@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
 using Moq;
-using Rhino.Etl.Core;
-using Rhino.Etl.Core.Operations;
+using Transformalize.Rhino.Etl.Core;
+using Transformalize.Rhino.Etl.Core.Operations;
+using System.Linq;
 
 namespace Transformalize.Test {
     [TestFixture]

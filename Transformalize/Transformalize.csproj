@@ -30,50 +30,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Boo.Lang">
-      <HintPath>..\packages\Boo.0.9.4\lib\Boo.Lang.dll</HintPath>
-    </Reference>
-    <Reference Include="Boo.Lang.Compiler">
-      <HintPath>..\packages\Boo-Compiler.0.9.4\lib\Boo.Lang.Compiler.dll</HintPath>
-    </Reference>
-    <Reference Include="Boo.Lang.Parser">
-      <HintPath>..\packages\Boo-Compiler.0.9.4\lib\Boo.Lang.Parser.dll</HintPath>
-    </Reference>
-    <Reference Include="Common.Logging">
-      <HintPath>..\packages\Common.Logging.2.0.0\lib\2.0\Common.Logging.dll</HintPath>
-    </Reference>
-    <Reference Include="Common.Logging.NLog20">
-      <HintPath>..\packages\Common.Logging.NLog20.2.1.2\lib\net40\Common.Logging.NLog20.dll</HintPath>
-    </Reference>
     <Reference Include="Dapper">
       <HintPath>..\packages\Dapper.1.12.1\lib\net40\Dapper.dll</HintPath>
-    </Reference>
-    <Reference Include="FileHelpers">
-      <HintPath>..\packages\FileHelpers.2.0.0.0\lib\FileHelpers.dll</HintPath>
-    </Reference>
-    <Reference Include="FileHelpers.ExcelStorage">
-      <HintPath>..\packages\FileHelpers.2.0.0.0\lib\FileHelpers.ExcelStorage.dll</HintPath>
-    </Reference>
-    <Reference Include="Interop.Excel">
-      <HintPath>..\packages\FileHelpers.2.0.0.0\lib\Interop.Excel.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="Interop.Office">
-      <HintPath>..\packages\FileHelpers.2.0.0.0\lib\Interop.Office.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="NLog, Version=2.0.1.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\NLog.2.0.0.2000\lib\net40\NLog.dll</HintPath>
-    </Reference>
-    <Reference Include="Rhino.DSL">
-      <HintPath>..\packages\RhinoDSL.1.0.0\lib\Rhino.DSL.dll</HintPath>
-    </Reference>
-    <Reference Include="Rhino.Etl.Core">
-      <HintPath>..\packages\Rhino-Etl.1.2.1.0\lib\net35\Rhino.Etl.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Rhino.Etl.Dsl">
-      <HintPath>..\packages\Rhino-Etl.1.2.1.0\lib\net35\Rhino.Etl.Dsl.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -110,11 +72,60 @@
     <Compile Include="DataTypeService.cs" />
     <Compile Include="OutputRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rhino.Etl\Core\ConventionOperations\ConventionInputCommandOperation.cs" />
+    <Compile Include="Rhino.Etl\Core\ConventionOperations\ConventionOutputCommandOperation.cs" />
+    <Compile Include="Rhino.Etl\Core\ConventionOperations\ConventionSqlBatchOperation.cs" />
+    <Compile Include="Rhino.Etl\Core\ConventionOperations\ConventionSqlBulkInsertOperation.cs" />
+    <Compile Include="Rhino.Etl\Core\DataReaders\Descriptor.cs" />
+    <Compile Include="Rhino.Etl\Core\DataReaders\DictionaryDescriptorAdapter.cs" />
+    <Compile Include="Rhino.Etl\Core\DataReaders\DictionaryEnumeratorDataReader.cs" />
+    <Compile Include="Rhino.Etl\Core\DataReaders\EnumerableDataReader.cs" />
+    <Compile Include="Rhino.Etl\Core\Enumerables\CachingEnumerable.cs" />
+    <Compile Include="Rhino.Etl\Core\Enumerables\EventRaisingEnumerator.cs" />
+    <Compile Include="Rhino.Etl\Core\Enumerables\GatedThreadSafeEnumerator.cs" />
+    <Compile Include="Rhino.Etl\Core\Enumerables\SingleRowEventRaisingEnumerator.cs" />
+    <Compile Include="Rhino.Etl\Core\Enumerables\ThreadSafeEnumerator.cs" />
+    <Compile Include="Rhino.Etl\Core\EtlProcess.cs" />
+    <Compile Include="Rhino.Etl\Core\EtlProcessBase.cs" />
+    <Compile Include="Rhino.Etl\Core\Exceptions\MissingKeyException.cs" />
+    <Compile Include="Rhino.Etl\Core\Exceptions\ParameterCountException.cs" />
+    <Compile Include="Rhino.Etl\Core\Exceptions\RhinoEtlException.cs" />
+    <Compile Include="Rhino.Etl\Core\Guard.cs" />
+    <Compile Include="Rhino.Etl\Core\Infrastructure\SqlCommandSet.cs" />
+    <Compile Include="Rhino.Etl\Core\Infrastructure\Use.cs" />
+    <Compile Include="Rhino.Etl\Core\IPipelineExecuter.cs" />
+    <Compile Include="Rhino.Etl\Core\ObjectArrayKeys.cs" />
+    <Compile Include="Rhino.Etl\Core\Operations\AbstractAggregationOperation.cs" />
+    <Compile Include="Rhino.Etl\Core\Operations\AbstractBranchingOperation.cs" />
+    <Compile Include="Rhino.Etl\Core\Operations\AbstractCommandOperation.cs" />
+    <Compile Include="Rhino.Etl\Core\Operations\AbstractDatabaseOperation.cs" />
+    <Compile Include="Rhino.Etl\Core\Operations\AbstractOperation.cs" />
+    <Compile Include="Rhino.Etl\Core\Operations\BranchingOperation.cs" />
+    <Compile Include="Rhino.Etl\Core\Operations\InputCommandOperation.cs" />
+    <Compile Include="Rhino.Etl\Core\Operations\IOperation.cs" />
+    <Compile Include="Rhino.Etl\Core\Operations\JoinOperation.cs" />
+    <Compile Include="Rhino.Etl\Core\Operations\JoinType.cs" />
+    <Compile Include="Rhino.Etl\Core\Operations\MultiThreadedBranchingOperation.cs" />
+    <Compile Include="Rhino.Etl\Core\Operations\NestedLoopsJoinOperation.cs" />
+    <Compile Include="Rhino.Etl\Core\Operations\OperationStatistics.cs" />
+    <Compile Include="Rhino.Etl\Core\Operations\OutputCommandOperation.cs" />
+    <Compile Include="Rhino.Etl\Core\Operations\PartialProcessOperation.cs" />
+    <Compile Include="Rhino.Etl\Core\Operations\SqlBatchOperation.cs" />
+    <Compile Include="Rhino.Etl\Core\Operations\SqlBulkInsertOperation.cs" />
+    <Compile Include="Rhino.Etl\Core\Pipelines\AbstractPipelineExecuter.cs" />
+    <Compile Include="Rhino.Etl\Core\Pipelines\PipelineExecutionException.cs" />
+    <Compile Include="Rhino.Etl\Core\Pipelines\SingleThreadedNonCachedPipelineExecuter.cs" />
+    <Compile Include="Rhino.Etl\Core\Pipelines\SingleThreadedPipelineExecuter.cs" />
+    <Compile Include="Rhino.Etl\Core\Pipelines\ThreadPoolPipelineExecuter.cs" />
+    <Compile Include="Rhino.Etl\Core\QuackingDictionary.cs" />
+    <Compile Include="Rhino.Etl\Core\Row.cs" />
+    <Compile Include="Rhino.Etl\Core\WithLoggingMixin.cs" />
     <Compile Include="TransformalizeProcess.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,7 +1,7 @@
 using System.Data.SqlClient;
-using Rhino.Etl.Core;
 using Transformalize.Configuration;
 using Dapper;
+using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize {
 

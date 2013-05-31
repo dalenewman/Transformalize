@@ -1,6 +1,6 @@
 ﻿using System.Configuration;
-using Rhino.Etl.Core;
 using Transformalize.Configuration;
+using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize {
     public class TransformalizeProcess : EtlProcess {
