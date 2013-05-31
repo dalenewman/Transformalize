@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Boo</id>
+    <version>0.9.4</version>
+    <title>Boo</title>
+    <authors>Rodrigo B. De Oliveira</authors>
+    <owners>Rodrigo B. De Oliveira</owners>
+    <licenseUrl>https://github.com/bamboo/boo/blob/master/license.txt</licenseUrl>
+    <projectUrl>http://boo.codehaus.org/</projectUrl>
+    <iconUrl>https://nugetgallery.blob.core.windows.net/icons/Boo.0.9.4.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>This is the Boo language extension assembly for working with the high-level Boo features.</description>
+    <summary>Boo language assembly</summary>
+    <tags>boo</tags>
+    <references>
+      <reference file="Boo.Lang.dll" />
+    </references>
+  </metadata>
+</package>

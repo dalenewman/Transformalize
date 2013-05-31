@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Rhino-Etl</id>
+    <version>1.2.1.0</version>
+    <title>Rhino-Etl</title>
+    <authors>Ayende Rahien,  Nathan Palmer</authors>
+    <owners>Ayende Rahien,  Nathan Palmer</owners>
+    <licenseUrl>https://github.com/hibernating-rhinos/rhino-etl/blob/master/license.txt</licenseUrl>
+    <projectUrl>https://github.com/hibernating-rhinos/rhino-etl</projectUrl>
+    <iconUrl>https://raw.github.com/wiki/hibernating-rhinos/rhino-esb/images/rhino-icon.jpg</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Rhino Etl is a developer friendly Extract, transform and load (ETL) library for .NET</description>
+    <releaseNotes />
+    <copyright />
+    <language>en-GB</language>
+    <dependencies>
+      <dependency id="Boo" version="0.9.4" />
+      <dependency id="RhinoDSL" version="1.0.0" />
+      <dependency id="Common.Logging" version="2.0.0" />
+      <dependency id="FileHelpers" version="2.0.0.0" />
+    </dependencies>
+    <references>
+      <reference file="Rhino.Etl.Core.dll" />
+      <reference file="Rhino.Etl.Dsl.dll" />
+    </references>
+  </metadata>
+</package>

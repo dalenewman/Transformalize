@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>RhinoDSL</id>
+    <version>1.0.0</version>
+    <title>RhinoDSL</title>
+    <authors>Ayende</authors>
+    <owners>Ayende</owners>
+    <licenseUrl>https://github.com/hibernating-rhinos/rhino-dsl/blob/master/license.txt</licenseUrl>
+    <projectUrl>https://github.com/hibernating-rhinos/rhino-dsl/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>The Rhino DSL project is a set of components that turned out to be useful across many DSL implementations. It contains classes to aid in building a DSL engine, implicit base classes, multifile DSLs, and so on.</description>
+    <summary>A Boo hosting environment</summary>
+    <tags>dsl rhinodsl boo</tags>
+    <dependencies>
+      <dependency id="Boo" version="0.9.4" />
+      <dependency id="Boo-Compiler" version="0.9.4" />
+    </dependencies>
+    <references>
+      <reference file="Rhino.DSL.dll" />
+    </references>
+  </metadata>
+</package>

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>FileHelpers</id>
+    <version>2.0.0.0</version>
+    <title>FileHelpers Lib   http://www.filehelpers.com</title>
+    <authors>Marcos Meli</authors>
+    <owners>Marcos Meli</owners>
+    <licenseUrl>http://www.filehelpers.com/credits.html</licenseUrl>
+    <projectUrl>http://www.filehelpers.com/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A simple to use file library for .NET that supports automatic formated file read/write operations.</description>
+    <summary>A simple to use file library for .NET that supports automatic formated file read/write operations.</summary>
+    <tags>Flat File</tags>
+    <references>
+      <reference file="FileHelpers.dll" />
+      <reference file="FileHelpers.ExcelStorage.dll" />
+      <reference file="Interop.Excel.dll" />
+      <reference file="Interop.Office.dll" />
+    </references>
+  </metadata>
+</package>
