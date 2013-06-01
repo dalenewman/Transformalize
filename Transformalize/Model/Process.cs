@@ -1,11 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Transformalize.Configuration;
 
-namespace Transformalize.Configuration {
+namespace Transformalize.Model {
 
-    public class ProcessConfiguration {
+    public class Process {
 
         const string ROW_VERSION_KEY = "RowVersion";
         const string TIME_KEY_KEY = "TimeKey";
@@ -17,27 +18,39 @@ namespace Transformalize.Configuration {
         public Dictionary<string, Connection> Connections = new Dictionary<string, Connection>();
         public string Output;
         public string Time;
-        public Connection Connection;
+        public Connection OutputConnection;
         public Dictionary<string, Entity> Entities = new Dictionary<string, Entity>();
         public List<Join> Joins = new List<Join>();
 
-        public ProcessConfiguration() { }
-        public ProcessConfiguration(ProcessConfigurationElement process) {
-            InitializeFromProcess(process);
+        public Process() { }
+        public Process(ProcessConfigurationElement process) {
+            InitializeFromConfiguration(process);
         }
 
-        private void InitializeFromProcess(ProcessConfigurationElement process) {
+        private void InitializeFromConfiguration(ProcessConfigurationElement process) {
             Name = process.Name;
+            Output = process.Output;
+            Time = process.Time;
 
             foreach (ConnectionConfigurationElement element in process.Connections) {
-                Connections.Add(element.Name, new Connection { Value = element.Value, Provider = element.Provider });
+                var connection = new Connection { ConnectionString = element.Value, Provider = element.Provider };
+                Connections.Add(element.Name, connection);
+                if (element.Name.Equals("output", StringComparison.OrdinalIgnoreCase)) {
+                    OutputConnection = connection;
+                }
             }
 
             foreach (EntityConfigurationElement entityElement in process.Entities) {
-                var entity = new Entity { Schema = entityElement.Schema, Name = entityElement.Name, Connection = Connections[entityElement.Connection] };
+                var entity = new Entity {
+                    ProcessName = Name,
+                    Schema = entityElement.Schema,
+                    Name = entityElement.Name,
+                    InputConnection = Connections[entityElement.Connection],
+                    OutputConnection = OutputConnection
+                };
 
                 foreach (FieldConfigurationElement fieldElement in entityElement.Keys) {
-                    var key = new Field {
+                    var keyField = new Field {
                         Entity = entity.Name,
                         Schema = entity.Schema,
                         Name = fieldElement.Name,
@@ -49,11 +62,11 @@ namespace Transformalize.Configuration {
                         Output = fieldElement.Output,
                         FieldType = FieldType.Key
                     };
-                    entity.Keys.Add(fieldElement.Alias, key);
-                    entity.All.Add(fieldElement.Alias, key);
+                    entity.Keys.Add(fieldElement.Alias, keyField);
+                    entity.All.Add(fieldElement.Alias, keyField);
 
                     if (entityElement.Version.Equals(fieldElement.Name)) {
-                        entity.Version = key;
+                        entity.Version = keyField;
                     }
                 }
 
@@ -107,61 +120,14 @@ namespace Transformalize.Configuration {
                 Joins.Add(join);
             }
 
-            Output = process.Output;
-            Time = process.Time;
-            Connection = Connections["output"];
-        }
-
-        private static string TruncateSql(string name) {
-            return string.Format(@"
-                IF EXISTS(
-        	        SELECT *
-        	        FROM INFORMATION_SCHEMA.TABLES
-        	        WHERE TABLE_SCHEMA = 'dbo'
-        	        AND TABLE_NAME = '{0}'
-                )	TRUNCATE TABLE [{0}];
-            ", name);
-        }
-
-        private static string DropSql(string name) {
-            return string.Format(@"
-                IF EXISTS(
-        	        SELECT *
-        	        FROM INFORMATION_SCHEMA.TABLES
-        	        WHERE TABLE_SCHEMA = 'dbo'
-        	        AND TABLE_NAME = '{0}'
-                )	DROP TABLE [{0}];
-            ", name);
         }
 
         public string TruncateOutputSql() {
-            return TruncateSql(Output);
+            return SqlTemplates.TruncateSql(Output);
         }
 
         public string DropOutputSql() {
-            return DropSql(Output);
-        }
-
-        public string CreateEntityTrackerSql() {
-            return @"
-                CREATE TABLE EntityTracker(
-	                EntityTrackerKey INT NOT NULL PRIMARY KEY IDENTITY(1,1),
-	                EntityName NVARCHAR(100) NOT NULL,
-	                VersionByteArray BINARY(8) NULL,
-	                VersionDateTime DATETIME NULL,
-                    VersionInt64 BIGINT NULL,
-                    VersionInt32 INT NULL,
-	                LastProcessedDate DATETIME NOT NULL
-                );
-            ";
-        }
-
-        public string TruncateEntityTrackerSql() {
-            return TruncateSql("EntityTracker");
-        }
-
-        public string DropEntityTrackerSql() {
-            return DropSql("EntityTracker");
+            return SqlTemplates.DropSql(Output);
         }
 
         private Dictionary<string, IField> Fields() {
@@ -195,7 +161,7 @@ namespace Transformalize.Configuration {
             return result;
         }
 
-        public string CreateSql() {
+        public string CreateOutputSql() {
 
             var sqlBuilder = new StringBuilder(Environment.NewLine);
             sqlBuilder.AppendFormat("CREATE TABLE [dbo].[{0}](\r\n", Output);

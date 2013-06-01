@@ -1,4 +1,4 @@
-namespace Transformalize.Configuration {
+namespace Transformalize.Model {
     public enum FieldType {
         Key,
         Field,

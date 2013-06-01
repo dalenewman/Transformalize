@@ -1,6 +1,7 @@
 ﻿using System.Configuration;
 using NUnit.Framework;
 using Transformalize.Configuration;
+using Transformalize.Model;
 
 namespace Transformalize.Test {
     [TestFixture]
@@ -10,9 +11,9 @@ namespace Transformalize.Test {
         public void TestCreateSql()
         {
             var config = (TransformalizeConfiguration)ConfigurationManager.GetSection("transformalize");
-            var process = new ProcessConfiguration(config.Processes[0]);
+            var process = new Process(config.Processes[0]);
 
-            var actual = process.CreateSql();
+            var actual = process.CreateOutputSql();
 
             Assert.AreEqual(@"
 CREATE TABLE [dbo].[OrderDetail](

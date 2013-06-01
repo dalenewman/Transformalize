@@ -1,9 +1,12 @@
+using System;
 using System.Collections.Generic;
 
-namespace Transformalize.Configuration {
+namespace Transformalize.Model {
     public class Field : IField {
 
         private string _sqlDataType;
+        private Type _realType;
+        private string _simpleType;
 
         public Dictionary<string, Xml> Xml = new Dictionary<string, Xml>();
         public string Schema { get; set; }
@@ -20,6 +23,14 @@ namespace Transformalize.Configuration {
 
         public string SqlDataType() {
             return _sqlDataType ?? (_sqlDataType = DataTypeService.GetSqlDbType(this));
+        }
+
+        public string SimpleType() {
+            return _simpleType ?? (_simpleType = Type.ToLower().Replace("system.", string.Empty));
+        }
+
+        public Type RealType() {
+            return _realType ?? (_realType = System.Type.GetType(this.Type));
         }
     }
 }

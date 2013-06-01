@@ -1,6 +1,7 @@
 ﻿using System.Configuration;
 using NUnit.Framework;
 using Transformalize.Configuration;
+using Transformalize.Model;
 
 namespace Transformalize.Test {
     [TestFixture]
@@ -36,12 +37,12 @@ namespace Transformalize.Test {
         public void TestGetAttributeAgain() {
 
             var config = (TransformalizeConfiguration)ConfigurationManager.GetSection("transformalize");
-            var process = new ProcessConfiguration(config.Processes[0]);
+            var process = new Process(config.Processes[0]);
 
             Assert.AreEqual("Test", process.Name);
-            Assert.AreEqual("Server=localhost;Database=TestInput;Trusted_Connection=True;", process.Connections["input"].Value);
-            Assert.AreEqual("Server=localhost;Database=TestOutput;Trusted_Connection=True;", process.Connections["output"].Value);
-            Assert.AreEqual("Server=localhost;Database=TestInput;Trusted_Connection=True;", process.Entities["OrderDetail"].Connection.Value);
+            Assert.AreEqual("Server=localhost;Database=TestInput;Trusted_Connection=True;", process.Connections["input"].ConnectionString);
+            Assert.AreEqual("Server=localhost;Database=TestOutput;Trusted_Connection=True;", process.Connections["output"].ConnectionString);
+            Assert.AreEqual("Server=localhost;Database=TestInput;Trusted_Connection=True;", process.Entities["OrderDetail"].InputConnection.ConnectionString);
             Assert.AreEqual("OrderDetailKey", process.Entities["OrderDetail"].Keys["OrderDetailKey"].Alias);
             Assert.AreEqual("ProductKey", process.Entities["OrderDetail"].Fields["ProductKey"].Alias);
             Assert.AreEqual("RowVersion", process.Entities["OrderDetail"].Version.Alias);

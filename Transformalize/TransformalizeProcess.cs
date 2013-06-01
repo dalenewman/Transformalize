@@ -1,5 +1,7 @@
 ﻿using System.Configuration;
 using Transformalize.Configuration;
+using Transformalize.Model;
+using Transformalize.Repositories;
 using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize {
@@ -13,10 +15,12 @@ namespace Transformalize {
 
         protected override void Initialize() {
             var config = (TransformalizeConfiguration)ConfigurationManager.GetSection("transformalize");
-            var process = new ProcessConfiguration(config.Processes.Get(_processName));
+            var process = new Process(config.Processes.Get(_processName));
+
+            var entityTrackerRepository = new EntityTrackerRepository(process);
             var outputRepository = new OutputRepository(process);
 
-            outputRepository.InitializeEntityTracker();
+            entityTrackerRepository.InitializeEntityTracker();
             outputRepository.InitializeOutput();
         }
     }

@@ -1,4 +1,4 @@
-namespace Transformalize.Configuration {
+namespace Transformalize.Model {
 
     public class Join {
         public Entity LeftEntity;

@@ -52,7 +52,7 @@
   <ItemGroup>
     <Compile Include="TestProcess.cs" />
     <Compile Include="TestInput.cs" />
-    <Compile Include="TestOutput.cs" />
+    <Compile Include="TestEntity.cs" />
     <Compile Include="TestConfiguration.cs" />
     <Compile Include="EtlProcessHelper.cs" />
     <Compile Include="TestOperations.cs" />

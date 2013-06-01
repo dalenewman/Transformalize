@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Transformalize.Configuration {
+namespace Transformalize.Model {
     public class Input {
 
         private Dictionary<string, IField> _fields;

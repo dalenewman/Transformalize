@@ -1,4 +1,4 @@
-namespace Transformalize.Configuration
+namespace Transformalize.Model
 {
     public interface IField {
         string Schema { get; }

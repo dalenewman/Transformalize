@@ -1,4 +1,4 @@
-namespace Transformalize.Configuration {
+namespace Transformalize.Model {
 
     public class Xml : IField {
         private string _sqlDataType;
