@@ -72,6 +72,9 @@
     <Compile Include="Model\Process.cs" />
     <Compile Include="Model\Xml.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Readers\IProcessReader.cs" />
+    <Compile Include="Readers\IVersionReader.cs" />
+    <Compile Include="Readers\VersionReader.cs" />
     <Compile Include="Repositories\EntityTrackerRepository.cs" />
     <Compile Include="Repositories\OutputRepository.cs" />
     <Compile Include="Rhino.Etl\Core\ConventionOperations\ConventionInputCommandOperation.cs" />

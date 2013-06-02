@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using Transformalize.Configuration;
 using Transformalize.Model;
+using Transformalize.Readers;
 
 namespace Transformalize.Test {
     [TestFixture]
@@ -36,8 +37,7 @@ namespace Transformalize.Test {
         [Test]
         public void TestGetAttributeAgain() {
 
-            var config = (TransformalizeConfiguration)ConfigurationManager.GetSection("transformalize");
-            var process = new Process(config.Processes[0]);
+            var process = new ProcessReader("Test").GetProcess();
 
             Assert.AreEqual("Test", process.Name);
             Assert.AreEqual("Server=localhost;Database=TestInput;Trusted_Connection=True;", process.Connections["input"].ConnectionString);

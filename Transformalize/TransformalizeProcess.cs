@@ -1,21 +1,22 @@
 ﻿using System.Configuration;
 using Transformalize.Configuration;
 using Transformalize.Model;
+using Transformalize.Readers;
 using Transformalize.Repositories;
 using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize {
     public class TransformalizeProcess : EtlProcess {
 
-        private readonly string _processName;
+        private readonly string _name;
 
-        public TransformalizeProcess(string processName) {
-            _processName = processName;
+        public TransformalizeProcess(string name) {
+            _name = name;
         }
 
-        protected override void Initialize() {
-            var config = (TransformalizeConfiguration)ConfigurationManager.GetSection("transformalize");
-            var process = new Process(config.Processes.Get(_processName));
+        protected override void Initialize()
+        {
+            var process = new ProcessReader(_name).GetProcess();
 
             var entityTrackerRepository = new EntityTrackerRepository(process);
             var outputRepository = new OutputRepository(process);

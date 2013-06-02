@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using Transformalize.Configuration;
 using Transformalize.Model;
+using Transformalize.Readers;
 
 namespace Transformalize.Test {
     [TestFixture]
@@ -10,8 +11,7 @@ namespace Transformalize.Test {
         [Test]
         public void TestCreateSql()
         {
-            var config = (TransformalizeConfiguration)ConfigurationManager.GetSection("transformalize");
-            var process = new Process(config.Processes[0]);
+            var process = new ProcessReader("Test").GetProcess();
 
             var actual = process.CreateOutputSql();
 

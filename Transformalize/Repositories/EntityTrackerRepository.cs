@@ -26,10 +26,12 @@ namespace Transformalize.Repositories {
                     EntityTrackerKey INT NOT NULL IDENTITY(1,1),
 					ProcessName NVARCHAR(100) NOT NULL,
 	                EntityName NVARCHAR(100) NOT NULL,
-	                VersionByteArray BINARY(8) NULL,
-	                VersionDateTime DATETIME NULL,
-                    VersionInt64 BIGINT NULL,
-                    VersionInt32 INT NULL,
+	                BinaryVersion BINARY(8) NULL,
+	                DateTimeVersion DATETIME NULL,
+                    Int64Version BIGINT NULL,
+                    Int32Version INT NULL,
+                    Int16Version SMALLINT NULL,
+                    ByteVersion TINYINT NULL,
 	                LastProcessedDate DATETIME NOT NULL,
 					CONSTRAINT Pk_EntityTracker_EntityTrackerKey PRIMARY KEY (
 						EntityTrackerKey
