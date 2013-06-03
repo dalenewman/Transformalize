@@ -46,11 +46,11 @@ namespace Transformalize.Repositories {
         }
 
         public string TruncateEntityTrackerSql() {
-            return SqlTemplates.TruncateSql("EntityTracker");
+            return SqlTemplates.TruncateTable("EntityTracker");
         }
 
         public string DropEntityTrackerSql() {
-            return SqlTemplates.DropSql("EntityTracker");
+            return SqlTemplates.DropTable("EntityTracker");
         }
 
         public void InitializeEntityTracker() {

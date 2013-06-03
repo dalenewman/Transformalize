@@ -23,11 +23,11 @@ namespace Transformalize.Model {
         public List<Join> Joins = new List<Join>();
 
         public string TruncateOutputSql() {
-            return SqlTemplates.TruncateSql(Output);
+            return SqlTemplates.TruncateTable(Output);
         }
 
         public string DropOutputSql() {
-            return SqlTemplates.DropSql(Output);
+            return SqlTemplates.DropTable(Output);
         }
 
         private Dictionary<string, IField> Fields() {

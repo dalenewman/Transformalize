@@ -75,5 +75,9 @@ namespace Transformalize.Model {
             return keys;
         }
 
+        public string CreateKeysSql(IEnumerable<Dictionary<string, object>> keyValues) {
+            return SqlTemplates.CreateTableVariable("@KEYS", Keys) + SqlTemplates.BatchInsertValues("@KEYS", Keys, keyValues, InputConnection.Year, InputConnection.BatchInsertSize);
+        }
+
     }
 }

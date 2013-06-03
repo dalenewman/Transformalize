@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Transformalize.Model {
     public class Field : IField {
@@ -31,6 +32,10 @@ namespace Transformalize.Model {
 
         public Type RealType() {
             return _realType ?? (_realType = System.Type.GetType(this.Type));
+        }
+
+        public bool NeedsQuotes() {
+            return (new [] { "string", "char", "datetime", "guid" }).Any(t => t.Equals(SimpleType()));
         }
     }
 }
