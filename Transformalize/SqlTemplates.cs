@@ -91,8 +91,30 @@ namespace Transformalize {
             return lines;
         }
 
+        public static string CreateKeysTableVariable(Dictionary<string, Field> keys) {
+            return CreateTableVariable("@KEYS", keys);
+        }
+
+        public static string BatchInsertKeyValues(Dictionary<string, Field> keys, IEnumerable<Dictionary<string, object>> keyValues, int year, int batchInsertSize) {
+            return BatchInsertValues("@KEYS", keys, keyValues, year, batchInsertSize);
+        }
+
+        public static string SelectJoinedOnKeys(Entity entity) {
+            const string sqlPattern = "SELECT {0}\r\nFROM [{1}].[{2}] t INNER JOIN @KEYS k ON ({3});";
+            var fields = entity.All.Keys.Select(fieldKey => entity.All[fieldKey]).Where(f => f.FieldType != FieldType.Version && !f.InnerXml.Any()).Select(f => f.AsSelect());
+            var xmlFields = entity.All.Keys.Select(fieldKey => entity.All[fieldKey]).Where(f => f.InnerXml.Any()).SelectMany(f => f.InnerXml).Select(kv => kv.Value.AsSelect());
+            var joins = entity.Keys.Keys.Select(keyKey => entity.Keys[keyKey]).Select(f => f.AsJoin("t", "k"));
+            return string.Format(sqlPattern, string.Join(", ", fields.Concat(xmlFields)), entity.Schema, entity.Name, string.Join(" AND ", joins));
+        }
+
+        public static string SelectByKeys(Entity entity) {
+            return
+                CreateKeysTableVariable(entity.Keys) +
+                BatchInsertKeyValues(entity.Keys, entity.GetKeys(), entity.InputConnection.Year, entity.InputConnection.BatchInsertSize) +
+                Environment.NewLine +
+                SelectJoinedOnKeys(entity);
+        }
+
     }
-
-
 
 }

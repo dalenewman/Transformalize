@@ -1,7 +1,4 @@
-﻿using System.Configuration;
-using NUnit.Framework;
-using Transformalize.Configuration;
-using Transformalize.Model;
+﻿using NUnit.Framework;
 using Transformalize.Readers;
 
 namespace Transformalize.Test {

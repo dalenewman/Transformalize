@@ -15,12 +15,14 @@ namespace Transformalize.Model {
         public Field Version;
         public Dictionary<string, Field> Keys { get; set; }
         public Dictionary<string, Field> Fields { get; set; }
-        public Dictionary<string, Field> All { get; set; }
+        public Dictionary<string, IField> All { get; set; }
+        public Dictionary<string, Join> Joins { get; set; }
 
         public Entity() {
             Keys = new Dictionary<string, Field>();
             Fields = new Dictionary<string, Field>();
-            All = new Dictionary<string, Field>();
+            All = new Dictionary<string, IField>();
+            Joins = new Dictionary<string, Join>();
         }
 
         public string GetKeySql(bool isRange) {
@@ -56,12 +58,12 @@ namespace Transformalize.Model {
 
             using (var cn = new SqlConnection(InputConnection.ConnectionString)) {
                 cn.Open();
-                var cmd = new SqlCommand(GetKeySql(versionReader.IsRange), cn) { CommandTimeout = 0};
-                
+                var cmd = new SqlCommand(GetKeySql(versionReader.IsRange), cn) { CommandTimeout = 0 };
+
                 if (versionReader.IsRange)
                     cmd.Parameters.Add(new SqlParameter("@Begin", begin));
                 cmd.Parameters.Add(new SqlParameter("@End", end));
-                
+
                 using (var reader = cmd.ExecuteReader()) {
                     while (reader.Read()) {
                         var fields = new Dictionary<string, object>();
@@ -73,10 +75,6 @@ namespace Transformalize.Model {
                 }
             }
             return keys;
-        }
-
-        public string CreateKeysSql(IEnumerable<Dictionary<string, object>> keyValues) {
-            return SqlTemplates.CreateTableVariable("@KEYS", Keys) + SqlTemplates.BatchInsertValues("@KEYS", Keys, keyValues, InputConnection.Year, InputConnection.BatchInsertSize);
         }
 
     }

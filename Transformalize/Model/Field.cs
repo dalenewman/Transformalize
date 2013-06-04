@@ -9,7 +9,6 @@ namespace Transformalize.Model {
         private Type _realType;
         private string _simpleType;
 
-        public Dictionary<string, Xml> Xml = new Dictionary<string, Xml>();
         public string Schema { get; set; }
         public string Entity { get; set; }
         public string Parent { get { return string.Empty; } }
@@ -22,8 +21,18 @@ namespace Transformalize.Model {
         public bool Output { get; set; }
         public FieldType FieldType { get; set; }
 
+        public Field() {
+            InnerXml = new Dictionary<string, Xml>();
+        }
+
         public string SqlDataType() {
             return _sqlDataType ?? (_sqlDataType = DataTypeService.GetSqlDbType(this));
+        }
+
+        public string AsSelect() {
+            return Alias.Equals(Name) ?
+                string.Format("t.[{0}]", Name) :
+                string.Format("[{0}] = t.[{1}]", Alias, Name);
         }
 
         public string SimpleType() {
@@ -35,7 +44,16 @@ namespace Transformalize.Model {
         }
 
         public bool NeedsQuotes() {
-            return (new [] { "string", "char", "datetime", "guid" }).Any(t => t.Equals(SimpleType()));
+            return (new[] { "string", "char", "datetime", "guid" }).Any(t => t.Equals(SimpleType()));
+        }
+
+        public string AsJoin(string left, string right) {
+            return string.Format("{0}.[{1}] = {2}.[{1}]", left, Name, right);
+        }
+
+        public Dictionary<string, Xml> InnerXml { get; set; }
+        public string AsDefinition() {
+            return string.Format("[{0}] {1} NOT NULL", Alias, SqlDataType());
         }
     }
 }

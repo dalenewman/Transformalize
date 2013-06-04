@@ -17,17 +17,41 @@ namespace Transformalize.Test {
         }
 
         [Test]
-        public void TestGetKeysSql() {
+        public void TestKeysTableVariable() {
             var process = new ProcessReader("Test").GetProcess();
             
             var entity = process.Entities["OrderDetail"];
-            entity.InputConnection.BatchInsertSize = 2;
+            var sql = SqlTemplates.CreateKeysTableVariable(entity.Keys);
 
-            var sql = entity.CreateKeysSql(entity.GetKeys());
+            Assert.AreEqual(@"DECLARE @KEYS AS TABLE([OrderDetailKey] INT NOT NULL);", sql);
+        }
+
+        [Test]
+        public void TestKeysTableVariableWithKeys() {
+            var process = new ProcessReader("Test").GetProcess();
+
+            var entity = process.Entities["OrderDetail"];
+            var connection = entity.InputConnection;
+            connection.BatchInsertSize = 2;
+            var sql = SqlTemplates.CreateKeysTableVariable(entity.Keys) + SqlTemplates.BatchInsertKeyValues(entity.Keys, entity.GetKeys(), connection.Year, connection.BatchInsertSize);
 
             Assert.AreEqual(@"DECLARE @KEYS AS TABLE([OrderDetailKey] INT NOT NULL);
 INSERT INTO @KEYS SELECT 1 UNION ALL SELECT 2;
 INSERT INTO @KEYS SELECT 3 UNION ALL SELECT 4;", sql);
         }
+
+        [Test]
+        public void TestSelectByKeysSql() {
+            var process = new ProcessReader("Test").GetProcess();
+
+            var entity = process.Entities["OrderDetail"];
+            var sql = SqlTemplates.SelectByKeys(entity);
+
+            Assert.AreEqual(@"DECLARE @KEYS AS TABLE([OrderDetailKey] INT NOT NULL);
+INSERT INTO @KEYS SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4;
+SELECT t.[OrderDetailKey], t.[OrderKey], t.[ProductKey], [Quantity] = t.[Qty], t.[Price], t.[RowVersion], [Color] = t.[Properties].value('(/Properties/Color)[1]','NVARCHAR(64)'), [Size] = t.[Properties].value('(/Properties/Size)[1]','NVARCHAR(64)'), [Gender] = t.[Properties].value('(/Properties/Gender)[1]','NVARCHAR(64)')
+FROM [dbo].[OrderDetail] t INNER JOIN @KEYS k ON (t.[OrderDetailKey] = k.[OrderDetailKey]);", sql);
+        }
+        
     }
 }

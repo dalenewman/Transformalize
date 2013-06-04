@@ -1,5 +1,6 @@
 using System;
 using System.Configuration;
+using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Model;
 
@@ -57,7 +58,7 @@ namespace Transformalize.Readers {
                     };
                     entity.Keys.Add(fieldElement.Alias, keyField);
                     entity.All.Add(fieldElement.Alias, keyField);
-
+                    
                     if (entityElement.Version.Equals(fieldElement.Name)) {
                         entity.Version = keyField;
                     }
@@ -77,7 +78,7 @@ namespace Transformalize.Readers {
                         FieldType = FieldType.Field
                     };
                     foreach (XmlConfigurationElement xmlElement in fieldElement.Xml) {
-                        field.Xml.Add(xmlElement.Alias, new Xml {
+                        field.InnerXml.Add(xmlElement.Alias, new Xml {
                             Entity = entity.Name,
                             Schema = entity.Schema,
                             Parent = fieldElement.Name,
@@ -95,7 +96,7 @@ namespace Transformalize.Readers {
 
                     entity.Fields.Add(fieldElement.Alias, field);
                     entity.All.Add(fieldElement.Alias, field);
-
+                    
                     if (entityElement.Version.Equals(fieldElement.Name)) {
                         entity.Version = field;
                     }

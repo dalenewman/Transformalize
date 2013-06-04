@@ -68,7 +68,6 @@
     <Compile Include="Model\Field.cs" />
     <Compile Include="Model\FieldType.cs" />
     <Compile Include="Model\IField.cs" />
-    <Compile Include="Model\Input.cs" />
     <Compile Include="Model\Join.cs" />
     <Compile Include="Model\Process.cs" />
     <Compile Include="Model\Xml.cs" />

@@ -12,7 +12,7 @@ namespace Transformalize.Model {
         const string TIME_KEY_KEY = "TimeKey";
         const string LOAD_DATE_KEY = "LoadDate";
 
-        private Dictionary<string, IField> _fields;
+        private IList<IField> _fields;
 
         public string Name;
         public Dictionary<string, Connection> Connections = new Dictionary<string, Connection>();
@@ -22,6 +22,27 @@ namespace Transformalize.Model {
         public Dictionary<string, Entity> Entities = new Dictionary<string, Entity>();
         public List<Join> Joins = new List<Join>();
 
+        public IList<IField> Fields {
+            get {
+                if (_fields == null) {
+                    _fields = new List<IField>();
+                    foreach (var entity in Entities.Select(kv => kv.Value)) {
+                        foreach (var field in entity.All.Select(kv => kv.Value)) {
+                            if (field.InnerXml.Any()) {
+                                foreach (var xmlField in field.InnerXml.Select(kv => kv.Value)) {
+                                    _fields.Add(xmlField);
+                                }
+                            }
+                            else {
+                                _fields.Add(field);
+                            }
+                        }
+                    }
+                }
+                return _fields;
+            }
+        }
+
         public string TruncateOutputSql() {
             return SqlTemplates.TruncateTable(Output);
         }
@@ -30,35 +51,14 @@ namespace Transformalize.Model {
             return SqlTemplates.DropTable(Output);
         }
 
-        private Dictionary<string, IField> Fields() {
-            if (_fields != null)
-                return _fields;
-
-            _fields = new Dictionary<string, IField>();
-            foreach (var entityKey in Entities.Keys) {
-                foreach (var fieldKey in Entities[entityKey].All.Keys) {
-                    var field = Entities[entityKey].All[fieldKey];
-                    if (field.Xml.Any()) {
-                        foreach (var xmlKey in field.Xml.Keys) {
-                            _fields[xmlKey] = field.Xml[xmlKey];
-                        }
-                    }
-                    else {
-                        _fields[fieldKey] = field;
-                    }
-
-                }
-            }
-            return _fields;
-        }
-
-        public SortedDictionary<string, IField> OutputFields() {
-            var result = new SortedDictionary<string, IField>();
-            var fields = Fields();
-            foreach (var fieldKey in fields.Where(f => f.Value.Output).Select(f => f.Key)) {
-                result[fieldKey] = fields[fieldKey];
-            }
-            return result;
+        public IEnumerable<IField> OutputFields() {
+            var fields = new List<IField> {
+                new Field() {Alias = ROW_VERSION_KEY, Type = "System.RowVersion"},
+                new Field() {Alias = TIME_KEY_KEY, Type = "System.Int32"},
+                new Field() {Alias = LOAD_DATE_KEY, Type = "System.DateTime"}
+            };
+            fields.AddRange(Fields.Where(f => f.Output));
+            return fields.OrderBy(f => f.Alias);
         }
 
         public string CreateOutputSql() {
@@ -66,14 +66,8 @@ namespace Transformalize.Model {
             var sqlBuilder = new StringBuilder(Environment.NewLine);
             sqlBuilder.AppendFormat("CREATE TABLE [dbo].[{0}](\r\n", Output);
 
-            var fields = OutputFields();
-
-            fields.Add(ROW_VERSION_KEY, new Field() { Alias = ROW_VERSION_KEY, Type = "System.RowVersion" });
-            fields.Add(TIME_KEY_KEY, new Field() { Alias = TIME_KEY_KEY, Type = "System.Int32" });
-            fields.Add(LOAD_DATE_KEY, new Field() { Alias = LOAD_DATE_KEY, Type = "System.DateTime" });
-
-            foreach (var fieldKey in fields.Keys) {
-                sqlBuilder.AppendFormat("[{0}] {1} NOT NULL,\r\n", fields[fieldKey].Alias, fields[fieldKey].SqlDataType());
+            foreach (var field in OutputFields()) {
+                sqlBuilder.AppendLine(field.AsDefinition() + ",");
             }
 
             sqlBuilder.AppendFormat("CONSTRAINT [PK_{0}] PRIMARY KEY CLUSTERED (\r\n", Output);

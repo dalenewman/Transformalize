@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Transformalize.Model
 {
     public interface IField {
@@ -13,5 +15,9 @@ namespace Transformalize.Model
         bool Output { get; }
         FieldType FieldType { get; }
         string SqlDataType();
+        string AsSelect();
+        string AsJoin(string left, string right);
+        Dictionary<string, Xml> InnerXml { get; }
+        string AsDefinition();
     }
 }

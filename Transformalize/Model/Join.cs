@@ -2,8 +2,8 @@ namespace Transformalize.Model {
 
     public class Join {
         public Entity LeftEntity;
-        public Field LeftField;
+        public IField LeftField;
         public Entity RightEntity;
-        public Field RightField;
+        public IField RightField;
     }
 }

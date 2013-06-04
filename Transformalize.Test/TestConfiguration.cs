@@ -46,8 +46,8 @@ namespace Transformalize.Test {
             Assert.AreEqual("OrderDetailKey", process.Entities["OrderDetail"].Keys["OrderDetailKey"].Alias);
             Assert.AreEqual("ProductKey", process.Entities["OrderDetail"].Fields["ProductKey"].Alias);
             Assert.AreEqual("RowVersion", process.Entities["OrderDetail"].Version.Alias);
-            Assert.AreEqual("/Properties/Color", process.Entities["OrderDetail"].Fields["Properties"].Xml["Color"].XPath);
-            Assert.AreEqual(1, process.Entities["OrderDetail"].Fields["Properties"].Xml["Color"].Index);
+            Assert.AreEqual("/Properties/Color", process.Entities["OrderDetail"].Fields["Properties"].InnerXml["Color"].XPath);
+            Assert.AreEqual(1, process.Entities["OrderDetail"].Fields["Properties"].InnerXml["Color"].Index);
             Assert.AreEqual("OrderDetail", process.Joins[0].LeftEntity.Name);
             Assert.AreEqual("Order", process.Joins[0].RightEntity.Name);
             Assert.AreEqual("OrderKey", process.Joins[0].LeftField.Name);
