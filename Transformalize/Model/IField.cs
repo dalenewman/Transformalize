@@ -14,10 +14,13 @@ namespace Transformalize.Model
         int Scale { get; }
         bool Output { get; }
         FieldType FieldType { get; }
-        string SqlDataType();
-        string AsSelect();
+        string SqlDataType { get; }
         string AsJoin(string left, string right);
         Dictionary<string, Xml> InnerXml { get; }
-        string AsDefinition();
+        object Default { get; }
+        string Quote { get; }
+        string XPath { get; }
+        int Index { get; }
+        FieldSqlWriter SqlWriter { get; }
     }
 }

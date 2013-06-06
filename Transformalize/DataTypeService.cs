@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Transformalize.Configuration;
 using Transformalize.Model;
 
 namespace Transformalize {
@@ -23,7 +22,7 @@ namespace Transformalize {
             {"rowversion", "ROWVERSION"}
         };
 
-        public static string GetSqlDbType(IField field) {
+        public static string GetSqlDbType(BaseField field) {
             var type = field.Type.ToLower().Replace("system.", string.Empty).ToLower();
             var length = type == "string" || type == "char"  || type == "byte[]" ? string.Concat("(", field.Length, ")") : string.Empty;
             var dimensions = type == "decimal" ? string.Format("({0},{1})", field.Precision, field.Scale) : string.Empty;

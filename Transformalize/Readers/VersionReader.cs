@@ -42,7 +42,7 @@ namespace Transformalize.Readers {
         }
 
         public object GetBeginVersion() {
-            var field = _entity.Version.SimpleType().Replace("byte[]", "binary") + "Version";
+            var field = _entity.Version.SimpleType.Replace("byte[]", "binary") + "Version";
             using (var reader = GetBeginVersionReader(field)) {
                 IsRange = reader.HasRows;
                 if (!IsRange)

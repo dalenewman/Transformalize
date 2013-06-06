@@ -30,10 +30,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Dapper, Version=1.12.1.1, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Dapper.1.13\lib\net45\Dapper.dll</HintPath>
-    </Reference>
     <Reference Include="NLog, Version=2.0.1.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\NLog.2.0.1.2\lib\net45\NLog.dll</HintPath>
@@ -41,8 +37,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -63,15 +58,90 @@
     <Compile Include="Configuration\XmlElementCollection.cs" />
     <Compile Include="DataTypeService.cs" />
     <Compile Include="LinqExtensions.cs" />
+    <Compile Include="Model\BaseField.cs" />
     <Compile Include="Model\Connection.cs" />
     <Compile Include="Model\Entity.cs" />
     <Compile Include="Model\Field.cs" />
+    <Compile Include="Model\FieldSqlWriter.cs" />
     <Compile Include="Model\FieldType.cs" />
     <Compile Include="Model\IField.cs" />
     <Compile Include="Model\Join.cs" />
     <Compile Include="Model\Process.cs" />
     <Compile Include="Model\Xml.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RazorEngine.Core\AttributeValue.cs" />
+    <Compile Include="RazorEngine.Core\CodeGenerators\SetModelTypeCodeGenerator.cs" />
+    <Compile Include="RazorEngine.Core\Common\GlobalSuppressions.cs" />
+    <Compile Include="RazorEngine.Core\Common\HashCodeCombiner.cs" />
+    <Compile Include="RazorEngine.Core\Compilation\CompilerServiceBase.cs" />
+    <Compile Include="RazorEngine.Core\Compilation\CompilerServiceBuilder.cs" />
+    <Compile Include="RazorEngine.Core\Compilation\CompilerServicesUtility.cs" />
+    <Compile Include="RazorEngine.Core\Compilation\CSharp\CSharpCodeParser.cs" />
+    <Compile Include="RazorEngine.Core\Compilation\CSharp\CSharpDirectCompilerService.cs" />
+    <Compile Include="RazorEngine.Core\Compilation\CSharp\CSharpRazorCodeGenerator.cs" />
+    <Compile Include="RazorEngine.Core\Compilation\CSharp\CSharpRazorCodeLanguage.cs" />
+    <Compile Include="RazorEngine.Core\Compilation\DefaultCompilerServiceFactory.cs" />
+    <Compile Include="RazorEngine.Core\Compilation\DirectCompilerServiceBase.cs" />
+    <Compile Include="RazorEngine.Core\Compilation\HasDynamicModelAttribute.cs" />
+    <Compile Include="RazorEngine.Core\Compilation\ICompilerService.cs" />
+    <Compile Include="RazorEngine.Core\Compilation\ICompilerServiceFactory.cs" />
+    <Compile Include="RazorEngine.Core\Compilation\Inspectors\ICodeInspector.cs" />
+    <Compile Include="RazorEngine.Core\Compilation\RazorDynamicObject.cs" />
+    <Compile Include="RazorEngine.Core\Compilation\RazorEngineHost.cs" />
+    <Compile Include="RazorEngine.Core\Compilation\TypeContext.cs" />
+    <Compile Include="RazorEngine.Core\Compilation\VisualBasic\VBCodeParser.cs" />
+    <Compile Include="RazorEngine.Core\Compilation\VisualBasic\VBDirectCompilerService.cs" />
+    <Compile Include="RazorEngine.Core\Compilation\VisualBasic\VBRazorCodeGenerator.cs" />
+    <Compile Include="RazorEngine.Core\Compilation\VisualBasic\VBRazorCodeLanguage.cs" />
+    <Compile Include="RazorEngine.Core\Configuration\Fluent\FluentConfigurationBuilder.cs" />
+    <Compile Include="RazorEngine.Core\Configuration\Fluent\FluentTemplateServiceConfiguration.cs" />
+    <Compile Include="RazorEngine.Core\Configuration\Fluent\IConfigurationBuilder.cs" />
+    <Compile Include="RazorEngine.Core\Configuration\ITemplateServiceConfiguration.cs" />
+    <Compile Include="RazorEngine.Core\Configuration\RazorEngineConfigurationSection.cs" />
+    <Compile Include="RazorEngine.Core\Configuration\TemplateServiceConfiguration.cs" />
+    <Compile Include="RazorEngine.Core\Configuration\Xml\NamespaceConfigurationElement.cs" />
+    <Compile Include="RazorEngine.Core\Configuration\Xml\NamespaceConfigurationElementCollection.cs" />
+    <Compile Include="RazorEngine.Core\Configuration\Xml\TemplateServiceConfigurationElement.cs" />
+    <Compile Include="RazorEngine.Core\Configuration\Xml\TemplateServiceConfigurationElementCollection.cs" />
+    <Compile Include="RazorEngine.Core\Configuration\Xml\XmlTemplateServiceConfiguration.cs" />
+    <Compile Include="RazorEngine.Core\Encoding.cs" />
+    <Compile Include="RazorEngine.Core\Language.cs" />
+    <Compile Include="RazorEngine.Core\PositionTagged.cs" />
+    <Compile Include="RazorEngine.Core\Razor.cs" />
+    <Compile Include="RazorEngine.Core\Templating\CachedTemplateItem.cs" />
+    <Compile Include="RazorEngine.Core\Templating\DefaultActivator.cs" />
+    <Compile Include="RazorEngine.Core\Templating\DefaultAppDomainFactory.cs" />
+    <Compile Include="RazorEngine.Core\Templating\DelegateActivator.cs" />
+    <Compile Include="RazorEngine.Core\Templating\DelegateAppDomainFactory.cs" />
+    <Compile Include="RazorEngine.Core\Templating\DelegateTemplateResolver.cs" />
+    <Compile Include="RazorEngine.Core\Templating\DynamicViewBag.cs" />
+    <Compile Include="RazorEngine.Core\Templating\ExecuteContext.cs" />
+    <Compile Include="RazorEngine.Core\Templating\HtmlTemplateBaseOfT.cs" />
+    <Compile Include="RazorEngine.Core\Templating\IActivator.cs" />
+    <Compile Include="RazorEngine.Core\Templating\IAppDomainFactory.cs" />
+    <Compile Include="RazorEngine.Core\Templating\InstanceContext.cs" />
+    <Compile Include="RazorEngine.Core\Templating\IsolatedTemplateService.cs" />
+    <Compile Include="RazorEngine.Core\Templating\ITemplate.cs" />
+    <Compile Include="RazorEngine.Core\Templating\ITemplateOfT.cs" />
+    <Compile Include="RazorEngine.Core\Templating\ITemplateResolver.cs" />
+    <Compile Include="RazorEngine.Core\Templating\ITemplateService.cs" />
+    <Compile Include="RazorEngine.Core\Templating\Parallel\DefaultParallelQueryPlan.cs" />
+    <Compile Include="RazorEngine.Core\Templating\Parallel\IParallelQueryPlan.cs" />
+    <Compile Include="RazorEngine.Core\Templating\RequireNamespacesAttribute.cs" />
+    <Compile Include="RazorEngine.Core\Templating\TemplateBase.cs" />
+    <Compile Include="RazorEngine.Core\Templating\TemplateBaseOfT.cs" />
+    <Compile Include="RazorEngine.Core\Templating\TemplateCompilationException.cs" />
+    <Compile Include="RazorEngine.Core\Templating\TemplateParsingException.cs" />
+    <Compile Include="RazorEngine.Core\Templating\TemplateService.cs" />
+    <Compile Include="RazorEngine.Core\Templating\TemplateServiceFactory.cs" />
+    <Compile Include="RazorEngine.Core\Templating\TemplateWriter.cs" />
+    <Compile Include="RazorEngine.Core\Templating\TypeLoader.cs" />
+    <Compile Include="RazorEngine.Core\Text\HtmlEncodedString.cs" />
+    <Compile Include="RazorEngine.Core\Text\HtmlEncodedStringFactory.cs" />
+    <Compile Include="RazorEngine.Core\Text\IEncodedString.cs" />
+    <Compile Include="RazorEngine.Core\Text\IEncodedStringFactory.cs" />
+    <Compile Include="RazorEngine.Core\Text\RawString.cs" />
+    <Compile Include="RazorEngine.Core\Text\RawStringFactory.cs" />
     <Compile Include="Readers\IProcessReader.cs" />
     <Compile Include="Readers\IVersionReader.cs" />
     <Compile Include="Readers\ProcessReader.cs" />
@@ -131,8 +201,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="RazorEngine.Core\ClassDiagram.cd" />
+    <None Include="RazorEngine.Core\packages.config" />
+    <None Include="Templates\CreateOutputTable.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

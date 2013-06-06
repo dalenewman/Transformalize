@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using RazorEngine.Templating;
 using Transformalize.Configuration;
 
 namespace Transformalize.Model {
@@ -21,6 +23,10 @@ namespace Transformalize.Model {
         public Connection OutputConnection;
         public Dictionary<string, Entity> Entities = new Dictionary<string, Entity>();
         public List<Join> Joins = new List<Join>();
+
+        public IEnumerable<string> OutputPrimaryKey() {
+            return Fields.Where(f => f.FieldType == FieldType.Key && f.Entity.Equals(Entities.Keys.First())).Select(f => f.SqlWriter.Alias().Asc().Write());
+        }
 
         public IList<IField> Fields {
             get {
@@ -64,20 +70,21 @@ namespace Transformalize.Model {
         public string CreateOutputSql() {
 
             var sqlBuilder = new StringBuilder(Environment.NewLine);
+
             sqlBuilder.AppendFormat("CREATE TABLE [dbo].[{0}](\r\n", Output);
-
-            foreach (var field in OutputFields()) {
-                sqlBuilder.AppendLine(field.AsDefinition() + ",");
-            }
-
+            sqlBuilder.Append(new FieldSqlWriter(OutputFields()).Alias().DataType().NotNull().Write(",\r\n") + ",\r\n");
             sqlBuilder.AppendFormat("CONSTRAINT [PK_{0}] PRIMARY KEY CLUSTERED (\r\n", Output);
-
-            var entity = Entities[Entities.Keys.First()];
-            var keys = entity.Keys.Keys.Select(key => string.Format("[{0}] ASC\r\n", entity.Keys[key].Alias));
-            sqlBuilder.AppendFormat(string.Join(", ", keys));
-
+            sqlBuilder.AppendFormat(string.Join(", ", OutputPrimaryKey()));
             sqlBuilder.Append(") WITH (IGNORE_DUP_KEY = ON));");
+          
             return sqlBuilder.ToString();
         }
+
+        //public string CreateOutputSql() {
+        //    using (var service = new TemplateService()) {
+        //        var template = File.ReadAllText(@"Templates\CreateOutputTable.cshtml");
+        //        return service.Parse(template, this, null, null);
+        //    }
+        //}
     }
 }

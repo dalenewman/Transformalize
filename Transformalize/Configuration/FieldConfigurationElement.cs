@@ -68,6 +68,12 @@ namespace Transformalize.Configuration
             set { this["output"] = value; }
         }
 
-
+        [ConfigurationProperty("default", IsRequired = false, DefaultValue = null)]
+        public object Default {
+            get {
+                return this["default"];
+            }
+            set { this["default"] = value; }
+        }
     }
 }

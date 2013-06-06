@@ -49,7 +49,7 @@ INSERT INTO @KEYS SELECT 3 UNION ALL SELECT 4;", sql);
 
             Assert.AreEqual(@"DECLARE @KEYS AS TABLE([OrderDetailKey] INT NOT NULL);
 INSERT INTO @KEYS SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4;
-SELECT t.[OrderDetailKey], t.[OrderKey], t.[ProductKey], [Quantity] = t.[Qty], t.[Price], t.[RowVersion], [Color] = t.[Properties].value('(/Properties/Color)[1]','NVARCHAR(64)'), [Size] = t.[Properties].value('(/Properties/Size)[1]','NVARCHAR(64)'), [Gender] = t.[Properties].value('(/Properties/Gender)[1]','NVARCHAR(64)')
+SELECT t.[OrderDetailKey], t.[OrderKey], t.[ProductKey], [Quantity] = t.[Qty], t.[Price], t.[RowVersion], [Color] = t.[Properties].value('(/Properties/Color)[1]', 'NVARCHAR(64)'), [Size] = t.[Properties].value('(/Properties/Size)[1]', 'NVARCHAR(64)'), [Gender] = t.[Properties].value('(/Properties/Gender)[1]', 'NVARCHAR(64)')
 FROM [dbo].[OrderDetail] t INNER JOIN @KEYS k ON (t.[OrderDetailKey] = k.[OrderDetailKey]);", sql);
         }
         

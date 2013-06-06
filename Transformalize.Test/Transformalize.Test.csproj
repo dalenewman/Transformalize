@@ -50,13 +50,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TestFields.cs" />
     <Compile Include="TestProcess.cs" />
-    <Compile Include="TestInput.cs" />
+    <Compile Include="TestOutput.cs" />
     <Compile Include="TestEntity.cs" />
     <Compile Include="TestConfiguration.cs" />
     <Compile Include="EtlProcessHelper.cs" />
     <Compile Include="TestOperations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestRazor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

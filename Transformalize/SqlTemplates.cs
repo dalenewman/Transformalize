@@ -48,7 +48,7 @@ namespace Transformalize {
         }
 
         public static string CreateTableVariable(string name, IDictionary<string, Field> fields) {
-            var defs = fields.Keys.Select(key => fields[key]).Select(f => string.Format("[{0}] {1} NOT NULL", f.Alias, f.SqlDataType()));
+            var defs = fields.Keys.Select(key => fields[key]).Select(f => string.Format("[{0}] {1} NOT NULL", f.Alias, f.SqlDataType));
             return CreateTableVariable(name, defs);
         }
 
@@ -83,8 +83,7 @@ namespace Transformalize {
                 foreach (var key in row.Keys) {
                     var value = row[key];
                     var field = fields[key];
-                    var quote = field.NeedsQuotes() ? "'" : string.Empty;
-                    values.Add(string.Format("{0}{1}{0}", quote, value));
+                    values.Add(string.Format("{0}{1}{0}", field.Quote, value));
                 }
                 lines.Add(string.Join(",", values));
             }
@@ -101,8 +100,8 @@ namespace Transformalize {
 
         public static string SelectJoinedOnKeys(Entity entity) {
             const string sqlPattern = "SELECT {0}\r\nFROM [{1}].[{2}] t INNER JOIN @KEYS k ON ({3});";
-            var fields = entity.All.Keys.Select(fieldKey => entity.All[fieldKey]).Where(f => f.FieldType != FieldType.Version && !f.InnerXml.Any()).Select(f => f.AsSelect());
-            var xmlFields = entity.All.Keys.Select(fieldKey => entity.All[fieldKey]).Where(f => f.InnerXml.Any()).SelectMany(f => f.InnerXml).Select(kv => kv.Value.AsSelect());
+            var fields = entity.All.Keys.Select(fieldKey => entity.All[fieldKey]).Where(f => f.FieldType != FieldType.Version && !f.InnerXml.Any()).Select(f => f.SqlWriter.Name().Prepend("t.").ToAlias().Write());
+            var xmlFields = entity.All.Keys.Select(fieldKey => entity.All[fieldKey]).Where(f => f.InnerXml.Any()).SelectMany(f => f.InnerXml).Select(kv => kv.Value.SqlWriter.XmlValue().ToAlias().Write());
             var joins = entity.Keys.Keys.Select(keyKey => entity.Keys[keyKey]).Select(f => f.AsJoin("t", "k"));
             return string.Format(sqlPattern, string.Join(", ", fields.Concat(xmlFields)), entity.Schema, entity.Name, string.Join(" AND ", joins));
         }

@@ -1,5 +1,4 @@
 using System.Data.SqlClient;
-using Dapper;
 using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
 
@@ -16,7 +15,8 @@ namespace Transformalize.Repositories {
         private static void Execute(string sql, string connectionString) {
             using (var cn = new SqlConnection(connectionString)) {
                 cn.Open();
-                cn.Execute(sql);
+                var command = new SqlCommand(sql, cn);
+                command.ExecuteNonQuery();
             }
         }
 

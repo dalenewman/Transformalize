@@ -1,0 +1,11 @@
+﻿@using System.Linq
+@{
+    //var Model = new Model.Process();  //Uncomment first part for intellisense to work
+}
+CREATE TABLE [dbo].[@Model.Output](
+@foreach (var field in Model.OutputFields()) {
+    @field.AsDefinition()@:,
+}
+CONSTRAINT [PK_@Model.Output] PRIMARY KEY CLUSTERED (
+    @string.Join(", ", Model.OutputPrimaryKey())
+) WITH (IGNORE_DUP_KEY = ON));

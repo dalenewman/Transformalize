@@ -54,7 +54,8 @@ namespace Transformalize.Readers {
                         Precision = fieldElement.Precision,
                         Scale = fieldElement.Scale,
                         Output = fieldElement.Output,
-                        FieldType = FieldType.Key
+                        FieldType = FieldType.Key,
+                        Default = fieldElement.Default
                     };
                     entity.Keys.Add(fieldElement.Alias, keyField);
                     entity.All.Add(fieldElement.Alias, keyField);
@@ -75,7 +76,8 @@ namespace Transformalize.Readers {
                         Precision = fieldElement.Precision,
                         Scale = fieldElement.Scale,
                         Output = fieldElement.Output,
-                        FieldType = FieldType.Field
+                        FieldType = FieldType.Field,
+                        Default = fieldElement.Default
                     };
                     foreach (XmlConfigurationElement xmlElement in fieldElement.Xml) {
                         field.InnerXml.Add(xmlElement.Alias, new Xml {
@@ -90,7 +92,9 @@ namespace Transformalize.Readers {
                             Length = xmlElement.Length,
                             Precision = xmlElement.Precision,
                             Scale = xmlElement.Scale,
-                            Output = xmlElement.Output
+                            Output = xmlElement.Output,
+                            Default = fieldElement.Default,
+                            FieldType = FieldType.Xml
                         });
                     }
 
