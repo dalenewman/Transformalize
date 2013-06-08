@@ -3,20 +3,17 @@ using System.Collections.Generic;
 using System.Data;
 using Transformalize.Rhino.Etl.Core.Infrastructure;
 
-namespace Transformalize.Rhino.Etl.Core.Operations
-{
+namespace Transformalize.Rhino.Etl.Core.Operations {
     /// <summary>
     /// Generic input command operation
     /// </summary>
-    public abstract class InputCommandOperation : AbstractCommandOperation
-    {
+    public abstract class InputCommandOperation : AbstractCommandOperation {
         /// <summary>
         /// Initializes a new instance of the <see cref="OutputCommandOperation"/> class.
         /// </summary>
         /// <param name="connectionStringName">Name of the connection string.</param>
         public InputCommandOperation(string connectionStringName)
-            : this(ConfigurationManager.ConnectionStrings[connectionStringName])
-        {
+            : this(ConfigurationManager.ConnectionStrings[connectionStringName]) {
         }
 
         /// <summary>
@@ -24,29 +21,23 @@ namespace Transformalize.Rhino.Etl.Core.Operations
         /// </summary>
         /// <param name="connectionStringSettings">Connection string settings to use.</param>
         public InputCommandOperation(ConnectionStringSettings connectionStringSettings)
-            : base(connectionStringSettings)
-        {
+            : base(connectionStringSettings) {
             UseTransaction = true;
         }
-       
+
         /// <summary>
         /// Executes this operation
         /// </summary>
         /// <param name="rows">The rows.</param>
         /// <returns></returns>
-        public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
-        {
+        public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             using (IDbConnection connection = Use.Connection(ConnectionStringSettings))
-            using (IDbTransaction transaction = BeginTransaction(connection))
-            {
-                using (currentCommand = connection.CreateCommand())
-                {
+            using (IDbTransaction transaction = BeginTransaction(connection)) {
+                using (currentCommand = connection.CreateCommand()) {
                     currentCommand.Transaction = transaction;
                     PrepareCommand(currentCommand);
-                    using (IDataReader reader = currentCommand.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
+                    using (IDataReader reader = currentCommand.ExecuteReader()) {
+                        while (reader.Read()) {
                             yield return CreateRowFromReader(reader);
                         }
                     }

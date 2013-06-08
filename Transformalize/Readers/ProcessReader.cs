@@ -16,6 +16,7 @@ namespace Transformalize.Readers {
 
             var configCollection = (TransformalizeConfiguration)ConfigurationManager.GetSection("transformalize");
             var config = configCollection.Processes.Get(_name);
+            var entityCount = 0;
 
             var process = new Process { Name = config.Name, Output = config.Output, Time = config.Time };
 
@@ -26,7 +27,8 @@ namespace Transformalize.Readers {
                     Year = element.Year,
                     BatchInsertSize = element.BatchInsertSize,
                     BulkInsertSize = element.BulkInsertSize,
-                    BatchUpdateSize = element.BatchUpdateSize
+                    BatchUpdateSize = element.BatchUpdateSize,
+                    BatchSelectSize = element.BatchSelectSize,
                 };
                 process.Connections.Add(element.Name, connection);
                 if (element.Name.Equals("output", StringComparison.OrdinalIgnoreCase)) {
@@ -35,6 +37,7 @@ namespace Transformalize.Readers {
             }
 
             foreach (EntityConfigurationElement entityElement in config.Entities) {
+                entityCount++;
                 var entity = new Entity {
                     ProcessName = process.Name,
                     Schema = entityElement.Schema,
@@ -54,12 +57,12 @@ namespace Transformalize.Readers {
                         Precision = fieldElement.Precision,
                         Scale = fieldElement.Scale,
                         Output = fieldElement.Output,
-                        FieldType = FieldType.Key,
+                        FieldType = entityCount == 1 ? FieldType.PrimaryKey : FieldType.Key,
                         Default = fieldElement.Default
                     };
                     entity.Keys.Add(fieldElement.Alias, keyField);
                     entity.All.Add(fieldElement.Alias, keyField);
-                    
+
                     if (entityElement.Version.Equals(fieldElement.Name)) {
                         entity.Version = keyField;
                     }
@@ -100,7 +103,7 @@ namespace Transformalize.Readers {
 
                     entity.Fields.Add(fieldElement.Alias, field);
                     entity.All.Add(fieldElement.Alias, field);
-                    
+
                     if (entityElement.Version.Equals(fieldElement.Name)) {
                         entity.Version = field;
                     }

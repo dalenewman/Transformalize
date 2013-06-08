@@ -3,6 +3,7 @@ namespace Transformalize.Model {
         Key,
         Field,
         Xml,
-        Version
+        Version,
+        PrimaryKey
     }
 }

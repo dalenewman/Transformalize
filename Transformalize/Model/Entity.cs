@@ -1,7 +1,10 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
 using Transformalize.Readers;
 using Transformalize.Rhino.Etl.Core;
+using Transformalize.Rhino.Etl.Core.ConventionOperations;
+using Transformalize.Rhino.Etl.Core.Operations;
 
 namespace Transformalize.Model {
 
@@ -13,14 +16,14 @@ namespace Transformalize.Model {
         public Connection InputConnection { get; set; }
         public Connection OutputConnection { get; set; }
         public Field Version;
-        public Dictionary<string, Field> Keys { get; set; }
-        public Dictionary<string, Field> Fields { get; set; }
+        public Dictionary<string, IField> Keys { get; set; }
+        public Dictionary<string, IField> Fields { get; set; }
         public Dictionary<string, IField> All { get; set; }
         public Dictionary<string, Join> Joins { get; set; }
 
         public Entity() {
-            Keys = new Dictionary<string, Field>();
-            Fields = new Dictionary<string, Field>();
+            Keys = new Dictionary<string, IField>();
+            Fields = new Dictionary<string, IField>();
             All = new Dictionary<string, IField>();
             Joins = new Dictionary<string, Join>();
         }
@@ -77,5 +80,15 @@ namespace Transformalize.Model {
             return keys;
         }
 
+        public IEnumerable<ConventionSqlInputOperation> GetInputOperations() {
+            return GetKeys()
+                .Partition(InputConnection.BatchSelectSize)
+                .Select(keyBatch => SqlTemplates.SelectByKeys(this, keyBatch))
+                .Select(sql => new ConventionSqlInputOperation(InputConnection.ConnectionString) { Sql = sql });
+        }
+
+        public SerialUnionAllOperation GetInputOperation() {
+            return new SerialUnionAllOperation(GetInputOperations());
+        }
     }
 }

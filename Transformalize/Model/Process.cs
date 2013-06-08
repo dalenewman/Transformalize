@@ -24,10 +24,6 @@ namespace Transformalize.Model {
         public Dictionary<string, Entity> Entities = new Dictionary<string, Entity>();
         public List<Join> Joins = new List<Join>();
 
-        public IEnumerable<string> OutputPrimaryKey() {
-            return Fields.Where(f => f.FieldType == FieldType.Key && f.Entity.Equals(Entities.Keys.First())).Select(f => f.SqlWriter.Alias().Asc().Write());
-        }
-
         public IList<IField> Fields {
             get {
                 if (_fields == null) {
@@ -72,19 +68,19 @@ namespace Transformalize.Model {
             var sqlBuilder = new StringBuilder(Environment.NewLine);
 
             sqlBuilder.AppendFormat("CREATE TABLE [dbo].[{0}](\r\n", Output);
-            sqlBuilder.Append(new FieldSqlWriter(OutputFields()).Alias().DataType().NotNull().Write(",\r\n") + ",\r\n");
+            sqlBuilder.Append(new FieldSqlWriter(OutputFields()).Alias().DataType().AppendIf(" NOT NULL", FieldType.PrimaryKey).Write(",\r\n") + ",\r\n");
             sqlBuilder.AppendFormat("CONSTRAINT [PK_{0}] PRIMARY KEY CLUSTERED (\r\n", Output);
-            sqlBuilder.AppendFormat(string.Join(", ", OutputPrimaryKey()));
+            sqlBuilder.AppendLine(new FieldSqlWriter(Entities.Select(kv => kv.Value).First().Keys).Alias().Asc().Write());
             sqlBuilder.Append(") WITH (IGNORE_DUP_KEY = ON));");
-          
+
             return sqlBuilder.ToString();
         }
 
-        //public string CreateOutputSql() {
-        //    using (var service = new TemplateService()) {
-        //        var template = File.ReadAllText(@"Templates\CreateOutputTable.cshtml");
-        //        return service.Parse(template, this, null, null);
-        //    }
-        //}
+        public string CreateOutputSqlWithTemplate() {
+            using (var service = new TemplateService()) {
+                var template = File.ReadAllText(@"Templates\CreateOutputTable.cshtml");
+                return service.Parse(template, this, null, null);
+            }
+        }
     }
 }

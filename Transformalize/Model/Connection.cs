@@ -6,5 +6,6 @@ namespace Transformalize.Model {
         public int BatchInsertSize { get; set; }
         public int BatchUpdateSize { get; set; }
         public int BulkInsertSize { get; set; }
+        public int BatchSelectSize { get; set; }
     }
 }

@@ -92,7 +92,7 @@ namespace Transformalize.Test {
         /// Tests that a simple template with a dynamic model can be parsed.
         /// </summary>
         [Test]
-        public void TemplateServiceCanParseSimpleTemplateWithDynamicModel()
+        public void TemplateService_CanParseSimpleTemplate_WithDynamicModel()
         {
             using (var service = new TemplateService())
             {

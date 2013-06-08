@@ -59,5 +59,14 @@ namespace Transformalize.Configuration
             }
             set { this["batchUpdateSize"] = value; }
         }
+
+        [ConfigurationProperty("batchSelectSize", IsRequired = false, DefaultValue = 255)]
+        public int BatchSelectSize {
+            get {
+                return (int)this["batchSelectSize"];
+            }
+            set { this["batchSelectSize"] = value; }
+        }
+
     }
 }

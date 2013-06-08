@@ -42,41 +42,39 @@ namespace Transformalize {
             ", name, defList, name.Replace(" ", string.Empty), keyList);
         }
 
-        public static string CreateTableVariable(string name, IEnumerable<string> defs) {
-            var defList = string.Join(", ", defs);
-            return string.Format(@"DECLARE {0} AS TABLE({1});", name.StartsWith("@") ? name : "@" + name, defList);
+        public static string CreateTableVariable(string name, Entity entity) {
+            var keyDefinitions = new FieldSqlWriter(entity.Keys).Alias().DataType().NotNull().Write();
+            return string.Format(@"DECLARE {0} AS TABLE({1});", name, keyDefinitions);
         }
 
-        public static string CreateTableVariable(string name, IDictionary<string, Field> fields) {
-            var defs = fields.Keys.Select(key => fields[key]).Select(f => string.Format("[{0}] {1} NOT NULL", f.Alias, f.SqlDataType));
-            return CreateTableVariable(name, defs);
-        }
-
-        private static string BatchInsertValues2005(string name, IEnumerable<string> rows, int size) {
+        private static string BatchInsertValues2005(string name, Entity entity, IEnumerable<IReadOnlyDictionary<string, object>> keyValues ) {
             var sqlBuilder = new StringBuilder();
-            foreach (var group in rows.Partition(size)) {
-                sqlBuilder.Append(string.Format("\r\nINSERT INTO {0} SELECT {1};", name, string.Join(" UNION ALL SELECT ", group)));
+            var fields = new FieldSqlWriter(entity.Keys).Name().Write();
+            foreach (var group in keyValues.Partition(entity.InputConnection.BatchInsertSize)) {
+                sqlBuilder.Append(string.Format("\r\nINSERT INTO {0}({1})\r\nSELECT {2};", name, fields, string.Join(" UNION ALL SELECT ", RowsToValues(entity.Keys, group))));
             }
             return sqlBuilder.ToString();
         }
 
-        private static string BatchInsertValues2008(string name, IEnumerable<string> rows, int size) {
+        private static string BatchInsertValues2008(string name, Entity entity, IEnumerable<IReadOnlyDictionary<string, object>> keyValues) {
             var sqlBuilder = new StringBuilder();
-            foreach (var group in rows.Partition(size)) {
-                var combinedValues = string.Join("),(", group);
-                sqlBuilder.Append(string.Format("\r\nINSERT INTO {0} VALUES({1});", name, combinedValues));
+            var fields = new FieldSqlWriter(entity.Keys).Name().Write();
+            foreach (var group in keyValues.Partition(entity.InputConnection.BatchInsertSize)) {
+                var combinedValues = string.Join("),(", RowsToValues(entity.Keys, group));
+                sqlBuilder.Append(string.Format("\r\nINSERT INTO {0}({1}) VALUES({2});", name, fields, combinedValues));
             }
             return sqlBuilder.ToString();
         }
 
-        public static string BatchInsertValues(string name, Dictionary<string, Field> fields, IEnumerable<Dictionary<string, object>> rows, int year, int size = 50) {
-            return year == 2005 ?
-                BatchInsertValues2005(name, RowsToValues(fields, rows), size) :
-                BatchInsertValues2008(name, RowsToValues(fields, rows), size);
+
+        public static string BatchInsertValues(string name, Entity entity, IEnumerable<IReadOnlyDictionary<string, object>> keyValues ) {
+            return entity.InputConnection.Year <= 2005 ?
+                BatchInsertValues2005(name, entity, keyValues) :
+                BatchInsertValues2008(name, entity, keyValues);
         }
 
 
-        private static IEnumerable<string> RowsToValues(Dictionary<string, Field> fields, IEnumerable<Dictionary<string, object>> rows) {
+        private static IEnumerable<string> RowsToValues(IReadOnlyDictionary<string, IField> fields, IEnumerable<IReadOnlyDictionary<string, object>> rows) {
             var lines = new List<string>();
             foreach (var row in rows) {
                 var values = new List<string>();
@@ -90,26 +88,19 @@ namespace Transformalize {
             return lines;
         }
 
-        public static string CreateKeysTableVariable(Dictionary<string, Field> keys) {
-            return CreateTableVariable("@KEYS", keys);
-        }
-
-        public static string BatchInsertKeyValues(Dictionary<string, Field> keys, IEnumerable<Dictionary<string, object>> keyValues, int year, int batchInsertSize) {
-            return BatchInsertValues("@KEYS", keys, keyValues, year, batchInsertSize);
-        }
-
         public static string SelectJoinedOnKeys(Entity entity) {
-            const string sqlPattern = "SELECT {0}\r\nFROM [{1}].[{2}] t INNER JOIN @KEYS k ON ({3});";
+            const string sqlPattern = "SELECT {0}\r\nFROM [{1}].[{2}] t\r\nINNER JOIN @KEYS k ON ({3});";
             var fields = entity.All.Keys.Select(fieldKey => entity.All[fieldKey]).Where(f => f.FieldType != FieldType.Version && !f.InnerXml.Any()).Select(f => f.SqlWriter.Name().Prepend("t.").ToAlias().Write());
             var xmlFields = entity.All.Keys.Select(fieldKey => entity.All[fieldKey]).Where(f => f.InnerXml.Any()).SelectMany(f => f.InnerXml).Select(kv => kv.Value.SqlWriter.XmlValue().ToAlias().Write());
             var joins = entity.Keys.Keys.Select(keyKey => entity.Keys[keyKey]).Select(f => f.AsJoin("t", "k"));
             return string.Format(sqlPattern, string.Join(", ", fields.Concat(xmlFields)), entity.Schema, entity.Name, string.Join(" AND ", joins));
         }
 
-        public static string SelectByKeys(Entity entity) {
+        public static string SelectByKeys(Entity entity, IEnumerable<IReadOnlyDictionary<string, object>> keyValues ) {
             return
-                CreateKeysTableVariable(entity.Keys) +
-                BatchInsertKeyValues(entity.Keys, entity.GetKeys(), entity.InputConnection.Year, entity.InputConnection.BatchInsertSize) +
+                "SET NOCOUNT ON;\r\n" +
+                CreateTableVariable("@KEYS", entity) +
+                BatchInsertValues("@KEYS", entity, keyValues) +
                 Environment.NewLine +
                 SelectJoinedOnKeys(entity);
         }

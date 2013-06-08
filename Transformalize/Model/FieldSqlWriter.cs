@@ -18,12 +18,12 @@ namespace Transformalize.Model {
             _output = expanded.ToDictionary(f => f.Alias, f => string.Empty);
         }
 
-        public FieldSqlWriter(Dictionary<string, IField> fields) {
-            _original = fields;
+        public FieldSqlWriter(IDictionary<string, IField> fields) {
+            _original = fields.ToDictionary(f => f.Key, f => f.Value);
             _output = fields.ToDictionary(f => f.Key, f => string.Empty);
         }
 
-        public FieldSqlWriter(params Dictionary<string, IField>[] fields) {
+        public FieldSqlWriter(params IDictionary<string, IField>[] fields) {
             _original = new Dictionary<string, IField>();
             foreach (var dict in fields) {
                 foreach (var key in dict.Keys) {
@@ -129,6 +129,24 @@ namespace Transformalize.Model {
 
         public FieldSqlWriter Desc() {
             Append(" DESC");
+            return this;
+        }
+
+        public FieldSqlWriter AppendIf(string suffix, FieldType fieldType) {
+            foreach (var key in CopyOutputKeys()) {
+                var field = _original[key];
+                if (field.FieldType == fieldType)
+                    _output[key] = string.Concat(_output[key], suffix);
+            }
+            return this;
+        }
+
+        public FieldSqlWriter AppendIfNot(string suffix, FieldType fieldType) {
+            foreach (var key in CopyOutputKeys()) {
+                var field = _original[key];
+                if (field.FieldType != fieldType)
+                    _output[key] = string.Concat(_output[key], suffix);
+            }
             return this;
         }
 

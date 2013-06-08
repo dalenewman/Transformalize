@@ -2,16 +2,12 @@ using System;
 using System.Configuration;
 using System.Data;
 
-namespace Transformalize.Rhino.Etl.Core.Infrastructure
-{
+namespace Transformalize.Rhino.Etl.Core.Infrastructure {
     /// <summary>
     /// Helper class to provide simple data access, when we want to access the ADO.Net
     /// library directly. 
     /// </summary>
-    public static class Use
-    {
-        #region Delegates
-
+    public static class Use {
         /// <summary>
         /// Delegate to execute an action with a command
         /// and return a result: <typeparam name="T"/>
@@ -22,8 +18,6 @@ namespace Transformalize.Rhino.Etl.Core.Infrastructure
         /// Delegate to execute an action with a command
         /// </summary>
         public delegate void Proc(IDbCommand command);
-
-        #endregion
 
         private static readonly object activeConnectionKey = new object();
         private static readonly object activeTransactionKey = new object();
@@ -40,7 +34,7 @@ namespace Transformalize.Rhino.Etl.Core.Infrastructure
         /// Gets or sets the active transaction.
         /// </summary>
         /// <value>The active transaction.</value>
-        [ThreadStatic] 
+        [ThreadStatic]
         private static IDbTransaction ActiveTransaction;
 
         /// <summary>
@@ -58,8 +52,7 @@ namespace Transformalize.Rhino.Etl.Core.Infrastructure
         /// <param name="connectionStringName">The name of the named connection string in the configuration file</param>
         /// <param name="actionToExecute">The action to execute</param>
         /// <returns></returns>
-        public static T Transaction<T>(string connectionStringName, Func<T> actionToExecute)
-        {
+        public static T Transaction<T>(string connectionStringName, Func<T> actionToExecute) {
             T result = default(T);
 
             ConnectionStringSettings connectionStringSettings = ConfigurationManager.ConnectionStrings[connectionStringName];
@@ -78,8 +71,7 @@ namespace Transformalize.Rhino.Etl.Core.Infrastructure
         /// <param name="connectionStringSettings">The connection string settings to use for the connection</param>
         /// <param name="actionToExecute">The action to execute</param>
         /// <returns></returns>
-        public static T Transaction<T>(ConnectionStringSettings connectionStringSettings, Func<T> actionToExecute)
-        {
+        public static T Transaction<T>(ConnectionStringSettings connectionStringSettings, Func<T> actionToExecute) {
             T result = default(T);
             Transaction(connectionStringSettings, delegate(IDbCommand command) { result = actionToExecute(command); });
             return result;
@@ -90,8 +82,7 @@ namespace Transformalize.Rhino.Etl.Core.Infrastructure
         /// </summary>
         /// <param name="connectionStringName">Name of the connection string.</param>
         /// <param name="actionToExecute">The action to execute.</param>
-        public static void Transaction(string connectionStringName, Proc actionToExecute)
-        {
+        public static void Transaction(string connectionStringName, Proc actionToExecute) {
             ConnectionStringSettings connectionStringSettings = ConfigurationManager.ConnectionStrings[connectionStringName];
             if (connectionStringSettings == null)
                 throw new InvalidOperationException("Could not find connnection string: " + connectionStringName);
@@ -104,8 +95,7 @@ namespace Transformalize.Rhino.Etl.Core.Infrastructure
         /// </summary>
         /// <param name="connectionStringSettings">The connection string settings to use for the connection</param>
         /// <param name="actionToExecute">The action to execute.</param>
-        public static void Transaction(ConnectionStringSettings connectionStringSettings, Proc actionToExecute)
-        {
+        public static void Transaction(ConnectionStringSettings connectionStringSettings, Proc actionToExecute) {
             Transaction(connectionStringSettings, IsolationLevel.Unspecified, actionToExecute);
         }
 
@@ -116,8 +106,7 @@ namespace Transformalize.Rhino.Etl.Core.Infrastructure
         /// <param name="connectionStringName">Name of the connection string.</param>
         /// <param name="isolationLevel">The isolation level.</param>
         /// <param name="actionToExecute">The action to execute.</param>
-        public static void Transaction(string connectionStringName, IsolationLevel isolationLevel, Proc actionToExecute)
-        {
+        public static void Transaction(string connectionStringName, IsolationLevel isolationLevel, Proc actionToExecute) {
             ConnectionStringSettings connectionStringSettings = ConfigurationManager.ConnectionStrings[connectionStringName];
             if (connectionStringSettings == null)
                 throw new InvalidOperationException("Could not find connnection string: " + connectionStringName);
@@ -132,25 +121,20 @@ namespace Transformalize.Rhino.Etl.Core.Infrastructure
         /// <param name="connectionStringSettings">Connection string settings node to use for the connection</param>
         /// <param name="isolationLevel">The isolation level.</param>
         /// <param name="actionToExecute">The action to execute.</param>
-        public static void Transaction(ConnectionStringSettings connectionStringSettings, IsolationLevel isolationLevel, Proc actionToExecute)
-        {
+        public static void Transaction(ConnectionStringSettings connectionStringSettings, IsolationLevel isolationLevel, Proc actionToExecute) {
             StartTransaction(connectionStringSettings, isolationLevel);
-            try
-            {
-                using (IDbCommand command = ActiveConnection.CreateCommand())
-                {
+            try {
+                using (IDbCommand command = ActiveConnection.CreateCommand()) {
                     command.Transaction = ActiveTransaction;
                     actionToExecute(command);
                 }
                 CommitTransaction();
             }
-            catch
-            {
+            catch {
                 RollbackTransaction();
                 throw;
             }
-            finally
-            {
+            finally {
                 DisposeTransaction();
             }
         }
@@ -158,10 +142,8 @@ namespace Transformalize.Rhino.Etl.Core.Infrastructure
         /// <summary>
         /// Disposes the transaction.
         /// </summary>
-        private static void DisposeTransaction()
-        {
-            if (TransactionCounter <= 0)
-            {
+        private static void DisposeTransaction() {
+            if (TransactionCounter <= 0) {
                 ActiveConnection.Dispose();
                 ActiveConnection = null;
             }
@@ -170,8 +152,7 @@ namespace Transformalize.Rhino.Etl.Core.Infrastructure
         /// <summary>
         /// Rollbacks the transaction.
         /// </summary>
-        private static void RollbackTransaction()
-        {
+        private static void RollbackTransaction() {
             ActiveTransaction.Rollback();
             ActiveTransaction.Dispose();
             ActiveTransaction = null;
@@ -181,11 +162,9 @@ namespace Transformalize.Rhino.Etl.Core.Infrastructure
         /// <summary>
         /// Commits the transaction.
         /// </summary>
-        private static void CommitTransaction()
-        {
+        private static void CommitTransaction() {
             TransactionCounter--;
-            if (TransactionCounter == 0 && ActiveTransaction != null)
-            {
+            if (TransactionCounter == 0 && ActiveTransaction != null) {
                 ActiveTransaction.Commit();
                 ActiveTransaction.Dispose();
                 ActiveTransaction = null;
@@ -197,10 +176,8 @@ namespace Transformalize.Rhino.Etl.Core.Infrastructure
         /// </summary>
         /// <param name="connectionStringSettings">The connection string settings to use for the transaction</param>
         /// <param name="isolation">The isolation.</param>
-        private static void StartTransaction(ConnectionStringSettings connectionStringSettings, IsolationLevel isolation)
-        {
-            if (TransactionCounter <= 0)
-            {
+        private static void StartTransaction(ConnectionStringSettings connectionStringSettings, IsolationLevel isolation) {
+            if (TransactionCounter <= 0) {
                 TransactionCounter = 0;
                 ActiveConnection = Connection(connectionStringSettings);
                 ActiveTransaction = ActiveConnection.BeginTransaction(isolation);
@@ -214,8 +191,7 @@ namespace Transformalize.Rhino.Etl.Core.Infrastructure
         /// </summary>
         /// <param name="name">The name.</param>
         /// <returns>The open connection</returns>
-        public static IDbConnection Connection(string name)
-        {
+        public static IDbConnection Connection(string name) {
             ConnectionStringSettings connectionString = ConfigurationManager.ConnectionStrings[name];
             if (connectionString == null)
                 throw new InvalidOperationException("Could not find connnection string: " + name);
@@ -229,8 +205,7 @@ namespace Transformalize.Rhino.Etl.Core.Infrastructure
         /// </summary>
         /// <param name="connectionString">ConnectionStringSetting node</param>
         /// <returns>The open connection</returns>
-        public static IDbConnection Connection(ConnectionStringSettings connectionString)
-        {
+        public static IDbConnection Connection(ConnectionStringSettings connectionString) {
             if (connectionString == null)
                 throw new InvalidOperationException("Null ConnectionStringSettings specified");
             Type type = Type.GetType(connectionString.ProviderName);
@@ -240,7 +215,7 @@ namespace Transformalize.Rhino.Etl.Core.Infrastructure
             IDbConnection connection = (IDbConnection)Activator.CreateInstance(type);
             connection.ConnectionString = connectionString.ConnectionString;
             connection.Open();
-            return connection;            
+            return connection;
         }
     }
 }

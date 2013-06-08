@@ -6,36 +6,35 @@ namespace Transformalize.Test {
     public class TestOutput {
 
         [Test]
-        public void TestCreateSql()
-        {
+        public void TestCreateSql() {
             var process = new ProcessReader("Test").GetProcess();
-
             var actual = process.CreateOutputSql();
 
             Assert.AreEqual(@"
 CREATE TABLE [dbo].[OrderDetail](
-[Address] NVARCHAR(100) NOT NULL,
-[City] NVARCHAR(50) NOT NULL,
-[Color] NVARCHAR(64) NOT NULL,
-[Country] NVARCHAR(2) NOT NULL,
-[CustomerKey] INT NOT NULL,
-[FirstName] NVARCHAR(50) NOT NULL,
-[Gender] NVARCHAR(64) NOT NULL,
-[LastName] NVARCHAR(50) NOT NULL,
-[LoadDate] DATETIME NOT NULL,
-[OrderDate] DATETIME NOT NULL,
+[Address] NVARCHAR(100),
+[City] NVARCHAR(50),
+[Color] NVARCHAR(64),
+[Country] NVARCHAR(2),
+[CustomerKey] INT,
+[FirstName] NVARCHAR(50),
+[Gender] NVARCHAR(64),
+[LastName] NVARCHAR(50),
+[LoadDate] DATETIME,
+[OrderDate] DATETIME,
 [OrderDetailKey] INT NOT NULL,
-[OrderKey] INT NOT NULL,
-[Price] DECIMAL(10,5) NOT NULL,
-[ProductKey] INT NOT NULL,
-[ProductName] NVARCHAR(100) NOT NULL,
-[Quantity] INT NOT NULL,
-[RowVersion] ROWVERSION NOT NULL,
-[Size] NVARCHAR(64) NOT NULL,
-[State] NVARCHAR(2) NOT NULL,
-[TimeKey] INT NOT NULL,
+[OrderKey] INT,
+[Price] DECIMAL(10,5),
+[ProductKey] INT,
+[ProductName] NVARCHAR(100),
+[Quantity] INT,
+[RowVersion] ROWVERSION,
+[Size] NVARCHAR(64),
+[State] NVARCHAR(2),
+[TimeKey] INT,
 CONSTRAINT [PK_OrderDetail] PRIMARY KEY CLUSTERED (
-[OrderDetailKey] ASC) WITH (IGNORE_DUP_KEY = ON));", actual);
+[OrderDetailKey] ASC
+) WITH (IGNORE_DUP_KEY = ON));", actual);
         }
 
     }
