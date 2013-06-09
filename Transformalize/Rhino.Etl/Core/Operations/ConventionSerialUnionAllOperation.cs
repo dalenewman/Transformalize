@@ -2,29 +2,17 @@
 using System.Linq;
 
 namespace Transformalize.Rhino.Etl.Core.Operations {
-    public class SerialUnionAllOperation : AbstractOperation {
+    public class ConventionSerialUnionAllOperation : AbstractOperation {
 
+        public string OperationColumn { get; set; }
         private readonly List<IOperation> _operations = new List<IOperation>();
 
-        public SerialUnionAllOperation() { }
-
-        public SerialUnionAllOperation(IEnumerable<IOperation> ops) {
-            _operations.AddRange(ops);
-        }
-
-        public SerialUnionAllOperation(params IOperation[] ops) {
-            _operations.AddRange(ops);
+        public ConventionSerialUnionAllOperation(string operationColumn = "operation") {
+            OperationColumn = operationColumn;
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
-            foreach (var operation in _operations)
-                foreach (var row in operation.Execute(null))
-                    yield return row;
-        }
-
-        public SerialUnionAllOperation Add(params IOperation[] operation) {
-            _operations.AddRange(operation);
-            return this;
+            return rows.Select(row => row[OperationColumn]).Cast<IOperation>().SelectMany(operation => operation.Execute(null));
         }
 
         /// <summary>

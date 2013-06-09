@@ -56,7 +56,9 @@
     <Compile Include="Configuration\TransformalizeConfiguration.cs" />
     <Compile Include="Configuration\XmlConfigurationElement.cs" />
     <Compile Include="Configuration\XmlElementCollection.cs" />
+    <Compile Include="Model\EntitySqlWriter.cs" />
     <Compile Include="DataTypeService.cs" />
+    <Compile Include="Operations\EntityKeysExtract.cs" />
     <Compile Include="LinqExtensions.cs" />
     <Compile Include="Model\BaseField.cs" />
     <Compile Include="Model\Connection.cs" />
@@ -68,6 +70,7 @@
     <Compile Include="Model\Join.cs" />
     <Compile Include="Model\Process.cs" />
     <Compile Include="Model\Xml.cs" />
+    <Compile Include="Operations\EntityKeysToOperations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RazorEngine.Core\AttributeValue.cs" />
     <Compile Include="RazorEngine.Core\CodeGenerators\SetModelTypeCodeGenerator.cs" />
@@ -178,6 +181,7 @@
     <Compile Include="Rhino.Etl\Core\Operations\AbstractDatabaseOperation.cs" />
     <Compile Include="Rhino.Etl\Core\Operations\AbstractOperation.cs" />
     <Compile Include="Rhino.Etl\Core\Operations\BranchingOperation.cs" />
+    <Compile Include="Rhino.Etl\Core\Operations\ConventionSerialUnionAllOperation.cs" />
     <Compile Include="Rhino.Etl\Core\Operations\InputCommandOperation.cs" />
     <Compile Include="Rhino.Etl\Core\Operations\AbstractSqlInputOperation.cs" />
     <Compile Include="Rhino.Etl\Core\Operations\IOperation.cs" />

@@ -1,27 +1,19 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using NUnit.Framework;
+using Transformalize.Operations;
 using Transformalize.Readers;
+using Transformalize.Rhino.Etl.Core.Operations;
 
 namespace Transformalize.Test {
     [TestFixture]
     public class TestEntity : EtlProcessHelper {
-        [Test]
-        public void TestGetKeys() {
-            var process = new ProcessReader("Test").GetProcess();
-
-            var entity = process.Entities["OrderDetail"];
-            var orderDetailKeys = entity.GetKeys();
-
-            Assert.AreEqual(4, orderDetailKeys.Count());
-        }
 
         [Test]
         public void TestKeysTableVariable() {
             var process = new ProcessReader("Test").GetProcess();
 
             var entity = process.Entities["OrderDetail"];
-            var sql = SqlTemplates.CreateTableVariable("@KEYS", entity);
+            var sql = entity.EntitySqlWriter.CreateTableVariable("@KEYS");
 
             Assert.AreEqual(@"DECLARE @KEYS AS TABLE([OrderDetailKey] INT NOT NULL);", sql);
         }
@@ -32,7 +24,10 @@ namespace Transformalize.Test {
 
             var entity = process.Entities["OrderDetail"];
             entity.InputConnection.BatchInsertSize = 2;
-            var sql = SqlTemplates.CreateTableVariable("@KEYS", entity) + SqlTemplates.BatchInsertValues("@KEYS", entity, entity.GetKeys());
+
+            var keys = TestOperation(new EntityKeysExtract(entity));
+
+            var sql = entity.EntitySqlWriter.CreateTableVariable("@KEYS") + entity.EntitySqlWriter.BatchInsertValues("@KEYS", keys);
 
             Assert.AreEqual(
 @"DECLARE @KEYS AS TABLE([OrderDetailKey] INT NOT NULL);
@@ -47,7 +42,8 @@ SELECT 3 UNION ALL SELECT 4;", sql);
             var process = new ProcessReader("Test").GetProcess();
 
             var entity = process.Entities["OrderDetail"];
-            var sql = SqlTemplates.SelectByKeys(entity, entity.GetKeys());
+            var keys = TestOperation(new EntityKeysExtract(entity));
+            var sql = entity.EntitySqlWriter.SelectByKeys(keys);
 
             Assert.AreEqual(
 @"SET NOCOUNT ON;
@@ -60,33 +56,46 @@ INNER JOIN @KEYS k ON (t.[OrderDetailKey] = k.[OrderDetailKey]);", sql);
         }
 
         [Test]
-        public void TestGetInputOperations() {
+        public void TestEntityKeysExtract() {
             var process = new ProcessReader("Test").GetProcess();
-            
             var entity = process.Entities["OrderDetail"];
             entity.InputConnection.BatchInsertSize = 1;
             entity.InputConnection.BatchSelectSize = 2;
 
-            var operations = process.Entities["OrderDetail"].GetInputOperations();
-
-            Assert.AreEqual(2, operations.Count());
+            var operation = new EntityKeysExtract(entity);
+            var results = TestOperation(operation);
+            Assert.AreEqual(4, results.Count);
         }
 
         [Test]
-        public void TestGetInputOperation() {
-            var process = new ProcessReader("Test").GetProcess();
+        public void TestEntityKeysToOperations() {
 
+            var process = new ProcessReader("Test").GetProcess();
             var entity = process.Entities["OrderDetail"];
             entity.InputConnection.BatchInsertSize = 1;
             entity.InputConnection.BatchSelectSize = 2;
 
-            var operation = process.Entities["OrderDetail"].GetInputOperation();
+            var entityKeyExtract = new EntityKeysExtract(entity);
+            var entityKeysToOperations = new EntityKeysToOperations(entity);
 
-            var results = TestOperation(operation);
+            var operations = TestOperation(entityKeyExtract, entityKeysToOperations);
+            Assert.AreEqual(2, operations.Count);
+        }
 
-            Assert.AreEqual(4, results.Count);
+        [Test]
+        public void TestEntityExtract() {
 
+            var process = new ProcessReader("Test").GetProcess();
+            var entity = process.Entities["OrderDetail"];
+            entity.InputConnection.BatchInsertSize = 1;
+            entity.InputConnection.BatchSelectSize = 2;
 
+            var entityKeyExtract = new EntityKeysExtract(entity);
+            var entityKeysToOperations = new EntityKeysToOperations(entity);
+            var entityExtract = new ConventionSerialUnionAllOperation();
+
+            var rows = TestOperation(entityKeyExtract, entityKeysToOperations, entityExtract);
+            Assert.AreEqual(4, rows.Count);
         }
 
     }
