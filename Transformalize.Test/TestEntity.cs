@@ -1,8 +1,9 @@
-﻿using System.Linq;
-using NUnit.Framework;
+﻿using NUnit.Framework;
+using Transformalize.Model;
 using Transformalize.Operations;
 using Transformalize.Readers;
 using Transformalize.Rhino.Etl.Core.Operations;
+using Transformalize.Writers;
 
 namespace Transformalize.Test {
     [TestFixture]
@@ -13,7 +14,7 @@ namespace Transformalize.Test {
             var process = new ProcessReader("Test").GetProcess();
 
             var entity = process.Entities["OrderDetail"];
-            var sql = entity.EntitySqlWriter.CreateTableVariable("@KEYS");
+            var sql = string.Format(@"DECLARE @KEYS AS TABLE({0});", new FieldSqlWriter(entity.Keys).Name().DataType().NotNull());
 
             Assert.AreEqual(@"DECLARE @KEYS AS TABLE([OrderDetailKey] INT NOT NULL);", sql);
         }
@@ -27,7 +28,9 @@ namespace Transformalize.Test {
 
             var keys = TestOperation(new EntityKeysExtract(entity));
 
-            var sql = entity.EntitySqlWriter.CreateTableVariable("@KEYS") + entity.EntitySqlWriter.BatchInsertValues("@KEYS", keys);
+            var writer = new FieldSqlWriter(entity.Keys).Name().DataType().NotNull();
+            var sql = string.Format(@"DECLARE @KEYS AS TABLE({0});", writer )
+                + entity.EntitySqlWriter.BatchInsertValues("@KEYS", entity.Keys, keys);
 
             Assert.AreEqual(
 @"DECLARE @KEYS AS TABLE([OrderDetailKey] INT NOT NULL);
@@ -96,6 +99,30 @@ INNER JOIN @KEYS k ON (t.[OrderDetailKey] = k.[OrderDetailKey]);", sql);
 
             var rows = TestOperation(entityKeyExtract, entityKeysToOperations, entityExtract);
             Assert.AreEqual(4, rows.Count);
+        }
+
+        [Test]
+        public void TestEntityToOutput() {
+
+            var process = new ProcessReader("Test").GetProcess();
+            var entity = process.Entities["OrderDetail"];
+
+            var entityKeyExtract = new EntityKeysExtract(entity);
+            var entityKeysToOperations = new EntityKeysToOperations(entity);
+            var entityExtract = new ConventionSerialUnionAllOperation();
+            var entityToOutput = new EntityToOutput(entity);
+
+            var rows = TestOperation(
+                entityKeyExtract,
+                entityKeysToOperations,
+                entityExtract,
+                entityToOutput
+            );
+            
+            var writer = new VersionWriter(entity);
+            writer.WriteEndVersion(entityKeyExtract.End);
+
+            Assert.AreEqual(0, rows.Count);
         }
 
     }

@@ -43,7 +43,8 @@ namespace Transformalize.Readers {
                     Schema = entityElement.Schema,
                     Name = entityElement.Name,
                     InputConnection = process.Connections[entityElement.Connection],
-                    OutputConnection = process.OutputConnection
+                    OutputConnection = process.OutputConnection,
+                    Output = process.Output
                 };
 
                 foreach (FieldConfigurationElement fieldElement in entityElement.Keys) {

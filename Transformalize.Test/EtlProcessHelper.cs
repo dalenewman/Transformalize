@@ -1,10 +1,13 @@
 using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
 using Transformalize.Rhino.Etl.Core;
 using Transformalize.Rhino.Etl.Core.Operations;
 
 namespace Transformalize.Test {
 
     public class EtlProcessHelper {
+
         protected List<Row> TestOperation(params IOperation[] operations) {
             return new TestProcess(operations).ExecuteWithResults();
         }
@@ -50,6 +53,12 @@ namespace Transformalize.Test {
             public List<Row> ExecuteWithResults() {
                 Execute();
                 return returnRows;
+            }
+
+            protected override void PostProcessing() {
+                var errors = GetAllErrors().ToArray();
+                if (errors.Any())
+                    throw errors.First();
             }
         }
 

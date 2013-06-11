@@ -9,12 +9,7 @@ using Transformalize.Configuration;
 namespace Transformalize.Model {
 
     public class Process {
-
-        const string ROW_VERSION_KEY = "RowVersion";
-        const string TIME_KEY_KEY = "TimeKey";
-        const string LOAD_DATE_KEY = "LoadDate";
-
-        private IList<IField> _fields;
+        private Dictionary<string, IField> _fields;
 
         public string Name;
         public Dictionary<string, Connection> Connections = new Dictionary<string, Connection>();
@@ -24,20 +19,14 @@ namespace Transformalize.Model {
         public Dictionary<string, Entity> Entities = new Dictionary<string, Entity>();
         public List<Join> Joins = new List<Join>();
 
-        public IList<IField> Fields {
+        public Dictionary<string, IField> Fields {
             get {
                 if (_fields == null) {
-                    _fields = new List<IField>();
-                    foreach (var entity in Entities.Select(kv => kv.Value)) {
-                        foreach (var field in entity.All.Select(kv => kv.Value)) {
-                            if (field.InnerXml.Any()) {
-                                foreach (var xmlField in field.InnerXml.Select(kv => kv.Value)) {
-                                    _fields.Add(xmlField);
-                                }
-                            }
-                            else {
-                                _fields.Add(field);
-                            }
+                    _fields = new Dictionary<string, IField>();
+                    foreach (var entityKey in Entities.Keys) {
+                        var entity = Entities[entityKey];
+                        foreach (var fieldKey in entity.All.Keys) {
+                            _fields[fieldKey] = entity.All[fieldKey];
                         }
                     }
                 }
@@ -53,22 +42,12 @@ namespace Transformalize.Model {
             return SqlTemplates.DropTable(Output);
         }
 
-        public IEnumerable<IField> OutputFields() {
-            var fields = new List<IField> {
-                new Field() {Alias = ROW_VERSION_KEY, Type = "System.RowVersion"},
-                new Field() {Alias = TIME_KEY_KEY, Type = "System.Int32"},
-                new Field() {Alias = LOAD_DATE_KEY, Type = "System.DateTime"}
-            };
-            fields.AddRange(Fields.Where(f => f.Output));
-            return fields.OrderBy(f => f.Alias);
-        }
-
         public string CreateOutputSql() {
 
             var sqlBuilder = new StringBuilder(Environment.NewLine);
 
             sqlBuilder.AppendFormat("CREATE TABLE [dbo].[{0}](\r\n", Output);
-            sqlBuilder.Append(new FieldSqlWriter(OutputFields()).Alias().DataType().AppendIf(" NOT NULL", FieldType.PrimaryKey).Write(",\r\n") + ",\r\n");
+            sqlBuilder.Append(new FieldSqlWriter(Fields).ExpandXml().AddSystemFields().Output().Alias().DataType().AppendIf(" NOT NULL", FieldType.PrimaryKey).Write(",\r\n") + ",\r\n");
             sqlBuilder.AppendFormat("CONSTRAINT [PK_{0}] PRIMARY KEY CLUSTERED (\r\n", Output);
             sqlBuilder.AppendLine(new FieldSqlWriter(Entities.Select(kv => kv.Value).First().Keys).Alias().Asc().Write());
             sqlBuilder.Append(") WITH (IGNORE_DUP_KEY = ON));");

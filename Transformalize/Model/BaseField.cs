@@ -1,9 +1,8 @@
 using System.Linq;
 
-namespace Transformalize.Model
-{
+namespace Transformalize.Model {
     public abstract class BaseField {
-        
+
         private string _type;
         public string Type {
             get { return _type; }
@@ -25,15 +24,24 @@ namespace Transformalize.Model
         }
 
         private string _sqlDataType;
+        private string _alias;
+
         public string SqlDataType {
             get { return _sqlDataType ?? (_sqlDataType = DataTypeService.GetSqlDbType(this)); }
+        }
+
+        public string Alias {
+            get {
+                return _alias ?? Name;
+            }
+            set { _alias = value; }
         }
 
         public string Schema { get; set; }
         public string Entity { get; set; }
         public string Parent { get; set; }
         public string Name { get; set; }
-        public string Alias { get; set; }
+
         public int Length { get; set; }
         public int Precision { get; set; }
         public int Scale { get; set; }

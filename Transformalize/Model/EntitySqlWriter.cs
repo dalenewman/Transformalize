@@ -9,49 +9,40 @@ namespace Transformalize.Model {
     public class EntitySqlWriter : WithLoggingMixin {
         private readonly Entity _entity;
 
-        public EntitySqlWriter(Entity entity)
-        {
+        public EntitySqlWriter(Entity entity) {
             _entity = entity;
         }
 
-        public string CreateTableVariable(string name) {
-            var keyDefinitions = new FieldSqlWriter(_entity.Keys).Alias().DataType().NotNull().Write();
-            return string.Format(@"DECLARE {0} AS TABLE({1});", name, keyDefinitions);
-        }
-
-        private string BatchInsertValues2005(string name, IEnumerable<Row> rows) {
+        private string BatchInsertValues2005(string name, IDictionary<string, IField> fields, IEnumerable<Row> rows) {
             var sqlBuilder = new StringBuilder();
-            var fields = new FieldSqlWriter(_entity.Keys).Name().Write();
             foreach (var group in rows.Partition(_entity.InputConnection.BatchInsertSize)) {
-                sqlBuilder.Append(string.Format("\r\nINSERT INTO {0}({1})\r\nSELECT {2};", name, fields, string.Join(" UNION ALL SELECT ", RowsToValues(_entity.Keys, group))));
+                sqlBuilder.Append(string.Format("\r\nINSERT INTO {0}\r\nSELECT {1};", name, string.Join("\r\nUNION ALL SELECT ", RowsToValues(fields, group))));
             }
             return sqlBuilder.ToString();
         }
 
-        private string BatchInsertValues2008(string name, IEnumerable<Row> rows) {
+        private string BatchInsertValues2008(string name, IDictionary<string, IField> fields , IEnumerable<Row> rows) {
             var sqlBuilder = new StringBuilder();
-            var fields = new FieldSqlWriter(_entity.Keys).Name().Write();
             foreach (var group in rows.Partition(_entity.InputConnection.BatchInsertSize)) {
-                var combinedValues = string.Join("),(", RowsToValues(_entity.Keys, group));
-                sqlBuilder.Append(string.Format("\r\nINSERT INTO {0}({1}) VALUES({2});", name, fields, combinedValues));
+                sqlBuilder.Append(string.Format("\r\nINSERT INTO {0}\r\nVALUES({1});", name, string.Join("),\r\n(", RowsToValues(fields, @group))));
             }
             return sqlBuilder.ToString();
         }
 
-        public string BatchInsertValues(string name, IEnumerable<Row> row) {
+        public string BatchInsertValues(string name, IDictionary<string, IField> fields, IEnumerable<Row> row) {
             return _entity.InputConnection.Year <= 2005 ?
-                BatchInsertValues2005(name, row) :
-                BatchInsertValues2008(name, row);
+                BatchInsertValues2005(name, fields, row) :
+                BatchInsertValues2008(name, fields, row);
         }
 
 
-        private static IEnumerable<string> RowsToValues(IReadOnlyDictionary<string, IField> fields, IEnumerable<Row> rows) {
+        private static IEnumerable<string> RowsToValues(IDictionary<string, IField> fields, IEnumerable<Row> rows) {
             var lines = new List<string>();
             foreach (var row in rows) {
                 var values = new List<string>();
-                foreach (var key in row.Columns) {
-                    var value = row[key];
-                    var field = fields[key];
+                foreach (var fieldKey in fields.Keys) {
+                    var value = row[fieldKey];
+                    var field = fields[fieldKey];
                     values.Add(string.Format("{0}{1}{0}", field.Quote, value));
                 }
                 lines.Add(string.Join(",", values));
@@ -71,11 +62,12 @@ namespace Transformalize.Model {
             return sql;
         }
 
-        public string SelectByKeys(IEnumerable<Row> keyValues) {
+        public string SelectByKeys(IEnumerable<Row> rows) {
+            var writer = new FieldSqlWriter(_entity.Keys).Alias().DataType().NotNull();
+            var declareKeys = string.Format(@"DECLARE @KEYS AS TABLE({0});", writer);
             var sql = "SET NOCOUNT ON;\r\n" +
-                CreateTableVariable("@KEYS") +
-                BatchInsertValues("@KEYS", keyValues) +
-                Environment.NewLine +
+                declareKeys +
+                BatchInsertValues("@KEYS", _entity.Keys, rows) + Environment.NewLine +
                 SelectJoinedOnKeys();
 
             Trace(sql);
@@ -101,6 +93,29 @@ namespace Transformalize.Model {
             return string.Format(sqlPattern, string.Join(", ", selectKeys), _entity.Schema, _entity.Name, criteria, string.Join(", ", orderByKeys));
         }
 
+        public string UpsertSql(IEnumerable<Row> rows)
+        {
+            var writer = new FieldSqlWriter(_entity.All).ExpandXml().Output().Alias();
+            var context = writer.Context();
+            var fields = writer.Write(", ", false);
+            var fieldsData = string.Concat("d.", fields.Replace(", ", ", d."));
+            var definitions = writer.DataType().NotNull().Prepend("\t").Write(",\r\n");
+
+            var table = string.Format("DECLARE @DATA AS TABLE(\r\n{0}\r\n);", definitions);
+            var sets = writer.Reload(_entity.Fields).ExpandXml().Output().Alias().Set("o", "d").Write();
+            var joins = writer.Reload(_entity.Keys).Alias().Set("o", "d").Write(" AND ");
+            var sql = "SET NOCOUNT ON;\r\n" +
+                      table + Environment.NewLine +
+                      BatchInsertValues("@DATA", context, rows) +
+                      Environment.NewLine + Environment.NewLine +
+                      string.Format("UPDATE o\r\nSET {0}\r\nFROM [{1}].[{2}] o\r\nINNER JOIN @DATA d ON ({3});", sets, _entity.Schema, _entity.Output, joins) +
+                      Environment.NewLine + Environment.NewLine +
+                      string.Format("INSERT INTO [{0}].[{1}]({2})\r\nSELECT {3}\r\nFROM @DATA d\r\nLEFT OUTER JOIN [{0}].[{1}] o ON ({4})\r\nWHERE o.{5} IS NULL;", _entity.Schema, _entity.Output, fields, fieldsData, joins, _entity.Keys.First().Key);
+
+            Trace(sql);
+
+            return sql;
+        }
     }
 
 }

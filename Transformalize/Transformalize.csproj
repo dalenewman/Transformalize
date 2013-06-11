@@ -71,6 +71,7 @@
     <Compile Include="Model\Process.cs" />
     <Compile Include="Model\Xml.cs" />
     <Compile Include="Operations\EntityKeysToOperations.cs" />
+    <Compile Include="Operations\EntityToOutput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RazorEngine.Core\AttributeValue.cs" />
     <Compile Include="RazorEngine.Core\CodeGenerators\SetModelTypeCodeGenerator.cs" />
@@ -206,6 +207,8 @@
     <Compile Include="Rhino.Etl\Core\WithLoggingMixin.cs" />
     <Compile Include="SqlTemplates.cs" />
     <Compile Include="TransformalizeProcess.cs" />
+    <Compile Include="Writers\IVersionWriter.cs" />
+    <Compile Include="Writers\VersionWriter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

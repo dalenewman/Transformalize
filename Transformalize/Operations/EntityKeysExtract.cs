@@ -10,6 +10,8 @@ namespace Transformalize.Operations
     public class EntityKeysExtract : AbstractSqlInputOperation {
         private readonly Entity _entity;
 
+        public object End { get; set; }
+
         public EntityKeysExtract(Entity entity)
             : base(entity.InputConnection.ConnectionString) {
             _entity = entity;
@@ -23,7 +25,7 @@ namespace Transformalize.Operations
 
             var versionReader = new VersionReader(_entity);
             var begin = versionReader.GetBeginVersion();
-            var end = versionReader.GetEndVersion();
+            End = versionReader.GetEndVersion();
 
             if (!versionReader.HasRows) {
                 Warn("The entity is empty!");
@@ -33,8 +35,7 @@ namespace Transformalize.Operations
 
             if (versionReader.IsRange)
                 cmd.Parameters.Add(new SqlParameter("@Begin", begin));
-            cmd.Parameters.Add(new SqlParameter("@End", end));
-
+            cmd.Parameters.Add(new SqlParameter("@End", End));
         }
     }
 }

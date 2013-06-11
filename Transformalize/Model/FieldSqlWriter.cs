@@ -2,35 +2,76 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Transformalize.Model {
+
+
     public class FieldSqlWriter {
 
-        private Dictionary<string, string> _output;
-        private readonly Dictionary<string, IField> _original;
+        const string ROW_VERSION_KEY = "RowVersion";
+        const string TIME_KEY_KEY = "TimeKey";
+        const string LOAD_DATE_KEY = "LoadDate";
+        private SortedDictionary<string, string> _output;
+        private Dictionary<string, IField> _original;
 
         public FieldSqlWriter(IField field) {
-            _original = new Dictionary<string, IField> { { field.Alias, field } };
-            _output = new Dictionary<string, string> { { field.Alias, string.Empty } };
+            StartWithField(field);
+        }
+
+        public FieldSqlWriter Reload(IField field) {
+            StartWithField(field);
+            return this;
         }
 
         public FieldSqlWriter(IEnumerable<IField> fields) {
-            var expanded = fields.ToArray();
-            _original = expanded.ToArray().ToDictionary(f => f.Alias, f => f);
-            _output = expanded.ToDictionary(f => f.Alias, f => string.Empty);
+            StartWithFields(fields);
+        }
+
+        public FieldSqlWriter Reload(IEnumerable<IField> fields) {
+            StartWithFields(fields);
+            return this;
         }
 
         public FieldSqlWriter(IDictionary<string, IField> fields) {
-            _original = fields.ToDictionary(f => f.Key, f => f.Value);
-            _output = fields.ToDictionary(f => f.Key, f => string.Empty);
+            StartWithDictionary(fields);
+        }
+
+        public FieldSqlWriter Reload(IDictionary<string, IField> fields) {
+            StartWithDictionary(fields);
+            return this;
         }
 
         public FieldSqlWriter(params IDictionary<string, IField>[] fields) {
+            StartWithDictionaries(fields);
+        }
+
+        public FieldSqlWriter Reload(params IDictionary<string, IField>[] fields) {
+            StartWithDictionaries(fields);
+            return this;
+        }
+
+        private void StartWithField(IField field) {
+            _original = new Dictionary<string, IField> { { field.Alias, field } };
+            _output = new SortedDictionary<string, string> { { field.Alias, string.Empty } };
+        }
+
+        private void StartWithFields(IEnumerable<IField> fields) {
+            var expanded = fields.ToArray();
+            _original = expanded.ToArray().ToDictionary(f => f.Alias, f => f);
+            _output = new SortedDictionary<string, string>(expanded.ToDictionary(f => f.Alias, f => string.Empty));
+        }
+
+        private void StartWithDictionary(IDictionary<string, IField> fields) {
+            _original = fields.ToDictionary(f => f.Key, f => f.Value);
+            _output = new SortedDictionary<string, string>(fields.ToDictionary(f => f.Key, f => string.Empty));
+        }
+
+        private void StartWithDictionaries(params IDictionary<string, IField>[] fields) {
             _original = new Dictionary<string, IField>();
             foreach (var dict in fields) {
                 foreach (var key in dict.Keys) {
                     _original[key] = dict[key];
                 }
             }
-            _output = _original.ToDictionary(f => f.Key, f => string.Empty);
+            _output = new SortedDictionary<string, string>(_original.ToDictionary(f => f.Key, f => string.Empty));
         }
 
         public string Write(string separator = ", ", bool flush = true) {
@@ -41,7 +82,7 @@ namespace Transformalize.Model {
         }
 
         private void Flush() {
-            _output = _original.ToDictionary(f => f.Key, f => string.Empty);
+            _output = new SortedDictionary<string, string>(_original.ToDictionary(f => f.Key, f => string.Empty));
         }
 
         public FieldSqlWriter Name() {
@@ -185,5 +226,53 @@ namespace Transformalize.Model {
             return this;
         }
 
+        public FieldSqlWriter Set(string left, string right) {
+            foreach (var key in CopyOutputKeys()) {
+                var value = _output[key];
+                _output[key] = string.Concat(left, ".", value, " = ", right, ".", value);
+            }
+            return this;
+        }
+
+        public FieldSqlWriter ExpandXml() {
+            foreach (var key in CopyOutputKeys()) {
+
+                var field = _original[key];
+                if (!field.InnerXml.Any()) continue;
+
+                foreach (var xml in field.InnerXml) {
+                    _original[xml.Key] = xml.Value;
+                    _output[xml.Key] = string.Empty;
+                }
+
+                _output.Remove(key);
+            }
+            return this;
+        }
+
+        public FieldSqlWriter AddSystemFields() {
+            var fields = new List<IField> {
+                new Field() {Alias = ROW_VERSION_KEY, Type = "System.RowVersion", Output = true},
+                new Field() {Alias = TIME_KEY_KEY, Type = "System.Int32", Output = true},
+                new Field() {Alias = LOAD_DATE_KEY, Type = "System.DateTime", Output = true}
+            };
+            foreach (var field in fields) {
+                _original[field.Alias] = field;
+                _output[field.Alias] = string.Empty;
+            }
+            return this;
+        }
+
+        public override string ToString() {
+            return Write();
+        }
+
+        public Dictionary<string, IField> Context() {
+            var results = new Dictionary<string, IField>();
+            foreach (var key in _output.Keys) {
+                results[key] = _original[key];
+            }
+            return results;
+        }
     }
 }

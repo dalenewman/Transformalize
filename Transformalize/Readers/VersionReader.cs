@@ -4,6 +4,7 @@ using Transformalize.Model;
 
 namespace Transformalize.Readers {
     public class VersionReader : IVersionReader {
+
         private readonly Entity _entity;
         public bool HasRows { get; private set; }
         public bool IsRange { get; private set; }

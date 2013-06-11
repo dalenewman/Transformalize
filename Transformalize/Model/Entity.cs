@@ -13,9 +13,11 @@ namespace Transformalize.Model {
         public Field Version;
         public Dictionary<string, IField> Keys { get; set; }
         public Dictionary<string, IField> Fields { get; set; }
+        public Dictionary<string, IField> Xml { get; set; } 
         public Dictionary<string, IField> All { get; set; }
         public Dictionary<string, Join> Joins { get; set; }
         public EntitySqlWriter EntitySqlWriter { get; private set; }
+        public string Output { get; set; }
 
         public Entity() {
             Keys = new Dictionary<string, IField>();
