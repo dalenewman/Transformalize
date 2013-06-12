@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.Linq;
+using NLog;
 using Transformalize.Rhino.Etl.Core;
 using Transformalize.Rhino.Etl.Core.Operations;
 
@@ -16,7 +18,10 @@ namespace Transformalize.Test {
             return new TestProcess(operations).ExecuteWithResults();
         }
 
-        protected class TestProcess : EtlProcess {
+        protected class TestProcess : EtlProcess
+        {
+            private Logger _logger = LogManager.GetCurrentClassLogger();
+            private System.Diagnostics.Stopwatch _stopwatch = new Stopwatch();
             List<Row> returnRows = new List<Row>();
 
             private class ResultsOperation : AbstractOperation {
@@ -44,6 +49,8 @@ namespace Transformalize.Test {
             IEnumerable<IOperation> testOperations = null;
 
             protected override void Initialize() {
+                _stopwatch.Start();
+
                 foreach (var testOperation in testOperations)
                     Register(testOperation);
 
@@ -56,6 +63,8 @@ namespace Transformalize.Test {
             }
 
             protected override void PostProcessing() {
+                _stopwatch.Stop();
+                _logger.Info("Time Elapsed: {0}", _stopwatch.Elapsed);
                 var errors = GetAllErrors().ToArray();
                 if (errors.Any())
                     throw errors.First();

@@ -5,8 +5,7 @@ using Transformalize.Readers;
 using Transformalize.Rhino.Etl.Core;
 using Transformalize.Rhino.Etl.Core.Operations;
 
-namespace Transformalize.Operations
-{
+namespace Transformalize.Operations {
     public class EntityKeysExtract : AbstractSqlInputOperation {
         private readonly Entity _entity;
 
@@ -15,7 +14,7 @@ namespace Transformalize.Operations
         public EntityKeysExtract(Entity entity)
             : base(entity.InputConnection.ConnectionString) {
             _entity = entity;
-            }
+        }
 
         protected override Row CreateRowFromReader(IDataReader reader) {
             return Row.FromReader(reader);

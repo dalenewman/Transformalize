@@ -188,6 +188,7 @@
     <Compile Include="Rhino.Etl\Core\Operations\IOperation.cs" />
     <Compile Include="Rhino.Etl\Core\Operations\JoinOperation.cs" />
     <Compile Include="Rhino.Etl\Core\Operations\JoinType.cs" />
+    <Compile Include="Rhino.Etl\Core\Operations\LogOperation.cs" />
     <Compile Include="Rhino.Etl\Core\Operations\MultiThreadedBranchingOperation.cs" />
     <Compile Include="Rhino.Etl\Core\Operations\NestedLoopsJoinOperation.cs" />
     <Compile Include="Rhino.Etl\Core\Operations\OperationStatistics.cs" />

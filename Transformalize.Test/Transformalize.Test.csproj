@@ -58,7 +58,6 @@
     <Compile Include="EtlProcessHelper.cs" />
     <Compile Include="TestOperations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestRazor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

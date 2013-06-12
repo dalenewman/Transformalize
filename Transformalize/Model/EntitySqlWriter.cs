@@ -78,7 +78,7 @@ namespace Transformalize.Model {
         public string SelectKeys(bool isRange) {
             const string sqlPattern = @"SELECT {0} FROM [{1}].[{2}] WITH (NOLOCK) WHERE {3} ORDER BY {4};";
 
-            var criteria = string.Format(isRange ? "[{0}] BETWEEN @Start AND @End" : "[{0}] <= @End", _entity.Version.Name);
+            var criteria = string.Format(isRange ? "[{0}] BETWEEN @Begin AND @End" : "[{0}] <= @End", _entity.Version.Name);
             var orderByKeys = new List<string>();
             var selectKeys = new List<string>();
 
