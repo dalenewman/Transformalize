@@ -6,7 +6,7 @@ using Transformalize.Rhino.Etl.Core;
 using Transformalize.Rhino.Etl.Core.Operations;
 using System.Linq;
 
-namespace Transformalize.Test {
+namespace Transformalize.Test.Unit {
     [TestFixture]
     public class TestOperations : EtlProcessHelper {
 

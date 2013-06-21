@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using NLog;
@@ -18,23 +17,22 @@ namespace Transformalize.Test {
             return new TestProcess(operations).ExecuteWithResults();
         }
 
-        protected class TestProcess : EtlProcess
-        {
-            private Logger _logger = LogManager.GetCurrentClassLogger();
-            private System.Diagnostics.Stopwatch _stopwatch = new Stopwatch();
-            List<Row> returnRows = new List<Row>();
+        protected class TestProcess : EtlProcess {
+            private readonly Logger _logger = LogManager.GetCurrentClassLogger();
+            private readonly Stopwatch _stopwatch = new Stopwatch();
+            readonly List<Row> _returnRows = new List<Row>();
 
             private class ResultsOperation : AbstractOperation {
+                readonly List<Row> _rows;
+
                 public ResultsOperation(List<Row> returnRows) {
-                    this.returnRows = returnRows;
+                    _rows = returnRows;
                 }
 
-                List<Row> returnRows = null;
-
                 public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
-                    returnRows.AddRange(rows);
-
-                    return rows;
+                    var r = rows.ToArray();
+                    _rows.AddRange(r);
+                    return r;
                 }
             }
 
@@ -54,12 +52,12 @@ namespace Transformalize.Test {
                 foreach (var testOperation in testOperations)
                     Register(testOperation);
 
-                Register(new ResultsOperation(returnRows));
+                Register(new ResultsOperation(_returnRows));
             }
 
             public List<Row> ExecuteWithResults() {
                 Execute();
-                return returnRows;
+                return _returnRows;
             }
 
             protected override void PostProcessing() {

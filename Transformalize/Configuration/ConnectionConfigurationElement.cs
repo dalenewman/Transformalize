@@ -36,6 +36,9 @@ namespace Transformalize.Configuration
             set { this["provider"] = value; }
         }
 
+        /// <summary>
+        /// When creating temporary tables via VALUES... or SELECT & UNION ALL, too long of a statement can slow performance, 50 is a good default for this.
+        /// </summary>
         [ConfigurationProperty("batchInsertSize", IsRequired = false, DefaultValue = 50)]
         public int BatchInsertSize {
             get {
@@ -44,7 +47,7 @@ namespace Transformalize.Configuration
             set { this["batchInsertSize"] = value; }
         }
 
-        [ConfigurationProperty("bulkInsertSize", IsRequired = false, DefaultValue = 50)]
+        [ConfigurationProperty("bulkInsertSize", IsRequired = false, DefaultValue = 100)]
         public int BulkInsertSize {
             get {
                 return (int)this["bulkInsertSize"];
@@ -52,7 +55,7 @@ namespace Transformalize.Configuration
             set { this["bulkInsertSize"] = value; }
         }
 
-        [ConfigurationProperty("batchUpdateSize", IsRequired = false, DefaultValue = 50)]
+        [ConfigurationProperty("batchUpdateSize", IsRequired = false, DefaultValue = 100)]
         public int BatchUpdateSize {
             get {
                 return (int)this["batchUpdateSize"];
@@ -60,7 +63,10 @@ namespace Transformalize.Configuration
             set { this["batchUpdateSize"] = value; }
         }
 
-        [ConfigurationProperty("batchSelectSize", IsRequired = false, DefaultValue = 255)]
+        /// <summary>
+        /// When pulling data from a source in key batches (to reduce blocking), 250 is the default, but you can mess around with this.  Keep it in multiples of the batchInsertSize though.
+        /// </summary>
+        [ConfigurationProperty("batchSelectSize", IsRequired = false, DefaultValue = 250)]
         public int BatchSelectSize {
             get {
                 return (int)this["batchSelectSize"];

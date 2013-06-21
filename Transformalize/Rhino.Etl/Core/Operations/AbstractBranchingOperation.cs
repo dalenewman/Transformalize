@@ -1,18 +1,15 @@
 using System;
 using System.Collections.Generic;
 
-namespace Transformalize.Rhino.Etl.Core.Operations
-{
+namespace Transformalize.Rhino.Etl.Core.Operations {
     /// <summary>
     /// Branch the current pipeline flow into all its inputs
     /// </summary>
-    public abstract class AbstractBranchingOperation : AbstractOperation
-    {
+    public abstract class AbstractBranchingOperation : AbstractOperation {
         /// <summary>
         /// Creates a new <see cref="AbstractOperation"/>
         /// </summary>
-        protected AbstractBranchingOperation()
-        {
+        protected AbstractBranchingOperation() {
             Operations = new List<IOperation>();
         }
 
@@ -26,8 +23,7 @@ namespace Transformalize.Rhino.Etl.Core.Operations
         /// </summary>
         /// <param name="operation">The operation.</param>
         /// <returns></returns>
-        public AbstractBranchingOperation Add(IOperation operation)
-        {
+        public AbstractBranchingOperation Add(IOperation operation) {
             Operations.Add(operation);
             return this;
         }
@@ -36,11 +32,9 @@ namespace Transformalize.Rhino.Etl.Core.Operations
         /// Initializes this instance
         /// </summary>
         /// <param name="pipelineExecuter">The current pipeline executer.</param>
-        public override void PrepareForExecution(IPipelineExecuter pipelineExecuter)
-        {
+        public override void PrepareForExecution(IPipelineExecuter pipelineExecuter) {
             base.PrepareForExecution(pipelineExecuter);
-            foreach (IOperation operation in Operations)
-            {
+            foreach (IOperation operation in Operations) {
                 operation.PrepareForExecution(pipelineExecuter);
             }
         }
@@ -48,36 +42,30 @@ namespace Transformalize.Rhino.Etl.Core.Operations
         ///    <summary>
         ///    Occurs when    a row is processed.
         ///    </summary>
-        public override    event Action<IOperation, Row> OnRowProcessed
-        {
-            add
-            {
-                foreach    (IOperation    operation in Operations)
-                    operation.OnRowProcessed +=    value;
-                base.OnRowProcessed    += value;
+        public override event Action<IOperation, Row> OnRowProcessed {
+            add {
+                foreach (IOperation operation in Operations)
+                    operation.OnRowProcessed += value;
+                base.OnRowProcessed += value;
             }
-            remove
-            {
-                foreach    (IOperation    operation in Operations)
-                    operation.OnRowProcessed -=    value;
-                base.OnRowProcessed    -= value;
+            remove {
+                foreach (IOperation operation in Operations)
+                    operation.OnRowProcessed -= value;
+                base.OnRowProcessed -= value;
             }
         }
 
         ///    <summary>
         ///    Occurs when    all    the    rows has finished processing.
         ///    </summary>
-        public override    event Action<IOperation> OnFinishedProcessing
-        {
-            add
-            {
-                foreach    (IOperation    operation in Operations)
+        public override event Action<IOperation> OnFinishedProcessing {
+            add {
+                foreach (IOperation operation in Operations)
                     operation.OnFinishedProcessing += value;
                 base.OnFinishedProcessing += value;
             }
-            remove
-            {
-                foreach    (IOperation    operation in Operations)
+            remove {
+                foreach (IOperation operation in Operations)
                     operation.OnFinishedProcessing -= value;
                 base.OnFinishedProcessing -= value;
             }

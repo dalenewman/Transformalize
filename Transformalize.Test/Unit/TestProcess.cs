@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using Transformalize.Model;
 
-namespace Transformalize.Test {
+namespace Transformalize.Test.Unit {
     [TestFixture]
     public class TestProcess {
 
@@ -32,12 +32,6 @@ namespace Transformalize.Test {
                 )	DROP TABLE [dbo].[TEST];
             ", output.DropOutputSql());
         }    
-
-        [Test]
-        public void RunProcess() {
-            var process = new TransformalizeProcess("Test");
-            process.Execute();
-        }
 
     }
 }

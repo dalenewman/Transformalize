@@ -28,10 +28,10 @@ namespace Transformalize.Configuration
             set { this["connection"] = value; }
         }
 
-        [ConfigurationProperty("keys")]
-        public FieldElementCollection Keys {
+        [ConfigurationProperty("primaryKey")]
+        public FieldElementCollection PrimaryKey {
             get {
-                return this["keys"] as FieldElementCollection;
+                return this["primaryKey"] as FieldElementCollection;
             }
         }
 

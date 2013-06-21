@@ -12,7 +12,7 @@ namespace Transformalize.Rhino.Etl.Core.Operations {
         /// Initializes a new instance of the <see cref="OutputCommandOperation"/> class.
         /// </summary>
         /// <param name="connectionStringName">Name of the connection string.</param>
-        public InputCommandOperation(string connectionStringName)
+        protected InputCommandOperation(string connectionStringName)
             : this(ConfigurationManager.ConnectionStrings[connectionStringName]) {
         }
 
@@ -20,10 +20,7 @@ namespace Transformalize.Rhino.Etl.Core.Operations {
         /// Initializes a new instance of the <see cref="OutputCommandOperation"/> class.
         /// </summary>
         /// <param name="connectionStringSettings">Connection string settings to use.</param>
-        public InputCommandOperation(ConnectionStringSettings connectionStringSettings)
-            : base(connectionStringSettings) {
-            UseTransaction = true;
-        }
+        protected InputCommandOperation(ConnectionStringSettings connectionStringSettings) : base(connectionStringSettings) { }
 
         /// <summary>
         /// Executes this operation
@@ -31,12 +28,12 @@ namespace Transformalize.Rhino.Etl.Core.Operations {
         /// <param name="rows">The rows.</param>
         /// <returns></returns>
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
-            using (IDbConnection connection = Use.Connection(ConnectionStringSettings))
-            using (IDbTransaction transaction = BeginTransaction(connection)) {
+            using (var connection = Use.Connection(ConnectionStringSettings))
+            using (var transaction = BeginTransaction(connection)) {
                 using (currentCommand = connection.CreateCommand()) {
                     currentCommand.Transaction = transaction;
                     PrepareCommand(currentCommand);
-                    using (IDataReader reader = currentCommand.ExecuteReader()) {
+                    using (var reader = currentCommand.ExecuteReader()) {
                         while (reader.Read()) {
                             yield return CreateRowFromReader(reader);
                         }

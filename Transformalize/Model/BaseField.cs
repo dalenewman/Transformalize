@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Transformalize.Model {
@@ -25,6 +26,7 @@ namespace Transformalize.Model {
 
         private string _sqlDataType;
         private string _alias;
+        private bool _output;
 
         public string SqlDataType {
             get { return _sqlDataType ?? (_sqlDataType = DataTypeService.GetSqlDbType(this)); }
@@ -37,17 +39,33 @@ namespace Transformalize.Model {
             set { _alias = value; }
         }
 
+        /// <summary>
+        /// Output is set in field configuration, but also is always true if FieldType is any type of key (for updating purposes)
+        /// </summary>
+        public bool Output {
+            get {
+                return FieldType == FieldType.MasterKey || FieldType == FieldType.ForeignKey || _output;
+            }
+            set { _output = value; }
+        }
+
         public string Schema { get; set; }
         public string Entity { get; set; }
         public string Parent { get; set; }
         public string Name { get; set; }
+        public bool Input { get; set; }
 
         public int Length { get; set; }
         public int Precision { get; set; }
         public int Scale { get; set; }
         public object Default { get; set; }
-        public bool Output { get; set; }
+
         public FieldType FieldType { get; set; }
+        public KeyValuePair<string, string> References { get; set; }
+
+        public bool HasReference() {
+            return References.Key != null;
+        }
 
     }
 }

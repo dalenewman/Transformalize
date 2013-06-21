@@ -18,7 +18,7 @@ namespace Transformalize.Rhino.Etl.Core.Pipelines
         /// <param name="enumerator">The enumerator.</param>
         protected override IEnumerable<Row> DecorateEnumerableForExecution(IOperation operation, IEnumerable<Row> enumerator)
         {
-            ThreadSafeEnumerator<Row> threadedEnumerator = new ThreadSafeEnumerator<Row>();
+            var threadedEnumerator = new ThreadSafeEnumerator<Row>();
             ThreadPool.QueueUserWorkItem(delegate
             {
                 try

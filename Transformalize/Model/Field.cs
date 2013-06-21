@@ -16,6 +16,7 @@ namespace Transformalize.Model {
 
         public Field() {
             InnerXml = new Dictionary<string, Xml>();
+            FieldType = FieldType.Field;
         }
         
         public string AsJoin(string left, string right) {

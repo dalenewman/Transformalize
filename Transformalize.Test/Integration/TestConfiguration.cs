@@ -1,13 +1,11 @@
 ﻿using System.Configuration;
 using NUnit.Framework;
 using Transformalize.Configuration;
-using Transformalize.Model;
 using Transformalize.Readers;
 
-namespace Transformalize.Test {
+namespace Transformalize.Test.Integration {
     [TestFixture]
     public class TestConfiguration : EtlProcessHelper {
-
         [Test]
         public void TestGetAttribute() {
             var config = (TransformalizeConfiguration)ConfigurationManager.GetSection("transformalize");
@@ -18,8 +16,8 @@ namespace Transformalize.Test {
             Assert.AreEqual("output", process.Connections[1].Name);
             Assert.AreEqual("OrderDetail", process.Entities[0].Name);
             Assert.AreEqual("input", process.Entities[0].Connection);
-            Assert.AreEqual("OrderDetailKey", process.Entities[0].Keys[0].Name);
-            Assert.AreEqual("OrderDetailKey", process.Entities[0].Keys[0].Alias);
+            Assert.AreEqual("OrderDetailKey", process.Entities[0].PrimaryKey[0].Name);
+            Assert.AreEqual("OrderDetailKey", process.Entities[0].PrimaryKey[0].Alias);
             Assert.AreEqual("OrderKey", process.Entities[0].Fields[0].Name);
             Assert.AreEqual("OrderKey", process.Entities[0].Fields[0].Alias);
             Assert.AreEqual("RowVersion", process.Entities[0].Version);
@@ -43,7 +41,7 @@ namespace Transformalize.Test {
             Assert.AreEqual("Server=localhost;Database=TestInput;Trusted_Connection=True;", process.Connections["input"].ConnectionString);
             Assert.AreEqual("Server=localhost;Database=TestOutput;Trusted_Connection=True;", process.Connections["output"].ConnectionString);
             Assert.AreEqual("Server=localhost;Database=TestInput;Trusted_Connection=True;", process.Entities["OrderDetail"].InputConnection.ConnectionString);
-            Assert.AreEqual("OrderDetailKey", process.Entities["OrderDetail"].Keys["OrderDetailKey"].Alias);
+            Assert.AreEqual("OrderDetailKey", process.Entities["OrderDetail"].PrimaryKey["OrderDetailKey"].Alias);
             Assert.AreEqual("ProductKey", process.Entities["OrderDetail"].Fields["ProductKey"].Alias);
             Assert.AreEqual("RowVersion", process.Entities["OrderDetail"].Version.Alias);
             Assert.AreEqual("/Properties/Color", process.Entities["OrderDetail"].Fields["Properties"].InnerXml["Color"].XPath);

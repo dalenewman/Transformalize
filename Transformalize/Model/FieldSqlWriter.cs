@@ -44,7 +44,10 @@ namespace Transformalize.Model {
         }
 
         public FieldSqlWriter Reload(params IDictionary<string, IField>[] fields) {
-            StartWithDictionaries(fields);
+            if (fields.Length == 0)
+                StartWithDictionary(_original);
+            else
+                StartWithDictionaries(fields);
             return this;
         }
 
@@ -81,28 +84,36 @@ namespace Transformalize.Model {
             return result;
         }
 
+        public IEnumerable<string> Values(bool flush = true) {
+            return _output.Select(kv => kv.Value);
+        }
+
         private void Flush() {
             _output = new SortedDictionary<string, string>(_original.ToDictionary(f => f.Key, f => string.Empty));
-        }
-
-        public FieldSqlWriter Name() {
-            foreach (var key in CopyOutputKeys()) {
-                _output[key] += string.Concat("[", _original[key].Name, "]");
-            }
-            return this;
-        }
-
-        public FieldSqlWriter Alias() {
-            foreach (var key in CopyOutputKeys()) {
-                _output[key] += string.Concat("[", _original[key].Alias, "]");
-            }
-            return this;
         }
 
         private IEnumerable<string> CopyOutputKeys() {
             var keys = new string[_output.Keys.Count];
             _output.Keys.CopyTo(keys, 0);
             return keys;
+        }
+
+        private static string SafeColumn(string name) {
+            return string.Concat("[", name, "]");
+        }
+
+        public FieldSqlWriter Name() {
+            foreach (var key in CopyOutputKeys()) {
+                _output[key] = SafeColumn(_original[key].Name);
+            }
+            return this;
+        }
+
+        public FieldSqlWriter Alias() {
+            foreach (var key in CopyOutputKeys()) {
+                _output[key] = SafeColumn(_original[key].Alias);
+            }
+            return this;
         }
 
         public FieldSqlWriter IsNull() {
@@ -191,10 +202,29 @@ namespace Transformalize.Model {
             return this;
         }
 
+        private static string XmlValue(IField field) {
+            return string.Format("[{0}].value('({1})[{2}]', '{3}')", field.Parent, field.XPath, field.Index, field.SqlDataType);
+        }
+
         public FieldSqlWriter XmlValue() {
             foreach (var key in CopyOutputKeys()) {
+                _output[key] = XmlValue(_original[key]);
+            }
+            return this;
+        }
+
+        /// <summary>
+        /// Presents the field for a select. 
+        /// </summary>
+        /// <returns>field's name for a regular field, and the XPath necessary for XML based fields.</returns>
+        public FieldSqlWriter Select() {
+            foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];
-                _output[key] = string.Format("t.[{0}].value('({1})[{2}]', '{3}')", field.Parent, field.XPath, field.Index, field.SqlDataType);
+                if (field.FieldType == Model.FieldType.Xml)
+                    _output[key] = XmlValue(field);
+                else {
+                    _output[key] = SafeColumn(field.Name);
+                }
             }
             return this;
         }
@@ -203,6 +233,24 @@ namespace Transformalize.Model {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];
                 if (field.Output != answer)
+                    _output.Remove(key);
+            }
+            return this;
+        }
+
+        public FieldSqlWriter Input(bool answer = true) {
+            foreach (var key in CopyOutputKeys()) {
+                var field = _original[key];
+                if (field.Input != answer)
+                    _output.Remove(key);
+            }
+            return this;
+        }
+
+        public FieldSqlWriter HasReference(bool answer) {
+            foreach (var key in CopyOutputKeys()) {
+                var field = _original[key];
+                if (field.HasReference() != answer)
                     _output.Remove(key);
             }
             return this;
@@ -226,10 +274,19 @@ namespace Transformalize.Model {
             return this;
         }
 
+        public FieldSqlWriter FieldType(params FieldType[] answers) {
+            foreach (var key in CopyOutputKeys()) {
+                var field = _original[key];
+                if (!answers.Any(a => a == field.FieldType))
+                    _output.Remove(key);
+            }
+            return this;
+        }
+
         public FieldSqlWriter Set(string left, string right) {
             foreach (var key in CopyOutputKeys()) {
-                var value = _output[key];
-                _output[key] = string.Concat(left, ".", value, " = ", right, ".", value);
+                var name = _output[key];
+                _output[key] = string.Concat(left, ".", name, " = ", right, ".", name);
             }
             return this;
         }
@@ -274,5 +331,6 @@ namespace Transformalize.Model {
             }
             return results;
         }
+
     }
 }

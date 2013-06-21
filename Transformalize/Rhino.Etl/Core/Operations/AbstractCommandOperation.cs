@@ -1,22 +1,19 @@
 using System.Configuration;
 using System.Data;
 
-namespace Transformalize.Rhino.Etl.Core.Operations
-{
+namespace Transformalize.Rhino.Etl.Core.Operations {
     /// <summary>
     /// Base class for operations that directly manipulate ADO.Net
     /// It is important to remember that this is supposed to be a deep base class, not to be 
     /// directly inherited or used
     /// </summary>
-    public abstract class AbstractCommandOperation : AbstractDatabaseOperation
-    {
+    public abstract class AbstractCommandOperation : AbstractDatabaseOperation {
         /// <summary>
         /// Initializes a new instance of the <see cref="AbstractDatabaseOperation"/> class.
         /// </summary>
         /// <param name="connectionStringName">Name of the connection string.</param>
         protected AbstractCommandOperation(string connectionStringName)
-            : this(ConfigurationManager.ConnectionStrings[connectionStringName])
-        {
+            : this(ConfigurationManager.ConnectionStrings[connectionStringName]) {
         }
 
         /// <summary>
@@ -24,8 +21,7 @@ namespace Transformalize.Rhino.Etl.Core.Operations
         /// </summary>
         /// <param name="connectionStringSettings">The connection string settings to use.</param>
         protected AbstractCommandOperation(ConnectionStringSettings connectionStringSettings)
-            : base(connectionStringSettings)
-        {
+            : base(connectionStringSettings) {
         }
 
         /// <summary>
@@ -38,8 +34,7 @@ namespace Transformalize.Rhino.Etl.Core.Operations
         /// </summary>
         /// <param name="name">The name.</param>
         /// <param name="value">The value.</param>
-        protected void AddParameter(string name, object value)
-        {
+        protected void AddParameter(string name, object value) {
             AddParameter(currentCommand, name, value);
         }
 
@@ -48,14 +43,8 @@ namespace Transformalize.Rhino.Etl.Core.Operations
         /// </summary>
         /// <param name="connection">The IDbConnection object you are working with</param>
         /// <returns>An open IDbTransaction object or null.</returns>
-        protected IDbTransaction BeginTransaction(IDbConnection connection)
-        {
-            if (UseTransaction)
-            {
-                return connection.BeginTransaction();
-            }
-
-            return null;
+        protected IDbTransaction BeginTransaction(IDbConnection connection) {
+            return UseTransaction ? connection.BeginTransaction() : null;
         }
     }
 }

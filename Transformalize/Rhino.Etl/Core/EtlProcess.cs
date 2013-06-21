@@ -2,28 +2,30 @@ using System.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using Transformalize.Rhino.Etl.Core.Infrastructure;
 using Transformalize.Rhino.Etl.Core.Operations;
 using Transformalize.Rhino.Etl.Core.Pipelines;
 
-namespace Transformalize.Rhino.Etl.Core
-{
+namespace Transformalize.Rhino.Etl.Core {
     /// <summary>
     /// A single etl process
     /// </summary>
-    public abstract class EtlProcess : EtlProcessBase<EtlProcess>, IDisposable
-    {
+    public abstract class EtlProcess : EtlProcessBase<EtlProcess>, IDisposable {
+        private readonly string _name;
         private IPipelineExecuter pipelineExecuter = new ThreadPoolPipelineExecuter();
+
+        protected EtlProcess(string name = "") {
+            _name = name;
+        }
 
         /// <summary>
         /// Gets the pipeline executer.
         /// </summary>
         /// <value>The pipeline executer.</value>
-        public IPipelineExecuter PipelineExecuter
-        {
+        public IPipelineExecuter PipelineExecuter {
             get { return pipelineExecuter; }
-            set
-            {
+            set {
                 Info("Setting PipelineExecutor to {0}", value.GetType().ToString());
                 pipelineExecuter = value;
             }
@@ -33,10 +35,8 @@ namespace Transformalize.Rhino.Etl.Core
         /// <summary>
         /// Gets a new partial process that we can work with
         /// </summary>
-        protected static PartialProcessOperation Partial
-        {
-            get
-            {
+        protected static PartialProcessOperation Partial {
+            get {
                 PartialProcessOperation operation = new PartialProcessOperation();
                 return operation;
             }
@@ -48,10 +48,8 @@ namespace Transformalize.Rhino.Etl.Core
         ///Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         ///</summary>
         ///<filterpriority>2</filterpriority>
-        public void Dispose()
-        {
-            foreach (IOperation operation in operations)
-            {
+        public void Dispose() {
+            foreach (IOperation operation in operations) {
                 operation.Dispose();
             }
         }
@@ -66,29 +64,30 @@ namespace Transformalize.Rhino.Etl.Core
         /// <summary>
         /// Executes this process
         /// </summary>
-        public void Execute()
-        {
+        public void Execute() {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             Initialize();
             MergeLastOperationsToOperations();
             RegisterToOperationsEvents();
-            Trace("Starting to execute {0}", Name);
+            Trace("{0} | Starting to execute {1}", _name, Name);
             PipelineExecuter.Execute(Name, operations, TranslateRows);
 
             PostProcessing();
+            stopwatch.Stop();
+            Info("{0} | StopWatch Time Elapsed: {1}", _name, stopwatch.Elapsed);
         }
 
         /// <summary>
         /// Translate the rows from one representation to another
         /// </summary>
-        public virtual IEnumerable<Row> TranslateRows(IEnumerable<Row> rows)
-        {
+        public virtual IEnumerable<Row> TranslateRows(IEnumerable<Row> rows) {
             return rows;
         }
 
-        private void RegisterToOperationsEvents()
-        {
-            foreach (IOperation operation in operations)
-            {
+        private void RegisterToOperationsEvents() {
+            foreach (IOperation operation in operations) {
                 operation.OnRowProcessed += OnRowProcessed;
                 operation.OnFinishedProcessing += OnFinishedProcessing;
             }
@@ -99,16 +98,14 @@ namespace Transformalize.Rhino.Etl.Core
         /// Called when this process has finished processing.
         /// </summary>
         /// <param name="op">The op.</param>
-        protected virtual void OnFinishedProcessing(IOperation op)
-        {
-            Trace("Finished {0}: {1}", op.Name, op.Statistics);
+        protected virtual void OnFinishedProcessing(IOperation op) {
+            Trace("{0} | Finished {1}: {2}", _name, op.Name, op.Statistics);
         }
 
         /// <summary>
         /// Allow derived class to deal with custom logic after all the internal steps have been executed
         /// </summary>
-        protected virtual void PostProcessing()
-        {
+        protected virtual void PostProcessing() {
         }
 
         /// <summary>
@@ -116,12 +113,15 @@ namespace Transformalize.Rhino.Etl.Core
         /// </summary>
         /// <param name="op">The operation.</param>
         /// <param name="dictionary">The dictionary.</param>
-        protected virtual void OnRowProcessed(IOperation op, Row dictionary)
-        {
+        protected virtual void OnRowProcessed(IOperation op, Row dictionary) {
             if (op.Statistics.OutputtedRows % 1000 == 0)
-                Info("Processed {0} rows in {1}", op.Statistics.OutputtedRows, op.Name);
-            else
-                Debug("Processed {0} rows in {1}", op.Statistics.OutputtedRows, op.Name);
+                Info("{0} | Processed {1} rows in {2}", _name, op.Statistics.OutputtedRows, op.Name);
+            else {
+                if (op.Statistics.OutputtedRows % 100 == 0)
+                    Debug("{0} | Processed {1} rows in {2}", _name, op.Statistics.OutputtedRows, op.Name);
+                else
+                    Trace("{0} | Processed {1} rows in {2}", _name, op.Statistics.OutputtedRows, op.Name);
+            }
         }
 
         /// <summary>
@@ -131,8 +131,7 @@ namespace Transformalize.Rhino.Etl.Core
         /// <param name="connectionName">Name of the connection.</param>
         /// <param name="commandText">The command text.</param>
         /// <returns></returns>
-        protected static T ExecuteScalar<T>(string connectionName, string commandText)
-        {
+        protected static T ExecuteScalar<T>(string connectionName, string commandText) {
             return ExecuteScalar<T>(ConfigurationManager.ConnectionStrings[connectionName], commandText);
         }
 
@@ -143,10 +142,8 @@ namespace Transformalize.Rhino.Etl.Core
         /// <param name="connectionStringSettings">The connection string settings node to use</param>
         /// <param name="commandText">The command text.</param>
         /// <returns></returns>
-        protected static T ExecuteScalar<T>(ConnectionStringSettings connectionStringSettings, string commandText)
-        {
-            return Use.Transaction<T>(connectionStringSettings, delegate(IDbCommand cmd)
-            {
+        protected static T ExecuteScalar<T>(ConnectionStringSettings connectionStringSettings, string commandText) {
+            return Use.Transaction<T>(connectionStringSettings, delegate(IDbCommand cmd) {
                 cmd.CommandText = commandText;
                 object scalar = cmd.ExecuteScalar();
                 return (T)(scalar ?? default(T));
@@ -157,20 +154,15 @@ namespace Transformalize.Rhino.Etl.Core
         /// Gets all errors that occured during the execution of this process
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Exception> GetAllErrors()
-        {
-            foreach (Exception error in Errors)
-            {
+        public IEnumerable<Exception> GetAllErrors() {
+            foreach (Exception error in Errors) {
                 yield return error;
             }
-            foreach (Exception error in pipelineExecuter.GetAllErrors())
-            {
+            foreach (Exception error in pipelineExecuter.GetAllErrors()) {
                 yield return error;
             }
-            foreach (IOperation operation in operations)
-            {
-                foreach (Exception exception in operation.GetAllErrors())
-                {
+            foreach (IOperation operation in operations) {
+                foreach (Exception exception in operation.GetAllErrors()) {
                     yield return exception;
                 }
             }

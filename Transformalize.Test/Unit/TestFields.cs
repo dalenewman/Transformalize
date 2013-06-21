@@ -2,18 +2,18 @@
 using NUnit.Framework;
 using Transformalize.Model;
 
-namespace Transformalize.Test {
+namespace Transformalize.Test.Unit {
     [TestFixture]
     public class TestFields {
 
         private readonly List<IField> _fields = new List<IField> {
-            new Field {Alias = "Field1", Type = "system.string", Output = true, Name="f1", Default="x", Length = 10, Parent="p1"},
+            new Field {Alias = "Field1", Type = "system.string", FieldType = FieldType.PrimaryKey  ,Output = true, Name="f1", Default="x", Length = 10, Parent="p1"},
             new Field {Alias = "Field2", Type = "system.int32", Output = false, Name="f2", Default=0, Length = 0, Parent="p2"}
         };
 
         private readonly List<IField> _xmlFields = new List<IField> {
-            new Xml {Alias = "Field1", Type = "system.string", Output = true, Name="f1", Default="x", Length = 10, XPath = "/Properties/f1", Index=1, Parent="p1"},
-            new Xml {Alias = "Field2", Type = "system.int32", Output = false, Name="f2", Default=0, Length = 0, XPath = "/Properties/f2", Index=1, Parent="p2"}
+            new Xml {Alias = "Field1", Type = "system.string", FieldType = FieldType.Xml, Output = true, Name="f1", Default="x", Length = 10, XPath = "/Properties/f1", Index=1, Parent="p1"},
+            new Xml {Alias = "Field2", Type = "system.int32", FieldType = FieldType.Xml, Output = false, Name="f2", Default=0, Length = 0, XPath = "/Properties/f2", Index=1, Parent="p2"}
         };
 
         [Test]
@@ -89,7 +89,7 @@ namespace Transformalize.Test {
         [Test]
         public void TestWriteXmlValueToAlias() {
             const string expected = "[Field1] = t.[p1].value('(/Properties/f1)[1]', 'NVARCHAR(10)'), [Field2] = t.[p2].value('(/Properties/f2)[1]', 'INT')";
-            var actual = new FieldSqlWriter(_xmlFields).XmlValue().ToAlias().Write();
+            var actual = new FieldSqlWriter(_xmlFields).XmlValue().Prepend("t.").ToAlias().Write();
             Assert.AreEqual(expected, actual);
         }
 

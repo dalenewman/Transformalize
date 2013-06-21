@@ -1,11 +1,10 @@
 using System;
-using System.Data;
 using System.Data.SqlClient;
 using Transformalize.Model;
-using Transformalize.Readers;
+using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Writers {
-    public class VersionWriter : IVersionWriter {
+    public class VersionWriter : WithLoggingMixin, IVersionWriter {
 
         private readonly Entity _entity;
 
@@ -13,12 +12,12 @@ namespace Transformalize.Writers {
             _entity = entity;
         }
 
-        public void WriteEndVersion(object end) {
+        public void WriteEndVersion(object end, int count) {
 
             var field = _entity.Version.SimpleType.Replace("byte[]", "binary") + "Version";
             var sql = string.Format(@"
-                INSERT INTO [EntityTracker](ProcessName, EntityName, [{0}], LastProcessedDate)
-                VALUES(@ProcessName, @EntityName, @End, @Date);
+                INSERT INTO [EntityTracker](ProcessName, EntityName, [{0}], LastProcessedDate, Rows)
+                VALUES(@ProcessName, @EntityName, @End, @Date, @Count);
             ", field);
 
             using (var cn = new SqlConnection(_entity.OutputConnection.ConnectionString)) {
@@ -28,9 +27,11 @@ namespace Transformalize.Writers {
                 command.Parameters.Add(new SqlParameter("@EntityName", _entity.Name));
                 command.Parameters.Add(new SqlParameter("@End", end));
                 command.Parameters.Add(new SqlParameter("@Date", DateTime.Now));
+                command.Parameters.Add(new SqlParameter("@Count", count));
                 command.ExecuteNonQuery();
             }
 
+            Info("{0} | Closing Entity: {1} ({2})", _entity.ProcessName, end, field);
         }
     }
 }

@@ -12,11 +12,6 @@ namespace Transformalize.Rhino.Etl.Core
         where TDerived : EtlProcessBase<TDerived>
     {
         /// <summary>
-        /// Internal field to indicate if a transaction is used. Defaulting to true.
-        /// </summary>
-        private bool useTransaction = true;
-
-        /// <summary>
         /// Ordered list of the operations in this process that will be added to the
         /// operations list after the initialization is completed.
         /// </summary>
@@ -40,11 +35,7 @@ namespace Transformalize.Rhino.Etl.Core
         /// Gets or sets whether we are using a transaction
         /// </summary>
         /// <value>True or value.</value>
-        public bool UseTransaction
-        {
-            get { return useTransaction; }
-            set { useTransaction = value; }
-        }
+        public bool UseTransaction { get; set; }
 
         /// <summary>
         /// Registers the specified operation.

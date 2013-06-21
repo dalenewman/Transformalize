@@ -33,6 +33,7 @@ namespace Transformalize.Repositories {
                     Int16Version SMALLINT NULL,
                     ByteVersion TINYINT NULL,
 	                LastProcessedDate DATETIME NOT NULL,
+                    Rows INT NOT NULL,
 					CONSTRAINT Pk_EntityTracker_EntityTrackerKey PRIMARY KEY (
 						EntityTrackerKey
 					)

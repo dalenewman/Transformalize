@@ -58,6 +58,8 @@
     <Compile Include="Configuration\XmlElementCollection.cs" />
     <Compile Include="Model\EntitySqlWriter.cs" />
     <Compile Include="DataTypeService.cs" />
+    <Compile Include="Operations\DistinctOperation.cs" />
+    <Compile Include="Operations\EntityKeyRegisterLoad.cs" />
     <Compile Include="Operations\EntityKeysExtract.cs" />
     <Compile Include="LinqExtensions.cs" />
     <Compile Include="Model\BaseField.cs" />
@@ -71,7 +73,7 @@
     <Compile Include="Model\Process.cs" />
     <Compile Include="Model\Xml.cs" />
     <Compile Include="Operations\EntityKeysToOperations.cs" />
-    <Compile Include="Operations\EntityToOutput.cs" />
+    <Compile Include="Operations\EntityDatabaseLoad.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RazorEngine.Core\AttributeValue.cs" />
     <Compile Include="RazorEngine.Core\CodeGenerators\SetModelTypeCodeGenerator.cs" />
@@ -150,6 +152,7 @@
     <Compile Include="Readers\IVersionReader.cs" />
     <Compile Include="Readers\ProcessReader.cs" />
     <Compile Include="Readers\VersionReader.cs" />
+    <Compile Include="RegisteredKeyExtract.cs" />
     <Compile Include="Repositories\EntityTrackerRepository.cs" />
     <Compile Include="Repositories\OutputRepository.cs" />
     <Compile Include="Rhino.Etl\Core\ConventionOperations\ConventionInputCommandOperation.cs" />
@@ -207,7 +210,7 @@
     <Compile Include="Rhino.Etl\Core\Row.cs" />
     <Compile Include="Rhino.Etl\Core\WithLoggingMixin.cs" />
     <Compile Include="SqlTemplates.cs" />
-    <Compile Include="TransformalizeProcess.cs" />
+    <Compile Include="EntityProcess.cs" />
     <Compile Include="Writers\IVersionWriter.cs" />
     <Compile Include="Writers\VersionWriter.cs" />
   </ItemGroup>

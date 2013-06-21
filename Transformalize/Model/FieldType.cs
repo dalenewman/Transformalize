@@ -1,9 +1,10 @@
 namespace Transformalize.Model {
     public enum FieldType {
-        Key,
+        ForeignKey,
         Field,
         Xml,
         Version,
-        PrimaryKey
+        PrimaryKey,
+        MasterKey
     }
 }

@@ -3,15 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace Transformalize.Rhino.Etl.Core.Enumerables
-{
+namespace Transformalize.Rhino.Etl.Core.Enumerables {
     /// <summary>
     /// This enumerator allows to safely move items between threads. It takes
     /// care of all the syncronization.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class ThreadSafeEnumerator<T> : IEnumerable<T>, IEnumerator<T>
-    {
+    public class ThreadSafeEnumerator<T> : IEnumerable<T>, IEnumerator<T> {
         private bool active = true;
         private readonly Queue<T> cached = new Queue<T>();
         private T current;
@@ -22,8 +20,7 @@ namespace Transformalize.Rhino.Etl.Core.Enumerables
         /// <returns>
         /// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
         /// </returns>
-        public IEnumerator<T> GetEnumerator()
-        {
+        public IEnumerator<T> GetEnumerator() {
             return this;
         }
 
@@ -33,8 +30,7 @@ namespace Transformalize.Rhino.Etl.Core.Enumerables
         /// <returns>
         /// An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.
         /// </returns>
-        IEnumerator IEnumerable.GetEnumerator()
-        {
+        IEnumerator IEnumerable.GetEnumerator() {
             return ((IEnumerable<T>)this).GetEnumerator();
         }
 
@@ -43,16 +39,14 @@ namespace Transformalize.Rhino.Etl.Core.Enumerables
         /// </summary>
         /// <value></value>
         /// <returns>The element in the collection at the current position of the enumerator.</returns>
-        public T Current
-        {
+        public T Current {
             get { return current; }
         }
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        public void Dispose()
-        {
+        public void Dispose() {
             cached.Clear();
         }
 
@@ -63,10 +57,8 @@ namespace Transformalize.Rhino.Etl.Core.Enumerables
         /// true if the enumerator was successfully advanced to the next element; false if the enumerator has passed the end of the collection.
         /// </returns>
         /// <exception cref="T:System.InvalidOperationException">The collection was modified after the enumerator was created. </exception>
-        public bool MoveNext()
-        {
-            lock (cached)
-            {
+        public bool MoveNext() {
+            lock (cached) {
                 while (cached.Count == 0 && active)
                     Monitor.Wait(cached);
 
@@ -83,8 +75,7 @@ namespace Transformalize.Rhino.Etl.Core.Enumerables
         /// Sets the enumerator to its initial position, which is before the first element in the collection.
         /// </summary>
         /// <exception cref="T:System.InvalidOperationException">The collection was modified after the enumerator was created. </exception>
-        public void Reset()
-        {
+        public void Reset() {
             throw new NotSupportedException();
         }
 
@@ -93,8 +84,7 @@ namespace Transformalize.Rhino.Etl.Core.Enumerables
         /// </summary>
         /// <value></value>
         /// <returns>The element in the collection at the current position of the enumerator.</returns>
-        object IEnumerator.Current
-        {
+        object IEnumerator.Current {
             get { return Current; }
         }
 
@@ -103,10 +93,8 @@ namespace Transformalize.Rhino.Etl.Core.Enumerables
         /// Will immediately release a waiting thread that can start working on itl
         /// </summary>
         /// <param name="item">The item.</param>
-        public void AddItem(T item)
-        {
-            lock (cached)
-            {
+        public void AddItem(T item) {
+            lock (cached) {
                 cached.Enqueue(item);
                 Monitor.Pulse(cached);
             }
@@ -115,10 +103,8 @@ namespace Transformalize.Rhino.Etl.Core.Enumerables
         /// <summary>
         /// Marks this instance as finished, so it will stop iterating
         /// </summary>
-        public void MarkAsFinished()
-        {
-            lock (cached)
-            {
+        public void MarkAsFinished() {
+            lock (cached) {
                 active = false;
                 Monitor.Pulse(cached);
             }

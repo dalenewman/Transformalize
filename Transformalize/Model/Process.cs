@@ -1,10 +1,6 @@
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using RazorEngine.Templating;
-using Transformalize.Configuration;
+using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Model {
 
@@ -18,6 +14,7 @@ namespace Transformalize.Model {
         public Connection OutputConnection;
         public Dictionary<string, Entity> Entities = new Dictionary<string, Entity>();
         public List<Join> Joins = new List<Join>();
+        public Dictionary<string, HashSet<object>> KeyRegister = new Dictionary<string, HashSet<object>>();
 
         public Dictionary<string, IField> Fields {
             get {
@@ -44,22 +41,19 @@ namespace Transformalize.Model {
 
         public string CreateOutputSql() {
 
-            var sqlBuilder = new StringBuilder(Environment.NewLine);
+            var writer = new FieldSqlWriter(Fields);
+            var primaryKey = writer.FieldType(FieldType.MasterKey).Alias().Asc().Values();
+            var defs = writer.Reload().ExpandXml().AddSystemFields().Output().Alias().DataType().AppendIf(" NOT NULL", FieldType.MasterKey).Values(flush: false);
 
-            sqlBuilder.AppendFormat("CREATE TABLE [dbo].[{0}](\r\n", Output);
-            sqlBuilder.Append(new FieldSqlWriter(Fields).ExpandXml().AddSystemFields().Output().Alias().DataType().AppendIf(" NOT NULL", FieldType.PrimaryKey).Write(",\r\n") + ",\r\n");
-            sqlBuilder.AppendFormat("CONSTRAINT [PK_{0}] PRIMARY KEY CLUSTERED (\r\n", Output);
-            sqlBuilder.AppendLine(new FieldSqlWriter(Entities.Select(kv => kv.Value).First().Keys).Alias().Asc().Write());
-            sqlBuilder.Append(") WITH (IGNORE_DUP_KEY = ON));");
-
-            return sqlBuilder.ToString();
+            return SqlTemplates.CreateTable(this.Output, defs, primaryKey, ignoreDups: true);
         }
 
-        public string CreateOutputSqlWithTemplate() {
-            using (var service = new TemplateService()) {
-                var template = File.ReadAllText(@"Templates\CreateOutputTable.cshtml");
-                return service.Parse(template, this, null, null);
-            }
+        public bool HasRegisteredKey(string key) {
+            return KeyRegister.ContainsKey(key);
+        }
+
+        public IEnumerable<Row> RelatedRows(string foreignKey) {
+            return KeyRegister[foreignKey].Select(o => new Row { { foreignKey, o } });
         }
     }
 }

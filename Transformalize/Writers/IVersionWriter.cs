@@ -1,5 +1,5 @@
 namespace Transformalize.Writers {
     public interface IVersionWriter {
-        void WriteEndVersion(object end);
+        void WriteEndVersion(object end, int count);
     }
 }

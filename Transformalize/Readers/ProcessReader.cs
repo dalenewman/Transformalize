@@ -1,10 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Model;
 
 namespace Transformalize.Readers {
+
     public class ProcessReader : IProcessReader {
         private readonly string _name;
 
@@ -47,7 +48,7 @@ namespace Transformalize.Readers {
                     Output = process.Output
                 };
 
-                foreach (FieldConfigurationElement fieldElement in entityElement.Keys) {
+                foreach (FieldConfigurationElement fieldElement in entityElement.PrimaryKey) {
                     var keyField = new Field {
                         Entity = entity.Name,
                         Schema = entity.Schema,
@@ -58,10 +59,11 @@ namespace Transformalize.Readers {
                         Precision = fieldElement.Precision,
                         Scale = fieldElement.Scale,
                         Output = fieldElement.Output,
-                        FieldType = entityCount == 1 ? FieldType.PrimaryKey : FieldType.Key,
+                        Input = fieldElement.Input,
+                        FieldType = entityCount == 1 ? FieldType.MasterKey : FieldType.PrimaryKey,
                         Default = fieldElement.Default
                     };
-                    entity.Keys.Add(fieldElement.Alias, keyField);
+                    entity.PrimaryKey.Add(fieldElement.Alias, keyField);
                     entity.All.Add(fieldElement.Alias, keyField);
 
                     if (entityElement.Version.Equals(fieldElement.Name)) {
@@ -80,6 +82,7 @@ namespace Transformalize.Readers {
                         Precision = fieldElement.Precision,
                         Scale = fieldElement.Scale,
                         Output = fieldElement.Output,
+                        Input = fieldElement.Input,
                         FieldType = FieldType.Field,
                         Default = fieldElement.Default
                     };
@@ -97,6 +100,7 @@ namespace Transformalize.Readers {
                             Precision = xmlElement.Precision,
                             Scale = xmlElement.Scale,
                             Output = xmlElement.Output,
+                            Input = true,
                             Default = fieldElement.Default,
                             FieldType = FieldType.Xml
                         });
@@ -117,8 +121,13 @@ namespace Transformalize.Readers {
                 var join = new Join();
                 join.LeftEntity = process.Entities[joinElement.LeftEntity];
                 join.LeftField = join.LeftEntity.All[joinElement.LeftField];
+                join.LeftField.FieldType = FieldType.ForeignKey;
                 join.RightEntity = process.Entities[joinElement.RightEntity];
                 join.RightField = join.RightEntity.All[joinElement.RightField];
+
+                join.LeftField.References = new KeyValuePair<string, string>(join.RightField.Name, join.RightField.Alias);
+                join.RightField.References = new KeyValuePair<string, string>(join.LeftEntity.Name, join.LeftField.Alias);
+                
                 process.Joins.Add(join);
             }
 

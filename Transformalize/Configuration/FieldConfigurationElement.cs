@@ -60,6 +60,14 @@ namespace Transformalize.Configuration
             set { this["scale"] = value; }
         }
 
+        [ConfigurationProperty("input", IsRequired = false, DefaultValue = true)]
+        public bool Input {
+            get {
+                return (bool)this["input"];
+            }
+            set { this["input"] = value; }
+        }
+
         [ConfigurationProperty("output", IsRequired = false, DefaultValue = true)]
         public bool Output {
             get {
