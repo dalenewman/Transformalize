@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Text;
+using NUnit.Framework;
 using Transformalize.Model;
 
 namespace Transformalize.Test.Unit {
@@ -31,7 +32,7 @@ namespace Transformalize.Test.Unit {
         	        AND TABLE_NAME = 'TEST'
                 )	DROP TABLE [dbo].[TEST];
             ", output.DropOutputSql());
-        }    
-
+        }
+   
     }
 }

@@ -247,10 +247,10 @@ namespace Transformalize.Model {
             return this;
         }
 
-        public FieldSqlWriter HasReference(bool answer) {
+        public FieldSqlWriter HasDefaultOrTransform() {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];
-                if (field.HasReference() != answer)
+                if (field.Default == null && field.Transforms == null)
                     _output.Remove(key);
             }
             return this;

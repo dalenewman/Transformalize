@@ -1,8 +1,11 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using Transformalize.Configuration;
 using Transformalize.Model;
+using Transformalize.Operations;
+using Transformalize.Transforms;
 
 namespace Transformalize.Readers {
 
@@ -61,8 +64,10 @@ namespace Transformalize.Readers {
                         Output = fieldElement.Output,
                         Input = fieldElement.Input,
                         FieldType = entityCount == 1 ? FieldType.MasterKey : FieldType.PrimaryKey,
-                        Default = fieldElement.Default
+                        Default = fieldElement.Default,
+                        Transforms = GetTransforms(fieldElement.Transforms)
                     };
+
                     entity.PrimaryKey.Add(fieldElement.Alias, keyField);
                     entity.All.Add(fieldElement.Alias, keyField);
 
@@ -84,8 +89,10 @@ namespace Transformalize.Readers {
                         Output = fieldElement.Output,
                         Input = fieldElement.Input,
                         FieldType = FieldType.Field,
-                        Default = fieldElement.Default
+                        Default = fieldElement.Default,
+                        Transforms = GetTransforms(fieldElement.Transforms)
                     };
+
                     foreach (XmlConfigurationElement xmlElement in fieldElement.Xml) {
                         field.InnerXml.Add(xmlElement.Alias, new Xml {
                             Entity = entity.Name,
@@ -101,9 +108,11 @@ namespace Transformalize.Readers {
                             Scale = xmlElement.Scale,
                             Output = xmlElement.Output,
                             Input = true,
-                            Default = fieldElement.Default,
-                            FieldType = FieldType.Xml
+                            Default = xmlElement.Default,
+                            FieldType = FieldType.Xml,
+                            Transforms = GetTransforms(xmlElement.Transforms)
                         });
+
                     }
 
                     entity.Fields.Add(fieldElement.Alias, field);
@@ -124,15 +133,40 @@ namespace Transformalize.Readers {
                 join.LeftField.FieldType = FieldType.ForeignKey;
                 join.RightEntity = process.Entities[joinElement.RightEntity];
                 join.RightField = join.RightEntity.All[joinElement.RightField];
-
-                join.LeftField.References = new KeyValuePair<string, string>(join.RightField.Name, join.RightField.Alias);
-                join.RightField.References = new KeyValuePair<string, string>(join.LeftEntity.Name, join.LeftField.Alias);
-                
                 process.Joins.Add(join);
             }
 
             return process;
         }
 
+        private static ITransform[] GetTransforms(IEnumerable transforms) {
+            var result = new List<ITransform>();
+
+            foreach (TransformConfigurationElement t in transforms) {
+                switch (t.Method.ToLower()) {
+                    case "replace":
+                        result.Add(new ReplaceTransform(t.OldValue, t.NewValue));
+                        break;
+                    case "insert":
+                        result.Add(new InsertTransform(t.Index, t.Value));
+                        break;
+                    case "remove":
+                        result.Add(new RemoveTransform(t.StartIndex, t.Length));
+                        break;
+                    case "trimstart":
+                        result.Add(new TrimStartTransform(t.TrimChars));
+                        break;
+                    case "trimend":
+                        result.Add(new TrimEndTransform(t.TrimChars));
+                        break;
+                    case "trim":
+                        result.Add(new TrimTransform(t.TrimChars));
+                        break;
+
+                }
+            }
+
+            return result.ToArray();
+        }
     }
 }

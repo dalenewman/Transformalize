@@ -45,6 +45,8 @@
   <ItemGroup>
     <Compile Include="Configuration\ConnectionConfigurationElement.cs" />
     <Compile Include="Configuration\ConnectionElementCollection.cs" />
+    <Compile Include="Configuration\TransformConfigurationElement.cs" />
+    <Compile Include="Configuration\TransformElementCollection.cs" />
     <Compile Include="Configuration\EntityConfigurationElement.cs" />
     <Compile Include="Configuration\EntityElementCollection.cs" />
     <Compile Include="Configuration\FieldConfigurationElement.cs" />
@@ -56,6 +58,12 @@
     <Compile Include="Configuration\TransformalizeConfiguration.cs" />
     <Compile Include="Configuration\XmlConfigurationElement.cs" />
     <Compile Include="Configuration\XmlElementCollection.cs" />
+    <Compile Include="StringBuilderExtensions.cs" />
+    <Compile Include="Operations\TransformOperation.cs" />
+    <Compile Include="Transforms\TrimTransform.cs" />
+    <Compile Include="Transforms\TrimEndTransform.cs" />
+    <Compile Include="Transforms\InsertTransform.cs" />
+    <Compile Include="Transforms\ITransform.cs" />
     <Compile Include="Model\EntitySqlWriter.cs" />
     <Compile Include="DataTypeService.cs" />
     <Compile Include="Operations\DistinctOperation.cs" />
@@ -211,6 +219,9 @@
     <Compile Include="Rhino.Etl\Core\WithLoggingMixin.cs" />
     <Compile Include="SqlTemplates.cs" />
     <Compile Include="EntityProcess.cs" />
+    <Compile Include="Transforms\RemoveTransform.cs" />
+    <Compile Include="Transforms\ReplaceTransform.cs" />
+    <Compile Include="Transforms\TrimStartTransform.cs" />
     <Compile Include="Writers\IVersionWriter.cs" />
     <Compile Include="Writers\VersionWriter.cs" />
   </ItemGroup>

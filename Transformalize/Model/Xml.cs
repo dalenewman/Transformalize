@@ -1,10 +1,9 @@
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Transformalize.Model {
 
     public class Xml : BaseField, IField {
-      
+
         private FieldSqlWriter _sqlWriter;
         public FieldSqlWriter SqlWriter {
             get { return _sqlWriter ?? (_sqlWriter = new FieldSqlWriter(this)); }

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Transformalize.Model {
     public class Field : BaseField, IField {
@@ -18,7 +17,7 @@ namespace Transformalize.Model {
             InnerXml = new Dictionary<string, Xml>();
             FieldType = FieldType.Field;
         }
-        
+
         public string AsJoin(string left, string right) {
             return string.Format("{0}.[{1}] = {2}.[{1}]", left, Name, right);
         }

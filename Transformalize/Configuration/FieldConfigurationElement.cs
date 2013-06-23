@@ -36,7 +36,7 @@ namespace Transformalize.Configuration
             }
         }
 
-        [ConfigurationProperty("length", IsRequired = false, DefaultValue = 64)]
+        [ConfigurationProperty("length", IsRequired = false, DefaultValue = 0)]
         public int Length {
             get {
                 return (int)this["length"];
@@ -77,11 +77,18 @@ namespace Transformalize.Configuration
         }
 
         [ConfigurationProperty("default", IsRequired = false, DefaultValue = null)]
-        public object Default {
+        public string Default {
             get {
-                return this["default"];
+                return (string) this["default"];
             }
             set { this["default"] = value; }
+        }
+
+        [ConfigurationProperty("transforms")]
+        public TransformElementCollection Transforms {
+            get {
+                return this["transforms"] as TransformElementCollection;
+            }
         }
     }
 }

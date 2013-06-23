@@ -78,5 +78,20 @@ namespace Transformalize.Configuration
             set { this["output"] = value; }
         }
 
+        [ConfigurationProperty("default", IsRequired = false, DefaultValue = null)]
+        public string Default {
+            get {
+                return (string)this["default"];
+            }
+            set { this["default"] = value; }
+        }
+
+        [ConfigurationProperty("transforms")]
+        public TransformElementCollection Transforms {
+            get {
+                return this["transforms"] as TransformElementCollection;
+            }
+        }
+
     }
 }

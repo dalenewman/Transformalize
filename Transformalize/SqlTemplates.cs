@@ -104,7 +104,7 @@ CREATE TABLE [{0}].[{1}](
                 foreach (var fieldKey in fields.Keys) {
                     var value = row[fieldKey];
                     var field = fields[fieldKey];
-                    values.Add(string.Concat(field.Quote, value, field.Quote));
+                    values.Add(string.Concat(field.Quote, value ?? field.Default, field.Quote));
                 }
                 yield return string.Join(",", values);
             }

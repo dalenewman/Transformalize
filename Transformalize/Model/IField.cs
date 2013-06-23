@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Text;
+using Transformalize.Transforms;
 
 namespace Transformalize.Model
 {
@@ -24,6 +26,7 @@ namespace Transformalize.Model
         int Index { get; }
         FieldSqlWriter SqlWriter { get; }
         KeyValuePair<string, string> References { get; set; }
-        bool HasReference();
+        ITransform[] Transforms { get; set; }
+        StringBuilder StringBuilder { get; set; }
     }
 }
