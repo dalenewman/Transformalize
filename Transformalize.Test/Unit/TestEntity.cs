@@ -74,7 +74,8 @@ SELECT
     [Quantity] = l.[Qty],
     [Size] = l.[Properties].value('(/Properties/Size)[1]', 'NVARCHAR(64)')
 FROM [OrderDetail] l
-INNER JOIN @KEYS r ON (l.[OrderDetailKey] = r.[OrderDetailKey]);";
+INNER JOIN @KEYS r ON (l.[OrderDetailKey] = r.[OrderDetailKey])
+OPTION (MAXDOP 1);";
 
             Assert.AreEqual(expected, actual);
         }
@@ -84,12 +85,10 @@ INNER JOIN @KEYS r ON (l.[OrderDetailKey] = r.[OrderDetailKey]);";
 
             var process = new ProcessReader("Test").GetProcess();
             var entity = process.Entities["OrderDetail"];
-            entity.InputConnection.BatchInsertSize = 1;
-            entity.InputConnection.BatchSelectSize = 2;
             var entityKeysToOperations = new EntityKeysToOperations(entity);
 
             var operations = TestOperation(_entityKeysExtract.Object, entityKeysToOperations);
-            Assert.AreEqual(4 / 2, operations.Count);
+            Assert.AreEqual(1, operations.Count);
         }
 
     }

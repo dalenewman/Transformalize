@@ -6,7 +6,7 @@ using Transformalize.Repositories;
 namespace Transformalize.Test.Integration {
     [TestFixture]
     public class TestProcess {
-
+        
         [Test]
         public void RunInitAndProcess() {
 

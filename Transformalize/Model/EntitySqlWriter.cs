@@ -15,9 +15,10 @@ namespace Transformalize.Model {
         }
 
         public string SelectByKeys(IEnumerable<Row> rows) {
+            var context = new FieldSqlWriter(_entity.PrimaryKey).Context();
             var sql = "SET NOCOUNT ON;\r\n" +
-                      SqlTemplates.CreateTableVariable(KEYS_TABLE_VARIABLE, _entity.PrimaryKey) +
-                      SqlTemplates.BatchInsertValues(_entity.InputConnection.BatchInsertSize, KEYS_TABLE_VARIABLE, _entity.PrimaryKey, rows, _entity.InputConnection.Year) + Environment.NewLine +
+                      SqlTemplates.CreateTableVariable(KEYS_TABLE_VARIABLE, context) +
+                      SqlTemplates.BatchInsertValues(50, KEYS_TABLE_VARIABLE, context, rows, _entity.InputConnection.Year) + Environment.NewLine +
                       SqlTemplates.Select(_entity.All, _entity.Name, KEYS_TABLE_VARIABLE);
 
             Trace(sql);
@@ -48,7 +49,7 @@ namespace Transformalize.Model {
             var table = SqlTemplates.CreateTableVariable("@DATA", context);
             var sql = "SET NOCOUNT ON;\r\n" +
                       table + Environment.NewLine +
-                      SqlTemplates.BatchInsertValues(_entity.InputConnection.BatchInsertSize, "@DATA", context, rows, _entity.InputConnection.Year) +
+                      SqlTemplates.BatchInsertValues(50, "@DATA", context, rows, _entity.OutputConnection.Year) +
                       UpsertSqlStatement(doInsert);
 
             Trace(sql);

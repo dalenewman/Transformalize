@@ -132,5 +132,61 @@ namespace Transformalize.Test.Unit {
 
         }
 
+        [Test]
+        public void TestSubStringTransform() {
+
+            var entity = new Entity();
+            entity.All["Field1"] = new Field { Length = 20, Transforms = new[] { new SubstringTransform(4, 3) }, Input = true };
+
+            var rows = TestOperation(
+                _testInput.Object,
+                new TransformOperation(entity),
+                new LogOperation()
+            );
+
+            Assert.AreEqual(3, rows.Count);
+            Assert.AreEqual("C d", rows[0]["Field1"]);
+            Assert.AreEqual("3 4", rows[1]["Field1"]);
+
+        }
+
+        [Test]
+        public void TestLeftTransform() {
+
+            var entity = new Entity();
+            entity.All["Field1"] = new Field { Length = 20, Transforms = new[] { new LeftTransform(4) }, Input = true };
+
+            var rows = TestOperation(
+                _testInput.Object,
+                new TransformOperation(entity),
+                new LogOperation()
+            );
+
+            Assert.AreEqual(3, rows.Count);
+            Assert.AreEqual("A b ", rows[0]["Field1"]);
+            Assert.AreEqual("1 2 ", rows[1]["Field1"]);
+
+        }
+
+        [Test]
+        public void TestRightTransform() {
+
+            var entity = new Entity();
+            entity.All["Field1"] = new Field { Length = 20, Transforms = new[] { new RightTransform(3) }, Input = true };
+
+            var rows = TestOperation(
+                _testInput.Object,
+                new TransformOperation(entity),
+                new LogOperation()
+            );
+
+            Assert.AreEqual(3, rows.Count);
+            Assert.AreEqual("f G", rows[0]["Field1"]);
+            Assert.AreEqual("6 7", rows[1]["Field1"]);
+
+        }
+
+
+
     }
 }

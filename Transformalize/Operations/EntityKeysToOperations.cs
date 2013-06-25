@@ -18,7 +18,7 @@ namespace Transformalize.Operations {
         
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
 
-            return rows.Partition(_entity.InputConnection.BatchSelectSize).Select(batch => new Row {{
+            return rows.Partition(_entity.InputConnection.InputBatchSize).Select(batch => new Row {{
                 _operationColumn,
                 new ConventionSqlInputOperation(_entity.InputConnection.ConnectionString) {
                     Sql = _entity.EntitySqlWriter.SelectByKeys(batch)

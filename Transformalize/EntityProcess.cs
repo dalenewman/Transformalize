@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.SqlClient;
 using System.Linq;
 using Transformalize.Model;
 using Transformalize.Operations;
@@ -21,8 +20,7 @@ namespace Transformalize {
         }
 
         protected override void Initialize() {
-
-
+            
             var firstKey = _entity.FirstKey();
             if (_entity.PrimaryKey.Count == 1 && _process.HasRegisteredKey(firstKey)) {
                 Register(
@@ -38,7 +36,7 @@ namespace Transformalize {
             }
 
             Register(new EntityKeysToOperations(_entity));
-            Register(new ConventionSerialUnionAllOperation());
+            Register(new SerialUnionAllOperation());
             Register(new TransformOperation(_entity));
             RegisterLast(new BranchingOperation()
                 .Add(new EntityDatabaseLoad(_entity))

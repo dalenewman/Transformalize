@@ -73,7 +73,8 @@ UNION ALL SELECT 7";
     [Quantity] = l.[Qty],
     [Size] = l.[Properties].value('(/Properties/Size)[1]', 'NVARCHAR(64)')
 FROM [OrderDetail] l
-INNER JOIN @KEYS r ON (l.[OrderDetailKey] = r.[OrderDetailKey]);";
+INNER JOIN @KEYS r ON (l.[OrderDetailKey] = r.[OrderDetailKey])
+OPTION (MAXDOP 1);";
 
             var actual = _entity.EntitySqlWriter.SelectByKeys(keys);
 
@@ -84,8 +85,7 @@ INNER JOIN @KEYS r ON (l.[OrderDetailKey] = r.[OrderDetailKey]);";
         [Test]
         public void TestEntityKeysToOperations() {
 
-            _entity.InputConnection.BatchInsertSize = 50;
-            _entity.InputConnection.BatchSelectSize = 200;
+            _entity.InputConnection.InputBatchSize = 200;
 
             var entityKeyExtract = new EntityKeysExtract(_entity);
             var entityKeysToOperations = new EntityKeysToOperations(_entity);
@@ -98,7 +98,7 @@ INNER JOIN @KEYS r ON (l.[OrderDetailKey] = r.[OrderDetailKey]);";
         public void TestEntityToOutput() {
             var entityKeyExtract = new EntityKeysExtract(_entity);
             var entityKeysToOperations = new EntityKeysToOperations(_entity);
-            var entityExtract = new ConventionSerialUnionAllOperation();
+            var entityExtract = new SerialUnionAllOperation();
             var entityToOutput = new MultiThreadedBranchingOperation().Add(new EntityDatabaseLoad(_entity)).Add(new EntityKeyRegisterLoad(_process, _entity));
 
             var rows = TestOperation(

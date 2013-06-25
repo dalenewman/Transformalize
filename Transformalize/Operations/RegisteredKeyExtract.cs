@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
 using Transformalize.Rhino.Etl.Core.Operations;
 
-namespace Transformalize {
+namespace Transformalize.Operations {
     public class RegisteredKeyExtract : AbstractOperation {
         private readonly Process _process;
         private readonly string _foreignKey;

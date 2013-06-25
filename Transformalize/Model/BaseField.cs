@@ -23,6 +23,7 @@ namespace Transformalize.Model {
         public int Precision { get; set; }
         public int Scale { get; set; }
         public object Default { get; set; }
+        public bool Clustered { get; set; }
         public FieldType FieldType { get; set; }
         public KeyValuePair<string, string> References { get; set; }
         public StringBuilder StringBuilder { get; set; }
@@ -65,7 +66,7 @@ namespace Transformalize.Model {
         /// </summary>
         public bool Output {
             get {
-                return FieldType == FieldType.MasterKey || FieldType == FieldType.ForeignKey || _output;
+                return FieldType == FieldType.MasterKey || FieldType == FieldType.ForeignKey || FieldType == FieldType.PrimaryKey || _output;
             }
             set { _output = value; }
         }

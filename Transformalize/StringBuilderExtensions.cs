@@ -37,7 +37,8 @@ namespace Transformalize {
                     while (sb[i] == trimChars[0] && i > -1) {
                         i--;
                     }
-                } else {
+                }
+                else {
                     while (trimChars.Any(c => c.Equals(sb[i])) && i > -1) {
                         i--;
                     }
@@ -53,6 +54,30 @@ namespace Transformalize {
         public static StringBuilder Trim(this StringBuilder sb, string trimChars) {
             return sb.TrimStart(trimChars).TrimEnd(trimChars);
         }
+
+        public static StringBuilder Substring(this StringBuilder sb, int startIndex, int length) {
+            var capacity = sb.Length;
+            if (capacity != 0 && startIndex < capacity) {
+
+                if (startIndex + length > capacity) {
+                    length = capacity - startIndex;
+                }
+
+                sb.Remove(startIndex + length, capacity - (startIndex + length));
+                sb.Remove(0, startIndex);
+
+            }
+            return sb;
+        }
+
+        public static StringBuilder Left(this StringBuilder sb, int length) {
+            return sb.Substring(0, length);
+        }
+
+        public static StringBuilder Right(this StringBuilder sb, int length) {
+            return sb.Substring(sb.Length - length, length);
+        }
+
 
     }
 }

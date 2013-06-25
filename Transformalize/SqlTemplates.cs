@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using NLog;
 using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
 
@@ -13,7 +12,7 @@ namespace Transformalize {
         private const string CREATE_TABLE_TEMPLATE = @"
 CREATE TABLE [{0}].[{1}](
     {2},
-    CONSTRAINT [Pk_{3}_{4}] PRIMARY KEY CLUSTERED (
+    CONSTRAINT [Pk_{3}_{4}] PRIMARY KEY (
         {5}
     ) {6}
 );
@@ -74,7 +73,7 @@ CREATE TABLE [{0}].[{1}](
         /// <returns>SQL Statement</returns>
         public static string Select(IDictionary<string, IField> fields, string leftTable, string rightTable, string leftSchema = "dbo", string rightSchema = "dbo") {
 
-            const string sqlPattern = "\r\nSELECT\r\n    {0}\r\nFROM {1} l\r\nINNER JOIN {2} r ON ({3});";
+            const string sqlPattern = "\r\nSELECT\r\n    {0}\r\nFROM {1} l\r\nINNER JOIN {2} r ON ({3})\r\nOPTION (MAXDOP 1);";
 
             var columns = new FieldSqlWriter(fields).ExpandXml().Input().Select().Prepend("l.").ToAlias().Write(",\r\n    ");
             var join = new FieldSqlWriter(fields).FieldType(FieldType.MasterKey, FieldType.PrimaryKey).Name().Set("l", "r").Write(" AND ");

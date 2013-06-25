@@ -13,7 +13,7 @@ namespace Transformalize.Rhino.Etl.Core {
     /// </summary>
     public abstract class EtlProcess : EtlProcessBase<EtlProcess>, IDisposable {
         private readonly string _name;
-        private IPipelineExecuter pipelineExecuter = new ThreadPoolPipelineExecuter();
+        private IPipelineExecuter _pipelineExecuter = new ThreadPoolPipelineExecuter();
 
         protected EtlProcess(string name = "") {
             _name = name;
@@ -24,10 +24,10 @@ namespace Transformalize.Rhino.Etl.Core {
         /// </summary>
         /// <value>The pipeline executer.</value>
         public IPipelineExecuter PipelineExecuter {
-            get { return pipelineExecuter; }
+            get { return _pipelineExecuter; }
             set {
                 Info("Setting PipelineExecutor to {0}", value.GetType().ToString());
-                pipelineExecuter = value;
+                _pipelineExecuter = value;
             }
         }
 
@@ -37,8 +37,7 @@ namespace Transformalize.Rhino.Etl.Core {
         /// </summary>
         protected static PartialProcessOperation Partial {
             get {
-                PartialProcessOperation operation = new PartialProcessOperation();
-                return operation;
+                return new PartialProcessOperation();
             }
         }
 
@@ -65,18 +64,12 @@ namespace Transformalize.Rhino.Etl.Core {
         /// Executes this process
         /// </summary>
         public void Execute() {
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
-
             Initialize();
             MergeLastOperationsToOperations();
             RegisterToOperationsEvents();
-            Trace("{0} | Starting to execute {1}", _name, Name);
+            Trace("{0} | Executing {1}", _name, Name);
             PipelineExecuter.Execute(Name, operations, TranslateRows);
-
             PostProcessing();
-            stopwatch.Stop();
-            Info("{0} | StopWatch Time Elapsed: {1}", _name, stopwatch.Elapsed);
         }
 
         /// <summary>
@@ -87,7 +80,7 @@ namespace Transformalize.Rhino.Etl.Core {
         }
 
         private void RegisterToOperationsEvents() {
-            foreach (IOperation operation in operations) {
+            foreach (var operation in operations) {
                 operation.OnRowProcessed += OnRowProcessed;
                 operation.OnFinishedProcessing += OnFinishedProcessing;
             }
@@ -145,7 +138,7 @@ namespace Transformalize.Rhino.Etl.Core {
         protected static T ExecuteScalar<T>(ConnectionStringSettings connectionStringSettings, string commandText) {
             return Use.Transaction<T>(connectionStringSettings, delegate(IDbCommand cmd) {
                 cmd.CommandText = commandText;
-                object scalar = cmd.ExecuteScalar();
+                var scalar = cmd.ExecuteScalar();
                 return (T)(scalar ?? default(T));
             });
         }
@@ -155,14 +148,14 @@ namespace Transformalize.Rhino.Etl.Core {
         /// </summary>
         /// <returns></returns>
         public IEnumerable<Exception> GetAllErrors() {
-            foreach (Exception error in Errors) {
+            foreach (var error in Errors) {
                 yield return error;
             }
-            foreach (Exception error in pipelineExecuter.GetAllErrors()) {
+            foreach (var error in _pipelineExecuter.GetAllErrors()) {
                 yield return error;
             }
-            foreach (IOperation operation in operations) {
-                foreach (Exception exception in operation.GetAllErrors()) {
+            foreach (var operation in operations) {
+                foreach (var exception in operation.GetAllErrors()) {
                     yield return exception;
                 }
             }

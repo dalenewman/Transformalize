@@ -27,6 +27,13 @@ namespace Transformalize.Configuration {
             }
         }
 
+        [ConfigurationProperty("maps")]
+        public MapElementCollection Maps {
+            get {
+                return this["maps"] as MapElementCollection;
+            }
+        }
+
         [ConfigurationProperty("time", IsRequired = true)]
         public string Time {
             get {

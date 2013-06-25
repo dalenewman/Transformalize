@@ -12,7 +12,7 @@ namespace Transformalize.Rhino.Etl.Core.Operations
     public abstract class SqlBatchOperation : AbstractDatabaseOperation
     {
         private int batchSize = 50;
-        private int timeout = 30;
+        private int timeout = 0;
 
         /// <summary>
         /// Gets or sets the size of the batch.

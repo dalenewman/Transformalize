@@ -28,5 +28,6 @@ namespace Transformalize.Model
         KeyValuePair<string, string> References { get; set; }
         ITransform[] Transforms { get; set; }
         StringBuilder StringBuilder { get; set; }
+        bool Clustered { get; }
     }
 }

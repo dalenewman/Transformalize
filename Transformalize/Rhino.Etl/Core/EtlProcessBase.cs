@@ -15,7 +15,7 @@ namespace Transformalize.Rhino.Etl.Core
         /// Ordered list of the operations in this process that will be added to the
         /// operations list after the initialization is completed.
         /// </summary>
-        private readonly List<IOperation> lastOperations = new List<IOperation>();
+        private readonly List<IOperation> _lastOperations = new List<IOperation>();
 
         /// <summary>
         /// Ordered list of the operations in this process
@@ -55,7 +55,7 @@ namespace Transformalize.Rhino.Etl.Core
         /// <param name="operation">The operation.</param>
         public TDerived RegisterLast(IOperation operation)
         {
-            lastOperations.Add(operation);
+            _lastOperations.Add(operation);
             Debug("RegisterLast {0} in {1}", operation.Name, Name);
             return (TDerived) this;
         }
@@ -65,7 +65,7 @@ namespace Transformalize.Rhino.Etl.Core
         /// </summary>
         protected void MergeLastOperationsToOperations()
         {
-            operations.AddRange(lastOperations);
+            operations.AddRange(_lastOperations);
         }
     }
 }

@@ -5,21 +5,25 @@ namespace Transformalize.Rhino.Etl.Core.Operations {
     public class SerialUnionAllOperation : AbstractOperation {
 
         private readonly List<IOperation> _operations = new List<IOperation>();
+        public string OperationColumn { get; set; }
 
-        public SerialUnionAllOperation() { }
-
-        public SerialUnionAllOperation(IEnumerable<IOperation> ops) {
-            _operations.AddRange(ops);
+        public SerialUnionAllOperation(string operationColumn = "operation") {
+            OperationColumn = operationColumn;
         }
 
-        public SerialUnionAllOperation(params IOperation[] ops) {
-            _operations.AddRange(ops);
+        public SerialUnionAllOperation(IEnumerable<IOperation> operations) {
+            _operations.AddRange(operations);
+        }
+
+        public SerialUnionAllOperation(params IOperation[] operations) {
+            _operations.AddRange(operations);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
-            foreach (var operation in _operations)
-                foreach (var row in operation.Execute(null))
-                    yield return row;
+            if (_operations.Count > 0)
+                return _operations.SelectMany(operation => operation.Execute(null));
+
+            return rows.Select(row => row[OperationColumn]).Cast<IOperation>().SelectMany(operation => operation.Execute(null));
         }
 
         public SerialUnionAllOperation Add(params IOperation[] operation) {
@@ -27,10 +31,6 @@ namespace Transformalize.Rhino.Etl.Core.Operations {
             return this;
         }
 
-        /// <summary>
-        /// Initializes this instance
-        /// </summary>
-        /// <param name="pipelineExecuter">The current pipeline executer.</param>
         public override void PrepareForExecution(IPipelineExecuter pipelineExecuter) {
             foreach (var operation in _operations) {
                 operation.PrepareForExecution(pipelineExecuter);

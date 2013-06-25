@@ -17,7 +17,7 @@ namespace Transformalize.Operations {
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             using (var cn = new SqlConnection(_entity.OutputConnection.ConnectionString)) {
                 cn.Open();
-                foreach (var group in rows.Partition(_entity.InputConnection.BatchUpdateSize)) {
+                foreach (var group in rows.Partition(_entity.OutputConnection.OutputBatchSize)) {
                     var cmd = new SqlCommand(
                         _entity.IsMaster() ?
                             _entity.EntitySqlWriter.UpsertSql(group):

@@ -20,7 +20,6 @@ CREATE TABLE [dbo].[OrderDetail](
     [FirstName] NVARCHAR(50),
     [Gender] NVARCHAR(64),
     [LastName] NVARCHAR(50),
-    [LoadDate] DATETIME,
     [OrderDate] DATETIME,
     [OrderDetailKey] INT NOT NULL,
     [OrderKey] INT,
@@ -28,11 +27,10 @@ CREATE TABLE [dbo].[OrderDetail](
     [ProductKey] INT,
     [ProductName] NVARCHAR(100),
     [Quantity] INT,
-    [RowVersion] ROWVERSION,
     [Size] NVARCHAR(64),
     [State] NVARCHAR(2),
-    [TimeKey] INT,
-    CONSTRAINT [Pk_OrderDetail_OrderDetailKey_ASC] PRIMARY KEY CLUSTERED (
+    [TflKey] INT NOT NULL IDENTITY(1,1) UNIQUE CLUSTERED,
+    CONSTRAINT [Pk_OrderDetail_OrderDetailKey_ASC] PRIMARY KEY (
         [OrderDetailKey] ASC
     ) WITH (IGNORE_DUP_KEY = ON)
 );

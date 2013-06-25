@@ -45,6 +45,10 @@
   <ItemGroup>
     <Compile Include="Configuration\ConnectionConfigurationElement.cs" />
     <Compile Include="Configuration\ConnectionElementCollection.cs" />
+    <Compile Include="Configuration\ItemConfigurationElement.cs" />
+    <Compile Include="Configuration\ItemElementCollection.cs" />
+    <Compile Include="Configuration\MapConfigurationElement.cs" />
+    <Compile Include="Configuration\MapElementCollection.cs" />
     <Compile Include="Configuration\TransformConfigurationElement.cs" />
     <Compile Include="Configuration\TransformElementCollection.cs" />
     <Compile Include="Configuration\EntityConfigurationElement.cs" />
@@ -58,8 +62,13 @@
     <Compile Include="Configuration\TransformalizeConfiguration.cs" />
     <Compile Include="Configuration\XmlConfigurationElement.cs" />
     <Compile Include="Configuration\XmlElementCollection.cs" />
+    <Compile Include="Operations\RegisteredKeyExtract.cs" />
+    <Compile Include="Repositories\ConnectionChecker.cs" />
+    <Compile Include="Rhino.Etl\Core\Operations\ParallelUnionAllOperation.cs" />
+    <Compile Include="Rhino.Etl\Core\Operations\SerialUnionAllOperation.cs" />
     <Compile Include="StringBuilderExtensions.cs" />
     <Compile Include="Operations\TransformOperation.cs" />
+    <Compile Include="Transforms\SubstringTransform.cs" />
     <Compile Include="Transforms\TrimTransform.cs" />
     <Compile Include="Transforms\TrimEndTransform.cs" />
     <Compile Include="Transforms\InsertTransform.cs" />
@@ -160,7 +169,6 @@
     <Compile Include="Readers\IVersionReader.cs" />
     <Compile Include="Readers\ProcessReader.cs" />
     <Compile Include="Readers\VersionReader.cs" />
-    <Compile Include="RegisteredKeyExtract.cs" />
     <Compile Include="Repositories\EntityTrackerRepository.cs" />
     <Compile Include="Repositories\OutputRepository.cs" />
     <Compile Include="Rhino.Etl\Core\ConventionOperations\ConventionInputCommandOperation.cs" />
@@ -193,7 +201,6 @@
     <Compile Include="Rhino.Etl\Core\Operations\AbstractDatabaseOperation.cs" />
     <Compile Include="Rhino.Etl\Core\Operations\AbstractOperation.cs" />
     <Compile Include="Rhino.Etl\Core\Operations\BranchingOperation.cs" />
-    <Compile Include="Rhino.Etl\Core\Operations\ConventionSerialUnionAllOperation.cs" />
     <Compile Include="Rhino.Etl\Core\Operations\InputCommandOperation.cs" />
     <Compile Include="Rhino.Etl\Core\Operations\AbstractSqlInputOperation.cs" />
     <Compile Include="Rhino.Etl\Core\Operations\IOperation.cs" />
@@ -204,9 +211,7 @@
     <Compile Include="Rhino.Etl\Core\Operations\NestedLoopsJoinOperation.cs" />
     <Compile Include="Rhino.Etl\Core\Operations\OperationStatistics.cs" />
     <Compile Include="Rhino.Etl\Core\Operations\OutputCommandOperation.cs" />
-    <Compile Include="Rhino.Etl\Core\Operations\ParallelUnionAllOperation.cs" />
     <Compile Include="Rhino.Etl\Core\Operations\PartialProcessOperation.cs" />
-    <Compile Include="Rhino.Etl\Core\Operations\SerialUnionAllOperation.cs" />
     <Compile Include="Rhino.Etl\Core\Operations\SqlBatchOperation.cs" />
     <Compile Include="Rhino.Etl\Core\Operations\SqlBulkInsertOperation.cs" />
     <Compile Include="Rhino.Etl\Core\Pipelines\AbstractPipelineExecuter.cs" />
@@ -229,9 +234,6 @@
     <None Include="packages.config" />
     <None Include="RazorEngine.Core\ClassDiagram.cd" />
     <None Include="RazorEngine.Core\packages.config" />
-    <None Include="Templates\CreateOutputTable.cshtml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

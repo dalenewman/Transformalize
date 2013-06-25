@@ -5,7 +5,7 @@ using Transformalize.Repositories;
 
 namespace Transformalize.Run {
     class Program {
-        static void Main(string[] args){
+        static void Main(string[] args) {
 
             var name = args[0];
             var mode = args[1] ?? "delta";
@@ -17,11 +17,14 @@ namespace Transformalize.Run {
                 new OutputRepository(process).InitializeOutput();
             }
 
-            while (process.Entities.Any(kv => !kv.Value.Processed)) {
-                using (var etlProcess = new EntityProcess(process)) {
-                    etlProcess.Execute();
+            if (new ConnectionChecker(process.Connections.Select(kv => kv.Value.ConnectionString)).Check()) {
+                while (process.Entities.Any(kv => !kv.Value.Processed)) {
+                    using (var etlProcess = new EntityProcess(process)) {
+                        etlProcess.Execute();
+                    }
                 }
             }
+
         }
     }
 }

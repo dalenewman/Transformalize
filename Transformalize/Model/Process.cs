@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Transformalize.Repositories;
 using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Model {
@@ -55,5 +56,6 @@ namespace Transformalize.Model {
         public IEnumerable<Row> RelatedRows(string foreignKey) {
             return KeyRegister[foreignKey].Select(o => new Row { { foreignKey, o } });
         }
+
     }
 }

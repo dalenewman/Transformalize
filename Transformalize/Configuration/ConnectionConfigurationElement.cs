@@ -36,42 +36,20 @@ namespace Transformalize.Configuration
             set { this["provider"] = value; }
         }
 
-        /// <summary>
-        /// When creating temporary tables via VALUES... or SELECT & UNION ALL, too long of a statement can slow performance, 50 is a good default for this.
-        /// </summary>
-        [ConfigurationProperty("batchInsertSize", IsRequired = false, DefaultValue = 50)]
-        public int BatchInsertSize {
+        [ConfigurationProperty("outputBatchSize", IsRequired = false, DefaultValue = 1000)]
+        public int OutputBatchSize {
             get {
-                return (int)this["batchInsertSize"];
+                return (int)this["outputBatchSize"];
             }
-            set { this["batchInsertSize"] = value; }
+            set { this["outputBatchSize"] = value; }
         }
 
-        [ConfigurationProperty("bulkInsertSize", IsRequired = false, DefaultValue = 100)]
-        public int BulkInsertSize {
+        [ConfigurationProperty("inputBatchSize", IsRequired = false, DefaultValue = 500)]
+        public int InputBatchSize {
             get {
-                return (int)this["bulkInsertSize"];
+                return (int)this["inputBatchSize"];
             }
-            set { this["bulkInsertSize"] = value; }
-        }
-
-        [ConfigurationProperty("batchUpdateSize", IsRequired = false, DefaultValue = 100)]
-        public int BatchUpdateSize {
-            get {
-                return (int)this["batchUpdateSize"];
-            }
-            set { this["batchUpdateSize"] = value; }
-        }
-
-        /// <summary>
-        /// When pulling data from a source in key batches (to reduce blocking), 250 is the default, but you can mess around with this.  Keep it in multiples of the batchInsertSize though.
-        /// </summary>
-        [ConfigurationProperty("batchSelectSize", IsRequired = false, DefaultValue = 250)]
-        public int BatchSelectSize {
-            get {
-                return (int)this["batchSelectSize"];
-            }
-            set { this["batchSelectSize"] = value; }
+            set { this["inputBatchSize"] = value; }
         }
 
     }

@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using System.Configuration;
 using Transformalize.Configuration;
 using Transformalize.Model;
-using Transformalize.Operations;
+using Transformalize.Repositories;
 using Transformalize.Transforms;
+using System.Linq;
 
 namespace Transformalize.Readers {
 
@@ -29,10 +30,8 @@ namespace Transformalize.Readers {
                     ConnectionString = element.Value,
                     Provider = element.Provider,
                     Year = element.Year,
-                    BatchInsertSize = element.BatchInsertSize,
-                    BulkInsertSize = element.BulkInsertSize,
-                    BatchUpdateSize = element.BatchUpdateSize,
-                    BatchSelectSize = element.BatchSelectSize,
+                    OutputBatchSize = element.OutputBatchSize,
+                    InputBatchSize = element.InputBatchSize,
                 };
                 process.Connections.Add(element.Name, connection);
                 if (element.Name.Equals("output", StringComparison.OrdinalIgnoreCase)) {
@@ -161,6 +160,15 @@ namespace Transformalize.Readers {
                         break;
                     case "trim":
                         result.Add(new TrimTransform(t.TrimChars));
+                        break;
+                    case "substring":
+                        result.Add(new SubstringTransform(t.StartIndex, t.Length));
+                        break;
+                    case "left":
+                        result.Add(new LeftTransform(t.Length));
+                        break;
+                    case "right":
+                        result.Add(new RightTransform(t.Length));
                         break;
 
                 }
