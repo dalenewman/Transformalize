@@ -11,12 +11,11 @@ namespace Transformalize {
                 var i = 0;
 
                 if (trimChars.Length == 1) {
-                    while (sb[i] == trimChars[0] && i < length) {
+                    while (i < length && sb[i] == trimChars[0]) {
                         i++;
                     }
-                }
-                else {
-                    while (trimChars.Any(c => c.Equals(sb[i])) && i < length) {
+                } else {
+                    while (i < length && trimChars.Any(c => c.Equals(sb[i]))) {
                         i++;
                     }
                 }
@@ -34,12 +33,11 @@ namespace Transformalize {
                 var i = length - 1;
 
                 if (trimChars.Length == 1) {
-                    while (sb[i] == trimChars[0] && i > -1) {
+                    while (i > -1 && sb[i] == trimChars[0]) {
                         i--;
                     }
-                }
-                else {
-                    while (trimChars.Any(c => c.Equals(sb[i])) && i > -1) {
+                } else {
+                    while (i > -1 && trimChars.Any(c => c.Equals(sb[i]))) {
                         i--;
                     }
                 }

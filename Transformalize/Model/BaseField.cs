@@ -29,10 +29,6 @@ namespace Transformalize.Model {
         public StringBuilder StringBuilder { get; set; }
         public ITransform[] Transforms { get; set; }
 
-        protected BaseField() {
-            StringBuilder = new StringBuilder(Length);
-        }
-
         public string Type {
             get { return _type; }
             set {

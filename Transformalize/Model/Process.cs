@@ -16,6 +16,9 @@ namespace Transformalize.Model {
         public Dictionary<string, Entity> Entities = new Dictionary<string, Entity>();
         public List<Join> Joins = new List<Join>();
         public Dictionary<string, HashSet<object>> KeyRegister = new Dictionary<string, HashSet<object>>();
+        public Dictionary<string, Dictionary<string, object>> MapEquals = new Dictionary<string, Dictionary<string, object>>();
+        public Dictionary<string, Dictionary<string, object>> MapStartsWith = new Dictionary<string, Dictionary<string, object>>();
+        public Dictionary<string, Dictionary<string, object>> MapEndsWith = new Dictionary<string, Dictionary<string, object>>();
 
         public Dictionary<string, IField> Fields {
             get {

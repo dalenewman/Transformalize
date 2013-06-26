@@ -17,7 +17,7 @@ namespace Transformalize.Run {
                 new OutputRepository(process).InitializeOutput();
             }
 
-            if (new ConnectionChecker(process.Connections.Select(kv => kv.Value.ConnectionString)).Check()) {
+            if (new ConnectionChecker(process.Connections.Select(kv => kv.Value.ConnectionString), process.Name).Check()) {
                 while (process.Entities.Any(kv => !kv.Value.Processed)) {
                     using (var etlProcess = new EntityProcess(process)) {
                         etlProcess.Execute();

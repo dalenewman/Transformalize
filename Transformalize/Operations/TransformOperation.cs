@@ -16,18 +16,17 @@ namespace Transformalize.Operations {
             var fields = new FieldSqlWriter(_entity.All).ExpandXml().Input().HasDefaultOrTransform().Context();
             foreach (var row in rows) {
                 foreach (var fieldKey in fields.Keys) {
-
                     if (row[fieldKey] == null) continue;
-                    
-                    var field = fields[fieldKey];
 
+                    var field = fields[fieldKey];
                     if (field.Transforms == null) continue;
 
                     field.StringBuilder.Clear();
                     field.StringBuilder.Append(row[fieldKey]);
-                    foreach (var transform in field.Transforms) {
-                        transform.Transform(field.StringBuilder);
+                    foreach (var transformer in field.Transforms) {
+                        transformer.Transform(field.StringBuilder);
                     }
+
                     row[fieldKey] = field.StringBuilder.ToString();
                 }
                 yield return row;

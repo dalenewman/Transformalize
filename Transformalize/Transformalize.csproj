@@ -68,6 +68,9 @@
     <Compile Include="Rhino.Etl\Core\Operations\SerialUnionAllOperation.cs" />
     <Compile Include="StringBuilderExtensions.cs" />
     <Compile Include="Operations\TransformOperation.cs" />
+    <Compile Include="Transforms\LeftTransform.cs" />
+    <Compile Include="Transforms\MapTransform.cs" />
+    <Compile Include="Transforms\RightTransform.cs" />
     <Compile Include="Transforms\SubstringTransform.cs" />
     <Compile Include="Transforms\TrimTransform.cs" />
     <Compile Include="Transforms\TrimEndTransform.cs" />

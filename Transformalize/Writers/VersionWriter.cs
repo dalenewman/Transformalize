@@ -31,7 +31,7 @@ namespace Transformalize.Writers {
                 command.ExecuteNonQuery();
             }
 
-            Info("{0} | Closing Entity: {1} ({2})", _entity.ProcessName, end, field);
+            Info("{0} | Closing {1} (using {2}).", _entity.ProcessName, _entity.Name, field);
         }
     }
 }

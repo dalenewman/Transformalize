@@ -20,7 +20,7 @@ namespace Transformalize {
         }
 
         protected override void Initialize() {
-            
+
             var firstKey = _entity.FirstKey();
             if (_entity.PrimaryKey.Count == 1 && _process.HasRegisteredKey(firstKey)) {
                 Register(
@@ -64,4 +64,19 @@ namespace Transformalize {
 
     }
 
+    public class JoinKeys : JoinOperation {
+        private readonly string[] _keys;
+
+        public JoinKeys(string[] keys) {
+            _keys = keys;
+        }
+
+        protected override Row MergeRows(Row leftRow, Row rightRow) {
+            return leftRow.Clone();
+        }
+
+        protected override void SetupJoinConditions() {
+            InnerJoin.Left(_keys).Right(_keys);
+        }
+    }
 }

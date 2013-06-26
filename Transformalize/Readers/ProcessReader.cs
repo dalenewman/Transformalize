@@ -4,14 +4,14 @@ using System.Collections.Generic;
 using System.Configuration;
 using Transformalize.Configuration;
 using Transformalize.Model;
-using Transformalize.Repositories;
 using Transformalize.Transforms;
-using System.Linq;
+using System.Text;
 
 namespace Transformalize.Readers {
 
     public class ProcessReader : IProcessReader {
         private readonly string _name;
+        private Process _process;
 
         public ProcessReader(string name) {
             _name = name;
@@ -23,8 +23,9 @@ namespace Transformalize.Readers {
             var config = configCollection.Processes.Get(_name);
             var entityCount = 0;
 
-            var process = new Process { Name = config.Name, Output = config.Output, Time = config.Time };
+            _process = new Process { Name = config.Name, Output = config.Output, Time = config.Time };
 
+            //shared connections
             foreach (ConnectionConfigurationElement element in config.Connections) {
                 var connection = new Connection {
                     ConnectionString = element.Value,
@@ -33,112 +34,138 @@ namespace Transformalize.Readers {
                     OutputBatchSize = element.OutputBatchSize,
                     InputBatchSize = element.InputBatchSize,
                 };
-                process.Connections.Add(element.Name, connection);
+                _process.Connections.Add(element.Name, connection);
                 if (element.Name.Equals("output", StringComparison.OrdinalIgnoreCase)) {
-                    process.OutputConnection = connection;
+                    _process.OutputConnection = connection;
                 }
             }
 
-            foreach (EntityConfigurationElement entityElement in config.Entities) {
+            //shared maps
+            foreach (MapConfigurationElement m in config.Maps) {
+
+                _process.MapStartsWith[m.Name] = new Dictionary<string, object>();
+                _process.MapEndsWith[m.Name] = new Dictionary<string, object>();
+                _process.MapEquals[m.Name] = new Dictionary<string, object>();
+
+                foreach (ItemConfigurationElement i in m.Items) {
+
+                    switch (i.Operator.ToLower()) {
+                        case "startswith":
+                            _process.MapStartsWith[m.Name][i.From] = i.To;
+                            break;
+                        case "endswith":
+                            _process.MapEndsWith[m.Name][i.From] = i.To;
+                            break;
+                        default:
+                            _process.MapEquals[m.Name][i.From] = i.To;
+                            break;
+                    }
+                }
+            }
+
+            foreach (EntityConfigurationElement e in config.Entities) {
                 entityCount++;
                 var entity = new Entity {
-                    ProcessName = process.Name,
-                    Schema = entityElement.Schema,
-                    Name = entityElement.Name,
-                    InputConnection = process.Connections[entityElement.Connection],
-                    OutputConnection = process.OutputConnection,
-                    Output = process.Output
+                    ProcessName = _process.Name,
+                    Schema = e.Schema,
+                    Name = e.Name,
+                    InputConnection = _process.Connections[e.Connection],
+                    OutputConnection = _process.OutputConnection,
+                    Output = _process.Output
                 };
 
-                foreach (FieldConfigurationElement fieldElement in entityElement.PrimaryKey) {
+                foreach (FieldConfigurationElement pk in e.PrimaryKey) {
                     var keyField = new Field {
                         Entity = entity.Name,
                         Schema = entity.Schema,
-                        Name = fieldElement.Name,
-                        Type = fieldElement.Type,
-                        Alias = fieldElement.Alias,
-                        Length = fieldElement.Length,
-                        Precision = fieldElement.Precision,
-                        Scale = fieldElement.Scale,
-                        Output = fieldElement.Output,
-                        Input = fieldElement.Input,
+                        Name = pk.Name,
+                        Type = pk.Type,
+                        Alias = pk.Alias,
+                        Length = pk.Length,
+                        Precision = pk.Precision,
+                        Scale = pk.Scale,
+                        Output = pk.Output,
+                        Input = pk.Input,
                         FieldType = entityCount == 1 ? FieldType.MasterKey : FieldType.PrimaryKey,
-                        Default = fieldElement.Default,
-                        Transforms = GetTransforms(fieldElement.Transforms)
+                        Default = pk.Default,
+                        StringBuilder = new StringBuilder(pk.Length, 4000),
+                        Transforms = GetTransforms(pk.Transforms)
                     };
 
-                    entity.PrimaryKey.Add(fieldElement.Alias, keyField);
-                    entity.All.Add(fieldElement.Alias, keyField);
+                    entity.PrimaryKey.Add(pk.Alias, keyField);
+                    entity.All.Add(pk.Alias, keyField);
 
-                    if (entityElement.Version.Equals(fieldElement.Name)) {
+                    if (e.Version.Equals(pk.Name)) {
                         entity.Version = keyField;
                     }
                 }
 
-                foreach (FieldConfigurationElement fieldElement in entityElement.Fields) {
+                foreach (FieldConfigurationElement f in e.Fields) {
                     var field = new Field {
                         Entity = entity.Name,
                         Schema = entity.Schema,
-                        Name = fieldElement.Name,
-                        Type = fieldElement.Type,
-                        Alias = fieldElement.Alias,
-                        Length = fieldElement.Length,
-                        Precision = fieldElement.Precision,
-                        Scale = fieldElement.Scale,
-                        Output = fieldElement.Output,
-                        Input = fieldElement.Input,
+                        Name = f.Name,
+                        Type = f.Type,
+                        Alias = f.Alias,
+                        Length = f.Length,
+                        Precision = f.Precision,
+                        Scale = f.Scale,
+                        Output = f.Output,
+                        Input = f.Input,
                         FieldType = FieldType.Field,
-                        Default = fieldElement.Default,
-                        Transforms = GetTransforms(fieldElement.Transforms)
+                        Default = f.Default,
+                        StringBuilder = new StringBuilder(f.Length, 4000),
+                        Transforms = GetTransforms(f.Transforms)
                     };
 
-                    foreach (XmlConfigurationElement xmlElement in fieldElement.Xml) {
-                        field.InnerXml.Add(xmlElement.Alias, new Xml {
+                    foreach (XmlConfigurationElement x in f.Xml) {
+                        field.InnerXml.Add(x.Alias, new Xml {
                             Entity = entity.Name,
                             Schema = entity.Schema,
-                            Parent = fieldElement.Name,
-                            XPath = fieldElement.Xml.XPath + xmlElement.XPath,
-                            Name = xmlElement.XPath,
-                            Alias = xmlElement.Alias,
-                            Index = xmlElement.Index,
-                            Type = xmlElement.Type,
-                            Length = xmlElement.Length,
-                            Precision = xmlElement.Precision,
-                            Scale = xmlElement.Scale,
-                            Output = xmlElement.Output,
+                            Parent = f.Name,
+                            XPath = f.Xml.XPath + x.XPath,
+                            Name = x.XPath,
+                            Alias = x.Alias,
+                            Index = x.Index,
+                            Type = x.Type,
+                            Length = x.Length,
+                            Precision = x.Precision,
+                            Scale = x.Scale,
+                            Output = x.Output,
                             Input = true,
-                            Default = xmlElement.Default,
+                            Default = x.Default,
                             FieldType = FieldType.Xml,
-                            Transforms = GetTransforms(xmlElement.Transforms)
+                            StringBuilder = new StringBuilder(x.Length, 4000),
+                            Transforms = GetTransforms(x.Transforms)
                         });
 
                     }
 
-                    entity.Fields.Add(fieldElement.Alias, field);
-                    entity.All.Add(fieldElement.Alias, field);
+                    entity.Fields.Add(f.Alias, field);
+                    entity.All.Add(f.Alias, field);
 
-                    if (entityElement.Version.Equals(fieldElement.Name)) {
+                    if (e.Version.Equals(f.Name)) {
                         entity.Version = field;
                     }
                 }
 
-                process.Entities.Add(entityElement.Name, entity);
+                _process.Entities.Add(e.Name, entity);
             }
 
             foreach (JoinConfigurationElement joinElement in config.Joins) {
                 var join = new Join();
-                join.LeftEntity = process.Entities[joinElement.LeftEntity];
+                join.LeftEntity = _process.Entities[joinElement.LeftEntity];
                 join.LeftField = join.LeftEntity.All[joinElement.LeftField];
                 join.LeftField.FieldType = FieldType.ForeignKey;
-                join.RightEntity = process.Entities[joinElement.RightEntity];
+                join.RightEntity = _process.Entities[joinElement.RightEntity];
                 join.RightField = join.RightEntity.All[joinElement.RightField];
-                process.Joins.Add(join);
+                _process.Joins.Add(join);
             }
 
-            return process;
+            return _process;
         }
 
-        private static ITransform[] GetTransforms(IEnumerable transforms) {
+        private ITransform[] GetTransforms(IEnumerable transforms) {
             var result = new List<ITransform>();
 
             foreach (TransformConfigurationElement t in transforms) {
@@ -170,7 +197,12 @@ namespace Transformalize.Readers {
                     case "right":
                         result.Add(new RightTransform(t.Length));
                         break;
-
+                    case "map":
+                        var equals = _process.MapEquals[t.Map];
+                        var startsWith = _process.MapStartsWith[t.Map];
+                        var endsWith = _process.MapEndsWith[t.Map];
+                        result.Add(new MapTransform(new[] { @equals, startsWith, endsWith }));
+                        break;
                 }
             }
 

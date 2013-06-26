@@ -1,10 +1,15 @@
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
+using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using Transformalize.Model;
 
 namespace Transformalize.Readers {
     public class VersionReader : IVersionReader {
-
+        private object _end;
+        private object _begin;
         private readonly Entity _entity;
         public bool HasRows { get; private set; }
         public bool IsRange { get; private set; }
@@ -49,7 +54,8 @@ namespace Transformalize.Readers {
                 if (!IsRange)
                     return null;
                 reader.Read();
-                return reader.GetValue(0);
+                _begin = reader.GetValue(0);
+                return _begin;
             }
         }
 
@@ -59,8 +65,30 @@ namespace Transformalize.Readers {
                 if (!HasRows)
                     return null;
                 reader.Read();
-                return reader.GetValue(0);
+                _end = reader.GetValue(0);
+                return _end;
             }
+        }
+
+        private IEnumerable<byte> ObjectToByteArray(object obj) {
+            if (obj == null)
+                return null;
+            var formatter = new BinaryFormatter();
+            var memory = new MemoryStream();
+            formatter.Serialize(memory, obj);
+            return memory.ToArray();
+        }
+
+        public bool BeginAndEndAreEqual() {
+            if (IsRange) {
+                if (_entity.Version.SimpleType.Equals("byte[]")) {
+                    var beginBytes = ObjectToByteArray(_begin);
+                    var endBytes = ObjectToByteArray(_end);
+                    return beginBytes.SequenceEqual(endBytes);
+                }
+                return _begin.Equals(_end);
+            }
+            return false;
         }
     }
 }

@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
 using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
 using Transformalize.Rhino.Etl.Core.Operations;
@@ -23,8 +22,9 @@ namespace Transformalize.Operations {
                             _entity.EntitySqlWriter.UpsertSql(group):
                             _entity.EntitySqlWriter.UpdateSql(group),
                         cn
-                    );
+                    ) {CommandTimeout = 0};
                     _entity.RecordsAffected += cmd.ExecuteNonQuery();
+                    Info("{0} | Processed {1} rows in {2}", _entity.ProcessName, _entity.RecordsAffected, Name);
                 }
                 yield break;
             }

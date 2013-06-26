@@ -1,5 +1,8 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.IO;
+using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using Transformalize.Model;
 using Transformalize.Readers;
 using Transformalize.Rhino.Etl.Core;
@@ -21,7 +24,15 @@ namespace Transformalize.Operations {
             _entity.End = versionReader.GetEndVersion();
 
             if (!versionReader.HasRows) {
-                Warn("The entity is empty!");
+                Info("{0} | No data detected in {1}.", _entity.ProcessName, _entity.Name);
+                yield break;
+            }
+
+            if (versionReader.IsRange) {
+                if (versionReader.BeginAndEndAreEqual()) {
+                    Info("{0} | No changes detected in {1}.", _entity.ProcessName, _entity.Name);
+                    yield break;
+                }
             }
 
             using (var cn = new SqlConnection(_entity.InputConnection.ConnectionString)) {

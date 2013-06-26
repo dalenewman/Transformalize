@@ -69,6 +69,13 @@ namespace Transformalize.Configuration
             set { this["length"] = value; }
         }
 
+        [ConfigurationProperty("map", IsRequired = false)]
+        public string Map {
+            get {
+                return this["map"] as string;
+            }
+            set { this["map"] = value; }
+        }
 
     }
 }
