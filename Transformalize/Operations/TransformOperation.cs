@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
 using Transformalize.Rhino.Etl.Core.Operations;
@@ -15,19 +14,27 @@ namespace Transformalize.Operations {
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             var fields = new FieldSqlWriter(_entity.All).ExpandXml().Input().HasDefaultOrTransform().Context();
             foreach (var row in rows) {
-                foreach (var fieldKey in fields.Keys) {
-                    if (row[fieldKey] == null) continue;
-
-                    var field = fields[fieldKey];
-                    if (field.Transforms == null) continue;
-
-                    field.StringBuilder.Clear();
-                    field.StringBuilder.Append(row[fieldKey]);
-                    foreach (var transformer in field.Transforms) {
-                        transformer.Transform(field.StringBuilder);
+                foreach (var key in fields.Keys) {
+                    var field = fields[key];
+                    if (row[key] == null) {
+                        row[key] = field.Default;
+                        continue;
                     }
 
-                    row[fieldKey] = field.StringBuilder.ToString();
+                    if (field.Transforms == null) continue;
+
+                    if (field.UseStringBuilder) {
+                        field.StringBuilder.Clear();
+                        field.StringBuilder.Append(row[key]);
+                        foreach (var transformer in field.Transforms) {
+                            transformer.Transform(field.StringBuilder);
+                        }
+                        row[key] = field.StringBuilder.ToString();
+                    } else {
+                        foreach (var transformer in field.Transforms) {
+                            row[key] = transformer.Transform(row[key]);
+                        }
+                    }
                 }
                 yield return row;
             }

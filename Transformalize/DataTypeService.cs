@@ -23,11 +23,10 @@ namespace Transformalize {
         };
 
         public static string GetSqlDbType(BaseField field) {
-            var type = field.Type.ToLower().Replace("system.", string.Empty).ToLower();
-            var length = type == "string" || type == "char"  || type == "byte[]" ? string.Concat("(", field.Length, ")") : string.Empty;
-            var dimensions = type == "decimal" ? string.Format("({0},{1})", field.Precision, field.Scale) : string.Empty;
+            var length = field.SimpleType == "string" || field.SimpleType == "char" || field.SimpleType == "byte[]" ? string.Concat("(", field.Length, ")") : string.Empty;
+            var dimensions = field.SimpleType == "decimal" ? string.Format("({0},{1})", field.Precision, field.Scale) : string.Empty;
             var surrogate = field.Clustered ? " NOT NULL IDENTITY(1,1) UNIQUE CLUSTERED" : string.Empty;
-            return string.Concat(Types[type], length, dimensions, surrogate);
+            return string.Concat(Types[field.SimpleType], length, dimensions, surrogate);
         }
     }
 }

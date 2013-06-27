@@ -10,7 +10,7 @@ namespace Transformalize.Test.Integration {
         [Test]
         public void RunInitAndProcess() {
 
-            var process = new ProcessReader("DslPj").GetProcess();
+            var process = new ProcessReader("Test").GetProcess();
 
             new EntityTrackerRepository(process).InitializeEntityTracker();
             new OutputRepository(process).InitializeOutput();

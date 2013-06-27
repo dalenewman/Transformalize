@@ -14,7 +14,8 @@ namespace Transformalize {
                     while (i < length && sb[i] == trimChars[0]) {
                         i++;
                     }
-                } else {
+                }
+                else {
                     while (i < length && trimChars.Any(c => c.Equals(sb[i]))) {
                         i++;
                     }
@@ -36,7 +37,8 @@ namespace Transformalize {
                     while (i > -1 && sb[i] == trimChars[0]) {
                         i--;
                     }
-                } else {
+                }
+                else {
                     while (i > -1 && trimChars.Any(c => c.Equals(sb[i]))) {
                         i--;
                     }
@@ -76,6 +78,50 @@ namespace Transformalize {
             return sb.Substring(sb.Length - length, length);
         }
 
+        public static bool IsEqualTo(this StringBuilder sb, string value) {
+            var valLen = value.Length;
+            if (sb.Length == valLen) {
+                for (var i = 0; i < valLen; i++) {
+                    if (!sb[i].Equals(value[i])) {
+                        break;
+                    }
+                    if (i == valLen - 1) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
 
+        public static bool StartsWith(this StringBuilder sb, string value) {
+            var valLen = value.Length;
+            if (valLen < sb.Length) {
+                for (var i = 0; i < valLen; i++) {
+                    if (!sb[i].Equals(value[i])) {
+                        break;
+                    }
+                    if (i == valLen - 1) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public static bool EndsWith(this StringBuilder sb, string value) {
+            var sbLen = sb.Length;
+            var valLen = value.Length;
+            if (valLen < sbLen) {
+                for (var i = 0; i < valLen; i++) {
+                    if (!value[i].Equals(sb[sbLen - valLen + i])) {
+                        break;
+                    }
+                    if (i == valLen - 1) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
     }
 }

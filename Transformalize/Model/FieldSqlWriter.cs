@@ -313,7 +313,7 @@ namespace Transformalize.Model {
                 //new Field() {Alias = ROW_VERSION_KEY, Type = "System.RowVersion", Output = true},
                 //new Field() {Alias = TIME_KEY_KEY, Type = "System.Int32", Output = true},
                 //new Field() {Alias = LOAD_DATE_KEY, Type = "System.DateTime", Output = true}
-                new Field() { Alias = SURROGATE_KEY, Type="System.Int32", Output = true, Clustered = true}
+                new Field("System.Int32", Model.FieldType.Field, true) { Alias = SURROGATE_KEY, Clustered = true}
             };
 
             foreach (var field in fields) {

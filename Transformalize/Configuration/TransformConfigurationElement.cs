@@ -77,5 +77,13 @@ namespace Transformalize.Configuration
             set { this["map"] = value; }
         }
 
+
+        [ConfigurationProperty("script", IsRequired = false)]
+        public string Script {
+            get {
+                return this["script"] as string;
+            }
+            set { this["script"] = value; }
+        }
     }
 }

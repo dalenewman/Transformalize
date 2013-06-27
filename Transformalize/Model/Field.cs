@@ -13,9 +13,15 @@ namespace Transformalize.Model {
         public int Index { get { return 1; } }
         public Dictionary<string, Xml> InnerXml { get; set; }
 
-        public Field() {
+        public Field(string typeName, FieldType fieldType, bool output)
+            : base(typeName, fieldType, output) {
             InnerXml = new Dictionary<string, Xml>();
-            FieldType = FieldType.Field;
+        }
+
+        // defaults to string field output
+        public Field()
+            : base("System.String", FieldType.Field, true) {
+            InnerXml = new Dictionary<string, Xml>();
         }
 
         public string AsJoin(string left, string right) {

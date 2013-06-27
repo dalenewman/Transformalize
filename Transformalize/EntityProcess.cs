@@ -45,6 +45,9 @@ namespace Transformalize {
         }
 
         protected override void PostProcessing() {
+
+            _entity.Dispose();
+
             var errors = GetAllErrors().ToArray();
             if (errors.Any()) {
                 foreach (var error in errors) {
@@ -57,26 +60,11 @@ namespace Transformalize {
             new VersionWriter(_entity).WriteEndVersion(_entity.End, _entity.RecordsAffected);
             foreach (var key in _process.KeyRegister.Keys) {
                 var set = _process.KeyRegister[key];
-                Info("{0} | {1} {2}(s) saved.", _entity.ProcessName, set.Count, key);
+                Debug("{0} | {1} {2}(s) saved.", _entity.ProcessName, set.Count, key);
             }
             base.PostProcessing();
         }
 
     }
 
-    public class JoinKeys : JoinOperation {
-        private readonly string[] _keys;
-
-        public JoinKeys(string[] keys) {
-            _keys = keys;
-        }
-
-        protected override Row MergeRows(Row leftRow, Row rightRow) {
-            return leftRow.Clone();
-        }
-
-        protected override void SetupJoinConditions() {
-            InnerJoin.Left(_keys).Right(_keys);
-        }
-    }
 }

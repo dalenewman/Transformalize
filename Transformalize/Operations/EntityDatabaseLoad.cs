@@ -24,7 +24,7 @@ namespace Transformalize.Operations {
                         cn
                     ) {CommandTimeout = 0};
                     _entity.RecordsAffected += cmd.ExecuteNonQuery();
-                    Info("{0} | Processed {1} rows in {2}", _entity.ProcessName, _entity.RecordsAffected, Name);
+                    Info("{0} | Processed {1} rows in {2} ({3})", _entity.ProcessName, _entity.RecordsAffected, Name, _entity.Name );
                 }
                 yield break;
             }

@@ -1,8 +1,8 @@
+using System;
 using System.Text;
 
-namespace Transformalize.Transforms
-{
-    public class LeftTransform : ITransform {
+namespace Transformalize.Transforms {
+    public class LeftTransform : ITransform, IDisposable {
         private readonly int _length;
 
         public LeftTransform(int length) {
@@ -12,5 +12,11 @@ namespace Transformalize.Transforms
         public void Transform(StringBuilder sb) {
             sb.Left(_length);
         }
+
+        public object Transform(object value) {
+            return value.ToString().Left(_length);
+        }
+
+        public void Dispose(){}
     }
 }

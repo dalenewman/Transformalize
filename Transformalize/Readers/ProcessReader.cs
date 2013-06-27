@@ -4,12 +4,14 @@ using System.Collections.Generic;
 using System.Configuration;
 using Transformalize.Configuration;
 using Transformalize.Model;
+using Transformalize.Rhino.Etl.Core;
 using Transformalize.Transforms;
 using System.Text;
+using System.Linq;
 
 namespace Transformalize.Readers {
 
-    public class ProcessReader : IProcessReader {
+    public class ProcessReader : WithLoggingMixin, IProcessReader {
         private readonly string _name;
         private Process _process;
 
@@ -42,25 +44,9 @@ namespace Transformalize.Readers {
 
             //shared maps
             foreach (MapConfigurationElement m in config.Maps) {
-
-                _process.MapStartsWith[m.Name] = new Dictionary<string, object>();
-                _process.MapEndsWith[m.Name] = new Dictionary<string, object>();
-                _process.MapEquals[m.Name] = new Dictionary<string, object>();
-
-                foreach (ItemConfigurationElement i in m.Items) {
-
-                    switch (i.Operator.ToLower()) {
-                        case "startswith":
-                            _process.MapStartsWith[m.Name][i.From] = i.To;
-                            break;
-                        case "endswith":
-                            _process.MapEndsWith[m.Name][i.From] = i.To;
-                            break;
-                        default:
-                            _process.MapEquals[m.Name][i.From] = i.To;
-                            break;
-                    }
-                }
+                _process.MapEquals[m.Name] = GetMapItems(m.Items, "equals");
+                _process.MapStartsWith[m.Name] = GetMapItems(m.Items, "startswith");
+                _process.MapEndsWith[m.Name] = GetMapItems(m.Items, "endswith");
             }
 
             foreach (EntityConfigurationElement e in config.Entities) {
@@ -75,18 +61,16 @@ namespace Transformalize.Readers {
                 };
 
                 foreach (FieldConfigurationElement pk in e.PrimaryKey) {
-                    var keyField = new Field {
+                    var fieldType = entityCount == 1 ? FieldType.MasterKey : FieldType.PrimaryKey;
+                    var keyField = new Field(pk.Type, fieldType, pk.Output) {
                         Entity = entity.Name,
                         Schema = entity.Schema,
                         Name = pk.Name,
-                        Type = pk.Type,
                         Alias = pk.Alias,
                         Length = pk.Length,
                         Precision = pk.Precision,
                         Scale = pk.Scale,
-                        Output = pk.Output,
                         Input = pk.Input,
-                        FieldType = entityCount == 1 ? FieldType.MasterKey : FieldType.PrimaryKey,
                         Default = pk.Default,
                         StringBuilder = new StringBuilder(pk.Length, 4000),
                         Transforms = GetTransforms(pk.Transforms)
@@ -101,25 +85,22 @@ namespace Transformalize.Readers {
                 }
 
                 foreach (FieldConfigurationElement f in e.Fields) {
-                    var field = new Field {
+                    var field = new Field(f.Type, FieldType.Field, f.Output) {
                         Entity = entity.Name,
                         Schema = entity.Schema,
                         Name = f.Name,
-                        Type = f.Type,
                         Alias = f.Alias,
                         Length = f.Length,
                         Precision = f.Precision,
                         Scale = f.Scale,
-                        Output = f.Output,
                         Input = f.Input,
-                        FieldType = FieldType.Field,
                         Default = f.Default,
                         StringBuilder = new StringBuilder(f.Length, 4000),
                         Transforms = GetTransforms(f.Transforms)
                     };
 
                     foreach (XmlConfigurationElement x in f.Xml) {
-                        field.InnerXml.Add(x.Alias, new Xml {
+                        field.InnerXml.Add(x.Alias, new Xml(x.Type, x.Output) {
                             Entity = entity.Name,
                             Schema = entity.Schema,
                             Parent = f.Name,
@@ -127,14 +108,11 @@ namespace Transformalize.Readers {
                             Name = x.XPath,
                             Alias = x.Alias,
                             Index = x.Index,
-                            Type = x.Type,
                             Length = x.Length,
                             Precision = x.Precision,
                             Scale = x.Scale,
-                            Output = x.Output,
                             Input = true,
                             Default = x.Default,
-                            FieldType = FieldType.Xml,
                             StringBuilder = new StringBuilder(x.Length, 4000),
                             Transforms = GetTransforms(x.Transforms)
                         });
@@ -162,7 +140,16 @@ namespace Transformalize.Readers {
                 _process.Joins.Add(join);
             }
 
+            Info("{0} | Process Loaded.", _process.Name);
             return _process;
+        }
+
+        private Dictionary<string, object> GetMapItems(ItemElementCollection items, string @operator) {
+            var mapItems = new Dictionary<string, object>();
+            foreach (var i in items.Cast<ItemConfigurationElement>().Where(i => i.Operator.Equals(@operator, StringComparison.OrdinalIgnoreCase))) {
+                mapItems[i.From] = i.To;
+            }
+            return mapItems;
         }
 
         private ITransform[] GetTransforms(IEnumerable transforms) {
@@ -202,6 +189,9 @@ namespace Transformalize.Readers {
                         var startsWith = _process.MapStartsWith[t.Map];
                         var endsWith = _process.MapEndsWith[t.Map];
                         result.Add(new MapTransform(new[] { @equals, startsWith, endsWith }));
+                        break;
+                    case "javascript":
+                        result.Add(new JavascriptTransform(t.Script));
                         break;
                 }
             }

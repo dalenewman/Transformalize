@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using NLog;
 using Transformalize.Readers;
 using Transformalize.Repositories;
 
@@ -7,8 +8,12 @@ namespace Transformalize.Run {
     class Program {
         static void Main(string[] args) {
 
+            var logger = LogManager.GetLogger("Transformalize.Run");
             var name = args[0];
             var mode = args[1] ?? "delta";
+
+            var watch = new System.Diagnostics.Stopwatch();
+            watch.Start();
 
             var process = new ProcessReader(name).GetProcess();
 
@@ -24,6 +29,9 @@ namespace Transformalize.Run {
                     }
                 }
             }
+
+            watch.Stop();
+            logger.Info("{0} | Process completed in {1}.", process.Name, watch.Elapsed);
 
         }
     }

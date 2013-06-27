@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Noesis.Javascript</id>
+    <version>0.7.1.0</version>
+    <title>Noesis.Javascript</title>
+    <authors>Javascript .Net</authors>
+    <owners>Javascript .Net</owners>
+    <licenseUrl>http://javascriptdotnet.codeplex.com/license</licenseUrl>
+    <projectUrl>http://javascriptdotnet.codeplex.com/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Javascript .NET integrates Google's V8 Javascript engine and exposes it to the CLI environment. Javascript .NET compiles (at runtime) and executes scripts directly from .NET code. It allows CLI objects to be exposed and manipulated directly from the executed Javascript.</description>
+    <summary>Run V8 Javascript engine from .NET</summary>
+    <releaseNotes />
+    <copyright />
+    <language />
+    <tags>javascript runtime v8 noesis</tags>
+    <references>
+      <reference file="Noesis.Javascript.dll" />
+    </references>
+  </metadata>
+</package>

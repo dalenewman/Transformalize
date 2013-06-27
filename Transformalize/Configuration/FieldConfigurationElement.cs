@@ -76,7 +76,7 @@ namespace Transformalize.Configuration
             set { this["output"] = value; }
         }
 
-        [ConfigurationProperty("default", IsRequired = false, DefaultValue = null)]
+        [ConfigurationProperty("default", IsRequired = false, DefaultValue = "")]
         public string Default {
             get {
                 return (string) this["default"];

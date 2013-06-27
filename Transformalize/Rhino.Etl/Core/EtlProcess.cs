@@ -2,7 +2,6 @@ using System.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using Transformalize.Rhino.Etl.Core.Infrastructure;
 using Transformalize.Rhino.Etl.Core.Operations;
 using Transformalize.Rhino.Etl.Core.Pipelines;

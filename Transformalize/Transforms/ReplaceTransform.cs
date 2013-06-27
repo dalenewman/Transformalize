@@ -1,8 +1,8 @@
+using System;
 using System.Text;
 
-namespace Transformalize.Transforms
-{
-    public class ReplaceTransform : ITransform {
+namespace Transformalize.Transforms {
+    public class ReplaceTransform : ITransform, IDisposable {
 
         private readonly string _oldValue;
         private readonly string _newValue;
@@ -15,5 +15,11 @@ namespace Transformalize.Transforms
         public void Transform(StringBuilder sb) {
             sb.Replace(_oldValue, _newValue);
         }
+
+        public object Transform(object value) {
+            return value.ToString().Replace(_oldValue, _newValue);
+        }
+
+        public void Dispose() { }
     }
 }

@@ -1,10 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Model {
 
-    public class Entity : WithLoggingMixin {
+    public class Entity : WithLoggingMixin, IDisposable {
 
         public string Schema { get; set; }
         public string ProcessName { get; set; }
@@ -38,6 +39,16 @@ namespace Transformalize.Model {
 
         public bool IsMaster() {
             return PrimaryKey.Any(kv => kv.Value.FieldType == FieldType.MasterKey);
+        }
+
+        public void Dispose() {
+            foreach (var key in All.Keys) {
+                var field = All[key];
+                if (field.Transforms == null) continue;
+                foreach (var t in field.Transforms) {
+                    t.Dispose();
+                }
+            }
         }
     }
 }

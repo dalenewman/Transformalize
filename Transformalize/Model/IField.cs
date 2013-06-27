@@ -29,5 +29,6 @@ namespace Transformalize.Model
         ITransform[] Transforms { get; set; }
         StringBuilder StringBuilder { get; set; }
         bool Clustered { get; }
+        bool UseStringBuilder { get; }
     }
 }
