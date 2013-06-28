@@ -20,8 +20,20 @@ namespace Transformalize.Test.Integration {
                     etlProcess.Execute();
                 }
             }
-
         }
+
+        [Test]
+        public void RunProcess() {
+
+            var process = new ProcessReader("Test").GetProcess();
+
+            while (process.Entities.Any(kv => !kv.Value.Processed)) {
+                using (var etlProcess = new EntityProcess(process)) {
+                    etlProcess.Execute();
+                }
+            }
+        }
+
 
     }
 }

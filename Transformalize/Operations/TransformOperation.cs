@@ -14,6 +14,7 @@ namespace Transformalize.Operations {
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             var fields = new FieldSqlWriter(_entity.All).ExpandXml().Input().HasDefaultOrTransform().Context();
             foreach (var row in rows) {
+                row["TflId"] = _entity.TflId;
                 foreach (var key in fields.Keys) {
                     var field = fields[key];
                     if (row[key] == null) {

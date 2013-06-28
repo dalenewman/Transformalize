@@ -15,7 +15,7 @@ namespace Transformalize.Model {
         public string Time;
         public Connection OutputConnection;
         public Dictionary<string, Entity> Entities = new Dictionary<string, Entity>();
-        public List<Join> Joins = new List<Join>();
+        public List<Relationship> Joins = new List<Relationship>();
         public Dictionary<string, HashSet<object>> KeyRegister = new Dictionary<string, HashSet<object>>();
         public Dictionary<string, Dictionary<string, object>> MapEquals = new Dictionary<string, Dictionary<string, object>>();
         public Dictionary<string, Dictionary<string, object>> MapStartsWith = new Dictionary<string, Dictionary<string, object>>();
@@ -48,7 +48,7 @@ namespace Transformalize.Model {
 
             var writer = new FieldSqlWriter(Fields);
             var primaryKey = writer.FieldType(FieldType.MasterKey).Alias().Asc().Values();
-            var defs = writer.Reload().ExpandXml().AddSystemFields().Output().Alias().DataType().AppendIf(" NOT NULL", FieldType.MasterKey).Values(flush: false);
+            var defs = writer.Reload().ExpandXml().AddSystemFields(true).Output().Alias().DataType().AppendIf(" NOT NULL", FieldType.MasterKey).Values(flush: false);
 
             return SqlTemplates.CreateTable(this.Output, defs, primaryKey, ignoreDups: true);
         }

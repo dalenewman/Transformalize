@@ -13,8 +13,7 @@ namespace Transformalize {
         private readonly Process _process;
         private readonly Entity _entity;
 
-        public EntityProcess(Process process)
-            : base(process.Name) {
+        public EntityProcess(Process process) : base(process.Name) {
             _process = process;
             _entity = _process.Entities.First(kv => !kv.Value.Processed).Value;
         }

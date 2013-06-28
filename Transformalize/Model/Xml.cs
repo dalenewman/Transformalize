@@ -14,7 +14,7 @@ namespace Transformalize.Model {
         public int Index { get; set; }
         public Dictionary<string, Xml> InnerXml { get { return new Dictionary<string, Xml>(); } }
         
-        public Xml(string typeName, bool output) : base(typeName, FieldType.Xml, output) {}
+        public Xml(string typeName, int length, bool output) : base(typeName, length, FieldType.Xml, output) {}
 
         public string AsJoin(string left, string right) {
             return "Never Join on XML! You Crazy???";

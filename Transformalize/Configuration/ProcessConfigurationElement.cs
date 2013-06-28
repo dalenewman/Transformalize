@@ -49,10 +49,10 @@ namespace Transformalize.Configuration {
             }
         }
 
-        [ConfigurationProperty("joins")]
-        public JoinElementCollection Joins {
+        [ConfigurationProperty("relationships")]
+        public RelationshipElementCollection Relationships {
             get {
-                return this["joins"] as JoinElementCollection;
+                return this["relationships"] as RelationshipElementCollection;
             }
         }
 

@@ -12,15 +12,14 @@ namespace Transformalize.Model {
         public string XPath { get { return string.Empty; } }
         public int Index { get { return 1; } }
         public Dictionary<string, Xml> InnerXml { get; set; }
-
-        public Field(string typeName, FieldType fieldType, bool output)
-            : base(typeName, fieldType, output) {
+        
+        public Field(string typeName, int length, FieldType fieldType, bool output)
+            : base(typeName, length, fieldType, output) {
             InnerXml = new Dictionary<string, Xml>();
         }
 
         // defaults to string field output
-        public Field()
-            : base("System.String", FieldType.Field, true) {
+        public Field() : base("System.String", 64, FieldType.Field, true) {
             InnerXml = new Dictionary<string, Xml>();
         }
 

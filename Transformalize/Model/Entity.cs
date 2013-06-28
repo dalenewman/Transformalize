@@ -17,18 +17,19 @@ namespace Transformalize.Model {
         public Dictionary<string, IField> Fields { get; set; }
         public Dictionary<string, IField> Xml { get; set; }
         public Dictionary<string, IField> All { get; set; }
-        public Dictionary<string, Join> Joins { get; set; }
+        public Dictionary<string, Relationship> Joins { get; set; }
         public EntitySqlWriter EntitySqlWriter { get; private set; }
         public string Output { get; set; }
         public bool Processed { get; set; }
         public int RecordsAffected { get; set; }
         public object End { get; set; }
+        public int TflId { get; set; }
 
         public Entity() {
             PrimaryKey = new Dictionary<string, IField>();
             Fields = new Dictionary<string, IField>();
             All = new Dictionary<string, IField>();
-            Joins = new Dictionary<string, Join>();
+            Joins = new Dictionary<string, Relationship>();
             EntitySqlWriter = new EntitySqlWriter(this);
             Processed = false;
         }

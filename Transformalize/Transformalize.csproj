@@ -61,8 +61,8 @@
     <Compile Include="Configuration\EntityElementCollection.cs" />
     <Compile Include="Configuration\FieldConfigurationElement.cs" />
     <Compile Include="Configuration\FieldElementCollection.cs" />
-    <Compile Include="Configuration\JoinConfigurationElement.cs" />
-    <Compile Include="Configuration\JoinElementCollection.cs" />
+    <Compile Include="Configuration\RelationshipConfigurationElement.cs" />
+    <Compile Include="Configuration\RelationshipElementCollection.cs" />
     <Compile Include="Configuration\ProcessConfigurationElement.cs" />
     <Compile Include="Configuration\ProcessElementCollection.cs" />
     <Compile Include="Configuration\TransformalizeConfiguration.cs" />
@@ -78,6 +78,8 @@
     <Compile Include="Transforms\JavascriptTransform.cs" />
     <Compile Include="Transforms\LeftTransform.cs" />
     <Compile Include="Transforms\MapTransform.cs" />
+    <Compile Include="Transforms\PadLeftTransform.cs" />
+    <Compile Include="Transforms\PadRightTransform.cs" />
     <Compile Include="Transforms\RightTransform.cs" />
     <Compile Include="Transforms\SubstringTransform.cs" />
     <Compile Include="Transforms\TrimTransform.cs" />
@@ -97,7 +99,7 @@
     <Compile Include="Model\FieldSqlWriter.cs" />
     <Compile Include="Model\FieldType.cs" />
     <Compile Include="Model\IField.cs" />
-    <Compile Include="Model\Join.cs" />
+    <Compile Include="Model\Relationship.cs" />
     <Compile Include="Model\Process.cs" />
     <Compile Include="Model\Xml.cs" />
     <Compile Include="Operations\EntityKeysToOperations.cs" />

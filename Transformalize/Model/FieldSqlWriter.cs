@@ -6,9 +6,7 @@ namespace Transformalize.Model {
 
     public class FieldSqlWriter {
 
-        const string ROW_VERSION_KEY = "RowVersion";
-        const string TIME_KEY_KEY = "TimeKey";
-        const string LOAD_DATE_KEY = "LoadDate";
+        private const string BATCH_ID = "TflId";
         private const string SURROGATE_KEY = "TflKey";
         private SortedDictionary<string, string> _output;
         private Dictionary<string, IField> _original;
@@ -308,13 +306,13 @@ namespace Transformalize.Model {
             return this;
         }
 
-        public FieldSqlWriter AddSystemFields() {
+        public FieldSqlWriter AddSystemFields(bool withIdentity = false) {
             var fields = new List<IField> {
-                //new Field() {Alias = ROW_VERSION_KEY, Type = "System.RowVersion", Output = true},
-                //new Field() {Alias = TIME_KEY_KEY, Type = "System.Int32", Output = true},
-                //new Field() {Alias = LOAD_DATE_KEY, Type = "System.DateTime", Output = true}
-                new Field("System.Int32", Model.FieldType.Field, true) { Alias = SURROGATE_KEY, Clustered = true}
+                new Field("System.Int32", 8, Model.FieldType.Field, true) {Alias = BATCH_ID, NotNull = true},
             };
+
+            if(withIdentity)
+                fields.Add(new Field("System.Int32", 8, Model.FieldType.Field, true) { Alias = SURROGATE_KEY, NotNull = true, Clustered = true, Identity = true });
 
             foreach (var field in fields) {
                 _original[field.Alias] = field;

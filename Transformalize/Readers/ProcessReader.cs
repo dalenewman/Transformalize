@@ -62,17 +62,15 @@ namespace Transformalize.Readers {
 
                 foreach (FieldConfigurationElement pk in e.PrimaryKey) {
                     var fieldType = entityCount == 1 ? FieldType.MasterKey : FieldType.PrimaryKey;
-                    var keyField = new Field(pk.Type, fieldType, pk.Output) {
+                    var keyField = new Field(pk.Type, pk.Length, fieldType, pk.Output) {
                         Entity = entity.Name,
                         Schema = entity.Schema,
                         Name = pk.Name,
                         Alias = pk.Alias,
-                        Length = pk.Length,
                         Precision = pk.Precision,
                         Scale = pk.Scale,
                         Input = pk.Input,
                         Default = pk.Default,
-                        StringBuilder = new StringBuilder(pk.Length, 4000),
                         Transforms = GetTransforms(pk.Transforms)
                     };
 
@@ -85,22 +83,20 @@ namespace Transformalize.Readers {
                 }
 
                 foreach (FieldConfigurationElement f in e.Fields) {
-                    var field = new Field(f.Type, FieldType.Field, f.Output) {
+                    var field = new Field(f.Type, f.Length, FieldType.Field, f.Output) {
                         Entity = entity.Name,
                         Schema = entity.Schema,
                         Name = f.Name,
                         Alias = f.Alias,
-                        Length = f.Length,
                         Precision = f.Precision,
                         Scale = f.Scale,
                         Input = f.Input,
                         Default = f.Default,
-                        StringBuilder = new StringBuilder(f.Length, 4000),
                         Transforms = GetTransforms(f.Transforms)
                     };
 
                     foreach (XmlConfigurationElement x in f.Xml) {
-                        field.InnerXml.Add(x.Alias, new Xml(x.Type, x.Output) {
+                        field.InnerXml.Add(x.Alias, new Xml(x.Type, x.Length, x.Output) {
                             Entity = entity.Name,
                             Schema = entity.Schema,
                             Parent = f.Name,
@@ -108,12 +104,10 @@ namespace Transformalize.Readers {
                             Name = x.XPath,
                             Alias = x.Alias,
                             Index = x.Index,
-                            Length = x.Length,
                             Precision = x.Precision,
                             Scale = x.Scale,
                             Input = true,
                             Default = x.Default,
-                            StringBuilder = new StringBuilder(x.Length, 4000),
                             Transforms = GetTransforms(x.Transforms)
                         });
 
@@ -130,8 +124,8 @@ namespace Transformalize.Readers {
                 _process.Entities.Add(e.Name, entity);
             }
 
-            foreach (JoinConfigurationElement joinElement in config.Joins) {
-                var join = new Join();
+            foreach (RelationshipConfigurationElement joinElement in config.Relationships) {
+                var join = new Relationship();
                 join.LeftEntity = _process.Entities[joinElement.LeftEntity];
                 join.LeftField = join.LeftEntity.All[joinElement.LeftField];
                 join.LeftField.FieldType = FieldType.ForeignKey;

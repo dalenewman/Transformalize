@@ -31,7 +31,7 @@ namespace Transformalize.Test.Unit {
             var entity = process.Entities["OrderDetail"];
             
             var actual = SqlTemplates.CreateTableVariable("KEYS", entity.PrimaryKey);
-            const string expected = "DECLARE @KEYS AS TABLE([OrderDetailKey] INT NOT NULL);";
+            const string expected = "DECLARE @KEYS AS TABLE([OrderDetailKey] INT);";
 
             Assert.AreEqual(expected, actual);
         }

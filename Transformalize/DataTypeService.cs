@@ -25,8 +25,9 @@ namespace Transformalize {
         public static string GetSqlDbType(BaseField field) {
             var length = field.SimpleType == "string" || field.SimpleType == "char" || field.SimpleType == "byte[]" ? string.Concat("(", field.Length, ")") : string.Empty;
             var dimensions = field.SimpleType == "decimal" ? string.Format("({0},{1})", field.Precision, field.Scale) : string.Empty;
-            var surrogate = field.Clustered ? " NOT NULL IDENTITY(1,1) UNIQUE CLUSTERED" : string.Empty;
-            return string.Concat(Types[field.SimpleType], length, dimensions, surrogate);
+            var notNull = field.NotNull ? " NOT NULL" : string.Empty;
+            var surrogate = field.Clustered ? " IDENTITY(1,1) UNIQUE CLUSTERED" : string.Empty;
+            return string.Concat(Types[field.SimpleType], length, dimensions, notNull, surrogate);
         }
     }
 }

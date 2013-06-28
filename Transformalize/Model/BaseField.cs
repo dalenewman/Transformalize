@@ -7,6 +7,7 @@ using Transformalize.Transforms;
 namespace Transformalize.Model {
 
     public abstract class BaseField {
+
         private FieldType _fieldType;
         private string _name;
         private string _sqlDataType;
@@ -20,10 +21,12 @@ namespace Transformalize.Model {
         public string Entity { get; set; }
         public string Parent { get; set; }
         public bool Input { get; set; }
-        public int Length { get; set; }
+        public int Length { get; private set; }
         public int Precision { get; set; }
         public int Scale { get; set; }
         public bool Clustered { get; set; }
+        public bool NotNull { get; set; }
+        public bool Identity { get; set; }
         public KeyValuePair<string, string> References { get; set; }
         public StringBuilder StringBuilder { get; set; }
         public ITransform[] Transforms { get; set; }
@@ -70,18 +73,20 @@ namespace Transformalize.Model {
             return FieldType == FieldType.MasterKey || FieldType == FieldType.ForeignKey || FieldType == FieldType.PrimaryKey;
         }
 
-        protected BaseField(string typeName, FieldType fieldType, bool output) {
-            Initialize(typeName, fieldType, output);
+        protected BaseField(string typeName, int length, FieldType fieldType, bool output) {
+            Initialize(typeName, length, fieldType, output);
         }
 
-        private void Initialize(string typeName, FieldType fieldType, bool output) {
+        private void Initialize(string typeName, int length, FieldType fieldType, bool output) {
             Type = typeName;
+            Length = length;
             SimpleType = Type.ToLower().Replace("system.", string.Empty);
             Quote = (new[] { "string", "char", "datetime", "guid" }).Any(t => t.Equals(SimpleType)) ? "'" : string.Empty;
             UseStringBuilder = (new[] { "string", "char" }).Any(t => t.Equals(SimpleType));
             FieldType = fieldType;
             Output = output || MustBeOutput();
             SystemType = System.Type.GetType(typeName);
+            StringBuilder = UseStringBuilder ? new StringBuilder(length, length == 0 ? 8000 : length) : null;
         }
 
         private object ConvertDefault(string value) {

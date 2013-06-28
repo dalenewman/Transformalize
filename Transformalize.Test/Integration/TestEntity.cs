@@ -33,9 +33,9 @@ namespace Transformalize.Test.Integration {
             var sql = SqlTemplates.CreateTableVariable("@KEYS", _entity.PrimaryKey)
                 + SqlTemplates.BatchInsertValues(5, "@KEYS", _entity.PrimaryKey, rows, 2005);
 
-            Assert.AreEqual(123947, sql.Length);
+            Assert.AreEqual(123938, sql.Length);
 
-            const string expected = @"DECLARE @KEYS AS TABLE([OrderDetailKey] INT NOT NULL);
+            const string expected = @"DECLARE @KEYS AS TABLE([OrderDetailKey] INT);
 INSERT INTO @KEYS
 SELECT 1
 UNION ALL SELECT 2
@@ -53,7 +53,7 @@ UNION ALL SELECT 7";
             var keys = TestOperation(new EntityKeysExtract(_entity));
 
             const string expectedStart = @"SET NOCOUNT ON;
-DECLARE @KEYS AS TABLE([OrderDetailKey] INT NOT NULL);
+DECLARE @KEYS AS TABLE([OrderDetailKey] INT);
 INSERT INTO @KEYS
 SELECT 1
 UNION ALL SELECT 2
@@ -92,26 +92,6 @@ OPTION (MAXDOP 1);";
 
             var operations = TestOperation(entityKeyExtract, entityKeysToOperations);
             Assert.AreEqual(5000 / 200, operations.Count);
-        }
-
-        [Test]
-        public void TestEntityToOutput() {
-            var entityKeyExtract = new EntityKeysExtract(_entity);
-            var entityKeysToOperations = new EntityKeysToOperations(_entity);
-            var entityExtract = new SerialUnionAllOperation();
-            var entityToOutput = new MultiThreadedBranchingOperation().Add(new EntityDatabaseLoad(_entity)).Add(new EntityKeyRegisterLoad(_process, _entity));
-
-            var rows = TestOperation(
-                entityKeyExtract,
-                entityKeysToOperations,
-                entityExtract,
-                entityToOutput
-            );
-
-            Assert.AreEqual(0, rows.Count);
-            Assert.Less(0, _process.KeyRegister["OrderKey"].Count);
-            Assert.Less(0, _process.KeyRegister["ProductKey"].Count);
-
         }
 
     }

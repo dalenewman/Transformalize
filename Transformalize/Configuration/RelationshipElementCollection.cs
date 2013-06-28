@@ -2,11 +2,11 @@ using System.Configuration;
 
 namespace Transformalize.Configuration
 {
-    public class JoinElementCollection : ConfigurationElementCollection {
+    public class RelationshipElementCollection : ConfigurationElementCollection {
 
-        public JoinConfigurationElement this[int index] {
+        public RelationshipConfigurationElement this[int index] {
             get {
-                return BaseGet(index) as JoinConfigurationElement;
+                return BaseGet(index) as RelationshipConfigurationElement;
             }
             set {
                 if (BaseGet(index) != null) {
@@ -17,11 +17,11 @@ namespace Transformalize.Configuration
         }
 
         protected override ConfigurationElement CreateNewElement() {
-            return new JoinConfigurationElement();
+            return new RelationshipConfigurationElement();
         }
 
         protected override object GetElementKey(ConfigurationElement element) {
-            var join = element as JoinConfigurationElement;
+            var join = element as RelationshipConfigurationElement;
 
             return string.Concat(join.LeftEntity, join.LeftField, join.RightEntity, join.RightField);
         }

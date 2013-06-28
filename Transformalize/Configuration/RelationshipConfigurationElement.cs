@@ -2,7 +2,7 @@ using System.Configuration;
 
 namespace Transformalize.Configuration
 {
-    public class JoinConfigurationElement : ConfigurationElement {
+    public class RelationshipConfigurationElement : ConfigurationElement {
 
         [ConfigurationProperty("leftEntity", IsRequired = true)]
         public string LeftEntity {

@@ -7,13 +7,13 @@ namespace Transformalize.Test.Unit {
     public class TestFields {
 
         private readonly List<IField> _fields = new List<IField> {
-            new Field("system.string", FieldType.PrimaryKey, true) {Alias = "Field1", Name="f1", Default="x", Length = 10, Parent="p1"},
-            new Field("system.int32", FieldType.Field, false) {Alias = "Field2", Name="f2", Default=0, Length = 0, Parent="p2"}
+            new Field("system.string", 10, FieldType.PrimaryKey, true) {Alias = "Field1", Name="f1", Default="x", Parent="p1"},
+            new Field("system.int32", 8, FieldType.Field, false) {Alias = "Field2", Name="f2", Default=0, Parent="p2"}
         };
 
         private readonly List<IField> _xmlFields = new List<IField> {
-            new Xml("system.string", true) {Alias = "Field1", Name="f1", Default="x", Length = 10, XPath = "/Properties/f1", Index=1, Parent="p1"},
-            new Xml("system.int32", false) {Alias = "Field2", Name="f2", Default=0, Length = 0, XPath = "/Properties/f2", Index=1, Parent="p2"}
+            new Xml("system.string", 10, true) {Alias = "Field1", Name="f1", Default="x", XPath = "/Properties/f1", Index=1, Parent="p1"},
+            new Xml("system.int32", 8, false) {Alias = "Field2", Name="f2", Default=0, XPath = "/Properties/f2", Index=1, Parent="p2"}
         };
 
         [Test]

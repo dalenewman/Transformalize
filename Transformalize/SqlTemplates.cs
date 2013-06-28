@@ -58,7 +58,7 @@ CREATE TABLE [{0}].[{1}](
         }
 
         public static string CreateTableVariable(string name, IDictionary<string, IField> fields) {
-            var defs = new FieldSqlWriter(fields).Alias().DataType().NotNull().Write();
+            var defs = new FieldSqlWriter(fields).Alias().DataType().Write();
             return string.Format(@"DECLARE @{0} AS TABLE({1});", name.TrimStart("@".ToCharArray()), defs);
         }
 

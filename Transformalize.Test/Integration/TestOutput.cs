@@ -29,6 +29,7 @@ CREATE TABLE [dbo].[OrderDetail](
     [Quantity] INT,
     [Size] NVARCHAR(64),
     [State] NVARCHAR(2),
+    [TflId] INT NOT NULL,
     [TflKey] INT NOT NULL IDENTITY(1,1) UNIQUE CLUSTERED,
     CONSTRAINT [Pk_OrderDetail_OrderDetailKey_ASC] PRIMARY KEY (
         [OrderDetailKey] ASC

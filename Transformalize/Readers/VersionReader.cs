@@ -13,6 +13,7 @@ namespace Transformalize.Readers {
         private readonly Entity _entity;
         public bool HasRows { get; private set; }
         public bool IsRange { get; private set; }
+        public int TflId { get; private set; }
 
         public VersionReader(Entity entity) {
             _entity = entity;
@@ -29,7 +30,7 @@ namespace Transformalize.Readers {
         private SqlDataReader GetBeginVersionReader(string field) {
 
             var sql = string.Format(@"
-                SELECT [{0}]
+                SELECT [{0}], [EntityTrackerKey]
                 FROM [EntityTracker]
                 WHERE [EntityTrackerKey] = (
 	                SELECT [EntityTrackerKey] = MAX([EntityTrackerKey])
@@ -55,6 +56,7 @@ namespace Transformalize.Readers {
                     return null;
                 reader.Read();
                 _begin = reader.GetValue(0);
+                _entity.TflId = reader.GetInt32(1);
                 return _begin;
             }
         }

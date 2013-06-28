@@ -5,7 +5,7 @@ namespace Transformalize {
 
     public static class StringBuilderExtensions {
 
-        public static StringBuilder TrimStart(this StringBuilder sb, string trimChars) {
+        public static void TrimStart(this StringBuilder sb, string trimChars) {
             var length = sb.Length;
             if (length != 0) {
                 var i = 0;
@@ -25,10 +25,9 @@ namespace Transformalize {
                     sb.Remove(0, i);
                 }
             }
-            return sb;
         }
 
-        public static StringBuilder TrimEnd(this StringBuilder sb, string trimChars) {
+        public static void TrimEnd(this StringBuilder sb, string trimChars) {
             var length = sb.Length;
             if (length != 0) {
                 var i = length - 1;
@@ -48,14 +47,14 @@ namespace Transformalize {
                     sb.Remove(i + 1, (length - i) - 1);
                 }
             }
-            return sb;
         }
 
-        public static StringBuilder Trim(this StringBuilder sb, string trimChars) {
-            return sb.TrimStart(trimChars).TrimEnd(trimChars);
+        public static void Trim(this StringBuilder sb, string trimChars) {
+            sb.TrimStart(trimChars);
+            sb.TrimEnd(trimChars);
         }
 
-        public static StringBuilder Substring(this StringBuilder sb, int startIndex, int length) {
+        public static void Substring(this StringBuilder sb, int startIndex, int length) {
             var capacity = sb.Length;
             if (capacity != 0 && startIndex < capacity) {
 
@@ -65,17 +64,33 @@ namespace Transformalize {
 
                 sb.Remove(startIndex + length, capacity - (startIndex + length));
                 sb.Remove(0, startIndex);
-
             }
-            return sb;
         }
 
-        public static StringBuilder Left(this StringBuilder sb, int length) {
-            return sb.Substring(0, length);
+        public static void PadLeft(this StringBuilder sb, int totalWidth, char paddingChar) {
+            var sbLen = sb.Length;
+            if (sbLen < totalWidth) {
+                for (var i = 0; i < totalWidth - sbLen; i++) {
+                    sb.Insert(0, paddingChar);
+                }
+            }
         }
 
-        public static StringBuilder Right(this StringBuilder sb, int length) {
-            return sb.Substring(sb.Length - length, length);
+        public static void PadRight(this StringBuilder sb, int totalWidth, char paddingChar) {
+            var sbLen = sb.Length;
+            if (sbLen < totalWidth) {
+                for (var i = 0; i < totalWidth - sbLen; i++) {
+                    sb.Append(paddingChar);
+                }
+            }
+        }
+
+        public static void Left(this StringBuilder sb, int length) {
+            sb.Substring(0, length);
+        }
+
+        public static void Right(this StringBuilder sb, int length) {
+            sb.Substring(sb.Length - length, length);
         }
 
         public static bool IsEqualTo(this StringBuilder sb, string value) {
@@ -123,5 +138,6 @@ namespace Transformalize {
             }
             return false;
         }
+
     }
 }

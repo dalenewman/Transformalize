@@ -25,10 +25,10 @@ namespace Transformalize.Test.Integration {
             Assert.AreEqual("Color", process.Entities[0].Fields[4].Xml[0].Alias);
             Assert.AreEqual("Color", process.Entities[0].Fields[4].Xml[0].XPath);
             Assert.AreEqual(1, process.Entities[0].Fields[4].Xml[0].Index);
-            Assert.AreEqual("OrderDetail", process.Joins[0].LeftEntity);
-            Assert.AreEqual("Order", process.Joins[0].RightEntity);
-            Assert.AreEqual("OrderKey", process.Joins[0].LeftField);
-            Assert.AreEqual("OrderKey", process.Joins[0].RightField);
+            Assert.AreEqual("OrderDetail", process.Relationships[0].LeftEntity);
+            Assert.AreEqual("Order", process.Relationships[0].RightEntity);
+            Assert.AreEqual("OrderKey", process.Relationships[0].LeftField);
+            Assert.AreEqual("OrderKey", process.Relationships[0].RightField);
 
         }
 
