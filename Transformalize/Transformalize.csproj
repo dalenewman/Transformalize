@@ -51,6 +51,8 @@
   <ItemGroup>
     <Compile Include="Configuration\ConnectionConfigurationElement.cs" />
     <Compile Include="Configuration\ConnectionElementCollection.cs" />
+    <Compile Include="Configuration\ParameterConfigurationElement.cs" />
+    <Compile Include="Configuration\ParameterElementCollection.cs" />
     <Compile Include="Configuration\ItemConfigurationElement.cs" />
     <Compile Include="Configuration\ItemElementCollection.cs" />
     <Compile Include="Configuration\MapConfigurationElement.cs" />

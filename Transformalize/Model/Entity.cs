@@ -26,6 +26,8 @@ namespace Transformalize.Model {
         public int TflId { get; set; }
 
         public Entity() {
+            Name = string.Empty;
+            Schema = string.Empty;
             PrimaryKey = new Dictionary<string, IField>();
             Fields = new Dictionary<string, IField>();
             All = new Dictionary<string, IField>();

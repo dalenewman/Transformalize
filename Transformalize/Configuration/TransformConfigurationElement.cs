@@ -69,6 +69,22 @@ namespace Transformalize.Configuration
             set { this["length"] = value; }
         }
 
+        [ConfigurationProperty("totalWidth", IsRequired = false)]
+        public int TotalWidth {
+            get {
+                return (int)this["totalWidth"];
+            }
+            set { this["totalWidth"] = value; }
+        }
+
+        [ConfigurationProperty("paddingChar", IsRequired = false)]
+        public char PaddingChar {
+            get {
+                return (char)this["paddingChar"];
+            }
+            set { this["paddingChar"] = value; }
+        }
+
         [ConfigurationProperty("map", IsRequired = false)]
         public string Map {
             get {
@@ -84,6 +100,20 @@ namespace Transformalize.Configuration
                 return this["script"] as string;
             }
             set { this["script"] = value; }
+        }
+
+        [ConfigurationProperty("parameters")]
+        public ParameterElementCollection Parameters {
+            get {
+                return this["parameters"] as ParameterElementCollection;
+            }
+        }
+
+        [ConfigurationProperty("results")]
+        public FieldElementCollection Results {
+            get {
+                return this["results"] as FieldElementCollection;
+            }
         }
     }
 }

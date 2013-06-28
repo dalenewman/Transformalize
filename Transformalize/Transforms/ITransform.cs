@@ -6,6 +6,8 @@ namespace Transformalize.Transforms {
     public interface ITransform : IDisposable {
         void Transform(StringBuilder sb);
         object Transform(object value);
+        bool HasParameters { get; }
+        bool HasResults { get; }
     }
 
 }

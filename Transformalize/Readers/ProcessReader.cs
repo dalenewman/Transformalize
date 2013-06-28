@@ -6,7 +6,6 @@ using Transformalize.Configuration;
 using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
 using Transformalize.Transforms;
-using System.Text;
 using System.Linq;
 
 namespace Transformalize.Readers {
@@ -62,17 +61,8 @@ namespace Transformalize.Readers {
 
                 foreach (FieldConfigurationElement pk in e.PrimaryKey) {
                     var fieldType = entityCount == 1 ? FieldType.MasterKey : FieldType.PrimaryKey;
-                    var keyField = new Field(pk.Type, pk.Length, fieldType, pk.Output) {
-                        Entity = entity.Name,
-                        Schema = entity.Schema,
-                        Name = pk.Name,
-                        Alias = pk.Alias,
-                        Precision = pk.Precision,
-                        Scale = pk.Scale,
-                        Input = pk.Input,
-                        Default = pk.Default,
-                        Transforms = GetTransforms(pk.Transforms)
-                    };
+
+                    var keyField = GetField(entity, pk, fieldType);
 
                     entity.PrimaryKey.Add(pk.Alias, keyField);
                     entity.All.Add(pk.Alias, keyField);
@@ -83,17 +73,7 @@ namespace Transformalize.Readers {
                 }
 
                 foreach (FieldConfigurationElement f in e.Fields) {
-                    var field = new Field(f.Type, f.Length, FieldType.Field, f.Output) {
-                        Entity = entity.Name,
-                        Schema = entity.Schema,
-                        Name = f.Name,
-                        Alias = f.Alias,
-                        Precision = f.Precision,
-                        Scale = f.Scale,
-                        Input = f.Input,
-                        Default = f.Default,
-                        Transforms = GetTransforms(f.Transforms)
-                    };
+                    var field = GetField(entity, f);
 
                     foreach (XmlConfigurationElement x in f.Xml) {
                         field.InnerXml.Add(x.Alias, new Xml(x.Type, x.Length, x.Output) {
@@ -124,6 +104,7 @@ namespace Transformalize.Readers {
                 _process.Entities.Add(e.Name, entity);
             }
 
+            //shared relationships
             foreach (RelationshipConfigurationElement joinElement in config.Relationships) {
                 var join = new Relationship();
                 join.LeftEntity = _process.Entities[joinElement.LeftEntity];
@@ -133,6 +114,9 @@ namespace Transformalize.Readers {
                 join.RightField = join.RightEntity.All[joinElement.RightField];
                 _process.Joins.Add(join);
             }
+
+            //shared transforms
+            _process.Transforms = GetTransforms(config.Transforms);
 
             Info("{0} | Process Loaded.", _process.Name);
             return _process;
@@ -146,46 +130,73 @@ namespace Transformalize.Readers {
             return mapItems;
         }
 
+        private Field GetField(Entity entity, FieldConfigurationElement field, FieldType fieldType = FieldType.Field) {
+            return new Field(field.Type, field.Length, fieldType, field.Output) {
+                Entity = entity.Name,
+                Schema = entity.Schema,
+                Name = field.Name,
+                Alias = field.Alias,
+                Precision = field.Precision,
+                Scale = field.Scale,
+                Input = field.Input,
+                Default = field.Default,
+                Transforms = GetTransforms(field.Transforms)
+            };
+        }
+
         private ITransform[] GetTransforms(IEnumerable transforms) {
             var result = new List<ITransform>();
 
             foreach (TransformConfigurationElement t in transforms) {
+                var parameters = t.Parameters.Cast<ParameterConfigurationElement>().Select(p => _process.Entities[p.Entity].All[p.Field]).ToDictionary(v=>v.Alias, v=>v);
+                var results = new Dictionary<string, IField>();
+                foreach (FieldConfigurationElement r in t.Results) {
+                    var field = GetField(new Entity(), r);
+                    results[field.Alias] = field;
+                }
+
                 switch (t.Method.ToLower()) {
                     case "replace":
-                        result.Add(new ReplaceTransform(t.OldValue, t.NewValue));
+                        result.Add(new ReplaceTransform(t.OldValue, t.NewValue, parameters, results));
                         break;
                     case "insert":
-                        result.Add(new InsertTransform(t.Index, t.Value));
+                        result.Add(new InsertTransform(t.Index, t.Value, parameters, results));
                         break;
                     case "remove":
-                        result.Add(new RemoveTransform(t.StartIndex, t.Length));
+                        result.Add(new RemoveTransform(t.StartIndex, t.Length, parameters, results));
                         break;
                     case "trimstart":
-                        result.Add(new TrimStartTransform(t.TrimChars));
+                        result.Add(new TrimStartTransform(t.TrimChars, parameters, results));
                         break;
                     case "trimend":
-                        result.Add(new TrimEndTransform(t.TrimChars));
+                        result.Add(new TrimEndTransform(t.TrimChars, parameters, results));
                         break;
                     case "trim":
-                        result.Add(new TrimTransform(t.TrimChars));
+                        result.Add(new TrimTransform(t.TrimChars, parameters, results));
                         break;
                     case "substring":
-                        result.Add(new SubstringTransform(t.StartIndex, t.Length));
+                        result.Add(new SubstringTransform(t.StartIndex, t.Length, parameters, results));
                         break;
                     case "left":
-                        result.Add(new LeftTransform(t.Length));
+                        result.Add(new LeftTransform(t.Length, parameters, results));
                         break;
                     case "right":
-                        result.Add(new RightTransform(t.Length));
+                        result.Add(new RightTransform(t.Length, parameters, results));
                         break;
                     case "map":
                         var equals = _process.MapEquals[t.Map];
                         var startsWith = _process.MapStartsWith[t.Map];
                         var endsWith = _process.MapEndsWith[t.Map];
-                        result.Add(new MapTransform(new[] { @equals, startsWith, endsWith }));
+                        result.Add(new MapTransform(new[] { @equals, startsWith, endsWith }, parameters, results));
                         break;
                     case "javascript":
-                        result.Add(new JavascriptTransform(t.Script));
+                        result.Add(new JavascriptTransform(t.Script, parameters, results));
+                        break;
+                    case "padleft":
+                        result.Add(new PadLeftTransform(t.TotalWidth, t.PaddingChar, parameters, results));
+                        break;
+                    case "padright":
+                        result.Add(new PadRightTransform(t.TotalWidth, t.PaddingChar, parameters, results));
                         break;
                 }
             }

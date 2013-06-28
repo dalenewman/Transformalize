@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Repositories;
 using Transformalize.Rhino.Etl.Core;
+using Transformalize.Transforms;
 
 namespace Transformalize.Model {
 
@@ -20,6 +21,7 @@ namespace Transformalize.Model {
         public Dictionary<string, Dictionary<string, object>> MapEquals = new Dictionary<string, Dictionary<string, object>>();
         public Dictionary<string, Dictionary<string, object>> MapStartsWith = new Dictionary<string, Dictionary<string, object>>();
         public Dictionary<string, Dictionary<string, object>> MapEndsWith = new Dictionary<string, Dictionary<string, object>>();
+        public ITransform[] Transforms { get; set; }
 
         public Dictionary<string, IField> Fields {
             get {

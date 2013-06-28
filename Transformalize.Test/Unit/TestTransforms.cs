@@ -45,7 +45,7 @@ namespace Transformalize.Test.Unit {
         public void TestInsertTransform() {
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field() { Transforms = new[] { new InsertTransform(1, ".") }, Input = true };
+            entity.All["Field1"] = new Field() { Transforms = new[] { new InsertTransform(1, ".", null, null) }, Input = true };
 
             var rows = TestOperation(
                 _testInput.Object,
@@ -166,7 +166,7 @@ namespace Transformalize.Test.Unit {
         public void TestLeftTransform() {
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field() { Transforms = new[] { new LeftTransform(4) }, Input = true };
+            entity.All["Field1"] = new Field() { Transforms = new[] { new LeftTransform(4, null, null) }, Input = true };
 
             var rows = TestOperation(
                 _testInput.Object,
@@ -206,7 +206,7 @@ namespace Transformalize.Test.Unit {
             mapStartsWith["1"] = "I used to start with 1.";
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field() { Input = true, Transforms = new[] { new MapTransform(new[] { mapEquals, mapStartsWith, mapEndsWith }) } };
+            entity.All["Field1"] = new Field() { Input = true, Transforms = new[] { new MapTransform(new[] { mapEquals, mapStartsWith, mapEndsWith }, null, null) } };
 
             var rows = TestOperation(
                 _testInput.Object,
@@ -269,7 +269,7 @@ namespace Transformalize.Test.Unit {
         public void TestJavscriptStringTransform() {
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field { Input = true, Transforms = new[] { new JavascriptTransform("field.length;") } };
+            entity.All["Field1"] = new Field { Input = true, Transforms = new[] { new JavascriptTransform("field.length;", null, null) } };
 
             var rows = TestOperation(
                 _testInput.Object,
@@ -297,7 +297,7 @@ namespace Transformalize.Test.Unit {
             var numbers = numbersMock.Object;
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field("System.Int32", 8, FieldType.Field, true) { Input = true, Transforms = new[] { new JavascriptTransform("field * 2;") }, Default = 0 };
+            entity.All["Field1"] = new Field("System.Int32", 8, FieldType.Field, true) { Input = true, Transforms = new[] { new JavascriptTransform("field * 2;", null, null) }, Default = 0 };
 
             var rows = TestOperation(
                 numbers,

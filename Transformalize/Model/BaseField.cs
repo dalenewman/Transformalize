@@ -86,7 +86,7 @@ namespace Transformalize.Model {
             FieldType = fieldType;
             Output = output || MustBeOutput();
             SystemType = System.Type.GetType(typeName);
-            StringBuilder = UseStringBuilder ? new StringBuilder(length, length == 0 ? 8000 : length) : null;
+            StringBuilder = UseStringBuilder ? new StringBuilder(length, 8000) : null;
         }
 
         private object ConvertDefault(string value) {
