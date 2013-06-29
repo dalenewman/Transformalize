@@ -22,7 +22,7 @@ namespace Transformalize {
             {"rowversion", "ROWVERSION"}
         };
 
-        public static string GetSqlDbType(BaseField field) {
+        public static string GetSqlDbType(Field field) {
             var length = field.SimpleType == "string" || field.SimpleType == "char" || field.SimpleType == "byte[]" ? string.Concat("(", field.Length, ")") : string.Empty;
             var dimensions = field.SimpleType == "decimal" ? string.Format("({0},{1})", field.Precision, field.Scale) : string.Empty;
             var notNull = field.NotNull ? " NOT NULL" : string.Empty;

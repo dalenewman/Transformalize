@@ -76,7 +76,7 @@ namespace Transformalize.Readers {
                     var field = GetField(entity, f);
 
                     foreach (XmlConfigurationElement x in f.Xml) {
-                        field.InnerXml.Add(x.Alias, new Xml(x.Type, x.Length, x.Output) {
+                        field.InnerXml.Add(x.Alias, new Field(x.Type, x.Length, FieldType.Xml, x.Output, x.Default) {
                             Entity = entity.Name,
                             Schema = entity.Schema,
                             Parent = f.Name,
@@ -87,7 +87,6 @@ namespace Transformalize.Readers {
                             Precision = x.Precision,
                             Scale = x.Scale,
                             Input = true,
-                            Default = x.Default,
                             Transforms = GetTransforms(x.Transforms)
                         });
 
@@ -131,7 +130,7 @@ namespace Transformalize.Readers {
         }
 
         private Field GetField(Entity entity, FieldConfigurationElement field, FieldType fieldType = FieldType.Field) {
-            return new Field(field.Type, field.Length, fieldType, field.Output) {
+            return new Field(field.Type, field.Length, fieldType, field.Output, field.Default) {
                 Entity = entity.Name,
                 Schema = entity.Schema,
                 Name = field.Name,
@@ -139,7 +138,6 @@ namespace Transformalize.Readers {
                 Precision = field.Precision,
                 Scale = field.Scale,
                 Input = field.Input,
-                Default = field.Default,
                 Transforms = GetTransforms(field.Transforms)
             };
         }
@@ -149,7 +147,7 @@ namespace Transformalize.Readers {
 
             foreach (TransformConfigurationElement t in transforms) {
                 var parameters = t.Parameters.Cast<ParameterConfigurationElement>().Select(p => _process.Entities[p.Entity].All[p.Field]).ToDictionary(v=>v.Alias, v=>v);
-                var results = new Dictionary<string, IField>();
+                var results = new Dictionary<string, Field>();
                 foreach (FieldConfigurationElement r in t.Results) {
                     var field = GetField(new Entity(), r);
                     results[field.Alias] = field;

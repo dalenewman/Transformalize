@@ -8,7 +8,7 @@ using Transformalize.Transforms;
 namespace Transformalize.Model {
 
     public class Process {
-        private Dictionary<string, IField> _fields;
+        private Dictionary<string, Field> _fields;
 
         public string Name;
         public Dictionary<string, Connection> Connections = new Dictionary<string, Connection>();
@@ -23,10 +23,10 @@ namespace Transformalize.Model {
         public Dictionary<string, Dictionary<string, object>> MapEndsWith = new Dictionary<string, Dictionary<string, object>>();
         public ITransform[] Transforms { get; set; }
 
-        public Dictionary<string, IField> Fields {
+        public Dictionary<string, Field> Fields {
             get {
                 if (_fields == null) {
-                    _fields = new Dictionary<string, IField>();
+                    _fields = new Dictionary<string, Field>();
                     foreach (var entityKey in Entities.Keys) {
                         var entity = Entities[entityKey];
                         foreach (var fieldKey in entity.All.Keys) {

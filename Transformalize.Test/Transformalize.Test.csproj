@@ -54,6 +54,7 @@
     <Compile Include="Integration\TestOutput.cs" />
     <Compile Include="Integration\TestProcess.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Unit\TestMultiFieldTransforms.cs" />
     <Compile Include="Unit\TestTransforms.cs" />
     <Compile Include="Unit\TestEntity.cs" />
     <Compile Include="Unit\TestFields.cs" />

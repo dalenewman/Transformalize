@@ -25,14 +25,14 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void TestReplaceTransform() {
-
+        public void TestReplaceTransform()
+        {
             var entity = new Entity();
-            entity.All["Field1"] = new Field() { Transforms = new[] { new ReplaceTransform("b", "B"), new ReplaceTransform("2", "Two") }, Input = true };
+            entity.All["Field1"] = new Field(FieldType.Field) { Transforms = new[] { new ReplaceTransform("b", "B"), new ReplaceTransform("2", "Two") }};
 
             var rows = TestOperation(
                 _testInput.Object,
-                new TransformOperation(entity),
+                new EntityTransform(entity),
                 new LogOperation()
             );
 
@@ -42,14 +42,16 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void TestInsertTransform() {
+        public void TestInsertTransform()
+        {
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field() { Transforms = new[] { new InsertTransform(1, ".", null, null) }, Input = true };
+            entity.All["Field1"] = new Field(FieldType.Field) { Transforms = new[] { new InsertTransform(1, ".") } };
 
             var rows = TestOperation(
                 _testInput.Object,
-                new TransformOperation(entity),
+                new EntityDefaults(entity),
+                new EntityTransform(entity),
                 new LogOperation()
             );
 
@@ -63,11 +65,12 @@ namespace Transformalize.Test.Unit {
         public void TestRemoveTransform() {
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field() { Transforms = new[] { new RemoveTransform(2, 2) }, Input = true };
+            entity.All["Field1"] = new Field(FieldType.Field) { Transforms = new[] { new RemoveTransform(2, 2) } };
 
             var rows = TestOperation(
                 _testInput.Object,
-                new TransformOperation(entity),
+                new EntityDefaults(entity),
+                new EntityTransform(entity),
                 new LogOperation()
             );
 
@@ -80,11 +83,11 @@ namespace Transformalize.Test.Unit {
         public void TestTrimStartTransform() {
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field() { Transforms = new[] { new TrimStartTransform("1 ") }, Input = true };
-
+            entity.All["Field1"] = new Field(FieldType.Field) {Transforms = new[] {new TrimStartTransform("1 ")}};
+           
             var rows = TestOperation(
                 _testInput.Object,
-                new TransformOperation(entity),
+                new EntityTransform(entity),
                 new LogOperation()
             );
 
@@ -97,11 +100,12 @@ namespace Transformalize.Test.Unit {
         public void TestTrimEndTransform1() {
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field() { Transforms = new[] { new TrimEndTransform(" ") }, Input = true };
+            entity.All["Field1"] = new Field(FieldType.Field) { Transforms = new[] { new TrimEndTransform(" ") }, Input = true };
+            var fields = new Dictionary<string, Field> { { "", null } };
 
             var rows = TestOperation(
                 _testInput.Object,
-                new TransformOperation(entity),
+                new EntityTransform(entity),
                 new LogOperation()
             );
 
@@ -114,11 +118,12 @@ namespace Transformalize.Test.Unit {
         public void TestTrimEndTransform2() {
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field() { Transforms = new[] { new TrimEndTransform("G ") }, Input = true };
+            entity.All["Field1"] = new Field(FieldType.Field) { Transforms = new[] { new TrimEndTransform("G ") }, Input = true };
+            var fields = new Dictionary<string, Field> { { "", null } };
 
             var rows = TestOperation(
                 _testInput.Object,
-                new TransformOperation(entity),
+                new EntityTransform(entity),
                 new LogOperation()
             );
 
@@ -132,11 +137,11 @@ namespace Transformalize.Test.Unit {
         public void TestTrimTransform() {
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field() { Transforms = new[] { new TrimTransform("1G") }, Input = true };
+            entity.All["Field1"] = new Field(FieldType.Field) { Transforms = new[] { new TrimTransform("1G") }};
 
             var rows = TestOperation(
                 _testInput.Object,
-                new TransformOperation(entity),
+                new EntityTransform(entity),
                 new LogOperation()
             );
 
@@ -149,11 +154,12 @@ namespace Transformalize.Test.Unit {
         public void TestSubStringTransform() {
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field() { Transforms = new[] { new SubstringTransform(4, 3) }, Input = true };
+            entity.All["Field1"] = new Field(FieldType.Field) { Transforms = new[] { new SubstringTransform(4, 3) }, Input = true };
+            var fields = new Dictionary<string, Field> { { "", null } };
 
             var rows = TestOperation(
                 _testInput.Object,
-                new TransformOperation(entity),
+                new EntityTransform(entity),
                 new LogOperation()
             );
 
@@ -166,11 +172,12 @@ namespace Transformalize.Test.Unit {
         public void TestLeftTransform() {
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field() { Transforms = new[] { new LeftTransform(4, null, null) }, Input = true };
+            entity.All["Field1"] = new Field(FieldType.Field) { Transforms = new[] { new LeftTransform(4, null, null) }, Input = true };
+            var fields = new Dictionary<string, Field> { { "", null } };
 
             var rows = TestOperation(
                 _testInput.Object,
-                new TransformOperation(entity),
+                new EntityTransform(entity),
                 new LogOperation()
             );
 
@@ -183,11 +190,12 @@ namespace Transformalize.Test.Unit {
         public void TestRightTransform() {
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field() { Transforms = new[] { new RightTransform(3) }, Input = true };
+            entity.All["Field1"] = new Field(FieldType.Field) { Transforms = new[] { new RightTransform(3) }, Input = true };
+            var fields = new Dictionary<string, Field> { { "", null } };
 
             var rows = TestOperation(
                 _testInput.Object,
-                new TransformOperation(entity),
+                new EntityTransform(entity),
                 new LogOperation()
             );
 
@@ -206,11 +214,12 @@ namespace Transformalize.Test.Unit {
             mapStartsWith["1"] = "I used to start with 1.";
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field() { Input = true, Transforms = new[] { new MapTransform(new[] { mapEquals, mapStartsWith, mapEndsWith }, null, null) } };
+            entity.All["Field1"] = new Field(FieldType.Field) { Input = true, Transforms = new[] { new MapTransform(new[] { mapEquals, mapStartsWith, mapEndsWith }, null, null) } };
+            var fields = new Dictionary<string, Field> { { "", null } };
 
             var rows = TestOperation(
                 _testInput.Object,
-                new TransformOperation(entity),
+                new EntityTransform(entity),
                 new LogOperation()
             );
 
@@ -229,11 +238,12 @@ namespace Transformalize.Test.Unit {
             mapEndsWith["7"] = "I used to end with 7.";
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field { Input = true, Transforms = new[] { new MapTransform(new[] { mapEquals, mapStartsWith, mapEndsWith }) } };
+            entity.All["Field1"] = new Field(FieldType.Field) { Input = true, Transforms = new[] { new MapTransform(new[] { mapEquals, mapStartsWith, mapEndsWith }) } };
+            var fields = new Dictionary<string, Field> { { "", null } };
 
             var rows = TestOperation(
                 _testInput.Object,
-                new TransformOperation(entity),
+                new EntityTransform(entity),
                 new LogOperation()
             );
 
@@ -252,11 +262,11 @@ namespace Transformalize.Test.Unit {
             mapEndsWith["6 7"] = "67";
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field { Input = true, Transforms = new[] { new MapTransform(new[] { mapEquals, mapStartsWith, mapEndsWith }) } };
+            entity.All["Field1"] = new Field(FieldType.Field) { Input = true, Transforms = new[] { new MapTransform(new[] { mapEquals, mapStartsWith, mapEndsWith }) } };
 
             var rows = TestOperation(
                 _testInput.Object,
-                new TransformOperation(entity),
+                new EntityTransform(entity),
                 new LogOperation()
             );
 
@@ -269,18 +279,19 @@ namespace Transformalize.Test.Unit {
         public void TestJavscriptStringTransform() {
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field { Input = true, Transforms = new[] { new JavascriptTransform("field.length;", null, null) } };
+            entity.All["Field1"] = new Field(FieldType.Field) { Input = true, Transforms = new[] { new JavascriptTransform("field.length;", null, null) } };
 
             var rows = TestOperation(
                 _testInput.Object,
-                new TransformOperation(entity),
+                new EntityDefaults(entity),
+                new EntityTransform(entity),
                 new LogOperation()
             );
 
             Assert.AreEqual("13", rows[0]["Field1"]);
             Assert.AreEqual("13", rows[1]["Field1"]);
             Assert.AreEqual("4", rows[2]["Field1"]);
-            Assert.AreEqual(null, rows[3]["Field1"]);
+            Assert.AreEqual("0", rows[3]["Field1"]);
 
         }
 
@@ -297,11 +308,12 @@ namespace Transformalize.Test.Unit {
             var numbers = numbersMock.Object;
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field("System.Int32", 8, FieldType.Field, true) { Input = true, Transforms = new[] { new JavascriptTransform("field * 2;", null, null) }, Default = 0 };
+            entity.All["Field1"] = new Field("System.Int32", 8, FieldType.Field, true, 0) { Input = true, Transforms = new[] { new JavascriptTransform("field * 2;", null, null) }, Default = 0 };
+            var fields = new Dictionary<string, Field> { { "", null } };
 
             var rows = TestOperation(
                 numbers,
-                new TransformOperation(entity),
+                new EntityTransform(entity),
                 new LogOperation()
             );
 
@@ -324,11 +336,12 @@ namespace Transformalize.Test.Unit {
             var input = mock.Object;
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field() { Input = true, Transforms = new[] { new PadLeftTransform(5, '0') }, Default = "00000" };
+            entity.All["Field1"] = new Field(FieldType.Field) { Input = true, Transforms = new[] { new PadLeftTransform(5, '0') }, Default = "00000" };
+            var fields = new Dictionary<string, Field> { { "", null } };
 
             var rows = TestOperation(
                 input,
-                new TransformOperation(entity),
+                new EntityTransform(entity),
                 new LogOperation()
             );
 
@@ -351,11 +364,12 @@ namespace Transformalize.Test.Unit {
             var input = mock.Object;
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field() { Input = true, Transforms = new[] { new PadRightTransform(5, '0') }, Default = "00000" };
+            entity.All["Field1"] = new Field(FieldType.Field) { Input = true, Transforms = new[] { new PadRightTransform(5, '0') }, Default = "00000" };
+            var fields = new Dictionary<string, Field> { { "", null } };
 
             var rows = TestOperation(
                 input,
-                new TransformOperation(entity),
+                new EntityTransform(entity),
                 new LogOperation()
             );
 

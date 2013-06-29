@@ -9,40 +9,40 @@ namespace Transformalize.Model {
         private const string BATCH_ID = "TflId";
         private const string SURROGATE_KEY = "TflKey";
         private SortedDictionary<string, string> _output;
-        private Dictionary<string, IField> _original;
+        private Dictionary<string, Field> _original;
 
-        public FieldSqlWriter(IField field) {
+        public FieldSqlWriter(Field field) {
             StartWithField(field);
         }
 
-        public FieldSqlWriter Reload(IField field) {
+        public FieldSqlWriter Reload(Field field) {
             StartWithField(field);
             return this;
         }
 
-        public FieldSqlWriter(IEnumerable<IField> fields) {
+        public FieldSqlWriter(IEnumerable<Field> fields) {
             StartWithFields(fields);
         }
 
-        public FieldSqlWriter Reload(IEnumerable<IField> fields) {
+        public FieldSqlWriter Reload(IEnumerable<Field> fields) {
             StartWithFields(fields);
             return this;
         }
 
-        public FieldSqlWriter(IDictionary<string, IField> fields) {
+        public FieldSqlWriter(IDictionary<string, Field> fields) {
             StartWithDictionary(fields);
         }
 
-        public FieldSqlWriter Reload(IDictionary<string, IField> fields) {
+        public FieldSqlWriter Reload(IDictionary<string, Field> fields) {
             StartWithDictionary(fields);
             return this;
         }
 
-        public FieldSqlWriter(params IDictionary<string, IField>[] fields) {
+        public FieldSqlWriter(params IDictionary<string, Field>[] fields) {
             StartWithDictionaries(fields);
         }
 
-        public FieldSqlWriter Reload(params IDictionary<string, IField>[] fields) {
+        public FieldSqlWriter Reload(params IDictionary<string, Field>[] fields) {
             if (fields.Length == 0)
                 StartWithDictionary(_original);
             else
@@ -50,24 +50,24 @@ namespace Transformalize.Model {
             return this;
         }
 
-        private void StartWithField(IField field) {
-            _original = new Dictionary<string, IField> { { field.Alias, field } };
+        private void StartWithField(Field field) {
+            _original = new Dictionary<string, Field> { { field.Alias, field } };
             _output = new SortedDictionary<string, string> { { field.Alias, string.Empty } };
         }
 
-        private void StartWithFields(IEnumerable<IField> fields) {
+        private void StartWithFields(IEnumerable<Field> fields) {
             var expanded = fields.ToArray();
             _original = expanded.ToArray().ToDictionary(f => f.Alias, f => f);
             _output = new SortedDictionary<string, string>(expanded.ToDictionary(f => f.Alias, f => string.Empty));
         }
 
-        private void StartWithDictionary(IDictionary<string, IField> fields) {
+        private void StartWithDictionary(IDictionary<string, Field> fields) {
             _original = fields.ToDictionary(f => f.Key, f => f.Value);
             _output = new SortedDictionary<string, string>(fields.ToDictionary(f => f.Key, f => string.Empty));
         }
 
-        private void StartWithDictionaries(params IDictionary<string, IField>[] fields) {
-            _original = new Dictionary<string, IField>();
+        private void StartWithDictionaries(params IDictionary<string, Field>[] fields) {
+            _original = new Dictionary<string, Field>();
             foreach (var dict in fields) {
                 foreach (var key in dict.Keys) {
                     _original[key] = dict[key];
@@ -201,7 +201,7 @@ namespace Transformalize.Model {
             return this;
         }
 
-        private static string XmlValue(IField field) {
+        private static string XmlValue(Field field) {
             return string.Format("[{0}].value('({1})[{2}]', '{3}')", field.Parent, field.XPath, field.Index, field.SqlDataType);
         }
 
@@ -246,10 +246,10 @@ namespace Transformalize.Model {
             return this;
         }
 
-        public FieldSqlWriter HasDefaultOrTransform() {
+        public FieldSqlWriter HasTransform() {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];
-                if (field.Default == null && field.Transforms == null)
+                if (field.Transforms == null)
                     _output.Remove(key);
             }
             return this;
@@ -307,12 +307,12 @@ namespace Transformalize.Model {
         }
 
         public FieldSqlWriter AddSystemFields(bool withIdentity = false) {
-            var fields = new List<IField> {
-                new Field("System.Int32", 8, Model.FieldType.Field, true) {Alias = BATCH_ID, NotNull = true},
+            var fields = new List<Field> {
+                new Field("System.Int32", 8, Model.FieldType.Field, true, 0) {Alias = BATCH_ID, NotNull = true},
             };
 
             if(withIdentity)
-                fields.Add(new Field("System.Int32", 8, Model.FieldType.Field, true) { Alias = SURROGATE_KEY, NotNull = true, Clustered = true, Identity = true });
+                fields.Add(new Field("System.Int32", 8, Model.FieldType.Field, true, 0) { Alias = SURROGATE_KEY, NotNull = true, Clustered = true, Identity = true });
 
             foreach (var field in fields) {
                 _original[field.Alias] = field;
@@ -325,8 +325,8 @@ namespace Transformalize.Model {
             return Write();
         }
 
-        public Dictionary<string, IField> Context() {
-            var results = new Dictionary<string, IField>();
+        public Dictionary<string, Field> Context() {
+            var results = new Dictionary<string, Field>();
             foreach (var key in _output.Keys) {
                 results[key] = _original[key];
             }

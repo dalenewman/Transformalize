@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using System.Text;
 using Transformalize.Model;
+using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Transforms {
     public class MapTransform : ITransform {
-        private readonly Dictionary<string, IField> _parameters;
-        private readonly Dictionary<string, IField> _results;
+        private readonly Dictionary<string, Field> _parameters;
+        private readonly Dictionary<string, Field> _results;
         private readonly IDictionary<string, object> _equals;
         private readonly IDictionary<string, object> _startsWith;
         private readonly IDictionary<string, object> _endsWith;
@@ -16,7 +17,7 @@ namespace Transformalize.Transforms {
             _endsWith = maps[2];
         }
 
-        public MapTransform(IList<IDictionary<string, object>> maps, Dictionary<string, IField> parameters, Dictionary<string, IField> results) {
+        public MapTransform(IList<IDictionary<string, object>> maps, Dictionary<string, Field> parameters, Dictionary<string, Field> results) {
             _parameters = parameters;
             _results = results;
             _equals = maps[0];
@@ -26,62 +27,68 @@ namespace Transformalize.Transforms {
             HasResults = results != null && results.Count > 0;
         }
 
-        public void Transform(StringBuilder sb) {
+        public void Transform(ref StringBuilder sb) {
 
             foreach (var key in _equals.Keys) {
                 if (!sb.IsEqualTo(key)) continue;
                 sb.Clear();
                 sb.Append(_equals[key]);
-                goto done;
+                return;
             }
 
             foreach (var key in _startsWith.Keys) {
                 if (!sb.StartsWith(key)) continue;
                 sb.Clear();
                 sb.Append(_startsWith[key]);
-                goto done;
+                return;
             }
 
             foreach (var key in _endsWith.Keys) {
                 if (!sb.EndsWith(key)) continue;
                 sb.Clear();
                 sb.Append(_endsWith[key]);
-                goto done;
+                return;
             }
 
             foreach (var key in _equals.Keys) {
                 if (!key.Equals("*")) continue;
                 sb.Clear();
                 sb.Append(_equals[key]);
-                goto done;
+                return;
             }
 
-        done: ;
         }
 
-        public object Transform(object value) {
+        public void Transform(ref object value) {
             foreach (var key in _equals.Keys) {
-                if (value.Equals(key))
-                    return _equals[key];
+                if (!value.Equals(key)) continue;
+                value = _equals[key];
+                return;
             }
 
             foreach (var key in _startsWith.Keys) {
-                if (value.ToString().StartsWith(key))
-                    return _startsWith[key];
+                if (!value.ToString().StartsWith(key)) continue;
+                value = _startsWith[key];
+                return;
             }
 
             foreach (var key in _endsWith.Keys) {
-                if (value.ToString().EndsWith(key))
-                    return _endsWith[key];
+                if (!value.ToString().EndsWith(key)) continue;
+                value = _endsWith[key];
+                return;
             }
 
             foreach (var key in _equals.Keys) {
-                if (key.Equals("*"))
-                    return _equals[key];
+                if (!key.Equals("*")) continue;
+                value = _equals[key];
+                return;
             }
 
-            return value;
+        }
 
+        public void Transform(ref Row row)
+        {
+            
         }
 
         public bool HasParameters { get; private set; }

@@ -2,8 +2,8 @@ namespace Transformalize.Model {
 
     public class Relationship {
         public Entity LeftEntity;
-        public IField LeftField;
+        public Field LeftField;
         public Entity RightEntity;
-        public IField RightField;
+        public Field RightField;
     }
 }

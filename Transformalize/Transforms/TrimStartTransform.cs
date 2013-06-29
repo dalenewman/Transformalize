@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using System.Text;
 using Transformalize.Model;
+using Transformalize.Rhino.Etl.Core;
 
-namespace Transformalize.Transforms
-{
+namespace Transformalize.Transforms {
     public class TrimStartTransform : ITransform {
         private readonly string _trimChars;
-        private readonly Dictionary<string, IField> _parameters;
-        private readonly Dictionary<string, IField> _results;
+        private readonly Dictionary<string, Field> _parameters;
+        private readonly Dictionary<string, Field> _results;
         private readonly char[] _trimCharArray;
 
         public TrimStartTransform(string trimChars) {
@@ -15,7 +15,7 @@ namespace Transformalize.Transforms
             _trimCharArray = trimChars.ToCharArray();
         }
 
-        public TrimStartTransform(string trimChars, Dictionary<string, IField> parameters, Dictionary<string, IField> results) {
+        public TrimStartTransform(string trimChars, Dictionary<string, Field> parameters, Dictionary<string, Field> results) {
             _trimChars = trimChars;
             _parameters = parameters;
             _results = results;
@@ -24,13 +24,15 @@ namespace Transformalize.Transforms
             HasResults = results != null && results.Count > 0;
         }
 
-        public void Transform(StringBuilder sb) {
+        public void Transform(ref StringBuilder sb) {
             sb.TrimStart(_trimChars);
         }
 
-        public object Transform(object value)
-        {
-            return value.ToString().TrimStart(_trimCharArray);
+        public void Transform(ref object value) {
+            value = value.ToString().TrimStart(_trimCharArray);
+        }
+        public void Transform(ref Row row) {
+
         }
 
         public bool HasParameters { get; private set; }

@@ -6,14 +6,14 @@ namespace Transformalize.Test.Unit {
     [TestFixture]
     public class TestFields {
 
-        private readonly List<IField> _fields = new List<IField> {
-            new Field("system.string", 10, FieldType.PrimaryKey, true) {Alias = "Field1", Name="f1", Default="x", Parent="p1"},
-            new Field("system.int32", 8, FieldType.Field, false) {Alias = "Field2", Name="f2", Default=0, Parent="p2"}
+        private readonly List<Field> _fields = new List<Field> {
+            new Field("system.string", 10, FieldType.PrimaryKey, true, "") {Alias = "Field1", Name="f1", Default="x", Parent="p1"},
+            new Field("system.int32", 8, FieldType.Field, false, 0) {Alias = "Field2", Name="f2", Default=0, Parent="p2"}
         };
 
-        private readonly List<IField> _xmlFields = new List<IField> {
-            new Xml("system.string", 10, true) {Alias = "Field1", Name="f1", Default="x", XPath = "/Properties/f1", Index=1, Parent="p1"},
-            new Xml("system.int32", 8, false) {Alias = "Field2", Name="f2", Default=0, XPath = "/Properties/f2", Index=1, Parent="p2"}
+        private readonly List<Field> _xmlFields = new List<Field> {
+            new Field("system.string", 10, FieldType.Xml, true, "") {Alias = "Field1", Name="f1", Default="x", XPath = "/Properties/f1", Index=1, Parent="p1"},
+            new Field("system.int32", 8, FieldType.Xml, false, 0) {Alias = "Field2", Name="f2", Default=0, XPath = "/Properties/f2", Index=1, Parent="p2"}
         };
 
         [Test]

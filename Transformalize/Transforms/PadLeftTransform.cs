@@ -1,20 +1,21 @@
 using System.Collections.Generic;
 using System.Text;
 using Transformalize.Model;
+using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Transforms {
     public class PadLeftTransform : ITransform {
         private readonly int _totalWidth;
         private readonly char _paddingChar;
-        private readonly Dictionary<string, IField> _parameters;
-        private readonly Dictionary<string, IField> _results;
+        private readonly Dictionary<string, Field> _parameters;
+        private readonly Dictionary<string, Field> _results;
 
         public PadLeftTransform(int totalWidth, char paddingChar) {
             _totalWidth = totalWidth;
             _paddingChar = paddingChar;
         }
 
-        public PadLeftTransform(int totalWidth, char paddingChar, Dictionary<string, IField> parameters, Dictionary<string, IField> results) {
+        public PadLeftTransform(int totalWidth, char paddingChar, Dictionary<string, Field> parameters, Dictionary<string, Field> results) {
             _totalWidth = totalWidth;
             _paddingChar = paddingChar;
             _parameters = parameters;
@@ -23,12 +24,17 @@ namespace Transformalize.Transforms {
             HasResults = results != null && results.Count > 0;
         }
 
-        public void Transform(StringBuilder sb) {
+        public void Transform(ref StringBuilder sb) {
             sb.PadLeft(_totalWidth, _paddingChar);
         }
 
-        public object Transform(object value) {
-            return value.ToString().PadLeft(_totalWidth, _paddingChar);
+        public void Transform(ref object value) {
+            value = value.ToString().PadLeft(_totalWidth, _paddingChar);
+        }
+
+        public void Transform(ref Row row)
+        {
+            
         }
 
         public bool HasParameters { get; private set; }

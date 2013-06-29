@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Model;
 using Transformalize.Operations;
@@ -13,7 +14,8 @@ namespace Transformalize {
         private readonly Process _process;
         private readonly Entity _entity;
 
-        public EntityProcess(Process process) : base(process.Name) {
+        public EntityProcess(Process process)
+            : base(process.Name) {
             _process = process;
             _entity = _process.Entities.First(kv => !kv.Value.Processed).Value;
         }
@@ -36,7 +38,8 @@ namespace Transformalize {
 
             Register(new EntityKeysToOperations(_entity));
             Register(new SerialUnionAllOperation());
-            Register(new TransformOperation(_entity));
+            Register(new EntityDefaults(_entity));
+            Register(new EntityTransform(_entity));
             RegisterLast(new BranchingOperation()
                 .Add(new EntityDatabaseLoad(_entity))
                 .Add(new EntityKeyRegisterLoad(_process, _entity))

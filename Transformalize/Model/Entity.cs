@@ -13,10 +13,10 @@ namespace Transformalize.Model {
         public Connection InputConnection { get; set; }
         public Connection OutputConnection { get; set; }
         public Field Version;
-        public Dictionary<string, IField> PrimaryKey { get; set; }
-        public Dictionary<string, IField> Fields { get; set; }
-        public Dictionary<string, IField> Xml { get; set; }
-        public Dictionary<string, IField> All { get; set; }
+        public Dictionary<string, Field> PrimaryKey { get; set; }
+        public Dictionary<string, Field> Fields { get; set; }
+        public Dictionary<string, Field> Xml { get; set; }
+        public Dictionary<string, Field> All { get; set; }
         public Dictionary<string, Relationship> Joins { get; set; }
         public EntitySqlWriter EntitySqlWriter { get; private set; }
         public string Output { get; set; }
@@ -28,9 +28,9 @@ namespace Transformalize.Model {
         public Entity() {
             Name = string.Empty;
             Schema = string.Empty;
-            PrimaryKey = new Dictionary<string, IField>();
-            Fields = new Dictionary<string, IField>();
-            All = new Dictionary<string, IField>();
+            PrimaryKey = new Dictionary<string, Field>();
+            Fields = new Dictionary<string, Field>();
+            All = new Dictionary<string, Field>();
             Joins = new Dictionary<string, Relationship>();
             EntitySqlWriter = new EntitySqlWriter(this);
             Processed = false;

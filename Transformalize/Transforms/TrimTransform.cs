@@ -1,38 +1,50 @@
 using System.Collections.Generic;
 using System.Text;
 using Transformalize.Model;
+using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Transforms {
     public class TrimTransform : ITransform {
         private readonly string _trimChars;
-        private readonly Dictionary<string, IField> _parameters;
-        private readonly Dictionary<string, IField> _results;
         private readonly char[] _trimCharArray;
+        private readonly Dictionary<string, Field> _parameters;
+        private readonly Dictionary<string, Field> _results;
+        private readonly bool _hasParameters;
+        private readonly bool _hasResults;
+
+        public bool HasParameters {
+            get { return _hasParameters; }
+        }
+
+        public bool HasResults {
+            get { return _hasResults; }
+        }
 
         public TrimTransform(string trimChars) {
             _trimChars = trimChars;
             _trimCharArray = trimChars.ToCharArray();
         }
 
-        public TrimTransform(string trimChars, Dictionary<string, IField> parameters, Dictionary<string, IField> results) {
+        public TrimTransform(string trimChars, Dictionary<string, Field> parameters, Dictionary<string, Field> results) {
+            _trimCharArray = trimChars.ToCharArray();
             _trimChars = trimChars;
             _parameters = parameters;
             _results = results;
-            _trimCharArray = trimChars.ToCharArray();
-            HasParameters = parameters != null && parameters.Count > 0;
-            HasResults = results != null && results.Count > 0;
+            _hasParameters = parameters != null && parameters.Count > 0;
+            _hasResults = results != null && results.Count > 0;
         }
 
-        public void Transform(StringBuilder sb) {
+        public void Transform(ref StringBuilder sb) {
             sb.Trim(_trimChars);
         }
 
-        public object Transform(object value) {
-            return value.ToString().Trim(_trimCharArray);
+        public void Transform(ref object value) {
+            value = value.ToString().Trim(_trimCharArray);
         }
 
-        public bool HasParameters { get; private set; }
-        public bool HasResults { get; private set; }
+        public void Transform(ref Row row) {
+
+        }
 
         public void Dispose() { }
     }
