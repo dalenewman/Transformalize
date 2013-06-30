@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using NLog;
 using Transformalize.Rhino.Etl.Core.Exceptions;
+using LogManager = Transformalize.NLog.LogManager;
+using Logger = Transformalize.NLog.Logger;
 
 namespace Transformalize.Rhino.Etl.Core
 {

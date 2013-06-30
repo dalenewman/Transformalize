@@ -32,10 +32,43 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NLog">
-      <HintPath>..\packages\NLog.2.0.1.2\lib\net40\NLog.dll</HintPath>
-    </Reference>
     <Reference Include="Noesis.Javascript, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Noesis.Javascript.0.7.1.0\lib\net40\amd64\Noesis.Javascript.dll</HintPath>
@@ -70,6 +103,289 @@
     <Compile Include="Configuration\TransformalizeConfiguration.cs" />
     <Compile Include="Configuration\XmlConfigurationElement.cs" />
     <Compile Include="Configuration\XmlElementCollection.cs" />
+    <Compile Include="NLog\ComInterop\ComLogger.cs" />
+    <Compile Include="NLog\ComInterop\ComLogManager.cs" />
+    <Compile Include="NLog\ComInterop\IComLogger.cs" />
+    <Compile Include="NLog\ComInterop\IComLogManager.cs" />
+    <Compile Include="NLog\Common\AsyncContinuation.cs" />
+    <Compile Include="NLog\Common\AsyncHelpers.cs" />
+    <Compile Include="NLog\Common\AsynchronousAction.cs" />
+    <Compile Include="NLog\Common\AsyncLogEventInfo.cs" />
+    <Compile Include="NLog\Common\InternalLogger.cs" />
+    <Compile Include="NLog\Common\LogEventInfoBuffer.cs" />
+    <Compile Include="NLog\Conditions\ConditionAndExpression.cs" />
+    <Compile Include="NLog\Conditions\ConditionEvaluationException.cs" />
+    <Compile Include="NLog\Conditions\ConditionExpression.cs" />
+    <Compile Include="NLog\Conditions\ConditionLayoutExpression.cs" />
+    <Compile Include="NLog\Conditions\ConditionLevelExpression.cs" />
+    <Compile Include="NLog\Conditions\ConditionLiteralExpression.cs" />
+    <Compile Include="NLog\Conditions\ConditionLoggerNameExpression.cs" />
+    <Compile Include="NLog\Conditions\ConditionMessageExpression.cs" />
+    <Compile Include="NLog\Conditions\ConditionMethodAttribute.cs" />
+    <Compile Include="NLog\Conditions\ConditionMethodExpression.cs" />
+    <Compile Include="NLog\Conditions\ConditionMethods.cs" />
+    <Compile Include="NLog\Conditions\ConditionMethodsAttribute.cs" />
+    <Compile Include="NLog\Conditions\ConditionNotExpression.cs" />
+    <Compile Include="NLog\Conditions\ConditionOrExpression.cs" />
+    <Compile Include="NLog\Conditions\ConditionParseException.cs" />
+    <Compile Include="NLog\Conditions\ConditionParser.cs" />
+    <Compile Include="NLog\Conditions\ConditionRelationalExpression.cs" />
+    <Compile Include="NLog\Conditions\ConditionRelationalOperator.cs" />
+    <Compile Include="NLog\Conditions\ConditionTokenizer.cs" />
+    <Compile Include="NLog\Conditions\ConditionTokenType.cs" />
+    <Compile Include="NLog\Config\AdvancedAttribute.cs" />
+    <Compile Include="NLog\Config\AppDomainFixedOutputAttribute.cs" />
+    <Compile Include="NLog\Config\ArrayParameterAttribute.cs" />
+    <Compile Include="NLog\Config\ConfigSectionHandler.cs" />
+    <Compile Include="NLog\Config\ConfigurationItemCreator.cs" />
+    <Compile Include="NLog\Config\ConfigurationItemFactory.cs" />
+    <Compile Include="NLog\Config\DefaultParameterAttribute.cs" />
+    <Compile Include="NLog\Config\Factory.cs" />
+    <Compile Include="NLog\Config\IFactory.cs" />
+    <Compile Include="NLog\Config\IInstallable.cs" />
+    <Compile Include="NLog\Config\INamedItemFactory.cs" />
+    <Compile Include="NLog\Config\InstallationContext.cs" />
+    <Compile Include="NLog\Config\LoggingConfiguration.cs" />
+    <Compile Include="NLog\Config\LoggingConfigurationChangedEventArgs.cs" />
+    <Compile Include="NLog\Config\LoggingConfigurationReloadedEventArgs.cs" />
+    <Compile Include="NLog\Config\LoggingRule.cs" />
+    <Compile Include="NLog\Config\MethodFactory.cs" />
+    <Compile Include="NLog\Config\NameBaseAttribute.cs" />
+    <Compile Include="NLog\Config\NLogConfigurationItemAttribute.cs" />
+    <Compile Include="NLog\Config\NLogXmlElement.cs" />
+    <Compile Include="NLog\Config\RequiredParameterAttribute.cs" />
+    <Compile Include="NLog\Config\SimpleConfigurator.cs" />
+    <Compile Include="NLog\Config\StackTraceUsage.cs" />
+    <Compile Include="NLog\Config\ThreadAgnosticAttribute.cs" />
+    <Compile Include="NLog\Config\XmlLoggingConfiguration.cs" />
+    <Compile Include="NLog\Filters\ConditionBasedFilter.cs" />
+    <Compile Include="NLog\Filters\Filter.cs" />
+    <Compile Include="NLog\Filters\FilterAttribute.cs" />
+    <Compile Include="NLog\Filters\FilterResult.cs" />
+    <Compile Include="NLog\Filters\LayoutBasedFilter.cs" />
+    <Compile Include="NLog\Filters\WhenContainsFilter.cs" />
+    <Compile Include="NLog\Filters\WhenEqualFilter.cs" />
+    <Compile Include="NLog\Filters\WhenNotContainsFilter.cs" />
+    <Compile Include="NLog\Filters\WhenNotEqualFilter.cs" />
+    <Compile Include="NLog\GDC.cs" />
+    <Compile Include="NLog\GlobalDiagnosticsContext.cs" />
+    <Compile Include="NLog\GlobalSuppressions.cs" />
+    <Compile Include="NLog\Internal\AspHelper.cs" />
+    <Compile Include="NLog\Internal\CompactFrameworkHelper.cs" />
+    <Compile Include="NLog\Internal\CompilerAttributes.cs" />
+    <Compile Include="NLog\Internal\CurrentTimeGetter.cs" />
+    <Compile Include="NLog\Internal\DictionaryAdapter.cs" />
+    <Compile Include="NLog\Internal\EnumerableHelpers.cs" />
+    <Compile Include="NLog\Internal\EnvironmentHelper.cs" />
+    <Compile Include="NLog\Internal\ExceptionHelper.cs" />
+    <Compile Include="NLog\Internal\FactoryHelper.cs" />
+    <Compile Include="NLog\Internal\FileAppenders\BaseFileAppender.cs" />
+    <Compile Include="NLog\Internal\FileAppenders\CountingSingleProcessFileAppender.cs" />
+    <Compile Include="NLog\Internal\FileAppenders\ICreateFileParameters.cs" />
+    <Compile Include="NLog\Internal\FileAppenders\IFileAppenderFactory.cs" />
+    <Compile Include="NLog\Internal\FileAppenders\MutexMultiProcessFileAppender.cs" />
+    <Compile Include="NLog\Internal\FileAppenders\RetryingMultiProcessFileAppender.cs" />
+    <Compile Include="NLog\Internal\FileAppenders\SingleProcessFileAppender.cs" />
+    <Compile Include="NLog\Internal\FileAppenders\UnixMultiProcessFileAppender.cs" />
+    <Compile Include="NLog\Internal\FileInfoHelper.cs" />
+    <Compile Include="NLog\Internal\IRenderable.cs" />
+    <Compile Include="NLog\Internal\ISmtpClient.cs" />
+    <Compile Include="NLog\Internal\ISupportsInitialize.cs" />
+    <Compile Include="NLog\Internal\IUsesStackTrace.cs" />
+    <Compile Include="NLog\Internal\LocalizableAttribute.cs" />
+    <Compile Include="NLog\Internal\LoggerConfiguration.cs" />
+    <Compile Include="NLog\Internal\MultiFileWatcher.cs" />
+    <Compile Include="NLog\Internal\MySmtpClient.cs" />
+    <Compile Include="NLog\Internal\NativeMethods.cs" />
+    <Compile Include="NLog\Internal\NetworkSenders\HttpNetworkSender.cs" />
+    <Compile Include="NLog\Internal\NetworkSenders\INetworkSenderFactory.cs" />
+    <Compile Include="NLog\Internal\NetworkSenders\ISocket.cs" />
+    <Compile Include="NLog\Internal\NetworkSenders\NetworkSender.cs" />
+    <Compile Include="NLog\Internal\NetworkSenders\NetworkSenderFactory.cs" />
+    <Compile Include="NLog\Internal\NetworkSenders\SocketAsyncEventArgs.cs" />
+    <Compile Include="NLog\Internal\NetworkSenders\SocketError.cs" />
+    <Compile Include="NLog\Internal\NetworkSenders\SocketProxy.cs" />
+    <Compile Include="NLog\Internal\NetworkSenders\TcpNetworkSender.cs" />
+    <Compile Include="NLog\Internal\NetworkSenders\UdpNetworkSender.cs" />
+    <Compile Include="NLog\Internal\ObjectGraphScanner.cs" />
+    <Compile Include="NLog\Internal\ParameterUtils.cs" />
+    <Compile Include="NLog\Internal\PlatformDetector.cs" />
+    <Compile Include="NLog\Internal\PortableFileInfoHelper.cs" />
+    <Compile Include="NLog\Internal\PortableThreadIDHelper.cs" />
+    <Compile Include="NLog\Internal\PropertyHelper.cs" />
+    <Compile Include="NLog\Internal\ReflectionHelpers.cs" />
+    <Compile Include="NLog\Internal\RuntimeOS.cs" />
+    <Compile Include="NLog\Internal\SimpleStringReader.cs" />
+    <Compile Include="NLog\Internal\SingleCallContinuation.cs" />
+    <Compile Include="NLog\Internal\SortHelpers.cs" />
+    <Compile Include="NLog\Internal\StackTraceUsageUtils.cs" />
+    <Compile Include="NLog\Internal\TargetWithFilterChain.cs" />
+    <Compile Include="NLog\Internal\ThreadIDHelper.cs" />
+    <Compile Include="NLog\Internal\ThreadLocalStorageHelper.cs" />
+    <Compile Include="NLog\Internal\TimeoutContinuation.cs" />
+    <Compile Include="NLog\Internal\UrlHelper.cs" />
+    <Compile Include="NLog\Internal\Win32FileInfoHelper.cs" />
+    <Compile Include="NLog\Internal\Win32FileNativeMethods.cs" />
+    <Compile Include="NLog\Internal\Win32ThreadIDHelper.cs" />
+    <Compile Include="NLog\LayoutRenderers\AmbientPropertyAttribute.cs" />
+    <Compile Include="NLog\LayoutRenderers\AspApplicationValueLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\AspRequestValueLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\AspSessionValueLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\BaseDirLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\CallSiteLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\CounterLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\DateLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\DocumentUriLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\EnvironmentLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\EventContextLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\ExceptionLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\FileContentsLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\GarbageCollectorInfoLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\GarbageCollectorProperty.cs" />
+    <Compile Include="NLog\LayoutRenderers\GdcLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\GuidLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\IdentityLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\InstallContextLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\LayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\LayoutRendererAttribute.cs" />
+    <Compile Include="NLog\LayoutRenderers\LevelLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\LiteralLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\Log4JXmlEventLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\LoggerNameLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\LongDateLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\MachineNameLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\MdcLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\MessageLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\NdcLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\NewLineLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\NLogDirLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\PerformanceCounterLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\ProcessIdLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\ProcessInfoLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\ProcessInfoProperty.cs" />
+    <Compile Include="NLog\LayoutRenderers\ProcessNameLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\ProcessTimeLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\QueryPerformanceCounterLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\RegistryLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\ShortDateLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\SilverlightApplicationInfoLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\SilverlightApplicationInfoOption.cs" />
+    <Compile Include="NLog\LayoutRenderers\SpecialFolderLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\StackTraceFormat.cs" />
+    <Compile Include="NLog\LayoutRenderers\StackTraceLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\TempDirLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\ThreadIdLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\ThreadNameLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\TicksLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\TimeLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\WindowsIdentityLayoutRenderer.cs" />
+    <Compile Include="NLog\LayoutRenderers\Wrappers\CachedLayoutRendererWrapper.cs" />
+    <Compile Include="NLog\LayoutRenderers\Wrappers\FileSystemNormalizeLayoutRendererWrapper.cs" />
+    <Compile Include="NLog\LayoutRenderers\Wrappers\JsonEncodeLayoutRendererWrapper.cs" />
+    <Compile Include="NLog\LayoutRenderers\Wrappers\LowercaseLayoutRendererWrapper.cs" />
+    <Compile Include="NLog\LayoutRenderers\Wrappers\OnExceptionLayoutRendererWrapper.cs" />
+    <Compile Include="NLog\LayoutRenderers\Wrappers\PaddingLayoutRendererWrapper.cs" />
+    <Compile Include="NLog\LayoutRenderers\Wrappers\ReplaceLayoutRendererWrapper.cs" />
+    <Compile Include="NLog\LayoutRenderers\Wrappers\Rot13LayoutRendererWrapper.cs" />
+    <Compile Include="NLog\LayoutRenderers\Wrappers\TrimWhiteSpaceLayoutRendererWrapper.cs" />
+    <Compile Include="NLog\LayoutRenderers\Wrappers\UppercaseLayoutRendererWrapper.cs" />
+    <Compile Include="NLog\LayoutRenderers\Wrappers\UrlEncodeLayoutRendererWrapper.cs" />
+    <Compile Include="NLog\LayoutRenderers\Wrappers\WhenEmptyLayoutRendererWrapper.cs" />
+    <Compile Include="NLog\LayoutRenderers\Wrappers\WhenLayoutRendererWrapper.cs" />
+    <Compile Include="NLog\LayoutRenderers\Wrappers\WrapperLayoutRendererBase.cs" />
+    <Compile Include="NLog\LayoutRenderers\Wrappers\XmlEncodeLayoutRendererWrapper.cs" />
+    <Compile Include="NLog\Layouts\CsvColumn.cs" />
+    <Compile Include="NLog\Layouts\CsvColumnDelimiterMode.cs" />
+    <Compile Include="NLog\Layouts\CsvLayout.cs" />
+    <Compile Include="NLog\Layouts\CsvQuotingMode.cs" />
+    <Compile Include="NLog\Layouts\Layout.cs" />
+    <Compile Include="NLog\Layouts\LayoutAttribute.cs" />
+    <Compile Include="NLog\Layouts\LayoutParser.cs" />
+    <Compile Include="NLog\Layouts\LayoutWithHeaderAndFooter.cs" />
+    <Compile Include="NLog\Layouts\Log4JXmlEventLayout.cs" />
+    <Compile Include="NLog\Layouts\SimpleLayout.cs" />
+    <Compile Include="NLog\LogEventInfo.cs" />
+    <Compile Include="NLog\LogFactory-T.cs" />
+    <Compile Include="NLog\LogFactory.cs" />
+    <Compile Include="NLog\Logger-V1Compat.cs" />
+    <Compile Include="NLog\Logger.cs" />
+    <Compile Include="NLog\LoggerImpl.cs" />
+    <Compile Include="NLog\LogLevel.cs" />
+    <Compile Include="NLog\LogManager.cs" />
+    <Compile Include="NLog\LogMessageGenerator.cs" />
+    <Compile Include="NLog\LogReceiverService\ILogReceiverClient.cs" />
+    <Compile Include="NLog\LogReceiverService\ILogReceiverServer.cs" />
+    <Compile Include="NLog\LogReceiverService\LogReceiverForwardingService.cs" />
+    <Compile Include="NLog\LogReceiverService\LogReceiverServiceConfig.cs" />
+    <Compile Include="NLog\LogReceiverService\NLogEvent.cs" />
+    <Compile Include="NLog\LogReceiverService\NLogEvents.cs" />
+    <Compile Include="NLog\LogReceiverService\StringCollection.cs" />
+    <Compile Include="NLog\LogReceiverService\WcfLogReceiverClient.cs" />
+    <Compile Include="NLog\MappedDiagnosticsContext.cs" />
+    <Compile Include="NLog\MDC.cs" />
+    <Compile Include="NLog\NDC.cs" />
+    <Compile Include="NLog\NestedDiagnosticsContext.cs" />
+    <Compile Include="NLog\NLogConfigurationException.cs" />
+    <Compile Include="NLog\NLogRuntimeException.cs" />
+    <Compile Include="NLog\NLogTraceListener.cs" />
+    <Compile Include="NLog\Targets\ArchiveNumberingMode.cs" />
+    <Compile Include="NLog\Targets\AspResponseTarget.cs" />
+    <Compile Include="NLog\Targets\ChainsawTarget.cs" />
+    <Compile Include="NLog\Targets\ColoredConsoleTarget.cs" />
+    <Compile Include="NLog\Targets\ConsoleOutputColor.cs" />
+    <Compile Include="NLog\Targets\ConsoleRowHighlightingRule.cs" />
+    <Compile Include="NLog\Targets\ConsoleTarget.cs" />
+    <Compile Include="NLog\Targets\ConsoleWordHighlightingRule.cs" />
+    <Compile Include="NLog\Targets\DatabaseCommandInfo.cs" />
+    <Compile Include="NLog\Targets\DatabaseParameterInfo.cs" />
+    <Compile Include="NLog\Targets\DatabaseTarget.cs" />
+    <Compile Include="NLog\Targets\DebuggerTarget.cs" />
+    <Compile Include="NLog\Targets\DebugTarget.cs" />
+    <Compile Include="NLog\Targets\EventLogTarget.cs" />
+    <Compile Include="NLog\Targets\FileArchivePeriod.cs" />
+    <Compile Include="NLog\Targets\FileTarget.cs" />
+    <Compile Include="NLog\Targets\LineEndingMode.cs" />
+    <Compile Include="NLog\Targets\MailTarget.cs" />
+    <Compile Include="NLog\Targets\MemoryTarget.cs" />
+    <Compile Include="NLog\Targets\MethodCallParameter.cs" />
+    <Compile Include="NLog\Targets\MethodCallTarget.cs" />
+    <Compile Include="NLog\Targets\MethodCallTargetBase.cs" />
+    <Compile Include="NLog\Targets\NetworkTarget.cs" />
+    <Compile Include="NLog\Targets\NetworkTargetOverflowAction.cs" />
+    <Compile Include="NLog\Targets\NLogViewerParameterInfo.cs" />
+    <Compile Include="NLog\Targets\NLogViewerTarget.cs" />
+    <Compile Include="NLog\Targets\NullTarget.cs" />
+    <Compile Include="NLog\Targets\OutputDebugStringTarget.cs" />
+    <Compile Include="NLog\Targets\PerformanceCounterTarget.cs" />
+    <Compile Include="NLog\Targets\SmtpAuthenticationMode.cs" />
+    <Compile Include="NLog\Targets\Target.cs" />
+    <Compile Include="NLog\Targets\TargetAttribute.cs" />
+    <Compile Include="NLog\Targets\TargetWithLayout.cs" />
+    <Compile Include="NLog\Targets\TargetWithLayoutHeaderAndFooter.cs" />
+    <Compile Include="NLog\Targets\TraceTarget.cs" />
+    <Compile Include="NLog\Targets\WebServiceProtocol.cs" />
+    <Compile Include="NLog\Targets\WebServiceTarget.cs" />
+    <Compile Include="NLog\Targets\Win32FileAttributes.cs" />
+    <Compile Include="NLog\Targets\Wrappers\AsyncRequestQueue-T.cs" />
+    <Compile Include="NLog\Targets\Wrappers\AsyncTargetWrapper.cs" />
+    <Compile Include="NLog\Targets\Wrappers\AsyncTargetWrapperOverflowAction.cs" />
+    <Compile Include="NLog\Targets\Wrappers\AutoFlushTargetWrapper.cs" />
+    <Compile Include="NLog\Targets\Wrappers\BufferingTargetWrapper.cs" />
+    <Compile Include="NLog\Targets\Wrappers\CompoundTargetBase.cs" />
+    <Compile Include="NLog\Targets\Wrappers\FallbackGroupTarget.cs" />
+    <Compile Include="NLog\Targets\Wrappers\FilteringRule.cs" />
+    <Compile Include="NLog\Targets\Wrappers\FilteringTargetWrapper.cs" />
+    <Compile Include="NLog\Targets\Wrappers\ImpersonatingTargetWrapper.cs" />
+    <Compile Include="NLog\Targets\Wrappers\LogOnProviderType.cs" />
+    <Compile Include="NLog\Targets\Wrappers\PostFilteringTargetWrapper.cs" />
+    <Compile Include="NLog\Targets\Wrappers\RandomizeGroupTarget.cs" />
+    <Compile Include="NLog\Targets\Wrappers\RepeatingTargetWrapper.cs" />
+    <Compile Include="NLog\Targets\Wrappers\RetryingTargetWrapper.cs" />
+    <Compile Include="NLog\Targets\Wrappers\RoundRobinGroupTarget.cs" />
+    <Compile Include="NLog\Targets\Wrappers\SecurityImpersonationLevel.cs" />
+    <Compile Include="NLog\Targets\Wrappers\SecurityLogOnType.cs" />
+    <Compile Include="NLog\Targets\Wrappers\SplitGroupTarget.cs" />
+    <Compile Include="NLog\Targets\Wrappers\WrapperTargetBase.cs" />
     <Compile Include="Operations\ProcessTransform.cs" />
     <Compile Include="Operations\EntityDefaults.cs" />
     <Compile Include="StringExtensions.cs" />

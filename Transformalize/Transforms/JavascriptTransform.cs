@@ -29,6 +29,7 @@ namespace Transformalize.Transforms {
         }
 
         public void Transform(ref StringBuilder sb) {
+            //not efficient, value in sb should have never been there
             _context.SetParameter("field", sb.ToString());
             sb.Clear();
             sb.Append(Run());
