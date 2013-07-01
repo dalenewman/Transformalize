@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
+using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Transforms {
@@ -10,6 +12,8 @@ namespace Transformalize.Transforms {
         void Transform(ref Row row);
         bool HasParameters { get; }
         bool HasResults { get; }
+        Dictionary<string, Field> Parameters { get; }
+        Dictionary<string, Field> Results { get; } 
     }
 
 }

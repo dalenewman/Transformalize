@@ -11,7 +11,6 @@ namespace Transformalize.Model {
         private FieldType _fieldType;
         private string _name;
         private string _sqlDataType;
-        private object _default;
 
         public StringBuilder StringBuilder;
 

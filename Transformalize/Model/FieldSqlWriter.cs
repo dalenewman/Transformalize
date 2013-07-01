@@ -11,6 +11,10 @@ namespace Transformalize.Model {
         private SortedDictionary<string, string> _output;
         private Dictionary<string, Field> _original;
 
+        public FieldSqlWriter() {
+            StartEmpty();
+        }
+
         public FieldSqlWriter(Field field) {
             StartWithField(field);
         }
@@ -53,6 +57,11 @@ namespace Transformalize.Model {
         private void StartWithField(Field field) {
             _original = new Dictionary<string, Field> { { field.Alias, field } };
             _output = new SortedDictionary<string, string> { { field.Alias, string.Empty } };
+        }
+
+        private void StartEmpty() {
+            _original = new Dictionary<string, Field>();
+            _output = new SortedDictionary<string, string>();
         }
 
         private void StartWithFields(IEnumerable<Field> fields) {
@@ -157,19 +166,10 @@ namespace Transformalize.Model {
             return this;
         }
 
-        private void Append(string suffix) {
+        public FieldSqlWriter Append(string suffix) {
             foreach (var key in CopyOutputKeys()) {
                 _output[key] = string.Concat(_output[key], suffix);
             }
-        }
-
-        public FieldSqlWriter Null() {
-            Append(" NULL");
-            return this;
-        }
-
-        public FieldSqlWriter NotNull() {
-            Append(" NOT NULL");
             return this;
         }
 
@@ -290,6 +290,14 @@ namespace Transformalize.Model {
             return this;
         }
 
+        public FieldSqlWriter SetParam() {
+            foreach (var key in CopyOutputKeys()) {
+                var name = _output[key];
+                _output[key] = string.Concat(name, " = @", name.Trim("[]".ToCharArray()));
+            }
+            return this;
+        }
+
         public FieldSqlWriter ExpandXml() {
             foreach (var key in CopyOutputKeys()) {
 
@@ -306,18 +314,24 @@ namespace Transformalize.Model {
             return this;
         }
 
-        public FieldSqlWriter AddSystemFields(bool withIdentity = false) {
-            var fields = new List<Field> {
-                new Field("System.Int32", 8, Model.FieldType.Field, true, 0) {Alias = BATCH_ID, NotNull = true},
+        public FieldSqlWriter AddBatchId(bool forCreate = true) {
+
+            _original[BATCH_ID] = new Field("System.Int32", 8, Model.FieldType.Field, true, 0) {
+                Alias = BATCH_ID,
+                NotNull = forCreate
             };
 
-            if(withIdentity)
-                fields.Add(new Field("System.Int32", 8, Model.FieldType.Field, true, 0) { Alias = SURROGATE_KEY, NotNull = true, Clustered = true, Identity = true });
+            _output[BATCH_ID] = string.Empty;
+            return this;
+        }
 
-            foreach (var field in fields) {
-                _original[field.Alias] = field;
-                _output[field.Alias] = string.Empty;
-            }
+        public FieldSqlWriter AddSurrogateKey(bool forCreate = true) {
+            if (forCreate)
+                _original[SURROGATE_KEY] = new Field("System.Int32", 8, Model.FieldType.Field, true, 0) { Alias = SURROGATE_KEY, NotNull = true, Clustered = true, Identity = true };
+            else
+                _original[SURROGATE_KEY] = new Field("System.Int32", 8, Model.FieldType.Field, true, 0) { Alias = SURROGATE_KEY };
+
+            _output[SURROGATE_KEY] = string.Empty;
             return this;
         }
 

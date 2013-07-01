@@ -8,8 +8,8 @@ namespace Transformalize.Transforms {
     public class JavascriptTransform : ITransform {
         private readonly JavascriptContext _context = new JavascriptContext();
         private readonly string _script;
-        private readonly Dictionary<string, Field> _parameters;
-        private readonly Dictionary<string, Field> _results;
+        public Dictionary<string, Field> Parameters { get; private set; }
+        public Dictionary<string, Field> Results { get; private set; }
         private readonly bool _hasParameters;
         private readonly bool _hasResults;
 
@@ -22,14 +22,13 @@ namespace Transformalize.Transforms {
 
         public JavascriptTransform(string script, Dictionary<string, Field> parameters, Dictionary<string, Field> results) {
             _script = script;
-            _parameters = parameters;
-            _results = results;
+            Parameters = parameters;
+            Results = results;
             _hasParameters = parameters != null && parameters.Count > 0;
             _hasResults = results != null && results.Count > 0;
         }
 
         public void Transform(ref StringBuilder sb) {
-            //not efficient, value in sb should have never been there
             _context.SetParameter("field", sb.ToString());
             sb.Clear();
             sb.Append(Run());
@@ -41,11 +40,11 @@ namespace Transformalize.Transforms {
         }
 
         public void Transform(ref Row row) {
-            foreach (var key in _parameters.Keys) {
+            foreach (var key in Parameters.Keys) {
                 _context.SetParameter(key, row[key]);
             }
             var result = Run();
-            foreach (var key in _results.Keys) {
+            foreach (var key in Results.Keys) {
                 row[key] = result;
             }
         }

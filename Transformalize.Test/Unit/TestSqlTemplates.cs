@@ -1,15 +1,11 @@
-﻿using System.Text;
-using NUnit.Framework;
-using Transformalize.Model;
+﻿using NUnit.Framework;
 
 namespace Transformalize.Test.Unit {
     [TestFixture]
-    public class TestProcess {
+    public class TestSqlTemplates {
 
         [Test]
         public void TestTruncateSql() {
-            var output = new Process() { Name = "Test", Output = "Test" };
-
             Assert.AreEqual(@"
                 IF EXISTS(
         	        SELECT *
@@ -17,13 +13,11 @@ namespace Transformalize.Test.Unit {
         	        WHERE TABLE_SCHEMA = 'dbo'
         	        AND TABLE_NAME = 'Test'
                 )	TRUNCATE TABLE [dbo].[Test];
-            ", output.TruncateOutputSql());
+            ", SqlTemplates.TruncateTable("Test"));
         }
 
         [Test]
         public void TestDropSql() {
-            var output = new Process() { Name = "TEST", Output = "TEST" };
-
             Assert.AreEqual(@"
                 IF EXISTS(
         	        SELECT *
@@ -31,7 +25,7 @@ namespace Transformalize.Test.Unit {
         	        WHERE TABLE_SCHEMA = 'dbo'
         	        AND TABLE_NAME = 'TEST'
                 )	DROP TABLE [dbo].[TEST];
-            ", output.DropOutputSql());
+            ", SqlTemplates.DropTable("TEST"));
         }
    
     }

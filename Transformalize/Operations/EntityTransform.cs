@@ -15,16 +15,17 @@ namespace Transformalize.Operations {
             foreach (var row in rows) {
 
                 foreach (var key in _fields.Keys) {
+                    var value = row[key];
                     var field = _fields[key];
+
                     if (field.UseStringBuilder) {
                         field.StringBuilder.Clear();
-                        field.StringBuilder.Append(row[key]);
+                        field.StringBuilder.Append(value);
                         foreach (var t in field.Transforms) {
                             t.Transform(ref field.StringBuilder);
                         }
                         row[key] = field.StringBuilder.ToString();
                     } else {
-                        var value = row[key];
                         foreach (var t in field.Transforms) {
                             t.Transform(ref value);
                         }

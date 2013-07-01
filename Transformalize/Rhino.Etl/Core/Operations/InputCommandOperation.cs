@@ -8,19 +8,30 @@ namespace Transformalize.Rhino.Etl.Core.Operations {
     /// Generic input command operation
     /// </summary>
     public abstract class InputCommandOperation : AbstractCommandOperation {
+        
+        private const string PROVIDER = "System.Data.SqlClient.SqlConnection, System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="OutputCommandOperation"/> class.
+        /// Initializes a new instance of the <see cref="InputCommandOperation"/> class.
         /// </summary>
-        /// <param name="connectionStringName">Name of the connection string.</param>
-        protected InputCommandOperation(string connectionStringName)
-            : this(ConfigurationManager.ConnectionStrings[connectionStringName]) {
+        /// <param name="connectionString">The connection string.</param>
+        protected InputCommandOperation(string connectionString) : this(GetConnectionStringSettings(connectionString) ) {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="OutputCommandOperation"/> class.
+        /// Initializes a new instance of the <see cref="InputCommandOperation"/> class.
         /// </summary>
         /// <param name="connectionStringSettings">Connection string settings to use.</param>
-        protected InputCommandOperation(ConnectionStringSettings connectionStringSettings) : base(connectionStringSettings) { }
+        protected InputCommandOperation(ConnectionStringSettings connectionStringSettings) : base(connectionStringSettings) {
+            UseTransaction = false;
+        }
+
+        private static ConnectionStringSettings GetConnectionStringSettings(string connectionString) {
+            return new ConnectionStringSettings {
+                ConnectionString = connectionString,
+                ProviderName = PROVIDER,
+            };
+        }
 
         /// <summary>
         /// Executes this operation
@@ -28,12 +39,12 @@ namespace Transformalize.Rhino.Etl.Core.Operations {
         /// <param name="rows">The rows.</param>
         /// <returns></returns>
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
-            using (var connection = Use.Connection(ConnectionStringSettings))
-            using (var transaction = BeginTransaction(connection)) {
+            using (IDbConnection connection = Use.Connection(ConnectionStringSettings))
+            using (IDbTransaction transaction = BeginTransaction(connection)) {
                 using (currentCommand = connection.CreateCommand()) {
                     currentCommand.Transaction = transaction;
                     PrepareCommand(currentCommand);
-                    using (var reader = currentCommand.ExecuteReader()) {
+                    using (IDataReader reader = currentCommand.ExecuteReader()) {
                         while (reader.Read()) {
                             yield return CreateRowFromReader(reader);
                         }

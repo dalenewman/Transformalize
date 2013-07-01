@@ -115,5 +115,13 @@ namespace Transformalize.Configuration
                 return this["results"] as FieldElementCollection;
             }
         }
+
+        [ConfigurationProperty("format", IsRequired = false)]
+        public string Format {
+            get {
+                return this["format"] as string;
+            }
+            set { this["format"] = value; }
+        }
     }
 }

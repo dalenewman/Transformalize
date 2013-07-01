@@ -20,8 +20,8 @@ namespace Transformalize.Operations {
 
             return rows.Partition(_entity.InputConnection.InputBatchSize).Select(batch => new Row {{
                 _operationColumn,
-                new ConventionSqlInputOperation(_entity.InputConnection.ConnectionString) {
-                    Sql = _entity.EntitySqlWriter.SelectByKeys(batch)
+                new ConventionInputCommandOperation(_entity.InputConnection.ConnectionString) {
+                    Command = _entity.EntitySqlWriter.SelectByKeys(batch)
                 }
             }});
         }

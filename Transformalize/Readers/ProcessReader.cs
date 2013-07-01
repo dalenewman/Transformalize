@@ -116,7 +116,14 @@ namespace Transformalize.Readers {
 
             //shared transforms
             _process.Transforms = GetTransforms(config.Transforms);
+            foreach (var p in _process.Transforms.SelectMany(t => t.Parameters)) {
+                _process.Parameters[p.Key] = p.Value;
+            }
+            foreach (var r in _process.Transforms.SelectMany(t => t.Results)) {
+                _process.Results[r.Key] = r.Value;
+            }
 
+            //all done
             Info("{0} | Process Loaded.", _process.Name);
             return _process;
         }
@@ -146,7 +153,7 @@ namespace Transformalize.Readers {
             var result = new List<ITransform>();
 
             foreach (TransformConfigurationElement t in transforms) {
-                var parameters = t.Parameters.Cast<ParameterConfigurationElement>().Select(p => _process.Entities[p.Entity].All[p.Field]).ToDictionary(v=>v.Alias, v=>v);
+                var parameters = t.Parameters.Cast<ParameterConfigurationElement>().Select(p => _process.Entities[p.Entity].All[p.Field]).ToDictionary(v => v.Alias, v => v);
                 var results = new Dictionary<string, Field>();
                 foreach (FieldConfigurationElement r in t.Results) {
                     var field = GetField(new Entity(), r);
@@ -195,6 +202,9 @@ namespace Transformalize.Readers {
                         break;
                     case "padright":
                         result.Add(new PadRightTransform(t.TotalWidth, t.PaddingChar, parameters, results));
+                        break;
+                    case "format":
+                        result.Add(new FormatTransform(t.Format, parameters, results));
                         break;
                 }
             }

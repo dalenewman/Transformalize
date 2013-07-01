@@ -8,6 +8,9 @@ namespace Transformalize.Rhino.Etl.Core.ConventionOperations {
     /// figure out as many things as it can on its own.
     /// </summary>
     public class ConventionInputCommandOperation : InputCommandOperation {
+
+        private const string PROVIDER = "System.Data.SqlClient.SqlConnection, System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+ 
         /// <summary>
         /// Gets or sets the command to get the input from the database
         /// </summary>
@@ -21,10 +24,17 @@ namespace Transformalize.Rhino.Etl.Core.ConventionOperations {
         /// <summary>
         /// Initializes a new instance of the <see cref="ConventionInputCommandOperation"/> class.
         /// </summary>
-        /// <param name="connectionStringName">Name of the connection string.</param>
-        public ConventionInputCommandOperation(string connectionStringName)
-            : this(ConfigurationManager.ConnectionStrings[connectionStringName]) {
+        /// <param name="connectionString">The connection string.</param>
+        public ConventionInputCommandOperation(string connectionString) : base(GetConnectionStringSettings(connectionString)) {
+            UseTransaction = false;
             Timeout = 0;
+        }
+
+        private static ConnectionStringSettings GetConnectionStringSettings(string connectionString) {
+            return new ConnectionStringSettings {
+                ConnectionString = connectionString,
+                ProviderName = PROVIDER,
+            };
         }
 
         /// <summary>

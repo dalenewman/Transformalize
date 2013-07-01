@@ -5,8 +5,8 @@ using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Transforms {
     public class MapTransform : ITransform {
-        private readonly Dictionary<string, Field> _parameters;
-        private readonly Dictionary<string, Field> _results;
+        public Dictionary<string, Field> Parameters { get; private set; }
+        public Dictionary<string, Field> Results { get; private set; }
         private readonly IDictionary<string, object> _equals;
         private readonly IDictionary<string, object> _startsWith;
         private readonly IDictionary<string, object> _endsWith;
@@ -18,8 +18,8 @@ namespace Transformalize.Transforms {
         }
 
         public MapTransform(IList<IDictionary<string, object>> maps, Dictionary<string, Field> parameters, Dictionary<string, Field> results) {
-            _parameters = parameters;
-            _results = results;
+            Parameters = parameters;
+            Results = results;
             _equals = maps[0];
             _startsWith = maps[1];
             _endsWith = maps[2];

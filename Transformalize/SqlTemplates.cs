@@ -51,7 +51,7 @@ CREATE TABLE [{0}].[{1}](
                 name.Length > 128 ? name.Substring(0, 128) : name,
                 defList,
                 name.Replace(" ", string.Empty),
-                keyName.Length > 128 ? keyName.Substring(0,128) : keyName,
+                keyName.Length > 128 ? keyName.Substring(0, 128) : keyName,
                 keyList,
                 ignoreDups ? "WITH (IGNORE_DUP_KEY = ON)" : string.Empty
             );
@@ -121,6 +121,36 @@ CREATE TABLE [{0}].[{1}](
             return schema.Equals("dbo", StringComparison.OrdinalIgnoreCase) ?
                 string.Concat("[", name, "]") :
                 string.Concat("[", schema, "].[", name, "]");
+        }
+
+        public static string BatchUpdateSql(
+            IEnumerable<Row> batch,
+            int sqlYear,
+            Dictionary<string, Field> fields,
+            Dictionary<string, Field> key,
+            string table,
+            string schema = "dbo") {
+
+            var sqlBuilder = new StringBuilder(Environment.NewLine);
+
+            var writer = new FieldSqlWriter(fields, key);
+            var tableVar= CreateTableVariable("@DATA", writer.Context());
+
+            sqlBuilder.AppendLine("SET NOCOUNT ON;");
+            sqlBuilder.AppendLine(tableVar);
+            sqlBuilder.Append(BatchInsertValues(50, "@DATA", writer.Context(), batch, sqlYear));
+
+            var updates = writer.Alias().Write();
+            var sets = new FieldSqlWriter(fields).Alias().Set("o", "d").Write();
+            var joins = new FieldSqlWriter(key).Alias().Set("o", "d").Write(" AND ");
+
+            sqlBuilder.AppendLine("SET NOCOUNT OFF;");
+            sqlBuilder.AppendLine(string.Empty);
+            sqlBuilder.AppendFormat("WITH diff AS (\r\n    SELECT {0} FROM @DATA\r\n    EXCEPT\r\n    SELECT {0} FROM [{1}].[{2}]\r\n)   ", updates, schema, table);
+            sqlBuilder.AppendFormat("UPDATE o\r\n    SET {0}\r\n    FROM [{1}].[{2}] o\r\n    INNER JOIN diff d ON ({3});", sets, schema, table, joins);
+            sqlBuilder.AppendLine(string.Empty);
+
+            return sqlBuilder.ToString();
         }
     }
 }

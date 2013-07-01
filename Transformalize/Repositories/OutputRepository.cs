@@ -21,10 +21,10 @@ namespace Transformalize.Repositories {
         }
 
         public void InitializeOutput() {
-            Execute(_process.TruncateOutputSql(), _process.OutputConnection.ConnectionString);
+            Execute(SqlTemplates.TruncateTable(_process.Output), _process.OutputConnection.ConnectionString);
             Info("{0} | Truncated {1}", _process.Name, _process.Output);
 
-            Execute(_process.DropOutputSql(), _process.OutputConnection.ConnectionString);
+            Execute(SqlTemplates.DropTable(_process.Output), _process.OutputConnection.ConnectionString);
             Info("{0} | Dropped {1}", _process.Name, _process.Output);
             
             Execute(_process.CreateOutputSql(), _process.OutputConnection.ConnectionString);

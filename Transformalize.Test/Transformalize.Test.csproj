@@ -82,9 +82,11 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EtlProcessHelper.cs" />
+    <Compile Include="Integration\TestMultiFieldTransforms.cs" />
     <Compile Include="Integration\TestConfiguration.cs" />
     <Compile Include="Integration\TestEntity.cs" />
     <Compile Include="Integration\TestOutput.cs" />
@@ -95,7 +97,7 @@
     <Compile Include="Unit\TestEntity.cs" />
     <Compile Include="Unit\TestFields.cs" />
     <Compile Include="Unit\TestOperations.cs" />
-    <Compile Include="Unit\TestProcess.cs" />
+    <Compile Include="Unit\TestSqlTemplates.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

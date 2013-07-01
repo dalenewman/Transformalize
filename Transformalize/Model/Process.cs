@@ -22,6 +22,8 @@ namespace Transformalize.Model {
         public Dictionary<string, Dictionary<string, object>> MapStartsWith = new Dictionary<string, Dictionary<string, object>>();
         public Dictionary<string, Dictionary<string, object>> MapEndsWith = new Dictionary<string, Dictionary<string, object>>();
         public ITransform[] Transforms { get; set; }
+        public Dictionary<string, Field> Parameters = new Dictionary<string, Field>();
+        public Dictionary<string, Field> Results = new Dictionary<string, Field>(); 
 
         public Dictionary<string, Field> Fields {
             get {
@@ -37,22 +39,14 @@ namespace Transformalize.Model {
                 return _fields;
             }
         }
-
-        public string TruncateOutputSql() {
-            return SqlTemplates.TruncateTable(Output);
-        }
-
-        public string DropOutputSql() {
-            return SqlTemplates.DropTable(Output);
-        }
-
+        
         public string CreateOutputSql() {
 
-            var writer = new FieldSqlWriter(Fields);
+            var writer = new FieldSqlWriter(Fields, Results);
             var primaryKey = writer.FieldType(FieldType.MasterKey).Alias().Asc().Values();
-            var defs = writer.Reload().ExpandXml().AddSystemFields(true).Output().Alias().DataType().AppendIf(" NOT NULL", FieldType.MasterKey).Values(flush: false);
+            var defs = writer.Reload().ExpandXml().AddSurrogateKey().AddBatchId().Output().Alias().DataType().AppendIf(" NOT NULL", FieldType.MasterKey).Values();
 
-            return SqlTemplates.CreateTable(this.Output, defs, primaryKey, ignoreDups: true);
+            return SqlTemplates.CreateTable(Output, defs, primaryKey, ignoreDups: true);
         }
 
         public bool HasRegisteredKey(string key) {

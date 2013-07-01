@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Text;
 using NUnit.Framework;
 using Moq;
 using Transformalize.Model;
@@ -88,64 +87,5 @@ namespace Transformalize.Test.Unit {
             mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(data);
             return mock.Object;
         }
-    }
-
-    public class FormatTransform : ITransform {
-        private readonly string _format;
-        private readonly Dictionary<string, Field> _parameters;
-        private readonly Dictionary<string, Field> _results;
-        private readonly bool _hasParameters;
-        private readonly bool _hasResults;
-        private readonly object[] _parameterValues;
-        private int _index;
-
-        public bool HasParameters {
-            get { return _hasParameters; }
-        }
-        public bool HasResults {
-            get { return _hasResults; }
-        }
-
-        public FormatTransform(string format, Dictionary<string, Field> parameters, Dictionary<string, Field> results) {
-            _format = format;
-            _parameters = parameters;
-            _results = results;
-            _hasParameters = parameters != null && parameters.Count > 0;
-            _hasResults = results != null && results.Count > 0;
-
-            if (!_hasParameters) return;
-
-            _parameterValues = new object[_parameters.Count];
-        }
-
-        public FormatTransform(string format) : this(format, null, null) { }
-
-        public void Transform(ref StringBuilder sb) {
-            // not efficient, could do AppendFormat() first if value passed in along with stringbuilder
-            var value = sb.ToString();
-            sb.Clear();
-            sb.AppendFormat(_format, value);
-        }
-
-        public void Transform(ref object value) {
-            value = string.Format(_format, value);
-        }
-
-        public void Transform(ref Row row) {
-            _index = 0;
-            foreach (var key in _parameters.Keys) {
-                _parameterValues[_index] = row[key];
-                _index++;
-            }
-
-            var result = string.Format(_format, _parameterValues);
-            foreach (var key in _results.Keys) {
-                row[key] = result;
-            }
-        }
-
-        public void Dispose() {
-        }
-
     }
 }

@@ -1,6 +1,8 @@
-﻿using System.Configuration;
+﻿using System.Collections.Generic;
+using System.Configuration;
 using NUnit.Framework;
 using Transformalize.Configuration;
+using Transformalize.Model;
 using Transformalize.Readers;
 
 namespace Transformalize.Test.Integration {
@@ -51,6 +53,25 @@ namespace Transformalize.Test.Integration {
             Assert.AreEqual("OrderKey", process.Joins[0].LeftField.Name);
             Assert.AreEqual("OrderKey", process.Joins[0].RightField.Name);
 
+        }
+
+        [Test]
+        public void TestGetAllFieldsNeededForMultiFieldTransformations()
+        {
+            var process = new ProcessReader("Test").GetProcess();
+
+            var expected = new Dictionary<string, Field> {
+                {"LastName", new Field(FieldType.Field) { Entity = "Customer", Alias = "LastName"}},
+                {"ProductName", new Field(FieldType.Field) { Entity = "Product", Alias="ProductName"}}
+            };
+
+            var actual = process.Parameters;
+
+            Assert.AreEqual(2, actual.Count);
+            Assert.AreEqual(expected["LastName"].Alias, actual["LastName"].Alias);
+            Assert.AreEqual("Customer", actual["LastName"].Entity);
+            Assert.AreEqual(expected["ProductName"].Alias, actual["ProductName"].Alias);
+            Assert.AreEqual("Product", actual["ProductName"].Entity);
         }
     }
 }

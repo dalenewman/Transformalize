@@ -103,6 +103,10 @@
     <Compile Include="Configuration\TransformalizeConfiguration.cs" />
     <Compile Include="Configuration\XmlConfigurationElement.cs" />
     <Compile Include="Configuration\XmlElementCollection.cs" />
+    <Compile Include="Operations\ParametersExtract.cs" />
+    <Compile Include="Operations\ResultsExperimentalLoad.cs" />
+    <Compile Include="Operations\ResultsLoad.cs" />
+    <Compile Include="TransformProcess.cs" />
     <Compile Include="NLog\ComInterop\ComLogger.cs" />
     <Compile Include="NLog\ComInterop\ComLogManager.cs" />
     <Compile Include="NLog\ComInterop\IComLogger.cs" />
@@ -395,6 +399,7 @@
     <Compile Include="Rhino.Etl\Core\Operations\SerialUnionAllOperation.cs" />
     <Compile Include="StringBuilderExtensions.cs" />
     <Compile Include="Operations\EntityTransform.cs" />
+    <Compile Include="Transforms\FormatTransform.cs" />
     <Compile Include="Transforms\JavascriptTransform.cs" />
     <Compile Include="Transforms\LeftTransform.cs" />
     <Compile Include="Transforms\MapTransform.cs" />
@@ -505,7 +510,6 @@
     <Compile Include="Rhino.Etl\Core\ConventionOperations\ConventionOutputCommandOperation.cs" />
     <Compile Include="Rhino.Etl\Core\ConventionOperations\ConventionSqlBatchOperation.cs" />
     <Compile Include="Rhino.Etl\Core\ConventionOperations\ConventionSqlBulkInsertOperation.cs" />
-    <Compile Include="Rhino.Etl\Core\ConventionOperations\ConventionSqlInputOperation.cs" />
     <Compile Include="Rhino.Etl\Core\DataReaders\Descriptor.cs" />
     <Compile Include="Rhino.Etl\Core\DataReaders\DictionaryDescriptorAdapter.cs" />
     <Compile Include="Rhino.Etl\Core\DataReaders\DictionaryEnumeratorDataReader.cs" />
@@ -532,7 +536,6 @@
     <Compile Include="Rhino.Etl\Core\Operations\AbstractOperation.cs" />
     <Compile Include="Rhino.Etl\Core\Operations\BranchingOperation.cs" />
     <Compile Include="Rhino.Etl\Core\Operations\InputCommandOperation.cs" />
-    <Compile Include="Rhino.Etl\Core\Operations\AbstractSqlInputOperation.cs" />
     <Compile Include="Rhino.Etl\Core\Operations\IOperation.cs" />
     <Compile Include="Rhino.Etl\Core\Operations\JoinOperation.cs" />
     <Compile Include="Rhino.Etl\Core\Operations\JoinType.cs" />

@@ -8,8 +8,8 @@ namespace Transformalize.Transforms {
 
         private readonly int _index;
         private readonly string _value;
-        private readonly Dictionary<string, Field> _parameters;
-        private readonly Dictionary<string, Field> _results;
+        public Dictionary<string, Field> Parameters { get; private set; }
+        public Dictionary<string, Field> Results { get; private set; }
 
         public bool HasParameters { get; private set; }
         public bool HasResults { get; private set; }
@@ -24,8 +24,8 @@ namespace Transformalize.Transforms {
         public InsertTransform(int index, string value, Dictionary<string, Field> parameters, Dictionary<string, Field> results) {
             _index = index;
             _value = value;
-            _parameters = parameters;
-            _results = results;
+            Parameters = parameters;
+            Results = results;
             HasParameters = parameters != null && parameters.Count > 0;
             HasResults = results != null && results.Count > 0;
         }

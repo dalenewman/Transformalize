@@ -27,6 +27,7 @@ CREATE TABLE [dbo].[OrderDetail](
     [ProductKey] INT,
     [ProductName] NVARCHAR(100),
     [Quantity] INT,
+    [Result] TINYINT,
     [Size] NVARCHAR(64),
     [State] NVARCHAR(2),
     [TflId] INT NOT NULL,

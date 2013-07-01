@@ -6,8 +6,8 @@ using Transformalize.Rhino.Etl.Core;
 namespace Transformalize.Transforms {
     public class LeftTransform : ITransform {
         private readonly int _length;
-        private readonly Dictionary<string, Field> _parameters;
-        private readonly Dictionary<string, Field> _results;
+        public Dictionary<string, Field> Parameters { get; private set; }
+        public Dictionary<string, Field> Results { get; private set; }
         private readonly bool _hasParameters;
         private readonly bool _hasResults;
 
@@ -17,8 +17,8 @@ namespace Transformalize.Transforms {
 
         public LeftTransform(int length, Dictionary<string, Field> parameters, Dictionary<string, Field> results) {
             _length = length;
-            _parameters = parameters;
-            _results = results;
+            Parameters = parameters;
+            Results = results;
             _hasParameters = parameters != null && parameters.Count > 0;
             _hasResults = results != null && results.Count > 0;
         }
@@ -31,9 +31,8 @@ namespace Transformalize.Transforms {
             value = value.ToString().Left(_length);
         }
 
-        public void Transform(ref Row row)
-        {
-            
+        public void Transform(ref Row row) {
+
         }
 
         public bool HasParameters {

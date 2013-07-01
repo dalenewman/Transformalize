@@ -6,8 +6,8 @@ using Transformalize.Rhino.Etl.Core;
 namespace Transformalize.Transforms {
     public class TrimStartTransform : ITransform {
         private readonly string _trimChars;
-        private readonly Dictionary<string, Field> _parameters;
-        private readonly Dictionary<string, Field> _results;
+        public Dictionary<string, Field> Parameters { get; private set; }
+        public Dictionary<string, Field> Results { get; private set; }
         private readonly char[] _trimCharArray;
 
         public TrimStartTransform(string trimChars) {
@@ -17,8 +17,8 @@ namespace Transformalize.Transforms {
 
         public TrimStartTransform(string trimChars, Dictionary<string, Field> parameters, Dictionary<string, Field> results) {
             _trimChars = trimChars;
-            _parameters = parameters;
-            _results = results;
+            Parameters = parameters;
+            Results = results;
             _trimCharArray = trimChars.ToCharArray();
             HasParameters = parameters != null && parameters.Count > 0;
             HasResults = results != null && results.Count > 0;

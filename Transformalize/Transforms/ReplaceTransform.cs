@@ -9,8 +9,8 @@ namespace Transformalize.Transforms {
 
         private readonly string _oldValue;
         private readonly string _newValue;
-        private readonly Dictionary<string, Field> _parameters;
-        private readonly Dictionary<string, Field> _results;
+        public Dictionary<string, Field> Parameters { get; private set; }
+        public Dictionary<string, Field> Results { get; private set; }
 
         public ReplaceTransform(string oldValue, string newValue) {
             _oldValue = oldValue;
@@ -20,8 +20,8 @@ namespace Transformalize.Transforms {
         public ReplaceTransform(string oldValue, string newValue, Dictionary<string, Field> parameters, Dictionary<string, Field> results) {
             _oldValue = oldValue;
             _newValue = newValue;
-            _parameters = parameters;
-            _results = results;
+            Parameters = parameters;
+            Results = results;
             HasParameters = parameters != null && parameters.Count > 0;
             HasResults = results != null && results.Count > 0;
         }

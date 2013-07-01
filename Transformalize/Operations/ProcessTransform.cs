@@ -14,7 +14,7 @@ namespace Transformalize.Operations {
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
-                var r = row.Clone();
+                var r = row;
                 foreach (var t in _transforms) {
                     t.Transform(ref r);
                 }

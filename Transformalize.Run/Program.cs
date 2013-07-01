@@ -33,12 +33,6 @@ namespace Transformalize.Run {
                     }
                 }
 
-                // TODO: make a transform process that does this...
-                // get all the fields needed to satisfy transform parameters
-                // query fields from output table where TflId in (@TflIds), also return TflKey
-                // run the transforms on them.
-                // run batch update process on transformed output, using TflKey as join
-                //var batchIds = process.Entities.Select(e => e.Value.TflId).ToArray();
             }
 
             watch.Stop();

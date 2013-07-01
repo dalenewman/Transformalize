@@ -6,8 +6,8 @@ using Transformalize.Rhino.Etl.Core;
 namespace Transformalize.Transforms {
     public class RightTransform : ITransform {
         private readonly int _length;
-        private readonly Dictionary<string, Field> _parameters;
-        private readonly Dictionary<string, Field> _results;
+        public Dictionary<string, Field> Parameters { get; private set; }
+        public Dictionary<string, Field> Results { get; private set; }
 
         public RightTransform(int length) {
             _length = length;
@@ -15,8 +15,8 @@ namespace Transformalize.Transforms {
 
         public RightTransform(int length, Dictionary<string, Field> parameters, Dictionary<string, Field> results) {
             _length = length;
-            _parameters = parameters;
-            _results = results;
+            Parameters = parameters;
+            Results = results;
             HasParameters = parameters != null && parameters.Count > 0;
             HasResults = results != null && results.Count > 0;
         }

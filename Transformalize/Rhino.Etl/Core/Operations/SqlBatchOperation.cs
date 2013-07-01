@@ -4,51 +4,54 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using Transformalize.Rhino.Etl.Core.Infrastructure;
 
-namespace Transformalize.Rhino.Etl.Core.Operations
-{
+namespace Transformalize.Rhino.Etl.Core.Operations {
     /// <summary>
     /// Perform a batch command against SQL server
     /// </summary>
-    public abstract class SqlBatchOperation : AbstractDatabaseOperation
-    {
-        private int batchSize = 50;
-        private int timeout = 0;
+    public abstract class SqlBatchOperation : AbstractDatabaseOperation {
+
+        private const string PROVIDER = "System.Data.SqlClient.SqlConnection, System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+        private int _batchSize = 50;
+        private int _timeout;
 
         /// <summary>
         /// Gets or sets the size of the batch.
         /// </summary>
         /// <value>The size of the batch.</value>
-        public int BatchSize
-        {
-            get { return batchSize; }
-            set { batchSize = value; }
+        public int BatchSize {
+            get { return _batchSize; }
+            set { _batchSize = value; }
         }
 
         /// <summary>
         /// The timeout of the command set
         /// </summary>
-        public int Timeout
-        {
-            get { return timeout; }
-            set { timeout = value; }
+        public int Timeout {
+            get { return _timeout; }
+            set { _timeout = value; }
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SqlBatchOperation"/> class.
         /// </summary>
-        /// <param name="connectionStringName">Name of the connection string.</param>
-        public SqlBatchOperation(string connectionStringName)
-            : this(ConfigurationManager.ConnectionStrings[connectionStringName])
-        {            
+        /// <param name="connectionString">The connection string.</param>
+        protected SqlBatchOperation(string connectionString)
+            : this(GetConnectionStringSettings(connectionString)) {
+        }
+
+        private static ConnectionStringSettings GetConnectionStringSettings(string connectionString) {
+            return new ConnectionStringSettings {
+                ConnectionString = connectionString,
+                ProviderName = PROVIDER,
+            };
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SqlBatchOperation"/> class.
         /// </summary>
         /// <param name="connectionStringSettings">The connection string settings to use.</param>
-        public SqlBatchOperation(ConnectionStringSettings connectionStringSettings)
-            : base(connectionStringSettings)
-        {
+        protected SqlBatchOperation(ConnectionStringSettings connectionStringSettings)
+            : base(connectionStringSettings) {
             base.paramPrefix = "@";
         }
 
@@ -57,42 +60,35 @@ namespace Transformalize.Rhino.Etl.Core.Operations
         /// </summary>
         /// <param name="rows">The rows.</param>
         /// <returns></returns>
-        public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
-        {
+        public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             Guard.Against<ArgumentException>(rows == null, "SqlBatchOperation cannot accept a null enumerator");
-            using (SqlConnection connection = (SqlConnection)Use.Connection(ConnectionStringSettings))
-            using (SqlTransaction transaction = connection.BeginTransaction())
-            {
+            using (var connection = (SqlConnection)Use.Connection(ConnectionStringSettings))
+            using (var transaction = connection.BeginTransaction()) {
                 SqlCommandSet commandSet = null;
-                CreateCommandSet(connection, transaction, ref commandSet, timeout);
-                foreach (Row row in rows)
-                {
-                    SqlCommand command = new SqlCommand();
+                CreateCommandSet(connection, transaction, ref commandSet, _timeout);
+                foreach (var row in rows) {
+                    var command = new SqlCommand();
                     PrepareCommand(row, command);
                     if (command.Parameters.Count == 0) //workaround around a framework bug
                     {
-                        Guid guid = Guid.NewGuid();
+                        var guid = Guid.NewGuid();
                         command.Parameters.AddWithValue(guid.ToString(), guid);
                     }
                     commandSet.Append(command);
-                    if (commandSet.CountOfCommands >= batchSize)
-                    {
+                    if (commandSet.CountOfCommands >= _batchSize) {
                         Debug("Executing batch of {0} commands", commandSet.CountOfCommands);
                         commandSet.ExecuteNonQuery();
-                        CreateCommandSet(connection, transaction, ref commandSet, timeout);
+                        CreateCommandSet(connection, transaction, ref commandSet, _timeout);
                     }
                 }
                 Debug("Executing final batch of {0} commands", commandSet.CountOfCommands);
                 commandSet.ExecuteNonQuery();
 
-                if (PipelineExecuter.HasErrors)
-                {
+                if (PipelineExecuter.HasErrors) {
                     Warn(null, "Rolling back transaction in {0}", Name);
                     transaction.Rollback();
                     Warn(null, "Rolled back transaction in {0}", Name);
-                }
-                else
-                {
+                } else {
                     Debug("Committing {0}", Name);
                     transaction.Commit();
                     Debug("Committed {0}", Name);
@@ -108,13 +104,11 @@ namespace Transformalize.Rhino.Etl.Core.Operations
         /// <param name="command">The command.</param>
         protected abstract void PrepareCommand(Row row, SqlCommand command);
 
-        private static void CreateCommandSet(SqlConnection connection, SqlTransaction transaction, ref SqlCommandSet commandSet, int timeout)
-        {
+        private static void CreateCommandSet(SqlConnection connection, SqlTransaction transaction, ref SqlCommandSet commandSet, int timeout) {
             if (commandSet != null)
                 commandSet.Dispose();
-            commandSet = new SqlCommandSet
-            {
-                Connection = connection, 
+            commandSet = new SqlCommandSet {
+                Connection = connection,
                 Transaction = transaction,
                 CommandTimeout = timeout
             };
