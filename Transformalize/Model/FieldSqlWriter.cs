@@ -78,8 +78,8 @@ namespace Transformalize.Model {
         private void StartWithDictionaries(params IDictionary<string, Field>[] fields) {
             _original = new Dictionary<string, Field>();
             foreach (var dict in fields) {
-                foreach (var key in dict.Keys) {
-                    _original[key] = dict[key];
+                foreach (var pair in dict) {
+                    _original[pair.Key] = pair.Value;
                 }
             }
             _output = new SortedDictionary<string, string>(_original.ToDictionary(f => f.Key, f => string.Empty));
@@ -341,8 +341,8 @@ namespace Transformalize.Model {
 
         public Dictionary<string, Field> Context() {
             var results = new Dictionary<string, Field>();
-            foreach (var key in _output.Keys) {
-                results[key] = _original[key];
+            foreach (var pair in _output) {
+                results[pair.Key] = _original[pair.Key];
             }
             return results;
         }

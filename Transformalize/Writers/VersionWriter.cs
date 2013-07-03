@@ -16,7 +16,7 @@ namespace Transformalize.Writers {
 
             var field = _entity.Version.SimpleType.Replace("byte[]", "binary") + "Version";
             var sql = string.Format(@"
-                INSERT INTO [EntityTracker](ProcessName, EntityName, [{0}], LastProcessedDate, Rows)
+                INSERT INTO [TflTracker](ProcessName, EntityName, [{0}], LastProcessedDate, Rows)
                 VALUES(@ProcessName, @EntityName, @End, @Date, @Count);
             ", field);
 

@@ -13,20 +13,88 @@ namespace Transformalize.Readers {
     public class ProcessReader : WithLoggingMixin, IProcessReader {
         private readonly string _name;
         private Process _process;
+        private readonly ProcessConfigurationElement _config;
 
         public ProcessReader(string name) {
             _name = name;
+            _config = ((TransformalizeConfiguration)ConfigurationManager.GetSection("transformalize")).Processes.Get(_name);
         }
 
         public Process GetProcess() {
+            ReadProcess();
+            ReadConnections(_config);
+            ReadMaps(_config);
+            ReadEntities(_config);
+            ReadRelationships(_config);
+            ReadTransforms(_config);
+            return ReturnProcess();
+        }
 
-            var configCollection = (TransformalizeConfiguration)ConfigurationManager.GetSection("transformalize");
-            var config = configCollection.Processes.Get(_name);
-            var entityCount = 0;
+        public Process GetSingleEntityProcess(string name) {
+            ReadProcess();
+            ReadConnections(_config);
+            ReadMaps(_config);
+            ReadEntity(_config, name);
 
-            _process = new Process { Name = config.Name, Output = config.Output, Time = config.Time };
+            var output = string.Format("Tfl{0}", name);
+            _process.Entities[name].Output = output;
+            _process.Output = output;
 
-            //shared connections
+            return ReturnProcess();
+        }
+
+        private Process ReturnProcess() {
+            Info("{0} | Process Loaded.", _process.Name);
+            return _process;
+        }
+
+        private void ReadProcess() {
+            _process = new Process { Name = _config.Name, Output = _config.Output, Time = _config.Time };
+        }
+
+        private void ReadTransforms(ProcessConfigurationElement config) {
+            _process.Transforms = GetTransforms(config.Transforms);
+            foreach (var p in _process.Transforms.SelectMany(t => t.Parameters)) {
+                _process.Parameters[p.Key] = p.Value;
+            }
+            foreach (var r in _process.Transforms.SelectMany(t => t.Results)) {
+                _process.Results[r.Key] = r.Value;
+            }
+        }
+
+        private void ReadRelationships(ProcessConfigurationElement config) {
+            foreach (RelationshipConfigurationElement joinElement in config.Relationships) {
+                var j = new Relationship { LeftEntity = _process.Entities[joinElement.LeftEntity] };
+                j.LeftField = j.LeftEntity.All[joinElement.LeftField];
+                j.LeftField.FieldType = FieldType.ForeignKey;
+                j.RightEntity = _process.Entities[joinElement.RightEntity];
+                j.RightField = j.RightEntity.All[joinElement.RightField];
+                _process.Joins.Add(j);
+            }
+        }
+
+        private void ReadEntities(ProcessConfigurationElement config) {
+            var entityCount = 1;
+            foreach (EntityConfigurationElement e in config.Entities) {
+                _process.Entities.Add(e.Name, GetEntity(e, entityCount));
+                entityCount++;
+            }
+        }
+
+        private void ReadEntity(ProcessConfigurationElement config, string name) {
+            var entity = GetEntity(config.Entities.Cast<EntityConfigurationElement>().First(e => e.Name == name), 1);
+            _process.Entities.Add(entity.Name, entity);
+        }
+
+        private void ReadMaps(ProcessConfigurationElement config) {
+            foreach (MapConfigurationElement m in config.Maps) {
+                _process.MapEquals[m.Name] = GetMapItems(m.Items, "equals");
+                _process.MapStartsWith[m.Name] = GetMapItems(m.Items, "startswith");
+                _process.MapEndsWith[m.Name] = GetMapItems(m.Items, "endswith");
+            }
+        }
+
+        private void ReadConnections(ProcessConfigurationElement config) {
             foreach (ConnectionConfigurationElement element in config.Connections) {
                 var connection = new Connection {
                     ConnectionString = element.Value,
@@ -40,95 +108,64 @@ namespace Transformalize.Readers {
                     _process.OutputConnection = connection;
                 }
             }
-
-            //shared maps
-            foreach (MapConfigurationElement m in config.Maps) {
-                _process.MapEquals[m.Name] = GetMapItems(m.Items, "equals");
-                _process.MapStartsWith[m.Name] = GetMapItems(m.Items, "startswith");
-                _process.MapEndsWith[m.Name] = GetMapItems(m.Items, "endswith");
-            }
-
-            foreach (EntityConfigurationElement e in config.Entities) {
-                entityCount++;
-                var entity = new Entity {
-                    ProcessName = _process.Name,
-                    Schema = e.Schema,
-                    Name = e.Name,
-                    InputConnection = _process.Connections[e.Connection],
-                    OutputConnection = _process.OutputConnection,
-                    Output = _process.Output
-                };
-
-                foreach (FieldConfigurationElement pk in e.PrimaryKey) {
-                    var fieldType = entityCount == 1 ? FieldType.MasterKey : FieldType.PrimaryKey;
-
-                    var keyField = GetField(entity, pk, fieldType);
-
-                    entity.PrimaryKey.Add(pk.Alias, keyField);
-                    entity.All.Add(pk.Alias, keyField);
-
-                    if (e.Version.Equals(pk.Name)) {
-                        entity.Version = keyField;
-                    }
-                }
-
-                foreach (FieldConfigurationElement f in e.Fields) {
-                    var field = GetField(entity, f);
-
-                    foreach (XmlConfigurationElement x in f.Xml) {
-                        field.InnerXml.Add(x.Alias, new Field(x.Type, x.Length, FieldType.Xml, x.Output, x.Default) {
-                            Entity = entity.Name,
-                            Schema = entity.Schema,
-                            Parent = f.Name,
-                            XPath = f.Xml.XPath + x.XPath,
-                            Name = x.XPath,
-                            Alias = x.Alias,
-                            Index = x.Index,
-                            Precision = x.Precision,
-                            Scale = x.Scale,
-                            Input = true,
-                            Transforms = GetTransforms(x.Transforms)
-                        });
-
-                    }
-
-                    entity.Fields.Add(f.Alias, field);
-                    entity.All.Add(f.Alias, field);
-
-                    if (e.Version.Equals(f.Name)) {
-                        entity.Version = field;
-                    }
-                }
-
-                _process.Entities.Add(e.Name, entity);
-            }
-
-            //shared relationships
-            foreach (RelationshipConfigurationElement joinElement in config.Relationships) {
-                var join = new Relationship();
-                join.LeftEntity = _process.Entities[joinElement.LeftEntity];
-                join.LeftField = join.LeftEntity.All[joinElement.LeftField];
-                join.LeftField.FieldType = FieldType.ForeignKey;
-                join.RightEntity = _process.Entities[joinElement.RightEntity];
-                join.RightField = join.RightEntity.All[joinElement.RightField];
-                _process.Joins.Add(join);
-            }
-
-            //shared transforms
-            _process.Transforms = GetTransforms(config.Transforms);
-            foreach (var p in _process.Transforms.SelectMany(t => t.Parameters)) {
-                _process.Parameters[p.Key] = p.Value;
-            }
-            foreach (var r in _process.Transforms.SelectMany(t => t.Results)) {
-                _process.Results[r.Key] = r.Value;
-            }
-
-            //all done
-            Info("{0} | Process Loaded.", _process.Name);
-            return _process;
         }
 
-        private Dictionary<string, object> GetMapItems(ItemElementCollection items, string @operator) {
+        private Entity GetEntity(EntityConfigurationElement e, int entityCount) {
+
+            var entity = new Entity {
+                ProcessName = _process.Name,
+                Schema = e.Schema,
+                Name = e.Name,
+                InputConnection = _process.Connections[e.Connection],
+                OutputConnection = _process.OutputConnection,
+                Output = _process.Output
+            };
+
+            foreach (FieldConfigurationElement pk in e.PrimaryKey) {
+                var fieldType = entityCount == 1 ? FieldType.MasterKey : FieldType.PrimaryKey;
+
+                var keyField = GetField(entity, pk, fieldType);
+
+                entity.PrimaryKey.Add(pk.Alias, keyField);
+                entity.All.Add(pk.Alias, keyField);
+
+                if (e.Version.Equals(pk.Name)) {
+                    entity.Version = keyField;
+                }
+            }
+
+            foreach (FieldConfigurationElement f in e.Fields) {
+                var field = GetField(entity, f);
+
+                foreach (XmlConfigurationElement x in f.Xml) {
+                    field.InnerXml.Add(x.Alias, new Field(x.Type, x.Length, FieldType.Xml, x.Output, x.Default) {
+                        Entity = entity.Name,
+                        Schema = entity.Schema,
+                        Parent = f.Name,
+                        XPath = f.Xml.XPath + x.XPath,
+                        Name = x.XPath,
+                        Alias = x.Alias,
+                        Index = x.Index,
+                        Precision = x.Precision,
+                        Scale = x.Scale,
+                        Input = true,
+                        Transforms = GetTransforms(x.Transforms)
+                    });
+
+                }
+
+                entity.Fields.Add(f.Alias, field);
+                entity.All.Add(f.Alias, field);
+
+                if (e.Version.Equals(f.Name)) {
+                    entity.Version = field;
+                }
+            }
+
+            return entity;
+        }
+
+        private static Dictionary<string, object> GetMapItems(IEnumerable items, string @operator) {
             var mapItems = new Dictionary<string, object>();
             foreach (var i in items.Cast<ItemConfigurationElement>().Where(i => i.Operator.Equals(@operator, StringComparison.OrdinalIgnoreCase))) {
                 mapItems[i.From] = i.To;

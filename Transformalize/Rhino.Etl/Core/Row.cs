@@ -1,8 +1,8 @@
+using System.Collections;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
@@ -13,7 +13,6 @@ namespace Transformalize.Rhino.Etl.Core {
     /// Represent a virtual row
     /// </summary>
     [DebuggerDisplay("Count = {items.Count}")]
-    [DebuggerTypeProxy(typeof(QuackingDictionaryDebugView))]
     [Serializable]
     public class Row : QuackingDictionary, IEquatable<Row> {
         static readonly Dictionary<Type, List<PropertyInfo>> propertiesCache = new Dictionary<Type, List<PropertyInfo>>();
@@ -22,16 +21,14 @@ namespace Transformalize.Rhino.Etl.Core {
         /// <summary>
         /// Initializes a new instance of the <see cref="Row"/> class.
         /// </summary>
-        public Row()
-            : base(new Hashtable(StringComparer.InvariantCultureIgnoreCase)) {
+        public Row() : base(new Dictionary<string, object>(StringComparer.InvariantCultureIgnoreCase)) {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Row"/> class.
         /// </summary>
         /// <param name="itemsToClone">The items to clone.</param>
-        protected Row(IDictionary itemsToClone)
-            : base(new Hashtable(itemsToClone, StringComparer.InvariantCultureIgnoreCase)) {
+        protected Row(IDictionary<string, object> itemsToClone) : base(new Dictionary<string, object>(itemsToClone, StringComparer.InvariantCultureIgnoreCase)) {
         }
 
 
@@ -39,21 +36,13 @@ namespace Transformalize.Rhino.Etl.Core {
         /// Creates a copy of the given source, erasing whatever is in the row currently.
         /// </summary>
         /// <param name="source">The source row.</param>
-        public void Copy(IDictionary source) {
-            items = new Hashtable(source, StringComparer.InvariantCultureIgnoreCase);
+        public void Copy(IDictionary<string, object> source) {
+            items = new Dictionary<string, object>(source, StringComparer.InvariantCultureIgnoreCase);
         }
 
-        /// <summary>
-        /// Gets the columns in this row.
-        /// </summary>
-        /// <value>The columns.</value>
         public IEnumerable<string> Columns {
             get {
-                //We likely would want to change the row when iterating on the columns, so we
-                //want to make sure that we send a copy, to avoid enumeration modified exception
-                foreach (string column in new ArrayList(items.Keys)) {
-                    yield return column;
-                }
+                return new List<string>(items.Keys);
             }
         }
 
@@ -117,8 +106,8 @@ namespace Transformalize.Rhino.Etl.Core {
         /// </summary>
         /// <param name="columns">The columns.</param>
         /// <returns></returns>
-        public ObjectArrayKeys CreateKey(params string[] columns) {
-            object[] array = new object[columns.Length];
+        public ObjectArrayKeys CreateKey(string[] columns) {
+            var array = new object[columns.Length];
             for (int i = 0; i < columns.Length; i++) {
                 array[i] = items[columns[i]];
             }
@@ -133,23 +122,23 @@ namespace Transformalize.Rhino.Etl.Core {
         public static Row FromObject(object obj) {
             if (obj == null)
                 throw new ArgumentNullException("obj");
-            Row row = new Row();
-            foreach (PropertyInfo property in GetProperties(obj)) {
+            var row = new Row();
+            foreach (var property in GetProperties(obj)) {
                 row[property.Name] = property.GetValue(obj, new object[0]);
             }
-            foreach (FieldInfo field in GetFields(obj)) {
+            foreach (var field in GetFields(obj)) {
                 row[field.Name] = field.GetValue(obj);
             }
             return row;
         }
 
-        private static List<PropertyInfo> GetProperties(object obj) {
+        private static IEnumerable<PropertyInfo> GetProperties(object obj) {
             List<PropertyInfo> properties;
             if (propertiesCache.TryGetValue(obj.GetType(), out properties))
                 return properties;
 
             properties = new List<PropertyInfo>();
-            foreach (PropertyInfo property in obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic)) {
+            foreach (var property in obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic)) {
                 if (property.CanRead == false || property.GetIndexParameters().Length > 0)
                     continue;
                 properties.Add(property);
@@ -158,13 +147,13 @@ namespace Transformalize.Rhino.Etl.Core {
             return properties;
         }
 
-        private static List<FieldInfo> GetFields(object obj) {
+        private static IEnumerable<FieldInfo> GetFields(object obj) {
             List<FieldInfo> fields;
             if (fieldsCache.TryGetValue(obj.GetType(), out fields))
                 return fields;
 
             fields = new List<FieldInfo>();
-            foreach (FieldInfo fieldInfo in obj.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic)) {
+            foreach (var fieldInfo in obj.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic)) {
                 if (Attribute.IsDefined(fieldInfo, typeof(CompilerGeneratedAttribute)) == false) {
                     fields.Add(fieldInfo);
                 }
@@ -179,7 +168,7 @@ namespace Transformalize.Rhino.Etl.Core {
         /// <param name="reader">The reader.</param>
         /// <returns></returns>
         public static Row FromReader(IDataReader reader) {
-            Row row = new Row();
+            var row = new Row();
             for (int i = 0; i < reader.FieldCount; i++) {
                 row[reader.GetName(i)] = reader.GetValue(i);
             }
@@ -201,13 +190,13 @@ namespace Transformalize.Rhino.Etl.Core {
         /// the matching fields/properties on it.
         /// </summary>
         public object ToObject(Type type) {
-            object instance = Activator.CreateInstance(type);
-            foreach (PropertyInfo info in GetProperties(instance)) {
-                if (items.Contains(info.Name) && info.CanWrite)
+            var instance = Activator.CreateInstance(type);
+            foreach (var info in GetProperties(instance)) {
+                if (items.ContainsKey(info.Name) && info.CanWrite)
                     info.SetValue(instance, items[info.Name], null);
             }
-            foreach (FieldInfo info in GetFields(instance)) {
-                if (items.Contains(info.Name))
+            foreach (var info in GetFields(instance)) {
+                if (items.ContainsKey(info.Name))
                     info.SetValue(instance, items[info.Name]);
             }
             return instance;

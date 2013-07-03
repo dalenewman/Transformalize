@@ -14,22 +14,21 @@ namespace Transformalize.Operations {
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
 
-                foreach (var key in _fields.Keys) {
-                    var value = row[key];
-                    var field = _fields[key];
+                foreach (var pair in _fields) {
+                    var value = row[pair.Key];
 
-                    if (field.UseStringBuilder) {
-                        field.StringBuilder.Clear();
-                        field.StringBuilder.Append(value);
-                        foreach (var t in field.Transforms) {
-                            t.Transform(ref field.StringBuilder);
+                    if (pair.Value.UseStringBuilder) {
+                        pair.Value.StringBuilder.Clear();
+                        pair.Value.StringBuilder.Append(value);
+                        foreach (var t in pair.Value.Transforms) {
+                            t.Transform(ref pair.Value.StringBuilder);
                         }
-                        row[key] = field.StringBuilder.ToString();
+                        row[pair.Key] = pair.Value.StringBuilder.ToString();
                     } else {
-                        foreach (var t in field.Transforms) {
+                        foreach (var t in pair.Value.Transforms) {
                             t.Transform(ref value);
                         }
-                        row[key] = value;
+                        row[pair.Key] = value;
                     }
                 }
                 yield return row;

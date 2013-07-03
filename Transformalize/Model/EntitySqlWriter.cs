@@ -18,7 +18,7 @@ namespace Transformalize.Model {
         public string SelectByKeys(IEnumerable<Row> rows) {
             var context = new FieldSqlWriter(_entity.PrimaryKey).Context();
             var sql = "SET NOCOUNT ON;\r\n" +
-                      SqlTemplates.CreateTableVariable(KEYS_TABLE_VARIABLE, context) +
+                      SqlTemplates.CreateTableVariable(KEYS_TABLE_VARIABLE, context, false) +
                       SqlTemplates.BatchInsertValues(50, KEYS_TABLE_VARIABLE, context, rows, _entity.InputConnection.Year) + Environment.NewLine +
                       SqlTemplates.Select(_entity.All, _entity.Name, KEYS_TABLE_VARIABLE);
 
@@ -34,12 +34,9 @@ namespace Transformalize.Model {
             var orderByKeys = new List<string>();
             var selectKeys = new List<string>();
 
-            foreach (var key in _entity.PrimaryKey.Keys) {
-                var field = _entity.PrimaryKey[key];
-                var name = field.Name;
-                var alias = field.Alias;
-                selectKeys.Add(alias.Equals(name) ? string.Concat("[", name, "]") : string.Format("{0} = [{1}]", alias, name));
-                orderByKeys.Add(string.Concat("[", name, "]"));
+            foreach (var pair in _entity.PrimaryKey) {
+                selectKeys.Add(pair.Value.Alias.Equals(pair.Value.Name) ? string.Concat("[", pair.Value.Name, "]") : string.Format("{0} = [{1}]", pair.Value.Alias, pair.Value.Name));
+                orderByKeys.Add(string.Concat("[", pair.Value.Name, "]"));
             }
 
             return string.Format(sqlPattern, string.Join(", ", selectKeys), _entity.Schema, _entity.Name, criteria, string.Join(", ", orderByKeys));

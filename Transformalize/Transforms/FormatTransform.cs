@@ -46,14 +46,14 @@ namespace Transformalize.Transforms {
 
         public void Transform(ref Row row) {
             _index = 0;
-            foreach (var key in Parameters.Keys) {
-                _parameterValues[_index] = row[key];
+            foreach (var pair in Parameters) {
+                _parameterValues[_index] = row[pair.Key];
                 _index++;
             }
 
             var result = string.Format(_format, _parameterValues);
-            foreach (var key in Results.Keys) {
-                row[key] = result;
+            foreach (var pair in Results) {
+                row[pair.Key] = result;
             }
         }
 

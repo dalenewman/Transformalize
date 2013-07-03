@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Transformalize.Model;
+using Transformalize.Operations;
 using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize {
@@ -8,19 +9,20 @@ namespace Transformalize {
     public class TransformProcess : EtlProcess {
 
         private readonly Process _process;
+        private readonly int[] _tflId;
 
         public TransformProcess(Process process) : base(process.Name) {
             _process = process;
+            _tflId = process.Entities.Select(e => e.Value.TflId).Distinct().ToArray();
         }
 
         protected override void Initialize() {
+            Register(new ParametersExtract(_process, _tflId));
+            Register(new ProcessTransform(_process));
+            RegisterLast(new ResultsLoad(_process));
             // TODO: make a transform process that does this...
-            // get all the fields needed to satisfy transform parameters
-            // query fields from output table where TflId in (@TflIds), also return TflKey
-            // run the transforms on them.
-            // run batch update process on transformed output, using TflKey as join
             //var batchIds = process.Entities.Select(e => e.Value.TflId).ToArray();
-            
+
         }
 
         protected override void PostProcessing() {

@@ -40,12 +40,12 @@ namespace Transformalize.Transforms {
         }
 
         public void Transform(ref Row row) {
-            foreach (var key in Parameters.Keys) {
-                _context.SetParameter(key, row[key]);
+            foreach (var pair in Parameters) {
+                _context.SetParameter(pair.Key, row[pair.Key]);
             }
             var result = Run();
-            foreach (var key in Results.Keys) {
-                row[key] = result;
+            foreach (var pair in Results) {
+                row[pair.Key] = result;
             }
         }
 

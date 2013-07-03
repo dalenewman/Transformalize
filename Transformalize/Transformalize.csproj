@@ -103,6 +103,9 @@
     <Compile Include="Configuration\TransformalizeConfiguration.cs" />
     <Compile Include="Configuration\XmlConfigurationElement.cs" />
     <Compile Include="Configuration\XmlElementCollection.cs" />
+    <Compile Include="Operations\EntityBatchId.cs" />
+    <Compile Include="Operations\EntityBulkInsert.cs" />
+    <Compile Include="Runner.cs" />
     <Compile Include="Operations\ParametersExtract.cs" />
     <Compile Include="Operations\ResultsExperimentalLoad.cs" />
     <Compile Include="Operations\ResultsLoad.cs" />
@@ -504,7 +507,7 @@
     <Compile Include="Readers\IVersionReader.cs" />
     <Compile Include="Readers\ProcessReader.cs" />
     <Compile Include="Readers\VersionReader.cs" />
-    <Compile Include="Repositories\EntityTrackerRepository.cs" />
+    <Compile Include="Repositories\TflTrackerRepository.cs" />
     <Compile Include="Repositories\OutputRepository.cs" />
     <Compile Include="Rhino.Etl\Core\ConventionOperations\ConventionInputCommandOperation.cs" />
     <Compile Include="Rhino.Etl\Core\ConventionOperations\ConventionOutputCommandOperation.cs" />

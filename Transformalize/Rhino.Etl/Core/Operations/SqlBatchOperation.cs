@@ -52,7 +52,7 @@ namespace Transformalize.Rhino.Etl.Core.Operations {
         /// <param name="connectionStringSettings">The connection string settings to use.</param>
         protected SqlBatchOperation(ConnectionStringSettings connectionStringSettings)
             : base(connectionStringSettings) {
-            base.paramPrefix = "@";
+            base.ParamPrefix = "@";
         }
 
         /// <summary>

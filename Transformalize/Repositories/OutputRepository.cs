@@ -20,7 +20,7 @@ namespace Transformalize.Repositories {
             }
         }
 
-        public void InitializeOutput() {
+        public void Init() {
             Execute(SqlTemplates.TruncateTable(_process.Output), _process.OutputConnection.ConnectionString);
             Info("{0} | Truncated {1}", _process.Name, _process.Output);
 

@@ -8,12 +8,11 @@ namespace Transformalize.Operations
     public class ResultsLoad : SqlBatchOperation {
         private readonly Process _process;
 
-        public ResultsLoad(Process process)
-            : base(process.OutputConnection.ConnectionString) {
+        public ResultsLoad(Process process) : base(process.OutputConnection.ConnectionString) {
             _process = process;
             BatchSize = 50;
             UseTransaction = false;
-            }
+        }
 
         protected override void PrepareCommand(Row row, SqlCommand command) {
             var sets = new FieldSqlWriter(_process.Results).Alias().SetParam().Write();

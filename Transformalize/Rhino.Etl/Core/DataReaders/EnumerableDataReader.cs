@@ -3,30 +3,27 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 
-namespace Transformalize.Rhino.Etl.Core.DataReaders
-{
+namespace Transformalize.Rhino.Etl.Core.DataReaders {
     /// <summary>
     /// Represent a data reader that is based on IEnumerable implementation.
     /// This is important because we can now pass an in memory generated code to code
     /// that requires this, such as the SqlBulkCopy class.
     /// </summary>
-    public abstract class EnumerableDataReader : IDataReader
-    {
+    public abstract class EnumerableDataReader : IDataReader {
         /// <summary>
         /// The enumerator that we are iterating on.
         /// Required so subclasses can access the current object.
         /// </summary>
-        protected readonly IEnumerator enumerator;
-        private long rowCount = 0;
-        private bool isClosed = false;
+        protected readonly IEnumerator Enumerator;
+        private int _rowCount;
+        private bool _isClosed = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EnumerableDataReader"/> class.
         /// </summary>
         /// <param name="enumerator">The enumerator.</param>
-        protected EnumerableDataReader(IEnumerator enumerator)
-        {
-            this.enumerator = enumerator;
+        protected EnumerableDataReader(IEnumerator enumerator) {
+            this.Enumerator = enumerator;
         }
 
         /// <summary>
@@ -41,10 +38,9 @@ namespace Transformalize.Rhino.Etl.Core.DataReaders
         /// <summary>
         /// Closes the <see cref="T:System.Data.IDataReader"/> Object.
         /// </summary>
-        public void Close()
-        {
+        public void Close() {
             DoClose();
-            isClosed = true;
+            _isClosed = true;
         }
 
         /// <summary>
@@ -62,15 +58,13 @@ namespace Transformalize.Rhino.Etl.Core.DataReaders
         /// <returns>
         /// A <see cref="T:System.Data.DataTable"/> that describes the column metadata.
         /// </returns>
-        public DataTable GetSchemaTable()
-        {
-            DataTable table = new DataTable("schema");
+        public DataTable GetSchemaTable() {
+            var table = new DataTable("schema");
             table.Columns.Add("ColumnName", typeof(string));
             table.Columns.Add("ColumnOrdinal", typeof(int));
             table.Columns.Add("DataType", typeof(Type));
 
-            for (int i = 0; i < PropertyDescriptors.Count; i++)
-            {
+            for (var i = 0; i < PropertyDescriptors.Count; i++) {
                 table.Rows.Add(
                     PropertyDescriptors[i].Name,
                     i,
@@ -86,8 +80,7 @@ namespace Transformalize.Rhino.Etl.Core.DataReaders
         /// <returns>
         /// true if there are more rows; otherwise, false.
         /// </returns>
-        public bool NextResult()
-        {
+        public bool NextResult() {
             return false;
         }
 
@@ -97,11 +90,10 @@ namespace Transformalize.Rhino.Etl.Core.DataReaders
         /// <returns>
         /// true if there are more rows; otherwise, false.
         /// </returns>
-        public bool Read()
-        {
-            bool next = enumerator.MoveNext();
+        public bool Read() {
+            bool next = Enumerator.MoveNext();
             if (next)
-                rowCount += 1;
+                _rowCount += 1;
             return next;
         }
 
@@ -111,8 +103,7 @@ namespace Transformalize.Rhino.Etl.Core.DataReaders
         /// </summary>
         /// <value></value>
         /// <returns>The level of nesting.</returns>
-        public int Depth
-        {
+        public int Depth {
             get { return 0; }
         }
 
@@ -121,9 +112,8 @@ namespace Transformalize.Rhino.Etl.Core.DataReaders
         /// </summary>
         /// <value></value>
         /// <returns>true if the data reader is closed; otherwise, false.</returns>
-        public bool IsClosed
-        {
-            get { return isClosed; }
+        public bool IsClosed {
+            get { return _isClosed; }
         }
 
         /// <summary>
@@ -131,16 +121,14 @@ namespace Transformalize.Rhino.Etl.Core.DataReaders
         /// </summary>
         /// <value></value>
         /// <returns>The number of rows changed, inserted, or deleted; 0 if no rows were affected or the statement failed; and -1 for SELECT statements.</returns>
-        public int RecordsAffected
-        {
+        public int RecordsAffected {
             get { return -1; }
         }
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        public void Dispose()
-        {
+        public void Dispose() {
             Close();
         }
 
@@ -152,8 +140,7 @@ namespace Transformalize.Rhino.Etl.Core.DataReaders
         /// The name of the field or the empty string (""), if there is no value to return.
         /// </returns>
         /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount"/>. </exception>
-        public string GetName(int i)
-        {
+        public string GetName(int i) {
             return PropertyDescriptors[i].Name;
         }
 
@@ -165,8 +152,7 @@ namespace Transformalize.Rhino.Etl.Core.DataReaders
         /// The data type information for the specified field.
         /// </returns>
         /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount"/>. </exception>
-        public string GetDataTypeName(int i)
-        {
+        public string GetDataTypeName(int i) {
             return PropertyDescriptors[i].Type.Name;
         }
 
@@ -178,8 +164,7 @@ namespace Transformalize.Rhino.Etl.Core.DataReaders
         /// The <see cref="T:System.Type"/> information corresponding to the type of <see cref="T:System.Object"/> that would be returned from <see cref="M:System.Data.IDataRecord.GetValue(System.Int32)"/>.
         /// </returns>
         /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount"/>. </exception>
-        public Type GetFieldType(int i)
-        {
+        public Type GetFieldType(int i) {
             return PropertyDescriptors[i].Type;
         }
 
@@ -191,9 +176,8 @@ namespace Transformalize.Rhino.Etl.Core.DataReaders
         /// The <see cref="T:System.Object"/> which will contain the field value upon return.
         /// </returns>
         /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount"/>. </exception>
-        public object GetValue(int i)
-        {
-            return PropertyDescriptors[i].GetValue(enumerator.Current) ?? DBNull.Value;
+        public object GetValue(int i) {
+            return PropertyDescriptors[i].GetValue(Enumerator.Current) ?? DBNull.Value;
         }
 
         /// <summary>
@@ -203,11 +187,9 @@ namespace Transformalize.Rhino.Etl.Core.DataReaders
         /// <returns>
         /// The number of instances of <see cref="T:System.Object"/> in the array.
         /// </returns>
-        public int GetValues(object[] values)
-        {
-            for (int i = 0; i < PropertyDescriptors.Count; i++)
-            {
-                values[i] = PropertyDescriptors[i].GetValue(enumerator.Current);
+        public int GetValues(object[] values) {
+            for (int i = 0; i < PropertyDescriptors.Count; i++) {
+                values[i] = PropertyDescriptors[i].GetValue(Enumerator.Current);
             }
             return PropertyDescriptors.Count;
         }
@@ -217,10 +199,8 @@ namespace Transformalize.Rhino.Etl.Core.DataReaders
         /// </summary>
         /// <param name="name">The name of the field to find.</param>
         /// <returns>The index of the named field.</returns>
-        public int GetOrdinal(string name)
-        {
-            for (int i = 0; i < PropertyDescriptors.Count; i++)
-            {
+        public int GetOrdinal(string name) {
+            for (int i = 0; i < PropertyDescriptors.Count; i++) {
                 if (string.Equals(PropertyDescriptors[i].Name, name, StringComparison.InvariantCultureIgnoreCase))
                     return i;
             }
@@ -233,8 +213,7 @@ namespace Transformalize.Rhino.Etl.Core.DataReaders
         /// <param name="i">The zero-based column ordinal.</param>
         /// <returns>The value of the column.</returns>
         /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount"/>. </exception>
-        public bool GetBoolean(int i)
-        {
+        public bool GetBoolean(int i) {
             return (bool)GetValue(i);
         }
 
@@ -246,16 +225,14 @@ namespace Transformalize.Rhino.Etl.Core.DataReaders
         /// The 8-bit unsigned integer value of the specified column.
         /// </returns>
         /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount"/>. </exception>
-        public byte GetByte(int i)
-        {
+        public byte GetByte(int i) {
             return (byte)GetValue(i);
         }
 
         /// <summary>
         /// We do not support this operation
         /// </summary>
-        public long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length)
-        {
+        public long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length) {
             throw new NotSupportedException();
         }
 
@@ -267,16 +244,14 @@ namespace Transformalize.Rhino.Etl.Core.DataReaders
         /// The character value of the specified column.
         /// </returns>
         /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount"/>. </exception>
-        public char GetChar(int i)
-        {
+        public char GetChar(int i) {
             return (char)GetValue(i);
         }
 
         /// <summary>
         /// We do not support this operation
         /// </summary>
-        public long GetChars(int i, long fieldoffset, char[] buffer, int bufferoffset, int length)
-        {
+        public long GetChars(int i, long fieldoffset, char[] buffer, int bufferoffset, int length) {
             throw new NotSupportedException();
         }
 
@@ -286,8 +261,7 @@ namespace Transformalize.Rhino.Etl.Core.DataReaders
         /// <param name="i">The index of the field to find.</param>
         /// <returns>The GUID value of the specified field.</returns>
         /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount"/>. </exception>
-        public Guid GetGuid(int i)
-        {
+        public Guid GetGuid(int i) {
             return (Guid)GetValue(i);
         }
 
@@ -299,8 +273,7 @@ namespace Transformalize.Rhino.Etl.Core.DataReaders
         /// The 16-bit signed integer value of the specified field.
         /// </returns>
         /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount"/>. </exception>
-        public short GetInt16(int i)
-        {
+        public short GetInt16(int i) {
             return (short)GetValue(i);
         }
 
@@ -312,8 +285,7 @@ namespace Transformalize.Rhino.Etl.Core.DataReaders
         /// The 32-bit signed integer value of the specified field.
         /// </returns>
         /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount"/>. </exception>
-        public int GetInt32(int i)
-        {
+        public int GetInt32(int i) {
             return (int)GetValue(i);
         }
 
@@ -325,8 +297,7 @@ namespace Transformalize.Rhino.Etl.Core.DataReaders
         /// The 64-bit signed integer value of the specified field.
         /// </returns>
         /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount"/>. </exception>
-        public long GetInt64(int i)
-        {
+        public long GetInt64(int i) {
             return (long)GetValue(i);
         }
 
@@ -338,8 +309,7 @@ namespace Transformalize.Rhino.Etl.Core.DataReaders
         /// The single-precision floating point number of the specified field.
         /// </returns>
         /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount"/>. </exception>
-        public float GetFloat(int i)
-        {
+        public float GetFloat(int i) {
             return (float)GetValue(i);
         }
 
@@ -351,8 +321,7 @@ namespace Transformalize.Rhino.Etl.Core.DataReaders
         /// The double-precision floating point number of the specified field.
         /// </returns>
         /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount"/>. </exception>
-        public double GetDouble(int i)
-        {
+        public double GetDouble(int i) {
             return (double)GetValue(i);
         }
 
@@ -362,8 +331,7 @@ namespace Transformalize.Rhino.Etl.Core.DataReaders
         /// <param name="i">The index of the field to find.</param>
         /// <returns>The string value of the specified field.</returns>
         /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount"/>. </exception>
-        public string GetString(int i)
-        {
+        public string GetString(int i) {
             return (string)GetValue(i);
         }
 
@@ -375,8 +343,7 @@ namespace Transformalize.Rhino.Etl.Core.DataReaders
         /// The fixed-position numeric value of the specified field.
         /// </returns>
         /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount"/>. </exception>
-        public decimal GetDecimal(int i)
-        {
+        public decimal GetDecimal(int i) {
             return (decimal)GetValue(i);
         }
 
@@ -388,16 +355,14 @@ namespace Transformalize.Rhino.Etl.Core.DataReaders
         /// The date and time data value of the specified field.
         /// </returns>
         /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount"/>. </exception>
-        public DateTime GetDateTime(int i)
-        {
+        public DateTime GetDateTime(int i) {
             return (DateTime)GetValue(i);
         }
 
         /// <summary>
         /// We do not support nesting
         /// </summary>
-        public IDataReader GetData(int i)
-        {
+        public IDataReader GetData(int i) {
             throw new NotSupportedException();
         }
 
@@ -409,8 +374,7 @@ namespace Transformalize.Rhino.Etl.Core.DataReaders
         /// true if the specified field is set to null; otherwise, false.
         /// </returns>
         /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount"/>. </exception>
-        public bool IsDBNull(int i)
-        {
+        public bool IsDBNull(int i) {
             return GetValue(i) == null || GetValue(i) == DBNull.Value;
         }
 
@@ -419,8 +383,7 @@ namespace Transformalize.Rhino.Etl.Core.DataReaders
         /// </summary>
         /// <value></value>
         /// <returns>When not positioned in a valid recordset, 0; otherwise, the number of columns in the current record. The default is -1.</returns>
-        public int FieldCount
-        {
+        public int FieldCount {
             get { return PropertyDescriptors.Count; }
         }
 
@@ -428,8 +391,7 @@ namespace Transformalize.Rhino.Etl.Core.DataReaders
         /// Gets the <see cref="System.Object"/> with the specified i.
         /// </summary>
         /// <value></value>
-        public object this[int i]
-        {
+        public object this[int i] {
             get { return GetValue(i); }
         }
 
@@ -437,8 +399,7 @@ namespace Transformalize.Rhino.Etl.Core.DataReaders
         /// Gets the <see cref="System.Object"/> with the specified name.
         /// </summary>
         /// <value></value>
-        public object this[string name]
-        {
+        public object this[string name] {
             get { return GetValue(GetOrdinal(name)); }
         }
 

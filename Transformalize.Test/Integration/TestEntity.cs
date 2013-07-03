@@ -3,7 +3,6 @@ using Transformalize.Model;
 using Transformalize.Operations;
 using Transformalize.Readers;
 using Transformalize.Repositories;
-using Transformalize.Rhino.Etl.Core.Operations;
 
 namespace Transformalize.Test.Integration {
 
@@ -17,8 +16,8 @@ namespace Transformalize.Test.Integration {
         public void SetUp() {
             _process = new ProcessReader("Test").GetProcess();
 
-            new OutputRepository(_process).InitializeOutput();
-            new EntityTrackerRepository(_process).InitializeEntityTracker();
+            new OutputRepository(_process).Init();
+            new TflTrackerRepository(_process).Init();
 
             _entity = _process.Entities["OrderDetail"];
         }
@@ -28,12 +27,12 @@ namespace Transformalize.Test.Integration {
 
             var rows = TestOperation(new EntityKeysExtract(_entity));
 
-            Assert.AreEqual(5000, rows.Count);
+            Assert.AreEqual(10000, rows.Count);
 
             var sql = SqlTemplates.CreateTableVariable("@KEYS", _entity.PrimaryKey)
                 + SqlTemplates.BatchInsertValues(5, "@KEYS", _entity.PrimaryKey, rows, 2005);
 
-            Assert.AreEqual(123938, sql.Length);
+            Assert.AreEqual(248939, sql.Length);
 
             const string expected = @"DECLARE @KEYS AS TABLE([OrderDetailKey] INT);
 INSERT INTO @KEYS
@@ -91,7 +90,7 @@ OPTION (MAXDOP 1);";
             var entityKeysToOperations = new EntityKeysToOperations(_entity);
 
             var operations = TestOperation(entityKeyExtract, entityKeysToOperations);
-            Assert.AreEqual(5000 / 200, operations.Count);
+            Assert.AreEqual(10000 / 200, operations.Count);
         }
 
     }

@@ -57,8 +57,8 @@ CREATE TABLE [{0}].[{1}](
             );
         }
 
-        public static string CreateTableVariable(string name, IDictionary<string, Field> fields) {
-            var defs = new FieldSqlWriter(fields).Alias().DataType().Write();
+        public static string CreateTableVariable(string name, IDictionary<string, Field> fields, bool useAlias = true) {
+            var defs = useAlias ? new FieldSqlWriter(fields).Alias().DataType().Write() : new FieldSqlWriter(fields).Name().DataType().Write();
             return string.Format(@"DECLARE @{0} AS TABLE({1});", name.TrimStart("@".ToCharArray()), defs);
         }
 
@@ -100,10 +100,13 @@ CREATE TABLE [{0}].[{1}](
         private static IEnumerable<string> RowsToValues(IDictionary<string, Field> fields, IEnumerable<Row> rows) {
             foreach (var row in rows) {
                 var values = new List<string>();
-                foreach (var fieldKey in fields.Keys) {
-                    var value = row[fieldKey];
-                    var field = fields[fieldKey];
-                    values.Add(string.Concat(field.Quote, value ?? field.Default, field.Quote));
+                foreach (var pair in fields) {
+                    var value = row[pair.Key].ToString();
+                    values.Add(
+                        pair.Value.Quote == string.Empty
+                        ? value
+                        : string.Concat(pair.Value.Quote, value.Replace("'", "''"), pair.Value.Quote)
+                    );
                 }
                 yield return string.Join(",", values);
             }
@@ -134,7 +137,7 @@ CREATE TABLE [{0}].[{1}](
             var sqlBuilder = new StringBuilder(Environment.NewLine);
 
             var writer = new FieldSqlWriter(fields, key);
-            var tableVar= CreateTableVariable("@DATA", writer.Context());
+            var tableVar = CreateTableVariable("@DATA", writer.Context());
 
             sqlBuilder.AppendLine("SET NOCOUNT ON;");
             sqlBuilder.AppendLine(tableVar);

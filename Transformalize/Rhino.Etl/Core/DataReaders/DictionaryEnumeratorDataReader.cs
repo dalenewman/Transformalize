@@ -1,30 +1,24 @@
 using System;
 using System.Collections.Generic;
 
-namespace Transformalize.Rhino.Etl.Core.DataReaders
-{
+namespace Transformalize.Rhino.Etl.Core.DataReaders {
     /// <summary>
     /// A datareader over a collection of dictionaries
     /// </summary>
-    public class DictionaryEnumeratorDataReader : EnumerableDataReader
-    {
-        private readonly IEnumerable<Row> enumerable;
-        private readonly List<Descriptor> propertyDescriptors = new List<Descriptor>();
+    public class DictionaryEnumeratorDataReader : EnumerableDataReader {
+        private readonly IEnumerable<Row> _enumerable;
+        private readonly List<Descriptor> _propertyDescriptors = new List<Descriptor>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DictionaryEnumeratorDataReader"/> class.
         /// </summary>
         /// <param name="schema">The schema.</param>
         /// <param name="enumerable">The enumerator.</param>
-        public DictionaryEnumeratorDataReader(
-            IDictionary<string, Type> schema,
-            IEnumerable<Row> enumerable)
-            : base(enumerable.GetEnumerator())
-        {
-            this.enumerable = enumerable;
-            foreach (KeyValuePair<string, Type> pair in schema)
-            {
-                propertyDescriptors.Add(new DictionaryDescriptorAdapter(pair));
+        public DictionaryEnumeratorDataReader(IEnumerable<KeyValuePair<string, Type>> schema, IEnumerable<Row> enumerable)
+            : base(enumerable.GetEnumerator()) {
+            _enumerable = enumerable;
+            foreach (var pair in schema) {
+                _propertyDescriptors.Add(new DictionaryDescriptorAdapter(pair));
             }
         }
 
@@ -33,22 +27,20 @@ namespace Transformalize.Rhino.Etl.Core.DataReaders
         /// is going to handle
         /// </summary>
         /// <value>The property descriptors.</value>
-        protected override IList<Descriptor> PropertyDescriptors
-        {
-            get { return propertyDescriptors; }
+        protected override IList<Descriptor> PropertyDescriptors {
+            get { return _propertyDescriptors; }
         }
 
         /// <summary>
         /// Perform the actual closing of the reader
         /// </summary>
-        protected override void DoClose()
-        {
-            IDisposable disposable = enumerator as IDisposable;
+        protected override void DoClose() {
+            var disposable = Enumerator as IDisposable;
             if (disposable != null)
                 disposable.Dispose();
 
-            disposable = enumerable as IDisposable;
-            if(disposable != null)
+            disposable = _enumerable as IDisposable;
+            if (disposable != null)
                 disposable.Dispose();
         }
     }

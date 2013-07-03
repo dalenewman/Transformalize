@@ -18,14 +18,15 @@ namespace Transformalize.Operations {
             var register = new FieldSqlWriter(_entity.All).FieldType(FieldType.ForeignKey).Context();
 
             foreach (var row in rows) {
-                foreach (var fieldKey in register.Keys) {
-                    if (!_process.KeyRegister.ContainsKey(fieldKey)) {
-                        _process.KeyRegister.Add(fieldKey, new HashSet<object>());
+                foreach (var pair in register) {
+                    if (!_process.KeyRegister.ContainsKey(pair.Key)) {
+                        _process.KeyRegister.Add(pair.Key, new HashSet<object>());
                     }
-                    _process.KeyRegister[fieldKey].Add(row[fieldKey]);
+                    _process.KeyRegister[pair.Key].Add(row[pair.Key]);
                 }
+                yield return row;
             }
-            yield break;
+            
         }
     }
 }

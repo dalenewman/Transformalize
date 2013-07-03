@@ -29,31 +29,31 @@ namespace Transformalize.Transforms {
 
         public void Transform(ref StringBuilder sb) {
 
-            foreach (var key in _equals.Keys) {
-                if (!sb.IsEqualTo(key)) continue;
+            foreach (var pair in _equals) {
+                if (!sb.IsEqualTo(pair.Key)) continue;
                 sb.Clear();
-                sb.Append(_equals[key]);
+                sb.Append(_equals[pair.Key]);
                 return;
             }
 
-            foreach (var key in _startsWith.Keys) {
-                if (!sb.StartsWith(key)) continue;
+            foreach (var pair in _startsWith) {
+                if (!sb.StartsWith(pair.Key)) continue;
                 sb.Clear();
-                sb.Append(_startsWith[key]);
+                sb.Append(_startsWith[pair.Key]);
                 return;
             }
 
-            foreach (var key in _endsWith.Keys) {
-                if (!sb.EndsWith(key)) continue;
+            foreach (var pair in _endsWith) {
+                if (!sb.EndsWith(pair.Key)) continue;
                 sb.Clear();
-                sb.Append(_endsWith[key]);
+                sb.Append(_endsWith[pair.Key]);
                 return;
             }
 
-            foreach (var key in _equals.Keys) {
-                if (!key.Equals("*")) continue;
+            foreach (var pair in _equals) {
+                if (!pair.Key.Equals("*")) continue;
                 sb.Clear();
-                sb.Append(_equals[key]);
+                sb.Append(_equals[pair.Key]);
                 return;
             }
 

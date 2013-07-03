@@ -38,7 +38,7 @@ namespace Transformalize.Repositories {
 
             var result = results.All(r => r);
             if (result)
-                Info("{0} | Databases are online.", _logPrefix);
+                Info("{0} | All Systems: Online.", _logPrefix);
             return result;
         }
 

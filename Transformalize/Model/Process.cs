@@ -23,23 +23,22 @@ namespace Transformalize.Model {
         public Dictionary<string, Dictionary<string, object>> MapEndsWith = new Dictionary<string, Dictionary<string, object>>();
         public ITransform[] Transforms { get; set; }
         public Dictionary<string, Field> Parameters = new Dictionary<string, Field>();
-        public Dictionary<string, Field> Results = new Dictionary<string, Field>(); 
+        public Dictionary<string, Field> Results = new Dictionary<string, Field>();
 
         public Dictionary<string, Field> Fields {
             get {
                 if (_fields == null) {
                     _fields = new Dictionary<string, Field>();
-                    foreach (var entityKey in Entities.Keys) {
-                        var entity = Entities[entityKey];
-                        foreach (var fieldKey in entity.All.Keys) {
-                            _fields[fieldKey] = entity.All[fieldKey];
+                    foreach (var pair in Entities) {
+                        foreach (var innerPair in pair.Value.All) {
+                            _fields[innerPair.Key] = pair.Value.All[innerPair.Key];
                         }
                     }
                 }
                 return _fields;
             }
         }
-        
+
         public string CreateOutputSql() {
 
             var writer = new FieldSqlWriter(Fields, Results);

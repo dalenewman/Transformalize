@@ -1,42 +1,28 @@
-﻿using System;
-using System.Linq;
+﻿using System.Diagnostics;
 using Transformalize.NLog;
-using Transformalize.Readers;
-using Transformalize.Repositories;
 using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Run {
     class Program {
+
+        private static readonly Stopwatch Timer = new Stopwatch();
+
         static void Main(string[] args) {
 
-            Guard.Against(args.Length == 0,"You must provide the project name as the first argument.");
+            Guard.Against(args.Length == 0, "\r\nYou must provide the process name as the first argument.\r\nE.g. tfl <process> <mode=init|delta|entity>");
 
-            var name = args[0];
-            var mode = args.Length > 1 ? args[1] : "delta";
+            var process = args[0];
+            var mode = args.Length > 1 ? args[1].ToLower() : "delta";
+            var entity = args.Length > 2 ? args[2] : string.Empty;
+
+            Guard.Against(mode.Equals("entity") && string.IsNullOrEmpty(entity), "\r\nYou must provide an entity name when in entity mode.\r\nE.g. tfl <process> <mode> <entity>.");
+
             var logger = LogManager.GetLogger("Transformalize.Run");
 
-            var watch = new System.Diagnostics.Stopwatch();
-            watch.Start();
-
-            var process = new ProcessReader(name).GetProcess();
-
-            if (mode.Equals("init", StringComparison.OrdinalIgnoreCase)) {
-                new EntityTrackerRepository(process).InitializeEntityTracker();
-                new OutputRepository(process).InitializeOutput();
-            }
-
-            if (new ConnectionChecker(process.Connections.Select(kv => kv.Value.ConnectionString), process.Name).Check()) {
-                
-                while (process.Entities.Any(kv => !kv.Value.Processed)) {
-                    using (var etlProcess = new EntityProcess(process)) {
-                        etlProcess.Execute();
-                    }
-                }
-
-            }
-
-            watch.Stop();
-            logger.Info("{0} | Process completed in {1}.", process.Name, watch.Elapsed);
+            Timer.Start();
+            new Runner(process, mode, entity).Run();
+            Timer.Stop();
+            logger.Info("{0} | Process completed in {1}.", process, Timer.Elapsed);
 
         }
     }

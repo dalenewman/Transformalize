@@ -22,6 +22,7 @@ namespace Transformalize.Model {
         public string Output { get; set; }
         public bool Processed { get; set; }
         public int RecordsAffected { get; set; }
+        public object Begin { get; set; }
         public object End { get; set; }
         public int TflId { get; set; }
 
@@ -45,13 +46,16 @@ namespace Transformalize.Model {
         }
 
         public void Dispose() {
-            foreach (var key in All.Keys) {
-                var field = All[key];
-                if (field.Transforms == null) continue;
-                foreach (var t in field.Transforms) {
+            foreach (var pair in All) {
+                if (pair.Value.Transforms == null) continue;
+                foreach (var t in pair.Value.Transforms) {
                     t.Dispose();
                 }
             }
+        }
+
+        public bool DoBulkInsert() {
+            return IsMaster() && Begin == null;
         }
     }
 }

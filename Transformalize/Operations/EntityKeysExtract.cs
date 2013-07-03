@@ -20,7 +20,7 @@ namespace Transformalize.Operations {
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
 
             var versionReader = new VersionReader(_entity);
-            var begin = versionReader.GetBeginVersion();
+            _entity.Begin = versionReader.GetBeginVersion();
             _entity.End = versionReader.GetEndVersion();
 
             if (!versionReader.HasRows) {
@@ -40,7 +40,7 @@ namespace Transformalize.Operations {
                 var cmd = new SqlCommand(_entity.EntitySqlWriter.SelectKeys(versionReader.IsRange), cn);
 
                 if (versionReader.IsRange)
-                    cmd.Parameters.Add(new SqlParameter("@Begin", begin));
+                    cmd.Parameters.Add(new SqlParameter("@Begin", _entity.Begin));
                 cmd.Parameters.Add(new SqlParameter("@End", _entity.End));
 
                 using (var reader = cmd.ExecuteReader()) {

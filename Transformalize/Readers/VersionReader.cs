@@ -30,11 +30,11 @@ namespace Transformalize.Readers {
         private SqlDataReader GetBeginVersionReader(string field) {
 
             var sql = string.Format(@"
-                SELECT [{0}], [EntityTrackerKey]
-                FROM [EntityTracker]
-                WHERE [EntityTrackerKey] = (
-	                SELECT [EntityTrackerKey] = MAX([EntityTrackerKey])
-	                FROM [EntityTracker]
+                SELECT [{0}], [TflTrackerKey]
+                FROM [TflTracker]
+                WHERE [TflTrackerKey] = (
+	                SELECT [TflTrackerKey] = MAX([TflTrackerKey])
+	                FROM [TflTracker]
 	                WHERE [ProcessName] = @ProcessName 
                     AND [EntityName] = @EntityName
                 );

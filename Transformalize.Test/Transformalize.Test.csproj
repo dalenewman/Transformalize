@@ -86,11 +86,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EtlProcessHelper.cs" />
+    <Compile Include="Integration\TestRunner.cs" />
     <Compile Include="Integration\TestMultiFieldTransforms.cs" />
     <Compile Include="Integration\TestConfiguration.cs" />
     <Compile Include="Integration\TestEntity.cs" />
     <Compile Include="Integration\TestOutput.cs" />
-    <Compile Include="Integration\TestProcess.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Unit\TestMultiFieldTransforms.cs" />
     <Compile Include="Unit\TestTransforms.cs" />
