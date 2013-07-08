@@ -9,6 +9,7 @@ namespace Transformalize.Operations {
 
         public EntityTransform(Entity entity) {
             _fields = new FieldSqlWriter(entity.All).ExpandXml().HasTransform().Input().Context();
+            UseTransaction = false;
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

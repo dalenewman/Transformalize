@@ -10,6 +10,7 @@ namespace Transformalize.Operations
 
         public EntityBatchId(Entity entity) {
             _entity = entity;
+            UseTransaction = false;
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

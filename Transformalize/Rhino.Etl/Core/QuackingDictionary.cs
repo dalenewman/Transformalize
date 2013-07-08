@@ -1,10 +1,9 @@
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text;
 using Transformalize.Rhino.Etl.Core.Exceptions;
-using Enumerable = System.Linq.Enumerable;
 
 namespace Transformalize.Rhino.Etl.Core {
     /// <summary>
@@ -15,38 +14,39 @@ namespace Transformalize.Rhino.Etl.Core {
         /// <summary>
         /// The inner items collection
         /// </summary>
-        protected IDictionary<string, object> items;
+        protected IDictionary<string, object> Items;
 
         /// <summary>
         /// The last item that was access, useful for debugging
         /// </summary>
-        protected string lastAccess;
+        protected string LastAccess;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="QuackingDictionary"/> class.
         /// </summary>
         /// <param name="items">The items.</param>
-        public QuackingDictionary(IDictionary<string, object> items) {
-            this.items = items != null ?
-                new Dictionary<string, object>(items, StringComparer.InvariantCultureIgnoreCase) :
-                new Dictionary<string, object>(StringComparer.InvariantCultureIgnoreCase);
+        public QuackingDictionary(IEnumerable<KeyValuePair<string, object>> items) {
+            Items = items != null ?
+                new ConcurrentDictionary<string, object>(items, StringComparer.InvariantCultureIgnoreCase) :
+                new ConcurrentDictionary<string, object>(StringComparer.InvariantCultureIgnoreCase);
         }
 
         public bool TryGetValue(string key, out object value) {
-            return items.TryGetValue(key, out value);
+            return Items.TryGetValue(key, out value);
         }
 
         public object this[string key] {
             get {
-                lastAccess = key;
-                return items.ContainsKey(key) ? items[key] : null;
+                LastAccess = key;
+                //return items.ContainsKey(key) ? items[key] : null;
+                return Items[key];
             }
             set {
-                lastAccess = key;
+                LastAccess = key;
                 if (value == DBNull.Value)
-                    items[key] = null;
+                    Items[key] = null;
                 else
-                    items[key] = value;
+                    Items[key] = value;
             }
         }
 
@@ -77,10 +77,14 @@ namespace Transformalize.Rhino.Etl.Core {
                 "You cannot invoke methods on a row, it is merely a data structure, after all.");
         }
 
+        IEnumerator<KeyValuePair<string, object>> IEnumerable<KeyValuePair<string, object>>.GetEnumerator() {
+            return Items.GetEnumerator();
+        }
+
         public override string ToString() {
             var sb = new StringBuilder();
             sb.Append("{");
-            foreach (var pair in items) {
+            foreach (var pair in Items) {
                 sb.Append(pair.Key)
                     .Append(" : ");
                 if (pair.Value is string) {
@@ -99,63 +103,59 @@ namespace Transformalize.Rhino.Etl.Core {
         }
 
         public IEnumerator GetEnumerator() {
-            return new Dictionary<string, object>(items).GetEnumerator();
-        }
-
-        IEnumerator<KeyValuePair<string, object>> IEnumerable<KeyValuePair<string, object>>.GetEnumerator() {
-            return items.GetEnumerator();
+            return new ConcurrentDictionary<string, object>(Items).GetEnumerator();
         }
 
         public bool Contains(string key) {
-            return items.ContainsKey(key);
+            return Items.ContainsKey(key);
         }
 
         public bool ContainsKey(string key) {
-            return items.ContainsKey(key);
+            return Items.ContainsKey(key);
         }
 
         public void Add(string key, object value) {
-            items.Add(key, value);
+            Items.Add(key, value);
         }
 
         public bool Remove(string key) {
-            return items.Remove(key);
+            return Items.Remove(key);
         }
 
         public void Add(KeyValuePair<string, object> item) {
-            items.Add(item);
+            Items.Add(item);
         }
 
         public void Clear() {
-            items.Clear();
+            Items.Clear();
         }
 
         public bool Contains(KeyValuePair<string, object> item) {
-            return items.Contains(item);
+            return Items.Contains(item);
         }
 
         public ICollection<string> Keys {
-            get { return items.Keys; }
+            get { return Items.Keys; }
         }
 
         public ICollection<object> Values {
-            get { return items.Values; }
+            get { return Items.Values; }
         }
 
         public bool IsReadOnly {
-            get { return items.IsReadOnly; }
+            get { return Items.IsReadOnly; }
         }
 
         public void CopyTo(KeyValuePair<string, object>[] array, int index) {
-            items.CopyTo(array, index);
+            Items.CopyTo(array, index);
         }
 
         public bool Remove(KeyValuePair<string, object> item) {
-            return items.Remove(item);
+            return Items.Remove(item);
         }
 
         public int Count {
-            get { return items.Count; }
+            get { return Items.Count; }
         }
 
     }

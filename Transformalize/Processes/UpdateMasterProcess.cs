@@ -1,28 +1,26 @@
-﻿using System;
+using System;
 using System.Linq;
 using Transformalize.Model;
 using Transformalize.Operations;
 using Transformalize.Rhino.Etl.Core;
 
-namespace Transformalize {
+namespace Transformalize.Processes {
 
-    public class TransformProcess : EtlProcess {
+    public class UpdateMasterProcess : EtlProcess {
 
         private readonly Process _process;
         private readonly int[] _tflId;
 
-        public TransformProcess(Process process) : base(process.Name) {
+        public UpdateMasterProcess(Process process)
+            : base(process.Name) {
             _process = process;
             _tflId = process.Entities.Select(e => e.Value.TflId).Distinct().ToArray();
         }
 
         protected override void Initialize() {
-            Register(new ParametersExtract(_process, _tflId));
-            Register(new ProcessTransform(_process));
-            RegisterLast(new ResultsLoad(_process));
-            // TODO: make a transform process that does this...
-            //var batchIds = process.Entities.Select(e => e.Value.TflId).ToArray();
-
+            foreach (var entity in _process.Entities) {
+                Register(new EntityUpdateMaster(_process, entity.Value));
+            }
         }
 
         protected override void PostProcessing() {

@@ -1,9 +1,14 @@
+using System.Collections.Generic;
+
 namespace Transformalize.Model {
 
     public class Relationship {
         public Entity LeftEntity;
-        public Field LeftField;
         public Entity RightEntity;
-        public Field RightField;
+        public List<Join> Join;
+
+        public Relationship() {
+            Join = new List<Join>();
+        }
     }
 }

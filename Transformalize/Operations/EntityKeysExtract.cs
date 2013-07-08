@@ -3,6 +3,7 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using Transformalize.Data;
 using Transformalize.Model;
 using Transformalize.Readers;
 using Transformalize.Rhino.Etl.Core;
@@ -19,7 +20,7 @@ namespace Transformalize.Operations {
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
 
-            var versionReader = new VersionReader(_entity);
+            var versionReader = new SqlServerVersionReader(_entity);
             _entity.Begin = versionReader.GetBeginVersion();
             _entity.End = versionReader.GetEndVersion();
 
@@ -44,8 +45,15 @@ namespace Transformalize.Operations {
                 cmd.Parameters.Add(new SqlParameter("@End", _entity.End));
 
                 using (var reader = cmd.ExecuteReader()) {
+
                     while (reader.Read()) {
-                        yield return Row.FromReader(reader);
+                        var index = 0;
+                        var row = new Row();
+                        foreach (var pk in _entity.PrimaryKey) {
+                            row[pk.Key] = reader.GetValue(index);
+                            index++;
+                        }
+                        yield return row;
                     }
                 }
 

@@ -10,6 +10,7 @@ namespace Transformalize.Operations
 
         public EntityDefaults(Entity entity) {
             _fields = new FieldSqlWriter(entity.All).ExpandXml().Input().Context();
+            UseTransaction = false;
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

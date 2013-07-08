@@ -183,10 +183,10 @@ namespace Transformalize.Model {
             return this;
         }
 
-        public FieldSqlWriter AppendIf(string suffix, FieldType fieldType) {
+        public FieldSqlWriter AppendIf(string suffix, params FieldType[] fieldTypes) {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];
-                if (field.FieldType == fieldType)
+                if (fieldTypes.Any(ft=>ft == field.FieldType))
                     _output[key] = string.Concat(_output[key], suffix);
             }
             return this;

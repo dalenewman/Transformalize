@@ -26,7 +26,7 @@ namespace Transformalize.Test.Unit {
 
         [Test]
         public void TestKeysTableVariable() {
-            var process = new ProcessReader("Test").GetProcess();
+            var process = new ProcessReader("Test").Read();
 
             var entity = process.Entities["OrderDetail"];
             
@@ -39,7 +39,7 @@ namespace Transformalize.Test.Unit {
         [Test]
         public void TestKeyInserts() {
 
-            var entity = new ProcessReader("Test").GetProcess().Entities["OrderDetail"];
+            var entity = new ProcessReader("Test").Read().Entities["OrderDetail"];
 
             var rows = TestOperation(_entityKeysExtract.Object);
 
@@ -60,9 +60,9 @@ UNION ALL SELECT 4;";
         [Test]
         public void TestSelectByKeysSql() {
 
-            var entity = new ProcessReader("Test").GetProcess().Entities["OrderDetail"];
+            var entity = new ProcessReader("Test").Read().Entities["OrderDetail"];
 
-            var actual = SqlTemplates.Select(entity.All, entity.Output, "@KEYS");
+            var actual = SqlTemplates.Select(entity.All, entity.OutputName(), "@KEYS");
             const string expected = @"
 SELECT
     [Color] = l.[Properties].value('(/Properties/Color)[1]', 'NVARCHAR(64)'),
@@ -73,7 +73,7 @@ SELECT
     l.[ProductKey],
     [Quantity] = l.[Qty],
     [Size] = l.[Properties].value('(/Properties/Size)[1]', 'NVARCHAR(64)')
-FROM [OrderDetail] l
+FROM [TestOrderDetail] l
 INNER JOIN @KEYS r ON (l.[OrderDetailKey] = r.[OrderDetailKey])
 OPTION (MAXDOP 1);";
 
@@ -83,7 +83,7 @@ OPTION (MAXDOP 1);";
         [Test]
         public void TestEntityKeysToOperations() {
 
-            var process = new ProcessReader("Test").GetProcess();
+            var process = new ProcessReader("Test").Read();
             var entity = process.Entities["OrderDetail"];
             var entityKeysToOperations = new EntityKeysToOperations(entity);
 

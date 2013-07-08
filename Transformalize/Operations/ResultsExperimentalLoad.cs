@@ -14,16 +14,16 @@ namespace Transformalize.Operations
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
-            using (var cn = new SqlConnection(_process.OutputConnection.ConnectionString)) {
+            using (var cn = new SqlConnection(_process.MasterEntity.OutputConnection.ConnectionString)) {
                 cn.Open();
                 var records = 0;
-                foreach (var group in rows.Partition(_process.OutputConnection.OutputBatchSize)) {
+                foreach (var group in rows.Partition(_process.MasterEntity.OutputConnection.OutputBatchSize)) {
                     var sql = SqlTemplates.BatchUpdateSql(
                         group
-                        , _process.OutputConnection.Year,
+                        , _process.MasterEntity.OutputConnection.Year,
                         _process.Results,
                         new FieldSqlWriter().AddSurrogateKey(false).Context(),
-                        _process.Output
+                        _process.MasterEntity.OutputName()
                         );
                     var cmd = new SqlCommand(sql, cn) { CommandTimeout = 0 };
                     records += cmd.ExecuteNonQuery();

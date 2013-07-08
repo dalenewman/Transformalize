@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using Transformalize.Configuration;
+using Transformalize.Data;
 using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
 using Transformalize.Transforms;
@@ -10,49 +11,72 @@ using System.Linq;
 
 namespace Transformalize.Readers {
 
-    public class ProcessReader : WithLoggingMixin, IProcessReader {
+    public class ProcessReader : WithLoggingMixin, IConfigurationReader<Process> {
         private readonly string _name;
+        private readonly IConnectionChecker _connectionChecker;
+        private readonly IEntityCounter _entityCounter;
         private Process _process;
         private readonly ProcessConfigurationElement _config;
+        private int _connectionCount;
+        private int _mapCount;
+        private int _entityCount;
+        private int _relationshipCount;
+        private int _transformCount;
+        public int Count { get { return 1; } }
 
-        public ProcessReader(string name) {
+        public ProcessReader(string name, IEntityCounter entityCounter = null, IConnectionChecker connectionChecker = null) {
             _name = name;
+            _connectionChecker = connectionChecker ?? new SqlServerConnectionChecker(name);
+            _entityCounter = entityCounter ?? new SqlServerEntityCounter(_connectionChecker);
             _config = ((TransformalizeConfiguration)ConfigurationManager.GetSection("transformalize")).Processes.Get(_name);
         }
 
-        public Process GetProcess() {
+        public Process Read() {
             ReadProcess();
-            ReadConnections(_config);
-            ReadMaps(_config);
-            ReadEntities(_config);
-            ReadRelationships(_config);
-            ReadTransforms(_config);
-            return ReturnProcess();
-        }
+            _connectionCount = ReadConnections(_config);
+            _mapCount = ReadMaps(_config);
+            _entityCount = ReadEntities(_config, _connectionChecker);
+            _relationshipCount = ReadRelationships(_config);
+            _transformCount = ReadTransforms(_config);
+            _process.RelatedKeys = ReadRelatedKeys();
 
-        public Process GetSingleEntityProcess(string name) {
-            ReadProcess();
-            ReadConnections(_config);
-            ReadMaps(_config);
-            ReadEntity(_config, name);
+            foreach (var entity in _process.Entities) {
+                entity.Value.RelationshipToMaster = ReadRelationshipToMaster(entity.Value);
+            }
 
-            var output = string.Format("Tfl{0}", name);
-            _process.Entities[name].Output = output;
-            _process.Output = output;
+            LogProcessConfiguration();
 
-            return ReturnProcess();
-        }
-
-        private Process ReturnProcess() {
-            Info("{0} | Process Loaded.", _process.Name);
             return _process;
         }
 
-        private void ReadProcess() {
-            _process = new Process { Name = _config.Name, Output = _config.Output, Time = _config.Time };
+        private IEnumerable<Relationship> ReadRelationshipToMaster(Entity rightEntity) {
+            var relationships = _process.Relationships.Where(r => r.RightEntity.Equals(rightEntity)).ToList();
+
+            if (relationships.Any() && !relationships.Any(r => r.LeftEntity.IsMaster())) {
+                var leftEntity = relationships.Last().LeftEntity;
+                relationships.AddRange(ReadRelationshipToMaster(leftEntity));
+            }
+            return relationships;
         }
 
-        private void ReadTransforms(ProcessConfigurationElement config) {
+        private void LogProcessConfiguration() {
+            Info("{0} | Process Loaded.", _process.Name);
+            Info("{0} | {1} Connection{2}.", _process.Name, _connectionCount, _connectionCount == 1 ? string.Empty : "s");
+            Info("{0} | {1} Map{2}.", _process.Name, _mapCount, _mapCount == 1 ? string.Empty : "s");
+            Info("{0} | {1} Entit{2}.", _process.Name, _entityCount, _entityCount == 1 ? "y" : "ies");
+            foreach (var entity in _process.Entities) {
+                Info("{0} | Entity {1} input has {2} records.", _process.Name, entity.Value.Name, entity.Value.InputCount);
+                Info("{0} | Entity {1} output has {2} records.", _process.Name, entity.Value.Name, entity.Value.OutputCount);
+            }
+            Info("{0} | {1} Relationship{2}.", _process.Name, _relationshipCount, _relationshipCount == 1 ? string.Empty : "s");
+            Info("{0} | {1} Transform{2}.", _process.Name, _transformCount, _transformCount == 1 ? string.Empty : "s");
+        }
+
+        private void ReadProcess() {
+            _process = new Process { Name = _config.Name };
+        }
+
+        private int ReadTransforms(ProcessConfigurationElement config) {
             _process.Transforms = GetTransforms(config.Transforms);
             foreach (var p in _process.Transforms.SelectMany(t => t.Parameters)) {
                 _process.Parameters[p.Key] = p.Value;
@@ -60,43 +84,78 @@ namespace Transformalize.Readers {
             foreach (var r in _process.Transforms.SelectMany(t => t.Results)) {
                 _process.Results[r.Key] = r.Value;
             }
+            return _process.Transforms.Count();
         }
 
-        private void ReadRelationships(ProcessConfigurationElement config) {
-            foreach (RelationshipConfigurationElement joinElement in config.Relationships) {
-                var j = new Relationship { LeftEntity = _process.Entities[joinElement.LeftEntity] };
-                j.LeftField = j.LeftEntity.All[joinElement.LeftField];
+        private int ReadRelationships(ProcessConfigurationElement config) {
+            var count = 0;
+            foreach (RelationshipConfigurationElement r in config.Relationships) {
+                _process.Relationships.Add(new Relationship {
+                    LeftEntity = _process.Entities[r.LeftEntity],
+                    RightEntity = _process.Entities[r.RightEntity],
+                    Join = GetJoins(r)
+                });
+                count++;
+            }
+            return count;
+        }
+
+        private List<Join> GetJoins(RelationshipConfigurationElement relationshipElement) {
+            var join = new List<Join>();
+            foreach (JoinConfigurationElement joinElement in relationshipElement.Join) {
+                var j = new Join {
+                    LeftField = _process.Entities[relationshipElement.LeftEntity].All[joinElement.LeftField],
+                    RightField = _process.Entities[relationshipElement.RightEntity].All[joinElement.RightField]
+                };
                 j.LeftField.FieldType = FieldType.ForeignKey;
-                j.RightEntity = _process.Entities[joinElement.RightEntity];
-                j.RightField = j.RightEntity.All[joinElement.RightField];
-                _process.Joins.Add(j);
+                join.Add(j);
             }
+            return join;
         }
 
-        private void ReadEntities(ProcessConfigurationElement config) {
-            var entityCount = 1;
+        private int ReadEntities(ProcessConfigurationElement config, IConnectionChecker connectionChecker) {
+            var count = 0;
             foreach (EntityConfigurationElement e in config.Entities) {
-                _process.Entities.Add(e.Name, GetEntity(e, entityCount));
-                entityCount++;
+                var entity = GetEntity(e, count, connectionChecker);
+                _process.Entities.Add(e.Name, entity);
+                if (entity.IsMaster())
+                    _process.MasterEntity = entity;
+                count++;
             }
+            return count;
         }
 
-        private void ReadEntity(ProcessConfigurationElement config, string name) {
-            var entity = GetEntity(config.Entities.Cast<EntityConfigurationElement>().First(e => e.Name == name), 1);
-            _process.Entities.Add(entity.Name, entity);
+        private IEnumerable<Field> ReadRelatedKeys() {
+            var entity = _process.Entities.Select(e => e.Value).First(e => e.IsMaster());
+            return GetRelatedKeys(entity);
         }
 
-        private void ReadMaps(ProcessConfigurationElement config) {
+        private IEnumerable<Field> GetRelatedKeys(Entity entity) {
+            var foreignKeys = entity.All.Where(f => f.Value.FieldType.Equals(FieldType.ForeignKey)).Select(f => f.Value).ToList();
+            if (foreignKeys.Any()) {
+                foreach (var alias in foreignKeys.Select(fk => fk.Alias).ToArray()) {
+                    var nextEntity = _process.Relationships.Where(r => r.LeftEntity.Name.Equals(entity.Name) && r.Join.Any(j => j.LeftField.Alias.Equals(alias))).Select(r => r.RightEntity).First();
+                    foreignKeys.AddRange(GetRelatedKeys(nextEntity));
+                }
+            }
+            return foreignKeys;
+        }
+
+        private int ReadMaps(ProcessConfigurationElement config) {
+            var count = 0;
             foreach (MapConfigurationElement m in config.Maps) {
                 _process.MapEquals[m.Name] = GetMapItems(m.Items, "equals");
                 _process.MapStartsWith[m.Name] = GetMapItems(m.Items, "startswith");
                 _process.MapEndsWith[m.Name] = GetMapItems(m.Items, "endswith");
+                count++;
             }
+            return count;
         }
 
-        private void ReadConnections(ProcessConfigurationElement config) {
+        private int ReadConnections(ProcessConfigurationElement config) {
+            var count = 0;
             foreach (ConnectionConfigurationElement element in config.Connections) {
-                var connection = new Connection {
+                var connection = new Connection(_connectionChecker) {
                     ConnectionString = element.Value,
                     Provider = element.Provider,
                     Year = element.Year,
@@ -104,25 +163,26 @@ namespace Transformalize.Readers {
                     InputBatchSize = element.InputBatchSize,
                 };
                 _process.Connections.Add(element.Name, connection);
-                if (element.Name.Equals("output", StringComparison.OrdinalIgnoreCase)) {
-                    _process.OutputConnection = connection;
-                }
+                count++;
             }
+            return count;
         }
 
-        private Entity GetEntity(EntityConfigurationElement e, int entityCount) {
+        private Entity GetEntity(EntityConfigurationElement e, int entityCount, IConnectionChecker connectionChecker) {
 
             var entity = new Entity {
                 ProcessName = _process.Name,
                 Schema = e.Schema,
                 Name = e.Name,
                 InputConnection = _process.Connections[e.Connection],
-                OutputConnection = _process.OutputConnection,
-                Output = _process.Output
+                OutputConnection = _process.Connections["output"]
             };
 
+            entity.InputCount = _entityCounter.CountInput(entity);
+            entity.OutputCount = _entityCounter.CountOutput(entity);
+
             foreach (FieldConfigurationElement pk in e.PrimaryKey) {
-                var fieldType = entityCount == 1 ? FieldType.MasterKey : FieldType.PrimaryKey;
+                var fieldType = entityCount == 0 ? FieldType.MasterKey : FieldType.PrimaryKey;
 
                 var keyField = GetField(entity, pk, fieldType);
 
@@ -248,5 +308,6 @@ namespace Transformalize.Readers {
 
             return result.ToArray();
         }
+
     }
 }

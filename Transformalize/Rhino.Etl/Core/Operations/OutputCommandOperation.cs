@@ -11,19 +11,28 @@ namespace Transformalize.Rhino.Etl.Core.Operations
     /// </summary>
     public abstract class OutputCommandOperation : AbstractCommandOperation
     {
+        private const string PROVIDER = "System.Data.SqlClient.SqlConnection, System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+
         /// <summary>
         /// Initializes a new instance of the <see cref="OutputCommandOperation"/> class.
         /// </summary>
-        /// <param name="connectionStringName">Name of the connection string.</param>
-        public OutputCommandOperation(string connectionStringName) : this(ConfigurationManager.ConnectionStrings[connectionStringName])
+        /// <param name="connectionString">The connection string.</param>
+        protected OutputCommandOperation(string connectionString) : this(GetConnectionStringSettings(connectionString))
         {
+        }
+
+        private static ConnectionStringSettings GetConnectionStringSettings(string connectionString) {
+            return new ConnectionStringSettings {
+                ConnectionString = connectionString,
+                ProviderName = PROVIDER,
+            };
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OutputCommandOperation"/> class.
         /// </summary>
         /// <param name="connectionStringSettings">Connection string settings to use.</param>
-        public OutputCommandOperation(ConnectionStringSettings connectionStringSettings)
+        protected OutputCommandOperation(ConnectionStringSettings connectionStringSettings)
             : base(connectionStringSettings)
         {
         }

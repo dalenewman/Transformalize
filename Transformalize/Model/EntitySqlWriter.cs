@@ -67,13 +67,13 @@ namespace Transformalize.Model {
                 var sqlBuilder = new StringBuilder(Environment.NewLine);
                 sqlBuilder.AppendLine("SET NOCOUNT OFF;");
                 sqlBuilder.AppendLine(string.Empty);
-                sqlBuilder.AppendFormat("WITH diff AS (\r\n    SELECT {0} FROM @DATA\r\n    EXCEPT\r\n    SELECT {0} FROM [{1}].[{2}]\r\n)   ", fields, _entity.Schema, _entity.Output);
-                sqlBuilder.AppendFormat("UPDATE o\r\n    SET {0}, TflId = @TflId\r\n    FROM [{1}].[{2}] o\r\n    INNER JOIN diff d ON ({3});", sets, _entity.Schema, _entity.Output, joins);
+                sqlBuilder.AppendFormat("WITH diff AS (\r\n    SELECT {0} FROM @DATA\r\n    EXCEPT\r\n    SELECT {0} FROM [{1}].[{2}]\r\n)   ", fields, _entity.Schema, _entity.OutputName());
+                sqlBuilder.AppendFormat("UPDATE o\r\n    SET {0}, TflId = @TflId\r\n    FROM [{1}].[{2}] o\r\n    INNER JOIN diff d ON ({3});", sets, _entity.Schema, _entity.OutputName(), joins);
                 sqlBuilder.AppendLine(string.Empty);
 
                 if (doInsert) {
                     sqlBuilder.AppendLine(string.Empty);
-                    sqlBuilder.AppendFormat("INSERT INTO [{0}].[{1}]({2}, TflId)\r\nSELECT {3}, @TflId\r\nFROM @DATA d\r\nLEFT OUTER JOIN [{0}].[{1}] o ON ({4})\r\nWHERE o.{5} IS NULL;", _entity.Schema, _entity.Output, fields, fieldsData, joins, _entity.PrimaryKey.First().Key);
+                    sqlBuilder.AppendFormat("INSERT INTO [{0}].[{1}]({2}, TflId)\r\nSELECT {3}, @TflId\r\nFROM @DATA d\r\nLEFT OUTER JOIN [{0}].[{1}] o ON ({4})\r\nWHERE o.{5} IS NULL;", _entity.Schema, _entity.OutputName(), fields, fieldsData, joins, _entity.PrimaryKey.First().Key);
                 }
 
                 _upsertSqlStatement = sqlBuilder.ToString();

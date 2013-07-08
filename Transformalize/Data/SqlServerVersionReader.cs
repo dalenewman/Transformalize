@@ -6,8 +6,8 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using Transformalize.Model;
 
-namespace Transformalize.Readers {
-    public class VersionReader : IVersionReader {
+namespace Transformalize.Data {
+    public class SqlServerVersionReader : IVersionReader {
         private object _end;
         private object _begin;
         private readonly Entity _entity;
@@ -15,7 +15,7 @@ namespace Transformalize.Readers {
         public bool IsRange { get; private set; }
         public int TflId { get; private set; }
 
-        public VersionReader(Entity entity) {
+        public SqlServerVersionReader(Entity entity) {
             _entity = entity;
         }
 

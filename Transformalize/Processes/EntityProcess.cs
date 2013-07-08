@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Transformalize.Model;
 using Transformalize.Operations;
@@ -6,22 +6,23 @@ using Transformalize.Rhino.Etl.Core;
 using Transformalize.Rhino.Etl.Core.Operations;
 using Transformalize.Writers;
 
-namespace Transformalize {
+namespace Transformalize.Processes {
 
     public class EntityProcess : EtlProcess {
 
         private readonly Process _process;
         private readonly Entity _entity;
-        private readonly bool _isMaster;
+
 
         public EntityProcess(Process process)
             : base(process.Name) {
             _process = process;
-            _isMaster = !_process.Entities.Any(kv => kv.Value.Processed);
             _entity = _process.Entities.First(kv => !kv.Value.Processed).Value;
         }
 
         protected override void Initialize() {
+
+            Register(new EntityCreate(_entity, _process));
 
             // this is suspicious stuff here -- refactor later 
             var firstKey = _entity.FirstKey();
@@ -42,16 +43,12 @@ namespace Transformalize {
             Register(new SerialUnionAllOperation());
             Register(new EntityDefaults(_entity));
             Register(new EntityTransform(_entity));
-            if (_entity.DoBulkInsert()) {
-                Info("{0} | Performing Bulk Insert for {1}.", _process.Name, _entity.Name);
-                Register(new EntityBatchId(_entity));
+            Register(new EntityBatchId(_entity));
+
+            if (_entity.OutputCount > 0)
                 Register(new EntityKeyRegisterLoad(_process, _entity));
-                RegisterLast(new EntityBulkInsert(_entity));
-            } else {
-                Info("{0} | Performing Custom Update for {1}.", _process.Name, _entity.Name);
-                Register(new EntityKeyRegisterLoad(_process, _entity));
-                RegisterLast(new EntityDatabaseLoad(_entity));
-            }
+
+            RegisterLast(new EntityBulkInsert(_entity));
 
         }
 

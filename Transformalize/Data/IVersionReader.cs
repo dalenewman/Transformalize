@@ -1,4 +1,4 @@
-namespace Transformalize.Readers {
+namespace Transformalize.Data {
     public interface IVersionReader {
         bool IsRange { get; }
         bool HasRows { get; }

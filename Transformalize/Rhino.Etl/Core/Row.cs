@@ -1,4 +1,4 @@
-using System.Collections;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
@@ -15,20 +15,21 @@ namespace Transformalize.Rhino.Etl.Core {
     [DebuggerDisplay("Count = {items.Count}")]
     [Serializable]
     public class Row : QuackingDictionary, IEquatable<Row> {
-        static readonly Dictionary<Type, List<PropertyInfo>> propertiesCache = new Dictionary<Type, List<PropertyInfo>>();
-        static readonly Dictionary<Type, List<FieldInfo>> fieldsCache = new Dictionary<Type, List<FieldInfo>>();
+        static readonly ConcurrentDictionary<Type, List<PropertyInfo>> PropertiesCache = new ConcurrentDictionary<Type, List<PropertyInfo>>();
+        static readonly ConcurrentDictionary<Type, List<FieldInfo>> FieldsCache = new ConcurrentDictionary<Type, List<FieldInfo>>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Row"/> class.
         /// </summary>
-        public Row() : base(new Dictionary<string, object>(StringComparer.InvariantCultureIgnoreCase)) {
+        public Row()
+            : base(new ConcurrentDictionary<string, object>(StringComparer.InvariantCultureIgnoreCase)) {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Row"/> class.
         /// </summary>
         /// <param name="itemsToClone">The items to clone.</param>
-        protected Row(IDictionary<string, object> itemsToClone) : base(new Dictionary<string, object>(itemsToClone, StringComparer.InvariantCultureIgnoreCase)) {
+        protected Row(IDictionary<string, object> itemsToClone) : base(new ConcurrentDictionary<string, object>(itemsToClone, StringComparer.InvariantCultureIgnoreCase)) {
         }
 
 
@@ -37,12 +38,12 @@ namespace Transformalize.Rhino.Etl.Core {
         /// </summary>
         /// <param name="source">The source row.</param>
         public void Copy(IDictionary<string, object> source) {
-            items = new Dictionary<string, object>(source, StringComparer.InvariantCultureIgnoreCase);
+            Items = new ConcurrentDictionary<string, object>(source, StringComparer.InvariantCultureIgnoreCase);
         }
 
         public IEnumerable<string> Columns {
             get {
-                return new List<string>(items.Keys);
+                return new List<string>(Items.Keys);
             }
         }
 
@@ -65,9 +66,9 @@ namespace Transformalize.Rhino.Etl.Core {
             if (Columns.SequenceEqual(other.Columns, StringComparer.InvariantCultureIgnoreCase) == false)
                 return false;
 
-            foreach (var key in items.Keys) {
-                var item = items[key];
-                var otherItem = other.items[key];
+            foreach (var key in Items.Keys) {
+                var item = Items[key];
+                var otherItem = other.Items[key];
 
                 if (item == null | otherItem == null)
                     return item == null & otherItem == null;
@@ -108,8 +109,8 @@ namespace Transformalize.Rhino.Etl.Core {
         /// <returns></returns>
         public ObjectArrayKeys CreateKey(string[] columns) {
             var array = new object[columns.Length];
-            for (int i = 0; i < columns.Length; i++) {
-                array[i] = items[columns[i]];
+            for (var i = 0; i < columns.Length; i++) {
+                array[i] = Items[columns[i]];
             }
             return new ObjectArrayKeys(array);
         }
@@ -134,7 +135,7 @@ namespace Transformalize.Rhino.Etl.Core {
 
         private static IEnumerable<PropertyInfo> GetProperties(object obj) {
             List<PropertyInfo> properties;
-            if (propertiesCache.TryGetValue(obj.GetType(), out properties))
+            if (PropertiesCache.TryGetValue(obj.GetType(), out properties))
                 return properties;
 
             properties = new List<PropertyInfo>();
@@ -143,13 +144,13 @@ namespace Transformalize.Rhino.Etl.Core {
                     continue;
                 properties.Add(property);
             }
-            propertiesCache[obj.GetType()] = properties;
+            PropertiesCache[obj.GetType()] = properties;
             return properties;
         }
 
         private static IEnumerable<FieldInfo> GetFields(object obj) {
             List<FieldInfo> fields;
-            if (fieldsCache.TryGetValue(obj.GetType(), out fields))
+            if (FieldsCache.TryGetValue(obj.GetType(), out fields))
                 return fields;
 
             fields = new List<FieldInfo>();
@@ -158,7 +159,7 @@ namespace Transformalize.Rhino.Etl.Core {
                     fields.Add(fieldInfo);
                 }
             }
-            fieldsCache[obj.GetType()] = fields;
+            FieldsCache[obj.GetType()] = fields;
             return fields;
         }
 
@@ -169,7 +170,8 @@ namespace Transformalize.Rhino.Etl.Core {
         /// <returns></returns>
         public static Row FromReader(IDataReader reader) {
             var row = new Row();
-            for (int i = 0; i < reader.FieldCount; i++) {
+            var count = reader.FieldCount;
+            for (var i = 0; i < count; i++) {
                 row[reader.GetName(i)] = reader.GetValue(i);
             }
             return row;
@@ -192,12 +194,12 @@ namespace Transformalize.Rhino.Etl.Core {
         public object ToObject(Type type) {
             var instance = Activator.CreateInstance(type);
             foreach (var info in GetProperties(instance)) {
-                if (items.ContainsKey(info.Name) && info.CanWrite)
-                    info.SetValue(instance, items[info.Name], null);
+                if (Items.ContainsKey(info.Name) && info.CanWrite)
+                    info.SetValue(instance, Items[info.Name], null);
             }
             foreach (var info in GetFields(instance)) {
-                if (items.ContainsKey(info.Name))
-                    info.SetValue(instance, items[info.Name]);
+                if (Items.ContainsKey(info.Name))
+                    info.SetValue(instance, Items[info.Name]);
             }
             return instance;
         }

@@ -14,7 +14,7 @@ namespace Transformalize.Operations {
         }
 
         protected override void Accumulate(Row row, Row aggregate) {
-            foreach (var column in _columnsToGroupBy.Where(column => aggregate[column] == null)) {
+            foreach (var column in _columnsToGroupBy) {
                 aggregate[column] = row[column];
             }
         }

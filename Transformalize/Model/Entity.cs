@@ -19,12 +19,15 @@ namespace Transformalize.Model {
         public Dictionary<string, Field> All { get; set; }
         public Dictionary<string, Relationship> Joins { get; set; }
         public EntitySqlWriter EntitySqlWriter { get; private set; }
-        public string Output { get; set; }
         public bool Processed { get; set; }
         public int RecordsAffected { get; set; }
         public object Begin { get; set; }
         public object End { get; set; }
         public int TflId { get; set; }
+        public int InputCount { get; set; }
+        public int OutputCount { get; set; }
+
+        public IEnumerable<Relationship> RelationshipToMaster { get; set; }
 
         public Entity() {
             Name = string.Empty;
@@ -54,8 +57,12 @@ namespace Transformalize.Model {
             }
         }
 
-        public bool DoBulkInsert() {
-            return IsMaster() && Begin == null;
+        public string OutputName() {
+            return string.Concat(ProcessName, Name);
+        }
+        
+        public bool HasForeignKeys() {
+            return Fields.Any(f => f.Value.FieldType.Equals(FieldType.ForeignKey));
         }
     }
 }

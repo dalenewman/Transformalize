@@ -22,8 +22,7 @@ namespace Transformalize.Configuration
 
         protected override object GetElementKey(ConfigurationElement element) {
             var join = element as RelationshipConfigurationElement;
-
-            return string.Concat(join.LeftEntity, join.LeftField, join.RightEntity, join.RightField);
+            return string.Concat(join.LeftEntity, join.RightEntity).ToLower();
         }
     }
 }

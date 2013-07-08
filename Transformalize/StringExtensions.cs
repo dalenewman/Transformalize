@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using System.Text;
-
-namespace Transformalize {
+﻿namespace Transformalize {
 
     public static class StringExtensions {
 

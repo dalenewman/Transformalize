@@ -48,16 +48,16 @@ namespace Transformalize.Repositories {
 
         public void ResetProcess() {
             var sql = string.Format("DELETE FROM TflTracker WHERE ProcessName = '{0}';", _process.Name);
-            Execute(sql, _process.OutputConnection.ConnectionString);
+            Execute(sql, _process.MasterEntity.OutputConnection.ConnectionString);
         }
 
         public void ResetEntity(string entity) {
             var sql = string.Format("DELETE FROM TflTracker WHERE ProcessName = '{0}' AND EntityName = '{1}';", _process.Name, entity);
-            Execute(sql, _process.OutputConnection.ConnectionString);
+            Execute(sql, _process.MasterEntity.OutputConnection.ConnectionString);
         }
 
         public void Init() {
-            var cs = _process.OutputConnection.ConnectionString;
+            var cs = _process.MasterEntity.OutputConnection.ConnectionString;
 
             Execute(SqlTemplates.TruncateTable("TflTracker"), cs);
             Info("{0} | Truncated TflTracker.", _process.Name);

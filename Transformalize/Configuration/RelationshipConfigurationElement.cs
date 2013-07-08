@@ -1,7 +1,6 @@
 using System.Configuration;
 
-namespace Transformalize.Configuration
-{
+namespace Transformalize.Configuration {
     public class RelationshipConfigurationElement : ConfigurationElement {
 
         [ConfigurationProperty("leftEntity", IsRequired = true)]
@@ -12,14 +11,6 @@ namespace Transformalize.Configuration
             set { this["leftEntity"] = value; }
         }
 
-        [ConfigurationProperty("leftField", IsRequired = true)]
-        public string LeftField {
-            get {
-                return this["leftField"] as string;
-            }
-            set { this["leftField"] = value; }
-        }
-
         [ConfigurationProperty("rightEntity", IsRequired = true)]
         public string RightEntity {
             get {
@@ -28,12 +19,11 @@ namespace Transformalize.Configuration
             set { this["rightEntity"] = value; }
         }
 
-        [ConfigurationProperty("rightField", IsRequired = true)]
-        public string RightField {
+        [ConfigurationProperty("join")]
+        public JoinElementCollection Join {
             get {
-                return this["rightField"] as string;
+                return this["join"] as JoinElementCollection;
             }
-            set { this["rightField"] = value; }
         }
 
     }

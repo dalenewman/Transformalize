@@ -20,6 +20,14 @@ namespace Transformalize.Configuration {
             set { this["output"] = value; }
         }
 
+        [ConfigurationProperty("connection", IsRequired = true)]
+        public string Connection {
+            get {
+                return this["connection"] as string;
+            }
+            set { this["connection"] = value; }
+        }
+
         [ConfigurationProperty("connections")]
         public ConnectionElementCollection Connections {
             get {
@@ -32,14 +40,6 @@ namespace Transformalize.Configuration {
             get {
                 return this["maps"] as MapElementCollection;
             }
-        }
-
-        [ConfigurationProperty("time", IsRequired = true)]
-        public string Time {
-            get {
-                return this["time"] as string;
-            }
-            set { this["time"] = value; }
         }
 
         [ConfigurationProperty("entities")]

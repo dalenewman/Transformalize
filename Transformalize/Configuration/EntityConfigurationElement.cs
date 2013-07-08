@@ -49,5 +49,13 @@ namespace Transformalize.Configuration
             }
             set { this["version"] = value; }
         }
+
+        [ConfigurationProperty("output")]
+        public OutputElementCollection Output {
+            get {
+                return this["output"] as OutputElementCollection;
+            }
+        }
+
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Transformalize.Model;
+using Transformalize.Processes;
 using Transformalize.Readers;
 using Transformalize.Repositories;
 
@@ -8,30 +9,31 @@ namespace Transformalize {
         private readonly string _mode;
         private readonly Process _process;
 
-        public Runner(string process, string mode, string entity = "") {
+        public Runner(string process, string mode) {
             _mode = mode.ToLower();
-            _process = mode.Equals("entity") ?
-                new ProcessReader(process).GetSingleEntityProcess(entity) :
-                new ProcessReader(process).GetProcess();
+            _process = new ProcessReader(process).Read();
         }
 
         public void Run() {
-            if (!new ConnectionChecker(_process.Connections.Select(kv => kv.Value.ConnectionString), _process.Name).Check()) return;
+            if (!_process.IsReady()) return;
 
             switch (_mode) {
                 case "init":
                     new TflTrackerRepository(_process).Init();
-                    new OutputRepository(_process).Init();
-                    break;
-                case "entity":
-                    new TflTrackerRepository(_process).Init();
-                    new OutputRepository(_process).Init();
-                    ProcessEntities();
+                    //todo:clear entity tables too
                     break;
                 default:
                     ProcessEntities();
-                    ProcessTransforms();
+                    ProcessEntityUpdates();
+                    //ProcessTransforms();
                     break;
+            }
+        }
+
+        private void ProcessEntityUpdates()
+        {
+            using (var entityUpdateProcess = new UpdateMasterProcess(_process)) {
+                entityUpdateProcess.Execute();
             }
         }
 
