@@ -18,7 +18,6 @@ namespace Transformalize.Operations
             UseTransaction = false;
         }
 
-
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             if (!_entity.IsMaster() && _entity.HasForeignKeys()) {
                 using (var cn = new SqlConnection(_process.MasterEntity.OutputConnection.ConnectionString)) {
@@ -35,9 +34,9 @@ namespace Transformalize.Operations
 
         private string PrepareSql() {
             var builder = new StringBuilder();
-            var master = _process.Entities.Where(e => e.Value.IsMaster())
-                                 .Select(e => string.Format("[{0}].[{1}]", e.Value.Schema, e.Value.OutputName()))
-                                 .First();
+            var masterEntity = _process.Entities.Where(e => e.Value.IsMaster()).Select(e=>e.Value).First();
+
+            var master = string.Format("[{0}].[{1}]", masterEntity.Schema, masterEntity.OutputName());
             var source = string.Format("[{0}].[{1}]", _entity.Schema, _entity.OutputName());
             var sets = new FieldSqlWriter(_entity.Fields).FieldType(FieldType.ForeignKey).Alias().Set(master, source);
 
@@ -52,6 +51,7 @@ namespace Transformalize.Operations
                 builder.AppendFormat("INNER JOIN {0} ON ({1})\r\n", left, join);
             }
 
+            builder.AppendFormat("WHERE {0}.[TflBatchId] = {1}", master, masterEntity.TflBatchId);
             return builder.ToString();
         }
     }

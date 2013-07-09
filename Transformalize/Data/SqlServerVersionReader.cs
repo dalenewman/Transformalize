@@ -13,7 +13,6 @@ namespace Transformalize.Data {
         private readonly Entity _entity;
         public bool HasRows { get; private set; }
         public bool IsRange { get; private set; }
-        public int TflId { get; private set; }
 
         public SqlServerVersionReader(Entity entity) {
             _entity = entity;
@@ -30,11 +29,11 @@ namespace Transformalize.Data {
         private SqlDataReader GetBeginVersionReader(string field) {
 
             var sql = string.Format(@"
-                SELECT [{0}], [TflTrackerKey]
-                FROM [TflTracker]
-                WHERE [TflTrackerKey] = (
-	                SELECT [TflTrackerKey] = MAX([TflTrackerKey])
-	                FROM [TflTracker]
+                SELECT [{0}]
+                FROM [TflBatch]
+                WHERE [TflBatchId] = (
+	                SELECT [TflBatchId] = MAX([TflBatchId])
+	                FROM [TflBatch]
 	                WHERE [ProcessName] = @ProcessName 
                     AND [EntityName] = @EntityName
                 );
@@ -56,7 +55,6 @@ namespace Transformalize.Data {
                     return null;
                 reader.Read();
                 _begin = reader.GetValue(0);
-                _entity.TflId = reader.GetInt32(1);
                 return _begin;
             }
         }

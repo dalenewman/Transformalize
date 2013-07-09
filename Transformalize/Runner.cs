@@ -1,13 +1,12 @@
-﻿using System.Linq;
+﻿using Transformalize.Data;
 using Transformalize.Model;
 using Transformalize.Processes;
 using Transformalize.Readers;
-using Transformalize.Repositories;
 
 namespace Transformalize {
     public class Runner {
         private readonly string _mode;
-        private readonly Process _process;
+        private Process _process;
 
         public Runner(string process, string mode) {
             _mode = mode.ToLower();
@@ -19,35 +18,35 @@ namespace Transformalize {
 
             switch (_mode) {
                 case "init":
-                    new TflTrackerRepository(_process).Init();
-                    //todo:clear entity tables too
+                    new TflBatchRepository(ref _process).Init();
+                    new EntityDropper(ref _process).Drop();
                     break;
                 default:
+                    new EntityCounter(ref _process).Count();
                     ProcessEntities();
-                    ProcessEntityUpdates();
+                    ProcessMaster();
                     //ProcessTransforms();
                     break;
             }
         }
 
-        private void ProcessEntityUpdates()
-        {
-            using (var entityUpdateProcess = new UpdateMasterProcess(_process)) {
-                entityUpdateProcess.Execute();
-            }
-        }
-
         private void ProcessEntities() {
-            while (_process.Entities.Any(kv => !kv.Value.Processed)) {
-                using (var entityProcess = new EntityProcess(_process)) {
-                    entityProcess.Execute();
+            foreach (var entity in _process.Entities) {
+                using (var process = new EntityProcess(ref _process, entity.Value)) {
+                    process.Execute();
                 }
             }
         }
 
+        private void ProcessMaster() {
+            using (var process = new UpdateMasterProcess(ref _process)) {
+                process.Execute();
+            }
+        }
+
         private void ProcessTransforms() {
-            using (var transform = new TransformProcess(_process)) {
-                transform.Execute();
+            using (var process = new TransformProcess(_process)) {
+                process.Execute();
             }
         }
 

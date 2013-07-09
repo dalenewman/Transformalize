@@ -2,13 +2,13 @@ using System.Data.SqlClient;
 using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
 
-namespace Transformalize.Repositories {
+namespace Transformalize.Data {
 
-    public class TflTrackerRepository : WithLoggingMixin {
+    public class TflBatchRepository : WithLoggingMixin {
 
         private readonly Process _process;
 
-        public TflTrackerRepository(Process process) {
+        public TflBatchRepository(ref Process process) {
             _process = process;
         }
 
@@ -20,10 +20,10 @@ namespace Transformalize.Repositories {
             }
         }
 
-        public string CreateTflTrackerSql() {
+        public string PrepareSql() {
             return @"
-                CREATE TABLE TflTracker(
-                    TflTrackerKey INT NOT NULL IDENTITY(1,1),
+                CREATE TABLE TflBatch(
+                    TflBatchId INT NOT NULL,
 					ProcessName NVARCHAR(100) NOT NULL,
 	                EntityName NVARCHAR(100) NOT NULL,
 	                BinaryVersion BINARY(8) NULL,
@@ -34,39 +34,39 @@ namespace Transformalize.Repositories {
                     ByteVersion TINYINT NULL,
 	                LastProcessedDate DATETIME NOT NULL,
                     Rows INT NOT NULL,
-					CONSTRAINT Pk_TflTracker_TflTrackerKey PRIMARY KEY (
-						TflTrackerKey
+					CONSTRAINT Pk_TflBatch_TflBatchId PRIMARY KEY (
+						TflBatchId
 					)
                 );
 
-                CREATE INDEX Ix_TflTracker_ProcessName_EntityName__TflTrackerKey ON TflTracker (
+                CREATE INDEX Ix_TflBatch_ProcessName_EntityName__TflBatchId ON TflBatch (
                     ProcessName ASC,
                     EntityName ASC
-                ) INCLUDE (TflTrackerKey);
+                ) INCLUDE (TflBatchId);
             ";
         }
 
         public void ResetProcess() {
-            var sql = string.Format("DELETE FROM TflTracker WHERE ProcessName = '{0}';", _process.Name);
+            var sql = string.Format("DELETE FROM TflBatch WHERE ProcessName = '{0}';", _process.Name);
             Execute(sql, _process.MasterEntity.OutputConnection.ConnectionString);
         }
 
         public void ResetEntity(string entity) {
-            var sql = string.Format("DELETE FROM TflTracker WHERE ProcessName = '{0}' AND EntityName = '{1}';", _process.Name, entity);
+            var sql = string.Format("DELETE FROM TflBatch WHERE ProcessName = '{0}' AND EntityName = '{1}';", _process.Name, entity);
             Execute(sql, _process.MasterEntity.OutputConnection.ConnectionString);
         }
 
         public void Init() {
             var cs = _process.MasterEntity.OutputConnection.ConnectionString;
 
-            Execute(SqlTemplates.TruncateTable("TflTracker"), cs);
-            Info("{0} | Truncated TflTracker.", _process.Name);
+            Execute(SqlTemplates.TruncateTable("TflBatch"), cs);
+            Info("{0} | Truncated TflBatch.", _process.Name);
 
-            Execute(SqlTemplates.DropTable("TflTracker"), cs);
-            Info("{0} | Dropped TflTracker.", _process.Name);
+            Execute(SqlTemplates.DropTable("TflBatch"), cs);
+            Info("{0} | Dropped TflBatch.", _process.Name);
 
-            Execute(CreateTflTrackerSql(), cs);
-            Info("{0} | Created TflTracker.", _process.Name);
+            Execute(PrepareSql(), cs);
+            Info("{0} | Created TflBatch.", _process.Name);
         }
 
     }

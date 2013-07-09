@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Transformalize.Rhino.Etl.Core;
 using Transformalize.Transforms;
 
 namespace Transformalize.Model {
@@ -13,7 +12,6 @@ namespace Transformalize.Model {
         public Dictionary<string, Connection> Connections = new Dictionary<string, Connection>();
         public Dictionary<string, Entity> Entities = new Dictionary<string, Entity>();
         public List<Relationship> Relationships = new List<Relationship>();
-        public Dictionary<string, HashSet<object>> KeyRegister = new Dictionary<string, HashSet<object>>();
         public Dictionary<string, Dictionary<string, object>> MapEquals = new Dictionary<string, Dictionary<string, object>>();
         public Dictionary<string, Dictionary<string, object>> MapStartsWith = new Dictionary<string, Dictionary<string, object>>();
         public Dictionary<string, Dictionary<string, object>> MapEndsWith = new Dictionary<string, Dictionary<string, object>>();
@@ -35,14 +33,6 @@ namespace Transformalize.Model {
                 }
                 return _fields;
             }
-        }
-
-        public bool HasRegisteredKey(string key) {
-            return KeyRegister.ContainsKey(key);
-        }
-
-        public IEnumerable<Row> RelatedRows(string foreignKey) {
-            return KeyRegister[foreignKey].Select(o => new Row { { foreignKey, o } });
         }
 
         public bool IsReady() {

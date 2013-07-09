@@ -9,12 +9,9 @@ namespace Transformalize.Processes {
     public class UpdateMasterProcess : EtlProcess {
 
         private readonly Process _process;
-        private readonly int[] _tflId;
 
-        public UpdateMasterProcess(Process process)
-            : base(process.Name) {
+        public UpdateMasterProcess(ref Process process) : base(process.Name) {
             _process = process;
-            _tflId = process.Entities.Select(e => e.Value.TflId).Distinct().ToArray();
         }
 
         protected override void Initialize() {

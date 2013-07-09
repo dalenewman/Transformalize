@@ -24,10 +24,9 @@ namespace Transformalize.Readers {
         private int _transformCount;
         public int Count { get { return 1; } }
 
-        public ProcessReader(string name, IEntityCounter entityCounter = null, IConnectionChecker connectionChecker = null) {
+        public ProcessReader(string name, IConnectionChecker connectionChecker = null) {
             _name = name;
             _connectionChecker = connectionChecker ?? new SqlServerConnectionChecker(name);
-            _entityCounter = entityCounter ?? new SqlServerEntityCounter(_connectionChecker);
             _config = ((TransformalizeConfiguration)ConfigurationManager.GetSection("transformalize")).Processes.Get(_name);
         }
 
@@ -35,7 +34,7 @@ namespace Transformalize.Readers {
             ReadProcess();
             _connectionCount = ReadConnections(_config);
             _mapCount = ReadMaps(_config);
-            _entityCount = ReadEntities(_config, _connectionChecker);
+            _entityCount = ReadEntities(_config);
             _relationshipCount = ReadRelationships(_config);
             _transformCount = ReadTransforms(_config);
             _process.RelatedKeys = ReadRelatedKeys();
@@ -64,10 +63,6 @@ namespace Transformalize.Readers {
             Info("{0} | {1} Connection{2}.", _process.Name, _connectionCount, _connectionCount == 1 ? string.Empty : "s");
             Info("{0} | {1} Map{2}.", _process.Name, _mapCount, _mapCount == 1 ? string.Empty : "s");
             Info("{0} | {1} Entit{2}.", _process.Name, _entityCount, _entityCount == 1 ? "y" : "ies");
-            foreach (var entity in _process.Entities) {
-                Info("{0} | Entity {1} input has {2} records.", _process.Name, entity.Value.Name, entity.Value.InputCount);
-                Info("{0} | Entity {1} output has {2} records.", _process.Name, entity.Value.Name, entity.Value.OutputCount);
-            }
             Info("{0} | {1} Relationship{2}.", _process.Name, _relationshipCount, _relationshipCount == 1 ? string.Empty : "s");
             Info("{0} | {1} Transform{2}.", _process.Name, _transformCount, _transformCount == 1 ? string.Empty : "s");
         }
@@ -113,10 +108,10 @@ namespace Transformalize.Readers {
             return join;
         }
 
-        private int ReadEntities(ProcessConfigurationElement config, IConnectionChecker connectionChecker) {
+        private int ReadEntities(ProcessConfigurationElement config) {
             var count = 0;
             foreach (EntityConfigurationElement e in config.Entities) {
-                var entity = GetEntity(e, count, connectionChecker);
+                var entity = GetEntity(e, count);
                 _process.Entities.Add(e.Name, entity);
                 if (entity.IsMaster())
                     _process.MasterEntity = entity;
@@ -168,7 +163,7 @@ namespace Transformalize.Readers {
             return count;
         }
 
-        private Entity GetEntity(EntityConfigurationElement e, int entityCount, IConnectionChecker connectionChecker) {
+        private Entity GetEntity(EntityConfigurationElement e, int entityCount) {
 
             var entity = new Entity {
                 ProcessName = _process.Name,
@@ -177,9 +172,6 @@ namespace Transformalize.Readers {
                 InputConnection = _process.Connections[e.Connection],
                 OutputConnection = _process.Connections["output"]
             };
-
-            entity.InputCount = _entityCounter.CountInput(entity);
-            entity.OutputCount = _entityCounter.CountOutput(entity);
 
             foreach (FieldConfigurationElement pk in e.PrimaryKey) {
                 var fieldType = entityCount == 0 ? FieldType.MasterKey : FieldType.PrimaryKey;

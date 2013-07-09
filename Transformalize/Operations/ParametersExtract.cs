@@ -9,19 +9,19 @@ namespace Transformalize.Operations {
         private readonly string _sql;
         private Dictionary<string, Field> _parameters;
 
-        private string BuildSql(Process process, ICollection<int> tflId) {
+        private string BuildSql(Process process, ICollection<int> tflBatchId) {
             _parameters = process.Parameters;
             var fields = new FieldSqlWriter(process.Parameters).Alias().Write();
-            var tflIdWhereClause = tflId.Count > 0 ? string.Format(" WHERE [TflId] IN ({0})", string.Join(", ", tflId)) : string.Empty;
-            var sql = string.Format("SELECT [TflKey], {0} FROM {1}{2};", fields, process.View, tflIdWhereClause);
+            var tflWhereClause = tflBatchId.Count > 0 ? string.Format(" WHERE [TflId] IN ({0})", string.Join(", ", tflBatchId)) : string.Empty;
+            var sql = string.Format("SELECT [TflKey], {0} FROM {1}{2};", fields, process.View, tflWhereClause);
             Debug("{0} | SQL:\r\n{1}", process.Name, sql);
             return sql;
         }
 
-        public ParametersExtract(Process process, ICollection<int> tflId)
+        public ParametersExtract(Process process, ICollection<int> tflBatchId)
             : base(process.MasterEntity.OutputConnection.ConnectionString) {
             UseTransaction = false;
-            _sql = BuildSql(process, tflId);
+            _sql = BuildSql(process, tflBatchId);
         }
 
         protected override Row CreateRowFromReader(IDataReader reader) {

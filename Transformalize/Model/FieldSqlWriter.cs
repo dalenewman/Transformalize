@@ -6,7 +6,7 @@ namespace Transformalize.Model {
 
     public class FieldSqlWriter {
 
-        private const string BATCH_ID = "TflId";
+        private const string BATCH_ID = "TflBatchId";
         private const string SURROGATE_KEY = "TflKey";
         private SortedDictionary<string, string> _output;
         private Dictionary<string, Field> _original;

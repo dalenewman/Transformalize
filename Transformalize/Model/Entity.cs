@@ -19,11 +19,10 @@ namespace Transformalize.Model {
         public Dictionary<string, Field> All { get; set; }
         public Dictionary<string, Relationship> Joins { get; set; }
         public EntitySqlWriter EntitySqlWriter { get; private set; }
-        public bool Processed { get; set; }
         public int RecordsAffected { get; set; }
         public object Begin { get; set; }
         public object End { get; set; }
-        public int TflId { get; set; }
+        public int TflBatchId { get; set; }
         public int InputCount { get; set; }
         public int OutputCount { get; set; }
 
@@ -37,7 +36,6 @@ namespace Transformalize.Model {
             All = new Dictionary<string, Field>();
             Joins = new Dictionary<string, Relationship>();
             EntitySqlWriter = new EntitySqlWriter(this);
-            Processed = false;
         }
 
         public string FirstKey() {

@@ -1,4 +1,5 @@
 using System;
+using System.Data;
 using System.Data.SqlClient;
 using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
@@ -16,13 +17,14 @@ namespace Transformalize.Writers {
 
             var field = _entity.Version.SimpleType.Replace("byte[]", "binary") + "Version";
             var sql = string.Format(@"
-                INSERT INTO [TflTracker](ProcessName, EntityName, [{0}], LastProcessedDate, Rows)
-                VALUES(@ProcessName, @EntityName, @End, @Date, @Count);
+                INSERT INTO [TflBatch](TflBatchId, ProcessName, EntityName, [{0}], LastProcessedDate, Rows)
+                VALUES(@TflBatchId, @ProcessName, @EntityName, @End, @Date, @Count);
             ", field);
 
             using (var cn = new SqlConnection(_entity.OutputConnection.ConnectionString)) {
                 cn.Open();
                 var command = new SqlCommand(sql, cn);
+                command.Parameters.Add(new SqlParameter("@TflBatchId", _entity.TflBatchId));
                 command.Parameters.Add(new SqlParameter("@ProcessName", _entity.ProcessName));
                 command.Parameters.Add(new SqlParameter("@EntityName", _entity.Name));
                 command.Parameters.Add(new SqlParameter("@End", end));

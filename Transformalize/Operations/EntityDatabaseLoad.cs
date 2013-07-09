@@ -23,7 +23,7 @@ namespace Transformalize.Operations {
                             _entity.EntitySqlWriter.UpdateSql(group),
                         cn
                     ) {CommandTimeout = 0};
-                    cmd.Parameters.Add(new SqlParameter("@TflId", _entity.TflId));
+                    cmd.Parameters.Add(new SqlParameter("@TflBatchId", _entity.TflBatchId));
                     _entity.RecordsAffected += cmd.ExecuteNonQuery();
                     Info("{0} | Processed {1} rows in {2} ({3})", _entity.ProcessName, _entity.RecordsAffected, Name, _entity.Name );
                 }

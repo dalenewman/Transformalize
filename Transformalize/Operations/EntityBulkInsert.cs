@@ -11,6 +11,7 @@ namespace Transformalize.Operations
             _entity = entity;
             UseTransaction = false;
             TurnOptionOn(SqlBulkCopyOptions.TableLock);
+            TurnOptionOff(SqlBulkCopyOptions.UseInternalTransaction);
         }
 
         protected override void PrepareSchema() {
