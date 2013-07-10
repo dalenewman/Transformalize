@@ -19,7 +19,8 @@ namespace Transformalize.Model {
         public Dictionary<string, Field> Parameters = new Dictionary<string, Field>();
         public Dictionary<string, Field> Results = new Dictionary<string, Field>();
         public IEnumerable<Field> RelatedKeys;
-        public string View;
+        public string View { get; set; }
+        public bool OutputRecordsExist { get; set; }
 
         public Dictionary<string, Field> Fields {
             get {

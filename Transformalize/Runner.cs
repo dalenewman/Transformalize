@@ -22,7 +22,6 @@ namespace Transformalize {
                     new EntityDropper(ref _process).Drop();
                     break;
                 default:
-                    new EntityCounter(ref _process).Count();
                     ProcessEntities();
                     ProcessMaster();
                     //ProcessTransforms();
@@ -31,6 +30,7 @@ namespace Transformalize {
         }
 
         private void ProcessEntities() {
+            new EntityRecordsExist(ref _process).Check();
             foreach (var entity in _process.Entities) {
                 using (var process = new EntityProcess(ref _process, entity.Value)) {
                     process.Execute();

@@ -13,7 +13,7 @@ namespace Transformalize.Writers {
             _entity = entity;
         }
 
-        public void WriteEndVersion(object end, int count) {
+        public void WriteEndVersion(object end, long count) {
 
             var field = _entity.Version.SimpleType.Replace("byte[]", "binary") + "Version";
             var sql = string.Format(@"

@@ -14,7 +14,6 @@ namespace Transformalize.Readers {
     public class ProcessReader : WithLoggingMixin, IConfigurationReader<Process> {
         private readonly string _name;
         private readonly IConnectionChecker _connectionChecker;
-        private readonly IEntityCounter _entityCounter;
         private Process _process;
         private readonly ProcessConfigurationElement _config;
         private int _connectionCount;
@@ -173,10 +172,12 @@ namespace Transformalize.Readers {
                 OutputConnection = _process.Connections["output"]
             };
 
+            var pkIndex = 0;
             foreach (FieldConfigurationElement pk in e.PrimaryKey) {
                 var fieldType = entityCount == 0 ? FieldType.MasterKey : FieldType.PrimaryKey;
 
                 var keyField = GetField(entity, pk, fieldType);
+                keyField.Index = pkIndex;
 
                 entity.PrimaryKey.Add(pk.Alias, keyField);
                 entity.All.Add(pk.Alias, keyField);
@@ -184,10 +185,14 @@ namespace Transformalize.Readers {
                 if (e.Version.Equals(pk.Name)) {
                     entity.Version = keyField;
                 }
+
+                pkIndex++;
             }
 
+            var fieldIndex = 0;
             foreach (FieldConfigurationElement f in e.Fields) {
                 var field = GetField(entity, f);
+                field.Index = fieldIndex;
 
                 foreach (XmlConfigurationElement x in f.Xml) {
                     field.InnerXml.Add(x.Alias, new Field(x.Type, x.Length, FieldType.Xml, x.Output, x.Default) {
@@ -212,6 +217,14 @@ namespace Transformalize.Readers {
                 if (e.Version.Equals(f.Name)) {
                     entity.Version = field;
                 }
+
+                fieldIndex++;
+            }
+
+            if (entity.Version == null) {
+                var message = string.Format("{0} | version field reference '{1}' is undefined in {2}." , _process.Name, e.Version, e.Name);
+                Error(message);
+                throw new TransformalizeException(message);
             }
 
             return entity;

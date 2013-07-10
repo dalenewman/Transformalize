@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Transformalize.Data;
 using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
 using Transformalize.Rhino.Etl.Core.Operations;
@@ -8,9 +7,8 @@ namespace Transformalize.Operations {
     public class EntityBatchId : AbstractOperation {
         private readonly Entity _entity;
 
-        public EntityBatchId(Entity entity, IEntityBatch entityBatch) {
+        public EntityBatchId(Entity entity) {
             _entity = entity;
-            _entity.TflBatchId = entityBatch.GetNext(_entity);
             UseTransaction = false;
         }
 
@@ -21,9 +19,5 @@ namespace Transformalize.Operations {
             }
         }
 
-        public override void Dispose() {
-            _entity.RecordsAffected = (int)Statistics.OutputtedRows;
-            base.Dispose();
-        }
     }
 }

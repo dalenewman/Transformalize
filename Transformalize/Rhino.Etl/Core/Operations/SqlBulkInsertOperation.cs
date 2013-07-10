@@ -93,7 +93,7 @@ namespace Transformalize.Rhino.Etl.Core.Operations {
             set { _batchSize = value; }
         }
 
-        ///    <summary>The batch size    value of the bulk insert operation</summary>
+        ///    <summary>The batch size value of the bulk insert operation</summary>
         public virtual int NotifyBatchSize {
             get { return _notifyBatchSize > 0 ? _notifyBatchSize : _batchSize; }
             set { _notifyBatchSize = value; }
@@ -204,14 +204,17 @@ namespace Transformalize.Rhino.Etl.Core.Operations {
                 _sqlBulkCopy.WriteToServer(adapter);
 
                 if (PipelineExecuter.HasErrors) {
-                    Warn("Rolling back transaction in {0}", Name);
-                    if (transaction != null) transaction.Rollback();
-                    Warn("Rolled back transaction in {0}", Name);
-                }
-                else {
-                    Debug("Committing {0}", Name);
-                    if (transaction != null) transaction.Commit();
-                    Debug("Committed {0}", Name);
+                    if (transaction != null) {
+                        Warn("Rolling back transaction in {0}", Name);
+                        transaction.Rollback();
+                        Warn("Rolled back transaction in {0}", Name);
+                    }
+                } else {
+                    if (transaction != null) {
+                        Debug("Committing {0}", Name);
+                        transaction.Commit();
+                        Debug("Committed {0}", Name);
+                    }
                 }
             }
             yield break;
@@ -237,11 +240,11 @@ namespace Transformalize.Rhino.Etl.Core.Operations {
         /// Creates the SQL bulk copy instance
         /// </summary>
         private SqlBulkCopy CreateSqlBulkCopy(SqlConnection connection, SqlTransaction transaction) {
-            var copy = new SqlBulkCopy(connection, _bulkCopyOptions, transaction) {BatchSize = _batchSize};
+            var copy = new SqlBulkCopy(connection, _bulkCopyOptions, transaction) { BatchSize = _batchSize };
             foreach (var pair in Mappings) {
                 copy.ColumnMappings.Add(pair.Key, pair.Value);
             }
-            copy.NotifyAfter = _notifyBatchSize;
+            copy.NotifyAfter = NotifyBatchSize;
             copy.SqlRowsCopied += OnSqlRowsCopied;
             copy.DestinationTableName = TargetTable;
             copy.BulkCopyTimeout = Timeout;

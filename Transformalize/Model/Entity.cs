@@ -19,7 +19,7 @@ namespace Transformalize.Model {
         public Dictionary<string, Field> All { get; set; }
         public Dictionary<string, Relationship> Joins { get; set; }
         public EntitySqlWriter EntitySqlWriter { get; private set; }
-        public int RecordsAffected { get; set; }
+        public long RecordsAffected { get; set; }
         public object Begin { get; set; }
         public object End { get; set; }
         public int TflBatchId { get; set; }

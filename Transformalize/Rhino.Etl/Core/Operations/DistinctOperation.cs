@@ -1,9 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using Transformalize.Rhino.Etl.Core;
-using Transformalize.Rhino.Etl.Core.Operations;
 
-namespace Transformalize.Operations {
+namespace Transformalize.Rhino.Etl.Core.Operations {
     
     public class DistinctOperation : AbstractAggregationOperation {
 
