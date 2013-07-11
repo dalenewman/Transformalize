@@ -5,7 +5,6 @@ using Transformalize.Model;
 using Transformalize.Operations;
 using Transformalize.Rhino.Etl.Core;
 using Transformalize.Rhino.Etl.Core.Operations;
-using Transformalize.Writers;
 
 namespace Transformalize.Processes {
 
@@ -23,7 +22,6 @@ namespace Transformalize.Processes {
 
         protected override void Initialize() {
 
-            Register(new EntityCreate(_entity, _process));
             Register(new EntityInputKeysExtract(_entity));
             Register(new EntityKeysToOperations(_entity));
             Register(new SerialUnionAllOperation());
@@ -57,7 +55,7 @@ namespace Transformalize.Processes {
                 }
                 throw new InvalidOperationException("Houstan.  We have a problem in the threads!");
             }
-            new VersionWriter(_entity).WriteEndVersion(_entity.End, _entity.RecordsAffected);
+            new SqlServerEntityVersionWriter(_entity).WriteEndVersion(_entity.End, _entity.RecordsAffected);
             base.PostProcessing();
         }
 

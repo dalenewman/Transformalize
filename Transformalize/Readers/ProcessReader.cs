@@ -37,6 +37,7 @@ namespace Transformalize.Readers {
             _relationshipCount = ReadRelationships(_config);
             _transformCount = ReadTransforms(_config);
             _process.RelatedKeys = ReadRelatedKeys();
+            _process.View = _process.MasterEntity.OutputName() + "Star";
 
             foreach (var entity in _process.Entities) {
                 entity.Value.RelationshipToMaster = ReadRelationshipToMaster(entity.Value);
@@ -205,7 +206,6 @@ namespace Transformalize.Readers {
                         Index = x.Index,
                         Precision = x.Precision,
                         Scale = x.Scale,
-                        Input = true,
                         Transforms = GetTransforms(x.Transforms)
                     });
 
@@ -247,6 +247,8 @@ namespace Transformalize.Readers {
                 Precision = field.Precision,
                 Scale = field.Scale,
                 Input = field.Input,
+                Unicode = field.Unicode,
+                VariableLength = field.VariableLength,
                 Transforms = GetTransforms(field.Transforms)
             };
         }

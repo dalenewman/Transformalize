@@ -7,14 +7,14 @@ using System.Runtime.Serialization.Formatters.Binary;
 using Transformalize.Model;
 
 namespace Transformalize.Data {
-    public class SqlServerEntityVersion : IEntityVersion {
+    public class SqlServerEntityVersionReader : IEntityVersionReader {
         private object _end;
         private object _begin;
         private readonly Entity _entity;
         public bool HasRows { get; private set; }
         public bool IsRange { get; private set; }
 
-        public SqlServerEntityVersion(Entity entity) {
+        public SqlServerEntityVersionReader(Entity entity) {
             _entity = entity;
         }
 

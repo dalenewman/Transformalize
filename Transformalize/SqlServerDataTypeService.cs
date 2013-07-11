@@ -3,8 +3,8 @@ using Transformalize.Model;
 
 namespace Transformalize {
 
-    public static class DataTypeService {
-        
+    public class SqlServerDataTypeService : IDataTypeService {
+
         private static readonly Dictionary<string, string> Types = new Dictionary<string, string> {
             {"int64", "BIGINT"},
             {"boolean", "BIT"},
@@ -22,12 +22,27 @@ namespace Transformalize {
             {"rowversion", "ROWVERSION"}
         };
 
-        public static string GetSqlDbType(Field field) {
+        public string GetDataType(Field field) {
+
             var length = field.SimpleType == "string" || field.SimpleType == "char" || field.SimpleType == "byte[]" ? string.Concat("(", field.Length, ")") : string.Empty;
             var dimensions = field.SimpleType == "decimal" ? string.Format("({0},{1})", field.Precision, field.Scale) : string.Empty;
             var notNull = field.NotNull ? " NOT NULL" : string.Empty;
             var surrogate = field.Clustered ? " IDENTITY(1,1) UNIQUE CLUSTERED" : string.Empty;
-            return string.Concat(Types[field.SimpleType], length, dimensions, notNull, surrogate);
+            var sqlDataType = Types[field.SimpleType];
+
+            if (!field.Unicode && sqlDataType.StartsWith("N")) {
+                sqlDataType = sqlDataType.TrimStart("N".ToCharArray());
+            }
+
+            if (!field.VariableLength && sqlDataType.EndsWith("VARCHAR")) {
+                sqlDataType = sqlDataType.Replace("VAR", string.Empty);
+            }
+
+            return string.Concat(sqlDataType, length, dimensions, notNull, surrogate);
         }
+    }
+
+    public interface IDataTypeService {
+        string GetDataType(Field field);
     }
 }

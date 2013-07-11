@@ -18,13 +18,12 @@ namespace Transformalize {
 
             switch (_mode) {
                 case "init":
-                    new TflBatchRepository(ref _process).Init();
-                    new EntityDropper(ref _process).Drop();
+                    new InitializationProcess(_process).Execute();
                     break;
                 default:
                     ProcessEntities();
                     ProcessMaster();
-                    //ProcessTransforms();
+                    ProcessTransforms();
                     break;
             }
         }

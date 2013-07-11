@@ -18,7 +18,6 @@ namespace Transformalize.Model {
         public Dictionary<string, Field> Xml { get; set; }
         public Dictionary<string, Field> All { get; set; }
         public Dictionary<string, Relationship> Joins { get; set; }
-        public EntitySqlWriter EntitySqlWriter { get; private set; }
         public long RecordsAffected { get; set; }
         public object Begin { get; set; }
         public object End { get; set; }
@@ -35,7 +34,6 @@ namespace Transformalize.Model {
             Fields = new Dictionary<string, Field>();
             All = new Dictionary<string, Field>();
             Joins = new Dictionary<string, Relationship>();
-            EntitySqlWriter = new EntitySqlWriter(this);
         }
 
         public string FirstKey() {

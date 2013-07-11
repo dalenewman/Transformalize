@@ -22,20 +22,6 @@ namespace Transformalize.Model {
         public string View { get; set; }
         public bool OutputRecordsExist { get; set; }
 
-        public Dictionary<string, Field> Fields {
-            get {
-                if (_fields == null) {
-                    _fields = new Dictionary<string, Field>();
-                    foreach (var pair in Entities) {
-                        foreach (var innerPair in pair.Value.All) {
-                            _fields[innerPair.Key] = pair.Value.All[innerPair.Key];
-                        }
-                    }
-                }
-                return _fields;
-            }
-        }
-
         public bool IsReady() {
             return Connections.Select(connection => connection.Value.IsReady()).All(b => b.Equals(true));
         }

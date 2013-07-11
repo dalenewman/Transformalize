@@ -76,6 +76,22 @@ namespace Transformalize.Configuration
             set { this["output"] = value; }
         }
 
+        [ConfigurationProperty("unicode", IsRequired = false, DefaultValue = true)]
+        public bool Unicode {
+            get {
+                return (bool)this["unicode"];
+            }
+            set { this["unicode"] = value; }
+        }
+
+        [ConfigurationProperty("variableLength", IsRequired = false, DefaultValue = true)]
+        public bool VariableLength {
+            get {
+                return (bool)this["variableLength"];
+            }
+            set { this["variableLength"] = value; }
+        }
+
         [ConfigurationProperty("default", IsRequired = false, DefaultValue = "")]
         public string Default {
             get {

@@ -16,7 +16,7 @@ namespace Transformalize.Operations
 
         protected override void PrepareCommand(Row row, SqlCommand command) {
             var sets = new FieldSqlWriter(_process.Results).Alias().SetParam().Write();
-            command.CommandText = string.Format("UPDATE {0} SET {1} WHERE TflKey = @TflKey;", _process.View, sets);
+            command.CommandText = string.Format("UPDATE {0} SET {1} WHERE TflKey = @TflKey;", _process.MasterEntity.OutputName(), sets);
             foreach (var r in _process.Results) {
                 AddParameter(command, r.Key, row[r.Key]);
             }

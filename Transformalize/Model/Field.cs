@@ -36,9 +36,11 @@ namespace Transformalize.Model {
         public Dictionary<string, Field> InnerXml { get; set; }
         public string XPath { get; set; }
         public int Index { get; set; }
+        public bool Unicode { get; set; }
+        public bool VariableLength { get; set; }
 
         public string SqlDataType {
-            get { return _sqlDataType ?? (_sqlDataType = DataTypeService.GetSqlDbType(this)); }
+            get { return _sqlDataType ?? (_sqlDataType = new SqlServerDataTypeService().GetDataType(this)); }
         }
 
         public object Default;
@@ -81,6 +83,8 @@ namespace Transformalize.Model {
 
         private void Initialize(string typeName, int length, FieldType fieldType, bool output, object @default) {
             Input = true;
+            Unicode = true;
+            VariableLength = true;
             Type = typeName;
             Length = length;
             SimpleType = Type.ToLower().Replace("system.", string.Empty);

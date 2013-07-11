@@ -1,15 +1,14 @@
 using System;
-using System.Data;
 using System.Data.SqlClient;
 using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
 
-namespace Transformalize.Writers {
-    public class VersionWriter : WithLoggingMixin, IVersionWriter {
+namespace Transformalize.Data {
+    public class SqlServerEntityVersionWriter : WithLoggingMixin, IEntityVersionWriter {
 
         private readonly Entity _entity;
 
-        public VersionWriter(Entity entity) {
+        public SqlServerEntityVersionWriter(Entity entity) {
             _entity = entity;
         }
 

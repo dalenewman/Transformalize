@@ -3,12 +3,11 @@ using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Data {
-
-    public class TflBatchRepository : WithLoggingMixin {
+    public class SqlServerTflWriter : WithLoggingMixin, ITflWriter {
 
         private readonly Process _process;
 
-        public TflBatchRepository(ref Process process) {
+        public SqlServerTflWriter(ref Process process) {
             _process = process;
         }
 
@@ -20,7 +19,7 @@ namespace Transformalize.Data {
             }
         }
 
-        public string PrepareSql() {
+        public string CreateSql() {
             return @"
                 CREATE TABLE TflBatch(
                     TflBatchId INT NOT NULL,
@@ -46,17 +45,12 @@ namespace Transformalize.Data {
             ";
         }
 
-        public void ResetProcess() {
+        public void Reset() {
             var sql = string.Format("DELETE FROM TflBatch WHERE ProcessName = '{0}';", _process.Name);
             Execute(sql, _process.MasterEntity.OutputConnection.ConnectionString);
         }
 
-        public void ResetEntity(string entity) {
-            var sql = string.Format("DELETE FROM TflBatch WHERE ProcessName = '{0}' AND EntityName = '{1}';", _process.Name, entity);
-            Execute(sql, _process.MasterEntity.OutputConnection.ConnectionString);
-        }
-
-        public void Init() {
+        public void Initialize() {
             var cs = _process.MasterEntity.OutputConnection.ConnectionString;
 
             Execute(SqlTemplates.TruncateTable("TflBatch"), cs);
@@ -65,7 +59,7 @@ namespace Transformalize.Data {
             Execute(SqlTemplates.DropTable("TflBatch"), cs);
             Info("{0} | Dropped TflBatch.", _process.Name);
 
-            Execute(PrepareSql(), cs);
+            Execute(CreateSql(), cs);
             Info("{0} | Created TflBatch.", _process.Name);
         }
 

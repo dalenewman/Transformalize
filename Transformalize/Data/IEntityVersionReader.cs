@@ -1,5 +1,5 @@
 namespace Transformalize.Data {
-    public interface IEntityVersion {
+    public interface IEntityVersionReader {
         bool IsRange { get; }
         bool HasRows { get; }
         object GetBeginVersion();

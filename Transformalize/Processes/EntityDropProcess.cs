@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using Transformalize.Model;
 using Transformalize.Operations;
@@ -6,18 +5,18 @@ using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Processes {
 
-    public class TransformProcess : EtlProcess {
+    public class EntityDropProcess : EtlProcess {
 
         private readonly Process _process;
 
-        public TransformProcess(Process process) : base(process.Name) {
+        public EntityDropProcess(Process process) : base(process.Name) {
             _process = process;
         }
 
         protected override void Initialize() {
-            Register(new ParametersExtract(_process));
-            Register(new ProcessTransform(_process));
-            RegisterLast(new ResultsLoad(_process));
+            foreach (var pair in _process.Entities) {
+                Register(new EntityDrop(pair.Value));
+            }
         }
 
         protected override void PostProcessing() {
@@ -27,7 +26,7 @@ namespace Transformalize.Processes {
                 foreach (var error in errors) {
                     Error(error.InnerException, "Message: {0}\r\nStackTrace:{1}\r\n", error.Message, error.StackTrace);
                 }
-                throw new InvalidOperationException("Houstan.  We have a problem.");
+                throw new TransformalizeException("Entity Drop Error!");
             }
 
             base.PostProcessing();
