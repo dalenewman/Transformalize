@@ -601,6 +601,7 @@
     <None Include="RazorEngine.Core\packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="LICENSE.txt" />
     <Content Include="msvcp100.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
