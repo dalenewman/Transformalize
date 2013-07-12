@@ -1,7 +1,9 @@
 Transformalize
 ==============
-A combination of replication, transformation, and de-normalization.
+Released under GNU General Public License, version 3 (GPL-3.0).
 
-The goal of Transformalize is to provide a reliable and efficient means of transforming and flattening relational data in
-near real-time.  Among other uses, a flattened data set can be useful as a data source for an OLAP cube, a SOLR data import
-handler, and/or a regular relational reporting data source.
+Transformalize is a combination of replication, transformation, and de-normalization.
+
+It provides a reliable and efficient means of transforming relational data into a star-schema in near real-time.  
+Among other uses, the output can be useful as a data source for an OLAP cube, a SOLR data import
+handler, and/or a faster relational reporting data source.
