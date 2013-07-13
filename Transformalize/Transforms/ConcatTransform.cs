@@ -21,44 +21,57 @@ using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Transforms {
-    public class RemoveTransform : ITransform {
-        private readonly int _startIndex;
-        private readonly int _length;
+    public class ConcatTransform : ITransform {
+
         public Dictionary<string, Field> Parameters { get; private set; }
         public Dictionary<string, Field> Results { get; private set; }
+        private readonly bool _hasParameters;
+        private readonly bool _hasResults;
+        private readonly object[] _parameterValues;
+        private int _index;
 
-        public RemoveTransform(int startIndex, int length) {
-            _startIndex = startIndex;
-            _length = length;
+        public bool HasParameters {
+            get { return _hasParameters; }
+        }
+        public bool HasResults {
+            get { return _hasResults; }
         }
 
-        public RemoveTransform(int startIndex, int length, Dictionary<string, Field> parameters, Dictionary<string, Field> results) {
-            _startIndex = startIndex;
-            _length = length;
+        public ConcatTransform(Dictionary<string, Field> parameters, Dictionary<string, Field> results) {
             Parameters = parameters;
             Results = results;
-            HasParameters = parameters != null && parameters.Count > 0;
-            HasResults = results != null && results.Count > 0;
+            _hasParameters = parameters != null && parameters.Count > 0;
+            _hasResults = results != null && results.Count > 0;
+
+            if (!_hasParameters) return;
+
+            _parameterValues = new object[Parameters.Count];
+        }
+
+        public ConcatTransform() {
+            throw new TransformalizeException("Do Concat transform at Entity or Process level.  Concat needs parameters.");
         }
 
         public void Transform(ref StringBuilder sb) {
-            if (_startIndex > sb.Length) return;
-            sb.Remove(_startIndex, _length);
         }
 
         public void Transform(ref object value) {
-            var str = value.ToString();
-            if (_startIndex > str.Length) return;
-            value = str.Remove(_startIndex, _length);
         }
 
         public void Transform(ref Row row) {
-
+            _index = 0;
+            foreach (var pair in Parameters) {
+                _parameterValues[_index] = row[pair.Key];
+                _index++;
+            }
+            var result = string.Concat(_parameterValues);
+            foreach (var pair in Results) {
+                row[pair.Key] = result;
+            }
         }
 
-        public bool HasParameters { get; private set; }
-        public bool HasResults { get; private set; }
+        public void Dispose() {
+        }
 
-        public void Dispose() { }
     }
 }

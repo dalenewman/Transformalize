@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -25,6 +26,7 @@ namespace Transformalize.Model {
     public class FieldSqlWriter {
 
         private const string BATCH_ID = "TflBatchId";
+        private const string UPDATE = "TflUpdate";
         private const string SURROGATE_KEY = "TflKey";
         private SortedDictionary<string, string> _output;
         private Dictionary<string, Field> _original;

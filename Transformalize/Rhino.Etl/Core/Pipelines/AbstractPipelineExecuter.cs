@@ -2,14 +2,12 @@ using System;
 using System.Collections.Generic;
 using Transformalize.Rhino.Etl.Core.Operations;
 
-namespace Transformalize.Rhino.Etl.Core.Pipelines
-{
+namespace Transformalize.Rhino.Etl.Core.Pipelines {
     /// <summary>
     /// Base class for pipeline executers, handles all the details and leave the actual
     /// pipeline execution to the 
     /// </summary>
-    public abstract class AbstractPipelineExecuter : WithLoggingMixin, IPipelineExecuter
-    {
+    public abstract class AbstractPipelineExecuter : WithLoggingMixin, IPipelineExecuter {
         #region IPipelineExecuter Members
 
         /// <summary>
@@ -20,28 +18,20 @@ namespace Transformalize.Rhino.Etl.Core.Pipelines
         /// <param name="translateRows">Translate the rows into another representation</param>
         public void Execute(string pipelineName,
                             ICollection<IOperation> pipeline,
-                            Func<IEnumerable<Row>, IEnumerable<Row>> translateRows)
-        {
-            try
-            {
-                IEnumerable<Row> enumerablePipeline = PipelineToEnumerable(pipeline, new List<Row>(), translateRows);
-                try
-                {
-                    raiseNotifyExecutionStarting();
-                    DateTime start = DateTime.Now;
+                            Func<IEnumerable<Row>, IEnumerable<Row>> translateRows) {
+            try {
+                var enumerablePipeline = PipelineToEnumerable(pipeline, new List<Row>(), translateRows);
+                try {
+                    RaiseNotifyExecutionStarting();
+                    var start = DateTime.Now;
                     ExecutePipeline(enumerablePipeline);
-                    raiseNotifyExecutionCompleting();
+                    RaiseNotifyExecutionCompleting();
                     Trace("Completed process {0} in {1}", pipelineName, DateTime.Now - start);
+                } catch (Exception e) {
+                    Error(e, "Failed to execute pipeline {0}", pipelineName);
                 }
-                catch (Exception e)
-                {
-                    string errorMessage = string.Format("Failed to execute pipeline {0}", pipelineName);
-                    Error(e, errorMessage);
-                }
-            }
-            catch (Exception e)
-            {
-                Error(e, "Failed to create pipeline {0}", pipelineName);                
+            } catch (Exception e) {
+                Error(e, "Failed to create pipeline {0}", pipelineName);
             }
 
             DisposeAllOperations(pipeline);
@@ -55,12 +45,10 @@ namespace Transformalize.Rhino.Etl.Core.Pipelines
         /// <param name="translateEnumerable">Translate the rows from one representation to another</param>
         /// <returns></returns>
         public virtual IEnumerable<Row> PipelineToEnumerable(
-            ICollection<IOperation> pipeline, 
+            ICollection<IOperation> pipeline,
             IEnumerable<Row> rows,
-            Func<IEnumerable<Row>, IEnumerable<Row>> translateEnumerable)
-        {
-            foreach (var operation in pipeline)
-            {
+            Func<IEnumerable<Row>, IEnumerable<Row>> translateEnumerable) {
+            foreach (var operation in pipeline) {
                 operation.PrepareForExecution(this);
                 var enumerator = operation.Execute(rows);
                 enumerator = translateEnumerable(enumerator);
@@ -73,8 +61,7 @@ namespace Transformalize.Rhino.Etl.Core.Pipelines
         /// Gets all errors that occured under this executer
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Exception> GetAllErrors()
-        {
+        public IEnumerable<Exception> GetAllErrors() {
             return Errors;
         }
 
@@ -84,8 +71,7 @@ namespace Transformalize.Rhino.Etl.Core.Pipelines
         /// <value>
         ///     <c>true</c> if this instance has errors; otherwise, <c>false</c>.
         /// </value>
-        public bool HasErrors
-        {
+        public bool HasErrors {
             get { return Errors.Length != 0; }
         }
 
@@ -96,17 +82,14 @@ namespace Transformalize.Rhino.Etl.Core.Pipelines
         /// Since we use a pipeline, we need to force it to execute at some point. 
         /// We aren't really interested in the result, just in that the pipeline would execute.
         /// </summary>
-        protected virtual void ExecutePipeline(IEnumerable<Row> pipeline)
-        {
+        protected virtual void ExecutePipeline(IEnumerable<Row> pipeline) {
             var enumerator = pipeline.GetEnumerator();
-            try
-            {
+            try {
 #pragma warning disable 642
                 while (enumerator.MoveNext()) ;
 #pragma warning restore 642
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 Error(e, "Failed to execute operation {0}", enumerator.Current);
             }
         }
@@ -115,16 +98,11 @@ namespace Transformalize.Rhino.Etl.Core.Pipelines
         /// <summary>
         /// Destroys the pipeline.
         /// </summary>
-        protected void DisposeAllOperations(ICollection<IOperation> operations)
-        {
-            foreach (IOperation operation in operations)
-            {
-                try
-                {
+        protected void DisposeAllOperations(ICollection<IOperation> operations) {
+            foreach (var operation in operations) {
+                try {
                     operation.Dispose();
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     Error(e, "Failed to disposed {0}", operation.Name);
                 }
             }
@@ -133,26 +111,24 @@ namespace Transformalize.Rhino.Etl.Core.Pipelines
         ///    <summary>
         ///    Occurs when    the    pipeline has been successfully created,    but    before it is executed
         ///    </summary>
-        public event Action<IPipelineExecuter> NotifyExecutionStarting = delegate {    };
+        public event Action<IPipelineExecuter> NotifyExecutionStarting = delegate { };
 
         ///    <summary>
         ///    Raises the ExecutionStarting event
         ///    </summary>
-        private    void raiseNotifyExecutionStarting()
-        {
+        private void RaiseNotifyExecutionStarting() {
             NotifyExecutionStarting(this);
         }
 
         ///    <summary>
         ///    Occurs when    the    pipeline has been successfully created,    but    before it is disposed
         ///    </summary>
-        public event Action<IPipelineExecuter> NotifyExecutionCompleting = delegate    { };
+        public event Action<IPipelineExecuter> NotifyExecutionCompleting = delegate { };
 
         ///    <summary>
         ///    Raises the ExecutionCompleting event
         ///    </summary>
-        private    void raiseNotifyExecutionCompleting()
-        {
+        private void RaiseNotifyExecutionCompleting() {
             NotifyExecutionCompleting(this);
         }
 

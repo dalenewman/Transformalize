@@ -49,7 +49,7 @@ namespace Transformalize.Data {
                     Int32Version INT NULL,
                     Int16Version SMALLINT NULL,
                     ByteVersion TINYINT NULL,
-	                LastProcessedDate DATETIME NOT NULL,
+	                TflUpdate DATETIME NOT NULL,
                     Rows BIGINT NOT NULL,
 					CONSTRAINT Pk_TflBatch_TflBatchId PRIMARY KEY (
 						TflBatchId

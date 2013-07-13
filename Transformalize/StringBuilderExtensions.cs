@@ -157,5 +157,21 @@ namespace Transformalize {
             return false;
         }
 
+        public static void ToLower(this StringBuilder sb) {
+            for (var i = 0; i < sb.Length; i++) {
+                if (char.IsUpper(sb[i])) {
+                    sb[i] = char.ToLower(sb[i]);
+                }
+            }
+        }
+
+        public static void ToUpper(this StringBuilder sb) {
+            for (var i = 0; i < sb.Length; i++) {
+                if (char.IsLower(sb[i])) {
+                    sb[i] = char.ToUpper(sb[i]);
+                }
+            }
+        }
+
     }
 }

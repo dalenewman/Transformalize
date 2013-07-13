@@ -113,7 +113,7 @@ namespace Transformalize.Model {
             SystemType = System.Type.GetType(typeName);
             StringBuilder = UseStringBuilder ? new StringBuilder(length, 8000) : null;
             InnerXml = new Dictionary<string, Field>();
-            Default = ConvertDefault(@default ?? (object)string.Empty);
+            Default = ConvertDefault(@default ?? string.Empty);
         }
 
         private FieldSqlWriter _sqlWriter;

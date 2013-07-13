@@ -30,7 +30,8 @@ namespace Transformalize.Processes {
         private readonly ITflWriter _tflWriter;
         private readonly IViewWriter _viewWriter;
 
-        public InitializationProcess(Process process, ITflWriter tflWriter = null, IViewWriter viewWriter = null) : base(process.Name) {
+        public InitializationProcess(Process process, ITflWriter tflWriter = null, IViewWriter viewWriter = null)
+            : base(process.Name) {
             _process = process;
             _tflWriter = tflWriter ?? new SqlServerTflWriter(ref process);
             _viewWriter = viewWriter ?? new SqlServerViewWriter(ref process);
@@ -47,7 +48,6 @@ namespace Transformalize.Processes {
         }
 
         protected override void PostProcessing() {
-            _viewWriter.Create();
 
             var errors = GetAllErrors().ToArray();
             if (errors.Any()) {
@@ -57,6 +57,7 @@ namespace Transformalize.Processes {
                 throw new TransformalizeException("Initialization Error!");
             }
 
+            _viewWriter.Create();
             base.PostProcessing();
         }
 

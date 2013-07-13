@@ -141,7 +141,7 @@
     <Compile Include="Operations\EntityUpdateMaster.cs" />
     <Compile Include="Model\Join.cs" />
     <Compile Include="Operations\EntityCreate.cs" />
-    <Compile Include="Operations\EntityBatchId.cs" />
+    <Compile Include="Operations\EntityAddTflFields.cs" />
     <Compile Include="Operations\EntityBulkInsert.cs" />
     <Compile Include="Data\IEntityCounter.cs" />
     <Compile Include="Data\SqlServerEntityCounter.cs" />
@@ -441,6 +441,9 @@
     <Compile Include="StringBuilderExtensions.cs" />
     <Compile Include="Operations\EntityTransform.cs" />
     <Compile Include="TransformalizeException.cs" />
+    <Compile Include="Transforms\ConcatTransform.cs" />
+    <Compile Include="Transforms\ToLowerTransform.cs" />
+    <Compile Include="Transforms\ToUpperTransform.cs" />
     <Compile Include="Transforms\FormatTransform.cs" />
     <Compile Include="Transforms\JavascriptTransform.cs" />
     <Compile Include="Transforms\LeftTransform.cs" />

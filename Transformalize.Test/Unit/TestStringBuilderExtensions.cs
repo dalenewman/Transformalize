@@ -1,4 +1,4 @@
-/*
+﻿/*
 Transformalize - Replicate, Transform, and Denormalize Your Data...
 Copyright (C) 2013 Dale Newman
 
@@ -15,22 +15,26 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-using System;
-using System.Collections.Generic;
+
 using System.Text;
-using Transformalize.Model;
-using Transformalize.Rhino.Etl.Core;
+using NUnit.Framework;
 
-namespace Transformalize.Transforms {
+namespace Transformalize.Test.Unit {
+    [TestFixture]
+    public class TestStringBuilderExtensions {
 
-    public interface ITransform : IDisposable {
-        void Transform(ref StringBuilder sb);
-        void Transform(ref Object value);
-        void Transform(ref Row row);
-        bool HasParameters { get; }
-        bool HasResults { get; }
-        Dictionary<string, Field> Parameters { get; }
-        Dictionary<string, Field> Results { get; } 
+        [Test]
+        public void TestToUpper() {
+            var sb = new StringBuilder(".Net");
+            sb.ToUpper();
+            Assert.AreEqual(".NET", sb.ToString());
+        }
+
+        [Test]
+        public void TestToLower() {
+            var sb = new StringBuilder(".Net");
+            sb.ToLower();
+            Assert.AreEqual(".net", sb.ToString());
+        }
     }
-
 }

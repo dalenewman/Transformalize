@@ -31,26 +31,29 @@ namespace Transformalize.Data {
         }
 
         public void WriteEndVersion(object end, long count) {
-
-            var field = _entity.Version.SimpleType.Replace("byte[]", "binary") + "Version";
-            var sql = string.Format(@"
-                INSERT INTO [TflBatch](TflBatchId, ProcessName, EntityName, [{0}], LastProcessedDate, Rows)
-                VALUES(@TflBatchId, @ProcessName, @EntityName, @End, @Date, @Count);
-            ", field);
-
-            using (var cn = new SqlConnection(_entity.OutputConnection.ConnectionString)) {
-                cn.Open();
-                var command = new SqlCommand(sql, cn);
-                command.Parameters.Add(new SqlParameter("@TflBatchId", _entity.TflBatchId));
-                command.Parameters.Add(new SqlParameter("@ProcessName", _entity.ProcessName));
-                command.Parameters.Add(new SqlParameter("@EntityName", _entity.Name));
-                command.Parameters.Add(new SqlParameter("@End", end));
-                command.Parameters.Add(new SqlParameter("@Date", DateTime.Now));
-                command.Parameters.Add(new SqlParameter("@Count", count));
-                command.ExecuteNonQuery();
+            if (count > 0) {
+                using (var cn = new SqlConnection(_entity.OutputConnection.ConnectionString)) {
+                    cn.Open();
+                    var command = new SqlCommand(PrepareSql(), cn);
+                    command.Parameters.Add(new SqlParameter("@TflBatchId", _entity.TflBatchId));
+                    command.Parameters.Add(new SqlParameter("@ProcessName", _entity.ProcessName));
+                    command.Parameters.Add(new SqlParameter("@EntityName", _entity.Name));
+                    command.Parameters.Add(new SqlParameter("@End", end));
+                    command.Parameters.Add(new SqlParameter("@TflUpdate", DateTime.Now));
+                    command.Parameters.Add(new SqlParameter("@Count", count));
+                    command.ExecuteNonQuery();
+                }
             }
 
-            Info("{0} | Closing {1} (using {2}).", _entity.ProcessName, _entity.Name, field);
+            Info("{0} | Closing {1}", _entity.ProcessName, _entity.Name);
+        }
+
+        private string PrepareSql() {
+            var field = _entity.Version.SimpleType.Replace("byte[]", "binary") + "Version";
+            return string.Format(@"
+                INSERT INTO [TflBatch](TflBatchId, ProcessName, EntityName, [{0}], TflUpdate, Rows)
+                VALUES(@TflBatchId, @ProcessName, @EntityName, @End, @TflUpdate, @Count);
+            ", field);
         }
     }
 }

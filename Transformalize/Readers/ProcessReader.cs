@@ -328,6 +328,15 @@ namespace Transformalize.Readers {
                     case "format":
                         result.Add(new FormatTransform(t.Format, parameters, results));
                         break;
+                    case "toupper":
+                        result.Add(new ToUpperTransform());
+                        break;
+                    case "tolower":
+                        result.Add(new ToLowerTransform());
+                        break;
+                    case "concat":
+                        result.Add(new ConcatTransform(parameters, results));
+                        break;
                 }
             }
 

@@ -67,7 +67,7 @@ namespace Transformalize.Data
         public string CreateSql() {
             var builder = new StringBuilder();
             builder.AppendFormat("CREATE VIEW [{0}] AS\r\n", _process.View);
-            builder.AppendFormat("SELECT\r\n    [{0}].[TflKey],\r\n    [{0}].[TflBatchId],\r\n", _masterEntity.OutputName());
+            builder.AppendFormat("SELECT\r\n    [{0}].[TflKey],\r\n    [{0}].[TflBatchId],\r\n    b.[TflUpdate],\r\n", _masterEntity.OutputName());
             foreach (var pair in _process.Entities) {
                 var entity = pair.Value;
                 if (entity.IsMaster()) {
@@ -83,6 +83,7 @@ namespace Transformalize.Data
             builder.TrimEnd("\r\n,");
             builder.AppendLine();
             builder.AppendFormat("FROM [{0}]\r\n", _masterEntity.OutputName());
+            builder.AppendFormat("INNER JOIN [TflBatch] b ON ([{0}].TflBatchId = b.TflBatchId)\r\n", _masterEntity.OutputName());
 
             foreach (var pair in _process.Entities.Where(e => !e.Value.IsMaster())) {
                 var entity = pair.Value;

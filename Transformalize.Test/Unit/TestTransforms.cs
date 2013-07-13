@@ -397,6 +397,122 @@ namespace Transformalize.Test.Unit {
             Assert.AreEqual("00000", rows[3]["Field1"]);
         }
 
+        [Test]
+        public void TestToUpperTransform() {
+
+            var mock = new Mock<IOperation>();
+            mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row> {
+                new Row { {"Field1", "345!"} },
+                new Row { {"Field1", ""} },
+                new Row { {"Field1", "abcDe"}},
+                new Row { {"Field1", null }}
+            });
+            var input = mock.Object;
+
+            var entity = new Entity();
+            entity.All["Field1"] = new Field(FieldType.Field) { Input = true, Transforms = new[] { new ToUpperTransform() }, Default = "" };
+
+            var rows = TestOperation(
+                input,
+                new EntityTransform(entity),
+                new LogOperation()
+            );
+
+            Assert.AreEqual("345!", rows[0]["Field1"]);
+            Assert.AreEqual("", rows[1]["Field1"]);
+            Assert.AreEqual("ABCDE", rows[2]["Field1"]);
+            Assert.AreEqual("", rows[3]["Field1"]);
+        }
+
+        [Test]
+        public void TestToLowerTransform() {
+
+            var mock = new Mock<IOperation>();
+            mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row> {
+                new Row { {"Field1", "345!"} },
+                new Row { {"Field1", ""} },
+                new Row { {"Field1", "abcDe"}},
+                new Row { {"Field1", null }}
+            });
+            var input = mock.Object;
+
+            var entity = new Entity();
+            entity.All["Field1"] = new Field(FieldType.Field) { Input = true, Transforms = new[] { new ToLowerTransform() }, Default = "" };
+
+            var rows = TestOperation(
+                input,
+                new EntityTransform(entity),
+                new LogOperation()
+            );
+
+            Assert.AreEqual("345!", rows[0]["Field1"]);
+            Assert.AreEqual("", rows[1]["Field1"]);
+            Assert.AreEqual("abcde", rows[2]["Field1"]);
+            Assert.AreEqual("", rows[3]["Field1"]);
+        }
+
+        [Test]
+        public void TestFormatTransform() {
+
+            var mock = new Mock<IOperation>();
+            mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row> {
+                new Row { {"Field1", "F1"}, {"Field2", "F2"} },
+                new Row { {"Field1", ""}, {"Field2", ""} },
+                new Row { {"Field1", " f1 "}, {"Field2", " f2 "}},
+                new Row { {"Field1", null }, {"Field2", null}}
+            });
+            var input = mock.Object;
+
+            var entity = new Entity();
+            entity.All["Field1"] = new Field(FieldType.Field) { Input = true };
+            entity.All["Field2"] = new Field(FieldType.Field) { Input = true };
+
+            var process = new Process();
+            process.Transforms = new ITransform[] { new FormatTransform("{0}+{1}", new Dictionary<string, Field> { {"Field1", entity.All["Field1"]}, {"Field2",entity.All["Field2"]}},new Dictionary<string, Field>{{"result", new Field(FieldType.Field)}} ) };
+
+            var rows = TestOperation(
+                input,
+                new ProcessTransform(process),
+                new LogOperation()
+            );
+
+            Assert.AreEqual("F1+F2", rows[0]["result"]);
+            Assert.AreEqual("+", rows[1]["result"]);
+            Assert.AreEqual(" f1 + f2 ", rows[2]["result"]);
+            Assert.AreEqual("+", rows[3]["result"]);
+        }
+
+        [Test]
+        public void TestConcatTransform() {
+
+            var mock = new Mock<IOperation>();
+            mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row> {
+                new Row { {"Field1", "F1"}, {"Field2", "F2"} },
+                new Row { {"Field1", ""}, {"Field2", ""} },
+                new Row { {"Field1", " f1 "}, {"Field2", " f2 "}},
+                new Row { {"Field1", null }, {"Field2", null}}
+            });
+            var input = mock.Object;
+
+            var entity = new Entity();
+            entity.All["Field1"] = new Field(FieldType.Field) { Input = true };
+            entity.All["Field2"] = new Field(FieldType.Field) { Input = true };
+
+            var process = new Process();
+            process.Transforms = new ITransform[] { new ConcatTransform(new Dictionary<string, Field> { { "Field1", entity.All["Field1"] }, { "Field2", entity.All["Field2"] } }, new Dictionary<string, Field> { { "result", new Field(FieldType.Field) } }) };
+
+            var rows = TestOperation(
+                input,
+                new ProcessTransform(process),
+                new LogOperation()
+            );
+
+            Assert.AreEqual("F1F2", rows[0]["result"]);
+            Assert.AreEqual("", rows[1]["result"]);
+            Assert.AreEqual(" f1  f2 ", rows[2]["result"]);
+            Assert.AreEqual("", rows[3]["result"]);
+        }
+
 
     }
 }

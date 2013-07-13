@@ -32,6 +32,7 @@ namespace Transformalize.Test.Unit {
 SELECT
     [TestOrderDetail].[TflKey],
     [TestOrderDetail].[TflBatchId],
+    b.[TflUpdate],
     [TestOrderDetail].[Color],
     [TestOrderDetail].[Gender],
     [TestOrderDetail].[OrderDetailKey],
@@ -51,6 +52,7 @@ SELECT
     [TestCustomer].[State],
     [TestProduct].[ProductName]
 FROM [TestOrderDetail]
+INNER JOIN [TflBatch] b ON ([TestOrderDetail].TflBatchId = b.TflBatchId)
 INNER JOIN [TestOrder] ON ([TestOrderDetail].[OrderKey] = [TestOrder].[OrderKey])
 INNER JOIN [TestCustomer] ON ([TestOrderDetail].[CustomerKey] = [TestCustomer].[CustomerKey])
 INNER JOIN [TestProduct] ON ([TestOrderDetail].[ProductKey] = [TestProduct].[ProductKey])

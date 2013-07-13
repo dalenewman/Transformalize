@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -40,19 +41,18 @@ namespace Transformalize.Operations
             if (!_entity.IsMaster() && _entity.HasForeignKeys()) {
                 using (var cn = new SqlConnection(_process.MasterEntity.OutputConnection.ConnectionString)) {
                     cn.Open();
-                    var sql = PrepareSql();
-                    var cmd = new SqlCommand(sql, cn);
+                    var cmd = new SqlCommand(PrepareSql(), cn);
+                    cmd.Parameters.Add(new SqlParameter("@TflBatchId", _process.MasterEntity.TflBatchId));
                     var records = cmd.ExecuteNonQuery();
                     Info("{0} | Updated {1} Master Records.", _process.Name, records);
                 }
             }
-
             return rows;
         }
 
         private string PrepareSql() {
             var builder = new StringBuilder();
-            var masterEntity = _process.Entities.Where(e => e.Value.IsMaster()).Select(e=>e.Value).First();
+            var masterEntity = _process.MasterEntity;
 
             var master = string.Format("[{0}].[{1}]", masterEntity.Schema, masterEntity.OutputName());
             var source = string.Format("[{0}].[{1}]", _entity.Schema, _entity.OutputName());
@@ -69,7 +69,7 @@ namespace Transformalize.Operations
                 builder.AppendFormat("INNER JOIN {0} ON ({1})\r\n", left, join);
             }
 
-            builder.AppendFormat("WHERE {0}.[TflBatchId] = {1}", master, masterEntity.TflBatchId);
+            builder.AppendFormat("WHERE {0}.[TflBatchId] = @TflBatchId", master);
             return builder.ToString();
         }
     }

@@ -16,16 +16,17 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
 using Transformalize.Rhino.Etl.Core.Operations;
 
 namespace Transformalize.Operations {
-    public class EntityBatchId : AbstractOperation {
+    public class EntityAddTflFields : AbstractOperation {
         private readonly Entity _entity;
 
-        public EntityBatchId(Entity entity) {
+        public EntityAddTflFields(Entity entity) {
             _entity = entity;
             UseTransaction = false;
         }

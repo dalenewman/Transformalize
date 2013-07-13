@@ -39,33 +39,16 @@ namespace Transformalize {
                     new InitializationProcess(_process).Execute();
                     break;
                 default:
-                    ProcessEntities();
-                    ProcessMaster();
-                    ProcessTransforms();
+                    new EntityRecordsExist(ref _process).Check();
+                    foreach (var entity in _process.Entities) {
+                        new EntityProcess(ref _process, entity.Value).Execute();
+                    }
+                    new UpdateMasterProcess(ref _process).Execute();
+                    new TransformProcess(_process).Execute();
                     break;
             }
         }
 
-        private void ProcessEntities() {
-            new EntityRecordsExist(ref _process).Check();
-            foreach (var entity in _process.Entities) {
-                using (var process = new EntityProcess(ref _process, entity.Value)) {
-                    process.Execute();
-                }
-            }
-        }
-
-        private void ProcessMaster() {
-            using (var process = new UpdateMasterProcess(ref _process)) {
-                process.Execute();
-            }
-        }
-
-        private void ProcessTransforms() {
-            using (var process = new TransformProcess(_process)) {
-                process.Execute();
-            }
-        }
 
     }
 }

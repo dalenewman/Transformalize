@@ -57,7 +57,7 @@ namespace Transformalize.Processes {
                         .RegisterLast(new EntityBatchUpdate(_entity)));
                 RegisterLast(branch);
             } else {
-                Register(new EntityBatchId(_entity));
+                Register(new EntityAddTflFields(_entity));
                 RegisterLast(new EntityBulkInsert(_entity));
             }
         }
