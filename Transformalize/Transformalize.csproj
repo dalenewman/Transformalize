@@ -127,6 +127,9 @@
     <Compile Include="Operations\EntityBatchUpdate.cs" />
     <Compile Include="Operations\EntityOutputKeysExtract.cs" />
     <Compile Include="Operations\EntityJoinAction.cs" />
+    <Compile Include="Operations\EntityInputKeysStore.cs" />
+    <Compile Include="Operations\EntityInputKeysStoreExtract.cs" />
+    <Compile Include="Processes\EntityKeysProcess.cs" />
     <Compile Include="Processes\InitializationProcess.cs" />
     <Compile Include="Processes\EntityDropProcess.cs" />
     <Compile Include="Processes\EntityCreateProcess.cs" />
@@ -442,6 +445,7 @@
     <Compile Include="Operations\EntityTransform.cs" />
     <Compile Include="TransformalizeException.cs" />
     <Compile Include="Transforms\ConcatTransform.cs" />
+    <Compile Include="Transforms\Transformer.cs" />
     <Compile Include="Transforms\ToLowerTransform.cs" />
     <Compile Include="Transforms\ToUpperTransform.cs" />
     <Compile Include="Transforms\FormatTransform.cs" />
@@ -455,7 +459,6 @@
     <Compile Include="Transforms\TrimTransform.cs" />
     <Compile Include="Transforms\TrimEndTransform.cs" />
     <Compile Include="Transforms\InsertTransform.cs" />
-    <Compile Include="Transforms\ITransform.cs" />
     <Compile Include="SqlServerDataTypeService.cs" />
     <Compile Include="Operations\EntityInputKeysExtract.cs" />
     <Compile Include="LinqExtensions.cs" />

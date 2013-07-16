@@ -40,6 +40,7 @@ namespace Transformalize {
                     break;
                 default:
                     new EntityRecordsExist(ref _process).Check();
+                    new EntityKeysProcess(ref _process).Execute();
                     foreach (var entity in _process.Entities) {
                         new EntityProcess(ref _process, entity.Value).Execute();
                     }

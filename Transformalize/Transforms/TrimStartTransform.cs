@@ -18,13 +18,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System.Collections.Generic;
 using System.Text;
 using Transformalize.Model;
-using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Transforms {
-    public class TrimStartTransform : ITransform {
+    public class TrimStartTransform : Transformer {
         private readonly string _trimChars;
-        public Dictionary<string, Field> Parameters { get; private set; }
-        public Dictionary<string, Field> Results { get; private set; }
         private readonly char[] _trimCharArray;
 
         public TrimStartTransform(string trimChars) {
@@ -32,29 +29,23 @@ namespace Transformalize.Transforms {
             _trimCharArray = trimChars.ToCharArray();
         }
 
-        public TrimStartTransform(string trimChars, Dictionary<string, Field> parameters, Dictionary<string, Field> results) {
+        public TrimStartTransform(string trimChars, Dictionary<string, Field> parameters, Dictionary<string, Field> results)
+            : base(parameters, results) {
             _trimChars = trimChars;
-            Parameters = parameters;
-            Results = results;
             _trimCharArray = trimChars.ToCharArray();
-            HasParameters = parameters != null && parameters.Count > 0;
-            HasResults = results != null && results.Count > 0;
         }
 
-        public void Transform(ref StringBuilder sb) {
+        protected override string Name {
+            get { return "TrimStart Transform"; }
+        }
+
+        public override void Transform(ref StringBuilder sb) {
             sb.TrimStart(_trimChars);
         }
 
-        public void Transform(ref object value) {
+        public override void Transform(ref object value) {
             value = value.ToString().TrimStart(_trimCharArray);
         }
-        public void Transform(ref Row row) {
 
-        }
-
-        public bool HasParameters { get; private set; }
-        public bool HasResults { get; private set; }
-
-        public void Dispose() { }
     }
 }

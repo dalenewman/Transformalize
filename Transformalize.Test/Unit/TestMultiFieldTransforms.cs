@@ -34,7 +34,7 @@ namespace Transformalize.Test.Unit {
         public void TestJavascriptTransformStrings() {
 
             var process = new Process {
-                Transforms = new ITransform[] {
+                Transforms = new Transformer[] {
                     new JavascriptTransform("FirstName + ' ' + LastName",
                         new Dictionary<string, Field> { {"FirstName", new Field(FieldType.Field)},{"LastName",new Field(FieldType.Field)}},
                         new Dictionary<string, Field> { {"FullName", new Field(FieldType.Field)}}
@@ -57,7 +57,7 @@ namespace Transformalize.Test.Unit {
         public void TestJavascriptTransformNumbers() {
 
             var process = new Process {
-                Transforms = new ITransform[] {
+                Transforms = new Transformer[] {
                     new JavascriptTransform("x * y",
                         new Dictionary<string, Field> { {"x", new Field("System.Int32",8,FieldType.Field,true,0)},{"y",new Field("System.Int32",8,FieldType.Field,true,0)}},
                         new Dictionary<string, Field> { {"z", new Field(FieldType.Field)}}
@@ -80,7 +80,7 @@ namespace Transformalize.Test.Unit {
         public void TestFormatTransform() {
 
             var process = new Process {
-                Transforms = new ITransform[] {
+                Transforms = new Transformer[] {
                     new FormatTransform("{0} {1}",
                         new Dictionary<string, Field> { {"x", new Field(FieldType.Field)},{"y",new Field(FieldType.Field)}},
                         new Dictionary<string, Field> { {"z", new Field(FieldType.Field)}}

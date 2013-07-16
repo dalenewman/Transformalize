@@ -271,8 +271,8 @@ namespace Transformalize.Readers {
             };
         }
 
-        private ITransform[] GetTransforms(IEnumerable transforms) {
-            var result = new List<ITransform>();
+        private Transformer[] GetTransforms(IEnumerable transforms) {
+            var result = new List<Transformer>();
 
             foreach (TransformConfigurationElement t in transforms) {
                 var parameters = t.Parameters.Cast<ParameterConfigurationElement>().Select(p => _process.Entities[p.Entity].All[p.Field]).ToDictionary(v => v.Alias, v => v);

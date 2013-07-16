@@ -18,51 +18,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System.Collections.Generic;
 using System.Text;
 using Transformalize.Model;
-using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Transforms {
-    public class TrimTransform : ITransform {
+    public class TrimTransform : Transformer {
         private readonly string _trimChars;
         private readonly char[] _trimCharArray;
-        public Dictionary<string, Field> Parameters { get; private set; }
-        public Dictionary<string, Field> Results { get; private set; }
-        private readonly bool _hasParameters;
-        private readonly bool _hasResults;
-
-        public bool HasParameters {
-            get { return _hasParameters; }
-        }
-
-        public bool HasResults {
-            get { return _hasResults; }
-        }
 
         public TrimTransform(string trimChars) {
             _trimChars = trimChars;
             _trimCharArray = trimChars.ToCharArray();
         }
 
-        public TrimTransform(string trimChars, Dictionary<string, Field> parameters, Dictionary<string, Field> results) {
+        public TrimTransform(string trimChars, Dictionary<string, Field> parameters, Dictionary<string, Field> results)
+            : base(parameters, results) {
             _trimCharArray = trimChars.ToCharArray();
             _trimChars = trimChars;
-            Parameters = parameters;
-            Results = results;
-            _hasParameters = parameters != null && parameters.Count > 0;
-            _hasResults = results != null && results.Count > 0;
         }
 
-        public void Transform(ref StringBuilder sb) {
+        protected override string Name {
+            get { return "Trim Transform"; }
+        }
+
+        public override void Transform(ref StringBuilder sb) {
             sb.Trim(_trimChars);
         }
 
-        public void Transform(ref object value) {
+        public override void Transform(ref object value) {
             value = value.ToString().Trim(_trimCharArray);
         }
-
-        public void Transform(ref Row row) {
-
-        }
-
-        public void Dispose() { }
     }
 }

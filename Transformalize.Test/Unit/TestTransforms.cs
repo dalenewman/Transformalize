@@ -43,10 +43,9 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void TestReplaceTransform()
-        {
+        public void TestReplaceTransform() {
             var entity = new Entity();
-            entity.All["Field1"] = new Field(FieldType.Field) { Transforms = new[] { new ReplaceTransform("b", "B"), new ReplaceTransform("2", "Two") }};
+            entity.All["Field1"] = new Field(FieldType.Field) { Transforms = new[] { new ReplaceTransform("b", "B"), new ReplaceTransform("2", "Two") } };
 
             var rows = TestOperation(
                 _testInput.Object,
@@ -60,8 +59,7 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void TestInsertTransform()
-        {
+        public void TestInsertTransform() {
 
             var entity = new Entity();
             entity.All["Field1"] = new Field(FieldType.Field) { Transforms = new[] { new InsertTransform(1, ".") } };
@@ -101,8 +99,8 @@ namespace Transformalize.Test.Unit {
         public void TestTrimStartTransform() {
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field(FieldType.Field) {Transforms = new[] {new TrimStartTransform("1 ")}};
-           
+            entity.All["Field1"] = new Field(FieldType.Field) { Transforms = new[] { new TrimStartTransform("1 ") } };
+
             var rows = TestOperation(
                 _testInput.Object,
                 new EntityTransform(entity),
@@ -155,7 +153,7 @@ namespace Transformalize.Test.Unit {
         public void TestTrimTransform() {
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field(FieldType.Field) { Transforms = new[] { new TrimTransform("1G") }};
+            entity.All["Field1"] = new Field(FieldType.Field) { Transforms = new[] { new TrimTransform("1G") } };
 
             var rows = TestOperation(
                 _testInput.Object,
@@ -468,7 +466,9 @@ namespace Transformalize.Test.Unit {
             entity.All["Field2"] = new Field(FieldType.Field) { Input = true };
 
             var process = new Process();
-            process.Transforms = new ITransform[] { new FormatTransform("{0}+{1}", new Dictionary<string, Field> { {"Field1", entity.All["Field1"]}, {"Field2",entity.All["Field2"]}},new Dictionary<string, Field>{{"result", new Field(FieldType.Field)}} ) };
+            process.Transforms = new Transformer[] {
+                new FormatTransform("{0}+{1}", new Dictionary<string, Field> { {"Field1", entity.All["Field1"]}, {"Field2",entity.All["Field2"]}},new Dictionary<string, Field>{{"result", new Field(FieldType.Field)}} )
+            };
 
             var rows = TestOperation(
                 input,
@@ -499,7 +499,7 @@ namespace Transformalize.Test.Unit {
             entity.All["Field2"] = new Field(FieldType.Field) { Input = true };
 
             var process = new Process();
-            process.Transforms = new ITransform[] { new ConcatTransform(new Dictionary<string, Field> { { "Field1", entity.All["Field1"] }, { "Field2", entity.All["Field2"] } }, new Dictionary<string, Field> { { "result", new Field(FieldType.Field) } }) };
+            process.Transforms = new Transformer[] { new ConcatTransform(new Dictionary<string, Field> { { "Field1", entity.All["Field1"] }, { "Field2", entity.All["Field2"] } }, new Dictionary<string, Field> { { "result", new Field(FieldType.Field) } }) };
 
             var rows = TestOperation(
                 input,

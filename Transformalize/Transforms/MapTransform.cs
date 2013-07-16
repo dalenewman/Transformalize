@@ -21,9 +21,7 @@ using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Transforms {
-    public class MapTransform : ITransform {
-        public Dictionary<string, Field> Parameters { get; private set; }
-        public Dictionary<string, Field> Results { get; private set; }
+    public class MapTransform : Transformer {
         private readonly IDictionary<string, object> _equals;
         private readonly IDictionary<string, object> _startsWith;
         private readonly IDictionary<string, object> _endsWith;
@@ -34,17 +32,18 @@ namespace Transformalize.Transforms {
             _endsWith = maps[2];
         }
 
-        public MapTransform(IList<IDictionary<string, object>> maps, Dictionary<string, Field> parameters, Dictionary<string, Field> results) {
-            Parameters = parameters;
-            Results = results;
+        public MapTransform(IList<IDictionary<string, object>> maps, Dictionary<string, Field> parameters, Dictionary<string, Field> results)
+            : base(parameters, results) {
             _equals = maps[0];
             _startsWith = maps[1];
             _endsWith = maps[2];
-            HasParameters = parameters != null && parameters.Count > 0;
-            HasResults = results != null && results.Count > 0;
         }
 
-        public void Transform(ref StringBuilder sb) {
+        protected override string Name {
+            get { return "Map Transform"; }
+        }
+
+        public override void Transform(ref StringBuilder sb) {
 
             foreach (var pair in _equals) {
                 if (!sb.IsEqualTo(pair.Key)) continue;
@@ -76,7 +75,7 @@ namespace Transformalize.Transforms {
 
         }
 
-        public void Transform(ref object value) {
+        public override void Transform(ref object value) {
             foreach (var key in _equals.Keys) {
                 if (!value.Equals(key)) continue;
                 value = _equals[key];
@@ -103,14 +102,5 @@ namespace Transformalize.Transforms {
 
         }
 
-        public void Transform(ref Row row)
-        {
-            
-        }
-
-        public bool HasParameters { get; private set; }
-        public bool HasResults { get; private set; }
-
-        public void Dispose() { }
     }
 }

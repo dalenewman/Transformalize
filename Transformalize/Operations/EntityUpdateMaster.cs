@@ -37,14 +37,30 @@ namespace Transformalize.Operations
             UseTransaction = false;
         }
 
-        public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
-            if (!_entity.IsMaster() && _entity.HasForeignKeys()) {
+        public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
+        {
+            if (_entity.IsMaster())
+                return rows;
+
+            if (_entity.RecordsAffected == 0)
+                return rows;
+
+            if (_process.OutputRecordsExist || _entity.HasForeignKeys()) {
                 using (var cn = new SqlConnection(_process.MasterEntity.OutputConnection.ConnectionString)) {
                     cn.Open();
                     var cmd = new SqlCommand(PrepareSql(), cn);
-                    cmd.Parameters.Add(new SqlParameter("@TflBatchId", _process.MasterEntity.TflBatchId));
+
+                    Info(string.Empty);
+                    Info(cmd.CommandText);
+                    Info(string.Empty);
+                    Info("Entity TflBatchId = {0}", _entity.TflBatchId);
+                    Info("Master TflBatchId = {0}", _process.MasterEntity.TflBatchId);
+                    Info(string.Empty);
+                    
+                    cmd.Parameters.Add(new SqlParameter("@TflBatchId", _entity.TflBatchId));
                     var records = cmd.ExecuteNonQuery();
-                    Info("{0} | Updated {1} Master Records.", _process.Name, records);
+
+                    Info("{0} | Processed {1} rows in EntityUpdateMaster", _process.Name, records);
                 }
             }
             return rows;
@@ -54,22 +70,25 @@ namespace Transformalize.Operations
             var builder = new StringBuilder();
             var masterEntity = _process.MasterEntity;
 
-            var master = string.Format("[{0}].[{1}]", masterEntity.Schema, masterEntity.OutputName());
-            var source = string.Format("[{0}].[{1}]", _entity.Schema, _entity.OutputName());
-            var sets = new FieldSqlWriter(_entity.Fields).FieldType(FieldType.ForeignKey).Alias().Set(master, source);
+            var master = string.Format("[{0}]", masterEntity.OutputName());
+            var source = string.Format("[{0}]", _entity.OutputName());
+            var sets = _process.OutputRecordsExist ?
+                new FieldSqlWriter(_entity.Fields).FieldType(FieldType.ForeignKey).AddBatchId(false).Alias().Set(master, source).Write(",\r\n    ") :
+                new FieldSqlWriter(_entity.Fields).FieldType(FieldType.ForeignKey).Alias().Set(master, source).Write(",\r\n    ");
+
 
             builder.AppendFormat("UPDATE {0}\r\n", master);
             builder.AppendFormat("SET {0}\r\n", sets);
-            builder.AppendFormat("FROM [{0}].[{1}]\r\n", _entity.Schema, _entity.OutputName());
+            builder.AppendFormat("FROM {0}\r\n", source);
 
             foreach (var relationship in _entity.RelationshipToMaster) {
-                var left = string.Format("[{0}].[{1}]", relationship.LeftEntity.Schema, relationship.LeftEntity.OutputName());
-                var right = string.Format("[{0}].[{1}]", relationship.RightEntity.Schema, relationship.RightEntity.OutputName());
+                var left = string.Format("[{0}]", relationship.LeftEntity.OutputName());
+                var right = string.Format("[{0}]", relationship.RightEntity.OutputName());
                 var join = string.Join(" AND ", relationship.Join.Select(j => string.Format("{0}.[{1}] = {2}.[{3}]", left, j.LeftField.Alias, right, j.RightField.Alias)));
                 builder.AppendFormat("INNER JOIN {0} ON ({1})\r\n", left, join);
             }
 
-            builder.AppendFormat("WHERE {0}.[TflBatchId] = @TflBatchId", master);
+            builder.AppendFormat("WHERE {0}.[TflBatchId] = @TflBatchId", source);
             return builder.ToString();
         }
     }

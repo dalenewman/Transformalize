@@ -33,7 +33,7 @@ namespace Transformalize.Model {
         public Dictionary<string, Dictionary<string, object>> MapEquals = new Dictionary<string, Dictionary<string, object>>();
         public Dictionary<string, Dictionary<string, object>> MapStartsWith = new Dictionary<string, Dictionary<string, object>>();
         public Dictionary<string, Dictionary<string, object>> MapEndsWith = new Dictionary<string, Dictionary<string, object>>();
-        public ITransform[] Transforms { get; set; }
+        public Transformer[] Transforms { get; set; }
         public Dictionary<string, Field> Parameters = new Dictionary<string, Field>();
         public Dictionary<string, Field> Results = new Dictionary<string, Field>();
         public IEnumerable<Field> RelatedKeys;

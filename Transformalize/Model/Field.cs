@@ -47,7 +47,7 @@ namespace Transformalize.Model {
         public bool NotNull { get; set; }
         public bool Identity { get; set; }
         public KeyValuePair<string, string> References { get; set; }
-        public ITransform[] Transforms { get; set; }
+        public Transformer[] Transforms { get; set; }
         public bool Output { get; private set; }
         public bool UseStringBuilder { get; private set; }
         public Type SystemType { get; private set; }

@@ -22,41 +22,35 @@ using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Transforms {
-    public class JavascriptTransform : ITransform {
+    public class JavascriptTransform : Transformer {
         private readonly JavascriptContext _context = new JavascriptContext();
         private readonly string _script;
-        public Dictionary<string, Field> Parameters { get; private set; }
-        public Dictionary<string, Field> Results { get; private set; }
-        private readonly bool _hasParameters;
-        private readonly bool _hasResults;
-
-        public bool HasParameters { get { return _hasParameters; } }
-        public bool HasResults { get { return _hasResults; } }
 
         public JavascriptTransform(string script) {
             _script = script;
         }
 
-        public JavascriptTransform(string script, Dictionary<string, Field> parameters, Dictionary<string, Field> results) {
+        public JavascriptTransform(string script, Dictionary<string, Field> parameters, Dictionary<string, Field> results)
+            : base(parameters, results) {
             _script = script;
-            Parameters = parameters;
-            Results = results;
-            _hasParameters = parameters != null && parameters.Count > 0;
-            _hasResults = results != null && results.Count > 0;
         }
 
-        public void Transform(ref StringBuilder sb) {
+        protected override string Name {
+            get { return "Javascript Transform"; }
+        }
+
+        public override void Transform(ref StringBuilder sb) {
             _context.SetParameter("field", sb.ToString());
             sb.Clear();
             sb.Append(Run());
         }
 
-        public void Transform(ref object value) {
+        public override void Transform(ref object value) {
             _context.SetParameter("field", value);
             value = Run();
         }
 
-        public void Transform(ref Row row) {
+        public override void Transform(ref Row row) {
             foreach (var pair in Parameters) {
                 _context.SetParameter(pair.Key, row[pair.Key]);
             }
@@ -70,8 +64,9 @@ namespace Transformalize.Transforms {
             return _context.Run(_script);
         }
 
-        public void Dispose() {
+        public new void Dispose() {
             _context.Dispose();
+            base.Dispose();
         }
     }
 }

@@ -16,61 +16,31 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System.Collections.Generic;
-using System.Text;
 using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Transforms {
-    public class ConcatTransform : ITransform {
+    public class ConcatTransform : Transformer {
 
-        public Dictionary<string, Field> Parameters { get; private set; }
-        public Dictionary<string, Field> Results { get; private set; }
-        private readonly bool _hasParameters;
-        private readonly bool _hasResults;
         private readonly object[] _parameterValues;
         private int _index;
 
-        public bool HasParameters {
-            get { return _hasParameters; }
-        }
-        public bool HasResults {
-            get { return _hasResults; }
-        }
+        protected override string Name { get { return "Concat Transform"; } }
 
-        public ConcatTransform(Dictionary<string, Field> parameters, Dictionary<string, Field> results) {
-            Parameters = parameters;
-            Results = results;
-            _hasParameters = parameters != null && parameters.Count > 0;
-            _hasResults = results != null && results.Count > 0;
-
-            if (!_hasParameters) return;
-
-            _parameterValues = new object[Parameters.Count];
+        public ConcatTransform(Dictionary<string, Field> parameters, Dictionary<string, Field> results)
+            : base(parameters, results) {
+            if (HasParameters) {
+                _parameterValues = new object[Parameters.Count];
+            }
         }
 
-        public ConcatTransform() {
-            throw new TransformalizeException("Do Concat transform at Entity or Process level.  Concat needs parameters.");
-        }
-
-        public void Transform(ref StringBuilder sb) {
-        }
-
-        public void Transform(ref object value) {
-        }
-
-        public void Transform(ref Row row) {
+        public override void Transform(ref Row row) {
             _index = 0;
             foreach (var pair in Parameters) {
                 _parameterValues[_index] = row[pair.Key];
                 _index++;
             }
-            var result = string.Concat(_parameterValues);
-            foreach (var pair in Results) {
-                row[pair.Key] = result;
-            }
-        }
-
-        public void Dispose() {
+            row[FirstResult.Key] = string.Concat(_parameterValues);
         }
 
     }

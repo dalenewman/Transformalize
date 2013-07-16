@@ -40,7 +40,7 @@ namespace Transformalize.Processes {
 
         protected override void Initialize() {
 
-            Register(new EntityInputKeysExtract(_entity));
+            Register(new EntityInputKeysStoreExtract(_entity));
             Register(new EntityKeysToOperations(_entity));
             Register(new SerialUnionAllOperation());
             Register(new EntityDefaults(_entity));

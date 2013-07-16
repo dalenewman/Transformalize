@@ -18,7 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using Transformalize.Data;
 using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Model {
@@ -42,16 +44,20 @@ namespace Transformalize.Model {
         public int TflBatchId { get; set; }
         public int InputCount { get; set; }
         public int OutputCount { get; set; }
-
         public IEnumerable<Relationship> RelationshipToMaster { get; set; }
+        public List<Row> InputKeys { get; set; }
+        public IDbCommand InputKeysCommand { get; set; }
+        public IEntityVersionReader EntityVersionReader { get; private set; }
 
-        public Entity() {
+        public Entity(IEntityVersionReader entityVersionReader = null) {
             Name = string.Empty;
             Schema = string.Empty;
             PrimaryKey = new Dictionary<string, Field>();
             Fields = new Dictionary<string, Field>();
             All = new Dictionary<string, Field>();
             Joins = new Dictionary<string, Relationship>();
+            EntityVersionReader = entityVersionReader ?? new SqlServerEntityVersionReader(this);
+            InputKeys = new List<Row>();
         }
 
         public string FirstKey() {
@@ -74,9 +80,16 @@ namespace Transformalize.Model {
         public string OutputName() {
             return string.Concat(ProcessName, Name);
         }
-        
+
         public bool HasForeignKeys() {
             return Fields.Any(f => f.Value.FieldType.Equals(FieldType.ForeignKey));
+        }
+
+        public bool NeedsUpdate() {
+            if (!EntityVersionReader.HasRows)
+                return false;
+
+            return (!EntityVersionReader.IsRange || !EntityVersionReader.BeginAndEndAreEqual());
         }
     }
 }

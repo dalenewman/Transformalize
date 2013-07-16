@@ -16,40 +16,20 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
 using System.Text;
-using Transformalize.Model;
-using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Transforms {
-    public class ToUpperTransform : ITransform {
-
-        public Dictionary<string, Field> Parameters { get; private set; }
-        public Dictionary<string, Field> Results { get; private set; }
-
-        public bool HasParameters { get; private set; }
-        public bool HasResults { get; private set; }
-
-        public ToUpperTransform() {
-            HasParameters = false;
-            HasResults = false;
+    public class ToUpperTransform : Transformer {
+        protected override string Name {
+            get { return "ToUpper Transform"; }
         }
 
-        public ToUpperTransform(Dictionary<string, Field> parameters, Dictionary<string, Field> results) {
-            throw new TransformalizeException("Do ToUpper transform in <fields/> element!");
-        }
-
-        public void Transform(ref StringBuilder sb) {
+        public override void Transform(ref StringBuilder sb) {
             sb.ToUpper();
         }
 
-        public void Transform(ref object value) {
+        public override void Transform(ref object value) {
             value = value.ToString().ToUpper();
         }
-
-        public void Transform(ref Row row) {
-        }
-
-        public void Dispose() { }
     }
 }

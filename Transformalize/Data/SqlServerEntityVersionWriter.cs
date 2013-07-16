@@ -45,7 +45,7 @@ namespace Transformalize.Data {
                 }
             }
 
-            Info("{0} | Closing {1}", _entity.ProcessName, _entity.Name);
+            Info("{0} | Processed {1}", _entity.ProcessName, _entity.Name);
         }
 
         private string PrepareSql() {
