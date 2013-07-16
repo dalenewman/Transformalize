@@ -319,6 +319,9 @@ namespace Transformalize.Readers {
                     case "javascript":
                         result.Add(new JavascriptTransform(t.Script, parameters, results));
                         break;
+                    case "template":
+                        result.Add(new TemplateTransform(t.Template, parameters, results));
+                        break;
                     case "padleft":
                         result.Add(new PadLeftTransform(t.TotalWidth, t.PaddingChar, parameters, results));
                         break;

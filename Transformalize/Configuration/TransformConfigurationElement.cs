@@ -120,6 +120,14 @@ namespace Transformalize.Configuration
             set { this["script"] = value; }
         }
 
+        [ConfigurationProperty("template", IsRequired = false)]
+        public string Template {
+            get {
+                return this["template"] as string;
+            }
+            set { this["template"] = value; }
+        }
+
         [ConfigurationProperty("parameters")]
         public ParameterElementCollection Parameters {
             get {

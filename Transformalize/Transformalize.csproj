@@ -445,6 +445,7 @@
     <Compile Include="Operations\EntityTransform.cs" />
     <Compile Include="TransformalizeException.cs" />
     <Compile Include="Transforms\ConcatTransform.cs" />
+    <Compile Include="Transforms\TemplateTransform.cs" />
     <Compile Include="Transforms\Transformer.cs" />
     <Compile Include="Transforms\ToLowerTransform.cs" />
     <Compile Include="Transforms\ToUpperTransform.cs" />

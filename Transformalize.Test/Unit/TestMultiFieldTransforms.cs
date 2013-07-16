@@ -99,6 +99,31 @@ namespace Transformalize.Test.Unit {
             Assert.AreEqual("Dale Newman", rows[0]["z"]);
         }
 
+        [Test]
+        public void TestTemplateTransformStrings() {
+
+            var process = new Process {
+                Transforms = new Transformer[] {
+                    new TemplateTransform("@{ var fullName = Model.FirstName + \" \" + Model.LastName;}@fullName",
+                        new Dictionary<string, Field> { {"FirstName", new Field(FieldType.Field)},{"LastName",new Field(FieldType.Field)}},
+                        new Dictionary<string, Field> { {"FullName", new Field(FieldType.Field)}}
+                    )
+                }
+            };
+
+            var rows = TestOperation(
+                GetTestData(new List<Row> {
+                    new Row { {"FirstName", "Dale"}, {"LastName", "Newman"} },
+                }),
+                new ProcessTransform(process),
+                new LogOperation()
+            );
+
+            Assert.AreEqual("Dale Newman", rows[0]["FullName"]);
+        }
+
+
+
 
         private static IOperation GetTestData(IEnumerable<Row> data) {
             var mock = new Mock<IOperation>();
