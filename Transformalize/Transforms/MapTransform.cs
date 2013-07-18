@@ -17,8 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System.Collections.Generic;
 using System.Text;
-using Transformalize.Model;
-using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Transforms {
     public class MapTransform : Transformer {
@@ -27,13 +25,6 @@ namespace Transformalize.Transforms {
         private readonly IDictionary<string, object> _endsWith;
 
         public MapTransform(IList<IDictionary<string, object>> maps) {
-            _equals = maps[0];
-            _startsWith = maps[1];
-            _endsWith = maps[2];
-        }
-
-        public MapTransform(IList<IDictionary<string, object>> maps, Dictionary<string, Field> parameters, Dictionary<string, Field> results)
-            : base(parameters, results) {
             _equals = maps[0];
             _startsWith = maps[1];
             _endsWith = maps[2];

@@ -1,4 +1,4 @@
-﻿/*
+/*
 Transformalize - Replicate, Transform, and Denormalize Your Data...
 Copyright (C) 2013 Dale Newman
 
@@ -15,22 +15,24 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
+using System.Collections.Generic;
 using Transformalize.Model;
+using Transformalize.Rhino.Etl.Core;
 
-namespace Transformalize.Data {
-    public class EntityDropper {
-        private readonly Process _process;
-        private readonly IEntityDropper _dropper;
+namespace Transformalize.Transforms {
+    public class CopyTransform : Transformer {
 
-        public EntityDropper(ref Process process, IEntityDropper dropper = null) {
-            _process = process;
-            _dropper = dropper ?? new SqlServerEntityDropper();
+        protected override string Name {
+            get { return "Copy Transform"; }
         }
 
-        public void Drop() {
-            foreach (var entity in _process.Entities) {
-                _dropper.DropOutput(entity);
+        public CopyTransform(Dictionary<string, Field> parameters, Dictionary<string, Field> results)
+            : base(parameters, results) {
+        }
+
+        public override void Transform(ref Row row) {
+            foreach (var pair in Results) {
+                row[pair.Key] = row[FirstParameter.Key];
             }
         }
     }

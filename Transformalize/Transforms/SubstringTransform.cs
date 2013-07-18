@@ -30,12 +30,6 @@ namespace Transformalize.Transforms {
             _length = length;
         }
 
-        public SubstringTransform(int startIndex, int length, Dictionary<string, Field> parameters, Dictionary<string, Field> results)
-            : base(parameters, results) {
-            _startIndex = startIndex;
-            _length = length;
-        }
-
         protected override string Name {
             get { return "Substring Transform"; }
         }

@@ -30,6 +30,7 @@ namespace Transformalize.Transforms {
         public Dictionary<string, Field> Parameters { get; set; }
         public Dictionary<string, Field> Results { get; set; }
         protected KeyValuePair<string, Field> FirstResult { get; set; }
+        protected KeyValuePair<string, Field> FirstParameter { get; set; } 
         protected bool HasParameters { get; private set; }
         protected bool HasResults { get; private set; }
         protected object[] ParameterValues { get; private set; }
@@ -57,6 +58,7 @@ namespace Transformalize.Transforms {
             }
             if (HasParameters) {
                 ParameterValues = new object[Parameters.Count];
+                FirstParameter = Parameters.First();
             }
         }
 

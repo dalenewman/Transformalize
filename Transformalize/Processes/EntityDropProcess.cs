@@ -32,8 +32,8 @@ namespace Transformalize.Processes {
         }
 
         protected override void Initialize() {
-            foreach (var pair in _process.Entities) {
-                Register(new EntityDrop(pair.Value));
+            foreach (var entity in _process.Entities) {
+                Register(new EntityDrop(entity));
             }
         }
 

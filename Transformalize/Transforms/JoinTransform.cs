@@ -16,33 +16,33 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System.Collections.Generic;
-using System.Text;
 using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Transforms {
-    public class RemoveTransform : Transformer {
-        private readonly int _startIndex;
-        private readonly int _length;
+    public class JoinTransform : Transformer {
+        private readonly string _separator;
+        private readonly object[] _parameterValues;
+        private int _index;
 
-        public RemoveTransform(int startIndex, int length) {
-            _startIndex = startIndex;
-            _length = length;
+        protected override string Name { get { return "Join Transform"; } }
+
+        public JoinTransform(string separator, Dictionary<string, Field> parameters, Dictionary<string, Field> results)
+            : base(parameters, results) {
+            _separator = separator;
+            if (HasParameters) {
+                _parameterValues = new object[Parameters.Count];
+            }
         }
 
-        protected override string Name {
-            get { return "Remove Transform"; }
+        public override void Transform(ref Row row) {
+            _index = 0;
+            foreach (var pair in Parameters) {
+                _parameterValues[_index] = row[pair.Key];
+                _index++;
+            }
+            row[FirstResult.Key] = string.Join(_separator, _parameterValues);
         }
 
-        public override void Transform(ref StringBuilder sb) {
-            if (_startIndex > sb.Length) return;
-            sb.Remove(_startIndex, _length);
-        }
-
-        public override void Transform(ref object value) {
-            var str = value.ToString();
-            if (_startIndex > str.Length) return;
-            value = str.Remove(_startIndex, _length);
-        }
     }
 }

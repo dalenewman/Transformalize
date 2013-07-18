@@ -16,33 +16,37 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System.Collections.Generic;
-using System.Text;
 using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Transforms {
-    public class RemoveTransform : Transformer {
-        private readonly int _startIndex;
-        private readonly int _length;
-
-        public RemoveTransform(int startIndex, int length) {
-            _startIndex = startIndex;
-            _length = length;
-        }
+    public class SplitTransform : Transformer {
+        private readonly char[] _separatorArray;
+        private readonly int _count;
+        private int _index;
+        private readonly object[] _parameterValues;
 
         protected override string Name {
-            get { return "Remove Transform"; }
+            get { return "Split Transform"; }
         }
 
-        public override void Transform(ref StringBuilder sb) {
-            if (_startIndex > sb.Length) return;
-            sb.Remove(_startIndex, _length);
+        public SplitTransform(string separator, Dictionary<string, Field> parameters, Dictionary<string, Field> results)
+            : base(parameters, results) {
+            _separatorArray = separator.ToCharArray();
+            if (HasParameters) {
+                _parameterValues = new object[Parameters.Count];
+            }
+            _count = Results.Count;
         }
 
-        public override void Transform(ref object value) {
-            var str = value.ToString();
-            if (_startIndex > str.Length) return;
-            value = str.Remove(_startIndex, _length);
+        public override void Transform(ref Row row)
+        {
+            var split = row[FirstParameter.Key].ToString().Split(_separatorArray, _count);
+            _index = 0;
+            foreach (var pair in Results) {
+                row[pair.Key] = split[_index];
+                _index++;
+            }
         }
     }
 }

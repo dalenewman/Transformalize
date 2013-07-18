@@ -40,31 +40,36 @@ namespace Transformalize.Processes {
 
         protected override void Initialize() {
 
-            Register(new EntityInputKeysStoreExtract(_entity));
+            var keysExtract = new EntityInputKeysExtract(_entity);
+            if (!keysExtract.NeedsToRun()) return;
+
+            Register(keysExtract);
+            Register(new EntityInputKeysStore(_entity));
             Register(new EntityKeysToOperations(_entity));
             Register(new SerialUnionAllOperation());
             Register(new EntityDefaults(_entity));
+            Register(new FieldTransform(_entity));
             Register(new EntityTransform(_entity));
 
             if (_process.OutputRecordsExist) {
                 Register(new EntityJoinAction(_entity).Right(new EntityOutputKeysExtract(_entity)));
                 var branch = new BranchingOperation()
                     .Add(new PartialProcessOperation()
-                        .Register(new EntityActionFilter(ref _entity, EntityAction.Insert))
-                        .RegisterLast(new EntityBulkInsert(_entity)))
+                             .Register(new EntityActionFilter(ref _entity, EntityAction.Insert))
+                             .RegisterLast(new EntityBulkInsert(_entity)))
                     .Add(new PartialProcessOperation()
-                        .Register(new EntityActionFilter(ref _entity, EntityAction.Update))
-                        .RegisterLast(new EntityBatchUpdate(_entity)));
+                             .Register(new EntityActionFilter(ref _entity, EntityAction.Update))
+                             .RegisterLast(new EntityBatchUpdate(_entity)));
                 RegisterLast(branch);
-            } else {
+            }
+            else {
                 Register(new EntityAddTflFields(_entity));
                 RegisterLast(new EntityBulkInsert(_entity));
             }
+
         }
 
         protected override void PostProcessing() {
-
-            _entity.Dispose();
 
             var errors = GetAllErrors().ToArray();
             if (errors.Any()) {

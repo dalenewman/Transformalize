@@ -38,6 +38,22 @@ namespace Transformalize.Configuration
             set { this["value"] = value; }
         }
 
+        [ConfigurationProperty("pattern", IsRequired = false)]
+        public string Pattern {
+            get {
+                return this["pattern"] as string;
+            }
+            set { this["pattern"] = value; }
+        }
+
+        [ConfigurationProperty("replacement", IsRequired = false, DefaultValue = "")]
+        public string Replacement {
+            get {
+                return this["replacement"] as string;
+            }
+            set { this["replacement"] = value; }
+        }
+
         [ConfigurationProperty("oldValue", IsRequired = false)]
         public string OldValue {
             get {
@@ -69,6 +85,14 @@ namespace Transformalize.Configuration
                 return (int) this["index"];
             }
             set { this["index"] = value; }
+        }
+
+        [ConfigurationProperty("count", IsRequired = false, DefaultValue = 0)]
+        public int Count {
+            get {
+                return (int)this["count"];
+            }
+            set { this["count"] = value; }
         }
 
         [ConfigurationProperty("startIndex", IsRequired = false)]
@@ -148,6 +172,14 @@ namespace Transformalize.Configuration
                 return this["format"] as string;
             }
             set { this["format"] = value; }
+        }
+
+        [ConfigurationProperty("separator", IsRequired = false)]
+        public string Separator {
+            get {
+                return this["separator"] as string;
+            }
+            set { this["separator"] = value; }
         }
     }
 }

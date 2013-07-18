@@ -14,7 +14,7 @@ namespace Transformalize.Operations {
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             _entity.InputKeys = rows.ToList();
-            yield break;
+            return _entity.InputKeys;
         }
 
     }

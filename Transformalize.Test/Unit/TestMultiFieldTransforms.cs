@@ -122,8 +122,28 @@ namespace Transformalize.Test.Unit {
             Assert.AreEqual("Dale Newman", rows[0]["FullName"]);
         }
 
+        [Test]
+        public void TestJoinTransformStrings() {
 
+            var process = new Process {
+                Transforms = new Transformer[] {
+                    new JoinTransform(" ",
+                        new Dictionary<string, Field> { {"FirstName", new Field(FieldType.Field)},{"LastName",new Field(FieldType.Field)}},
+                        new Dictionary<string, Field> { {"FullName", new Field(FieldType.Field)}}
+                    )
+                }
+            };
 
+            var rows = TestOperation(
+                GetTestData(new List<Row> {
+                    new Row { {"FirstName", "Dale"}, {"LastName", "Newman"} },
+                }),
+                new ProcessTransform(process),
+                new LogOperation()
+            );
+
+            Assert.AreEqual("Dale Newman", rows[0]["FullName"]);
+        }
 
         private static IOperation GetTestData(IEnumerable<Row> data) {
             var mock = new Mock<IOperation>();

@@ -30,22 +30,6 @@ namespace Transformalize.Configuration {
             set { this["name"] = value; }
         }
 
-        [ConfigurationProperty("output", IsRequired = true)]
-        public string Output {
-            get {
-                return this["output"] as string;
-            }
-            set { this["output"] = value; }
-        }
-
-        [ConfigurationProperty("connection", IsRequired = true)]
-        public string Connection {
-            get {
-                return this["connection"] as string;
-            }
-            set { this["connection"] = value; }
-        }
-
         [ConfigurationProperty("connections")]
         public ConnectionElementCollection Connections {
             get {

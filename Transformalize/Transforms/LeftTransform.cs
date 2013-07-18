@@ -15,20 +15,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-using System.Collections.Generic;
 using System.Text;
-using Transformalize.Model;
 
 namespace Transformalize.Transforms {
     public class LeftTransform : Transformer {
         private readonly int _length;
 
         public LeftTransform(int length) {
-            _length = length;
-        }
-
-        public LeftTransform(int length, Dictionary<string, Field> parameters, Dictionary<string, Field> results)
-            : base(parameters, results) {
             _length = length;
         }
 

@@ -33,7 +33,12 @@ namespace Transformalize.Operations {
             TurnOptionOff(SqlBulkCopyOptions.UseInternalTransaction);
         }
 
+        void EntityBulkInsert_OnFinishedProcessing(IOperation obj) {
+            _entity.RecordsAffected = _count;
+        }
+
         protected override void PrepareSchema() {
+            OnFinishedProcessing += EntityBulkInsert_OnFinishedProcessing;
             NotifyBatchSize = 1000;
             BatchSize = _entity.OutputConnection.OutputBatchSize;
 
@@ -48,9 +53,5 @@ namespace Transformalize.Operations {
             Info("{0} | Processed {1} rows in EntityBulkInsert", _entity.ProcessName, _count);
         }
 
-        public override void Dispose() {
-            _entity.RecordsAffected = _count;
-            base.Dispose();
-        }
     }
 }

@@ -50,12 +50,7 @@ namespace Transformalize.Operations
                     cn.Open();
                     var cmd = new SqlCommand(PrepareSql(), cn);
 
-                    Info(string.Empty);
-                    Info(cmd.CommandText);
-                    Info(string.Empty);
-                    Info("Entity TflBatchId = {0}", _entity.TflBatchId);
-                    Info("Master TflBatchId = {0}", _process.MasterEntity.TflBatchId);
-                    Info(string.Empty);
+                    Debug(cmd.CommandText);
                     
                     cmd.Parameters.Add(new SqlParameter("@TflBatchId", _entity.TflBatchId));
                     var records = cmd.ExecuteNonQuery();

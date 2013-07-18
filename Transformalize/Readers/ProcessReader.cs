@@ -58,7 +58,7 @@ namespace Transformalize.Readers {
             _process.View = _process.MasterEntity.OutputName() + "Star";
 
             foreach (var entity in _process.Entities) {
-                entity.Value.RelationshipToMaster = ReadRelationshipToMaster(entity.Value);
+                entity.RelationshipToMaster = ReadRelationshipToMaster(entity);
             }
 
             LogProcessConfiguration();
@@ -82,6 +82,8 @@ namespace Transformalize.Readers {
             Info("{0} | {1} Map{2}.", _process.Name, _mapCount, _mapCount == 1 ? string.Empty : "s");
             Info("{0} | {1} Entit{2}.", _process.Name, _entityCount, _entityCount == 1 ? "y" : "ies");
             Info("{0} | {1} Relationship{2}.", _process.Name, _relationshipCount, _relationshipCount == 1 ? string.Empty : "s");
+
+            _transformCount += _process.Entities.SelectMany(e => e.All).SelectMany(f => f.Value.Transforms).Count();
             Info("{0} | {1} Transform{2}.", _process.Name, _transformCount, _transformCount == 1 ? string.Empty : "s");
         }
 
@@ -90,7 +92,14 @@ namespace Transformalize.Readers {
         }
 
         private int ReadTransforms(ProcessConfigurationElement config) {
-            _process.Transforms = GetTransforms(config.Transforms);
+            var alternates = new Dictionary<string, Field>();
+            foreach (var entity in _process.Entities) {
+                foreach (var field in entity.All) {
+                    alternates[field.Value.Alias] = field.Value;
+                }
+            }
+
+            _process.Transforms = GetTransforms(config.Transforms, new FieldSqlWriter(alternates).ExpandXml().Input().Context());
             foreach (var p in _process.Transforms.SelectMany(t => t.Parameters)) {
                 _process.Parameters[p.Key] = p.Value;
             }
@@ -104,8 +113,8 @@ namespace Transformalize.Readers {
             var count = 0;
             foreach (RelationshipConfigurationElement r in config.Relationships) {
                 _process.Relationships.Add(new Relationship {
-                    LeftEntity = _process.Entities[r.LeftEntity],
-                    RightEntity = _process.Entities[r.RightEntity],
+                    LeftEntity = _process.Entities.First(e => e.Name.Equals(r.LeftEntity, StringComparison.OrdinalIgnoreCase)),
+                    RightEntity = _process.Entities.First(e => e.Name.Equals(r.RightEntity, StringComparison.OrdinalIgnoreCase)),
                     Join = GetJoins(r)
                 });
                 count++;
@@ -117,8 +126,8 @@ namespace Transformalize.Readers {
             var join = new List<Join>();
             foreach (JoinConfigurationElement joinElement in relationshipElement.Join) {
                 var j = new Join {
-                    LeftField = _process.Entities[relationshipElement.LeftEntity].All[joinElement.LeftField],
-                    RightField = _process.Entities[relationshipElement.RightEntity].All[joinElement.RightField]
+                    LeftField = _process.Entities.First(e => e.Name.Equals(relationshipElement.LeftEntity, StringComparison.OrdinalIgnoreCase)).All[joinElement.LeftField],
+                    RightField = _process.Entities.First(e => e.Name.Equals(relationshipElement.RightEntity, StringComparison.OrdinalIgnoreCase)).All[joinElement.RightField]
                 };
                 j.LeftField.FieldType = FieldType.ForeignKey;
                 join.Add(j);
@@ -130,7 +139,7 @@ namespace Transformalize.Readers {
             var count = 0;
             foreach (EntityConfigurationElement e in config.Entities) {
                 var entity = GetEntity(e, count);
-                _process.Entities.Add(e.Name, entity);
+                _process.Entities.Add(entity);
                 if (entity.IsMaster())
                     _process.MasterEntity = entity;
                 count++;
@@ -139,7 +148,7 @@ namespace Transformalize.Readers {
         }
 
         private IEnumerable<Field> ReadRelatedKeys() {
-            var entity = _process.Entities.Select(e => e.Value).First(e => e.IsMaster());
+            var entity = _process.Entities.First(e => e.IsMaster());
             return GetRelatedKeys(entity);
         }
 
@@ -214,7 +223,7 @@ namespace Transformalize.Readers {
                 field.Index = fieldIndex;
 
                 foreach (XmlConfigurationElement x in f.Xml) {
-                    field.InnerXml.Add(x.Alias, new Field(x.Type, x.Length, FieldType.Xml, x.Output, x.Default) {
+                    var xmlField = new Field(x.Type, x.Length, FieldType.Xml, x.Output, x.Default) {
                         Entity = entity.Name,
                         Schema = entity.Schema,
                         Parent = f.Name,
@@ -223,10 +232,10 @@ namespace Transformalize.Readers {
                         Alias = x.Alias,
                         Index = x.Index,
                         Precision = x.Precision,
-                        Scale = x.Scale,
-                        Transforms = GetTransforms(x.Transforms)
-                    });
-
+                        Scale = x.Scale
+                    };
+                    xmlField.Transforms = GetTransforms(x.Transforms, new FieldSqlWriter(xmlField).Input().Context());
+                    field.InnerXml.Add(x.Alias, xmlField);
                 }
 
                 entity.Fields.Add(f.Alias, field);
@@ -240,10 +249,12 @@ namespace Transformalize.Readers {
             }
 
             if (entity.Version == null) {
-                var message = string.Format("{0} | version field reference '{1}' is undefined in {2}." , _process.Name, e.Version, e.Name);
+                var message = string.Format("{0} | version field reference '{1}' is undefined in {2}.", _process.Name, e.Version, e.Name);
                 Error(message);
                 throw new TransformalizeException(message);
             }
+
+            entity.Transforms = GetTransforms(e.Transforms, new FieldSqlWriter(entity.All).ExpandXml().Input().Context());
 
             return entity;
         }
@@ -257,7 +268,7 @@ namespace Transformalize.Readers {
         }
 
         private Field GetField(Entity entity, FieldConfigurationElement field, FieldType fieldType = FieldType.Field) {
-            return new Field(field.Type, field.Length, fieldType, field.Output, field.Default) {
+            var newField = new Field(field.Type, field.Length, fieldType, field.Output, field.Default) {
                 Entity = entity.Name,
                 Schema = entity.Schema,
                 Name = field.Name,
@@ -266,55 +277,63 @@ namespace Transformalize.Readers {
                 Scale = field.Scale,
                 Input = field.Input,
                 Unicode = field.Unicode,
-                VariableLength = field.VariableLength,
-                Transforms = GetTransforms(field.Transforms)
+                VariableLength = field.VariableLength
             };
+            newField.Transforms = GetTransforms(field.Transforms, new FieldSqlWriter(newField).ExpandXml().Input().Context());
+            return newField;
         }
 
-        private Transformer[] GetTransforms(IEnumerable transforms) {
+        private Transformer[] GetTransforms(IEnumerable transforms, Dictionary<string, Field> defaultParameters) {
             var result = new List<Transformer>();
 
             foreach (TransformConfigurationElement t in transforms) {
-                var parameters = t.Parameters.Cast<ParameterConfigurationElement>().Select(p => _process.Entities[p.Entity].All[p.Field]).ToDictionary(v => v.Alias, v => v);
+
+                var parameters = t.Parameters.Cast<ParameterConfigurationElement>().Select(p => _process.Entities.First(e => e.Name.Equals(p.Entity, StringComparison.OrdinalIgnoreCase)).All[p.Field]).ToDictionary(v => v.Alias, v => v);
                 var results = new Dictionary<string, Field>();
                 foreach (FieldConfigurationElement r in t.Results) {
                     var field = GetField(new Entity(), r);
                     results[field.Alias] = field;
                 }
+                if (!parameters.Any()) {
+                    parameters = defaultParameters;
+                }
 
                 switch (t.Method.ToLower()) {
                     case "replace":
-                        result.Add(new ReplaceTransform(t.OldValue, t.NewValue, parameters, results));
+                        result.Add(new ReplaceTransform(t.OldValue, t.NewValue));
+                        break;
+                    case "regexreplace":
+                        result.Add(new RegexReplaceTransform(t.Pattern, t.Replacement, t.Count));
                         break;
                     case "insert":
-                        result.Add(new InsertTransform(t.Index, t.Value, parameters, results));
+                        result.Add(new InsertTransform(t.Index, t.Value));
                         break;
                     case "remove":
-                        result.Add(new RemoveTransform(t.StartIndex, t.Length, parameters, results));
+                        result.Add(new RemoveTransform(t.StartIndex, t.Length));
                         break;
                     case "trimstart":
-                        result.Add(new TrimStartTransform(t.TrimChars, parameters, results));
+                        result.Add(new TrimStartTransform(t.TrimChars));
                         break;
                     case "trimend":
-                        result.Add(new TrimEndTransform(t.TrimChars, parameters, results));
+                        result.Add(new TrimEndTransform(t.TrimChars));
                         break;
                     case "trim":
-                        result.Add(new TrimTransform(t.TrimChars, parameters, results));
+                        result.Add(new TrimTransform(t.TrimChars));
                         break;
                     case "substring":
-                        result.Add(new SubstringTransform(t.StartIndex, t.Length, parameters, results));
+                        result.Add(new SubstringTransform(t.StartIndex, t.Length));
                         break;
                     case "left":
-                        result.Add(new LeftTransform(t.Length, parameters, results));
+                        result.Add(new LeftTransform(t.Length));
                         break;
                     case "right":
-                        result.Add(new RightTransform(t.Length, parameters, results));
+                        result.Add(new RightTransform(t.Length));
                         break;
                     case "map":
                         var equals = _process.MapEquals[t.Map];
                         var startsWith = _process.MapStartsWith[t.Map];
                         var endsWith = _process.MapEndsWith[t.Map];
-                        result.Add(new MapTransform(new[] { @equals, startsWith, endsWith }, parameters, results));
+                        result.Add(new MapTransform(new[] { @equals, startsWith, endsWith }));
                         break;
                     case "javascript":
                         result.Add(new JavascriptTransform(t.Script, parameters, results));
@@ -323,10 +342,10 @@ namespace Transformalize.Readers {
                         result.Add(new TemplateTransform(t.Template, parameters, results));
                         break;
                     case "padleft":
-                        result.Add(new PadLeftTransform(t.TotalWidth, t.PaddingChar, parameters, results));
+                        result.Add(new PadLeftTransform(t.TotalWidth, t.PaddingChar));
                         break;
                     case "padright":
-                        result.Add(new PadRightTransform(t.TotalWidth, t.PaddingChar, parameters, results));
+                        result.Add(new PadRightTransform(t.TotalWidth, t.PaddingChar));
                         break;
                     case "format":
                         result.Add(new FormatTransform(t.Format, parameters, results));
@@ -339,6 +358,15 @@ namespace Transformalize.Readers {
                         break;
                     case "concat":
                         result.Add(new ConcatTransform(parameters, results));
+                        break;
+                    case "join":
+                        result.Add(new JoinTransform(t.Separator, parameters, results));
+                        break;
+                    case "split":
+                        result.Add(new SplitTransform(t.Separator, parameters, results));
+                        break;
+                    case "copy":
+                        result.Add(new CopyTransform(parameters, results));
                         break;
                 }
             }

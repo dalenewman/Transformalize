@@ -28,13 +28,19 @@ namespace Transformalize.Processes {
 
         private readonly Process _process;
 
-        public UpdateMasterProcess(ref Process process) : base(process.Name) {
+        public UpdateMasterProcess(ref Process process)
+            : base(process.Name) {
             _process = process;
         }
 
         protected override void Initialize() {
+            var last = _process.Entities.Last().Name;
             foreach (var entity in _process.Entities) {
-                Register(new EntityUpdateMaster(_process, entity.Value));
+                if (entity.Name.Equals(last))
+                    RegisterLast(new EntityUpdateMaster(_process, entity));
+                else {
+                    Register(new EntityUpdateMaster(_process, entity));
+                }
             }
         }
 

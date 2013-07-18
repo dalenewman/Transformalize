@@ -22,6 +22,7 @@ using System.Data;
 using System.Linq;
 using Transformalize.Data;
 using Transformalize.Rhino.Etl.Core;
+using Transformalize.Transforms;
 
 namespace Transformalize.Model {
 
@@ -48,6 +49,7 @@ namespace Transformalize.Model {
         public List<Row> InputKeys { get; set; }
         public IDbCommand InputKeysCommand { get; set; }
         public IEntityVersionReader EntityVersionReader { get; private set; }
+        public Transformer[] Transforms { get; set; }
 
         public Entity(IEntityVersionReader entityVersionReader = null) {
             Name = string.Empty;

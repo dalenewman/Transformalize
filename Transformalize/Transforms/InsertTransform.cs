@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System.Collections.Generic;
 using System.Text;
 using Transformalize.Model;
-using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Transforms {
     public class InsertTransform : Transformer {
@@ -28,12 +27,6 @@ namespace Transformalize.Transforms {
         private readonly string _value;
 
         public InsertTransform(int index, string value) {
-            _index = index;
-            _value = value;
-        }
-
-        public InsertTransform(int index, string value, Dictionary<string, Field> parameters, Dictionary<string, Field> results)
-            : base(parameters, results) {
             _index = index;
             _value = value;
         }

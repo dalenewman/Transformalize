@@ -121,6 +121,7 @@
     <Compile Include="Data\EntityDropper.cs" />
     <Compile Include="Data\SqlServerEntityVersionWriter.cs" />
     <Compile Include="Data\SqlServerViewWriter.cs" />
+    <Compile Include="Operations\EntityTransform.cs" />
     <Compile Include="Operations\EntityDrop.cs" />
     <Compile Include="Operations\EntityAction.cs" />
     <Compile Include="Operations\EntityActionFilter.cs" />
@@ -442,9 +443,13 @@
     <Compile Include="Rhino.Etl\Core\Operations\ParallelUnionAllOperation.cs" />
     <Compile Include="Rhino.Etl\Core\Operations\SerialUnionAllOperation.cs" />
     <Compile Include="StringBuilderExtensions.cs" />
-    <Compile Include="Operations\EntityTransform.cs" />
+    <Compile Include="Operations\FieldTransform.cs" />
     <Compile Include="TransformalizeException.cs" />
     <Compile Include="Transforms\ConcatTransform.cs" />
+    <Compile Include="Transforms\RegexReplaceTransform.cs" />
+    <Compile Include="Transforms\CopyTransform.cs" />
+    <Compile Include="Transforms\SplitTransform.cs" />
+    <Compile Include="Transforms\JoinTransform.cs" />
     <Compile Include="Transforms\TemplateTransform.cs" />
     <Compile Include="Transforms\Transformer.cs" />
     <Compile Include="Transforms\ToLowerTransform.cs" />

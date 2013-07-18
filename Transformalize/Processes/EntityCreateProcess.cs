@@ -33,8 +33,8 @@ namespace Transformalize.Processes {
         }
 
         protected override void Initialize() {
-            foreach (var pair in _process.Entities) {
-                Register(new EntityCreate(pair.Value, _process));
+            foreach (var entity in _process.Entities) {
+                Register(new EntityCreate(entity, _process));
             }
         }
 

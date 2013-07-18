@@ -29,12 +29,6 @@ namespace Transformalize.Transforms {
             _trimCharArray = trimChars.ToCharArray();
         }
 
-        public TrimTransform(string trimChars, Dictionary<string, Field> parameters, Dictionary<string, Field> results)
-            : base(parameters, results) {
-            _trimCharArray = trimChars.ToCharArray();
-            _trimChars = trimChars;
-        }
-
         protected override string Name {
             get { return "Trim Transform"; }
         }

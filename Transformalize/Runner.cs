@@ -26,7 +26,7 @@ namespace Transformalize {
         private readonly string _mode;
         private Process _process;
 
-        public Runner(string process, string mode) {
+        public Runner(string process, string mode = "default") {
             _mode = mode.ToLower();
             _process = new ProcessReader(process).Read();
         }
@@ -36,16 +36,23 @@ namespace Transformalize {
 
             switch (_mode) {
                 case "init":
-                    new InitializationProcess(_process).Execute();
+                    using (var process = new InitializationProcess(_process)) {
+                        process.Execute();
+                    }
                     break;
                 default:
                     new EntityRecordsExist(ref _process).Check();
-                    new EntityKeysProcess(ref _process).Execute();
                     foreach (var entity in _process.Entities) {
-                        new EntityProcess(ref _process, entity.Value).Execute();
+                        using (var entityProcess = new EntityProcess(ref _process, entity)) {
+                            entityProcess.Execute();
+                        }
                     }
-                    new UpdateMasterProcess(ref _process).Execute();
-                    new TransformProcess(_process).Execute();
+                    using (var masterProcess = new UpdateMasterProcess(ref _process)) {
+                        masterProcess.Execute();
+                    }
+                    using (var transformProcess = new TransformProcess(_process)) {
+                        transformProcess.Execute();
+                    }
                     break;
             }
         }

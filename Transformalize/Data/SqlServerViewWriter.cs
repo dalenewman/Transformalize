@@ -68,12 +68,10 @@ namespace Transformalize.Data
             var builder = new StringBuilder();
             builder.AppendFormat("CREATE VIEW [{0}] AS\r\n", _process.View);
             builder.AppendFormat("SELECT\r\n    [{0}].[TflKey],\r\n    [{0}].[TflBatchId],\r\n    b.[TflUpdate],\r\n", _masterEntity.OutputName());
-            foreach (var pair in _process.Entities) {
-                var entity = pair.Value;
+            foreach (var entity in _process.Entities) {
                 if (entity.IsMaster()) {
                     builder.AppendLine(string.Concat(new FieldSqlWriter(entity.PrimaryKey, entity.Fields, _process.Results).ExpandXml().Output().Alias().Prepend(string.Concat("    [", entity.OutputName(), "].")).Write(",\r\n"), ","));
-                }
-                else {
+                } else {
                     if (entity.Fields.Any(f => f.Value.FieldType == FieldType.ForeignKey)) {
                         builder.AppendLine(string.Concat(new FieldSqlWriter(entity.Fields).ExpandXml().Output().FieldType(FieldType.ForeignKey).Alias().Prepend(string.Concat("    [", _masterEntity.OutputName(), "].")).Write(",\r\n"), ","));
                     }
@@ -85,8 +83,7 @@ namespace Transformalize.Data
             builder.AppendFormat("FROM [{0}]\r\n", _masterEntity.OutputName());
             builder.AppendFormat("INNER JOIN [TflBatch] b ON ([{0}].TflBatchId = b.TflBatchId)\r\n", _masterEntity.OutputName());
 
-            foreach (var pair in _process.Entities.Where(e => !e.Value.IsMaster())) {
-                var entity = pair.Value;
+            foreach (var entity in _process.Entities.Where(e => !e.IsMaster())) {
                 builder.AppendFormat("INNER JOIN [{0}] ON (", entity.OutputName());
                 foreach (var pk in entity.PrimaryKey) {
                     builder.AppendFormat("[{0}].[{1}] = [{2}].[{1}] AND ", _masterEntity.OutputName(), pk.Value.Alias, entity.OutputName());

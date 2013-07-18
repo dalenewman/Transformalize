@@ -28,17 +28,21 @@ namespace Transformalize.Processes {
 
         private readonly Process _process;
 
-        public EntityKeysProcess(ref Process process)
-            : base(process.Name) {
+        public EntityKeysProcess(ref Process process) : base(process.Name) {
             _process = process;
         }
 
         protected override void Initialize() {
+            var last = _process.Entities.Last().Name;
             foreach (var entity in _process.Entities) {
-                var keysExtract = new EntityInputKeysExtract(entity.Value);
+                var keysExtract = new EntityInputKeysExtract(entity);
                 if (!keysExtract.NeedsToRun()) continue;
                 Register(keysExtract);
-                Register(new EntityInputKeysStore(entity.Value));
+                if (entity.Name.Equals(last)) {
+                    RegisterLast(new EntityInputKeysStore(entity));
+                } else {
+                    Register(new EntityInputKeysStore(entity));
+                }
             }
         }
 

@@ -31,10 +31,10 @@ namespace Transformalize.Data {
 
         public void Count() {
             foreach (var entity in _process.Entities) {
-                entity.Value.InputCount = _entityCounter.CountInput(entity.Value);
-                Info("{0} | Entity {1} input has {2} records.", _process.Name, entity.Value.Name, entity.Value.InputCount);
-                entity.Value.OutputCount = _entityCounter.CountOutput(entity.Value);
-                Info("{0} | Entity {1} output has {2} records.", _process.Name, entity.Value.Name, entity.Value.OutputCount);
+                entity.InputCount = _entityCounter.CountInput(entity);
+                Info("{0} | Entity {1} input has {2} records.", _process.Name, entity.Name, entity.InputCount);
+                entity.OutputCount = _entityCounter.CountOutput(entity);
+                Info("{0} | Entity {1} output has {2} records.", _process.Name, entity.Name, entity.OutputCount);
             }
         }
     }

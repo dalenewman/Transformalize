@@ -75,5 +75,12 @@ namespace Transformalize.Configuration
             }
         }
 
+        [ConfigurationProperty("transforms")]
+        public TransformElementCollection Transforms {
+            get {
+                return this["transforms"] as TransformElementCollection;
+            }
+        }
+
     }
 }

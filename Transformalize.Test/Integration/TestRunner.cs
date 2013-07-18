@@ -29,7 +29,7 @@ namespace Transformalize.Test.Integration {
 
         [Test]
         public void Delta() {
-            new Runner("Test", "delta").Run();
+            new Runner("Test").Run();
         }
         
     }

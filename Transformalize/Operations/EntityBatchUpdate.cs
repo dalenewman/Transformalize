@@ -45,5 +45,6 @@ namespace Transformalize.Operations {
 
             Debug(command.CommandText);
         }
+
     }
 }

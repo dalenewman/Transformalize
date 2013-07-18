@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Collections.Generic;
+using System.Linq;
 using Moq;
 using NUnit.Framework;
 using Transformalize.Operations;
@@ -46,7 +47,7 @@ namespace Transformalize.Test.Unit {
         public void TestKeysTableVariable() {
             var process = new ProcessReader("Test").Read();
 
-            var entity = process.Entities["OrderDetail"];
+            var entity = process.Entities.First();
             
             var actual = SqlTemplates.CreateTableVariable("KEYS", entity.PrimaryKey);
             const string expected = "DECLARE @KEYS AS TABLE([OrderDetailKey] INT);";
@@ -57,7 +58,7 @@ namespace Transformalize.Test.Unit {
         [Test]
         public void TestKeyInserts() {
 
-            var entity = new ProcessReader("Test").Read().Entities["OrderDetail"];
+            var entity = new ProcessReader("Test").Read().Entities.First();
 
             var rows = TestOperation(_entityKeysExtract.Object);
 
@@ -78,7 +79,7 @@ UNION ALL SELECT 4;";
         [Test]
         public void TestSelectByKeysSql() {
 
-            var entity = new ProcessReader("Test").Read().Entities["OrderDetail"];
+            var entity = new ProcessReader("Test").Read().Entities.First();
 
             var actual = SqlTemplates.Select(entity.All, entity.OutputName(), "@KEYS");
             const string expected = @"
@@ -102,7 +103,7 @@ OPTION (MAXDOP 1);";
         public void TestEntityKeysToOperations() {
 
             var process = new ProcessReader("Test").Read();
-            var entity = process.Entities["OrderDetail"];
+            var entity = process.Entities.First();
             var entityKeysToOperations = new EntityKeysToOperations(entity);
 
             var operations = TestOperation(_entityKeysExtract.Object, entityKeysToOperations);

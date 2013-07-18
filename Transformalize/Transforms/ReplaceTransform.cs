@@ -18,7 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System.Collections.Generic;
 using System.Text;
 using Transformalize.Model;
-using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Transforms {
     public class ReplaceTransform : Transformer {
@@ -27,12 +26,6 @@ namespace Transformalize.Transforms {
         private readonly string _newValue;
 
         public ReplaceTransform(string oldValue, string newValue) {
-            _oldValue = oldValue;
-            _newValue = newValue;
-        }
-
-        public ReplaceTransform(string oldValue, string newValue, Dictionary<string, Field> parameters, Dictionary<string, Field> results)
-            : base(parameters, results) {
             _oldValue = oldValue;
             _newValue = newValue;
         }

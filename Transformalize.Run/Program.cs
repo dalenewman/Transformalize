@@ -30,7 +30,7 @@ namespace Transformalize.Run {
             Guard.Against(args.Length == 0, "\r\nYou must provide the process name as the first argument.\r\nE.g. tfl <process> <mode=init|delta|entity>");
 
             var process = args[0];
-            var mode = args.Length > 1 ? args[1].ToLower() : "delta";
+            var mode = args.Length > 1 ? args[1].ToLower() : "default";
 
             var logger = LogManager.GetLogger("Transformalize.Run");
 

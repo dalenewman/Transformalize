@@ -86,9 +86,17 @@ namespace Transformalize.Model {
 
         private void StartWithFields(IEnumerable<Field> fields) {
             var expanded = fields.ToArray();
-            _original = expanded.ToArray().ToDictionary(f => f.Alias, f => f);
+            _original = expanded.ToDictionary(f => f.Alias, f => f);
             _output = new SortedDictionary<string, string>(expanded.ToDictionary(f => f.Alias, f => string.Empty));
         }
+
+        //private static Dictionary<string, Field> ToDictionary(IEnumerable<Field> fields) {
+        //    var dict = new Dictionary<string, Field>();
+        //    foreach (var field in fields) {
+        //        dict[field.Alias] = field;
+        //    }
+        //    return dict;
+        //}
 
         private void StartWithDictionary(IDictionary<string, Field> fields) {
             _original = fields.ToDictionary(f => f.Key, f => f.Value);
