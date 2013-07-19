@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Text;
 using NUnit.Framework;
+using Transformalize.Extensions;
 
 namespace Transformalize.Test.Unit {
     [TestFixture]

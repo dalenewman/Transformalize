@@ -48,7 +48,7 @@ namespace Transformalize.Model {
         public bool Identity { get; set; }
         public KeyValuePair<string, string> References { get; set; }
         public Transformer[] Transforms { get; set; }
-        public bool Output { get; private set; }
+        public bool Output { get; set; }
         public bool UseStringBuilder { get; private set; }
         public Type SystemType { get; private set; }
         public Dictionary<string, Field> InnerXml { get; set; }
@@ -114,6 +114,10 @@ namespace Transformalize.Model {
             StringBuilder = UseStringBuilder ? new StringBuilder(length, 8000) : null;
             InnerXml = new Dictionary<string, Field>();
             Default = ConvertDefault(@default ?? string.Empty);
+
+            if (SimpleType.Equals("rowversion")) {
+                Output = false;
+            }
         }
 
         private FieldSqlWriter _sqlWriter;

@@ -56,7 +56,7 @@ namespace Transformalize.Operations {
                 cn.Open();
                 var cmd = new SqlCommand(sql, cn);
                 cmd.ExecuteNonQuery();
-                Info("{0} | Created Output {1}.{2}", _entity.ProcessName, _entity.Schema, _entity.OutputName());
+                Info("{0} | Initialized {1} in {2} on {3}.", _entity.ProcessName, _entity.OutputName(), _entity.OutputConnection.Database, _entity.OutputConnection.Server);
             }
         }
     }

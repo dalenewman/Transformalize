@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Transformalize.Extensions;
 using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
 using Transformalize.Rhino.Etl.Core.ConventionOperations;
@@ -38,7 +39,7 @@ namespace Transformalize.Operations {
         
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
 
-            return rows.Partition(_entity.InputConnection.InputBatchSize).Select(batch => new Row {{
+            return rows.Partition(_entity.InputConnection.BatchSize).Select(batch => new Row {{
                 _operationColumn,
                 new ConventionInputCommandOperation(_entity.InputConnection.ConnectionString) {
                     Command = SelectByKeys(batch)

@@ -31,7 +31,7 @@ namespace Transformalize.Data {
             using (var cn = new SqlConnection(entity.OutputConnection.ConnectionString)) {
                 cn.Open();
                 new SqlCommand(string.Format(FORMAT, entity.Schema, entity.OutputName()), cn).ExecuteNonQuery();
-                Info("{0} | Dropped Output {1}.{2}", entity.ProcessName, entity.Schema, entity.OutputName());
+                Debug("{0} | Dropped Output {1}.{2}", entity.ProcessName, entity.Schema, entity.OutputName());
             }
         }
     }

@@ -50,8 +50,10 @@ namespace Transformalize {
                     using (var masterProcess = new UpdateMasterProcess(ref _process)) {
                         masterProcess.Execute();
                     }
-                    using (var transformProcess = new TransformProcess(_process)) {
-                        transformProcess.Execute();
+                    if (_process.Transforms.Length > 0) {
+                        using (var transformProcess = new TransformProcess(_process)) {
+                            transformProcess.Execute();
+                        }
                     }
                     break;
             }

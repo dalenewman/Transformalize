@@ -32,11 +32,18 @@ namespace Transformalize.Operations {
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
+            OnFinishedProcessing += EntityAddTflFields_OnFinishedProcessing;
             foreach (var row in rows) {
                 row["TflBatchId"] = _entity.TflBatchId;
                 yield return row;
             }
         }
+
+        void EntityAddTflFields_OnFinishedProcessing(IOperation obj) {
+            _entity.RecordsAffected = obj.Statistics.OutputtedRows;
+        }
+
+
 
     }
 }

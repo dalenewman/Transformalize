@@ -1,4 +1,4 @@
-﻿/*
+/*
 Transformalize - Replicate, Transform, and Denormalize Your Data...
 Copyright (C) 2013 Dale Newman
 
@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System.Linq;
 using System.Text;
 
-namespace Transformalize {
+namespace Transformalize.Extensions {
 
     public static class StringBuilderExtensions {
 

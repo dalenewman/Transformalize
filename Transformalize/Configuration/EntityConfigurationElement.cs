@@ -18,8 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Configuration;
 
-namespace Transformalize.Configuration
-{
+namespace Transformalize.Configuration {
     public class EntityConfigurationElement : ConfigurationElement {
 
         [ConfigurationProperty("schema", IsRequired = false, DefaultValue = "dbo")]
@@ -82,5 +81,12 @@ namespace Transformalize.Configuration
             }
         }
 
+        [ConfigurationProperty("auto", IsRequired = false, DefaultValue = false)]
+        public bool Auto {
+            get {
+                return (bool) this["auto"];
+            }
+            set { this["auto"] = value; }
+        }
     }
 }

@@ -39,18 +39,18 @@ namespace Transformalize.Data {
 
         public string CreateSql() {
             return @"
-                CREATE TABLE TflBatch(
-                    TflBatchId INT NOT NULL,
-					ProcessName NVARCHAR(100) NOT NULL,
-	                EntityName NVARCHAR(100) NOT NULL,
-	                BinaryVersion BINARY(8) NULL,
-	                DateTimeVersion DATETIME NULL,
-                    Int64Version BIGINT NULL,
-                    Int32Version INT NULL,
-                    Int16Version SMALLINT NULL,
-                    ByteVersion TINYINT NULL,
-	                TflUpdate DATETIME NOT NULL,
-                    Rows BIGINT NOT NULL,
+                CREATE TABLE [TflBatch](
+                    [TflBatchId] INT NOT NULL,
+					[ProcessName] NVARCHAR(100) NOT NULL,
+	                [EntityName] NVARCHAR(100) NOT NULL,
+	                [RowVersion] BINARY(8) NULL,
+	                [DateTimeVersion] DATETIME NULL,
+                    [Int64Version] BIGINT NULL,
+                    [Int32Version] INT NULL,
+                    [Int16Version] SMALLINT NULL,
+                    [ByteVersion] TINYINT NULL,
+	                [TflUpdate] DATETIME NOT NULL,
+                    [Rows] BIGINT NOT NULL,
 					CONSTRAINT Pk_TflBatch_TflBatchId PRIMARY KEY (
 						TflBatchId
 					)
@@ -72,13 +72,15 @@ namespace Transformalize.Data {
             var cs = _process.MasterEntity.OutputConnection.ConnectionString;
 
             Execute(SqlTemplates.TruncateTable("TflBatch"), cs);
-            Info("{0} | Truncated TflBatch.", _process.Name);
+            Debug("{0} | Truncated TflBatch.", _process.Name);
 
             Execute(SqlTemplates.DropTable("TflBatch"), cs);
-            Info("{0} | Dropped TflBatch.", _process.Name);
+            Debug("{0} | Dropped TflBatch.", _process.Name);
 
             Execute(CreateSql(), cs);
-            Info("{0} | Created TflBatch.", _process.Name);
+            Debug("{0} | Created TflBatch.", _process.Name);
+            
+            Info("{0} | Initialized Transformalizer storage.", _process.Name);
         }
 
     }

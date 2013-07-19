@@ -54,20 +54,12 @@ namespace Transformalize.Configuration
             set { this["provider"] = value; }
         }
 
-        [ConfigurationProperty("outputBatchSize", IsRequired = false, DefaultValue = 1000)]
-        public int OutputBatchSize {
+        [ConfigurationProperty("batchSize", IsRequired = false, DefaultValue = 500)]
+        public int BatchSize {
             get {
-                return (int)this["outputBatchSize"];
+                return (int)this["batchSize"];
             }
-            set { this["outputBatchSize"] = value; }
-        }
-
-        [ConfigurationProperty("inputBatchSize", IsRequired = false, DefaultValue = 500)]
-        public int InputBatchSize {
-            get {
-                return (int)this["inputBatchSize"];
-            }
-            set { this["inputBatchSize"] = value; }
+            set { this["batchSize"] = value; }
         }
 
     }

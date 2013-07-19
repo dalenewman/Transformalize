@@ -31,6 +31,7 @@ namespace Transformalize.Readers {
 
     public class ProcessReader : WithLoggingMixin, IConfigurationReader<Process> {
         private readonly string _name;
+        private IEntityAutoFieldReader _autoFieldReader;
         private readonly IConnectionChecker _connectionChecker;
         private Process _process;
         private readonly ProcessConfigurationElement _config;
@@ -41,8 +42,9 @@ namespace Transformalize.Readers {
         private int _transformCount;
         public int Count { get { return 1; } }
 
-        public ProcessReader(string name, IConnectionChecker connectionChecker = null) {
+        public ProcessReader(string name, IConnectionChecker connectionChecker = null, IEntityAutoFieldReader autoFieldReader = null) {
             _name = name;
+            _autoFieldReader = autoFieldReader;
             _connectionChecker = connectionChecker ?? new SqlServerConnectionChecker(name);
             _config = ((TransformalizeConfiguration)ConfigurationManager.GetSection("transformalize")).Processes.Get(_name);
         }
@@ -77,14 +79,14 @@ namespace Transformalize.Readers {
         }
 
         private void LogProcessConfiguration() {
-            Info("{0} | Process Loaded.", _process.Name);
-            Info("{0} | {1} Connection{2}.", _process.Name, _connectionCount, _connectionCount == 1 ? string.Empty : "s");
-            Info("{0} | {1} Map{2}.", _process.Name, _mapCount, _mapCount == 1 ? string.Empty : "s");
-            Info("{0} | {1} Entit{2}.", _process.Name, _entityCount, _entityCount == 1 ? "y" : "ies");
-            Info("{0} | {1} Relationship{2}.", _process.Name, _relationshipCount, _relationshipCount == 1 ? string.Empty : "s");
+            Debug("{0} | Process Loaded.", _process.Name);
+            Debug("{0} | {1} Connection{2}.", _process.Name, _connectionCount, _connectionCount == 1 ? string.Empty : "s");
+            Debug("{0} | {1} Map{2}.", _process.Name, _mapCount, _mapCount == 1 ? string.Empty : "s");
+            Debug("{0} | {1} Entit{2}.", _process.Name, _entityCount, _entityCount == 1 ? "y" : "ies");
+            Debug("{0} | {1} Relationship{2}.", _process.Name, _relationshipCount, _relationshipCount == 1 ? string.Empty : "s");
 
             _transformCount += _process.Entities.SelectMany(e => e.All).SelectMany(f => f.Value.Transforms).Count();
-            Info("{0} | {1} Transform{2}.", _process.Name, _transformCount, _transformCount == 1 ? string.Empty : "s");
+            Debug("{0} | {1} Transform{2}.", _process.Name, _transformCount, _transformCount == 1 ? string.Empty : "s");
         }
 
         private void ReadProcess() {
@@ -177,12 +179,10 @@ namespace Transformalize.Readers {
         private int ReadConnections(ProcessConfigurationElement config) {
             var count = 0;
             foreach (ConnectionConfigurationElement element in config.Connections) {
-                var connection = new Connection(_connectionChecker) {
-                    ConnectionString = element.Value,
+                var connection = new Connection(element.Value, _connectionChecker) {
                     Provider = element.Provider,
                     Year = element.Year,
-                    OutputBatchSize = element.OutputBatchSize,
-                    InputBatchSize = element.InputBatchSize,
+                    BatchSize = element.BatchSize
                 };
                 _process.Connections.Add(element.Name, connection);
                 count++;
@@ -200,6 +200,15 @@ namespace Transformalize.Readers {
                 OutputConnection = _process.Connections["output"]
             };
 
+            if (e.Auto) {
+                if (_autoFieldReader == null) {
+                    _autoFieldReader = new SqlServerEntityAutoFieldReader(entity, entityCount);
+                    entity.All = _autoFieldReader.ReadAll();
+                    entity.Fields = _autoFieldReader.ReadFields();
+                    entity.PrimaryKey = _autoFieldReader.ReadPrimaryKey();
+                }
+            }
+
             var pkIndex = 0;
             foreach (FieldConfigurationElement pk in e.PrimaryKey) {
                 var fieldType = entityCount == 0 ? FieldType.MasterKey : FieldType.PrimaryKey;
@@ -207,12 +216,8 @@ namespace Transformalize.Readers {
                 var keyField = GetField(entity, pk, fieldType);
                 keyField.Index = pkIndex;
 
-                entity.PrimaryKey.Add(pk.Alias, keyField);
-                entity.All.Add(pk.Alias, keyField);
-
-                if (e.Version.Equals(pk.Name)) {
-                    entity.Version = keyField;
-                }
+                entity.PrimaryKey[pk.Alias] = keyField;
+                entity.All[pk.Alias] = keyField;
 
                 pkIndex++;
             }
@@ -238,17 +243,15 @@ namespace Transformalize.Readers {
                     field.InnerXml.Add(x.Alias, xmlField);
                 }
 
-                entity.Fields.Add(f.Alias, field);
-                entity.All.Add(f.Alias, field);
-
-                if (e.Version.Equals(f.Name)) {
-                    entity.Version = field;
-                }
+                entity.Fields[f.Alias] = field;
+                entity.All[f.Alias] = field;
 
                 fieldIndex++;
             }
 
-            if (entity.Version == null) {
+            if (entity.All.ContainsKey(e.Version)) {
+                entity.Version = entity.All[e.Version];
+            } else {
                 var message = string.Format("{0} | version field reference '{1}' is undefined in {2}.", _process.Name, e.Version, e.Name);
                 Error(message);
                 throw new TransformalizeException(message);

@@ -23,26 +23,61 @@ namespace Transformalize {
 
     public class SqlServerDataTypeService : IDataTypeService {
 
-        private static readonly Dictionary<string, string> Types = new Dictionary<string, string> {
-            {"int64", "BIGINT"},
-            {"boolean", "BIT"},
-            {"string", "NVARCHAR"},
-            {"datetime", "DATETIME"},
-            {"decimal", "DECIMAL"},
-            {"double", "FLOAT"},
-            {"int32", "INT"},
-            {"char", "NCHAR"},
-            {"single", "REAL"},
-            {"int16", "SMALLINT"},
-            {"byte", "TINYINT"},
-            {"byte[]", "BINARY"},
-            {"guid", "UNIQUEIDENTIFIER"},
-            {"rowversion", "ROWVERSION"}
-        };
+        private Dictionary<string, string> _types;
+        private Dictionary<string, string> _reverseTypes;
+
+        public Dictionary<string, string> Types {
+            get {
+                if (_types == null) {
+                    _types = new Dictionary<string, string> {
+                        {"int64", "BIGINT"},
+                        {"boolean", "BIT"},
+                        {"string", "NVARCHAR"},
+                        {"datetime", "DATETIME"},
+                        {"decimal", "DECIMAL"},
+                        {"double", "FLOAT"},
+                        {"int32", "INT"},
+                        {"char", "NCHAR"},
+                        {"single", "REAL"},
+                        {"int16", "SMALLINT"},
+                        {"byte", "TINYINT"},
+                        {"binary", "BINARY"},
+                        {"guid", "UNIQUEIDENTIFIER"},
+                        {"rowversion", "ROWVERSION"}
+                    };
+                }
+                return _types;
+            }
+        }
+
+        public Dictionary<string, string> TypesReverse {
+            get {
+                if (_reverseTypes == null) {
+                    _reverseTypes = new Dictionary<string, string> {
+                        {"BIGINT","System.Int64" },
+                        {"BIT", "System.Boolean"},
+                        {"NVARCHAR", "System.String"},
+                        {"DATETIME", "System.DateTime"},
+                        {"DECIMAL", "System.Decimal" },
+                        {"MONEY", "System.Decimal"},
+                        {"FLOAT", "System.Double"},
+                        {"INT", "System.Int32"},
+                        {"NCHAR", "System.Char"},
+                        {"REAL", "System.Single"},
+                        {"SMALLINT", "System.Int16"},
+                        {"TINYINT", "System.Byte" },
+                        {"UNIQUEIDENTIFIER", "System.Guid" },
+                        {"ROWVERSION", "RowVersion" },
+                        {"TIMESTAMP", "RowVersion"}
+                    };
+                }
+                return _reverseTypes;
+            }
+        }
 
         public string GetDataType(Field field) {
 
-            var length = field.SimpleType == "string" || field.SimpleType == "char" || field.SimpleType == "byte[]" ? string.Concat("(", field.Length, ")") : string.Empty;
+            var length = field.SimpleType == "string" || field.SimpleType == "char" || field.SimpleType == "binary" ? string.Concat("(", field.Length, ")") : string.Empty;
             var dimensions = field.SimpleType == "decimal" ? string.Format("({0},{1})", field.Precision, field.Scale) : string.Empty;
             var notNull = field.NotNull ? " NOT NULL" : string.Empty;
             var surrogate = field.Clustered ? " IDENTITY(1,1) UNIQUE CLUSTERED" : string.Empty;
@@ -58,9 +93,5 @@ namespace Transformalize {
 
             return string.Concat(sqlDataType, length, dimensions, notNull, surrogate);
         }
-    }
-
-    public interface IDataTypeService {
-        string GetDataType(Field field);
     }
 }

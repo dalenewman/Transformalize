@@ -80,8 +80,10 @@ namespace Transformalize.Rhino.Etl.Core {
 
         private void RegisterToOperationsEvents() {
             foreach (var operation in operations) {
-                operation.OnRowProcessed += OnRowProcessed;
-                operation.OnFinishedProcessing += OnFinishedProcessing;
+                if (IsDebugEnabled() || IsTraceEnabled()) {
+                    operation.OnRowProcessed += OnRowProcessed;
+                    operation.OnFinishedProcessing += OnFinishedProcessing;
+                }
             }
         }
 
@@ -107,7 +109,7 @@ namespace Transformalize.Rhino.Etl.Core {
         /// <param name="dictionary">The dictionary.</param>
         protected virtual void OnRowProcessed(IOperation op, Row dictionary) {
             if (op.Statistics.OutputtedRows % 1000 == 0)
-                Info("{0} | Processed {1} rows in {2}", _name, op.Statistics.OutputtedRows, op.Name);
+                Debug("{0} | Processed {1} rows in {2}", _name, op.Statistics.OutputtedRows, op.Name);
             else {
                 if (op.Statistics.OutputtedRows % 100 == 0)
                     Debug("{0} | Processed {1} rows in {2}", _name, op.Statistics.OutputtedRows, op.Name);

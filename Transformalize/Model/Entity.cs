@@ -80,7 +80,7 @@ namespace Transformalize.Model {
         }
 
         public string OutputName() {
-            return string.Concat(ProcessName, Name);
+            return string.Concat(ProcessName, Name).Replace(" ",string.Empty);
         }
 
         public bool HasForeignKeys() {

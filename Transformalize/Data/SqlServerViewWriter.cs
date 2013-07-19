@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using Transformalize.Extensions;
 using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
 
@@ -49,7 +50,7 @@ namespace Transformalize.Data
                 var createCommand = new SqlCommand(CreateSql(), cn);
                 createCommand.ExecuteNonQuery();
 
-                Info("{0} | Created View {1}", _process.Name, _process.View);
+                Debug("{0} | Created Output {1}", _process.Name, _process.View);
             }
         }
 

@@ -45,7 +45,7 @@ namespace Transformalize.Data {
                     cn.Open();
                     result = cn.State == ConnectionState.Open;
                     if (result) {
-                        Info("{0} | {1}.{2} is ready.", _logPrefix, builder.DataSource, builder.InitialCatalog);
+                        Debug("{0} | {1}.{2} is ready.", _logPrefix, builder.DataSource, builder.InitialCatalog);
                     }
                     else {
                         Warn("{0} | {1}.{2} wouldn't open.", _logPrefix, builder.DataSource, builder.InitialCatalog);

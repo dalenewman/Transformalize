@@ -45,11 +45,11 @@ namespace Transformalize.Data {
                 }
             }
 
-            Info("{0} | Processed {1}", _entity.ProcessName, _entity.Name);
+            Info("{0} | Processed {1} records from {2}", _entity.ProcessName, count, _entity.Name);
         }
 
         private string PrepareSql() {
-            var field = _entity.Version.SimpleType.Replace("byte[]", "binary") + "Version";
+            var field = _entity.Version.SimpleType.Replace("version", string.Empty) + "Version";
             return string.Format(@"
                 INSERT INTO [TflBatch](TflBatchId, ProcessName, EntityName, [{0}], TflUpdate, Rows)
                 VALUES(@TflBatchId, @ProcessName, @EntityName, @End, @TflUpdate, @Count);

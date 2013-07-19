@@ -23,7 +23,6 @@ using Transformalize.Rhino.Etl.Core.Operations;
 namespace Transformalize.Operations {
     public class EntityBulkInsert : SqlBulkInsertOperation {
         private readonly Entity _entity;
-        private long _count;
 
         public EntityBulkInsert(Entity entity)
             : base(entity.OutputConnection.ConnectionString, entity.OutputName()) {
@@ -33,14 +32,9 @@ namespace Transformalize.Operations {
             TurnOptionOff(SqlBulkCopyOptions.UseInternalTransaction);
         }
 
-        void EntityBulkInsert_OnFinishedProcessing(IOperation obj) {
-            _entity.RecordsAffected = _count;
-        }
-
         protected override void PrepareSchema() {
-            OnFinishedProcessing += EntityBulkInsert_OnFinishedProcessing;
             NotifyBatchSize = 1000;
-            BatchSize = _entity.OutputConnection.OutputBatchSize;
+            BatchSize = _entity.OutputConnection.BatchSize;
 
             var fields = new FieldSqlWriter(_entity.All).ExpandXml().Output().AddBatchId(false).Context();
             foreach (var pair in fields) {
@@ -49,8 +43,7 @@ namespace Transformalize.Operations {
         }
 
         protected override void OnSqlRowsCopied(object sender, SqlRowsCopiedEventArgs e) {
-            _count = e.RowsCopied;
-            Info("{0} | Processed {1} rows in EntityBulkInsert", _entity.ProcessName, _count);
+           Debug("{0} | Processed {1} rows in EntityBulkInsert", _entity.ProcessName, e.RowsCopied);
         }
 
     }

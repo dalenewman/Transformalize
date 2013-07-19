@@ -24,12 +24,12 @@ namespace Transformalize.Test.Integration {
 
         [Test]
         public void Init() {
-            new Runner("Test", "init").Run();
+            new Runner("NorthWind", "init").Run();
         }
 
         [Test]
         public void Delta() {
-            new Runner("Test").Run();
+            new Runner("NorthWind").Run();
         }
         
     }

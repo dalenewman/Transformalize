@@ -81,6 +81,14 @@ namespace Transformalize.Rhino.Etl.Core {
             }
         }
 
+        protected bool IsDebugEnabled() {
+            return _log.IsDebugEnabled;
+        }
+
+        protected bool IsTraceEnabled() {
+            return _log.IsTraceEnabled;
+        }
+
         /// <summary>
         /// Gets all the errors
         /// </summary>

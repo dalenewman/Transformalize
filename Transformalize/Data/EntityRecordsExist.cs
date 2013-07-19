@@ -32,7 +32,7 @@ namespace Transformalize.Data {
         public void Check() {
             var entity = _process.MasterEntity;
             _process.OutputRecordsExist = _entityRecordsExist.OutputRecordsExist(entity);
-            Info(
+            Debug(
                 _process.OutputRecordsExist
                     ? "{0} | {1}.{2} has records; delta run."
                     : "{0} | {1}.{2} is empty; initial run.",

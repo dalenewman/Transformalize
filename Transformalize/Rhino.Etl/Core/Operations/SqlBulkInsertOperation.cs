@@ -209,7 +209,8 @@ namespace Transformalize.Rhino.Etl.Core.Operations {
                         transaction.Rollback();
                         Warn("Rolled back transaction in {0}", Name);
                     }
-                } else {
+                }
+                else {
                     if (transaction != null) {
                         Debug("Committing {0}", Name);
                         transaction.Commit();
@@ -244,8 +245,10 @@ namespace Transformalize.Rhino.Etl.Core.Operations {
             foreach (var pair in Mappings) {
                 copy.ColumnMappings.Add(pair.Key, pair.Value);
             }
-            copy.NotifyAfter = NotifyBatchSize;
-            copy.SqlRowsCopied += OnSqlRowsCopied;
+            if (IsDebugEnabled() || IsTraceEnabled()) {
+                copy.NotifyAfter = NotifyBatchSize;
+                copy.SqlRowsCopied += OnSqlRowsCopied;
+            }
             copy.DestinationTableName = TargetTable;
             copy.BulkCopyTimeout = Timeout;
             return copy;

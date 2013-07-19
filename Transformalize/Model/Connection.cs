@@ -16,21 +16,37 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Data.SqlClient;
 using Transformalize.Data;
 
 namespace Transformalize.Model {
     public class Connection {
         private readonly IConnectionChecker _connectionChecker;
+        private readonly SqlConnectionStringBuilder _builder;
 
-        public Connection(IConnectionChecker connectionChecker) {
+        public Connection(string connectionString, IConnectionChecker connectionChecker) {
             _connectionChecker = connectionChecker;
+            _builder = new SqlConnectionStringBuilder(connectionString);
         }
 
-        public string ConnectionString { get; set; }
+        public string ConnectionString {
+            get { return _builder.ConnectionString; }
+        }
+
+        public string Database
+        {
+            get { return _builder.InitialCatalog; }
+        }
+
+        public string Server
+        {
+            get { return _builder.DataSource; }
+        }
+
         public string Provider { get; set; }
         public int Year { get; set; }
-        public int OutputBatchSize { get; set; }
-        public int InputBatchSize { get; set; }
+        public int BatchSize { get; set; }
+
         public bool IsReady() {
             return _connectionChecker.Check(ConnectionString);
         }
