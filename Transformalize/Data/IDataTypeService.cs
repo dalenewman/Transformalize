@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Transformalize.Model;
 
-namespace Transformalize
+namespace Transformalize.Data
 {
     public interface IDataTypeService {
         string GetDataType(Field field);

@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
 using System.Linq;
+using Transformalize.Data;
 using Transformalize.Transforms;
 
 namespace Transformalize.Model {
@@ -26,7 +27,7 @@ namespace Transformalize.Model {
 
         public string Name;
         public Entity MasterEntity;
-        public Dictionary<string, Connection> Connections = new Dictionary<string, Connection>();
+        public Dictionary<string, SqlServerConnection> Connections = new Dictionary<string, SqlServerConnection>();
         public List<Entity> Entities = new List<Entity>();
         public List<Relationship> Relationships = new List<Relationship>();
         public Dictionary<string, Dictionary<string, object>> MapEquals = new Dictionary<string, Dictionary<string, object>>();

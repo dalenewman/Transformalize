@@ -109,10 +109,16 @@
     <Compile Include="Configuration\XmlElementCollection.cs" />
     <Compile Include="Data\EntityRecordsExist.cs" />
     <Compile Include="Data\EntityCounter.cs" />
+    <Compile Include="Data\ICompatibilityReader.cs" />
+    <Compile Include="Data\IConnection.cs" />
+    <Compile Include="Data\IDataTypeService.cs" />
     <Compile Include="Data\IEntityAutoFieldReader.cs" />
     <Compile Include="Data\IEntityVersionWriter.cs" />
     <Compile Include="Data\ITflWriter.cs" />
     <Compile Include="Data\IViewWriter.cs" />
+    <Compile Include="Data\SqlServerCompatibilityReader.cs" />
+    <Compile Include="Data\SqlServerConnection.cs" />
+    <Compile Include="Data\SqlServerDataTypeService.cs" />
     <Compile Include="Data\SqlServerEntityAutoFieldReader.cs" />
     <Compile Include="Data\SqlServerEntityRecordsExist.cs" />
     <Compile Include="Data\IEntityBatch.cs" />
@@ -126,7 +132,6 @@
     <Compile Include="Extensions\LinqExtensions.cs" />
     <Compile Include="Extensions\StringBuilderExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="IDataTypeService.cs" />
     <Compile Include="Operations\EntityTransform.cs" />
     <Compile Include="Operations\EntityDrop.cs" />
     <Compile Include="Operations\EntityAction.cs" />
@@ -469,10 +474,8 @@
     <Compile Include="Transforms\TrimTransform.cs" />
     <Compile Include="Transforms\TrimEndTransform.cs" />
     <Compile Include="Transforms\InsertTransform.cs" />
-    <Compile Include="SqlServerDataTypeService.cs" />
     <Compile Include="Operations\EntityInputKeysExtract.cs" />
     <Compile Include="Model\Field.cs" />
-    <Compile Include="Model\Connection.cs" />
     <Compile Include="Model\Entity.cs" />
     <Compile Include="Model\FieldSqlWriter.cs" />
     <Compile Include="Model\FieldType.cs" />

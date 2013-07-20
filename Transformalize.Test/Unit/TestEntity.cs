@@ -64,7 +64,7 @@ namespace Transformalize.Test.Unit {
 
             Assert.AreEqual(4, rows.Count);
 
-            var actual = SqlTemplates.BatchInsertValues(2, "@KEYS", entity.PrimaryKey, rows, 2005);
+            var actual = SqlTemplates.BatchInsertValues(2, "@KEYS", entity.PrimaryKey, rows, false);
             const string expected = @"
 INSERT INTO @KEYS
 SELECT 1

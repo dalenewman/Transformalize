@@ -51,7 +51,7 @@ namespace Transformalize.Operations {
             var context = new FieldSqlWriter(_entity.PrimaryKey).Context();
             var sql = "SET NOCOUNT ON;\r\n" +
                       SqlTemplates.CreateTableVariable(KEYS_TABLE_VARIABLE, context, false) +
-                      SqlTemplates.BatchInsertValues(50, KEYS_TABLE_VARIABLE, context, rows, _entity.InputConnection.Year) + Environment.NewLine +
+                      SqlTemplates.BatchInsertValues(50, KEYS_TABLE_VARIABLE, context, rows, _entity.InputConnection.InsertMultipleValues()) + Environment.NewLine +
                       SqlTemplates.Select(_entity.All, _entity.Name, KEYS_TABLE_VARIABLE);
 
             Trace(sql);

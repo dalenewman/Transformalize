@@ -100,7 +100,7 @@ CREATE TABLE [{0}].[{1}](
             return string.Format(sqlPattern, columns, SafeTable(leftTable, leftSchema), SafeTable(rightTable, rightSchema), @join);
         }
 
-        private static string BatchInsertValues2005(int size, string name, IDictionary<string, Field> fields, IEnumerable<Row> rows) {
+        private static string InsertUnionedValues(int size, string name, IDictionary<string, Field> fields, IEnumerable<Row> rows) {
             var sqlBuilder = new StringBuilder();
             foreach (var group in rows.Partition(size)) {
                 sqlBuilder.Append(string.Format("\r\nINSERT INTO {0}\r\nSELECT {1};", name, string.Join("\r\nUNION ALL SELECT ", RowsToValues(fields, group))));
@@ -108,7 +108,7 @@ CREATE TABLE [{0}].[{1}](
             return sqlBuilder.ToString();
         }
 
-        private static string BatchInsertValues2008(int size, string name, IDictionary<string, Field> fields, IEnumerable<Row> rows) {
+        private static string InsertMultipleValues(int size, string name, IDictionary<string, Field> fields, IEnumerable<Row> rows) {
             var sqlBuilder = new StringBuilder();
             foreach (var group in rows.Partition(size)) {
                 sqlBuilder.Append(string.Format("\r\nINSERT INTO {0}\r\nVALUES({1});", name, string.Join("),\r\n(", RowsToValues(fields, @group))));
@@ -117,9 +117,10 @@ CREATE TABLE [{0}].[{1}](
         }
 
         private static IEnumerable<string> RowsToValues(IDictionary<string, Field> fields, IEnumerable<Row> rows) {
+            var orderedFields = new FieldSqlWriter(fields).Context();
             foreach (var row in rows) {
                 var values = new List<string>();
-                foreach (var pair in fields) {
+                foreach (var pair in orderedFields) {
                     var value = row[pair.Key].ToString();
                     values.Add(
                         pair.Value.Quote == string.Empty
@@ -131,10 +132,10 @@ CREATE TABLE [{0}].[{1}](
             }
         }
 
-        public static string BatchInsertValues(int size, string name, IDictionary<string, Field> fields, IEnumerable<Row> rows, int year) {
-            return year <= 2005 ?
-                BatchInsertValues2005(size, name, fields, rows) :
-                BatchInsertValues2008(size, name, fields, rows);
+        public static string BatchInsertValues(int size, string name, IDictionary<string, Field> fields, IEnumerable<Row> rows, bool insertMultipleValues) {
+            return insertMultipleValues ?
+                InsertMultipleValues(size, name, fields, rows):
+                InsertUnionedValues(size, name, fields, rows);
         }
 
         private static string SafeTable(string name, string schema = "dbo") {
@@ -144,6 +145,6 @@ CREATE TABLE [{0}].[{1}](
                 string.Concat("[", name, "]") :
                 string.Concat("[", schema, "].[", name, "]");
         }
-        
+
     }
 }

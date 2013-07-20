@@ -38,12 +38,12 @@ namespace Transformalize.Configuration
             set { this["value"] = value; }
         }
 
-        [ConfigurationProperty("year", IsRequired = false, DefaultValue = 2008)]
-        public int Year {
+        [ConfigurationProperty("compatabilityLevel", IsRequired = false, DefaultValue = 0)]
+        public int CompatabilityLevel {
             get {
-                return (int) this["year"];
+                return (int)this["compatabilityLevel"];
             }
-            set { this["year"] = value; }
+            set { this["compatabilityLevel"] = value; }
         }
 
         [ConfigurationProperty("provider", IsRequired = false, DefaultValue = "")]

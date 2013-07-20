@@ -33,7 +33,7 @@ namespace Transformalize.Operations {
         }
 
         protected override void PrepareSchema() {
-            NotifyBatchSize = 1000;
+            NotifyBatchSize = 10000;
             BatchSize = _entity.OutputConnection.BatchSize;
 
             var fields = new FieldSqlWriter(_entity.All).ExpandXml().Output().AddBatchId(false).Context();
@@ -43,7 +43,7 @@ namespace Transformalize.Operations {
         }
 
         protected override void OnSqlRowsCopied(object sender, SqlRowsCopiedEventArgs e) {
-           Debug("{0} | Processed {1} rows in EntityBulkInsert", _entity.ProcessName, e.RowsCopied);
+           Info("{0} | Processed {1} rows in EntityBulkInsert", _entity.ProcessName, e.RowsCopied);
         }
 
     }

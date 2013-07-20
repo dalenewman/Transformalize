@@ -31,7 +31,6 @@ namespace Transformalize.Readers {
 
     public class ProcessReader : WithLoggingMixin, IConfigurationReader<Process> {
         private readonly string _name;
-        private IEntityAutoFieldReader _autoFieldReader;
         private readonly IConnectionChecker _connectionChecker;
         private Process _process;
         private readonly ProcessConfigurationElement _config;
@@ -44,7 +43,6 @@ namespace Transformalize.Readers {
 
         public ProcessReader(string name, IConnectionChecker connectionChecker = null, IEntityAutoFieldReader autoFieldReader = null) {
             _name = name;
-            _autoFieldReader = autoFieldReader;
             _connectionChecker = connectionChecker ?? new SqlServerConnectionChecker(name);
             _config = ((TransformalizeConfiguration)ConfigurationManager.GetSection("transformalize")).Processes.Get(_name);
         }
@@ -131,7 +129,8 @@ namespace Transformalize.Readers {
                     LeftField = _process.Entities.First(e => e.Name.Equals(relationshipElement.LeftEntity, StringComparison.OrdinalIgnoreCase)).All[joinElement.LeftField],
                     RightField = _process.Entities.First(e => e.Name.Equals(relationshipElement.RightEntity, StringComparison.OrdinalIgnoreCase)).All[joinElement.RightField]
                 };
-                j.LeftField.FieldType = FieldType.ForeignKey;
+                if(j.LeftField.FieldType != FieldType.MasterKey && j.LeftField.FieldType != FieldType.PrimaryKey)
+                    j.LeftField.FieldType = FieldType.ForeignKey;
                 join.Add(j);
             }
             return join;
@@ -179,9 +178,9 @@ namespace Transformalize.Readers {
         private int ReadConnections(ProcessConfigurationElement config) {
             var count = 0;
             foreach (ConnectionConfigurationElement element in config.Connections) {
-                var connection = new Connection(element.Value, _connectionChecker) {
+                var connection = new SqlServerConnection(element.Value, _process.Name) {
                     Provider = element.Provider,
-                    Year = element.Year,
+                    CompatibilityLevel = element.CompatabilityLevel,
                     BatchSize = element.BatchSize
                 };
                 _process.Connections.Add(element.Name, connection);
@@ -201,12 +200,10 @@ namespace Transformalize.Readers {
             };
 
             if (e.Auto) {
-                if (_autoFieldReader == null) {
-                    _autoFieldReader = new SqlServerEntityAutoFieldReader(entity, entityCount);
-                    entity.All = _autoFieldReader.ReadAll();
-                    entity.Fields = _autoFieldReader.ReadFields();
-                    entity.PrimaryKey = _autoFieldReader.ReadPrimaryKey();
-                }
+                var autoReader = new SqlServerEntityAutoFieldReader(entity, entityCount);
+                entity.All = autoReader.ReadAll();
+                entity.Fields = autoReader.ReadFields();
+                entity.PrimaryKey = autoReader.ReadPrimaryKey();
             }
 
             var pkIndex = 0;

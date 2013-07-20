@@ -45,7 +45,7 @@ namespace Transformalize.Data {
                 }
             }
 
-            Info("{0} | Processed {1} records from {2}", _entity.ProcessName, count, _entity.Name);
+            Info("{0} | Processed {1} rows in {2}", _entity.ProcessName, count, _entity.Name);
         }
 
         private string PrepareSql() {

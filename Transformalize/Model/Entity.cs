@@ -31,8 +31,8 @@ namespace Transformalize.Model {
         public string Schema { get; set; }
         public string ProcessName { get; set; }
         public string Name { get; set; }
-        public Connection InputConnection { get; set; }
-        public Connection OutputConnection { get; set; }
+        public SqlServerConnection InputConnection { get; set; }
+        public SqlServerConnection OutputConnection { get; set; }
         public Field Version;
         public Dictionary<string, Field> PrimaryKey { get; set; }
         public Dictionary<string, Field> Fields { get; set; }

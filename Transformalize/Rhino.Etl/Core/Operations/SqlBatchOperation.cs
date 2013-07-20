@@ -55,6 +55,10 @@ namespace Transformalize.Rhino.Etl.Core.Operations {
             base.ParamPrefix = "@";
         }
 
+        SqlTransaction BeginTransaction(SqlConnection connection) {
+            return UseTransaction ? connection.BeginTransaction() : null;
+        }
+
         /// <summary>
         /// Executes this operation
         /// </summary>
@@ -63,7 +67,7 @@ namespace Transformalize.Rhino.Etl.Core.Operations {
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             Guard.Against<ArgumentException>(rows == null, "SqlBatchOperation cannot accept a null enumerator");
             using (var connection = (SqlConnection)Use.Connection(ConnectionStringSettings))
-            using (var transaction = connection.BeginTransaction()) {
+            using (var transaction = BeginTransaction(connection)) {
                 SqlCommandSet commandSet = null;
                 CreateCommandSet(connection, transaction, ref commandSet, _timeout);
                 foreach (var row in rows) {
@@ -76,23 +80,27 @@ namespace Transformalize.Rhino.Etl.Core.Operations {
                     }
                     commandSet.Append(command);
                     if (commandSet.CountOfCommands >= _batchSize) {
-                        Debug("Executing batch of {0} commands", commandSet.CountOfCommands);
+                        Trace("Executing batch of {0} commands", commandSet.CountOfCommands);
                         commandSet.ExecuteNonQuery();
                         CreateCommandSet(connection, transaction, ref commandSet, _timeout);
                     }
                 }
-                Debug("Executing final batch of {0} commands", commandSet.CountOfCommands);
+                Trace("Executing final batch of {0} commands", commandSet.CountOfCommands);
                 commandSet.ExecuteNonQuery();
 
-                if (PipelineExecuter.HasErrors) {
-                    Warn(null, "Rolling back transaction in {0}", Name);
-                    transaction.Rollback();
-                    Warn(null, "Rolled back transaction in {0}", Name);
-                } else {
-                    Debug("Committing {0}", Name);
-                    transaction.Commit();
-                    Debug("Committed {0}", Name);
+                if (transaction != null) {
+                    if (PipelineExecuter.HasErrors) {
+                        Warn(null, "Rolling back transaction in {0}", Name);
+                        transaction.Rollback();
+                        Warn(null, "Rolled back transaction in {0}", Name);
+                    }
+                    else {
+                        Trace("Committing {0}", Name);
+                        transaction.Commit();
+                        Trace("Committed {0}", Name);
+                    }
                 }
+
             }
             yield break;
         }

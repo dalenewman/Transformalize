@@ -1,4 +1,4 @@
-﻿/*
+/*
 Transformalize - Replicate, Transform, and Denormalize Your Data...
 Copyright (C) 2013 Dale Newman
 
@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System.Collections.Generic;
 using Transformalize.Model;
 
-namespace Transformalize {
+namespace Transformalize.Data {
 
     public class SqlServerDataTypeService : IDataTypeService {
 

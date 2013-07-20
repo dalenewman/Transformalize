@@ -17,38 +17,49 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Data.SqlClient;
-using Transformalize.Data;
 
-namespace Transformalize.Model {
-    public class Connection {
+namespace Transformalize.Data {
+
+    public class SqlServerConnection : IConnection {
+
         private readonly IConnectionChecker _connectionChecker;
         private readonly SqlConnectionStringBuilder _builder;
+        private ICompatibilityReader _compatibilityReader;
 
-        public Connection(string connectionString, IConnectionChecker connectionChecker) {
-            _connectionChecker = connectionChecker;
+        public string Provider { get; set; }
+        public int BatchSize { get; set; }
+        public int CompatibilityLevel { get; set; }
+
+        private ICompatibilityReader CompatibilityReader
+        {
+            get { return _compatibilityReader ?? (_compatibilityReader = new SqlServerCompatibilityReader(this)); }
+        }
+
+        public SqlServerConnection(string connectionString, string processName) {
             _builder = new SqlConnectionStringBuilder(connectionString);
+            _connectionChecker = new SqlServerConnectionChecker(processName);
         }
 
         public string ConnectionString {
             get { return _builder.ConnectionString; }
         }
 
-        public string Database
-        {
+        public string Database {
             get { return _builder.InitialCatalog; }
         }
 
-        public string Server
-        {
+        public string Server {
             get { return _builder.DataSource; }
         }
 
-        public string Provider { get; set; }
-        public int Year { get; set; }
-        public int BatchSize { get; set; }
-
         public bool IsReady() {
             return _connectionChecker.Check(ConnectionString);
+        }
+
+        public bool InsertMultipleValues() {
+            if (CompatibilityLevel > 0)
+                return CompatibilityLevel > 90;
+            return CompatibilityReader.InsertMultipleValues;
         }
     }
 }
