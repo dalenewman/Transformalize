@@ -2,6 +2,7 @@ using System.Configuration;
 using System;
 using System.Collections;
 using System.Data;
+using System.Data.SqlClient;
 
 namespace Transformalize.Rhino.Etl.Core.Operations {
     /// <summary>
@@ -124,5 +125,14 @@ namespace Transformalize.Rhino.Etl.Core.Operations {
                 return true;
             return SupportedTypes.ContainsKey(value.GetType());
         }
+
+        /// <summary>
+        /// Determines if transaction should be used
+        /// </summary>
+        /// <param name="connection">The connection.</param>
+        protected SqlTransaction BeginTransaction(SqlConnection connection) {
+            return UseTransaction ? connection.BeginTransaction() : null;
+        }
+
     }
 }

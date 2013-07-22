@@ -30,6 +30,8 @@ namespace Transformalize.Model {
         private FieldType _fieldType;
         private string _name;
         private string _sqlDataType;
+        private FieldSqlWriter _sqlWriter;
+        private bool _input;
 
         public StringBuilder StringBuilder;
 
@@ -40,7 +42,6 @@ namespace Transformalize.Model {
         public string Schema { get; set; }
         public string Entity { get; set; }
         public string Parent { get; set; }
-        public bool Input { get; set; }
         public int Length { get; private set; }
         public int Precision { get; set; }
         public int Scale { get; set; }
@@ -57,12 +58,21 @@ namespace Transformalize.Model {
         public int Index { get; set; }
         public bool Unicode { get; set; }
         public bool VariableLength { get; set; }
+        public object Default;
 
         public string SqlDataType {
             get { return _sqlDataType ?? (_sqlDataType = new SqlServerDataTypeService().GetDataType(this)); }
         }
 
-        public object Default;
+        public bool Input {
+            get { return _input; }
+            set {
+                _input = value;
+                if (!_input && Output) {
+                    Output = false;
+                }
+            }
+        }
 
         /// <summary>
         /// FieldType can affect Output
@@ -91,7 +101,7 @@ namespace Transformalize.Model {
         }
 
         public bool MustBeOutput() {
-            return FieldType == FieldType.MasterKey || FieldType == FieldType.ForeignKey || FieldType == FieldType.PrimaryKey;
+            return FieldType.HasFlag(FieldType.MasterKey) || FieldType.HasFlag(FieldType.ForeignKey) || FieldType.HasFlag(FieldType.PrimaryKey);
         }
 
         public Field(FieldType fieldType) : this("System.String", 64, fieldType, true, null) { }
@@ -112,7 +122,10 @@ namespace Transformalize.Model {
             FieldType = fieldType;
             Output = output || MustBeOutput();
             SystemType = System.Type.GetType(typeName);
-            StringBuilder = UseStringBuilder ? new StringBuilder(length, 8000) : null;
+
+            var maxCapacity = new[] { length == 0 ? 1 : length, 8000 }.Min();
+            StringBuilder = UseStringBuilder ? new StringBuilder(maxCapacity, maxCapacity) : null;
+
             InnerXml = new Dictionary<string, Field>();
             Default = ConvertDefault(@default ?? string.Empty);
 
@@ -121,7 +134,6 @@ namespace Transformalize.Model {
             }
         }
 
-        private FieldSqlWriter _sqlWriter;
         public FieldSqlWriter SqlWriter {
             get { return _sqlWriter ?? (_sqlWriter = new FieldSqlWriter(this)); }
             set { _sqlWriter = value; }

@@ -89,6 +89,7 @@
     <Compile Include="Integration\TestRunner.cs" />
     <Compile Include="Integration\TestConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Unit\TestFieldType.cs" />
     <Compile Include="Unit\TestStringBuilderExtensions.cs" />
     <Compile Include="Unit\TestViewWriter.cs" />
     <Compile Include="Unit\TestMultiFieldTransforms.cs" />

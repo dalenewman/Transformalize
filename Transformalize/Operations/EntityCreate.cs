@@ -25,7 +25,9 @@ using Transformalize.Rhino.Etl.Core;
 using Transformalize.Rhino.Etl.Core.Operations;
 
 namespace Transformalize.Operations {
+
     public class EntityCreate : AbstractOperation {
+        
         private readonly Entity _entity;
         private readonly IEntityExists _entityExists;
         private readonly FieldSqlWriter _writer;

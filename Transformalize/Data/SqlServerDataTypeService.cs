@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Collections.Generic;
+using System.Globalization;
 using Transformalize.Model;
 
 namespace Transformalize.Data {
@@ -44,6 +45,7 @@ namespace Transformalize.Data {
                         {"binary", "BINARY"},
                         {"guid", "UNIQUEIDENTIFIER"},
                         {"rowversion", "ROWVERSION"}
+                        
                     };
                 }
                 return _types;
@@ -68,7 +70,9 @@ namespace Transformalize.Data {
                         {"TINYINT", "System.Byte" },
                         {"UNIQUEIDENTIFIER", "System.Guid" },
                         {"ROWVERSION", "RowVersion" },
-                        {"TIMESTAMP", "RowVersion"}
+                        {"TIMESTAMP", "RowVersion"},
+                        {"IMAGE", "System.String"},
+                        {"NTEXT", "System.String"}
                     };
                 }
                 return _reverseTypes;
@@ -77,7 +81,7 @@ namespace Transformalize.Data {
 
         public string GetDataType(Field field) {
 
-            var length = field.SimpleType == "string" || field.SimpleType == "char" || field.SimpleType == "binary" ? string.Concat("(", field.Length, ")") : string.Empty;
+            var length = field.SimpleType == "string" || field.SimpleType == "char" || field.SimpleType == "binary" ? string.Concat("(", field.Length > 8000 ? "MAX" : field.Length.ToString(CultureInfo.InvariantCulture), ")") : string.Empty;
             var dimensions = field.SimpleType == "decimal" ? string.Format("({0},{1})", field.Precision, field.Scale) : string.Empty;
             var notNull = field.NotNull ? " NOT NULL" : string.Empty;
             var surrogate = field.Clustered ? " IDENTITY(1,1) UNIQUE CLUSTERED" : string.Empty;

@@ -221,10 +221,6 @@ namespace Transformalize.Rhino.Etl.Core.Operations {
             yield break;
         }
 
-        SqlTransaction BeginTransaction(SqlConnection connection) {
-            return UseTransaction ? connection.BeginTransaction() : null;
-        }
-
         /// <summary>
         ///    Handle sql notifications
         ///    </summary>

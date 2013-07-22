@@ -67,7 +67,7 @@ namespace Transformalize.Model {
         }
 
         public bool IsMaster() {
-            return PrimaryKey.Any(kv => kv.Value.FieldType == FieldType.MasterKey);
+            return PrimaryKey.Any(kv => kv.Value.FieldType.HasFlag(FieldType.MasterKey));
         }
 
         public void Dispose() {
@@ -84,7 +84,7 @@ namespace Transformalize.Model {
         }
 
         public bool HasForeignKeys() {
-            return Fields.Any(f => f.Value.FieldType.Equals(FieldType.ForeignKey));
+            return Fields.Any(f => f.Value.FieldType.HasFlag(FieldType.ForeignKey));
         }
 
         public bool NeedsUpdate() {

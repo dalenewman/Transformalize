@@ -55,10 +55,6 @@ namespace Transformalize.Rhino.Etl.Core.Operations {
             base.ParamPrefix = "@";
         }
 
-        SqlTransaction BeginTransaction(SqlConnection connection) {
-            return UseTransaction ? connection.BeginTransaction() : null;
-        }
-
         /// <summary>
         /// Executes this operation
         /// </summary>

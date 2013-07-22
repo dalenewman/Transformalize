@@ -129,8 +129,15 @@ namespace Transformalize.Readers {
                     LeftField = _process.Entities.First(e => e.Name.Equals(relationshipElement.LeftEntity, StringComparison.OrdinalIgnoreCase)).All[joinElement.LeftField],
                     RightField = _process.Entities.First(e => e.Name.Equals(relationshipElement.RightEntity, StringComparison.OrdinalIgnoreCase)).All[joinElement.RightField]
                 };
-                if(j.LeftField.FieldType != FieldType.MasterKey && j.LeftField.FieldType != FieldType.PrimaryKey)
+
+                if (j.LeftField.FieldType.HasFlag(FieldType.MasterKey) ||
+                    j.LeftField.FieldType.HasFlag(FieldType.PrimaryKey)) {
+                    j.LeftField.FieldType |= FieldType.ForeignKey;
+                }
+                else {
                     j.LeftField.FieldType = FieldType.ForeignKey;
+                }
+
                 join.Add(j);
             }
             return join;
@@ -154,7 +161,7 @@ namespace Transformalize.Readers {
         }
 
         private IEnumerable<Field> GetRelatedKeys(Entity entity) {
-            var foreignKeys = entity.All.Where(f => f.Value.FieldType.Equals(FieldType.ForeignKey)).Select(f => f.Value).ToList();
+            var foreignKeys = entity.All.Where(f => f.Value.FieldType.HasFlag(FieldType.ForeignKey)).Select(f => f.Value).ToList();
             if (foreignKeys.Any()) {
                 foreach (var alias in foreignKeys.Select(fk => fk.Alias).ToArray()) {
                     var nextEntity = _process.Relationships.Where(r => r.LeftEntity.Name.Equals(entity.Name) && r.Join.Any(j => j.LeftField.Alias.Equals(alias))).Select(r => r.RightEntity).First();
@@ -240,6 +247,11 @@ namespace Transformalize.Readers {
                     field.InnerXml.Add(x.Alias, xmlField);
                 }
 
+                if (e.Auto && entity.Fields.ContainsKey(field.Name)) {
+                    entity.Fields.Remove(field.Name);
+                    entity.All.Remove(field.Name);
+                }
+
                 entity.Fields[f.Alias] = field;
                 entity.All[f.Alias] = field;
 
@@ -248,9 +260,19 @@ namespace Transformalize.Readers {
 
             if (entity.All.ContainsKey(e.Version)) {
                 entity.Version = entity.All[e.Version];
-            } else {
+            }
+            else {
                 var message = string.Format("{0} | version field reference '{1}' is undefined in {2}.", _process.Name, e.Version, e.Name);
                 Error(message);
+                throw new TransformalizeException(message);
+            }
+
+            var entityKeys = new HashSet<string>(entity.Fields.Where(kv => kv.Value.Output).Select(kv => kv.Key));
+            var processKeys = new HashSet<string>(_process.Entities.SelectMany(pe => pe.Fields).Where(kv => kv.Value.Output).Select(kv => kv.Key));
+            entityKeys.IntersectWith(processKeys);
+            if (entityKeys.Any()) {
+                var count = entityKeys.Count;
+                var message = String.Format("{0} | field overlap error.  The field{2}: {1} {3} already defined in previous entities.  You must alias (rename) these.", _process.Name, string.Join(", ", entityKeys), count == 1 ? string.Empty : "s", count == 1 ? "is" : "are");
                 throw new TransformalizeException(message);
             }
 

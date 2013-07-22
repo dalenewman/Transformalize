@@ -16,13 +16,18 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace Transformalize.Model {
-    public enum FieldType {
-        ForeignKey,
-        Field,
-        Xml,
-        Version,
-        PrimaryKey,
-        MasterKey
+
+    [FlagsAttribute] 
+    public enum FieldType : short {
+        None = 0,
+        ForeignKey = 1,
+        Field = 2,
+        Xml = 4,
+        Version = 8,
+        PrimaryKey = 16,
+        MasterKey = 32
     }
 }

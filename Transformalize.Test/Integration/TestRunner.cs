@@ -23,14 +23,24 @@ namespace Transformalize.Test.Integration {
     public class TestRunner {
 
         [Test]
-        public void Init() {
+        public void TestInit() {
+            new Runner("Test", "init").Run();
+        }
+
+        [Test]
+        public void TestDefault() {
+            new Runner("Test").Run();
+        }
+
+        [Test]
+        public void NorthWindInit() {
             new Runner("NorthWind", "init").Run();
         }
 
         [Test]
-        public void Delta() {
+        public void NorthWindDefault() {
             new Runner("NorthWind").Run();
         }
-        
+
     }
 }

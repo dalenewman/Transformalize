@@ -163,7 +163,7 @@ namespace Transformalize.Model {
         public FieldSqlWriter ToAlias() {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];
-                if (field.Alias != field.Name || field.FieldType == Model.FieldType.Xml) {
+                if (field.Alias != field.Name || field.FieldType.HasFlag(Model.FieldType.Xml)) {
                     _output[key] = string.Concat("[", field.Alias, "] = ", _output[key]);
                 }
             }
@@ -173,7 +173,7 @@ namespace Transformalize.Model {
         public FieldSqlWriter AsAlias() {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];
-                if (field.Alias != field.Name || field.FieldType == Model.FieldType.Xml) {
+                if (field.Alias != field.Name || field.FieldType.HasFlag(Model.FieldType.Xml)) {
                     _output[key] = string.Concat(_output[key], " AS [", _original[key].Alias, "]");
                 }
             }
@@ -214,7 +214,7 @@ namespace Transformalize.Model {
         public FieldSqlWriter AppendIf(string suffix, params FieldType[] fieldTypes) {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];
-                if (fieldTypes.Any(ft=>ft == field.FieldType))
+                if (fieldTypes.Any(ft=>ft.HasFlag(field.FieldType)))
                     _output[key] = string.Concat(_output[key], suffix);
             }
             return this;
@@ -223,7 +223,7 @@ namespace Transformalize.Model {
         public FieldSqlWriter AppendIfNot(string suffix, FieldType fieldType) {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];
-                if (field.FieldType != fieldType)
+                if (!field.FieldType.HasFlag(fieldType))
                     _output[key] = string.Concat(_output[key], suffix);
             }
             return this;
@@ -247,7 +247,7 @@ namespace Transformalize.Model {
         public FieldSqlWriter Select() {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];
-                if (field.FieldType == Model.FieldType.Xml)
+                if (field.FieldType.HasFlag(Model.FieldType.Xml))
                     _output[key] = XmlValue(field);
                 else {
                     _output[key] = SafeColumn(field.Name);
@@ -295,7 +295,7 @@ namespace Transformalize.Model {
         public FieldSqlWriter FieldType(FieldType answer) {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];
-                if (field.FieldType != answer)
+                if (!field.FieldType.HasFlag(answer))
                     _output.Remove(key);
             }
             return this;
@@ -304,7 +304,7 @@ namespace Transformalize.Model {
         public FieldSqlWriter FieldType(params FieldType[] answers) {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];
-                if (!answers.Any(a => a == field.FieldType))
+                if (!answers.Any(a => field.FieldType.HasFlag(a)))
                     _output.Remove(key);
             }
             return this;

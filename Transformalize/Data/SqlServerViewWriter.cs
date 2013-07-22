@@ -73,7 +73,7 @@ namespace Transformalize.Data
                 if (entity.IsMaster()) {
                     builder.AppendLine(string.Concat(new FieldSqlWriter(entity.PrimaryKey, entity.Fields, _process.Results).ExpandXml().Output().Alias().Prepend(string.Concat("    [", entity.OutputName(), "].")).Write(",\r\n"), ","));
                 } else {
-                    if (entity.Fields.Any(f => f.Value.FieldType == FieldType.ForeignKey)) {
+                    if (entity.Fields.Any(f => f.Value.FieldType.HasFlag(FieldType.ForeignKey))) {
                         builder.AppendLine(string.Concat(new FieldSqlWriter(entity.Fields).ExpandXml().Output().FieldType(FieldType.ForeignKey).Alias().Prepend(string.Concat("    [", _masterEntity.OutputName(), "].")).Write(",\r\n"), ","));
                     }
                     builder.AppendLine(string.Concat(new FieldSqlWriter(entity.Fields).ExpandXml().Output().FieldType(FieldType.Field, FieldType.Version, FieldType.Xml).Alias().Prepend(string.Concat("    [", entity.OutputName(), "].")).Write(",\r\n"), ","));
