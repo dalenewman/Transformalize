@@ -16,27 +16,26 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System.Collections.Generic;
-using System.Text;
 using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
+using Transformalize.fastJSON;
 
 namespace Transformalize.Transforms {
-    public class ConcatTransform : Transformer {
+    public class JsonTransform : Transformer {
+        protected override string Name { get { return "Json Transform"; } }
+        private readonly Dictionary<string, object> _values = new Dictionary<string, object>();
 
-        private readonly StringBuilder _builder = new StringBuilder();
-
-        protected override string Name { get { return "Concat Transform"; } }
-
-        public ConcatTransform(Dictionary<string, Field> parameters, Dictionary<string, Field> results)
+        public JsonTransform(Dictionary<string, Field> parameters, Dictionary<string, Field> results)
             : base(parameters, results) {
         }
 
         public override void Transform(ref Row row) {
-            _builder.Clear();
+            _values.Clear();
             foreach (var pair in Parameters) {
-                _builder.Append(row[pair.Key]);
+                _values[pair.Key] = row[pair.Key];
             }
-            row[FirstResult.Key] = _builder.ToString();
+
+            row[FirstResult.Key] = JSON.Instance.ToJSON(_values);
         }
 
     }

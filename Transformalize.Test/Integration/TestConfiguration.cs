@@ -21,8 +21,8 @@ using System.Configuration;
 using System.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration;
+using Transformalize.Data;
 using Transformalize.Model;
-using Transformalize.Readers;
 
 namespace Transformalize.Test.Integration {
     [TestFixture]

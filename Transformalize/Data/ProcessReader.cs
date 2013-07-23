@@ -20,14 +20,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using Transformalize.Configuration;
-using Transformalize.Data;
 using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
 using Transformalize.Transforms;
-using System.Linq;
 
-namespace Transformalize.Readers {
+namespace Transformalize.Data {
 
     public class ProcessReader : WithLoggingMixin, IConfigurationReader<Process> {
         private readonly string _name;
@@ -203,7 +202,8 @@ namespace Transformalize.Readers {
                 Schema = e.Schema,
                 Name = e.Name,
                 InputConnection = _process.Connections[e.Connection],
-                OutputConnection = _process.Connections["output"]
+                OutputConnection = _process.Connections["output"],
+                Prefix = e.Prefix == "Default" ? e.Name.Replace(" ", string.Empty) : e.Prefix
             };
 
             if (e.Auto) {
@@ -260,8 +260,7 @@ namespace Transformalize.Readers {
 
             if (entity.All.ContainsKey(e.Version)) {
                 entity.Version = entity.All[e.Version];
-            }
-            else {
+            } else {
                 var message = string.Format("{0} | version field reference '{1}' is undefined in {2}.", _process.Name, e.Version, e.Name);
                 Error(message);
                 throw new TransformalizeException(message);

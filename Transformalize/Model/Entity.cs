@@ -50,6 +50,7 @@ namespace Transformalize.Model {
         public IDbCommand InputKeysCommand { get; set; }
         public IEntityVersionReader EntityVersionReader { get; private set; }
         public Transformer[] Transforms { get; set; }
+        public string Prefix { get; set; }
 
         public Entity(IEntityVersionReader entityVersionReader = null) {
             Name = string.Empty;
@@ -60,6 +61,7 @@ namespace Transformalize.Model {
             Joins = new Dictionary<string, Relationship>();
             EntityVersionReader = entityVersionReader ?? new SqlServerEntityVersionReader(this);
             InputKeys = new List<Row>();
+            Prefix = string.Empty;
         }
 
         public string FirstKey() {

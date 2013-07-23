@@ -16,32 +16,35 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System.Collections.Generic;
+using System.Text;
 using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Transforms {
     public class JoinTransform : Transformer {
         private readonly string _separator;
-        private readonly object[] _parameterValues;
         private int _index;
+        private readonly StringBuilder _builder = new StringBuilder();
+        private readonly int _count;
 
         protected override string Name { get { return "Join Transform"; } }
 
         public JoinTransform(string separator, Dictionary<string, Field> parameters, Dictionary<string, Field> results)
             : base(parameters, results) {
             _separator = separator;
-            if (HasParameters) {
-                _parameterValues = new object[Parameters.Count];
-            }
+            _count = Parameters.Count;
         }
 
         public override void Transform(ref Row row) {
             _index = 0;
+            _builder.Clear();
             foreach (var pair in Parameters) {
-                _parameterValues[_index] = row[pair.Key];
+                _builder.Append(row[pair.Key]);
                 _index++;
+                if (_index < _count)
+                    _builder.Append(_separator);
             }
-            row[FirstResult.Key] = string.Join(_separator, _parameterValues);
+            row[FirstResult.Key] = _builder.ToString();
         }
 
     }

@@ -59,7 +59,8 @@ namespace Transformalize.Model {
         public bool Unicode { get; set; }
         public bool VariableLength { get; set; }
         public object Default;
-
+        public bool Auto { get; set; }
+        
         public string SqlDataType {
             get { return _sqlDataType ?? (_sqlDataType = new SqlServerDataTypeService().GetDataType(this)); }
         }
@@ -122,10 +123,7 @@ namespace Transformalize.Model {
             FieldType = fieldType;
             Output = output || MustBeOutput();
             SystemType = System.Type.GetType(typeName);
-
-            var maxCapacity = new[] { length == 0 ? 1 : length, 8000 }.Min();
-            StringBuilder = UseStringBuilder ? new StringBuilder(maxCapacity, maxCapacity) : null;
-
+            StringBuilder = UseStringBuilder ? new StringBuilder() : null;
             InnerXml = new Dictionary<string, Field>();
             Default = ConvertDefault(@default ?? string.Empty);
 

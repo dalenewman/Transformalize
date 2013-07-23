@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace Transformalize.Readers {
+namespace Transformalize.Data {
     public interface IConfigurationReader<out T> {
         T Read();
         int Count { get; }

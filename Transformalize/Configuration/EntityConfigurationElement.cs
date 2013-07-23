@@ -88,5 +88,13 @@ namespace Transformalize.Configuration {
             }
             set { this["auto"] = value; }
         }
+
+        [ConfigurationProperty("prefix", IsRequired = false, DefaultValue = "Default")]
+        public string Prefix {
+            get {
+                return this["prefix"] as string;
+            }
+            set { this["prefix"] = value; }
+        }
     }
 }

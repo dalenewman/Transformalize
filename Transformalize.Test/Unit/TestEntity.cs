@@ -20,8 +20,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Moq;
 using NUnit.Framework;
+using Transformalize.Data;
 using Transformalize.Operations;
-using Transformalize.Readers;
 using Transformalize.Rhino.Etl.Core;
 using Transformalize.Rhino.Etl.Core.Operations;
 

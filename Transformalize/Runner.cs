@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using Transformalize.Data;
 using Transformalize.Model;
 using Transformalize.Processes;
-using Transformalize.Readers;
 
 namespace Transformalize {
     public class Runner {

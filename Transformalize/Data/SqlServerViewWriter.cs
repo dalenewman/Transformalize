@@ -23,8 +23,7 @@ using Transformalize.Extensions;
 using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
 
-namespace Transformalize.Data
-{
+namespace Transformalize.Data {
     public class SqlServerViewWriter : WithLoggingMixin, IViewWriter {
         private readonly Process _process;
         private readonly Entity _masterEntity;
@@ -72,7 +71,8 @@ namespace Transformalize.Data
             foreach (var entity in _process.Entities) {
                 if (entity.IsMaster()) {
                     builder.AppendLine(string.Concat(new FieldSqlWriter(entity.PrimaryKey, entity.Fields, _process.Results).ExpandXml().Output().Alias().Prepend(string.Concat("    [", entity.OutputName(), "].")).Write(",\r\n"), ","));
-                } else {
+                }
+                else {
                     if (entity.Fields.Any(f => f.Value.FieldType.HasFlag(FieldType.ForeignKey))) {
                         builder.AppendLine(string.Concat(new FieldSqlWriter(entity.Fields).ExpandXml().Output().FieldType(FieldType.ForeignKey).Alias().Prepend(string.Concat("    [", _masterEntity.OutputName(), "].")).Write(",\r\n"), ","));
                     }
@@ -86,12 +86,19 @@ namespace Transformalize.Data
 
             foreach (var entity in _process.Entities.Where(e => !e.IsMaster())) {
                 builder.AppendFormat("INNER JOIN [{0}] ON (", entity.OutputName());
-                foreach (var pk in entity.PrimaryKey) {
-                    builder.AppendFormat("[{0}].[{1}] = [{2}].[{1}] AND ", _masterEntity.OutputName(), pk.Value.Alias, entity.OutputName());
+
+                foreach (var join in entity.RelationshipToMaster.First().Join.ToArray()) {
+                    builder.AppendFormat("[{0}].[{1}] = [{2}].[{3}] AND ", _masterEntity.OutputName(), join.LeftField.Alias, entity.OutputName(), join.RightField.Alias);
                 }
+                //foreach (var pk in entity.PrimaryKey) {
+                //    builder.AppendFormat("[{0}].[{1}] = [{2}].[{1}] AND ", _masterEntity.OutputName(), pk.Value.Alias, entity.OutputName());
+                //}
                 builder.TrimEnd(" AND ");
                 builder.AppendLine(")");
             }
+
+
+
             builder.Append(";");
             return builder.ToString();
         }

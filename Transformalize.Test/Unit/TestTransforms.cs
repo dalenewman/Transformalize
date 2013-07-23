@@ -530,6 +530,36 @@ namespace Transformalize.Test.Unit {
             Assert.AreEqual("", rows[3]["result"]);
         }
 
+        [Test]
+        public void TestJsonTransform() {
+
+            var mock = new Mock<IOperation>();
+            mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row> {
+                new Row { {"Field1", "Data1"}, {"Field2", 2} },
+                new Row { {"Field1", ""}, {"Field2", ""} },
+                new Row { {"Field1", " f1 "}, {"Field2", " f2 "}},
+                new Row { {"Field1", null }, {"Field2", null}}
+            });
+            var input = mock.Object;
+
+            var entity = new Entity();
+            entity.All["Field1"] = new Field(FieldType.Field) { Input = true };
+            entity.All["Field2"] = new Field(FieldType.Field) { Input = true };
+
+            var process = new Process();
+            process.Transforms = new Transformer[] { new JsonTransform(new Dictionary<string, Field> { { "Field1", entity.All["Field1"] }, { "Field2", entity.All["Field2"] } }, new Dictionary<string, Field> { { "result", new Field(FieldType.Field) } }) };
+
+            var rows = TestOperation(
+                input,
+                new ProcessTransform(process),
+                new LogOperation()
+            );
+
+            Assert.AreEqual("{\"Field1\":\"Data1\",\"Field2\":2}", rows[0]["result"]);
+            Assert.AreEqual("{\"Field1\":\"\",\"Field2\":\"\"}", rows[1]["result"]);
+            Assert.AreEqual("{\"Field1\":\" f1 \",\"Field2\":\" f2 \"}", rows[2]["result"]);
+            Assert.AreEqual("{\"Field1\":null,\"Field2\":null}", rows[3]["result"]);
+        }
 
     }
 }

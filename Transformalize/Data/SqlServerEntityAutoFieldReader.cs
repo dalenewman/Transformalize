@@ -25,18 +25,21 @@ namespace Transformalize.Data {
                 if (!reader.HasRows) return;
 
                 while (reader.Read()) {
+                    var name = reader.GetString(0);
                     var type = GetSystemType(reader.GetString(2));
                     var length = reader.GetInt32(3);
                     var fieldType = reader.GetBoolean(7) ? (_count == 0 ? FieldType.MasterKey : FieldType.PrimaryKey) : FieldType.Field;
                     var field = new Field(type, length, fieldType, true, null) {
-                        Name = reader.GetString(0),
+                        Name = name,
                         Entity = _entity.Name,
                         Index = reader.GetInt32(6),
                         Schema = _entity.Schema,
                         Input = true,
                         Precision = reader.GetByte(4),
                         Scale = reader.GetInt32(5),
-                        Transforms = new Transformer[0]
+                        Transforms = new Transformer[0],
+                        Auto = true,
+                        Alias = _entity.Prefix + name
                     };
                     _fields.Add(field);
                 }
@@ -52,13 +55,13 @@ namespace Transformalize.Data {
         }
 
         public Dictionary<string, Field> ReadFields() {
-            var fields = _fields.Where(f => f.FieldType.Equals(FieldType.Field)).ToDictionary(k => k.Name, v => v);
+            var fields = _fields.Where(f => f.FieldType.Equals(FieldType.Field)).ToDictionary(k => k.Alias, v => v);
             Debug("{0} | Entity auto found {0} field{2}.", _entity.ProcessName, fields.Count, fields.Count == 1 ? string.Empty : "s");
             return fields;
         }
 
         public Dictionary<string, Field> ReadPrimaryKey() {
-            var primaryKey = _fields.Where(f => !f.FieldType.Equals(FieldType.Field)).ToDictionary(k => k.Name, v => v);
+            var primaryKey = _fields.Where(f => !f.FieldType.Equals(FieldType.Field)).ToDictionary(k => k.Alias, v => v);
             Debug("{0} | Entity auto found {0} primary key{2}.", _entity.ProcessName, primaryKey.Count, primaryKey.Count == 1 ? string.Empty : "s");
             if (!primaryKey.Any())
                 Warn("{0} | Entity auto could not find a primary key.  You will need to define one in <fields><primaryKey> element.");
@@ -66,7 +69,7 @@ namespace Transformalize.Data {
         }
 
         public Dictionary<string, Field> ReadAll() {
-            return _fields.ToDictionary(k => k.Name, v => v);
+            return _fields.ToDictionary(k => k.Alias, v => v);
         }
 
         private static string PrepareSql() {
