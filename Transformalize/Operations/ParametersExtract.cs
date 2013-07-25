@@ -26,11 +26,11 @@ using System.Linq;
 namespace Transformalize.Operations {
     public class ParametersExtract : InputCommandOperation {
         private readonly string _sql;
-        private Dictionary<string, Field> _parameters;
+        private IParameters _parameters;
 
         private string BuildSql(Process process) {
             _parameters = process.Parameters;
-            var fields = new FieldSqlWriter(process.Parameters).Alias().Write();
+            var fields = string.Join(", ", _parameters.Keys);
             var tflWhereClause = string.Format(" WHERE [TflBatchId] IN ({0})", string.Join(", ", process.Entities.Select(kv=>kv.TflBatchId)));
             var sql = string.Format("SELECT [TflKey], {0} FROM {1}{2};", fields, process.View, tflWhereClause);
             Debug("{0} | SQL:\r\n{1}", process.Name, sql);

@@ -45,7 +45,7 @@ namespace Transformalize.Test.Unit {
         [Test]
         public void TestReplaceTransform() {
             var entity = new Entity();
-            entity.All["Field1"] = new Field(FieldType.Field) { Transforms = new[] { new ReplaceTransform("b", "B"), new ReplaceTransform("2","Two") } };
+            entity.All["Field1"] = new Field(FieldType.Field) { Transforms = new[] { new ReplaceTransform("b", "B"), new ReplaceTransform("2", "Two") } };
 
             var rows = TestOperation(
                 _testInput.Object,
@@ -483,8 +483,8 @@ namespace Transformalize.Test.Unit {
             entity.All["Field2"] = new Field(FieldType.Field) { Input = true };
 
             var process = new Process();
-            process.Transforms = new Transformer[] {
-                new FormatTransform("{0}+{1}", new Dictionary<string, Field> { {"Field1", entity.All["Field1"]}, {"Field2",entity.All["Field2"]}},new Dictionary<string, Field>{{"result", new Field(FieldType.Field)}} )
+            process.Transforms = new AbstractTransform[] {
+                new FormatTransform("{0}+{1}", new Parameters { {"Field1", new Parameter("Field1", null)}, {"Field2", new Parameter("Field2", null)}},new Dictionary<string, Field>{{"result", new Field(FieldType.Field)}} )
             };
 
             var rows = TestOperation(
@@ -516,7 +516,7 @@ namespace Transformalize.Test.Unit {
             entity.All["Field2"] = new Field(FieldType.Field) { Input = true };
 
             var process = new Process();
-            process.Transforms = new Transformer[] { new ConcatTransform(new Dictionary<string, Field> { { "Field1", entity.All["Field1"] }, { "Field2", entity.All["Field2"] } }, new Dictionary<string, Field> { { "result", new Field(FieldType.Field) } }) };
+            process.Transforms = new AbstractTransform[] { new ConcatTransform(new Parameters { { "Field1", new Parameter() }, { "Field2", new Parameter("Field2", null) } }, new Dictionary<string, Field> { { "result", new Field(FieldType.Field) } }) };
 
             var rows = TestOperation(
                 input,
@@ -547,7 +547,16 @@ namespace Transformalize.Test.Unit {
             entity.All["Field2"] = new Field(FieldType.Field) { Input = true };
 
             var process = new Process();
-            process.Transforms = new Transformer[] { new JsonTransform(new Dictionary<string, Field> { { "Field1", entity.All["Field1"] }, { "Field2", entity.All["Field2"] } }, new Dictionary<string, Field> { { "result", new Field(FieldType.Field) } }) };
+            process.Transforms = new AbstractTransform[] {
+                new JsonTransform(
+                    new Parameters {
+                        { "Field1", new Parameter("Field1", null) },
+                        { "Field2", new Parameter("Field2",null) }
+                    }, 
+                    new Dictionary<string, Field> {
+                        { "result", new Field(FieldType.Field) }
+                    })
+            };
 
             var rows = TestOperation(
                 input,
@@ -560,6 +569,40 @@ namespace Transformalize.Test.Unit {
             Assert.AreEqual("{\"Field1\":\" f1 \",\"Field2\":\" f2 \"}", rows[2]["result"]);
             Assert.AreEqual("{\"Field1\":null,\"Field2\":null}", rows[3]["result"]);
         }
+
+        [Test]
+        public void TestJsonTransform2() {
+
+            var mock = new Mock<IOperation>();
+            mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row> {
+                new Row { {"Field1", "d1"}, {"Field2", "d2"} },
+                new Row { {"Field1", 1}, {"Field2", 2} },
+                new Row { {"Field1", null }, {"Field2", null}}
+            });
+            var input = mock.Object;
+
+            var entity = new Entity();
+            entity.All["Field1"] = new Field(FieldType.Field) { Input = true };
+            entity.All["Field2"] = new Field(FieldType.Field) { Input = true };
+
+            var process = new Process();
+            process.Transforms = new AbstractTransform[] {
+                new JsonTransform(new Parameters {
+                    { "Field1", new Parameter("Field1",null) }, { "Field2", new Parameter("Field2",null) }, { "Field3", new Parameter("Field3", 3)}
+                }, new Dictionary<string, Field> { { "result", new Field(FieldType.Field) } })
+            };
+
+            var rows = TestOperation(
+                input,
+                new ProcessTransform(process),
+                new LogOperation()
+            );
+
+            Assert.AreEqual("{\"Field1\":\"d1\",\"Field2\":\"d2\",\"Field3\":3}", rows[0]["result"]);
+            Assert.AreEqual("{\"Field1\":1,\"Field2\":2,\"Field3\":3}", rows[1]["result"]);
+            Assert.AreEqual("{\"Field1\":null,\"Field2\":null,\"Field3\":3}", rows[2]["result"]);
+        }
+
 
     }
 }

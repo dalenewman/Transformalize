@@ -21,7 +21,7 @@ using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Transforms {
-    public class JoinTransform : Transformer {
+    public class JoinTransform : AbstractTransform {
         private readonly string _separator;
         private int _index;
         private readonly StringBuilder _builder = new StringBuilder();
@@ -29,7 +29,7 @@ namespace Transformalize.Transforms {
 
         protected override string Name { get { return "Join Transform"; } }
 
-        public JoinTransform(string separator, Dictionary<string, Field> parameters, Dictionary<string, Field> results)
+        public JoinTransform(string separator, IParameters parameters, Dictionary<string, Field> results)
             : base(parameters, results) {
             _separator = separator;
             _count = Parameters.Count;
@@ -39,7 +39,7 @@ namespace Transformalize.Transforms {
             _index = 0;
             _builder.Clear();
             foreach (var pair in Parameters) {
-                _builder.Append(row[pair.Key]);
+                _builder.Append(pair.Value.Value ?? row[pair.Key]);
                 _index++;
                 if (_index < _count)
                     _builder.Append(_separator);

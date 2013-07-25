@@ -21,7 +21,7 @@ using System.Text;
 using Transformalize.Model;
 
 namespace Transformalize.Transforms {
-    public class InsertTransform : Transformer {
+    public class InsertTransform : AbstractTransform {
 
         private readonly int _index;
         private readonly string _value;

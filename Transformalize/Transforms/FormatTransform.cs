@@ -21,7 +21,7 @@ using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Transforms {
-    public class FormatTransform : Transformer {
+    public class FormatTransform : AbstractTransform {
         private readonly string _format;
         private int _index;
 
@@ -29,7 +29,8 @@ namespace Transformalize.Transforms {
             get { return "Format Transform"; }
         }
 
-        public FormatTransform(string format, Dictionary<string, Field> parameters, Dictionary<string, Field> results) : base(parameters, results) {
+        public FormatTransform(string format, IParameters parameters, Dictionary<string, Field> results)
+            : base(parameters, results) {
             _format = format;
         }
 
@@ -46,7 +47,7 @@ namespace Transformalize.Transforms {
         public override void Transform(ref Row row) {
             _index = 0;
             foreach (var pair in Parameters) {
-                ParameterValues[_index] = row[pair.Key];
+                ParameterValues[_index] = pair.Value.Value ?? row[pair.Key];
                 _index++;
             }
 

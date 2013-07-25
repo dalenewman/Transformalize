@@ -17,9 +17,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System.Text;
 using System.Text.RegularExpressions;
+using Transformalize.Model;
 
 namespace Transformalize.Transforms {
-    public class RegexReplaceTransform : Transformer {
+    public class RegexReplaceTransform : AbstractTransform {
         private readonly string _replacement;
         private readonly int _count;
         private readonly Regex _regex;

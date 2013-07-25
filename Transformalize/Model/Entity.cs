@@ -49,7 +49,7 @@ namespace Transformalize.Model {
         public List<Row> InputKeys { get; set; }
         public IDbCommand InputKeysCommand { get; set; }
         public IEntityVersionReader EntityVersionReader { get; private set; }
-        public Transformer[] Transforms { get; set; }
+        public AbstractTransform[] Transforms { get; set; }
         public string Prefix { get; set; }
 
         public Entity(IEntityVersionReader entityVersionReader = null) {

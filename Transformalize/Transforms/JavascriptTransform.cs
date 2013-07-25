@@ -22,7 +22,7 @@ using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Transforms {
-    public class JavascriptTransform : Transformer {
+    public class JavascriptTransform : AbstractTransform {
         private readonly JavascriptContext _context = new JavascriptContext();
         private readonly string _script;
 
@@ -30,7 +30,7 @@ namespace Transformalize.Transforms {
             _script = script;
         }
 
-        public JavascriptTransform(string script, Dictionary<string, Field> parameters, Dictionary<string, Field> results)
+        public JavascriptTransform(string script, IParameters parameters, Dictionary<string, Field> results)
             : base(parameters, results) {
             _script = script;
         }
@@ -52,7 +52,7 @@ namespace Transformalize.Transforms {
 
         public override void Transform(ref Row row) {
             foreach (var pair in Parameters) {
-                _context.SetParameter(pair.Key, row[pair.Key]);
+                _context.SetParameter(pair.Value.Name, pair.Value.Value ?? row[pair.Key]);
             }
             var result = Run();
             foreach (var pair in Results) {

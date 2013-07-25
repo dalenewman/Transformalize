@@ -49,7 +49,7 @@ namespace Transformalize.Model {
         public bool NotNull { get; set; }
         public bool Identity { get; set; }
         public KeyValuePair<string, string> References { get; set; }
-        public Transformer[] Transforms { get; set; }
+        public AbstractTransform[] Transforms { get; set; }
         public bool Output { get; set; }
         public bool UseStringBuilder { get; private set; }
         public Type SystemType { get; private set; }
@@ -125,7 +125,7 @@ namespace Transformalize.Model {
             SystemType = System.Type.GetType(typeName);
             StringBuilder = UseStringBuilder ? new StringBuilder() : null;
             InnerXml = new Dictionary<string, Field>();
-            Default = ConvertDefault(@default ?? string.Empty);
+            Default = new ConversionFactory().Convert(@default ?? string.Empty, SimpleType);
 
             if (SimpleType.Equals("rowversion")) {
                 Output = false;
@@ -141,61 +141,5 @@ namespace Transformalize.Model {
             return string.Format("{0}.[{1}] = {2}.[{1}]", left, Name, right);
         }
 
-        private object ConvertDefault(object @default) {
-            var value = @default.ToString();
-            switch (SimpleType) {
-                case "datetime":
-                    if (value == string.Empty)
-                        value = "9999-12-31";
-                    return Convert.ToDateTime(value);
-                case "boolean":
-                    if (value == string.Empty)
-                        value = "false";
-                    if (value == "0")
-                        value = "false";
-                    if (value == "1")
-                        value = "true";
-                    return Convert.ToBoolean(value);
-                case "decimal":
-                    if (value == string.Empty)
-                        value = "0.0";
-                    return Convert.ToDecimal(value);
-                case "double":
-                    if (value == string.Empty)
-                        value = "0.0";
-                    return Convert.ToDouble(value);
-                case "single":
-                    if (value == string.Empty)
-                        value = "0.0";
-                    return Convert.ToSingle(value);
-                case "int64":
-                    if (value == string.Empty)
-                        value = "0";
-                    return Convert.ToInt64(value);
-                case "int32":
-                    if (value == string.Empty)
-                        value = "0";
-                    return Convert.ToInt32(value);
-                case "int16":
-                    if (value == string.Empty)
-                        value = "0";
-                    return Convert.ToInt16(value);
-                case "byte":
-                    if (value == string.Empty)
-                        value = "0";
-                    return Convert.ToByte(value);
-                case "guid":
-                    if (value == string.Empty)
-                        value = "00000000-0000-0000-0000-000000000000";
-                    return value.ToLower() == "new" ? Guid.NewGuid() : Guid.Parse(value);
-                case "char":
-                    if (value == string.Empty)
-                        value = " ";
-                    return Convert.ToChar(value);
-                default:
-                    return value;
-            }
-
-        }
     }
 }

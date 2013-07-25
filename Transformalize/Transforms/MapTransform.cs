@@ -18,9 +18,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System.Collections.Generic;
 using System.Text;
 using Transformalize.Extensions;
+using Transformalize.Model;
 
 namespace Transformalize.Transforms {
-    public class MapTransform : Transformer {
+    public class MapTransform : AbstractTransform {
         private readonly IDictionary<string, object> _equals;
         private readonly IDictionary<string, object> _startsWith;
         private readonly IDictionary<string, object> _endsWith;

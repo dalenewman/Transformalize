@@ -18,9 +18,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Text;
 using Transformalize.Extensions;
+using Transformalize.Model;
 
 namespace Transformalize.Transforms {
-    public class ToUpperTransform : Transformer {
+    public class ToUpperTransform : AbstractTransform {
         protected override string Name {
             get { return "ToUpper Transform"; }
         }

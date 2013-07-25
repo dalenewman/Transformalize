@@ -21,20 +21,20 @@ using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Transforms {
-    public class ConcatTransform : Transformer {
+    public class ConcatTransform : AbstractTransform {
 
         private readonly StringBuilder _builder = new StringBuilder();
 
         protected override string Name { get { return "Concat Transform"; } }
 
-        public ConcatTransform(Dictionary<string, Field> parameters, Dictionary<string, Field> results)
+        public ConcatTransform(IParameters parameters, Dictionary<string, Field> results)
             : base(parameters, results) {
         }
 
         public override void Transform(ref Row row) {
             _builder.Clear();
             foreach (var pair in Parameters) {
-                _builder.Append(row[pair.Key]);
+                _builder.Append(pair.Value.Value ?? row[pair.Key]);
             }
             row[FirstResult.Key] = _builder.ToString();
         }

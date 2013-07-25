@@ -21,18 +21,18 @@ using Transformalize.Rhino.Etl.Core;
 using Transformalize.fastJSON;
 
 namespace Transformalize.Transforms {
-    public class JsonTransform : Transformer {
+    public class JsonTransform : AbstractTransform {
         protected override string Name { get { return "Json Transform"; } }
         private readonly Dictionary<string, object> _values = new Dictionary<string, object>();
 
-        public JsonTransform(Dictionary<string, Field> parameters, Dictionary<string, Field> results)
+        public JsonTransform(IParameters parameters, Dictionary<string, Field> results)
             : base(parameters, results) {
         }
 
         public override void Transform(ref Row row) {
             _values.Clear();
             foreach (var pair in Parameters) {
-                _values[pair.Key] = row[pair.Key];
+                _values[pair.Value.Name] = pair.Value.Value ?? row[pair.Key];
             }
 
             row[FirstResult.Key] = JSON.Instance.ToJSON(_values);

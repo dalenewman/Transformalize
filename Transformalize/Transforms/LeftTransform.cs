@@ -17,9 +17,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System.Text;
 using Transformalize.Extensions;
+using Transformalize.Model;
 
 namespace Transformalize.Transforms {
-    public class LeftTransform : Transformer {
+    public class LeftTransform : AbstractTransform {
         private readonly int _length;
 
         public LeftTransform(int length) {

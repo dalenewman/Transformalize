@@ -37,7 +37,7 @@ namespace Transformalize.Data {
                         Input = true,
                         Precision = reader.GetByte(4),
                         Scale = reader.GetInt32(5),
-                        Transforms = new Transformer[0],
+                        Transforms = new AbstractTransform[0],
                         Auto = true,
                         Alias = _entity.Prefix + name
                     };

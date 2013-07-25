@@ -21,7 +21,7 @@ using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Transforms {
-    public class RemoveTransform : Transformer {
+    public class RemoveTransform : AbstractTransform {
         private readonly int _startIndex;
         private readonly int _length;
 

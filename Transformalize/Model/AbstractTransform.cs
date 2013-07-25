@@ -15,22 +15,22 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 using System;
 using System.Collections.Generic;
-using System.Text;
-using Transformalize.Model;
-using Transformalize.Rhino.Etl.Core;
 using System.Linq;
+using System.Text;
+using Transformalize.Rhino.Etl.Core;
 
-namespace Transformalize.Transforms {
+namespace Transformalize.Model {
 
-    public abstract class Transformer : WithLoggingMixin, IDisposable {
+    public abstract class AbstractTransform : WithLoggingMixin, IDisposable {
 
         protected abstract string Name { get; }
-        public Dictionary<string, Field> Parameters { get; set; }
+        public IParameters Parameters { get; set; }
         public Dictionary<string, Field> Results { get; set; }
         protected KeyValuePair<string, Field> FirstResult { get; set; }
-        protected KeyValuePair<string, Field> FirstParameter { get; set; } 
+        protected KeyValuePair<string, IParameter> FirstParameter { get; set; } 
         protected bool HasParameters { get; private set; }
         protected bool HasResults { get; private set; }
         protected object[] ParameterValues { get; private set; }
@@ -38,7 +38,7 @@ namespace Transformalize.Transforms {
         /// <summary>
         /// Used for field level transformations, there are no parameters and the result is inline
         /// </summary>
-        protected Transformer() {
+        protected AbstractTransform() {
             HasParameters = false;
             HasResults = false;
         }
@@ -48,7 +48,7 @@ namespace Transformalize.Transforms {
         /// </summary>
         /// <param name="parameters"></param>
         /// <param name="results"></param>
-        protected Transformer(Dictionary<string, Field> parameters, Dictionary<string, Field> results) {
+        protected AbstractTransform(IParameters parameters, Dictionary<string, Field> results) {
             Parameters = parameters;
             Results = results;
             HasParameters = parameters != null && parameters.Count > 0;

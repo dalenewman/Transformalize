@@ -18,9 +18,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Text;
 using Transformalize.Extensions;
+using Transformalize.Model;
 
 namespace Transformalize.Transforms {
-    public class ToLowerTransform : Transformer {
+    public class ToLowerTransform : AbstractTransform {
         protected override string Name {
             get { return "ToLower Transform"; }
         }

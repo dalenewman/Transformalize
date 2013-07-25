@@ -24,7 +24,7 @@ using Transformalize.Transforms;
 
 namespace Transformalize.Operations {
     public class EntityTransform : AbstractOperation {
-        private readonly Transformer[] _transforms;
+        private readonly AbstractTransform[] _transforms;
 
         public EntityTransform(Entity entity) {
             _transforms = entity.Transforms;

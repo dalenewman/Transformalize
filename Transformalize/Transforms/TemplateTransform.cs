@@ -22,7 +22,7 @@ using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Transforms {
-    public class TemplateTransform : Transformer {
+    public class TemplateTransform : AbstractTransform {
         private readonly string _key;
         private DynamicViewBag _context = new DynamicViewBag();
 
@@ -31,7 +31,7 @@ namespace Transformalize.Transforms {
             RazorEngine.Razor.Compile(template, key);
         }
 
-        public TemplateTransform(string template, Dictionary<string, Field> parameters, Dictionary<string, Field> results)
+        public TemplateTransform(string template, IParameters parameters, Dictionary<string, Field> results)
             : base(parameters, results) {
             _key = FirstResult.Key;
             RazorEngine.Razor.Compile(template, _key);
@@ -54,7 +54,7 @@ namespace Transformalize.Transforms {
 
         public override void Transform(ref Row row) {
             foreach (var pair in Parameters) {
-                _context.AddValue(pair.Key, row[pair.Key]);
+                _context.AddValue(pair.Value.Name, pair.Value.Value ?? row[pair.Key]);
             }
             row[FirstResult.Key] = Run();
         }

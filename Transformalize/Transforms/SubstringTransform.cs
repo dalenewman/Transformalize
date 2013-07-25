@@ -22,7 +22,7 @@ using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Transforms {
-    public class SubstringTransform : Transformer {
+    public class SubstringTransform : AbstractTransform {
         private readonly int _startIndex;
         private readonly int _length;
 

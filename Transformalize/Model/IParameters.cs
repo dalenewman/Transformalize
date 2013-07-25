@@ -16,30 +16,17 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System.Collections.Generic;
-using System.Text;
-using Transformalize.Model;
 
-namespace Transformalize.Transforms {
-    public class ReplaceTransform : AbstractTransform {
-
-        private readonly string _oldValue;
-        private readonly string _newValue;
-
-        public ReplaceTransform(string oldValue, string newValue) {
-            _oldValue = oldValue;
-            _newValue = newValue;
-        }
-
-        protected override string Name {
-            get { return "Replace Transform"; }
-        }
-
-        public override void Transform(ref StringBuilder sb) {
-            sb.Replace(_oldValue, _newValue);
-        }
-
-        public override void Transform(ref object value) {
-            value = value.ToString().Replace(_oldValue, _newValue);
-        }
+namespace Transformalize.Model
+{
+    public interface IParameters {
+        int Count { get; }
+        IEnumerable<string> Keys { get; }
+        IEnumerator<KeyValuePair<string, IParameter>> GetEnumerator();
+        IParameter this[string key] { get; set; }
+        void Add(string field, string name, object value, string type);
+        void Add(string field, IParameter parameter);
+        KeyValuePair<string, IParameter> First();
+        bool Any();
     }
 }

@@ -99,8 +99,10 @@ namespace Transformalize.Data {
             }
 
             _process.Transforms = GetTransforms(config.Transforms, new FieldSqlWriter(alternates).ExpandXml().Input().Context());
-            foreach (var p in _process.Transforms.SelectMany(t => t.Parameters)) {
-                _process.Parameters[p.Key] = p.Value;
+            foreach (var transform in _process.Transforms) {
+                foreach (var pair in transform.Parameters) {
+                    _process.Parameters.Add(pair.Key, pair.Value);
+                }
             }
             foreach (var r in _process.Transforms.SelectMany(t => t.Results)) {
                 _process.Results[r.Key] = r.Value;
@@ -260,7 +262,8 @@ namespace Transformalize.Data {
 
             if (entity.All.ContainsKey(e.Version)) {
                 entity.Version = entity.All[e.Version];
-            } else {
+            }
+            else {
                 var message = string.Format("{0} | version field reference '{1}' is undefined in {2}.", _process.Name, e.Version, e.Name);
                 Error(message);
                 throw new TransformalizeException(message);
@@ -304,19 +307,21 @@ namespace Transformalize.Data {
             return newField;
         }
 
-        private Transformer[] GetTransforms(IEnumerable transforms, Dictionary<string, Field> defaultParameters) {
-            var result = new List<Transformer>();
+        private AbstractTransform[] GetTransforms(IEnumerable transforms, Dictionary<string, Field> defaultParameters) {
+            var result = new List<AbstractTransform>();
 
             foreach (TransformConfigurationElement t in transforms) {
+                var parameters = GetParameters(t);
 
-                var parameters = t.Parameters.Cast<ParameterConfigurationElement>().Select(p => _process.Entities.First(e => e.Name.Equals(p.Entity, StringComparison.OrdinalIgnoreCase)).All[p.Field]).ToDictionary(v => v.Alias, v => v);
                 var results = new Dictionary<string, Field>();
                 foreach (FieldConfigurationElement r in t.Results) {
                     var field = GetField(new Entity(), r);
                     results[field.Alias] = field;
                 }
                 if (!parameters.Any()) {
-                    parameters = defaultParameters;
+                    foreach (var p in defaultParameters) {
+                        parameters.Add(p.Key, p.Key, null, "System.Object");
+                    }
                 }
 
                 switch (t.Method.ToLower()) {
@@ -395,5 +400,38 @@ namespace Transformalize.Data {
             return result.ToArray();
         }
 
+        private IParameters GetParameters(TransformConfigurationElement t) {
+
+            var parameters = new Parameters();
+
+            foreach (ParameterConfigurationElement p in t.Parameters) {
+                if (!string.IsNullOrEmpty(p.Entity) && !string.IsNullOrEmpty(p.Field)) {
+                    if (_process.Entities.Any(e => e.Name.Equals(p.Entity))) {
+                        var entity = _process.Entities.Find(e => e.Name.Equals(p.Entity));
+                        if (entity.All.ContainsKey(p.Field)) {
+                            var field = entity.All[p.Field];
+                            var key = String.IsNullOrEmpty(p.Name) ? field.Alias : p.Name;
+                            parameters.Add(field.Alias, key, null, "System.Object");
+                        }
+                        else {
+                            var message = string.Format("A {0} parameter references the field {1} in entity {2}.  The field {1} does not exist.", t.Method, p.Field, p.Entity);
+                            throw new TransformalizeException(message);
+                        }
+                    }
+                    else {
+                        var message = string.Format("A {0} parameter references the entity {1}.  The entity {1} does not exist.", t.Method, p.Entity);
+                        throw new TransformalizeException(message);
+                    }
+                }
+                else {
+                    if (string.IsNullOrEmpty(p.Name) || string.IsNullOrEmpty(p.Value)) {
+                        var message = string.Format("A {0} parameter does not reference an entity and field, nor does it have a name and value.  It must do have one or the other.", t.Method);
+                        throw new TransformalizeException(message);
+                    }
+                    parameters.Add(p.Name, p.Name, p.Value, p.Type);
+                }
+            }
+            return parameters;
+        }
     }
 }

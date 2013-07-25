@@ -15,25 +15,17 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-using System.Collections.Generic;
-using Transformalize.Model;
-using Transformalize.Rhino.Etl.Core;
+namespace Transformalize.Model {
+    public class Parameter : IParameter {
+        
+        public Parameter() { }
 
-namespace Transformalize.Transforms {
-    public class CopyTransform : AbstractTransform {
-
-        protected override string Name {
-            get { return "Copy Transform"; }
+        public Parameter(string name, object value) {
+            Name = name;
+            Value = value;
         }
 
-        public CopyTransform(IParameters parameters, Dictionary<string, Field> results)
-            : base(parameters, results) {
-        }
-
-        public override void Transform(ref Row row) {
-            foreach (var pair in Results) {
-                row[pair.Key] = FirstParameter.Value.Value ?? row[FirstParameter.Key];
-            }
-        }
+        public string Name { get; set; }
+        public object Value { get; set; }
     }
 }

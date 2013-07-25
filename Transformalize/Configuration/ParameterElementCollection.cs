@@ -39,7 +39,8 @@ namespace Transformalize.Configuration {
 
         protected override object GetElementKey(ConfigurationElement element) {
             var parameter = (ParameterConfigurationElement)element;
-            return string.Concat(parameter.Entity, parameter.Field).ToLower();
+            var key = string.IsNullOrEmpty(parameter.Name) ? parameter.Field : parameter.Name;
+            return string.Concat(parameter.Entity, key).ToLower();
         }
 
     }

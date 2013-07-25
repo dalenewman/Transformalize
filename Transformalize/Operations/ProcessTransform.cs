@@ -24,7 +24,7 @@ using Transformalize.Transforms;
 
 namespace Transformalize.Operations {
     public class ProcessTransform : AbstractOperation {
-        private readonly Transformer[] _transforms;
+        private readonly AbstractTransform[] _transforms;
 
         public ProcessTransform(Process process) {
             _transforms = process.Transforms;

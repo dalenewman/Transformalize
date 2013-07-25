@@ -107,6 +107,7 @@
     <Compile Include="Configuration\TransformalizeConfiguration.cs" />
     <Compile Include="Configuration\XmlConfigurationElement.cs" />
     <Compile Include="Configuration\XmlElementCollection.cs" />
+    <Compile Include="Data\ConversionFactory.cs" />
     <Compile Include="Data\EntityRecordsExist.cs" />
     <Compile Include="Data\EntityCounter.cs" />
     <Compile Include="Data\ICompatibilityReader.cs" />
@@ -142,6 +143,11 @@
     <Compile Include="fastJSON\JsonSerializer.cs" />
     <Compile Include="fastJSON\Reflection.cs" />
     <Compile Include="fastJSON\SafeDictionary.cs" />
+    <Compile Include="Model\IParameter.cs" />
+    <Compile Include="Model\IParameters.cs" />
+    <Compile Include="Model\Parameter.cs" />
+    <Compile Include="Model\Parameters.cs" />
+    <Compile Include="Model\AbstractTransform.cs" />
     <Compile Include="Operations\EntityTransform.cs" />
     <Compile Include="Operations\EntityDrop.cs" />
     <Compile Include="Operations\EntityAction.cs" />
@@ -471,7 +477,6 @@
     <Compile Include="Transforms\SplitTransform.cs" />
     <Compile Include="Transforms\JsonTransform.cs" />
     <Compile Include="Transforms\TemplateTransform.cs" />
-    <Compile Include="Transforms\Transformer.cs" />
     <Compile Include="Transforms\ToLowerTransform.cs" />
     <Compile Include="Transforms\ToUpperTransform.cs" />
     <Compile Include="Transforms\FormatTransform.cs" />

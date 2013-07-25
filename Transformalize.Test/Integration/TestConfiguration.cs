@@ -85,18 +85,16 @@ namespace Transformalize.Test.Integration {
         {
             var process = new ProcessReader("Test").Read();
 
-            var expected = new Dictionary<string, Field> {
-                {"LastName", new Field(FieldType.Field) { Entity = "Customer", Alias = "LastName"}},
-                {"ProductName", new Field(FieldType.Field) { Entity = "Product", Alias="ProductName"}}
+            var expected = new Parameters() {
+                {"LastName", "LastName", null, "System.Object"},
+                {"ProductName", "ProductName", null, "System.Object"}
             };
 
             var actual = process.Parameters;
 
             Assert.AreEqual(2, actual.Count);
-            Assert.AreEqual(expected["LastName"].Alias, actual["LastName"].Alias);
-            Assert.AreEqual("Customer", actual["LastName"].Entity);
-            Assert.AreEqual(expected["ProductName"].Alias, actual["ProductName"].Alias);
-            Assert.AreEqual("Product", actual["ProductName"].Entity);
+            Assert.AreEqual(expected["LastName"].Name, actual["LastName"].Name);
+            Assert.AreEqual(expected["ProductName"].Value, actual["ProductName"].Value);
         }
     }
 }

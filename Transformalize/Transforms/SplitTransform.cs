@@ -20,22 +20,18 @@ using Transformalize.Model;
 using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Transforms {
-    public class SplitTransform : Transformer {
+    public class SplitTransform : AbstractTransform {
         private readonly char[] _separatorArray;
         private readonly int _count;
         private int _index;
-        private readonly object[] _parameterValues;
 
         protected override string Name {
             get { return "Split Transform"; }
         }
 
-        public SplitTransform(string separator, Dictionary<string, Field> parameters, Dictionary<string, Field> results)
+        public SplitTransform(string separator, IParameters parameters, Dictionary<string, Field> results)
             : base(parameters, results) {
             _separatorArray = separator.ToCharArray();
-            if (HasParameters) {
-                _parameterValues = new object[Parameters.Count];
-            }
             _count = Results.Count;
         }
 

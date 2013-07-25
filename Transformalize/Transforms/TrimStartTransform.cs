@@ -21,7 +21,7 @@ using Transformalize.Extensions;
 using Transformalize.Model;
 
 namespace Transformalize.Transforms {
-    public class TrimStartTransform : Transformer {
+    public class TrimStartTransform : AbstractTransform {
         private readonly string _trimChars;
         private readonly char[] _trimCharArray;
 

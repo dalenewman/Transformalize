@@ -34,9 +34,9 @@ namespace Transformalize.Test.Unit {
         public void TestJavascriptTransformStrings() {
 
             var process = new Process {
-                Transforms = new Transformer[] {
+                Transforms = new AbstractTransform[] {
                     new JavascriptTransform("FirstName + ' ' + LastName",
-                        new Dictionary<string, Field> { {"FirstName", new Field(FieldType.Field)},{"LastName",new Field(FieldType.Field)}},
+                        new Parameters { {"FirstName", new Parameter("FirstName", null)},{"LastName", new Parameter("LastName", null)}},
                         new Dictionary<string, Field> { {"FullName", new Field(FieldType.Field)}}
                     )
                 }
@@ -57,9 +57,9 @@ namespace Transformalize.Test.Unit {
         public void TestJavascriptTransformNumbers() {
 
             var process = new Process {
-                Transforms = new Transformer[] {
+                Transforms = new AbstractTransform[] {
                     new JavascriptTransform("x * y",
-                        new Dictionary<string, Field> { {"x", new Field("System.Int32",8,FieldType.Field,true,0)},{"y",new Field("System.Int32",8,FieldType.Field,true,0)}},
+                        new Parameters { {"x", new Parameter("x", null)},{"y", new Parameter("y", null)}},
                         new Dictionary<string, Field> { {"z", new Field(FieldType.Field)}}
                     )
                 }
@@ -80,9 +80,9 @@ namespace Transformalize.Test.Unit {
         public void TestFormatTransform() {
 
             var process = new Process {
-                Transforms = new Transformer[] {
+                Transforms = new AbstractTransform[] {
                     new FormatTransform("{0} {1}",
-                        new Dictionary<string, Field> { {"x", new Field(FieldType.Field)},{"y",new Field(FieldType.Field)}},
+                        new Parameters { {"x", new Parameter("x", null)},{"y", new Parameter("y", null)}},
                         new Dictionary<string, Field> { {"z", new Field(FieldType.Field)}}
                     )
                 }
@@ -103,9 +103,9 @@ namespace Transformalize.Test.Unit {
         public void TestTemplateTransformStrings() {
 
             var process = new Process {
-                Transforms = new Transformer[] {
+                Transforms = new AbstractTransform[] {
                     new TemplateTransform("@{ var fullName = Model.FirstName + \" \" + Model.LastName;}@fullName",
-                        new Dictionary<string, Field> { {"FirstName", new Field(FieldType.Field)},{"LastName",new Field(FieldType.Field)}},
+                        new Parameters { {"FirstName", new Parameter("FirstName",null)},{"LastName", new Parameter("LastName",null)}},
                         new Dictionary<string, Field> { {"FullName", new Field(FieldType.Field)}}
                     )
                 }
@@ -126,9 +126,9 @@ namespace Transformalize.Test.Unit {
         public void TestJoinTransformStrings() {
 
             var process = new Process {
-                Transforms = new Transformer[] {
+                Transforms = new AbstractTransform[] {
                     new JoinTransform(" ",
-                        new Dictionary<string, Field> { {"FirstName", new Field(FieldType.Field)},{"LastName",new Field(FieldType.Field)}},
+                        new Parameters { {"FirstName", new Parameter("FirstName",null)},{"LastName", new Parameter("LastName",null)}},
                         new Dictionary<string, Field> { {"FullName", new Field(FieldType.Field)}}
                     )
                 }
