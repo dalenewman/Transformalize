@@ -31,7 +31,7 @@ namespace Transformalize.Operations {
         private string BuildSql(Process process) {
             _parameters = process.Parameters;
             var fields = string.Join(", ", _parameters.Keys);
-            var tflWhereClause = string.Format(" WHERE [TflBatchId] IN ({0})", string.Join(", ", process.Entities.Select(kv=>kv.TflBatchId)));
+            var tflWhereClause = string.Format(" WHERE [TflBatchId] IN ({0})", string.Join(", ", process.Entities.Select(kv=>kv.TflBatchId).Distinct()));
             var sql = string.Format("SELECT [TflKey], {0} FROM {1}{2};", fields, process.View, tflWhereClause);
             Debug("{0} | SQL:\r\n{1}", process.Name, sql);
             return sql;

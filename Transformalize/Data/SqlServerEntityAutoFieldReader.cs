@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using Transformalize.Model;
@@ -27,7 +28,7 @@ namespace Transformalize.Data {
                 while (reader.Read()) {
                     var name = reader.GetString(0);
                     var type = GetSystemType(reader.GetString(2));
-                    var length = reader.GetInt32(3);
+                    var length = reader.GetString(3);
                     var fieldType = reader.GetBoolean(7) ? (_count == 0 ? FieldType.MasterKey : FieldType.PrimaryKey) : FieldType.Field;
                     var field = new Field(type, length, fieldType, true, null) {
                         Name = name,
@@ -75,23 +76,30 @@ namespace Transformalize.Data {
         private static string PrepareSql() {
             return @"
                 SELECT
-	                c.COLUMN_NAME,  --0
-	                CAST(CASE c.IS_NULLABLE WHEN 'YES' THEN 1 ELSE 0 END AS BIT) AS IS_NULLABLE, --1
-	                UPPER(c.DATA_TYPE) AS DATA_TYPE, --2
-	                ISNULL(c.CHARACTER_MAXIMUM_LENGTH, 0) AS CHARACTER_MAXIMUM_LENGTH, --3
-	                ISNULL(c.NUMERIC_PRECISION, 0) AS NUMERIC_PRECISION, --4
-	                ISNULL(c.NUMERIC_SCALE, 0) AS NUMERIC_SCALE, --5
-	                ISNULL(pk.ORDINAL_POSITION,c.ORDINAL_POSITION) AS ORDINAL_POSITION, --5
-	                CAST(CASE WHEN pk.COLUMN_NAME IS NULL THEN 0 ELSE 1 END AS BIT) AS IS_PRIMARY_KEY
+                    c.COLUMN_NAME,  --0
+                    CAST(CASE c.IS_NULLABLE WHEN 'YES' THEN 1 ELSE 0 END AS BIT) AS IS_NULLABLE, --1
+                    UPPER(c.DATA_TYPE) AS DATA_TYPE, --2
+                    CASE UPPER(c.DATA_TYPE)
+		                WHEN 'ROWVERSION' THEN '8'
+		                WHEN 'TIMESTAMP' THEN '8'
+		                WHEN 'NTEXT' THEN 'MAX'
+		                WHEN 'IMAGE' THEN 'MAX'
+		                ELSE CAST(ISNULL(c.CHARACTER_MAXIMUM_LENGTH, 0) AS NVARCHAR(4))
+	                END AS CHARACTER_MAXIMUM_LENGTH, --3
+                    ISNULL(c.NUMERIC_PRECISION, 0) AS NUMERIC_PRECISION, --4
+                    ISNULL(c.NUMERIC_SCALE, 0) AS NUMERIC_SCALE, --5
+                    ISNULL(pk.ORDINAL_POSITION,c.ORDINAL_POSITION) AS ORDINAL_POSITION, --5
+                    CAST(CASE WHEN pk.COLUMN_NAME IS NULL THEN 0 ELSE 1 END AS BIT) AS IS_PRIMARY_KEY
+                    ,c.*
                 FROM INFORMATION_SCHEMA.COLUMNS c
                 LEFT OUTER JOIN (
-	                SELECT
-		                kcu.TABLE_SCHEMA,
-		                kcu.TABLE_NAME,
-		                kcu.COLUMN_NAME,
-		                kcu.ORDINAL_POSITION
-	                FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu
-	                INNER JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc ON (kcu.TABLE_SCHEMA = tc.TABLE_SCHEMA AND kcu.TABLE_NAME = tc.TABLE_NAME AND kcu.CONSTRAINT_NAME = tc.CONSTRAINT_NAME AND tc.CONSTRAINT_TYPE = 'PRIMARY KEY')
+                    SELECT
+                        kcu.TABLE_SCHEMA,
+                        kcu.TABLE_NAME,
+                        kcu.COLUMN_NAME,
+                        kcu.ORDINAL_POSITION
+                    FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu
+                    INNER JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc ON (kcu.TABLE_SCHEMA = tc.TABLE_SCHEMA AND kcu.TABLE_NAME = tc.TABLE_NAME AND kcu.CONSTRAINT_NAME = tc.CONSTRAINT_NAME AND tc.CONSTRAINT_TYPE = 'PRIMARY KEY')
                 ) pk ON (c.TABLE_SCHEMA = pk.TABLE_SCHEMA AND c.TABLE_NAME = pk.TABLE_NAME AND c.COLUMN_NAME = pk.COLUMN_NAME)
                 WHERE c.TABLE_SCHEMA = @Schema
                 AND c.TABLE_NAME = @Name

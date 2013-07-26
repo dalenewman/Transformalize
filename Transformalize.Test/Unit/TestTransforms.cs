@@ -341,7 +341,7 @@ namespace Transformalize.Test.Unit {
             var numbers = numbersMock.Object;
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field("System.Int32", 8, FieldType.Field, true, 0) { Input = true, Transforms = new[] { new JavascriptTransform("field * 2;", null, null) }, Default = 0 };
+            entity.All["Field1"] = new Field("System.Int32", "8", FieldType.Field, true, 0) { Input = true, Transforms = new[] { new JavascriptTransform("field * 2;", null, null) }, Default = 0 };
             var fields = new Dictionary<string, Field> { { "", null } };
 
             var rows = TestOperation(

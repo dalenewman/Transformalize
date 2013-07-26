@@ -24,12 +24,12 @@ namespace Transformalize.Test.Integration {
 
         [Test]
         public void TestInit() {
-            new Runner("Test", "init").Run();
+            new Runner("TEST", "init").Run();
         }
 
         [Test]
         public void TestDefault() {
-            new Runner("Test").Run();
+            new Runner("TEST").Run();
         }
 
         [Test]

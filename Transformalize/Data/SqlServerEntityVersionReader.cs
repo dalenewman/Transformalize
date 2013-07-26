@@ -66,7 +66,7 @@ namespace Transformalize.Data {
         }
 
         public object GetBeginVersion() {
-            var field = _entity.Version.SimpleType.Replace("version",string.Empty) + "Version";
+            var field = _entity.Version.SimpleType.Replace("version",string.Empty).Replace("byte[]","Binary") + "Version";
             using (var reader = GetBeginVersionReader(field)) {
                 IsRange = reader.HasRows;
                 if (!IsRange)
@@ -98,8 +98,10 @@ namespace Transformalize.Data {
         }
 
         public bool BeginAndEndAreEqual() {
-            if (IsRange) {
-                if (_entity.Version.SimpleType.Equals("rowversion")) {
+            if (IsRange)
+            {
+                var bytes = new[] {"byte[]", "rowversion"};
+                if (bytes.Any(t => t == _entity.Version.SimpleType)) {
                     var beginBytes = ObjectToByteArray(_begin);
                     var endBytes = ObjectToByteArray(_end);
                     return beginBytes.SequenceEqual(endBytes);

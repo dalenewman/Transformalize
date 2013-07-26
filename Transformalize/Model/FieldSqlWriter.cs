@@ -274,6 +274,24 @@ namespace Transformalize.Model {
             return this;
         }
 
+        public FieldSqlWriter Group() {
+            foreach (var key in CopyOutputKeys()) {
+                var field = _original[key];
+                if (field.Aggregate != "group")
+                    _output.Remove(key);
+            }
+            return this;
+        }
+
+        public FieldSqlWriter Aggregate() {
+            foreach (var key in CopyOutputKeys()) {
+                var field = _original[key];
+                if (field.Aggregate == "group" || field.Aggregate == "ignore")
+                    _output.Remove(key);
+            }
+            return this;
+        }
+
         public FieldSqlWriter HasTransform() {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];
@@ -344,7 +362,7 @@ namespace Transformalize.Model {
 
         public FieldSqlWriter AddBatchId(bool forCreate = true) {
 
-            _original[BATCH_ID] = new Field("System.Int32", 8, Model.FieldType.Field, true, 0) {
+            _original[BATCH_ID] = new Field("System.Int32", "8", Model.FieldType.Field, true, 0) {
                 Alias = BATCH_ID,
                 NotNull = forCreate
             };
@@ -355,9 +373,9 @@ namespace Transformalize.Model {
 
         public FieldSqlWriter AddSurrogateKey(bool forCreate = true) {
             if (forCreate)
-                _original[SURROGATE_KEY] = new Field("System.Int32", 8, Model.FieldType.Field, true, 0) { Alias = SURROGATE_KEY, NotNull = true, Clustered = true, Identity = true };
+                _original[SURROGATE_KEY] = new Field("System.Int32", "8", Model.FieldType.Field, true, 0) { Alias = SURROGATE_KEY, NotNull = true, Clustered = true, Identity = true };
             else
-                _original[SURROGATE_KEY] = new Field("System.Int32", 8, Model.FieldType.Field, true, 0) { Alias = SURROGATE_KEY };
+                _original[SURROGATE_KEY] = new Field("System.Int32", "8", Model.FieldType.Field, true, 0) { Alias = SURROGATE_KEY };
 
             _output[SURROGATE_KEY] = string.Empty;
             return this;

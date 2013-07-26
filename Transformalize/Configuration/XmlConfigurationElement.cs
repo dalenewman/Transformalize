@@ -64,10 +64,10 @@ namespace Transformalize.Configuration
             set { this["type"] = value; }
         }
 
-        [ConfigurationProperty("length", IsRequired = false, DefaultValue=64)]
-        public int Length {
+        [ConfigurationProperty("length", IsRequired = false, DefaultValue="64")]
+        public string Length {
             get {
-                return (int)this["length"];
+                return this["length"] as string;
             }
             set { this["length"] = value; }
         }
@@ -109,6 +109,14 @@ namespace Transformalize.Configuration
             get {
                 return this["transforms"] as TransformElementCollection;
             }
+        }
+
+        [ConfigurationProperty("aggregate", IsRequired = false, DefaultValue = "")]
+        public string Aggregate {
+            get {
+                return (string)this["aggregate"];
+            }
+            set { this["aggregate"] = value; }
         }
 
     }

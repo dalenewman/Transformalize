@@ -59,6 +59,8 @@ namespace Transformalize.Data {
                     if (value == string.Empty)
                         value = " ";
                     return System.Convert.ToChar(value);
+                case "byte[]":
+                    return new byte[0];
                 default:
                     return value;
             }

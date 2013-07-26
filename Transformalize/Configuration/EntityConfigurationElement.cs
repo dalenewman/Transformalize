@@ -96,5 +96,14 @@ namespace Transformalize.Configuration {
             }
             set { this["prefix"] = value; }
         }
+
+        [ConfigurationProperty("group", IsRequired = false, DefaultValue = false)]
+        public bool Group {
+            get {
+                return (bool) this["group"];
+            }
+            set { this["group"] = value; }
+        }
+
     }
 }

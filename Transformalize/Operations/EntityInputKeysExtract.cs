@@ -36,13 +36,13 @@ namespace Transformalize.Operations {
             _entity.Begin = _entity.EntityVersionReader.GetBeginVersion();
             _entity.End = _entity.EntityVersionReader.GetEndVersion();
             if (!_entity.EntityVersionReader.HasRows) {
-                Info("{0} | No data detected in {1}.", _entity.ProcessName, _entity.Name);
+                Debug("{0} | No data detected in {1}.", _entity.ProcessName, _entity.Name);
             }
 
             if (!_entity.EntityVersionReader.IsRange) return;
 
             if (_entity.EntityVersionReader.BeginAndEndAreEqual()) {
-                Info("{0} | No changes detected in {1}.", _entity.ProcessName, _entity.Name);
+                Debug("{0} | No changes detected in {1}.", _entity.ProcessName, _entity.Name);
             }
         }
 

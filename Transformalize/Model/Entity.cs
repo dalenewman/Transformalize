@@ -22,7 +22,6 @@ using System.Data;
 using System.Linq;
 using Transformalize.Data;
 using Transformalize.Rhino.Etl.Core;
-using Transformalize.Transforms;
 
 namespace Transformalize.Model {
 
@@ -33,7 +32,7 @@ namespace Transformalize.Model {
         public string Name { get; set; }
         public SqlServerConnection InputConnection { get; set; }
         public SqlServerConnection OutputConnection { get; set; }
-        public Field Version;
+        public Field Version { get; set; }
         public Dictionary<string, Field> PrimaryKey { get; set; }
         public Dictionary<string, Field> Fields { get; set; }
         public Dictionary<string, Field> Xml { get; set; }
@@ -51,6 +50,8 @@ namespace Transformalize.Model {
         public IEntityVersionReader EntityVersionReader { get; private set; }
         public AbstractTransform[] Transforms { get; set; }
         public string Prefix { get; set; }
+        public bool Group { get; set; }
+        public bool Auto { get; set; }
 
         public Entity(IEntityVersionReader entityVersionReader = null) {
             Name = string.Empty;

@@ -126,9 +126,11 @@ namespace Transformalize.Data {
         private List<Join> GetJoins(RelationshipConfigurationElement relationshipElement) {
             var join = new List<Join>();
             foreach (JoinConfigurationElement joinElement in relationshipElement.Join) {
+                var leftEntity = _process.Entities.First(e => e.Name.Equals(relationshipElement.LeftEntity, StringComparison.OrdinalIgnoreCase));
+                var rightEntity = _process.Entities.First(e => e.Name.Equals(relationshipElement.RightEntity, StringComparison.OrdinalIgnoreCase));
                 var j = new Join {
-                    LeftField = _process.Entities.First(e => e.Name.Equals(relationshipElement.LeftEntity, StringComparison.OrdinalIgnoreCase)).All[joinElement.LeftField],
-                    RightField = _process.Entities.First(e => e.Name.Equals(relationshipElement.RightEntity, StringComparison.OrdinalIgnoreCase)).All[joinElement.RightField]
+                    LeftField = leftEntity.All.ContainsKey(joinElement.LeftField) ? leftEntity.All[joinElement.LeftField] : leftEntity.All.Select(kv=>kv.Value).First(v=>v.Name.Equals(joinElement.LeftField, StringComparison.OrdinalIgnoreCase)),
+                    RightField = rightEntity.All.ContainsKey(joinElement.RightField) ? rightEntity.All[joinElement.RightField] : rightEntity.All.Select(kv=>kv.Value).First(v=>v.Name.Equals(joinElement.RightField, StringComparison.OrdinalIgnoreCase))
                 };
 
                 if (j.LeftField.FieldType.HasFlag(FieldType.MasterKey) ||
@@ -205,10 +207,12 @@ namespace Transformalize.Data {
                 Name = e.Name,
                 InputConnection = _process.Connections[e.Connection],
                 OutputConnection = _process.Connections["output"],
-                Prefix = e.Prefix == "Default" ? e.Name.Replace(" ", string.Empty) : e.Prefix
+                Prefix = e.Prefix == "Default" ? e.Name.Replace(" ", string.Empty) : e.Prefix,
+                Group = e.Group,
+                Auto = e.Auto
             };
 
-            if (e.Auto) {
+            if (entity.Auto) {
                 var autoReader = new SqlServerEntityAutoFieldReader(entity, entityCount);
                 entity.All = autoReader.ReadAll();
                 entity.Fields = autoReader.ReadFields();
@@ -243,13 +247,14 @@ namespace Transformalize.Data {
                         Alias = x.Alias,
                         Index = x.Index,
                         Precision = x.Precision,
-                        Scale = x.Scale
+                        Scale = x.Scale,
+                        Aggregate = x.Aggregate.ToLower()
                     };
                     xmlField.Transforms = GetTransforms(x.Transforms, new FieldSqlWriter(xmlField).Input().Context());
                     field.InnerXml.Add(x.Alias, xmlField);
                 }
 
-                if (e.Auto && entity.Fields.ContainsKey(field.Name)) {
+                if (entity.Auto && entity.Fields.ContainsKey(field.Name)) {
                     entity.Fields.Remove(field.Name);
                     entity.All.Remove(field.Name);
                 }
@@ -264,9 +269,13 @@ namespace Transformalize.Data {
                 entity.Version = entity.All[e.Version];
             }
             else {
-                var message = string.Format("{0} | version field reference '{1}' is undefined in {2}.", _process.Name, e.Version, e.Name);
-                Error(message);
-                throw new TransformalizeException(message);
+                if (entity.All.Any(kv => kv.Value.Name.Equals(e.Version, StringComparison.OrdinalIgnoreCase))) {
+                    entity.Version = entity.All.Select(kv => kv.Value).First(v => v.Name.Equals(e.Version, StringComparison.OrdinalIgnoreCase));
+                } else {
+                    var message = string.Format("{0} | version field reference '{1}' is undefined in {2}.", _process.Name, e.Version, e.Name);
+                    Error(message);
+                    throw new TransformalizeException(message);
+                }
             }
 
             var entityKeys = new HashSet<string>(entity.Fields.Where(kv => kv.Value.Output).Select(kv => kv.Key));
@@ -301,7 +310,8 @@ namespace Transformalize.Data {
                 Scale = field.Scale,
                 Input = field.Input,
                 Unicode = field.Unicode,
-                VariableLength = field.VariableLength
+                VariableLength = field.VariableLength,
+                Aggregate = field.Aggregate.ToLower()
             };
             newField.Transforms = GetTransforms(field.Transforms, new FieldSqlWriter(newField).ExpandXml().Input().Context());
             return newField;

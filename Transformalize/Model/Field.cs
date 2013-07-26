@@ -21,7 +21,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Transformalize.Data;
-using Transformalize.Transforms;
 
 namespace Transformalize.Model {
 
@@ -42,7 +41,7 @@ namespace Transformalize.Model {
         public string Schema { get; set; }
         public string Entity { get; set; }
         public string Parent { get; set; }
-        public int Length { get; private set; }
+        public string Length { get; private set; }
         public int Precision { get; set; }
         public int Scale { get; set; }
         public bool Clustered { get; set; }
@@ -60,6 +59,7 @@ namespace Transformalize.Model {
         public bool VariableLength { get; set; }
         public object Default;
         public bool Auto { get; set; }
+        public string Aggregate { get; set; }
         
         public string SqlDataType {
             get { return _sqlDataType ?? (_sqlDataType = new SqlServerDataTypeService().GetDataType(this)); }
@@ -105,13 +105,13 @@ namespace Transformalize.Model {
             return FieldType.HasFlag(FieldType.MasterKey) || FieldType.HasFlag(FieldType.ForeignKey) || FieldType.HasFlag(FieldType.PrimaryKey);
         }
 
-        public Field(FieldType fieldType) : this("System.String", 64, fieldType, true, null) { }
+        public Field(FieldType fieldType) : this("System.String", "64", fieldType, true, null) { }
 
-        public Field(string typeName, int length, FieldType fieldType, bool output, object @default) {
+        public Field(string typeName, string length, FieldType fieldType, bool output, object @default) {
             Initialize(typeName, length, fieldType, output, @default);
         }
 
-        private void Initialize(string typeName, int length, FieldType fieldType, bool output, object @default) {
+        private void Initialize(string typeName, string length, FieldType fieldType, bool output, object @default) {
             Input = true;
             Unicode = true;
             VariableLength = true;

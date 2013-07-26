@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using Transformalize.Model;
 
 namespace Transformalize.Data {
@@ -42,7 +43,7 @@ namespace Transformalize.Data {
                         {"single", "REAL"},
                         {"int16", "SMALLINT"},
                         {"byte", "TINYINT"},
-                        {"binary", "BINARY"},
+                        {"byte[]", "VARBINARY"},
                         {"guid", "UNIQUEIDENTIFIER"},
                         {"rowversion", "ROWVERSION"}
                         
@@ -69,9 +70,11 @@ namespace Transformalize.Data {
                         {"SMALLINT", "System.Int16"},
                         {"TINYINT", "System.Byte" },
                         {"UNIQUEIDENTIFIER", "System.Guid" },
-                        {"ROWVERSION", "RowVersion" },
-                        {"TIMESTAMP", "RowVersion"},
-                        {"IMAGE", "System.String"},
+                        {"ROWVERSION", "System.Byte[]" },
+                        {"TIMESTAMP", "System.Byte[]"},
+                        {"IMAGE", "System.Byte[]"},
+                        {"BINARY", "System.Byte[]"},
+                        {"VARBINARY", "System.Byte[]"},
                         {"NTEXT", "System.String"}
                     };
                 }
@@ -80,8 +83,8 @@ namespace Transformalize.Data {
         }
 
         public string GetDataType(Field field) {
-
-            var length = field.SimpleType == "string" || field.SimpleType == "char" || field.SimpleType == "binary" ? string.Concat("(", field.Length > 8000 ? "MAX" : field.Length.ToString(CultureInfo.InvariantCulture), ")") : string.Empty;
+            
+            var length = (new [] { "string","char","binary","byte[]"}).Any(t=>t == field.SimpleType) ? string.Concat("(", field.Length, ")") : string.Empty;
             var dimensions = field.SimpleType == "decimal" ? string.Format("({0},{1})", field.Precision, field.Scale) : string.Empty;
             var notNull = field.NotNull ? " NOT NULL" : string.Empty;
             var surrogate = field.Clustered ? " IDENTITY(1,1) UNIQUE CLUSTERED" : string.Empty;

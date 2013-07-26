@@ -24,12 +24,15 @@ namespace Transformalize.Operations {
     public class EntityBulkInsert : SqlBulkInsertOperation {
         private readonly Entity _entity;
 
-        public EntityBulkInsert(Entity entity)
-            : base(entity.OutputConnection.ConnectionString, entity.OutputName()) {
+        public EntityBulkInsert(Entity entity) : base(entity.OutputConnection.ConnectionString, entity.OutputName()) {
+            
             _entity = entity;
             UseTransaction = false;
+
             TurnOptionOn(SqlBulkCopyOptions.TableLock);
             TurnOptionOff(SqlBulkCopyOptions.UseInternalTransaction);
+            TurnOptionOff(SqlBulkCopyOptions.CheckConstraints);
+            TurnOptionOff(SqlBulkCopyOptions.FireTriggers);
         }
 
         protected override void PrepareSchema() {

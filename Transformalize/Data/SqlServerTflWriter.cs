@@ -43,7 +43,8 @@ namespace Transformalize.Data {
                     [TflBatchId] INT NOT NULL,
 					[ProcessName] NVARCHAR(100) NOT NULL,
 	                [EntityName] NVARCHAR(100) NOT NULL,
-	                [RowVersion] BINARY(8) NULL,
+	                [BinaryVersion] BINARY(8) NULL,
+                    [StringVersion] NVARCHAR(64) NULL,
 	                [DateTimeVersion] DATETIME NULL,
                     [Int64Version] BIGINT NULL,
                     [Int32Version] INT NULL,
@@ -80,7 +81,7 @@ namespace Transformalize.Data {
             Execute(CreateSql(), cs);
             Debug("{0} | Created TflBatch.", _process.Name);
             
-            Info("{0} | Initialized Transformalizer storage.", _process.Name);
+            Info("{0} | Initialized TrAnSfOrMaLiZeR.", _process.Name);
         }
 
     }

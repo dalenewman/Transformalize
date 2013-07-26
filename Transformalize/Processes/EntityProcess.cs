@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Linq;
+using System.Text;
 using Transformalize.Data;
 using Transformalize.Model;
 using Transformalize.Operations;
@@ -50,6 +51,9 @@ namespace Transformalize.Processes {
             Register(new EntityDefaults(_entity));
             Register(new FieldTransform(_entity));
             Register(new EntityTransform(_entity));
+
+            if (_entity.Group)
+                Register(new EntityAggregation(_entity));
 
             if (_process.OutputRecordsExist) {
                 Register(new EntityJoinAction(_entity).Right(new EntityOutputKeysExtract(_entity)));

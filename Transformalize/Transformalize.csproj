@@ -148,6 +148,7 @@
     <Compile Include="Model\Parameter.cs" />
     <Compile Include="Model\Parameters.cs" />
     <Compile Include="Model\AbstractTransform.cs" />
+    <Compile Include="Operations\EntityAggregation.cs" />
     <Compile Include="Operations\EntityTransform.cs" />
     <Compile Include="Operations\EntityDrop.cs" />
     <Compile Include="Operations\EntityAction.cs" />
