@@ -17,8 +17,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Diagnostics;
-using Transformalize.NLog;
-using Transformalize.Rhino.Etl.Core;
+using Transformalize.Libs.NLog;
+using Transformalize.Libs.Rhino.Etl.Core;
 
 namespace Transformalize.Run {
     class Program {

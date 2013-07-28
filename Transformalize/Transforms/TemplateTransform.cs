@@ -17,9 +17,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System.Collections.Generic;
 using System.Text;
-using RazorEngine.Templating;
+using Transformalize.Libs.RazorEngine.Core;
+using Transformalize.Libs.RazorEngine.Core.Templating;
+using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Model;
-using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Transforms {
     public class TemplateTransform : AbstractTransform {
@@ -28,13 +29,13 @@ namespace Transformalize.Transforms {
 
         public TemplateTransform(string template, string key) {
             _key = key;
-            RazorEngine.Razor.Compile(template, key);
+            Razor.Compile(template, key);
         }
 
         public TemplateTransform(string template, IParameters parameters, Dictionary<string, Field> results)
             : base(parameters, results) {
             _key = FirstResult.Key;
-            RazorEngine.Razor.Compile(template, _key);
+            Razor.Compile(template, _key);
         }
 
         protected override string Name {
@@ -60,7 +61,7 @@ namespace Transformalize.Transforms {
         }
 
         private string Run() {
-            return RazorEngine.Razor.Run(_key, _context);
+            return Razor.Run(_key, _context);
         }
 
         public new void Dispose() {

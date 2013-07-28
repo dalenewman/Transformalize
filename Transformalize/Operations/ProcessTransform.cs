@@ -17,9 +17,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Collections.Generic;
+using Transformalize.Libs.Rhino.Etl.Core;
+using Transformalize.Libs.Rhino.Etl.Core.Operations;
 using Transformalize.Model;
-using Transformalize.Rhino.Etl.Core;
-using Transformalize.Rhino.Etl.Core.Operations;
 using Transformalize.Transforms;
 
 namespace Transformalize.Operations {

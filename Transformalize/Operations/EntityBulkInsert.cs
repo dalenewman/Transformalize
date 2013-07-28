@@ -17,8 +17,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Data.SqlClient;
+using Transformalize.Libs.Rhino.Etl.Core.Operations;
 using Transformalize.Model;
-using Transformalize.Rhino.Etl.Core.Operations;
 
 namespace Transformalize.Operations {
     public class EntityBulkInsert : SqlBulkInsertOperation {

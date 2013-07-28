@@ -20,7 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Transformalize.Rhino.Etl.Core;
+using Transformalize.Libs.Rhino.Etl.Core;
 
 namespace Transformalize.Model {
 

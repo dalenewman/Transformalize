@@ -20,7 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using Transformalize.Rhino.Etl.Core;
+using Transformalize.Libs.Rhino.Etl.Core;
 
 namespace Transformalize.Data {
     public class SqlServerConnectionChecker : WithLoggingMixin, IConnectionChecker {

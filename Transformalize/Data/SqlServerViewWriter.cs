@@ -20,8 +20,8 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using Transformalize.Extensions;
+using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Model;
-using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Data {
     public class SqlServerViewWriter : WithLoggingMixin, IViewWriter {

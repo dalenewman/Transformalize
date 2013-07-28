@@ -17,8 +17,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Data.SqlClient;
+using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Model;
-using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Data {
     public class SqlServerEntityDropper : WithLoggingMixin, IEntityDropper {

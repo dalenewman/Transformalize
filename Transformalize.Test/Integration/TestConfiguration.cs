@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -81,8 +82,31 @@ namespace Transformalize.Test.Integration {
         }
 
         [Test]
-        public void TestGetAllFieldsNeededForMultiFieldTransformations()
-        {
+        public void TestRelatedKeys() {
+
+            var process = new ProcessReader("NorthWind").Read();
+
+            Assert.AreEqual(8, process.RelatedKeys.Count());
+
+            foreach (var relatedKey in process.RelatedKeys) {
+                Console.WriteLine("{0} : {1}", relatedKey.Entity, relatedKey.Name);
+            }
+
+            Assert.AreEqual(0, process.Entities.First().RelationshipToMaster.Count());
+            
+            Assert.AreEqual(1, process.Entities.First(e => e.Name.Equals("Products")).RelationshipToMaster.Count());
+            Assert.AreEqual(2, process.Entities.First(e => e.Name.Equals("Customers")).RelationshipToMaster.Count());
+            Assert.AreEqual(2, process.Entities.First(e => e.Name.Equals("Employees")).RelationshipToMaster.Count());
+            Assert.AreEqual(3, process.Entities.First(e => e.Name.Equals("EmployeeTerritories")).RelationshipToMaster.Count());
+
+            Assert.AreEqual(1, process.Entities.First(e => e.Name.Equals("Orders")).RelationshipToMaster.Count());
+            Assert.AreEqual(2, process.Entities.First(e => e.Name.Equals("Categories")).RelationshipToMaster.Count());
+            Assert.AreEqual(2, process.Entities.First(e => e.Name.Equals("Suppliers")).RelationshipToMaster.Count());
+
+        }
+
+        [Test]
+        public void TestGetAllFieldsNeededForMultiFieldTransformations() {
             var process = new ProcessReader("Test").Read();
 
             var expected = new Parameters() {

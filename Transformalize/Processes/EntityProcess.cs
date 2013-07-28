@@ -20,10 +20,10 @@ using System;
 using System.Linq;
 using System.Text;
 using Transformalize.Data;
+using Transformalize.Libs.Rhino.Etl.Core;
+using Transformalize.Libs.Rhino.Etl.Core.Operations;
 using Transformalize.Model;
 using Transformalize.Operations;
-using Transformalize.Rhino.Etl.Core;
-using Transformalize.Rhino.Etl.Core.Operations;
 
 namespace Transformalize.Processes {
 

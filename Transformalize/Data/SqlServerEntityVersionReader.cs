@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -66,7 +67,7 @@ namespace Transformalize.Data {
         }
 
         public object GetBeginVersion() {
-            var field = _entity.Version.SimpleType.Replace("version",string.Empty).Replace("byte[]","Binary") + "Version";
+            var field = GetVersionField(_entity.Version.SimpleType);
             using (var reader = GetBeginVersionReader(field)) {
                 IsRange = reader.HasRows;
                 if (!IsRange)
@@ -74,6 +75,17 @@ namespace Transformalize.Data {
                 reader.Read();
                 _begin = reader.GetValue(0);
                 return _begin;
+            }
+        }
+
+        public static string GetVersionField(string type) {
+            switch (type.ToLower()) {
+                case "rowversion":
+                    return "BinaryVersion";
+                case "byte[]":
+                    return "BinaryVersion";
+                default:
+                    return type[0].ToString(CultureInfo.InvariantCulture).ToUpper() + type.Substring(1) + "Version";
             }
         }
 
@@ -98,9 +110,8 @@ namespace Transformalize.Data {
         }
 
         public bool BeginAndEndAreEqual() {
-            if (IsRange)
-            {
-                var bytes = new[] {"byte[]", "rowversion"};
+            if (IsRange) {
+                var bytes = new[] { "byte[]", "rowversion" };
                 if (bytes.Any(t => t == _entity.Version.SimpleType)) {
                     var beginBytes = ObjectToByteArray(_begin);
                     var endBytes = ObjectToByteArray(_end);

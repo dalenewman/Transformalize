@@ -21,8 +21,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Transformalize.Extensions;
+using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Model;
-using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize {
 

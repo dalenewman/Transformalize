@@ -19,7 +19,6 @@ using System.Collections.Generic;
 using System.Text;
 using Transformalize.Extensions;
 using Transformalize.Model;
-using Transformalize.Rhino.Etl.Core;
 
 namespace Transformalize.Transforms {
     public class SubstringTransform : AbstractTransform {
