@@ -107,6 +107,7 @@
     <Compile Include="Configuration\TransformalizeConfiguration.cs" />
     <Compile Include="Configuration\XmlConfigurationElement.cs" />
     <Compile Include="Configuration\XmlElementCollection.cs" />
+    <Compile Include="Data\ConfigurationMapReader.cs" />
     <Compile Include="Data\ConversionFactory.cs" />
     <Compile Include="Data\EntityRecordsExist.cs" />
     <Compile Include="Data\EntityCounter.cs" />
@@ -116,6 +117,7 @@
     <Compile Include="Data\IDataTypeService.cs" />
     <Compile Include="Data\IEntityAutoFieldReader.cs" />
     <Compile Include="Data\IEntityVersionWriter.cs" />
+    <Compile Include="Data\IMapReader.cs" />
     <Compile Include="Data\ITflWriter.cs" />
     <Compile Include="Data\IViewWriter.cs" />
     <Compile Include="Data\ProcessReader.cs" />
@@ -131,6 +133,7 @@
     <Compile Include="Data\IEntityDropper.cs" />
     <Compile Include="Data\EntityDropper.cs" />
     <Compile Include="Data\SqlServerEntityVersionWriter.cs" />
+    <Compile Include="Data\SqlServerMapReader.cs" />
     <Compile Include="Data\SqlServerViewWriter.cs" />
     <Compile Include="Extensions\LinqExtensions.cs" />
     <Compile Include="Extensions\StringBuilderExtensions.cs" />

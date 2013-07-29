@@ -41,5 +41,13 @@ namespace Transformalize.Configuration {
             return ((ItemConfigurationElement)element).From.ToLower();
         }
 
+        [ConfigurationProperty("sql", IsRequired = false, DefaultValue = "")]
+        public string Sql {
+            get {
+                return this["sql"] as string;
+            }
+            set { this["sql"] = value; }
+        }
+
     }
 }

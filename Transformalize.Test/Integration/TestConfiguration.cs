@@ -86,7 +86,7 @@ namespace Transformalize.Test.Integration {
 
             var process = new ProcessReader("NorthWind").Read();
 
-            Assert.AreEqual(8, process.RelatedKeys.Count());
+            Assert.AreEqual(7, process.RelatedKeys.Count());
 
             foreach (var relatedKey in process.RelatedKeys) {
                 Console.WriteLine("{0} : {1}", relatedKey.Entity, relatedKey.Name);
@@ -97,8 +97,7 @@ namespace Transformalize.Test.Integration {
             Assert.AreEqual(1, process.Entities.First(e => e.Name.Equals("Products")).RelationshipToMaster.Count());
             Assert.AreEqual(2, process.Entities.First(e => e.Name.Equals("Customers")).RelationshipToMaster.Count());
             Assert.AreEqual(2, process.Entities.First(e => e.Name.Equals("Employees")).RelationshipToMaster.Count());
-            Assert.AreEqual(3, process.Entities.First(e => e.Name.Equals("EmployeeTerritories")).RelationshipToMaster.Count());
-
+            
             Assert.AreEqual(1, process.Entities.First(e => e.Name.Equals("Orders")).RelationshipToMaster.Count());
             Assert.AreEqual(2, process.Entities.First(e => e.Name.Equals("Categories")).RelationshipToMaster.Count());
             Assert.AreEqual(2, process.Entities.First(e => e.Name.Equals("Suppliers")).RelationshipToMaster.Count());

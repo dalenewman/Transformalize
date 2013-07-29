@@ -37,6 +37,22 @@ namespace Transformalize.Configuration {
             set { this["rightEntity"] = value; }
         }
 
+        [ConfigurationProperty("leftField", IsRequired = false, DefaultValue = "")]
+        public string LeftField {
+            get {
+                return this["leftField"] as string;
+            }
+            set { this["leftField"] = value; }
+        }
+
+        [ConfigurationProperty("rightField", IsRequired = false, DefaultValue = "")]
+        public string RightField {
+            get {
+                return this["rightField"] as string;
+            }
+            set { this["rightField"] = value; }
+        }
+
         [ConfigurationProperty("join")]
         public JoinElementCollection Join {
             get {
