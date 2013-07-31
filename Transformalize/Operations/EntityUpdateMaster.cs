@@ -16,7 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -48,7 +47,7 @@ namespace Transformalize.Operations
             if (_process.OutputRecordsExist || _entity.HasForeignKeys()) {
                 using (var cn = new SqlConnection(_process.MasterEntity.OutputConnection.ConnectionString)) {
                     cn.Open();
-                    var cmd = new SqlCommand(PrepareSql(), cn);
+                    var cmd = new SqlCommand(PrepareSql(), cn) {CommandTimeout = 0};
 
                     Debug(cmd.CommandText);
                     

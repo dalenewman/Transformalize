@@ -16,20 +16,38 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Transformalize.Model;
+using System.Data.SqlClient;
 
 namespace Transformalize.Data
 {
-    public class SqlServerEntityExists : IEntityExists
+    public class SqlServerTableExists : ITableExists
     {
-        public bool OutputExists(Entity entity)
+        private readonly string _connectionString;
+        private const string FORMAT = @"
+IF EXISTS(
+	SELECT *
+	FROM INFORMATION_SCHEMA.TABLES 
+	WHERE TABLE_SCHEMA = '{0}' 
+	AND  TABLE_NAME = '{1}'
+)	SELECT 1
+ELSE
+	SELECT 0;";
+
+
+        public SqlServerTableExists(string connectionString)
         {
-            return new SqlServerTableExists(entity.OutputConnection.ConnectionString).Exists("dbo", entity.OutputName());
+            _connectionString = connectionString;
         }
 
-        public bool InputExists(Entity entity)
+        public bool Exists(string schema, string name)
         {
-            return new SqlServerTableExists(entity.InputConnection.ConnectionString).Exists(entity.Schema, entity.Name);
+            var sql = string.Format(FORMAT, schema, name);
+            using (var cn = new SqlConnection(_connectionString))
+            {
+                cn.Open();
+                var cmd = new SqlCommand(sql, cn);
+                return (int)cmd.ExecuteScalar() == 1;
+            }
         }
     }
 }

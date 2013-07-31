@@ -118,6 +118,7 @@
     <Compile Include="Data\IEntityAutoFieldReader.cs" />
     <Compile Include="Data\IEntityVersionWriter.cs" />
     <Compile Include="Data\IMapReader.cs" />
+    <Compile Include="Data\ITableExists.cs" />
     <Compile Include="Data\ITflWriter.cs" />
     <Compile Include="Data\IViewWriter.cs" />
     <Compile Include="Data\ProcessReader.cs" />
@@ -134,6 +135,7 @@
     <Compile Include="Data\EntityDropper.cs" />
     <Compile Include="Data\SqlServerEntityVersionWriter.cs" />
     <Compile Include="Data\SqlServerMapReader.cs" />
+    <Compile Include="Data\SqlServerTableExists.cs" />
     <Compile Include="Data\SqlServerViewWriter.cs" />
     <Compile Include="Extensions\LinqExtensions.cs" />
     <Compile Include="Extensions\StringBuilderExtensions.cs" />

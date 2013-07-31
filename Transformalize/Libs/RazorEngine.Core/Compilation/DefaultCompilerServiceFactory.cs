@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using Transformalize.Libs.RazorEngine.Core.Compilation.CSharp;
 using Transformalize.Libs.RazorEngine.Core.Compilation.VisualBasic;

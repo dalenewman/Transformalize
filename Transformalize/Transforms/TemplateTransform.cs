@@ -22,50 +22,88 @@ using Transformalize.Libs.RazorEngine.Core.Templating;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Model;
 
-namespace Transformalize.Transforms {
-    public class TemplateTransform : AbstractTransform {
+namespace Transformalize.Transforms
+{
+    public class TemplateTransform : AbstractTransform
+    {
+        private readonly string _templateModelType;
         private readonly string _key;
-        private DynamicViewBag _context = new DynamicViewBag();
+        private Dictionary<string, object> _dictionaryContext = new Dictionary<string, object>();
+        private DynamicViewBag _dynamicViewBagContext = new DynamicViewBag();
+        private object _value;
 
-        public TemplateTransform(string template, string key) {
+        public TemplateTransform(string template, string key)
+        {
             _key = key;
-            Razor.Compile(template, key);
+            Razor.Compile("@{ var " + key + " = Model; }" + template, typeof(object), key);
+            Debug("Compiled template with hashcode {0} and key {1}.", template.GetHashCode(), _key);
         }
 
-        public TemplateTransform(string template, IParameters parameters, Dictionary<string, Field> results)
-            : base(parameters, results) {
+        public TemplateTransform(string template, string templateModelType, IParameters parameters, Dictionary<string, Field> results)
+            : base(parameters, results)
+        {
+            _templateModelType = templateModelType;
             _key = FirstResult.Key;
-            Razor.Compile(template, _key);
+            if (templateModelType == "dynamic")
+            {
+                Razor.Compile(template, typeof(DynamicViewBag), _key);
+            }
+            else
+            {
+                Razor.Compile(template, typeof(Dictionary<string, object>), _key);
+            } 
+            Debug("Compiled {0} template with hashcode {1} and key {2}.", templateModelType, template.GetHashCode(), _key);
+
         }
 
-        protected override string Name {
+        protected override string Name
+        {
             get { return "Template Transform"; }
         }
 
-        public override void Transform(ref StringBuilder sb) {
-            _context.AddValue("field", sb.ToString());
+        public override void Transform(ref StringBuilder sb)
+        {
+            _value = sb.ToString();
             sb.Clear();
-            sb.Append(Run());
+            sb.Append(Razor.Run(_key, _value));
         }
 
-        public override void Transform(ref object value) {
-            _context.AddValue("field", value);
-            value = Run();
+        public override void Transform(ref object value)
+        {
+            _value = value;
+            value = Razor.Run(_key, _value);
         }
 
-        public override void Transform(ref Row row) {
-            foreach (var pair in Parameters) {
-                _context.AddValue(pair.Value.Name, pair.Value.Value ?? row[pair.Key]);
+        public override void Transform(ref Row row)
+        {
+            if (_templateModelType == "dynamic")
+                RunWithDynamic(ref row);
+            else
+                RunWithDictionary(ref row);
+        }
+
+        private void RunWithDictionary(ref Row row)
+        {
+            foreach (var pair in Parameters)
+            {
+                _dictionaryContext[pair.Value.Name] = pair.Value.Value ?? row[pair.Key];
             }
-            row[FirstResult.Key] = Run();
+            row[FirstResult.Key] = Razor.Run(_key, _dictionaryContext);
         }
 
-        private string Run() {
-            return Razor.Run(_key, _context);
+        private void RunWithDynamic(ref Row row)
+        {
+            foreach (var pair in Parameters)
+            {
+                 _dynamicViewBagContext.AddValue(pair.Value.Name, pair.Value.Value ?? row[pair.Key]);
+            }
+            row[FirstResult.Key] = Razor.Run(_key, _dynamicViewBagContext);
         }
 
-        public new void Dispose() {
-            _context = null;
+        public new void Dispose()
+        {
+            _dictionaryContext = null;
+            _dynamicViewBagContext = null;
             base.Dispose();
         }
     }

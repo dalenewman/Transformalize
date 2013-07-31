@@ -26,9 +26,11 @@ using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Model;
 using Transformalize.Transforms;
 
-namespace Transformalize.Data {
+namespace Transformalize.Data
+{
 
-    public class ProcessReader : WithLoggingMixin, IConfigurationReader<Process> {
+    public class ProcessReader : WithLoggingMixin, IConfigurationReader<Process>
+    {
         private readonly string _name;
         private Process _process;
         private readonly ProcessConfigurationElement _config;
@@ -39,12 +41,14 @@ namespace Transformalize.Data {
         private int _transformCount;
         public int Count { get { return 1; } }
 
-        public ProcessReader(string name) {
+        public ProcessReader(string name)
+        {
             _name = name;
             _config = ((TransformalizeConfiguration)ConfigurationManager.GetSection("transformalize")).Processes.Get(_name);
         }
 
-        public Process Read() {
+        public Process Read()
+        {
             _process = new Process { Name = _config.Name };
 
             _connectionCount = ReadConnections(_config);
@@ -55,7 +59,8 @@ namespace Transformalize.Data {
             _process.RelatedKeys = ReadRelatedKeys();
             _process.View = _process.MasterEntity.OutputName() + "Star";
 
-            foreach (var entity in _process.Entities) {
+            foreach (var entity in _process.Entities)
+            {
                 entity.RelationshipToMaster = ReadRelationshipToMaster(entity);
             }
 
@@ -64,17 +69,20 @@ namespace Transformalize.Data {
             return _process;
         }
 
-        private IEnumerable<Relationship> ReadRelationshipToMaster(Entity rightEntity) {
+        private IEnumerable<Relationship> ReadRelationshipToMaster(Entity rightEntity)
+        {
             var relationships = _process.Relationships.Where(r => r.RightEntity.Equals(rightEntity)).ToList();
 
-            if (relationships.Any() && !relationships.Any(r => r.LeftEntity.IsMaster())) {
+            if (relationships.Any() && !relationships.Any(r => r.LeftEntity.IsMaster()))
+            {
                 var leftEntity = relationships.Last().LeftEntity;
                 relationships.AddRange(ReadRelationshipToMaster(leftEntity));
             }
             return relationships;
         }
 
-        private void LogProcessConfiguration() {
+        private void LogProcessConfiguration()
+        {
             Debug("{0} | Process Loaded.", _process.Name);
             Debug("{0} | {1} Connection{2}.", _process.Name, _connectionCount, _connectionCount == 1 ? string.Empty : "s");
             Debug("{0} | {1} Map{2}.", _process.Name, _mapCount, _mapCount == 1 ? string.Empty : "s");
@@ -85,34 +93,44 @@ namespace Transformalize.Data {
             Debug("{0} | {1} Transform{2}.", _process.Name, _transformCount, _transformCount == 1 ? string.Empty : "s");
         }
 
-        private int ReadTransforms(ProcessConfigurationElement config) {
+        private int ReadTransforms(ProcessConfigurationElement config)
+        {
             var alternates = new Dictionary<string, Field>();
-            foreach (var entity in _process.Entities) {
-                foreach (var field in entity.All) {
+            foreach (var entity in _process.Entities)
+            {
+                foreach (var field in entity.All)
+                {
                     alternates[field.Value.Alias] = field.Value;
                 }
             }
 
             _process.Transforms = GetTransforms(config.Transforms, new FieldSqlWriter(alternates).ExpandXml().Input().Context());
-            foreach (var transform in _process.Transforms) {
-                foreach (var pair in transform.Parameters) {
+            foreach (var transform in _process.Transforms)
+            {
+                foreach (var pair in transform.Parameters)
+                {
                     _process.Parameters.Add(pair.Key, pair.Value);
                 }
             }
-            foreach (var r in _process.Transforms.SelectMany(t => t.Results)) {
+
+            foreach (var r in _process.Transforms.SelectMany(t => t.Results))
+            {
                 _process.Results[r.Key] = r.Value;
             }
             return _process.Transforms.Count();
         }
 
-        private int ReadRelationships(RelationshipElementCollection relationships) {
+        private int ReadRelationships(RelationshipElementCollection relationships)
+        {
             var count = 0;
-            foreach (RelationshipConfigurationElement r in relationships) {
+            foreach (RelationshipConfigurationElement r in relationships)
+            {
 
                 var leftEntity = _process.Entities.First(e => e.Name.Equals(r.LeftEntity, StringComparison.OrdinalIgnoreCase));
                 var rightEntity = _process.Entities.First(e => e.Name.Equals(r.RightEntity, StringComparison.OrdinalIgnoreCase));
                 var join = GetJoins(r, leftEntity, rightEntity);
-                var relationship = new Relationship {
+                var relationship = new Relationship
+                {
                     LeftEntity = leftEntity,
                     RightEntity = rightEntity,
                     Join = join
@@ -124,9 +142,11 @@ namespace Transformalize.Data {
             return count;
         }
 
-        private List<Join> GetJoins(RelationshipConfigurationElement r, Entity leftEntity, Entity rightEntity) {
+        private List<Join> GetJoins(RelationshipConfigurationElement r, Entity leftEntity, Entity rightEntity)
+        {
 
-            if (string.IsNullOrEmpty(r.LeftField)) {
+            if (string.IsNullOrEmpty(r.LeftField))
+            {
                 return (
                     from JoinConfigurationElement j in r.Join
                     select GetJoin(leftEntity, j.LeftField, rightEntity, j.RightField)
@@ -137,26 +157,32 @@ namespace Transformalize.Data {
             return new List<Join> { GetJoin(leftEntity, r.LeftField, rightEntity, r.RightField) };
         }
 
-        public Join GetJoin(Entity leftEntity, string leftField, Entity rightEntity, string rightField) {
+        public Join GetJoin(Entity leftEntity, string leftField, Entity rightEntity, string rightField)
+        {
 
-            var join = new Join {
+            var join = new Join
+            {
                 LeftField = leftEntity.All.ContainsKey(leftField) ? leftEntity.All[leftField] : leftEntity.All.Select(kv => kv.Value).First(v => v.Name.Equals(leftField, StringComparison.OrdinalIgnoreCase)),
                 RightField = rightEntity.All.ContainsKey(rightField) ? rightEntity.All[rightField] : rightEntity.All.Select(kv => kv.Value).First(v => v.Name.Equals(rightField, StringComparison.OrdinalIgnoreCase))
             };
 
-            if (join.LeftField.FieldType.HasFlag(FieldType.MasterKey) || join.LeftField.FieldType.HasFlag(FieldType.PrimaryKey)) {
+            if (join.LeftField.FieldType.HasFlag(FieldType.MasterKey) || join.LeftField.FieldType.HasFlag(FieldType.PrimaryKey))
+            {
                 join.LeftField.FieldType |= FieldType.ForeignKey;
             }
-            else {
+            else
+            {
                 join.LeftField.FieldType = FieldType.ForeignKey;
             }
 
             return join;
         }
 
-        private int ReadEntities(ProcessConfigurationElement config) {
+        private int ReadEntities(ProcessConfigurationElement config)
+        {
             var count = 0;
-            foreach (EntityConfigurationElement e in config.Entities) {
+            foreach (EntityConfigurationElement e in config.Entities)
+            {
                 var entity = GetEntity(e, count);
                 _process.Entities.Add(entity);
                 if (entity.IsMaster())
@@ -166,15 +192,19 @@ namespace Transformalize.Data {
             return count;
         }
 
-        private IEnumerable<Field> ReadRelatedKeys() {
+        private IEnumerable<Field> ReadRelatedKeys()
+        {
             var entity = _process.Entities.First(e => e.IsMaster());
             return GetRelatedKeys(entity);
         }
 
-        private IEnumerable<Field> GetRelatedKeys(Entity entity) {
+        private IEnumerable<Field> GetRelatedKeys(Entity entity)
+        {
             var foreignKeys = entity.All.Where(f => f.Value.FieldType.HasFlag(FieldType.ForeignKey)).Select(f => f.Value).ToList();
-            if (foreignKeys.Any()) {
-                foreach (var alias in foreignKeys.Select(fk => fk.Alias).ToArray()) {
+            if (foreignKeys.Any())
+            {
+                foreach (var alias in foreignKeys.Select(fk => fk.Alias).ToArray())
+                {
                     var nextEntity = _process.Relationships.Where(r => r.LeftEntity.Name.Equals(entity.Name) && r.Join.Any(j => j.LeftField.Alias.Equals(alias))).Select(r => r.RightEntity).First();
                     foreignKeys.AddRange(GetRelatedKeys(nextEntity));
                 }
@@ -182,16 +212,21 @@ namespace Transformalize.Data {
             return foreignKeys;
         }
 
-        private int ReadMaps(ProcessConfigurationElement config) {
+        private int ReadMaps(ProcessConfigurationElement config)
+        {
             var count = 0;
-            foreach (MapConfigurationElement m in config.Maps) {
-                if (string.IsNullOrEmpty(m.Connection)) {
+            foreach (MapConfigurationElement m in config.Maps)
+            {
+                if (string.IsNullOrEmpty(m.Connection))
+                {
                     _process.MapEquals[m.Name] = new ConfigurationMapReader(m.Items, "equals").Read();
                     _process.MapStartsWith[m.Name] = new ConfigurationMapReader(m.Items, "startswith").Read();
                     _process.MapEndsWith[m.Name] = new ConfigurationMapReader(m.Items, "endswith").Read();
                 }
-                else {
-                    if (_process.Connections.ContainsKey(m.Connection)) {
+                else
+                {
+                    if (_process.Connections.ContainsKey(m.Connection))
+                    {
                         _process.MapEquals[m.Name] = new SqlServerMapReader(m.Items.Sql, _process.Connections[m.Connection].ConnectionString).Read();
                     }
                 }
@@ -200,10 +235,13 @@ namespace Transformalize.Data {
             return count;
         }
 
-        private int ReadConnections(ProcessConfigurationElement config) {
+        private int ReadConnections(ProcessConfigurationElement config)
+        {
             var count = 0;
-            foreach (ConnectionConfigurationElement element in config.Connections) {
-                var connection = new SqlServerConnection(element.Value, _process.Name) {
+            foreach (ConnectionConfigurationElement element in config.Connections)
+            {
+                var connection = new SqlServerConnection(element.Value, _process.Name)
+                {
                     Provider = element.Provider,
                     CompatibilityLevel = element.CompatabilityLevel,
                     BatchSize = element.BatchSize
@@ -214,9 +252,11 @@ namespace Transformalize.Data {
             return count;
         }
 
-        private Entity GetEntity(EntityConfigurationElement e, int entityCount) {
+        private Entity GetEntity(EntityConfigurationElement e, int entityCount)
+        {
 
-            var entity = new Entity {
+            var entity = new Entity
+            {
                 ProcessName = _process.Name,
                 Schema = e.Schema,
                 Name = e.Name,
@@ -227,7 +267,8 @@ namespace Transformalize.Data {
                 Auto = e.Auto
             };
 
-            if (entity.Auto) {
+            if (entity.Auto)
+            {
                 var autoReader = new SqlServerEntityAutoFieldReader(entity, entityCount);
                 entity.All = autoReader.ReadAll();
                 entity.Fields = autoReader.ReadFields();
@@ -235,7 +276,8 @@ namespace Transformalize.Data {
             }
 
             var pkIndex = 0;
-            foreach (FieldConfigurationElement pk in e.PrimaryKey) {
+            foreach (FieldConfigurationElement pk in e.PrimaryKey)
+            {
                 var fieldType = entityCount == 0 ? FieldType.MasterKey : FieldType.PrimaryKey;
 
                 var keyField = GetField(entity, pk, fieldType);
@@ -248,12 +290,15 @@ namespace Transformalize.Data {
             }
 
             var fieldIndex = 0;
-            foreach (FieldConfigurationElement f in e.Fields) {
+            foreach (FieldConfigurationElement f in e.Fields)
+            {
                 var field = GetField(entity, f);
                 field.Index = fieldIndex;
 
-                foreach (XmlConfigurationElement x in f.Xml) {
-                    var xmlField = new Field(x.Type, x.Length, FieldType.Xml, x.Output, x.Default) {
+                foreach (XmlConfigurationElement x in f.Xml)
+                {
+                    var xmlField = new Field(x.Type, x.Length, FieldType.Xml, x.Output, x.Default)
+                    {
                         Entity = entity.Name,
                         Schema = entity.Schema,
                         Parent = f.Name,
@@ -265,11 +310,12 @@ namespace Transformalize.Data {
                         Scale = x.Scale,
                         Aggregate = x.Aggregate.ToLower()
                     };
-                    xmlField.Transforms = GetTransforms(x.Transforms, new FieldSqlWriter(xmlField).Input().Context());
+                    xmlField.Transforms = GetTransforms(x.Transforms, null, xmlField.Alias);
                     field.InnerXml.Add(x.Alias, xmlField);
                 }
 
-                if (entity.Auto && entity.Fields.ContainsKey(field.Name)) {
+                if (entity.Auto && entity.Fields.ContainsKey(field.Name))
+                {
                     entity.Fields.Remove(field.Name);
                     entity.All.Remove(field.Name);
                 }
@@ -280,14 +326,18 @@ namespace Transformalize.Data {
                 fieldIndex++;
             }
 
-            if (entity.All.ContainsKey(e.Version)) {
+            if (entity.All.ContainsKey(e.Version))
+            {
                 entity.Version = entity.All[e.Version];
             }
-            else {
-                if (entity.All.Any(kv => kv.Value.Name.Equals(e.Version, StringComparison.OrdinalIgnoreCase))) {
+            else
+            {
+                if (entity.All.Any(kv => kv.Value.Name.Equals(e.Version, StringComparison.OrdinalIgnoreCase)))
+                {
                     entity.Version = entity.All.Select(kv => kv.Value).First(v => v.Name.Equals(e.Version, StringComparison.OrdinalIgnoreCase));
                 }
-                else {
+                else
+                {
                     var message = string.Format("{0} | version field reference '{1}' is undefined in {2}.", _process.Name, e.Version, e.Name);
                     Error(message);
                     throw new TransformalizeException(message);
@@ -297,19 +347,22 @@ namespace Transformalize.Data {
             var entityKeys = new HashSet<string>(entity.Fields.Where(kv => kv.Value.Output).Select(kv => kv.Key));
             var processKeys = new HashSet<string>(_process.Entities.SelectMany(pe => pe.Fields).Where(kv => kv.Value.Output).Select(kv => kv.Key));
             entityKeys.IntersectWith(processKeys);
-            if (entityKeys.Any()) {
+            if (entityKeys.Any())
+            {
                 var count = entityKeys.Count;
                 var message = String.Format("{0} | field overlap error.  The field{2}: {1} {3} already defined in previous entities.  You must alias (rename) these.", _process.Name, string.Join(", ", entityKeys), count == 1 ? string.Empty : "s", count == 1 ? "is" : "are");
                 throw new TransformalizeException(message);
             }
 
-            entity.Transforms = GetTransforms(e.Transforms, new FieldSqlWriter(entity.All).ExpandXml().Input().Context());
-
+            var defaultParameters = new FieldSqlWriter(entity.All).ExpandXml().Input().Context();
+            entity.Transforms = GetTransforms(e.Transforms, defaultParameters);
             return entity;
         }
 
-        private Field GetField(Entity entity, FieldConfigurationElement field, FieldType fieldType = FieldType.Field) {
-            var newField = new Field(field.Type, field.Length, fieldType, field.Output, field.Default) {
+        private Field GetField(Entity entity, FieldConfigurationElement field, FieldType fieldType = FieldType.Field)
+        {
+            var newField = new Field(field.Type, field.Length, fieldType, field.Output, field.Default)
+            {
                 Entity = entity.Name,
                 Schema = entity.Schema,
                 Name = field.Name,
@@ -321,28 +374,37 @@ namespace Transformalize.Data {
                 VariableLength = field.VariableLength,
                 Aggregate = field.Aggregate.ToLower()
             };
-            newField.Transforms = GetTransforms(field.Transforms, new FieldSqlWriter(newField).ExpandXml().Input().Context());
+
+            var defaultParameters = new FieldSqlWriter(newField).ExpandXml().Input().Remove(newField.Alias).Context();
+            newField.Transforms = GetTransforms(field.Transforms, defaultParameters.Count > 0 ? defaultParameters : null, newField.Alias);
             return newField;
         }
 
-        private AbstractTransform[] GetTransforms(IEnumerable transforms, Dictionary<string, Field> defaultParameters) {
+        private AbstractTransform[] GetTransforms(IEnumerable transforms, Dictionary<string, Field> defaultParameters, string field = null)
+        {
             var result = new List<AbstractTransform>();
 
-            foreach (TransformConfigurationElement t in transforms) {
+            foreach (TransformConfigurationElement t in transforms)
+            {
                 var parameters = GetParameters(t);
 
                 var results = new Dictionary<string, Field>();
-                foreach (FieldConfigurationElement r in t.Results) {
-                    var field = GetField(new Entity(), r);
-                    results[field.Alias] = field;
+                foreach (FieldConfigurationElement r in t.Results)
+                {
+                    var f = GetField(new Entity(), r);
+                    results[f.Alias] = f;
                 }
-                if (!parameters.Any()) {
-                    foreach (var p in defaultParameters) {
+
+                if (!parameters.Any() && defaultParameters != null)
+                {
+                    foreach (var p in defaultParameters)
+                    {
                         parameters.Add(p.Key, p.Key, null, "System.Object");
                     }
                 }
 
-                switch (t.Method.ToLower()) {
+                switch (t.Method.ToLower())
+                {
                     case "replace":
                         result.Add(new ReplaceTransform(t.OldValue, t.NewValue));
                         break;
@@ -380,10 +442,18 @@ namespace Transformalize.Data {
                         result.Add(new MapTransform(new[] { @equals, startsWith, endsWith }));
                         break;
                     case "javascript":
-                        result.Add(new JavascriptTransform(t.Script, parameters, results));
+                        result.Add(
+                            parameters.Any() ?
+                            new JavascriptTransform(t.Script, parameters, results) :
+                            new JavascriptTransform(t.Script, field)
+                        );
                         break;
                     case "template":
-                        result.Add(new TemplateTransform(t.Template, parameters, results));
+                        result.Add(
+                            parameters.Any() ?
+                            new TemplateTransform(t.Template, t.TemplateModelType, parameters, results) :
+                            new TemplateTransform(t.Template, field)
+                        );
                         break;
                     case "padleft":
                         result.Add(new PadLeftTransform(t.TotalWidth, t.PaddingChar));
@@ -418,31 +488,40 @@ namespace Transformalize.Data {
             return result.ToArray();
         }
 
-        private IParameters GetParameters(TransformConfigurationElement t) {
+        private IParameters GetParameters(TransformConfigurationElement t)
+        {
 
             var parameters = new Parameters();
 
-            foreach (ParameterConfigurationElement p in t.Parameters) {
-                if (!string.IsNullOrEmpty(p.Entity) && !string.IsNullOrEmpty(p.Field)) {
-                    if (_process.Entities.Any(e => e.Name.Equals(p.Entity))) {
+            foreach (ParameterConfigurationElement p in t.Parameters)
+            {
+                if (!string.IsNullOrEmpty(p.Entity) && !string.IsNullOrEmpty(p.Field))
+                {
+                    if (_process.Entities.Any(e => e.Name.Equals(p.Entity)))
+                    {
                         var entity = _process.Entities.Find(e => e.Name.Equals(p.Entity));
-                        if (entity.All.ContainsKey(p.Field)) {
+                        if (entity.All.ContainsKey(p.Field))
+                        {
                             var field = entity.All[p.Field];
                             var key = String.IsNullOrEmpty(p.Name) ? field.Alias : p.Name;
                             parameters.Add(field.Alias, key, null, "System.Object");
                         }
-                        else {
+                        else
+                        {
                             var message = string.Format("A {0} parameter references the field {1} in entity {2}.  The field {1} does not exist.", t.Method, p.Field, p.Entity);
                             throw new TransformalizeException(message);
                         }
                     }
-                    else {
+                    else
+                    {
                         var message = string.Format("A {0} parameter references the entity {1}.  The entity {1} does not exist.", t.Method, p.Entity);
                         throw new TransformalizeException(message);
                     }
                 }
-                else {
-                    if (string.IsNullOrEmpty(p.Name) || string.IsNullOrEmpty(p.Value)) {
+                else
+                {
+                    if (string.IsNullOrEmpty(p.Name) || string.IsNullOrEmpty(p.Value))
+                    {
                         var message = string.Format("A {0} parameter does not reference an entity and field, nor does it have a name and value.  It must do have one or the other.", t.Method);
                         throw new TransformalizeException(message);
                     }

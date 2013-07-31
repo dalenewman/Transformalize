@@ -146,7 +146,7 @@ namespace Transformalize.Libs.RazorEngine.Core.Templating
         /// <param name="name">The name of the section.</param>
         /// <param name="isRequired">Flag to specify whether the section is required.</param>
         /// <returns>The template writer helper.</returns>
-        public TemplateWriter RenderSection(string name, bool isRequired = true)
+        public virtual TemplateWriter RenderSection(string name, bool isRequired = true)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("The name of the section to render must be specified.");
@@ -333,6 +333,20 @@ namespace Transformalize.Libs.RazorEngine.Core.Templating
         public virtual void WriteTo(TextWriter writer, TemplateWriter helper)
         {
             helper.WriteTo(writer);
+        }
+
+        /// <summary>
+        /// Resolves the specified path
+        /// </summary>
+        /// <param name="path">The path.</param>
+        /// <returns>The resolved path.</returns>
+        public virtual string ResolveUrl(string path)
+        {
+            // TODO: Actually resolve the url
+            if (path.StartsWith("~")) {
+                path = path.Substring(1);
+            }
+            return path;
         }
         #endregion
     }

@@ -21,50 +21,64 @@ using Noesis.Javascript;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Model;
 
-namespace Transformalize.Transforms {
-    public class JavascriptTransform : AbstractTransform {
+namespace Transformalize.Transforms
+{
+    public class JavascriptTransform : AbstractTransform
+    {
         private readonly JavascriptContext _context = new JavascriptContext();
         private readonly string _script;
+        private readonly string _field;
 
-        public JavascriptTransform(string script) {
+        public JavascriptTransform(string script, string field)
+        {
             _script = script;
+            _field = field;
         }
 
         public JavascriptTransform(string script, IParameters parameters, Dictionary<string, Field> results)
-            : base(parameters, results) {
+            : base(parameters, results)
+        {
             _script = script;
         }
 
-        protected override string Name {
+        protected override string Name
+        {
             get { return "Javascript Transform"; }
         }
 
-        public override void Transform(ref StringBuilder sb) {
-            _context.SetParameter("field", sb.ToString());
+        public override void Transform(ref StringBuilder sb)
+        {
+            _context.SetParameter(_field, sb.ToString());
             sb.Clear();
             sb.Append(Run());
         }
 
-        public override void Transform(ref object value) {
-            _context.SetParameter("field", value);
+        public override void Transform(ref object value)
+        {
+            _context.SetParameter(_field, value);
             value = Run();
         }
 
-        public override void Transform(ref Row row) {
-            foreach (var pair in Parameters) {
+        public override void Transform(ref Row row)
+        {
+            foreach (var pair in Parameters)
+            {
                 _context.SetParameter(pair.Value.Name, pair.Value.Value ?? row[pair.Key]);
             }
             var result = Run();
-            foreach (var pair in Results) {
+            foreach (var pair in Results)
+            {
                 row[pair.Key] = result;
             }
         }
 
-        private object Run() {
+        private object Run()
+        {
             return _context.Run(_script);
         }
 
-        public new void Dispose() {
+        public new void Dispose()
+        {
             _context.Dispose();
             base.Dispose();
         }

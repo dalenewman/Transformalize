@@ -1,4 +1,4 @@
-using System.Web.Razor.Parser.SyntaxTree;
+﻿using System.Web.Razor.Parser.SyntaxTree;
 using Transformalize.Libs.RazorEngine.Core.Templating;
 
 namespace Transformalize.Libs.RazorEngine.Core.Compilation.VisualBasic

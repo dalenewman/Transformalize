@@ -393,5 +393,15 @@ namespace Transformalize.Model {
             return results;
         }
 
+        public FieldSqlWriter Remove(string @alias)
+        {
+            foreach (var key in CopyOutputKeys())
+            {
+                var field = _original[key];
+                if (field.Alias == @alias)
+                    _output.Remove(key);
+            }
+            return this;
+        }
     }
 }

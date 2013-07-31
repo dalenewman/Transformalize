@@ -1,4 +1,4 @@
-namespace Transformalize.Libs.RazorEngine.Core
+﻿namespace Transformalize.Libs.RazorEngine.Core
 {
     /// <summary>
     /// Defines the possible supported code languages.

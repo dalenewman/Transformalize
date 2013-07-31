@@ -1,4 +1,4 @@
-using System.CodeDom;
+﻿using System.CodeDom;
 
 namespace Transformalize.Libs.RazorEngine.Core.Compilation.Inspectors
 {

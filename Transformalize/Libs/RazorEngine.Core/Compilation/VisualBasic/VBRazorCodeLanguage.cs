@@ -1,4 +1,4 @@
-using System.Web.Razor.Generator;
+﻿using System.Web.Razor.Generator;
 
 namespace Transformalize.Libs.RazorEngine.Core.Compilation.VisualBasic
 {

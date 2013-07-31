@@ -20,43 +20,54 @@ using System.Configuration;
 
 namespace Transformalize.Configuration
 {
-    public class TransformConfigurationElement : ConfigurationElement {
+    public class TransformConfigurationElement : ConfigurationElement
+    {
 
         [ConfigurationProperty("method", IsRequired = true)]
-        public string Method {
-            get {
+        public string Method
+        {
+            get
+            {
                 return this["method"] as string;
             }
             set { this["method"] = value; }
         }
 
         [ConfigurationProperty("value", IsRequired = false)]
-        public string Value {
-            get {
+        public string Value
+        {
+            get
+            {
                 return this["value"] as string;
             }
             set { this["value"] = value; }
         }
 
         [ConfigurationProperty("pattern", IsRequired = false)]
-        public string Pattern {
-            get {
+        public string Pattern
+        {
+            get
+            {
                 return this["pattern"] as string;
             }
             set { this["pattern"] = value; }
         }
 
         [ConfigurationProperty("replacement", IsRequired = false, DefaultValue = "")]
-        public string Replacement {
-            get {
+        public string Replacement
+        {
+            get
+            {
                 return this["replacement"] as string;
             }
             set { this["replacement"] = value; }
         }
 
         [ConfigurationProperty("oldValue", IsRequired = false)]
-        public string OldValue {
-            get {
+        public string OldValue
+        {
+            get
+            {
                 return this["oldValue"] as string;
             }
             set { this["oldValue"] = value; }
@@ -64,72 +75,90 @@ namespace Transformalize.Configuration
 
 
         [ConfigurationProperty("newValue", IsRequired = false)]
-        public string NewValue {
-            get {
+        public string NewValue
+        {
+            get
+            {
                 return this["newValue"] as string;
             }
             set { this["newValue"] = value; }
         }
 
         [ConfigurationProperty("trimChars", IsRequired = false)]
-        public string TrimChars {
-            get {
+        public string TrimChars
+        {
+            get
+            {
                 return this["trimChars"] as string;
             }
             set { this["trimChars"] = value; }
         }
 
         [ConfigurationProperty("index", IsRequired = false)]
-        public int Index {
-            get {
-                return (int) this["index"];
+        public int Index
+        {
+            get
+            {
+                return (int)this["index"];
             }
             set { this["index"] = value; }
         }
 
         [ConfigurationProperty("count", IsRequired = false, DefaultValue = 0)]
-        public int Count {
-            get {
+        public int Count
+        {
+            get
+            {
                 return (int)this["count"];
             }
             set { this["count"] = value; }
         }
 
         [ConfigurationProperty("startIndex", IsRequired = false)]
-        public int StartIndex {
-            get {
+        public int StartIndex
+        {
+            get
+            {
                 return (int)this["startIndex"];
             }
             set { this["startIndex"] = value; }
         }
 
         [ConfigurationProperty("length", IsRequired = false)]
-        public int Length {
-            get {
+        public int Length
+        {
+            get
+            {
                 return (int)this["length"];
             }
             set { this["length"] = value; }
         }
 
         [ConfigurationProperty("totalWidth", IsRequired = false)]
-        public int TotalWidth {
-            get {
+        public int TotalWidth
+        {
+            get
+            {
                 return (int)this["totalWidth"];
             }
             set { this["totalWidth"] = value; }
         }
 
         [ConfigurationProperty("paddingChar", IsRequired = false)]
-        public char PaddingChar {
-            get {
+        public char PaddingChar
+        {
+            get
+            {
                 return (char)this["paddingChar"];
             }
             set { this["paddingChar"] = value; }
         }
 
         [ConfigurationProperty("map", IsRequired = false)]
-        public string Map {
-            get {
+        public string Map
+        {
+            get
+            {
                 return this["map"] as string;
             }
             set { this["map"] = value; }
@@ -137,49 +166,72 @@ namespace Transformalize.Configuration
 
 
         [ConfigurationProperty("script", IsRequired = false)]
-        public string Script {
-            get {
+        public string Script
+        {
+            get
+            {
                 return this["script"] as string;
             }
             set { this["script"] = value; }
         }
 
         [ConfigurationProperty("template", IsRequired = false)]
-        public string Template {
-            get {
+        public string Template
+        {
+            get
+            {
                 return this["template"] as string;
             }
             set { this["template"] = value; }
         }
 
         [ConfigurationProperty("parameters")]
-        public ParameterElementCollection Parameters {
-            get {
+        public ParameterElementCollection Parameters
+        {
+            get
+            {
                 return this["parameters"] as ParameterElementCollection;
             }
         }
 
         [ConfigurationProperty("results")]
-        public FieldElementCollection Results {
-            get {
+        public FieldElementCollection Results
+        {
+            get
+            {
                 return this["results"] as FieldElementCollection;
             }
         }
 
         [ConfigurationProperty("format", IsRequired = false)]
-        public string Format {
-            get {
+        public string Format
+        {
+            get
+            {
                 return this["format"] as string;
             }
             set { this["format"] = value; }
         }
 
         [ConfigurationProperty("separator", IsRequired = false)]
-        public string Separator {
-            get {
+        public string Separator
+        {
+            get
+            {
                 return this["separator"] as string;
             }
             set { this["separator"] = value; }
         }
+
+        [ConfigurationProperty("templateModelType", IsRequired = false, DefaultValue = "dynamic")]
+        public string TemplateModelType
+        {
+            get
+            {
+                return this["templateModelType"] as string;
+            }
+            set { this["templateModelType"] = value; }
+        }
+
     }
 }

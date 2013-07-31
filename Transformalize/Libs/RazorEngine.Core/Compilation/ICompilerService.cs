@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Transformalize.Libs.RazorEngine.Core.Compilation.Inspectors;
@@ -24,7 +24,7 @@ namespace Transformalize.Libs.RazorEngine.Core.Compilation
 
         #region Methods
         /// <summary>
-        /// Builds a type name for the specified template type and model type.
+        /// Builds a type name for the specified template type.
         /// </summary>
         /// <param name="templateType">The template type.</param>
         /// <returns>The string type name (including namespace).</returns>

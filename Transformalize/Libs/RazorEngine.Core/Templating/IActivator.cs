@@ -1,4 +1,4 @@
-namespace Transformalize.Libs.RazorEngine.Core.Templating
+﻿namespace Transformalize.Libs.RazorEngine.Core.Templating
 {
     /// <summary>
     /// Defines the required contract for implementing an activator.

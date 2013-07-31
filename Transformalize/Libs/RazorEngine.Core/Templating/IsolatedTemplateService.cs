@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Reflection;
+using System.Linq;
 using Transformalize.Libs.RazorEngine.Core.Compilation;
 using Transformalize.Libs.RazorEngine.Core.Text;
 

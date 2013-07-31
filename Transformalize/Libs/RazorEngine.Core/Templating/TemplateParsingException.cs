@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 using System.Web.Razor.Parser.SyntaxTree;

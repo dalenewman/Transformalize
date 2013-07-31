@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics.Contracts;
 using Transformalize.Libs.RazorEngine.Core.Compilation;
 using Transformalize.Libs.RazorEngine.Core.Compilation.Inspectors;

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics.Contracts;
 
 namespace Transformalize.Libs.RazorEngine.Core.Templating

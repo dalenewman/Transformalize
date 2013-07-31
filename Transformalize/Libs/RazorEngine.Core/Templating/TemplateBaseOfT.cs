@@ -1,4 +1,4 @@
-using System.Dynamic;
+﻿using System.Dynamic;
 using Transformalize.Libs.RazorEngine.Core.Compilation;
 
 namespace Transformalize.Libs.RazorEngine.Core.Templating

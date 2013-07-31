@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.CodeDom;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
@@ -56,8 +56,9 @@ namespace Transformalize.Libs.RazorEngine.Core.Compilation
         #endregion
 
         #region Methods
+
         /// <summary>
-        /// Builds a type name for the specified template type and model type.
+        /// Builds a type name for the specified template type.
         /// </summary>
         /// <param name="templateType">The template type.</param>
         /// <returns>The string type name (including namespace).</returns>
@@ -73,21 +74,6 @@ namespace Transformalize.Libs.RazorEngine.Core.Compilation
             return templateType.Namespace
                    + "."
                    + templateType.Name.Substring(0, templateType.Name.IndexOf('`'));
-        }
-
-        private static Type GetIteratorInterface(Type modelType)
-        {
-            Type firstInterface = null;
-            foreach (var @interface in modelType.GetInterfaces())
-            {
-                if (firstInterface == null) 
-                    firstInterface = @interface;
-
-                if (@interface.IsGenericType)
-                    return @interface;
-            }
-
-            return @firstInterface ?? modelType;
         }
 
         /// <summary>
@@ -109,13 +95,16 @@ namespace Transformalize.Libs.RazorEngine.Core.Compilation
             var host = new RazorEngineHost(CodeLanguage, MarkupParserFactory)
                            {
                                DefaultBaseTemplateType = templateType,
+                               DefaultModelType = modelType,
                                DefaultBaseClass = BuildTypeName(templateType),
                                DefaultClassName = className,
                                DefaultNamespace = "CompiledRazorTemplates.Dynamic",
                                GeneratedClassContext = new GeneratedClassContext("Execute", "Write", "WriteLiteral",
                                                                                  "WriteTo", "WriteLiteralTo",
                                                                                  "RazorEngine.Templating.TemplateWriter",
-                                                                                 "DefineSection")
+                                                                                 "DefineSection") {
+                                                                                     ResolveUrlMethodName = "ResolveUrl"
+                                                                                 }
                            };
 
             return host;

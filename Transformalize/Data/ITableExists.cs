@@ -1,4 +1,4 @@
-/*
+﻿/*
 Transformalize - Replicate, Transform, and Denormalize Your Data...
 Copyright (C) 2013 Dale Newman
 
@@ -16,8 +16,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace Transformalize.Data {
-    public interface ITflWriter {
-        void Initialize();
+namespace Transformalize.Data
+{
+    public interface ITableExists
+    {
+        bool Exists(string schema, string name);
     }
 }

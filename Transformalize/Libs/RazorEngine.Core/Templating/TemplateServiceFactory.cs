@@ -1,4 +1,4 @@
-using Transformalize.Libs.RazorEngine.Core.Configuration;
+﻿using Transformalize.Libs.RazorEngine.Core.Configuration;
 
 namespace Transformalize.Libs.RazorEngine.Core.Templating
 {

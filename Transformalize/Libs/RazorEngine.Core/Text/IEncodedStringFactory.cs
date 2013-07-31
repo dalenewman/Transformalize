@@ -1,4 +1,4 @@
-namespace Transformalize.Libs.RazorEngine.Core.Text
+﻿namespace Transformalize.Libs.RazorEngine.Core.Text
 {
     /// <summary>
     /// Defines the required contract for implementing a factory for building encoded strings.

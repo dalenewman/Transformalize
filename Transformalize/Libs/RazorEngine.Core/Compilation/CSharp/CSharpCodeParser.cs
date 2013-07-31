@@ -1,6 +1,6 @@
-using System.Web.Razor.Generator;
-using System.Web.Razor.Parser;
+﻿using System.Web.Razor.Generator;
 using System.Web.Razor.Text;
+using System.Web.Razor.Parser;
 using Transformalize.Libs.RazorEngine.Core.CodeGenerators;
 
 namespace Transformalize.Libs.RazorEngine.Core.Compilation.CSharp

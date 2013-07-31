@@ -1,4 +1,4 @@
-namespace Transformalize.Libs.RazorEngine.Core.Text
+﻿namespace Transformalize.Libs.RazorEngine.Core.Text
 {
     /// <summary>
     /// Represents an unencoded string.

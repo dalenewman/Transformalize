@@ -20,24 +20,32 @@ using System.Data.SqlClient;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Model;
 
-namespace Transformalize.Data {
-    public class SqlServerTflWriter : WithLoggingMixin, ITflWriter {
+namespace Transformalize.Data
+{
+    public class SqlServerTflWriter : WithLoggingMixin, ITflWriter
+    {
 
         private readonly Process _process;
 
-        public SqlServerTflWriter(ref Process process) {
+        public SqlServerTflWriter(ref Process process)
+        {
             _process = process;
         }
 
-        private static void Execute(string sql, string connectionString) {
-            using (var cn = new SqlConnection(connectionString)) {
+        private static void Execute(string connectionString, string sqlFormat, params object[] values)
+        {
+            var sql = values.Length > 0 ? string.Format(sqlFormat, values) : sqlFormat;
+
+            using (var cn = new SqlConnection(connectionString))
+            {
                 cn.Open();
                 var command = new SqlCommand(sql, cn);
                 command.ExecuteNonQuery();
             }
         }
 
-        public string CreateSql() {
+        public string CreateSql()
+        {
             return @"
                 CREATE TABLE [TflBatch](
                     [TflBatchId] INT NOT NULL,
@@ -64,23 +72,18 @@ namespace Transformalize.Data {
             ";
         }
 
-        public void Reset() {
-            var sql = string.Format("DELETE FROM TflBatch WHERE ProcessName = '{0}';", _process.Name);
-            Execute(sql, _process.MasterEntity.OutputConnection.ConnectionString);
-        }
-
-        public void Initialize() {
+        public void Initialize()
+        {
             var cs = _process.MasterEntity.OutputConnection.ConnectionString;
 
-            Execute(SqlTemplates.TruncateTable("TflBatch"), cs);
-            Debug("{0} | Truncated TflBatch.", _process.Name);
+            if (!new SqlServerTableExists(cs).Exists("dbo", "TflBatch"))
+            {
+                Execute(cs, CreateSql());
+                Debug("{0} | Created TflBatch.", _process.Name);
+            }
 
-            Execute(SqlTemplates.DropTable("TflBatch"), cs);
-            Debug("{0} | Dropped TflBatch.", _process.Name);
+            Execute(cs, "DELETE FROM TflBatch WHERE ProcessName = '{0}';", _process.Name);
 
-            Execute(CreateSql(), cs);
-            Debug("{0} | Created TflBatch.", _process.Name);
-            
             Info("{0} | Initialized TrAnSfOrMaLiZeR.", _process.Name);
         }
 

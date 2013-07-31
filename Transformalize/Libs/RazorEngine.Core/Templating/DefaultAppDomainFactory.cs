@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Transformalize.Libs.RazorEngine.Core.Templating
 {

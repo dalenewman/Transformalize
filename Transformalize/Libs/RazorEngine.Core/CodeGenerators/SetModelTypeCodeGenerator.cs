@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Globalization;
 using System.Web.Razor.Generator;
 using Transformalize.Libs.RazorEngine.Core.Common;

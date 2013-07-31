@@ -1,4 +1,4 @@
-using System.Configuration;
+﻿using System.Configuration;
 
 namespace Transformalize.Libs.RazorEngine.Core.Configuration.Xml
 {

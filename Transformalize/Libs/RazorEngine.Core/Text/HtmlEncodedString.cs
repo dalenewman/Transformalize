@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 
 namespace Transformalize.Libs.RazorEngine.Core.Text
 {

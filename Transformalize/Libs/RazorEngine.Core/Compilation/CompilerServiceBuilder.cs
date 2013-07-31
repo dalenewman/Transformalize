@@ -1,4 +1,4 @@
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 using Transformalize.Libs.RazorEngine.Core.Configuration;
 
 namespace Transformalize.Libs.RazorEngine.Core.Compilation

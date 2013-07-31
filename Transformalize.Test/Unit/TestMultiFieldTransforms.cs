@@ -28,8 +28,7 @@ using Transformalize.Transforms;
 namespace Transformalize.Test.Unit {
     [TestFixture]
     public class MulitFieldTestTransforms : EtlProcessHelper {
-
-
+        
         [Test]
         public void TestJavascriptTransformStrings() {
 
@@ -100,11 +99,11 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void TestTemplateTransformStrings() {
+        public void TestTemplateTransformStringsWithDictionary() {
 
             var process = new Process {
                 Transforms = new AbstractTransform[] {
-                    new TemplateTransform("@{ var fullName = Model.FirstName + \" \" + Model.LastName;}@fullName",
+                    new TemplateTransform("@{ var fullName = Model[\"FirstName\"] + \" \" + Model[\"LastName\"];}@fullName", "dictionary",
                         new Parameters { {"FirstName", new Parameter("FirstName",null)},{"LastName", new Parameter("LastName",null)}},
                         new Dictionary<string, Field> { {"FullName", new Field(FieldType.Field)}}
                     )
@@ -121,6 +120,32 @@ namespace Transformalize.Test.Unit {
 
             Assert.AreEqual("Dale Newman", rows[0]["FullName"]);
         }
+
+        [Test]
+        public void TestTemplateTransformStringsWithDynamic()
+        {
+
+            var process = new Process
+            {
+                Transforms = new AbstractTransform[] {
+                    new TemplateTransform("@{ var fullName = Model.FirstName + \" \" + Model.LastName;}@fullName", "dynamic",
+                        new Parameters { {"FirstName", new Parameter("FirstName",null)},{"LastName", new Parameter("LastName",null)}},
+                        new Dictionary<string, Field> { {"FullName", new Field(FieldType.Field)}}
+                    )
+                }
+            };
+
+            var rows = TestOperation(
+                GetTestData(new List<Row> {
+                    new Row { {"FirstName", "Dale"}, {"LastName", "Newman"} },
+                }),
+                new ProcessTransform(process),
+                new LogOperation()
+            );
+
+            Assert.AreEqual("Dale Newman", rows[0]["FullName"]);
+        }
+
 
         [Test]
         public void TestJoinTransformStrings() {

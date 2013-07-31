@@ -1,4 +1,4 @@
-using System.CodeDom;
+﻿using System.CodeDom;
 using System.Web.Razor.Parser.SyntaxTree;
 using Transformalize.Libs.RazorEngine.Core.Templating;
 
@@ -25,10 +25,23 @@ namespace Transformalize.Libs.RazorEngine.Core.Compilation.CSharp
             var mvcHost = host as Compilation.RazorEngineHost;
             if (mvcHost != null)
             {
-                // set the default model type to "dynamic"
-                SetBaseType("dynamic");
+                SetBaseTypeFromHost(mvcHost);
             }
         }
+
+        private void SetBaseTypeFromHost(Compilation.RazorEngineHost mvcHost)
+        {
+            if (!mvcHost.DefaultBaseTemplateType.IsGenericType)
+            {
+                SetBaseType(mvcHost.DefaultBaseTemplateType.FullName);
+            }
+            else
+            {
+                var modelTypeName = CompilerServicesUtility.ResolveCSharpTypeName(mvcHost.DefaultModelType);
+                SetBaseType(mvcHost.DefaultBaseClass + "<" + modelTypeName + ">");
+            }
+        }
+
         #endregion
 
         #region Properties
@@ -39,9 +52,9 @@ namespace Transformalize.Libs.RazorEngine.Core.Compilation.CSharp
         #endregion
 
         #region Methods
-        private void SetBaseType(string modelTypeName)
+        private void SetBaseType(string baseTypeName)
         {
-            var baseType = new CodeTypeReference(Context.Host.DefaultBaseClass + "<" + modelTypeName + ">");
+            var baseType = new CodeTypeReference(baseTypeName);
             Context.GeneratedClass.BaseTypes.Clear();
             Context.GeneratedClass.BaseTypes.Add(baseType);
         }

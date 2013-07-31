@@ -1,4 +1,4 @@
-namespace Transformalize.Libs.RazorEngine.Core.Compilation
+﻿namespace Transformalize.Libs.RazorEngine.Core.Compilation
 {
     /// <summary>
     /// Defines the required contract for implementing a compiler service factory.
