@@ -203,7 +203,7 @@ namespace Transformalize.Test.Unit
             input.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row> {
                 new Row { {"Name", "Dale"} }
             });
-            
+
             var entity = new Entity();
             entity.All["Name"] = new Field(FieldType.Field) { Transforms = new[] { new TemplateTransform("Hello @Name", "Name") } };
 
@@ -353,7 +353,8 @@ namespace Transformalize.Test.Unit
         {
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field(FieldType.Field) { Input = true, Transforms = new[] { new JavascriptTransform("Field1.length;", "Field1") } };
+            var scripts = new Dictionary<string, Script>();
+            entity.All["Field1"] = new Field(FieldType.Field) { Input = true, Transforms = new[] { new JavascriptTransform("Field1.length;", "Field1", scripts) } };
 
             var rows = TestOperation(
                 _testInput.Object,
@@ -370,6 +371,39 @@ namespace Transformalize.Test.Unit
         }
 
         [Test]
+        public void TestJavscriptFromScript()
+        {
+            const string scriptContent = "function Double(input) { if(!input || input == '') { return '';} else { return input + input;} }";
+            var mock = new Mock<IOperation>();
+            mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row> {
+                new Row { {"Field1", "T"} },
+                new Row { {"Field1", "2"} },
+                new Row { {"Field1", null }}
+            });
+            var input = mock.Object;
+
+            var entity = new Entity();
+            var scripts = new Dictionary<string, Script> { { "test", new Script("test", scriptContent, "test.js") } };
+            entity.All["Field1"] = new Field(FieldType.Field)
+                                       {
+                                           Transforms = new[] { new JavascriptTransform("Double(Field1);", "Field1", scripts) }
+                                       };
+
+            var rows = TestOperation(
+                input,
+                new EntityDefaults(entity),
+                new FieldTransform(entity),
+                new LogOperation()
+            );
+
+            Assert.AreEqual("TT", rows[0]["Field1"]);
+            Assert.AreEqual("22", rows[1]["Field1"]);
+            Assert.AreEqual("", rows[2]["Field1"]);
+
+        }
+
+
+        [Test]
         public void TestJavscriptInt32Transform()
         {
 
@@ -383,7 +417,8 @@ namespace Transformalize.Test.Unit
             var numbers = numbersMock.Object;
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field("System.Int32", "8", FieldType.Field, true, 0) { Input = true, Transforms = new[] { new JavascriptTransform("Field1 * 2;", "Field1") }, Default = 0 };
+            var scripts = new Dictionary<string, Script>();
+            entity.All["Field1"] = new Field("System.Int32", "8", FieldType.Field, true, 0) { Input = true, Transforms = new[] { new JavascriptTransform("Field1 * 2;", "Field1", scripts) }, Default = 0 };
 
             var rows = TestOperation(
                 numbers,

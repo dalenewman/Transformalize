@@ -19,26 +19,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Data;
-using Transformalize.Transforms;
 
 namespace Transformalize.Model {
-
     public class Process {
 
         public string Name;
         public Entity MasterEntity;
-        public Dictionary<string, SqlServerConnection> Connections = new Dictionary<string, SqlServerConnection>();
+        public VersionOptions VersionOptions = new VersionOptions();
+        public Dictionary<string, Field> Results = new Dictionary<string, Field>();
         public List<Entity> Entities = new List<Entity>();
+        public Dictionary<string, SqlServerConnection> Connections = new Dictionary<string, SqlServerConnection>();
         public List<Relationship> Relationships = new List<Relationship>();
         public Dictionary<string, Dictionary<string, object>> MapEquals = new Dictionary<string, Dictionary<string, object>>();
         public Dictionary<string, Dictionary<string, object>> MapStartsWith = new Dictionary<string, Dictionary<string, object>>();
         public Dictionary<string, Dictionary<string, object>> MapEndsWith = new Dictionary<string, Dictionary<string, object>>();
-        public AbstractTransform[] Transforms { get; set; }
         public IParameters Parameters = new Parameters();
-        public Dictionary<string, Field> Results = new Dictionary<string, Field>();
         public IEnumerable<Field> RelatedKeys;
-        public string View { get; set; }
-        public bool OutputRecordsExist { get; set; }
+        public AbstractTransform[] Transforms;
+        public string View;
+        public bool OutputRecordsExist;
+        public Dictionary<string, Script> Scripts = new Dictionary<string, Script>();
 
         public bool IsReady() {
             return Connections.Select(connection => connection.Value.IsReady()).All(b => b.Equals(true));

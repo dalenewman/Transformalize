@@ -29,12 +29,13 @@ namespace Transformalize.Model {
         protected abstract string Name { get; }
         public IParameters Parameters { get; set; }
         public Dictionary<string, Field> Results { get; set; }
+        public Dictionary<string, string> Scripts = new Dictionary<string, string>();
         protected KeyValuePair<string, Field> FirstResult { get; set; }
         protected KeyValuePair<string, IParameter> FirstParameter { get; set; } 
         protected bool HasParameters { get; private set; }
         protected bool HasResults { get; private set; }
         protected object[] ParameterValues { get; private set; }
-
+        
         /// <summary>
         /// Used for field level transformations, there are no parameters and the result is inline
         /// </summary>

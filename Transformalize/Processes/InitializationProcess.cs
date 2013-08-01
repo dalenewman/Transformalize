@@ -40,8 +40,9 @@ namespace Transformalize.Processes {
             _viewWriter.Drop();
         }
 
-        protected override void Initialize() {
-            foreach (var entity in _process.Entities) {
+        protected override void Initialize()
+        {
+           foreach (var entity in _process.Entities) {
                 Register(new EntityDrop(entity));
                 Register(new EntityCreate(entity, _process));
             }

@@ -44,6 +44,15 @@ namespace Transformalize.Configuration {
             }
         }
 
+        [ConfigurationProperty("scripts")]
+        public ScriptElementCollection Scripts
+        {
+            get
+            {
+                return this["scripts"] as ScriptElementCollection;
+            }
+        }
+
         [ConfigurationProperty("entities")]
         public EntityElementCollection Entities {
             get {

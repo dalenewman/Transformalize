@@ -84,6 +84,10 @@
   <ItemGroup>
     <Compile Include="Configuration\ConnectionConfigurationElement.cs" />
     <Compile Include="Configuration\ConnectionElementCollection.cs" />
+    <Compile Include="Configuration\TransformScriptConfigurationElement.cs" />
+    <Compile Include="Configuration\TransformScriptElementCollection.cs" />
+    <Compile Include="Configuration\ScriptConfigurationElement.cs" />
+    <Compile Include="Configuration\ScriptElementCollection.cs" />
     <Compile Include="Configuration\JoinConfigurationElement.cs" />
     <Compile Include="Configuration\JoinElementCollection.cs" />
     <Compile Include="Configuration\EmptyConfigurationElement.cs" />
@@ -561,7 +565,10 @@
     <Compile Include="Model\Parameter.cs" />
     <Compile Include="Model\Parameters.cs" />
     <Compile Include="Model\AbstractTransform.cs" />
+    <Compile Include="Model\Script.cs" />
+    <Compile Include="Model\VersionOptions.cs" />
     <Compile Include="Operations\EntityAggregation.cs" />
+    <Compile Include="Operations\EntityInputKeysExtractAll.cs" />
     <Compile Include="Operations\EntityTransform.cs" />
     <Compile Include="Operations\EntityDrop.cs" />
     <Compile Include="Operations\EntityAction.cs" />
@@ -618,7 +625,7 @@
     <Compile Include="Transforms\TrimTransform.cs" />
     <Compile Include="Transforms\TrimEndTransform.cs" />
     <Compile Include="Transforms\InsertTransform.cs" />
-    <Compile Include="Operations\EntityInputKeysExtract.cs" />
+    <Compile Include="Operations\EntityInputKeysExtractDelta.cs" />
     <Compile Include="Model\Field.cs" />
     <Compile Include="Model\Entity.cs" />
     <Compile Include="Model\FieldSqlWriter.cs" />

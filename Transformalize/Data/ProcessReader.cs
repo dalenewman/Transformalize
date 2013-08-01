@@ -20,6 +20,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Libs.Rhino.Etl.Core;
@@ -39,6 +40,7 @@ namespace Transformalize.Data
         private int _entityCount;
         private int _relationshipCount;
         private int _transformCount;
+        private int _scriptCount;
         public int Count { get { return 1; } }
 
         public ProcessReader(string name)
@@ -51,11 +53,12 @@ namespace Transformalize.Data
         {
             _process = new Process { Name = _config.Name };
 
-            _connectionCount = ReadConnections(_config);
-            _mapCount = ReadMaps(_config);
-            _entityCount = ReadEntities(_config);
-            _relationshipCount = ReadRelationships(_config.Relationships);
-            _transformCount = ReadTransforms(_config);
+            _connectionCount = ReadConnections();
+            _scriptCount = ReadScripts();
+            _mapCount = ReadMaps();
+            _entityCount = ReadEntities();
+            _relationshipCount = ReadRelationships();
+            _transformCount = ReadTransforms();
             _process.RelatedKeys = ReadRelatedKeys();
             _process.View = _process.MasterEntity.OutputName() + "Star";
 
@@ -67,6 +70,30 @@ namespace Transformalize.Data
             LogProcessConfiguration();
 
             return _process;
+        }
+
+        private int ReadScripts()
+        {
+            var s = new [] {'\\'};
+            var scripts = _config.Scripts.Cast<ScriptConfigurationElement>().ToArray();
+            var path = _config.Scripts.Path;
+            foreach (var script in scripts)
+            {
+                var fileInfo = new FileInfo(path.TrimEnd(s) + @"\" + script.File);
+                if (!fileInfo.Exists)
+                {
+                    Warn("Script {0} does not exist!", fileInfo.FullName);
+                }
+                else
+                {
+                    _process.Scripts[script.Name] = new Script(script.Name, File.ReadAllText(fileInfo.FullName), fileInfo.FullName, script.Template);
+                    Debug("Loaded script {0}.", fileInfo.FullName);
+                }
+                
+            }
+
+
+            return scripts.Count();
         }
 
         private IEnumerable<Relationship> ReadRelationshipToMaster(Entity rightEntity)
@@ -93,7 +120,7 @@ namespace Transformalize.Data
             Debug("{0} | {1} Transform{2}.", _process.Name, _transformCount, _transformCount == 1 ? string.Empty : "s");
         }
 
-        private int ReadTransforms(ProcessConfigurationElement config)
+        private int ReadTransforms()
         {
             var alternates = new Dictionary<string, Field>();
             foreach (var entity in _process.Entities)
@@ -104,7 +131,7 @@ namespace Transformalize.Data
                 }
             }
 
-            _process.Transforms = GetTransforms(config.Transforms, new FieldSqlWriter(alternates).ExpandXml().Input().Context());
+            _process.Transforms = GetTransforms(_config.Transforms, new FieldSqlWriter(alternates).ExpandXml().Input().Context());
             foreach (var transform in _process.Transforms)
             {
                 foreach (var pair in transform.Parameters)
@@ -120,10 +147,10 @@ namespace Transformalize.Data
             return _process.Transforms.Count();
         }
 
-        private int ReadRelationships(RelationshipElementCollection relationships)
+        private int ReadRelationships()
         {
             var count = 0;
-            foreach (RelationshipConfigurationElement r in relationships)
+            foreach (RelationshipConfigurationElement r in _config.Relationships)
             {
 
                 var leftEntity = _process.Entities.First(e => e.Name.Equals(r.LeftEntity, StringComparison.OrdinalIgnoreCase));
@@ -178,10 +205,10 @@ namespace Transformalize.Data
             return join;
         }
 
-        private int ReadEntities(ProcessConfigurationElement config)
+        private int ReadEntities()
         {
             var count = 0;
-            foreach (EntityConfigurationElement e in config.Entities)
+            foreach (EntityConfigurationElement e in _config.Entities)
             {
                 var entity = GetEntity(e, count);
                 _process.Entities.Add(entity);
@@ -212,10 +239,10 @@ namespace Transformalize.Data
             return foreignKeys;
         }
 
-        private int ReadMaps(ProcessConfigurationElement config)
+        private int ReadMaps()
         {
             var count = 0;
-            foreach (MapConfigurationElement m in config.Maps)
+            foreach (MapConfigurationElement m in _config.Maps)
             {
                 if (string.IsNullOrEmpty(m.Connection))
                 {
@@ -235,10 +262,10 @@ namespace Transformalize.Data
             return count;
         }
 
-        private int ReadConnections(ProcessConfigurationElement config)
+        private int ReadConnections()
         {
             var count = 0;
-            foreach (ConnectionConfigurationElement element in config.Connections)
+            foreach (ConnectionConfigurationElement element in _config.Connections)
             {
                 var connection = new SqlServerConnection(element.Value, _process.Name)
                 {
@@ -442,10 +469,16 @@ namespace Transformalize.Data
                         result.Add(new MapTransform(new[] { @equals, startsWith, endsWith }));
                         break;
                     case "javascript":
+                        var scripts = new Dictionary<string, Script>();
+                        foreach (TransformScriptConfigurationElement script in t.Scripts)
+                        {
+                            scripts[script.Name] = _process.Scripts[script.Name];
+                        }
+
                         result.Add(
                             parameters.Any() ?
-                            new JavascriptTransform(t.Script, parameters, results) :
-                            new JavascriptTransform(t.Script, field)
+                            new JavascriptTransform(t.Script, parameters, results, scripts) :
+                            new JavascriptTransform(t.Script, field, scripts)
                         );
                         break;
                     case "template":

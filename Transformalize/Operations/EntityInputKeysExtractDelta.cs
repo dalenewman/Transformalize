@@ -24,12 +24,13 @@ using Transformalize.Libs.Rhino.Etl.Core.Operations;
 using Transformalize.Model;
 
 namespace Transformalize.Operations {
-
-    public class EntityInputKeysExtract : InputCommandOperation {
+    public class EntityInputKeysExtractDelta : InputCommandOperation {
 
         private readonly Entity _entity;
+        private readonly List<string> _selectKeys = new List<string>();
+        private readonly List<string> _orderByKeys = new List<string>();
 
-        public EntityInputKeysExtract(Entity entity)
+        public EntityInputKeysExtractDelta(Entity entity)
             : base(entity.InputConnection.ConnectionString) {
 
             _entity = entity;
@@ -64,14 +65,12 @@ namespace Transformalize.Operations {
 
             var criteria = string.Format(isRange ? "[{0}] BETWEEN @Begin AND @End" : "[{0}] <= @End", _entity.Version.Name);
 
-            var orderByKeys = new List<string>();
-            var selectKeys = new List<string>();
             foreach (var pair in _entity.PrimaryKey) {
-                selectKeys.Add(pair.Value.Alias.Equals(pair.Value.Name) ? string.Concat("[", pair.Value.Name, "]") : string.Format("{0} = [{1}]", pair.Value.Alias, pair.Value.Name));
-                orderByKeys.Add(string.Concat("[", pair.Value.Name, "]"));
+                _selectKeys.Add(pair.Value.Alias.Equals(pair.Value.Name) ? string.Concat("[", pair.Value.Name, "]") : string.Format("{0} = [{1}]", pair.Value.Alias, pair.Value.Name));
+                _orderByKeys.Add(string.Concat("[", pair.Value.Name, "]"));
             }
 
-            return string.Format(sqlPattern, string.Join(", ", selectKeys), _entity.Schema, _entity.Name, criteria, string.Join(", ", orderByKeys));
+            return string.Format(sqlPattern, string.Join(", ", _selectKeys), _entity.Schema, _entity.Name, criteria, string.Join(", ", _orderByKeys));
         }
 
         public bool NeedsToRun() {

@@ -29,16 +29,25 @@ namespace Transformalize.Transforms
         private readonly string _script;
         private readonly string _field;
 
-        public JavascriptTransform(string script, string field)
+        public JavascriptTransform(string script, string field, Dictionary<string, Script> scripts)
         {
             _script = script;
             _field = field;
+            foreach (var pair in scripts)
+            {
+                Debug("Running script {0}.", pair.Value.File);
+                _context.Run(pair.Value.Content);
+            }
         }
 
-        public JavascriptTransform(string script, IParameters parameters, Dictionary<string, Field> results)
+        public JavascriptTransform(string script, IParameters parameters, Dictionary<string, Field> results, Dictionary<string, Script> scripts)
             : base(parameters, results)
         {
             _script = script;
+            foreach (var pair in scripts)
+            {
+                _context.Run(pair.Value.Content);
+            }
         }
 
         protected override string Name

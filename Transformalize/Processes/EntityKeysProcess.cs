@@ -35,7 +35,7 @@ namespace Transformalize.Processes {
         protected override void Initialize() {
             var last = _process.Entities.Last().Name;
             foreach (var entity in _process.Entities) {
-                var keysExtract = new EntityInputKeysExtract(entity);
+                var keysExtract = new EntityInputKeysExtractDelta(entity);
                 if (!keysExtract.NeedsToRun()) continue;
                 Register(keysExtract);
                 if (entity.Name.Equals(last)) {

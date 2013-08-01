@@ -36,7 +36,8 @@ namespace Transformalize.Test.Unit {
                 Transforms = new AbstractTransform[] {
                     new JavascriptTransform("FirstName + ' ' + LastName",
                         new Parameters { {"FirstName", new Parameter("FirstName", null)},{"LastName", new Parameter("LastName", null)}},
-                        new Dictionary<string, Field> { {"FullName", new Field(FieldType.Field)}}
+                        new Dictionary<string, Field> { {"FullName", new Field(FieldType.Field)}},
+                        new Dictionary<string, Script>()
                     )
                 }
             };
@@ -59,7 +60,8 @@ namespace Transformalize.Test.Unit {
                 Transforms = new AbstractTransform[] {
                     new JavascriptTransform("x * y",
                         new Parameters { {"x", new Parameter("x", null)},{"y", new Parameter("y", null)}},
-                        new Dictionary<string, Field> { {"z", new Field(FieldType.Field)}}
+                        new Dictionary<string, Field> { {"z", new Field(FieldType.Field)}},
+                        new Dictionary<string, Script>()
                     )
                 }
             };

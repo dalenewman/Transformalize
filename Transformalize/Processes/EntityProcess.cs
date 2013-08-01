@@ -25,26 +25,36 @@ using Transformalize.Libs.Rhino.Etl.Core.Operations;
 using Transformalize.Model;
 using Transformalize.Operations;
 
-namespace Transformalize.Processes {
+namespace Transformalize.Processes
+{
 
-    public class EntityProcess : EtlProcess {
+    public class EntityProcess : EtlProcess
+    {
 
         private readonly Process _process;
         private Entity _entity;
 
         public EntityProcess(ref Process process, Entity entity, IEntityBatch entityBatch = null)
-            : base(process.Name) {
+            : base(process.Name)
+        {
             _process = process;
             _entity = entity;
             _entity.TflBatchId = (entityBatch ?? new SqlServerEntityBatch()).GetNext(_entity);
         }
 
-        protected override void Initialize() {
-
-            var keysExtract = new EntityInputKeysExtract(_entity);
-            if (!keysExtract.NeedsToRun()) return;
-
-            Register(keysExtract);
+        protected override void Initialize()
+        {
+            if (_process.VersionOptions.UseBeginVersion)
+            {
+                var keysExtract = new EntityInputKeysExtractDelta(_entity);
+                if (!keysExtract.NeedsToRun()) return;
+                Register(keysExtract);
+            }
+            else
+            {
+                Register(new EntityInputKeysExtractAll(_entity));
+            }
+            
             Register(new EntityInputKeysStore(_entity));
             Register(new EntityKeysToOperations(_entity));
             Register(new SerialUnionAllOperation());
@@ -55,7 +65,8 @@ namespace Transformalize.Processes {
             if (_entity.Group)
                 Register(new EntityAggregation(_entity));
 
-            if (_process.OutputRecordsExist) {
+            if (_process.OutputRecordsExist)
+            {
                 Register(new EntityJoinAction(_entity).Right(new EntityOutputKeysExtract(_entity)));
                 var branch = new BranchingOperation()
                     .Add(new PartialProcessOperation()
@@ -66,23 +77,32 @@ namespace Transformalize.Processes {
                              .RegisterLast(new EntityBatchUpdate(_entity)));
                 RegisterLast(branch);
             }
-            else {
+            else
+            {
                 Register(new EntityAddTflFields(_entity));
                 RegisterLast(new EntityBulkInsert(_entity));
             }
 
         }
 
-        protected override void PostProcessing() {
+        protected override void PostProcessing()
+        {
 
             var errors = GetAllErrors().ToArray();
-            if (errors.Any()) {
-                foreach (var error in errors) {
+            if (errors.Any())
+            {
+                foreach (var error in errors)
+                {
                     Error(error.InnerException, "Message: {0}\r\nStackTrace:{1}\r\n", error.Message, error.StackTrace);
                 }
                 throw new InvalidOperationException("Houstan.  We have a problem in the threads!");
             }
-            new SqlServerEntityVersionWriter(_entity).WriteEndVersion(_entity.End, _entity.RecordsAffected);
+
+            if (_process.VersionOptions.WriteEndVersion)
+            {
+                new SqlServerEntityVersionWriter(_entity).WriteEndVersion(_entity.End, _entity.RecordsAffected);
+            }
+
             base.PostProcessing();
         }
 

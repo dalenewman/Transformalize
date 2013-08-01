@@ -163,8 +163,7 @@ namespace Transformalize.Configuration
             }
             set { this["map"] = value; }
         }
-
-
+        
         [ConfigurationProperty("script", IsRequired = false)]
         public string Script
         {
@@ -200,6 +199,15 @@ namespace Transformalize.Configuration
             get
             {
                 return this["results"] as FieldElementCollection;
+            }
+        }
+
+        [ConfigurationProperty("scripts")]
+        public TransformScriptElementCollection Scripts
+        {
+            get
+            {
+                return this["scripts"] as TransformScriptElementCollection;
             }
         }
 
