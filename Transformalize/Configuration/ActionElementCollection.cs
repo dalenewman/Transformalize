@@ -1,4 +1,4 @@
-﻿/*
+/*
 Transformalize - Replicate, Transform, and Denormalize Your Data...
 Copyright (C) 2013 Dale Newman
 
@@ -16,20 +16,31 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Transformalize.Model;
+using System.Configuration;
 
-namespace Transformalize.Data
-{
-    public class SqlServerEntityExists : IEntityExists
-    {
-        public bool OutputExists(Entity entity)
-        {
-            return new SqlServerTableExists(entity.OutputConnection.ConnectionString).Exists("dbo", entity.OutputName());
+namespace Transformalize.Configuration {
+    public class ActionElementCollection : ConfigurationElementCollection {
+        
+        public ActionConfigurationElement this[int index] {
+            get {
+                return BaseGet(index) as ActionConfigurationElement;
+            }
+            set {
+                if (BaseGet(index) != null) {
+                    BaseRemoveAt(index);
+                }
+                BaseAdd(index, value);
+            }
         }
 
-        public bool InputExists(Entity entity)
-        {
-            return new SqlServerTableExists(entity.InputConnection.ConnectionString).Exists(entity.Schema, entity.Name);
+        protected override ConfigurationElement CreateNewElement() {
+            return new ActionConfigurationElement();
         }
+
+        protected override object GetElementKey(ConfigurationElement element)
+        {
+            return element.GetHashCode();
+        }
+
     }
 }

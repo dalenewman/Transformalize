@@ -1,4 +1,4 @@
-﻿/*
+/*
 Transformalize - Replicate, Transform, and Denormalize Your Data...
 Copyright (C) 2013 Dale Newman
 
@@ -16,22 +16,17 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Transformalize.Data.SqlServer;
+using System.Data.SqlClient;
 using Transformalize.Model;
 
-namespace Transformalize.Data {
-    public class EntityDropper {
-        private readonly Process _process;
-        private readonly IEntityDropper _dropper;
-
-        public EntityDropper(ref Process process, IEntityDropper dropper = null) {
-            _process = process;
-            _dropper = dropper ?? new SqlServerEntityDropper();
-        }
-
-        public void Drop() {
-            foreach (var entity in _process.Entities) {
-                _dropper.DropOutput(entity);
+namespace Transformalize.Data.SqlServer
+{
+    public class SqlServerEntityBatch : IEntityBatch {
+        public int GetNext(Entity entity) {
+            using (var cn = new SqlConnection(entity.OutputConnection.ConnectionString)) {
+                cn.Open();
+                var cmd = new SqlCommand("SELECT ISNULL(MAX(TflBatchId),0)+1 FROM [dbo].[TflBatch];", cn);
+                return (int)cmd.ExecuteScalar();
             }
         }
     }

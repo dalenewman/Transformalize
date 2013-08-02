@@ -22,223 +22,262 @@ namespace Transformalize.Configuration
 {
     public class TransformConfigurationElement : ConfigurationElement
     {
+        private const string METHOD = "method";
+        private const string VALUE = "value";
+        private const string PATTERN = "pattern";
+        private const string REPLACEMENT = "replacement";
+        private const string OLD_VALUE = "oldValue";
+        private const string NEW_VALUE = "newValue";
+        private const string TRIM_CHARS = "trimChars";
+        private const string INDEX = "index";
+        private const string COUNT = "count";
+        private const string START_INDEX = "startIndex";
+        private const string LENGTH = "length";
+        private const string TOTAL_WIDTH = "totalWidth";
+        private const string PADDING_CHAR = "paddingChar";
+        private const string MAP = "map";
+        private const string SCRIPT = "script";
+        private const string TEMPLATE = "template";
+        private const string PARAMETERS = "parameters";
+        private const string RESULTS = "results";
+        private const string SCRIPTS = "scripts";
+        private const string FORMAT = "format";
+        private const string SEPARATOR = "separator";
+        private const string MODEL = "model";
+        private const string NAME = "name";
 
-        [ConfigurationProperty("method", IsRequired = true)]
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
+        [ConfigurationProperty(METHOD, IsRequired = true)]
         public string Method
         {
             get
             {
-                return this["method"] as string;
+                return this[METHOD] as string;
             }
-            set { this["method"] = value; }
+            set { this[METHOD] = value; }
         }
 
-        [ConfigurationProperty("value", IsRequired = false)]
+        [ConfigurationProperty(NAME, IsRequired = false, DefaultValue = "")]
+        public string Name
+        {
+            get
+            {
+                return this[NAME] as string;
+            }
+            set { this[NAME] = value; }
+        }
+
+        [ConfigurationProperty(VALUE, IsRequired = false, DefaultValue = "")]
         public string Value
         {
             get
             {
-                return this["value"] as string;
+                return this[VALUE] as string;
             }
-            set { this["value"] = value; }
+            set { this[VALUE] = value; }
         }
 
-        [ConfigurationProperty("pattern", IsRequired = false)]
+        [ConfigurationProperty(PATTERN, IsRequired = false, DefaultValue = "")]
         public string Pattern
         {
             get
             {
-                return this["pattern"] as string;
+                return this[PATTERN] as string;
             }
-            set { this["pattern"] = value; }
+            set { this[PATTERN] = value; }
         }
 
-        [ConfigurationProperty("replacement", IsRequired = false, DefaultValue = "")]
+        [ConfigurationProperty(REPLACEMENT, IsRequired = false, DefaultValue = "")]
         public string Replacement
         {
             get
             {
-                return this["replacement"] as string;
+                return this[REPLACEMENT] as string;
             }
-            set { this["replacement"] = value; }
+            set { this[REPLACEMENT] = value; }
         }
 
-        [ConfigurationProperty("oldValue", IsRequired = false)]
+        [ConfigurationProperty(OLD_VALUE, IsRequired = false, DefaultValue = "")]
         public string OldValue
         {
             get
             {
-                return this["oldValue"] as string;
+                return this[OLD_VALUE] as string;
             }
-            set { this["oldValue"] = value; }
+            set { this[OLD_VALUE] = value; }
         }
 
 
-        [ConfigurationProperty("newValue", IsRequired = false)]
+        [ConfigurationProperty(NEW_VALUE, IsRequired = false, DefaultValue = "")]
         public string NewValue
         {
             get
             {
-                return this["newValue"] as string;
+                return this[NEW_VALUE] as string;
             }
-            set { this["newValue"] = value; }
+            set { this[NEW_VALUE] = value; }
         }
 
-        [ConfigurationProperty("trimChars", IsRequired = false)]
+        [ConfigurationProperty(TRIM_CHARS, IsRequired = false, DefaultValue = "")]
         public string TrimChars
         {
             get
             {
-                return this["trimChars"] as string;
+                return this[TRIM_CHARS] as string;
             }
-            set { this["trimChars"] = value; }
+            set { this[TRIM_CHARS] = value; }
         }
 
-        [ConfigurationProperty("index", IsRequired = false)]
+        [ConfigurationProperty(INDEX, IsRequired = false, DefaultValue = 0)]
         public int Index
         {
             get
             {
-                return (int)this["index"];
+                return (int)this[INDEX];
             }
-            set { this["index"] = value; }
+            set { this[INDEX] = value; }
         }
 
-        [ConfigurationProperty("count", IsRequired = false, DefaultValue = 0)]
+        [ConfigurationProperty(COUNT, IsRequired = false, DefaultValue = 0)]
         public int Count
         {
             get
             {
-                return (int)this["count"];
+                return (int)this[COUNT];
             }
-            set { this["count"] = value; }
+            set { this[COUNT] = value; }
         }
 
-        [ConfigurationProperty("startIndex", IsRequired = false)]
+        [ConfigurationProperty(START_INDEX, IsRequired = false, DefaultValue = 0)]
         public int StartIndex
         {
             get
             {
-                return (int)this["startIndex"];
+                return (int)this[START_INDEX];
             }
-            set { this["startIndex"] = value; }
+            set { this[START_INDEX] = value; }
         }
 
-        [ConfigurationProperty("length", IsRequired = false)]
+        [ConfigurationProperty(LENGTH, IsRequired = false, DefaultValue = 0)]
         public int Length
         {
             get
             {
-                return (int)this["length"];
+                return (int)this[LENGTH];
             }
-            set { this["length"] = value; }
+            set { this[LENGTH] = value; }
         }
 
-        [ConfigurationProperty("totalWidth", IsRequired = false)]
+        [ConfigurationProperty(TOTAL_WIDTH, IsRequired = false, DefaultValue = 0)]
         public int TotalWidth
         {
             get
             {
-                return (int)this["totalWidth"];
+                return (int)this[TOTAL_WIDTH];
             }
-            set { this["totalWidth"] = value; }
+            set { this[TOTAL_WIDTH] = value; }
         }
 
-        [ConfigurationProperty("paddingChar", IsRequired = false)]
-        public char PaddingChar
+        [StringValidator(MaxLength = 1)]
+        [ConfigurationProperty(PADDING_CHAR, IsRequired = false, DefaultValue = "0")]
+        public string PaddingChar
         {
             get
             {
-                return (char)this["paddingChar"];
+                return (string)this[PADDING_CHAR];
             }
-            set { this["paddingChar"] = value; }
+            set { this[PADDING_CHAR] = value; }
         }
 
-        [ConfigurationProperty("map", IsRequired = false)]
+        [ConfigurationProperty(MAP, IsRequired = false, DefaultValue = "")]
         public string Map
         {
             get
             {
-                return this["map"] as string;
+                return this[MAP] as string;
             }
-            set { this["map"] = value; }
+            set { this[MAP] = value; }
         }
         
-        [ConfigurationProperty("script", IsRequired = false)]
+        [ConfigurationProperty(SCRIPT, IsRequired = false, DefaultValue = "")]
         public string Script
         {
             get
             {
-                return this["script"] as string;
+                return this[SCRIPT] as string;
             }
-            set { this["script"] = value; }
+            set { this[SCRIPT] = value; }
         }
 
-        [ConfigurationProperty("template", IsRequired = false)]
+        [ConfigurationProperty(TEMPLATE, IsRequired = false, DefaultValue = "")]
         public string Template
         {
             get
             {
-                return this["template"] as string;
+                return this[TEMPLATE] as string;
             }
-            set { this["template"] = value; }
+            set { this[TEMPLATE] = value; }
         }
 
-        [ConfigurationProperty("parameters")]
-        public ParameterElementCollection Parameters
-        {
-            get
-            {
-                return this["parameters"] as ParameterElementCollection;
-            }
-        }
-
-        [ConfigurationProperty("results")]
-        public FieldElementCollection Results
-        {
-            get
-            {
-                return this["results"] as FieldElementCollection;
-            }
-        }
-
-        [ConfigurationProperty("scripts")]
-        public TransformScriptElementCollection Scripts
-        {
-            get
-            {
-                return this["scripts"] as TransformScriptElementCollection;
-            }
-        }
-
-        [ConfigurationProperty("format", IsRequired = false)]
+        [ConfigurationProperty(FORMAT, IsRequired = false, DefaultValue = "")]
         public string Format
         {
             get
             {
-                return this["format"] as string;
+                return this[FORMAT] as string;
             }
-            set { this["format"] = value; }
+            set { this[FORMAT] = value; }
         }
 
-        [ConfigurationProperty("separator", IsRequired = false)]
+        [ConfigurationProperty(SEPARATOR, IsRequired = false, DefaultValue = ",")]
         public string Separator
         {
             get
             {
-                return this["separator"] as string;
+                return this[SEPARATOR] as string;
             }
-            set { this["separator"] = value; }
+            set { this[SEPARATOR] = value; }
         }
 
-        [ConfigurationProperty("templateModelType", IsRequired = false, DefaultValue = "dynamic")]
-        public string TemplateModelType
+        [ConfigurationProperty(MODEL, IsRequired = false, DefaultValue = "dynamic")]
+        public string Model
         {
             get
             {
-                return this["templateModelType"] as string;
+                return this[MODEL] as string;
             }
-            set { this["templateModelType"] = value; }
+            set { this[MODEL] = value; }
+        }
+
+        [ConfigurationProperty(PARAMETERS)]
+        public ParameterElementCollection Parameters
+        {
+            get
+            {
+                return this[PARAMETERS] as ParameterElementCollection;
+            }
+        }
+
+        [ConfigurationProperty(RESULTS)]
+        public FieldElementCollection Results
+        {
+            get
+            {
+                return this[RESULTS] as FieldElementCollection;
+            }
+        }
+
+        [ConfigurationProperty(SCRIPTS)]
+        public TransformScriptElementCollection Scripts
+        {
+            get
+            {
+                return this[SCRIPTS] as TransformScriptElementCollection;
+            }
         }
 
     }

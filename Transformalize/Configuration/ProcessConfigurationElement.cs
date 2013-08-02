@@ -74,5 +74,14 @@ namespace Transformalize.Configuration {
             }
         }
 
+        [ConfigurationProperty("templates")]
+        public TemplateElementCollection Templates
+        {
+            get
+            {
+                return this["templates"] as TemplateElementCollection;
+            }
+        }
+
     }
 }

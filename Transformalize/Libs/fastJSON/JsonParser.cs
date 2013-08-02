@@ -6,32 +6,16 @@ using System.Text;
 namespace Transformalize.Libs.fastJSON
 {
     /// <summary>
-    /// This class encodes and decodes JSON strings.
-    /// Spec. details, see http://www.json.org/
+    ///     This class encodes and decodes JSON strings.
+    ///     Spec. details, see http://www.json.org/
     /// </summary>
     internal sealed class JsonParser
     {
-        enum Token
-        {
-            None = -1,           // Used to denote no Lookahead available
-            Curly_Open,
-            Curly_Close,
-            Squared_Open,
-            Squared_Close,
-            Colon,
-            Comma,
-            String,
-            Number,
-            True,
-            False,
-            Null
-        }
-
-        readonly char[] json;
-        readonly StringBuilder s = new StringBuilder();
-        Token lookAheadToken = Token.None;
-        int index;
-        bool _ignorecase = false;
+        private readonly bool _ignorecase;
+        private readonly char[] json;
+        private readonly StringBuilder s = new StringBuilder();
+        private int index;
+        private Token lookAheadToken = Token.None;
 
 
         internal JsonParser(string json, bool ignorecase)
@@ -47,7 +31,7 @@ namespace Transformalize.Libs.fastJSON
 
         private Dictionary<string, object> ParseObject()
         {
-            Dictionary<string, object> table = new Dictionary<string, object>();
+            var table = new Dictionary<string, object>();
 
             ConsumeToken(); // {
 
@@ -55,7 +39,6 @@ namespace Transformalize.Libs.fastJSON
             {
                 switch (LookAhead())
                 {
-
                     case Token.Comma:
                         ConsumeToken();
                         break;
@@ -66,7 +49,6 @@ namespace Transformalize.Libs.fastJSON
 
                     default:
                         {
-
                             // name
                             string name = ParseString();
                             if (_ignorecase)
@@ -90,14 +72,13 @@ namespace Transformalize.Libs.fastJSON
 
         private List<object> ParseArray()
         {
-            List<object> array = new List<object>();
+            var array = new List<object>();
             ConsumeToken(); // [
 
             while (true)
             {
                 switch (LookAhead())
                 {
-
                     case Token.Comma:
                         ConsumeToken();
                         break;
@@ -155,7 +136,7 @@ namespace Transformalize.Libs.fastJSON
 
             while (index < json.Length)
             {
-                var c = json[index++];
+                char c = json[index++];
 
                 if (c == '"')
                 {
@@ -226,7 +207,7 @@ namespace Transformalize.Libs.fastJSON
 
                             // parse the 32 bit hex into an integer codepoint
                             uint codePoint = ParseUnicode(json[index], json[index + 1], json[index + 2], json[index + 3]);
-                            s.Append((char)codePoint);
+                            s.Append((char) codePoint);
 
                             // skip 4 chars
                             index += 4;
@@ -242,11 +223,11 @@ namespace Transformalize.Libs.fastJSON
         {
             uint p1 = 0;
             if (c1 >= '0' && c1 <= '9')
-                p1 = (uint)(c1 - '0') * multipliyer;
+                p1 = (uint) (c1 - '0')*multipliyer;
             else if (c1 >= 'A' && c1 <= 'F')
-                p1 = (uint)((c1 - 'A') + 10) * multipliyer;
+                p1 = (uint) ((c1 - 'A') + 10)*multipliyer;
             else if (c1 >= 'a' && c1 <= 'f')
-                p1 = (uint)((c1 - 'a') + 10) * multipliyer;
+                p1 = (uint) ((c1 - 'a') + 10)*multipliyer;
             return p1;
         }
 
@@ -273,7 +254,7 @@ namespace Transformalize.Libs.fastJSON
                 else
                 {
                     num *= 10;
-                    num += (int)(cc - '0');
+                    num += (cc - '0');
                 }
             }
 
@@ -285,32 +266,32 @@ namespace Transformalize.Libs.fastJSON
             ConsumeToken();
 
             // Need to start back one place because the first digit is also a token and would have been consumed
-            var startIndex = index - 1;
+            int startIndex = index - 1;
             bool dec = false;
             do
             {
                 if (index == json.Length)
                     break;
-                var c = json[index];
+                char c = json[index];
 
                 if ((c >= '0' && c <= '9') || c == '.' || c == '-' || c == '+' || c == 'e' || c == 'E')
                 {
                     if (c == '.' || c == 'e' || c == 'E')
                         dec = true;
                     if (++index == json.Length)
-                        break;                        //throw new Exception("Unexpected end of string whilst parsing number");
+                        break; //throw new Exception("Unexpected end of string whilst parsing number");
                     continue;
                 }
                 break;
             } while (true);
 
-			if (dec)
-			{
-				string s = new string(json, startIndex, index - startIndex);
-				return double.Parse(s, NumberFormatInfo.InvariantInfo);
-			}
-			long num;
-			return JSON.CreateLong(out num, json, startIndex, index - startIndex);
+            if (dec)
+            {
+                var s = new string(json, startIndex, index - startIndex);
+                return double.Parse(s, NumberFormatInfo.InvariantInfo);
+            }
+            long num;
+            return JSON.CreateLong(out num, json, startIndex, index - startIndex);
         }
 
         private Token LookAhead()
@@ -327,7 +308,7 @@ namespace Transformalize.Libs.fastJSON
 
         private Token NextToken()
         {
-            var result = lookAheadToken != Token.None ? lookAheadToken : NextTokenCore();
+            Token result = lookAheadToken != Token.None ? lookAheadToken : NextTokenCore();
 
             lookAheadToken = Token.None;
 
@@ -345,7 +326,6 @@ namespace Transformalize.Libs.fastJSON
 
                 if (c > ' ') break;
                 if (c != ' ' && c != '\t' && c != '\n' && c != '\r') break;
-
             } while (++index < json.Length);
 
             if (index == json.Length)
@@ -431,10 +411,25 @@ namespace Transformalize.Libs.fastJSON
                         return Token.Null;
                     }
                     break;
-
             }
 
             throw new Exception("Could not find token at index " + --index);
+        }
+
+        private enum Token
+        {
+            None = -1, // Used to denote no Lookahead available
+            Curly_Open,
+            Curly_Close,
+            Squared_Open,
+            Squared_Close,
+            Colon,
+            Comma,
+            String,
+            Number,
+            True,
+            False,
+            Null
         }
     }
 }

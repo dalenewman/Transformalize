@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 
-namespace Transformalize.Data
+namespace Transformalize.Data.SqlServer
 {
     public class SqlServerMapReader : IMapReader {
         private readonly string _sql;

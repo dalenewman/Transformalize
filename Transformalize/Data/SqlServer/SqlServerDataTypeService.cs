@@ -17,11 +17,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using Transformalize.Model;
 
-namespace Transformalize.Data {
+namespace Transformalize.Data.SqlServer {
 
     public class SqlServerDataTypeService : IDataTypeService {
 

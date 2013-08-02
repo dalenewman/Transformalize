@@ -23,6 +23,7 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using Transformalize.Configuration;
+using Transformalize.Data.SqlServer;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Model;
 using Transformalize.Transforms;
@@ -33,6 +34,7 @@ namespace Transformalize.Data
     public class ProcessReader : WithLoggingMixin, IConfigurationReader<Process>
     {
         private readonly string _name;
+        private readonly ConversionFactory _conversionFactory = new ConversionFactory();
         private Process _process;
         private readonly ProcessConfigurationElement _config;
         private int _connectionCount;
@@ -41,6 +43,7 @@ namespace Transformalize.Data
         private int _relationshipCount;
         private int _transformCount;
         private int _scriptCount;
+        private int _templateCount;
         public int Count { get { return 1; } }
 
         public ProcessReader(string name)
@@ -51,7 +54,7 @@ namespace Transformalize.Data
 
         public Process Read()
         {
-            _process = new Process { Name = _config.Name };
+            _process = new Process(_config.Name);
 
             _connectionCount = ReadConnections();
             _scriptCount = ReadScripts();
@@ -69,12 +72,13 @@ namespace Transformalize.Data
 
             LogProcessConfiguration();
 
+            _templateCount = ReadTemplates();
             return _process;
         }
 
         private int ReadScripts()
         {
-            var s = new [] {'\\'};
+            var s = new[] { '\\' };
             var scripts = _config.Scripts.Cast<ScriptConfigurationElement>().ToArray();
             var path = _config.Scripts.Path;
             foreach (var script in scripts)
@@ -82,18 +86,66 @@ namespace Transformalize.Data
                 var fileInfo = new FileInfo(path.TrimEnd(s) + @"\" + script.File);
                 if (!fileInfo.Exists)
                 {
-                    Warn("Script {0} does not exist!", fileInfo.FullName);
+                    Warn("Missing Script: {0}.", fileInfo.FullName);
                 }
                 else
                 {
-                    _process.Scripts[script.Name] = new Script(script.Name, File.ReadAllText(fileInfo.FullName), fileInfo.FullName, script.Template);
+                    _process.Scripts[script.Name] = new Script(script.Name, File.ReadAllText(fileInfo.FullName), fileInfo.FullName);
                     Debug("Loaded script {0}.", fileInfo.FullName);
                 }
-                
+
             }
 
-
             return scripts.Count();
+        }
+
+        private int ReadTemplates()
+        {
+            var s = new[] { '\\' };
+            var templates = _config.Templates.Cast<TemplateConfigurationElement>().ToArray();
+            var path = _config.Templates.Path;
+            foreach (var element in templates)
+            {
+
+                var fileInfo = new FileInfo(path.TrimEnd(s) + @"\" + element.File);
+                if (!fileInfo.Exists)
+                {
+                    Warn("Missing Template {0}.", fileInfo.FullName);
+                }
+                else
+                {
+                    var template = new Template(element.Name, File.ReadAllText(fileInfo.FullName), fileInfo.FullName, _config);
+
+                    foreach (SettingConfigurationElement setting in element.Settings)
+                    {
+                        template.Settings[setting.Name] = _conversionFactory.Convert(setting.Value, setting.Type);
+                    }
+
+                    foreach (ActionConfigurationElement action in element.Actions)
+                    {
+                        var templateAction = new TemplateAction
+                                                 {
+                                                     Action = action.Action,
+                                                     File = action.File,
+                                                     Method = action.Method,
+                                                     Url = action.Url
+                                                 };
+
+                        if (!String.IsNullOrEmpty(action.Connection) && _process.Connections.ContainsKey(action.Connection))
+                        {
+                            templateAction.Connection = _process.Connections[action.Connection];
+                        }
+
+                        template.Actions.Add(templateAction);
+                    }
+
+                    _process.Templates[element.Name] = template;
+                    Debug("Loaded template {0} with {1} setting{2}.", fileInfo.FullName, template.Settings.Count, template.Settings.Count == 1 ? string.Empty : "s");
+                }
+
+            }
+
+            return templates.Count();
         }
 
         private IEnumerable<Relationship> ReadRelationshipToMaster(Entity rightEntity)
@@ -112,9 +164,11 @@ namespace Transformalize.Data
         {
             Debug("{0} | Process Loaded.", _process.Name);
             Debug("{0} | {1} Connection{2}.", _process.Name, _connectionCount, _connectionCount == 1 ? string.Empty : "s");
-            Debug("{0} | {1} Map{2}.", _process.Name, _mapCount, _mapCount == 1 ? string.Empty : "s");
             Debug("{0} | {1} Entit{2}.", _process.Name, _entityCount, _entityCount == 1 ? "y" : "ies");
             Debug("{0} | {1} Relationship{2}.", _process.Name, _relationshipCount, _relationshipCount == 1 ? string.Empty : "s");
+            Debug("{0} | {1} Script{2}.", _process.Name, _scriptCount, _scriptCount == 1 ? string.Empty : "s");
+            Debug("{0} | {1} Template{2}.", _process.Name, _templateCount, _templateCount == 1 ? string.Empty : "s");
+            Debug("{0} | {1} Map{2}.", _process.Name, _mapCount, _mapCount == 1 ? string.Empty : "s");
 
             _transformCount += _process.Entities.SelectMany(e => e.All).SelectMany(f => f.Value.Transforms).Count();
             Debug("{0} | {1} Transform{2}.", _process.Name, _transformCount, _transformCount == 1 ? string.Empty : "s");
@@ -484,15 +538,15 @@ namespace Transformalize.Data
                     case "template":
                         result.Add(
                             parameters.Any() ?
-                            new TemplateTransform(t.Template, t.TemplateModelType, parameters, results) :
+                            new TemplateTransform(t.Template, t.Model, parameters, results) :
                             new TemplateTransform(t.Template, field)
                         );
                         break;
                     case "padleft":
-                        result.Add(new PadLeftTransform(t.TotalWidth, t.PaddingChar));
+                        result.Add(new PadLeftTransform(t.TotalWidth, t.PaddingChar[0]));
                         break;
                     case "padright":
-                        result.Add(new PadRightTransform(t.TotalWidth, t.PaddingChar));
+                        result.Add(new PadRightTransform(t.TotalWidth, t.PaddingChar[0]));
                         break;
                     case "format":
                         result.Add(new FormatTransform(t.Format, parameters, results));

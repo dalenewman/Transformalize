@@ -15,11 +15,11 @@ namespace Transformalize.Libs.fastJSON
     {
         private StringBuilder _output = new StringBuilder();
         private StringBuilder _before = new StringBuilder();
-        readonly int _MAX_DEPTH = 10;
-        int _current_depth = 0;
-        private Dictionary<string, int> _globalTypes = new Dictionary<string, int>();
-        private JSONParameters _params;
-        private bool _useEscapedUnicode = false;
+        private const int MAX_DEPTH = 10;
+        private int _currentDepth;
+        private readonly Dictionary<string, int> _globalTypes = new Dictionary<string, int>();
+        private readonly JSONParameters _params;
+        private readonly bool _useEscapedUnicode;
 
         internal JSONSerializer(JSONParameters param)
         {
@@ -48,7 +48,7 @@ namespace Transformalize.Libs.fastJSON
                     sb.Append('\"');
                 }
                 sb.Append("},");
-                sb.Append(_output.ToString());
+                sb.Append(_output);
                 str = sb.ToString();
             }
             else
@@ -66,10 +66,10 @@ namespace Transformalize.Libs.fastJSON
                 WriteString(obj.ToString());
 
             else if (obj is Guid)
-                WriteGuid((Guid)obj);
+                WriteGuid((Guid) obj);
 
             else if (obj is bool)
-                _output.Append(((bool)obj) ? "true" : "false"); // conform to standard
+                _output.Append(((bool) obj) ? "true" : "false"); // conform to standard
 
             else if (
                 obj is int || obj is long || obj is double ||
@@ -77,32 +77,33 @@ namespace Transformalize.Libs.fastJSON
                 obj is byte || obj is short ||
                 obj is sbyte || obj is ushort ||
                 obj is uint || obj is ulong
-            )
-                _output.Append(((IConvertible)obj).ToString(NumberFormatInfo.InvariantInfo));
+                )
+                _output.Append(((IConvertible) obj).ToString(NumberFormatInfo.InvariantInfo));
 
             else if (obj is DateTime)
-                WriteDateTime((DateTime)obj);
+                WriteDateTime((DateTime) obj);
 
-            else if (obj is IDictionary && obj.GetType().IsGenericType && obj.GetType().GetGenericArguments()[0] == typeof(string))
-                WriteStringDictionary((IDictionary)obj);
+            else if (obj is IDictionary && obj.GetType().IsGenericType &&
+                     obj.GetType().GetGenericArguments()[0] == typeof (string))
+                WriteStringDictionary((IDictionary) obj);
 
             else if (obj is IDictionary)
-                WriteDictionary((IDictionary)obj);
+                WriteDictionary((IDictionary) obj);
 #if !SILVERLIGHT
             else if (obj is DataSet)
-                WriteDataset((DataSet)obj);
+                WriteDataset((DataSet) obj);
 
             else if (obj is DataTable)
-                this.WriteDataTable((DataTable)obj);
+                WriteDataTable((DataTable) obj);
 #endif
             else if (obj is byte[])
-                WriteBytes((byte[])obj);
+                WriteBytes((byte[]) obj);
 
-            else if (obj is IEnumerable)// Array || obj is IList || obj is ICollection)
-                WriteArray((IEnumerable)obj);
+            else if (obj is IEnumerable) // Array || obj is IList || obj is ICollection)
+                WriteArray((IEnumerable) obj);
 
             else if (obj is Enum)
-                WriteEnum((Enum)obj);
+                WriteEnum((Enum) obj);
 
             else if (JSON.Instance.IsTypeRegistered(obj.GetType()))
                 WriteCustom(obj);
@@ -172,7 +173,7 @@ namespace Transformalize.Libs.fastJSON
         {
             if (ds == null) return null;
 
-            DatasetSchema m = new DatasetSchema();
+            var m = new DatasetSchema();
             m.Info = new List<string>();
             m.Name = ds.TableName;
 
@@ -191,7 +192,7 @@ namespace Transformalize.Libs.fastJSON
         {
             if (ds == null) return null;
 
-            DatasetSchema m = new DatasetSchema();
+            var m = new DatasetSchema();
             m.Info = new List<string>();
             m.Name = ds.DataSetName;
 
@@ -223,7 +224,7 @@ namespace Transformalize.Libs.fastJSON
             _output.Append('{');
             if (_params.UseExtensions)
             {
-                WritePair("$schema", _params.UseOptimizedDatasetSchema ? (object)GetSchema(ds) : ds.GetXmlSchema());
+                WritePair("$schema", _params.UseOptimizedDatasetSchema ? (object) GetSchema(ds) : ds.GetXmlSchema());
                 _output.Append(',');
             }
             bool tablesep = false;
@@ -263,23 +264,24 @@ namespace Transformalize.Libs.fastJSON
             _output.Append(']');
         }
 
-        void WriteDataTable(DataTable dt)
+        private void WriteDataTable(DataTable dt)
         {
-            this._output.Append('{');
+            _output.Append('{');
             if (_params.UseExtensions)
             {
-                this.WritePair("$schema", _params.UseOptimizedDatasetSchema ? (object)this.GetSchema(dt) : this.GetXmlSchema(dt));
-                this._output.Append(',');
+                WritePair("$schema", _params.UseOptimizedDatasetSchema ? (object) GetSchema(dt) : GetXmlSchema(dt));
+                _output.Append(',');
             }
 
             WriteDataTableData(dt);
 
             // end datatable
-            this._output.Append('}');
+            _output.Append('}');
         }
 #endif
 
-        bool _TypesWritten = false;
+        private bool _TypesWritten;
+
         private void WriteObject(object obj)
         {
             if (_params.UsingGlobalTypes == false)
@@ -296,12 +298,12 @@ namespace Transformalize.Libs.fastJSON
                     _output.Append('{');
             }
             _TypesWritten = true;
-            _current_depth++;
-            if (_current_depth > _MAX_DEPTH)
-                throw new Exception("Serializer encountered maximum depth of " + _MAX_DEPTH);
+            _currentDepth++;
+            if (_currentDepth > MAX_DEPTH)
+                throw new Exception("Serializer encountered maximum depth of " + MAX_DEPTH);
 
 
-            Dictionary<string, string> map = new Dictionary<string, string>();
+            var map = new Dictionary<string, string>();
             Type t = obj.GetType();
             bool append = false;
             if (_params.UseExtensions)
@@ -324,7 +326,7 @@ namespace Transformalize.Libs.fastJSON
 
             List<Getters> g = Reflection.Instance.GetGetters(t);
 
-            foreach (var p in g)
+            foreach (Getters p in g)
             {
                 object o = p.Getter(obj);
                 if ((o == null || o is DBNull) && _params.SerializeNullValues == false)
@@ -340,7 +342,7 @@ namespace Transformalize.Libs.fastJSON
                     if (o != null && _params.UseExtensions)
                     {
                         Type tt = o.GetType();
-                        if (tt == typeof(System.Object))
+                        if (tt == typeof (Object))
                             map.Add(p.Name, tt.ToString());
                     }
                     append = true;
@@ -351,9 +353,9 @@ namespace Transformalize.Libs.fastJSON
                 _output.Append(",\"$map\":");
                 WriteStringDictionary(map);
             }
-            _current_depth--;
+            _currentDepth--;
             _output.Append('}');
-            _current_depth--;
+            _currentDepth--;
         }
 
         private void WritePairFast(string name, string value)
@@ -405,7 +407,7 @@ namespace Transformalize.Libs.fastJSON
             {
                 if (pendingSeparator) _output.Append(',');
 
-                WritePair((string)entry.Key, entry.Value);
+                WritePair((string) entry.Key, entry.Value);
 
                 pendingSeparator = true;
             }
@@ -445,9 +447,9 @@ namespace Transformalize.Libs.fastJSON
 
             int runIndex = -1;
 
-            for (var index = 0; index < s.Length; ++index)
+            for (int index = 0; index < s.Length; ++index)
             {
-                var c = s[index];
+                char c = s[index];
 
                 if (_useEscapedUnicode)
                 {
@@ -461,7 +463,7 @@ namespace Transformalize.Libs.fastJSON
                 }
                 else
                 {
-                    if (c != '\t' && c != '\n' && c != '\r' && c != '\"' && c != '\\')// && c != ':' && c!=',')
+                    if (c != '\t' && c != '\n' && c != '\r' && c != '\"' && c != '\\') // && c != ':' && c!=',')
                     {
                         if (runIndex == -1)
                             runIndex = index;
@@ -478,16 +480,25 @@ namespace Transformalize.Libs.fastJSON
 
                 switch (c)
                 {
-                    case '\t': _output.Append("\\t"); break;
-                    case '\r': _output.Append("\\r"); break;
-                    case '\n': _output.Append("\\n"); break;
+                    case '\t':
+                        _output.Append("\\t");
+                        break;
+                    case '\r':
+                        _output.Append("\\r");
+                        break;
+                    case '\n':
+                        _output.Append("\\n");
+                        break;
                     case '"':
-                    case '\\': _output.Append('\\'); _output.Append(c); break;
+                    case '\\':
+                        _output.Append('\\');
+                        _output.Append(c);
+                        break;
                     default:
                         if (_useEscapedUnicode)
                         {
                             _output.Append("\\u");
-                            _output.Append(((int)c).ToString("X4", NumberFormatInfo.InvariantInfo));
+                            _output.Append(((int) c).ToString("X4", NumberFormatInfo.InvariantInfo));
                         }
                         else
                             _output.Append(c);

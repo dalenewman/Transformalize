@@ -19,10 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration;
 using Transformalize.Data;
+using Transformalize.Libs.fastJSON;
 using Transformalize.Model;
 
 namespace Transformalize.Test.Integration {
@@ -119,5 +121,6 @@ namespace Transformalize.Test.Integration {
             Assert.AreEqual(expected["LastName"].Name, actual["LastName"].Name);
             Assert.AreEqual(expected["ProductName"].Value, actual["ProductName"].Value);
         }
+
     }
 }

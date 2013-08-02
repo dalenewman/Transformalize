@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Model;
 
-namespace Transformalize.Data {
+namespace Transformalize.Data.SqlServer {
     public class SqlServerEntityAutoFieldReader : WithLoggingMixin, IEntityAutoFieldReader {
         private readonly Entity _entity;
         private readonly int _count;

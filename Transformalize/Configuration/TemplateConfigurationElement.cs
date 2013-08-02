@@ -17,46 +17,51 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Configuration;
-using System.IO;
-using System.Text;
-using System.Xml;
 
-namespace Transformalize.Configuration
-{
+namespace Transformalize.Configuration {
 
-    public class TransformalizeConfiguration : ConfigurationSection
-    {
+    public class TemplateConfigurationElement : ConfigurationElement {
 
         public override bool IsReadOnly()
         {
             return false;
         }
 
-        [ConfigurationProperty("processes")]
-        public ProcessElementCollection Processes
+        [ConfigurationProperty("name", IsRequired = true)]
+        public string Name {
+            get {
+                return this["name"] as string;
+            }
+            set { this["name"] = value; }
+        }
+
+        [ConfigurationProperty("file", IsRequired = true)]
+        public string File
         {
             get
             {
-                return this["processes"] as ProcessElementCollection;
+                return this["file"] as string;
+            }
+            set { this["file"] = value; }
+        }
+
+        [ConfigurationProperty("settings")]
+        public SettingElementCollection Settings
+        {
+            get
+            {
+                return this["settings"] as SettingElementCollection;
             }
         }
 
-
-        public string Serialize()
+        [ConfigurationProperty("actions")]
+        public ActionElementCollection Actions
         {
-            return SerializeSection(null, "transformalize", ConfigurationSaveMode.Minimal);
+            get
+            {
+                return this["actions"] as ActionElementCollection;
+            }
         }
-
-        public void Deserialize(string serializedConfiguration)
-        {
-            var reader = XmlReader.Create(new StringReader(serializedConfiguration));
-            if (!reader.ReadToFollowing("transformalize")) return;
-            var stringBuilder = new StringBuilder().Append(reader.ReadOuterXml());
-            var stringReader = new StringReader(stringBuilder.ToString());
-            reader = XmlReader.Create(stringReader);
-            DeserializeSection(reader);
-        }
-
 
     }
 }

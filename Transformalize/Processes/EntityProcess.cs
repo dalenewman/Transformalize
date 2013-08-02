@@ -18,8 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Linq;
-using System.Text;
 using Transformalize.Data;
+using Transformalize.Data.SqlServer;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
 using Transformalize.Model;
@@ -44,7 +44,7 @@ namespace Transformalize.Processes
 
         protected override void Initialize()
         {
-            if (_process.VersionOptions.UseBeginVersion)
+            if (_process.Options.UseBeginVersion)
             {
                 var keysExtract = new EntityInputKeysExtractDelta(_entity);
                 if (!keysExtract.NeedsToRun()) return;
@@ -98,7 +98,7 @@ namespace Transformalize.Processes
                 throw new InvalidOperationException("Houstan.  We have a problem in the threads!");
             }
 
-            if (_process.VersionOptions.WriteEndVersion)
+            if (_process.Options.WriteEndVersion)
             {
                 new SqlServerEntityVersionWriter(_entity).WriteEndVersion(_entity.End, _entity.RecordsAffected);
             }

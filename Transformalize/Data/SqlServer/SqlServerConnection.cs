@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Data.SqlClient;
 
-namespace Transformalize.Data {
+namespace Transformalize.Data.SqlServer {
 
     public class SqlServerConnection : IConnection {
 

@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Linq;
 using Transformalize.Data;
+using Transformalize.Data.SqlServer;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Model;
 using Transformalize.Operations;

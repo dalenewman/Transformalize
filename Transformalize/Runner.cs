@@ -20,44 +20,78 @@ using Transformalize.Data;
 using Transformalize.Model;
 using Transformalize.Processes;
 
-namespace Transformalize {
-    public class Runner {
-        private readonly string _mode;
+namespace Transformalize
+{
+    public class Runner
+    {
         private Process _process;
 
-        public Runner(string process, string mode = "default") {
-            _mode = mode.ToLower();
+        public Runner(string process)
+        {
             _process = new ProcessReader(process).Read();
         }
 
-        public void Run() {
+        public Runner(Process process)
+        {
+            _process = process;
+        }
+
+        public Runner(string process, Options options)
+        {
+            _process = new ProcessReader(process).Read();
+            _process.Options = options;
+        }
+
+        public Runner(Process process, Options options)
+        {
+            _process = process;
+            _process.Options = options;
+        }
+
+        public void Run()
+        {
             if (!_process.IsReady()) return;
 
-            switch (_mode) {
-                case "init":
-                    using (var process = new InitializationProcess(_process)) {
+            switch (_process.Options.Mode)
+            {
+                case Modes.Initialize:
+                    using (var process = new InitializationProcess(_process))
+                    {
                         process.Execute();
                     }
                     break;
                 default:
                     new EntityRecordsExist(ref _process).Check();
-                    foreach (var entity in _process.Entities) {
-                        using (var entityProcess = new EntityProcess(ref _process, entity)) {
+
+                    foreach (var entity in _process.Entities)
+                    {
+                        using (var entityProcess = new EntityProcess(ref _process, entity))
+                        {
                             entityProcess.Execute();
                         }
                     }
-                    using (var masterProcess = new UpdateMasterProcess(ref _process)) {
+
+                    using (var masterProcess = new UpdateMasterProcess(ref _process))
+                    {
                         masterProcess.Execute();
                     }
-                    if (_process.Transforms.Length > 0) {
-                        using (var transformProcess = new TransformProcess(_process)) {
+
+                    if (_process.Transforms.Length > 0)
+                    {
+                        using (var transformProcess = new TransformProcess(_process))
+                        {
                             transformProcess.Execute();
                         }
                     }
+
+                    if (_process.Options.RenderTemplates)
+                    {
+                        new TemplateManager(_process).Manage();    
+                    }
+                    
                     break;
             }
         }
-
 
     }
 }

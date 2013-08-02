@@ -4,8 +4,8 @@ namespace Transformalize.Libs.fastJSON
 {
     internal sealed class SafeDictionary<TKey, TValue>
     {
-        private readonly object _Padlock = new object();
         private readonly Dictionary<TKey, TValue> _Dictionary;
+        private readonly object _Padlock = new object();
 
         public SafeDictionary(int capacity)
         {
@@ -17,13 +17,10 @@ namespace Transformalize.Libs.fastJSON
             _Dictionary = new Dictionary<TKey, TValue>();
         }
 
-        public bool TryGetValue(TKey key, out TValue value)
+        public int Count
         {
-            lock (_Padlock)
-                return _Dictionary.TryGetValue(key, out value);
+            get { lock (_Padlock) return _Dictionary.Count; }
         }
-
-        public int Count { get { lock (_Padlock) return _Dictionary.Count; } }
 
         public TValue this[TKey key]
         {
@@ -37,6 +34,12 @@ namespace Transformalize.Libs.fastJSON
                 lock (_Padlock)
                     _Dictionary[key] = value;
             }
+        }
+
+        public bool TryGetValue(TKey key, out TValue value)
+        {
+            lock (_Padlock)
+                return _Dictionary.TryGetValue(key, out value);
         }
 
         public void Add(TKey key, TValue value)

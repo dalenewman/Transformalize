@@ -1,4 +1,4 @@
-﻿/*
+/*
 Transformalize - Replicate, Transform, and Denormalize Your Data...
 Copyright (C) 2013 Dale Newman
 
@@ -16,23 +16,20 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Data.SqlClient;
-using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Model;
 
-namespace Transformalize.Data {
-    public class SqlServerEntityDropper : WithLoggingMixin, IEntityDropper {
+namespace Transformalize.Data.SqlServer
+{
+    public class SqlServerEntityExists : IEntityExists
+    {
+        public bool OutputExists(Entity entity)
+        {
+            return new SqlServerTableExists(entity.OutputConnection.ConnectionString).Exists("dbo", entity.OutputName());
+        }
 
-        private const string FORMAT = "DROP TABLE [{0}].[{1}];";
-
-        public void DropOutput(Entity entity) {
-            if (!new SqlServerEntityExists().OutputExists(entity)) return;
-
-            using (var cn = new SqlConnection(entity.OutputConnection.ConnectionString)) {
-                cn.Open();
-                new SqlCommand(string.Format(FORMAT, entity.Schema, entity.OutputName()), cn).ExecuteNonQuery();
-                Debug("{0} | Dropped Output {1}.{2}", entity.ProcessName, entity.Schema, entity.OutputName());
-            }
+        public bool InputExists(Entity entity)
+        {
+            return new SqlServerTableExists(entity.InputConnection.ConnectionString).Exists(entity.Schema, entity.Name);
         }
     }
 }

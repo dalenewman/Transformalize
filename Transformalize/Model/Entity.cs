@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Transformalize.Data;
+using Transformalize.Data.SqlServer;
 using Transformalize.Libs.Rhino.Etl.Core;
 
 namespace Transformalize.Model {

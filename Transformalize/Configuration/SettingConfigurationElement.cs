@@ -17,46 +17,41 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Configuration;
-using System.IO;
-using System.Text;
-using System.Xml;
 
 namespace Transformalize.Configuration
 {
-
-    public class TransformalizeConfiguration : ConfigurationSection
-    {
+    public class SettingConfigurationElement : ConfigurationElement {
 
         public override bool IsReadOnly()
         {
             return false;
         }
 
-        [ConfigurationProperty("processes")]
-        public ProcessElementCollection Processes
+        [ConfigurationProperty("name", IsRequired = false)]
+        public string Name {
+            get {
+                return this["name"] as string;
+            }
+            set { this["name"] = value; }
+        }
+
+        [ConfigurationProperty("value", IsRequired = false)]
+        public string Value {
+            get {
+                return this["value"] as string;
+            }
+            set { this["value"] = value; }
+        }
+
+        [ConfigurationProperty("type", IsRequired = false, DefaultValue = "System.String")]
+        public string Type
         {
             get
             {
-                return this["processes"] as ProcessElementCollection;
+                return this["type"] as string;
             }
+            set { this["type"] = value; }
         }
-
-
-        public string Serialize()
-        {
-            return SerializeSection(null, "transformalize", ConfigurationSaveMode.Minimal);
-        }
-
-        public void Deserialize(string serializedConfiguration)
-        {
-            var reader = XmlReader.Create(new StringReader(serializedConfiguration));
-            if (!reader.ReadToFollowing("transformalize")) return;
-            var stringBuilder = new StringBuilder().Append(reader.ReadOuterXml());
-            var stringReader = new StringReader(stringBuilder.ToString());
-            reader = XmlReader.Create(stringReader);
-            DeserializeSection(reader);
-        }
-
 
     }
 }

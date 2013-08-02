@@ -1,4 +1,4 @@
-﻿/*
+/*
 Transformalize - Replicate, Transform, and Denormalize Your Data...
 Copyright (C) 2013 Dale Newman
 
@@ -17,36 +17,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Data.SqlClient;
+using Transformalize.Libs.Rhino.Etl.Core;
+using Transformalize.Model;
 
-namespace Transformalize.Data
-{
-    public class SqlServerTableExists : ITableExists
-    {
-        private readonly string _connectionString;
-        private const string FORMAT = @"
-IF EXISTS(
-	SELECT *
-	FROM INFORMATION_SCHEMA.TABLES 
-	WHERE TABLE_SCHEMA = '{0}' 
-	AND  TABLE_NAME = '{1}'
-)	SELECT 1
-ELSE
-	SELECT 0;";
+namespace Transformalize.Data.SqlServer {
+    public class SqlServerEntityDropper : WithLoggingMixin, IEntityDropper {
 
+        private const string FORMAT = "DROP TABLE [{0}].[{1}];";
 
-        public SqlServerTableExists(string connectionString)
-        {
-            _connectionString = connectionString;
-        }
+        public void DropOutput(Entity entity) {
+            if (!new SqlServerEntityExists().OutputExists(entity)) return;
 
-        public bool Exists(string schema, string name)
-        {
-            var sql = string.Format(FORMAT, schema, name);
-            using (var cn = new SqlConnection(_connectionString))
-            {
+            using (var cn = new SqlConnection(entity.OutputConnection.ConnectionString)) {
                 cn.Open();
-                var cmd = new SqlCommand(sql, cn);
-                return (int)cmd.ExecuteScalar() == 1;
+                new SqlCommand(string.Format(FORMAT, entity.Schema, entity.OutputName()), cn).ExecuteNonQuery();
+                Debug("{0} | Dropped Output {1}.{2}", entity.ProcessName, entity.Schema, entity.OutputName());
             }
         }
     }

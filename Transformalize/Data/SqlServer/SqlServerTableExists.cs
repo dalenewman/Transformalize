@@ -1,4 +1,4 @@
-﻿/*
+/*
 Transformalize - Replicate, Transform, and Denormalize Your Data...
 Copyright (C) 2013 Dale Newman
 
@@ -17,16 +17,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Data.SqlClient;
-using Transformalize.Model;
 
-namespace Transformalize.Data
+namespace Transformalize.Data.SqlServer
 {
-    public class SqlServerEntityBatch : IEntityBatch {
-        public int GetNext(Entity entity) {
-            using (var cn = new SqlConnection(entity.OutputConnection.ConnectionString)) {
+    public class SqlServerTableExists : ITableExists
+    {
+        private readonly string _connectionString;
+        private const string FORMAT = @"
+IF EXISTS(
+	SELECT *
+	FROM INFORMATION_SCHEMA.TABLES 
+	WHERE TABLE_SCHEMA = '{0}' 
+	AND  TABLE_NAME = '{1}'
+)	SELECT 1
+ELSE
+	SELECT 0;";
+
+
+        public SqlServerTableExists(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
+
+        public bool Exists(string schema, string name)
+        {
+            var sql = string.Format(FORMAT, schema, name);
+            using (var cn = new SqlConnection(_connectionString))
+            {
                 cn.Open();
-                var cmd = new SqlCommand("SELECT ISNULL(MAX(TflBatchId),0)+1 FROM [dbo].[TflBatch];", cn);
-                return (int)cmd.ExecuteScalar();
+                var cmd = new SqlCommand(sql, cn);
+                return (int)cmd.ExecuteScalar() == 1;
             }
         }
     }

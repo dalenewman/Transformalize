@@ -22,7 +22,7 @@ using System.Data;
 using System.Data.SqlClient;
 using Transformalize.Libs.Rhino.Etl.Core;
 
-namespace Transformalize.Data {
+namespace Transformalize.Data.SqlServer {
     public class SqlServerConnectionChecker : WithLoggingMixin, IConnectionChecker {
         private readonly string _logPrefix;
         private readonly int _timeOut;

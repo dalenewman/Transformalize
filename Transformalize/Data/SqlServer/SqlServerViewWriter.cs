@@ -1,4 +1,4 @@
-﻿/*
+/*
 Transformalize - Replicate, Transform, and Denormalize Your Data...
 Copyright (C) 2013 Dale Newman
 
@@ -23,7 +23,7 @@ using Transformalize.Extensions;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Model;
 
-namespace Transformalize.Data {
+namespace Transformalize.Data.SqlServer {
     public class SqlServerViewWriter : WithLoggingMixin, IViewWriter {
         private readonly Process _process;
         private readonly Entity _masterEntity;

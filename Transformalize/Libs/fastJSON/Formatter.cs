@@ -20,7 +20,7 @@ namespace Transformalize.Libs.fastJSON
 
         public static string PrettyPrint(string input)
         {
-            var output = new StringBuilder(input.Length * 2);
+            var output = new StringBuilder(input.Length*2);
             char? quote = null;
             int depth = 0;
 
@@ -87,7 +87,6 @@ namespace Transformalize.Libs.fastJSON
                             output.Append(ch);
                         break;
                 }
-
             }
 
             return output.ToString();

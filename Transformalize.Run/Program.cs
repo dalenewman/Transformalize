@@ -16,29 +16,72 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Generic;
 using System.Diagnostics;
 using Transformalize.Libs.NLog;
-using Transformalize.Libs.Rhino.Etl.Core;
+using Transformalize.Model;
 
-namespace Transformalize.Run {
-    class Program {
+namespace Transformalize.Run
+{
+    class Program
+    {
 
         private static readonly Stopwatch Timer = new Stopwatch();
+        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
-        static void Main(string[] args) {
+        static void Main(string[] args)
+        {
 
-            Guard.Against(args.Length == 0, "\r\nYou must provide the process name as the first argument.\r\nE.g. tfl <process> <mode=init|delta|entity>");
+            if (args.Length == 0)
+            {
+                Log.Error("Please provide the process name (e.g. Tfl MyProcess)");
+                return;
+            }
 
             var process = args[0];
-            var mode = args.Length > 1 ? args[1].ToLower() : "default";
-
-            var logger = LogManager.GetLogger("Transformalize.Run");
 
             Timer.Start();
-            new Runner(process, mode).Run();
-            Timer.Stop();
-            logger.Info("{0} | Process completed in {1}.", process, Timer.Elapsed);
 
+            if (OptionsMayExist(args))
+            {
+                var json = CombineArguments(args);
+                var options = new Options(json);
+                if (options.IsValid())
+                {
+                    new Runner(process, options).Run();
+                }
+                else
+                {
+                    foreach (var problem in options.Problems)
+                    {
+                        Log.Error(process + " | " + problem);
+                    }
+                    Log.Warn(process + " | Aborting process.");
+                }
+
+            }
+            else
+            {
+                new Runner(process).Run();
+            }
+
+            Timer.Stop();
+
+            Log.Info("{0} | Process completed in {1}.", process, Timer.Elapsed);
+
+        }
+
+        private static string CombineArguments(IEnumerable<string> args)
+        {
+            var options = new List<string>(args);
+            options.RemoveAt(0);
+            var json = string.Join(string.Empty, options);
+            return json;
+        }
+
+        private static bool OptionsMayExist(ICollection<string> args)
+        {
+            return args.Count > 1;
         }
     }
 }

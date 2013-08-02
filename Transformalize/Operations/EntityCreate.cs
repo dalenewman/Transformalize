@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using Transformalize.Data;
+using Transformalize.Data.SqlServer;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
 using Transformalize.Model;

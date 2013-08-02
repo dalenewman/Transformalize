@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using NUnit.Framework;
+using Transformalize.Model;
 
 namespace Transformalize.Test.Integration {
     [TestFixture]
@@ -24,18 +25,18 @@ namespace Transformalize.Test.Integration {
 
         [Test]
         public void TestInit() {
-            new Runner("Test", "init").Run();
+            new Runner("Test", new Options("Test") { Mode = Modes.Initialize}).Run();
         }
 
         [Test]
         public void TestDefault() {
-            new Runner("Test").Run();
+            new Runner("Test", new Options("Test") { RenderTemplates = false}).Run();
         }
 
         [Test]
         public void NorthWindInit() {
-            new Runner("NorthWindEt", "init").Run();
-            new Runner("NorthWind", "init").Run();
+            new Runner("NorthWindEt", new Options("NorthWindEt") { Mode = Modes.Initialize }).Run();
+            new Runner("NorthWind", new Options("NorthWind") { Mode = Modes.Initialize }).Run();
         }
 
         [Test]

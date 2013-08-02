@@ -16,14 +16,15 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Configuration;
 
 namespace Transformalize.Configuration {
-    public class OutputElementCollection : ConfigurationElementCollection {
+    public class TemplateElementCollection : ConfigurationElementCollection {
 
-        public EmptyConfigurationElement this[int index] {
+        public TemplateConfigurationElement this[int index] {
             get {
-                return BaseGet(index) as EmptyConfigurationElement;
+                return BaseGet(index) as TemplateConfigurationElement;
             }
             set {
                 if (BaseGet(index) != null) {
@@ -34,36 +35,21 @@ namespace Transformalize.Configuration {
         }
 
         protected override ConfigurationElement CreateNewElement() {
-            return new EmptyConfigurationElement();
+            return new TemplateConfigurationElement();
         }
 
-        protected override object GetElementKey(ConfigurationElement element)
+        protected override object GetElementKey(ConfigurationElement element) {
+            return ((TemplateConfigurationElement)element).Name.ToLower();
+        }
+
+        [ConfigurationProperty("path", IsRequired = false, DefaultValue = "")]
+        public string Path
         {
-            return element.GetHashCode();
-        }
-
-        [ConfigurationProperty("schema", IsRequired = false, DefaultValue = "dbo")]
-        public string Schema {
-            get {
-                return this["schema"] as string;
+            get
+            {
+                return this["path"] as string;
             }
-            set { this["schema"] = value; }
-        }
-
-        [ConfigurationProperty("name", IsRequired = false, DefaultValue = "output")]
-        public string Name {
-            get {
-                return this["name"] as string;
-            }
-            set { this["name"] = value; }
-        }
-
-        [ConfigurationProperty("connection", IsRequired = false, DefaultValue = "output")]
-        public string Connection {
-            get {
-                return this["connection"] as string;
-            }
-            set { this["connection"] = value; }
+            set { this["path"] = value; }
         }
 
     }

@@ -1,6 +1,6 @@
-﻿using System.Data.SqlClient;
+using System.Data.SqlClient;
 
-namespace Transformalize.Data
+namespace Transformalize.Data.SqlServer
 {
     public class SqlServerCompatibilityReader : ICompatibilityReader {
 

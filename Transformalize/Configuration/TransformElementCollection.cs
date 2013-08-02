@@ -38,8 +38,9 @@ namespace Transformalize.Configuration {
             return new TransformConfigurationElement();
         }
 
-        protected override object GetElementKey(ConfigurationElement element) {
-            return Guid.NewGuid();
+        protected override object GetElementKey(ConfigurationElement element)
+        {
+            return element.GetHashCode();
         }
     }
 }
