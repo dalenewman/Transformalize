@@ -24,6 +24,7 @@ using System.IO;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Data.SqlServer;
+using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Model;
 using Transformalize.Transforms;
@@ -31,9 +32,10 @@ using Transformalize.Transforms;
 namespace Transformalize.Data
 {
 
-    public class ProcessReader : WithLoggingMixin, IConfigurationReader<Process>
+    public class ProcessReader : IConfigurationReader<Process>
     {
-        private readonly string _name;
+        private readonly string _processName = string.Empty;
+        private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly ConversionFactory _conversionFactory = new ConversionFactory();
         private Process _process;
         private readonly ProcessConfigurationElement _config;
@@ -45,15 +47,26 @@ namespace Transformalize.Data
         private int _scriptCount;
         private int _templateCount;
         public int Count { get { return 1; } }
-
-        public ProcessReader(string name)
+        
+        public ProcessReader(ProcessConfigurationElement process)
         {
-            _name = name;
-            _config = ((TransformalizeConfiguration)ConfigurationManager.GetSection("transformalize")).Processes.Get(_name);
+            _config = process;
+        }
+
+        public ProcessReader(string processName)
+        {
+            _processName = processName;
+            _config = ((TransformalizeConfiguration)ConfigurationManager.GetSection("transformalize")).Processes.Get(processName);
         }
 
         public Process Read()
         {
+            if (_config == null)
+            {
+                _log.Error("Sorry.  I can't find a process named {0}.", _processName);
+                return new Process();
+            }
+
             _process = new Process(_config.Name);
 
             _connectionCount = ReadConnections();
@@ -86,12 +99,12 @@ namespace Transformalize.Data
                 var fileInfo = new FileInfo(path.TrimEnd(s) + @"\" + script.File);
                 if (!fileInfo.Exists)
                 {
-                    Warn("Missing Script: {0}.", fileInfo.FullName);
+                    _log.Warn("Missing Script: {0}.", fileInfo.FullName);
                 }
                 else
                 {
                     _process.Scripts[script.Name] = new Script(script.Name, File.ReadAllText(fileInfo.FullName), fileInfo.FullName);
-                    Debug("Loaded script {0}.", fileInfo.FullName);
+                    _log.Debug("Loaded script {0}.", fileInfo.FullName);
                 }
 
             }
@@ -110,7 +123,7 @@ namespace Transformalize.Data
                 var fileInfo = new FileInfo(path.TrimEnd(s) + @"\" + element.File);
                 if (!fileInfo.Exists)
                 {
-                    Warn("Missing Template {0}.", fileInfo.FullName);
+                    _log.Warn("Missing Template {0}.", fileInfo.FullName);
                 }
                 else
                 {
@@ -140,7 +153,7 @@ namespace Transformalize.Data
                     }
 
                     _process.Templates[element.Name] = template;
-                    Debug("Loaded template {0} with {1} setting{2}.", fileInfo.FullName, template.Settings.Count, template.Settings.Count == 1 ? string.Empty : "s");
+                    _log.Debug("Loaded template {0} with {1} setting{2}.", fileInfo.FullName, template.Settings.Count, template.Settings.Count == 1 ? string.Empty : "s");
                 }
 
             }
@@ -162,16 +175,16 @@ namespace Transformalize.Data
 
         private void LogProcessConfiguration()
         {
-            Debug("{0} | Process Loaded.", _process.Name);
-            Debug("{0} | {1} Connection{2}.", _process.Name, _connectionCount, _connectionCount == 1 ? string.Empty : "s");
-            Debug("{0} | {1} Entit{2}.", _process.Name, _entityCount, _entityCount == 1 ? "y" : "ies");
-            Debug("{0} | {1} Relationship{2}.", _process.Name, _relationshipCount, _relationshipCount == 1 ? string.Empty : "s");
-            Debug("{0} | {1} Script{2}.", _process.Name, _scriptCount, _scriptCount == 1 ? string.Empty : "s");
-            Debug("{0} | {1} Template{2}.", _process.Name, _templateCount, _templateCount == 1 ? string.Empty : "s");
-            Debug("{0} | {1} Map{2}.", _process.Name, _mapCount, _mapCount == 1 ? string.Empty : "s");
+            _log.Debug("{0} | Process Loaded.", _process.Name);
+            _log.Debug("{0} | {1} Connection{2}.", _process.Name, _connectionCount, _connectionCount == 1 ? string.Empty : "s");
+            _log.Debug("{0} | {1} Entit{2}.", _process.Name, _entityCount, _entityCount == 1 ? "y" : "ies");
+            _log.Debug("{0} | {1} Relationship{2}.", _process.Name, _relationshipCount, _relationshipCount == 1 ? string.Empty : "s");
+            _log.Debug("{0} | {1} Script{2}.", _process.Name, _scriptCount, _scriptCount == 1 ? string.Empty : "s");
+            _log.Debug("{0} | {1} Template{2}.", _process.Name, _templateCount, _templateCount == 1 ? string.Empty : "s");
+            _log.Debug("{0} | {1} Map{2}.", _process.Name, _mapCount, _mapCount == 1 ? string.Empty : "s");
 
             _transformCount += _process.Entities.SelectMany(e => e.All).SelectMany(f => f.Value.Transforms).Count();
-            Debug("{0} | {1} Transform{2}.", _process.Name, _transformCount, _transformCount == 1 ? string.Empty : "s");
+            _log.Debug("{0} | {1} Transform{2}.", _process.Name, _transformCount, _transformCount == 1 ? string.Empty : "s");
         }
 
         private int ReadTransforms()
@@ -420,7 +433,7 @@ namespace Transformalize.Data
                 else
                 {
                     var message = string.Format("{0} | version field reference '{1}' is undefined in {2}.", _process.Name, e.Version, e.Name);
-                    Error(message);
+                    _log.Error(message);
                     throw new TransformalizeException(message);
                 }
             }

@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<process>
+
+  <connections>
+    <add name="input" value="Server=localhost;Database=NorthWind;Trusted_Connection=True;"/>
+    <add name="output" value="Server=localhost;Database=NorthWindStar;Trusted_Connection=True;"/>
+  </connections>
+
+  <entities>
+    <add name="Order Details" version="RowVersion" auto="true"/>
+    <add name="Orders" version="RowVersion" auto="true"/>
+    <add name="Customers" version="RowVersion" auto="true"/>
+    <add name="Employees" version="RowVersion" auto="true">
+      <fields>
+        <add name="ReportsTo" alias="EmployeesManager" type="string" length="64">
+          <transforms>
+            <add method="map" map="Managers"></add>
+          </transforms>
+        </add>
+      </fields>
+    </add>
+    <add name="Products" version="RowVersion" auto="true"/>
+    <add name="Suppliers" version="RowVersion" auto="true"/>
+    <add name="Categories" version="RowVersion" auto="true"/>
+    <add name="Shippers" version="RowVersion" auto="true"/>
+  </entities>
+
+  <relationships>
+    <add leftEntity="Order Details" leftField="OrderID" rightEntity="Orders" rightField="OrderID"/>
+    <add leftEntity="Orders" leftField="CustomerID" rightEntity="Customers" rightField="CustomerID"/>
+    <add leftEntity="Orders" leftField="EmployeeID" rightEntity="Employees" rightField="EmployeeID"/>
+    <add leftEntity="Orders" leftField="ShipVia" rightEntity="Shippers" rightField="ShipperID"/>
+    <add leftEntity="Order Details" leftField="ProductID" rightEntity="Products" rightField="ProductID"/>
+    <add leftEntity="Products" leftField="SupplierID" rightEntity="Suppliers" rightField="SupplierID"/>
+    <add leftEntity="Products" leftField="CategoryID" rightEntity="Categories" rightField="CategoryID"/>
+  </relationships>
+
+  <maps>
+    <add name="Managers" connection="input">
+      <items sql="select EmployeeID, FirstName + ' ' + LastName FROM Employees;"/>
+    </add>
+  </maps>
+
+</process>

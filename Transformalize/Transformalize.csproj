@@ -80,6 +80,7 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\ConnectionConfigurationElement.cs" />
@@ -153,6 +154,7 @@
     <Compile Include="Data\SqlServer\SqlServerTflWriter.cs" />
     <Compile Include="Data\SqlServer\SqlServerViewWriter.cs" />
     <Compile Include="Data\TemplateManager.cs" />
+    <Compile Include="Extensions\XmlExtensions.cs" />
     <Compile Include="Extensions\LinqExtensions.cs" />
     <Compile Include="Extensions\StringBuilderExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
@@ -606,12 +608,15 @@
     <Compile Include="Operations\EntityAddTflFields.cs" />
     <Compile Include="Operations\EntityBulkInsert.cs" />
     <Compile Include="Data\IEntityCounter.cs" />
-    <Compile Include="Runner.cs" />
     <Compile Include="Operations\ParametersExtract.cs" />
     <Compile Include="Operations\ResultsLoad.cs" />
     <Compile Include="Operations\ProcessTransform.cs" />
     <Compile Include="Operations\EntityDefaults.cs" />
     <Compile Include="Operations\FieldTransform.cs" />
+    <Compile Include="Runner\AbstractProcessRunner.cs" />
+    <Compile Include="Runner\ProcessNameRunner.cs" />
+    <Compile Include="Runner\ProcessRunner.cs" />
+    <Compile Include="Runner\ProcessXmlRunner.cs" />
     <Compile Include="TransformalizeException.cs" />
     <Compile Include="Transforms\ConcatTransform.cs" />
     <Compile Include="Transforms\JoinTransform.cs" />

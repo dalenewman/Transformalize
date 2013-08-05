@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Transformalize.Libs.NLog;
 using Transformalize.Model;
+using Transformalize.Runner;
 
 namespace Transformalize.Run
 {
@@ -48,7 +49,10 @@ namespace Transformalize.Run
                 var options = new Options(json);
                 if (options.IsValid())
                 {
-                    new Runner(process, options).Run();
+                    if (process.EndsWith(".xml"))
+                        new ProcessXmlRunner(process, options).Run();
+                    else
+                        new ProcessNameRunner(process, options).Run();
                 }
                 else
                 {
@@ -62,7 +66,10 @@ namespace Transformalize.Run
             }
             else
             {
-                new Runner(process).Run();
+                if (process.EndsWith(".xml"))
+                    new ProcessXmlRunner(process).Run();
+                else
+                    new ProcessNameRunner(process).Run();
             }
 
             Timer.Stop();

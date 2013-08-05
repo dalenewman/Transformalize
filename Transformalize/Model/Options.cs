@@ -15,6 +15,7 @@ namespace Transformalize.Model
         public bool WriteEndVersion { get; set; }
         public bool RenderTemplates { get; set; }
         public bool PerformTemplateActions { get; set; }
+        public int TestCount { get; set; }
 
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
 
@@ -126,6 +127,7 @@ namespace Transformalize.Model
             RenderTemplates = true;
             PerformTemplateActions = true;
             Mode = Modes.Normal;
+            TestCount = 20;
         }
 
     }
