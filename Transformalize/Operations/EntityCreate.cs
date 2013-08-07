@@ -18,12 +18,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using Transformalize.Data;
-using Transformalize.Data.SqlServer;
+using Transformalize.Core.Entity_;
+using Transformalize.Core.Field_;
+using Transformalize.Core.Fields_;
+using Transformalize.Core.Process_;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
-using Transformalize.Model;
+using Transformalize.Providers;
+using Transformalize.Providers.SqlServer;
 
 namespace Transformalize.Operations {
 
@@ -35,9 +37,11 @@ namespace Transformalize.Operations {
 
         public EntityCreate(Entity entity, Process process, IEntityExists entityExists = null) {
             _entity = entity;
+            var relatedFields = new Fields();
+            relatedFields.AddRange(process.RelatedKeys);
             _writer = entity.IsMaster() ?
-                new FieldSqlWriter(entity.All, process.Results, process.RelatedKeys.ToDictionary(k => k.Alias, v => v)) :
-                new FieldSqlWriter(entity.All);
+                new FieldSqlWriter(entity.All.ToEnumerable(), process.Results.ToEnumerable(), entity.Results.ToEnumerable(), process.RelatedKeys) :
+                new FieldSqlWriter(entity.All, entity.Results);
             _entityExists = entityExists ?? new SqlServerEntityExists();
         }
 

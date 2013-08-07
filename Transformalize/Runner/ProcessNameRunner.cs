@@ -18,8 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Configuration;
 using Transformalize.Configuration;
-using Transformalize.Data;
-using Transformalize.Model;
+using Transformalize.Core;
+using Transformalize.Core.Process_;
 
 namespace Transformalize.Runner
 {

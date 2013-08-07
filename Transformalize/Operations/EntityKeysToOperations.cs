@@ -19,11 +19,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Transformalize.Core.Entity_;
+using Transformalize.Core.Field_;
 using Transformalize.Extensions;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.ConventionOperations;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
-using Transformalize.Model;
+using Transformalize.Providers;
+using Transformalize.Providers.SqlServer;
 
 namespace Transformalize.Operations {
 
@@ -51,7 +54,7 @@ namespace Transformalize.Operations {
             var context = new FieldSqlWriter(_entity.PrimaryKey).Context();
             var sql = "SET NOCOUNT ON;\r\n" +
                       SqlTemplates.CreateTableVariable(KEYS_TABLE_VARIABLE, context, false) +
-                      SqlTemplates.BatchInsertValues(50, KEYS_TABLE_VARIABLE, context, rows, _entity.InputConnection.InsertMultipleValues()) + Environment.NewLine +
+                      SqlTemplates.BatchInsertValues(50, KEYS_TABLE_VARIABLE, context, rows, ((SqlServerConnection)_entity.InputConnection).InsertMultipleValues()) + Environment.NewLine +
                       SqlTemplates.Select(_entity.All, _entity.Name, KEYS_TABLE_VARIABLE);
 
             Trace(sql);

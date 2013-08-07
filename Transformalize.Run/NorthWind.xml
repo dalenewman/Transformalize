@@ -7,11 +7,31 @@
   </connections>
 
   <entities>
-    <add name="Order Details" version="RowVersion" auto="true"/>
-    <add name="Orders" version="RowVersion" auto="true"/>
-    <add name="Customers" version="RowVersion" auto="true"/>
+    <add name="Order Details" version="RowVersion" auto="true">
+      <fields>
+        <add name="RowVersion" alias="OrderDetailsRowVersion" type="byte[]" output="false"></add>
+      </fields>
+      <transforms>
+        <add method="javascript" script="OrderDetailsQuantity * OrderDetailsUnitPrice">
+          <results>
+            <add name="OrderDetailsExtendedPrice" type="Decimal" precision="19" scale="4"/>
+          </results>
+        </add>
+      </transforms>
+    </add>
+    <add name="Orders" version="RowVersion" auto="true">
+      <fields>
+        <add name="RowVersion" alias="OrdersRowVersion" type="byte[]" output="false"></add>
+      </fields>
+    </add>
+    <add name="Customers" version="RowVersion" auto="true">
+      <fields>
+        <add name="RowVersion" alias="CustomersRowVersion" type="byte[]" output="false"></add>
+      </fields>
+    </add>
     <add name="Employees" version="RowVersion" auto="true">
       <fields>
+        <add name="RowVersion" alias="EmployeesRowVersion" type="byte[]" output="false"></add>
         <add name="ReportsTo" alias="EmployeesManager" type="string" length="64">
           <transforms>
             <add method="map" map="Managers"></add>
@@ -19,10 +39,26 @@
         </add>
       </fields>
     </add>
-    <add name="Products" version="RowVersion" auto="true"/>
-    <add name="Suppliers" version="RowVersion" auto="true"/>
-    <add name="Categories" version="RowVersion" auto="true"/>
-    <add name="Shippers" version="RowVersion" auto="true"/>
+    <add name="Products" version="RowVersion" auto="true">
+      <fields>
+        <add name="RowVersion" alias="ProductsRowVersion" type="byte[]" output="false"></add>
+      </fields>
+    </add>
+    <add name="Suppliers" version="RowVersion" auto="true">
+      <fields>
+        <add name="RowVersion" alias="SuppliersRowVersion" type="byte[]" output="false"></add>
+      </fields>
+    </add>
+    <add name="Categories" version="RowVersion" auto="true">
+      <fields>
+        <add name="RowVersion" alias="CategoriesRowVersion" type="byte[]" output="false"></add>
+      </fields>
+    </add>
+    <add name="Shippers" version="RowVersion" auto="true">
+      <fields>
+        <add name="RowVersion" alias="ShippersRowVersion" type="byte[]" output="false"></add>
+      </fields>
+    </add>
   </entities>
 
   <relationships>

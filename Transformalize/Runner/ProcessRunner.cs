@@ -1,4 +1,5 @@
-using Transformalize.Model;
+using Transformalize.Core;
+using Transformalize.Core.Process_;
 
 namespace Transformalize.Runner
 {

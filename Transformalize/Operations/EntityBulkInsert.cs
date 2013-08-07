@@ -17,8 +17,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Data.SqlClient;
+using Transformalize.Core.Entity_;
+using Transformalize.Core.Field_;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
-using Transformalize.Model;
 
 namespace Transformalize.Operations {
     public class EntityBulkInsert : SqlBulkInsertOperation {
@@ -39,7 +40,7 @@ namespace Transformalize.Operations {
             NotifyBatchSize = 10000;
             BatchSize = _entity.OutputConnection.BatchSize;
 
-            var fields = new FieldSqlWriter(_entity.All).ExpandXml().Output().AddBatchId(false).Context();
+            var fields = new FieldSqlWriter(_entity.All, _entity.Results).ExpandXml().Output().AddBatchId(false).Context();
             foreach (var pair in fields) {
                 Schema[pair.Key] = pair.Value.SystemType;
             }

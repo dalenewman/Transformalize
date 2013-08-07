@@ -19,11 +19,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System.Collections.Generic;
 using NUnit.Framework;
 using Moq;
+using Transformalize.Core;
+using Transformalize.Core.Field_;
+using Transformalize.Core.Fields_;
+using Transformalize.Core.Parameter_;
+using Transformalize.Core.Parameters_;
+using Transformalize.Core.Process_;
+using Transformalize.Core.Transform_;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
-using Transformalize.Model;
 using Transformalize.Operations;
-using Transformalize.Transforms;
 
 namespace Transformalize.Test.Unit {
     [TestFixture]
@@ -32,11 +37,14 @@ namespace Transformalize.Test.Unit {
         [Test]
         public void TestJavascriptTransformStrings() {
 
+            var parameters = new Parameters { { "FirstName", new Parameter("FirstName", null) }, { "LastName", new Parameter("LastName", null) } };
+            var results = new Fields(new Dictionary<string, Field> { { "FullName", new Field(FieldType.Field) } });
+
             var process = new Process {
                 Transforms = new AbstractTransform[] {
                     new JavascriptTransform("FirstName + ' ' + LastName",
-                        new Parameters { {"FirstName", new Parameter("FirstName", null)},{"LastName", new Parameter("LastName", null)}},
-                        new Dictionary<string, Field> { {"FullName", new Field(FieldType.Field)}},
+                        parameters,
+                        results,
                         new Dictionary<string, Script>()
                     )
                 }
@@ -56,11 +64,14 @@ namespace Transformalize.Test.Unit {
         [Test]
         public void TestJavascriptTransformNumbers() {
 
+            var parameters = new Parameters { { "x", new Parameter("x", null) }, { "y", new Parameter("y", null) } };
+            var results = new Fields(new Dictionary<string, Field> { { "z", new Field(FieldType.Field) } });
+
             var process = new Process {
                 Transforms = new AbstractTransform[] {
                     new JavascriptTransform("x * y",
-                        new Parameters { {"x", new Parameter("x", null)},{"y", new Parameter("y", null)}},
-                        new Dictionary<string, Field> { {"z", new Field(FieldType.Field)}},
+                        parameters,
+                        results,
                         new Dictionary<string, Script>()
                     )
                 }
@@ -80,11 +91,14 @@ namespace Transformalize.Test.Unit {
         [Test]
         public void TestFormatTransform() {
 
+            var parameters = new Parameters { { "x", new Parameter("x", null) }, { "y", new Parameter("y", null) } };
+            var results = new Fields(new Dictionary<string, Field> { { "z", new Field(FieldType.Field) } });
+
             var process = new Process {
                 Transforms = new AbstractTransform[] {
                     new FormatTransform("{0} {1}",
-                        new Parameters { {"x", new Parameter("x", null)},{"y", new Parameter("y", null)}},
-                        new Dictionary<string, Field> { {"z", new Field(FieldType.Field)}}
+                        parameters,
+                        results
                     )
                 }
             };
@@ -103,11 +117,14 @@ namespace Transformalize.Test.Unit {
         [Test]
         public void TestTemplateTransformStringsWithDictionary() {
 
+            var parameters = new Parameters { { "FirstName", new Parameter("FirstName", null) }, { "LastName", new Parameter("LastName", null) } };
+            var results = new Fields(new Dictionary<string, Field> { { "FullName", new Field(FieldType.Field) } });
+
             var process = new Process {
                 Transforms = new AbstractTransform[] {
                     new TemplateTransform("@{ var fullName = Model[\"FirstName\"] + \" \" + Model[\"LastName\"];}@fullName", "dictionary",
-                        new Parameters { {"FirstName", new Parameter("FirstName",null)},{"LastName", new Parameter("LastName",null)}},
-                        new Dictionary<string, Field> { {"FullName", new Field(FieldType.Field)}}
+                        parameters,
+                        results
                     )
                 }
             };
@@ -127,12 +144,15 @@ namespace Transformalize.Test.Unit {
         public void TestTemplateTransformStringsWithDynamic()
         {
 
+            var parameters = new Parameters { { "FirstName", new Parameter("FirstName", null) }, { "LastName", new Parameter("LastName", null) } };
+            var results = new Fields(new Dictionary<string, Field> { { "FullName", new Field(FieldType.Field) } });
+
             var process = new Process
             {
                 Transforms = new AbstractTransform[] {
                     new TemplateTransform("@{ var fullName = Model.FirstName + \" \" + Model.LastName;}@fullName", "dynamic",
-                        new Parameters { {"FirstName", new Parameter("FirstName",null)},{"LastName", new Parameter("LastName",null)}},
-                        new Dictionary<string, Field> { {"FullName", new Field(FieldType.Field)}}
+                        parameters,
+                        results
                     )
                 }
             };
@@ -152,11 +172,14 @@ namespace Transformalize.Test.Unit {
         [Test]
         public void TestJoinTransformStrings() {
 
+            var parameters = new Parameters { { "FirstName", new Parameter("FirstName", null) }, { "LastName", new Parameter("LastName", null) } };
+            var results = new Fields(new Dictionary<string, Field> { { "FullName", new Field(FieldType.Field) } });
+
             var process = new Process {
                 Transforms = new AbstractTransform[] {
                     new JoinTransform(" ",
-                        new Parameters { {"FirstName", new Parameter("FirstName",null)},{"LastName", new Parameter("LastName",null)}},
-                        new Dictionary<string, Field> { {"FullName", new Field(FieldType.Field)}}
+                        parameters,
+                        results
                     )
                 }
             };

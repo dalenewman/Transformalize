@@ -1,6 +1,8 @@
-using Transformalize.Data;
+using Transformalize.Core;
+using Transformalize.Core.Entity_;
+using Transformalize.Core.Process_;
+using Transformalize.Core.Template_;
 using Transformalize.Libs.NLog;
-using Transformalize.Model;
 using Transformalize.Processes;
 
 namespace Transformalize.Runner

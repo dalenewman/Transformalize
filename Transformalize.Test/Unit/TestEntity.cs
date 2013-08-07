@@ -20,10 +20,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Moq;
 using NUnit.Framework;
-using Transformalize.Data;
+using Transformalize.Core.Process_;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
 using Transformalize.Operations;
+using Transformalize.Providers;
 
 namespace Transformalize.Test.Unit {
     [TestFixture]

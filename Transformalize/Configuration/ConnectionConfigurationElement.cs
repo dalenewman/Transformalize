@@ -46,12 +46,12 @@ namespace Transformalize.Configuration
             set { this["compatabilityLevel"] = value; }
         }
 
-        [ConfigurationProperty("provider", IsRequired = false, DefaultValue = "")]
-        public string Provider {
+        [ConfigurationProperty("type", IsRequired = false, DefaultValue = "SqlServer")]
+        public string Type {
             get {
-                return this["provider"] as string;
+                return this["type"] as string;
             }
-            set { this["provider"] = value; }
+            set { this["type"] = value; }
         }
 
         [ConfigurationProperty("batchSize", IsRequired = false, DefaultValue = 500)]

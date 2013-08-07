@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using NUnit.Framework;
+using Transformalize.Providers;
 
 namespace Transformalize.Test.Unit {
     [TestFixture]

@@ -20,9 +20,11 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using Transformalize.Core.Entity_;
+using Transformalize.Core.Field_;
+using Transformalize.Core.Process_;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
-using Transformalize.Model;
 
 namespace Transformalize.Operations
 {

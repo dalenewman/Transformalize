@@ -16,9 +16,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using NUnit.Framework;
-using Transformalize.Data;
-using Transformalize.Data.SqlServer;
+using Transformalize.Core.Process_;
+using Transformalize.Providers.SqlServer;
 
 namespace Transformalize.Test.Unit {
     [TestFixture]
@@ -28,6 +29,7 @@ namespace Transformalize.Test.Unit {
         public void TestWriteSql() {
             var process = new ProcessReader("Test").Read();
             var actual = new SqlServerViewWriter(ref process).CreateSql();
+
             Assert.AreEqual(@"CREATE VIEW [TestOrderDetailStar] AS
 SELECT
     [TestOrderDetail].[TflKey],
@@ -57,6 +59,8 @@ INNER JOIN [TestOrder] ON ([TestOrderDetail].[OrderKey] = [TestOrder].[OrderKey]
 INNER JOIN [TestCustomer] ON ([TestOrderDetail].[CustomerKey] = [TestCustomer].[CustomerKey])
 INNER JOIN [TestProduct] ON ([TestOrderDetail].[ProductKey] = [TestProduct].[ProductKey])
 ;", actual);
+
+            Console.Write(actual);
         }
    
     }

@@ -20,7 +20,7 @@ using System;
 using System.Configuration;
 using NUnit.Framework;
 using Transformalize.Configuration;
-using Transformalize.Model;
+using Transformalize.Core;
 
 namespace Transformalize.Test.Unit {
     [TestFixture]

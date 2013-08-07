@@ -16,11 +16,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.Generic;
+using Transformalize.Core.Entity_;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
-using Transformalize.Model;
 
 namespace Transformalize.Operations {
     public class EntityAddTflFields : AbstractOperation {

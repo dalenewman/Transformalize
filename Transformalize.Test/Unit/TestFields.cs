@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
 using NUnit.Framework;
-using Transformalize.Model;
+using Transformalize.Core.Field_;
 
 namespace Transformalize.Test.Unit {
     [TestFixture]

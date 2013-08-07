@@ -16,11 +16,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Linq;
+using Transformalize.Core.Entity_;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
-using Transformalize.Model;
 
 namespace Transformalize.Operations
 {
@@ -30,7 +29,7 @@ namespace Transformalize.Operations
         private readonly int _tflBatchId;
 
         public EntityJoinAction(Entity entity) {
-            _keys = entity.PrimaryKey.Select(e => e.Value.Alias).ToArray();
+            _keys = entity.PrimaryKey.ToEnumerable().Select(e => e.Alias).ToArray();
             _firstKey = _keys[0];
             _tflBatchId = entity.TflBatchId;
         }

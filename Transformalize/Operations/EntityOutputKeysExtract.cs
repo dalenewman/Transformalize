@@ -18,9 +18,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Data;
 using System.Text;
+using Transformalize.Core.Entity_;
+using Transformalize.Core.Field_;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
-using Transformalize.Model;
+using Transformalize.Providers;
+using Transformalize.Providers.SqlServer;
 
 namespace Transformalize.Operations {
     public class EntityOutputKeysExtract : InputCommandOperation {
@@ -47,7 +50,7 @@ namespace Transformalize.Operations {
 
             var builder = new StringBuilder();
             builder.AppendLine(SqlTemplates.CreateTableVariable("@KEYS", _entity.PrimaryKey));
-            builder.AppendLine(SqlTemplates.BatchInsertValues(50, "@KEYS", _entity.PrimaryKey, _entity.InputKeys, _entity.OutputConnection.InsertMultipleValues()));
+            builder.AppendLine(SqlTemplates.BatchInsertValues(50, "@KEYS", _entity.PrimaryKey, _entity.InputKeys, ((SqlServerConnection)_entity.OutputConnection).InsertMultipleValues()));
 
             var selectKeys =  new FieldSqlWriter(_entity.PrimaryKey).Alias().Write(", e.", false);
             var joinKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias().Set("e", "k").Write(" AND ");

@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
-using Transformalize.Model;
+using Transformalize.Core.Parameters_;
 
 namespace Transformalize.Test.Unit {
     [TestFixture]

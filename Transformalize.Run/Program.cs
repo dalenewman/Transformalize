@@ -18,8 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
 using System.Diagnostics;
+using Transformalize.Core;
 using Transformalize.Libs.NLog;
-using Transformalize.Model;
 using Transformalize.Runner;
 
 namespace Transformalize.Run

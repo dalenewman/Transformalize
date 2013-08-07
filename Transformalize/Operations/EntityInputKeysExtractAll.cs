@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using Transformalize.Core.Entity_;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
-using Transformalize.Model;
 
 namespace Transformalize.Operations
 {

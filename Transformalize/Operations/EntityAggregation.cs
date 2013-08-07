@@ -1,11 +1,12 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using Transformalize.Core.Entity_;
+using Transformalize.Core.Field_;
+using Transformalize.Core.Fields_;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
-using Transformalize.Model;
 
 namespace Transformalize.Operations {
     public class EntityAggregation : AbstractAggregationOperation {
@@ -14,7 +15,7 @@ namespace Transformalize.Operations {
         private readonly char[] _separatorArray;
         private readonly string _separatorString;
         private readonly string[] _columnsToGroupBy;
-        private readonly IDictionary<string, Field> _columnsToAccumulate;
+        private readonly IFields _columnsToAccumulate;
         private readonly string _firstKey;
         private readonly IDictionary<string, StringBuilder> _builders = new Dictionary<string, StringBuilder>();
 
@@ -23,9 +24,9 @@ namespace Transformalize.Operations {
             _separator = separator;
             _separatorString = separator.ToString(CultureInfo.InvariantCulture);
             _separatorArray = new[] { separator };
-            _columnsToGroupBy = new FieldSqlWriter(_entity.All).ExpandXml().Input().Group().Context().Select(e => e.Value.Alias).ToArray();
-            _firstKey = _columnsToGroupBy.Length > 0 ? _columnsToGroupBy[0] : _columnsToAccumulate.Select(c => c.Key).First();
-            _columnsToAccumulate = new FieldSqlWriter(_entity.All).ExpandXml().Input().Aggregate().Context().ToDictionary(k => k.Key, v => v.Value);
+            _columnsToGroupBy = new FieldSqlWriter(_entity.All).ExpandXml().Input().Group().Context().ToEnumerable().Select(e => e.Alias).ToArray();
+            _firstKey = _columnsToGroupBy.Length > 0 ? _columnsToGroupBy[0] : _columnsToAccumulate.ToEnumerable().Select(c => c.Alias).First();
+            _columnsToAccumulate = new FieldSqlWriter(_entity.All).ExpandXml().Input().Aggregate().Context();
 
             foreach (var pair in _columnsToAccumulate) {
                 _builders[pair.Key] = new StringBuilder();

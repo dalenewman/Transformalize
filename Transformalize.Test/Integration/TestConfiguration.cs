@@ -17,15 +17,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration;
-using Transformalize.Data;
-using Transformalize.Libs.fastJSON;
-using Transformalize.Model;
+using Transformalize.Core.Parameters_;
+using Transformalize.Core.Process_;
 
 namespace Transformalize.Test.Integration {
     [TestFixture]
@@ -112,7 +109,7 @@ namespace Transformalize.Test.Integration {
 
             var expected = new Parameters() {
                 {"LastName", "LastName", null, "System.Object"},
-                {"ProductName", "ProductName", null, "System.Object"}
+                {"ProductName", "ProductName", "None", "System.Object"}
             };
 
             var actual = process.Parameters;

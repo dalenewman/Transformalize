@@ -16,15 +16,20 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using Moq;
+using Transformalize.Core;
+using Transformalize.Core.Entity_;
+using Transformalize.Core.Field_;
+using Transformalize.Core.Fields_;
+using Transformalize.Core.Parameter_;
+using Transformalize.Core.Parameters_;
+using Transformalize.Core.Process_;
+using Transformalize.Core.Transform_;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
-using Transformalize.Model;
 using Transformalize.Operations;
-using Transformalize.Transforms;
 
 namespace Transformalize.Test.Unit
 {
@@ -563,9 +568,11 @@ namespace Transformalize.Test.Unit
             entity.All["Field1"] = new Field(FieldType.Field) { Input = true };
             entity.All["Field2"] = new Field(FieldType.Field) { Input = true };
 
+            var parameters = new Parameters { { "Field1", new Parameter("Field1", null) }, { "Field2", new Parameter("Field2", null) } };
+            var results = new Fields(new Dictionary<string, Field> { { "result", new Field(FieldType.Field) } });
             var process = new Process();
             process.Transforms = new AbstractTransform[] {
-                new FormatTransform("{0}+{1}", new Parameters { {"Field1", new Parameter("Field1", null)}, {"Field2", new Parameter("Field2", null)}},new Dictionary<string, Field>{{"result", new Field(FieldType.Field)}} )
+                new FormatTransform("{0}+{1}", parameters, results)
             };
 
             var rows = TestOperation(
@@ -597,8 +604,10 @@ namespace Transformalize.Test.Unit
             entity.All["Field1"] = new Field(FieldType.Field) { Input = true };
             entity.All["Field2"] = new Field(FieldType.Field) { Input = true };
 
+            var parameters = new Parameters { { "Field1", new Parameter() }, { "Field2", new Parameter("Field2", null) } };
+            var results = new Fields(new Dictionary<string, Field> { { "result", new Field(FieldType.Field) } });
             var process = new Process();
-            process.Transforms = new AbstractTransform[] { new ConcatTransform(new Parameters { { "Field1", new Parameter() }, { "Field2", new Parameter("Field2", null) } }, new Dictionary<string, Field> { { "result", new Field(FieldType.Field) } }) };
+            process.Transforms = new AbstractTransform[] { new ConcatTransform(parameters, results) };
 
             var rows = TestOperation(
                 input,
@@ -629,16 +638,14 @@ namespace Transformalize.Test.Unit
             entity.All["Field1"] = new Field(FieldType.Field) { Input = true };
             entity.All["Field2"] = new Field(FieldType.Field) { Input = true };
 
+            var parameters = new Parameters { { "Field1", new Parameter("Field1", null) }, { "Field2", new Parameter("Field2", null) } };
+            var results = new Fields(new Dictionary<string, Field> { { "result", new Field(FieldType.Field) } });
             var process = new Process();
             process.Transforms = new AbstractTransform[] {
                 new JsonTransform(
-                    new Parameters {
-                        { "Field1", new Parameter("Field1", null) },
-                        { "Field2", new Parameter("Field2",null) }
-                    }, 
-                    new Dictionary<string, Field> {
-                        { "result", new Field(FieldType.Field) }
-                    })
+                    parameters, 
+                    results
+                )
             };
 
             var rows = TestOperation(
@@ -669,11 +676,11 @@ namespace Transformalize.Test.Unit
             entity.All["Field1"] = new Field(FieldType.Field) { Input = true };
             entity.All["Field2"] = new Field(FieldType.Field) { Input = true };
 
+            var parameters = new Parameters { { "Field1", new Parameter("Field1", null) }, { "Field2", new Parameter("Field2", null) }, { "Field3", new Parameter("Field3", 3) } };
+            var results = new Fields(new Dictionary<string, Field> { { "result", new Field(FieldType.Field) } });
             var process = new Process();
             process.Transforms = new AbstractTransform[] {
-                new JsonTransform(new Parameters {
-                    { "Field1", new Parameter("Field1",null) }, { "Field2", new Parameter("Field2",null) }, { "Field3", new Parameter("Field3", 3)}
-                }, new Dictionary<string, Field> { { "result", new Field(FieldType.Field) } })
+                new JsonTransform(parameters, results)
             };
 
             var rows = TestOperation(

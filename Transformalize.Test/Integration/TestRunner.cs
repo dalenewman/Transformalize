@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using NUnit.Framework;
-using Transformalize.Model;
+using Transformalize.Core;
 using Transformalize.Runner;
 
 namespace Transformalize.Test.Integration {
@@ -26,23 +26,21 @@ namespace Transformalize.Test.Integration {
 
         [Test]
         public void TestInit() {
-            new ProcessNameRunner("Test", new Options("Test") { Mode = Modes.Initialize}).Run();
+            new ProcessNameRunner("Test", new Options { Mode = Modes.Initialize}).Run();
         }
 
         [Test]
         public void TestDefault() {
-            new ProcessNameRunner("Test", new Options("Test") { RenderTemplates = false}).Run();
+            new ProcessNameRunner("Test", new Options { RenderTemplates = false}).Run();
         }
 
         [Test]
         public void NorthWindInit() {
-            new ProcessNameRunner("NorthWindEt", new Options("NorthWindEt") { Mode = Modes.Initialize }).Run();
-            new ProcessNameRunner("NorthWind", new Options("NorthWind") { Mode = Modes.Initialize }).Run();
+            new ProcessNameRunner("NorthWind", new Options { Mode = Modes.Initialize }).Run();
         }
 
         [Test]
         public void NorthWindDefault() {
-            new ProcessNameRunner("NorthWindEt").Run();
             new ProcessNameRunner("NorthWind").Run();
         }
 
