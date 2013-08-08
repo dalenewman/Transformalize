@@ -30,11 +30,9 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Pipelines
                 }
                 catch (Exception e)
                 {
-                    Error(e, "Failed to execute operation {0}", operation);
+                    Error("Failed to execute {0}. {1} {2}", operation.Name, e.Message, e.InnerException != null ? e.InnerException.Message : string.Empty);
+                    Environment.Exit(0);
                     threadedEnumerator.MarkAsFinished();
-#if DEBUG
-                    throw e;
-#endif
                 }
                 finally
                 {

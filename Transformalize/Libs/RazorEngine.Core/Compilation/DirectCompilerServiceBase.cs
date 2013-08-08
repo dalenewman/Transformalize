@@ -9,6 +9,7 @@ using System.Security;
 using System.Text;
 using System.Web.Razor;
 using System.Web.Razor.Parser;
+using Transformalize.Libs.NLog;
 using Transformalize.Libs.RazorEngine.Core.Templating;
 
 namespace Transformalize.Libs.RazorEngine.Core.Compilation
@@ -18,6 +19,8 @@ namespace Transformalize.Libs.RazorEngine.Core.Compilation
     /// </summary>
     public abstract class DirectCompilerServiceBase : CompilerServiceBase, IDisposable
     {
+        private Logger _log = LogManager.GetCurrentClassLogger();
+
         #region Fields
         private readonly CodeDomProvider _codeDomProvider;
         private bool _disposed;
@@ -102,7 +105,16 @@ namespace Transformalize.Libs.RazorEngine.Core.Compilation
             var compileResult = result.Item1;
 
             if (compileResult.Errors != null && compileResult.Errors.Count > 0)
-                throw new TemplateCompilationException(compileResult.Errors, result.Item2, context.TemplateContent);
+            {
+                _log.Warn("The following template content will not compile:");
+                _log.Info(Environment.NewLine + context.TemplateContent);
+                foreach (var error in compileResult.Errors)
+                {
+                    _log.Error(error.ToString().Split(':').Last().Trim(' '));
+                }
+                Environment.Exit(0);
+                //throw new TemplateCompilationException(compileResult.Errors, result.Item2, context.TemplateContent);
+            }
 
             return Tuple.Create(
                 compileResult.CompiledAssembly.GetType("CompiledRazorTemplates.Dynamic." + context.ClassName),

@@ -26,6 +26,7 @@ using Transformalize.Core.Fields_;
 using Transformalize.Core.Parameter_;
 using Transformalize.Core.Parameters_;
 using Transformalize.Core.Process_;
+using Transformalize.Core.Template_;
 using Transformalize.Core.Transform_;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
@@ -210,7 +211,8 @@ namespace Transformalize.Test.Unit
             });
 
             var entity = new Entity();
-            entity.All["Name"] = new Field(FieldType.Field) { Transforms = new[] { new TemplateTransform("Hello @Name", "Name") } };
+            var templates = new Dictionary<string, Template>();
+            entity.All["Name"] = new Field(FieldType.Field) { Transforms = new[] { new TemplateTransform("Hello @Name", "Name", templates) } };
 
             var rows = TestOperation(
                 input.Object,

@@ -19,11 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System.Configuration;
 
 namespace Transformalize.Configuration {
-    public class TransformScriptElementCollection : ConfigurationElementCollection {
+    public class TransformTemplateElementCollection : ConfigurationElementCollection {
 
-        public TransformScriptConfigurationElement this[int index] {
+        public TransformTemplateConfigurationElement this[int index]
+        {
             get {
-                return BaseGet(index) as TransformScriptConfigurationElement;
+                return BaseGet(index) as TransformTemplateConfigurationElement;
             }
             set {
                 if (BaseGet(index) != null) {
@@ -34,11 +35,11 @@ namespace Transformalize.Configuration {
         }
 
         protected override ConfigurationElement CreateNewElement() {
-            return new TransformScriptConfigurationElement();
+            return new TransformTemplateConfigurationElement();
         }
 
         protected override object GetElementKey(ConfigurationElement element) {
-            return ((TransformScriptConfigurationElement)element).Name.ToLower();
+            return ((TransformTemplateConfigurationElement)element).Name.ToLower();
         }
 
     }

@@ -20,11 +20,13 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using Moq;
 using Transformalize.Core;
+using Transformalize.Core.Entity_;
 using Transformalize.Core.Field_;
 using Transformalize.Core.Fields_;
 using Transformalize.Core.Parameter_;
 using Transformalize.Core.Parameters_;
 using Transformalize.Core.Process_;
+using Transformalize.Core.Template_;
 using Transformalize.Core.Transform_;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
@@ -119,12 +121,14 @@ namespace Transformalize.Test.Unit {
 
             var parameters = new Parameters { { "FirstName", new Parameter("FirstName", null) }, { "LastName", new Parameter("LastName", null) } };
             var results = new Fields(new Dictionary<string, Field> { { "FullName", new Field(FieldType.Field) } });
+            var templates = new Dictionary<string, Template>();
 
             var process = new Process {
                 Transforms = new AbstractTransform[] {
                     new TemplateTransform("@{ var fullName = Model[\"FirstName\"] + \" \" + Model[\"LastName\"];}@fullName", "dictionary",
                         parameters,
-                        results
+                        results,
+                        templates
                     )
                 }
             };
@@ -146,13 +150,15 @@ namespace Transformalize.Test.Unit {
 
             var parameters = new Parameters { { "FirstName", new Parameter("FirstName", null) }, { "LastName", new Parameter("LastName", null) } };
             var results = new Fields(new Dictionary<string, Field> { { "FullName", new Field(FieldType.Field) } });
+            var templates = new Dictionary<string, Template>();
 
             var process = new Process
             {
                 Transforms = new AbstractTransform[] {
                     new TemplateTransform("@{ var fullName = Model.FirstName + \" \" + Model.LastName;}@fullName", "dynamic",
                         parameters,
-                        results
+                        results,
+                        templates
                     )
                 }
             };

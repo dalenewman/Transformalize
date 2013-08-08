@@ -2,11 +2,10 @@ using System.Collections.Generic;
 using System.Dynamic;
 using Transformalize.Configuration;
 using Transformalize.Libs.RazorEngine.Core;
-using Transformalize.Libs.Rhino.Etl.Core;
 
 namespace Transformalize.Core.Template_
 {
-    public class Template : WithLoggingMixin
+    public class Template
     {
 
         public Dictionary<string, object> Settings = new Dictionary<string, object>();

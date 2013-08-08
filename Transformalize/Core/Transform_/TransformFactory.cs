@@ -3,6 +3,7 @@ using Transformalize.Configuration;
 using Transformalize.Core.Fields_;
 using Transformalize.Core.Parameters_;
 using Transformalize.Core.Process_;
+using Transformalize.Core.Template_;
 using Transformalize.Libs.NLog;
 
 namespace Transformalize.Core.Transform_
@@ -81,10 +82,17 @@ namespace Transformalize.Core.Transform_
                             : new JavascriptTransform(_transform.Script, fieldName, scripts);
 
                 case "template":
+
+                    var templates = new Dictionary<string, Template>();
+                    foreach (TransformTemplateConfigurationElement template in _transform.Templates)
+                    {
+                        templates[template.Name] = _process.Templates[template.Name];
+                    }
+
                     return
                         _parameters.Any()
-                            ? new TemplateTransform(_transform.Template, _transform.Model, _parameters, _results)
-                            : new TemplateTransform(_transform.Template, fieldName);
+                            ? new TemplateTransform(_transform.Template, _transform.Model, _parameters, _results, templates)
+                            : new TemplateTransform(_transform.Template, fieldName, templates);
 
                 case "padleft":
                     return new PadLeftTransform(_transform.TotalWidth, _transform.PaddingChar[0]);

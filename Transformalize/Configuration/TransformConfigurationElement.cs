@@ -45,6 +45,7 @@ namespace Transformalize.Configuration
         private const string SEPARATOR = "separator";
         private const string MODEL = "model";
         private const string NAME = "name";
+        private const string TEMPLATES = "templates";
 
         public override bool IsReadOnly()
         {
@@ -278,6 +279,12 @@ namespace Transformalize.Configuration
             {
                 return this[SCRIPTS] as TransformScriptElementCollection;
             }
+        }
+
+        [ConfigurationProperty(TEMPLATES)]
+        public TransformTemplateElementCollection Templates
+        {
+            get { return this[TEMPLATES] as TransformTemplateElementCollection; }
         }
 
     }

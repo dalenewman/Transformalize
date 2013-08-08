@@ -72,6 +72,7 @@ namespace Transformalize.Core.Process_
 
             _connectionCount = ReadConnections();
             _scriptCount = ReadScripts();
+            _templateCount = ReadTemplates(false);
             _mapCount = ReadMaps();
             _entityCount = ReadEntities();
             _relationshipCount = ReadRelationships();
@@ -84,9 +85,8 @@ namespace Transformalize.Core.Process_
                 entity.RelationshipToMaster = ReadRelationshipToMaster(entity);
             }
 
+            _templateCount += ReadTemplates(true);
             LogProcessConfiguration();
-
-            _templateCount = ReadTemplates();
             return _process;
         }
 
@@ -113,7 +113,7 @@ namespace Transformalize.Core.Process_
             return scripts.Count();
         }
 
-        private int ReadTemplates()
+        private int ReadTemplates(bool withProcess)
         {
             var s = new[] { '\\' };
             var templates = _config.Templates.Cast<TemplateConfigurationElement>().ToArray();
@@ -129,6 +129,9 @@ namespace Transformalize.Core.Process_
                 else
                 {
                     var template = new Template(element.Name, File.ReadAllText(fileInfo.FullName), fileInfo.FullName, _config);
+
+                    if (withProcess && !template.Content.StartsWith("@using Core.Process"))
+                        continue;
 
                     foreach (SettingConfigurationElement setting in element.Settings)
                     {
