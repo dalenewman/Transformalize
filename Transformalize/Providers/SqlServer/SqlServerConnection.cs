@@ -17,7 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Data.SqlClient;
-using Transformalize.Core;
 
 namespace Transformalize.Providers.SqlServer {
 
@@ -31,15 +30,16 @@ namespace Transformalize.Providers.SqlServer {
         public int BatchSize { get; set; }
         public int CompatibilityLevel { get; set; }
         public ConnectionType ConnectionType { get; set; }
+        public string Process { get; set; }
 
         private ICompatibilityReader CompatibilityReader
         {
             get { return _compatibilityReader ?? (_compatibilityReader = new SqlServerCompatibilityReader(this)); }
         }
 
-        public SqlServerConnection(string connectionString, string processName) {
+        public SqlServerConnection(string connectionString) {
             _builder = new SqlConnectionStringBuilder(connectionString);
-            _connectionChecker = new SqlServerConnectionChecker(processName);
+            _connectionChecker = new SqlServerConnectionChecker();
         }
 
         public string ConnectionString {

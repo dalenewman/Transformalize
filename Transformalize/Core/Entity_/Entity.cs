@@ -52,22 +52,10 @@ namespace Transformalize.Core.Entity_ {
         public List<Row> InputKeys { get; set; }
         public IDbCommand InputKeysCommand { get; set; }
         public IEntityVersionReader EntityVersionReader { get; private set; }
-        public AbstractTransform[] Transforms { get; set; }
+        public Transforms Transforms { get; set; }
         public string Prefix { get; set; }
         public bool Group { get; set; }
         public bool Auto { get; set; }
-
-        public IFields Results {
-            get
-            {
-                var results = new Fields();
-                foreach (var transform in Transforms.Where(transform => transform.HasResults))
-                {
-                    results.AddRange(transform.Results);
-                }
-                return results;
-            } 
-        }
 
         public Entity(IEntityVersionReader entityVersionReader = null) {
             Name = string.Empty;
@@ -79,6 +67,7 @@ namespace Transformalize.Core.Entity_ {
             EntityVersionReader = entityVersionReader ?? new SqlServerEntityVersionReader(this);
             InputKeys = new List<Row>();
             Prefix = string.Empty;
+            Transforms =  new Transforms();
         }
 
         public string FirstKey() {
@@ -92,7 +81,7 @@ namespace Transformalize.Core.Entity_ {
         public void Dispose() {
             foreach (var pair in All) {
                 if (pair.Value.Transforms == null) continue;
-                foreach (var t in pair.Value.Transforms) {
+                foreach (AbstractTransform t in pair.Value.Transforms) {
                     t.Dispose();
                 }
             }

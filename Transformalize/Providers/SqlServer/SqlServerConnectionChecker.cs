@@ -20,17 +20,17 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using Transformalize.Core;
-using Transformalize.Libs.Rhino.Etl.Core;
+using Transformalize.Core.Process_;
+using Transformalize.Libs.NLog;
 
 namespace Transformalize.Providers.SqlServer {
-    public class SqlServerConnectionChecker : WithLoggingMixin, IConnectionChecker {
-        private readonly string _logPrefix;
+    public class SqlServerConnectionChecker : IConnectionChecker
+    {
+        private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly int _timeOut;
         private static readonly Dictionary<string, bool> CachedResults = new Dictionary<string, bool>();
 
-        public SqlServerConnectionChecker(string logPrefix = "", int timeOut = 3) {
-            _logPrefix = logPrefix;
+        public SqlServerConnectionChecker(int timeOut = 3) {
             _timeOut = timeOut;
         }
 
@@ -46,14 +46,14 @@ namespace Transformalize.Providers.SqlServer {
                     cn.Open();
                     result = cn.State == ConnectionState.Open;
                     if (result) {
-                        Debug("{0} | {1}.{2} is ready.", _logPrefix, builder.DataSource, builder.InitialCatalog);
+                        _log.Debug("{0} | {1}.{2} is ready.", Process.Name, builder.DataSource, builder.InitialCatalog);
                     }
                     else {
-                        Warn("{0} | {1}.{2} wouldn't open.", _logPrefix, builder.DataSource, builder.InitialCatalog);
+                        _log.Warn("{0} | {1}.{2} wouldn't open.", Process.Name, builder.DataSource, builder.InitialCatalog);
                     }
                 }
                 catch (Exception e) {
-                    Warn("{0} | {1}.{2} threw error: {3}.", _logPrefix, builder.DataSource, builder.InitialCatalog, e.Message);
+                    _log.Warn("{0} | {1}.{2} threw error: {3}.", Process.Name, builder.DataSource, builder.InitialCatalog, e.Message);
                 }
             }
             CachedResults[connectionString] = result;

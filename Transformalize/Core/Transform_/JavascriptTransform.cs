@@ -21,12 +21,14 @@ using System.Text;
 using Noesis.Javascript;
 using Transformalize.Core.Fields_;
 using Transformalize.Core.Parameters_;
+using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Core;
 
 namespace Transformalize.Core.Transform_
 {
     public class JavascriptTransform : AbstractTransform
     {
+        private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly JavascriptContext _context = new JavascriptContext();
         private readonly string _script;
         private readonly string _field;
@@ -37,7 +39,7 @@ namespace Transformalize.Core.Transform_
             _field = field;
             foreach (var pair in scripts)
             {
-                Debug("Running script {0}.", pair.Value.File);
+                _log.Debug("Running script {0}.", pair.Value.File);
                 _context.Run(pair.Value.Content);
             }
         }
@@ -76,11 +78,7 @@ namespace Transformalize.Core.Transform_
             {
                 _context.SetParameter(pair.Value.Name, pair.Value.Value ?? row[pair.Key]);
             }
-            var result = Run();
-            foreach (var pair in Results)
-            {
-                row[pair.Key] = result;
-            }
+            row[FirstResult.Key] = Run();
         }
 
         private object Run()

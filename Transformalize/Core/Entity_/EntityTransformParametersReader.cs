@@ -33,12 +33,12 @@ namespace Transformalize.Core.Entity_
 
                 if (!string.IsNullOrEmpty(p.Field))
                 {
-                    var fields = new FieldSqlWriter(_entity.All).Input().ExpandXml().Context();
+                    var fields = new FieldSqlWriter(_entity.All, _entity.Transforms.Results()).Input().ExpandXml().Context();
                     if (fields.Any(Common.FieldFinder(p)))
                     {
                         var field = fields.Last(Common.FieldFinder(p)).Value;
                         var key = string.IsNullOrEmpty(p.Name) ? field.Alias : p.Name;
-                        parameters.Add(field.Alias, key, field.Default, field.Type);
+                        parameters.Add(field.Alias, key, null, field.Type);
                     }
                     else
                     {
@@ -57,7 +57,7 @@ namespace Transformalize.Core.Entity_
                 var fields = new FieldSqlWriter(_entity.All).ExpandXml().Input().Context().ToEnumerable();
                 foreach (var field in fields)
                 {
-                    parameters.Add(field.Alias, field.Alias, field.Default, field.Type);
+                    parameters.Add(field.Alias, field.Alias, null, field.Type);
                 }
             }
 

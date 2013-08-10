@@ -50,7 +50,7 @@ namespace Transformalize.Core.Field_ {
         public bool NotNull { get; set; }
         public bool Identity { get; set; }
         public KeyValuePair<string, string> References { get; set; }
-        public AbstractTransform[] Transforms { get; set; }
+        public Transforms Transforms { get; set; }
         public bool Output { get; set; }
         public bool UseStringBuilder { get; private set; }
         public Type SystemType { get; private set; }

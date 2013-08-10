@@ -46,6 +46,7 @@ namespace Transformalize.Configuration
             set { this["compatabilityLevel"] = value; }
         }
 
+        [RegexStringValidator(@"SqlServer|AnalysisServices")]
         [ConfigurationProperty("type", IsRequired = false, DefaultValue = "SqlServer")]
         public string Type {
             get {
@@ -60,6 +61,16 @@ namespace Transformalize.Configuration
                 return (int)this["batchSize"];
             }
             set { this["batchSize"] = value; }
+        }
+
+        [ConfigurationProperty("enabled", IsRequired = false, DefaultValue = true)]
+        public bool Enabled
+        {
+            get
+            {
+                return (bool)this["enabled"];
+            }
+            set { this["enabled"] = value; }
         }
 
     }

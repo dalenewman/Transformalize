@@ -1,12 +1,13 @@
 using System;
 using System.IO;
 using Transformalize.Core.Process_;
-using Transformalize.Libs.Rhino.Etl.Core;
+using Transformalize.Libs.NLog;
 
 namespace Transformalize.Core.Template_
 {
-    public class TemplateManager : WithLoggingMixin
+    public class TemplateManager
     {
+        private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly Process _process;
         private readonly char[] _trim = new[] { '\\' };
         public TemplateManager(Process process)
@@ -17,14 +18,12 @@ namespace Transformalize.Core.Template_
         public void Manage()
         {
 
-            var folder = GetTemporaryFolder();
-            if (!Directory.Exists(folder))
-                Directory.CreateDirectory(folder);
+            var folder = Common.GetTemporaryFolder();
 
-            foreach (var pair in _process.Templates)
+            foreach (var pair in Process.Templates)
             {
                 var result = pair.Value.Render();
-                Info("{0} | Rendered {1} template.", _process.Name, pair.Value.Name);
+                _log.Info("{0} | Rendered {1} template.", Process.Name, pair.Value.Name);
 
                 var renderedInfo = new FileInfo(folder.TrimEnd(_trim) + @"\" + pair.Value.Name + ".temp.txt");
                 File.WriteAllText(renderedInfo.FullName, result);
@@ -50,7 +49,7 @@ namespace Transformalize.Core.Template_
                             break;
 
                         default:
-                            Warn("{0} | The {1} action is not implemented.", _process.Name, action.Action);
+                            _log.Warn("{0} | The {1} action is not implemented.", Process.Name, action.Action);
                             break;
 
                     }
@@ -58,9 +57,5 @@ namespace Transformalize.Core.Template_
             }
         }
 
-        public string GetTemporaryFolder()
-        {
-            return Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData).TrimEnd(_trim) + @"\Tfl\" + _process.Name;
-        }
     }
 }

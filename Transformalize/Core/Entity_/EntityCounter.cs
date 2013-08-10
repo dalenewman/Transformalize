@@ -27,15 +27,15 @@ namespace Transformalize.Core.Entity_ {
 
         public EntityCounter(ref Process process, IEntityCounter entityCounter = null) {
             _process = process;
-            _entityCounter = entityCounter ?? new SqlServerEntityCounter(new SqlServerConnectionChecker(process.Name));
+            _entityCounter = entityCounter ?? new SqlServerEntityCounter(new SqlServerConnectionChecker());
         }
 
         public void Count() {
             foreach (var entity in _process.Entities) {
                 entity.InputCount = _entityCounter.CountInput(entity);
-                Info("{0} | Entity {1} input has {2} records.", _process.Name, entity.Name, entity.InputCount);
+                Info("{0} | Entity {1} input has {2} records.", Process.Name, entity.Name, entity.InputCount);
                 entity.OutputCount = _entityCounter.CountOutput(entity);
-                Info("{0} | Entity {1} output has {2} records.", _process.Name, entity.Name, entity.OutputCount);
+                Info("{0} | Entity {1} output has {2} records.", Process.Name, entity.Name, entity.OutputCount);
             }
         }
     }

@@ -16,7 +16,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Generic;
 using System.Text;
+using Transformalize.Core.Field_;
+using Transformalize.Core.Fields_;
+using Transformalize.Core.Parameters_;
 using Transformalize.Extensions;
 
 namespace Transformalize.Core.Transform_ {
@@ -25,12 +29,24 @@ namespace Transformalize.Core.Transform_ {
             get { return "ToLower Transform"; }
         }
 
+        public ToLowerTransform(IParameters parameters)
+            : base(parameters, new Fields()) {
+        }
+
         public override void Transform(ref StringBuilder sb) {
             sb.ToLower();
         }
 
         public override void Transform(ref object value) {
             value = value.ToString().ToLower();
+        }
+
+        public override void Transform(ref Libs.Rhino.Etl.Core.Row row)
+        {
+            foreach (var parameter in Parameters)
+            {
+                row[parameter.Key] = row[parameter.Key].ToString().ToLower();
+            }
         }
 
     }

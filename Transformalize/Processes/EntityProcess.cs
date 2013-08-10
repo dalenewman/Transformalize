@@ -35,7 +35,6 @@ namespace Transformalize.Processes
         private Entity _entity;
 
         public EntityProcess(ref Process process, Entity entity, IEntityBatch entityBatch = null)
-            : base(process.Name)
         {
             _process = process;
             _entity = entity;
@@ -54,7 +53,7 @@ namespace Transformalize.Processes
             {
                 Register(new EntityInputKeysExtractAll(_entity));
             }
-            
+
             Register(new EntityInputKeysStore(_entity));
             Register(new EntityKeysToOperations(_entity));
             Register(new SerialUnionAllOperation());

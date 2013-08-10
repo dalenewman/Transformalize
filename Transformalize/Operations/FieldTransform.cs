@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using Transformalize.Core.Entity_;
 using Transformalize.Core.Field_;
 using Transformalize.Core.Fields_;
+using Transformalize.Core.Transform_;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
 
@@ -41,12 +42,12 @@ namespace Transformalize.Operations {
                     if (pair.Value.UseStringBuilder) {
                         pair.Value.StringBuilder.Clear();
                         pair.Value.StringBuilder.Append(value);
-                        foreach (var t in pair.Value.Transforms) {
+                        foreach (AbstractTransform t in pair.Value.Transforms) {
                             t.Transform(ref pair.Value.StringBuilder);
                         }
                         row[pair.Key] = pair.Value.StringBuilder.ToString();
                     } else {
-                        foreach (var t in pair.Value.Transforms) {
+                        foreach (AbstractTransform t in pair.Value.Transforms) {
                             t.Transform(ref value);
                         }
                         row[pair.Key] = value;

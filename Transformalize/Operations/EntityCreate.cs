@@ -40,8 +40,8 @@ namespace Transformalize.Operations {
             var relatedFields = new Fields();
             relatedFields.AddRange(process.RelatedKeys);
             _writer = entity.IsMaster() ?
-                new FieldSqlWriter(entity.All.ToEnumerable(), process.Results.ToEnumerable(), entity.Results.ToEnumerable(), process.RelatedKeys) :
-                new FieldSqlWriter(entity.All, entity.Results);
+                new FieldSqlWriter(entity.All, process.Transforms.Results(), entity.Transforms.Results(), new Fields(process.RelatedKeys)) :
+                new FieldSqlWriter(entity.All, entity.Transforms.Results());
             _entityExists = entityExists ?? new SqlServerEntityExists();
         }
 

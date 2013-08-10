@@ -30,24 +30,23 @@ namespace Transformalize.Core.Process_ {
 
     public class Process {
 
-        public string Name { get; set; }
+        public static Dictionary<string, Dictionary<string, object>> MapEquals = new Dictionary<string, Dictionary<string, object>>();
+        public static Dictionary<string, Dictionary<string, object>> MapStartsWith = new Dictionary<string, Dictionary<string, object>>();
+        public static Dictionary<string, Dictionary<string, object>> MapEndsWith = new Dictionary<string, Dictionary<string, object>>();
+        public static Dictionary<string, Script> Scripts = new Dictionary<string, Script>();
+        public static Dictionary<string, Template> Templates = new Dictionary<string, Template>();
+        public static string Name { get; set; }
+        
         public Entity MasterEntity { get; set; }
         public Options Options { get; set; }
-        public IFields Results { get; set; }
         public List<Entity> Entities { get; set; }
-
         public Dictionary<string, IConnection> Connections = new Dictionary<string, IConnection>();
         public List<Relationship> Relationships = new List<Relationship>();
-        public Dictionary<string, Dictionary<string, object>> MapEquals = new Dictionary<string, Dictionary<string, object>>();
-        public Dictionary<string, Dictionary<string, object>> MapStartsWith = new Dictionary<string, Dictionary<string, object>>();
-        public Dictionary<string, Dictionary<string, object>> MapEndsWith = new Dictionary<string, Dictionary<string, object>>();
         public IParameters Parameters = new Parameters();
         public IEnumerable<Field> RelatedKeys;
-        public AbstractTransform[] Transforms;
+        public Transforms Transforms;
         public string View;
         public bool OutputRecordsExist;
-        public Dictionary<string, Script> Scripts = new Dictionary<string, Script>();
-        public Dictionary<string, Template> Templates = new Dictionary<string, Template>();
 
         public bool IsReady() {
             return Connections.Select(connection => connection.Value.IsReady()).All(b => b.Equals(true));
@@ -58,9 +57,9 @@ namespace Transformalize.Core.Process_ {
         public Process(string name)
         {
             Name = name;
-            Results = new Fields();
             Entities = new List<Entity>();
             Options = new Options(name);
+            Transforms = new Transforms();
         }
 
         public IFields InputFields()
@@ -68,7 +67,7 @@ namespace Transformalize.Core.Process_ {
             var fields = new Fields();
             foreach (var entity in Entities)
             {
-                fields.AddRange(new FieldSqlWriter(entity.All).ExpandXml().Input().Context());
+                fields.AddRange(new FieldSqlWriter(entity.All, entity.Transforms.Results()).ExpandXml().Input().Context());
             }
             return fields;
         }

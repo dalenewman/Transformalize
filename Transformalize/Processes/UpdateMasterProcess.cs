@@ -22,33 +22,41 @@ using Transformalize.Core.Process_;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Operations;
 
-namespace Transformalize.Processes {
+namespace Transformalize.Processes
+{
 
-    public class UpdateMasterProcess : EtlProcess {
+    public class UpdateMasterProcess : EtlProcess
+    {
 
         private readonly Process _process;
 
         public UpdateMasterProcess(ref Process process)
-            : base(process.Name) {
+        {
             _process = process;
         }
 
-        protected override void Initialize() {
+        protected override void Initialize()
+        {
             var last = _process.Entities.Last().Name;
-            foreach (var entity in _process.Entities) {
+            foreach (var entity in _process.Entities)
+            {
                 if (entity.Name.Equals(last))
                     RegisterLast(new EntityUpdateMaster(_process, entity));
-                else {
+                else
+                {
                     Register(new EntityUpdateMaster(_process, entity));
                 }
             }
         }
 
-        protected override void PostProcessing() {
+        protected override void PostProcessing()
+        {
 
             var errors = GetAllErrors().ToArray();
-            if (errors.Any()) {
-                foreach (var error in errors) {
+            if (errors.Any())
+            {
+                foreach (var error in errors)
+                {
                     Error(error.InnerException, "Message: {0}\r\nStackTrace:{1}\r\n", error.Message, error.StackTrace);
                 }
                 throw new InvalidOperationException("Houstan.  We have a problem.");

@@ -33,10 +33,12 @@ namespace Transformalize.Operations
             UseTransaction = false;
         }
 
-        protected override void PrepareCommand(Row row, SqlCommand command) {
-            var sets = new FieldSqlWriter(_process.Results).Alias().SetParam().Write();
+        protected override void PrepareCommand(Row row, SqlCommand command)
+        {
+            var results = _process.Transforms.Results();
+            var sets = new FieldSqlWriter(results).Alias().SetParam().Write();
             command.CommandText = string.Format("UPDATE {0} SET {1} WHERE TflKey = @TflKey;", _process.MasterEntity.OutputName(), sets);
-            foreach (var r in _process.Results) {
+            foreach (var r in results) {
                 AddParameter(command, r.Key, row[r.Key]);
             }
             AddParameter(command, "TflKey", row["TflKey"]);

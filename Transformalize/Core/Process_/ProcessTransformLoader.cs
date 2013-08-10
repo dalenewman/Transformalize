@@ -5,30 +5,27 @@ using Transformalize.Core.Transform_;
 
 namespace Transformalize.Core.Process_
 {
-    public class ProcessTransformReader : ITransformReader
+    public class ProcessTransformLoader : ITransformLoader
     {
         private readonly Process _process;
         private readonly TransformElementCollection _transforms;
 
-        public ProcessTransformReader(Process process, TransformElementCollection transforms)
+        public ProcessTransformLoader(ref Process process, TransformElementCollection transforms)
         {
             _process = process;
             _transforms = transforms;
         }
 
-        public AbstractTransform[] Read()
+        public void Load()
         {
-
-            var result = new List<AbstractTransform>();
 
             foreach (TransformConfigurationElement t in _transforms)
             {
                 var parametersReader = new ProcessTransformParametersReader(_process, t);
-                var fieldsReader = new FieldsReader(_process, null, t.Results);
-                result.Add(new TransformFactory(_process, t, parametersReader, fieldsReader).Create());
+                var fieldsReader = new FieldsReader(null, t.Results);
+                _process.Transforms.Add(new TransformFactory(t, parametersReader, fieldsReader).Create());
             }
 
-            return result.ToArray();
         }
     }
 }

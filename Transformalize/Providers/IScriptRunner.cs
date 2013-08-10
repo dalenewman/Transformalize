@@ -1,4 +1,4 @@
-/*
+﻿/*
 Transformalize - Replicate, Transform, and Denormalize Your Data...
 Copyright (C) 2013 Dale Newman
 
@@ -16,15 +16,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
-using Transformalize.Core.Field_;
-
 namespace Transformalize.Providers
 {
-    public interface IDataTypeService {
-        string GetDataType(Field field);
-        Dictionary<string, string> Types { get; }
-        Dictionary<string, string> TypesReverse { get; } 
-
+    public interface IScriptRunner
+    {
+        IScriptReponse Execute(string script);
     }
 }

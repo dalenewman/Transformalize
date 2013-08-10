@@ -11,17 +11,15 @@ namespace Transformalize.Core.Transform_
     public class TransformFactory
     {
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
-        private readonly Process _process;
         private readonly TransformConfigurationElement _transform;
         private readonly IFields _results;
         private readonly IParameters _parameters;
 
-        public TransformFactory(Process process, TransformConfigurationElement transform, ITransformParametersReader transformParametersReader, IFieldsReader resultsReader)
+        public TransformFactory(TransformConfigurationElement transform, ITransformParametersReader transformParametersReader, IFieldsReader resultsReader)
         {
-            _process = process;
             _transform = transform;
-            _parameters = transformParametersReader.Read() ?? new Parameters();
-            _results = resultsReader.Read() ?? new Fields();
+            _parameters = transformParametersReader.Read();
+            _results = resultsReader.Read();
         }
 
         public AbstractTransform Create(string fieldName = "")
@@ -60,12 +58,12 @@ namespace Transformalize.Core.Transform_
                     return new RightTransform(_transform.Length);
 
                 case "map":
-                    var equals = _process.MapEquals[_transform.Map];
-                    var startsWith = _process.MapStartsWith.ContainsKey(_transform.Map)
-                                         ? _process.MapStartsWith[_transform.Map]
+                    var equals = Process.MapEquals[_transform.Map];
+                    var startsWith = Process.MapStartsWith.ContainsKey(_transform.Map)
+                                         ? Process.MapStartsWith[_transform.Map]
                                          : new Dictionary<string, object>();
-                    var endsWith = _process.MapEndsWith.ContainsKey(_transform.Map)
-                                       ? _process.MapEndsWith[_transform.Map]
+                    var endsWith = Process.MapEndsWith.ContainsKey(_transform.Map)
+                                       ? Process.MapEndsWith[_transform.Map]
                                        : new Dictionary<string, object>();
                     return new MapTransform(new[] {@equals, startsWith, endsWith});
 
@@ -73,7 +71,7 @@ namespace Transformalize.Core.Transform_
                     var scripts = new Dictionary<string, Script>();
                     foreach (TransformScriptConfigurationElement script in _transform.Scripts)
                     {
-                        scripts[script.Name] = _process.Scripts[script.Name];
+                        scripts[script.Name] = Process.Scripts[script.Name];
                     }
 
                     return
@@ -86,7 +84,7 @@ namespace Transformalize.Core.Transform_
                     var templates = new Dictionary<string, Template>();
                     foreach (TransformTemplateConfigurationElement template in _transform.Templates)
                     {
-                        templates[template.Name] = _process.Templates[template.Name];
+                        templates[template.Name] = Process.Templates[template.Name];
                     }
 
                     return
@@ -107,10 +105,10 @@ namespace Transformalize.Core.Transform_
                     return new DateFormatTransform(_transform.Format, _parameters, _results);
 
                 case "toupper":
-                    return new ToUpperTransform();
+                    return new ToUpperTransform(_parameters);
 
                 case "tolower":
-                    return new ToLowerTransform();
+                    return new ToLowerTransform(_parameters);
 
                 case "concat":
                     return new ConcatTransform(_parameters, _results);

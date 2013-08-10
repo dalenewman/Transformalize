@@ -40,7 +40,7 @@ namespace Transformalize.Operations {
             NotifyBatchSize = 10000;
             BatchSize = _entity.OutputConnection.BatchSize;
 
-            var fields = new FieldSqlWriter(_entity.All, _entity.Results).ExpandXml().Output().AddBatchId(false).Context();
+            var fields = new FieldSqlWriter(_entity.All, _entity.Transforms.Results()).ExpandXml().Output().AddBatchId(false).Context();
             foreach (var pair in fields) {
                 Schema[pair.Key] = pair.Value.SystemType;
             }

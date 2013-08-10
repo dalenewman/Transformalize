@@ -17,12 +17,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Text;
+using Transformalize.Core.Fields_;
+using Transformalize.Core.Parameters_;
 using Transformalize.Extensions;
+using Transformalize.Libs.Rhino.Etl.Core;
 
 namespace Transformalize.Core.Transform_ {
     public class ToUpperTransform : AbstractTransform {
         protected override string Name {
             get { return "ToUpper Transform"; }
+        }
+
+        public ToUpperTransform(IParameters parameters)
+            : base(parameters, new Fields()) {
         }
 
         public override void Transform(ref StringBuilder sb) {
@@ -31,6 +38,14 @@ namespace Transformalize.Core.Transform_ {
 
         public override void Transform(ref object value) {
             value = value.ToString().ToUpper();
+        }
+
+        public override void Transform(ref Row row)
+        {
+            foreach (var parameter in Parameters)
+            {
+                row[parameter.Key] = row[parameter.Key].ToString().ToUpper();
+            }
         }
     }
 }

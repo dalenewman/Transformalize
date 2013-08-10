@@ -42,7 +42,7 @@ namespace Transformalize.Runner
                         masterProcess.Execute();
                     }
 
-                    if (process.Transforms.Length > 0)
+                    if (process.Transforms.Count > 0)
                     {
                         using (var transformProcess = new TransformProcess(process))
                         {

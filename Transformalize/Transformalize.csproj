@@ -43,6 +43,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
+    <Optimize>true</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
@@ -133,7 +134,7 @@
     <Compile Include="Core\Common.cs" />
     <Compile Include="Core\ConfigurationMapReader.cs" />
     <Compile Include="Core\ConversionFactory.cs" />
-    <Compile Include="Core\Process_\ProcessTransformReader.cs" />
+    <Compile Include="Core\Process_\ProcessTransformLoader.cs" />
     <Compile Include="Core\Entity_\Entity.cs" />
     <Compile Include="Core\Entity_\EntityCounter.cs" />
     <Compile Include="Core\Entity_\EntityDropper.cs" />
@@ -151,7 +152,7 @@
     <Compile Include="Core\Fields_\FieldsReader.cs" />
     <Compile Include="Core\Fields_\IFields.cs" />
     <Compile Include="Core\Fields_\IFieldsReader.cs" />
-    <Compile Include="Core\Entity_\EntityTransformReader.cs" />
+    <Compile Include="Core\Entity_\EntityTransformLoader.cs" />
     <Compile Include="Core\Field_\Field.cs" />
     <Compile Include="Core\Field_\FieldReader.cs" />
     <Compile Include="Core\Field_\FieldSqlWriter.cs" />
@@ -189,6 +190,7 @@
     <Compile Include="Core\Transform_\FormatTransform.cs" />
     <Compile Include="Core\Transform_\InsertTransform.cs" />
     <Compile Include="Core\Transform_\ITransformParametersReader.cs" />
+    <Compile Include="Core\Transform_\ITransformLoader.cs" />
     <Compile Include="Core\Transform_\ITransformReader.cs" />
     <Compile Include="Core\Transform_\JavascriptTransform.cs" />
     <Compile Include="Core\Transform_\JoinTransform.cs" />
@@ -207,12 +209,17 @@
     <Compile Include="Core\Transform_\ToLowerTransform.cs" />
     <Compile Include="Core\Transform_\ToUpperTransform.cs" />
     <Compile Include="Core\Transform_\TransformFactory.cs" />
+    <Compile Include="Core\Transform_\Transforms.cs" />
     <Compile Include="Core\Transform_\TrimEndTransform.cs" />
     <Compile Include="Core\Transform_\TrimStartTransform.cs" />
     <Compile Include="Core\Transform_\TrimTransform.cs" />
     <Compile Include="Core\Web.cs" />
+    <Compile Include="Providers\AnalysisServices\AnalysisServicesScriptRunner.cs" />
+    <Compile Include="Providers\AnalysisServices\AnalysisServicesConnectionChecker.cs" />
     <Compile Include="Providers\AnalysisServices\AnalysisServicesConnection.cs" />
     <Compile Include="Providers\ConnectionType.cs" />
+    <Compile Include="Providers\IScriptReponse.cs" />
+    <Compile Include="Providers\IScriptRunner.cs" />
     <Compile Include="Providers\ICompatibilityReader.cs" />
     <Compile Include="Providers\IConnection.cs" />
     <Compile Include="Providers\IConnectionChecker.cs" />
@@ -220,6 +227,8 @@
     <Compile Include="Providers\ITableExists.cs" />
     <Compile Include="Providers\ITflWriter.cs" />
     <Compile Include="Providers\IViewWriter.cs" />
+    <Compile Include="Providers\ScriptResponse.cs" />
+    <Compile Include="Providers\SqlServer\SqlServerScriptRunner.cs" />
     <Compile Include="Providers\SqlServer\SqlServerCompatibilityReader.cs" />
     <Compile Include="Providers\SqlServer\SqlServerConnection.cs" />
     <Compile Include="Providers\SqlServer\SqlServerConnectionChecker.cs" />
@@ -710,10 +719,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
-    if not exist "$(TargetDir)x86" md "$(TargetDir)x86"
-    xcopy /s /y "$(SolutionDir)packages\Noesis.Javascript.0.7.1.0\NativeBinaries\net40\x86\*.*" "$(TargetDir)x86"
-    if not exist "$(TargetDir)amd64" md "$(TargetDir)amd64"
-    xcopy /s /y "$(SolutionDir)packages\Noesis.Javascript.0.7.1.0\NativeBinaries\net40\amd64\*.*" "$(TargetDir)amd64"</PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

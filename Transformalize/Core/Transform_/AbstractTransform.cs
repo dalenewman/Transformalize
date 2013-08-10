@@ -23,12 +23,15 @@ using Transformalize.Core.Field_;
 using Transformalize.Core.Fields_;
 using Transformalize.Core.Parameter_;
 using Transformalize.Core.Parameters_;
+using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Core;
 
 namespace Transformalize.Core.Transform_ {
 
-    public abstract class AbstractTransform : WithLoggingMixin, IDisposable {
+    public abstract class AbstractTransform : IDisposable
+    {
 
+        private readonly Logger _log = LogManager.GetCurrentClassLogger();
         protected abstract string Name { get; }
         public IParameters Parameters { get; set; }
         public IFields Results { get; set; }
@@ -67,13 +70,13 @@ namespace Transformalize.Core.Transform_ {
         }
 
         public virtual void Transform(ref StringBuilder sb) {
-            Error("Field level transformation is not implemented for {0} transform!", Name);
+            _log.Error("Field level transformation is not implemented for {0} transform!", Name);
         }
         public virtual void Transform(ref Object value) {
-            Error("Field level transformation is not implemented for {0} transform!", Name);
+            _log.Error("Field level transformation is not implemented for {0} transform!", Name);
         }
         public virtual void Transform(ref Row row) {
-            Error("Entity or Process level transformation is not implemented for {0} transform!", Name);
+            _log.Error("Entity or Process level transformation is not implemented for {0} transform!", Name);
         }
 
         public virtual void Dispose() {

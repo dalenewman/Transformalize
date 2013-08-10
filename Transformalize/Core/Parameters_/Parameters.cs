@@ -55,7 +55,7 @@ namespace Transformalize.Core.Parameters_
             var parameter = new Parameter()
             {
                 Name = name,
-                Value = _conversionFactory.Convert(value, type)
+                Value = value == null ? null : _conversionFactory.Convert(value, type)
             };
             _items.Add(field, parameter);
             RecordFirst(field, parameter);
@@ -92,6 +92,14 @@ namespace Transformalize.Core.Parameters_
             if (_first.Key == null)
             {
                 _first = new KeyValuePair<string, IParameter>(field, parameter);
+            }
+        }
+
+        public void AddRange(IParameters parameters)
+        {
+            foreach (var parameter in parameters)
+            {
+                Add(parameter.Key, parameter.Value);
             }
         }
     }

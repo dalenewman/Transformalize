@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using Transformalize.Core.Process_;
 using Transformalize.Libs.Rhino.Etl.Core.Infrastructure;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
 using Transformalize.Libs.Rhino.Etl.Core.Pipelines;
@@ -14,8 +15,8 @@ namespace Transformalize.Libs.Rhino.Etl.Core {
         private readonly string _name;
         private IPipelineExecuter _pipelineExecuter = new ThreadPoolPipelineExecuter();
 
-        protected EtlProcess(string name = "") {
-            _name = name;
+        protected EtlProcess() {
+            _name = Process.Name;
         }
 
         /// <summary>

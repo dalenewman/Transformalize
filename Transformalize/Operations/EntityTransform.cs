@@ -24,7 +24,7 @@ using Transformalize.Libs.Rhino.Etl.Core.Operations;
 
 namespace Transformalize.Operations {
     public class EntityTransform : AbstractOperation {
-        private readonly AbstractTransform[] _transforms;
+        private readonly Transforms _transforms;
 
         public EntityTransform(Entity entity) {
             _transforms = entity.Transforms;
@@ -33,7 +33,7 @@ namespace Transformalize.Operations {
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
                 var r = row;
-                foreach (var t in _transforms) {
+                foreach (AbstractTransform t in _transforms) {
                     t.Transform(ref r);
                 }
                 yield return r;

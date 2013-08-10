@@ -18,18 +18,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Transformalize.Configuration;
 using Transformalize.Core.Field_;
+using Transformalize.Core.Process_;
 
 namespace Transformalize.Core
 {
     public static class Common
     {
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
+        private const string APPLICATION_FOLDER = @"\Tfl\";
+        private static readonly char[] Slash = new[] { '\\' };
 
         public static Func<KeyValuePair<string, Field>, bool> FieldFinder(ParameterConfigurationElement p)
         {
             return kv => kv.Value.Alias.Equals(p.Field, IC) || kv.Value.Name.Equals(p.Field, IC);
         }
+
+        public static string GetTemporaryFolder()
+        {
+            var folder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData).TrimEnd(Slash) + APPLICATION_FOLDER + Process.Name;
+
+            if (!Directory.Exists(folder))
+                Directory.CreateDirectory(folder);
+
+            return folder;
+        }
+
     }
 }

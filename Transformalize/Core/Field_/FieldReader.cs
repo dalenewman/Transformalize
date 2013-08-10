@@ -6,12 +6,10 @@ namespace Transformalize.Core.Field_
 {
     public class FieldReader : IFieldReader
     {
-        private readonly Process _process;
         private readonly Entity _entity;
 
-        public FieldReader(Process process, Entity entity)
+        public FieldReader(Entity entity)
         {
-            _process = process;
             _entity = entity ?? new Entity();
         }
 
@@ -19,7 +17,7 @@ namespace Transformalize.Core.Field_
         {
             var f = new Field(field.Type, field.Length, fieldType, field.Output, field.Default)
                         {
-                            Process = _process.Name,
+                            Process = Process.Name,
                             Entity = _entity.Name,
                             Schema = _entity.Schema,
                             Name = field.Name,
@@ -31,7 +29,7 @@ namespace Transformalize.Core.Field_
                             VariableLength = field.VariableLength,
                             Aggregate = field.Aggregate.ToLower(),
                         };
-            f.Transforms = new FieldTransformReader(_process, f, field.Transforms).Read();
+            f.Transforms = new FieldTransformReader(f, field.Transforms).Read();
             return f;
         }
     }

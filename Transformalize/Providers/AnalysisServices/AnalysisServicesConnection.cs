@@ -1,44 +1,68 @@
 using System;
-using Microsoft.AnalysisServices;
-using Transformalize.Core;
-using ConnectionType = Transformalize.Providers.ConnectionType;
+using Transformalize.Libs.NLog;
 
 namespace Transformalize.Providers.AnalysisServices
 {
     public class AnalysisServicesConnection : IConnection
     {
-        public AnalysisServicesConnection(string connectionString)
-        {
-            ConnectionString = connectionString;
-            Database = string.Empty; //
-            CompatibilityLevel = 100;
-            Server = string.Empty; //
-        }
-
-        public int BatchSize { get; set; }
-        public string ConnectionString { get; private set; }
-
-        public bool IsReady()
-        {
-            bool isReady;
-            var server = new Server();
-            try
-            {
-                server.Connect(ConnectionString);
-                isReady = server.Connected;
-                server.Disconnect();
-
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-            return isReady;
-        }
+        private const StringSplitOptions RE = StringSplitOptions.RemoveEmptyEntries;
+        private readonly IConnectionChecker _connectionChecker;
+        private readonly char[] _semiColen = new[] { ';' };
+        private readonly char[] _equal = new[] { '=' };
+        private readonly Logger _log = LogManager.GetCurrentClassLogger();
 
         public string Database { get; private set; }
         public string Server { get; private set; }
         public int CompatibilityLevel { get; set; }
         public ConnectionType ConnectionType { get; set; }
+        public int BatchSize { get; set; }
+        public string ConnectionString { get; private set; }
+        public string Process { get; set; }
+
+
+        public AnalysisServicesConnection(string connectionString)
+        {
+            _connectionChecker = new AnalysisServicesConnectionChecker();
+            ConnectionString = connectionString;
+            CompatibilityLevel = 100;
+            ConnectionType = ConnectionType.AnalysisServices;
+            ParseConnectionString();
+        }
+
+        public bool IsReady()
+        {
+            return _connectionChecker.Check(ConnectionString);
+        }
+
+        private void ParseConnectionString()
+        {
+            foreach (var pair in ConnectionString.Split(_semiColen, RE))
+            {
+                try
+                {
+                    var attribute = pair.Split(_equal, RE)[0].Trim().ToLower();
+                    var value = pair.Split(_equal, RE)[1].Trim();
+
+                    if (attribute == "data source")
+                    {
+                        Server = value;
+                    }
+
+                    if (attribute == "catalog")
+                    {
+                        Database = value;
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    Server = string.Empty;
+                    Database = string.Empty;
+                    _log.Warn("{0} | Could not parse Analysis Services connection string: {1}.", Process, ConnectionString);
+                    _log.Debug(e.Message);
+                }
+            }
+        }
+
     }
 }

@@ -21,6 +21,7 @@ using System.Text;
 using Transformalize.Core.Fields_;
 using Transformalize.Core.Parameters_;
 using Transformalize.Core.Template_;
+using Transformalize.Libs.NLog;
 using Transformalize.Libs.RazorEngine.Core;
 using Transformalize.Libs.RazorEngine.Core.Templating;
 using Transformalize.Libs.Rhino.Etl.Core;
@@ -29,6 +30,7 @@ namespace Transformalize.Core.Transform_
 {
     public class TemplateTransform : AbstractTransform
     {
+        private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly string _templateModelType;
         private readonly string _key;
         private Dictionary<string, object> _dictionaryContext = new Dictionary<string, object>();
@@ -48,7 +50,7 @@ namespace Transformalize.Core.Transform_
             var content = _builder.ToString();
 
             Razor.Compile(content, typeof(object), key);
-            Debug("Compiled template with hashcode {0} and key {1}.", content.GetHashCode(), _key);
+            _log.Debug("Compiled template with hashcode {0} and key {1}.", content.GetHashCode(), _key);
         }
 
         public TemplateTransform(string template, string templateModelType, IParameters parameters, IFields results, IEnumerable<KeyValuePair<string, Template>> templates)
@@ -65,7 +67,7 @@ namespace Transformalize.Core.Transform_
             var type = templateModelType == "dynamic" ? typeof (DynamicViewBag) : typeof (Dictionary<string, object>);
 
             Razor.Compile(content, type, _key);
-            Debug("Compiled {0} template with hashcode {1} and key {2}.", templateModelType, template.GetHashCode(), _key);
+            _log.Debug("Compiled {0} template with hashcode {1} and key {2}.", templateModelType, template.GetHashCode(), _key);
 
         }
 

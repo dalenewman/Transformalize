@@ -51,7 +51,7 @@ namespace Transformalize.Providers.SqlServer {
                 var createCommand = new SqlCommand(CreateSql(), cn);
                 createCommand.ExecuteNonQuery();
 
-                Debug("{0} | Created Output {1}", _process.Name, _process.View);
+                Debug("{0} | Created Output {1}", Process.Name, _process.View);
             }
         }
 
@@ -72,13 +72,13 @@ namespace Transformalize.Providers.SqlServer {
             builder.AppendFormat("SELECT\r\n    [{0}].[TflKey],\r\n    [{0}].[TflBatchId],\r\n    b.[TflUpdate],\r\n", _masterEntity.OutputName());
             foreach (var entity in _process.Entities) {
                 if (entity.IsMaster()) {
-                    builder.AppendLine(string.Concat(new FieldSqlWriter(entity.PrimaryKey, entity.Fields, _process.Results, entity.Results).ExpandXml().Output().Alias().Prepend(string.Concat("    [", entity.OutputName(), "].")).Write(",\r\n"), ","));
+                    builder.AppendLine(string.Concat(new FieldSqlWriter(entity.PrimaryKey, entity.Fields, _process.Transforms.Results(), entity.Transforms.Results()).ExpandXml().Output().Alias().Prepend(string.Concat("    [", entity.OutputName(), "].")).Write(",\r\n"), ","));
                 }
                 else {
                     if (entity.Fields.Any(f => f.Value.FieldType.HasFlag(FieldType.ForeignKey))) {
                         builder.AppendLine(string.Concat(new FieldSqlWriter(entity.Fields).ExpandXml().Output().FieldType(FieldType.ForeignKey).Alias().Prepend(string.Concat("    [", _masterEntity.OutputName(), "].")).Write(",\r\n"), ","));
                     }
-                    builder.AppendLine(string.Concat(new FieldSqlWriter(entity.Fields, entity.Results).ExpandXml().Output().FieldType(FieldType.Field, FieldType.Version, FieldType.Xml).Alias().Prepend(string.Concat("    [", entity.OutputName(), "].")).Write(",\r\n"), ","));
+                    builder.AppendLine(string.Concat(new FieldSqlWriter(entity.Fields, entity.Transforms.Results()).ExpandXml().Output().FieldType(FieldType.Field, FieldType.Version, FieldType.Xml).Alias().Prepend(string.Concat("    [", entity.OutputName(), "].")).Write(",\r\n"), ","));
                 }
             }
             builder.TrimEnd("\r\n,");

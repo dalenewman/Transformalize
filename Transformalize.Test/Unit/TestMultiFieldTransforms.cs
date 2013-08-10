@@ -20,7 +20,6 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using Moq;
 using Transformalize.Core;
-using Transformalize.Core.Entity_;
 using Transformalize.Core.Field_;
 using Transformalize.Core.Fields_;
 using Transformalize.Core.Parameter_;
@@ -43,7 +42,7 @@ namespace Transformalize.Test.Unit {
             var results = new Fields(new Dictionary<string, Field> { { "FullName", new Field(FieldType.Field) } });
 
             var process = new Process {
-                Transforms = new AbstractTransform[] {
+                Transforms = new Transforms() {
                     new JavascriptTransform("FirstName + ' ' + LastName",
                         parameters,
                         results,
@@ -70,7 +69,7 @@ namespace Transformalize.Test.Unit {
             var results = new Fields(new Dictionary<string, Field> { { "z", new Field(FieldType.Field) } });
 
             var process = new Process {
-                Transforms = new AbstractTransform[] {
+                Transforms = new Transforms() {
                     new JavascriptTransform("x * y",
                         parameters,
                         results,
@@ -97,7 +96,7 @@ namespace Transformalize.Test.Unit {
             var results = new Fields(new Dictionary<string, Field> { { "z", new Field(FieldType.Field) } });
 
             var process = new Process {
-                Transforms = new AbstractTransform[] {
+                Transforms = new Transforms() {
                     new FormatTransform("{0} {1}",
                         parameters,
                         results
@@ -124,7 +123,7 @@ namespace Transformalize.Test.Unit {
             var templates = new Dictionary<string, Template>();
 
             var process = new Process {
-                Transforms = new AbstractTransform[] {
+                Transforms = new Transforms() {
                     new TemplateTransform("@{ var fullName = Model[\"FirstName\"] + \" \" + Model[\"LastName\"];}@fullName", "dictionary",
                         parameters,
                         results,
@@ -154,7 +153,7 @@ namespace Transformalize.Test.Unit {
 
             var process = new Process
             {
-                Transforms = new AbstractTransform[] {
+                Transforms = new Transforms() {
                     new TemplateTransform("@{ var fullName = Model.FirstName + \" \" + Model.LastName;}@fullName", "dynamic",
                         parameters,
                         results,
@@ -182,7 +181,7 @@ namespace Transformalize.Test.Unit {
             var results = new Fields(new Dictionary<string, Field> { { "FullName", new Field(FieldType.Field) } });
 
             var process = new Process {
-                Transforms = new AbstractTransform[] {
+                Transforms = new Transforms() {
                     new JoinTransform(" ",
                         parameters,
                         results

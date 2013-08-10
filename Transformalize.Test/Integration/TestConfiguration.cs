@@ -58,7 +58,7 @@ namespace Transformalize.Test.Integration {
 
             var process = new ProcessReader("Test").Read();
 
-            Assert.AreEqual("Test", process.Name);
+            Assert.AreEqual("Test", Process.Name);
             Assert.AreEqual("Data Source=localhost;Initial Catalog=TestInput;Integrated Security=True", process.Connections["input"].ConnectionString);
             Assert.AreEqual("Data Source=localhost;Initial Catalog=TestOutput;Integrated Security=True", process.Connections["output"].ConnectionString);
             Assert.AreEqual("Data Source=localhost;Initial Catalog=TestInput;Integrated Security=True", process.Entities.First().InputConnection.ConnectionString);
@@ -109,7 +109,7 @@ namespace Transformalize.Test.Integration {
 
             var expected = new Parameters() {
                 {"LastName", "LastName", null, "System.Object"},
-                {"ProductName", "ProductName", "None", "System.Object"}
+                {"ProductName", "ProductName", null, "System.Object"}
             };
 
             var actual = process.Parameters;

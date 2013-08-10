@@ -29,6 +29,7 @@ namespace Transformalize.Core.Fields_
         IEnumerator<KeyValuePair<string, Field>> GetEnumerator();
         Field this[string key] { get; set; }
         void Add(string key, Field field);
+        void AddRange(IFields fields);
         KeyValuePair<string, Field> First();
         KeyValuePair<string, Field> First(Func<KeyValuePair<string, Field>, bool> predicate);
         bool Any();

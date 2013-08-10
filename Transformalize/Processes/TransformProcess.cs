@@ -28,7 +28,7 @@ namespace Transformalize.Processes {
 
         private readonly Process _process;
 
-        public TransformProcess(Process process) : base(process.Name) {
+        public TransformProcess(Process process) {
             _process = process;
         }
 

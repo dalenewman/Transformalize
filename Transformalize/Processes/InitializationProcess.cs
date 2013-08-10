@@ -24,16 +24,18 @@ using Transformalize.Operations;
 using Transformalize.Providers;
 using Transformalize.Providers.SqlServer;
 
-namespace Transformalize.Processes {
+namespace Transformalize.Processes
+{
 
-    public class InitializationProcess : EtlProcess {
+    public class InitializationProcess : EtlProcess
+    {
 
         private readonly Process _process;
         private readonly ITflWriter _tflWriter;
         private readonly IViewWriter _viewWriter;
 
         public InitializationProcess(Process process, ITflWriter tflWriter = null, IViewWriter viewWriter = null)
-            : base(process.Name) {
+        {
             _process = process;
             _tflWriter = tflWriter ?? new SqlServerTflWriter(ref process);
             _viewWriter = viewWriter ?? new SqlServerViewWriter(ref process);
@@ -44,17 +46,21 @@ namespace Transformalize.Processes {
 
         protected override void Initialize()
         {
-           foreach (var entity in _process.Entities) {
+            foreach (var entity in _process.Entities)
+            {
                 Register(new EntityDrop(entity));
                 Register(new EntityCreate(entity, _process));
             }
         }
 
-        protected override void PostProcessing() {
+        protected override void PostProcessing()
+        {
 
             var errors = GetAllErrors().ToArray();
-            if (errors.Any()) {
-                foreach (var error in errors) {
+            if (errors.Any())
+            {
+                foreach (var error in errors)
+                {
                     Error(error.InnerException, "Message: {0}\r\nStackTrace:{1}\r\n", error.Message, error.StackTrace);
                 }
                 throw new TransformalizeException("Initialization Error!");
