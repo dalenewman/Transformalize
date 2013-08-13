@@ -184,7 +184,6 @@
     <Compile Include="Core\TransformalizeException.cs" />
     <Compile Include="Core\Transform_\AbstractTransform.cs" />
     <Compile Include="Core\Transform_\ConcatTransform.cs" />
-    <Compile Include="Core\Transform_\CopyTransform.cs" />
     <Compile Include="Core\Transform_\DateFormatTransform.cs" />
     <Compile Include="Core\Transform_\EmptyTransform.cs" />
     <Compile Include="Core\Transform_\FormatTransform.cs" />

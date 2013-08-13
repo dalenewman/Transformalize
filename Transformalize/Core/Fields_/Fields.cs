@@ -20,7 +20,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Transformalize.Core.Field_;
+using Transformalize.Core.Transform_;
 
 namespace Transformalize.Core.Fields_
 {
@@ -32,7 +34,7 @@ namespace Transformalize.Core.Fields_
         public int Count { get { return _items.Count; } }
         public IEnumerable<string> Keys { get { return _items.Keys; } }
 
-        public Fields() {}
+        public Fields() { }
 
         public Fields(IEnumerable<Field> fields)
         {
@@ -52,7 +54,7 @@ namespace Transformalize.Core.Fields_
         public IEnumerable<Field> ToEnumerable()
         {
             return _items.Select(kv => kv.Value);
-        } 
+        }
 
         public Field this[string key]
         {
@@ -128,7 +130,7 @@ namespace Transformalize.Core.Fields_
         public KeyValuePair<string, Field> First()
         {
             return _items.First();
-        } 
+        }
 
         public KeyValuePair<string, Field> First(Func<KeyValuePair<string, Field>, bool> predicate)
         {
@@ -138,7 +140,7 @@ namespace Transformalize.Core.Fields_
         public KeyValuePair<string, Field> Last()
         {
             return _items.Last();
-        } 
+        }
 
         public KeyValuePair<string, Field> Last(Func<KeyValuePair<string, Field>, bool> predicate)
         {
@@ -154,5 +156,6 @@ namespace Transformalize.Core.Fields_
         {
             return GetEnumerator();
         }
+
     }
 }

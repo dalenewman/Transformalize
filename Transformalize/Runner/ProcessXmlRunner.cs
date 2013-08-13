@@ -78,7 +78,7 @@ namespace Transformalize.Runner
             }
             catch (Exception e)
             {
-                Log.Error("Sorry.  I couldn't parse the file {0}.  Make sure it is valid XML and try again. {1}", xmlFileInfo.Name, e.Message);
+                 Log.Error("Sorry.  I couldn't parse the file {0}.  Make sure it is valid XML and try again. {1}", xmlFileInfo.Name, e.Message);
                 return;
             }
 

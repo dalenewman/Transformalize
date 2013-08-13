@@ -58,7 +58,7 @@ namespace Transformalize.Core.Process_ {
         {
             Name = name;
             Entities = new List<Entity>();
-            Options = new Options(name);
+            Options = new Options();
             Transforms = new Transforms();
         }
 

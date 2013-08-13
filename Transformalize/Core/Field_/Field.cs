@@ -20,12 +20,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Transformalize.Core.Parameter_;
 using Transformalize.Core.Transform_;
 using Transformalize.Providers.SqlServer;
 
-namespace Transformalize.Core.Field_ {
+namespace Transformalize.Core.Field_
+{
 
-    public class Field {
+    public class Field
+    {
 
         private FieldType _fieldType;
         private string _name;
@@ -62,16 +65,22 @@ namespace Transformalize.Core.Field_ {
         public object Default;
         public bool Auto { get; set; }
         public string Aggregate { get; set; }
-        
-        public string SqlDataType {
+        public Parameter AsParameter { get; set; }
+        public bool HasTransforms { get; set; }
+
+        public string SqlDataType
+        {
             get { return _sqlDataType ?? (_sqlDataType = new SqlServerDataTypeService().GetDataType(this)); }
         }
 
-        public bool Input {
+        public bool Input
+        {
             get { return _input; }
-            set {
+            set
+            {
                 _input = value;
-                if (!_input && Output) {
+                if (!_input && Output)
+                {
                     Output = false;
                 }
             }
@@ -80,11 +89,14 @@ namespace Transformalize.Core.Field_ {
         /// <summary>
         /// FieldType can affect Output
         /// </summary>
-        public FieldType FieldType {
+        public FieldType FieldType
+        {
             get { return _fieldType; }
-            set {
+            set
+            {
                 _fieldType = value;
-                if (MustBeOutput()) {
+                if (MustBeOutput())
+                {
                     Output = true;
                 }
             }
@@ -93,27 +105,33 @@ namespace Transformalize.Core.Field_ {
         /// <summary>
         /// Alias follows name if no alias provided
         /// </summary>
-        public string Name {
+        public string Name
+        {
             get { return _name; }
-            set {
+            set
+            {
                 _name = value;
-                if (string.IsNullOrEmpty(Alias)) {
+                if (string.IsNullOrEmpty(Alias))
+                {
                     Alias = Name;
                 }
             }
         }
 
-        public bool MustBeOutput() {
+        public bool MustBeOutput()
+        {
             return FieldType.HasFlag(FieldType.MasterKey) || FieldType.HasFlag(FieldType.ForeignKey) || FieldType.HasFlag(FieldType.PrimaryKey);
         }
 
         public Field(FieldType fieldType) : this("System.String", "64", fieldType, true, null) { }
 
-        public Field(string typeName, string length, FieldType fieldType, bool output, object @default) {
+        public Field(string typeName, string length, FieldType fieldType, bool output, object @default)
+        {
             Initialize(typeName, length, fieldType, output, @default);
         }
 
-        private void Initialize(string typeName, string length, FieldType fieldType, bool output, object @default) {
+        private void Initialize(string typeName, string length, FieldType fieldType, bool output, object @default)
+        {
             Input = true;
             Unicode = true;
             VariableLength = true;
@@ -129,18 +147,38 @@ namespace Transformalize.Core.Field_ {
             InnerXml = new Dictionary<string, Field>();
             Default = new ConversionFactory().Convert(@default ?? string.Empty, SimpleType);
 
-            if (SimpleType.Equals("rowversion")) {
+            if (SimpleType.Equals("rowversion"))
+            {
                 Output = false;
             }
+
         }
 
-        public FieldSqlWriter SqlWriter {
+        public FieldSqlWriter SqlWriter
+        {
             get { return _sqlWriter ?? (_sqlWriter = new FieldSqlWriter(this)); }
             set { _sqlWriter = value; }
         }
 
-        public string AsJoin(string left, string right) {
+        public string AsJoin(string left, string right)
+        {
             return string.Format("{0}.[{1}] = {2}.[{1}]", left, Name, right);
+        }
+
+        public void Transform()
+        {
+            foreach (AbstractTransform t in Transforms)
+            {
+                t.Transform(ref StringBuilder);
+            }
+        }
+
+        public void Transform(ref object value)
+        {
+            foreach (AbstractTransform t in Transforms)
+            {
+                t.Transform(ref value);
+            }
         }
 
     }

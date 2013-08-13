@@ -1,7 +1,4 @@
-using System.Linq;
 using Transformalize.Configuration;
-using Transformalize.Core.Field_;
-using Transformalize.Core.Fields_;
 using Transformalize.Core.Parameters_;
 using Transformalize.Core.Transform_;
 using Transformalize.Libs.NLog;
@@ -13,6 +10,7 @@ namespace Transformalize.Core.Process_
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly Process _process;
         private readonly TransformConfigurationElement _transform;
+        private readonly char[] _dotArray = new[] { '.' };
 
         public ProcessTransformParametersReader(Process process, TransformConfigurationElement transform)
         {
@@ -23,6 +21,19 @@ namespace Transformalize.Core.Process_
         public Parameters Read()
         {
             var parameters = new Parameters();
+
+            if (_transform.Parameter != string.Empty)
+            {
+                if (_transform.Parameter.Contains("."))
+                {
+                    var values = _transform.Parameter.Split(_dotArray);
+                    _transform.Parameters.Insert(new ParameterConfigurationElement { Entity = values[0], Field = values[1] });
+                }
+                else
+                {
+                    _transform.Parameters.Insert(new ParameterConfigurationElement { Entity = _transform.Parameter });
+                }
+            }
 
             foreach (ParameterConfigurationElement p in _transform.Parameters)
             {

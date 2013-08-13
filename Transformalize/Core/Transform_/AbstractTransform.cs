@@ -26,7 +26,8 @@ using Transformalize.Core.Parameters_;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Core;
 
-namespace Transformalize.Core.Transform_ {
+namespace Transformalize.Core.Transform_
+{
 
     public abstract class AbstractTransform : IDisposable
     {
@@ -37,15 +38,17 @@ namespace Transformalize.Core.Transform_ {
         public IFields Results { get; set; }
         public Dictionary<string, string> Scripts = new Dictionary<string, string>();
         protected KeyValuePair<string, Field> FirstResult { get; set; }
-        protected KeyValuePair<string, IParameter> FirstParameter { get; set; } 
+        protected KeyValuePair<string, IParameter> FirstParameter { get; set; }
         public bool HasParameters { get; private set; }
         public bool HasResults { get; private set; }
         protected object[] ParameterValues { get; private set; }
-        
+        public bool RequiresRow { get; set; }
+
         /// <summary>
         /// Used for field level transformations, there are no parameters and the result is inline
         /// </summary>
-        protected AbstractTransform() {
+        protected AbstractTransform()
+        {
             HasParameters = false;
             HasResults = false;
         }
@@ -55,31 +58,67 @@ namespace Transformalize.Core.Transform_ {
         /// </summary>
         /// <param name="parameters"></param>
         /// <param name="results"></param>
-        protected AbstractTransform(IParameters parameters, IFields results) {
+        protected AbstractTransform(IParameters parameters, IFields results)
+        {
             Parameters = parameters;
             Results = results;
             HasParameters = parameters != null && parameters.Count > 0;
             HasResults = results != null && results.Count > 0;
-            if (HasResults) {
+            if (HasResults)
+            {
                 FirstResult = Results.First();
             }
-            if (HasParameters) {
+            if (HasParameters)
+            {
                 ParameterValues = new object[Parameters.Count];
                 FirstParameter = Parameters.First();
             }
         }
 
-        public virtual void Transform(ref StringBuilder sb) {
-            _log.Error("Field level transformation is not implemented for {0} transform!", Name);
+        public virtual void Transform(ref StringBuilder sb)
+        {
+            _log.Error("Transform with StringBuilder is not implemented in {0}!", Name);
         }
-        public virtual void Transform(ref Object value) {
-            _log.Error("Field level transformation is not implemented for {0} transform!", Name);
+        public virtual void Transform(ref Object value)
+        {
+            _log.Error("Transform with object value is not implemented in {0}!", Name);
         }
-        public virtual void Transform(ref Row row) {
-            _log.Error("Entity or Process level transformation is not implemented for {0} transform!", Name);
+        public virtual void Transform(ref Row row)
+        {
+            _log.Error("Transform with row is not implemented in {0}!", Name);
         }
 
-        public virtual void Dispose() {
+        public void TransformResult(Field field, ref object value)
+        {
+            if (!field.HasTransforms)
+                return;
+
+            if (field.UseStringBuilder)
+            {
+                field.StringBuilder.Clear();
+                field.StringBuilder.Append(value);
+                field.Transform();
+                value = field.StringBuilder.ToString();
+            }
+            else
+            {
+                field.Transform(ref value);
+            }
+        }
+
+        public void TransformResult(Field field, ref string value)
+        {
+            if (!field.HasTransforms)
+                return;
+
+            field.StringBuilder.Clear();
+            field.StringBuilder.Append(value);
+            field.Transform();
+            value = field.StringBuilder.ToString();
+        }
+
+        public virtual void Dispose()
+        {
             Parameters = null;
             Results = null;
         }

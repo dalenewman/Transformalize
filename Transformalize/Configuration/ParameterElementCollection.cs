@@ -43,5 +43,10 @@ namespace Transformalize.Configuration {
             return string.Concat(parameter.Entity, key).ToLower();
         }
 
+        public void Insert(ParameterConfigurationElement element)
+        {
+            BaseAdd(0,element);
+        }
+
     }
 }

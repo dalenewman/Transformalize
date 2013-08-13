@@ -24,32 +24,21 @@
       <fields>
         <add name="RowVersion" alias="OrdersRowVersion" type="byte[]" output="false"></add>
       </fields>
+      
       <transforms>
-        <add method="dateformat" format="yyyy-MM-dd">
-          <parameters>
-            <add field="OrdersOrderDate"></add>
-          </parameters>
+        <add method="dateformat" format="yyyy-MM-dd" parameter="OrdersOrderDate" result="TimeOrderDate" />
+        <add method="dateformat" format="MM-MMM" parameter="OrdersOrderDate">
           <results>
-            <add name="TimeOrderDate" length="10" default="9999-12-31"></add>
+            <add name="TimeOrderMonth" length="6" default="12-DEC">
+              <transforms>
+                <add method="toUpper"></add>
+              </transforms>
+            </add>
           </results>
         </add>
-        <add method="dateformat" format="MM-MMM">
-          <parameters>
-            <add field="OrdersOrderDate"></add>
-          </parameters>
-          <results>
-            <add name="TimeOrderMonth" length="6" default="12-DEC"></add>
-          </results>
-        </add>
-        <add method="dateformat" format="yyyy">
-          <parameters>
-            <add field="OrdersOrderDate"></add>
-          </parameters>
-          <results>
-            <add name="TimeOrderYear" length="4" default="9999"></add>
-          </results>
-        </add>
-      </transforms>      
+        <add method="dateformat" format="yyyy" parameter="OrdersOrderDate" result="TimeOrderYear" />
+      </transforms>
+
     </add>
     <add name="Customers" version="RowVersion" auto="true">
       <fields>
@@ -64,7 +53,18 @@
             <add method="map" map="Managers"></add>
           </transforms>
         </add>
+        <add name="Photo" alias="EmployeesPhoto" input="false"></add>
+        <add name="PhotoPath" alias="EmployeesPhotoPath" input="false"></add>
       </fields>
+      <transforms>
+        <add method="join" separator=" " result="Employee">
+          <parameters>
+            <add field="EmployeesTitleOfCourtesy"></add>
+            <add field="EmployeesFirstName"></add>
+            <add field="EmployeesLastName"></add>
+          </parameters>
+        </add>
+      </transforms>
     </add>
     <add name="Products" version="RowVersion" auto="true">
       <fields>

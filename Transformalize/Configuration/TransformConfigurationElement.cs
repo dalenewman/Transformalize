@@ -46,11 +46,8 @@ namespace Transformalize.Configuration
         private const string MODEL = "model";
         private const string NAME = "name";
         private const string TEMPLATES = "templates";
-
-        public override bool IsReadOnly()
-        {
-            return false;
-        }
+        private const string PARAMETER = "parameter";
+        private const string RESULT = "result";
 
         [ConfigurationProperty(METHOD, IsRequired = true)]
         public string Method
@@ -232,6 +229,26 @@ namespace Transformalize.Configuration
                 return this[FORMAT] as string;
             }
             set { this[FORMAT] = value; }
+        }
+
+        [ConfigurationProperty(PARAMETER, IsRequired = false, DefaultValue = "")]
+        public string Parameter
+        {
+            get
+            {
+                return this[PARAMETER] as string;
+            }
+            set { this[PARAMETER] = value; }
+        }
+
+        [ConfigurationProperty(RESULT, IsRequired = false, DefaultValue = "")]
+        public string Result
+        {
+            get
+            {
+                return this[RESULT] as string;
+            }
+            set { this[RESULT] = value; }
         }
 
         [ConfigurationProperty(SEPARATOR, IsRequired = false, DefaultValue = ",")]

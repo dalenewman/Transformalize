@@ -22,8 +22,12 @@ namespace Transformalize.Core.Process_
             foreach (TransformConfigurationElement t in _transforms)
             {
                 var parametersReader = new ProcessTransformParametersReader(_process, t);
-                var fieldsReader = new FieldsReader(null, t.Results);
-                _process.Transforms.Add(new TransformFactory(t, parametersReader, fieldsReader).Create());
+
+                if (t.Result != string.Empty)
+                    t.Results.Insert(new FieldConfigurationElement() { Name = t.Result });
+
+                var resultsReader = new FieldsReader(null, t.Results);
+                _process.Transforms.Add(new TransformFactory(t, parametersReader, resultsReader).Create());
             }
 
         }

@@ -36,12 +36,12 @@ namespace Transformalize.Test.Integration {
 
         [Test]
         public void NorthWindInit() {
-            new ProcessNameRunner("NorthWind", new Options { Mode = Modes.Initialize }).Run();
+            new ProcessXmlRunner("NorthWind.xml", new Options { Mode = Modes.Initialize }).Run();
         }
 
         [Test]
         public void NorthWindDefault() {
-            new ProcessNameRunner("NorthWind").Run();
+            new ProcessXmlRunner("NorthWind.xml").Run();
         }
 
         [Test]

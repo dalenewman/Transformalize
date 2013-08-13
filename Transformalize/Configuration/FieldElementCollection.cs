@@ -42,5 +42,9 @@ namespace Transformalize.Configuration
             return ((FieldConfigurationElement)element).Alias.ToLower();
         }
 
+        public void Insert(FieldConfigurationElement element)
+        {
+            BaseAdd(0, element);
+        }
     }
 }

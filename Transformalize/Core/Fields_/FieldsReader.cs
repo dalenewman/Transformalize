@@ -1,7 +1,6 @@
 using Transformalize.Configuration;
 using Transformalize.Core.Entity_;
 using Transformalize.Core.Field_;
-using Transformalize.Core.Process_;
 
 namespace Transformalize.Core.Fields_
 {

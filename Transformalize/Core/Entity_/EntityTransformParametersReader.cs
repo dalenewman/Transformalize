@@ -23,6 +23,11 @@ namespace Transformalize.Core.Entity_
         {
             var parameters = new Parameters();
 
+            if (_transform.Parameter != string.Empty)
+            {
+                _transform.Parameters.Insert(new ParameterConfigurationElement {Entity = _entity.Name, Field = _transform.Parameter});
+            }
+
             foreach (ParameterConfigurationElement p in _transform.Parameters)
             {
                 if (string.IsNullOrEmpty(p.Field) && (string.IsNullOrEmpty(p.Name) || string.IsNullOrEmpty(p.Value)))

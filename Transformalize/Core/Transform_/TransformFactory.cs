@@ -119,9 +119,6 @@ namespace Transformalize.Core.Transform_
                 case "split":
                     return new SplitTransform(_transform.Separator, _parameters, _results);
 
-                case "copy":
-                    return new CopyTransform(_parameters, _results);
-
             }
 
             _log.Warn("{0} | {1} method is undefined.  It will not be used.");

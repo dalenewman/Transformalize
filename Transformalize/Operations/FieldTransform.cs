@@ -24,33 +24,37 @@ using Transformalize.Core.Transform_;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
 
-namespace Transformalize.Operations {
-    public class FieldTransform : AbstractOperation {
+namespace Transformalize.Operations
+{
+    public class FieldTransform : AbstractOperation
+    {
         private readonly IFields _fields;
 
-        public FieldTransform(Entity entity) {
+        public FieldTransform(Entity entity)
+        {
             _fields = new FieldSqlWriter(entity.All).ExpandXml().HasTransform().Input().Context();
             UseTransaction = false;
         }
 
-        public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
-            foreach (var row in rows) {
+        public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
+        {
+            foreach (var row in rows)
+            {
+                foreach (var field in _fields)
+                {
+                    var value = row[field.Key];
 
-                foreach (var pair in _fields) {
-                    var value = row[pair.Key];
-
-                    if (pair.Value.UseStringBuilder) {
-                        pair.Value.StringBuilder.Clear();
-                        pair.Value.StringBuilder.Append(value);
-                        foreach (AbstractTransform t in pair.Value.Transforms) {
-                            t.Transform(ref pair.Value.StringBuilder);
-                        }
-                        row[pair.Key] = pair.Value.StringBuilder.ToString();
-                    } else {
-                        foreach (AbstractTransform t in pair.Value.Transforms) {
-                            t.Transform(ref value);
-                        }
-                        row[pair.Key] = value;
+                    if (field.Value.UseStringBuilder)
+                    {
+                        field.Value.StringBuilder.Clear();
+                        field.Value.StringBuilder.Append(value);
+                        field.Value.Transform();
+                        row[field.Key] = field.Value.StringBuilder.ToString();
+                    }
+                    else
+                    {
+                        field.Value.Transform(ref value);
+                        row[field.Key] = value;
                     }
                 }
                 yield return row;

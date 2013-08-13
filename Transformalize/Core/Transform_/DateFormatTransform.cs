@@ -26,7 +26,7 @@ namespace Transformalize.Core.Transform_ {
         private readonly string _format;
 
         protected override string Name {
-            get { return "Format Transform"; }
+            get { return "Date Format Transform"; }
         }
 
         public DateFormatTransform(string format, IParameters parameters, IFields results)
@@ -39,8 +39,11 @@ namespace Transformalize.Core.Transform_ {
             value = ((DateTime) value).ToString(_format);
         }
 
-        public override void Transform(ref Row row) {
-            row[FirstResult.Key] = ((DateTime) row[FirstParameter.Key]).ToString(_format);
+        public override void Transform(ref Row row)
+        {
+            var value = ((DateTime) row[FirstParameter.Key]).ToString(_format);
+            TransformResult(FirstResult.Value, ref value);
+            row[FirstResult.Key] = value;
         }
 
     }

@@ -402,20 +402,7 @@ namespace Transformalize.Core.Process_
 
                 foreach (XmlConfigurationElement x in f.Xml)
                 {
-                    var xmlField = new Field(x.Type, x.Length, FieldType.Xml, x.Output, x.Default)
-                    {
-                        Entity = entity.Name,
-                        Schema = entity.Schema,
-                        Parent = f.Name,
-                        XPath = f.Xml.XPath + x.XPath,
-                        Name = x.XPath,
-                        Alias = x.Alias,
-                        Index = x.Index,
-                        Precision = x.Precision,
-                        Scale = x.Scale,
-                        Aggregate = x.Aggregate.ToLower()
-                    };
-                    xmlField.Transforms = new FieldTransformReader(xmlField, x.Transforms).Read();
+                    var xmlField = new FieldReader(entity).Read(x, f);
                     field.InnerXml.Add(x.Alias, xmlField);
                 }
 
