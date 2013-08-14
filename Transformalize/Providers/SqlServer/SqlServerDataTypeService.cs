@@ -45,8 +45,8 @@ namespace Transformalize.Providers.SqlServer {
                         {"byte", "TINYINT"},
                         {"byte[]", "VARBINARY"},
                         {"guid", "UNIQUEIDENTIFIER"},
-                        {"rowversion", "ROWVERSION"}
-                        
+                        {"rowversion", "ROWVERSION"},
+                        {"xml", "XML"}
                     };
                 }
                 return _types;
@@ -75,7 +75,8 @@ namespace Transformalize.Providers.SqlServer {
                         {"IMAGE", "System.Byte[]"},
                         {"BINARY", "System.Byte[]"},
                         {"VARBINARY", "System.Byte[]"},
-                        {"NTEXT", "System.String"}
+                        {"NTEXT", "System.String"},
+                        {"XML", "System.Xml"}
                     };
                 }
                 return _reverseTypes;

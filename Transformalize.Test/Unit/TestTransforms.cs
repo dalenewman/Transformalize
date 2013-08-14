@@ -696,6 +696,70 @@ namespace Transformalize.Test.Unit
             Assert.AreEqual("{\"Field1\":null,\"Field2\":null,\"Field3\":3}", rows[2]["result"]);
         }
 
+        [Test]
+        public void TestCalcTransform()
+        {
+
+            var mock = new Mock<IOperation>();
+            mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row> {
+                new Row { {"var1", 2}, {"var2", 3.5} },
+                new Row { {"var1", 1}, {"var2", 5.3} },
+                new Row { {"var1", 0 }, {"var2", 1.0}}
+            });
+            var input = mock.Object;
+
+            var entity = new Entity();
+            entity.All["var1"] = new Field("int32","0",FieldType.Field,true,0) { Input = true };
+            entity.All["var2"] = new Field("decimal", "0", FieldType.Field, true, 0.0) { Input = true };
+
+            var parameters = new Parameters { { "var1", new Parameter("var1", null) }, { "var2", new Parameter("var2", null) } };
+            var results = new Fields(new Dictionary<string, Field> { { "result", new Field(FieldType.Field) } });
+            const string expression = "[var1] * [var2]";
+            var process = new Process { Transforms = new Transforms() { new ExpressionTransform(expression, parameters, results) } };
+
+            var rows = TestOperation(
+                input,
+                new ProcessTransform(process),
+                new LogOperation()
+            );
+
+            Assert.AreEqual(7.0, rows[0]["result"]);
+            Assert.AreEqual(5.3, rows[1]["result"]);
+            Assert.AreEqual(0.0, rows[2]["result"]);
+        }
+
+        [Test]
+        public void TestCalcIfTransform()
+        {
+
+            var mock = new Mock<IOperation>();
+            mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row> {
+                new Row { {"var1", 2}, {"var2", 3.5} },
+                new Row { {"var1", 1}, {"var2", 5.3} },
+                new Row { {"var1", 0 }, {"var2", 1.0}}
+            });
+            var input = mock.Object;
+
+            var entity = new Entity();
+            entity.All["var1"] = new Field("int32", "0", FieldType.Field, true, 0) { Input = true };
+            entity.All["var2"] = new Field("decimal", "0", FieldType.Field, true, 0.0) { Input = true };
+
+            var parameters = new Parameters { { "var1", new Parameter("var1", null) }, { "var2", new Parameter("var2", null) } };
+            var results = new Fields(new Dictionary<string, Field> { { "result", new Field("boolean", "0", FieldType.Field, true, false) } });
+            const string expression = "if([var1] * [var2] == 7, true, false)";
+            var process = new Process { Transforms = new Transforms() { new ExpressionTransform(expression, parameters, results) } };
+
+            var rows = TestOperation(
+                input,
+                new ProcessTransform(process),
+                new LogOperation()
+            );
+
+            Assert.AreEqual(true, rows[0]["result"]);
+            Assert.AreEqual(false, rows[1]["result"]);
+            Assert.AreEqual(false, rows[2]["result"]);
+        }
+
 
     }
 }

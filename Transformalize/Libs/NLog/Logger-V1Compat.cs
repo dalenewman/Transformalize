@@ -425,7 +425,6 @@ namespace Transformalize.Libs.NLog
         /// <param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Log(LogLevel level, IFormatProvider formatProvider, string message, sbyte argument)
         { 
@@ -441,7 +440,6 @@ namespace Transformalize.Libs.NLog
         /// <param name="level">The log level.</param>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Log(LogLevel level, string message, sbyte argument)
         { 
@@ -458,7 +456,6 @@ namespace Transformalize.Libs.NLog
         /// <param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Log(LogLevel level, IFormatProvider formatProvider, string message, uint argument)
         { 
@@ -474,7 +471,6 @@ namespace Transformalize.Libs.NLog
         /// <param name="level">The log level.</param>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Log(LogLevel level, string message, uint argument)
         { 
@@ -491,7 +487,6 @@ namespace Transformalize.Libs.NLog
         /// <param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Log(LogLevel level, IFormatProvider formatProvider, string message, ulong argument)
         { 
@@ -507,7 +502,6 @@ namespace Transformalize.Libs.NLog
         /// <param name="level">The log level.</param>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Log(LogLevel level, string message, ulong argument)
         { 
@@ -875,7 +869,6 @@ namespace Transformalize.Libs.NLog
         /// <param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Trace(IFormatProvider formatProvider, string message, sbyte argument)
         { 
@@ -890,7 +883,6 @@ namespace Transformalize.Libs.NLog
         /// </summary>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Trace(string message, sbyte argument)
         { 
@@ -906,7 +898,6 @@ namespace Transformalize.Libs.NLog
         /// <param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Trace(IFormatProvider formatProvider, string message, uint argument)
         { 
@@ -921,7 +912,6 @@ namespace Transformalize.Libs.NLog
         /// </summary>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Trace(string message, uint argument)
         { 
@@ -937,7 +927,6 @@ namespace Transformalize.Libs.NLog
         /// <param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Trace(IFormatProvider formatProvider, string message, ulong argument)
         { 
@@ -952,7 +941,6 @@ namespace Transformalize.Libs.NLog
         /// </summary>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Trace(string message, ulong argument)
         { 
@@ -1320,7 +1308,6 @@ namespace Transformalize.Libs.NLog
         /// <param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Debug(IFormatProvider formatProvider, string message, sbyte argument)
         { 
@@ -1335,7 +1322,6 @@ namespace Transformalize.Libs.NLog
         /// </summary>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Debug(string message, sbyte argument)
         { 
@@ -1351,7 +1337,6 @@ namespace Transformalize.Libs.NLog
         /// <param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Debug(IFormatProvider formatProvider, string message, uint argument)
         { 
@@ -1366,7 +1351,6 @@ namespace Transformalize.Libs.NLog
         /// </summary>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Debug(string message, uint argument)
         { 
@@ -1382,7 +1366,6 @@ namespace Transformalize.Libs.NLog
         /// <param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Debug(IFormatProvider formatProvider, string message, ulong argument)
         { 
@@ -1397,7 +1380,6 @@ namespace Transformalize.Libs.NLog
         /// </summary>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Debug(string message, ulong argument)
         { 
@@ -1765,7 +1747,6 @@ namespace Transformalize.Libs.NLog
         /// <param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Info(IFormatProvider formatProvider, string message, sbyte argument)
         { 
@@ -1780,7 +1761,6 @@ namespace Transformalize.Libs.NLog
         /// </summary>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Info(string message, sbyte argument)
         { 
@@ -1796,7 +1776,6 @@ namespace Transformalize.Libs.NLog
         /// <param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Info(IFormatProvider formatProvider, string message, uint argument)
         { 
@@ -1811,7 +1790,6 @@ namespace Transformalize.Libs.NLog
         /// </summary>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Info(string message, uint argument)
         { 
@@ -1827,7 +1805,6 @@ namespace Transformalize.Libs.NLog
         /// <param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Info(IFormatProvider formatProvider, string message, ulong argument)
         { 
@@ -1842,7 +1819,6 @@ namespace Transformalize.Libs.NLog
         /// </summary>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Info(string message, ulong argument)
         { 
@@ -2210,7 +2186,6 @@ namespace Transformalize.Libs.NLog
         /// <param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Warn(IFormatProvider formatProvider, string message, sbyte argument)
         { 
@@ -2225,7 +2200,6 @@ namespace Transformalize.Libs.NLog
         /// </summary>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Warn(string message, sbyte argument)
         { 
@@ -2241,7 +2215,6 @@ namespace Transformalize.Libs.NLog
         /// <param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Warn(IFormatProvider formatProvider, string message, uint argument)
         { 
@@ -2256,7 +2229,6 @@ namespace Transformalize.Libs.NLog
         /// </summary>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Warn(string message, uint argument)
         { 
@@ -2272,7 +2244,6 @@ namespace Transformalize.Libs.NLog
         /// <param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Warn(IFormatProvider formatProvider, string message, ulong argument)
         { 
@@ -2287,7 +2258,6 @@ namespace Transformalize.Libs.NLog
         /// </summary>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Warn(string message, ulong argument)
         { 
@@ -2655,7 +2625,6 @@ namespace Transformalize.Libs.NLog
         /// <param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Error(IFormatProvider formatProvider, string message, sbyte argument)
         { 
@@ -2670,7 +2639,6 @@ namespace Transformalize.Libs.NLog
         /// </summary>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Error(string message, sbyte argument)
         { 
@@ -2686,7 +2654,6 @@ namespace Transformalize.Libs.NLog
         /// <param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Error(IFormatProvider formatProvider, string message, uint argument)
         { 
@@ -2701,7 +2668,6 @@ namespace Transformalize.Libs.NLog
         /// </summary>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Error(string message, uint argument)
         { 
@@ -2717,7 +2683,6 @@ namespace Transformalize.Libs.NLog
         /// <param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Error(IFormatProvider formatProvider, string message, ulong argument)
         { 
@@ -2732,7 +2697,6 @@ namespace Transformalize.Libs.NLog
         /// </summary>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Error(string message, ulong argument)
         { 
@@ -3100,7 +3064,6 @@ namespace Transformalize.Libs.NLog
         /// <param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Fatal(IFormatProvider formatProvider, string message, sbyte argument)
         { 
@@ -3115,7 +3078,6 @@ namespace Transformalize.Libs.NLog
         /// </summary>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Fatal(string message, sbyte argument)
         { 
@@ -3131,7 +3093,6 @@ namespace Transformalize.Libs.NLog
         /// <param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Fatal(IFormatProvider formatProvider, string message, uint argument)
         { 
@@ -3146,7 +3107,6 @@ namespace Transformalize.Libs.NLog
         /// </summary>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Fatal(string message, uint argument)
         { 
@@ -3162,7 +3122,6 @@ namespace Transformalize.Libs.NLog
         /// <param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Fatal(IFormatProvider formatProvider, string message, ulong argument)
         { 
@@ -3177,7 +3136,6 @@ namespace Transformalize.Libs.NLog
         /// </summary>
         /// <param name="message">A <see langword="string" /> containing one format item.</param>
         /// <param name="argument">The argument to format.</param>
-        [CLSCompliant(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void Fatal(string message, ulong argument)
         { 

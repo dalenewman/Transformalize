@@ -45,6 +45,18 @@ namespace Transformalize.Test.Integration {
         }
 
         [Test]
+        public void EsInit()
+        {
+            new ProcessXmlRunner(@"c:\etl\rhinoetl\tfl\Es.xml", new Options { Mode = Modes.Initialize }).Run();
+        }
+
+        [Test]
+        public void EsDefault()
+        {
+            new ProcessXmlRunner(@"c:\etl\rhinoetl\tfl\Es.xml").Run();
+        }
+
+        [Test]
         public void NorthWindByXml()
         {
             new ProcessXmlRunner("NorthWind.xml").Run();

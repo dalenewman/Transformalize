@@ -76,6 +76,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Antlr3.Runtime, Version=3.3.0.7239, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\Antlr3.Runtime.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.AnalysisServices, Version=10.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\Microsoft.AnalysisServices.DLL</HintPath>
@@ -186,6 +190,7 @@
     <Compile Include="Core\Transform_\ConcatTransform.cs" />
     <Compile Include="Core\Transform_\DateFormatTransform.cs" />
     <Compile Include="Core\Transform_\EmptyTransform.cs" />
+    <Compile Include="Core\Transform_\ExpressionTransform.cs" />
     <Compile Include="Core\Transform_\FormatTransform.cs" />
     <Compile Include="Core\Transform_\InsertTransform.cs" />
     <Compile Include="Core\Transform_\ITransformParametersReader.cs" />
@@ -205,6 +210,7 @@
     <Compile Include="Core\Transform_\SplitTransform.cs" />
     <Compile Include="Core\Transform_\SubstringTransform.cs" />
     <Compile Include="Core\Transform_\TemplateTransform.cs" />
+    <Compile Include="Core\Transform_\ToLocalTimeTransform.cs" />
     <Compile Include="Core\Transform_\ToLowerTransform.cs" />
     <Compile Include="Core\Transform_\ToUpperTransform.cs" />
     <Compile Include="Core\Transform_\TransformFactory.cs" />
@@ -213,6 +219,26 @@
     <Compile Include="Core\Transform_\TrimStartTransform.cs" />
     <Compile Include="Core\Transform_\TrimTransform.cs" />
     <Compile Include="Core\Web.cs" />
+    <Compile Include="Libs\NCalc\Domain\BinaryExpression.cs" />
+    <Compile Include="Libs\NCalc\Domain\EvaluationVisitor.cs" />
+    <Compile Include="Libs\NCalc\Domain\Function.cs" />
+    <Compile Include="Libs\NCalc\Domain\LogicalExpression.cs" />
+    <Compile Include="Libs\NCalc\Domain\LogicalExpressionVisitor.cs" />
+    <Compile Include="Libs\NCalc\Domain\Parameter.cs" />
+    <Compile Include="Libs\NCalc\Domain\SerializationVisitor.cs" />
+    <Compile Include="Libs\NCalc\Domain\TernaryExpression.cs" />
+    <Compile Include="Libs\NCalc\Domain\UnaryExpression.cs" />
+    <Compile Include="Libs\NCalc\Domain\Value.cs" />
+    <Compile Include="Libs\NCalc\EvaluateFunctionHandler.cs" />
+    <Compile Include="Libs\NCalc\EvaluateParameterHandler.cs" />
+    <Compile Include="Libs\NCalc\EvaluationException.cs" />
+    <Compile Include="Libs\NCalc\EvaluationOption.cs" />
+    <Compile Include="Libs\NCalc\Expression.cs" />
+    <Compile Include="Libs\NCalc\FunctionArgs.cs" />
+    <Compile Include="Libs\NCalc\NCalcLexer.cs" />
+    <Compile Include="Libs\NCalc\NCalcParser.cs" />
+    <Compile Include="Libs\NCalc\Numbers.cs" />
+    <Compile Include="Libs\NCalc\ParameterArgs.cs" />
     <Compile Include="Providers\AnalysisServices\AnalysisServicesScriptRunner.cs" />
     <Compile Include="Providers\AnalysisServices\AnalysisServicesConnectionChecker.cs" />
     <Compile Include="Providers\AnalysisServices\AnalysisServicesConnection.cs" />
@@ -698,11 +724,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Libs\NCalc\NCalc.tokens" />
     <None Include="Libs\RazorEngine.Core\ClassDiagram.cd" />
     <None Include="Libs\RazorEngine.Core\packages.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Antlr3.Runtime.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="LICENSE.txt" />
     <Content Include="Microsoft.AnalysisServices.DLL">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

@@ -40,7 +40,6 @@ namespace Transformalize.Libs.NLog
     /// <summary>
     /// Provides logging interface and utility functions.
     /// </summary>
-    [CLSCompliant(true)]
     public partial class Logger
     {
         private readonly Type loggerType = typeof(Logger);

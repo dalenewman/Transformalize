@@ -79,6 +79,11 @@ namespace Transformalize.Core.Transform_
                             ? new JavascriptTransform(_transform.Script, _parameters, _results, scripts)
                             : new JavascriptTransform(_transform.Script, fieldName, scripts);
 
+                case "expression":
+                    return _parameters.Any()
+                        ? new ExpressionTransform(_transform.Expression, _parameters, _results)
+                        : new ExpressionTransform(fieldName, _transform.Expression, _parameters, _results); 
+
                 case "template":
 
                     var templates = new Dictionary<string, Template>();
@@ -118,6 +123,9 @@ namespace Transformalize.Core.Transform_
 
                 case "split":
                     return new SplitTransform(_transform.Separator, _parameters, _results);
+
+                case "tolocaltime":
+                    return new ToLocalTimeTransform();
 
             }
 
