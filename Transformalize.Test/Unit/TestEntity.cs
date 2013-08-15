@@ -93,7 +93,7 @@ SELECT
     l.[ProductKey],
     [Quantity] = l.[Qty],
     [Size] = l.[Properties].value('(/Properties/Size)[1]', 'NVARCHAR(64)')
-FROM [TestOrderDetail] l
+FROM [TestOrderDetail] l WITH (NOLOCK)
 INNER JOIN @KEYS r ON (l.[OrderDetailKey] = r.[OrderDetailKey])
 OPTION (MAXDOP 1);";
 

@@ -1,6 +1,7 @@
 using System;
 using System.Configuration;
 using System.Data;
+using System.Data.SqlClient;
 
 namespace Transformalize.Libs.Rhino.Etl.Core.Infrastructure {
     /// <summary>
@@ -208,12 +209,9 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Infrastructure {
         public static IDbConnection Connection(ConnectionStringSettings connectionString) {
             if (connectionString == null)
                 throw new InvalidOperationException("Null ConnectionStringSettings specified");
-            Type type = Type.GetType(connectionString.ProviderName);
-            if (type == null)
-                throw new InvalidOperationException("The type name '" + connectionString.ProviderName +
-                                                    "' could not be found for connection string: " + connectionString.Name);
-            IDbConnection connection = (IDbConnection)Activator.CreateInstance(type);
-            connection.ConnectionString = connectionString.ConnectionString;
+            
+            //todo: handle providers
+            IDbConnection connection = new SqlConnection(connectionString.ConnectionString);
             connection.Open();
             return connection;
         }

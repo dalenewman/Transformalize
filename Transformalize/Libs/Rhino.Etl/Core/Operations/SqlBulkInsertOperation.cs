@@ -10,7 +10,6 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Operations {
     /// Allows to execute an operation that perform a bulk insert into a sql server database
     /// </summary>
     public abstract class SqlBulkInsertOperation : AbstractDatabaseOperation {
-        private const string PROVIDER = "System.Data.SqlClient.SqlConnection, System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
 
         /// <summary>
         /// The schema of the destination table
@@ -33,7 +32,6 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Operations {
         private static ConnectionStringSettings GetConnectionStringSettings(string connectionString) {
             return new ConnectionStringSettings {
                 ConnectionString = connectionString,
-                ProviderName = PROVIDER,
             };
         }
 

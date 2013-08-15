@@ -10,7 +10,6 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Operations {
     /// </summary>
     public abstract class SqlBatchOperation : AbstractDatabaseOperation {
 
-        private const string PROVIDER = "System.Data.SqlClient.SqlConnection, System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
         private int _batchSize = 50;
         private int _timeout;
 
@@ -42,7 +41,6 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Operations {
         private static ConnectionStringSettings GetConnectionStringSettings(string connectionString) {
             return new ConnectionStringSettings {
                 ConnectionString = connectionString,
-                ProviderName = PROVIDER,
             };
         }
 

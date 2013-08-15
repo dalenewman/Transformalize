@@ -16,7 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using Transformalize.Core.Entity_;
@@ -27,8 +26,6 @@ namespace Transformalize.Operations {
     public class EntityInputKeysExtractDelta : InputCommandOperation {
 
         private readonly Entity _entity;
-        private readonly List<string> _selectKeys = new List<string>();
-        private readonly List<string> _orderByKeys = new List<string>();
 
         public EntityInputKeysExtractDelta(Entity entity)
             : base(entity.InputConnection.ConnectionString) {
@@ -54,6 +51,7 @@ namespace Transformalize.Operations {
         protected override void PrepareCommand(IDbCommand cmd) {
             cmd.CommandTimeout = 0;
             cmd.CommandText = PrepareSql(_entity.EntityVersionReader.IsRange);
+            cmd.CommandType = CommandType.Text;
 
             if (_entity.EntityVersionReader.IsRange)
                 cmd.Parameters.Add(new SqlParameter("@Begin", _entity.Begin));
@@ -62,15 +60,8 @@ namespace Transformalize.Operations {
 
         public string PrepareSql(bool isRange) {
             const string sqlPattern = "SELECT {0}\r\nFROM [{1}].[{2}] WITH (NOLOCK)\r\nWHERE {3}\r\nORDER BY {4};";
-
             var criteria = string.Format(isRange ? "[{0}] BETWEEN @Begin AND @End" : "[{0}] <= @End", _entity.Version.Name);
-
-            foreach (var pair in _entity.PrimaryKey) {
-                _selectKeys.Add(pair.Value.Alias.Equals(pair.Value.Name) ? string.Concat("[", pair.Value.Name, "]") : string.Format("{0} = [{1}]", pair.Value.Alias, pair.Value.Name));
-                _orderByKeys.Add(string.Concat("[", pair.Value.Name, "]"));
-            }
-
-            return string.Format(sqlPattern, string.Join(", ", _selectKeys), _entity.Schema, _entity.Name, criteria, string.Join(", ", _orderByKeys));
+            return string.Format(sqlPattern, string.Join(", ", _entity.SelectKeys()), _entity.Schema, _entity.Name, criteria, string.Join(", ",_entity.OrderByKeys()));
         }
 
         public bool NeedsToRun() {

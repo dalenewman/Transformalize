@@ -10,8 +10,6 @@ namespace Transformalize.Operations
     public class EntityInputKeysExtractAll : InputCommandOperation
     {
         private readonly Entity _entity;
-        private readonly List<string> _selectKeys = new List<string>(); 
-        private readonly List<string> _orderByKeys = new List<string>();
 
         public EntityInputKeysExtractAll(Entity entity)
             : base(entity.InputConnection.ConnectionString)
@@ -32,15 +30,7 @@ namespace Transformalize.Operations
         protected string PrepareSql()
         {
             const string sqlPattern = "SELECT {0}\r\nFROM [{1}].[{2}] WITH (NOLOCK)\r\nWHERE [{3}] <= @End\r\nORDER BY {4};";
-
-            foreach (var pair in _entity.PrimaryKey)
-            {
-                _selectKeys.Add(pair.Value.Alias.Equals(pair.Value.Name) ? string.Concat("[", pair.Value.Name, "]") : string.Format("{0} = [{1}]", pair.Value.Alias, pair.Value.Name));
-                _orderByKeys.Add(string.Concat("[", pair.Value.Name, "]"));
-            }
-
-            return string.Format(sqlPattern, string.Join(", ", _selectKeys), _entity.Schema, _entity.Name, _entity.Version.Name, string.Join(", ", _orderByKeys));
-            
+            return string.Format(sqlPattern, string.Join(", ", _entity.SelectKeys()), _entity.Schema, _entity.Name, _entity.Version.Name, string.Join(", ", _entity.OrderByKeys()));
         }
 
         protected override void PrepareCommand(IDbCommand cmd)

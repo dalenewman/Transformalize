@@ -2,45 +2,68 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Transformalize.Libs.Rhino.Etl.Core.Operations {
-    public class LogOperation : AbstractOperation {
+namespace Transformalize.Libs.Rhino.Etl.Core.Operations
+{
+    public class LogOperation : AbstractOperation
+    {
 
         private readonly string _delimiter;
         private readonly int _maxLengh;
         private readonly List<string> _ignores = new List<string>();
-        private KeyValuePair<string, object> _whereFilter;
+        private readonly List<string> _only = new List<string>();
+        private bool _firstRow = true;
 
-        public LogOperation(string delimiter = " | ", int maxLength = 64) {
+        public LogOperation(string delimiter = " | ", int maxLength = 32)
+        {
             _delimiter = delimiter;
             _maxLengh = maxLength;
-            _whereFilter = new KeyValuePair<string, object>(string.Empty, null);
         }
 
-        public LogOperation Ignore(string column) {
-            _ignores.Add(column);
+        public LogOperation Ignore(params string[] columns)
+        {
+            _ignores.AddRange(columns);
             return this;
         }
 
-        public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
-            foreach (var row in rows) {
-                if (!String.IsNullOrEmpty(_whereFilter.Key)) {
-                    if (row[_whereFilter.Key] == _whereFilter.Value) {
-                        LogRow(row);
-                    }
-                } else {
-                    LogRow(row);
+        public LogOperation Only(params string[] columns)
+        {
+            _only.AddRange(columns);
+            return this;
+        }
+
+        public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
+        {
+            foreach (var row in rows)
+            {
+
+                if (_firstRow)
+                {
+                    var columns = _only.Any()
+                        ? row.Columns.Where(column => _only.Contains(column))
+                            .Select(column => column.PadLeft(_maxLengh))
+                            .ToArray()
+                        : row.Columns.Where(column => !_ignores.Contains(column))
+                            .Select(column => column.PadLeft(_maxLengh))
+                            .ToArray();
+
+                    Info(string.Empty);
+                    Info(string.Join(_delimiter, columns));
                 }
 
+                var values = _only.Any() ?
+                    row.Columns.Where(column => _only.Contains(column)).Select(column => EnforceMaxLength(row[column]).PadLeft(_maxLengh, ' ')).ToList() :
+                    row.Columns.Where(column => !_ignores.Contains(column)).Select(column => EnforceMaxLength(row[column]).PadLeft(_maxLengh, ' ')).ToList();
+
+                Info(string.Join(_delimiter, values));
+
+                _firstRow = false;
                 yield return row;
+
             }
         }
 
-        private void LogRow(Row row) {
-            var values = row.Columns.Where(column => !_ignores.Contains(column)).Select(column => EnforceMaxLength(row[column])).ToList();
-                Info(string.Join(_delimiter, values));
-        }
-
-        public string EnforceMaxLength(object value) {
+        public string EnforceMaxLength(object value)
+        {
             if (value == null)
                 return string.Empty;
 
@@ -50,11 +73,6 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Operations {
                 return stringValue.Substring(0, _maxLengh - 3) + "...";
 
             return stringValue;
-        }
-
-        public IOperation Where(string key, object value) {
-            _whereFilter = new KeyValuePair<string, object>(key, value);
-            return this;
         }
     }
 }

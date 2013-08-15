@@ -18,8 +18,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Linq;
+using Transformalize.Core;
 using Transformalize.Core.Process_;
 using Transformalize.Libs.Rhino.Etl.Core;
+using Transformalize.Libs.Rhino.Etl.Core.Operations;
 using Transformalize.Operations;
 
 namespace Transformalize.Processes {
@@ -35,7 +37,11 @@ namespace Transformalize.Processes {
         protected override void Initialize() {
             Register(new ParametersExtract(_process));
             Register(new ProcessTransform(_process));
-            RegisterLast(new ResultsLoad(_process));
+
+            if (_process.Options.Mode == Modes.Test)
+                RegisterLast(new LogOperation());
+            else
+                RegisterLast(new ResultsLoad(_process));
         }
 
         protected override void PostProcessing() {

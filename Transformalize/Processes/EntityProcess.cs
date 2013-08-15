@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Linq;
+using Transformalize.Core;
 using Transformalize.Core.Entity_;
 using Transformalize.Core.Process_;
 using Transformalize.Libs.Rhino.Etl.Core;
@@ -33,25 +34,36 @@ namespace Transformalize.Processes
 
         private readonly Process _process;
         private Entity _entity;
+        private readonly Modes _mode;
 
         public EntityProcess(ref Process process, Entity entity, IEntityBatch entityBatch = null)
         {
             _process = process;
             _entity = entity;
-            _entity.TflBatchId = (entityBatch ?? new SqlServerEntityBatch()).GetNext(_entity);
+            _mode = process.Options.Mode;
+
+            if (_mode != Modes.Test)
+                _entity.TflBatchId = (entityBatch ?? new SqlServerEntityBatch()).GetNext(_entity);
         }
 
         protected override void Initialize()
         {
-            if (_process.Options.UseBeginVersion)
+            if (_mode == Modes.Test)
             {
-                var keysExtract = new EntityInputKeysExtractDelta(_entity);
-                if (!keysExtract.NeedsToRun()) return;
-                Register(keysExtract);
+                Register(new EntityInputKeysExtractTop(_entity, _process.Options.Top));
             }
             else
             {
-                Register(new EntityInputKeysExtractAll(_entity));
+                if (_process.Options.UseBeginVersion)
+                {
+                    var keysExtract = new EntityInputKeysExtractDelta(_entity);
+                    if (!keysExtract.NeedsToRun()) return;
+                    Register(keysExtract);
+                }
+                else
+                {
+                    Register(new EntityInputKeysExtractAll(_entity));
+                }
             }
 
             Register(new EntityInputKeysStore(_entity));
@@ -64,22 +76,29 @@ namespace Transformalize.Processes
             if (_entity.Group)
                 Register(new EntityAggregation(_entity));
 
-            if (_process.OutputRecordsExist)
+            if (_mode == Modes.Test)
             {
-                Register(new EntityJoinAction(_entity).Right(new EntityOutputKeysExtract(_entity)));
-                var branch = new BranchingOperation()
-                    .Add(new PartialProcessOperation()
-                             .Register(new EntityActionFilter(ref _entity, EntityAction.Insert))
-                             .RegisterLast(new EntityBulkInsert(_entity)))
-                    .Add(new PartialProcessOperation()
-                             .Register(new EntityActionFilter(ref _entity, EntityAction.Update))
-                             .RegisterLast(new EntityBatchUpdate(_entity)));
-                RegisterLast(branch);
+                RegisterLast(new LogOperation());
             }
             else
             {
-                Register(new EntityAddTflFields(_entity));
-                RegisterLast(new EntityBulkInsert(_entity));
+                if (_process.OutputRecordsExist)
+                {
+                    Register(new EntityJoinAction(_entity).Right(new EntityOutputKeysExtract(_entity)));
+                    var branch = new BranchingOperation()
+                        .Add(new PartialProcessOperation()
+                            .Register(new EntityActionFilter(ref _entity, EntityAction.Insert))
+                            .RegisterLast(new EntityBulkInsert(_entity)))
+                        .Add(new PartialProcessOperation()
+                            .Register(new EntityActionFilter(ref _entity, EntityAction.Update))
+                            .RegisterLast(new EntityBatchUpdate(_entity)));
+                    RegisterLast(branch);
+                }
+                else
+                {
+                    Register(new EntityAddTflFields(_entity));
+                    RegisterLast(new EntityBulkInsert(_entity));
+                }
             }
 
         }
@@ -97,9 +116,12 @@ namespace Transformalize.Processes
                 throw new InvalidOperationException("Houstan.  We have a problem in the threads!");
             }
 
-            if (_process.Options.WriteEndVersion)
+            if (_mode != Modes.Test)
             {
-                new SqlServerEntityVersionWriter(_entity).WriteEndVersion(_entity.End, _entity.RecordsAffected);
+                if (_process.Options.WriteEndVersion)
+                {
+                    new SqlServerEntityVersionWriter(_entity).WriteEndVersion(_entity.End, _entity.RecordsAffected);
+                }
             }
 
             base.PostProcessing();

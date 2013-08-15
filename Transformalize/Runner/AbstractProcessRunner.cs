@@ -27,7 +27,8 @@ namespace Transformalize.Runner
                     }
                     break;
                 default:
-                    new EntityRecordsExist(ref process).Check();
+                    if (process.Options.Mode != Modes.Test)
+                        new EntityRecordsExist(ref process).Check();
 
                     foreach (var entity in process.Entities)
                     {
@@ -37,10 +38,11 @@ namespace Transformalize.Runner
                         }
                     }
 
-                    using (var masterProcess = new UpdateMasterProcess(ref process))
-                    {
-                        masterProcess.Execute();
-                    }
+                    if (process.Options.Mode != Modes.Test)
+                        using (var masterProcess = new UpdateMasterProcess(ref process))
+                        {
+                            masterProcess.Execute();
+                        }
 
                     if (process.Transforms.Count > 0)
                     {

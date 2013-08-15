@@ -248,7 +248,7 @@ namespace Transformalize.Core.Process_
 
         public Join GetJoin(Entity leftEntity, string leftField, Entity rightEntity, string rightField)
         {
-
+            //todo: need to check for join fields and exit if they are not available
             var join = new Join
             {
                 LeftField = leftEntity.All.ContainsKey(leftField) ? leftEntity.All[leftField] : leftEntity.All.ToEnumerable().First(v => v.Name.Equals(leftField, StringComparison.OrdinalIgnoreCase)),

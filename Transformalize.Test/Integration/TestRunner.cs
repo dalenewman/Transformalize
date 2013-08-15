@@ -53,7 +53,7 @@ namespace Transformalize.Test.Integration {
         [Test]
         public void EsDefault()
         {
-            new ProcessXmlRunner(@"c:\etl\rhinoetl\tfl\Es.xml").Run();
+            new ProcessXmlRunner(@"c:\etl\rhinoetl\tfl\Es.xml", new Options { Mode = Modes.Test, Top = 20}).Run();
         }
 
         [Test]

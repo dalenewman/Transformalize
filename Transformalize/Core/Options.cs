@@ -26,14 +26,14 @@ namespace Transformalize.Core
 {
     public class Options
     {
-        public List<string> Problems = new List<string>(); 
+        public List<string> Problems = new List<string>();
 
         public Modes Mode { get; set; }
         public bool UseBeginVersion { get; set; }
         public bool WriteEndVersion { get; set; }
         public bool RenderTemplates { get; set; }
         public bool PerformTemplateActions { get; set; }
-        public int TestCount { get; set; }
+        public int Top { get; set; }
 
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
 
@@ -46,7 +46,7 @@ namespace Transformalize.Core
                 {
                     if (settings.Contains("'"))
                     {
-                        settings = settings.Replace('\'','"');
+                        settings = settings.Replace('\'', '"');
                     }
                     var options = JSON.Instance.ToObject<Dictionary<string, object>>(settings);
 
@@ -62,6 +62,10 @@ namespace Transformalize.Core
                                 {
                                     Mode = Modes.Initialize;
                                 }
+                                else if (value.Equals("test"))
+                                {
+                                    Mode = Modes.Test;
+                                }
                                 break;
                             case "rendertemplates":
                                 if (bool.TryParse(value, out input))
@@ -70,7 +74,7 @@ namespace Transformalize.Core
                                 }
                                 else
                                 {
-                                    RecordBadValue(option);
+                                    RecordBadValue(option, typeof(bool));
                                 }
                                 break;
                             case "usebeginversion":
@@ -80,7 +84,7 @@ namespace Transformalize.Core
                                 }
                                 else
                                 {
-                                    RecordBadValue(option);
+                                    RecordBadValue(option, typeof(bool));
                                 }
 
                                 break;
@@ -91,7 +95,7 @@ namespace Transformalize.Core
                                 }
                                 else
                                 {
-                                    RecordBadValue(option);
+                                    RecordBadValue(option, typeof(bool));
                                 }
                                 break;
 
@@ -102,10 +106,21 @@ namespace Transformalize.Core
                                 }
                                 else
                                 {
-                                    RecordBadValue(option);
+                                    RecordBadValue(option, typeof(bool));
                                 }
                                 break;
 
+                            case "top":
+                                int top;
+                                if (int.TryParse(value, out top))
+                                {
+                                    Top = top;
+                                }
+                                else
+                                {
+                                    RecordBadValue(option, typeof(int));
+                                }
+                                break;
                             default:
                                 RecordBadProperty(option);
                                 break;
@@ -128,9 +143,9 @@ namespace Transformalize.Core
             return !Problems.Any();
         }
 
-        private void RecordBadValue(KeyValuePair<string, object> option)
+        private void RecordBadValue(KeyValuePair<string, object> option, Type type)
         {
-            Problems.Add(string.Format("The {0} option value of {1} must evaluate to True or False.", option.Key, option.Value));
+            Problems.Add(string.Format("The {0} option value of {1} must evaluate to a {2}.", option.Key, option.Value, type));
         }
 
         private void RecordBadProperty(KeyValuePair<string, object> option)
@@ -145,7 +160,7 @@ namespace Transformalize.Core
             RenderTemplates = true;
             PerformTemplateActions = true;
             Mode = Modes.Normal;
-            TestCount = 20;
+            Top = 100;
         }
 
     }

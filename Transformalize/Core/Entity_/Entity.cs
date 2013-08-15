@@ -27,9 +27,11 @@ using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Providers;
 using Transformalize.Providers.SqlServer;
 
-namespace Transformalize.Core.Entity_ {
+namespace Transformalize.Core.Entity_
+{
 
-    public class Entity : IDisposable {
+    public class Entity : IDisposable
+    {
 
         public string Schema { get; set; }
         public string ProcessName { get; set; }
@@ -57,7 +59,8 @@ namespace Transformalize.Core.Entity_ {
         public bool Group { get; set; }
         public bool Auto { get; set; }
 
-        public Entity(IEntityVersionReader entityVersionReader = null) {
+        public Entity(IEntityVersionReader entityVersionReader = null)
+        {
             Name = string.Empty;
             Schema = string.Empty;
             PrimaryKey = new Fields();
@@ -67,39 +70,67 @@ namespace Transformalize.Core.Entity_ {
             EntityVersionReader = entityVersionReader ?? new SqlServerEntityVersionReader(this);
             InputKeys = new List<Row>();
             Prefix = string.Empty;
-            Transforms =  new Transforms();
+            Transforms = new Transforms();
         }
 
-        public string FirstKey() {
+        public string FirstKey()
+        {
             return PrimaryKey.First().Key;
         }
 
-        public bool IsMaster() {
+        public bool IsMaster()
+        {
             return PrimaryKey.Any(kv => kv.Value.FieldType.HasFlag(FieldType.MasterKey));
         }
 
-        public void Dispose() {
-            foreach (var pair in All) {
+        public void Dispose()
+        {
+            foreach (var pair in All)
+            {
                 if (pair.Value.Transforms == null) continue;
-                foreach (AbstractTransform t in pair.Value.Transforms) {
+                foreach (AbstractTransform t in pair.Value.Transforms)
+                {
                     t.Dispose();
                 }
             }
         }
 
-        public string OutputName() {
-            return string.Concat(ProcessName, Name).Replace(" ",string.Empty);
+        public string OutputName()
+        {
+            return string.Concat(ProcessName, Name).Replace(" ", string.Empty);
         }
 
-        public bool HasForeignKeys() {
+        public bool HasForeignKeys()
+        {
             return Fields.Any(f => f.Value.FieldType.HasFlag(FieldType.ForeignKey));
         }
 
-        public bool NeedsUpdate() {
+        public bool NeedsUpdate()
+        {
             if (!EntityVersionReader.HasRows)
                 return false;
 
             return (!EntityVersionReader.IsRange || !EntityVersionReader.BeginAndEndAreEqual());
+        }
+
+        public List<string> SelectKeys()
+        {
+            var selectKeys = new List<string>();
+            foreach (var pair in PrimaryKey)
+            {
+                selectKeys.Add(pair.Value.Alias.Equals(pair.Value.Name) ? string.Concat("[", pair.Value.Name, "]") : string.Format("{0} = [{1}]", pair.Value.Alias, pair.Value.Name));
+            }
+            return selectKeys;
+        }
+
+        public List<string> OrderByKeys()
+        {
+            var orderByKeys = new List<string>();
+            foreach (var pair in PrimaryKey)
+            {
+                orderByKeys.Add(string.Concat("[", pair.Value.Name, "]"));
+            }
+            return orderByKeys;
         }
     }
 }

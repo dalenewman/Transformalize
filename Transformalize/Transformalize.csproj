@@ -239,6 +239,7 @@
     <Compile Include="Libs\NCalc\NCalcParser.cs" />
     <Compile Include="Libs\NCalc\Numbers.cs" />
     <Compile Include="Libs\NCalc\ParameterArgs.cs" />
+    <Compile Include="Operations\EntityInputKeysExtractTop.cs" />
     <Compile Include="Providers\AnalysisServices\AnalysisServicesScriptRunner.cs" />
     <Compile Include="Providers\AnalysisServices\AnalysisServicesConnectionChecker.cs" />
     <Compile Include="Providers\AnalysisServices\AnalysisServicesConnection.cs" />
@@ -487,7 +488,6 @@
     <Compile Include="Libs\NLog\LogEventInfo.cs" />
     <Compile Include="Libs\NLog\LogFactory-T.cs" />
     <Compile Include="Libs\NLog\LogFactory.cs" />
-    <Compile Include="Libs\NLog\Logger-V1Compat.cs" />
     <Compile Include="Libs\NLog\Logger.cs" />
     <Compile Include="Libs\NLog\LoggerImpl.cs" />
     <Compile Include="Libs\NLog\LogLevel.cs" />
