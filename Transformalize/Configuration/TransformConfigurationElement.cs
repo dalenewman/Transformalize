@@ -49,6 +49,7 @@ namespace Transformalize.Configuration
         private const string PARAMETER = "parameter";
         private const string RESULT = "result";
         private const string EXPRESSION = "expression";
+        private const string TYPE = "type";
 
         [ConfigurationProperty(METHOD, IsRequired = true)]
         public string Method
@@ -316,6 +317,15 @@ namespace Transformalize.Configuration
             get { return this[TEMPLATES] as TransformTemplateElementCollection; }
         }
 
+        [ConfigurationProperty(TYPE, IsRequired = false, DefaultValue = "")]
+        public string Type
+        {
+            get
+            {
+                return this[TYPE] as string;
+            }
+            set { this[TYPE] = value; }
+        }
 
     }
 }

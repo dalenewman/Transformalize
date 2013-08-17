@@ -132,5 +132,15 @@ namespace Transformalize.Core.Entity_
             }
             return orderByKeys;
         }
+
+        public IFields InputFields()
+        {
+            return new FieldSqlWriter(All, Transforms.Results()).ExpandXml().Input().Context();
+        }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

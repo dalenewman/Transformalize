@@ -248,11 +248,22 @@ namespace Transformalize.Core.Process_
 
         public Join GetJoin(Entity leftEntity, string leftField, Entity rightEntity, string rightField)
         {
-            //todo: need to check for join fields and exit if they are not available
+            if (!leftEntity.All.ContainsKey(leftField) && !leftEntity.All.ToEnumerable().Any(Common.FieldFinder(leftField)))
+            {
+                _log.Error("{0} | The left entity {1} does not have a field named {2} for joining to the right entity {3} with field {4}.", Process.Name, leftEntity.Name, leftField, rightEntity.Name, rightField);
+                Environment.Exit(0);
+            }
+
+            if (!rightEntity.All.ContainsKey(rightField) && !rightEntity.All.ToEnumerable().Any(Common.FieldFinder(rightField)))
+            {
+                _log.Error("{0} | The right entity {1} does not have a field named {2} for joining to the left entity {3} with field {4}.", Process.Name, rightEntity.Name, rightField, leftEntity.Name, leftField);
+                Environment.Exit(0);                
+            }
+
             var join = new Join
             {
-                LeftField = leftEntity.All.ContainsKey(leftField) ? leftEntity.All[leftField] : leftEntity.All.ToEnumerable().First(v => v.Name.Equals(leftField, StringComparison.OrdinalIgnoreCase)),
-                RightField = rightEntity.All.ContainsKey(rightField) ? rightEntity.All[rightField] : rightEntity.All.ToEnumerable().First(v => v.Name.Equals(rightField, StringComparison.OrdinalIgnoreCase))
+                LeftField = leftEntity.All.ContainsKey(leftField) ? leftEntity.All[leftField] : leftEntity.All.ToEnumerable().First(Common.FieldFinder(leftField)),
+                RightField = rightEntity.All.ContainsKey(rightField) ? rightEntity.All[rightField] : rightEntity.All.ToEnumerable().First(Common.FieldFinder(rightField))
             };
 
             if (join.LeftField.FieldType.HasFlag(FieldType.MasterKey) || join.LeftField.FieldType.HasFlag(FieldType.PrimaryKey))
@@ -430,9 +441,8 @@ namespace Transformalize.Core.Process_
                 }
                 else
                 {
-                    var message = string.Format("{0} | version field reference '{1}' is undefined in {2}.", Process.Name, e.Version, e.Name);
-                    _log.Error(message);
-                    throw new TransformalizeException(message);
+                    _log.Error("{0} | version field reference '{1}' is undefined in {2}.", Process.Name, e.Version, e.Name);
+                    Environment.Exit(0);
                 }
             }
 
@@ -442,11 +452,11 @@ namespace Transformalize.Core.Process_
             if (entityKeys.Any())
             {
                 var count = entityKeys.Count;
-                var message = String.Format("{0} | field overlap error.  The field{2}: {1} {3} already defined in previous entities.  You must alias (rename) these.", Process.Name, string.Join(", ", entityKeys), count == 1 ? string.Empty : "s", count == 1 ? "is" : "are");
-                throw new TransformalizeException(message);
+                _log.Error("{0} | field overlap error.  The field{2}: {1} {3} already defined in previous entities.  You must alias (rename) these.", Process.Name, string.Join(", ", entityKeys), count == 1 ? string.Empty : "s", count == 1 ? "is" : "are");
+                Environment.Exit(0);
             }
 
-            new EntityTransformLoader(_process, ref entity, e.Transforms).Load();
+            new EntityTransformLoader(ref entity, e.Transforms).Load();
 
             return entity;
         }

@@ -38,6 +38,11 @@ namespace Transformalize.Core
             return kv => kv.Value.Alias.Equals(p.Field, IC) || kv.Value.Name.Equals(p.Field, IC);
         }
 
+        public static Func<Field, bool> FieldFinder(string nameOrAlias)
+        {
+            return v => v.Name.Equals(nameOrAlias, IC) || v.Alias.Equals(nameOrAlias, IC);
+        }
+
         public static string GetTemporaryFolder()
         {
             var folder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData).TrimEnd(Slash) + APPLICATION_FOLDER + Process.Name;

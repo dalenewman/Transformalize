@@ -24,8 +24,8 @@ namespace Transformalize.Core.Field_
             foreach (TransformConfigurationElement t in _transforms)
             {
                 var parametersReader = new FieldTransformParametersReader(_field, t);
-                var fieldsReader = new FieldsReader(null, t.Results);
-                transforms.Add(new TransformFactory(t, parametersReader, fieldsReader).Create(_field.Alias));
+                var resultsReader = new FieldsReader(null, t.Results);
+                transforms.Add(new TransformFactory(t, parametersReader, resultsReader).Create(_field.Alias));
             }
 
             return transforms;

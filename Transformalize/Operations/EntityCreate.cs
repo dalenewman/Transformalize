@@ -26,6 +26,7 @@ using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
 using Transformalize.Providers;
 using Transformalize.Providers.SqlServer;
+using System.Linq;
 
 namespace Transformalize.Operations {
 
@@ -37,11 +38,11 @@ namespace Transformalize.Operations {
 
         public EntityCreate(Entity entity, Process process, IEntityExists entityExists = null) {
             _entity = entity;
-            var relatedFields = new Fields();
-            relatedFields.AddRange(process.RelatedKeys);
-            _writer = entity.IsMaster() ?
-                new FieldSqlWriter(entity.All, process.Transforms.Results(), entity.Transforms.Results(), new Fields(process.RelatedKeys)) :
+           
+            _writer = _entity.IsMaster() ?
+                new FieldSqlWriter(entity.All, process.Transforms.Results(), entity.Transforms.Results(), GetRelationshipFields(process)) :
                 new FieldSqlWriter(entity.All, entity.Transforms.Results());
+
             _entityExists = entityExists ?? new SqlServerEntityExists();
         }
 
@@ -65,6 +66,35 @@ namespace Transformalize.Operations {
                 cmd.ExecuteNonQuery();
                 Info("{0} | Initialized {1} in {2} on {3}.", _entity.ProcessName, _entity.OutputName(), _entity.OutputConnection.Database, _entity.OutputConnection.Server);
             }
+        }
+
+        private IFields GetRelationshipFields(Process process)
+        {
+            var relationships = process.Relationships.Where(r => r.LeftEntity.Name != _entity.Name && r.RightEntity.Name != _entity.Name).ToArray();
+            var fields = new Fields();
+            if (relationships.Any())
+            {
+                foreach (var relationship in relationships)
+                {
+                    var leftSide = relationship.LeftEntity.RelationshipToMaster.Count();
+                    var rightSide = relationship.RightEntity.RelationshipToMaster.Count();
+                    if (leftSide <= rightSide)
+                    {
+                        foreach (var join in relationship.Join)
+                        {
+                            fields.Add(join.LeftField);
+                        }
+                    }
+                    else
+                    {
+                        foreach (var join in relationship.Join)
+                        {
+                            fields.Add(join.RightField);
+                        }
+                    }
+                }
+            }
+            return fields;
         }
     }
 }

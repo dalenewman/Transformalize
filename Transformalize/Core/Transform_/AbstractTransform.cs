@@ -85,7 +85,7 @@ namespace Transformalize.Core.Transform_
         }
         public virtual void Transform(ref Row row)
         {
-            _log.Error("Transform with row is not implemented in {0}!", Name);
+            _log.Error("Transform with row is not implemented in {0}!  It must be implemented at the field level, or pushed down based on a matching type attribute.", Name);
         }
 
         public void TransformResult(Field field, ref object value)

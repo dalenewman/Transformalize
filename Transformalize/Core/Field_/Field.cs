@@ -181,5 +181,10 @@ namespace Transformalize.Core.Field_
             }
         }
 
+        public override string ToString()
+        {
+            return string.Format("({0}} {1}.{2}", Type, Entity, Alias);
+        }
+
     }
 }

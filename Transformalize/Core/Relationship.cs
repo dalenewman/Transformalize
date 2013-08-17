@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Collections.Generic;
+using System.Text;
 using Transformalize.Core.Entity_;
 
 namespace Transformalize.Core {
@@ -28,6 +29,17 @@ namespace Transformalize.Core {
 
         public Relationship() {
             Join = new List<Join>();
+        }
+
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+            foreach (var join in Join)
+            {
+                builder.Append(join);
+                builder.Append(" ");
+            }
+            return builder.ToString();
         }
     }
 }

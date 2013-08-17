@@ -23,5 +23,11 @@ namespace Transformalize.Core
     public class Join {
         public Field LeftField;
         public Field RightField;
+
+        public override string ToString()
+        {
+            return string.Format("Join: {0}.{1} = {2}.{3}", LeftField.Entity, LeftField.Name, RightField.Entity, RightField.Name);
+        }
     }
+
 }

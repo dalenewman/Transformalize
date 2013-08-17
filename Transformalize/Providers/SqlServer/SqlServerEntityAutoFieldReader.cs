@@ -4,6 +4,7 @@ using System.Linq;
 using Transformalize.Core.Entity_;
 using Transformalize.Core.Field_;
 using Transformalize.Core.Fields_;
+using Transformalize.Core.Process_;
 using Transformalize.Core.Transform_;
 using Transformalize.Libs.NLog;
 
@@ -69,7 +70,7 @@ namespace Transformalize.Providers.SqlServer {
             var primaryKey = _fields.Where(f => !f.FieldType.Equals(FieldType.Field)).ToDictionary(k => k.Alias, v => v);
             _log.Debug("{0} | Entity auto found {0} primary key{2}.", _entity.ProcessName, primaryKey.Count, primaryKey.Count == 1 ? string.Empty : "s");
             if (!primaryKey.Any())
-                _log.Warn("{0} | Entity auto could not find a primary key.  You will need to define one in <fields><primaryKey> element.");
+                _log.Warn("{0} | Entity auto could not find a primary key on {1}.  You will need to define one in <fields><primaryKey> element.", _entity.ProcessName, _entity.Name);
             return new Fields(primaryKey);
         }
 

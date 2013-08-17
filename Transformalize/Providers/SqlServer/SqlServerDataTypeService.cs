@@ -62,6 +62,7 @@ namespace Transformalize.Providers.SqlServer {
                         {"NVARCHAR", "System.String"},
                         {"DATETIME", "System.DateTime"},
                         {"DECIMAL", "System.Decimal" },
+                        {"NUMERIC", "System.Decimal"},
                         {"MONEY", "System.Decimal"},
                         {"FLOAT", "System.Double"},
                         {"INT", "System.Int32"},
