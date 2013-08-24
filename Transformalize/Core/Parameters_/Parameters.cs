@@ -47,6 +47,7 @@ namespace Transformalize.Core.Parameters_
             set
             {
                 _items[key] = value;
+                RecordFirst(key);
             }
         }
 
@@ -57,8 +58,7 @@ namespace Transformalize.Core.Parameters_
                 Name = name,
                 Value = value == null ? null : _conversionFactory.Convert(value, type)
             };
-            _items.Add(field, parameter);
-            RecordFirst(field, parameter);
+            Add(field, parameter);
         }
 
         public void Add(string field, IParameter parameter)
@@ -92,6 +92,14 @@ namespace Transformalize.Core.Parameters_
             if (_first.Key == null)
             {
                 _first = new KeyValuePair<string, IParameter>(field, parameter);
+            }
+        }
+
+        private void RecordFirst(string key)
+        {
+            if (_first.Key == null)
+            {
+                _first = new KeyValuePair<string, IParameter>(key, _items[key]); ;
             }
         }
 

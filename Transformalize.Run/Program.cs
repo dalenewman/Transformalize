@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Transformalize.Core;
@@ -29,6 +30,7 @@ namespace Transformalize.Run
 
         private static readonly Stopwatch Timer = new Stopwatch();
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
+        private static Options _options = new Options();
 
         static void Main(string[] args)
         {
@@ -46,17 +48,17 @@ namespace Transformalize.Run
             if (OptionsMayExist(args))
             {
                 var json = CombineArguments(args);
-                var options = new Options(json);
-                if (options.IsValid())
+                _options = new Options(json);
+                if (_options.Valid())
                 {
                     if (process.EndsWith(".xml"))
-                        new ProcessXmlRunner(process, options).Run();
+                        new ProcessXmlRunner(process, _options).Run();
                     else
-                        new ProcessNameRunner(process, options).Run();
+                        new ProcessNameRunner(process, _options).Run();
                 }
                 else
                 {
-                    foreach (var problem in options.Problems)
+                    foreach (var problem in _options.Problems)
                     {
                         Log.Error(process + " | " + problem);
                     }
@@ -76,6 +78,10 @@ namespace Transformalize.Run
 
             Log.Info("{0} | Process completed in {1}.", process, Timer.Elapsed);
 
+            if (_options.Mode != Modes.Test) return;
+
+            Console.WriteLine("Press any key to continue.");
+            Console.ReadKey();
         }
 
         private static string CombineArguments(IEnumerable<string> args)

@@ -77,7 +77,7 @@ CREATE TABLE [{0}].[{1}](
             );
         }
 
-        public static string CreateTableVariable(string name, IFields fields, bool useAlias = true) {
+        public static string CreateTableVariable(string name, Field[] fields, bool useAlias = true) {
             var defs = useAlias ? new FieldSqlWriter(fields).Alias().DataType().Write() : new FieldSqlWriter(fields).Name().DataType().Write();
             return string.Format(@"DECLARE @{0} AS TABLE({1});", name.TrimStart("@".ToCharArray()), defs);
         }
@@ -101,7 +101,7 @@ CREATE TABLE [{0}].[{1}](
             return string.Format(sqlPattern, columns, SafeTable(leftTable, leftSchema), SafeTable(rightTable, rightSchema), @join);
         }
 
-        private static string InsertUnionedValues(int size, string name, IFields fields, IEnumerable<Row> rows) {
+        private static string InsertUnionedValues(int size, string name, Field[] fields, IEnumerable<Row> rows) {
             var sqlBuilder = new StringBuilder();
             foreach (var group in rows.Partition(size)) {
                 sqlBuilder.Append(string.Format("\r\nINSERT INTO {0}\r\nSELECT {1};", name, string.Join("\r\nUNION ALL SELECT ", RowsToValues(fields, group))));
@@ -109,7 +109,7 @@ CREATE TABLE [{0}].[{1}](
             return sqlBuilder.ToString();
         }
 
-        private static string InsertMultipleValues(int size, string name, IFields fields, IEnumerable<Row> rows) {
+        private static string InsertMultipleValues(int size, string name, Field[] fields, IEnumerable<Row> rows) {
             var sqlBuilder = new StringBuilder();
             foreach (var group in rows.Partition(size)) {
                 sqlBuilder.Append(string.Format("\r\nINSERT INTO {0}\r\nVALUES({1});", name, string.Join("),\r\n(", RowsToValues(fields, @group))));
@@ -117,23 +117,23 @@ CREATE TABLE [{0}].[{1}](
             return sqlBuilder.ToString();
         }
 
-        private static IEnumerable<string> RowsToValues(IFields fields, IEnumerable<Row> rows) {
-            var orderedFields = new FieldSqlWriter(fields).Context();
+        private static IEnumerable<string> RowsToValues(Field[] fields, IEnumerable<Row> rows) {
+            var orderedFields = new FieldSqlWriter(fields).ToArray();
             foreach (var row in rows) {
                 var values = new List<string>();
-                foreach (var pair in orderedFields) {
-                    var value = row[pair.Key].ToString();
+                foreach (var field in orderedFields) {
+                    var value = row[field.Alias].ToString();
                     values.Add(
-                        pair.Value.Quote == string.Empty
+                        field.Quote == string.Empty
                         ? value
-                        : string.Concat(pair.Value.Quote, value.Replace("'", "''"), pair.Value.Quote)
+                        : string.Concat(field.Quote, value.Replace("'", "''"), field.Quote)
                     );
                 }
                 yield return string.Join(",", values);
             }
         }
 
-        public static string BatchInsertValues(int size, string name, IFields fields, IEnumerable<Row> rows, bool insertMultipleValues) {
+        public static string BatchInsertValues(int size, string name, Field[] fields, IEnumerable<Row> rows, bool insertMultipleValues) {
             return insertMultipleValues ?
                 InsertMultipleValues(size, name, fields, rows):
                 InsertUnionedValues(size, name, fields, rows);

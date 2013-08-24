@@ -1,5 +1,8 @@
+using System.Collections.Generic;
 using System.Data;
 using Transformalize.Core.Entity_;
+using Transformalize.Core.Field_;
+using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
 
@@ -9,17 +12,25 @@ namespace Transformalize.Operations
     {
         private readonly Entity _entity;
         private readonly int _top;
+        private readonly IEnumerable<string> _fields;
+        private readonly Logger _log = LogManager.GetCurrentClassLogger();
 
         public EntityInputKeysExtractTop(Entity entity, int top)
             : base(entity.InputConnection.ConnectionString)
         {
             _entity = entity;
+            _fields = new FieldSqlWriter(entity.PrimaryKey).Alias().Keys();
             _top = top;
         }
 
         protected override Row CreateRowFromReader(IDataReader reader)
         {
-            return Row.FromReader(reader);
+            var row = new Row();
+            foreach (var field in _fields)
+            {
+                row.Add(field, reader[field]);
+            }
+            return row;
         }
 
         protected string PrepareSql()
@@ -33,6 +44,8 @@ namespace Transformalize.Operations
             cmd.CommandTimeout = 0;
             cmd.CommandText = PrepareSql();
             cmd.CommandType = CommandType.Text;
+
+            _log.Trace(cmd.CommandText);
         }
     }
 }

@@ -61,11 +61,11 @@ namespace Transformalize.Core.Transform_
                     var equals = Process.MapEquals[_transform.Map];
                     var startsWith = Process.MapStartsWith.ContainsKey(_transform.Map)
                         ? Process.MapStartsWith[_transform.Map]
-                        : new Dictionary<string, object>();
+                        : new Map();
                     var endsWith = Process.MapEndsWith.ContainsKey(_transform.Map)
                         ? Process.MapEndsWith[_transform.Map]
-                        : new Dictionary<string, object>();
-                    return new MapTransform(new[] {@equals, startsWith, endsWith});
+                        : new Map();
+                    return new MapTransform(new[] {@equals, startsWith, endsWith}, _parameters, _results);
 
                 case "javascript":
                     var scripts = new Dictionary<string, Script>();

@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using Transformalize.Core.Entity_;
@@ -25,34 +26,49 @@ using Transformalize.Libs.Rhino.Etl.Core.Operations;
 using Transformalize.Providers;
 using Transformalize.Providers.SqlServer;
 
-namespace Transformalize.Operations {
-    public class EntityOutputKeysExtract : InputCommandOperation {
+namespace Transformalize.Operations
+{
+    public class EntityOutputKeysExtract : InputCommandOperation
+    {
 
         private readonly Entity _entity;
+        private readonly List<string> _fields;
+        private readonly Field[] _key;
 
         public EntityOutputKeysExtract(Entity entity)
-            : base(entity.OutputConnection.ConnectionString) {
+            : base(entity.OutputConnection.ConnectionString)
+        {
             _entity = entity;
+            _fields = new List<string>(new FieldSqlWriter(entity.PrimaryKey).Alias().Keys()) {"TflKey"};
+            _key = new FieldSqlWriter(entity.PrimaryKey).ToArray();
         }
 
-        protected override Row CreateRowFromReader(IDataReader reader) {
-            return Row.FromReader(reader);
+        protected override Row CreateRowFromReader(IDataReader reader)
+        {
+            var row = new Row();
+            foreach (var field in _fields)
+            {
+                row.Add(field, reader[field]);
+            }
+            return row;
         }
 
-        protected override void PrepareCommand(IDbCommand cmd) {
+        protected override void PrepareCommand(IDbCommand cmd)
+        {
             cmd.CommandTimeout = 0;
             cmd.CommandText = PrepareSql();
             Debug("\r\n{0}", cmd.CommandText);
         }
 
-        private string PrepareSql() {
+        private string PrepareSql()
+        {
             const string sqlPattern = "{0}\r\nSELECT e.{1}, TflKey\r\nFROM [{2}].[{3}] e WITH (NOLOCK)\r\nINNER JOIN @KEYS k ON ({4})\r\nORDER BY {5};";
 
             var builder = new StringBuilder();
-            builder.AppendLine(SqlTemplates.CreateTableVariable("@KEYS", _entity.PrimaryKey));
-            builder.AppendLine(SqlTemplates.BatchInsertValues(50, "@KEYS", _entity.PrimaryKey, _entity.InputKeys, ((SqlServerConnection)_entity.OutputConnection).InsertMultipleValues()));
+            builder.AppendLine(SqlTemplates.CreateTableVariable("@KEYS", _key));
+            builder.AppendLine(SqlTemplates.BatchInsertValues(50, "@KEYS", _key, _entity.InputKeys, ((SqlServerConnection)_entity.OutputConnection).InsertMultipleValues()));
 
-            var selectKeys =  new FieldSqlWriter(_entity.PrimaryKey).Alias().Write(", e.", false);
+            var selectKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias().Write(", e.", false);
             var joinKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias().Set("e", "k").Write(" AND ");
             var orderByKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias().Asc().Write();
             return string.Format(sqlPattern, builder, selectKeys, _entity.Schema, _entity.OutputName(), joinKeys, orderByKeys);

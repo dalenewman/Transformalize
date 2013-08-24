@@ -1,6 +1,6 @@
-using System.Collections.Generic;
 using System.Data.SqlClient;
 using Transformalize.Core;
+using Transformalize.Core.Parameters_;
 
 namespace Transformalize.Providers.SqlServer
 {
@@ -13,8 +13,8 @@ namespace Transformalize.Providers.SqlServer
             _connectionString = connectionString;
         }
 
-        public Dictionary<string, object> Read() {
-            var map = new Dictionary<string, object>();
+        public Map Read() {
+            var map = new Map();
 
             using (var cn = new SqlConnection(_connectionString)) {
                 cn.Open();
@@ -22,7 +22,7 @@ namespace Transformalize.Providers.SqlServer
                 var reader = cmd.ExecuteReader();
                 if (reader.HasRows) {
                     while (reader.Read()) {
-                        map[reader.GetValue(0).ToString()] = reader.GetValue(1);
+                        map[reader.GetValue(0).ToString()] = new Item(reader.GetValue(1));
                     }
                 }
             }

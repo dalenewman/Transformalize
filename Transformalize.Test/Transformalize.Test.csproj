@@ -94,10 +94,9 @@
     <Compile Include="Unit\TestParameters.cs" />
     <Compile Include="Unit\TestFieldType.cs" />
     <Compile Include="Unit\TestStringBuilderExtensions.cs" />
-    <Compile Include="Unit\TestViewWriter.cs" />
     <Compile Include="Unit\TestMultiFieldTransforms.cs" />
     <Compile Include="Unit\TestTransforms.cs" />
-    <Compile Include="Unit\TestEntity.cs" />
+    <Compile Include="Unit\TestWithProcess.cs" />
     <Compile Include="Unit\TestFields.cs" />
     <Compile Include="Unit\TestOperations.cs" />
     <Compile Include="Unit\TestSqlTemplates.cs" />

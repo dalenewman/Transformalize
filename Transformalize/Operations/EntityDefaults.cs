@@ -19,25 +19,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System.Collections.Generic;
 using Transformalize.Core.Entity_;
 using Transformalize.Core.Field_;
-using Transformalize.Core.Fields_;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
 
 namespace Transformalize.Operations
 {
     public class EntityDefaults : AbstractOperation {
-        private readonly IFields _fields;
+        private readonly Field[] _fields;
 
         public EntityDefaults(Entity entity) {
-            _fields = new FieldSqlWriter(entity.All).ExpandXml().Input().Context();
+            _fields = new FieldSqlWriter(entity.All).ExpandXml().Input().ToArray(); //HasDefault()
             UseTransaction = false;
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
-                foreach (var key in row.Columns) {
-                    if (row[key] == null) {
-                        row[key] = _fields[key].Default;
+                foreach (var field in _fields)
+                {
+                    if (row[field.Alias] == null)
+                    {
+                        row[field.Alias] = field.Default;
                     }
                 }
                 yield return row;

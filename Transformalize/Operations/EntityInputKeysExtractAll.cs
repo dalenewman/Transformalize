@@ -1,7 +1,10 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using Transformalize.Core.Entity_;
+using Transformalize.Core.Field_;
+using Transformalize.Core.Fields_;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
 
@@ -10,21 +13,28 @@ namespace Transformalize.Operations
     public class EntityInputKeysExtractAll : InputCommandOperation
     {
         private readonly Entity _entity;
+        private readonly IEnumerable<string> _fields;
 
         public EntityInputKeysExtractAll(Entity entity)
             : base(entity.InputConnection.ConnectionString)
         {
             _entity = entity;
             _entity.End = _entity.EntityVersionReader.GetEndVersion();
+            _fields = new FieldSqlWriter(entity.PrimaryKey).Alias().Keys();
             if (!_entity.EntityVersionReader.HasRows)
             {
-                Debug("{0} | No data detected in {1}.", _entity.ProcessName, _entity.Name);
+                Debug("{0} | No data detected in {1}.", _entity.ProcessName, _entity.Alias);
             }
         }
 
         protected override Row CreateRowFromReader(IDataReader reader)
         {
-            return Row.FromReader(reader);
+            var row = new Row();
+            foreach (var field in _fields)
+            {
+                row.Add(field, reader[field]);
+            }
+            return row;
         }
 
         protected string PrepareSql()

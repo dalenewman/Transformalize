@@ -46,7 +46,7 @@ namespace Transformalize.Operations
             if (_entity.RecordsAffected == 0)
                 return rows;
 
-            if (_process.OutputRecordsExist || _entity.HasForeignKeys()) {
+            if (Process.OutputRecordsExist || _entity.HasForeignKeys()) {
                 using (var cn = new SqlConnection(_process.MasterEntity.OutputConnection.ConnectionString)) {
                     cn.Open();
                     var cmd = new SqlCommand(PrepareSql(), cn) {CommandTimeout = 0};
@@ -68,7 +68,7 @@ namespace Transformalize.Operations
 
             var master = string.Format("[{0}]", masterEntity.OutputName());
             var source = string.Format("[{0}]", _entity.OutputName());
-            var sets = _process.OutputRecordsExist ?
+            var sets = Process.OutputRecordsExist ?
                 new FieldSqlWriter(_entity.Fields).FieldType(FieldType.ForeignKey).AddBatchId(false).Alias().Set(master, source).Write(",\r\n    ") :
                 new FieldSqlWriter(_entity.Fields).FieldType(FieldType.ForeignKey).Alias().Set(master, source).Write(",\r\n    ");
 

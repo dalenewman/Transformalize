@@ -235,14 +235,12 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Operations {
         /// Creates the SQL bulk copy instance
         /// </summary>
         private SqlBulkCopy CreateSqlBulkCopy(SqlConnection connection, SqlTransaction transaction) {
-            var copy = new SqlBulkCopy(connection, _bulkCopyOptions, transaction) { BatchSize = _batchSize, EnableStreaming = true};
+            var copy = new SqlBulkCopy(connection, _bulkCopyOptions, transaction) { BatchSize = _batchSize };
             foreach (var pair in Mappings) {
                 copy.ColumnMappings.Add(pair.Key, pair.Value);
             }
-            if (IsDebugEnabled() || IsTraceEnabled()) {
-                copy.NotifyAfter = NotifyBatchSize;
-                copy.SqlRowsCopied += OnSqlRowsCopied;
-            }
+            copy.NotifyAfter = NotifyBatchSize;
+            copy.SqlRowsCopied += OnSqlRowsCopied;
             copy.DestinationTableName = TargetTable;
             copy.BulkCopyTimeout = Timeout;
             return copy;

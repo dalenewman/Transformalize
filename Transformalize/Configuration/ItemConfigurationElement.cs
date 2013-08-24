@@ -30,7 +30,7 @@ namespace Transformalize.Configuration
             set { this["from"] = value; }
         }
 
-        [ConfigurationProperty("to", IsRequired = true)]
+        [ConfigurationProperty("to", IsRequired = false, DefaultValue = "")]
         public string To {
             get {
                 return this["to"] as string;
@@ -38,6 +38,16 @@ namespace Transformalize.Configuration
             set { this["to"] = value; }
         }
 
+        [ConfigurationProperty("parameter", IsRequired = false, DefaultValue = "")]
+        public string Parameter
+        {
+            get
+            {
+                return this["parameter"] as string;
+            }
+            set { this["parameter"] = value; }
+        }
+        
         [ConfigurationProperty("operator", IsRequired = false, DefaultValue = "equals")]
         public string Operator {
             get {

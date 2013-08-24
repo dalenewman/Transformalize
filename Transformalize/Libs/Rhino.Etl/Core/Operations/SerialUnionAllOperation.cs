@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
+using Transformalize.Libs.NLog;
 
 namespace Transformalize.Libs.Rhino.Etl.Core.Operations {
     public class SerialUnionAllOperation : AbstractOperation {
 
         private readonly List<IOperation> _operations = new List<IOperation>();
         public string OperationColumn { get; set; }
+        private readonly Logger _log = LogManager.GetCurrentClassLogger();
 
         public SerialUnionAllOperation(string operationColumn = "operation") {
             OperationColumn = operationColumn;
@@ -20,10 +22,20 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Operations {
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
-            if (_operations.Count > 0)
-                return _operations.SelectMany(operation => operation.Execute(null));
 
-            return rows.Select(row => row[OperationColumn]).Cast<IOperation>().SelectMany(operation => operation.Execute(null));
+            if (_operations.Count > 0)
+            {
+                foreach (var row in _operations.SelectMany(operation => operation.Execute(null)))
+                {
+                    yield return row;
+                }
+            }
+
+            foreach (var innerRow in rows.Select(row => (IOperation) row[OperationColumn]).SelectMany(operation => operation.Execute(null)))
+            {
+                yield return innerRow;
+            }
+
         }
 
         public SerialUnionAllOperation Add(params IOperation[] operation) {

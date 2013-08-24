@@ -23,6 +23,7 @@ using Transformalize.Configuration;
 using Transformalize.Core;
 using Transformalize.Core.Process_;
 using Transformalize.Extensions;
+using Transformalize.Libs.NLog;
 
 namespace Transformalize.Runner
 {

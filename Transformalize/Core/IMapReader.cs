@@ -16,11 +16,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
+using Transformalize.Core.Parameters_;
 
 namespace Transformalize.Core
 {
     public interface IMapReader {
-        Dictionary<string, object> Read();
+        Map Read();
     }
 }

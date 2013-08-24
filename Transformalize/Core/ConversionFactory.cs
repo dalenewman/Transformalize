@@ -27,7 +27,7 @@ namespace Transformalize.Core {
             if (simpleType == "object")
                 return something;
 
-            var value = something.ToString();
+            var value = something == null ? string.Empty : something.ToString();
             switch (simpleType) {
                 case "datetime":
                     if (value == string.Empty)

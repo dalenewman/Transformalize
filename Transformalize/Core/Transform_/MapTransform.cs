@@ -17,80 +17,120 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using Transformalize.Core.Fields_;
+using Transformalize.Core.Parameters_;
 using Transformalize.Extensions;
+using Transformalize.Libs.Rhino.Etl.Core;
 
-namespace Transformalize.Core.Transform_ {
-    public class MapTransform : AbstractTransform {
-        private readonly IDictionary<string, object> _equals;
-        private readonly IDictionary<string, object> _startsWith;
-        private readonly IDictionary<string, object> _endsWith;
+namespace Transformalize.Core.Transform_
+{
 
-        public MapTransform(IList<IDictionary<string, object>> maps) {
+    public class MapTransform : AbstractTransform
+    {
+        private readonly Map _equals;
+        private readonly Map _startsWith;
+        private readonly Map _endsWith;
+
+        public MapTransform(IList<Map> maps, IParameters parameters, IFields results) : base(parameters, results)
+        {
             _equals = maps[0];
             _startsWith = maps[1];
             _endsWith = maps[2];
         }
 
-        protected override string Name {
+        protected override string Name
+        {
             get { return "Map Transform"; }
         }
 
-        public override void Transform(ref StringBuilder sb) {
-
-            foreach (var pair in _equals) {
+        public override void Transform(ref StringBuilder sb)
+        {
+            foreach (var pair in _equals)
+            {
                 if (!sb.IsEqualTo(pair.Key)) continue;
                 sb.Clear();
-                sb.Append(_equals[pair.Key]);
+                sb.Append(pair.Value.Value);
                 return;
             }
 
-            foreach (var pair in _startsWith) {
+            foreach (var pair in _startsWith)
+            {
                 if (!sb.StartsWith(pair.Key)) continue;
                 sb.Clear();
-                sb.Append(_startsWith[pair.Key]);
+                sb.Append(pair.Value.Value);
                 return;
             }
 
-            foreach (var pair in _endsWith) {
+            foreach (var pair in _endsWith)
+            {
                 if (!sb.EndsWith(pair.Key)) continue;
                 sb.Clear();
-                sb.Append(_endsWith[pair.Key]);
+                sb.Append(pair.Value.Value);
                 return;
             }
 
-            foreach (var pair in _equals) {
-                if (!pair.Key.Equals("*")) continue;
-                sb.Clear();
-                sb.Append(_equals[pair.Key]);
+            if (!_equals.ContainsKey("*")) return;
+
+            sb.Clear();
+            sb.Append(_equals["*"].Value);
+        }
+
+        public override void Transform(ref object value)
+        {
+            var valueKey = value.ToString();
+
+            if (_equals.ContainsKey(valueKey))
+            {
+                value = _equals[valueKey].Value;
                 return;
+            }
+
+            foreach (var pair in _startsWith.Where(pair => valueKey.StartsWith(pair.Key)))
+            {
+                value = pair.Value.Value;
+                return;
+            }
+
+            foreach (var pair in _endsWith.Where(pair => valueKey.EndsWith(pair.Key)))
+            {
+                value = pair.Value.Value;
+                return;
+            }
+
+            if (_equals.ContainsKey("*"))
+            {
+                value = _equals["*"].Value;
             }
 
         }
 
-        public override void Transform(ref object value) {
-            foreach (var key in _equals.Keys) {
-                if (!value.Equals(key)) continue;
-                value = _equals[key];
+        public override void Transform(ref Row row)
+        {
+            var valueKey = row[FirstParameter.Key].ToString();
+            
+            if (_equals.ContainsKey(valueKey))
+            {
+                row[FirstResult.Key] = _equals[valueKey].Value ?? row[_equals[valueKey].Parameter];
                 return;
             }
 
-            foreach (var key in _startsWith.Keys) {
-                if (!value.ToString().StartsWith(key)) continue;
-                value = _startsWith[key];
+            foreach (var pair in _startsWith.Where(pair => valueKey.StartsWith(pair.Key)))
+            {
+                row[FirstResult.Key] = pair.Value.Value ?? row[pair.Value.Parameter];
                 return;
             }
 
-            foreach (var key in _endsWith.Keys) {
-                if (!value.ToString().EndsWith(key)) continue;
-                value = _endsWith[key];
+            foreach (var pair in _endsWith.Where(pair => valueKey.EndsWith(pair.Key)))
+            {
+                row[FirstResult.Key] = pair.Value.Value ?? row[pair.Value.Parameter];
                 return;
             }
 
-            foreach (var key in _equals.Keys) {
-                if (!key.Equals("*")) continue;
-                value = _equals[key];
-                return;
+            if (_equals.ContainsKey("*"))
+            {
+                row[FirstResult.Key] = _equals["*"].Value ?? row[_equals["*"].Parameter];
             }
 
         }

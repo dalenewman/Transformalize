@@ -22,6 +22,7 @@ using System.Linq;
 using Transformalize.Core.Entity_;
 using Transformalize.Core.Field_;
 using Transformalize.Extensions;
+using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.ConventionOperations;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
@@ -34,27 +35,33 @@ namespace Transformalize.Operations {
         private readonly Entity _entity;
         private readonly string _operationColumn;
         private const string KEYS_TABLE_VARIABLE = "@KEYS";
+        private readonly string[] _fields;
+        private readonly Field[] _key;
+        private readonly Logger _log = LogManager.GetCurrentClassLogger();
 
         public EntityKeysToOperations(Entity entity, string operationColumn = "operation") {
             _entity = entity;
             _operationColumn = operationColumn;
+            _fields = new FieldSqlWriter(_entity.All).ExpandXml().Input().Keys().ToArray();
+            _key = new FieldSqlWriter(_entity.PrimaryKey).ToArray();
         }
         
-        public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
+        public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
+        {
+            foreach (var batch in rows.Partition(_entity.InputConnection.BatchSize))
+            {
+                var sql = SelectByKeys(batch);
+                var row = new Row();
+                row[_operationColumn] = new EntityDataExtract(_fields, sql, _entity.InputConnection.ConnectionString);
+                yield return row;
+            }
 
-            return rows.Partition(_entity.InputConnection.BatchSize).Select(batch => new Row {{
-                _operationColumn,
-                new ConventionInputCommandOperation(_entity.InputConnection.ConnectionString) {
-                    Command = SelectByKeys(batch)
-                }
-            }});
         }
 
         public string SelectByKeys(IEnumerable<Row> rows) {
-            var context = new FieldSqlWriter(_entity.PrimaryKey).Context();
             var sql = "SET NOCOUNT ON;\r\n" +
-                      SqlTemplates.CreateTableVariable(KEYS_TABLE_VARIABLE, context, false) +
-                      SqlTemplates.BatchInsertValues(50, KEYS_TABLE_VARIABLE, context, rows, ((SqlServerConnection)_entity.InputConnection).InsertMultipleValues()) + Environment.NewLine +
+                      SqlTemplates.CreateTableVariable(KEYS_TABLE_VARIABLE, _key, false) +
+                      SqlTemplates.BatchInsertValues(50, KEYS_TABLE_VARIABLE, _key, rows, ((SqlServerConnection)_entity.InputConnection).InsertMultipleValues()) + Environment.NewLine +
                       SqlTemplates.Select(_entity.All, _entity.Name, KEYS_TABLE_VARIABLE);
 
             Trace(sql);

@@ -30,7 +30,7 @@ namespace Transformalize.Runner
                     if (process.Options.Mode != Modes.Test)
                         new EntityRecordsExist(ref process).Check();
 
-                    foreach (var entity in process.Entities)
+                    foreach (var entity in Process.Entities)
                     {
                         using (var entityProcess = new EntityProcess(ref process, entity))
                         {

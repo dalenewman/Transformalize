@@ -16,9 +16,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using Transformalize.Core.Entity_;
+using Transformalize.Core.Field_;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
 
@@ -26,6 +29,7 @@ namespace Transformalize.Operations {
     public class EntityInputKeysExtractDelta : InputCommandOperation {
 
         private readonly Entity _entity;
+        private readonly IEnumerable<string> _fields;
 
         public EntityInputKeysExtractDelta(Entity entity)
             : base(entity.InputConnection.ConnectionString) {
@@ -33,19 +37,26 @@ namespace Transformalize.Operations {
             _entity = entity;
             _entity.Begin = _entity.EntityVersionReader.GetBeginVersion();
             _entity.End = _entity.EntityVersionReader.GetEndVersion();
+            _fields = new FieldSqlWriter(entity.PrimaryKey).Alias().Keys();
+
             if (!_entity.EntityVersionReader.HasRows) {
-                Debug("{0} | No data detected in {1}.", _entity.ProcessName, _entity.Name);
+                Debug("{0} | No data detected in {1}.", _entity.ProcessName, _entity.Alias);
             }
 
             if (!_entity.EntityVersionReader.IsRange) return;
 
             if (_entity.EntityVersionReader.BeginAndEndAreEqual()) {
-                Debug("{0} | No changes detected in {1}.", _entity.ProcessName, _entity.Name);
+                Debug("{0} | No changes detected in {1}.", _entity.ProcessName, _entity.Alias);
             }
         }
 
         protected override Row CreateRowFromReader(IDataReader reader) {
-            return Row.FromReader(reader);
+            var row = new Row();
+            foreach (var field in _fields)
+            {
+                row.Add(field, reader[field]);
+            }
+            return row;
         }
 
         protected override void PrepareCommand(IDbCommand cmd) {

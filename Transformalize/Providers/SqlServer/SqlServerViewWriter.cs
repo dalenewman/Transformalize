@@ -30,7 +30,7 @@ namespace Transformalize.Providers.SqlServer {
         private readonly Process _process;
         private readonly Entity _masterEntity;
 
-        public SqlServerViewWriter(ref Process process) {
+        public SqlServerViewWriter(Process process) {
             _process = process;
             _masterEntity = _process.MasterEntity;
         }
@@ -70,7 +70,7 @@ namespace Transformalize.Providers.SqlServer {
             var builder = new StringBuilder();
             builder.AppendFormat("CREATE VIEW [{0}] AS\r\n", _process.View);
             builder.AppendFormat("SELECT\r\n    [{0}].[TflKey],\r\n    [{0}].[TflBatchId],\r\n    b.[TflUpdate],\r\n", _masterEntity.OutputName());
-            foreach (var entity in _process.Entities) {
+            foreach (var entity in Process.Entities) {
                 if (entity.IsMaster()) {
                     builder.AppendLine(string.Concat(new FieldSqlWriter(entity.PrimaryKey, entity.Fields, _process.Transforms.Results(), entity.Transforms.Results()).ExpandXml().Output().Alias().Prepend(string.Concat("    [", entity.OutputName(), "].")).Write(",\r\n"), ","));
                 }
@@ -78,7 +78,9 @@ namespace Transformalize.Providers.SqlServer {
                     if (entity.Fields.Any(f => f.Value.FieldType.HasFlag(FieldType.ForeignKey))) {
                         builder.AppendLine(string.Concat(new FieldSqlWriter(entity.Fields).ExpandXml().Output().FieldType(FieldType.ForeignKey).Alias().Prepend(string.Concat("    [", _masterEntity.OutputName(), "].")).Write(",\r\n"), ","));
                     }
-                    builder.AppendLine(string.Concat(new FieldSqlWriter(entity.Fields, entity.Transforms.Results()).ExpandXml().Output().FieldType(FieldType.Field, FieldType.Version, FieldType.Xml).Alias().Prepend(string.Concat("    [", entity.OutputName(), "].")).Write(",\r\n"), ","));
+                    var writer = new FieldSqlWriter(entity.Fields, entity.Transforms.Results()).ExpandXml().Output().FieldType(FieldType.Field,FieldType.Version,FieldType.Xml);
+                    if(writer.Context().Any())
+                        builder.AppendLine(string.Concat(writer.Alias().Prepend(string.Concat("    [", entity.OutputName(), "].")).Write(",\r\n"), ","));
                 }
             }
             builder.TrimEnd("\r\n,");
@@ -86,15 +88,13 @@ namespace Transformalize.Providers.SqlServer {
             builder.AppendFormat("FROM [{0}]\r\n", _masterEntity.OutputName());
             builder.AppendFormat("INNER JOIN [TflBatch] b ON ([{0}].TflBatchId = b.TflBatchId)\r\n", _masterEntity.OutputName());
 
-            foreach (var entity in _process.Entities.Where(e => !e.IsMaster())) {
-                builder.AppendFormat("INNER JOIN [{0}] ON (", entity.OutputName());
+            foreach (var entity in Process.Entities.Where(e => !e.IsMaster())) {
+                builder.AppendFormat("LEFT OUTER JOIN [{0}] ON (", entity.OutputName());
 
                 foreach (var join in entity.RelationshipToMaster.First().Join.ToArray()) {
                     builder.AppendFormat("[{0}].[{1}] = [{2}].[{3}] AND ", _masterEntity.OutputName(), join.LeftField.Alias, entity.OutputName(), join.RightField.Alias);
                 }
-                //foreach (var pk in entity.PrimaryKey) {
-                //    builder.AppendFormat("[{0}].[{1}] = [{2}].[{1}] AND ", _masterEntity.OutputName(), pk.Value.Alias, entity.OutputName());
-                //}
+
                 builder.TrimEnd(" AND ");
                 builder.AppendLine(")");
             }

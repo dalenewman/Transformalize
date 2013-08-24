@@ -37,6 +37,16 @@ namespace Transformalize.Configuration {
             set { this["name"] = value; }
         }
 
+        [ConfigurationProperty("alias", IsRequired = false, DefaultValue = "")]
+        public string Alias
+        {
+            get
+            {
+                return this["alias"] as string;
+            }
+            set { this["alias"] = value; }
+        }
+
         [ConfigurationProperty("connection", IsRequired = false, DefaultValue = "input")]
         public string Connection {
             get {

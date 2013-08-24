@@ -30,24 +30,24 @@ namespace Transformalize.Core.Process_ {
 
     public class Process {
 
-        public static Dictionary<string, Dictionary<string, object>> MapEquals = new Dictionary<string, Dictionary<string, object>>();
-        public static Dictionary<string, Dictionary<string, object>> MapStartsWith = new Dictionary<string, Dictionary<string, object>>();
-        public static Dictionary<string, Dictionary<string, object>> MapEndsWith = new Dictionary<string, Dictionary<string, object>>();
+        public static Dictionary<string, Map> MapEquals = new Dictionary<string, Map>();
+        public static Dictionary<string, Map> MapStartsWith = new Dictionary<string, Map>();
+        public static Dictionary<string, Map> MapEndsWith = new Dictionary<string, Map>();
         public static Dictionary<string, Script> Scripts = new Dictionary<string, Script>();
         public static Dictionary<string, Template> Templates = new Dictionary<string, Template>();
         public static string Name { get; set; }
-        
+        public static Dictionary<string, IConnection> Connections = new Dictionary<string, IConnection>();
+        public static bool OutputRecordsExist;
+        public static List<Entity> Entities { get; set; }
+
         public Entity MasterEntity { get; set; }
         public Options Options { get; set; }
-        public List<Entity> Entities { get; set; }
-        public Dictionary<string, IConnection> Connections = new Dictionary<string, IConnection>();
         public List<Relationship> Relationships = new List<Relationship>();
         public IParameters Parameters = new Parameters();
         public IEnumerable<Field> RelatedKeys;
-        public Transforms Transforms;
+        public Transforms Transforms = new Transforms();
         public string View;
-        public bool OutputRecordsExist;
-
+        
         public bool IsReady() {
             return Connections.Select(connection => connection.Value.IsReady()).All(b => b.Equals(true));
         }
@@ -62,12 +62,12 @@ namespace Transformalize.Core.Process_ {
             Transforms = new Transforms();
         }
 
-        public IFields InputFields()
+        public static IFields InputFields()
         {
             var fields = new Fields();
             foreach (var entity in Entities)
             {
-                fields.AddRange(new FieldSqlWriter(entity.All, entity.Transforms.Results()).ExpandXml().Input().Context());
+                fields.AddRange(new FieldSqlWriter(entity.All, entity.Transforms.Results()).ExpandXml().Input().ToArray());
             }
             return fields;
         }

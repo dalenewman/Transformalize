@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Transformalize.Libs.NLog;
 
 namespace Transformalize.Libs.Rhino.Etl.Core.Operations
 {
@@ -35,28 +36,30 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Operations
         {
             foreach (var row in rows)
             {
-
-                if (_firstRow)
+                if (IsDebugEnabled())
                 {
-                    var columns = _only.Any()
-                        ? row.Columns.Where(column => _only.Contains(column))
-                            .Select(column => column.PadLeft(_maxLengh))
-                            .ToArray()
-                        : row.Columns.Where(column => !_ignores.Contains(column))
-                            .Select(column => column.PadLeft(_maxLengh))
-                            .ToArray();
+                    if (_firstRow)
+                    {
+                        var columns = _only.Any()
+                            ? row.Columns.Where(column => _only.Contains(column))
+                                .Select(column => column.PadLeft(_maxLengh))
+                                .ToArray()
+                            : row.Columns.Where(column => !_ignores.Contains(column))
+                                .Select(column => column.PadLeft(_maxLengh))
+                                .ToArray();
 
-                    Info(string.Empty);
-                    Info(string.Join(_delimiter, columns));
+                        Debug(new String('-', (columns.Count() * _maxLengh) + columns.Count() - 1));
+                        Debug(string.Join(_delimiter, columns));
+                    }
+
+                    var values = _only.Any() ?
+                        row.Columns.Where(column => _only.Contains(column)).Select(column => EnforceMaxLength(row[column]).PadLeft(_maxLengh, ' ')).ToList() :
+                        row.Columns.Where(column => !_ignores.Contains(column)).Select(column => EnforceMaxLength(row[column]).PadLeft(_maxLengh, ' ')).ToList();
+
+                    Debug(string.Join(_delimiter, values));
+
+                    _firstRow = false;
                 }
-
-                var values = _only.Any() ?
-                    row.Columns.Where(column => _only.Contains(column)).Select(column => EnforceMaxLength(row[column]).PadLeft(_maxLengh, ' ')).ToList() :
-                    row.Columns.Where(column => !_ignores.Contains(column)).Select(column => EnforceMaxLength(row[column]).PadLeft(_maxLengh, ' ')).ToList();
-
-                Info(string.Join(_delimiter, values));
-
-                _firstRow = false;
                 yield return row;
 
             }

@@ -29,7 +29,7 @@ namespace Transformalize.Providers.SqlServer
 
         public bool InputExists(Entity entity)
         {
-            return new SqlServerTableExists(entity.InputConnection.ConnectionString).Exists(entity.Schema, entity.Name);
+            return new SqlServerTableExists(entity.InputConnection.ConnectionString).Exists(entity.Schema, entity.Alias);
         }
     }
 }

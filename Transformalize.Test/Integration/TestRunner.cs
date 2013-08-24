@@ -51,9 +51,9 @@ namespace Transformalize.Test.Integration {
         }
 
         [Test]
-        public void EsTestTop20()
+        public void EsTestTrace()
         {
-            new ProcessXmlRunner(@"c:\etl\rhinoetl\tfl\Es.xml", new Options { Mode = Modes.Test, Top = 20}).Run();
+            new ProcessXmlRunner(@"c:\etl\rhinoetl\tfl\Es.xml", new Options("{'mode':'test','top':5,'loglevel':'trace'}")).Run();
         }
 
         [Test]

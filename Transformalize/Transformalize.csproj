@@ -136,8 +136,12 @@
     <Compile Include="Configuration\XmlConfigurationElement.cs" />
     <Compile Include="Configuration\XmlElementCollection.cs" />
     <Compile Include="Core\Common.cs" />
-    <Compile Include="Core\ConfigurationMapReader.cs" />
+    <Compile Include="Core\MapConfigurationReader.cs" />
     <Compile Include="Core\ConversionFactory.cs" />
+    <Compile Include="Core\Entity_\EntityConfigurationReader.cs" />
+    <Compile Include="Core\Entity_\IEntityReader.cs" />
+    <Compile Include="Core\Item.cs" />
+    <Compile Include="Core\Map.cs" />
     <Compile Include="Core\Process_\ProcessTransformLoader.cs" />
     <Compile Include="Core\Entity_\Entity.cs" />
     <Compile Include="Core\Entity_\EntityCounter.cs" />
@@ -239,6 +243,7 @@
     <Compile Include="Libs\NCalc\NCalcParser.cs" />
     <Compile Include="Libs\NCalc\Numbers.cs" />
     <Compile Include="Libs\NCalc\ParameterArgs.cs" />
+    <Compile Include="Operations\EntityDataExtract.cs" />
     <Compile Include="Operations\EntityInputKeysExtractTop.cs" />
     <Compile Include="Providers\AnalysisServices\AnalysisServicesScriptRunner.cs" />
     <Compile Include="Providers\AnalysisServices\AnalysisServicesConnectionChecker.cs" />
@@ -688,7 +693,6 @@
     <Compile Include="Libs\Rhino.Etl\Core\Pipelines\SingleThreadedNonCachedPipelineExecuter.cs" />
     <Compile Include="Libs\Rhino.Etl\Core\Pipelines\SingleThreadedPipelineExecuter.cs" />
     <Compile Include="Libs\Rhino.Etl\Core\Pipelines\ThreadPoolPipelineExecuter.cs" />
-    <Compile Include="Libs\Rhino.Etl\Core\QuackingDictionary.cs" />
     <Compile Include="Libs\Rhino.Etl\Core\Row.cs" />
     <Compile Include="Libs\Rhino.Etl\Core\WithLoggingMixin.cs" />
     <Compile Include="Operations\EntityAggregation.cs" />

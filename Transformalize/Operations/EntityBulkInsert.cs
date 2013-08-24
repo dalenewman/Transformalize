@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Data.SqlClient;
+using System.Linq;
 using Transformalize.Core.Entity_;
 using Transformalize.Core.Field_;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
@@ -34,15 +35,16 @@ namespace Transformalize.Operations {
             TurnOptionOff(SqlBulkCopyOptions.UseInternalTransaction);
             TurnOptionOff(SqlBulkCopyOptions.CheckConstraints);
             TurnOptionOff(SqlBulkCopyOptions.FireTriggers);
+
         }
 
         protected override void PrepareSchema() {
             NotifyBatchSize = 10000;
             BatchSize = _entity.OutputConnection.BatchSize;
 
-            var fields = new FieldSqlWriter(_entity.All, _entity.Transforms.Results()).ExpandXml().Output().AddBatchId(false).Context();
-            foreach (var pair in fields) {
-                Schema[pair.Key] = pair.Value.SystemType;
+            var fields = new FieldSqlWriter(_entity.All, _entity.Transforms.Results()).ExpandXml().Output().AddBatchId(false).ToArray();
+            foreach (var field in fields) {
+                Schema[field.Alias] = field.SystemType;
             }
         }
 

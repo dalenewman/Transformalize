@@ -29,7 +29,6 @@ namespace Transformalize.Core.Field_
 
     public class Field
     {
-
         private FieldType _fieldType;
         private string _name;
         private string _sqlDataType;
@@ -66,7 +65,7 @@ namespace Transformalize.Core.Field_
         public bool Auto { get; set; }
         public string Aggregate { get; set; }
         public Parameter AsParameter { get; set; }
-        public bool HasTransforms { get; set; }
+        public bool HasTransforms { get { return Transforms != null && Transforms.Count > 0; } }
 
         public string SqlDataType
         {
@@ -125,13 +124,14 @@ namespace Transformalize.Core.Field_
 
         public Field(FieldType fieldType) : this("System.String", "64", fieldType, true, null) { }
 
-        public Field(string typeName, string length, FieldType fieldType, bool output, object @default)
+        public Field(string typeName, string length, FieldType fieldType, bool output, string @default)
         {
             Initialize(typeName, length, fieldType, output, @default);
         }
 
-        private void Initialize(string typeName, string length, FieldType fieldType, bool output, object @default)
+        private void Initialize(string typeName, string length, FieldType fieldType, bool output, string @default)
         {
+            Name = "field";
             Input = true;
             Unicode = true;
             VariableLength = true;
@@ -145,8 +145,12 @@ namespace Transformalize.Core.Field_
             SystemType = System.Type.GetType(typeName);
             StringBuilder = UseStringBuilder ? new StringBuilder() : null;
             InnerXml = new Dictionary<string, Field>();
-            Default = new ConversionFactory().Convert(@default ?? string.Empty, SimpleType);
 
+            if (@default != Common.DefaultNotProvided)
+            {
+                Default = new ConversionFactory().Convert(@default, SimpleType);    
+            }
+            
             if (SimpleType.Equals("rowversion"))
             {
                 Output = false;
@@ -183,7 +187,7 @@ namespace Transformalize.Core.Field_
 
         public override string ToString()
         {
-            return string.Format("({0}} {1}.{2}", Type, Entity, Alias);
+            return string.Format("({0}) {1}", Type, Alias);
         }
 
     }

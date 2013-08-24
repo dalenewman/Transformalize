@@ -20,7 +20,7 @@ namespace Transformalize.Core.Field_
             var f = new Field(field.Type, field.Length, fieldType, field.Output, field.Default)
                         {
                             Process = Process.Name,
-                            Entity = _entity.Name,
+                            Entity = _entity.Alias,
                             Schema = _entity.Schema,
                             Name = field.Name,
                             Alias = field.Alias,
@@ -33,7 +33,6 @@ namespace Transformalize.Core.Field_
                             AsParameter = new Parameter(field.Alias, null)
                         };
             f.Transforms = new FieldTransformReader(f, field.Transforms).Read();
-            f.HasTransforms = f.Transforms.Count > 0;
             return f;
         }
 
@@ -41,7 +40,7 @@ namespace Transformalize.Core.Field_
         {
             var xmlField = new Field(x.Type, x.Length, FieldType.Xml, x.Output, x.Default)
             {
-                Entity = _entity.Name,
+                Entity = _entity.Alias,
                 Schema = _entity.Schema,
                 Parent = parent.Name,
                 XPath = parent.Xml.XPath + x.XPath,
@@ -54,7 +53,6 @@ namespace Transformalize.Core.Field_
                 AsParameter = new Parameter(x.Alias, null)
             };
             xmlField.Transforms = new FieldTransformReader(xmlField, x.Transforms).Read();
-            xmlField.HasTransforms = xmlField.Transforms.Count > 0;
             return xmlField;
         }
     }

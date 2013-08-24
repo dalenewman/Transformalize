@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using Transformalize.Core;
 using Transformalize.Core.Entity_;
 using Transformalize.Core.Field_;
 using Transformalize.Core.Fields_;
@@ -15,7 +17,7 @@ namespace Transformalize.Operations {
         private readonly char[] _separatorArray;
         private readonly string _separatorString;
         private readonly string[] _columnsToGroupBy;
-        private readonly IFields _columnsToAccumulate;
+        private readonly Field[] _columnsToAccumulate;
         private readonly string _firstKey;
         private readonly IDictionary<string, StringBuilder> _builders = new Dictionary<string, StringBuilder>();
 
@@ -24,12 +26,12 @@ namespace Transformalize.Operations {
             _separator = separator;
             _separatorString = separator.ToString(CultureInfo.InvariantCulture);
             _separatorArray = new[] { separator };
-            _columnsToGroupBy = new FieldSqlWriter(_entity.All).ExpandXml().Input().Group().Context().ToEnumerable().Select(e => e.Alias).ToArray();
-            _firstKey = _columnsToGroupBy.Length > 0 ? _columnsToGroupBy[0] : _columnsToAccumulate.ToEnumerable().Select(c => c.Alias).First();
-            _columnsToAccumulate = new FieldSqlWriter(_entity.All).ExpandXml().Input().Aggregate().Context();
+            _columnsToGroupBy = new FieldSqlWriter(_entity.PrimaryKey).ExpandXml().Input().Context().ToEnumerable().Select(f=>f.Alias).ToArray();
+            _firstKey = _columnsToGroupBy[0];
+            _columnsToAccumulate = new FieldSqlWriter(_entity.All).ExpandXml().Input().Aggregate().ToArray();
 
-            foreach (var pair in _columnsToAccumulate) {
-                _builders[pair.Key] = new StringBuilder();
+            foreach (var field in _columnsToAccumulate) {
+                _builders[field.Alias] = new StringBuilder();
             }
         }
 
@@ -40,43 +42,57 @@ namespace Transformalize.Operations {
                     aggregate[column] = row[column];
                 }
 
-                foreach (var pair in _columnsToAccumulate) {
-                    aggregate[pair.Value.Alias] = pair.Value.Default;
+                foreach (var field in _columnsToAccumulate) {
+                    aggregate[field.Alias] = field.Default ?? new ConversionFactory().Convert(string.Empty, field.SimpleType);
                 }
             }
+
             //accumulate
-            foreach (var pair in _columnsToAccumulate) {
-                switch (pair.Value.Aggregate) {
+            foreach (var field in _columnsToAccumulate) {
+                switch (field.Aggregate) {
                     case "sum":
-                        switch (pair.Value.SimpleType) {
+                        switch (field.SimpleType) {
                             case "int32":
-                                aggregate[pair.Key] = (int)aggregate[pair.Key] + (int)row[pair.Key];
+                                aggregate[field.Alias] = (int)aggregate[field.Alias] + (int)row[field.Alias];
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case "max":
+                        switch (field.SimpleType)
+                        {
+                            case "int32":
+                                aggregate[field.Alias] = Math.Max((int)aggregate[field.Alias],(int)row[field.Alias]);
+                                break;
+                            case "int64":
+                                aggregate[field.Alias] = Math.Max((long)aggregate[field.Alias], (long)row[field.Alias]);
                                 break;
                             default:
                                 break;
                         }
                         break;
                     case "join":
-                        var aggregateValue = aggregate[pair.Key].ToString();
+                        var aggregateValue = aggregate[field.Alias].ToString();
                         var aggregateIsEmpty = aggregateValue == string.Empty;
 
-                        var rowValue = row[pair.Key].ToString().Replace(_separatorString, string.Empty);
+                        var rowValue = row[field.Alias].ToString().Replace(_separatorString, string.Empty);
                         var rowIsEmpty = rowValue == string.Empty;
                         
                         if (aggregateIsEmpty && rowIsEmpty)
                             break;
 
                         if (!aggregateIsEmpty) {
-                            _builders[pair.Key].Clear();
-                            _builders[pair.Key].Append(aggregateValue);
+                            _builders[field.Alias].Clear();
+                            _builders[field.Alias].Append(aggregateValue);
                             if (!rowIsEmpty && aggregateValue != rowValue) {
-                                _builders[pair.Key].Append(_separator);
-                                _builders[pair.Key].Append(" ");
-                                _builders[pair.Key].Append(rowValue);
+                                _builders[field.Alias].Append(_separator);
+                                _builders[field.Alias].Append(" ");
+                                _builders[field.Alias].Append(rowValue);
                             }
-                            aggregate[pair.Key] = _builders[pair.Key].ToString();
+                            aggregate[field.Alias] = _builders[field.Alias].ToString();
                         } else {
-                            aggregate[pair.Key] = rowValue;
+                            aggregate[field.Alias] = rowValue;
                         }
 
                         break;
@@ -92,16 +108,16 @@ namespace Transformalize.Operations {
 
         protected override void FinishAggregation(Row aggregate) {
             //final accumulate
-            foreach (var pair in _columnsToAccumulate) {
-                switch (pair.Value.Aggregate) {
+            foreach (var field in _columnsToAccumulate) {
+                switch (field.Aggregate) {
                     case "join":
-                        var aggregateValue = aggregate[pair.Key].ToString();
+                        var aggregateValue = aggregate[field.Alias].ToString();
                         var aggregateIsEmpty = aggregateValue == string.Empty;
 
                         if (aggregateIsEmpty)
                             break;
 
-                        aggregate[pair.Key] = string.Join(_separatorString + " ",aggregateValue.Split(_separatorArray).Select(s=>s.Trim()).Distinct());
+                        aggregate[field.Alias] = string.Join(_separatorString + " ",aggregateValue.Split(_separatorArray).Select(s=>s.Trim()).Distinct());
                         break;
                     default:
                         break;

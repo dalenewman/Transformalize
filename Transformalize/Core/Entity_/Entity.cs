@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using Transformalize.Core.Field_;
 using Transformalize.Core.Fields_;
 using Transformalize.Core.Transform_;
@@ -30,12 +29,12 @@ using Transformalize.Providers.SqlServer;
 namespace Transformalize.Core.Entity_
 {
 
-    public class Entity : IDisposable
+    public class Entity
     {
 
         public string Schema { get; set; }
         public string ProcessName { get; set; }
-        public string Name { get; set; }
+        public string Alias { get; set; }
         public IConnection InputConnection { get; set; }
         public IConnection OutputConnection { get; set; }
         public Field Version { get; set; }
@@ -58,10 +57,12 @@ namespace Transformalize.Core.Entity_
         public string Prefix { get; set; }
         public bool Group { get; set; }
         public bool Auto { get; set; }
+        public string Name { get; set; }
 
         public Entity(IEntityVersionReader entityVersionReader = null)
         {
             Name = string.Empty;
+            Alias = string.Empty;
             Schema = string.Empty;
             PrimaryKey = new Fields();
             Fields = new Fields();
@@ -83,21 +84,9 @@ namespace Transformalize.Core.Entity_
             return PrimaryKey.Any(kv => kv.Value.FieldType.HasFlag(FieldType.MasterKey));
         }
 
-        public void Dispose()
-        {
-            foreach (var pair in All)
-            {
-                if (pair.Value.Transforms == null) continue;
-                foreach (AbstractTransform t in pair.Value.Transforms)
-                {
-                    t.Dispose();
-                }
-            }
-        }
-
         public string OutputName()
         {
-            return string.Concat(ProcessName, Name).Replace(" ", string.Empty);
+            return string.Concat(ProcessName, Alias).Replace(" ", string.Empty);
         }
 
         public bool HasForeignKeys()
@@ -140,7 +129,7 @@ namespace Transformalize.Core.Entity_
 
         public override string ToString()
         {
-            return Name;
+            return Alias;
         }
     }
 }

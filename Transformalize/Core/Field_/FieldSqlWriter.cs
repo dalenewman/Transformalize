@@ -19,14 +19,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Core.Fields_;
+using Transformalize.Libs.NLog;
 
 namespace Transformalize.Core.Field_ {
 
 
-    public class FieldSqlWriter {
+    public class FieldSqlWriter
+    {
 
+        private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private const string BATCH_ID = "TflBatchId";
-        private const string UPDATE = "TflUpdate";
         private const string SURROGATE_KEY = "TflKey";
         private SortedDictionary<string, string> _output;
         private Dictionary<string, Field> _original;
@@ -100,14 +102,6 @@ namespace Transformalize.Core.Field_ {
             _output = new SortedDictionary<string, string>(expanded.ToDictionary(f => f.Alias, f => string.Empty));
         }
 
-        //private static Dictionary<string, Field> ToDictionary(IEnumerable<Field> fields) {
-        //    var dict = new Dictionary<string, Field>();
-        //    foreach (var field in fields) {
-        //        dict[field.Alias] = field;
-        //    }
-        //    return dict;
-        //}
-
         private void StartWithDictionary(IDictionary<string, Field> fields) {
             _original = fields.ToDictionary(f => f.Key, f => f.Value);
             _output = new SortedDictionary<string, string>(fields.ToDictionary(f => f.Key, f => string.Empty));
@@ -160,6 +154,11 @@ namespace Transformalize.Core.Field_ {
             return _output.Select(kv => kv.Value);
         }
 
+        public IEnumerable<string> Keys(bool flush = true)
+        {
+            return _output.Select(kv => kv.Key);
+        }
+
         private void Flush() {
             _output = new SortedDictionary<string, string>(_original.ToDictionary(f => f.Key, f => string.Empty));
         }
@@ -191,7 +190,8 @@ namespace Transformalize.Core.Field_ {
         public FieldSqlWriter IsNull() {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];
-                _output[key] = string.Concat("ISNULL(", _output[key], ", ", field.Quote, field.Default, field.Quote, ")");
+                var d = field.Default ?? new ConversionFactory().Convert(string.Empty, field.SimpleType);
+                _output[key] = string.Concat("ISNULL(", _output[key], ", ", field.Quote, d, field.Quote, ")");
             }
             return this;
         }
@@ -310,19 +310,10 @@ namespace Transformalize.Core.Field_ {
             return this;
         }
 
-        public FieldSqlWriter Group() {
-            foreach (var key in CopyOutputKeys()) {
-                var field = _original[key];
-                if (field.Aggregate != "group")
-                    _output.Remove(key);
-            }
-            return this;
-        }
-
         public FieldSqlWriter Aggregate() {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];
-                if (field.Aggregate == "group" || field.Aggregate == "ignore")
+                if (field.Aggregate == string.Empty || field.FieldType.HasFlag(Field_.FieldType.PrimaryKey) || field.FieldType.HasFlag(Field_.FieldType.MasterKey))
                     _output.Remove(key);
             }
             return this;
@@ -331,7 +322,18 @@ namespace Transformalize.Core.Field_ {
         public FieldSqlWriter HasTransform() {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];
-                if (field.Transforms == null)
+                if (!field.HasTransforms)
+                    _output.Remove(key);
+            }
+            return this;
+        }
+
+        public FieldSqlWriter HasDefault()
+        {
+            foreach (var key in CopyOutputKeys())
+            {
+                var field = _original[key];
+                if (field.Default == null)
                     _output.Remove(key);
             }
             return this;
@@ -341,15 +343,6 @@ namespace Transformalize.Core.Field_ {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];
                 if (field.InnerXml.Any() != answer)
-                    _output.Remove(key);
-            }
-            return this;
-        }
-
-        public FieldSqlWriter FieldType(FieldType answer) {
-            foreach (var key in CopyOutputKeys()) {
-                var field = _original[key];
-                if (!field.FieldType.HasFlag(answer))
                     _output.Remove(key);
             }
             return this;
@@ -398,7 +391,7 @@ namespace Transformalize.Core.Field_ {
 
         public FieldSqlWriter AddBatchId(bool forCreate = true) {
 
-            _original[BATCH_ID] = new Field("System.Int32", "8", Field_.FieldType.Field, true, 0) {
+            _original[BATCH_ID] = new Field("System.Int32", "8", Field_.FieldType.Field, true, "0") {
                 Alias = BATCH_ID,
                 NotNull = forCreate
             };
@@ -409,9 +402,9 @@ namespace Transformalize.Core.Field_ {
 
         public FieldSqlWriter AddSurrogateKey(bool forCreate = true) {
             if (forCreate)
-                _original[SURROGATE_KEY] = new Field("System.Int32", "8", Field_.FieldType.Field, true, 0) { Alias = SURROGATE_KEY, NotNull = true, Clustered = true, Identity = true };
+                _original[SURROGATE_KEY] = new Field("System.Int32", "8", Field_.FieldType.Field, true, "0") { Alias = SURROGATE_KEY, NotNull = true, Clustered = true, Identity = true };
             else
-                _original[SURROGATE_KEY] = new Field("System.Int32", "8", Field_.FieldType.Field, true, 0) { Alias = SURROGATE_KEY };
+                _original[SURROGATE_KEY] = new Field("System.Int32", "8", Field_.FieldType.Field, true, "0") { Alias = SURROGATE_KEY };
 
             _output[SURROGATE_KEY] = string.Empty;
             return this;
@@ -429,6 +422,16 @@ namespace Transformalize.Core.Field_ {
             return results;
         }
 
+        public Field[] ToArray()
+        {
+            var results = new Fields();
+            foreach (var pair in _output)
+            {
+                results[pair.Key] = _original[pair.Key];
+            }
+            return results.ToEnumerable().ToArray();
+        }
+
         public FieldSqlWriter Remove(string @alias)
         {
             foreach (var key in CopyOutputKeys())
@@ -439,5 +442,6 @@ namespace Transformalize.Core.Field_ {
             }
             return this;
         }
+
     }
 }

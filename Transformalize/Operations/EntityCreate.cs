@@ -54,7 +54,9 @@ namespace Transformalize.Operations {
         private void CreateEntity() {
             if (_entityExists.OutputExists(_entity)) return;
 
-            var primaryKey = _writer.FieldType(FieldType.MasterKey, FieldType.PrimaryKey).Alias().Asc().Values();
+            var primaryKey = _entity.IsMaster()
+                ? _writer.FieldType(FieldType.MasterKey).Alias().Asc().Values()
+                : _writer.FieldType(FieldType.PrimaryKey).Alias().Asc().Values();
             var defs = _writer.Reload().ExpandXml().AddSurrogateKey().AddBatchId().Output().Alias().DataType().AppendIf(" NOT NULL", FieldType.MasterKey, FieldType.PrimaryKey).Values();
             var sql = SqlTemplates.CreateTable(_entity.OutputName(), defs, primaryKey, ignoreDups: true);
 
@@ -70,7 +72,7 @@ namespace Transformalize.Operations {
 
         private IFields GetRelationshipFields(Process process)
         {
-            var relationships = process.Relationships.Where(r => r.LeftEntity.Name != _entity.Name && r.RightEntity.Name != _entity.Name).ToArray();
+            var relationships = process.Relationships.Where(r => r.LeftEntity.Alias != _entity.Alias && r.RightEntity.Alias != _entity.Alias).ToArray();
             var fields = new Fields();
             if (relationships.Any())
             {

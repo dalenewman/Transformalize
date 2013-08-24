@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Configuration;
+using Transformalize.Core;
 
 namespace Transformalize.Configuration
 {
@@ -110,7 +111,7 @@ namespace Transformalize.Configuration
             set { this["variableLength"] = value; }
         }
 
-        [ConfigurationProperty("default", IsRequired = false, DefaultValue = "")]
+        [ConfigurationProperty("default", IsRequired = false, DefaultValue = Common.DefaultNotProvided)]
         public string Default {
             get {
                 return (string) this["default"];

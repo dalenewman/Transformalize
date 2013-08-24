@@ -37,7 +37,7 @@ namespace Transformalize.Providers.SqlServer {
                     var command = new SqlCommand(PrepareSql(), cn);
                     command.Parameters.Add(new SqlParameter("@TflBatchId", _entity.TflBatchId));
                     command.Parameters.Add(new SqlParameter("@ProcessName", _entity.ProcessName));
-                    command.Parameters.Add(new SqlParameter("@EntityName", _entity.Name));
+                    command.Parameters.Add(new SqlParameter("@EntityName", _entity.Alias));
                     command.Parameters.Add(new SqlParameter("@End", end));
                     command.Parameters.Add(new SqlParameter("@TflUpdate", DateTime.Now));
                     command.Parameters.Add(new SqlParameter("@Count", count));
@@ -45,7 +45,7 @@ namespace Transformalize.Providers.SqlServer {
                 }
             }
 
-            Info("{0} | Processed {1} rows in {2}", _entity.ProcessName, count, _entity.Name);
+            Info("{0} | Processed {1} rows in {2}", _entity.ProcessName, count, _entity.Alias);
         }
 
         private string PrepareSql() {

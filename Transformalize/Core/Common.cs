@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using Transformalize.Configuration;
 using Transformalize.Core.Field_;
 using Transformalize.Core.Process_;
@@ -31,11 +32,20 @@ namespace Transformalize.Core
         private const string APPLICATION_FOLDER = @"\Tfl\";
         private static readonly char[] Slash = new[] { '\\' };
 
+        public const string DefaultNotProvided = "tfl-default";
+
+        //public static Func<KeyValuePair<string, Field>, bool> FieldFinder(ParameterConfigurationElement p)
+        //{
+        //    if(p.Entity != string.Empty)
+        //        return kv => (kv.Value.Alias.Equals(p.Field, IC) && kv.Value.Entity.Equals(p.Entity, IC)) || (kv.Value.Name.Equals(p.Field, IC) && kv.Value.Entity.Equals(p.Entity, IC));
+        //    return kv => kv.Value.Alias.Equals(p.Field, IC) || kv.Value.Name.Equals(p.Field, IC);
+        //}
+
         public static Func<KeyValuePair<string, Field>, bool> FieldFinder(ParameterConfigurationElement p)
         {
-            if(p.Entity != string.Empty)
-                return kv => (kv.Value.Alias.Equals(p.Field, IC) && kv.Value.Entity.Equals(p.Entity, IC)) || (kv.Value.Name.Equals(p.Field, IC) && kv.Value.Entity.Equals(p.Entity, IC));
-            return kv => kv.Value.Alias.Equals(p.Field, IC) || kv.Value.Name.Equals(p.Field, IC);
+            if (p.Entity != string.Empty)
+                return f => f.Key.Equals(p.Field, IC) && f.Value.Entity.Equals(p.Entity, IC) || f.Value.Name.Equals(p.Field, IC) && f.Value.Entity.Equals(p.Entity, IC);
+            return f => f.Key.Equals(p.Field, IC) || f.Value.Name.Equals(p.Field, IC);
         }
 
         public static Func<Field, bool> FieldFinder(string nameOrAlias)
@@ -51,6 +61,16 @@ namespace Transformalize.Core
                 Directory.CreateDirectory(folder);
 
             return folder;
+        }
+
+        public static IEnumerable<byte> ObjectToByteArray(object obj)
+        {
+            if (obj == null)
+                return null;
+            var formatter = new BinaryFormatter();
+            var memory = new MemoryStream();
+            formatter.Serialize(memory, obj);
+            return memory.ToArray();
         }
 
     }

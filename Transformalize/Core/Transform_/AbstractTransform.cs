@@ -50,7 +50,10 @@ namespace Transformalize.Core.Transform_
         protected AbstractTransform()
         {
             HasParameters = false;
+            Parameters = new Parameters();
+
             HasResults = false;
+            Results = new Fields();
         }
 
         /// <summary>

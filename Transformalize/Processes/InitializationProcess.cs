@@ -38,7 +38,7 @@ namespace Transformalize.Processes
         {
             _process = process;
             _tflWriter = tflWriter ?? new SqlServerTflWriter(ref process);
-            _viewWriter = viewWriter ?? new SqlServerViewWriter(ref process);
+            _viewWriter = viewWriter ?? new SqlServerViewWriter(process);
 
             _tflWriter.Initialize();
             _viewWriter.Drop();
@@ -46,7 +46,7 @@ namespace Transformalize.Processes
 
         protected override void Initialize()
         {
-            foreach (var entity in _process.Entities)
+            foreach (var entity in Process.Entities)
             {
                 Register(new EntityDrop(entity));
                 Register(new EntityCreate(entity, _process));

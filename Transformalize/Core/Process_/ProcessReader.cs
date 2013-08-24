@@ -33,9 +33,9 @@ using Transformalize.Providers.SqlServer;
 
 namespace Transformalize.Core.Process_
 {
-
     public class ProcessReader : IConfigurationReader<Process>
     {
+        private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private readonly string _processName = string.Empty;
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly ConversionFactory _conversionFactory = new ConversionFactory();
@@ -81,7 +81,7 @@ namespace Transformalize.Core.Process_
             _process.RelatedKeys = ReadRelatedKeys();
             _process.View = _process.MasterEntity.OutputName() + "Star";
 
-            foreach (var entity in _process.Entities)
+            foreach (var entity in Process.Entities)
             {
                 entity.RelationshipToMaster = ReadRelationshipToMaster(entity);
             }
@@ -108,7 +108,6 @@ namespace Transformalize.Core.Process_
                     Process.Scripts[script.Name] = new Script(script.Name, File.ReadAllText(fileInfo.FullName), fileInfo.FullName);
                     _log.Debug("Loaded script {0}.", fileInfo.FullName);
                 }
-
             }
 
             return scripts.Count();
@@ -151,9 +150,9 @@ namespace Transformalize.Core.Process_
                                                      TemplateName = template.Name
                                                  };
 
-                        if (!String.IsNullOrEmpty(action.Connection) && _process.Connections.ContainsKey(action.Connection))
+                        if (!String.IsNullOrEmpty(action.Connection) && Process.Connections.ContainsKey(action.Connection))
                         {
-                            templateAction.Connection = _process.Connections[action.Connection];
+                            templateAction.Connection = Process.Connections[action.Connection];
                         }
 
                         template.Actions.Add(templateAction);
@@ -190,7 +189,7 @@ namespace Transformalize.Core.Process_
             _log.Debug("{0} | {1} Template{2}.", Process.Name, _templateCount, _templateCount == 1 ? string.Empty : "s");
             _log.Debug("{0} | {1} Map{2}.", Process.Name, _mapCount, _mapCount == 1 ? string.Empty : "s");
 
-            _transformCount += _process.Entities.Sum(e => e.Transforms.Count);
+            _transformCount += Process.Entities.Sum(e => e.Transforms.Count);
             _log.Debug("{0} | {1} Transform{2}.", Process.Name, _transformCount, _transformCount == 1 ? string.Empty : "s");
         }
 
@@ -215,8 +214,8 @@ namespace Transformalize.Core.Process_
             foreach (RelationshipConfigurationElement r in _config.Relationships)
             {
 
-                var leftEntity = _process.Entities.First(e => e.Name.Equals(r.LeftEntity, StringComparison.OrdinalIgnoreCase));
-                var rightEntity = _process.Entities.First(e => e.Name.Equals(r.RightEntity, StringComparison.OrdinalIgnoreCase));
+                var leftEntity = Process.Entities.First(e => e.Alias.Equals(r.LeftEntity, IC));
+                var rightEntity = Process.Entities.First(e => e.Alias.Equals(r.RightEntity, IC));
                 var join = GetJoins(r, leftEntity, rightEntity);
                 var relationship = new Relationship
                 {
@@ -250,13 +249,13 @@ namespace Transformalize.Core.Process_
         {
             if (!leftEntity.All.ContainsKey(leftField) && !leftEntity.All.ToEnumerable().Any(Common.FieldFinder(leftField)))
             {
-                _log.Error("{0} | The left entity {1} does not have a field named {2} for joining to the right entity {3} with field {4}.", Process.Name, leftEntity.Name, leftField, rightEntity.Name, rightField);
+                _log.Error("{0} | The left entity {1} does not have a field named {2} for joining to the right entity {3} with field {4}.", Process.Name, leftEntity.Alias, leftField, rightEntity.Alias, rightField);
                 Environment.Exit(0);
             }
 
             if (!rightEntity.All.ContainsKey(rightField) && !rightEntity.All.ToEnumerable().Any(Common.FieldFinder(rightField)))
             {
-                _log.Error("{0} | The right entity {1} does not have a field named {2} for joining to the left entity {3} with field {4}.", Process.Name, rightEntity.Name, rightField, leftEntity.Name, leftField);
+                _log.Error("{0} | The right entity {1} does not have a field named {2} for joining to the left entity {3} with field {4}.", Process.Name, rightEntity.Alias, rightField, leftEntity.Alias, leftField);
                 Environment.Exit(0);                
             }
 
@@ -281,10 +280,13 @@ namespace Transformalize.Core.Process_
         private int ReadEntities()
         {
             var count = 0;
-            foreach (EntityConfigurationElement e in _config.Entities)
+            foreach (IEntityReader reader in _config.Entities.Cast<EntityConfigurationElement>().Select(e => new EntityConfigurationReader(e)))
             {
-                var entity = GetEntity(e, count);
-                _process.Entities.Add(entity);
+                var entity = reader.Read(count);
+
+                GuardAgainstFieldOverlap(entity);
+
+                Process.Entities.Add(entity);
                 if (entity.IsMaster())
                     _process.MasterEntity = entity;
                 count++;
@@ -294,7 +296,7 @@ namespace Transformalize.Core.Process_
 
         private IEnumerable<Field> ReadRelatedKeys()
         {
-            var entity = _process.Entities.First(e => e.IsMaster());
+            var entity = Process.Entities.First(e => e.IsMaster());
             return GetRelatedKeys(entity);
         }
 
@@ -305,7 +307,7 @@ namespace Transformalize.Core.Process_
             {
                 foreach (var alias in foreignKeys.Select(fk => fk.Alias).ToArray())
                 {
-                    var nextEntity = _process.Relationships.Where(r => r.LeftEntity.Name.Equals(entity.Name) && r.Join.Any(j => j.LeftField.Alias.Equals(alias))).Select(r => r.RightEntity).First();
+                    var nextEntity = _process.Relationships.Where(r => r.LeftEntity.Alias.Equals(entity.Alias) && r.Join.Any(j => j.LeftField.Alias.Equals(alias))).Select(r => r.RightEntity).First();
                     foreignKeys.AddRange(GetRelatedKeys(nextEntity));
                 }
             }
@@ -319,15 +321,20 @@ namespace Transformalize.Core.Process_
             {
                 if (string.IsNullOrEmpty(m.Connection))
                 {
-                    Process.MapEquals[m.Name] = new ConfigurationMapReader(m.Items, "equals").Read();
-                    Process.MapStartsWith[m.Name] = new ConfigurationMapReader(m.Items, "startswith").Read();
-                    Process.MapEndsWith[m.Name] = new ConfigurationMapReader(m.Items, "endswith").Read();
+                    Process.MapEquals[m.Name] = new MapConfigurationReader(m.Items, "equals").Read();
+                    Process.MapStartsWith[m.Name] = new MapConfigurationReader(m.Items, "startswith").Read();
+                    Process.MapEndsWith[m.Name] = new MapConfigurationReader(m.Items, "endswith").Read();
                 }
                 else
                 {
-                    if (_process.Connections.ContainsKey(m.Connection))
+                    if (Process.Connections.ContainsKey(m.Connection))
                     {
-                        Process.MapEquals[m.Name] = new SqlServerMapReader(m.Items.Sql, _process.Connections[m.Connection].ConnectionString).Read();
+                        Process.MapEquals[m.Name] = new SqlServerMapReader(m.Items.Sql, Process.Connections[m.Connection].ConnectionString).Read();
+                    }
+                    else
+                    {
+                        _log.Error("{0} | Map {1} references connection {2}, which does not exist.");
+                        Environment.Exit(0);
                     }
                 }
                 count++;
@@ -362,103 +369,23 @@ namespace Transformalize.Core.Process_
                         Process = Process.Name
                     };
                 }
-                _process.Connections.Add(element.Name, connection);
+                Process.Connections.Add(element.Name, connection);
                 count++;
             }
             return count;
         }
 
-        private Entity GetEntity(EntityConfigurationElement e, int entityCount)
+        private void GuardAgainstFieldOverlap(Entity entity)
         {
-
-            var entity = new Entity
-            {
-                ProcessName = Process.Name,
-                Schema = e.Schema,
-                Name = e.Name,
-                InputConnection = _process.Connections[e.Connection],
-                OutputConnection = _process.Connections["output"],
-                Prefix = e.Prefix == "Default" ? e.Name.Replace(" ", string.Empty) : e.Prefix,
-                Group = e.Group,
-                Auto = e.Auto
-            };
-
-            if (entity.Auto)
-            {
-                var autoReader = new SqlServerEntityAutoFieldReader(entity, entityCount);
-                entity.All = autoReader.ReadAll();
-                entity.Fields = autoReader.ReadFields();
-                entity.PrimaryKey = autoReader.ReadPrimaryKey();
-            }
-
-            var pkIndex = 0;
-            foreach (FieldConfigurationElement pk in e.PrimaryKey)
-            {
-                var fieldType = entityCount == 0 ? FieldType.MasterKey : FieldType.PrimaryKey;
-
-                var keyField = new FieldReader(entity).Read(pk, fieldType);
-                keyField.Index = pkIndex;
-
-                entity.PrimaryKey[pk.Alias] = keyField;
-                entity.All[pk.Alias] = keyField;
-
-                pkIndex++;
-            }
-
-            var fieldIndex = 0;
-            foreach (FieldConfigurationElement f in e.Fields)
-            {
-                var field = new FieldReader(entity).Read(f);
-                field.Index = fieldIndex;
-
-                foreach (XmlConfigurationElement x in f.Xml)
-                {
-                    var xmlField = new FieldReader(entity).Read(x, f);
-                    field.InnerXml.Add(x.Alias, xmlField);
-                }
-
-                if (entity.Auto && entity.Fields.ContainsKey(field.Name))
-                {
-                    entity.Fields.Remove(field.Name);
-                    entity.All.Remove(field.Name);
-                }
-
-                entity.Fields[f.Alias] = field;
-                entity.All[f.Alias] = field;
-
-                fieldIndex++;
-            }
-
-            if (entity.All.ContainsKey(e.Version))
-            {
-                entity.Version = entity.All[e.Version];
-            }
-            else
-            {
-                if (entity.All.Any(kv => kv.Value.Name.Equals(e.Version, StringComparison.OrdinalIgnoreCase)))
-                {
-                    entity.Version = entity.All.ToEnumerable().First(v => v.Name.Equals(e.Version, StringComparison.OrdinalIgnoreCase));
-                }
-                else
-                {
-                    _log.Error("{0} | version field reference '{1}' is undefined in {2}.", Process.Name, e.Version, e.Name);
-                    Environment.Exit(0);
-                }
-            }
-
             var entityKeys = new HashSet<string>(entity.Fields.ToEnumerable().Where(f => f.Output).Select(f => f.Alias));
-            var processKeys = new HashSet<string>(_process.Entities.SelectMany(e2 => e2.Fields.ToEnumerable()).Where(f => f.Output).Select(f => f.Alias));
+            var processKeys = new HashSet<string>(Process.Entities.SelectMany(e2 => e2.Fields.ToEnumerable()).Where(f => f.Output).Select(f => f.Alias));
             entityKeys.IntersectWith(processKeys);
-            if (entityKeys.Any())
-            {
-                var count = entityKeys.Count;
-                _log.Error("{0} | field overlap error.  The field{2}: {1} {3} already defined in previous entities.  You must alias (rename) these.", Process.Name, string.Join(", ", entityKeys), count == 1 ? string.Empty : "s", count == 1 ? "is" : "are");
-                Environment.Exit(0);
-            }
+            
+            if (!entityKeys.Any()) return;
 
-            new EntityTransformLoader(ref entity, e.Transforms).Load();
-
-            return entity;
+            var count = entityKeys.Count;
+            _log.Error("{0} | field overlap error in {4}.  The field{2}: {1} {3} already defined in previous entities.  You must alias (rename) these.", Process.Name, string.Join(", ", entityKeys), count == 1 ? string.Empty : "s", count == 1 ? "is" : "are", entity.Alias);
+            Environment.Exit(0);
         }
 
     }

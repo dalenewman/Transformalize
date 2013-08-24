@@ -48,5 +48,9 @@ namespace Transformalize.Configuration {
             BaseAdd(0,element);
         }
 
+        public void Add(ParameterConfigurationElement element)
+        {
+            BaseAdd(element);
+        }
     }
 }

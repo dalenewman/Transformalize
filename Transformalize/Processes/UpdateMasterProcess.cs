@@ -37,10 +37,10 @@ namespace Transformalize.Processes
 
         protected override void Initialize()
         {
-            var last = _process.Entities.Last().Name;
-            foreach (var entity in _process.Entities)
+            var last = Process.Entities.Last().Alias;
+            foreach (var entity in Process.Entities)
             {
-                if (entity.Name.Equals(last))
+                if (entity.Alias.Equals(last))
                     RegisterLast(new EntityUpdateMaster(_process, entity));
                 else
                 {

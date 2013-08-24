@@ -59,9 +59,9 @@
       <transforms>
         <add method="join" separator=" " result="Employee">
           <parameters>
-            <add field="EmployeesTitleOfCourtesy"></add>
-            <add field="EmployeesFirstName"></add>
-            <add field="EmployeesLastName"></add>
+            <!--<add field="TitleOfCourtesy"></add>-->
+            <add field="FirstName"></add>
+            <add field="LastName"></add>
           </parameters>
         </add>
       </transforms>

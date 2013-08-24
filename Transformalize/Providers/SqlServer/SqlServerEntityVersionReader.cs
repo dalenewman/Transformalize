@@ -23,6 +23,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using Transformalize.Core;
 using Transformalize.Core.Entity_;
 
 namespace Transformalize.Providers.SqlServer {
@@ -62,7 +63,7 @@ namespace Transformalize.Providers.SqlServer {
             cn.Open();
             var command = new SqlCommand(sql, cn);
             command.Parameters.Add(new SqlParameter("@ProcessName", _entity.ProcessName));
-            command.Parameters.Add(new SqlParameter("@EntityName", _entity.Name));
+            command.Parameters.Add(new SqlParameter("@EntityName", _entity.Alias));
             return command.ExecuteReader(CommandBehavior.CloseConnection & CommandBehavior.SingleResult);
         }
 
@@ -100,21 +101,12 @@ namespace Transformalize.Providers.SqlServer {
             }
         }
 
-        private IEnumerable<byte> ObjectToByteArray(object obj) {
-            if (obj == null)
-                return null;
-            var formatter = new BinaryFormatter();
-            var memory = new MemoryStream();
-            formatter.Serialize(memory, obj);
-            return memory.ToArray();
-        }
-
         public bool BeginAndEndAreEqual() {
             if (IsRange) {
                 var bytes = new[] { "byte[]", "rowversion" };
                 if (bytes.Any(t => t == _entity.Version.SimpleType)) {
-                    var beginBytes = ObjectToByteArray(_begin);
-                    var endBytes = ObjectToByteArray(_end);
+                    var beginBytes = Common.ObjectToByteArray(_begin);
+                    var endBytes = Common.ObjectToByteArray(_end);
                     return beginBytes.SequenceEqual(endBytes);
                 }
                 return _begin.Equals(_end);

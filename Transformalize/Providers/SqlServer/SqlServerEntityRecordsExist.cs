@@ -51,7 +51,7 @@ ELSE
             if (_entityExists.InputExists(entity)) {
                 using (var cn = new SqlConnection(entity.InputConnection.ConnectionString)) {
                     cn.Open();
-                    var sql = string.Format(FORMAT, entity.Schema, entity.Name);
+                    var sql = string.Format(FORMAT, entity.Schema, entity.Alias);
                     var cmd = new SqlCommand(sql, cn);
                     return (int)cmd.ExecuteScalar() == 1;
                 }

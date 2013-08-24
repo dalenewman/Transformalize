@@ -34,6 +34,7 @@ namespace Transformalize.Core
         public bool RenderTemplates { get; set; }
         public bool PerformTemplateActions { get; set; }
         public int Top { get; set; }
+        public LogLevel LogLevel { get; set; }
 
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
 
@@ -66,6 +67,22 @@ namespace Transformalize.Core
                                 {
                                     Mode = Modes.Test;
                                 }
+                                break;
+                            case "loglevel":
+                                this.LogLevel = LogLevel.FromString(value);
+                                foreach (var rule in LogManager.Configuration.LoggingRules)
+                                {
+                                    if (rule.Targets.All(t => t.Name != "console")) continue;
+
+                                    foreach (var level in rule.Levels)
+                                    {
+                                        if (level.Ordinal < this.LogLevel.Ordinal)
+                                            rule.DisableLoggingForLevel(level);
+                                        else
+                                            rule.EnableLoggingForLevel(this.LogLevel);
+                                    }
+                                }
+                                LogManager.ReconfigExistingLoggers();
                                 break;
                             case "rendertemplates":
                                 if (bool.TryParse(value, out input))
@@ -134,11 +151,10 @@ namespace Transformalize.Core
                     _log.DebugException(message + " " + e.Message, e);
                     Problems.Add(message);
                 }
-
             }
         }
 
-        public bool IsValid()
+        public bool Valid()
         {
             return !Problems.Any();
         }
@@ -161,6 +177,7 @@ namespace Transformalize.Core
             PerformTemplateActions = true;
             Mode = Modes.Normal;
             Top = 100;
+            LogLevel = LogLevel.Info;
         }
 
     }

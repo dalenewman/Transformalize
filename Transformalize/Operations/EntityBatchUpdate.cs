@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Data.SqlClient;
+using System.Linq;
 using Transformalize.Core.Entity_;
 using Transformalize.Core.Field_;
 using Transformalize.Libs.Rhino.Etl.Core;
@@ -38,8 +39,8 @@ namespace Transformalize.Operations {
             var writer = new FieldSqlWriter(_entity.Fields).ExpandXml().Output();
             var sets = writer.Alias().SetParam().Write(",\r\n    ", false);
             command.CommandText = string.Format("UPDATE [{0}].[{1}]\r\nSET {2},\r\n    TflBatchId = @TflBatchId\r\nWHERE TflKey = @TflKey;", _entity.Schema, _entity.OutputName(), sets);
-            foreach (var r in writer.Context()) {
-                AddParameter(command, r.Key, row[r.Key]);
+            foreach (var r in writer.ToArray()) {
+                AddParameter(command, r.Alias, row[r.Alias]);
             }
             AddParameter(command, "TflKey", row["TflKey"]);
             AddParameter(command, "TflBatchId", _entity.TflBatchId);

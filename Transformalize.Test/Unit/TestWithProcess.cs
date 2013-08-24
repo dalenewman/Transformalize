@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Moq;
@@ -25,14 +26,16 @@ using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
 using Transformalize.Operations;
 using Transformalize.Providers;
+using Transformalize.Providers.SqlServer;
 
 namespace Transformalize.Test.Unit {
     [TestFixture]
-    public class TestEntity : EtlProcessHelper {
+    public class TestWithProcess : EtlProcessHelper {
 
         private readonly Mock<IOperation> _entityKeysExtract;
+        private readonly Process _process = new ProcessReader("Test").Read();
 
-        public TestEntity() {
+        public TestWithProcess() {
 
             _entityKeysExtract = new Mock<IOperation>();
             _entityKeysExtract.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row> {
@@ -46,11 +49,9 @@ namespace Transformalize.Test.Unit {
 
         [Test]
         public void TestKeysTableVariable() {
-            var process = new ProcessReader("Test").Read();
-
-            var entity = process.Entities.First();
+            var entity = Process.Entities.First();
             
-            var actual = SqlTemplates.CreateTableVariable("KEYS", entity.PrimaryKey);
+            var actual = SqlTemplates.CreateTableVariable("KEYS", entity.PrimaryKey.ToEnumerable().ToArray());
             const string expected = "DECLARE @KEYS AS TABLE([OrderDetailKey] INT);";
 
             Assert.AreEqual(expected, actual);
@@ -59,13 +60,13 @@ namespace Transformalize.Test.Unit {
         [Test]
         public void TestKeyInserts() {
 
-            var entity = new ProcessReader("Test").Read().Entities.First();
+            var entity = Process.Entities.First();
 
             var rows = TestOperation(_entityKeysExtract.Object);
 
             Assert.AreEqual(4, rows.Count);
 
-            var actual = SqlTemplates.BatchInsertValues(2, "@KEYS", entity.PrimaryKey, rows, false);
+            var actual = SqlTemplates.BatchInsertValues(2, "@KEYS", entity.PrimaryKey.ToEnumerable().ToArray(), rows, false);
             const string expected = @"
 INSERT INTO @KEYS
 SELECT 1
@@ -80,7 +81,7 @@ UNION ALL SELECT 4;";
         [Test]
         public void TestSelectByKeysSql() {
 
-            var entity = new ProcessReader("Test").Read().Entities.First();
+            var entity = Process.Entities.First();
 
             var actual = SqlTemplates.Select(entity.All, entity.OutputName(), "@KEYS");
             const string expected = @"
@@ -103,13 +104,52 @@ OPTION (MAXDOP 1);";
         [Test]
         public void TestEntityKeysToOperations() {
 
-            var process = new ProcessReader("Test").Read();
-            var entity = process.Entities.First();
+            var entity = Process.Entities.First();
             var entityKeysToOperations = new EntityKeysToOperations(entity);
 
             var operations = TestOperation(_entityKeysExtract.Object, entityKeysToOperations);
             Assert.AreEqual(1, operations.Count);
         }
+
+        [Test]
+        public void TestWriteSql()
+        {
+
+            var actual = new SqlServerViewWriter(_process).CreateSql();
+
+            Assert.AreEqual(@"CREATE VIEW [TestOrderDetailStar] AS
+SELECT
+    [TestOrderDetail].[TflKey],
+    [TestOrderDetail].[TflBatchId],
+    b.[TflUpdate],
+    [TestOrderDetail].[Color],
+    [TestOrderDetail].[Gender],
+    [TestOrderDetail].[OrderDetailKey],
+    [TestOrderDetail].[OrderKey],
+    [TestOrderDetail].[Price],
+    [TestOrderDetail].[ProductKey],
+    [TestOrderDetail].[Quantity],
+    [TestOrderDetail].[Result],
+    [TestOrderDetail].[Size],
+    [TestOrderDetail].[CustomerKey],
+    [TestOrder].[OrderDate],
+    [TestCustomer].[Address],
+    [TestCustomer].[City],
+    [TestCustomer].[Country],
+    [TestCustomer].[FirstName],
+    [TestCustomer].[LastName],
+    [TestCustomer].[State],
+    [TestProduct].[ProductName]
+FROM [TestOrderDetail]
+INNER JOIN [TflBatch] b ON ([TestOrderDetail].TflBatchId = b.TflBatchId)
+LEFT OUTER JOIN [TestOrder] ON ([TestOrderDetail].[OrderKey] = [TestOrder].[OrderKey])
+LEFT OUTER JOIN [TestCustomer] ON ([TestOrderDetail].[CustomerKey] = [TestCustomer].[CustomerKey])
+LEFT OUTER JOIN [TestProduct] ON ([TestOrderDetail].[ProductKey] = [TestProduct].[ProductKey])
+;", actual);
+
+            Console.Write(actual);
+        }
+
 
     }
 }

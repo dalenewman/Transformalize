@@ -20,19 +20,21 @@ using System.Collections.Generic;
 using Transformalize.Core.Entity_;
 using Transformalize.Core.Field_;
 using Transformalize.Core.Fields_;
-using Transformalize.Core.Transform_;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
+using System.Linq;
 
 namespace Transformalize.Operations
 {
     public class FieldTransform : AbstractOperation
     {
-        private readonly IFields _fields;
+        private readonly Field[] _fields;
+        private readonly int _transformCount;
 
         public FieldTransform(Entity entity)
         {
-            _fields = new FieldSqlWriter(entity.All).ExpandXml().HasTransform().Input().Context();
+            _fields = new FieldSqlWriter(entity.All).ExpandXml().HasTransform().Input().ToArray();
+            _transformCount = _fields.Any() ? _fields.Sum(f => f.Transforms.Count) : 0;
             UseTransaction = false;
         }
 
@@ -40,23 +42,28 @@ namespace Transformalize.Operations
         {
             foreach (var row in rows)
             {
-                foreach (var field in _fields)
+                if (_transformCount > 0)
                 {
-                    var value = row[field.Key];
+                    foreach (var field in _fields)
+                    {
+                        var value = row[field.Alias];
+                        if (value == null) continue;
 
-                    if (field.Value.UseStringBuilder)
-                    {
-                        field.Value.StringBuilder.Clear();
-                        field.Value.StringBuilder.Append(value);
-                        field.Value.Transform();
-                        row[field.Key] = field.Value.StringBuilder.ToString();
-                    }
-                    else
-                    {
-                        field.Value.Transform(ref value);
-                        row[field.Key] = value;
+                        if (field.UseStringBuilder)
+                        {
+                            field.StringBuilder.Clear();
+                            field.StringBuilder.Append(value);
+                            field.Transform();
+                            row[field.Alias] = field.StringBuilder.ToString();
+                        }
+                        else
+                        {
+                            field.Transform(ref value);
+                            row[field.Alias] = value;
+                        }
                     }
                 }
+
                 yield return row;
             }
         }

@@ -1,5 +1,6 @@
 using System.Linq;
 using Transformalize.Core.Entity_;
+using Transformalize.Core.Process_;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
 
@@ -26,6 +27,14 @@ namespace Transformalize.Operations {
 
         protected override string[] GetColumnsToGroupBy() {
             return _keys;
+        }
+
+        protected override void FinishAggregation(Row aggregate)
+        {
+            if (Process.OutputRecordsExist)
+            {
+                _entity.InputKeys.Add(aggregate);
+            }
         }
     }
 }

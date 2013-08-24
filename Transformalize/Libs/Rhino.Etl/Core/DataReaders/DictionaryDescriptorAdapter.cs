@@ -20,7 +20,7 @@ namespace Transformalize.Libs.Rhino.Etl.Core.DataReaders {
         /// <param name="obj">The obj.</param>
         /// <returns></returns>
         public override object GetValue(object obj) {
-            return ((IDictionary<string, object>)obj)[Name];
+            return ((Row)obj)[Name];
         }
     }
 }

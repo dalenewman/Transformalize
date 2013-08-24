@@ -38,8 +38,10 @@ namespace Transformalize.Configuration
             return new EntityConfigurationElement();
         }
 
-        protected override object GetElementKey(ConfigurationElement element) {
-            return ((EntityConfigurationElement)element).Name.ToLower();
+        protected override object GetElementKey(ConfigurationElement element)
+        {
+            var entity = ((EntityConfigurationElement) element);
+            return entity.Alias != string.Empty ? entity.Alias.ToLower() : entity.Name.ToLower();
         }
         
     }

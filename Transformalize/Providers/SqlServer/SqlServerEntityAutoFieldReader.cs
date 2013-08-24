@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using Transformalize.Core;
 using Transformalize.Core.Entity_;
 using Transformalize.Core.Field_;
 using Transformalize.Core.Fields_;
@@ -35,7 +36,7 @@ namespace Transformalize.Providers.SqlServer {
                     var type = GetSystemType(reader.GetString(2));
                     var length = reader.GetString(3);
                     var fieldType = reader.GetBoolean(7) ? (_count == 0 ? FieldType.MasterKey : FieldType.PrimaryKey) : FieldType.Field;
-                    var field = new Field(type, length, fieldType, true, null) {
+                    var field = new Field(type, length, fieldType, true, Common.DefaultNotProvided) {
                         Name = name,
                         Entity = _entity.Name,
                         Index = reader.GetInt32(6),

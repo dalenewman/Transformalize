@@ -82,7 +82,7 @@ namespace Transformalize.Processes
             }
             else
             {
-                if (_process.OutputRecordsExist)
+                if (Process.OutputRecordsExist)
                 {
                     Register(new EntityJoinAction(_entity).Right(new EntityOutputKeysExtract(_entity)));
                     var branch = new BranchingOperation()
