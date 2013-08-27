@@ -31,8 +31,13 @@ namespace Transformalize.Core.Transform_ {
             _regex = new Regex(pattern, RegexOptions.Compiled);
         }
 
-        protected override string Name {
+        public override string Name {
             get { return "Regex Replace Transform"; }
+        }
+
+        public override bool RequiresParameters
+        {
+            get { return false; }
         }
 
         public override void Transform(ref StringBuilder sb)
@@ -45,11 +50,11 @@ namespace Transformalize.Core.Transform_ {
                 sb.Append(_regex.Replace(input, _replacement));
         }
 
-        public override void Transform(ref object value) {
+        public override object Transform(object value)
+        {
             if (_count > 0)
-                value = _regex.Replace(value.ToString(), _replacement, _count);
-            else
-                value = _regex.Replace(value.ToString(), _replacement);
+                return _regex.Replace(value.ToString(), _replacement, _count);
+            return _regex.Replace(value.ToString(), _replacement);
         }
     }
 }

@@ -28,7 +28,6 @@ namespace Transformalize.Test.Integration {
     [TestFixture]
     public class TestConfiguration : EtlProcessHelper
     {
-
         private readonly Process _process = new ProcessReader("Test").Read();
 
         [Test]
@@ -83,38 +82,14 @@ namespace Transformalize.Test.Integration {
         }
 
         [Test]
-        public void TestRelatedKeys() {
-
-            var process = new ProcessReader("NorthWind").Read();
-
-            Assert.AreEqual(7, process.RelatedKeys.Count());
-
-            foreach (var relatedKey in process.RelatedKeys) {
-                Console.WriteLine("{0} : {1}", relatedKey.Entity, relatedKey.Name);
-            }
-
-            Assert.AreEqual(0, Process.Entities.First().RelationshipToMaster.Count());
-
-            Assert.AreEqual(1, Process.Entities.First(e => e.Alias.Equals("Products")).RelationshipToMaster.Count());
-            Assert.AreEqual(2, Process.Entities.First(e => e.Alias.Equals("Customers")).RelationshipToMaster.Count());
-            Assert.AreEqual(2, Process.Entities.First(e => e.Alias.Equals("Employees")).RelationshipToMaster.Count());
-
-            Assert.AreEqual(1, Process.Entities.First(e => e.Alias.Equals("Orders")).RelationshipToMaster.Count());
-            Assert.AreEqual(2, Process.Entities.First(e => e.Alias.Equals("Categories")).RelationshipToMaster.Count());
-            Assert.AreEqual(2, Process.Entities.First(e => e.Alias.Equals("Suppliers")).RelationshipToMaster.Count());
-
-        }
-
-        [Test]
         public void TestGetAllFieldsNeededForMultiFieldTransformations() {
-            var process = new ProcessReader("Test").Read();
 
             var expected = new Parameters() {
                 {"LastName", "LastName", null, "System.Object"},
                 {"ProductName", "ProductName", null, "System.Object"}
             };
 
-            var actual = process.Parameters;
+            var actual = _process.Parameters();
 
             Assert.AreEqual(2, actual.Count);
             Assert.AreEqual(expected["LastName"].Name, actual["LastName"].Name);

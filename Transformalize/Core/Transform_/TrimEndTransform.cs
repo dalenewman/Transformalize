@@ -29,16 +29,21 @@ namespace Transformalize.Core.Transform_ {
             _trimCharArray = trimChars.ToCharArray();
         }
 
-        protected override string Name {
+        public override string Name {
             get { return "TrimEnd Transform"; }
+        }
+
+        public override bool RequiresParameters
+        {
+            get { return false; }
         }
 
         public override void Transform(ref StringBuilder sb) {
             sb.TrimEnd(_trimChars);
         }
 
-        public override void Transform(ref object value) {
-            value = value.ToString().TrimEnd(_trimCharArray);
+        public override object Transform(object value) {
+            return value.ToString().TrimEnd(_trimCharArray);
         }
     }
 }

@@ -21,7 +21,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Transformalize.Core.Parameter_;
+using Transformalize.Core.Parameters_;
 using Transformalize.Core.Transform_;
+using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Providers.SqlServer;
 
 namespace Transformalize.Core.Field_
@@ -66,6 +68,8 @@ namespace Transformalize.Core.Field_
         public string Aggregate { get; set; }
         public Parameter AsParameter { get; set; }
         public bool HasTransforms { get { return Transforms != null && Transforms.Count > 0; } }
+        public IParameters Parameters { get; set; }
+        public bool HasParameters { get; set; }
 
         public string SqlDataType
         {
@@ -145,11 +149,8 @@ namespace Transformalize.Core.Field_
             SystemType = System.Type.GetType(typeName);
             StringBuilder = UseStringBuilder ? new StringBuilder() : null;
             InnerXml = new Dictionary<string, Field>();
-
-            if (@default != Common.DefaultNotProvided)
-            {
-                Default = new ConversionFactory().Convert(@default, SimpleType);    
-            }
+            Transforms = new Transforms();
+            Default = new ConversionFactory().Convert(@default, SimpleType);    
             
             if (SimpleType.Equals("rowversion"))
             {
@@ -169,19 +170,28 @@ namespace Transformalize.Core.Field_
             return string.Format("{0}.[{1}] = {2}.[{1}]", left, Name, right);
         }
 
-        public void Transform()
+        public void Transform(Row row)
         {
             foreach (AbstractTransform t in Transforms)
             {
-                t.Transform(ref StringBuilder);
-            }
-        }
-
-        public void Transform(ref object value)
-        {
-            foreach (AbstractTransform t in Transforms)
-            {
-                t.Transform(ref value);
+                if (t.HasParameters)
+                {
+                    t.Transform(ref row, Alias);
+                }
+                else
+                {
+                    if (UseStringBuilder)
+                    {
+                        StringBuilder.Clear();
+                        StringBuilder.Append(row[Alias]);
+                        t.Transform(ref StringBuilder);
+                        row[Alias] = StringBuilder.ToString();
+                    }
+                    else
+                    {
+                        row[Alias] = t.Transform(row[Alias]);
+                    }
+                }
             }
         }
 

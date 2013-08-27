@@ -72,13 +72,13 @@ namespace Transformalize.Providers.SqlServer {
             builder.AppendFormat("SELECT\r\n    [{0}].[TflKey],\r\n    [{0}].[TflBatchId],\r\n    b.[TflUpdate],\r\n", _masterEntity.OutputName());
             foreach (var entity in Process.Entities) {
                 if (entity.IsMaster()) {
-                    builder.AppendLine(string.Concat(new FieldSqlWriter(entity.PrimaryKey, entity.Fields, _process.Transforms.Results(), entity.Transforms.Results()).ExpandXml().Output().Alias().Prepend(string.Concat("    [", entity.OutputName(), "].")).Write(",\r\n"), ","));
+                    builder.AppendLine(string.Concat(new FieldSqlWriter(entity.PrimaryKey, entity.Fields, Process.CalculatedFields, entity.CalculatedFields).ExpandXml().Output().Alias().Prepend(string.Concat("    [", entity.OutputName(), "].")).Write(",\r\n"), ","));
                 }
                 else {
                     if (entity.Fields.Any(f => f.Value.FieldType.HasFlag(FieldType.ForeignKey))) {
                         builder.AppendLine(string.Concat(new FieldSqlWriter(entity.Fields).ExpandXml().Output().FieldType(FieldType.ForeignKey).Alias().Prepend(string.Concat("    [", _masterEntity.OutputName(), "].")).Write(",\r\n"), ","));
                     }
-                    var writer = new FieldSqlWriter(entity.Fields, entity.Transforms.Results()).ExpandXml().Output().FieldType(FieldType.Field,FieldType.Version,FieldType.Xml);
+                    var writer = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).ExpandXml().Output().FieldType(FieldType.Field,FieldType.Version,FieldType.Xml);
                     if(writer.Context().Any())
                         builder.AppendLine(string.Concat(writer.Alias().Prepend(string.Concat("    [", entity.OutputName(), "].")).Write(",\r\n"), ","));
                 }

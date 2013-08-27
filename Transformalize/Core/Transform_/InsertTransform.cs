@@ -29,8 +29,13 @@ namespace Transformalize.Core.Transform_ {
             _value = value;
         }
 
-        protected override string Name {
+        public override string Name {
             get { return "Insert Transform"; }
+        }
+
+        public override bool RequiresParameters
+        {
+            get { return false; }
         }
 
         public override void Transform(ref StringBuilder sb) {
@@ -38,10 +43,10 @@ namespace Transformalize.Core.Transform_ {
             sb.Insert(_index, _value);
         }
 
-        public override void Transform(ref object value) {
+        public override object Transform(object value) {
             var str = value.ToString();
-            if (_index > str.Length) return;
-            value = str.Insert(_index, _value);
+            if (_index > str.Length) return value;
+            return str.Insert(_index, _value);
         }
 
     }

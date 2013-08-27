@@ -14,9 +14,9 @@ namespace Transformalize.Core.Transform_
         private readonly string _field;
         private readonly Expression _expression;
 
-        public ExpressionTransform(string expression, IParameters parameters, IFields results) : this(null, expression, parameters, results) { }
+        public ExpressionTransform(string expression, IParameters parameters) : this(null, expression, parameters) { }
 
-        public ExpressionTransform(string field, string expression, IParameters parameters, IFields results) : base(parameters, results)
+        public ExpressionTransform(string field, string expression, IParameters parameters) : base(parameters)
         {
             _field = field ?? "value";
             _expression = new Expression(expression);
@@ -26,9 +26,14 @@ namespace Transformalize.Core.Transform_
             System.Environment.Exit(0);
         }
 
-        protected override string Name
+        public override string Name
         {
             get { return "Expression Transform"; }
+        }
+
+        public override bool RequiresParameters
+        {
+            get { return false; }
         }
 
         public override void Transform(ref StringBuilder sb)
@@ -38,19 +43,19 @@ namespace Transformalize.Core.Transform_
             sb.Append(_expression.Evaluate());
         }
 
-        public override void Transform(ref object value)
+        public override object Transform(object value)
         {
             _expression.Parameters[_field] = value;
-            value = _expression.Evaluate();
+            return _expression.Evaluate();
         }
 
-        public override void Transform(ref Row row)
+        public override void Transform(ref Row row, string resultKey)
         {
             foreach (var pair in Parameters)
             {
                 _expression.Parameters[pair.Value.Name] =  pair.Value.Value ?? row[pair.Key];
             }
-            row[FirstResult.Key] = _expression.Evaluate();
+            row[resultKey] = _expression.Evaluate();
         }
 
     }

@@ -29,16 +29,21 @@ namespace Transformalize.Core.Transform_ {
             _newValue = newValue;
         }
 
-        protected override string Name {
+        public override string Name {
             get { return "Replace Transform"; }
+        }
+
+        public override bool RequiresParameters
+        {
+            get { return false; }
         }
 
         public override void Transform(ref StringBuilder sb) {
             sb.Replace(_oldValue, _newValue);
         }
 
-        public override void Transform(ref object value) {
-            value = value.ToString().Replace(_oldValue, _newValue);
+        public override object Transform(object value) {
+            return value.ToString().Replace(_oldValue, _newValue);
         }
     }
 }

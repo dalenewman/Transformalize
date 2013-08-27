@@ -87,6 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EtlProcessHelper.cs" />
+    <Compile Include="Integration\TestNorthWindConfiguration.cs" />
     <Compile Include="Integration\TestRunner.cs" />
     <Compile Include="Integration\TestConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

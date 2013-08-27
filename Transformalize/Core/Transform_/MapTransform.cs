@@ -33,16 +33,21 @@ namespace Transformalize.Core.Transform_
         private readonly Map _startsWith;
         private readonly Map _endsWith;
 
-        public MapTransform(IList<Map> maps, IParameters parameters, IFields results) : base(parameters, results)
+        public MapTransform(IList<Map> maps, IParameters parameters) : base(parameters)
         {
             _equals = maps[0];
             _startsWith = maps[1];
             _endsWith = maps[2];
         }
 
-        protected override string Name
+        public override string Name
         {
             get { return "Map Transform"; }
+        }
+
+        public override bool RequiresParameters
+        {
+            get { return false; }
         }
 
         public override void Transform(ref StringBuilder sb)
@@ -77,60 +82,59 @@ namespace Transformalize.Core.Transform_
             sb.Append(_equals["*"].Value);
         }
 
-        public override void Transform(ref object value)
+        public override object Transform(object value)
         {
             var valueKey = value.ToString();
 
             if (_equals.ContainsKey(valueKey))
             {
-                value = _equals[valueKey].Value;
-                return;
+                return _equals[valueKey].Value;
             }
 
             foreach (var pair in _startsWith.Where(pair => valueKey.StartsWith(pair.Key)))
             {
-                value = pair.Value.Value;
-                return;
+                return pair.Value.Value;
             }
 
             foreach (var pair in _endsWith.Where(pair => valueKey.EndsWith(pair.Key)))
             {
-                value = pair.Value.Value;
-                return;
+                return pair.Value.Value;
             }
 
             if (_equals.ContainsKey("*"))
             {
-                value = _equals["*"].Value;
+                return _equals["*"].Value;
             }
+
+            return null;
 
         }
 
-        public override void Transform(ref Row row)
+        public override void Transform(ref Row row, string resultKey)
         {
             var valueKey = row[FirstParameter.Key].ToString();
             
             if (_equals.ContainsKey(valueKey))
             {
-                row[FirstResult.Key] = _equals[valueKey].Value ?? row[_equals[valueKey].Parameter];
+                row[resultKey] = _equals[valueKey].Value ?? row[_equals[valueKey].Parameter];
                 return;
             }
 
             foreach (var pair in _startsWith.Where(pair => valueKey.StartsWith(pair.Key)))
             {
-                row[FirstResult.Key] = pair.Value.Value ?? row[pair.Value.Parameter];
+                row[resultKey] = pair.Value.Value ?? row[pair.Value.Parameter];
                 return;
             }
 
             foreach (var pair in _endsWith.Where(pair => valueKey.EndsWith(pair.Key)))
             {
-                row[FirstResult.Key] = pair.Value.Value ?? row[pair.Value.Parameter];
+                row[resultKey] = pair.Value.Value ?? row[pair.Value.Parameter];
                 return;
             }
 
             if (_equals.ContainsKey("*"))
             {
-                row[FirstResult.Key] = _equals["*"].Value ?? row[_equals["*"].Parameter];
+                row[resultKey] = _equals["*"].Value ?? row[_equals["*"].Parameter];
             }
 
         }

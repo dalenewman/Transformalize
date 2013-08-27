@@ -17,7 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Text;
-using Transformalize.Core.Fields_;
 using Transformalize.Core.Parameters_;
 using Transformalize.Libs.Rhino.Etl.Core;
 
@@ -26,13 +25,18 @@ namespace Transformalize.Core.Transform_ {
         private readonly string _format;
         private int _index;
 
-        protected override string Name {
+        public override string Name {
             get { return "Format Transform"; }
         }
 
-        public FormatTransform(string format, IParameters parameters, IFields results)
-            : base(parameters, results) {
+        public FormatTransform(string format, IParameters parameters)
+            : base(parameters) {
             _format = format;
+        }
+
+        public override bool RequiresParameters
+        {
+            get { return false; }
         }
 
         public override void Transform(ref StringBuilder sb) {
@@ -41,18 +45,18 @@ namespace Transformalize.Core.Transform_ {
             sb.AppendFormat(_format, value);
         }
 
-        public override void Transform(ref object value) {
-            value = string.Format(_format, value);
+        public override object Transform(object value) {
+            return string.Format(_format, value);
         }
 
-        public override void Transform(ref Row row) {
+        public override void Transform(ref Row row, string resultKey) {
             _index = 0;
             foreach (var pair in Parameters) {
                 ParameterValues[_index] = pair.Value.Value ?? row[pair.Key];
                 _index++;
             }
 
-            row[FirstResult.Key] = string.Format(_format, ParameterValues);
+            row[resultKey] = string.Format(_format, ParameterValues);
         }
 
     }

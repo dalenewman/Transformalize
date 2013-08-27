@@ -24,7 +24,6 @@ using Transformalize.Core.Field_;
 using Transformalize.Core.Fields_;
 using Transformalize.Core.Parameter_;
 using Transformalize.Core.Parameters_;
-using Transformalize.Core.Process_;
 using Transformalize.Core.Template_;
 using Transformalize.Core.Transform_;
 using Transformalize.Libs.Rhino.Etl.Core;
@@ -33,29 +32,21 @@ using Transformalize.Operations;
 
 namespace Transformalize.Test.Unit {
     [TestFixture]
-    public class MulitFieldTestTransforms : EtlProcessHelper {
+    public class MultiFieldTestTransforms : EtlProcessHelper {
         
         [Test]
         public void TestJavascriptTransformStrings() {
 
             var parameters = new Parameters { { "FirstName", new Parameter("FirstName", null) }, { "LastName", new Parameter("LastName", null) } };
-            var results = new Fields(new Dictionary<string, Field> { { "FullName", new Field(FieldType.Field) } });
 
-            var process = new Process {
-                Transforms = new Transforms() {
-                    new JavascriptTransform("FirstName + ' ' + LastName",
-                        parameters,
-                        results,
-                        new Dictionary<string, Script>()
-                    )
-                }
-            };
+            var fullName = new Field(FieldType.Field) { Alias = "FullName"};
+            fullName.Transforms.Add(new JavascriptTransform("FirstName + ' ' + LastName", parameters, new Dictionary<string, Script>()));
 
             var rows = TestOperation(
                 GetTestData(new List<Row> {
                     new Row { {"FirstName", "Dale"}, {"LastName", "Newman"} },
                 }),
-                new ProcessTransform(process),
+                new FieldTransform(fullName),
                 new LogOperation()
             );
 
@@ -66,23 +57,15 @@ namespace Transformalize.Test.Unit {
         public void TestJavascriptTransformNumbers() {
 
             var parameters = new Parameters { { "x", new Parameter("x", null) }, { "y", new Parameter("y", null) } };
-            var results = new Fields(new Dictionary<string, Field> { { "z", new Field(FieldType.Field) } });
-
-            var process = new Process {
-                Transforms = new Transforms() {
-                    new JavascriptTransform("x * y",
-                        parameters,
-                        results,
-                        new Dictionary<string, Script>()
-                    )
-                }
-            };
+            
+            var z = new Field(FieldType.Field) { Alias = "z"};
+            z.Transforms.Add(new JavascriptTransform("x * y", parameters, new Dictionary<string, Script>()));
 
             var rows = TestOperation(
                 GetTestData(new List<Row> {
                     new Row { {"x", 3}, {"y", 11} },
                 }),
-                new ProcessTransform(process),
+                new FieldTransform(z),
                 new LogOperation()
             );
 
@@ -93,22 +76,15 @@ namespace Transformalize.Test.Unit {
         public void TestFormatTransform() {
 
             var parameters = new Parameters { { "x", new Parameter("x", null) }, { "y", new Parameter("y", null) } };
-            var results = new Fields(new Dictionary<string, Field> { { "z", new Field(FieldType.Field) } });
 
-            var process = new Process {
-                Transforms = new Transforms() {
-                    new FormatTransform("{0} {1}",
-                        parameters,
-                        results
-                    )
-                }
-            };
+            var z = new Field(FieldType.Field) { Alias = "z"};
+            z.Transforms.Add(new FormatTransform("{0} {1}", parameters));
 
             var rows = TestOperation(
                 GetTestData(new List<Row> {
                     new Row { {"x", "Dale"}, {"y", "Newman"} },
                 }),
-                new ProcessTransform(process),
+                new FieldTransform(z),
                 new LogOperation()
             );
 
@@ -119,24 +95,20 @@ namespace Transformalize.Test.Unit {
         public void TestTemplateTransformStringsWithDictionary() {
 
             var parameters = new Parameters { { "FirstName", new Parameter("FirstName", null) }, { "LastName", new Parameter("LastName", null) } };
-            var results = new Fields(new Dictionary<string, Field> { { "FullName", new Field(FieldType.Field) } });
             var templates = new Dictionary<string, Template>();
 
-            var process = new Process {
-                Transforms = new Transforms() {
-                    new TemplateTransform("@{ var fullName = Model[\"FirstName\"] + \" \" + Model[\"LastName\"];}@fullName", "dictionary",
-                        parameters,
-                        results,
-                        templates
-                    )
-                }
-            };
+            var fullName = new Field(FieldType.Field) { Alias = "FullName"};
+            fullName.Transforms.Add(
+                new TemplateTransform("@{ var fullName = Model[\"FirstName\"] + \" \" + Model[\"LastName\"];}@fullName", "dictionary",
+                parameters,
+                templates
+            ));
 
             var rows = TestOperation(
                 GetTestData(new List<Row> {
                     new Row { {"FirstName", "Dale"}, {"LastName", "Newman"} },
                 }),
-                new ProcessTransform(process),
+                new FieldTransform(fullName),
                 new LogOperation()
             );
 
@@ -148,25 +120,20 @@ namespace Transformalize.Test.Unit {
         {
 
             var parameters = new Parameters { { "FirstName", new Parameter("FirstName", null) }, { "LastName", new Parameter("LastName", null) } };
-            var results = new Fields(new Dictionary<string, Field> { { "FullName", new Field(FieldType.Field) } });
             var templates = new Dictionary<string, Template>();
 
-            var process = new Process
-            {
-                Transforms = new Transforms() {
-                    new TemplateTransform("@{ var fullName = Model.FirstName + \" \" + Model.LastName;}@fullName", "dynamic",
-                        parameters,
-                        results,
-                        templates
-                    )
-                }
-            };
-
+            var fullName = new Field(FieldType.Field) { Alias = "FullName"};
+            fullName.Transforms.Add(
+                new TemplateTransform("@{ var fullName = Model.FirstName + \" \" + Model.LastName;}@fullName", "dynamic",
+                parameters,
+                templates
+            ));
+            
             var rows = TestOperation(
                 GetTestData(new List<Row> {
                     new Row { {"FirstName", "Dale"}, {"LastName", "Newman"} },
                 }),
-                new ProcessTransform(process),
+                new FieldTransform(fullName),
                 new LogOperation()
             );
 
@@ -178,22 +145,15 @@ namespace Transformalize.Test.Unit {
         public void TestJoinTransformStrings() {
 
             var parameters = new Parameters { { "FirstName", new Parameter("FirstName", null) }, { "LastName", new Parameter("LastName", null) } };
-            var results = new Fields(new Dictionary<string, Field> { { "FullName", new Field(FieldType.Field) } });
 
-            var process = new Process {
-                Transforms = new Transforms() {
-                    new JoinTransform(" ",
-                        parameters,
-                        results
-                    )
-                }
-            };
+            var fullName = new Field(FieldType.Field) { Alias = "FullName"};
+            fullName.Transforms.Add(new JoinTransform(" ",parameters));
 
             var rows = TestOperation(
                 GetTestData(new List<Row> {
                     new Row { {"FirstName", "Dale"}, {"LastName", "Newman"} },
                 }),
-                new ProcessTransform(process),
+                new FieldTransform(fullName),
                 new LogOperation()
             );
 

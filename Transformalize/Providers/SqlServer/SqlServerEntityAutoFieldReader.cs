@@ -36,7 +36,7 @@ namespace Transformalize.Providers.SqlServer {
                     var type = GetSystemType(reader.GetString(2));
                     var length = reader.GetString(3);
                     var fieldType = reader.GetBoolean(7) ? (_count == 0 ? FieldType.MasterKey : FieldType.PrimaryKey) : FieldType.Field;
-                    var field = new Field(type, length, fieldType, true, Common.DefaultNotProvided) {
+                    var field = new Field(type, length, fieldType, true, string.Empty) {
                         Name = name,
                         Entity = _entity.Name,
                         Index = reader.GetInt32(6),

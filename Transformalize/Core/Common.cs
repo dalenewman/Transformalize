@@ -32,15 +32,6 @@ namespace Transformalize.Core
         private const string APPLICATION_FOLDER = @"\Tfl\";
         private static readonly char[] Slash = new[] { '\\' };
 
-        public const string DefaultNotProvided = "tfl-default";
-
-        //public static Func<KeyValuePair<string, Field>, bool> FieldFinder(ParameterConfigurationElement p)
-        //{
-        //    if(p.Entity != string.Empty)
-        //        return kv => (kv.Value.Alias.Equals(p.Field, IC) && kv.Value.Entity.Equals(p.Entity, IC)) || (kv.Value.Name.Equals(p.Field, IC) && kv.Value.Entity.Equals(p.Entity, IC));
-        //    return kv => kv.Value.Alias.Equals(p.Field, IC) || kv.Value.Name.Equals(p.Field, IC);
-        //}
-
         public static Func<KeyValuePair<string, Field>, bool> FieldFinder(ParameterConfigurationElement p)
         {
             if (p.Entity != string.Empty)

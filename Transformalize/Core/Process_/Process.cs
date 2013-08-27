@@ -39,13 +39,12 @@ namespace Transformalize.Core.Process_ {
         public static Dictionary<string, IConnection> Connections = new Dictionary<string, IConnection>();
         public static bool OutputRecordsExist;
         public static List<Entity> Entities { get; set; }
+        public static IFields CalculatedFields { get; set; }
 
         public Entity MasterEntity { get; set; }
         public Options Options { get; set; }
         public List<Relationship> Relationships = new List<Relationship>();
-        public IParameters Parameters = new Parameters();
         public IEnumerable<Field> RelatedKeys;
-        public Transforms Transforms = new Transforms();
         public string View;
         
         public bool IsReady() {
@@ -59,7 +58,7 @@ namespace Transformalize.Core.Process_ {
             Name = name;
             Entities = new List<Entity>();
             Options = new Options();
-            Transforms = new Transforms();
+            CalculatedFields = new Fields();
         }
 
         public static IFields InputFields()
@@ -67,9 +66,32 @@ namespace Transformalize.Core.Process_ {
             var fields = new Fields();
             foreach (var entity in Entities)
             {
-                fields.AddRange(new FieldSqlWriter(entity.All, entity.Transforms.Results()).ExpandXml().Input().ToArray());
+                fields.AddRange(new FieldSqlWriter(entity.All, entity.CalculatedFields).ExpandXml().Input().ToArray());
             }
             return fields;
+        }
+
+        public IParameters Parameters()
+        {
+            var parameters = new Parameters();
+
+            foreach (var calculatedField in CalculatedFields)
+            {
+                if (calculatedField.Value.HasTransforms)
+                {
+                    foreach (AbstractTransform transform in calculatedField.Value.Transforms)
+                    {
+                        if (transform.HasParameters)
+                        {
+                            foreach (var parameter in transform.Parameters)
+                            {
+                                parameters[parameter.Key] = parameter.Value;
+                            }
+                        }
+                    }
+                }
+            }
+            return parameters;
         }
     }
 }

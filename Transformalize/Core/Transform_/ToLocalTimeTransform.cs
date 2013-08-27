@@ -4,14 +4,19 @@ namespace Transformalize.Core.Transform_
 {
     public class ToLocalTimeTransform : AbstractTransform
     {
-        protected override string Name
+        public override string Name
         {
             get { return "To Local Time Transform"; }
         }
 
-        public override void Transform(ref object value)
+        public override bool RequiresParameters
         {
-            value = ((DateTime) value).ToLocalTime();
+            get { return false; }
+        }
+
+        public override object Transform(object value)
+        {
+            return ((DateTime) value).ToLocalTime();
         }
     }
 }

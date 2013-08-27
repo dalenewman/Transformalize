@@ -17,27 +17,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Collections.Generic;
-using Transformalize.Core.Fields_;
 using Transformalize.Core.Parameters_;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.fastJSON;
 
 namespace Transformalize.Core.Transform_ {
     public class JsonTransform : AbstractTransform {
-        protected override string Name { get { return "Json Transform"; } }
+        public override string Name { get { return "Json Transform"; } }
         private readonly Dictionary<string, object> _values = new Dictionary<string, object>();
 
-        public JsonTransform(IParameters parameters, IFields results)
-            : base(parameters, results) {
+        public JsonTransform(IParameters parameters)
+            : base(parameters) {
         }
 
-        public override void Transform(ref Row row) {
+        public override bool RequiresParameters
+        {
+            get { return true; }
+        }
+
+        public override void Transform(ref Row row, string resultKey) {
             _values.Clear();
             foreach (var pair in Parameters) {
                 _values[pair.Value.Name] = pair.Value.Value ?? row[pair.Key];
             }
 
-            row[FirstResult.Key] = JSON.Instance.ToJSON(_values);
+            row[resultKey] = JSON.Instance.ToJSON(_values);
         }
 
     }

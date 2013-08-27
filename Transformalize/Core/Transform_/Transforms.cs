@@ -38,26 +38,5 @@ namespace Transformalize.Core.Transform_
             _transforms.Add(account);
         }
 
-        public IFields Results()
-        {
-            var results = new Fields();
-            foreach (var transform in _transforms.Where(t=>t.HasResults))
-            {
-                results.AddRange(transform.Results);
-            }
-            return results;
-        }
-
-        public IParameters Parameters()
-        {
-            var parameters = new Parameters();
-            foreach (var transform in _transforms.Where(t=>t.HasParameters))
-            {
-                parameters.AddRange(transform.Parameters);
-            }
-            return parameters;
-        } 
-
-
     }
 }

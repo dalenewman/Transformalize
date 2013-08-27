@@ -69,6 +69,15 @@ namespace Transformalize.Configuration {
             }
         }
 
+        [ConfigurationProperty("calculated-fields")]
+        public FieldElementCollection CalculatedFields
+        {
+            get
+            {
+                return this["calculated-fields"] as FieldElementCollection;
+            }
+        }
+
         [ConfigurationProperty("version", IsRequired = true)]
         public string Version {
             get {

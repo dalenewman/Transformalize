@@ -293,15 +293,6 @@ namespace Transformalize.Configuration
             }
         }
 
-        [ConfigurationProperty(RESULTS)]
-        public FieldElementCollection Results
-        {
-            get
-            {
-                return this[RESULTS] as FieldElementCollection;
-            }
-        }
-
         [ConfigurationProperty(SCRIPTS)]
         public TransformScriptElementCollection Scripts
         {

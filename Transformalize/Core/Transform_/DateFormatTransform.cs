@@ -17,7 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
-using Transformalize.Core.Fields_;
 using Transformalize.Core.Parameters_;
 using Transformalize.Libs.Rhino.Etl.Core;
 
@@ -25,25 +24,28 @@ namespace Transformalize.Core.Transform_ {
     public class DateFormatTransform : AbstractTransform {
         private readonly string _format;
 
-        protected override string Name {
+        public override string Name {
             get { return "Date Format Transform"; }
         }
 
-        public DateFormatTransform(string format, IParameters parameters, IFields results)
-            : base(parameters, results) {
+        public DateFormatTransform(string format, IParameters parameters)
+            : base(parameters) {
             _format = format;
         }
 
-        public override void Transform(ref object value)
+        public override bool RequiresParameters
         {
-            value = ((DateTime) value).ToString(_format);
+            get { return false; }
         }
 
-        public override void Transform(ref Row row)
+        public override object Transform(object value)
         {
-            var value = ((DateTime) row[FirstParameter.Key]).ToString(_format);
-            TransformResult(FirstResult.Value, ref value);
-            row[FirstResult.Key] = value;
+            return ((DateTime) value).ToString(_format);
+        }
+
+        public override void Transform(ref Row row, string resultKey)
+        {
+            row[resultKey] = ((DateTime) row[FirstParameter.Key]).ToString(_format);
         }
 
     }

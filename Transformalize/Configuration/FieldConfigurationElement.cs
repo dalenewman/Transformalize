@@ -23,6 +23,8 @@ namespace Transformalize.Configuration
 {
     public class FieldConfigurationElement : ConfigurationElement {
 
+        private const string AGGREGATE = "aggregate";
+        
         [ConfigurationProperty("name", IsRequired = true)]
         public string Name {
             get {
@@ -111,7 +113,7 @@ namespace Transformalize.Configuration
             set { this["variableLength"] = value; }
         }
 
-        [ConfigurationProperty("default", IsRequired = false, DefaultValue = Common.DefaultNotProvided)]
+        [ConfigurationProperty("default", IsRequired = false, DefaultValue = "")]
         public string Default {
             get {
                 return (string) this["default"];
@@ -126,12 +128,12 @@ namespace Transformalize.Configuration
             }
         }
 
-        [ConfigurationProperty("aggregate", IsRequired = false, DefaultValue = "")]
+        [ConfigurationProperty(AGGREGATE, IsRequired = false, DefaultValue = "")]
         public string Aggregate {
             get {
-                return (string)this["aggregate"];
+                return (string)this[AGGREGATE];
             }
-            set { this["aggregate"] = value; }
+            set { this[AGGREGATE] = value; }
         }
 
     }

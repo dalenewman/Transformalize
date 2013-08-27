@@ -29,16 +29,21 @@ namespace Transformalize.Core.Transform_ {
             _length = length;
         }
 
-        protected override string Name {
+        public override string Name {
             get { return "Substring Transform"; }
+        }
+
+        public override bool RequiresParameters
+        {
+            get { return false; }
         }
 
         public override void Transform(ref StringBuilder sb) {
             sb.Substring(_startIndex, _length);
         }
 
-        public override void Transform(ref object value) {
-            value = value.ToString().Substring(_startIndex, _length);
+        public override object Transform(object value) {
+            return value.ToString().Substring(_startIndex, _length);
         }
     }
 }

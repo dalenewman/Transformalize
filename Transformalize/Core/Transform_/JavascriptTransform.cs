@@ -16,10 +16,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Noesis.Javascript;
-using Transformalize.Core.Fields_;
 using Transformalize.Core.Parameters_;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Core;
@@ -44,8 +44,8 @@ namespace Transformalize.Core.Transform_
             }
         }
 
-        public JavascriptTransform(string script, IParameters parameters, IFields results, Dictionary<string, Script> scripts)
-            : base(parameters, results)
+        public JavascriptTransform(string script, IParameters parameters, Dictionary<string, Script> scripts)
+            : base(parameters)
         {
             _script = script;
             foreach (var pair in scripts)
@@ -54,9 +54,14 @@ namespace Transformalize.Core.Transform_
             }
         }
 
-        protected override string Name
+        public override string Name
         {
             get { return "Javascript Transform"; }
+        }
+
+        public override bool RequiresParameters
+        {
+            get { return false; }
         }
 
         public override void Transform(ref StringBuilder sb)
@@ -66,19 +71,19 @@ namespace Transformalize.Core.Transform_
             sb.Append(Run());
         }
 
-        public override void Transform(ref object value)
+        public override object Transform(object value)
         {
             _context.SetParameter(_field, value);
-            value = Run();
+            return Run();
         }
 
-        public override void Transform(ref Row row)
+        public override void Transform(ref Row row, string resultKey)
         {
             foreach (var pair in Parameters)
             {
                 _context.SetParameter(pair.Value.Name, pair.Value.Value ?? row[pair.Key]);
             }
-            row[FirstResult.Key] = Run();
+            row[resultKey] = Run();
         }
 
         private object Run()
@@ -89,7 +94,6 @@ namespace Transformalize.Core.Transform_
         public new void Dispose()
         {
             _context.Dispose();
-            base.Dispose();
         }
     }
 }

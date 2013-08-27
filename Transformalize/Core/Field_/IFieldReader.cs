@@ -4,7 +4,7 @@ namespace Transformalize.Core.Field_
 {
     public interface IFieldReader
     {
-        Field Read(FieldConfigurationElement field, FieldType fieldType = FieldType.Field);
-        Field Read(XmlConfigurationElement field, FieldConfigurationElement parent);
+        Field Read(FieldConfigurationElement element, FieldType fieldType = FieldType.Field);
+        Field Read(XmlConfigurationElement element, FieldConfigurationElement parent);
     }
 }

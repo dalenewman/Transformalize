@@ -12,32 +12,26 @@ namespace Transformalize.Core.Process_
     public class ProcessTransformParametersReader : ITransformParametersReader
     {
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
-        private readonly TransformConfigurationElement _transform;
         private readonly char[] _dotArray = new[] { '.' };
         private readonly Field[] _fields = Process.InputFields().ToEnumerable().ToArray();
 
-        public ProcessTransformParametersReader(TransformConfigurationElement transform)
-        {
-            _transform = transform;
-        }
-
-        public Parameters Read()
+        public Parameters Read(TransformConfigurationElement transform)
         {
             var parameters = new Parameters();
 
-            if (_transform.Parameter != string.Empty)
+            if (transform.Parameter != string.Empty && transform.Parameter != "*")
             {
-                AddParameterToConfiguration(_transform.Parameter,true);
+                AddParameterToConfiguration(transform, transform.Parameter, true);
             }
 
-            if (_transform.Method.ToLower() == "map")
+            if (transform.Method.ToLower() == "map")
             {
-                AddMapParametersToConfiguration(Process.MapEquals[_transform.Map]);
-                AddMapParametersToConfiguration(Process.MapStartsWith[_transform.Map]);
-                AddMapParametersToConfiguration(Process.MapEndsWith[_transform.Map]);
+                AddMapParametersToConfiguration(transform, Process.MapEquals[transform.Map]);
+                AddMapParametersToConfiguration(transform, Process.MapStartsWith[transform.Map]);
+                AddMapParametersToConfiguration(transform, Process.MapEndsWith[transform.Map]);
             }
 
-            foreach (ParameterConfigurationElement p in _transform.Parameters)
+            foreach (ParameterConfigurationElement p in transform.Parameters)
             {
                 //if (!string.IsNullOrEmpty(p.Field) && string.IsNullOrEmpty(p.Entity))
                 //{
@@ -62,7 +56,7 @@ namespace Transformalize.Core.Process_
                     }
                     else
                     {
-                        _log.Warn("{0} | The process {1} has a {2} transform parameter that references field {3}.  This field doesn't exist.", Process.Name, _transform.Method, p.Field);
+                        _log.Warn("{0} | The process {1} has a {2} transform parameter that references field {3}.  This field doesn't exist.", Process.Name, transform.Method, p.Field);
                         return new Parameters();
                     }
                 }
@@ -72,19 +66,11 @@ namespace Transformalize.Core.Process_
                 }
             }
 
-            if (!parameters.Any())
-            {
-                foreach (var field in Process.InputFields().ToEnumerable())
-                {
-                    parameters.Add(field.Alias, field.Alias, null, field.Type);
-                }
-            }
-
             return parameters;
 
         }
 
-        private void AddParameterToConfiguration(string parameter, bool insert)
+        private void AddParameterToConfiguration(TransformConfigurationElement transform, string parameter, bool insert)
         {
             try
             {
@@ -94,17 +80,17 @@ namespace Transformalize.Core.Process_
                     var p = new ParameterConfigurationElement {Entity = values[0], Field = values[1]};
 
                     if (insert)
-                        _transform.Parameters.Insert(p);
+                        transform.Parameters.Insert(p);
                     else
-                        _transform.Parameters.Add(p);
+                        transform.Parameters.Add(p);
                 }
                 else
                 {
-                    var p = new ParameterConfigurationElement {Field = parameter};
+                    var p = new ParameterConfigurationElement { Field = parameter };
                     if(insert)
-                        _transform.Parameters.Insert(p);
+                        transform.Parameters.Insert(p);
                     else
-                        _transform.Parameters.Add(p);
+                        transform.Parameters.Add(p);
                 }
             }
             catch (Exception)
@@ -113,7 +99,7 @@ namespace Transformalize.Core.Process_
             }
         }
 
-        private void AddMapParametersToConfiguration(IEnumerable<KeyValuePair<string, Item>> items)
+        private void AddMapParametersToConfiguration(TransformConfigurationElement transform, IEnumerable<KeyValuePair<string, Item>> items)
         {
             foreach (var item in items)
             {
@@ -122,7 +108,7 @@ namespace Transformalize.Core.Process_
                     if (_fields.Any(Common.FieldFinder(item.Value.Parameter)))
                     {
                         item.Value.Parameter = _fields.First(Common.FieldFinder(item.Value.Parameter)).Alias;
-                        AddParameterToConfiguration(item.Value.Parameter, false);
+                        AddParameterToConfiguration(transform, item.Value.Parameter, false);
                     }
                     else
                     {

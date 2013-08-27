@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Core.Fields_;
+using Transformalize.Core.Parameter_;
 using Transformalize.Core.Parameters_;
 using Transformalize.Core.Process_;
 using Transformalize.Core.Template_;
@@ -12,50 +13,60 @@ namespace Transformalize.Core.Transform_
     {
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly TransformConfigurationElement _transform;
-        private readonly IFields _results;
+        private readonly IParametersReader _parametersReader;
         private readonly IParameters _parameters;
-
-        public TransformFactory(TransformConfigurationElement transform, ITransformParametersReader transformParametersReader, IFieldsReader resultsReader)
+        
+        public TransformFactory(TransformConfigurationElement transform, ITransformParametersReader transformParametersReader, IParametersReader parametersReader)
         {
             _transform = transform;
-            _parameters = transformParametersReader.Read();
-            _results = resultsReader.Read();
+            _parametersReader = parametersReader;
+            _parameters = transformParametersReader.Read(transform);
         }
 
         public AbstractTransform Create(string fieldName = "")
         {
-
+            AbstractTransform transform = new EmptyTransform();
             switch (_transform.Method.ToLower())
             {
                 case "replace":
-                    return new ReplaceTransform(_transform.OldValue, _transform.NewValue);
+                    transform = new ReplaceTransform(_transform.OldValue, _transform.NewValue);
+                    break;
 
                 case "regexreplace":
-                    return new RegexReplaceTransform(_transform.Pattern, _transform.Replacement, _transform.Count);
+                    transform = new RegexReplaceTransform(_transform.Pattern, _transform.Replacement, _transform.Count);
+                    break;
 
                 case "insert":
-                    return new InsertTransform(_transform.Index, _transform.Value);
+                    transform = new InsertTransform(_transform.Index, _transform.Value);
+                    break;
 
                 case "remove":
-                    return new RemoveTransform(_transform.StartIndex, _transform.Length);
+                    transform = new RemoveTransform(_transform.StartIndex, _transform.Length);
+                    break;
 
                 case "trimstart":
-                    return new TrimStartTransform(_transform.TrimChars);
+                    transform = new TrimStartTransform(_transform.TrimChars);
+                    break;
 
                 case "trimend":
-                    return new TrimEndTransform(_transform.TrimChars);
+                    transform = new TrimEndTransform(_transform.TrimChars);
+                    break;
 
                 case "trim":
-                    return new TrimTransform(_transform.TrimChars);
+                    transform = new TrimTransform(_transform.TrimChars);
+                    break;
 
                 case "substring":
-                    return new SubstringTransform(_transform.StartIndex, _transform.Length);
+                    transform = new SubstringTransform(_transform.StartIndex, _transform.Length);
+                    break;
 
                 case "left":
-                    return new LeftTransform(_transform.Length);
+                    transform = new LeftTransform(_transform.Length);
+                    break;
 
                 case "right":
-                    return new RightTransform(_transform.Length);
+                    transform = new RightTransform(_transform.Length);
+                    break;
 
                 case "map":
                     var equals = Process.MapEquals[_transform.Map];
@@ -65,7 +76,8 @@ namespace Transformalize.Core.Transform_
                     var endsWith = Process.MapEndsWith.ContainsKey(_transform.Map)
                         ? Process.MapEndsWith[_transform.Map]
                         : new Map();
-                    return new MapTransform(new[] {@equals, startsWith, endsWith}, _parameters, _results);
+                    transform = new MapTransform(new[] { @equals, startsWith, endsWith }, _parameters);
+                    break;
 
                 case "javascript":
                     var scripts = new Dictionary<string, Script>();
@@ -74,15 +86,17 @@ namespace Transformalize.Core.Transform_
                         scripts[script.Name] = Process.Scripts[script.Name];
                     }
 
-                    return
+                    transform = 
                         _parameters.Any()
-                            ? new JavascriptTransform(_transform.Script, _parameters, _results, scripts)
+                            ? new JavascriptTransform(_transform.Script, _parameters, scripts)
                             : new JavascriptTransform(_transform.Script, fieldName, scripts);
+                    break;
 
                 case "expression":
-                    return _parameters.Any()
-                        ? new ExpressionTransform(_transform.Expression, _parameters, _results)
-                        : new ExpressionTransform(fieldName, _transform.Expression, _parameters, _results); 
+                    transform = _parameters.Any()
+                        ? new ExpressionTransform(_transform.Expression, _parameters)
+                        : new ExpressionTransform(fieldName, _transform.Expression, _parameters);
+                    break;
 
                 case "template":
 
@@ -92,45 +106,57 @@ namespace Transformalize.Core.Transform_
                         templates[template.Name] = Process.Templates[template.Name];
                     }
 
-                    return
+                    transform = 
                         _parameters.Any()
-                            ? new TemplateTransform(_transform.Template, _transform.Model, _parameters, _results, templates)
+                            ? new TemplateTransform(_transform.Template, _transform.Model, _parameters, templates)
                             : new TemplateTransform(_transform.Template, fieldName, templates);
+                    break;
 
                 case "padleft":
-                    return new PadLeftTransform(_transform.TotalWidth, _transform.PaddingChar[0]);
+                    transform = new PadLeftTransform(_transform.TotalWidth, _transform.PaddingChar[0]);
+                    break;
 
                 case "padright":
-                    return new PadRightTransform(_transform.TotalWidth, _transform.PaddingChar[0]);
+                    transform = new PadRightTransform(_transform.TotalWidth, _transform.PaddingChar[0]);
+                    break;
 
                 case "format":
-                    return new FormatTransform(_transform.Format, _parameters, _results);
+                    transform = new FormatTransform(_transform.Format, _parameters);
+                    break;
 
                 case "dateformat":
-                    return new DateFormatTransform(_transform.Format, _parameters, _results);
+                    transform = new DateFormatTransform(_transform.Format, _parameters);
+                    break;
 
                 case "toupper":
-                    return new ToUpperTransform(_parameters);
+                    transform = new ToUpperTransform(_parameters);
+                    break;
 
                 case "tolower":
-                    return new ToLowerTransform(_parameters);
+                    transform = new ToLowerTransform(_parameters);
+                    break;
 
                 case "concat":
-                    return new ConcatTransform(_parameters, _results);
+                    transform = new ConcatTransform(_parameters);
+                    break;
 
                 case "join":
-                    return new JoinTransform(_transform.Separator, _parameters, _results);
-
-                case "split":
-                    return new SplitTransform(_transform.Separator, _parameters, _results);
+                    transform = new JoinTransform(_transform.Separator, _parameters);
+                    break;
 
                 case "tolocaltime":
-                    return new ToLocalTimeTransform();
-
+                    transform = new ToLocalTimeTransform();
+                    break;
             }
 
-            _log.Warn("{0} | {1} method is undefined.  It will not be used.");
-            return new EmptyTransform();
+            if (transform.RequiresParameters && !transform.Parameters.Any() || _transform.Parameter.Equals("*"))
+            {
+                transform.Parameters = _parametersReader.Read();
+            }
+
+            if(transform.Name == "Empty Transform")
+                _log.Warn("{0} | {1} method is undefined.  It will not be used.", Process.Name, _transform.Method );
+            return transform;
 
         }
 

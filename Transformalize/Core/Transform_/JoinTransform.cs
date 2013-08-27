@@ -17,7 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Text;
-using Transformalize.Core.Fields_;
 using Transformalize.Core.Parameters_;
 using Transformalize.Libs.Rhino.Etl.Core;
 
@@ -28,15 +27,20 @@ namespace Transformalize.Core.Transform_ {
         private readonly StringBuilder _builder = new StringBuilder();
         private readonly int _count;
 
-        protected override string Name { get { return "Join Transform"; } }
+        public override string Name { get { return "Join Transform"; } }
 
-        public JoinTransform(string separator, IParameters parameters, IFields results)
-            : base(parameters, results) {
+        public JoinTransform(string separator, IParameters parameters)
+            : base(parameters) {
             _separator = separator;
             _count = Parameters.Count;
         }
 
-        public override void Transform(ref Row row) {
+        public override bool RequiresParameters
+        {
+            get { return true; }
+        }
+
+        public override void Transform(ref Row row, string resultKey) {
             _index = 0;
             _builder.Clear();
             foreach (var pair in Parameters) {
@@ -45,7 +49,7 @@ namespace Transformalize.Core.Transform_ {
                 if (_index < _count)
                     _builder.Append(_separator);
             }
-            row[FirstResult.Key] = _builder.ToString();
+            row[resultKey] = _builder.ToString();
         }
 
     }

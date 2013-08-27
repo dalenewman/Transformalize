@@ -17,8 +17,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
-using Transformalize.Core.Fields_;
 using Transformalize.Core.Parameters_;
 using Transformalize.Core.Template_;
 using Transformalize.Libs.NLog;
@@ -53,11 +53,11 @@ namespace Transformalize.Core.Transform_
             _log.Debug("Compiled template with hashcode {0} and key {1}.", content.GetHashCode(), _key);
         }
 
-        public TemplateTransform(string template, string templateModelType, IParameters parameters, IFields results, IEnumerable<KeyValuePair<string, Template>> templates)
-            : base(parameters, results)
+        public TemplateTransform(string template, string templateModelType, IParameters parameters, IEnumerable<KeyValuePair<string, Template>> templates)
+            : base(parameters)
         {
             _templateModelType = templateModelType;
-            _key = FirstResult.Key;
+            _key = template.GetHashCode().ToString(CultureInfo.InvariantCulture);
 
             CombineTemplates(templates, ref _builder);
             _builder.Append(template);
@@ -67,13 +67,18 @@ namespace Transformalize.Core.Transform_
             var type = templateModelType == "dynamic" ? typeof (DynamicViewBag) : typeof (Dictionary<string, object>);
 
             Razor.Compile(content, type, _key);
-            _log.Debug("Compiled {0} template with hashcode {1} and key {2}.", templateModelType, template.GetHashCode(), _key);
+            _log.Debug("Compiled {0} template with hashcode/key {1}.", templateModelType, _key);
 
         }
 
-        protected override string Name
+        public override string Name
         {
             get { return "Template Transform"; }
+        }
+
+        public override bool RequiresParameters
+        {
+            get { return false; }
         }
 
         public override void Transform(ref StringBuilder sb)
@@ -83,36 +88,36 @@ namespace Transformalize.Core.Transform_
             sb.Append(Razor.Run(_key, _value));
         }
 
-        public override void Transform(ref object value)
+        public override object Transform(object value)
         {
             _value = value;
-            value = Razor.Run(_key, _value);
+            return Razor.Run(_key, _value);
         }
 
-        public override void Transform(ref Row row)
+        public override void Transform(ref Row row, string resultKey)
         {
             if (_templateModelType == "dynamic")
-                RunWithDynamic(ref row);
+                RunWithDynamic(ref row, resultKey);
             else
-                RunWithDictionary(ref row);
+                RunWithDictionary(ref row, resultKey);
         }
 
-        private void RunWithDictionary(ref Row row)
+        private void RunWithDictionary(ref Row row, string resultKey)
         {
             foreach (var pair in Parameters)
             {
                 _dictionaryContext[pair.Value.Name] = pair.Value.Value ?? row[pair.Key];
             }
-            row[FirstResult.Key] = Razor.Run(_key, _dictionaryContext);
+            row[resultKey] = Razor.Run(_key, _dictionaryContext);
         }
 
-        private void RunWithDynamic(ref Row row)
+        private void RunWithDynamic(ref Row row, string resultKey)
         {
             foreach (var pair in Parameters)
             {
                 _dynamicViewBagContext.AddValue(pair.Value.Name, pair.Value.Value ?? row[pair.Key]);
             }
-            row[FirstResult.Key] = Razor.Run(_key, _dynamicViewBagContext);
+            row[resultKey] = Razor.Run(_key, _dynamicViewBagContext);
         }
 
         private static void CombineTemplates(IEnumerable<KeyValuePair<string, Template>> templates, ref StringBuilder builder)

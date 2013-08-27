@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Core.Field_;
+using Transformalize.Core.Parameters_;
 using Transformalize.Core.Process_;
 using Transformalize.Libs.NLog;
 using Transformalize.Providers.SqlServer;
@@ -47,7 +48,7 @@ namespace Transformalize.Core.Entity_
             {
                 var fieldType = count == 0 ? FieldType.MasterKey : FieldType.PrimaryKey;
 
-                var keyField = new FieldReader(entity).Read(pk, fieldType);
+                var keyField = new FieldReader(entity, new FieldTransformParametersReader(pk.Alias), new EmptyParametersReader()).Read(pk, fieldType);
                 keyField.Index = pkIndex;
 
                 entity.PrimaryKey[pk.Alias] = keyField;
@@ -59,12 +60,12 @@ namespace Transformalize.Core.Entity_
             var fieldIndex = 0;
             foreach (FieldConfigurationElement f in _element.Fields)
             {
-                var field = new FieldReader(entity).Read(f);
+                var field = new FieldReader(entity, new FieldTransformParametersReader(f.Alias), new EmptyParametersReader()).Read(f);
                 field.Index = fieldIndex;
 
                 foreach (XmlConfigurationElement x in f.Xml)
                 {
-                    var xmlField = new FieldReader(entity).Read(x, f);
+                    var xmlField = new FieldReader(entity, new FieldTransformParametersReader(x.Alias), new EmptyParametersReader()).Read(x, f);
                     field.InnerXml.Add(x.Alias, xmlField);
                 }
 
@@ -97,9 +98,13 @@ namespace Transformalize.Core.Entity_
                 }
             }
 
-            new EntityTransformLoader(ref entity, _element.Transforms).Load();
+            foreach (FieldConfigurationElement field in _element.CalculatedFields)
+            {
+                entity.CalculatedFields.Add(field.Alias, new FieldReader(null, new EntityTransformParametersReader(entity), new EntityParametersReader(entity)).Read(field));
+            }
 
             return entity;
         }
+
     }
 }

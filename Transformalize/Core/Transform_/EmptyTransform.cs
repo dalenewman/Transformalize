@@ -1,12 +1,22 @@
+using Transformalize.Libs.Rhino.Etl.Core;
+
 namespace Transformalize.Core.Transform_
 {
     public class EmptyTransform : AbstractTransform
     {
-        protected override string Name { get { return "Empty Transform"; }}
+        public override string Name { get { return "Empty Transform"; }}
 
-        public override void Transform(ref Libs.Rhino.Etl.Core.Row row) {}
+        public override void Transform(ref Row row, string resultKey) {}
 
-        public override void Transform(ref object value) {}
+        public override object Transform(object value)
+        {
+            return null;
+        }
+
+        public override bool RequiresParameters
+        {
+            get { return false; }
+        }
 
         public override void Transform(ref System.Text.StringBuilder sb) {}
     }

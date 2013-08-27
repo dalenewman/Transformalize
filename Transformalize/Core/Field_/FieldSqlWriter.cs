@@ -122,10 +122,9 @@ namespace Transformalize.Core.Field_ {
             _original = new Dictionary<string, Field>();
             foreach (var dict in fields)
             {
-                foreach (var pair in dict)
-                {
-                    _original[pair.Key] = pair.Value;
-                }
+                if(dict != null)
+                    foreach (var pair in dict)
+                        _original[pair.Key] = pair.Value;
             }
             _output = new SortedDictionary<string, string>(_original.ToDictionary(f => f.Key, f => string.Empty));
         }

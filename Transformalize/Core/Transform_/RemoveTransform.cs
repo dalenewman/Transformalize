@@ -28,8 +28,13 @@ namespace Transformalize.Core.Transform_ {
             _length = length;
         }
 
-        protected override string Name {
+        public override string Name {
             get { return "Remove Transform"; }
+        }
+
+        public override bool RequiresParameters
+        {
+            get { return false; }
         }
 
         public override void Transform(ref StringBuilder sb) {
@@ -37,10 +42,10 @@ namespace Transformalize.Core.Transform_ {
             sb.Remove(_startIndex, _length);
         }
 
-        public override void Transform(ref object value) {
+        public override object Transform(object value) {
             var str = value.ToString();
-            if (_startIndex > str.Length) return;
-            value = str.Remove(_startIndex, _length);
+            if (_startIndex > str.Length) return value;
+            return str.Remove(_startIndex, _length);
         }
     }
 }

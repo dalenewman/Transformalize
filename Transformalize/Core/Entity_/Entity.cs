@@ -53,11 +53,11 @@ namespace Transformalize.Core.Entity_
         public List<Row> InputKeys { get; set; }
         public IDbCommand InputKeysCommand { get; set; }
         public IEntityVersionReader EntityVersionReader { get; private set; }
-        public Transforms Transforms { get; set; }
         public string Prefix { get; set; }
         public bool Group { get; set; }
         public bool Auto { get; set; }
         public string Name { get; set; }
+        public IFields CalculatedFields { get; set; }
 
         public Entity(IEntityVersionReader entityVersionReader = null)
         {
@@ -71,7 +71,7 @@ namespace Transformalize.Core.Entity_
             EntityVersionReader = entityVersionReader ?? new SqlServerEntityVersionReader(this);
             InputKeys = new List<Row>();
             Prefix = string.Empty;
-            Transforms = new Transforms();
+            CalculatedFields = new Fields();
         }
 
         public string FirstKey()
@@ -124,7 +124,7 @@ namespace Transformalize.Core.Entity_
 
         public IFields InputFields()
         {
-            return new FieldSqlWriter(All, Transforms.Results()).ExpandXml().Input().Context();
+            return new FieldSqlWriter(All, CalculatedFields).ExpandXml().Input().Context();
         }
 
         public override string ToString()

@@ -77,7 +77,7 @@ namespace Transformalize.Core.Process_
             _mapCount = ReadMaps();
             _entityCount = ReadEntities();
             _relationshipCount = ReadRelationships();
-            _transformCount = ReadProcessTransforms();
+            _transformCount = ReadProcessCalculatedFields();
             _process.RelatedKeys = ReadRelatedKeys();
             _process.View = _process.MasterEntity.OutputName() + "Star";
 
@@ -189,23 +189,18 @@ namespace Transformalize.Core.Process_
             _log.Debug("{0} | {1} Template{2}.", Process.Name, _templateCount, _templateCount == 1 ? string.Empty : "s");
             _log.Debug("{0} | {1} Map{2}.", Process.Name, _mapCount, _mapCount == 1 ? string.Empty : "s");
 
-            _transformCount += Process.Entities.Sum(e => e.Transforms.Count);
+            _transformCount += Process.Entities.Sum(e => e.CalculatedFields.Count + e.Fields.ToEnumerable().Sum(f=>f.Transforms.Count));
             _log.Debug("{0} | {1} Transform{2}.", Process.Name, _transformCount, _transformCount == 1 ? string.Empty : "s");
         }
 
-        private int ReadProcessTransforms()
+        private int ReadProcessCalculatedFields()
         {
-            new ProcessTransformLoader(ref _process, _config.Transforms).Load();
-            
-            foreach (AbstractTransform transform in _process.Transforms)
+            foreach (FieldConfigurationElement field in _config.CalculatedFields)
             {
-                foreach (var pair in transform.Parameters)
-                {
-                    _process.Parameters.Add(pair.Key, pair.Value);
-                }
+                Process.CalculatedFields.Add(field.Alias, new FieldReader(null, new ProcessTransformParametersReader(), new ProcessParametersReader()).Read(field));
             }
 
-            return _process.Transforms.Count;
+            return Process.CalculatedFields.Count;
         }
 
         private int ReadRelationships()

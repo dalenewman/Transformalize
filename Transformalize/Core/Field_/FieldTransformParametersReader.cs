@@ -1,5 +1,6 @@
 using Transformalize.Configuration;
 using Transformalize.Core.Parameters_;
+using Transformalize.Core.Process_;
 using Transformalize.Core.Transform_;
 using Transformalize.Libs.NLog;
 
@@ -7,31 +8,34 @@ namespace Transformalize.Core.Field_
 {
     public class FieldTransformParametersReader : ITransformParametersReader
     {
+        private readonly string _name;
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
-        private readonly Field _field;
-        private readonly TransformConfigurationElement _transform;
 
-        public FieldTransformParametersReader(Field field, TransformConfigurationElement transform)
+        public FieldTransformParametersReader(string name)
         {
-            _field = field;
-            _transform = transform;
+            _name = name;
         }
 
-        public Parameters Read()
+        public Parameters Read(TransformConfigurationElement transform)
         {
             var parameters = new Parameters();
 
-            foreach (ParameterConfigurationElement p in _transform.Parameters)
+            if (transform.Parameter != string.Empty && transform.Parameter != "*")
+            {
+                transform.Parameters.Insert(new ParameterConfigurationElement { Field = transform.Parameter });
+            }
+
+            foreach (ParameterConfigurationElement p in transform.Parameters)
             {
                 if (string.IsNullOrEmpty(p.Name))
                 {
-                    _log.Warn("{0} | The field {1} in entity {2} has a {3} transform parameter without a name attribute.  Field parameters require names and values.", _field.Process,  _field.Alias, _field.Entity, _transform.Method);
+                    _log.Warn("{0} | The field {1} has a {2} transform parameter without a name attribute.  Field parameters require names and values.", Process.Name,  _name, transform.Method);
                     return new Parameters();
                 }
 
                 if (string.IsNullOrEmpty(p.Value))
                 {
-                    _log.Warn("{0} | The field {1} in entity {2} has a {3} transform parameter without a value attribute.  Field parameters require names and values.", _field.Process, _field.Alias, _field.Entity, _transform.Method);
+                    _log.Warn("{0} | The field {1} has a {2} transform parameter without a value attribute.  Field parameters require names and values.", Process.Name, _name, transform.Method);
                     return new Parameters();
                 }
 

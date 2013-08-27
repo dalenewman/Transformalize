@@ -31,31 +31,16 @@ namespace Transformalize.Runner
                         new EntityRecordsExist(ref process).Check();
 
                     foreach (var entity in Process.Entities)
-                    {
-                        using (var entityProcess = new EntityProcess(ref process, entity))
-                        {
-                            entityProcess.Execute();
-                        }
-                    }
+                        new EntityProcess(ref process, entity).Execute();
 
                     if (process.Options.Mode != Modes.Test)
-                        using (var masterProcess = new UpdateMasterProcess(ref process))
-                        {
-                            masterProcess.Execute();
-                        }
+                        new UpdateMasterProcess(ref process).Execute();
 
-                    if (process.Transforms.Count > 0)
-                    {
-                        using (var transformProcess = new TransformProcess(process))
-                        {
-                            transformProcess.Execute();
-                        }
-                    }
+                    if (Process.CalculatedFields.Count > 0)
+                        new TransformProcess(process).Execute();
 
                     if (process.Options.RenderTemplates)
-                    {
                         new TemplateManager(process).Manage();
-                    }
 
                     break;
             }

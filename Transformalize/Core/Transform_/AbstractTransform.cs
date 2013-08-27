@@ -19,8 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Transformalize.Core.Field_;
-using Transformalize.Core.Fields_;
 using Transformalize.Core.Parameter_;
 using Transformalize.Core.Parameters_;
 using Transformalize.Libs.NLog;
@@ -33,17 +31,20 @@ namespace Transformalize.Core.Transform_
     {
 
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
-        protected abstract string Name { get; }
-        public IParameters Parameters { get; set; }
-        public IFields Results { get; set; }
+        public abstract string Name { get; }
+        public IParameters Parameters
+        {
+            get { return _parameters; }
+            set { _parameters = value; PrepareParameters(value); }
+        }
+
         public Dictionary<string, string> Scripts = new Dictionary<string, string>();
-        protected KeyValuePair<string, Field> FirstResult { get; set; }
+        private IParameters _parameters;
         protected KeyValuePair<string, IParameter> FirstParameter { get; set; }
         public bool HasParameters { get; private set; }
-        public bool HasResults { get; private set; }
         protected object[] ParameterValues { get; private set; }
         public bool RequiresRow { get; set; }
-
+        
         /// <summary>
         /// Used for field level transformations, there are no parameters and the result is inline
         /// </summary>
@@ -51,80 +52,46 @@ namespace Transformalize.Core.Transform_
         {
             HasParameters = false;
             Parameters = new Parameters();
-
-            HasResults = false;
-            Results = new Fields();
         }
 
+        public abstract bool RequiresParameters { get; }
+
         /// <summary>
-        /// Used for entity and process level transformations, requires parameters, and result
+        /// Used for entity and process level transformations, requires parameters
         /// </summary>
         /// <param name="parameters"></param>
-        /// <param name="results"></param>
-        protected AbstractTransform(IParameters parameters, IFields results)
+        protected AbstractTransform(IParameters parameters)
         {
             Parameters = parameters;
-            Results = results;
+        }
+
+        private void PrepareParameters(IParameters parameters)
+        {
             HasParameters = parameters != null && parameters.Count > 0;
-            HasResults = results != null && results.Count > 0;
-            if (HasResults)
-            {
-                FirstResult = Results.First();
-            }
-            if (HasParameters)
-            {
-                ParameterValues = new object[Parameters.Count];
-                FirstParameter = Parameters.First();
-            }
+            if (!HasParameters) return;
+            ParameterValues = new object[Parameters.Count];
+            FirstParameter = Parameters.First();
         }
 
         public virtual void Transform(ref StringBuilder sb)
         {
             _log.Error("Transform with StringBuilder is not implemented in {0}!", Name);
         }
-        public virtual void Transform(ref Object value)
+
+        public virtual object Transform(Object value)
         {
             _log.Error("Transform with object value is not implemented in {0}!", Name);
+            return null;
         }
-        public virtual void Transform(ref Row row)
+
+        public virtual void Transform(ref Row row, string resultKey)
         {
-            _log.Error("Transform with row is not implemented in {0}!  It must be implemented at the field level, or pushed down based on a matching type attribute.", Name);
+            _log.Error("Transform with row is not implemented in {0}!  It must be implemented at the field level, or pushed down based on a matching type attribute.",Name);
         }
 
-        public void TransformResult(Field field, ref object value)
-        {
-            if (!field.HasTransforms)
-                return;
-
-            if (field.UseStringBuilder)
-            {
-                field.StringBuilder.Clear();
-                field.StringBuilder.Append(value);
-                field.Transform();
-                value = field.StringBuilder.ToString();
-            }
-            else
-            {
-                field.Transform(ref value);
-            }
-        }
-
-        public void TransformResult(Field field, ref string value)
-        {
-            if (!field.HasTransforms)
-                return;
-
-            field.StringBuilder.Clear();
-            field.StringBuilder.Append(value);
-            field.Transform();
-            value = field.StringBuilder.ToString();
-        }
-
-        public virtual void Dispose()
+        public void Dispose()
         {
             Parameters = null;
-            Results = null;
         }
     }
-
 }

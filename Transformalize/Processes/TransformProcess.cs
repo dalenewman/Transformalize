@@ -36,7 +36,7 @@ namespace Transformalize.Processes {
 
         protected override void Initialize() {
             Register(new ParametersExtract(_process));
-            Register(new ProcessTransform(_process));
+            Register(new FieldTransform(Process.CalculatedFields));
 
             if (_process.Options.Mode == Modes.Test)
                 RegisterLast(new LogOperation());

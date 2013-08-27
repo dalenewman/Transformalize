@@ -20,6 +20,8 @@ using System;
 using System.Linq;
 using Transformalize.Core;
 using Transformalize.Core.Entity_;
+using Transformalize.Core.Field_;
+using Transformalize.Core.Fields_;
 using Transformalize.Core.Process_;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
@@ -35,6 +37,7 @@ namespace Transformalize.Processes
         private readonly Process _process;
         private Entity _entity;
         private readonly Modes _mode;
+        private readonly IFields _fieldsWithTransforms;
 
         public EntityProcess(ref Process process, Entity entity, IEntityBatch entityBatch = null)
         {
@@ -44,6 +47,8 @@ namespace Transformalize.Processes
 
             if (_mode != Modes.Test)
                 _entity.TflBatchId = (entityBatch ?? new SqlServerEntityBatch()).GetNext(_entity);
+
+            _fieldsWithTransforms = new FieldSqlWriter(entity.All).ExpandXml().HasTransform().Input().Context();
         }
 
         protected override void Initialize()
@@ -70,8 +75,8 @@ namespace Transformalize.Processes
             Register(new EntityKeysToOperations(_entity));
             Register(new SerialUnionAllOperation());
             Register(new EntityDefaults(_entity));
-            Register(new FieldTransform(_entity));
-            Register(new EntityTransform(_entity));
+            Register(new FieldTransform(_fieldsWithTransforms));
+            Register(new FieldTransform(_entity.CalculatedFields));
 
             if (_entity.Group)
                 Register(new EntityAggregation(_entity));

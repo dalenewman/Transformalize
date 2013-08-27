@@ -17,7 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Collections.Generic;
-using Transformalize.Core.Entity_;
 using Transformalize.Core.Field_;
 using Transformalize.Core.Fields_;
 using Transformalize.Libs.Rhino.Etl.Core;
@@ -31,9 +30,29 @@ namespace Transformalize.Operations
         private readonly Field[] _fields;
         private readonly int _transformCount;
 
-        public FieldTransform(Entity entity)
+        public FieldTransform(IFields fields)
         {
-            _fields = new FieldSqlWriter(entity.All).ExpandXml().HasTransform().Input().ToArray();
+            _fields = fields.ToEnumerable().ToArray();
+            _transformCount = _fields.Any() ? _fields.Sum(f => f.Transforms.Count) : 0;
+            UseTransaction = false;
+        }
+
+        public FieldTransform(params IFields[] fields)
+        {
+            var temp = new List<Field>();
+            foreach (var f in fields)
+            {
+                temp.AddRange(f.ToEnumerable());
+            }
+            _fields = temp.ToArray();
+
+            _transformCount = _fields.Any() ? _fields.Sum(f => f.Transforms.Count) : 0;
+            UseTransaction = false;
+        }
+
+        public FieldTransform(Field field)
+        {
+            _fields = new [] { field };
             _transformCount = _fields.Any() ? _fields.Sum(f => f.Transforms.Count) : 0;
             UseTransaction = false;
         }
@@ -46,21 +65,7 @@ namespace Transformalize.Operations
                 {
                     foreach (var field in _fields)
                     {
-                        var value = row[field.Alias];
-                        if (value == null) continue;
-
-                        if (field.UseStringBuilder)
-                        {
-                            field.StringBuilder.Clear();
-                            field.StringBuilder.Append(value);
-                            field.Transform();
-                            row[field.Alias] = field.StringBuilder.ToString();
-                        }
-                        else
-                        {
-                            field.Transform(ref value);
-                            row[field.Alias] = value;
-                        }
+                        field.Transform(row);
                     }
                 }
 

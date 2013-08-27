@@ -1,59 +1,77 @@
+using System.Collections;
 using Transformalize.Configuration;
 using Transformalize.Core.Entity_;
 using Transformalize.Core.Parameter_;
+using Transformalize.Core.Parameters_;
 using Transformalize.Core.Process_;
-using System.Linq;
+using Transformalize.Core.Transform_;
 
 namespace Transformalize.Core.Field_
 {
     public class FieldReader : IFieldReader
     {
+        private readonly ITransformParametersReader _transformParametersReader;
+        private readonly IParametersReader _parametersReader;
         private readonly Entity _entity;
 
-        public FieldReader(Entity entity)
+        public FieldReader(Entity entity, ITransformParametersReader transformParametersReader, IParametersReader parametersReader)
         {
+            _transformParametersReader = transformParametersReader;
+            _parametersReader = parametersReader;
             _entity = entity ?? new Entity();
         }
 
-        public Field Read(FieldConfigurationElement field, FieldType fieldType = FieldType.Field)
+        public Field Read(FieldConfigurationElement element, FieldType fieldType = FieldType.Field)
         {
-            var f = new Field(field.Type, field.Length, fieldType, field.Output, field.Default)
-                        {
-                            Process = Process.Name,
-                            Entity = _entity.Alias,
-                            Schema = _entity.Schema,
-                            Name = field.Name,
-                            Alias = field.Alias,
-                            Precision = field.Precision,
-                            Scale = field.Scale,
-                            Input = field.Input,
-                            Unicode = field.Unicode,
-                            VariableLength = field.VariableLength,
-                            Aggregate = field.Aggregate.ToLower(),
-                            AsParameter = new Parameter(field.Alias, null)
-                        };
-            f.Transforms = new FieldTransformReader(f, field.Transforms).Read();
-            return f;
+            var field = new Field(element.Type, element.Length, fieldType, element.Output, element.Default) {
+                Process = Process.Name,
+                Entity = _entity.Alias,
+                Schema = _entity.Schema,
+                Name = element.Name,
+                Alias = element.Alias,
+                Precision = element.Precision,
+                Scale = element.Scale,
+                Input = element.Input,
+                Unicode = element.Unicode,
+                VariableLength = element.VariableLength,
+                Aggregate = element.Aggregate.ToLower(),
+                AsParameter = new Parameter(element.Alias, null)
+            };
+
+            FieldTransformLoader(field, element.Transforms);
+
+            return field;
         }
 
-        public Field Read(XmlConfigurationElement x, FieldConfigurationElement parent)
+        public Field Read(XmlConfigurationElement element, FieldConfigurationElement parent)
         {
-            var xmlField = new Field(x.Type, x.Length, FieldType.Xml, x.Output, x.Default)
+            var xmlField = new Field(element.Type, element.Length, FieldType.Xml, element.Output, element.Default)
             {
                 Entity = _entity.Alias,
                 Schema = _entity.Schema,
                 Parent = parent.Name,
-                XPath = parent.Xml.XPath + x.XPath,
-                Name = x.XPath,
-                Alias = x.Alias,
-                Index = x.Index,
-                Precision = x.Precision,
-                Scale = x.Scale,
-                Aggregate = x.Aggregate.ToLower(),
-                AsParameter = new Parameter(x.Alias, null)
+                XPath = parent.Xml.XPath + element.XPath,
+                Name = element.XPath,
+                Alias = element.Alias,
+                Index = element.Index,
+                Precision = element.Precision,
+                Scale = element.Scale,
+                Aggregate = element.Aggregate.ToLower(),
+                AsParameter = new Parameter(element.Alias, null)
             };
-            xmlField.Transforms = new FieldTransformReader(xmlField, x.Transforms).Read();
+
+            FieldTransformLoader(xmlField, element.Transforms);
+
             return xmlField;
         }
+
+        private void FieldTransformLoader(Field field, IEnumerable transformElements)
+        {
+            foreach (TransformConfigurationElement t in transformElements)
+            {
+                field.Transforms.Add(new TransformFactory(t, _transformParametersReader, _parametersReader).Create(field.Alias));
+            }
+        }
+
     }
 }

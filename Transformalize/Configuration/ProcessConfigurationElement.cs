@@ -67,10 +67,12 @@ namespace Transformalize.Configuration {
             }
         }
 
-        [ConfigurationProperty("transforms")]
-        public TransformElementCollection Transforms {
-            get {
-                return this["transforms"] as TransformElementCollection;
+        [ConfigurationProperty("calculated-fields")]
+        public FieldElementCollection CalculatedFields
+        {
+            get
+            {
+                return this["calculated-fields"] as FieldElementCollection;
             }
         }
 

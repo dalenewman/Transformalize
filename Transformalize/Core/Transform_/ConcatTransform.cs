@@ -17,7 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Text;
-using Transformalize.Core.Fields_;
 using Transformalize.Core.Parameters_;
 using Transformalize.Libs.Rhino.Etl.Core;
 
@@ -26,18 +25,23 @@ namespace Transformalize.Core.Transform_ {
 
         private readonly StringBuilder _builder = new StringBuilder();
 
-        protected override string Name { get { return "Concat Transform"; } }
+        public override string Name { get { return "Concat Transform"; } }
 
-        public ConcatTransform(IParameters parameters, IFields results)
-            : base(parameters, results) {
+        public ConcatTransform(IParameters parameters)
+            : base(parameters) {
         }
 
-        public override void Transform(ref Row row) {
+        public override bool RequiresParameters
+        {
+            get { return true; }
+        }
+
+        public override void Transform(ref Row row, string resultKey) {
             _builder.Clear();
             foreach (var pair in Parameters) {
                 _builder.Append(pair.Value.Value ?? row[pair.Key]);
             }
-            row[FirstResult.Key] = _builder.ToString();
+            row[resultKey] = _builder.ToString();
         }
 
     }
