@@ -106,7 +106,7 @@ namespace Transformalize.Test.Unit {
 
         [Test]
         public void TestWriteXmlValueToAlias() {
-            const string expected = "[Field1] = t.[p1].value('(/Properties/f1)[1]', 'NVARCHAR(10)'), [Field2] = t.[p2].value('(/Properties/f2)[1]', 'INT')";
+            const string expected = "[Field1] = t.[p1].value(N'(/Properties/f1)[1]', N'NVARCHAR(10)'), [Field2] = t.[p2].value(N'(/Properties/f2)[1]', N'INT')";
             var actual = new FieldSqlWriter(_xmlFields).XmlValue().Prepend("t.").ToAlias().Write();
             Assert.AreEqual(expected, actual);
         }

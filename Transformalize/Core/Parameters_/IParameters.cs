@@ -27,7 +27,6 @@ namespace Transformalize.Core.Parameters_
         IEnumerator<KeyValuePair<string, IParameter>> GetEnumerator();
         IParameter this[string key] { get; set; }
         void Add(string field, string name, object value, string type);
-        void Add(string field, IParameter parameter);
         KeyValuePair<string, IParameter> First();
         bool Any();
     }

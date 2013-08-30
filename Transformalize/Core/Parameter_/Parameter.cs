@@ -27,5 +27,6 @@ namespace Transformalize.Core.Parameter_ {
 
         public string Name { get; set; }
         public object Value { get; set; }
+        public string SimpleType { get; set; }
     }
 }

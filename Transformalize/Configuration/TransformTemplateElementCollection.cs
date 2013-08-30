@@ -21,6 +21,11 @@ using System.Configuration;
 namespace Transformalize.Configuration {
     public class TransformTemplateElementCollection : ConfigurationElementCollection {
 
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
         public TransformTemplateConfigurationElement this[int index]
         {
             get {

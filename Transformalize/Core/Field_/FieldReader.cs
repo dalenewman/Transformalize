@@ -35,7 +35,7 @@ namespace Transformalize.Core.Field_
                 Unicode = element.Unicode,
                 VariableLength = element.VariableLength,
                 Aggregate = element.Aggregate.ToLower(),
-                AsParameter = new Parameter(element.Alias, null)
+                AsParameter = new Parameter(element.Alias, null) { SimpleType = Common.ToSimpleType(element.Type) }
             };
 
             FieldTransformLoader(field, element.Transforms);
@@ -57,7 +57,7 @@ namespace Transformalize.Core.Field_
                 Precision = element.Precision,
                 Scale = element.Scale,
                 Aggregate = element.Aggregate.ToLower(),
-                AsParameter = new Parameter(element.Alias, null)
+                AsParameter = new Parameter(element.Alias, null) { SimpleType = Common.ToSimpleType(element.Type) }
             };
 
             FieldTransformLoader(xmlField, element.Transforms);

@@ -41,7 +41,7 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Operations {
                 using (currentCommand = connection.CreateCommand()) {
                     currentCommand.Transaction = transaction;
                     PrepareCommand(currentCommand);
-                    using (var reader = currentCommand.ExecuteReader()) {
+                    using (var reader = currentCommand.ExecuteReader(CommandBehavior.SequentialAccess)) {
                         while (reader.Read()) {
                             yield return CreateRowFromReader(reader);
                         }

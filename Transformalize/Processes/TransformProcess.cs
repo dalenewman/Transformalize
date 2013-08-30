@@ -36,12 +36,9 @@ namespace Transformalize.Processes {
 
         protected override void Initialize() {
             Register(new ParametersExtract(_process));
-            Register(new FieldTransform(Process.CalculatedFields));
-
-            if (_process.Options.Mode == Modes.Test)
-                RegisterLast(new LogOperation());
-            else
-                RegisterLast(new ResultsLoad(_process));
+            Register(new ApplyDefaults(Process.CalculatedFields));
+            Register(new TransformFields(Process.CalculatedFields));
+            RegisterLast(new ResultsLoad(_process));
         }
 
         protected override void PostProcessing() {
@@ -58,5 +55,4 @@ namespace Transformalize.Processes {
         }
 
     }
-
 }

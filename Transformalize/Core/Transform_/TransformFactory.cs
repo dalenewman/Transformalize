@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Transformalize.Configuration;
+using Transformalize.Core.Field_;
 using Transformalize.Core.Fields_;
 using Transformalize.Core.Parameter_;
 using Transformalize.Core.Parameters_;
@@ -146,6 +147,14 @@ namespace Transformalize.Core.Transform_
 
                 case "tolocaltime":
                     transform = new ToLocalTimeTransform();
+                    break;
+
+                case "tojson":
+                    transform = new ToJsonTransform(_parameters);
+                    break;
+
+                case "fromxml":
+                    transform = new FromXmlTransform(fieldName, _parameters);
                     break;
             }
 

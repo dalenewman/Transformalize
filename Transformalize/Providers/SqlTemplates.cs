@@ -93,7 +93,7 @@ CREATE TABLE [{0}].[{1}](
         /// <returns>SQL Statement</returns>
         public static string Select(IFields fields, string leftTable, string rightTable, string leftSchema = "dbo", string rightSchema = "dbo") {
 
-            const string sqlPattern = "\r\nSELECT\r\n    {0}\r\nFROM {1} l WITH (NOLOCK)\r\nINNER JOIN {2} r ON ({3})\r\nOPTION (MAXDOP 1);";
+            const string sqlPattern = "\r\nSELECT\r\n    {0}\r\nFROM {1} l\r\nINNER JOIN {2} r ON ({3})\r\nOPTION (MAXDOP 2);";
 
             var columns = new FieldSqlWriter(fields).ExpandXml().Input().Select().Prepend("l.").ToAlias().Write(",\r\n    ");
             var join = new FieldSqlWriter(fields).FieldType(FieldType.MasterKey, FieldType.PrimaryKey).Name().Set("l", "r").Write(" AND ");

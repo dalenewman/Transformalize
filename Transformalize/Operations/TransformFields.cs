@@ -25,19 +25,19 @@ using System.Linq;
 
 namespace Transformalize.Operations
 {
-    public class FieldTransform : AbstractOperation
+    public class TransformFields : AbstractOperation
     {
         private readonly Field[] _fields;
         private readonly int _transformCount;
 
-        public FieldTransform(IFields fields)
+        public TransformFields(IFields fields)
         {
             _fields = fields.ToEnumerable().ToArray();
             _transformCount = _fields.Any() ? _fields.Sum(f => f.Transforms.Count) : 0;
             UseTransaction = false;
         }
 
-        public FieldTransform(params IFields[] fields)
+        public TransformFields(params IFields[] fields)
         {
             var temp = new List<Field>();
             foreach (var f in fields)
@@ -50,7 +50,7 @@ namespace Transformalize.Operations
             UseTransaction = false;
         }
 
-        public FieldTransform(Field field)
+        public TransformFields(Field field)
         {
             _fields = new [] { field };
             _transformCount = _fields.Any() ? _fields.Sum(f => f.Transforms.Count) : 0;

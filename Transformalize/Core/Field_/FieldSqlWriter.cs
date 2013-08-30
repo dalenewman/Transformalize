@@ -190,6 +190,10 @@ namespace Transformalize.Core.Field_ {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];
                 var d = field.Default ?? new ConversionFactory().Convert(string.Empty, field.SimpleType);
+
+                if (field.SimpleType == "byte[]")
+                    d = "0x";
+
                 _output[key] = string.Concat("ISNULL(", _output[key], ", ", field.Quote, d, field.Quote, ")");
             }
             return this;
@@ -198,9 +202,7 @@ namespace Transformalize.Core.Field_ {
         public FieldSqlWriter ToAlias() {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];
-                if (field.Alias != field.Name || field.FieldType.HasFlag(Field_.FieldType.Xml)) {
-                    _output[key] = string.Concat("[", field.Alias, "] = ", _output[key]);
-                }
+                _output[key] = string.Concat("[", field.Alias, "] = ", _output[key]);
             }
             return this;
         }
@@ -265,7 +267,7 @@ namespace Transformalize.Core.Field_ {
         }
 
         private static string XmlValue(Field field) {
-            return string.Format("[{0}].value('({1})[{2}]', '{3}')", field.Parent, field.XPath, field.Index, field.SqlDataType);
+            return string.Format("[{0}].value(N'({1})[{2}]', N'{3}')", field.Parent, field.XPath, field.Index, field.SqlDataType);
         }
 
         public FieldSqlWriter XmlValue() {

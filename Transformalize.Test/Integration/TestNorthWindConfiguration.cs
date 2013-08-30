@@ -17,18 +17,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
-using System.Configuration;
 using System.Linq;
 using NUnit.Framework;
-using Transformalize.Configuration;
-using Transformalize.Core.Parameters_;
 using Transformalize.Core.Process_;
+using Transformalize.Runner;
 
 namespace Transformalize.Test.Integration {
     [TestFixture]
     public class TestNorthConfiguration : EtlProcessHelper
     {
-        private readonly Process _process = new ProcessReader("NorthWind").Read();
+        
+        private readonly Process _process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.Xml").Read()).Read();
 
         [Test]
         public void TestRelatedKeys() {

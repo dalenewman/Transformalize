@@ -2,13 +2,17 @@ using System;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using Transformalize.Libs.NLog;
 
 namespace Transformalize.Libs.Rhino.Etl.Core.Infrastructure {
     /// <summary>
     /// Helper class to provide simple data access, when we want to access the ADO.Net
     /// library directly. 
     /// </summary>
-    public static class Use {
+    public static class Use
+    {
+
+        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
         /// <summary>
         /// Delegate to execute an action with a command
         /// and return a result: <typeparam name="T"/>
@@ -19,10 +23,6 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Infrastructure {
         /// Delegate to execute an action with a command
         /// </summary>
         public delegate void Proc(IDbCommand command);
-
-        private static readonly object activeConnectionKey = new object();
-        private static readonly object activeTransactionKey = new object();
-        private static readonly object transactionCounterKey = new object();
 
         /// <summary>
         /// Gets or sets the active connection.
@@ -209,9 +209,25 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Infrastructure {
         public static IDbConnection Connection(ConnectionStringSettings connectionString) {
             if (connectionString == null)
                 throw new InvalidOperationException("Null ConnectionStringSettings specified");
-            
-            //todo: handle providers
-            IDbConnection connection = new SqlConnection(connectionString.ConnectionString);
+
+            IDbConnection connection;
+
+            if (connectionString.ProviderName == string.Empty || connectionString.ProviderName.Equals("System.Data.SqlClient", StringComparison.OrdinalIgnoreCase))
+            {
+                connection = new SqlConnection(connectionString.ConnectionString);
+            }
+            else
+            {
+                var type = Type.GetType(connectionString.ProviderName, false, true);
+                if (type == null)
+                {
+                    Log.Error("The type name '" + connectionString.ProviderName + "' could not be found for connection string: " + connectionString.Name + ".  The provider name must be a type name, followed by the assembly name.  E.g. System.Data.SqlClient.SqlConnection, SystemData.  If this is ambiguous, then you need to specify the fully qualified name like this: System.Data.SqlClient.SqlConnection, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089.");
+                    Environment.Exit(1);
+                }
+                connection = (IDbConnection)Activator.CreateInstance(type);
+                
+            }
+
             connection.Open();
             return connection;
         }

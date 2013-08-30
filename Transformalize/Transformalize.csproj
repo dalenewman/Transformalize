@@ -164,7 +164,7 @@
     <Compile Include="Core\Field_\FieldTransformParametersReader.cs" />
     <Compile Include="Core\Field_\FieldType.cs" />
     <Compile Include="Core\Field_\IFieldReader.cs" />
-    <Compile Include="Core\IConfigurationReader.cs" />
+    <Compile Include="Core\IReader.cs" />
     <Compile Include="Core\IMapReader.cs" />
     <Compile Include="Core\Join.cs" />
     <Compile Include="Core\Modes.cs" />
@@ -175,6 +175,8 @@
     <Compile Include="Core\Parameters_\Parameters.cs" />
     <Compile Include="Core\Parameter_\IParameter.cs" />
     <Compile Include="Core\Parameter_\Parameter.cs" />
+    <Compile Include="Core\Process_\FromXmlTransformFieldsMoveAdapter.cs" />
+    <Compile Include="Core\Process_\FromXmlTransformFieldsToParametersAdapter.cs" />
     <Compile Include="Core\Process_\Process.cs" />
     <Compile Include="Core\Process_\ProcessParametersReader.cs" />
     <Compile Include="Core\Process_\ProcessReader.cs" />
@@ -201,7 +203,7 @@
     <Compile Include="Core\Transform_\ITransformReader.cs" />
     <Compile Include="Core\Transform_\JavascriptTransform.cs" />
     <Compile Include="Core\Transform_\JoinTransform.cs" />
-    <Compile Include="Core\Transform_\JsonTransform.cs" />
+    <Compile Include="Core\Transform_\ToJsonTransform.cs" />
     <Compile Include="Core\Transform_\LeftTransform.cs" />
     <Compile Include="Core\Transform_\MapTransform.cs" />
     <Compile Include="Core\Transform_\PadLeftTransform.cs" />
@@ -220,6 +222,7 @@
     <Compile Include="Core\Transform_\TrimEndTransform.cs" />
     <Compile Include="Core\Transform_\TrimStartTransform.cs" />
     <Compile Include="Core\Transform_\TrimTransform.cs" />
+    <Compile Include="Core\Transform_\FromXmlTransform.cs" />
     <Compile Include="Core\Web.cs" />
     <Compile Include="Libs\NCalc\Domain\BinaryExpression.cs" />
     <Compile Include="Libs\NCalc\Domain\EvaluationVisitor.cs" />
@@ -242,7 +245,7 @@
     <Compile Include="Libs\NCalc\Numbers.cs" />
     <Compile Include="Libs\NCalc\ParameterArgs.cs" />
     <Compile Include="Operations\EntityDataExtract.cs" />
-    <Compile Include="Operations\EntityInputKeysExtractTop.cs" />
+    <Compile Include="Operations\ExtractDataDifferently.cs" />
     <Compile Include="Providers\AnalysisServices\AnalysisServicesScriptRunner.cs" />
     <Compile Include="Providers\AnalysisServices\AnalysisServicesConnectionChecker.cs" />
     <Compile Include="Providers\AnalysisServices\AnalysisServicesConnection.cs" />
@@ -713,12 +716,11 @@
     <Compile Include="Operations\EntityBulkInsert.cs" />
     <Compile Include="Operations\ParametersExtract.cs" />
     <Compile Include="Operations\ResultsLoad.cs" />
-    <Compile Include="Operations\EntityDefaults.cs" />
-    <Compile Include="Operations\FieldTransform.cs" />
-    <Compile Include="Runner\AbstractProcessRunner.cs" />
-    <Compile Include="Runner\ProcessNameRunner.cs" />
+    <Compile Include="Operations\ApplyDefaults.cs" />
+    <Compile Include="Operations\TransformFields.cs" />
     <Compile Include="Runner\ProcessRunner.cs" />
-    <Compile Include="Runner\ProcessXmlRunner.cs" />
+    <Compile Include="Runner\ProcessConfigurationReader.cs" />
+    <Compile Include="Runner\ProcessXmlConfigurationReader.cs" />
     <Compile Include="Operations\EntityInputKeysExtractDelta.cs" />
     <Compile Include="Operations\EntityKeysToOperations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

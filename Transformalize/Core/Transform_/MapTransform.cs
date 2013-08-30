@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Transformalize.Core.Fields_;
 using Transformalize.Core.Parameters_;
 using Transformalize.Extensions;
 using Transformalize.Libs.Rhino.Etl.Core;

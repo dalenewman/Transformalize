@@ -105,9 +105,9 @@ namespace Transformalize.Core.Entity_
         public List<string> SelectKeys()
         {
             var selectKeys = new List<string>();
-            foreach (var pair in PrimaryKey)
+            foreach (var field in PrimaryKey.ToEnumerable())
             {
-                selectKeys.Add(pair.Value.Alias.Equals(pair.Value.Name) ? string.Concat("[", pair.Value.Name, "]") : string.Format("{0} = [{1}]", pair.Value.Alias, pair.Value.Name));
+                selectKeys.Add(field.Alias.Equals(field.Name) ? string.Concat("[", field.Name, "]") : string.Format("{0} = [{1}]", field.Alias, field.Name));
             }
             return selectKeys;
         }
@@ -115,9 +115,9 @@ namespace Transformalize.Core.Entity_
         public List<string> OrderByKeys()
         {
             var orderByKeys = new List<string>();
-            foreach (var pair in PrimaryKey)
+            foreach (var field in PrimaryKey.ToEnumerable())
             {
-                orderByKeys.Add(string.Concat("[", pair.Value.Name, "]"));
+                orderByKeys.Add(string.Concat("[", field.Name, "]"));
             }
             return orderByKeys;
         }

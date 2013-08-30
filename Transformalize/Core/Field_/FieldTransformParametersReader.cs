@@ -33,13 +33,15 @@ namespace Transformalize.Core.Field_
                     return new Parameters();
                 }
 
-                if (string.IsNullOrEmpty(p.Value))
-                {
-                    _log.Warn("{0} | The field {1} has a {2} transform parameter without a value attribute.  Field parameters require names and values.", Process.Name, _name, transform.Method);
-                    return new Parameters();
-                }
+                //if (string.IsNullOrEmpty(p.Value))
+                //{
+                //    _log.Warn("{0} | The field {1} has a {2} transform parameter without a value attribute.  Field parameters require names and values.", Process.Name, _name, transform.Method);
+                //    return new Parameters();
+                //}
 
-                parameters.Add(p.Name, p.Name, p.Value, p.Type);
+                var value = p.HasValue() ? p.Value : null;
+                var alias = p.HasValue() ? p.Name : p.Field;
+                parameters.Add(alias, p.Name, value, p.Type);
             }
 
             return parameters;

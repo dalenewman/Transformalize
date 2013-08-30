@@ -1,4 +1,4 @@
-/*
+﻿/*
 Transformalize - Replicate, Transform, and Denormalize Your Data...
 Copyright (C) 2013 Dale Newman
 
@@ -16,9 +16,22 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace Transformalize.Core {
-    public interface IConfigurationReader<out T> {
-        T Read();
-        int Count { get; }
+using NUnit.Framework;
+using Transformalize.Core;
+using Transformalize.Core.Process_;
+using Transformalize.Runner;
+
+namespace Transformalize.Test.Integration {
+    [TestFixture]
+    public class NorthWindInit {
+
+        [Test]
+        public void Go() {
+            var process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.xml").Read()).Read();
+            Process.Options = new Options { Mode = Modes.Initialize };
+            new ProcessRunner(process).Run();
+        }
+
+
     }
 }

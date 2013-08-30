@@ -22,5 +22,10 @@ namespace Transformalize.Configuration
 {
     public class EmptyConfigurationElement : ConfigurationElement {
 
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
     }
 }

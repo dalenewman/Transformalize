@@ -49,8 +49,9 @@ namespace Transformalize.Providers.SqlServer {
                 cn.Open();
 
                 var createCommand = new SqlCommand(CreateSql(), cn);
+                
+                Debug(createCommand.CommandText);
                 createCommand.ExecuteNonQuery();
-
                 Debug("{0} | Created Output {1}", Process.Name, _process.View);
             }
         }
@@ -72,15 +73,15 @@ namespace Transformalize.Providers.SqlServer {
             builder.AppendFormat("SELECT\r\n    [{0}].[TflKey],\r\n    [{0}].[TflBatchId],\r\n    b.[TflUpdate],\r\n", _masterEntity.OutputName());
             foreach (var entity in Process.Entities) {
                 if (entity.IsMaster()) {
-                    builder.AppendLine(string.Concat(new FieldSqlWriter(entity.PrimaryKey, entity.Fields, Process.CalculatedFields, entity.CalculatedFields).ExpandXml().Output().Alias().Prepend(string.Concat("    [", entity.OutputName(), "].")).Write(",\r\n"), ","));
+                    builder.AppendLine(string.Concat(new FieldSqlWriter(entity.PrimaryKey, entity.Fields, Process.CalculatedFields, entity.CalculatedFields).ExpandXml().Output().Alias().Prepend(string.Concat("[", entity.OutputName(), "].")).IsNull().ToAlias().Prepend("    ").Write(",\r\n"), ","));
                 }
                 else {
                     if (entity.Fields.Any(f => f.Value.FieldType.HasFlag(FieldType.ForeignKey))) {
-                        builder.AppendLine(string.Concat(new FieldSqlWriter(entity.Fields).ExpandXml().Output().FieldType(FieldType.ForeignKey).Alias().Prepend(string.Concat("    [", _masterEntity.OutputName(), "].")).Write(",\r\n"), ","));
+                        builder.AppendLine(string.Concat(new FieldSqlWriter(entity.Fields).ExpandXml().Output().FieldType(FieldType.ForeignKey).Alias().Prepend(string.Concat("[", _masterEntity.OutputName(), "].")).IsNull().ToAlias().Prepend("    ").Write(",\r\n"), ","));
                     }
                     var writer = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).ExpandXml().Output().FieldType(FieldType.Field,FieldType.Version,FieldType.Xml);
                     if(writer.Context().Any())
-                        builder.AppendLine(string.Concat(writer.Alias().Prepend(string.Concat("    [", entity.OutputName(), "].")).Write(",\r\n"), ","));
+                        builder.AppendLine(string.Concat(writer.Alias().Prepend(string.Concat("[", entity.OutputName(), "].")).IsNull().ToAlias().Prepend("    ").Write(",\r\n"), ","));
                 }
             }
             builder.TrimEnd("\r\n,");
@@ -98,8 +99,6 @@ namespace Transformalize.Providers.SqlServer {
                 builder.TrimEnd(" AND ");
                 builder.AppendLine(")");
             }
-
-
 
             builder.Append(";");
             return builder.ToString();

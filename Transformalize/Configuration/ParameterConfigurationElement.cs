@@ -22,6 +22,11 @@ namespace Transformalize.Configuration
 {
     public class ParameterConfigurationElement : ConfigurationElement {
 
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
         [ConfigurationProperty("entity", IsRequired = false)]
         public string Entity {
             get {
@@ -60,6 +65,11 @@ namespace Transformalize.Configuration
                 return this["type"] as string;
             }
             set { this["type"] = value; }
+        }
+
+        public bool HasValue()
+        {
+            return !string.IsNullOrEmpty(Value);
         }
 
     }

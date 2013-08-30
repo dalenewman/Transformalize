@@ -1,6 +1,5 @@
 using System.Data.SqlClient;
 using Transformalize.Core;
-using Transformalize.Core.Parameters_;
 
 namespace Transformalize.Providers.SqlServer
 {

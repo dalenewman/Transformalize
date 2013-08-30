@@ -17,19 +17,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Collections.Generic;
-using Transformalize.Core.Entity_;
 using Transformalize.Core.Field_;
+using Transformalize.Core.Fields_;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
 
 namespace Transformalize.Operations
 {
-    public class EntityDefaults : AbstractOperation {
+    public class ApplyDefaults : AbstractOperation {
         private readonly Field[] _fields;
 
-        public EntityDefaults(Entity entity) {
-            _fields = new FieldSqlWriter(entity.All).ExpandXml().Input().ToArray(); //HasDefault()
+        public ApplyDefaults(params IFields[] fields)
+        {
+            _fields = PrepareFields(fields);
             UseTransaction = false;
+        }
+
+        private static Field[] PrepareFields(IEnumerable<IFields> fields)
+        {
+            var list = new List<Field>();
+            foreach (var fieldArray in fields)
+            {
+                list.AddRange(new FieldSqlWriter(fieldArray).ExpandXml().ToArray()); //HasDefault()
+            }
+            return list.ToArray();
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

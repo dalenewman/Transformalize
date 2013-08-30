@@ -176,7 +176,7 @@ namespace Transformalize.Core
             RenderTemplates = true;
             PerformTemplateActions = true;
             Mode = Modes.Normal;
-            Top = 100;
+            Top = 0;
             LogLevel = LogLevel.Info;
         }
 

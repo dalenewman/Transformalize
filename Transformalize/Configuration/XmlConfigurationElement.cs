@@ -22,6 +22,11 @@ namespace Transformalize.Configuration
 {
     public class XmlConfigurationElement : ConfigurationElement {
 
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
         [ConfigurationProperty("schema", IsRequired = false, DefaultValue = "")]
         public string Schema {
             get {

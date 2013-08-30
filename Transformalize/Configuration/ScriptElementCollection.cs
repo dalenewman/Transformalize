@@ -22,6 +22,11 @@ using System.Configuration;
 namespace Transformalize.Configuration {
     public class ScriptElementCollection : ConfigurationElementCollection {
 
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
         public ScriptConfigurationElement this[int index] {
             get {
                 return BaseGet(index) as ScriptConfigurationElement;

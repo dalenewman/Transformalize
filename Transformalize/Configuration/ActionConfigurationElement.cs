@@ -22,6 +22,10 @@ namespace Transformalize.Configuration
 {
     public class ActionConfigurationElement : ConfigurationElement
     {
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
 
         [ConfigurationProperty("action", IsRequired = true)]
         public string Action

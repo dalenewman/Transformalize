@@ -56,6 +56,7 @@ namespace Transformalize.Operations
                     cmd.Parameters.Add(new SqlParameter("@TflBatchId", _entity.TflBatchId));
                     var records = cmd.ExecuteNonQuery();
 
+                    Debug("{0} | TflBatchId = {1}.", Process.Name, _entity.TflBatchId);
                     Info("{0} | Processed {1} rows in EntityUpdateMaster", Process.Name, records);
                 }
             }

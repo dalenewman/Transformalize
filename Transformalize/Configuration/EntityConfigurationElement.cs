@@ -21,107 +21,127 @@ using System.Configuration;
 namespace Transformalize.Configuration {
     public class EntityConfigurationElement : ConfigurationElement {
 
-        [ConfigurationProperty("schema", IsRequired = false, DefaultValue = "dbo")]
+        private const string SCHEMA = "schema";
+        private const string NAME = "name";
+        private const string ALIAS = "alias";
+        private const string CONNECTION = "connection";
+        private const string PRIMARY_KEY = "primaryKey";
+        private const string FIELDS = "fields";
+        private const string CALCULATED_FIELDS = "calculated-fields";
+        private const string VERSION = "version";
+        private const string OUTPUT = "output";
+        private const string TRANSFORMS = "transforms";
+        private const string AUTO = "auto";
+        private const string PREFIX = "prefix";
+        private const string GROUP = "group";
+
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
+        [ConfigurationProperty(SCHEMA, IsRequired = false, DefaultValue = "dbo")]
         public string Schema {
             get {
-                return this["schema"] as string;
+                return this[SCHEMA] as string;
             }
-            set { this["schema"] = value; }
+            set { this[SCHEMA] = value; }
         }
 
-        [ConfigurationProperty("name", IsRequired = true)]
+        [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name {
             get {
-                return this["name"] as string;
+                return this[NAME] as string;
             }
-            set { this["name"] = value; }
+            set { this[NAME] = value; }
         }
 
-        [ConfigurationProperty("alias", IsRequired = false, DefaultValue = "")]
+        [ConfigurationProperty(ALIAS, IsRequired = false, DefaultValue = "")]
         public string Alias
         {
             get
             {
-                return this["alias"] as string;
+                var alias = this[ALIAS] as string;
+                return alias == string.Empty ? Name : alias;
             }
-            set { this["alias"] = value; }
+            set { this[ALIAS] = value; }
         }
 
-        [ConfigurationProperty("connection", IsRequired = false, DefaultValue = "input")]
+        [ConfigurationProperty(CONNECTION, IsRequired = false, DefaultValue = "input")]
         public string Connection {
             get {
-                return this["connection"] as string;
+                return this[CONNECTION] as string;
             }
-            set { this["connection"] = value; }
+            set { this[CONNECTION] = value; }
         }
 
-        [ConfigurationProperty("primaryKey")]
+        [ConfigurationProperty(PRIMARY_KEY)]
         public FieldElementCollection PrimaryKey {
             get {
-                return this["primaryKey"] as FieldElementCollection;
+                return this[PRIMARY_KEY] as FieldElementCollection;
             }
         }
 
-        [ConfigurationProperty("fields")]
+        [ConfigurationProperty(FIELDS)]
         public FieldElementCollection Fields {
             get {
-                return this["fields"] as FieldElementCollection;
+                return this[FIELDS] as FieldElementCollection;
             }
         }
 
-        [ConfigurationProperty("calculated-fields")]
+        [ConfigurationProperty(CALCULATED_FIELDS)]
         public FieldElementCollection CalculatedFields
         {
             get
             {
-                return this["calculated-fields"] as FieldElementCollection;
+                return this[CALCULATED_FIELDS] as FieldElementCollection;
             }
         }
 
-        [ConfigurationProperty("version", IsRequired = true)]
+        [ConfigurationProperty(VERSION, IsRequired = true)]
         public string Version {
             get {
-                return this["version"] as string;
+                return this[VERSION] as string;
             }
-            set { this["version"] = value; }
+            set { this[VERSION] = value; }
         }
 
-        [ConfigurationProperty("output")]
+        [ConfigurationProperty(OUTPUT)]
         public OutputElementCollection Output {
             get {
-                return this["output"] as OutputElementCollection;
+                return this[OUTPUT] as OutputElementCollection;
             }
         }
 
-        [ConfigurationProperty("transforms")]
+        [ConfigurationProperty(TRANSFORMS)]
         public TransformElementCollection Transforms {
             get {
-                return this["transforms"] as TransformElementCollection;
+                return this[TRANSFORMS] as TransformElementCollection;
             }
         }
 
-        [ConfigurationProperty("auto", IsRequired = false, DefaultValue = false)]
+        [ConfigurationProperty(AUTO, IsRequired = false, DefaultValue = false)]
         public bool Auto {
             get {
-                return (bool) this["auto"];
+                return (bool) this[AUTO];
             }
-            set { this["auto"] = value; }
+            set { this[AUTO] = value; }
         }
 
-        [ConfigurationProperty("prefix", IsRequired = false, DefaultValue = "Default")]
+        [ConfigurationProperty(PREFIX, IsRequired = false, DefaultValue = "Default")]
         public string Prefix {
             get {
-                return this["prefix"] as string;
+                return this[PREFIX] as string;
             }
-            set { this["prefix"] = value; }
+            set { this[PREFIX] = value; }
         }
 
-        [ConfigurationProperty("group", IsRequired = false, DefaultValue = false)]
+        [ConfigurationProperty(GROUP, IsRequired = false, DefaultValue = false)]
         public bool Group {
             get {
-                return (bool) this["group"];
+                return (bool) this[GROUP];
             }
-            set { this["group"] = value; }
+            set { this[GROUP] = value; }
         }
 
     }

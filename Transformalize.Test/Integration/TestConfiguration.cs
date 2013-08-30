@@ -16,24 +16,24 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Configuration;
 using System.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration;
 using Transformalize.Core.Parameters_;
 using Transformalize.Core.Process_;
+using Transformalize.Runner;
 
 namespace Transformalize.Test.Integration {
     [TestFixture]
     public class TestConfiguration : EtlProcessHelper
     {
-        private readonly Process _process = new ProcessReader("Test").Read();
+        private static readonly ProcessConfigurationElement Element = new ProcessConfigurationReader("Test").Read();
+        private readonly Process _process = new ProcessReader(Element).Read();
 
         [Test]
-        public void TestReadConfiguration() {
-            var config = (TransformalizeConfiguration)ConfigurationManager.GetSection("transformalize");
-            var test = config.Processes.Get("Test");
+        public void TestReadConfiguration()
+        {
+            var test = Element;
 
             Assert.AreEqual("Test", test.Name);
             Assert.AreEqual("input", test.Connections[0].Name);
@@ -45,10 +45,6 @@ namespace Transformalize.Test.Integration {
             Assert.AreEqual("OrderKey", test.Entities[0].Fields[0].Name);
             Assert.AreEqual("OrderKey", test.Entities[0].Fields[0].Alias);
             Assert.AreEqual("RowVersion", test.Entities[0].Version);
-            Assert.AreEqual("/Properties/", test.Entities[0].Fields[4].Xml.XPath);
-            Assert.AreEqual("Color", test.Entities[0].Fields[4].Xml[0].Alias);
-            Assert.AreEqual("Color", test.Entities[0].Fields[4].Xml[0].XPath);
-            Assert.AreEqual(1, test.Entities[0].Fields[4].Xml[0].Index);
             Assert.AreEqual("OrderDetail", test.Relationships[0].LeftEntity);
             Assert.AreEqual("Order", test.Relationships[0].RightEntity);
             Assert.AreEqual("OrderKey", test.Relationships[0].Join[0].LeftField);
@@ -66,8 +62,7 @@ namespace Transformalize.Test.Integration {
             Assert.AreEqual("OrderDetailKey", Process.Entities.First().PrimaryKey["OrderDetailKey"].Alias);
             Assert.AreEqual("ProductKey", Process.Entities.First().Fields["ProductKey"].Alias);
             Assert.AreEqual("RowVersion", Process.Entities.First().Version.Alias);
-            Assert.AreEqual("/Properties/Color", Process.Entities.First().Fields["Properties"].InnerXml["Color"].XPath);
-            Assert.AreEqual(1, Process.Entities.First().Fields["Properties"].InnerXml["Color"].Index);
+
             Assert.AreEqual("OrderDetail", _process.Relationships[0].LeftEntity.Alias);
             Assert.AreEqual("Order", _process.Relationships[0].RightEntity.Alias);
             Assert.AreEqual("OrderKey", _process.Relationships[0].Join[0].LeftField.Name);
@@ -94,6 +89,28 @@ namespace Transformalize.Test.Integration {
             Assert.AreEqual(2, actual.Count);
             Assert.AreEqual(expected["LastName"].Name, actual["LastName"].Name);
             Assert.AreEqual(expected["ProductName"].Value, actual["ProductName"].Value);
+        }
+
+        [Test]
+        public void TestFromXmlTransformFieldsToParametersAdapter()
+        {
+            //Assert.AreEqual(3, Element.Entities[0].Fields[4].Transforms[0].Fields.Cast<FieldConfigurationElement>().Count());
+            //Assert.AreEqual(0, Element.Entities[0].Fields[4].Transforms[0].Parameters.Count);
+
+            //new FromXmlTransformFieldsToParametersAdapter(Element).Adapt();
+
+            //Assert.AreEqual(3, Element.Entities[0].Fields[4].Transforms[0].Parameters.Count);
+
+            //// tests combined because they affect one another
+            
+            //var initialCount = Element.Entities[0].Fields.Cast<FieldConfigurationElement>().Count();
+            //Assert.AreEqual(3, Element.Entities[0].Fields[4].Transforms[0].Fields.Cast<FieldConfigurationElement>().Count());
+
+            //new FromXmlTransformFieldsMoveAdapter(Element).Adapt();
+
+            Assert.AreEqual(0, Element.Entities[0].Fields[4].Transforms[0].Fields.Cast<FieldConfigurationElement>().Count());
+            Assert.AreEqual(9, Element.Entities[0].Fields.Cast<FieldConfigurationElement>().Count());
+
         }
 
     }

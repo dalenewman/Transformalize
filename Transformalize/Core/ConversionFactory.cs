@@ -23,7 +23,7 @@ namespace Transformalize.Core {
 
         public object Convert(object something, string type) {
 
-            var simpleType = type.ToLower().Replace("system.", string.Empty);
+            var simpleType = Common.ToSimpleType(type);
             if (simpleType == "object")
                 return something;
 

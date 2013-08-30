@@ -64,5 +64,10 @@ namespace Transformalize.Core
             return memory.ToArray();
         }
 
+        public static string ToSimpleType(string type)
+        {
+            return type.ToLower().Replace("system.", string.Empty);
+        }
+
     }
 }

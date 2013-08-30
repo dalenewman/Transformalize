@@ -21,6 +21,11 @@ using System.Configuration;
 namespace Transformalize.Configuration {
     public class ConnectionElementCollection : ConfigurationElementCollection {
 
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
         public ConnectionConfigurationElement this[int index] {
             get {
                 return BaseGet(index) as ConnectionConfigurationElement;

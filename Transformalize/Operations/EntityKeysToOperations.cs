@@ -24,20 +24,17 @@ using Transformalize.Core.Field_;
 using Transformalize.Extensions;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Core;
-using Transformalize.Libs.Rhino.Etl.Core.ConventionOperations;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
 using Transformalize.Providers;
 using Transformalize.Providers.SqlServer;
 
 namespace Transformalize.Operations {
-
     public class EntityKeysToOperations : AbstractOperation {
         private readonly Entity _entity;
         private readonly string _operationColumn;
         private const string KEYS_TABLE_VARIABLE = "@KEYS";
         private readonly string[] _fields;
         private readonly Field[] _key;
-        private readonly Logger _log = LogManager.GetCurrentClassLogger();
 
         public EntityKeysToOperations(Entity entity, string operationColumn = "operation") {
             _entity = entity;
@@ -55,7 +52,6 @@ namespace Transformalize.Operations {
                 row[_operationColumn] = new EntityDataExtract(_fields, sql, _entity.InputConnection.ConnectionString);
                 yield return row;
             }
-
         }
 
         public string SelectByKeys(IEnumerable<Row> rows) {

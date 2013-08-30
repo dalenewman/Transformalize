@@ -17,6 +17,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Collections.Generic;
+using System.Text;
+using System.Xml.Linq;
 using NUnit.Framework;
 using Moq;
 using Transformalize.Core;
@@ -59,7 +61,7 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 _testInput.Object,
-                new FieldTransform(entity.All),
+                new TransformFields(entity.All),
                 new LogOperation()
             );
 
@@ -76,7 +78,7 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 _testInput.Object,
-                new FieldTransform(entity.All),
+                new TransformFields(entity.All),
                 new LogOperation()
             );
 
@@ -91,12 +93,12 @@ namespace Transformalize.Test.Unit
         {
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field(FieldType.Field) { Alias="Field1", Transforms = new Transforms() { new InsertTransform(1, ".") } };
+            entity.All["Field1"] = new Field(FieldType.Field) { Alias = "Field1", Transforms = new Transforms() { new InsertTransform(1, ".") } };
 
             var rows = TestOperation(
                 _testInput.Object,
-                new EntityDefaults(entity),
-                new FieldTransform(entity.All),
+                new ApplyDefaults(entity.All),
+                new TransformFields(entity.All),
                 new LogOperation()
             );
 
@@ -115,8 +117,8 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 _testInput.Object,
-                new EntityDefaults(entity),
-                new FieldTransform(entity.All),
+                new ApplyDefaults(entity.All),
+                new TransformFields(entity.All),
                 new LogOperation()
             );
 
@@ -134,7 +136,7 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 _testInput.Object,
-                new FieldTransform(entity.All),
+                new TransformFields(entity.All),
                 new LogOperation()
             );
 
@@ -153,7 +155,7 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 _testInput.Object,
-                new FieldTransform(entity.All),
+                new TransformFields(entity.All),
                 new LogOperation()
             );
 
@@ -171,7 +173,7 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 _testInput.Object,
-                new FieldTransform(entity.All),
+                new TransformFields(entity.All),
                 new LogOperation()
             );
 
@@ -190,7 +192,7 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 _testInput.Object,
-                new FieldTransform(entity.All),
+                new TransformFields(entity.All),
                 new LogOperation()
             );
 
@@ -215,8 +217,8 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 input.Object,
-                new EntityDefaults(entity),
-                new FieldTransform(entity.All),
+                new ApplyDefaults(entity.All),
+                new TransformFields(entity.All),
                 new LogOperation()
             );
 
@@ -233,8 +235,8 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 _testInput.Object,
-                new EntityDefaults(entity),
-                new FieldTransform(entity.All),
+                new ApplyDefaults(entity.All),
+                new TransformFields(entity.All),
                 new LogOperation()
             );
 
@@ -253,7 +255,7 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 _testInput.Object,
-                new FieldTransform(entity.All),
+                new TransformFields(entity.All),
                 new LogOperation()
             );
 
@@ -272,7 +274,7 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 _testInput.Object,
-                new FieldTransform(entity.All),
+                new TransformFields(entity.All),
                 new LogOperation()
             );
 
@@ -298,7 +300,7 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 _testInput.Object,
-                new FieldTransform(entity.All),
+                new TransformFields(entity.All),
                 new LogOperation()
             );
 
@@ -324,7 +326,7 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 _testInput.Object,
-                new FieldTransform(entity.All),
+                new TransformFields(entity.All),
                 new LogOperation()
             );
 
@@ -349,7 +351,7 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 _testInput.Object,
-                new FieldTransform(entity.All),
+                new TransformFields(entity.All),
                 new LogOperation()
             );
 
@@ -368,8 +370,8 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 _testInput.Object,
-                new EntityDefaults(entity),
-                new FieldTransform(entity.All),
+                new ApplyDefaults(entity.All),
+                new TransformFields(entity.All),
                 new LogOperation()
             );
 
@@ -394,15 +396,16 @@ namespace Transformalize.Test.Unit
 
             var entity = new Entity();
             var scripts = new Dictionary<string, Script> { { "test", new Script("test", scriptContent, "test.js") } };
-            entity.All["Field1"] = new Field(FieldType.Field) {
+            entity.All["Field1"] = new Field(FieldType.Field)
+            {
                 Alias = "Field1",
                 Transforms = new Transforms() { new JavascriptTransform("Double(Field1);", "Field1", scripts) }
             };
 
             var rows = TestOperation(
                 input,
-                new EntityDefaults(entity),
-                new FieldTransform(entity.All),
+                new ApplyDefaults(entity.All),
+                new TransformFields(entity.All),
                 new LogOperation()
             );
 
@@ -432,8 +435,8 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 numbers,
-                new EntityDefaults(entity),
-                new FieldTransform(entity.All),
+                new ApplyDefaults(entity.All),
+                new TransformFields(entity.All),
                 new LogOperation()
             );
 
@@ -461,8 +464,8 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 input,
-                new EntityDefaults(entity),
-                new FieldTransform(entity.All),
+                new ApplyDefaults(entity.All),
+                new TransformFields(entity.All),
                 new LogOperation()
             );
 
@@ -491,8 +494,8 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 input,
-                new EntityDefaults(entity),
-                new FieldTransform(entity.All),
+                new ApplyDefaults(entity.All),
+                new TransformFields(entity.All),
                 new LogOperation()
             );
 
@@ -520,8 +523,8 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 input,
-                new EntityDefaults(entity),
-                new FieldTransform(entity.All),
+                new ApplyDefaults(entity.All),
+                new TransformFields(entity.All),
                 new LogOperation()
             );
 
@@ -549,8 +552,8 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 input,
-                new EntityDefaults(entity),
-                new FieldTransform(entity.All),
+                new ApplyDefaults(entity.All),
+                new TransformFields(entity.All),
                 new LogOperation()
             );
 
@@ -574,12 +577,12 @@ namespace Transformalize.Test.Unit
             var input = mock.Object;
 
             var parameters = new Parameters { { "Field1", new Parameter("Field1", null) }, { "Field2", new Parameter("Field2", null) } };
-            var result = new Field(FieldType.Field) { Alias = "result"};
+            var result = new Field(FieldType.Field) { Alias = "result" };
             result.Transforms.Add(new FormatTransform("{0}+{1}", parameters));
 
             var rows = TestOperation(
                 input,
-                new FieldTransform(result),
+                new TransformFields(result),
                 new LogOperation()
             );
 
@@ -603,12 +606,12 @@ namespace Transformalize.Test.Unit
             var input = mock.Object;
 
             var parameters = new Parameters { { "Field1", new Parameter() }, { "Field2", new Parameter("Field2", null) } };
-            var result = new Field(FieldType.Field) { Alias = "result"};
+            var result = new Field(FieldType.Field) { Alias = "result" };
             result.Transforms.Add(new ConcatTransform(parameters));
 
             var rows = TestOperation(
                 input,
-                new FieldTransform(result),
+                new TransformFields(result),
                 new LogOperation()
             );
 
@@ -632,12 +635,12 @@ namespace Transformalize.Test.Unit
             var input = mock.Object;
 
             var parameters = new Parameters { { "Field1", new Parameter("Field1", null) }, { "Field2", new Parameter("Field2", null) } };
-            var result = new Field(FieldType.Field) { Alias = "result"};
-            result.Transforms.Add(new JsonTransform(parameters));
+            var result = new Field(FieldType.Field) { Alias = "result" };
+            result.Transforms.Add(new ToJsonTransform(parameters));
 
             var rows = TestOperation(
                 input,
-                new FieldTransform(result),
+                new TransformFields(result),
                 new LogOperation()
             );
 
@@ -660,12 +663,12 @@ namespace Transformalize.Test.Unit
             var input = mock.Object;
 
             var parameters = new Parameters { { "Field1", new Parameter("Field1", null) }, { "Field2", new Parameter("Field2", null) }, { "Field3", new Parameter("Field3", 3) } };
-            var result = new Field(FieldType.Field) { Alias = "result"};
-            result.Transforms.Add(new JsonTransform(parameters));
+            var result = new Field(FieldType.Field) { Alias = "result" };
+            result.Transforms.Add(new ToJsonTransform(parameters));
 
             var rows = TestOperation(
                 input,
-                new FieldTransform(result),
+                new TransformFields(result),
                 new LogOperation()
             );
 
@@ -687,12 +690,12 @@ namespace Transformalize.Test.Unit
             var input = mock.Object;
 
             var parameters = new Parameters { { "var1", new Parameter("var1", null) }, { "var2", new Parameter("var2", null) } };
-            var result = new Field(FieldType.Field) { Alias = "result"};
+            var result = new Field(FieldType.Field) { Alias = "result" };
             result.Transforms.Add(new ExpressionTransform("[var1] * [var2]", parameters));
-            
+
             var rows = TestOperation(
                 input,
-                new FieldTransform(result),
+                new TransformFields(result),
                 new LogOperation()
             );
 
@@ -714,18 +717,55 @@ namespace Transformalize.Test.Unit
             var input = mock.Object;
 
             var parameters = new Parameters { { "var1", new Parameter("var1", null) }, { "var2", new Parameter("var2", null) } };
-            var result = new Field("boolean", "0", FieldType.Field, true, "false") { Alias = "result"};
+            var result = new Field("boolean", "0", FieldType.Field, true, "false") { Alias = "result" };
             result.Transforms.Add(new ExpressionTransform("if([var1] * [var2] == 7, true, false)", parameters));
 
             var rows = TestOperation(
                 input,
-                new FieldTransform(result),
+                new TransformFields(result),
                 new LogOperation()
             );
 
             Assert.AreEqual(true, rows[0]["result"]);
             Assert.AreEqual(false, rows[1]["result"]);
             Assert.AreEqual(false, rows[2]["result"]);
+        }
+
+        [Test]
+        public void TestXmlTransform()
+        {
+
+            var mock = new Mock<IOperation>();
+            mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row> {
+                new Row { {"XmlField", "<xml><item1>something1</item1><item2>2</item2></xml>"} },
+                new Row { {"XmlField", "<xml><item1>something3</item1><item2>4</item2></xml>"} }
+            });
+            var xmlInput = mock.Object;
+
+            var parameters = new Parameters {
+                {"item1", "item1", null, "string"},
+                {"XmlItem2", "item2", null, "int32"}
+            };
+
+            var entity = new Entity();
+            entity.All["XmlField"] = new Field(FieldType.Field)
+            {
+                Alias = "XmlField",
+                Input = true,
+                Transforms = new Transforms { new FromXmlTransform("XmlField", parameters) },
+                Default = ""
+            };
+
+            var rows = TestOperation(
+                xmlInput,
+                new TransformFields(entity.All),
+                new LogOperation()
+            );
+
+            Assert.AreEqual("something1", rows[0]["item1"]);
+            Assert.AreEqual(2, rows[0]["XmlItem2"]);
+            Assert.AreEqual("something3", rows[1]["item1"]);
+            Assert.AreEqual(4, rows[1]["XmlItem2"]);
         }
 
 

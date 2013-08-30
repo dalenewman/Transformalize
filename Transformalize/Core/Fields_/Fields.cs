@@ -20,16 +20,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Transformalize.Core.Field_;
-using Transformalize.Core.Transform_;
 
 namespace Transformalize.Core.Fields_
 {
-
     public class Fields : IFields, IEnumerable<KeyValuePair<string, Field>>
     {
-
         private readonly IDictionary<string, Field> _items = new Dictionary<string, Field>();
         public int Count { get { return _items.Count; } }
         public IEnumerable<string> Keys { get { return _items.Keys; } }
@@ -53,7 +49,7 @@ namespace Transformalize.Core.Fields_
 
         public IEnumerable<Field> ToEnumerable()
         {
-            return _items.Select(kv => kv.Value);
+            return _items.Select(kv => kv.Value).OrderBy(f=>f.Alias);
         }
 
         public Field this[string key]

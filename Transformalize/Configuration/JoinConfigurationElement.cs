@@ -22,6 +22,11 @@ namespace Transformalize.Configuration
 {
     public class JoinConfigurationElement : ConfigurationElement {
 
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
         [ConfigurationProperty("leftField", IsRequired = true)]
         public string LeftField {
             get {

@@ -43,67 +43,54 @@ namespace Transformalize.Processes
         {
             _process = process;
             _entity = entity;
-            _mode = process.Options.Mode;
+            _mode = Process.Options.Mode;
 
-            if (_mode != Modes.Test)
-                _entity.TflBatchId = (entityBatch ?? new SqlServerEntityBatch()).GetNext(_entity);
+            _entity.TflBatchId = (entityBatch ?? new SqlServerEntityBatch()).GetNext(_entity);
 
             _fieldsWithTransforms = new FieldSqlWriter(entity.All).ExpandXml().HasTransform().Input().Context();
         }
 
         protected override void Initialize()
         {
-            if (_mode == Modes.Test)
+            if (Process.Options.UseBeginVersion)
             {
-                Register(new EntityInputKeysExtractTop(_entity, _process.Options.Top));
+                var keysExtract = new EntityInputKeysExtractDelta(_entity);
+                if (!keysExtract.NeedsToRun()) return;
+                Register(keysExtract);
             }
             else
             {
-                if (_process.Options.UseBeginVersion)
-                {
-                    var keysExtract = new EntityInputKeysExtractDelta(_entity);
-                    if (!keysExtract.NeedsToRun()) return;
-                    Register(keysExtract);
-                }
-                else
-                {
-                    Register(new EntityInputKeysExtractAll(_entity));
-                }
+                Register(new EntityInputKeysExtractAll(_entity));
             }
+
 
             Register(new EntityInputKeysStore(_entity));
             Register(new EntityKeysToOperations(_entity));
+            //Register(new ExtractDataDifferently(_entity));
             Register(new SerialUnionAllOperation());
-            Register(new EntityDefaults(_entity));
-            Register(new FieldTransform(_fieldsWithTransforms));
-            Register(new FieldTransform(_entity.CalculatedFields));
+            Register(new ApplyDefaults(_entity.All, _entity.CalculatedFields));
+            Register(new TransformFields(_fieldsWithTransforms));
+            Register(new TransformFields(_entity.CalculatedFields));
 
             if (_entity.Group)
                 Register(new EntityAggregation(_entity));
 
-            if (_mode == Modes.Test)
+            if (Process.OutputRecordsExist)
             {
-                RegisterLast(new LogOperation());
+                Register(new EntityJoinAction(_entity).Right(new EntityOutputKeysExtract(_entity)));
+                var branch = new BranchingOperation()
+                    .Add(new PartialProcessOperation()
+                        .Register(new EntityActionFilter(ref _entity, EntityAction.Insert))
+                        .RegisterLast(new EntityBulkInsert(_entity)))
+                    .Add(new PartialProcessOperation()
+                        .Register(new EntityActionFilter(ref _entity, EntityAction.Update))
+                        .RegisterLast(new EntityBatchUpdate(_entity)));
+                RegisterLast(branch);
             }
             else
             {
-                if (Process.OutputRecordsExist)
-                {
-                    Register(new EntityJoinAction(_entity).Right(new EntityOutputKeysExtract(_entity)));
-                    var branch = new BranchingOperation()
-                        .Add(new PartialProcessOperation()
-                            .Register(new EntityActionFilter(ref _entity, EntityAction.Insert))
-                            .RegisterLast(new EntityBulkInsert(_entity)))
-                        .Add(new PartialProcessOperation()
-                            .Register(new EntityActionFilter(ref _entity, EntityAction.Update))
-                            .RegisterLast(new EntityBatchUpdate(_entity)));
-                    RegisterLast(branch);
-                }
-                else
-                {
-                    Register(new EntityAddTflFields(_entity));
-                    RegisterLast(new EntityBulkInsert(_entity));
-                }
+                Register(new EntityAddTflFields(_entity));
+                RegisterLast(new EntityBulkInsert(_entity));
             }
 
         }
@@ -121,12 +108,9 @@ namespace Transformalize.Processes
                 throw new InvalidOperationException("Houstan.  We have a problem in the threads!");
             }
 
-            if (_mode != Modes.Test)
+            if (Process.Options.WriteEndVersion)
             {
-                if (_process.Options.WriteEndVersion)
-                {
-                    new SqlServerEntityVersionWriter(_entity).WriteEndVersion(_entity.End, _entity.RecordsAffected);
-                }
+                new SqlServerEntityVersionWriter(_entity).WriteEndVersion(_entity.End, _entity.RecordsAffected);
             }
 
             base.PostProcessing();

@@ -39,7 +39,6 @@ namespace Transformalize.Configuration
         private const string SCRIPT = "script";
         private const string TEMPLATE = "template";
         private const string PARAMETERS = "parameters";
-        private const string RESULTS = "results";
         private const string SCRIPTS = "scripts";
         private const string FORMAT = "format";
         private const string SEPARATOR = "separator";
@@ -50,6 +49,13 @@ namespace Transformalize.Configuration
         private const string RESULT = "result";
         private const string EXPRESSION = "expression";
         private const string TYPE = "type";
+        private const string ROOT = "root";
+        private const string FIELDS = "fields";
+
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
 
         [ConfigurationProperty(METHOD, IsRequired = true)]
         public string Method
@@ -202,7 +208,18 @@ namespace Transformalize.Configuration
             }
             set { this[MAP] = value; }
         }
-        
+
+        [SettingsDescription("root, for xml transform.  designates a single XML root to use for parsing xml.")]
+        [ConfigurationProperty(ROOT, IsRequired = false, DefaultValue = "")]
+        public string Root
+        {
+            get
+            {
+                return this[ROOT] as string;
+            }
+            set { this[ROOT] = value; }
+        }
+ 
         [ConfigurationProperty(SCRIPT, IsRequired = false, DefaultValue = "")]
         public string Script
         {
@@ -316,6 +333,15 @@ namespace Transformalize.Configuration
                 return this[TYPE] as string;
             }
             set { this[TYPE] = value; }
+        }
+
+        [ConfigurationProperty(FIELDS)]
+        public FieldElementCollection Fields
+        {
+            get
+            {
+                return this[FIELDS] as FieldElementCollection;
+            }
         }
 
     }

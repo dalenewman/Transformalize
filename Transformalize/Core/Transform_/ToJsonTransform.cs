@@ -22,11 +22,11 @@ using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.fastJSON;
 
 namespace Transformalize.Core.Transform_ {
-    public class JsonTransform : AbstractTransform {
-        public override string Name { get { return "Json Transform"; } }
+    public class ToJsonTransform : AbstractTransform {
+        public override string Name { get { return "To Json Transform"; } }
         private readonly Dictionary<string, object> _values = new Dictionary<string, object>();
 
-        public JsonTransform(IParameters parameters)
+        public ToJsonTransform(IParameters parameters)
             : base(parameters) {
         }
 

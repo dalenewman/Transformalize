@@ -56,7 +56,8 @@ namespace Transformalize.Core.Parameters_
             var parameter = new Parameter()
             {
                 Name = name,
-                Value = value == null ? null : _conversionFactory.Convert(value, type)
+                Value = value == null ? null : _conversionFactory.Convert(value, type),
+                SimpleType = Common.ToSimpleType(type)
             };
             Add(field, parameter);
         }

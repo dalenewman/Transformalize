@@ -21,7 +21,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using Transformalize.Core.Entity_;
-using Transformalize.Core.Field_;
+using Transformalize.Core.Process_;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
 
@@ -37,7 +37,7 @@ namespace Transformalize.Operations {
             _entity = entity;
             _entity.Begin = _entity.EntityVersionReader.GetBeginVersion();
             _entity.End = _entity.EntityVersionReader.GetEndVersion();
-            _fields = new FieldSqlWriter(entity.PrimaryKey).Alias().Keys();
+            _fields = _entity.PrimaryKey.ToEnumerable().Select(f => f.Alias);
 
             if (!_entity.EntityVersionReader.HasRows) {
                 Debug("{0} | No data detected in {1}.", _entity.ProcessName, _entity.Alias);
@@ -54,7 +54,7 @@ namespace Transformalize.Operations {
             var row = new Row();
             foreach (var field in _fields)
             {
-                row.Add(field, reader[field]);
+                row[field] = reader[field];
             }
             return row;
         }
@@ -70,9 +70,10 @@ namespace Transformalize.Operations {
         }
 
         public string PrepareSql(bool isRange) {
-            const string sqlPattern = "SELECT {0}\r\nFROM [{1}].[{2}] WITH (NOLOCK)\r\nWHERE {3}\r\nORDER BY {4};";
+            const string sqlPattern = "SELECT {0}{1}\r\nFROM [{2}].[{3}] WITH (NOLOCK)\r\nWHERE {4}\r\nORDER BY {5};";
             var criteria = string.Format(isRange ? "[{0}] BETWEEN @Begin AND @End" : "[{0}] <= @End", _entity.Version.Name);
-            return string.Format(sqlPattern, string.Join(", ", _entity.SelectKeys()), _entity.Schema, _entity.Name, criteria, string.Join(", ",_entity.OrderByKeys()));
+            var top = Process.Options.Top > 0 ? "TOP " + Process.Options.Top + " " : string.Empty;
+            return string.Format(sqlPattern, top, string.Join(", ", _entity.SelectKeys()), _entity.Schema, _entity.Name, criteria, string.Join(", ",_entity.OrderByKeys()));
         }
 
         public bool NeedsToRun() {

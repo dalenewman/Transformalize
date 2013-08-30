@@ -21,6 +21,11 @@ using System.Configuration;
 namespace Transformalize.Configuration {
     public class RelationshipConfigurationElement : ConfigurationElement {
 
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
         [ConfigurationProperty("leftEntity", IsRequired = true)]
         public string LeftEntity {
             get {

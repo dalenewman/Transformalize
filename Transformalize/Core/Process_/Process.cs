@@ -42,7 +42,7 @@ namespace Transformalize.Core.Process_ {
         public static IFields CalculatedFields { get; set; }
 
         public Entity MasterEntity { get; set; }
-        public Options Options { get; set; }
+        public static Options Options { get; set; }
         public List<Relationship> Relationships = new List<Relationship>();
         public IEnumerable<Field> RelatedKeys;
         public string View;

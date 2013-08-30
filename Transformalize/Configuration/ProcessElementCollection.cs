@@ -21,6 +21,11 @@ using System.Configuration;
 namespace Transformalize.Configuration {
     public class ProcessElementCollection : ConfigurationElementCollection {
 
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
         public ProcessConfigurationElement this[int index] {
             get {
                 return BaseGet(index) as ProcessConfigurationElement;

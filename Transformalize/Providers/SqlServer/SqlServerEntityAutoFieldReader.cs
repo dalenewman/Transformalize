@@ -95,7 +95,7 @@ namespace Transformalize.Providers.SqlServer {
 	                END AS CHARACTER_MAXIMUM_LENGTH, --3
                     ISNULL(c.NUMERIC_PRECISION, 0) AS NUMERIC_PRECISION, --4
                     ISNULL(c.NUMERIC_SCALE, 0) AS NUMERIC_SCALE, --5
-                    ISNULL(pk.ORDINAL_POSITION,c.ORDINAL_POSITION) AS ORDINAL_POSITION, --5
+                    ISNULL(pk.ORDINAL_POSITION,c.ORDINAL_POSITION) AS ORDINAL_POSITION, --6
                     CAST(CASE WHEN pk.COLUMN_NAME IS NULL THEN 0 ELSE 1 END AS BIT) AS IS_PRIMARY_KEY
                     ,c.*
                 FROM INFORMATION_SCHEMA.COLUMNS c

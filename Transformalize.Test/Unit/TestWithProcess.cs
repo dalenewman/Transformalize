@@ -21,19 +21,22 @@ using System.Collections.Generic;
 using System.Linq;
 using Moq;
 using NUnit.Framework;
+using Transformalize.Configuration;
 using Transformalize.Core.Process_;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
 using Transformalize.Operations;
 using Transformalize.Providers;
 using Transformalize.Providers.SqlServer;
+using Transformalize.Runner;
 
 namespace Transformalize.Test.Unit {
     [TestFixture]
     public class TestWithProcess : EtlProcessHelper {
 
         private readonly Mock<IOperation> _entityKeysExtract;
-        private readonly Process _process = new ProcessReader("Test").Read();
+        private static readonly ProcessConfigurationElement Element = new ProcessConfigurationReader("Test").Read();
+        private readonly Process _process = new ProcessReader(Element).Read();
 
         public TestWithProcess() {
 
@@ -84,19 +87,31 @@ UNION ALL SELECT 4;";
             var entity = Process.Entities.First();
 
             var actual = SqlTemplates.Select(entity.All, entity.OutputName(), "@KEYS");
+//            const string expected = @"
+//SELECT
+//    [Color] = l.[Properties].value('(/Properties/Color)[1]', 'NVARCHAR(64)'),
+//    [Gender] = l.[Properties].value('(/Properties/Gender)[1]', 'NVARCHAR(64)'),
+//    l.[OrderDetailKey],
+//    l.[OrderKey],
+//    l.[Price],
+//    l.[ProductKey],
+//    [Quantity] = l.[Qty],
+//    [Size] = l.[Properties].value('(/Properties/Size)[1]', 'NVARCHAR(64)')
+//FROM [TestOrderDetail] l
+//INNER JOIN @KEYS r ON (l.[OrderDetailKey] = r.[OrderDetailKey])
+//OPTION (MAXDOP 2);";
+
             const string expected = @"
 SELECT
-    [Color] = l.[Properties].value('(/Properties/Color)[1]', 'NVARCHAR(64)'),
-    [Gender] = l.[Properties].value('(/Properties/Gender)[1]', 'NVARCHAR(64)'),
     l.[OrderDetailKey],
     l.[OrderKey],
     l.[Price],
     l.[ProductKey],
-    [Quantity] = l.[Qty],
-    [Size] = l.[Properties].value('(/Properties/Size)[1]', 'NVARCHAR(64)')
-FROM [TestOrderDetail] l WITH (NOLOCK)
+    l.[Properties],
+    [Quantity] = l.[Qty]
+FROM [TestOrderDetail] l
 INNER JOIN @KEYS r ON (l.[OrderDetailKey] = r.[OrderDetailKey])
-OPTION (MAXDOP 1);";
+OPTION (MAXDOP 2);";
 
             Assert.AreEqual(expected, actual);
         }
@@ -128,6 +143,7 @@ SELECT
     [TestOrderDetail].[OrderKey],
     [TestOrderDetail].[Price],
     [TestOrderDetail].[ProductKey],
+    [TestOrderDetail].[Properties],
     [TestOrderDetail].[Quantity],
     [TestOrderDetail].[Result],
     [TestOrderDetail].[Size],

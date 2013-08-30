@@ -17,114 +17,131 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Configuration;
-using Transformalize.Core;
 
 namespace Transformalize.Configuration
 {
     public class FieldConfigurationElement : ConfigurationElement {
 
         private const string AGGREGATE = "aggregate";
-        
-        [ConfigurationProperty("name", IsRequired = true)]
+        private const string NAME = "name";
+        private const string ALIAS = "alias";
+        private const string TYPE = "type";
+        private const string XML = "xml";
+        private const string LENGTH = "length";
+        private const string PRECISION = "precision";
+        private const string SCALE = "scale";
+        private const string INPUT = "input";
+        private const string OUTPUT = "output";
+        private const string UNICODE = "unicode";
+        private const string VARIABLE_LENGTH = "variableLength";
+        private const string DEFAULT = "default";
+        private const string TRANSFORMS = "transforms";
+
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
+        [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name {
             get {
-                return this["name"] as string;
+                return this[NAME] as string;
             }
-            set { this["name"] = value; }
+            set { this[NAME] = value; }
         }
 
-        [ConfigurationProperty("alias", IsRequired = false, DefaultValue = "")]
+        [ConfigurationProperty(ALIAS, IsRequired = false, DefaultValue = "")]
         public string Alias {
             get {
-                var alias = this["alias"] as string;
+                var alias = this[ALIAS] as string;
                 return alias == null || alias.Equals(string.Empty) ? Name : alias;
             }
-            set { this["alias"] = value; }
+            set { this[ALIAS] = value; }
         }
 
-        [ConfigurationProperty("type", IsRequired = false, DefaultValue = "System.String")]
+        [ConfigurationProperty(TYPE, IsRequired = false, DefaultValue = "System.String")]
         public string Type {
             get {
-                return this["type"] as string;
+                return this[TYPE] as string;
             }
-            set { this["type"] = value; }
+            set { this[TYPE] = value; }
         }
 
-        [ConfigurationProperty("xml")]
+        [ConfigurationProperty(XML)]
         public XmlElementCollection Xml {
             get {
-                return this["xml"] as XmlElementCollection;
+                return this[XML] as XmlElementCollection;
             }
         }
 
-        [ConfigurationProperty("length", IsRequired = false, DefaultValue = "64")]
+        [ConfigurationProperty(LENGTH, IsRequired = false, DefaultValue = "64")]
         public string Length {
             get {
-                return this["length"] as string;
+                return this[LENGTH] as string;
             }
-            set { this["length"] = value; }
+            set { this[LENGTH] = value; }
         }
 
-        [ConfigurationProperty("precision", IsRequired = false, DefaultValue = 18)]
+        [ConfigurationProperty(PRECISION, IsRequired = false, DefaultValue = 18)]
         public int Precision {
             get {
-                return (int)this["precision"];
+                return (int)this[PRECISION];
             }
-            set { this["precision"] = value; }
+            set { this[PRECISION] = value; }
         }
 
-        [ConfigurationProperty("scale", IsRequired = false, DefaultValue = 9)]
+        [ConfigurationProperty(SCALE, IsRequired = false, DefaultValue = 9)]
         public int Scale {
             get {
-                return (int)this["scale"];
+                return (int)this[SCALE];
             }
-            set { this["scale"] = value; }
+            set { this[SCALE] = value; }
         }
 
-        [ConfigurationProperty("input", IsRequired = false, DefaultValue = true)]
+        [ConfigurationProperty(INPUT, IsRequired = false, DefaultValue = true)]
         public bool Input {
             get {
-                return (bool)this["input"];
+                return (bool)this[INPUT];
             }
-            set { this["input"] = value; }
+            set { this[INPUT] = value; }
         }
 
-        [ConfigurationProperty("output", IsRequired = false, DefaultValue = true)]
+        [ConfigurationProperty(OUTPUT, IsRequired = false, DefaultValue = true)]
         public bool Output {
             get {
-                return (bool) this["output"];
+                return (bool) this[OUTPUT];
             }
-            set { this["output"] = value; }
+            set { this[OUTPUT] = value; }
         }
 
-        [ConfigurationProperty("unicode", IsRequired = false, DefaultValue = true)]
+        [ConfigurationProperty(UNICODE, IsRequired = false, DefaultValue = true)]
         public bool Unicode {
             get {
-                return (bool)this["unicode"];
+                return (bool)this[UNICODE];
             }
-            set { this["unicode"] = value; }
+            set { this[UNICODE] = value; }
         }
 
-        [ConfigurationProperty("variableLength", IsRequired = false, DefaultValue = true)]
+        [ConfigurationProperty(VARIABLE_LENGTH, IsRequired = false, DefaultValue = true)]
         public bool VariableLength {
             get {
-                return (bool)this["variableLength"];
+                return (bool)this[VARIABLE_LENGTH];
             }
-            set { this["variableLength"] = value; }
+            set { this[VARIABLE_LENGTH] = value; }
         }
 
-        [ConfigurationProperty("default", IsRequired = false, DefaultValue = "")]
+        [ConfigurationProperty(DEFAULT, IsRequired = false, DefaultValue = "")]
         public string Default {
             get {
-                return (string) this["default"];
+                return (string) this[DEFAULT];
             }
-            set { this["default"] = value; }
+            set { this[DEFAULT] = value; }
         }
 
-        [ConfigurationProperty("transforms")]
+        [ConfigurationProperty(TRANSFORMS)]
         public TransformElementCollection Transforms {
             get {
-                return this["transforms"] as TransformElementCollection;
+                return this[TRANSFORMS] as TransformElementCollection;
             }
         }
 

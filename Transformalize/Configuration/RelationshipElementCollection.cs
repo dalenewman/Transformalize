@@ -22,6 +22,11 @@ namespace Transformalize.Configuration
 {
     public class RelationshipElementCollection : ConfigurationElementCollection {
 
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
         public RelationshipConfigurationElement this[int index] {
             get {
                 return BaseGet(index) as RelationshipConfigurationElement;

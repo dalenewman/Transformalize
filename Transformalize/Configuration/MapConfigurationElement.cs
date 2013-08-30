@@ -22,6 +22,11 @@ namespace Transformalize.Configuration
 {
     public class MapConfigurationElement : ConfigurationElement {
 
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
         [ConfigurationProperty("name", IsRequired = true)]
         public string Name {
             get {

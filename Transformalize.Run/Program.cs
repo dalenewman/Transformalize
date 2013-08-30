@@ -18,8 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Transformalize.Core;
+using Transformalize.Core.Process_;
 using Transformalize.Libs.NLog;
 using Transformalize.Runner;
 
@@ -27,13 +27,13 @@ namespace Transformalize.Run
 {
     class Program
     {
-
-        private static readonly Stopwatch Timer = new Stopwatch();
+        private static readonly System.Diagnostics.Stopwatch Timer = new System.Diagnostics.Stopwatch();
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
         private static Options _options = new Options();
 
         static void Main(string[] args)
         {
+            var process = new Process();
 
             if (args.Length == 0)
             {
@@ -41,42 +41,39 @@ namespace Transformalize.Run
                 return;
             }
 
-            var process = args[0];
+            var arg = args[0];
 
             Timer.Start();
 
+            var configuration = arg.EndsWith(".xml") ? new ProcessXmlConfigurationReader(arg).Read() : new ProcessConfigurationReader(arg).Read();
+
             if (OptionsMayExist(args))
             {
-                var json = CombineArguments(args);
-                _options = new Options(json);
+                _options = new Options(CombineArguments(args));
                 if (_options.Valid())
                 {
-                    if (process.EndsWith(".xml"))
-                        new ProcessXmlRunner(process, _options).Run();
-                    else
-                        new ProcessNameRunner(process, _options).Run();
+                    process = new ProcessReader(configuration, _options).Read();
                 }
                 else
                 {
                     foreach (var problem in _options.Problems)
                     {
-                        Log.Error(process + " | " + problem);
+                        Log.Error(arg + " | " + problem);
                     }
-                    Log.Warn(process + " | Aborting process.");
+                    Log.Warn(arg + " | Aborting process.");
+                    Environment.Exit(1);
                 }
-
             }
             else
             {
-                if (process.EndsWith(".xml"))
-                    new ProcessXmlRunner(process).Run();
-                else
-                    new ProcessNameRunner(process).Run();
+                process = new ProcessReader(configuration).Read();
             }
+
+            new ProcessRunner(process).Run();
 
             Timer.Stop();
 
-            Log.Info("{0} | Process completed in {1}.", process, Timer.Elapsed);
+            Log.Info("{0} | Process completed in {1}.", arg, Timer.Elapsed);
 
             if (_options.Mode != Modes.Test) return;
 
@@ -88,8 +85,7 @@ namespace Transformalize.Run
         {
             var options = new List<string>(args);
             options.RemoveAt(0);
-            var json = string.Join(string.Empty, options);
-            return json;
+            return string.Join(string.Empty, options);
         }
 
         private static bool OptionsMayExist(ICollection<string> args)

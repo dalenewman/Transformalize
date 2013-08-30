@@ -46,7 +46,7 @@ namespace Transformalize.Test.Unit {
                 GetTestData(new List<Row> {
                     new Row { {"FirstName", "Dale"}, {"LastName", "Newman"} },
                 }),
-                new FieldTransform(fullName),
+                new TransformFields(fullName),
                 new LogOperation()
             );
 
@@ -65,7 +65,7 @@ namespace Transformalize.Test.Unit {
                 GetTestData(new List<Row> {
                     new Row { {"x", 3}, {"y", 11} },
                 }),
-                new FieldTransform(z),
+                new TransformFields(z),
                 new LogOperation()
             );
 
@@ -84,7 +84,7 @@ namespace Transformalize.Test.Unit {
                 GetTestData(new List<Row> {
                     new Row { {"x", "Dale"}, {"y", "Newman"} },
                 }),
-                new FieldTransform(z),
+                new TransformFields(z),
                 new LogOperation()
             );
 
@@ -108,7 +108,7 @@ namespace Transformalize.Test.Unit {
                 GetTestData(new List<Row> {
                     new Row { {"FirstName", "Dale"}, {"LastName", "Newman"} },
                 }),
-                new FieldTransform(fullName),
+                new TransformFields(fullName),
                 new LogOperation()
             );
 
@@ -133,7 +133,7 @@ namespace Transformalize.Test.Unit {
                 GetTestData(new List<Row> {
                     new Row { {"FirstName", "Dale"}, {"LastName", "Newman"} },
                 }),
-                new FieldTransform(fullName),
+                new TransformFields(fullName),
                 new LogOperation()
             );
 
@@ -153,7 +153,7 @@ namespace Transformalize.Test.Unit {
                 GetTestData(new List<Row> {
                     new Row { {"FirstName", "Dale"}, {"LastName", "Newman"} },
                 }),
-                new FieldTransform(fullName),
+                new TransformFields(fullName),
                 new LogOperation()
             );
 

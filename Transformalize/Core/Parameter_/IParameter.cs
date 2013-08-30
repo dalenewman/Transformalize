@@ -21,5 +21,6 @@ namespace Transformalize.Core.Parameter_
     public interface IParameter {
         string Name { get; set; }
         object Value { get; set; }
+        string SimpleType { get; set; }
     }
 }

@@ -18,14 +18,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Core.Entity_;
 using Transformalize.Core.Field_;
 using Transformalize.Core.Template_;
-using Transformalize.Core.Transform_;
 using Transformalize.Libs.NLog;
 using Transformalize.Providers;
 using Transformalize.Providers.AnalysisServices;
@@ -33,7 +31,7 @@ using Transformalize.Providers.SqlServer;
 
 namespace Transformalize.Core.Process_
 {
-    public class ProcessReader : IConfigurationReader<Process>
+    public class ProcessReader : IReader<Process>
     {
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private readonly string _processName = string.Empty;
@@ -41,6 +39,7 @@ namespace Transformalize.Core.Process_
         private readonly ConversionFactory _conversionFactory = new ConversionFactory();
         private Process _process;
         private readonly ProcessConfigurationElement _config;
+        private readonly Options _options;
         private int _connectionCount;
         private int _mapCount;
         private int _entityCount;
@@ -48,17 +47,24 @@ namespace Transformalize.Core.Process_
         private int _transformCount;
         private int _scriptCount;
         private int _templateCount;
-        public int Count { get { return 1; } }
+
+        private static ProcessConfigurationElement Adapt(ProcessConfigurationElement process)
+        {
+            new FromXmlTransformFieldsToParametersAdapter(process).Adapt();
+            new FromXmlTransformFieldsMoveAdapter(process).Adapt();
+            return process;
+        }
         
         public ProcessReader(ProcessConfigurationElement process)
         {
-            _config = process;
+            _config = Adapt(process);
+            _options = new Options();
         }
 
-        public ProcessReader(string processName)
+        public ProcessReader(ProcessConfigurationElement process, Options options)
         {
-            _processName = processName;
-            _config = ((TransformalizeConfiguration)ConfigurationManager.GetSection("transformalize")).Processes.Get(processName);
+            _config = Adapt(process);
+            _options = options;
         }
 
         public Process Read()
@@ -70,6 +76,7 @@ namespace Transformalize.Core.Process_
             }
 
             _process = new Process(_config.Name);
+            Process.Options = _options;
 
             _connectionCount = ReadConnections();
             _scriptCount = ReadScripts();
@@ -84,6 +91,11 @@ namespace Transformalize.Core.Process_
             foreach (var entity in Process.Entities)
             {
                 entity.RelationshipToMaster = ReadRelationshipToMaster(entity);
+                if (!entity.RelationshipToMaster.Any() && !entity.IsMaster())
+                {
+                    _log.Error("{0} | The entity {1} must have a relationship to the master entity {2}.", Process.Name, entity.Name, _process.MasterEntity.Name);
+                    Environment.Exit(1);
+                }
             }
 
             _templateCount += ReadTemplates(true);

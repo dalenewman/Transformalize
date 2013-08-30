@@ -22,6 +22,11 @@ namespace Transformalize.Configuration
 {
     public class ItemConfigurationElement : ConfigurationElement {
 
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
         [ConfigurationProperty("from", IsRequired = true)]
         public string From {
             get {

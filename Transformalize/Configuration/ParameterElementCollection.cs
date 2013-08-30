@@ -21,6 +21,11 @@ using System.Configuration;
 namespace Transformalize.Configuration {
     public class ParameterElementCollection : ConfigurationElementCollection {
 
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
         public ParameterConfigurationElement this[int index] {
             get {
                 return BaseGet(index) as ParameterConfigurationElement;

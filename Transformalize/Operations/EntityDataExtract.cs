@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
 
@@ -7,13 +8,13 @@ namespace Transformalize.Operations
 {
     public class EntityDataExtract : InputCommandOperation
     {
-        private readonly IEnumerable<string> _fields;
+        private readonly string[] _fields;
         private readonly string _sql;
 
 
         public EntityDataExtract(IEnumerable<string> fields, string sql, string connectionString ) : base(connectionString)
         {
-            _fields = fields;
+            _fields = fields.ToArray();
             _sql = sql;
 
             UseTransaction = false;

@@ -22,6 +22,11 @@ namespace Transformalize.Configuration
 {
     public class FieldElementCollection : ConfigurationElementCollection {
 
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
         public FieldConfigurationElement this[int index] {
             get {
                 return BaseGet(index) as FieldConfigurationElement;
@@ -46,5 +51,22 @@ namespace Transformalize.Configuration
         {
             BaseAdd(0, element);
         }
+
+        public void InsertAt(FieldConfigurationElement element, int at)
+        {
+            BaseAdd(at, element);
+        }
+
+        public void Clear()
+        {
+            BaseClear();
+        }
+
+        public int IndexOf(FieldConfigurationElement element)
+        {
+            return BaseIndexOf(element);
+        }
+
+
     }
 }

@@ -201,20 +201,20 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Operations {
                 var adapter = new DictionaryEnumeratorDataReader(_inputSchema, rows);
                 _sqlBulkCopy.WriteToServer(adapter);
 
-                if (PipelineExecuter.HasErrors) {
-                    if (transaction != null) {
-                        Warn("Rolling back transaction in {0}", Name);
-                        transaction.Rollback();
-                        Warn("Rolled back transaction in {0}", Name);
-                    }
-                }
-                else {
-                    if (transaction != null) {
-                        Debug("Committing {0}", Name);
-                        transaction.Commit();
-                        Debug("Committed {0}", Name);
-                    }
-                }
+                //if (PipelineExecuter.HasErrors) {
+                //    if (transaction != null) {
+                //        Warn("Rolling back transaction in {0}", Name);
+                //        transaction.Rollback();
+                //        Warn("Rolled back transaction in {0}", Name);
+                //    }
+                //}
+                //else {
+                //    if (transaction != null) {
+                //        Debug("Committing {0}", Name);
+                //        transaction.Commit();
+                //        Debug("Committed {0}", Name);
+                //    }
+                //}
             }
             yield break;
         }
@@ -235,7 +235,7 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Operations {
         /// Creates the SQL bulk copy instance
         /// </summary>
         private SqlBulkCopy CreateSqlBulkCopy(SqlConnection connection, SqlTransaction transaction) {
-            var copy = new SqlBulkCopy(connection, _bulkCopyOptions, transaction) { BatchSize = _batchSize };
+            var copy = new SqlBulkCopy(connection, _bulkCopyOptions, transaction) { BatchSize = _batchSize, EnableStreaming = true};
             foreach (var pair in Mappings) {
                 copy.ColumnMappings.Add(pair.Key, pair.Value);
             }

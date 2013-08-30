@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Transformalize.Core.Fields_;
 using Transformalize.Core.Parameter_;
 using Transformalize.Core.Parameters_;
 using Transformalize.Core.Transform_;
@@ -35,12 +36,11 @@ namespace Transformalize.Core.Field_
         private string _name;
         private string _sqlDataType;
         private FieldSqlWriter _sqlWriter;
-        private bool _input;
 
         public StringBuilder StringBuilder;
 
         public string Type { get; private set; }
-        public string SimpleType { get; private set; }
+        public string SimpleType { get; set; }
         public string Quote { get; private set; }
         public string Alias { get; set; }
         public string Schema { get; set; }
@@ -55,9 +55,10 @@ namespace Transformalize.Core.Field_
         public bool Identity { get; set; }
         public KeyValuePair<string, string> References { get; set; }
         public Transforms Transforms { get; set; }
+        public bool Input { get; set; }
         public bool Output { get; set; }
         public bool UseStringBuilder { get; private set; }
-        public Type SystemType { get; private set; }
+        public Type SystemType { get; set; }
         public Dictionary<string, Field> InnerXml { get; set; }
         public string XPath { get; set; }
         public int Index { get; set; }
@@ -74,19 +75,6 @@ namespace Transformalize.Core.Field_
         public string SqlDataType
         {
             get { return _sqlDataType ?? (_sqlDataType = new SqlServerDataTypeService().GetDataType(this)); }
-        }
-
-        public bool Input
-        {
-            get { return _input; }
-            set
-            {
-                _input = value;
-                if (!_input && Output)
-                {
-                    Output = false;
-                }
-            }
         }
 
         /// <summary>
@@ -141,8 +129,8 @@ namespace Transformalize.Core.Field_
             VariableLength = true;
             Type = typeName;
             Length = length;
-            SimpleType = Type.ToLower().Replace("system.", string.Empty);
-            Quote = (new[] { "string", "char", "datetime", "guid" }).Any(t => t.Equals(SimpleType)) ? "'" : string.Empty;
+            SimpleType = Common.ToSimpleType(typeName);
+            Quote = (new[] { "string", "char", "datetime", "guid", "xml" }).Any(t => t.Equals(SimpleType)) ? "'" : string.Empty;
             UseStringBuilder = (new[] { "string", "char" }).Any(t => t.Equals(SimpleType));
             FieldType = fieldType;
             Output = output || MustBeOutput();
@@ -174,7 +162,7 @@ namespace Transformalize.Core.Field_
         {
             foreach (AbstractTransform t in Transforms)
             {
-                if (t.HasParameters)
+                if (t.RequiresRow || t.HasParameters)
                 {
                     t.Transform(ref row, Alias);
                 }

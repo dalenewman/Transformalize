@@ -21,6 +21,11 @@ using System.Configuration;
 namespace Transformalize.Configuration {
     public class JoinElementCollection : ConfigurationElementCollection {
 
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
         public JoinConfigurationElement this[int index] {
             get {
                 return BaseGet(index) as JoinConfigurationElement;

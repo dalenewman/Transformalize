@@ -20,7 +20,12 @@ using System.Configuration;
 
 namespace Transformalize.Configuration {
     public class ActionElementCollection : ConfigurationElementCollection {
-        
+
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
         public ActionConfigurationElement this[int index] {
             get {
                 return BaseGet(index) as ActionConfigurationElement;
