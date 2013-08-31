@@ -199,10 +199,21 @@ namespace Transformalize.Core.Field_ {
             return this;
         }
 
-        public FieldSqlWriter ToAlias() {
+        public FieldSqlWriter ToAlias(bool ifNecessary = false) {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];
-                _output[key] = string.Concat("[", field.Alias, "] = ", _output[key]);
+                if (ifNecessary)
+                {
+                    if (field.Alias != field.Name)
+                    {
+                        _output[key] = string.Concat("[", field.Alias, "] = ", _output[key]);
+                    }
+                }
+                else
+                {
+                    _output[key] = string.Concat("[", field.Alias, "] = ", _output[key]);
+                }
+                    
             }
             return this;
         }

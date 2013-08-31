@@ -8,7 +8,7 @@ namespace Transformalize.Core.Process_
 
         public IParameters Read()
         {
-            foreach (var field in Process.InputFields().ToEnumerable())
+            foreach (var field in Process.OutputFields().ToEnumerable())
             {
                 _parameters.Add(field.Alias, field.Alias, null, field.Type);
             }

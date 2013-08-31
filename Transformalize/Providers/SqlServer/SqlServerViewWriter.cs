@@ -73,7 +73,7 @@ namespace Transformalize.Providers.SqlServer {
             builder.AppendFormat("SELECT\r\n    [{0}].[TflKey],\r\n    [{0}].[TflBatchId],\r\n    b.[TflUpdate],\r\n", _masterEntity.OutputName());
             foreach (var entity in Process.Entities) {
                 if (entity.IsMaster()) {
-                    builder.AppendLine(string.Concat(new FieldSqlWriter(entity.PrimaryKey, entity.Fields, Process.CalculatedFields, entity.CalculatedFields).ExpandXml().Output().Alias().Prepend(string.Concat("[", entity.OutputName(), "].")).IsNull().ToAlias().Prepend("    ").Write(",\r\n"), ","));
+                    builder.AppendLine(string.Concat(new FieldSqlWriter(entity.PrimaryKey, entity.Fields, Process.CalculatedFields, entity.CalculatedFields).ExpandXml().Output().Alias().Prepend(string.Concat("    [", entity.OutputName(), "].")).Write(",\r\n"), ","));
                 }
                 else {
                     if (entity.Fields.Any(f => f.Value.FieldType.HasFlag(FieldType.ForeignKey))) {

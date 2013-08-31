@@ -61,12 +61,12 @@ namespace Transformalize.Core.Process_ {
             CalculatedFields = new Fields();
         }
 
-        public static IFields InputFields()
+        public static IFields OutputFields()
         {
             var fields = new Fields();
             foreach (var entity in Entities)
             {
-                fields.AddRange(new FieldSqlWriter(entity.All, entity.CalculatedFields).ExpandXml().Input().ToArray());
+                fields.AddRange(new FieldSqlWriter(entity.All, entity.CalculatedFields).ExpandXml().Output().ToArray());
             }
             return fields;
         }

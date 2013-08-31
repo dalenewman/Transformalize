@@ -13,7 +13,7 @@ namespace Transformalize.Core.Process_
     {
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly char[] _dotArray = new[] { '.' };
-        private readonly Field[] _fields = Process.InputFields().ToEnumerable().ToArray();
+        private readonly Field[] _fields = Process.OutputFields().ToEnumerable().ToArray();
 
         public Parameters Read(TransformConfigurationElement transform)
         {
@@ -47,7 +47,7 @@ namespace Transformalize.Core.Process_
 
                 if (!string.IsNullOrEmpty(p.Field))
                 {
-                    var fields = Process.InputFields();
+                    var fields = Process.OutputFields();
                     if (fields.Any(Common.FieldFinder(p)))
                     {
                         var field = fields.Last(Common.FieldFinder(p)).Value;
@@ -56,7 +56,7 @@ namespace Transformalize.Core.Process_
                     }
                     else
                     {
-                        _log.Warn("{0} | The process {1} has a {2} transform parameter that references field {3}.  This field doesn't exist.", Process.Name, transform.Method, p.Field);
+                        _log.Warn("{0} | A {1} transform references {2}, but I can't find the definition for {2}.", Process.Name, transform.Method, p.Field);
                         return new Parameters();
                     }
                 }

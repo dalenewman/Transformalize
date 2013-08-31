@@ -18,10 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Linq;
-using Transformalize.Core;
 using Transformalize.Core.Process_;
 using Transformalize.Libs.Rhino.Etl.Core;
-using Transformalize.Libs.Rhino.Etl.Core.Operations;
 using Transformalize.Operations;
 
 namespace Transformalize.Processes {

@@ -1,11 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Xml;
-using Transformalize.Core.Field_;
-using Transformalize.Core.Fields_;
-using Transformalize.Core.Parameter_;
 using Transformalize.Core.Parameters_;
 using Transformalize.Libs.Rhino.Etl.Core;
 
@@ -56,14 +52,13 @@ namespace Transformalize.Core.Transform_
                     if (!reader.IsStartElement()) continue;
                     while (_map.ContainsKey(reader.Name))
                     {
-                        row[_map[reader.Name]] = _conversionMap[_typeMap[reader.Name]](reader.ReadElementContentAsString());
+                        var name = reader.Name;
+                        var value = reader.ReadElementContentAsString();
+                        if(value != string.Empty)
+                            row[_map[name]] = _conversionMap[_typeMap[name]](value);
                     }
                 }  
             }
-
-            //var x = XDocument.Parse(row[_xmlField].ToString());
-            //var nodes = _xmlRoot.Equals(string.Empty) ? x.Descendants() : x.Descendants(_xmlRoot);
-            //foreach (var node in nodes) { }
         }
 
     }

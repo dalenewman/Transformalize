@@ -29,7 +29,7 @@ namespace Transformalize.Test.Integration {
         public void Go()
         {
             var process = new ProcessReader(new ProcessXmlConfigurationReader(@"c:\etl\rhinoetl\tfl\Es.xml").Read()).Read();
-            Process.Options = new Options("{'mode':'test','top':100,'loglevel':'debug'}");
+            Process.Options = new Options("{'mode':'test','top':1,'loglevel':'trace'}");
             new ProcessRunner(process).Run();
         }
 

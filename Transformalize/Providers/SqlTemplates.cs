@@ -95,7 +95,7 @@ CREATE TABLE [{0}].[{1}](
 
             const string sqlPattern = "\r\nSELECT\r\n    {0}\r\nFROM {1} l\r\nINNER JOIN {2} r ON ({3})\r\nOPTION (MAXDOP 2);";
 
-            var columns = new FieldSqlWriter(fields).ExpandXml().Input().Select().Prepend("l.").ToAlias().Write(",\r\n    ");
+            var columns = new FieldSqlWriter(fields).ExpandXml().Input().Select().Prepend("l.").ToAlias(true).Write(",\r\n    ");
             var join = new FieldSqlWriter(fields).FieldType(FieldType.MasterKey, FieldType.PrimaryKey).Name().Set("l", "r").Write(" AND ");
 
             return string.Format(sqlPattern, columns, SafeTable(leftTable, leftSchema), SafeTable(rightTable, rightSchema), @join);

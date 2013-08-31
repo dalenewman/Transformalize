@@ -147,15 +147,15 @@ SELECT
     [TestOrderDetail].[Quantity],
     [TestOrderDetail].[Result],
     [TestOrderDetail].[Size],
-    [TestOrderDetail].[CustomerKey],
-    [TestOrder].[OrderDate],
-    [TestCustomer].[Address],
-    [TestCustomer].[City],
-    [TestCustomer].[Country],
-    [TestCustomer].[FirstName],
-    [TestCustomer].[LastName],
-    [TestCustomer].[State],
-    [TestProduct].[ProductName]
+    [CustomerKey] = ISNULL([TestOrderDetail].[CustomerKey], 0),
+    [OrderDate] = ISNULL([TestOrder].[OrderDate], '12/31/9999 12:00:00 AM'),
+    [Address] = ISNULL([TestCustomer].[Address], ''),
+    [City] = ISNULL([TestCustomer].[City], ''),
+    [Country] = ISNULL([TestCustomer].[Country], ''),
+    [FirstName] = ISNULL([TestCustomer].[FirstName], ''),
+    [LastName] = ISNULL([TestCustomer].[LastName], ''),
+    [State] = ISNULL([TestCustomer].[State], ''),
+    [ProductName] = ISNULL([TestProduct].[ProductName], 'None')
 FROM [TestOrderDetail]
 INNER JOIN [TflBatch] b ON ([TestOrderDetail].TflBatchId = b.TflBatchId)
 LEFT OUTER JOIN [TestOrder] ON ([TestOrderDetail].[OrderKey] = [TestOrder].[OrderKey])
