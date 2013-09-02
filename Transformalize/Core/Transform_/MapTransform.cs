@@ -29,14 +29,20 @@ namespace Transformalize.Core.Transform_
     public class MapTransform : AbstractTransform
     {
         private readonly Map _equals;
+        private readonly bool _hasEquals;
         private readonly Map _startsWith;
+        private readonly bool _hasStartsWith;
         private readonly Map _endsWith;
+        private readonly bool _hasEndsWith;
 
         public MapTransform(IList<Map> maps, IParameters parameters) : base(parameters)
         {
             _equals = maps[0];
+            _hasEquals = _equals.Any();
             _startsWith = maps[1];
+            _hasStartsWith = _startsWith.Any();
             _endsWith = maps[2];
+            _hasEndsWith = _endsWith.Any();
         }
 
         public override string Name
@@ -51,28 +57,37 @@ namespace Transformalize.Core.Transform_
 
         public override void Transform(ref StringBuilder sb)
         {
-            foreach (var pair in _equals)
+            if (_hasEquals)
             {
-                if (!sb.IsEqualTo(pair.Key)) continue;
-                sb.Clear();
-                sb.Append(pair.Value.Value);
-                return;
+                foreach (var pair in _equals)
+                {
+                    if (!sb.IsEqualTo(pair.Key)) continue;
+                    sb.Clear();
+                    sb.Append(pair.Value.Value);
+                    return;
+                }
+            }
+            
+            if (_hasStartsWith)
+            {
+                foreach (var pair in _startsWith)
+                {
+                    if (!sb.StartsWith(pair.Key)) continue;
+                    sb.Clear();
+                    sb.Append(pair.Value.Value);
+                    return;
+                }
             }
 
-            foreach (var pair in _startsWith)
+            if (_hasEndsWith)
             {
-                if (!sb.StartsWith(pair.Key)) continue;
-                sb.Clear();
-                sb.Append(pair.Value.Value);
-                return;
-            }
-
-            foreach (var pair in _endsWith)
-            {
-                if (!sb.EndsWith(pair.Key)) continue;
-                sb.Clear();
-                sb.Append(pair.Value.Value);
-                return;
+                foreach (var pair in _endsWith)
+                {
+                    if (!sb.EndsWith(pair.Key)) continue;
+                    sb.Clear();
+                    sb.Append(pair.Value.Value);
+                    return;
+                }
             }
 
             if (!_equals.ContainsKey("*")) return;
@@ -85,19 +100,28 @@ namespace Transformalize.Core.Transform_
         {
             var valueKey = value.ToString();
 
-            if (_equals.ContainsKey(valueKey))
+            if (_hasEquals)
             {
-                return _equals[valueKey].Value;
+                if (_equals.ContainsKey(valueKey))
+                {
+                    return _equals[valueKey].Value;
+                }
             }
 
-            foreach (var pair in _startsWith.Where(pair => valueKey.StartsWith(pair.Key)))
+            if (_hasStartsWith)
             {
-                return pair.Value.Value;
+                foreach (var pair in _startsWith.Where(pair => valueKey.StartsWith(pair.Key)))
+                {
+                    return pair.Value.Value;
+                }
             }
 
-            foreach (var pair in _endsWith.Where(pair => valueKey.EndsWith(pair.Key)))
+            if (_hasEndsWith)
             {
-                return pair.Value.Value;
+                foreach (var pair in _endsWith.Where(pair => valueKey.EndsWith(pair.Key)))
+                {
+                    return pair.Value.Value;
+                }
             }
 
             if (_equals.ContainsKey("*"))
@@ -113,22 +137,31 @@ namespace Transformalize.Core.Transform_
         {
             var valueKey = row[FirstParameter.Key].ToString();
             
-            if (_equals.ContainsKey(valueKey))
+            if (_hasEquals)
             {
-                row[resultKey] = _equals[valueKey].Value ?? row[_equals[valueKey].Parameter];
-                return;
+                if (_equals.ContainsKey(valueKey))
+                {
+                    row[resultKey] = _equals[valueKey].Value ?? row[_equals[valueKey].Parameter];
+                    return;
+                }
             }
 
-            foreach (var pair in _startsWith.Where(pair => valueKey.StartsWith(pair.Key)))
+            if (_hasStartsWith)
             {
-                row[resultKey] = pair.Value.Value ?? row[pair.Value.Parameter];
-                return;
+                foreach (var pair in _startsWith.Where(pair => valueKey.StartsWith(pair.Key)))
+                {
+                    row[resultKey] = pair.Value.Value ?? row[pair.Value.Parameter];
+                    return;
+                }                
             }
 
-            foreach (var pair in _endsWith.Where(pair => valueKey.EndsWith(pair.Key)))
+            if (_hasEndsWith)
             {
-                row[resultKey] = pair.Value.Value ?? row[pair.Value.Parameter];
-                return;
+                foreach (var pair in _endsWith.Where(pair => valueKey.EndsWith(pair.Key)))
+                {
+                    row[resultKey] = pair.Value.Value ?? row[pair.Value.Parameter];
+                    return;
+                }
             }
 
             if (_equals.ContainsKey("*"))

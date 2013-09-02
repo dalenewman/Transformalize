@@ -32,7 +32,7 @@ namespace Transformalize.Operations
 
         public TransformFields(IFields fields)
         {
-            _fields = fields.ToEnumerable().ToArray();
+            _fields = fields.ToEnumerable().OrderBy(f=>f.Index).ToArray();
             _transformCount = _fields.Any() ? _fields.Sum(f => f.Transforms.Count) : 0;
             UseTransaction = false;
         }
@@ -44,7 +44,7 @@ namespace Transformalize.Operations
             {
                 temp.AddRange(f.ToEnumerable());
             }
-            _fields = temp.ToArray();
+            _fields = temp.OrderBy(f=>f.Index).ToArray();
 
             _transformCount = _fields.Any() ? _fields.Sum(f => f.Transforms.Count) : 0;
             UseTransaction = false;

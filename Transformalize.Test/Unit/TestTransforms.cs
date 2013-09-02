@@ -295,8 +295,7 @@ namespace Transformalize.Test.Unit
 
             var entity = new Entity();
             var parameters = new Parameters();
-            var results = new Fields();
-            entity.All["Field1"] = new Field(FieldType.Field) { Alias = "Field1", Input = true, Transforms = new Transforms() { new MapTransform(new[] { mapEquals, mapStartsWith, mapEndsWith }, parameters) } };
+            entity.All["Field1"] = new Field(FieldType.Field) { Alias = "Field1", Transforms = new Transforms() { new MapTransform(new[] { mapEquals, mapStartsWith, mapEndsWith }, parameters) } };
 
             var rows = TestOperation(
                 _testInput.Object,
@@ -321,8 +320,7 @@ namespace Transformalize.Test.Unit
 
             var entity = new Entity();
             var parameters = new Parameters();
-            var results = new Fields();
-            entity.All["Field1"] = new Field(FieldType.Field) { Alias = "Field1", Input = true, Transforms = new Transforms() { new MapTransform(new[] { mapEquals, mapStartsWith, mapEndsWith }, parameters) } };
+            entity.All["Field1"] = new Field(FieldType.Field) { Alias = "Field1", Transforms = new Transforms() { new MapTransform(new[] { mapEquals, mapStartsWith, mapEndsWith }, parameters) } };
 
             var rows = TestOperation(
                 _testInput.Object,

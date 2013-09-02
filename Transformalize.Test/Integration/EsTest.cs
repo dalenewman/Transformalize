@@ -23,7 +23,7 @@ using Transformalize.Runner;
 
 namespace Transformalize.Test.Integration {
     [TestFixture]
-    public class EsTop {
+    public class EsTest {
 
         [Test]
         public void Go()

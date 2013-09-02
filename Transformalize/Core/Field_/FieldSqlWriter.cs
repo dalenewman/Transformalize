@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Core.Fields_;
-using Transformalize.Libs.NLog;
 
 namespace Transformalize.Core.Field_ {
 
@@ -27,7 +26,6 @@ namespace Transformalize.Core.Field_ {
     public class FieldSqlWriter
     {
 
-        private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private const string BATCH_ID = "TflBatchId";
         private const string SURROGATE_KEY = "TflKey";
         private SortedDictionary<string, string> _output;

@@ -18,7 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Linq;
-using Transformalize.Core;
 using Transformalize.Core.Entity_;
 using Transformalize.Core.Field_;
 using Transformalize.Core.Fields_;
@@ -34,20 +33,14 @@ namespace Transformalize.Processes
     public class EntityProcess : EtlProcess
     {
 
-        private readonly Process _process;
         private Entity _entity;
-        private readonly Modes _mode;
         private readonly IFields _fieldsWithTransforms;
 
-        public EntityProcess(ref Process process, Entity entity, IEntityBatch entityBatch = null)
+        public EntityProcess(Entity entity, IEntityBatch entityBatch = null)
         {
-            _process = process;
             _entity = entity;
-            _mode = Process.Options.Mode;
-
             _entity.TflBatchId = (entityBatch ?? new SqlServerEntityBatch()).GetNext(_entity);
-
-            _fieldsWithTransforms = new FieldSqlWriter(entity.All).ExpandXml().HasTransform().Input().Context();
+            _fieldsWithTransforms = new FieldSqlWriter(entity.All).ExpandXml().HasTransform().Context();
         }
 
         protected override void Initialize()

@@ -35,7 +35,7 @@ namespace Transformalize.Core.Entity_
 
                 if (!string.IsNullOrEmpty(p.Field))
                 {
-                    var fields = new FieldSqlWriter(_entity.All, _entity.CalculatedFields).Input().ExpandXml().Context();
+                    var fields = new FieldSqlWriter(_entity.All, _entity.CalculatedFields).ExpandXml().Context();
                     if (fields.Any(Common.FieldFinder(p)))
                     {
                         var field = fields.Last(Common.FieldFinder(p));
