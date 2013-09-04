@@ -17,31 +17,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Text;
+using Transformalize.Core.Parameters_;
 using Transformalize.Extensions;
+using Transformalize.Libs.Rhino.Etl.Core;
 
-namespace Transformalize.Core.Transform_ {
-    public class LeftTransform : AbstractTransform {
+namespace Transformalize.Core.Transform_
+{
+    public class LeftTransform : AbstractTransform
+    {
         private readonly int _length;
 
-        public LeftTransform(int length) {
-            _length = length;
-        }
-
-        public override string Name {
-            get { return "Left Transform"; }
-        }
-
-        public override bool RequiresParameters
+        public LeftTransform(int length, IParameters parameters)
+            : base(parameters)
         {
-            get { return false; }
+            _length = length;
+            Name = "Left";
         }
 
-        public override void Transform(ref StringBuilder sb) {
+        public override void Transform(ref StringBuilder sb)
+        {
             sb.Left(_length);
         }
 
-        public override object Transform(object value) {
+        public override object Transform(object value)
+        {
             return value.ToString().Left(_length);
+        }
+
+        public override void Transform(ref Row row, string resultKey)
+        {
+            row[resultKey] = row[FirstParameter.Key].ToString().Left(_length);
         }
 
     }

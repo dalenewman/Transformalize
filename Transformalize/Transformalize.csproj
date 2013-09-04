@@ -188,11 +188,13 @@
     <Compile Include="Core\Template_\TemplateActionCopy.cs" />
     <Compile Include="Core\Template_\TemplateActionHandler.cs" />
     <Compile Include="Core\Template_\TemplateActionOpen.cs" />
+    <Compile Include="Core\Template_\TemplateActionRun.cs" />
     <Compile Include="Core\Template_\TemplateActionWeb.cs" />
     <Compile Include="Core\Template_\TemplateManager.cs" />
     <Compile Include="Core\TransformalizeException.cs" />
     <Compile Include="Core\Transform_\AbstractTransform.cs" />
     <Compile Include="Core\Transform_\ConcatTransform.cs" />
+    <Compile Include="Core\Transform_\ConvertTransform.cs" />
     <Compile Include="Core\Transform_\DateFormatTransform.cs" />
     <Compile Include="Core\Transform_\EmptyTransform.cs" />
     <Compile Include="Core\Transform_\ExpressionTransform.cs" />

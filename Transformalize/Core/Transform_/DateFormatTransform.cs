@@ -20,32 +20,27 @@ using System;
 using Transformalize.Core.Parameters_;
 using Transformalize.Libs.Rhino.Etl.Core;
 
-namespace Transformalize.Core.Transform_ {
-    public class DateFormatTransform : AbstractTransform {
+namespace Transformalize.Core.Transform_
+{
+    public class DateFormatTransform : AbstractTransform
+    {
         private readonly string _format;
 
-        public override string Name {
-            get { return "Date Format Transform"; }
-        }
-
         public DateFormatTransform(string format, IParameters parameters)
-            : base(parameters) {
-            _format = format;
-        }
-
-        public override bool RequiresParameters
+            : base(parameters)
         {
-            get { return false; }
+            _format = format;
+            Name = "Date Format";
         }
 
         public override object Transform(object value)
         {
-            return ((DateTime) value).ToString(_format);
+            return ((DateTime)value).ToString(_format);
         }
 
         public override void Transform(ref Row row, string resultKey)
         {
-            row[resultKey] = ((DateTime) row[FirstParameter.Key]).ToString(_format);
+            row[resultKey] = ((DateTime)row[FirstParameter.Key]).ToString(_format);
         }
 
     }

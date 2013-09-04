@@ -30,7 +30,6 @@ namespace Transformalize.Operations
 {
     public class EntityOutputKeysExtract : InputCommandOperation
     {
-
         private readonly Entity _entity;
         private readonly List<string> _fields;
         private readonly Field[] _key;
@@ -48,7 +47,7 @@ namespace Transformalize.Operations
             var row = new Row();
             foreach (var field in _fields)
             {
-                row.Add(field, reader[field]);
+                row[field] = reader[field];
             }
             return row;
         }

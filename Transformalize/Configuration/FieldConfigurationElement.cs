@@ -33,7 +33,7 @@ namespace Transformalize.Configuration
         private const string INPUT = "input";
         private const string OUTPUT = "output";
         private const string UNICODE = "unicode";
-        private const string VARIABLE_LENGTH = "variableLength";
+        private const string VARIABLE_LENGTH = "variable-length";
         private const string DEFAULT = "default";
         private const string TRANSFORMS = "transforms";
 

@@ -17,33 +17,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Text;
+using Transformalize.Core.Parameters_;
 using Transformalize.Extensions;
+using Transformalize.Libs.Rhino.Etl.Core;
 
-namespace Transformalize.Core.Transform_ {
-    public class PadLeftTransform : AbstractTransform {
+namespace Transformalize.Core.Transform_
+{
+    public class PadLeftTransform : AbstractTransform
+    {
         private readonly int _totalWidth;
         private readonly char _paddingChar;
 
-        public PadLeftTransform(int totalWidth, char paddingChar) {
+        public PadLeftTransform(int totalWidth, char paddingChar, IParameters parameters) : base(parameters)
+        {
+            Name = "Pad Left";
             _totalWidth = totalWidth;
             _paddingChar = paddingChar;
         }
 
-        public override string Name {
-            get { return "PadLeft Transform"; }
-        }
-
-        public override bool RequiresParameters
+        public override void Transform(ref StringBuilder sb)
         {
-            get { return false; }
-        }
-
-        public override void Transform(ref StringBuilder sb) {
             sb.PadLeft(_totalWidth, _paddingChar);
         }
 
-        public override object Transform(object value) {
+        public override object Transform(object value)
+        {
             return value.ToString().PadLeft(_totalWidth, _paddingChar);
+        }
+
+        public override void Transform(ref Row row, string resultKey)
+        {
+            row[resultKey] = row[FirstParameter.Key].ToString().PadLeft(_totalWidth, _paddingChar);
         }
 
     }

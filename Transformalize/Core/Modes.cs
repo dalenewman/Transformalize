@@ -22,6 +22,7 @@ namespace Transformalize.Core
     {
         Initialize,
         Normal,
-        Test
+        Test,
+        Metadata
     }
 }

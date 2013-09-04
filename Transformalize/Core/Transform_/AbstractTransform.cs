@@ -31,7 +31,6 @@ namespace Transformalize.Core.Transform_
     {
 
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
-        public abstract string Name { get; }
         public IParameters Parameters
         {
             get { return _parameters; }
@@ -44,7 +43,9 @@ namespace Transformalize.Core.Transform_
         public bool HasParameters { get; private set; }
         protected object[] ParameterValues { get; private set; }
         public bool RequiresRow { get; set; }
-        
+        public bool RequiresParameters { get; set; }
+        public string Name { get; set; }
+
         /// <summary>
         /// Used for field level transformations, there are no parameters and the result is inline
         /// </summary>
@@ -53,8 +54,6 @@ namespace Transformalize.Core.Transform_
             HasParameters = false;
             Parameters = new Parameters();
         }
-
-        public abstract bool RequiresParameters { get; }
 
         /// <summary>
         /// Used for entity and process level transformations, requires parameters
@@ -92,6 +91,11 @@ namespace Transformalize.Core.Transform_
         public void Dispose()
         {
             Parameters = null;
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
     }
 }

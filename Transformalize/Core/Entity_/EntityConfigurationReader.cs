@@ -100,7 +100,7 @@ namespace Transformalize.Core.Entity_
 
             foreach (FieldConfigurationElement field in _element.CalculatedFields)
             {
-                entity.CalculatedFields.Add(field.Alias, new FieldReader(null, new EntityTransformParametersReader(entity), new EntityParametersReader(entity)).Read(field));
+                entity.CalculatedFields.Add(field.Alias, new FieldReader(entity, new EntityTransformParametersReader(entity), new EntityParametersReader(entity)).Read(field));
             }
 
             return entity;

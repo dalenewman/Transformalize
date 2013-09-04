@@ -20,30 +20,30 @@ using System.Text;
 using Transformalize.Core.Parameters_;
 using Transformalize.Libs.Rhino.Etl.Core;
 
-namespace Transformalize.Core.Transform_ {
-    public class JoinTransform : AbstractTransform {
+namespace Transformalize.Core.Transform_
+{
+    public class JoinTransform : AbstractTransform
+    {
         private readonly string _separator;
         private int _index;
         private readonly StringBuilder _builder = new StringBuilder();
         private readonly int _count;
 
-        public override string Name { get { return "Join Transform"; } }
-
         public JoinTransform(string separator, IParameters parameters)
-            : base(parameters) {
+            : base(parameters)
+        {
             _separator = separator;
             _count = Parameters.Count;
+            RequiresParameters = true;
+            Name = "Join";
         }
 
-        public override bool RequiresParameters
+        public override void Transform(ref Row row, string resultKey)
         {
-            get { return true; }
-        }
-
-        public override void Transform(ref Row row, string resultKey) {
             _index = 0;
             _builder.Clear();
-            foreach (var pair in Parameters) {
+            foreach (var pair in Parameters)
+            {
                 _builder.Append(pair.Value.Value ?? row[pair.Key]);
                 _index++;
                 if (_index < _count)

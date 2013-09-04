@@ -1,4 +1,4 @@
-/*
+﻿/*
 Transformalize - Replicate, Transform, and Denormalize Your Data...
 Copyright (C) 2013 Dale Newman
 
@@ -16,29 +16,21 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Text;
-using Transformalize.Core.Parameters_;
-using Transformalize.Extensions;
+using NUnit.Framework;
+using Transformalize.Core;
+using Transformalize.Core.Process_;
+using Transformalize.Runner;
 
-namespace Transformalize.Core.Transform_
-{
-    public class ToLowerTransform : AbstractTransform
-    {
+namespace Transformalize.Test.Integration {
+    [TestFixture]
+    public class EsMetaData {
 
-        public ToLowerTransform(IParameters parameters)
-            : base(parameters)
+        [Test]
+        public void Go()
         {
-            Name = "To Lower";
-        }
-
-        public override void Transform(ref StringBuilder sb)
-        {
-            sb.ToLower();
-        }
-
-        public override object Transform(object value)
-        {
-            return value.ToString().ToLower();
+            var process = new ProcessReader(new ProcessXmlConfigurationReader(@"c:\etl\rhinoetl\tfl\Es.xml").Read()).Read();
+            Process.Options = new Options("{'mode':'metadata'}");
+            new ProcessRunner(process).Run();
         }
 
     }

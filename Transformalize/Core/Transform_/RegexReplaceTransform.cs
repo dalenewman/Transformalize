@@ -18,26 +18,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Text;
 using System.Text.RegularExpressions;
+using Transformalize.Core.Parameters_;
 
-namespace Transformalize.Core.Transform_ {
-    public class RegexReplaceTransform : AbstractTransform {
+namespace Transformalize.Core.Transform_
+{
+    public class RegexReplaceTransform : AbstractTransform
+    {
         private readonly string _replacement;
         private readonly int _count;
         private readonly Regex _regex;
 
-        public RegexReplaceTransform(string pattern, string replacement, int count) {
+        public RegexReplaceTransform(string pattern, string replacement, int count, IParameters parameters) : base(parameters)
+        {
+            Name = "Regex Replace";
             _replacement = replacement;
             _count = count;
             _regex = new Regex(pattern, RegexOptions.Compiled);
-        }
-
-        public override string Name {
-            get { return "Regex Replace Transform"; }
-        }
-
-        public override bool RequiresParameters
-        {
-            get { return false; }
         }
 
         public override void Transform(ref StringBuilder sb)
@@ -56,5 +52,18 @@ namespace Transformalize.Core.Transform_ {
                 return _regex.Replace(value.ToString(), _replacement, _count);
             return _regex.Replace(value.ToString(), _replacement);
         }
+
+        public override void Transform(ref Libs.Rhino.Etl.Core.Row row, string resultKey)
+        {
+            if (_count > 0)
+            {
+                row[resultKey] = _regex.Replace(row[FirstParameter.Key].ToString(), _replacement, _count);
+            }
+            else
+            {
+                row[resultKey] = _regex.Replace(row[FirstParameter.Key].ToString(), _replacement);
+            }
+        }
+
     }
 }

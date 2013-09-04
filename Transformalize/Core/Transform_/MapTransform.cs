@@ -35,24 +35,16 @@ namespace Transformalize.Core.Transform_
         private readonly Map _endsWith;
         private readonly bool _hasEndsWith;
 
-        public MapTransform(IList<Map> maps, IParameters parameters) : base(parameters)
+        public MapTransform(IList<Map> maps, IParameters parameters)
+            : base(parameters)
         {
+            Name = "Map";
             _equals = maps[0];
             _hasEquals = _equals.Any();
             _startsWith = maps[1];
             _hasStartsWith = _startsWith.Any();
             _endsWith = maps[2];
             _hasEndsWith = _endsWith.Any();
-        }
-
-        public override string Name
-        {
-            get { return "Map Transform"; }
-        }
-
-        public override bool RequiresParameters
-        {
-            get { return false; }
         }
 
         public override void Transform(ref StringBuilder sb)
@@ -67,7 +59,7 @@ namespace Transformalize.Core.Transform_
                     return;
                 }
             }
-            
+
             if (_hasStartsWith)
             {
                 foreach (var pair in _startsWith)
@@ -136,7 +128,7 @@ namespace Transformalize.Core.Transform_
         public override void Transform(ref Row row, string resultKey)
         {
             var valueKey = row[FirstParameter.Key].ToString();
-            
+
             if (_hasEquals)
             {
                 if (_equals.ContainsKey(valueKey))
@@ -152,7 +144,7 @@ namespace Transformalize.Core.Transform_
                 {
                     row[resultKey] = pair.Value.Value ?? row[pair.Value.Parameter];
                     return;
-                }                
+                }
             }
 
             if (_hasEndsWith)

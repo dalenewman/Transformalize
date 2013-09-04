@@ -47,21 +47,12 @@ namespace Transformalize.Core.Transform_
         public JavascriptTransform(string script, IParameters parameters, Dictionary<string, Script> scripts)
             : base(parameters)
         {
+            Name = "Javascript";
             _script = script;
             foreach (var pair in scripts)
             {
                 _context.Run(pair.Value.Content);
             }
-        }
-
-        public override string Name
-        {
-            get { return "Javascript Transform"; }
-        }
-
-        public override bool RequiresParameters
-        {
-            get { return false; }
         }
 
         public override void Transform(ref StringBuilder sb)

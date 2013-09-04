@@ -21,23 +21,25 @@ using Transformalize.Core.Parameters_;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.fastJSON;
 
-namespace Transformalize.Core.Transform_ {
-    public class ToJsonTransform : AbstractTransform {
-        public override string Name { get { return "To Json Transform"; } }
+namespace Transformalize.Core.Transform_
+{
+    public class ToJsonTransform : AbstractTransform
+    {
         private readonly Dictionary<string, object> _values = new Dictionary<string, object>();
 
         public ToJsonTransform(IParameters parameters)
-            : base(parameters) {
-        }
-
-        public override bool RequiresParameters
+            : base(parameters)
         {
-            get { return true; }
+            Name = "To JSON";
+            RequiresParameters = true;
         }
 
-        public override void Transform(ref Row row, string resultKey) {
+
+        public override void Transform(ref Row row, string resultKey)
+        {
             _values.Clear();
-            foreach (var pair in Parameters) {
+            foreach (var pair in Parameters)
+            {
                 _values[pair.Value.Name] = pair.Value.Value ?? row[pair.Key];
             }
 

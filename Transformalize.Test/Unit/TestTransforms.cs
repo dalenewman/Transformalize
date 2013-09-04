@@ -57,7 +57,7 @@ namespace Transformalize.Test.Unit
         public void TestReplaceTransform()
         {
             var entity = new Entity();
-            entity.All["Field1"] = new Field(FieldType.Field) { Alias = "Field1", Transforms = new Transforms() { new ReplaceTransform("b", "B"), new ReplaceTransform("2", "Two") } };
+            entity.All["Field1"] = new Field(FieldType.Field) { Alias = "Field1", Transforms = new Transforms() { new ReplaceTransform("b", "B", new Parameters()), new ReplaceTransform("2", "Two", new Parameters()) } };
 
             var rows = TestOperation(
                 _testInput.Object,
@@ -74,7 +74,7 @@ namespace Transformalize.Test.Unit
         public void TestRegexReplaceTransform()
         {
             var entity = new Entity();
-            entity.All["Field1"] = new Field(FieldType.Field) { Alias = "Field1", Transforms = new Transforms() { new RegexReplaceTransform("[bd]", "X", 0), new RegexReplaceTransform(@"[\d]{1}$", "DIGIT", 0) } };
+            entity.All["Field1"] = new Field(FieldType.Field) { Alias = "Field1", Transforms = new Transforms() { new RegexReplaceTransform("[bd]", "X", 0, new Parameters()), new RegexReplaceTransform(@"[\d]{1}$", "DIGIT", 0, new Parameters()) } };
 
             var rows = TestOperation(
                 _testInput.Object,
@@ -93,7 +93,7 @@ namespace Transformalize.Test.Unit
         {
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field(FieldType.Field) { Alias = "Field1", Transforms = new Transforms() { new InsertTransform(1, ".") } };
+            entity.All["Field1"] = new Field(FieldType.Field) { Alias = "Field1", Transforms = new Transforms() { new InsertTransform(1, ".", new Parameters()) } };
 
             var rows = TestOperation(
                 _testInput.Object,
@@ -113,7 +113,7 @@ namespace Transformalize.Test.Unit
         {
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field(FieldType.Field) { Alias = "Field1", Transforms = new Transforms() { new RemoveTransform(2, 2) } };
+            entity.All["Field1"] = new Field(FieldType.Field) { Alias = "Field1", Transforms = new Transforms() { new RemoveTransform(2, 2, new Parameters()) } };
 
             var rows = TestOperation(
                 _testInput.Object,
@@ -132,7 +132,7 @@ namespace Transformalize.Test.Unit
         {
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field(FieldType.Field) { Alias = "Field1", Transforms = new Transforms() { new TrimStartTransform("1 ") } };
+            entity.All["Field1"] = new Field(FieldType.Field) { Alias = "Field1", Transforms = new Transforms() { new TrimStartTransform("1 ", new Parameters()) } };
 
             var rows = TestOperation(
                 _testInput.Object,
@@ -150,7 +150,7 @@ namespace Transformalize.Test.Unit
         {
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field(FieldType.Field) { Alias = "Field1", Transforms = new Transforms() { new TrimEndTransform(" ") }, Input = true };
+            entity.All["Field1"] = new Field(FieldType.Field) { Alias = "Field1", Transforms = new Transforms() { new TrimEndTransform(" ", new Parameters()) }, Input = true };
             var fields = new Dictionary<string, Field> { { "", null } };
 
             var rows = TestOperation(
@@ -169,7 +169,7 @@ namespace Transformalize.Test.Unit
         {
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field(FieldType.Field) { Alias = "Field1", Transforms = new Transforms() { new TrimEndTransform("G ") }, Input = true };
+            entity.All["Field1"] = new Field(FieldType.Field) { Alias = "Field1", Transforms = new Transforms() { new TrimEndTransform("G ", new Parameters()) }, Input = true };
 
             var rows = TestOperation(
                 _testInput.Object,
@@ -188,7 +188,7 @@ namespace Transformalize.Test.Unit
         {
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field(FieldType.Field) { Alias = "Field1", Transforms = new Transforms() { new TrimTransform("1G") } };
+            entity.All["Field1"] = new Field(FieldType.Field) { Alias = "Field1", Transforms = new Transforms() { new TrimTransform("1G", new Parameters()) } };
 
             var rows = TestOperation(
                 _testInput.Object,
@@ -231,7 +231,7 @@ namespace Transformalize.Test.Unit
         {
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field(FieldType.Field) { Alias = "Field1", Transforms = new Transforms() { new SubstringTransform(4, 3) }, Input = true };
+            entity.All["Field1"] = new Field(FieldType.Field) { Alias = "Field1", Transforms = new Transforms() { new SubstringTransform(4, 3, new Parameters()) }, Input = true };
 
             var rows = TestOperation(
                 _testInput.Object,
@@ -250,8 +250,7 @@ namespace Transformalize.Test.Unit
         {
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field(FieldType.Field) { Alias = "Field1", Transforms = new Transforms() { new LeftTransform(4) }, Input = true };
-            var fields = new Dictionary<string, Field> { { "", null } };
+            entity.All["Field1"] = new Field(FieldType.Field) { Alias = "Field1", Transforms = new Transforms() { new LeftTransform(4, new Parameters()) }, Input = true };
 
             var rows = TestOperation(
                 _testInput.Object,
@@ -269,8 +268,7 @@ namespace Transformalize.Test.Unit
         {
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field(FieldType.Field) { Alias = "Field1", Transforms = new Transforms() { new RightTransform(3) }, Input = true };
-            var fields = new Dictionary<string, Field> { { "", null } };
+            entity.All["Field1"] = new Field(FieldType.Field) { Alias = "Field1", Transforms = new Transforms() { new RightTransform(3, new Parameters()) }, Input = true };
 
             var rows = TestOperation(
                 _testInput.Object,
@@ -458,7 +456,7 @@ namespace Transformalize.Test.Unit
             var input = mock.Object;
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field(FieldType.Field) { Alias = "Field1", Input = true, Transforms = new Transforms() { new PadLeftTransform(5, '0') }, Default = "00000" };
+            entity.All["Field1"] = new Field(FieldType.Field) { Alias = "Field1", Input = true, Transforms = new Transforms() { new PadLeftTransform(5, '0', new Parameters()) }, Default = "00000" };
 
             var rows = TestOperation(
                 input,
@@ -487,8 +485,7 @@ namespace Transformalize.Test.Unit
             var input = mock.Object;
 
             var entity = new Entity();
-            entity.All["Field1"] = new Field(FieldType.Field) { Alias = "Field1", Input = true, Transforms = new Transforms() { new PadRightTransform(5, '0') }, Default = "00000" };
-            var fields = new Dictionary<string, Field> { { "", null } };
+            entity.All["Field1"] = new Field(FieldType.Field) { Alias = "Field1", Input = true, Transforms = new Transforms() { new PadRightTransform(5, '0', new Parameters()) }, Default = "00000" };
 
             var rows = TestOperation(
                 input,

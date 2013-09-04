@@ -13,21 +13,12 @@ namespace Transformalize.Core.Transform_
         private readonly XmlReaderSettings _settings = new XmlReaderSettings { IgnoreWhitespace = true, IgnoreComments = true };
         private readonly Dictionary<string, string> _map = new Dictionary<string, string>();
         private readonly Dictionary<string, string> _typeMap = new Dictionary<string, string>();
-        private readonly Dictionary<string, Func<string, object>> _conversionMap = new Dictionary<string, Func<string, object>> {
-            { "string", (x => x) },
-            { "xml" , (x => x)},
-            { "int32", (x => Convert.ToInt32(x)) },
-            { "double", (x => Convert.ToDouble(x)) },
-            { "datetime", (x => Convert.ToDateTime(x)) },
-            { "boolean", (x=> Convert.ToBoolean(x)) }
-        };
 
-        public override string Name { get { return "FromXml Transform"; } }
-        public override bool RequiresParameters { get { return false; } }
-
-        public FromXmlTransform(string xmlField, IParameters parameters) : base(parameters)
+        public FromXmlTransform(string xmlField, IParameters parameters)
+            : base(parameters)
         {
             RequiresRow = true;
+            Name = "From XML";
 
             _xmlField = xmlField;
 
@@ -54,10 +45,10 @@ namespace Transformalize.Core.Transform_
                     {
                         var name = reader.Name;
                         var value = reader.ReadElementContentAsString();
-                        if(value != string.Empty)
-                            row[_map[name]] = _conversionMap[_typeMap[name]](value);
+                        if (value != string.Empty)
+                            row[_map[name]] = Common.ConversionMap[_typeMap[name]](value);
                     }
-                }  
+                }
             }
         }
 

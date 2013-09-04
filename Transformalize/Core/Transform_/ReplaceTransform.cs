@@ -17,33 +17,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Text;
+using Transformalize.Core.Parameters_;
+using Transformalize.Libs.Rhino.Etl.Core;
 
-namespace Transformalize.Core.Transform_ {
-    public class ReplaceTransform : AbstractTransform {
+namespace Transformalize.Core.Transform_
+{
+    public class ReplaceTransform : AbstractTransform
+    {
 
         private readonly string _oldValue;
         private readonly string _newValue;
 
-        public ReplaceTransform(string oldValue, string newValue) {
+        public ReplaceTransform(string oldValue, string newValue, IParameters parameters)
+            : base(parameters)
+        {
+            Name = "Replace";
             _oldValue = oldValue;
             _newValue = newValue;
         }
 
-        public override string Name {
-            get { return "Replace Transform"; }
-        }
-
-        public override bool RequiresParameters
+        public override void Transform(ref StringBuilder sb)
         {
-            get { return false; }
-        }
-
-        public override void Transform(ref StringBuilder sb) {
             sb.Replace(_oldValue, _newValue);
         }
 
-        public override object Transform(object value) {
+        public override object Transform(object value)
+        {
             return value.ToString().Replace(_oldValue, _newValue);
+        }
+
+        public override void Transform(ref Row row, string resultKey)
+        {
+            row[resultKey] = row[FirstParameter.Key].ToString().Replace(_oldValue, _newValue);
         }
     }
 }

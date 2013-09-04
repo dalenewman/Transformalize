@@ -89,6 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EtlProcessHelper.cs" />
+    <Compile Include="Integration\EsMetaData.cs" />
     <Compile Include="Integration\EsNormal.cs" />
     <Compile Include="Integration\EsInit.cs" />
     <Compile Include="Integration\NorthWindNormal.cs" />

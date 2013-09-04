@@ -26,15 +26,15 @@ namespace Transformalize.Configuration
         private const string VALUE = "value";
         private const string PATTERN = "pattern";
         private const string REPLACEMENT = "replacement";
-        private const string OLD_VALUE = "oldValue";
-        private const string NEW_VALUE = "newValue";
-        private const string TRIM_CHARS = "trimChars";
+        private const string OLD_VALUE = "old-value";
+        private const string NEW_VALUE = "new-value";
+        private const string TRIM_CHARS = "trim-chars";
         private const string INDEX = "index";
         private const string COUNT = "count";
-        private const string START_INDEX = "startIndex";
+        private const string START_INDEX = "start-index";
         private const string LENGTH = "length";
         private const string TOTAL_WIDTH = "totalWidth";
-        private const string PADDING_CHAR = "paddingChar";
+        private const string PADDING_CHAR = "padding-char";
         private const string MAP = "map";
         private const string SCRIPT = "script";
         private const string TEMPLATE = "template";
@@ -51,6 +51,7 @@ namespace Transformalize.Configuration
         private const string TYPE = "type";
         private const string ROOT = "root";
         private const string FIELDS = "fields";
+        private const string TO = "to";
 
         public override bool IsReadOnly()
         {
@@ -77,6 +78,16 @@ namespace Transformalize.Configuration
             set { this[NAME] = value; }
         }
 
+        [ConfigurationProperty(TO, IsRequired = false, DefaultValue = "")]
+        public string To
+        {
+            get
+            {
+                return this[TO] as string;
+            }
+            set { this[TO] = value; }
+        }
+        
         [ConfigurationProperty(VALUE, IsRequired = false, DefaultValue = "")]
         public string Value
         {
@@ -128,7 +139,7 @@ namespace Transformalize.Configuration
             set { this[NEW_VALUE] = value; }
         }
 
-        [ConfigurationProperty(TRIM_CHARS, IsRequired = false, DefaultValue = "")]
+        [ConfigurationProperty(TRIM_CHARS, IsRequired = false, DefaultValue = " ")]
         public string TrimChars
         {
             get

@@ -66,7 +66,7 @@ namespace Transformalize.Core.Process_ {
             var fields = new Fields();
             foreach (var entity in Entities)
             {
-                fields.AddRange(new FieldSqlWriter(entity.All, entity.CalculatedFields).ExpandXml().Output().ToArray());
+                fields.AddRange(new FieldSqlWriter(entity.All, entity.CalculatedFields, CalculatedFields).ExpandXml().Output().ToArray());
             }
             return fields;
         }

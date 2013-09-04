@@ -17,36 +17,41 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Text;
+using Transformalize.Core.Parameters_;
+using Transformalize.Libs.Rhino.Etl.Core;
 
-namespace Transformalize.Core.Transform_ {
-    public class InsertTransform : AbstractTransform {
+namespace Transformalize.Core.Transform_
+{
+    public class InsertTransform : AbstractTransform
+    {
 
-        private readonly int _index;
+        private readonly int _startIndex;
         private readonly string _value;
 
-        public InsertTransform(int index, string value) {
-            _index = index;
-            _value = value;
-        }
-
-        public override string Name {
-            get { return "Insert Transform"; }
-        }
-
-        public override bool RequiresParameters
+        public InsertTransform(int startIndex, string value, IParameters parameters)
+            : base(parameters)
         {
-            get { return false; }
+            _startIndex = startIndex;
+            _value = value;
+            Name = "Insert";
         }
 
-        public override void Transform(ref StringBuilder sb) {
-            if (_index > sb.Length) return;
-            sb.Insert(_index, _value);
+        public override void Transform(ref StringBuilder sb)
+        {
+            if (_startIndex > sb.Length) return;
+            sb.Insert(_startIndex, _value);
         }
 
-        public override object Transform(object value) {
+        public override object Transform(object value)
+        {
             var str = value.ToString();
-            if (_index > str.Length) return value;
-            return str.Insert(_index, _value);
+            if (_startIndex > str.Length) return value;
+            return str.Insert(_startIndex, _value);
+        }
+
+        public override void Transform(ref Row row, string resultKey)
+        {
+            row[resultKey] = row[FirstParameter.Key].ToString().Insert(_startIndex, _value);
         }
 
     }

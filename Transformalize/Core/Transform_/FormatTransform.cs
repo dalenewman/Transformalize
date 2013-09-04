@@ -20,38 +20,37 @@ using System.Text;
 using Transformalize.Core.Parameters_;
 using Transformalize.Libs.Rhino.Etl.Core;
 
-namespace Transformalize.Core.Transform_ {
-    public class FormatTransform : AbstractTransform {
+namespace Transformalize.Core.Transform_
+{
+    public class FormatTransform : AbstractTransform
+    {
         private readonly string _format;
         private int _index;
 
-        public override string Name {
-            get { return "Format Transform"; }
-        }
-
         public FormatTransform(string format, IParameters parameters)
-            : base(parameters) {
-            _format = format;
-        }
-
-        public override bool RequiresParameters
+            : base(parameters)
         {
-            get { return false; }
+            _format = format;
+            Name = "Format";
         }
 
-        public override void Transform(ref StringBuilder sb) {
+        public override void Transform(ref StringBuilder sb)
+        {
             var value = sb.ToString();
             sb.Clear();
             sb.AppendFormat(_format, value);
         }
 
-        public override object Transform(object value) {
+        public override object Transform(object value)
+        {
             return string.Format(_format, value);
         }
 
-        public override void Transform(ref Row row, string resultKey) {
+        public override void Transform(ref Row row, string resultKey)
+        {
             _index = 0;
-            foreach (var pair in Parameters) {
+            foreach (var pair in Parameters)
+            {
                 ParameterValues[_index] = pair.Value.Value ?? row[pair.Key];
                 _index++;
             }

@@ -66,6 +66,9 @@ namespace Transformalize.Core
                                 else if (value.Equals("test"))
                                 {
                                     Mode = Modes.Test;
+                                } else if (value.Equals("metadata"))
+                                {
+                                    Mode = Modes.Metadata;
                                 }
                                 break;
                             case "loglevel":

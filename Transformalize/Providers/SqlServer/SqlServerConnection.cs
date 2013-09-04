@@ -31,6 +31,7 @@ namespace Transformalize.Providers.SqlServer {
         public int CompatibilityLevel { get; set; }
         public ConnectionType ConnectionType { get; set; }
         public string Process { get; set; }
+        public IScriptRunner ScriptRunner { get; private set; }
 
         private ICompatibilityReader CompatibilityReader
         {
@@ -40,6 +41,7 @@ namespace Transformalize.Providers.SqlServer {
         public SqlServerConnection(string connectionString) {
             _builder = new SqlConnectionStringBuilder(connectionString);
             _connectionChecker = new SqlServerConnectionChecker();
+            ScriptRunner = new SqlServerScriptRunner(this);
         }
 
         public string ConnectionString {

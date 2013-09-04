@@ -29,44 +29,48 @@ namespace Transformalize.Core.Transform_
             AbstractTransform transform = new EmptyTransform();
             switch (_transform.Method.ToLower())
             {
+                case "convert":
+                    transform = new ConvertTransform(_transform.To, _parameters);
+                    break;
+
                 case "replace":
-                    transform = new ReplaceTransform(_transform.OldValue, _transform.NewValue);
+                    transform = new ReplaceTransform(_transform.OldValue, _transform.NewValue, _parameters);
                     break;
 
                 case "regexreplace":
-                    transform = new RegexReplaceTransform(_transform.Pattern, _transform.Replacement, _transform.Count);
+                    transform = new RegexReplaceTransform(_transform.Pattern, _transform.Replacement, _transform.Count, _parameters);
                     break;
 
                 case "insert":
-                    transform = new InsertTransform(_transform.Index, _transform.Value);
+                    transform = new InsertTransform(_transform.Index, _transform.Value, _parameters);
                     break;
 
                 case "remove":
-                    transform = new RemoveTransform(_transform.StartIndex, _transform.Length);
+                    transform = new RemoveTransform(_transform.StartIndex, _transform.Length, _parameters);
                     break;
 
                 case "trimstart":
-                    transform = new TrimStartTransform(_transform.TrimChars);
+                    transform = new TrimStartTransform(_transform.TrimChars, _parameters);
                     break;
 
                 case "trimend":
-                    transform = new TrimEndTransform(_transform.TrimChars);
+                    transform = new TrimEndTransform(_transform.TrimChars, _parameters);
                     break;
 
                 case "trim":
-                    transform = new TrimTransform(_transform.TrimChars);
+                    transform = new TrimTransform(_transform.TrimChars, _parameters);
                     break;
 
                 case "substring":
-                    transform = new SubstringTransform(_transform.StartIndex, _transform.Length);
+                    transform = new SubstringTransform(_transform.StartIndex, _transform.Length, _parameters);
                     break;
 
                 case "left":
-                    transform = new LeftTransform(_transform.Length);
+                    transform = new LeftTransform(_transform.Length, _parameters);
                     break;
 
                 case "right":
-                    transform = new RightTransform(_transform.Length);
+                    transform = new RightTransform(_transform.Length, _parameters);
                     break;
 
                 case "map":
@@ -114,11 +118,11 @@ namespace Transformalize.Core.Transform_
                     break;
 
                 case "padleft":
-                    transform = new PadLeftTransform(_transform.TotalWidth, _transform.PaddingChar[0]);
+                    transform = new PadLeftTransform(_transform.TotalWidth, _transform.PaddingChar[0], _parameters);
                     break;
 
                 case "padright":
-                    transform = new PadRightTransform(_transform.TotalWidth, _transform.PaddingChar[0]);
+                    transform = new PadRightTransform(_transform.TotalWidth, _transform.PaddingChar[0], _parameters);
                     break;
 
                 case "format":
@@ -146,7 +150,7 @@ namespace Transformalize.Core.Transform_
                     break;
 
                 case "tolocaltime":
-                    transform = new ToLocalTimeTransform();
+                    transform = new ToLocalTimeTransform(_parameters);
                     break;
 
                 case "tojson":

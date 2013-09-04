@@ -18,8 +18,8 @@ namespace Transformalize.Providers.AnalysisServices
         public int BatchSize { get; set; }
         public string ConnectionString { get; private set; }
         public string Process { get; set; }
-
-
+        public IScriptRunner ScriptRunner { get; private set; }
+        
         public AnalysisServicesConnection(string connectionString)
         {
             _connectionChecker = new AnalysisServicesConnectionChecker();
@@ -27,6 +27,7 @@ namespace Transformalize.Providers.AnalysisServices
             CompatibilityLevel = 100;
             ConnectionType = ConnectionType.AnalysisServices;
             ParseConnectionString();
+            ScriptRunner = new AnalysisServicesScriptRunner(this);
         }
 
         public bool IsReady()

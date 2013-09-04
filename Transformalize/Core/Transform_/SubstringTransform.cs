@@ -17,33 +17,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Text;
+using Transformalize.Core.Parameters_;
 using Transformalize.Extensions;
+using Transformalize.Libs.Rhino.Etl.Core;
 
-namespace Transformalize.Core.Transform_ {
-    public class SubstringTransform : AbstractTransform {
+namespace Transformalize.Core.Transform_
+{
+    public class SubstringTransform : AbstractTransform
+    {
         private readonly int _startIndex;
         private readonly int _length;
 
-        public SubstringTransform(int startIndex, int length) {
+        public SubstringTransform(int startIndex, int length, IParameters parameters)
+            : base(parameters)
+        {
+            Name = "Substring";
             _startIndex = startIndex;
             _length = length;
         }
 
-        public override string Name {
-            get { return "Substring Transform"; }
-        }
-
-        public override bool RequiresParameters
+        public override void Transform(ref StringBuilder sb)
         {
-            get { return false; }
-        }
-
-        public override void Transform(ref StringBuilder sb) {
             sb.Substring(_startIndex, _length);
         }
 
-        public override object Transform(object value) {
+        public override object Transform(object value)
+        {
             return value.ToString().Substring(_startIndex, _length);
+        }
+
+        public override void Transform(ref Row row, string resultKey)
+        {
+            row[resultKey] = row[FirstParameter.Key].ToString().Substring(_startIndex, _length);
         }
     }
 }

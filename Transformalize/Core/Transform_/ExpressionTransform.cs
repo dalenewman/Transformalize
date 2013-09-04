@@ -16,24 +16,17 @@ namespace Transformalize.Core.Transform_
 
         public ExpressionTransform(string expression, IParameters parameters) : this(null, expression, parameters) { }
 
-        public ExpressionTransform(string field, string expression, IParameters parameters) : base(parameters)
+        public ExpressionTransform(string field, string expression, IParameters parameters)
+            : base(parameters)
         {
+            Name = "Expression";
             _field = field ?? "value";
             _expression = new Expression(expression);
             if (!_expression.HasErrors()) return;
 
             _log.Error("{0} | Expression '{1}' has errors: {2}", Process.Name, expression, _expression.Error);
             System.Environment.Exit(0);
-        }
 
-        public override string Name
-        {
-            get { return "Expression Transform"; }
-        }
-
-        public override bool RequiresParameters
-        {
-            get { return false; }
         }
 
         public override void Transform(ref StringBuilder sb)
@@ -53,7 +46,7 @@ namespace Transformalize.Core.Transform_
         {
             foreach (var pair in Parameters)
             {
-                _expression.Parameters[pair.Value.Name] =  pair.Value.Value ?? row[pair.Key];
+                _expression.Parameters[pair.Value.Name] = pair.Value.Value ?? row[pair.Key];
             }
             row[resultKey] = _expression.Evaluate();
         }

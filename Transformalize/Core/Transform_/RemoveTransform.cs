@@ -17,35 +17,40 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Text;
+using Transformalize.Core.Parameters_;
+using Transformalize.Libs.Rhino.Etl.Core;
 
-namespace Transformalize.Core.Transform_ {
-    public class RemoveTransform : AbstractTransform {
+namespace Transformalize.Core.Transform_
+{
+    public class RemoveTransform : AbstractTransform
+    {
         private readonly int _startIndex;
         private readonly int _length;
 
-        public RemoveTransform(int startIndex, int length) {
+        public RemoveTransform(int startIndex, int length, IParameters parameters)
+            : base(parameters)
+        {
+            Name = "Remove";
             _startIndex = startIndex;
             _length = length;
         }
 
-        public override string Name {
-            get { return "Remove Transform"; }
-        }
-
-        public override bool RequiresParameters
+        public override void Transform(ref StringBuilder sb)
         {
-            get { return false; }
-        }
-
-        public override void Transform(ref StringBuilder sb) {
             if (_startIndex > sb.Length) return;
             sb.Remove(_startIndex, _length);
         }
 
-        public override object Transform(object value) {
+        public override object Transform(object value)
+        {
             var str = value.ToString();
             if (_startIndex > str.Length) return value;
             return str.Remove(_startIndex, _length);
+        }
+
+        public override void Transform(ref Row row, string resultKey)
+        {
+            row[resultKey] = row[FirstParameter.Key].ToString().Remove(_startIndex, _length);
         }
     }
 }

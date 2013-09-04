@@ -56,6 +56,7 @@ namespace Transformalize.Core.Transform_
         public TemplateTransform(string template, string templateModelType, IParameters parameters, IEnumerable<KeyValuePair<string, Template>> templates)
             : base(parameters)
         {
+            Name = "Template";
             _templateModelType = templateModelType;
             _key = template.GetHashCode().ToString(CultureInfo.InvariantCulture);
 
@@ -64,21 +65,11 @@ namespace Transformalize.Core.Transform_
 
             var content = _builder.ToString();
 
-            var type = templateModelType == "dynamic" ? typeof (DynamicViewBag) : typeof (Dictionary<string, object>);
+            var type = templateModelType == "dynamic" ? typeof(DynamicViewBag) : typeof(Dictionary<string, object>);
 
             Razor.Compile(content, type, _key);
             _log.Debug("Compiled {0} template with hashcode/key {1}.", templateModelType, _key);
 
-        }
-
-        public override string Name
-        {
-            get { return "Template Transform"; }
-        }
-
-        public override bool RequiresParameters
-        {
-            get { return false; }
         }
 
         public override void Transform(ref StringBuilder sb)

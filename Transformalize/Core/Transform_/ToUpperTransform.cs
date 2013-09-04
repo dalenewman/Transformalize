@@ -20,26 +20,24 @@ using System.Text;
 using Transformalize.Core.Parameters_;
 using Transformalize.Extensions;
 
-namespace Transformalize.Core.Transform_ {
-    public class ToUpperTransform : AbstractTransform {
-        public override string Name {
-            get { return "ToUpper Transform"; }
-        }
+namespace Transformalize.Core.Transform_
+{
+    public class ToUpperTransform : AbstractTransform
+    {
 
         public ToUpperTransform(IParameters parameters)
-            : base(parameters) {
-        }
-
-        public override bool RequiresParameters
+            : base(parameters)
         {
-            get { return false; }
+            Name = "To Upper";
         }
 
-        public override void Transform(ref StringBuilder sb) {
+        public override void Transform(ref StringBuilder sb)
+        {
             sb.ToUpper();
         }
 
-        public override object Transform(object value) {
+        public override object Transform(object value)
+        {
             return value.ToString().ToUpper();
         }
 

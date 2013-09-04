@@ -17,33 +17,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Text;
+using Transformalize.Core.Parameters_;
 using Transformalize.Extensions;
+using Transformalize.Libs.Rhino.Etl.Core;
 
-namespace Transformalize.Core.Transform_ {
-    public class TrimStartTransform : AbstractTransform {
+namespace Transformalize.Core.Transform_
+{
+    public class TrimStartTransform : AbstractTransform
+    {
         private readonly string _trimChars;
         private readonly char[] _trimCharArray;
 
-        public TrimStartTransform(string trimChars) {
+        public TrimStartTransform(string trimChars, IParameters parameters) : base(parameters)
+        {
+            Name = "Trim Start";
             _trimChars = trimChars;
             _trimCharArray = trimChars.ToCharArray();
         }
 
-        public override string Name {
-            get { return "TrimStart Transform"; }
-        }
-
-        public override bool RequiresParameters
+        public override void Transform(ref StringBuilder sb)
         {
-            get { return false; }
-        }
-
-        public override void Transform(ref StringBuilder sb) {
             sb.TrimStart(_trimChars);
         }
 
-        public override object Transform(object value) {
+        public override object Transform(object value)
+        {
             return value.ToString().TrimStart(_trimCharArray);
+        }
+
+        public override void Transform(ref Row row, string resultKey)
+        {
+            row[resultKey] = row[FirstParameter.Key].ToString().TrimStart(_trimCharArray);
         }
 
     }

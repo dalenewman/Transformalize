@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using Transformalize.Core.Process_;
 using Transformalize.Libs.NLog;
@@ -8,12 +7,7 @@ namespace Transformalize.Core.Template_
     public class TemplateManager
     {
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
-        private readonly Process _process;
         private readonly char[] _trim = new[] { '\\' };
-        public TemplateManager(Process process)
-        {
-            _process = process;
-        }
 
         public void Manage()
         {
@@ -42,6 +36,10 @@ namespace Transformalize.Core.Template_
 
                         case "open":
                             new TemplateActionOpen(renderedInfo.FullName).Handle(action);
+                            break;
+
+                        case "run":
+                            new TemplateActionRun(renderedInfo.FullName).Handle(action);
                             break;
 
                         case "web":

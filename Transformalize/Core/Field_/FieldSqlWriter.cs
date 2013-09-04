@@ -192,6 +192,9 @@ namespace Transformalize.Core.Field_ {
                 if (field.SimpleType == "byte[]")
                     d = "0x";
 
+                if (field.SimpleType.StartsWith("bool"))
+                    d = (bool) d ? 1 : 0;
+
                 _output[key] = string.Concat("ISNULL(", _output[key], ", ", field.Quote, d, field.Quote, ")");
             }
             return this;

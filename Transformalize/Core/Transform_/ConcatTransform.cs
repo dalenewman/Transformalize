@@ -20,25 +20,25 @@ using System.Text;
 using Transformalize.Core.Parameters_;
 using Transformalize.Libs.Rhino.Etl.Core;
 
-namespace Transformalize.Core.Transform_ {
-    public class ConcatTransform : AbstractTransform {
+namespace Transformalize.Core.Transform_
+{
+    public class ConcatTransform : AbstractTransform
+    {
 
         private readonly StringBuilder _builder = new StringBuilder();
 
-        public override string Name { get { return "Concat Transform"; } }
-
         public ConcatTransform(IParameters parameters)
-            : base(parameters) {
-        }
-
-        public override bool RequiresParameters
+            : base(parameters)
         {
-            get { return true; }
+            RequiresParameters = true;
+            Name = "Concat";
         }
 
-        public override void Transform(ref Row row, string resultKey) {
+        public override void Transform(ref Row row, string resultKey)
+        {
             _builder.Clear();
-            foreach (var pair in Parameters) {
+            foreach (var pair in Parameters)
+            {
                 _builder.Append(pair.Value.Value ?? row[pair.Key]);
             }
             row[resultKey] = _builder.ToString();

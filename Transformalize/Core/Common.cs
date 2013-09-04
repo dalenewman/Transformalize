@@ -32,6 +32,34 @@ namespace Transformalize.Core
         private const string APPLICATION_FOLDER = @"\Tfl\";
         private static readonly char[] Slash = new[] { '\\' };
 
+        public static Dictionary<string, Func<string, object>> ConversionMap = new Dictionary<string, Func<string, object>> {
+            { "string", (x => x) },
+            { "xml" , (x => x)},
+            { "int16", (x => Convert.ToInt16(x)) },
+            { "int32", (x => Convert.ToInt32(x)) },
+            { "int64", (x => Convert.ToInt64(x)) },
+            { "long", (x => Convert.ToInt64(x)) },
+            { "double", (x => Convert.ToDouble(x)) },
+            { "decimal", (x => Convert.ToDecimal(x)) },
+            { "char", (x => Convert.ToChar(x)) },
+            { "datetime", (x => Convert.ToDateTime(x)) },
+            { "boolean", (x=> Convert.ToBoolean(x)) }
+        };
+
+        public static Dictionary<string, Func<object, object>> ObjectConversionMap = new Dictionary<string, Func<object, object>> {
+            { "string", (x => x) },
+            { "xml" , (x => x)},
+            { "int16", (x => Convert.ToInt16(x)) },
+            { "int32", (x => Convert.ToInt32(x)) },
+            { "int64", (x => Convert.ToInt64(x)) },
+            { "long", (x => Convert.ToInt64(x)) },
+            { "double", (x => Convert.ToDouble(x)) },
+            { "decimal", (x => Convert.ToDecimal(x)) },
+            { "char", (x => Convert.ToChar(x)) },
+            { "datetime", (x => Convert.ToDateTime(x)) },
+            { "boolean", (x=> Convert.ToBoolean(x)) }
+        };
+
         public static Func<KeyValuePair<string, Field>, bool> FieldFinder(ParameterConfigurationElement p)
         {
             if (p.Entity != string.Empty)
@@ -67,6 +95,16 @@ namespace Transformalize.Core
         public static string ToSimpleType(string type)
         {
             return type.ToLower().Replace("system.", string.Empty);
+        }
+
+        public static int DateTimeToInt32(DateTime date)
+        {
+            return (int)(date - new DateTime(1, 1, 1)).TotalDays + 1;
+        }
+
+        public static DateTime Int32ToDateTime(int timeKey)
+        {
+            return new DateTime(1, 1, 1).AddDays(timeKey - 1);
         }
 
     }

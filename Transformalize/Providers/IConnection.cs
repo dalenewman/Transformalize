@@ -27,5 +27,6 @@ namespace Transformalize.Providers
         int CompatibilityLevel { get; }
         ConnectionType ConnectionType { get; set; }
         string Process { get; set; }
+        IScriptRunner ScriptRunner { get; }
     }
 }
