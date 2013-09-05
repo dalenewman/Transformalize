@@ -45,7 +45,7 @@ namespace Transformalize.Providers.SqlServer {
                 }
             }
 
-            Info("{0} | Processed {1} rows in {2}", _entity.ProcessName, count, _entity.Alias);
+            Info("Processed {0} rows in {1}", count, _entity.Alias);
         }
 
         private string PrepareSql() {

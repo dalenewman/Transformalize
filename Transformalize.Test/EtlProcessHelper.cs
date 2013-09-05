@@ -32,11 +32,12 @@ namespace Transformalize.Test {
                 }
             }
 
-            public TestProcess(params IOperation[] testOperations) {
+            public TestProcess(params IOperation[] testOperations) : base("Test")
+            {
                 this.testOperations = testOperations;
             }
 
-            public TestProcess(IEnumerable<IOperation> testOperations) {
+            public TestProcess(IEnumerable<IOperation> testOperations) : base("Test") {
                 this.testOperations = testOperations;
             }
 

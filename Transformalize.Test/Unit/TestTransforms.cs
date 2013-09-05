@@ -675,6 +675,7 @@ namespace Transformalize.Test.Unit
         [Test]
         public void TestCalcTransform()
         {
+            var process = new Process("Test");
 
             var mock = new Mock<IOperation>();
             mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row> {
@@ -702,7 +703,7 @@ namespace Transformalize.Test.Unit
         [Test]
         public void TestCalcIfTransform()
         {
-
+            var process = new Process("Test");
             var mock = new Mock<IOperation>();
             mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row> {
                 new Row { {"var1", 2}, {"var2", 3.5} },

@@ -21,7 +21,7 @@ namespace Transformalize.Providers.AnalysisServices
 
             try
             {
-                _log.Debug("{0} | Connecting to {1} on {2}.", _connection.Process, _connection.Database, _connection.Server);
+                _log.Debug("Connecting to {0} on {1}.", _connection.Database, _connection.Server);
                 server.Connect(_connection.ConnectionString);
 
                 var results = server.Execute(script);
@@ -44,7 +44,7 @@ namespace Transformalize.Providers.AnalysisServices
             {
                 if (server.Connected)
                 {
-                    _log.Debug("{0} | Disconnecting from {1} on {2}.", _connection.Process, _connection.Database, _connection.Server);
+                    _log.Debug("Disconnecting from {0} on {1}.", _connection.Database, _connection.Server);
                     server.Disconnect();
                 }
             }

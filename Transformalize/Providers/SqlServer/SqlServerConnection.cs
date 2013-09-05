@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Data.SqlClient;
+using Transformalize.Core.Process_;
 
 namespace Transformalize.Providers.SqlServer {
 

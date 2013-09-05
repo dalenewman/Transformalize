@@ -30,7 +30,8 @@ namespace Transformalize.Providers.SqlServer {
         private readonly int _timeOut;
         private static readonly Dictionary<string, bool> CachedResults = new Dictionary<string, bool>();
 
-        public SqlServerConnectionChecker(int timeOut = 3) {
+        public SqlServerConnectionChecker(int timeOut = 3)
+        {
             _timeOut = timeOut;
         }
 
@@ -46,14 +47,14 @@ namespace Transformalize.Providers.SqlServer {
                     cn.Open();
                     result = cn.State == ConnectionState.Open;
                     if (result) {
-                        _log.Debug("{0} | {1}.{2} is ready.", Process.Name, builder.DataSource, builder.InitialCatalog);
+                        _log.Debug("{0}.{1} is ready.", builder.DataSource, builder.InitialCatalog);
                     }
                     else {
-                        _log.Warn("{0} | {1}.{2} wouldn't open.", Process.Name, builder.DataSource, builder.InitialCatalog);
+                        _log.Warn("{0}.{1} wouldn't open.", builder.DataSource, builder.InitialCatalog);
                     }
                 }
                 catch (Exception e) {
-                    _log.Warn("{0} | {1}.{2} threw error: {3}.", Process.Name, builder.DataSource, builder.InitialCatalog, e.Message);
+                    _log.Warn("{0}.{1} threw error: {2}.", builder.DataSource, builder.InitialCatalog, e.Message);
                 }
             }
             CachedResults[connectionString] = result;

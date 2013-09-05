@@ -55,7 +55,7 @@ namespace Transformalize.Test.Integration {
         [Test]
         public void TestProcessReader() {
 
-            Assert.AreEqual("Test", Process.Name);
+            Assert.AreEqual("Test", _process.Name);
             Assert.AreEqual("Data Source=localhost;Initial Catalog=TestInput;Integrated Security=True", Process.Connections["input"].ConnectionString);
             Assert.AreEqual("Data Source=localhost;Initial Catalog=TestOutput;Integrated Security=True", Process.Connections["output"].ConnectionString);
             Assert.AreEqual("Data Source=localhost;Initial Catalog=TestInput;Integrated Security=True", Process.Entities.First().InputConnection.ConnectionString);

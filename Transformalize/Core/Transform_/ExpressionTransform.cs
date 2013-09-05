@@ -1,5 +1,4 @@
 using System.Text;
-using Transformalize.Core.Fields_;
 using Transformalize.Core.Parameters_;
 using Transformalize.Core.Process_;
 using Transformalize.Libs.NCalc;
@@ -24,7 +23,7 @@ namespace Transformalize.Core.Transform_
             _expression = new Expression(expression);
             if (!_expression.HasErrors()) return;
 
-            _log.Error("{0} | Expression '{1}' has errors: {2}", Process.Name, expression, _expression.Error);
+            _log.Error("Expression '{0}' has errors: {1}", expression, _expression.Error);
             System.Environment.Exit(0);
 
         }

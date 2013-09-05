@@ -73,7 +73,7 @@ namespace Transformalize.Run
 
             Timer.Stop();
 
-            Log.Info("{0} | Process completed in {1}.", arg, Timer.Elapsed);
+            Log.Info("Process completed in {0}.", Timer.Elapsed);
 
             if (_options.Mode != Modes.Test) return;
 

@@ -24,18 +24,19 @@ using Transformalize.Core.Fields_;
 using Transformalize.Core.Parameters_;
 using Transformalize.Core.Template_;
 using Transformalize.Core.Transform_;
+using Transformalize.Libs.NLog;
 using Transformalize.Providers;
 
 namespace Transformalize.Core.Process_ {
 
     public class Process {
 
-        public static Dictionary<string, Map> MapEquals = new Dictionary<string, Map>();
-        public static Dictionary<string, Map> MapStartsWith = new Dictionary<string, Map>();
-        public static Dictionary<string, Map> MapEndsWith = new Dictionary<string, Map>();
-        public static Dictionary<string, Script> Scripts = new Dictionary<string, Script>();
-        public static Dictionary<string, Template> Templates = new Dictionary<string, Template>();
-        public static string Name { get; set; }
+        public Dictionary<string, Map> MapEquals = new Dictionary<string, Map>();
+        public Dictionary<string, Map> MapStartsWith = new Dictionary<string, Map>();
+        public Dictionary<string, Map> MapEndsWith = new Dictionary<string, Map>();
+        public Dictionary<string, Script> Scripts = new Dictionary<string, Script>();
+        public Dictionary<string, Template> Templates = new Dictionary<string, Template>();
+        public string Name { get; set; }
         public static Dictionary<string, IConnection> Connections = new Dictionary<string, IConnection>();
         public static bool OutputRecordsExist;
         public static List<Entity> Entities { get; set; }
@@ -59,6 +60,8 @@ namespace Transformalize.Core.Process_ {
             Entities = new List<Entity>();
             Options = new Options();
             CalculatedFields = new Fields();
+
+            GlobalDiagnosticsContext.Set("process", name);
         }
 
         public static IFields OutputFields()

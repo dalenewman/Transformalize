@@ -15,8 +15,8 @@ namespace Transformalize.Libs.Rhino.Etl.Core {
         private readonly string _name;
         private IPipelineExecuter _pipelineExecuter = new ThreadPoolPipelineExecuter();
 
-        protected EtlProcess() {
-            _name = Process.Name;
+        protected EtlProcess(string name) {
+            _name = name;
         }
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace Transformalize.Libs.Rhino.Etl.Core {
             Initialize();
             MergeLastOperationsToOperations();
             RegisterToOperationsEvents();
-            Trace("{0} | Executing {1}", _name, Name);
+            Trace("Executing {0}", Name);
             PipelineExecuter.Execute(Name, operations, TranslateRows);
             PostProcessing();
         }
@@ -92,7 +92,7 @@ namespace Transformalize.Libs.Rhino.Etl.Core {
         /// </summary>
         /// <param name="op">The op.</param>
         protected virtual void OnFinishedProcessing(IOperation op) {
-            Trace("{0} | Finished {1}: {2}", _name, op.Name, op.Statistics);
+            Trace("Finished {0}: {1}", op.Name, op.Statistics);
         }
 
         /// <summary>
@@ -108,12 +108,17 @@ namespace Transformalize.Libs.Rhino.Etl.Core {
         /// <param name="dictionary">The dictionary.</param>
         protected virtual void OnRowProcessed(IOperation op, Row dictionary) {
             if (op.Statistics.OutputtedRows % 10000 == 0)
-                Info("{0} | Processed {1} rows in {2}", _name, op.Statistics.OutputtedRows, op.Name);
+                Info("Processed {0} rows in {1}", op.Statistics.OutputtedRows, op.Name);
             else {
-                if (op.Statistics.OutputtedRows % 1000 == 0)
-                    Debug("{0} | Processed {1} rows in {2}", _name, op.Statistics.OutputtedRows, op.Name);
+                if (op.Statistics.OutputtedRows%1000 == 0)
+                {
+                    Debug("Processed {0} rows in {1}", op.Statistics.OutputtedRows, op.Name);
+                }
                 else
-                    Trace("{0} | Processed {1} rows in {2}", _name, op.Statistics.OutputtedRows, op.Name);
+                {
+                    if (op.Statistics.OutputtedRows % 10 == 0)
+                        Trace("Processed {0} rows in {1}", op.Statistics.OutputtedRows, op.Name);
+                }
             }
         }
 

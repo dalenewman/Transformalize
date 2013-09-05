@@ -52,7 +52,7 @@ namespace Transformalize.Providers.SqlServer {
                 
                 Debug(createCommand.CommandText);
                 createCommand.ExecuteNonQuery();
-                Debug("{0} | Created Output {1}", Process.Name, _process.View);
+                Debug("Created Output {0}.", _process.View);
             }
         }
 

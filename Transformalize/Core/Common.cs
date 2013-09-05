@@ -72,9 +72,9 @@ namespace Transformalize.Core
             return v => v.Name.Equals(nameOrAlias, IC) || v.Alias.Equals(nameOrAlias, IC);
         }
 
-        public static string GetTemporaryFolder()
+        public static string GetTemporaryFolder(string processName)
         {
-            var folder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData).TrimEnd(Slash) + APPLICATION_FOLDER + Process.Name;
+            var folder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData).TrimEnd(Slash) + APPLICATION_FOLDER + processName;
 
             if (!Directory.Exists(folder))
                 Directory.CreateDirectory(folder);

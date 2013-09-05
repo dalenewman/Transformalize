@@ -59,7 +59,7 @@ namespace Transformalize.Providers.AnalysisServices
                 {
                     Server = string.Empty;
                     Database = string.Empty;
-                    _log.Warn("{0} | Could not parse Analysis Services connection string: {1}.", Process, ConnectionString);
+                    _log.Warn("Could not parse Analysis Services connection string: {0}.", ConnectionString);
                     _log.Debug(e.Message);
                 }
             }

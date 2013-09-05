@@ -80,12 +80,12 @@ namespace Transformalize.Providers.SqlServer
             if (!new SqlServerTableExists(cs).Exists("dbo", "TflBatch"))
             {
                 Execute(cs, CreateSql());
-                Debug("{0} | Created TflBatch.", Process.Name);
+                Debug("Created TflBatch.");
             }
 
-            Execute(cs, "DELETE FROM TflBatch WHERE ProcessName = '{0}';", Process.Name);
+            Execute(cs, "DELETE FROM TflBatch WHERE ProcessName = '{0}';", _process.Name);
 
-            Info("{0} | Initialized TrAnSfOrMaLiZeR.", Process.Name);
+            Info("Initialized TrAnSfOrMaLiZeR.");
         }
 
     }

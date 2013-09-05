@@ -34,7 +34,7 @@ namespace Transformalize.Processes
         private readonly ITflWriter _tflWriter;
         private readonly IViewWriter _viewWriter;
 
-        public InitializationProcess(Process process, ITflWriter tflWriter = null, IViewWriter viewWriter = null)
+        public InitializationProcess(Process process, ITflWriter tflWriter = null, IViewWriter viewWriter = null) : base(process.Name)
         {
             _process = process;
             _tflWriter = tflWriter ?? new SqlServerTflWriter(ref process);

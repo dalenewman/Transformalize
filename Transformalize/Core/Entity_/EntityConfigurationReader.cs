@@ -11,28 +11,28 @@ namespace Transformalize.Core.Entity_
 {
     public class EntityConfigurationReader : IEntityReader
     {
-        private readonly EntityConfigurationElement _element;
+        private readonly Process _process;
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
-        public EntityConfigurationReader(EntityConfigurationElement element)
+        public EntityConfigurationReader(Process process)
         {
-            _element = element;
+            _process = process;
         }
 
-        public Entity Read(int count)
+        public Entity Read(EntityConfigurationElement element, int count)
         {
             var entity = new Entity
                 {
-                    ProcessName = Process.Name,
-                    Schema = _element.Schema,
-                    Name = _element.Name,
-                    InputConnection = Process.Connections[_element.Connection],
+                    ProcessName = _process.Name,
+                    Schema = element.Schema,
+                    Name = element.Name,
+                    InputConnection = Process.Connections[element.Connection],
                     OutputConnection = Process.Connections["output"],
-                    Prefix = _element.Prefix == "Default" ? _element.Name.Replace(" ", string.Empty) : _element.Prefix,
-                    Group = _element.Group,
-                    Auto = _element.Auto,
-                    Alias = string.IsNullOrEmpty(_element.Alias) ? _element.Name : _element.Alias,
+                    Prefix = element.Prefix == "Default" ? element.Name.Replace(" ", string.Empty) : element.Prefix,
+                    Group = element.Group,
+                    Auto = element.Auto,
+                    Alias = string.IsNullOrEmpty(element.Alias) ? element.Name : element.Alias,
                 };
 
             if (entity.Auto)
@@ -44,11 +44,11 @@ namespace Transformalize.Core.Entity_
             }
 
             var pkIndex = 0;
-            foreach (FieldConfigurationElement pk in _element.PrimaryKey)
+            foreach (FieldConfigurationElement pk in element.PrimaryKey)
             {
                 var fieldType = count == 0 ? FieldType.MasterKey : FieldType.PrimaryKey;
 
-                var keyField = new FieldReader(entity, new FieldTransformParametersReader(pk.Alias), new EmptyParametersReader()).Read(pk, fieldType);
+                var keyField = new FieldReader(_process, entity, new FieldTransformParametersReader(pk.Alias), new EmptyParametersReader()).Read(pk, fieldType);
                 keyField.Index = pkIndex;
 
                 entity.PrimaryKey[pk.Alias] = keyField;
@@ -58,14 +58,14 @@ namespace Transformalize.Core.Entity_
             }
 
             var fieldIndex = 0;
-            foreach (FieldConfigurationElement f in _element.Fields)
+            foreach (FieldConfigurationElement f in element.Fields)
             {
-                var field = new FieldReader(entity, new FieldTransformParametersReader(f.Alias), new EmptyParametersReader()).Read(f);
+                var field = new FieldReader(_process, entity, new FieldTransformParametersReader(f.Alias), new EmptyParametersReader()).Read(f);
                 field.Index = fieldIndex;
 
                 foreach (XmlConfigurationElement x in f.Xml)
                 {
-                    var xmlField = new FieldReader(entity, new FieldTransformParametersReader(x.Alias), new EmptyParametersReader()).Read(x, f);
+                    var xmlField = new FieldReader(_process, entity, new FieldTransformParametersReader(x.Alias), new EmptyParametersReader()).Read(x, f);
                     field.InnerXml.Add(x.Alias, xmlField);
                 }
 
@@ -81,26 +81,26 @@ namespace Transformalize.Core.Entity_
                 fieldIndex++;
             }
 
-            if (entity.All.ContainsKey(_element.Version))
+            if (entity.All.ContainsKey(element.Version))
             {
-                entity.Version = entity.All[_element.Version];
+                entity.Version = entity.All[element.Version];
             }
             else
             {
-                if (entity.All.Any(kv => kv.Value.Name.Equals(_element.Version, IC)))
+                if (entity.All.Any(kv => kv.Value.Name.Equals(element.Version, IC)))
                 {
-                    entity.Version = entity.All.ToEnumerable().First(v => v.Name.Equals(_element.Version, IC));
+                    entity.Version = entity.All.ToEnumerable().First(v => v.Name.Equals(element.Version, IC));
                 }
                 else
                 {
-                    _log.Error("{0} | version field reference '{1}' is undefined in {2}.", Process.Name, _element.Version, _element.Name);
+                    _log.Error("version field reference '{0}' is undefined in {1}.", element.Version, element.Name);
                     Environment.Exit(0);
                 }
             }
 
-            foreach (FieldConfigurationElement field in _element.CalculatedFields)
+            foreach (FieldConfigurationElement field in element.CalculatedFields)
             {
-                entity.CalculatedFields.Add(field.Alias, new FieldReader(entity, new EntityTransformParametersReader(entity), new EntityParametersReader(entity)).Read(field));
+                entity.CalculatedFields.Add(field.Alias, new FieldReader(_process, entity, new EntityTransformParametersReader(entity), new EntityParametersReader(entity)).Read(field));
             }
 
             return entity;

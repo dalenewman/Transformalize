@@ -1,8 +1,5 @@
 using System.Collections.Generic;
 using Transformalize.Configuration;
-using Transformalize.Core.Field_;
-using Transformalize.Core.Fields_;
-using Transformalize.Core.Parameter_;
 using Transformalize.Core.Parameters_;
 using Transformalize.Core.Process_;
 using Transformalize.Core.Template_;
@@ -12,163 +9,160 @@ namespace Transformalize.Core.Transform_
 {
     public class TransformFactory
     {
+        private readonly Process _process;
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
-        private readonly TransformConfigurationElement _transform;
-        private readonly IParametersReader _parametersReader;
-        private readonly IParameters _parameters;
         
-        public TransformFactory(TransformConfigurationElement transform, ITransformParametersReader transformParametersReader, IParametersReader parametersReader)
+        public TransformFactory(Process process)
         {
-            _transform = transform;
-            _parametersReader = parametersReader;
-            _parameters = transformParametersReader.Read(transform);
+            _process = process;
         }
 
-        public AbstractTransform Create(string fieldName = "")
+        public AbstractTransform Create(TransformConfigurationElement element, ITransformParametersReader transformParametersReader, IParametersReader parametersReader, string fieldName = "")
         {
+            var parameters = transformParametersReader.Read(element);
             AbstractTransform transform = new EmptyTransform();
-            switch (_transform.Method.ToLower())
+            switch (element.Method.ToLower())
             {
                 case "convert":
-                    transform = new ConvertTransform(_transform.To, _parameters);
+                    transform = new ConvertTransform(element.To, parameters);
                     break;
 
                 case "replace":
-                    transform = new ReplaceTransform(_transform.OldValue, _transform.NewValue, _parameters);
+                    transform = new ReplaceTransform(element.OldValue, element.NewValue, parameters);
                     break;
 
                 case "regexreplace":
-                    transform = new RegexReplaceTransform(_transform.Pattern, _transform.Replacement, _transform.Count, _parameters);
+                    transform = new RegexReplaceTransform(element.Pattern, element.Replacement, element.Count, parameters);
                     break;
 
                 case "insert":
-                    transform = new InsertTransform(_transform.Index, _transform.Value, _parameters);
+                    transform = new InsertTransform(element.Index, element.Value, parameters);
                     break;
 
                 case "remove":
-                    transform = new RemoveTransform(_transform.StartIndex, _transform.Length, _parameters);
+                    transform = new RemoveTransform(element.StartIndex, element.Length, parameters);
                     break;
 
                 case "trimstart":
-                    transform = new TrimStartTransform(_transform.TrimChars, _parameters);
+                    transform = new TrimStartTransform(element.TrimChars, parameters);
                     break;
 
                 case "trimend":
-                    transform = new TrimEndTransform(_transform.TrimChars, _parameters);
+                    transform = new TrimEndTransform(element.TrimChars, parameters);
                     break;
 
                 case "trim":
-                    transform = new TrimTransform(_transform.TrimChars, _parameters);
+                    transform = new TrimTransform(element.TrimChars, parameters);
                     break;
 
                 case "substring":
-                    transform = new SubstringTransform(_transform.StartIndex, _transform.Length, _parameters);
+                    transform = new SubstringTransform(element.StartIndex, element.Length, parameters);
                     break;
 
                 case "left":
-                    transform = new LeftTransform(_transform.Length, _parameters);
+                    transform = new LeftTransform(element.Length, parameters);
                     break;
 
                 case "right":
-                    transform = new RightTransform(_transform.Length, _parameters);
+                    transform = new RightTransform(element.Length, parameters);
                     break;
 
                 case "map":
-                    var equals = Process.MapEquals[_transform.Map];
-                    var startsWith = Process.MapStartsWith.ContainsKey(_transform.Map)
-                        ? Process.MapStartsWith[_transform.Map]
+                    var equals = _process.MapEquals[element.Map];
+                    var startsWith = _process.MapStartsWith.ContainsKey(element.Map)
+                        ? _process.MapStartsWith[element.Map]
                         : new Map();
-                    var endsWith = Process.MapEndsWith.ContainsKey(_transform.Map)
-                        ? Process.MapEndsWith[_transform.Map]
+                    var endsWith = _process.MapEndsWith.ContainsKey(element.Map)
+                        ? _process.MapEndsWith[element.Map]
                         : new Map();
-                    transform = new MapTransform(new[] { @equals, startsWith, endsWith }, _parameters);
+                    transform = new MapTransform(new[] { @equals, startsWith, endsWith }, parameters);
                     break;
 
                 case "javascript":
                     var scripts = new Dictionary<string, Script>();
-                    foreach (TransformScriptConfigurationElement script in _transform.Scripts)
+                    foreach (TransformScriptConfigurationElement script in element.Scripts)
                     {
-                        scripts[script.Name] = Process.Scripts[script.Name];
+                        scripts[script.Name] = _process.Scripts[script.Name];
                     }
 
                     transform = 
-                        _parameters.Any()
-                            ? new JavascriptTransform(_transform.Script, _parameters, scripts)
-                            : new JavascriptTransform(_transform.Script, fieldName, scripts);
+                        parameters.Any()
+                            ? new JavascriptTransform(element.Script, parameters, scripts)
+                            : new JavascriptTransform(element.Script, fieldName, scripts);
                     break;
 
                 case "expression":
-                    transform = _parameters.Any()
-                        ? new ExpressionTransform(_transform.Expression, _parameters)
-                        : new ExpressionTransform(fieldName, _transform.Expression, _parameters);
+                    transform = parameters.Any()
+                        ? new ExpressionTransform(element.Expression, parameters)
+                        : new ExpressionTransform(fieldName, element.Expression, parameters);
                     break;
 
                 case "template":
 
                     var templates = new Dictionary<string, Template>();
-                    foreach (TransformTemplateConfigurationElement template in _transform.Templates)
+                    foreach (TransformTemplateConfigurationElement template in element.Templates)
                     {
-                        templates[template.Name] = Process.Templates[template.Name];
+                        templates[template.Name] = _process.Templates[template.Name];
                     }
 
                     transform = 
-                        _parameters.Any()
-                            ? new TemplateTransform(_transform.Template, _transform.Model, _parameters, templates)
-                            : new TemplateTransform(_transform.Template, fieldName, templates);
+                        parameters.Any()
+                            ? new TemplateTransform(element.Template, element.Model, parameters, templates)
+                            : new TemplateTransform(element.Template, fieldName, templates);
                     break;
 
                 case "padleft":
-                    transform = new PadLeftTransform(_transform.TotalWidth, _transform.PaddingChar[0], _parameters);
+                    transform = new PadLeftTransform(element.TotalWidth, element.PaddingChar[0], parameters);
                     break;
 
                 case "padright":
-                    transform = new PadRightTransform(_transform.TotalWidth, _transform.PaddingChar[0], _parameters);
+                    transform = new PadRightTransform(element.TotalWidth, element.PaddingChar[0], parameters);
                     break;
 
                 case "format":
-                    transform = new FormatTransform(_transform.Format, _parameters);
+                    transform = new FormatTransform(element.Format, parameters);
                     break;
 
                 case "dateformat":
-                    transform = new DateFormatTransform(_transform.Format, _parameters);
+                    transform = new DateFormatTransform(element.Format, parameters);
                     break;
 
                 case "toupper":
-                    transform = new ToUpperTransform(_parameters);
+                    transform = new ToUpperTransform(parameters);
                     break;
 
                 case "tolower":
-                    transform = new ToLowerTransform(_parameters);
+                    transform = new ToLowerTransform(parameters);
                     break;
 
                 case "concat":
-                    transform = new ConcatTransform(_parameters);
+                    transform = new ConcatTransform(parameters);
                     break;
 
                 case "join":
-                    transform = new JoinTransform(_transform.Separator, _parameters);
+                    transform = new JoinTransform(element.Separator, parameters);
                     break;
 
                 case "tolocaltime":
-                    transform = new ToLocalTimeTransform(_parameters);
+                    transform = new ToLocalTimeTransform(parameters);
                     break;
 
                 case "tojson":
-                    transform = new ToJsonTransform(_parameters);
+                    transform = new ToJsonTransform(parameters);
                     break;
 
                 case "fromxml":
-                    transform = new FromXmlTransform(fieldName, _parameters);
+                    transform = new FromXmlTransform(fieldName, parameters);
                     break;
             }
 
-            if (transform.RequiresParameters && !transform.Parameters.Any() || _transform.Parameter.Equals("*"))
+            if (transform.RequiresParameters && !transform.Parameters.Any() || element.Parameter.Equals("*"))
             {
-                transform.Parameters = _parametersReader.Read();
+                transform.Parameters = parametersReader.Read();
             }
 
             if(transform.Name == "Empty Transform")
-                _log.Warn("{0} | {1} method is undefined.  It will not be used.", Process.Name, _transform.Method );
+                _log.Warn("{0} method is undefined.  It will not be used.", element.Method );
             return transform;
 
         }

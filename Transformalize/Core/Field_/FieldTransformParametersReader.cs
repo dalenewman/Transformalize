@@ -29,13 +29,13 @@ namespace Transformalize.Core.Field_
             {
                 if (string.IsNullOrEmpty(p.Name))
                 {
-                    _log.Warn("{0} | The field {1} has a {2} transform parameter without a name attribute.  Field parameters require names and values.", Process.Name,  _name, transform.Method);
+                    _log.Warn("The field {0} has a {1} transform parameter without a name attribute.  Field parameters require names and values.", _name, transform.Method);
                     return new Parameters();
                 }
 
                 //if (string.IsNullOrEmpty(p.Value))
                 //{
-                //    _log.Warn("{0} | The field {1} has a {2} transform parameter without a value attribute.  Field parameters require names and values.", Process.Name, _name, transform.Method);
+                //    _log.Warn("The field {0} has a {1} transform parameter without a value attribute.  Field parameters require names and values.", _name, transform.Method);
                 //    return new Parameters();
                 //}
 

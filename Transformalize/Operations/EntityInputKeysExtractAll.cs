@@ -23,7 +23,7 @@ namespace Transformalize.Operations
             _fields = new FieldSqlWriter(entity.PrimaryKey).Alias().Keys();
             if (!_entity.EntityVersionReader.HasRows)
             {
-                Debug("{0} | No data detected in {1}.", _entity.ProcessName, _entity.Alias);
+                Debug("No data detected in {0}.", _entity.Alias);
             }
         }
 

@@ -56,22 +56,22 @@ namespace Transformalize.Providers.SqlServer {
         private string GetSystemType(string dataType) {
             var typeDefined = _dataTypeService.TypesReverse.ContainsKey(dataType);
             if (!typeDefined) {
-                _log.Warn("{0} | Transformalize hasn't mapped the SQL data type: {1} to a .NET data type.  It will default to string.", _entity.ProcessName, dataType);
+                _log.Warn("Transformalize hasn't mapped the SQL data type: {0} to a .NET data type.  It will default to string.", dataType);
             }
             return typeDefined ? _dataTypeService.TypesReverse[dataType] : "System.String";
         }
 
         public IFields ReadFields() {
             var fields = _fields.Where(f => f.FieldType.Equals(FieldType.Field)).ToDictionary(k => k.Alias, v => v);
-            _log.Debug("{0} | Entity auto found {0} field{2}.", _entity.ProcessName, fields.Count, fields.Count == 1 ? string.Empty : "s");
+            _log.Debug("Entity auto found {0} field{1}.", fields.Count, fields.Count == 1 ? string.Empty : "s");
             return new Fields(fields);
         }
 
         public IFields ReadPrimaryKey() {
             var primaryKey = _fields.Where(f => !f.FieldType.Equals(FieldType.Field)).ToDictionary(k => k.Alias, v => v);
-            _log.Debug("{0} | Entity auto found {0} primary key{2}.", _entity.ProcessName, primaryKey.Count, primaryKey.Count == 1 ? string.Empty : "s");
+            _log.Debug("Entity auto found {0} primary key{1}.", primaryKey.Count, primaryKey.Count == 1 ? string.Empty : "s");
             if (!primaryKey.Any())
-                _log.Warn("{0} | Entity auto could not find a primary key on {1}.  You will need to define one in <fields><primaryKey> element.", _entity.ProcessName, _entity.Name);
+                _log.Warn("Entity auto could not find a primary key on {0}.  You will need to define one in <fields><primaryKey> element.", _entity.Name);
             return new Fields(primaryKey);
         }
 

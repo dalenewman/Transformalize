@@ -30,7 +30,7 @@ namespace Transformalize.Processes
 
         private readonly Process _process;
 
-        public UpdateMasterProcess(ref Process process)
+        public UpdateMasterProcess(ref Process process) : base(process.Name)
         {
             _process = process;
         }

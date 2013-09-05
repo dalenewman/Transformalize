@@ -89,7 +89,7 @@ namespace Transformalize.Libs.NCalc
                 foreach (string key in keysToRemove)
                 {
                     _compiledExpressions.Remove(key);
-                    _log.Debug("{0} | Expression released from cache, key: {1}", Core.Process_.Process.Name, key);
+                    _log.Debug("Expression released from cache, key: {0}", key);
                     //Trace.TraceInformation("Cache entry released: " + key);
                 }
             }
@@ -114,7 +114,7 @@ namespace Transformalize.Libs.NCalc
                     if (_compiledExpressions.ContainsKey(expression))
                     {
                         //Trace.TraceInformation("Expression retrieved from cache: " + expression);
-                        _log.Trace("{0} | Expression retrieved from cache: {1}", Core.Process_.Process.Name, expression);
+                        _log.Trace("Expression retrieved from cache: {0}", expression);
                         var wr = _compiledExpressions[expression];
                         logicalExpression = wr.Target as LogicalExpression;
                     
@@ -156,7 +156,7 @@ namespace Transformalize.Libs.NCalc
 
                     CleanCache();
 
-                    _log.Debug("{0} | Expression added to cache: {1}", Core.Process_.Process.Name, expression);
+                    _log.Debug("Expression added to cache: {0}", expression);
                     //Trace.TraceInformation("Expression added to cache: " + expression);
                 }
             }

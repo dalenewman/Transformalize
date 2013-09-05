@@ -32,9 +32,9 @@ namespace Transformalize.Core.Entity_ {
         public void Count() {
             foreach (var entity in Process.Entities) {
                 entity.InputCount = _entityCounter.CountInput(entity);
-                Info("{0} | Entity {1} input has {2} records.", Process.Name, entity.Alias, entity.InputCount);
+                Info("Entity {0} input has {1} records.", entity.Alias, entity.InputCount);
                 entity.OutputCount = _entityCounter.CountOutput(entity);
-                Info("{0} | Entity {1} output has {2} records.", Process.Name, entity.Alias, entity.OutputCount);
+                Info("Entity {0} output has {1} records.", entity.Alias, entity.OutputCount);
             }
         }
     }

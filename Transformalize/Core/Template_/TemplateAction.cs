@@ -6,6 +6,7 @@ namespace Transformalize.Core.Template_
     {
         public string Action;
         public string File;
+        public string RenderedFile;
         public string Method;
         public string Url;
         public string From;

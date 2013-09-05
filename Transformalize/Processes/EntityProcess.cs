@@ -32,11 +32,10 @@ namespace Transformalize.Processes
 
     public class EntityProcess : EtlProcess
     {
-
         private Entity _entity;
         private readonly IFields _fieldsWithTransforms;
 
-        public EntityProcess(Entity entity, IEntityBatch entityBatch = null)
+        public EntityProcess(Process process, Entity entity, IEntityBatch entityBatch = null) : base(process.Name)
         {
             _entity = entity;
             _entity.TflBatchId = (entityBatch ?? new SqlServerEntityBatch()).GetNext(_entity);

@@ -6,18 +6,24 @@ namespace Transformalize.Core.Template_
 {
     public class TemplateManager
     {
+        private readonly Process _process;
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly char[] _trim = new[] { '\\' };
+
+        public TemplateManager(Process process)
+        {
+            _process = process;
+        }
 
         public void Manage()
         {
 
-            var folder = Common.GetTemporaryFolder();
+            var folder = Common.GetTemporaryFolder(_process.Name);
 
-            foreach (var pair in Process.Templates)
+            foreach (var pair in _process.Templates)
             {
                 var result = pair.Value.Render();
-                _log.Info("{0} | Rendered {1} template.", Process.Name, pair.Value.Name);
+                _log.Debug("Rendered {0} template.", pair.Value.Name);
 
                 var renderedInfo = new FileInfo(folder.TrimEnd(_trim) + @"\" + pair.Value.Name + ".temp.txt");
                 File.WriteAllText(renderedInfo.FullName, result);
@@ -27,19 +33,19 @@ namespace Transformalize.Core.Template_
 
                 foreach (var action in pair.Value.Actions)
                 {
-
+                    action.RenderedFile = renderedInfo.FullName;
                     switch (action.Action.ToLower())
                     {
                         case "copy":
-                            new TemplateActionCopy(renderedInfo.FullName).Handle(action);
+                            new TemplateActionCopy().Handle(action);
                             break;
 
                         case "open":
-                            new TemplateActionOpen(renderedInfo.FullName).Handle(action);
+                            new TemplateActionOpen().Handle(action);
                             break;
 
                         case "run":
-                            new TemplateActionRun(renderedInfo.FullName).Handle(action);
+                            new TemplateActionRun().Handle(action);
                             break;
 
                         case "web":
@@ -47,7 +53,7 @@ namespace Transformalize.Core.Template_
                             break;
 
                         default:
-                            _log.Warn("{0} | The {1} action is not implemented.", Process.Name, action.Action);
+                            _log.Warn("The {0} action is not implemented.", action.Action);
                             break;
 
                     }

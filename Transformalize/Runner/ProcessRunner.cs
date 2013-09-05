@@ -7,6 +7,7 @@ using Transformalize.Core.Entity_;
 using Transformalize.Core.Field_;
 using Transformalize.Core.Process_;
 using Transformalize.Core.Template_;
+using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Core.Pipelines;
 using Transformalize.Processes;
 using Transformalize.Providers.SqlServer;
@@ -32,7 +33,7 @@ namespace Transformalize.Runner
                     new InitializationProcess(_process).Execute();
                     break;
                 case Modes.Metadata:
-                    var fileName = new FileInfo(Path.Combine(Common.GetTemporaryFolder(), "MetaData.xml")).FullName;
+                    var fileName = new FileInfo(Path.Combine(Common.GetTemporaryFolder(_process.Name), "MetaData.xml")).FullName;
                     File.WriteAllText(fileName, GetMetaData(), Encoding.UTF8);
                     System.Diagnostics.Process.Start(fileName);
                     break;
@@ -99,10 +100,10 @@ namespace Transformalize.Runner
                 f.Value.SimpleType == "decimal" && f.Value.Scale > 0 ? "scale=\"" + f.Value.Scale + "\"" : string.Empty);
         }
 
-        private static void RenderTemplates()
+        private void RenderTemplates()
         {
             if (Process.Options.RenderTemplates)
-                new TemplateManager().Manage();
+                new TemplateManager(_process).Manage();
         }
 
         private void ProcessTransforms()
@@ -127,9 +128,9 @@ namespace Transformalize.Runner
             updateMasterProcess.Execute();
         }
 
-        private static void ProcessEntities()
+        private void ProcessEntities()
         {
-            foreach (var entityProcess in Process.Entities.Select(entity => new EntityProcess(entity)))
+            foreach (var entityProcess in Process.Entities.Select(entity => new EntityProcess(_process, entity)))
             {
                 if (Process.Options.Mode == Modes.Test)
                     entityProcess.PipelineExecuter = new SingleThreadedNonCachedPipelineExecuter();

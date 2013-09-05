@@ -10,12 +10,14 @@ namespace Transformalize.Core.Field_
 {
     public class FieldReader : IFieldReader
     {
+        private readonly Process _process;
         private readonly ITransformParametersReader _transformParametersReader;
         private readonly IParametersReader _parametersReader;
         private readonly Entity _entity;
 
-        public FieldReader(Entity entity, ITransformParametersReader transformParametersReader, IParametersReader parametersReader)
+        public FieldReader(Process process, Entity entity, ITransformParametersReader transformParametersReader, IParametersReader parametersReader)
         {
+            _process = process;
             _transformParametersReader = transformParametersReader;
             _parametersReader = parametersReader;
             _entity = entity ?? new Entity();
@@ -24,7 +26,7 @@ namespace Transformalize.Core.Field_
         public Field Read(FieldConfigurationElement element, FieldType fieldType = FieldType.Field)
         {
             var field = new Field(element.Type, element.Length, fieldType, element.Output, element.Default) {
-                Process = Process.Name,
+                Process = _process.Name,
                 Entity = _entity.Alias,
                 Schema = _entity.Schema,
                 Name = element.Name,
@@ -69,7 +71,7 @@ namespace Transformalize.Core.Field_
         {
             foreach (TransformConfigurationElement t in transformElements)
             {
-                field.Transforms.Add(new TransformFactory(t, _transformParametersReader, _parametersReader).Create(field.Alias));
+                field.Transforms.Add(new TransformFactory(_process).Create(t, _transformParametersReader, _parametersReader, field.Alias));
             }
         }
 

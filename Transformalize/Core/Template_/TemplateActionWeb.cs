@@ -12,16 +12,16 @@ namespace Transformalize.Core.Template_
                 var response = method == "post" ? Web.Post(action.Url, string.Empty) : Web.Get(action.Url);
                 if (response.Code == HttpStatusCode.OK)
                 {
-                    Log.Info("{0} | Made web request to {1}.", action.ProcessName, action.Url);
+                    Log.Info("Made web request to {0}.", action.Url);
                 }
                 else
                 {
-                    Log.Warn("{0} | Web request to {1} returned {2}.", action.ProcessName, action.Url, response.Code);
+                    Log.Warn("Web request to {0} returned {1}.", action.Url, response.Code);
                 }
             }
             else
             {
-                Log.Warn("{0} | Missing url for web action.", action.ProcessName);
+                Log.Warn("Missing url for web action.");
             }
         }
     }

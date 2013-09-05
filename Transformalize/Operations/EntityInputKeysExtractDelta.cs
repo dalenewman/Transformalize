@@ -40,13 +40,13 @@ namespace Transformalize.Operations {
             _fields = _entity.PrimaryKey.ToEnumerable().Select(f => f.Alias);
 
             if (!_entity.EntityVersionReader.HasRows) {
-                Debug("{0} | No data detected in {1}.", _entity.ProcessName, _entity.Alias);
+                Debug("No data detected in {0}.", _entity.Alias);
             }
 
             if (!_entity.EntityVersionReader.IsRange) return;
 
             if (_entity.EntityVersionReader.BeginAndEndAreEqual()) {
-                Debug("{0} | No changes detected in {1}.", _entity.ProcessName, _entity.Alias);
+                Debug("No changes detected in {0}.", _entity.Alias);
             }
         }
 

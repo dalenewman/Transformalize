@@ -29,7 +29,7 @@ namespace Transformalize.Core.Entity_
             {
                 if (string.IsNullOrEmpty(p.Field) && (string.IsNullOrEmpty(p.Name) || string.IsNullOrEmpty(p.Value)))
                 {
-                    _log.Warn("{0} | The entity {1} has a {2} transform parameter without a field attribute, or name and value attributes.  Entity parameters require one or the other.", _entity.ProcessName, _entity.Alias, transform.Method);
+                    _log.Warn("The entity {0} has a {1} transform parameter without a field attribute, or name and value attributes.  Entity parameters require one or the other.", _entity.Alias, transform.Method);
                     return new Parameters();
                 }
 
@@ -44,7 +44,7 @@ namespace Transformalize.Core.Entity_
                     }
                     else
                     {
-                        _log.Warn("{0} | The entity {1} has a {2} transform parameter that references field {3}.  This field doesn't exist in {1}.", _entity.ProcessName, _entity.Alias, transform.Method, p.Field);
+                        _log.Warn("The entity {0} has a {1} transform parameter that references field {2}.  This field doesn't exist in {0}.", _entity.Alias, transform.Method, p.Field);
                         return new Parameters();
                     }
                 }

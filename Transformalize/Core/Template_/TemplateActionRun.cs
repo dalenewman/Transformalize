@@ -5,16 +5,9 @@ namespace Transformalize.Core.Template_
 {
     public class TemplateActionRun : TemplateActionHandler
     {
-        private readonly string _fileName;
-
-        public TemplateActionRun(string fileName)
-        {
-            _fileName = fileName;
-        }
-
         public override void Handle(TemplateAction action)
         {
-            var fileInfo = new FileInfo(_fileName);
+            var fileInfo = new FileInfo(action.RenderedFile);
             if (fileInfo.Exists)
             {
                 var script = File.ReadAllText(fileInfo.FullName);
@@ -23,11 +16,12 @@ namespace Transformalize.Core.Template_
                     var response = action.Connection.ScriptRunner.Execute(script);
                     if (response.Success)
                     {
-                        Log.Info("{0} | {1} ran. It affected {2} rows.", Process.Name, action.TemplateName, response.RowsAffected < 0 ? 0 : response.RowsAffected);
+                        Log.Info("{0} ran successfully.", action.TemplateName);
+                        Log.Debug("{0} affected {1} rows.", action.TemplateName, response.RowsAffected < 0 ? 0 : response.RowsAffected);
                     }
                     else
                     {
-                        Log.Warn("{0} | {1} failed", Process.Name, action.TemplateName);
+                        Log.Warn("{0} failed", action.TemplateName);
                         foreach (var message in response.Messages)
                         {
                             Log.Warn(message);
@@ -36,12 +30,12 @@ namespace Transformalize.Core.Template_
                 }
                 else
                 {
-                    Log.Warn("{0} | {1} is empty.", Process.Name, action.TemplateName);
+                    Log.Warn("{0} is empty.", action.TemplateName);
                 }
             }
             else
             {
-                Log.Warn("{0} | rendered output from {1} is not available.  It will not run.", Process.Name, action.TemplateName);
+                Log.Warn("rendered output from {0} is not available.  It will not run.", action.TemplateName);
             }
             
         }

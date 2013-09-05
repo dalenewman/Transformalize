@@ -48,7 +48,7 @@ namespace Transformalize.Operations {
         }
 
         protected override void OnSqlRowsCopied(object sender, SqlRowsCopiedEventArgs e) {
-           Info("{0} | Processed {1} rows in EntityBulkInsert", _entity.ProcessName, e.RowsCopied);
+           Info("Processed {0} rows in EntityBulkInsert", e.RowsCopied);
         }
 
     }
