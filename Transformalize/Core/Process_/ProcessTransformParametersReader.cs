@@ -12,15 +12,16 @@ namespace Transformalize.Core.Process_
     public class ProcessTransformParametersReader : ITransformParametersReader
     {
         private readonly Process _process;
+        private readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private readonly char[] _dotArray = new[] { '.' };
+        private readonly Field[] _fields;
 
         public ProcessTransformParametersReader(Process process)
         {
             _process = process;
+            _fields = _process.OutputFields().ToEnumerable().ToArray();
         }
 
-        private readonly Logger _log = LogManager.GetCurrentClassLogger();
-        private readonly char[] _dotArray = new[] { '.' };
-        private readonly Field[] _fields = Process.OutputFields().ToEnumerable().ToArray();
 
         public Parameters Read(TransformConfigurationElement transform)
         {
@@ -54,7 +55,7 @@ namespace Transformalize.Core.Process_
 
                 if (!string.IsNullOrEmpty(p.Field))
                 {
-                    var fields = Process.OutputFields();
+                    var fields = _process.OutputFields();
                     if (fields.Any(Common.FieldFinder(p)))
                     {
                         var field = fields.Last(Common.FieldFinder(p)).Value;

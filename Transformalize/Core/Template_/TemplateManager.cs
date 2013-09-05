@@ -28,7 +28,7 @@ namespace Transformalize.Core.Template_
                 var renderedInfo = new FileInfo(folder.TrimEnd(_trim) + @"\" + pair.Value.Name + ".temp.txt");
                 File.WriteAllText(renderedInfo.FullName, result);
 
-                if (!Process.Options.PerformTemplateActions)
+                if (!_process.Options.PerformTemplateActions)
                     continue;
 
                 foreach (var action in pair.Value.Actions)

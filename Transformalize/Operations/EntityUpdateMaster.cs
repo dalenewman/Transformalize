@@ -20,9 +20,11 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using Transformalize.Core;
 using Transformalize.Core.Entity_;
 using Transformalize.Core.Field_;
 using Transformalize.Core.Process_;
+using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
 
@@ -33,6 +35,7 @@ namespace Transformalize.Operations
         private readonly Entity _entity;
 
         public EntityUpdateMaster(Process process, Entity entity) {
+            GlobalDiagnosticsContext.Set("entity", Common.LogLength(entity.Alias, 20));
             _process = process;
             _entity = entity;
             UseTransaction = false;
@@ -46,7 +49,8 @@ namespace Transformalize.Operations
             if (_entity.RecordsAffected == 0)
                 return rows;
 
-            if (Process.OutputRecordsExist || _entity.HasForeignKeys()) {
+            if (_process.OutputRecordsExist || _entity.HasForeignKeys())
+            {
                 using (var cn = new SqlConnection(_process.MasterEntity.OutputConnection.ConnectionString)) {
                     cn.Open();
                     var cmd = new SqlCommand(PrepareSql(), cn) {CommandTimeout = 0};
@@ -69,7 +73,7 @@ namespace Transformalize.Operations
 
             var master = string.Format("[{0}]", masterEntity.OutputName());
             var source = string.Format("[{0}]", _entity.OutputName());
-            var sets = Process.OutputRecordsExist ?
+            var sets = _process.OutputRecordsExist ?
                 new FieldSqlWriter(_entity.Fields).FieldType(FieldType.ForeignKey).AddBatchId(false).Alias().Set(master, source).Write(",\r\n    ") :
                 new FieldSqlWriter(_entity.Fields).FieldType(FieldType.ForeignKey).Alias().Set(master, source).Write(",\r\n    ");
 

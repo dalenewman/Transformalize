@@ -19,9 +19,9 @@ namespace Transformalize.Operations
             : base(entity.InputConnection.ConnectionString)
         {
             _entity = entity;
-            _entity.End = _entity.EntityVersionReader.GetEndVersion();
+            _entity.InputConnection.LoadEndVersion(_entity);
             _fields = new FieldSqlWriter(entity.PrimaryKey).Alias().Keys();
-            if (!_entity.EntityVersionReader.HasRows)
+            if (!_entity.HasRows)
             {
                 Debug("No data detected in {0}.", _entity.Alias);
             }

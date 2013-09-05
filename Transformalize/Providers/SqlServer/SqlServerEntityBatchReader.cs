@@ -1,4 +1,4 @@
-﻿/*
+/*
 Transformalize - Replicate, Transform, and Denormalize Your Data...
 Copyright (C) 2013 Dale Newman
 
@@ -16,22 +16,20 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using NUnit.Framework;
-using Transformalize.Core;
-using Transformalize.Core.Process_;
-using Transformalize.Runner;
+using System.Data.SqlClient;
+using Transformalize.Core.Entity_;
 
-namespace Transformalize.Test.Integration {
-    [TestFixture]
-    public class EsTest {
+namespace Transformalize.Providers.SqlServer
+{
+    public class SqlServerEntityBatchReader : IEntityBatchReader {
 
-        [Test]
-        public void Go()
-        {
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(@"c:\etl\rhinoetl\tfl\Es.xml").Read()).Read();
-            Process.Options = new Options("{'mode':'test','top':1,'loglevel':'trace'}");
-            new ProcessRunner(process).Run();
+        public int ReadNext(Entity entity) {
+            using (var cn = new SqlConnection(entity.OutputConnection.ConnectionString)) {
+                cn.Open();
+                var cmd = new SqlCommand("SELECT ISNULL(MAX(TflBatchId),0)+1 FROM [dbo].[TflBatch] WHERE ProcessName = @ProcessName;", cn);
+                cmd.Parameters.Add(new SqlParameter("@ProcessName", entity.ProcessName));
+                return (int)cmd.ExecuteScalar();
+            }
         }
-
     }
 }

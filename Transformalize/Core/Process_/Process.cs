@@ -25,28 +25,29 @@ using Transformalize.Core.Parameters_;
 using Transformalize.Core.Template_;
 using Transformalize.Core.Transform_;
 using Transformalize.Libs.NLog;
+using Transformalize.Libs.RazorEngine.Core;
 using Transformalize.Providers;
 
 namespace Transformalize.Core.Process_ {
 
     public class Process {
 
+        public string Name;
+        public string View;
+        public Encoding TemplateContentType = Encoding.Raw;
         public Dictionary<string, Map> MapEquals = new Dictionary<string, Map>();
         public Dictionary<string, Map> MapStartsWith = new Dictionary<string, Map>();
         public Dictionary<string, Map> MapEndsWith = new Dictionary<string, Map>();
         public Dictionary<string, Script> Scripts = new Dictionary<string, Script>();
         public Dictionary<string, Template> Templates = new Dictionary<string, Template>();
-        public string Name { get; set; }
-        public static Dictionary<string, IConnection> Connections = new Dictionary<string, IConnection>();
-        public static bool OutputRecordsExist;
-        public static List<Entity> Entities { get; set; }
-        public static IFields CalculatedFields { get; set; }
-
-        public Entity MasterEntity { get; set; }
-        public static Options Options { get; set; }
+        public Dictionary<string, IConnection> Connections = new Dictionary<string, IConnection>();
+        public bool OutputRecordsExist;
+        public List<Entity> Entities = new List<Entity>();
+        public IFields CalculatedFields = new Fields();
+        public Entity MasterEntity;
+        public Options Options = new Options();
         public List<Relationship> Relationships = new List<Relationship>();
         public IEnumerable<Field> RelatedKeys;
-        public string View;
         
         public bool IsReady() {
             return Connections.Select(connection => connection.Value.IsReady()).All(b => b.Equals(true));
@@ -57,14 +58,10 @@ namespace Transformalize.Core.Process_ {
         public Process(string name)
         {
             Name = name;
-            Entities = new List<Entity>();
-            Options = new Options();
-            CalculatedFields = new Fields();
-
             GlobalDiagnosticsContext.Set("process", name);
         }
 
-        public static IFields OutputFields()
+        public IFields OutputFields()
         {
             var fields = new Fields();
             foreach (var entity in Entities)

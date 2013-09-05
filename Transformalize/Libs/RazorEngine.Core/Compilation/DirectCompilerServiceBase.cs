@@ -112,7 +112,7 @@ namespace Transformalize.Libs.RazorEngine.Core.Compilation
                 {
                     _log.Error(error.ToString().Split(':').Last().Trim(' '));
                 }
-                Environment.Exit(0);
+                Environment.Exit(1);
                 //throw new TemplateCompilationException(compileResult.Errors, result.Item2, context.TemplateContent);
             }
 

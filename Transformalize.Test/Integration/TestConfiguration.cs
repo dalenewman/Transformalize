@@ -56,12 +56,12 @@ namespace Transformalize.Test.Integration {
         public void TestProcessReader() {
 
             Assert.AreEqual("Test", _process.Name);
-            Assert.AreEqual("Data Source=localhost;Initial Catalog=TestInput;Integrated Security=True", Process.Connections["input"].ConnectionString);
-            Assert.AreEqual("Data Source=localhost;Initial Catalog=TestOutput;Integrated Security=True", Process.Connections["output"].ConnectionString);
-            Assert.AreEqual("Data Source=localhost;Initial Catalog=TestInput;Integrated Security=True", Process.Entities.First().InputConnection.ConnectionString);
-            Assert.AreEqual("OrderDetailKey", Process.Entities.First().PrimaryKey["OrderDetailKey"].Alias);
-            Assert.AreEqual("ProductKey", Process.Entities.First().Fields["ProductKey"].Alias);
-            Assert.AreEqual("RowVersion", Process.Entities.First().Version.Alias);
+            Assert.AreEqual("Data Source=localhost;Initial Catalog=TestInput;Integrated Security=True", _process.Connections["input"].ConnectionString);
+            Assert.AreEqual("Data Source=localhost;Initial Catalog=TestOutput;Integrated Security=True", _process.Connections["output"].ConnectionString);
+            Assert.AreEqual("Data Source=localhost;Initial Catalog=TestInput;Integrated Security=True",_process.Entities.First().InputConnection.ConnectionString);
+            Assert.AreEqual("OrderDetailKey",_process.Entities.First().PrimaryKey["OrderDetailKey"].Alias);
+            Assert.AreEqual("ProductKey",_process.Entities.First().Fields["ProductKey"].Alias);
+            Assert.AreEqual("RowVersion",_process.Entities.First().Version.Alias);
 
             Assert.AreEqual("OrderDetail", _process.Relationships[0].LeftEntity.Alias);
             Assert.AreEqual("Order", _process.Relationships[0].RightEntity.Alias);
@@ -69,10 +69,10 @@ namespace Transformalize.Test.Integration {
             Assert.AreEqual("OrderKey", _process.Relationships[0].Join[0].RightField.Name);
 
             Assert.AreEqual(3, _process.RelatedKeys.Count());
-            Assert.AreEqual(0, Process.Entities.First().RelationshipToMaster.Count());
-            Assert.AreEqual(1, Process.Entities.First(e => e.Alias.Equals("Product")).RelationshipToMaster.Count());
-            Assert.AreEqual(1, Process.Entities.First(e => e.Alias.Equals("Order")).RelationshipToMaster.Count());
-            Assert.AreEqual(2, Process.Entities.First(e => e.Alias.Equals("Customer")).RelationshipToMaster.Count());
+            Assert.AreEqual(0,_process.Entities.First().RelationshipToMaster.Count());
+            Assert.AreEqual(1,_process.Entities.First(e => e.Alias.Equals("Product")).RelationshipToMaster.Count());
+            Assert.AreEqual(1,_process.Entities.First(e => e.Alias.Equals("Order")).RelationshipToMaster.Count());
+            Assert.AreEqual(2,_process.Entities.First(e => e.Alias.Equals("Customer")).RelationshipToMaster.Count());
 
         }
 

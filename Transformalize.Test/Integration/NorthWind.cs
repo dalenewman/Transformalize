@@ -17,18 +17,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using NUnit.Framework;
+using Transformalize.Core;
 using Transformalize.Core.Process_;
 using Transformalize.Runner;
 
 namespace Transformalize.Test.Integration {
     [TestFixture]
-    public class NorthWindNormal {
+    public class NorthWind {
 
         [Test]
-        public void Go() {
+        public void Init() {
+            var process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.xml").Read()).Read();
+            process.Options = new Options { Mode = Modes.Initialize };
+            new ProcessRunner(process).Run();
+        }
+
+        [Test]
+        public void Normal()
+        {
             var process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.xml").Read()).Read();
             new ProcessRunner(process).Run();
         }
+
+
 
     }
 }

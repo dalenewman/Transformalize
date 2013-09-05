@@ -22,15 +22,17 @@ using Transformalize.Providers.SqlServer;
 
 namespace Transformalize.Core.Entity_ {
     public class EntityCounter : WithLoggingMixin {
-
+        private readonly Process _process;
         private readonly IEntityCounter _entityCounter;
 
-        public EntityCounter(IEntityCounter entityCounter = null) {
+        public EntityCounter(Process process, IEntityCounter entityCounter = null)
+        {
+            _process = process;
             _entityCounter = entityCounter ?? new SqlServerEntityCounter(new SqlServerConnectionChecker());
         }
 
         public void Count() {
-            foreach (var entity in Process.Entities) {
+            foreach (var entity in _process.Entities) {
                 entity.InputCount = _entityCounter.CountInput(entity);
                 Info("Entity {0} input has {1} records.", entity.Alias, entity.InputCount);
                 entity.OutputCount = _entityCounter.CountOutput(entity);

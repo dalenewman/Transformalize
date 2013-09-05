@@ -27,25 +27,25 @@ using Transformalize.Libs.Rhino.Etl.Core.Operations;
 
 namespace Transformalize.Operations {
     public class EntityInputKeysExtractDelta : InputCommandOperation {
-
+        private readonly Process _process;
         private readonly Entity _entity;
         private readonly IEnumerable<string> _fields;
 
-        public EntityInputKeysExtractDelta(Entity entity)
+        public EntityInputKeysExtractDelta(Process process, Entity entity)
             : base(entity.InputConnection.ConnectionString) {
-
+            _process = process;
             _entity = entity;
-            _entity.Begin = _entity.EntityVersionReader.GetBeginVersion();
-            _entity.End = _entity.EntityVersionReader.GetEndVersion();
             _fields = _entity.PrimaryKey.ToEnumerable().Select(f => f.Alias);
 
-            if (!_entity.EntityVersionReader.HasRows) {
+            _entity.CheckDelta();
+
+            if (!_entity.HasRows) {
                 Debug("No data detected in {0}.", _entity.Alias);
             }
 
-            if (!_entity.EntityVersionReader.IsRange) return;
+            if (!_entity.HasRange) return;
 
-            if (_entity.EntityVersionReader.BeginAndEndAreEqual()) {
+            if (_entity.BeginAndEndAreEqual()) {
                 Debug("No changes detected in {0}.", _entity.Alias);
             }
         }
@@ -61,10 +61,10 @@ namespace Transformalize.Operations {
 
         protected override void PrepareCommand(IDbCommand cmd) {
             cmd.CommandTimeout = 0;
-            cmd.CommandText = PrepareSql(_entity.EntityVersionReader.IsRange);
+            cmd.CommandText = PrepareSql(_entity.HasRange);
             cmd.CommandType = CommandType.Text;
 
-            if (_entity.EntityVersionReader.IsRange)
+            if (_entity.HasRange)
                 cmd.Parameters.Add(new SqlParameter("@Begin", _entity.Begin));
             cmd.Parameters.Add(new SqlParameter("@End", _entity.End));
         }
@@ -72,7 +72,7 @@ namespace Transformalize.Operations {
         public string PrepareSql(bool isRange) {
             const string sqlPattern = "SELECT {0}{1}\r\nFROM [{2}].[{3}] WITH (NOLOCK)\r\nWHERE {4}\r\nORDER BY {5};";
             var criteria = string.Format(isRange ? "[{0}] BETWEEN @Begin AND @End" : "[{0}] <= @End", _entity.Version.Name);
-            var top = Process.Options.Top > 0 ? "TOP " + Process.Options.Top + " " : string.Empty;
+            var top = _process.Options.Top > 0 ? "TOP " + _process.Options.Top + " " : string.Empty;
             return string.Format(sqlPattern, top, string.Join(", ", _entity.SelectKeys()), _entity.Schema, _entity.Name, criteria, string.Join(", ",_entity.OrderByKeys()));
         }
 

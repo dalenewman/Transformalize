@@ -16,17 +16,25 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Data;
+using Transformalize.Core.Entity_;
+
 namespace Transformalize.Providers
 {
     public interface IConnection {
         int BatchSize { get; set; }
         string ConnectionString { get; }
         bool IsReady();
+        string Name { get; }
         string Database { get; }
         string Server { get; }
+        string Provider { get; }
         int CompatibilityLevel { get; }
         ConnectionType ConnectionType { get; set; }
         string Process { get; set; }
         IScriptRunner ScriptRunner { get; }
+        IDbConnection GetConnection();
+        void LoadEndVersion(Entity entity);
+        void LoadBeginVersion(Entity entity);
     }
 }

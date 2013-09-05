@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System.Linq;
 using Transformalize.Core;
 using Transformalize.Core.Process_;
+using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Operations;
 using Transformalize.Providers;
@@ -36,6 +37,8 @@ namespace Transformalize.Processes
 
         public InitializationProcess(Process process, ITflWriter tflWriter = null, IViewWriter viewWriter = null) : base(process.Name)
         {
+            GlobalDiagnosticsContext.Set("entity", Common.LogLength("All", 3));
+
             _process = process;
             _tflWriter = tflWriter ?? new SqlServerTflWriter(ref process);
             _viewWriter = viewWriter ?? new SqlServerViewWriter(process);
@@ -46,7 +49,7 @@ namespace Transformalize.Processes
 
         protected override void Initialize()
         {
-            foreach (var entity in Process.Entities)
+            foreach (var entity in _process.Entities)
             {
                 Register(new EntityDrop(entity));
                 Register(new EntityCreate(entity, _process));
@@ -63,7 +66,7 @@ namespace Transformalize.Processes
                 {
                     Error(error.InnerException, "Message: {0}\r\nStackTrace:{1}\r\n", error.Message, error.StackTrace);
                 }
-                throw new TransformalizeException("Initialization Error!");
+                System.Environment.Exit(1);
             }
 
             _viewWriter.Create();

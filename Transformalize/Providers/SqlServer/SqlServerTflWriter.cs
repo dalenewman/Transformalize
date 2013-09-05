@@ -62,7 +62,8 @@ namespace Transformalize.Providers.SqlServer
 	                [TflUpdate] DATETIME NOT NULL,
                     [Rows] BIGINT NOT NULL,
 					CONSTRAINT Pk_TflBatch_TflBatchId PRIMARY KEY (
-						TflBatchId
+						TflBatchId,
+                        ProcessName
 					)
                 );
 

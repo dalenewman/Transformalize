@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Linq;
 using Transformalize.Core;
+using Transformalize.Core.Entity_;
 using Transformalize.Core.Process_;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Core;
@@ -26,30 +27,34 @@ using Transformalize.Operations;
 
 namespace Transformalize.Processes
 {
-
-    public class UpdateMasterProcess : EtlProcess
+    public class EntityKeysProcess : EtlProcess
     {
-
         private readonly Process _process;
+        private readonly Entity _entity;
 
-        public UpdateMasterProcess(ref Process process) : base(process.Name)
+        public EntityKeysProcess(Process process, Entity entity, IEntityBatchReader entityBatchReader) : base(process.Name)
         {
-            GlobalDiagnosticsContext.Set("entity", Common.LogLength("All",20));
+            GlobalDiagnosticsContext.Set("entity", Common.LogLength(entity.Alias,20));
             _process = process;
+            _entity = entity;
+            _entity.TflBatchId = entityBatchReader.ReadNext(_entity);
         }
 
         protected override void Initialize()
         {
-            var last = _process.Entities.Last().Alias;
-            foreach (var entity in _process.Entities)
+            if (_process.OutputRecordsExist && _process.Options.UseBeginVersion)
             {
-                if (entity.Alias.Equals(last))
-                    RegisterLast(new EntityUpdateMaster(_process, entity));
-                else
-                {
-                    Register(new EntityUpdateMaster(_process, entity));
-                }
+                var operation = new EntityInputKeysExtractDelta(_process, _entity);
+                if(operation.NeedsToRun())
+                    Register(operation);
             }
+            else
+            {
+                Register(new EntityInputKeysExtractAll(_entity));
+            }
+
+            Register(new EntityInputKeysStore(_process, _entity));
+
         }
 
         protected override void PostProcessing()
@@ -69,5 +74,4 @@ namespace Transformalize.Processes
         }
 
     }
-
 }

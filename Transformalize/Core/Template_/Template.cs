@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using System.Dynamic;
 using Transformalize.Configuration;
 using Transformalize.Libs.RazorEngine.Core;
+using Transformalize.Libs.RazorEngine.Core.Configuration.Fluent;
+using Transformalize.Libs.RazorEngine.Core.Templating;
 
 namespace Transformalize.Core.Template_
 {
@@ -14,13 +16,14 @@ namespace Transformalize.Core.Template_
         public string Content { get; private set; }
         public string Name { get; private set; }
         public string File { get; private set; }
+        public Encoding ContentType { get; private set; }
 
-        public Template(string name, string content, string file, ProcessConfigurationElement process)
+        public Template(string name, string content, string file, string contentType, ProcessConfigurationElement process)
         {
             File = file;
             Name = name;
             Content = content;
-
+            ContentType = contentType.Equals("raw") ? Encoding.Raw : Encoding.Html;
             _process = process;
         }
 
@@ -31,6 +34,9 @@ namespace Transformalize.Core.Template_
             {
                 ((IDictionary<string, object>)settings).Add(setting.Key, setting.Value);
             }
+            var config = new FluentTemplateServiceConfiguration(c => c.WithEncoding(ContentType));
+            var templateService = new TemplateService(config);
+            Razor.SetTemplateService(templateService);
 
             return Razor.Parse(Content, new {Process = _process, Settings = settings});
         }

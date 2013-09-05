@@ -214,7 +214,7 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Infrastructure {
 
             if (connectionString.ProviderName == string.Empty || connectionString.ProviderName.Equals("System.Data.SqlClient", StringComparison.OrdinalIgnoreCase))
             {
-                connection = new SqlConnection(connectionString.ConnectionString);
+                connection = new SqlConnection();
             }
             else
             {
@@ -228,6 +228,7 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Infrastructure {
                 
             }
 
+            connection.ConnectionString = connectionString.ConnectionString;
             connection.Open();
             return connection;
         }

@@ -22,7 +22,7 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using Transformalize.Configuration;
 using Transformalize.Core.Field_;
-using Transformalize.Core.Process_;
+using Transformalize.Extensions;
 
 namespace Transformalize.Core
 {
@@ -107,5 +107,9 @@ namespace Transformalize.Core
             return new DateTime(1, 1, 1).AddDays(timeKey - 1);
         }
 
+        public static string LogLength(string value, int totalWidth)
+        {
+            return value.Length > totalWidth ? value.Left(totalWidth) : value.PadRight(totalWidth, '.');
+        }
     }
 }

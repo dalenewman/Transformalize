@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using Transformalize.Core.Field_;
 using Transformalize.Core.Fields_;
 using Transformalize.Core.Transform_;
@@ -52,14 +53,15 @@ namespace Transformalize.Core.Entity_
         public IEnumerable<Relationship> RelationshipToMaster { get; set; }
         public List<Row> InputKeys { get; set; }
         public IDbCommand InputKeysCommand { get; set; }
-        public IEntityVersionReader EntityVersionReader { get; private set; }
         public string Prefix { get; set; }
         public bool Group { get; set; }
         public bool Auto { get; set; }
         public string Name { get; set; }
         public IFields CalculatedFields { get; set; }
+        public bool HasRows { get; set; }
+        public bool HasRange { get; set; }
 
-        public Entity(IEntityVersionReader entityVersionReader = null)
+        public Entity()
         {
             Name = string.Empty;
             Alias = string.Empty;
@@ -68,7 +70,6 @@ namespace Transformalize.Core.Entity_
             Fields = new Fields();
             All = new Fields();
             Joins = new Dictionary<string, Relationship>();
-            EntityVersionReader = entityVersionReader ?? new SqlServerEntityVersionReader(this);
             InputKeys = new List<Row>();
             Prefix = string.Empty;
             CalculatedFields = new Fields();
@@ -96,10 +97,10 @@ namespace Transformalize.Core.Entity_
 
         public bool NeedsUpdate()
         {
-            if (!EntityVersionReader.HasRows)
+            if (!HasRows)
                 return false;
 
-            return (!EntityVersionReader.IsRange || !EntityVersionReader.BeginAndEndAreEqual());
+            return (!HasRange || !BeginAndEndAreEqual());
         }
 
         public List<string> SelectKeys()
@@ -130,6 +131,28 @@ namespace Transformalize.Core.Entity_
         public override string ToString()
         {
             return Alias;
+        }
+
+        public bool BeginAndEndAreEqual()
+        {
+            if (HasRange)
+            {
+                var bytes = new[] { "byte[]", "rowversion" };
+                if (bytes.Any(t => t == Version.SimpleType))
+                {
+                    var beginBytes = Common.ObjectToByteArray(Begin);
+                    var endBytes = Common.ObjectToByteArray(End);
+                    return beginBytes.SequenceEqual(endBytes);
+                }
+                return Begin.Equals(End);
+            }
+            return false;
+        }
+
+        public void CheckDelta()
+        {
+            OutputConnection.LoadBeginVersion(this);
+            InputConnection.LoadEndVersion(this);
         }
     }
 }

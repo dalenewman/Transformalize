@@ -29,7 +29,7 @@ namespace Transformalize.Test.Integration {
         public void Go()
         {
             var process = new ProcessReader(new ProcessConfigurationReader("Test").Read()).Read();
-            Process.Options = new Options {Mode = Modes.Initialize};
+            process.Options = new Options {Mode = Modes.Initialize};
             new ProcessRunner(process).Run();
         }
 

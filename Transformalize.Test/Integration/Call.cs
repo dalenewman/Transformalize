@@ -23,15 +23,34 @@ using Transformalize.Runner;
 
 namespace Transformalize.Test.Integration {
     [TestFixture]
-    public class EsMetaData {
+    public class Call {
+        private const string CONFIGURATION_FILE = @"c:\etl\rhinoetl\tfl\Call.xml";
 
         [Test]
-        public void Go()
+        public void Init()
         {
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(@"c:\etl\rhinoetl\tfl\Es.xml").Read()).Read();
-            Process.Options = new Options("{'mode':'metadata'}");
+            var process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read()).Read();
+            process.Options = new Options { Mode = Modes.Initialize };
             new ProcessRunner(process).Run();
         }
+
+        [Test]
+        public void Normal()
+        {
+            var process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read()).Read();
+            process.Options = new Options { Mode = Modes.Normal };
+            new ProcessRunner(process).Run();
+        }
+
+        [Test]
+        public void Test()
+        {
+            var process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read()).Read();
+            process.Options = new Options("{'mode':'test','top':1,'loglevel':'trace'}");
+            new ProcessRunner(process).Run();
+        }
+
+
 
     }
 }

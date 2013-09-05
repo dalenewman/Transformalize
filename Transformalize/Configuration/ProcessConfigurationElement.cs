@@ -20,20 +20,35 @@ using System.Configuration;
 
 namespace Transformalize.Configuration {
 
-    public class ProcessConfigurationElement : ConfigurationElement {
+    public class ProcessConfigurationElement : ConfigurationElement
+    {
+
+        private const string TEMPLATE_CONTENT_TYPE = "template-content-type";
+        private const string NAME = "name";
 
         public override bool IsReadOnly()
         {
             return false;
         }
 
-        [ConfigurationProperty("name", IsRequired = true)]
+        [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name {
             get {
-                return this["name"] as string;
+                return this[NAME] as string;
             }
-            set { this["name"] = value; }
+            set { this[NAME] = value; }
         }
+
+        [ConfigurationProperty(TEMPLATE_CONTENT_TYPE, IsRequired = false, DefaultValue = "raw")]
+        public string TemplateContentType
+        {
+            get
+            {
+                return this[TEMPLATE_CONTENT_TYPE] as string;
+            }
+            set { this[TEMPLATE_CONTENT_TYPE] = value; }
+        }
+
 
         [ConfigurationProperty("connections")]
         public ConnectionElementCollection Connections {

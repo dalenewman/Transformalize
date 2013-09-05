@@ -8,15 +8,20 @@ using Transformalize.Core.Field_;
 using Transformalize.Core.Process_;
 using Transformalize.Core.Template_;
 using Transformalize.Libs.NLog;
+using Transformalize.Libs.RazorEngine.Core;
+using Transformalize.Libs.RazorEngine.Core.Configuration.Fluent;
+using Transformalize.Libs.RazorEngine.Core.Templating;
 using Transformalize.Libs.Rhino.Etl.Core.Pipelines;
 using Transformalize.Processes;
 using Transformalize.Providers.SqlServer;
+using Encoding = System.Text.Encoding;
 
 namespace Transformalize.Runner
 {
     public class ProcessRunner
     {
         private Process _process;
+        private Logger _log = LogManager.GetCurrentClassLogger();
 
         public ProcessRunner(Process process)
         {
@@ -27,7 +32,7 @@ namespace Transformalize.Runner
         {
             if (!_process.IsReady()) return;
 
-            switch (Process.Options.Mode)
+            switch (_process.Options.Mode)
             {
                 case Modes.Initialize:
                     new InitializationProcess(_process).Execute();
@@ -40,6 +45,7 @@ namespace Transformalize.Runner
                 default:
                     new EntityRecordsExist(ref _process).Check();
 
+                    SetupRazorTemplateService();
                     ProcessEntities();
                     ProcessMaster();
                     ProcessTransforms();
@@ -49,7 +55,15 @@ namespace Transformalize.Runner
             }
         }
 
-        private static string GetMetaData()
+        private void SetupRazorTemplateService()
+        {
+            var config = new FluentTemplateServiceConfiguration(c => c.WithEncoding(_process.TemplateContentType));
+            var templateService = new TemplateService(config);
+            Razor.SetTemplateService(templateService);
+            _log.Debug("Set RazorEngine to {0} content type.", _process.TemplateContentType);
+        }
+
+        private string GetMetaData()
         {
             var content = new StringBuilder();
             var count = 1;
@@ -58,7 +72,7 @@ namespace Transformalize.Runner
             content.AppendLine("<process>");
             content.AppendLine("  <entities>");
 
-            foreach (var entity in Process.Entities)
+            foreach (var entity in _process.Entities)
             {
                 content.AppendFormat("    <add name=\"{0}\">\r\n", entity.Name);
 
@@ -102,27 +116,26 @@ namespace Transformalize.Runner
 
         private void RenderTemplates()
         {
-            if (Process.Options.RenderTemplates)
+            if (_process.Options.RenderTemplates)
                 new TemplateManager(_process).Manage();
         }
 
         private void ProcessTransforms()
         {
-            if (Process.CalculatedFields.Count > 0)
-            {
-                var transformProcess = new TransformProcess(_process);
+            if (_process.CalculatedFields.Count <= 0) return;
 
-                if (Process.Options.Mode == Modes.Test)
-                    transformProcess.PipelineExecuter = new SingleThreadedNonCachedPipelineExecuter();
+            var transformProcess = new TransformProcess(_process);
 
-                transformProcess.Execute();
-            }
+            if (_process.Options.Mode == Modes.Test)
+                transformProcess.PipelineExecuter = new SingleThreadedNonCachedPipelineExecuter();
+
+            transformProcess.Execute();
         }
 
         private void ProcessMaster()
         {
             var updateMasterProcess = new UpdateMasterProcess(ref _process);
-            if (Process.Options.Mode == Modes.Test)
+            if (_process.Options.Mode == Modes.Test)
                 updateMasterProcess.PipelineExecuter = new SingleThreadedNonCachedPipelineExecuter();
 
             updateMasterProcess.Execute();
@@ -130,9 +143,17 @@ namespace Transformalize.Runner
 
         private void ProcessEntities()
         {
-            foreach (var entityProcess in Process.Entities.Select(entity => new EntityProcess(_process, entity)))
+            foreach (var entityKeysProcess in _process.Entities.Select(entity => new EntityKeysProcess(_process, entity, new SqlServerEntityBatchReader())))
             {
-                if (Process.Options.Mode == Modes.Test)
+                if (_process.Options.Mode == Modes.Test)
+                    entityKeysProcess.PipelineExecuter = new SingleThreadedNonCachedPipelineExecuter();
+
+                entityKeysProcess.Execute();
+            }
+
+            foreach (var entityProcess in _process.Entities.Select(entity => new EntityProcess(_process, entity)))
+            {
+                if (_process.Options.Mode == Modes.Test)
                     entityProcess.PipelineExecuter = new SingleThreadedNonCachedPipelineExecuter();
 
                 entityProcess.Execute();

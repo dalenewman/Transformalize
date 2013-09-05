@@ -1,5 +1,4 @@
 using System.Data.SqlClient;
-using Transformalize.Core;
 
 namespace Transformalize.Providers.SqlServer
 {

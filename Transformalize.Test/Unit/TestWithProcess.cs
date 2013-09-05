@@ -52,7 +52,7 @@ namespace Transformalize.Test.Unit {
 
         [Test]
         public void TestKeysTableVariable() {
-            var entity = Process.Entities.First();
+            var entity =_process.Entities.First();
             
             var actual = SqlTemplates.CreateTableVariable("KEYS", entity.PrimaryKey.ToEnumerable().ToArray());
             const string expected = "DECLARE @KEYS AS TABLE([OrderDetailKey] INT);";
@@ -63,7 +63,7 @@ namespace Transformalize.Test.Unit {
         [Test]
         public void TestKeyInserts() {
 
-            var entity = Process.Entities.First();
+            var entity =_process.Entities.First();
 
             var rows = TestOperation(_entityKeysExtract.Object);
 
@@ -84,7 +84,7 @@ UNION ALL SELECT 4;";
         [Test]
         public void TestSelectByKeysSql() {
 
-            var entity = Process.Entities.First();
+            var entity =_process.Entities.First();
 
             var actual = SqlTemplates.Select(entity.All, entity.OutputName(), "@KEYS");
 //            const string expected = @"
@@ -119,10 +119,17 @@ OPTION (MAXDOP 2);";
         [Test]
         public void TestEntityKeysToOperations() {
 
-            var entity = Process.Entities.First();
-            var entityKeysToOperations = new EntityKeysToOperations(entity);
+            var entity =_process.Entities.First();
 
-            var operations = TestOperation(_entityKeysExtract.Object, entityKeysToOperations);
+            var keys = TestOperation(
+                _entityKeysExtract.Object, 
+                new EntityInputKeysStore(_process, entity)
+            );
+
+            var operations = TestOperation(
+                new EntityKeysToOperations(entity)
+            );
+
             Assert.AreEqual(1, operations.Count);
         }
 

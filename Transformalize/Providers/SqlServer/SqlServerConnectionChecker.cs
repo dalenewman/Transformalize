@@ -20,7 +20,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using Transformalize.Core.Process_;
 using Transformalize.Libs.NLog;
 
 namespace Transformalize.Providers.SqlServer {

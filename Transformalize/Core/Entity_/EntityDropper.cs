@@ -21,15 +21,19 @@ using Transformalize.Providers.SqlServer;
 
 namespace Transformalize.Core.Entity_ {
     public class EntityDropper {
+        private readonly Process _process;
 
         private readonly IEntityDropper _dropper;
 
-        public EntityDropper(IEntityDropper dropper = null) {
+        public EntityDropper(Process process, IEntityDropper dropper = null)
+        {
+            _process = process;
             _dropper = dropper ?? new SqlServerEntityDropper();
         }
 
         public void Drop() {
-            foreach (var entity in Process.Entities) {
+            foreach (var entity in _process.Entities)
+            {
                 _dropper.DropOutput(entity);
             }
         }

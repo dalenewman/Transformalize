@@ -22,44 +22,60 @@ namespace Transformalize.Configuration {
 
     public class TemplateConfigurationElement : ConfigurationElement {
 
+        private const string CONTENT_TYPE = "content-type";
+        private const string FILE = "file";
+        private const string SETTINGS = "settings";
+        private const string ACTIONS = "actions";
+        private const string NAME = "name";
+
         public override bool IsReadOnly()
         {
             return false;
         }
 
-        [ConfigurationProperty("name", IsRequired = true)]
+        [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name {
             get {
-                return this["name"] as string;
+                return this[NAME] as string;
             }
-            set { this["name"] = value; }
+            set { this[NAME] = value; }
         }
 
-        [ConfigurationProperty("file", IsRequired = true)]
+        [ConfigurationProperty(FILE, IsRequired = true)]
         public string File
         {
             get
             {
-                return this["file"] as string;
+                return this[FILE] as string;
             }
-            set { this["file"] = value; }
+            set { this[FILE] = value; }
         }
 
-        [ConfigurationProperty("settings")]
+        [ConfigurationProperty(CONTENT_TYPE, IsRequired = false, DefaultValue = "raw")]
+        public string ContentType
+        {
+            get
+            {
+                return this[CONTENT_TYPE] as string;
+            }
+            set { this[CONTENT_TYPE] = value; }
+        }
+
+        [ConfigurationProperty(SETTINGS)]
         public SettingElementCollection Settings
         {
             get
             {
-                return this["settings"] as SettingElementCollection;
+                return this[SETTINGS] as SettingElementCollection;
             }
         }
 
-        [ConfigurationProperty("actions")]
+        [ConfigurationProperty(ACTIONS)]
         public ActionElementCollection Actions
         {
             get
             {
-                return this["actions"] as ActionElementCollection;
+                return this[ACTIONS] as ActionElementCollection;
             }
         }
 

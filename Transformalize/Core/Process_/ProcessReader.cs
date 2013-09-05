@@ -25,8 +25,10 @@ using Transformalize.Core.Entity_;
 using Transformalize.Core.Field_;
 using Transformalize.Core.Template_;
 using Transformalize.Libs.NLog;
+using Transformalize.Libs.RazorEngine.Core;
 using Transformalize.Providers;
 using Transformalize.Providers.AnalysisServices;
+using Transformalize.Providers.MySql;
 using Transformalize.Providers.SqlServer;
 
 namespace Transformalize.Core.Process_
@@ -75,8 +77,10 @@ namespace Transformalize.Core.Process_
                 return new Process();
             }
 
-            _process = new Process(_config.Name);
-            Process.Options = _options;
+            _process = new Process(_config.Name) {
+                Options = _options,
+                TemplateContentType = _config.TemplateContentType.Equals("raw") ? Encoding.Raw : Encoding.Html
+            };
 
             _connectionCount = ReadConnections();
             _scriptCount = ReadScripts();
@@ -88,7 +92,7 @@ namespace Transformalize.Core.Process_
             _process.RelatedKeys = ReadRelatedKeys();
             _process.View = _process.MasterEntity.OutputName() + "Star";
 
-            foreach (var entity in Process.Entities)
+            foreach (var entity in _process.Entities)
             {
                 entity.RelationshipToMaster = ReadRelationshipToMaster(entity);
                 if (!entity.RelationshipToMaster.Any() && !entity.IsMaster())
@@ -140,7 +144,7 @@ namespace Transformalize.Core.Process_
                 }
                 else
                 {
-                    var template = new Template(element.Name, File.ReadAllText(fileInfo.FullName), fileInfo.FullName, _config);
+                    var template = new Template(element.Name, File.ReadAllText(fileInfo.FullName), fileInfo.FullName, element.ContentType,  _config);
 
                     if (withProcess && !template.Content.StartsWith("@using Core.Process"))
                         continue;
@@ -162,9 +166,9 @@ namespace Transformalize.Core.Process_
                                                      TemplateName = template.Name
                                                  };
 
-                        if (!String.IsNullOrEmpty(action.Connection) && Process.Connections.ContainsKey(action.Connection))
+                        if (!String.IsNullOrEmpty(action.Connection) && _process.Connections.ContainsKey(action.Connection))
                         {
-                            templateAction.Connection = Process.Connections[action.Connection];
+                            templateAction.Connection = _process.Connections[action.Connection];
                         }
 
                         template.Actions.Add(templateAction);
@@ -201,7 +205,7 @@ namespace Transformalize.Core.Process_
             _log.Debug("{0} Template{1}.", _templateCount, _templateCount == 1 ? string.Empty : "s");
             _log.Debug("{0} Map{1}.", _mapCount, _mapCount == 1 ? string.Empty : "s");
 
-            _transformCount += Process.Entities.Sum(e => e.CalculatedFields.Count + e.Fields.ToEnumerable().Sum(f=>f.Transforms.Count));
+            _transformCount += _process.Entities.Sum(e => e.CalculatedFields.Count + e.Fields.ToEnumerable().Sum(f=>f.Transforms.Count));
             _log.Debug("{0} Transform{1}.", _transformCount, _transformCount == 1 ? string.Empty : "s");
         }
 
@@ -209,10 +213,10 @@ namespace Transformalize.Core.Process_
         {
             foreach (FieldConfigurationElement field in _config.CalculatedFields)
             {
-                Process.CalculatedFields.Add(field.Alias, new FieldReader(_process, null, new ProcessTransformParametersReader(_process), new ProcessParametersReader()).Read(field));
+                _process.CalculatedFields.Add(field.Alias, new FieldReader(_process, null, new ProcessTransformParametersReader(_process), new ProcessParametersReader(_process)).Read(field));
             }
 
-            return Process.CalculatedFields.Count;
+            return _process.CalculatedFields.Count;
         }
 
         private int ReadRelationships()
@@ -221,8 +225,8 @@ namespace Transformalize.Core.Process_
             foreach (RelationshipConfigurationElement r in _config.Relationships)
             {
 
-                var leftEntity = Process.Entities.First(e => e.Alias.Equals(r.LeftEntity, IC));
-                var rightEntity = Process.Entities.First(e => e.Alias.Equals(r.RightEntity, IC));
+                var leftEntity = _process.Entities.First(e => e.Alias.Equals(r.LeftEntity, IC));
+                var rightEntity = _process.Entities.First(e => e.Alias.Equals(r.RightEntity, IC));
                 var join = GetJoins(r, leftEntity, rightEntity);
                 var relationship = new Relationship
                 {
@@ -294,7 +298,7 @@ namespace Transformalize.Core.Process_
 
                 GuardAgainstFieldOverlap(entity);
 
-                Process.Entities.Add(entity);
+                _process.Entities.Add(entity);
                 if (entity.IsMaster())
                     _process.MasterEntity = entity;
                 count++;
@@ -304,7 +308,7 @@ namespace Transformalize.Core.Process_
 
         private IEnumerable<Field> ReadRelatedKeys()
         {
-            var entity = Process.Entities.First(e => e.IsMaster());
+            var entity = _process.Entities.First(e => e.IsMaster());
             return GetRelatedKeys(entity);
         }
 
@@ -335,9 +339,9 @@ namespace Transformalize.Core.Process_
                 }
                 else
                 {
-                    if (Process.Connections.ContainsKey(m.Connection))
+                    if (_process.Connections.ContainsKey(m.Connection))
                     {
-                        _process.MapEquals[m.Name] = new SqlServerMapReader(m.Items.Sql, Process.Connections[m.Connection].ConnectionString).Read();
+                        _process.MapEquals[m.Name] = new SqlServerMapReader(m.Items.Sql, _process.Connections[m.Connection].ConnectionString).Read();
                     }
                     else
                     {
@@ -357,27 +361,41 @@ namespace Transformalize.Core.Process_
             {
                 IConnection connection;
                 var type = element.Type.ToLower();
-                if (type == "analysisservices" || type == "ssas")
+
+                switch (type)
                 {
-                    connection = new AnalysisServicesConnection(element.Value)
-                                     {
-                                         BatchSize = element.BatchSize,
-                                         ConnectionType = ConnectionType.AnalysisServices,
-                                         CompatibilityLevel = element.CompatabilityLevel,
-                                         Process = _process.Name
-                                     };
+                    case "sqlserver":
+                        connection = new SqlServerConnection(element.Value)
+                        {
+                            ConnectionType = ConnectionType.SqlServer,
+                            CompatibilityLevel = element.CompatabilityLevel,
+                            BatchSize = element.BatchSize,
+                            Process = _process.Name,
+                            Name = element.Name
+                        };
+                        break;
+                    case "mysql":
+                        connection = new MySqlConnection(element.Value)
+                        {
+                            ConnectionType = ConnectionType.MySql,
+                            BatchSize = element.BatchSize,
+                            Process = _process.Name,
+                            Name = element.Name
+                        };
+                        break;
+                    default:
+                        connection = new AnalysisServicesConnection(element.Value)
+                        {
+                            BatchSize = element.BatchSize,
+                            ConnectionType = ConnectionType.AnalysisServices,
+                            CompatibilityLevel = element.CompatabilityLevel,
+                            Process = _process.Name,
+                            Name = element.Name
+                        };
+                        break;
                 }
-                else
-                {
-                    connection = new SqlServerConnection(element.Value)
-                    {
-                        ConnectionType = ConnectionType.SqlServer,
-                        CompatibilityLevel = element.CompatabilityLevel,
-                        BatchSize = element.BatchSize,
-                        Process = _process.Name
-                    };
-                }
-                Process.Connections.Add(element.Name, connection);
+
+               _process.Connections.Add(element.Name, connection);
                 count++;
             }
             return count;
@@ -386,7 +404,7 @@ namespace Transformalize.Core.Process_
         private void GuardAgainstFieldOverlap(Entity entity)
         {
             var entityKeys = new HashSet<string>(entity.Fields.ToEnumerable().Where(f => f.Output).Select(f => f.Alias));
-            var processKeys = new HashSet<string>(Process.Entities.SelectMany(e2 => e2.Fields.ToEnumerable()).Where(f => f.Output).Select(f => f.Alias));
+            var processKeys = new HashSet<string>(_process.Entities.SelectMany(e2 => e2.Fields.ToEnumerable()).Where(f => f.Output).Select(f => f.Alias));
             entityKeys.IntersectWith(processKeys);
             
             if (!entityKeys.Any()) return;

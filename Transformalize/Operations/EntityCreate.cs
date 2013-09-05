@@ -18,10 +18,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using Transformalize.Core;
 using Transformalize.Core.Entity_;
 using Transformalize.Core.Field_;
 using Transformalize.Core.Fields_;
 using Transformalize.Core.Process_;
+using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
 using Transformalize.Providers;
@@ -40,7 +42,7 @@ namespace Transformalize.Operations {
             _entity = entity;
            
             _writer = _entity.IsMaster() ?
-                new FieldSqlWriter(entity.All, Process.CalculatedFields, entity.CalculatedFields, GetRelationshipFields(process)) :
+                new FieldSqlWriter(entity.All, process.CalculatedFields, entity.CalculatedFields, GetRelationshipFields(process)) :
                 new FieldSqlWriter(entity.All, entity.CalculatedFields);
 
             _entityExists = entityExists ?? new SqlServerEntityExists();

@@ -18,7 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Linq;
+using Transformalize.Core;
 using Transformalize.Core.Process_;
+using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Operations;
 
@@ -29,13 +31,14 @@ namespace Transformalize.Processes {
         private readonly Process _process;
 
         public TransformProcess(Process process) : base(process.Name) {
+            GlobalDiagnosticsContext.Set("entity", Common.LogLength("All", 20));
             _process = process;
         }
 
         protected override void Initialize() {
             Register(new ParametersExtract(_process));
-            Register(new ApplyDefaults(Process.CalculatedFields));
-            Register(new TransformFields(Process.CalculatedFields));
+            Register(new ApplyDefaults(_process.CalculatedFields));
+            Register(new TransformFields(_process.CalculatedFields));
             RegisterLast(new ResultsLoad(_process));
         }
 
@@ -46,7 +49,7 @@ namespace Transformalize.Processes {
                 foreach (var error in errors) {
                     Error(error.InnerException, "Message: {0}\r\nStackTrace:{1}\r\n", error.Message, error.StackTrace);
                 }
-                throw new InvalidOperationException("Houstan.  We have a problem.");
+                Environment.Exit(1);
             }
 
             base.PostProcessing();

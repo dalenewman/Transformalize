@@ -51,7 +51,7 @@ namespace Transformalize.Configuration
             set { this["compatabilityLevel"] = value; }
         }
 
-        [RegexStringValidator(@"SqlServer|AnalysisServices")]
+        [RegexStringValidator(@"(?i)SqlServer|AnalysisServices|MySql")]
         [ConfigurationProperty("type", IsRequired = false, DefaultValue = "SqlServer")]
         public string Type {
             get {

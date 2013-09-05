@@ -71,9 +71,10 @@ namespace Transformalize.Providers.SqlServer {
             var builder = new StringBuilder();
             builder.AppendFormat("CREATE VIEW [{0}] AS\r\n", _process.View);
             builder.AppendFormat("SELECT\r\n    [{0}].[TflKey],\r\n    [{0}].[TflBatchId],\r\n    b.[TflUpdate],\r\n", _masterEntity.OutputName());
-            foreach (var entity in Process.Entities) {
+            foreach (var entity in _process.Entities)
+            {
                 if (entity.IsMaster()) {
-                    builder.AppendLine(string.Concat(new FieldSqlWriter(entity.PrimaryKey, entity.Fields, Process.CalculatedFields, entity.CalculatedFields).ExpandXml().Output().Alias().Prepend(string.Concat("    [", entity.OutputName(), "].")).Write(",\r\n"), ","));
+                    builder.AppendLine(string.Concat(new FieldSqlWriter(entity.PrimaryKey, entity.Fields, _process.CalculatedFields, entity.CalculatedFields).ExpandXml().Output().Alias().Prepend(string.Concat("    [", entity.OutputName(), "].")).Write(",\r\n"), ","));
                 }
                 else {
                     if (entity.Fields.Any(f => f.Value.FieldType.HasFlag(FieldType.ForeignKey))) {
@@ -89,7 +90,8 @@ namespace Transformalize.Providers.SqlServer {
             builder.AppendFormat("FROM [{0}]\r\n", _masterEntity.OutputName());
             builder.AppendFormat("INNER JOIN [TflBatch] b ON ([{0}].TflBatchId = b.TflBatchId)\r\n", _masterEntity.OutputName());
 
-            foreach (var entity in Process.Entities.Where(e => !e.IsMaster())) {
+            foreach (var entity in _process.Entities.Where(e => !e.IsMaster()))
+            {
                 builder.AppendFormat("LEFT OUTER JOIN [{0}] ON (", entity.OutputName());
 
                 foreach (var join in entity.RelationshipToMaster.First().Join.ToArray()) {

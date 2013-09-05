@@ -39,15 +39,15 @@ namespace Transformalize.Test.Integration {
                 Console.WriteLine("{0} : {1}", relatedKey.Entity, relatedKey.Name);
             }
 
-            Assert.AreEqual(0, Process.Entities.First().RelationshipToMaster.Count());
+            Assert.AreEqual(0,_process.Entities.First().RelationshipToMaster.Count());
 
-            Assert.AreEqual(1, Process.Entities.First(e => e.Alias.Equals("Products")).RelationshipToMaster.Count());
-            Assert.AreEqual(2, Process.Entities.First(e => e.Alias.Equals("Customers")).RelationshipToMaster.Count());
-            Assert.AreEqual(2, Process.Entities.First(e => e.Alias.Equals("Employees")).RelationshipToMaster.Count());
+            Assert.AreEqual(1,_process.Entities.First(e => e.Alias.Equals("Products")).RelationshipToMaster.Count());
+            Assert.AreEqual(2,_process.Entities.First(e => e.Alias.Equals("Customers")).RelationshipToMaster.Count());
+            Assert.AreEqual(2,_process.Entities.First(e => e.Alias.Equals("Employees")).RelationshipToMaster.Count());
 
-            Assert.AreEqual(1, Process.Entities.First(e => e.Alias.Equals("Orders")).RelationshipToMaster.Count());
-            Assert.AreEqual(2, Process.Entities.First(e => e.Alias.Equals("Categories")).RelationshipToMaster.Count());
-            Assert.AreEqual(2, Process.Entities.First(e => e.Alias.Equals("Suppliers")).RelationshipToMaster.Count());
+            Assert.AreEqual(1,_process.Entities.First(e => e.Alias.Equals("Orders")).RelationshipToMaster.Count());
+            Assert.AreEqual(2,_process.Entities.First(e => e.Alias.Equals("Categories")).RelationshipToMaster.Count());
+            Assert.AreEqual(2,_process.Entities.First(e => e.Alias.Equals("Suppliers")).RelationshipToMaster.Count());
 
         }
 

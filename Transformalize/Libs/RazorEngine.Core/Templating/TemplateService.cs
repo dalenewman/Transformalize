@@ -82,12 +82,8 @@ namespace Transformalize.Libs.RazorEngine.Core.Templating
         /// <param name="cacheName">The name of the template type in the cache.</param>
         public void Compile(string razorTemplate, Type modelType, string cacheName)
         {
-            Contract.Requires(razorTemplate != null);
-            Contract.Requires(cacheName != null);
-
-            int hashCode = razorTemplate.GetHashCode();
-
-            Type type = CreateTemplateType(razorTemplate, modelType);
+            var hashCode = razorTemplate.GetHashCode();
+            var type = CreateTemplateType(razorTemplate, modelType);
             var item = new CachedTemplateItem(hashCode, type);
 
             _cache.AddOrUpdate(cacheName, item, (n, i) => item);

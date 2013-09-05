@@ -28,7 +28,7 @@ namespace Transformalize.Test.Integration {
         [Test]
         public void Go() {
             var process = new ProcessReader(new ProcessConfigurationReader("Test").Read()).Read();
-            Process.Options = new Options {RenderTemplates = false};
+            process.Options = new Options {RenderTemplates = false};
             new ProcessRunner(process).Run();
         }
 

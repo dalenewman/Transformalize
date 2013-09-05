@@ -18,10 +18,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Linq;
+using Transformalize.Core;
 using Transformalize.Core.Entity_;
 using Transformalize.Core.Field_;
 using Transformalize.Core.Fields_;
 using Transformalize.Core.Process_;
+using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
 using Transformalize.Operations;
@@ -32,33 +34,22 @@ namespace Transformalize.Processes
 
     public class EntityProcess : EtlProcess
     {
+        private readonly Process _process;
         private Entity _entity;
         private readonly IFields _fieldsWithTransforms;
 
-        public EntityProcess(Process process, Entity entity, IEntityBatch entityBatch = null) : base(process.Name)
+        public EntityProcess(Process process, Entity entity, IEntityBatchReader entityBatchReader = null) : base(process.Name)
         {
+            GlobalDiagnosticsContext.Set("entity", Common.LogLength(entity.Alias, 20));
+            _process = process;
             _entity = entity;
-            _entity.TflBatchId = (entityBatch ?? new SqlServerEntityBatch()).GetNext(_entity);
+            _entity.TflBatchId = (entityBatchReader ?? new SqlServerEntityBatchReader()).ReadNext(_entity);
             _fieldsWithTransforms = new FieldSqlWriter(entity.All).ExpandXml().HasTransform().Context();
         }
 
         protected override void Initialize()
         {
-            if (Process.Options.UseBeginVersion)
-            {
-                var keysExtract = new EntityInputKeysExtractDelta(_entity);
-                if (!keysExtract.NeedsToRun()) return;
-                Register(keysExtract);
-            }
-            else
-            {
-                Register(new EntityInputKeysExtractAll(_entity));
-            }
-
-
-            Register(new EntityInputKeysStore(_entity));
             Register(new EntityKeysToOperations(_entity));
-            //Register(new ExtractDataDifferently(_entity));
             Register(new SerialUnionAllOperation());
             Register(new ApplyDefaults(_entity.All, _entity.CalculatedFields));
             Register(new TransformFields(_fieldsWithTransforms));
@@ -67,7 +58,7 @@ namespace Transformalize.Processes
             if (_entity.Group)
                 Register(new EntityAggregation(_entity));
 
-            if (Process.OutputRecordsExist)
+            if (_process.OutputRecordsExist)
             {
                 Register(new EntityJoinAction(_entity).Right(new EntityOutputKeysExtract(_entity)));
                 var branch = new BranchingOperation()
@@ -97,14 +88,15 @@ namespace Transformalize.Processes
                 {
                     Error(error.InnerException, "Message: {0}\r\nStackTrace:{1}\r\n", error.Message, error.StackTrace);
                 }
-                throw new InvalidOperationException("Houstan.  We have a problem in the threads!");
+                Environment.Exit(1);
             }
 
-            if (Process.Options.WriteEndVersion)
+            if (_process.Options.WriteEndVersion)
             {
                 new SqlServerEntityVersionWriter(_entity).WriteEndVersion(_entity.End, _entity.RecordsAffected);
             }
 
+            _entity.InputKeys = null;
             base.PostProcessing();
         }
 

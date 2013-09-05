@@ -45,7 +45,7 @@ namespace Transformalize.Operations {
         
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
         {
-            foreach (var batch in rows.Partition(_entity.InputConnection.BatchSize))
+            foreach (var batch in _entity.InputKeys.Partition(_entity.InputConnection.BatchSize))
             {
                 var sql = SelectByKeys(batch);
                 var row = new Row();
