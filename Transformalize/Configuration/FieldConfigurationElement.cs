@@ -36,6 +36,8 @@ namespace Transformalize.Configuration
         private const string VARIABLE_LENGTH = "variable-length";
         private const string DEFAULT = "default";
         private const string TRANSFORMS = "transforms";
+        private const string SEARCH_TYPE = "search-type";
+        private const string SEARCH_TYPES = "search-types";
 
         public override bool IsReadOnly()
         {
@@ -59,7 +61,7 @@ namespace Transformalize.Configuration
             set { this[ALIAS] = value; }
         }
 
-        [ConfigurationProperty(TYPE, IsRequired = false, DefaultValue = "System.String")]
+        [ConfigurationProperty(TYPE, IsRequired = false, DefaultValue = "string")]
         public string Type {
             get {
                 return this[TYPE] as string;
@@ -67,10 +69,30 @@ namespace Transformalize.Configuration
             set { this[TYPE] = value; }
         }
 
+
+        [ConfigurationProperty(SEARCH_TYPE, IsRequired = false, DefaultValue = "default")]
+        public string SearchType
+        {
+            get
+            {
+                return this[SEARCH_TYPE] as string;
+            }
+            set { this[SEARCH_TYPE] = value; }
+        }
+
         [ConfigurationProperty(XML)]
         public XmlElementCollection Xml {
             get {
                 return this[XML] as XmlElementCollection;
+            }
+        }
+
+        [ConfigurationProperty(SEARCH_TYPES)]
+        public FieldSearchTypeElementCollection SearchTypes
+        {
+            get
+            {
+                return this[SEARCH_TYPES] as FieldSearchTypeElementCollection;
             }
         }
 

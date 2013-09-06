@@ -102,6 +102,10 @@
     <Compile Include="Configuration\ConnectionElementCollection.cs" />
     <Compile Include="Configuration\ActionConfigurationElement.cs" />
     <Compile Include="Configuration\ActionElementCollection.cs" />
+    <Compile Include="Configuration\FieldSearchTypeConfigurationElement.cs" />
+    <Compile Include="Configuration\SearchTypeConfigurationElement.cs" />
+    <Compile Include="Configuration\SearchTypeElementCollection.cs" />
+    <Compile Include="Configuration\FieldSearchTypeElementCollection.cs" />
     <Compile Include="Configuration\TransformTemplateElementCollection.cs" />
     <Compile Include="Configuration\TransformTemplateConfigurationElement.cs" />
     <Compile Include="Configuration\SettingElementCollection.cs" />

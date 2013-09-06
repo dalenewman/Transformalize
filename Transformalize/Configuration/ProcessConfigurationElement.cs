@@ -57,6 +57,15 @@ namespace Transformalize.Configuration {
             }
         }
 
+        [ConfigurationProperty("search-types")]
+        public SearchTypeElementCollection SearchTypes
+        {
+            get
+            {
+                return this["search-types"] as SearchTypeElementCollection;
+            }
+        }
+
         [ConfigurationProperty("maps")]
         public MapElementCollection Maps {
             get {
