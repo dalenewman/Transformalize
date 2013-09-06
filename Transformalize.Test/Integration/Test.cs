@@ -23,15 +23,24 @@ using Transformalize.Runner;
 
 namespace Transformalize.Test.Integration {
     [TestFixture]
-    public class TestInit {
+    public class Test {
 
         [Test]
-        public void Go()
+        public void Init()
         {
-            var process = new ProcessReader(new ProcessConfigurationReader("Test").Read()).Read();
-            process.Options = new Options {Mode = Modes.Initialize};
+            var options = new Options { Mode = Modes.Initialize };
+            var process = new ProcessReader(new ProcessConfigurationReader("Test").Read(), options).Read();
             new ProcessRunner(process).Run();
         }
+
+        [Test]
+        public void Normal()
+        {
+            var options = new Options { RenderTemplates = true };
+            var process = new ProcessReader(new ProcessConfigurationReader("Test").Read(), options).Read();
+            new ProcessRunner(process).Run();
+        }
+
 
     }
 }

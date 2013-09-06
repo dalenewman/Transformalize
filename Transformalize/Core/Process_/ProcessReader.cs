@@ -26,6 +26,8 @@ using Transformalize.Core.Field_;
 using Transformalize.Core.Template_;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.RazorEngine.Core;
+using Transformalize.Libs.RazorEngine.Core.Configuration.Fluent;
+using Transformalize.Libs.RazorEngine.Core.Templating;
 using Transformalize.Providers;
 using Transformalize.Providers.AnalysisServices;
 using Transformalize.Providers.MySql;
@@ -57,12 +59,6 @@ namespace Transformalize.Core.Process_
             return process;
         }
         
-        public ProcessReader(ProcessConfigurationElement process)
-        {
-            _config = Adapt(process);
-            _options = new Options();
-        }
-
         public ProcessReader(ProcessConfigurationElement process, Options options)
         {
             _config = Adapt(process);
@@ -81,6 +77,8 @@ namespace Transformalize.Core.Process_
                 Options = _options,
                 TemplateContentType = _config.TemplateContentType.Equals("raw") ? Encoding.Raw : Encoding.Html
             };
+
+            SetupRazorTemplateService();
 
             _connectionCount = ReadConnections();
             _scriptCount = ReadScripts();
@@ -360,12 +358,21 @@ namespace Transformalize.Core.Process_
             foreach (ConnectionConfigurationElement element in _config.Connections)
             {
                 IConnection connection;
+                ProviderSetup provider;
                 var type = element.Type.ToLower();
 
                 switch (type)
                 {
                     case "sqlserver":
-                        connection = new SqlServerConnection(element.Value)
+                        provider = new ProviderSetup
+                                           {
+                                               ProviderType =
+                                                   "System.Data.SqlClient.SqlConnection, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+                                               L = "[",
+                                               R = "]"
+                                           };
+
+                        connection = new DefaultConnection(element.Value, provider)
                         {
                             ConnectionType = ConnectionType.SqlServer,
                             CompatibilityLevel = element.CompatabilityLevel,
@@ -375,7 +382,15 @@ namespace Transformalize.Core.Process_
                         };
                         break;
                     case "mysql":
-                        connection = new MySqlConnection(element.Value)
+                        provider = new ProviderSetup
+                        {
+                            ProviderType =
+                                "MySql.Data.MySqlClient.MySqlConnection, MySql.Data",
+                            L = "`",
+                            R = "`"
+                        };
+
+                        connection = new DefaultConnection(element.Value, provider)
                         {
                             ConnectionType = ConnectionType.MySql,
                             BatchSize = element.BatchSize,
@@ -413,6 +428,15 @@ namespace Transformalize.Core.Process_
             _log.Error("field overlap error in {3}.  The field{1}: {0} {2} already defined in previous entities.  You must alias (rename) these.", string.Join(", ", entityKeys), count == 1 ? string.Empty : "s", count == 1 ? "is" : "are", entity.Alias);
             Environment.Exit(0);
         }
+
+        private void SetupRazorTemplateService()
+        {
+            var config = new FluentTemplateServiceConfiguration(c => c.WithEncoding(_process.TemplateContentType));
+            var templateService = new TemplateService(config);
+            Razor.SetTemplateService(templateService);
+            _log.Debug("Set RazorEngine to {0} content type.", _process.TemplateContentType);
+        }
+
 
     }
 }

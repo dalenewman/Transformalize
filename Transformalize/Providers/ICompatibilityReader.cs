@@ -18,6 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Transformalize.Providers {
     public interface ICompatibilityReader {
-        bool InsertMultipleValues { get; }
+        bool CanInsertMultipleValues { get; }
     }
 }

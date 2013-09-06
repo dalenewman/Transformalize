@@ -100,6 +100,7 @@ namespace Transformalize.Test.Unit {
             var fullName = new Field(FieldType.Field) { Alias = "FullName"};
             fullName.Transforms.Add(
                 new TemplateTransform("@{ var fullName = Model[\"FirstName\"] + \" \" + Model[\"LastName\"];}@fullName", "dictionary",
+                "FullName",
                 parameters,
                 templates
             ));
@@ -124,7 +125,9 @@ namespace Transformalize.Test.Unit {
 
             var fullName = new Field(FieldType.Field) { Alias = "FullName"};
             fullName.Transforms.Add(
-                new TemplateTransform("@{ var fullName = Model.FirstName + \" \" + Model.LastName;}@fullName", "dynamic",
+                new TemplateTransform("@{ var fullName = Model.FirstName + \" \" + Model.LastName;}@fullName",
+                "FullName",
+                "dynamic",
                 parameters,
                 templates
             ));

@@ -22,6 +22,7 @@ using System.Linq;
 using Moq;
 using NUnit.Framework;
 using Transformalize.Configuration;
+using Transformalize.Core;
 using Transformalize.Core.Process_;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
@@ -36,7 +37,7 @@ namespace Transformalize.Test.Unit {
 
         private readonly Mock<IOperation> _entityKeysExtract;
         private static readonly ProcessConfigurationElement Element = new ProcessConfigurationReader("Test").Read();
-        private readonly Process _process = new ProcessReader(Element).Read();
+        private readonly Process _process = new ProcessReader(Element, new Options()).Read();
 
         public TestWithProcess() {
 

@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Linq;
 using NUnit.Framework;
+using Transformalize.Core;
 using Transformalize.Core.Process_;
 using Transformalize.Runner;
 
@@ -27,7 +28,7 @@ namespace Transformalize.Test.Integration {
     public class TestNorthConfiguration : EtlProcessHelper
     {
         
-        private readonly Process _process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.Xml").Read()).Read();
+        private readonly Process _process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.Xml").Read(), new Options()).Read();
 
         [Test]
         public void TestRelatedKeys() {

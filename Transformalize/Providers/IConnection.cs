@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Data;
 using Transformalize.Core.Entity_;
+using Transformalize.Providers.MySql;
 
 namespace Transformalize.Providers
 {
@@ -28,7 +29,7 @@ namespace Transformalize.Providers
         string Name { get; }
         string Database { get; }
         string Server { get; }
-        string Provider { get; }
+        ProviderSetup Provider { get; }
         int CompatibilityLevel { get; }
         ConnectionType ConnectionType { get; set; }
         string Process { get; set; }
@@ -36,5 +37,6 @@ namespace Transformalize.Providers
         IDbConnection GetConnection();
         void LoadEndVersion(Entity entity);
         void LoadBeginVersion(Entity entity);
+        bool CanInsertMultipleValues();
     }
 }

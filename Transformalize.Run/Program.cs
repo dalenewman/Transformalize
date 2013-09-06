@@ -66,7 +66,7 @@ namespace Transformalize.Run
             }
             else
             {
-                process = new ProcessReader(configuration).Read();
+                process = new ProcessReader(configuration, new Options()).Read();
             }
 
             new ProcessRunner(process).Run();

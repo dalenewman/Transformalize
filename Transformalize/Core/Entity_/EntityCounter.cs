@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using Transformalize.Core.Process_;
 using Transformalize.Libs.Rhino.Etl.Core;
+using Transformalize.Providers;
 using Transformalize.Providers.SqlServer;
 
 namespace Transformalize.Core.Entity_ {
@@ -28,7 +29,7 @@ namespace Transformalize.Core.Entity_ {
         public EntityCounter(Process process, IEntityCounter entityCounter = null)
         {
             _process = process;
-            _entityCounter = entityCounter ?? new SqlServerEntityCounter(new SqlServerConnectionChecker());
+            _entityCounter = entityCounter ?? new SqlServerEntityCounter(new DefaultConnectionChecker());
         }
 
         public void Count() {

@@ -40,20 +40,20 @@ namespace Transformalize.Core.Transform_
 
         public TemplateTransform(string template, string key, IEnumerable<KeyValuePair<string, Template>> templates)
         {
+            Name = "Template";
             CombineTemplates(templates, ref _builder);
             _builder.Append("@{ var ");
             _builder.Append(key);
             _builder.Append(" = Model; }");
             _builder.Append(template);
 
-            var content = _builder.ToString();
-            _key = content.GetHashCode().ToString(CultureInfo.InvariantCulture);
+            _key = key;
 
-            Razor.Compile(content, typeof(object), _key);
-            _log.Debug("Compiled template with hashcode/key {0}.", _key);
+            Razor.Compile(_builder.ToString(), typeof(object), key);
+            _log.Debug("Compiled template with key {0}.", key);
         }
 
-        public TemplateTransform(string template, string templateModelType, IParameters parameters, IEnumerable<KeyValuePair<string, Template>> templates)
+        public TemplateTransform(string template, string key, string templateModelType, IParameters parameters, IEnumerable<KeyValuePair<string, Template>> templates)
             : base(parameters)
         {
             Name = "Template";
@@ -62,13 +62,12 @@ namespace Transformalize.Core.Transform_
             CombineTemplates(templates, ref _builder);
             _builder.Append(template);
 
-            var content = _builder.ToString();
-            _key = content.GetHashCode().ToString(CultureInfo.InvariantCulture);
+            _key = key;
 
             var type = templateModelType == "dynamic" ? typeof(DynamicViewBag) : typeof(Dictionary<string, object>);
 
-            Razor.Compile(content, type, _key);
-            _log.Debug("Compiled {0} template with hashcode/key {1}.", templateModelType, _key);
+            Razor.Compile(_builder.ToString(), type, _key);
+            _log.Debug("Compiled {0} template with key {1}.", templateModelType, _key);
 
         }
 

@@ -93,8 +93,7 @@
     <Compile Include="Integration\NorthWindHandleUpdates.cs" />
     <Compile Include="Integration\Es.cs" />
     <Compile Include="Integration\NorthWind.cs" />
-    <Compile Include="Integration\TestNormal.cs" />
-    <Compile Include="Integration\TestInit.cs" />
+    <Compile Include="Integration\Test.cs" />
     <Compile Include="Integration\TestNorthWindConfiguration.cs" />
     <Compile Include="Integration\TestConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

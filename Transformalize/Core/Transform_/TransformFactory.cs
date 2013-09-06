@@ -107,7 +107,7 @@ namespace Transformalize.Core.Transform_
 
                     transform = 
                         parameters.Any()
-                            ? new TemplateTransform(element.Template, element.Model, parameters, templates)
+                            ? new TemplateTransform(element.Template, fieldName, element.Model, parameters, templates)
                             : new TemplateTransform(element.Template, fieldName, templates);
                     break;
 

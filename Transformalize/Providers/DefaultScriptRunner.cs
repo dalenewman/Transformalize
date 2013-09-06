@@ -1,14 +1,14 @@
-﻿using System;
-using System.Data.Common;
-using System.Data.SqlClient;
+using System;
+using System.Data;
+using Transformalize.Providers.MySql;
 
-namespace Transformalize.Providers.SqlServer
+namespace Transformalize.Providers
 {
-    public class SqlServerScriptRunner : IScriptRunner
+    public class DefaultScriptRunner : IScriptRunner
     {
-        private readonly SqlServerConnection _connection;
+        private readonly IConnection _connection;
 
-        public SqlServerScriptRunner(SqlServerConnection connection)
+        public DefaultScriptRunner(IConnection connection)
         {
             _connection = connection;
         }
@@ -16,12 +16,15 @@ namespace Transformalize.Providers.SqlServer
         public IScriptReponse Execute(string script)
         {
             var response = new ScriptResponse();
-            using (var cn = new SqlConnection(_connection.ConnectionString))
+            
+            using (var cn = _connection.GetConnection())
             {
                 try
                 {
                     cn.Open();
-                    var cmd = new SqlCommand(script, cn);
+                    var cmd = cn.CreateCommand();
+                    cmd.CommandText = script;
+                    cmd.CommandType = CommandType.Text;
                     response.RowsAffected = cmd.ExecuteNonQuery();
                     response.Success = true;
                 }

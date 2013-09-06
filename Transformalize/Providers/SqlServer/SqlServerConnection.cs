@@ -23,14 +23,14 @@ using Transformalize.Core.Entity_;
 
 namespace Transformalize.Providers.SqlServer {
 
-    public class SqlServerConnection : IConnection {
+    public class SqlServerConnectionX : IConnection {
 
         private readonly IConnectionChecker _connectionChecker;
         private readonly SqlConnectionStringBuilder _builder;
         private ICompatibilityReader _compatibilityReader;
 
         public string Name { get; set; }
-        public string Provider { get; set; }
+        public ProviderSetup Provider { get; set; }
         public int BatchSize { get; set; }
         public int CompatibilityLevel { get; set; }
         public ConnectionType ConnectionType { get; set; }
@@ -48,12 +48,12 @@ namespace Transformalize.Providers.SqlServer {
             get { return _compatibilityReader ?? (_compatibilityReader = new SqlServerCompatibilityReader(this)); }
         }
 
-        public SqlServerConnection(string connectionString)
+        public SqlServerConnectionX(string connectionString)
         {
-            Provider = "System.Data.SqlClient.SqlConnection, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+            Provider = new ProviderSetup { ProviderType = "System.Data.SqlClient.SqlConnection, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089", L = "[", R = "]" };
             _builder = new SqlConnectionStringBuilder(connectionString);
-            _connectionChecker = new SqlServerConnectionChecker();
-            ScriptRunner = new SqlServerScriptRunner(this);
+            _connectionChecker = new DefaultConnectionChecker();
+            ScriptRunner = new DefaultScriptRunner(this);
         }
 
         public string ConnectionString {
@@ -69,13 +69,13 @@ namespace Transformalize.Providers.SqlServer {
         }
 
         public bool IsReady() {
-            return _connectionChecker.Check(ConnectionString);
+            return _connectionChecker.Check(this);
         }
 
-        public bool InsertMultipleValues() {
+        public bool CanInsertMultipleValues() {
             if (CompatibilityLevel > 0)
                 return CompatibilityLevel > 90;
-            return CompatibilityReader.InsertMultipleValues;
+            return CompatibilityReader.CanInsertMultipleValues;
         }
 
         private SqlDataReader GetEndVersionReader(Entity entity)
@@ -123,30 +123,20 @@ namespace Transformalize.Providers.SqlServer {
 
         public void LoadBeginVersion(Entity entity)
         {
-            var field = GetVersionField(entity.Version.SimpleType);
-            using (var reader = GetBeginVersionReader(field, entity))
+            using (var reader = GetBeginVersionReader(entity.GetVersionField(), entity))
             {
                 entity.HasRange = reader.HasRows;
                 if (!entity.HasRange)
+                {
                     entity.Begin = null;
-                reader.Read();
-                entity.Begin = reader.GetValue(0); 
+                }
+                else
+                {
+                    reader.Read();
+                    entity.Begin = reader.GetValue(0); 
+                }
             }
         }
-
-        private static string GetVersionField(string type)
-        {
-            switch (type.ToLower())
-            {
-                case "rowversion":
-                    return "BinaryVersion";
-                case "byte[]":
-                    return "BinaryVersion";
-                default:
-                    return type[0].ToString(CultureInfo.InvariantCulture).ToUpper() + type.Substring(1) + "Version";
-            }
-        }
-
 
     }
 }

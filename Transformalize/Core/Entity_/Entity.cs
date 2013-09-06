@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using Transformalize.Core.Field_;
 using Transformalize.Core.Fields_;
@@ -154,5 +155,19 @@ namespace Transformalize.Core.Entity_
             OutputConnection.LoadBeginVersion(this);
             InputConnection.LoadEndVersion(this);
         }
+
+        public string GetVersionField()
+        {
+            switch (Version.SimpleType)
+            {
+                case "rowversion":
+                    return "BinaryVersion";
+                case "byte[]":
+                    return "BinaryVersion";
+                default:
+                    return Version.SimpleType[0].ToString(CultureInfo.InvariantCulture).ToUpper() + Version.SimpleType.Substring(1) + "Version";
+            }
+        }
+
     }
 }

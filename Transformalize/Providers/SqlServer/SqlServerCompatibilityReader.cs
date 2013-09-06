@@ -16,9 +16,9 @@ namespace Transformalize.Providers.SqlServer
                 _compatibilityLevel = (byte) cmd.ExecuteScalar();
             }
 
-            InsertMultipleValues = _compatibilityLevel > 90;
+            CanInsertMultipleValues = _compatibilityLevel > 90;
         }
 
-        public bool InsertMultipleValues { get; private set; }
+        public bool CanInsertMultipleValues { get; private set; }
     }
 }

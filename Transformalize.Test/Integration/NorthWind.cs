@@ -26,16 +26,18 @@ namespace Transformalize.Test.Integration {
     public class NorthWind {
 
         [Test]
-        public void Init() {
-            var process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.xml").Read()).Read();
-            process.Options = new Options { Mode = Modes.Initialize };
+        public void Init()
+        {
+            var options = new Options {Mode = Modes.Initialize};
+            var process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.xml").Read(), options).Read();
             new ProcessRunner(process).Run();
         }
 
         [Test]
         public void Normal()
         {
-            var process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.xml").Read()).Read();
+            var options = new Options();
+            var process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.xml").Read(), options).Read();
             new ProcessRunner(process).Run();
         }
 

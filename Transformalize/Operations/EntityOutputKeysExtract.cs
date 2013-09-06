@@ -65,7 +65,7 @@ namespace Transformalize.Operations
 
             var builder = new StringBuilder();
             builder.AppendLine(SqlTemplates.CreateTableVariable("@KEYS", _key));
-            builder.AppendLine(SqlTemplates.BatchInsertValues(50, "@KEYS", _key, _entity.InputKeys, ((SqlServerConnection)_entity.OutputConnection).InsertMultipleValues()));
+            builder.AppendLine(SqlTemplates.BatchInsertValues(50, "@KEYS", _key, _entity.InputKeys, _entity.OutputConnection.CanInsertMultipleValues()));
 
             var selectKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias().Write(", e.", false);
             var joinKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias().Set("e", "k").Write(" AND ");

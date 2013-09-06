@@ -5,13 +5,13 @@ namespace Transformalize.Providers.AnalysisServices
 {
     public class AnalysisServicesConnectionChecker : IConnectionChecker
     {
-        public bool Check(string connectionString)
+        public bool Check(IConnection connection)
         {
             bool isReady;
             var server = new Server();
             try
             {
-                server.Connect(connectionString);
+                server.Connect(connection.ConnectionString);
                 isReady = server.Connected;
                 server.Disconnect();
             }

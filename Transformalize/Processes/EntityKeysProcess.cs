@@ -50,7 +50,7 @@ namespace Transformalize.Processes
             }
             else
             {
-                Register(new EntityInputKeysExtractAll(_entity));
+                Register(new EntityInputKeysExtractAll(_process, _entity));
             }
 
             Register(new EntityInputKeysStore(_process, _entity));

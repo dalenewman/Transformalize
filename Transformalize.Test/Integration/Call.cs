@@ -29,24 +29,24 @@ namespace Transformalize.Test.Integration {
         [Test]
         public void Init()
         {
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read()).Read();
-            process.Options = new Options { Mode = Modes.Initialize };
+            var options = new Options { Mode = Modes.Initialize };
+            var process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read(), options).Read();
             new ProcessRunner(process).Run();
         }
 
         [Test]
         public void Normal()
         {
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read()).Read();
-            process.Options = new Options { Mode = Modes.Normal };
+            var options = new Options { Mode = Modes.Normal };
+            var process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read(), options).Read();
             new ProcessRunner(process).Run();
         }
 
         [Test]
         public void Test()
         {
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read()).Read();
-            process.Options = new Options("{'mode':'test','top':1,'loglevel':'trace'}");
+            var options = new Options("{'mode':'test','top':1,'loglevel':'trace'}");
+            var process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read(), options).Read();
             new ProcessRunner(process).Run();
         }
 

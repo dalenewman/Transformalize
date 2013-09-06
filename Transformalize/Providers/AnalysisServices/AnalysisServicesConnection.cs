@@ -15,7 +15,7 @@ namespace Transformalize.Providers.AnalysisServices
 
         public string Database { get; private set; }
         public string Server { get; private set; }
-        public string Provider { get; private set; }
+        public ProviderSetup Provider { get; private set; }
         public int CompatibilityLevel { get; set; }
         public ConnectionType ConnectionType { get; set; }
         public int BatchSize { get; set; }
@@ -38,9 +38,14 @@ namespace Transformalize.Providers.AnalysisServices
             throw new NotImplementedException();
         }
 
+        public bool CanInsertMultipleValues()
+        {
+            return false;
+        }
+
         public AnalysisServicesConnection(string connectionString)
         {
-            Provider = string.Empty;
+            Provider = new ProviderSetup();
             _connectionChecker = new AnalysisServicesConnectionChecker();
             ConnectionString = connectionString;
             CompatibilityLevel = 100;
@@ -51,7 +56,7 @@ namespace Transformalize.Providers.AnalysisServices
 
         public bool IsReady()
         {
-            return _connectionChecker.Check(ConnectionString);
+            return _connectionChecker.Check(this);
         }
 
         public string Name { get; set; }

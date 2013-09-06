@@ -45,7 +45,6 @@ namespace Transformalize.Runner
                 default:
                     new EntityRecordsExist(ref _process).Check();
 
-                    SetupRazorTemplateService();
                     ProcessEntities();
                     ProcessMaster();
                     ProcessTransforms();
@@ -53,14 +52,6 @@ namespace Transformalize.Runner
 
                     break;
             }
-        }
-
-        private void SetupRazorTemplateService()
-        {
-            var config = new FluentTemplateServiceConfiguration(c => c.WithEncoding(_process.TemplateContentType));
-            var templateService = new TemplateService(config);
-            Razor.SetTemplateService(templateService);
-            _log.Debug("Set RazorEngine to {0} content type.", _process.TemplateContentType);
         }
 
         private string GetMetaData()

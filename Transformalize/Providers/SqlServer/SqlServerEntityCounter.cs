@@ -25,12 +25,12 @@ namespace Transformalize.Providers.SqlServer {
         private readonly SqlServerEntityExists _entityExists;
 
         public SqlServerEntityCounter(IConnectionChecker connectionChecker = null) {
-            _connectionChecker = connectionChecker;
+            _connectionChecker = connectionChecker ?? new DefaultConnectionChecker();
             _entityExists = new SqlServerEntityExists();
         }
 
         public int CountInput(Entity entity) {
-            if (_connectionChecker == null || _connectionChecker.Check(entity.InputConnection.ConnectionString)) {
+            if (_connectionChecker == null || _connectionChecker.Check(entity.InputConnection)) {
                 if (_entityExists.InputExists(entity)) {
                     using (var cn = new SqlConnection(entity.InputConnection.ConnectionString)) {
                         cn.Open();
@@ -45,7 +45,7 @@ namespace Transformalize.Providers.SqlServer {
         }
 
         public int CountOutput(Entity entity) {
-            if (_connectionChecker == null || _connectionChecker.Check(entity.OutputConnection.ConnectionString)) {
+            if (_connectionChecker == null || _connectionChecker.Check(entity.OutputConnection)) {
                 if (_entityExists.OutputExists(entity)) {
                     using (var cn = new SqlConnection(entity.OutputConnection.ConnectionString)) {
                         cn.Open();
