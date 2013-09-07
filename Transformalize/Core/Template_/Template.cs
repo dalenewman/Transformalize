@@ -26,13 +26,14 @@ namespace Transformalize.Core.Template_
             ContentType = contentType.Equals("raw") ? Encoding.Raw : Encoding.Html;
             _process = process;
 
-            var config = new FluentTemplateServiceConfiguration(c => c.WithEncoding(ContentType));
-            var templateService = new TemplateService(config);
-            Razor.SetTemplateService(templateService);
         }
 
         public string Render()
         {
+            var config = new FluentTemplateServiceConfiguration(c => c.WithEncoding(ContentType));
+            var templateService = new TemplateService(config);
+            Razor.SetTemplateService(templateService);
+
             var settings = new ExpandoObject();
             foreach (var setting in Settings)
             {

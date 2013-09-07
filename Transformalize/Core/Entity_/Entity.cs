@@ -33,6 +33,7 @@ namespace Transformalize.Core.Entity_
 
     public class Entity
     {
+        private int _tflBatchId;
 
         public string Schema { get; set; }
         public string ProcessName { get; set; }
@@ -48,7 +49,6 @@ namespace Transformalize.Core.Entity_
         public long RecordsAffected { get; set; }
         public object Begin { get; set; }
         public object End { get; set; }
-        public int TflBatchId { get; set; }
         public int InputCount { get; set; }
         public int OutputCount { get; set; }
         public IEnumerable<Relationship> RelationshipToMaster { get; set; }
@@ -61,6 +61,16 @@ namespace Transformalize.Core.Entity_
         public IFields CalculatedFields { get; set; }
         public bool HasRows { get; set; }
         public bool HasRange { get; set; }
+
+        public int TflBatchId
+        {
+            get
+            {
+                if (_tflBatchId == 0)
+                    _tflBatchId = NextBatchId();
+                return _tflBatchId;
+            }
+        }
 
         public Entity()
         {
@@ -167,6 +177,11 @@ namespace Transformalize.Core.Entity_
                 default:
                     return Version.SimpleType[0].ToString(CultureInfo.InvariantCulture).ToUpper() + Version.SimpleType.Substring(1) + "Version";
             }
+        }
+
+        private int NextBatchId()
+        {
+            return OutputConnection.NextBatchId(ProcessName);
         }
 
     }

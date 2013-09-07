@@ -1,11 +1,8 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using Transformalize.Core;
 using Transformalize.Core.Entity_;
 using Transformalize.Core.Field_;
 using Transformalize.Core.Fields_;
-using Transformalize.Core.Process_;
 using Transformalize.Core.Transform_;
 using Transformalize.Libs.NLog;
 
@@ -14,44 +11,8 @@ namespace Transformalize.Providers.SqlServer {
     public class SqlServerEntityAutoFieldReader : IEntityAutoFieldReader
     {
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
-        private readonly Entity _entity;
-        private readonly int _count;
         private readonly List<Field> _fields = new List<Field>();
         private readonly IDataTypeService _dataTypeService = new SqlServerDataTypeService();
-
-        public SqlServerEntityAutoFieldReader(Entity entity, int count) {
-            _entity = entity;
-            _count = count;
-            using (var cn = new SqlConnection(entity.InputConnection.ConnectionString)) {
-                cn.Open();
-                var cmd = new SqlCommand(PrepareSql(), cn);
-                cmd.Parameters.Add(new SqlParameter("@Name", _entity.Name));
-                cmd.Parameters.Add(new SqlParameter("@Schema", _entity.Schema));
-                var reader = cmd.ExecuteReader();
-
-                if (!reader.HasRows) return;
-
-                while (reader.Read()) {
-                    var name = reader.GetString(0);
-                    var type = GetSystemType(reader.GetString(2));
-                    var length = reader.GetString(3);
-                    var fieldType = reader.GetBoolean(7) ? (_count == 0 ? FieldType.MasterKey : FieldType.PrimaryKey) : FieldType.Field;
-                    var field = new Field(type, length, fieldType, true, string.Empty) {
-                        Name = name,
-                        Entity = _entity.Name,
-                        Index = reader.GetInt32(6),
-                        Schema = _entity.Schema,
-                        Input = true,
-                        Precision = reader.GetByte(4),
-                        Scale = reader.GetInt32(5),
-                        Transforms = new Transforms(),
-                        Auto = true,
-                        Alias = _entity.Prefix + name
-                    };
-                    _fields.Add(field);
-                }
-            }
-        }
 
         private string GetSystemType(string dataType) {
             var typeDefined = _dataTypeService.TypesReverse.ContainsKey(dataType);
@@ -61,22 +22,41 @@ namespace Transformalize.Providers.SqlServer {
             return typeDefined ? _dataTypeService.TypesReverse[dataType] : "System.String";
         }
 
-        public IFields ReadFields() {
-            var fields = _fields.Where(f => f.FieldType.Equals(FieldType.Field)).ToDictionary(k => k.Alias, v => v);
-            _log.Debug("Entity auto found {0} field{1}.", fields.Count, fields.Count == 1 ? string.Empty : "s");
-            return new Fields(fields);
-        }
-
-        public IFields ReadPrimaryKey() {
-            var primaryKey = _fields.Where(f => !f.FieldType.Equals(FieldType.Field)).ToDictionary(k => k.Alias, v => v);
-            _log.Debug("Entity auto found {0} primary key{1}.", primaryKey.Count, primaryKey.Count == 1 ? string.Empty : "s");
-            if (!primaryKey.Any())
-                _log.Warn("Entity auto could not find a primary key on {0}.  You will need to define one in <fields><primaryKey> element.", _entity.Name);
-            return new Fields(primaryKey);
-        }
-
-        public IFields ReadAll()
+        public IFields Read(Entity entity, bool isMaster)
         {
+            using (var cn = new SqlConnection(entity.InputConnection.ConnectionString))
+            {
+                cn.Open();
+                var cmd = new SqlCommand(PrepareSql(), cn);
+                cmd.Parameters.Add(new SqlParameter("@Name", entity.Name));
+                cmd.Parameters.Add(new SqlParameter("@Schema", entity.Schema));
+                var reader = cmd.ExecuteReader();
+
+                if (!reader.HasRows) return new Fields();
+
+                while (reader.Read())
+                {
+                    var name = reader.GetString(0);
+                    var type = GetSystemType(reader.GetString(2));
+                    var length = reader.GetString(3);
+                    var fieldType = reader.GetBoolean(7) ? (isMaster ? FieldType.MasterKey : FieldType.PrimaryKey) : FieldType.Field;
+                    var field = new Field(type, length, fieldType, true, string.Empty)
+                    {
+                        Name = name,
+                        Entity = entity.Name,
+                        Index = reader.GetInt32(6),
+                        Schema = entity.Schema,
+                        Input = true,
+                        Precision = reader.GetByte(4),
+                        Scale = reader.GetInt32(5),
+                        Transforms = new Transforms(),
+                        Auto = true,
+                        Alias = entity.Prefix + name
+                    };
+                    _fields.Add(field);
+                }
+            }
+
             return new Fields(_fields);
         }
 

@@ -156,8 +156,9 @@ namespace Transformalize.Libs.RazorEngine.Core
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public static IEnumerable<Type> CreateTemplateTypes(IEnumerable<string> razorTemplates, Type modelType, bool parallel = false)
         {
-            IEnumerable<Type> modelTypes = Enumerable.Repeat<Type>(modelType, razorTemplates.Count());
-            return TemplateService.CreateTemplateTypes(razorTemplates, modelTypes, parallel);
+            var templates = razorTemplates.ToArray();
+            var modelTypes = Enumerable.Repeat(modelType, templates.Count());
+            return TemplateService.CreateTemplateTypes(templates, modelTypes, parallel);
         }
 
         /// <summary>
@@ -213,7 +214,7 @@ namespace Transformalize.Libs.RazorEngine.Core
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public static IEnumerable<ITemplate> GetTemplates<T>(IEnumerable<string> razorTemplates, IEnumerable<T> models, IEnumerable<string> cacheNames, bool parallel = false)
         {
-            List<object> modelList = (from m in models select (object)m).ToList();
+            var modelList = (from m in models select (object)m).ToList();
             return TemplateService.GetTemplates(razorTemplates, modelList, cacheNames, parallel);
         }
 
@@ -329,11 +330,13 @@ namespace Transformalize.Libs.RazorEngine.Core
             if (models == null)
                 throw new ArgumentException("Expected models list (this parameter may not be NULL).");
 
-            if (models.Count() == 0)
+            var m = models.ToArray();
+
+            if (!m.Any())
                 throw new ArgumentException("Expected at least one entry in models list.");
 
-            List<string> razorTemplateList = Enumerable.Repeat(razorTemplate, models.Count()).ToList();
-            return TemplateService.ParseMany(razorTemplateList, models, null, null, parallel);
+            var razorTemplateList = Enumerable.Repeat(razorTemplate, m.Count()).ToList();
+            return TemplateService.ParseMany(razorTemplateList, m, null, null, parallel);
         }
 
         /// <summary>
@@ -440,11 +443,13 @@ namespace Transformalize.Libs.RazorEngine.Core
             if (models == null)
                 throw new ArgumentException("Expected models list (this parameter may not be NULL).");
 
-            if (models.Count() == 0)
+            var ma = models.ToArray();
+
+            if (!ma.Any())
                 throw new ArgumentException("Expected at least one entry in models list.");
 
-            List<string> razorTemplateList = Enumerable.Repeat(razorTemplate, models.Count()).ToList();
-            List<object> modelList = (from m in models select (object)m).ToList();
+            var razorTemplateList = Enumerable.Repeat(razorTemplate, ma.Count()).ToList();
+            var modelList = (from m in ma select (object)m).ToList();
             return TemplateService.ParseMany(razorTemplateList, modelList, null, null, parallel);
         }
 
@@ -462,7 +467,7 @@ namespace Transformalize.Libs.RazorEngine.Core
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public static IEnumerable<string> ParseMany<T>(IEnumerable<string> razorTemplates, IEnumerable<T> models, bool parallel = false)
         {
-            List<object> modelList = (from m in models select (object)m).ToList();
+            var modelList = (from m in models select (object)m).ToList();
             return TemplateService.ParseMany(razorTemplates, modelList, null, null, parallel);
         }
 
@@ -484,7 +489,7 @@ namespace Transformalize.Libs.RazorEngine.Core
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public static IEnumerable<string> ParseMany<T>(IEnumerable<string> razorTemplates, IEnumerable<T> models, IEnumerable<string> cacheNames, bool parallel = false)
         {
-            List<object> modelList = (from m in models select (object)m).ToList();
+            var modelList = (from m in models select (object)m).ToList();
             return TemplateService.ParseMany(razorTemplates, modelList, null, cacheNames, parallel);
         }
 

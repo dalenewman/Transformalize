@@ -38,12 +38,11 @@ namespace Transformalize.Processes
         private Entity _entity;
         private readonly IFields _fieldsWithTransforms;
 
-        public EntityProcess(Process process, Entity entity, IEntityBatchReader entityBatchReader = null) : base(process.Name)
+        public EntityProcess(Process process, Entity entity) : base(process.Name)
         {
             GlobalDiagnosticsContext.Set("entity", Common.LogLength(entity.Alias, 20));
             _process = process;
             _entity = entity;
-            _entity.TflBatchId = (entityBatchReader ?? new SqlServerEntityBatchReader()).ReadNext(_entity);
             _fieldsWithTransforms = new FieldSqlWriter(entity.All).ExpandXml().HasTransform().Context();
         }
 

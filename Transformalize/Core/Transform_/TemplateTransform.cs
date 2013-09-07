@@ -17,7 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Collections.Generic;
-using System.Globalization;
 using System.Text;
 using Transformalize.Core.Parameters_;
 using Transformalize.Core.Template_;

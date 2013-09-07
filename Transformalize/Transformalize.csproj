@@ -170,6 +170,7 @@
     <Compile Include="Core\IReader.cs" />
     <Compile Include="Core\IMapReader.cs" />
     <Compile Include="Core\Join.cs" />
+    <Compile Include="Core\MetaDataWriter.cs" />
     <Compile Include="Core\Modes.cs" />
     <Compile Include="Core\Options.cs" />
     <Compile Include="Core\Parameters_\EmptyParametersReader.cs" />
@@ -255,6 +256,8 @@
     <Compile Include="Providers\AnalysisServices\AnalysisServicesScriptRunner.cs" />
     <Compile Include="Providers\AnalysisServices\AnalysisServicesConnectionChecker.cs" />
     <Compile Include="Providers\AnalysisServices\AnalysisServicesConnection.cs" />
+    <Compile Include="Providers\ConnectionFactory.cs" />
+    <Compile Include="Providers\DefaultConnection.cs" />
     <Compile Include="Providers\DefaultConnectionChecker.cs" />
     <Compile Include="Providers\ConnectionType.cs" />
     <Compile Include="Providers\DefaultScriptRunner.cs" />
@@ -267,12 +270,11 @@
     <Compile Include="Providers\ITableExists.cs" />
     <Compile Include="Providers\ITflWriter.cs" />
     <Compile Include="Providers\IViewWriter.cs" />
-    <Compile Include="Providers\MySql\DefaultConnection.cs" />
     <Compile Include="Providers\ProviderSetup.cs" />
     <Compile Include="Providers\ScriptResponse.cs" />
     <Compile Include="Providers\MySql\MySqlCompatibilityReader.cs" />
+    <Compile Include="Providers\Compatibility.cs" />
     <Compile Include="Providers\SqlServer\SqlServerCompatibilityReader.cs" />
-    <Compile Include="Providers\SqlServer\SqlServerConnection.cs" />
     <Compile Include="Providers\SqlServer\SqlServerDataTypeService.cs" />
     <Compile Include="Providers\SqlServer\SqlServerEntityAutoFieldReader.cs" />
     <Compile Include="Providers\SqlServer\SqlServerEntityBatchReader.cs" />

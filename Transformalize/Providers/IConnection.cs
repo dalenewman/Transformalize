@@ -38,5 +38,6 @@ namespace Transformalize.Providers
         void LoadEndVersion(Entity entity);
         void LoadBeginVersion(Entity entity);
         bool CanInsertMultipleValues();
+        int NextBatchId(string processName);
     }
 }

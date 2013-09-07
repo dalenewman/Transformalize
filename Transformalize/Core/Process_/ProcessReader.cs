@@ -29,8 +29,6 @@ using Transformalize.Libs.RazorEngine.Core;
 using Transformalize.Libs.RazorEngine.Core.Configuration.Fluent;
 using Transformalize.Libs.RazorEngine.Core.Templating;
 using Transformalize.Providers;
-using Transformalize.Providers.AnalysisServices;
-using Transformalize.Providers.MySql;
 using Transformalize.Providers.SqlServer;
 
 namespace Transformalize.Core.Process_
@@ -292,7 +290,7 @@ namespace Transformalize.Core.Process_
             foreach (EntityConfigurationElement element in _config.Entities)
             {
                 var reader = new EntityConfigurationReader(_process);
-                var entity = reader.Read(element, count);
+                var entity = reader.Read(element, count == 0);
 
                 GuardAgainstFieldOverlap(entity);
 
@@ -357,60 +355,7 @@ namespace Transformalize.Core.Process_
             var count = 0;
             foreach (ConnectionConfigurationElement element in _config.Connections)
             {
-                IConnection connection;
-                ProviderSetup provider;
-                var type = element.Type.ToLower();
-
-                switch (type)
-                {
-                    case "sqlserver":
-                        provider = new ProviderSetup
-                                           {
-                                               ProviderType =
-                                                   "System.Data.SqlClient.SqlConnection, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-                                               L = "[",
-                                               R = "]"
-                                           };
-
-                        connection = new DefaultConnection(element.Value, provider)
-                        {
-                            ConnectionType = ConnectionType.SqlServer,
-                            CompatibilityLevel = element.CompatabilityLevel,
-                            BatchSize = element.BatchSize,
-                            Process = _process.Name,
-                            Name = element.Name
-                        };
-                        break;
-                    case "mysql":
-                        provider = new ProviderSetup
-                        {
-                            ProviderType =
-                                "MySql.Data.MySqlClient.MySqlConnection, MySql.Data",
-                            L = "`",
-                            R = "`"
-                        };
-
-                        connection = new DefaultConnection(element.Value, provider)
-                        {
-                            ConnectionType = ConnectionType.MySql,
-                            BatchSize = element.BatchSize,
-                            Process = _process.Name,
-                            Name = element.Name
-                        };
-                        break;
-                    default:
-                        connection = new AnalysisServicesConnection(element.Value)
-                        {
-                            BatchSize = element.BatchSize,
-                            ConnectionType = ConnectionType.AnalysisServices,
-                            CompatibilityLevel = element.CompatabilityLevel,
-                            Process = _process.Name,
-                            Name = element.Name
-                        };
-                        break;
-                }
-
-               _process.Connections.Add(element.Name, connection);
+               _process.Connections.Add(element.Name, new ConnectionFactory(_process).Create(element));
                 count++;
             }
             return count;

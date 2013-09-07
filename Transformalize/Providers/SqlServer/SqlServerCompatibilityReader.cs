@@ -1,24 +1,32 @@
-using System.Data.SqlClient;
+using System.Data;
 
 namespace Transformalize.Providers.SqlServer
 {
     public class SqlServerCompatibilityReader : ICompatibilityReader {
 
-        private readonly byte _compatibilityLevel;
+        public Compatibility Read(IConnection connection)
+        {
+            var compatibility = new Compatibility();
 
-        public SqlServerCompatibilityReader(IConnection connection) {
-            
-            using (var cn = new SqlConnection(connection.ConnectionString)) {
+            using (var cn = connection.GetConnection())
+            {
                 cn.Open();
-                const string sql = "SELECT compatibility_level FROM sys.DATABASES WHERE [name] = @Database;";
-                var cmd = new SqlCommand(sql, cn);
-                cmd.Parameters.Add(new SqlParameter("@Database", connection.Database));
-                _compatibilityLevel = (byte) cmd.ExecuteScalar();
-            }
+                var cmd = cn.CreateCommand();
+                cmd.CommandText = "SELECT compatibility_level FROM sys.DATABASES WHERE [name] = @Database;";
+                
+                AddDatabaseParameter(connection, cmd);
 
-            CanInsertMultipleValues = _compatibilityLevel > 90;
+                compatibility.CanInsertMultipleRows = (byte)cmd.ExecuteScalar() > 90;
+            }
+            return compatibility;
         }
 
-        public bool CanInsertMultipleValues { get; private set; }
+        private static void AddDatabaseParameter(IConnection connection, IDbCommand cmd)
+        {
+            var database = cmd.CreateParameter();
+            database.ParameterName = "@Database";
+            database.Value = connection.Database;
+            cmd.Parameters.Add(database);
+        }
     }
 }

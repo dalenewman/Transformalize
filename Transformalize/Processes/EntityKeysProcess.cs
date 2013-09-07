@@ -32,12 +32,11 @@ namespace Transformalize.Processes
         private readonly Process _process;
         private readonly Entity _entity;
 
-        public EntityKeysProcess(Process process, Entity entity, IEntityBatchReader entityBatchReader) : base(process.Name)
+        public EntityKeysProcess(Process process, Entity entity) : base(process.Name)
         {
             GlobalDiagnosticsContext.Set("entity", Common.LogLength(entity.Alias,20));
             _process = process;
             _entity = entity;
-            _entity.TflBatchId = entityBatchReader.ReadNext(_entity);
         }
 
         protected override void Initialize()

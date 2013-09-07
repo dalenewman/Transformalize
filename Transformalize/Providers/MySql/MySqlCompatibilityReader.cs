@@ -2,11 +2,9 @@ namespace Transformalize.Providers.MySql
 {
     public class MySqlCompatibilityReader : ICompatibilityReader
     {
-        public bool CanInsertMultipleValues { get; private set; }
-
-        public MySqlCompatibilityReader()
+        public Compatibility Read(IConnection connection)
         {
-            CanInsertMultipleValues = true;
+            return new Compatibility {CanInsertMultipleRows = true};
         }
     }
 }

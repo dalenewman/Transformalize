@@ -20,7 +20,7 @@ namespace Transformalize.Core.Entity_
             _process = process;
         }
 
-        public Entity Read(EntityConfigurationElement element, int count)
+        public Entity Read(EntityConfigurationElement element, bool isMaster)
         {
             var entity = new Entity
                 {
@@ -37,16 +37,16 @@ namespace Transformalize.Core.Entity_
 
             if (entity.Auto)
             {
-                var autoReader = new SqlServerEntityAutoFieldReader(entity, count);
-                entity.All = autoReader.ReadAll();
-                entity.Fields = autoReader.ReadFields();
-                entity.PrimaryKey = autoReader.ReadPrimaryKey();
+                var autoReader = new SqlServerEntityAutoFieldReader();
+                entity.All = autoReader.Read(entity, isMaster);
+                entity.Fields = new FieldSqlWriter(entity.All).FieldType(FieldType.Field).Context();
+                entity.PrimaryKey = new FieldSqlWriter(entity.All).FieldType(FieldType.PrimaryKey, FieldType.MasterKey).Context();
             }
 
             var pkIndex = 0;
             foreach (FieldConfigurationElement pk in element.PrimaryKey)
             {
-                var fieldType = count == 0 ? FieldType.MasterKey : FieldType.PrimaryKey;
+                var fieldType = isMaster ? FieldType.MasterKey : FieldType.PrimaryKey;
 
                 var keyField = new FieldReader(_process, entity, new FieldTransformParametersReader(pk.Alias), new EmptyParametersReader()).Read(pk, fieldType);
                 keyField.Index = pkIndex;

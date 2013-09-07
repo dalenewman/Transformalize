@@ -20,14 +20,13 @@ using System;
 using System.Data;
 using System.Data.Common;
 using Transformalize.Core.Entity_;
+using Transformalize.Providers.MySql;
 
-
-
-namespace Transformalize.Providers.MySql {
+namespace Transformalize.Providers {
     public class DefaultConnection : IConnection {
 
         private readonly IConnectionChecker _connectionChecker;
-        private ICompatibilityReader _compatibilityReader;
+        private readonly ICompatibilityReader _compatibilityReader;
         private readonly DbConnectionStringBuilder _builder;
         
         public string Name { get; set; }
@@ -59,13 +58,9 @@ namespace Transformalize.Providers.MySql {
             }
         }
 
-        private ICompatibilityReader CompatibilityReader
+        public DefaultConnection(string connectionString, ProviderSetup providerSetup, ICompatibilityReader compatibilityReader)
         {
-            get { return _compatibilityReader ?? (_compatibilityReader = new MySqlCompatibilityReader()); }
-        }
-
-        public DefaultConnection(string connectionString, ProviderSetup providerSetup)
-        {
+            _compatibilityReader = compatibilityReader;
             Provider = providerSetup;
             _builder = new DbConnectionStringBuilder { ConnectionString = connectionString };
             _connectionChecker = new DefaultConnectionChecker();
@@ -85,7 +80,23 @@ namespace Transformalize.Providers.MySql {
         }
 
         public bool CanInsertMultipleValues() {
-            return CompatibilityReader.CanInsertMultipleValues;
+            return _compatibilityReader.Read(this).CanInsertMultipleRows;
+        }
+
+        public int NextBatchId(string processName)
+        {
+            using (var cn = GetConnection()) {
+                cn.Open();
+                var cmd = cn.CreateCommand();
+                cmd.CommandText = "SELECT ISNULL(MAX(TflBatchId),0)+1 FROM TflBatch WHERE ProcessName = @ProcessName;";
+
+                var process = cmd.CreateParameter();
+                process.ParameterName = "@ProcessName";
+                process.Value = processName;
+                
+                cmd.Parameters.Add(process);
+                return (int)cmd.ExecuteScalar();
+            }
         }
 
         private static IDbDataParameter CreateParameter(IDbCommand cmd, string name, object value)

@@ -43,6 +43,11 @@ namespace Transformalize.Providers.AnalysisServices
             return false;
         }
 
+        public int NextBatchId(string processName)
+        {
+            throw new NotImplementedException();
+        }
+
         public AnalysisServicesConnection(string connectionString)
         {
             Provider = new ProviderSetup();
