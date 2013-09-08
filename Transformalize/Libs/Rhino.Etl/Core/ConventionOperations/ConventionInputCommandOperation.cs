@@ -1,6 +1,7 @@
 using System.Configuration;
 using System.Data;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
+using Transformalize.Providers;
 
 namespace Transformalize.Libs.Rhino.Etl.Core.ConventionOperations {
     /// <summary>
@@ -21,28 +22,9 @@ namespace Transformalize.Libs.Rhino.Etl.Core.ConventionOperations {
         ///</summary>
         public int Timeout { get; set; }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ConventionInputCommandOperation"/> class.
-        /// </summary>
-        /// <param name="connectionString">The connection string.</param>
-        public ConventionInputCommandOperation(string connectionString) : base(GetConnectionStringSettings(connectionString)) {
+        public ConventionInputCommandOperation(IConnection connection) : base(connection) {
             UseTransaction = false;
             Timeout = 0;
-        }
-
-        private static ConnectionStringSettings GetConnectionStringSettings(string connectionString) {
-            return new ConnectionStringSettings {
-                ConnectionString = connectionString,
-                ProviderName = PROVIDER,
-            };
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ConventionInputCommandOperation"/> class.
-        /// </summary>
-        /// <param name="connectionStringSettings">Name of the connection string.</param>
-        public ConventionInputCommandOperation(ConnectionStringSettings connectionStringSettings)
-            : base(connectionStringSettings) {
         }
 
         /// <summary>

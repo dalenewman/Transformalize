@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -43,7 +44,8 @@ namespace Transformalize.Core
             { "decimal", (x => Convert.ToDecimal(x)) },
             { "char", (x => Convert.ToChar(x)) },
             { "datetime", (x => Convert.ToDateTime(x)) },
-            { "boolean", (x=> Convert.ToBoolean(x)) }
+            { "boolean", (x=> Convert.ToBoolean(x)) },
+            { "single", (x=> Convert.ToSingle(x))}
         };
 
         public static Dictionary<string, Func<object, object>> ObjectConversionMap = new Dictionary<string, Func<object, object>> {
@@ -57,7 +59,8 @@ namespace Transformalize.Core
             { "decimal", (x => Convert.ToDecimal(x)) },
             { "char", (x => Convert.ToChar(x)) },
             { "datetime", (x => Convert.ToDateTime(x)) },
-            { "boolean", (x=> Convert.ToBoolean(x)) }
+            { "boolean", (x=> Convert.ToBoolean(x)) },
+            { "single", (x => Convert.ToSingle(x))}
         };
 
         public static Func<KeyValuePair<string, Field>, bool> FieldFinder(ParameterConfigurationElement p)

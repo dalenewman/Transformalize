@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using Transformalize.Core;
 using Transformalize.Core.Entity_;
 using Transformalize.Core.Process_;
 using Transformalize.Libs.Rhino.Etl.Core;
@@ -29,13 +30,13 @@ namespace Transformalize.Operations {
     public class EntityInputKeysExtractDelta : InputCommandOperation {
         private readonly Process _process;
         private readonly Entity _entity;
-        private readonly IEnumerable<string> _fields;
+        private readonly string[] _fields;
 
         public EntityInputKeysExtractDelta(Process process, Entity entity)
-            : base(entity.InputConnection.ConnectionString) {
+            : base(entity.InputConnection) {
             _process = process;
             _entity = entity;
-            _fields = _entity.PrimaryKey.ToEnumerable().Select(f => f.Alias);
+            _fields = _entity.PrimaryKey.ToEnumerable().Select(f => f.Alias).ToArray();
 
             _entity.CheckDelta();
 
@@ -65,15 +66,15 @@ namespace Transformalize.Operations {
             cmd.CommandType = CommandType.Text;
 
             if (_entity.HasRange)
-                cmd.Parameters.Add(new SqlParameter("@Begin", _entity.Begin));
-            cmd.Parameters.Add(new SqlParameter("@End", _entity.End));
+                AddParameter(cmd, "@Begin", _entity.Begin);
+            AddParameter(cmd, "@End", _entity.End);
         }
-
+        
         public string PrepareSql(bool isRange) {
-            const string sqlPattern = "SELECT {0}{1}\r\nFROM [{2}].[{3}] WITH (NOLOCK)\r\nWHERE {4}\r\nORDER BY {5};";
+            const string sqlPattern = "SELECT {0}{1}\r\nFROM [{2}].[{3}] WITH (NOLOCK)\r\nWHERE {4};";
             var criteria = string.Format(isRange ? "[{0}] BETWEEN @Begin AND @End" : "[{0}] <= @End", _entity.Version.Name);
             var top = _process.Options.Top > 0 ? "TOP " + _process.Options.Top + " " : string.Empty;
-            return string.Format(sqlPattern, top, string.Join(", ", _entity.SelectKeys()), _entity.Schema, _entity.Name, criteria, string.Join(", ",_entity.OrderByKeys()));
+            return string.Format(sqlPattern, top, string.Join(", ", _entity.SelectKeys(Connection.Provider)), _entity.Schema, _entity.Name, criteria );
         }
 
         public bool NeedsToRun() {

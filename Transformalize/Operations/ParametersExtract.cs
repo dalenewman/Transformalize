@@ -38,7 +38,7 @@ namespace Transformalize.Operations {
         }
 
         public ParametersExtract(Process process)
-            : base(process.MasterEntity.OutputConnection.ConnectionString) {
+            : base(process.MasterEntity.OutputConnection) {
             UseTransaction = false;
             _sql = BuildSql(process);
         }

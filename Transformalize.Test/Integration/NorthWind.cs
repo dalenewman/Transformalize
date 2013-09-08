@@ -41,6 +41,13 @@ namespace Transformalize.Test.Integration {
             new ProcessRunner(process).Run();
         }
 
+        [Test]
+        public void Test()
+        {
+            var options = new Options { Mode = Modes.Test, Top = 1};
+            var process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.xml").Read(), options).Read();
+            new ProcessRunner(process).Run();
+        }
 
 
     }

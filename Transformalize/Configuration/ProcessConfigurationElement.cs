@@ -18,7 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Configuration;
 
-namespace Transformalize.Configuration {
+namespace Transformalize.Configuration
+{
 
     public class ProcessConfigurationElement : ConfigurationElement
     {
@@ -32,8 +33,10 @@ namespace Transformalize.Configuration {
         }
 
         [ConfigurationProperty(NAME, IsRequired = true)]
-        public string Name {
-            get {
+        public string Name
+        {
+            get
+            {
                 return this[NAME] as string;
             }
             set { this[NAME] = value; }
@@ -51,9 +54,20 @@ namespace Transformalize.Configuration {
 
 
         [ConfigurationProperty("connections")]
-        public ConnectionElementCollection Connections {
-            get {
+        public ConnectionElementCollection Connections
+        {
+            get
+            {
                 return this["connections"] as ConnectionElementCollection;
+            }
+        }
+
+        [ConfigurationProperty("providers")]
+        public ProviderElementCollection Providers
+        {
+            get
+            {
+                return this["providers"] as ProviderElementCollection;
             }
         }
 
@@ -67,8 +81,10 @@ namespace Transformalize.Configuration {
         }
 
         [ConfigurationProperty("maps")]
-        public MapElementCollection Maps {
-            get {
+        public MapElementCollection Maps
+        {
+            get
+            {
                 return this["maps"] as MapElementCollection;
             }
         }
@@ -83,15 +99,19 @@ namespace Transformalize.Configuration {
         }
 
         [ConfigurationProperty("entities")]
-        public EntityElementCollection Entities {
-            get {
+        public EntityElementCollection Entities
+        {
+            get
+            {
                 return this["entities"] as EntityElementCollection;
             }
         }
 
         [ConfigurationProperty("relationships")]
-        public RelationshipElementCollection Relationships {
-            get {
+        public RelationshipElementCollection Relationships
+        {
+            get
+            {
                 return this["relationships"] as RelationshipElementCollection;
             }
         }

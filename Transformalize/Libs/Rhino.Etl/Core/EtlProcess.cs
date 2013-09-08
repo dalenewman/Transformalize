@@ -6,6 +6,7 @@ using Transformalize.Core.Process_;
 using Transformalize.Libs.Rhino.Etl.Core.Infrastructure;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
 using Transformalize.Libs.Rhino.Etl.Core.Pipelines;
+using Transformalize.Providers;
 
 namespace Transformalize.Libs.Rhino.Etl.Core {
     /// <summary>
@@ -122,26 +123,8 @@ namespace Transformalize.Libs.Rhino.Etl.Core {
             }
         }
 
-        /// <summary>
-        /// Executes the command and return a scalar
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="connectionName">Name of the connection.</param>
-        /// <param name="commandText">The command text.</param>
-        /// <returns></returns>
-        protected static T ExecuteScalar<T>(string connectionName, string commandText) {
-            return ExecuteScalar<T>(ConfigurationManager.ConnectionStrings[connectionName], commandText);
-        }
-
-        /// <summary>
-        /// Executes the command and return a scalar
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="connectionStringSettings">The connection string settings node to use</param>
-        /// <param name="commandText">The command text.</param>
-        /// <returns></returns>
-        protected static T ExecuteScalar<T>(ConnectionStringSettings connectionStringSettings, string commandText) {
-            return Use.Transaction<T>(connectionStringSettings, delegate(IDbCommand cmd) {
+        protected static T ExecuteScalar<T>(IConnection connection, string commandText) {
+            return Use.Transaction<T>(connection, delegate(IDbCommand cmd) {
                 cmd.CommandText = commandText;
                 var scalar = cmd.ExecuteScalar();
                 return (T)(scalar ?? default(T));

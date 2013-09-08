@@ -1,4 +1,5 @@
-﻿using Transformalize.Core.Process_;
+﻿using Transformalize.Configuration;
+using Transformalize.Core.Process_;
 using Transformalize.Providers.AnalysisServices;
 using Transformalize.Providers.MySql;
 using Transformalize.Providers.SqlServer;
@@ -14,50 +15,42 @@ namespace Transformalize.Providers
             _process = process;
         }
 
-        public IConnection Create(Configuration.ConnectionConfigurationElement element)
+        public IConnection Create(ConnectionConfigurationElement element)
         {
-            ProviderSetup provider;
-            var type = element.Type.ToLower();
+            var provider = element.Provider.ToLower();
 
-            switch (type)
+            switch (provider)
             {
                 case "sqlserver":
-                    provider = new ProviderSetup {
-                        ProviderType = "System.Data.SqlClient.SqlConnection, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-                        L = "[",
-                        R = "]"
-                    };
-
-                    return new DefaultConnection(element.Value, provider, new SqlServerCompatibilityReader())
-                    {
-                        ConnectionType = ConnectionType.SqlServer,
-                        CompatibilityLevel = element.CompatabilityLevel,
-                        BatchSize = element.BatchSize,
-                        Process = _process.Name,
-                        Name = element.Name
-                    };
+                    return GetDefaultConnection(element,
+                        new ProviderSetup(new SqlServerCompatibilityReader()) { ProviderType = _process.Providers[provider], L = "[", R = "]" }
+                    );
 
                 case "mysql":
-                    provider = new ProviderSetup { ProviderType = "MySql.Data.MySqlClient.MySqlConnection, MySql.Data", L = "`", R = "`" };
-
-                    return new DefaultConnection(element.Value, provider, new MySqlCompatibilityReader())
-                    {
-                        ConnectionType = ConnectionType.MySql,
-                        BatchSize = element.BatchSize,
-                        Process = _process.Name,
-                        Name = element.Name
-                    };
+                    return GetDefaultConnection(element,
+                        new ProviderSetup(new MySqlCompatibilityReader()) { ProviderType = _process.Providers[provider], L = "`", R = "`" }
+                    );
 
                 default:
                     return new AnalysisServicesConnection(element.Value)
                     {
                         BatchSize = element.BatchSize,
-                        ConnectionType = ConnectionType.AnalysisServices,
                         CompatibilityLevel = element.CompatabilityLevel,
                         Process = _process.Name,
                         Name = element.Name
                     };
             }
+        }
+
+        private IConnection GetDefaultConnection(ConnectionConfigurationElement element, ProviderSetup providerSetup)
+        {
+            return new DefaultConnection(element.Value, providerSetup)
+                       {
+                           CompatibilityLevel = element.CompatabilityLevel,
+                           BatchSize = element.BatchSize,
+                           Process = _process.Name,
+                           Name = element.Name
+                       };
         }
     }
 }

@@ -1,5 +1,6 @@
 using System.Data.SqlClient;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
+using Transformalize.Providers;
 
 namespace Transformalize.Libs.Rhino.Etl.Core.ConventionOperations
 {
@@ -20,11 +21,7 @@ namespace Transformalize.Libs.Rhino.Etl.Core.ConventionOperations
             set { command = value; }
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ConventionSqlBatchOperation"/> class.
-        /// </summary>
-        /// <param name="connectionStringName">Name of the connection string.</param>
-        public ConventionSqlBatchOperation(string connectionStringName) : base(connectionStringName)
+        public ConventionSqlBatchOperation(IConnection connection) : base(connection)
         {
         }
 

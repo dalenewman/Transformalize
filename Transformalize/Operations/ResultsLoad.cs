@@ -29,7 +29,7 @@ namespace Transformalize.Operations
         private readonly Process _process;
 
         public ResultsLoad(Process process)
-            : base(process.MasterEntity.OutputConnection.ConnectionString)
+            : base(process.MasterEntity.OutputConnection)
         {
             _process = process;
             BatchSize = 50;

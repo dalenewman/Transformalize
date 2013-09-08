@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
+using Transformalize.Core;
 using Transformalize.Core.Entity_;
 using Transformalize.Core.Field_;
 using Transformalize.Libs.Rhino.Etl.Core;
@@ -35,7 +36,7 @@ namespace Transformalize.Operations
         private readonly Field[] _key;
 
         public EntityOutputKeysExtract(Entity entity)
-            : base(entity.OutputConnection.ConnectionString)
+            : base(entity.OutputConnection)
         {
             _entity = entity;
             _fields = new List<string>(new FieldSqlWriter(entity.PrimaryKey).Alias().Keys()) {"TflKey"};
@@ -65,7 +66,7 @@ namespace Transformalize.Operations
 
             var builder = new StringBuilder();
             builder.AppendLine(SqlTemplates.CreateTableVariable("@KEYS", _key));
-            builder.AppendLine(SqlTemplates.BatchInsertValues(50, "@KEYS", _key, _entity.InputKeys, _entity.OutputConnection.CanInsertMultipleValues()));
+            builder.AppendLine(SqlTemplates.BatchInsertValues(50, "@KEYS", _key, _entity.InputKeys, _entity.OutputConnection.Compatibility.CanInsertMultipleRows));
 
             var selectKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias().Write(", e.", false);
             var joinKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias().Set("e", "k").Write(" AND ");

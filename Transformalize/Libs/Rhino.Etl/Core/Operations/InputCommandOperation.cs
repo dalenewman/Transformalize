@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using Transformalize.Libs.Rhino.Etl.Core.Infrastructure;
+using Transformalize.Providers;
 
 namespace Transformalize.Libs.Rhino.Etl.Core.Operations {
     /// <summary>
@@ -9,25 +10,9 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Operations {
     /// </summary>
     public abstract class InputCommandOperation : AbstractCommandOperation {
         
-        /// <summary>
-        /// Initializes a new instance of the <see cref="InputCommandOperation"/> class.
-        /// </summary>
-        /// <param name="connectionString">The connection string.</param>
-        protected InputCommandOperation(string connectionString) : this(GetConnectionStringSettings(connectionString) ) {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="InputCommandOperation"/> class.
-        /// </summary>
-        /// <param name="connectionStringSettings">Connection string settings to use.</param>
-        protected InputCommandOperation(ConnectionStringSettings connectionStringSettings) : base(connectionStringSettings) {
+        protected InputCommandOperation(IConnection connection) : base(connection)
+        {
             UseTransaction = false;
-        }
-
-        private static ConnectionStringSettings GetConnectionStringSettings(string connectionString) {
-            return new ConnectionStringSettings {
-                ConnectionString = connectionString,
-            };
         }
 
         /// <summary>
@@ -36,9 +21,9 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Operations {
         /// <param name="rows">The rows.</param>
         /// <returns></returns>
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
-            using (var connection = Use.Connection(ConnectionStringSettings))
-            using (var transaction = BeginTransaction(connection)) {
-                using (currentCommand = connection.CreateCommand()) {
+            using (var cn = Use.Connection(Connection))
+            using (var transaction = BeginTransaction(cn)) {
+                using (currentCommand = cn.CreateCommand()) {
                     currentCommand.Transaction = transaction;
                     PrepareCommand(currentCommand);
                     using (var reader = currentCommand.ExecuteReader(CommandBehavior.SequentialAccess)) {

@@ -1,24 +1,16 @@
 using System;
 using System.Configuration;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
+using Transformalize.Providers;
 
 namespace Transformalize.Libs.Rhino.Etl.Core.ConventionOperations
 {
     /// <summary>Convertion wrapper around the <see cref="SqlBulkInsertOperation"/>.</summary>
     public class ConventionSqlBulkInsertOperation : SqlBulkInsertOperation
     {
-        /// <summary>Creates a new <see cref="ConventionSqlBulkInsertOperation"/></summary>
-        /// <param name="connectionStringName"></param>
-        /// <param name="targetTable"></param>
-        public ConventionSqlBulkInsertOperation(string connectionStringName, string targetTable) : this(ConfigurationManager.ConnectionStrings[connectionStringName], targetTable)
-        {
-        }
 
-        /// <summary>Creates a new <see cref="ConventionSqlBulkInsertOperation"/></summary>
-        /// <param name="connectionStringSettings">Connection string settings to use.</param>
-        /// <param name="targetTable"></param>
-        public ConventionSqlBulkInsertOperation(ConnectionStringSettings connectionStringSettings, string targetTable)
-            : base(connectionStringSettings, targetTable)
+        public ConventionSqlBulkInsertOperation(IConnection connection, string targetTable)
+            : base(connection, targetTable)
         {
         }
 

@@ -22,60 +22,67 @@ namespace Transformalize.Configuration
 {
     public class ConnectionConfigurationElement : ConfigurationElement {
 
+        private const string NAME = "name";
+        private const string VALUE = "value";
+        private const string COMPATABILITY_LEVEL = "compatabilityLevel";
+        private const string PROVIDER = "provider";
+        private const string BATCH_SIZE = "batchSize";
+        private const string ENABLED = "enabled";
+
         public override bool IsReadOnly()
         {
             return false;
         }
 
-        [ConfigurationProperty("name", IsRequired = true)]
+        [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name {
             get {
-                return this["name"] as string;
+                return this[NAME] as string;
             }
-            set { this["name"] = value; }
+            set { this[NAME] = value; }
         }
 
-        [ConfigurationProperty("value", IsRequired = true)]
+        [ConfigurationProperty(VALUE, IsRequired = true)]
         public string Value {
             get {
-                return this["value"] as string;
+                return this[VALUE] as string;
             }
-            set { this["value"] = value; }
+            set { this[VALUE] = value; }
         }
 
-        [ConfigurationProperty("compatabilityLevel", IsRequired = false, DefaultValue = 0)]
+        [ConfigurationProperty(COMPATABILITY_LEVEL, IsRequired = false, DefaultValue = 0)]
         public int CompatabilityLevel {
             get {
-                return (int)this["compatabilityLevel"];
+                return (int)this[COMPATABILITY_LEVEL];
             }
-            set { this["compatabilityLevel"] = value; }
+            set { this[COMPATABILITY_LEVEL] = value; }
         }
 
         [RegexStringValidator(@"(?i)SqlServer|AnalysisServices|MySql")]
-        [ConfigurationProperty("type", IsRequired = false, DefaultValue = "SqlServer")]
-        public string Type {
+        [ConfigurationProperty(PROVIDER, IsRequired = false, DefaultValue = "SqlServer")]
+        public string Provider {
             get {
-                return this["type"] as string;
+                return this[PROVIDER] as string;
             }
-            set { this["type"] = value; }
+            set { this[PROVIDER] = value; }
         }
 
-        [ConfigurationProperty("batchSize", IsRequired = false, DefaultValue = 500)]
+        [ConfigurationProperty(BATCH_SIZE, IsRequired = false, DefaultValue = 500)]
         public int BatchSize {
             get {
-                return (int)this["batchSize"];
+                return (int)this[BATCH_SIZE];
             }
-            set { this["batchSize"] = value; }
+            set { this[BATCH_SIZE] = value; }
         }
 
-        [ConfigurationProperty("enabled", IsRequired = false, DefaultValue = true)]
+        [ConfigurationProperty(ENABLED, IsRequired = false, DefaultValue = true)]
         public bool Enabled
         {
             get
             {
-                return (bool)this["enabled"];
+                return (bool)this[ENABLED];
             }
-            set { this["enabled"] = value; }
+            set { this[ENABLED] = value; }
         }
 
     }

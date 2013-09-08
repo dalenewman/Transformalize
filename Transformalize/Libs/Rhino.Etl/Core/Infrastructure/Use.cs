@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using Transformalize.Libs.NLog;
+using Transformalize.Providers;
 
 namespace Transformalize.Libs.Rhino.Etl.Core.Infrastructure {
     /// <summary>
@@ -45,85 +46,18 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Infrastructure {
         [ThreadStatic]
         private static int TransactionCounter;
 
-        /// <summary>
-        /// Execute the specified delegate inside a transaction and return 
-        /// the result of the delegate.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="connectionStringName">The name of the named connection string in the configuration file</param>
-        /// <param name="actionToExecute">The action to execute</param>
-        /// <returns></returns>
-        public static T Transaction<T>(string connectionStringName, Func<T> actionToExecute) {
+        public static T Transaction<T>(IConnection connection, Func<T> actionToExecute) {
             T result = default(T);
-
-            ConnectionStringSettings connectionStringSettings = ConfigurationManager.ConnectionStrings[connectionStringName];
-            if (connectionStringSettings == null)
-                throw new InvalidOperationException("Could not find connnection string: " + connectionStringName);
-
-            Transaction(connectionStringSettings, delegate(IDbCommand command) { result = actionToExecute(command); });
+            Transaction(connection, delegate(IDbCommand command) { result = actionToExecute(command); });
             return result;
         }
 
-        /// <summary>
-        /// Execute the specified delegate inside a transaction and return 
-        /// the result of the delegate.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="connectionStringSettings">The connection string settings to use for the connection</param>
-        /// <param name="actionToExecute">The action to execute</param>
-        /// <returns></returns>
-        public static T Transaction<T>(ConnectionStringSettings connectionStringSettings, Func<T> actionToExecute) {
-            T result = default(T);
-            Transaction(connectionStringSettings, delegate(IDbCommand command) { result = actionToExecute(command); });
-            return result;
+        public static void Transaction(IConnection connection, Proc actionToExecute) {
+            Transaction(connection, IsolationLevel.Unspecified, actionToExecute);
         }
 
-        /// <summary>
-        /// Execute the specified delegate inside a transaction
-        /// </summary>
-        /// <param name="connectionStringName">Name of the connection string.</param>
-        /// <param name="actionToExecute">The action to execute.</param>
-        public static void Transaction(string connectionStringName, Proc actionToExecute) {
-            ConnectionStringSettings connectionStringSettings = ConfigurationManager.ConnectionStrings[connectionStringName];
-            if (connectionStringSettings == null)
-                throw new InvalidOperationException("Could not find connnection string: " + connectionStringName);
-
-            Transaction(connectionStringSettings, IsolationLevel.Unspecified, actionToExecute);
-        }
-
-        /// <summary>
-        /// Execute the specified delegate inside a transaction
-        /// </summary>
-        /// <param name="connectionStringSettings">The connection string settings to use for the connection</param>
-        /// <param name="actionToExecute">The action to execute.</param>
-        public static void Transaction(ConnectionStringSettings connectionStringSettings, Proc actionToExecute) {
-            Transaction(connectionStringSettings, IsolationLevel.Unspecified, actionToExecute);
-        }
-
-        /// <summary>
-        /// Execute the specified delegate inside a transaction with the specific
-        /// isolation level 
-        /// </summary>
-        /// <param name="connectionStringName">Name of the connection string.</param>
-        /// <param name="isolationLevel">The isolation level.</param>
-        /// <param name="actionToExecute">The action to execute.</param>
-        public static void Transaction(string connectionStringName, IsolationLevel isolationLevel, Proc actionToExecute) {
-            ConnectionStringSettings connectionStringSettings = ConfigurationManager.ConnectionStrings[connectionStringName];
-            if (connectionStringSettings == null)
-                throw new InvalidOperationException("Could not find connnection string: " + connectionStringName);
-
-            Transaction(connectionStringSettings, isolationLevel, actionToExecute);
-        }
-
-        /// <summary>
-        /// Execute the specified delegate inside a transaction with the specific
-        /// isolation level 
-        /// </summary>
-        /// <param name="connectionStringSettings">Connection string settings node to use for the connection</param>
-        /// <param name="isolationLevel">The isolation level.</param>
-        /// <param name="actionToExecute">The action to execute.</param>
-        public static void Transaction(ConnectionStringSettings connectionStringSettings, IsolationLevel isolationLevel, Proc actionToExecute) {
-            StartTransaction(connectionStringSettings, isolationLevel);
+        public static void Transaction(IConnection connection, IsolationLevel isolationLevel, Proc actionToExecute) {
+            StartTransaction(connection, isolationLevel);
             try {
                 using (IDbCommand command = ActiveConnection.CreateCommand()) {
                     command.Transaction = ActiveTransaction;
@@ -172,65 +106,20 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Infrastructure {
             }
         }
 
-        /// <summary>
-        /// Starts the transaction.
-        /// </summary>
-        /// <param name="connectionStringSettings">The connection string settings to use for the transaction</param>
-        /// <param name="isolation">The isolation.</param>
-        private static void StartTransaction(ConnectionStringSettings connectionStringSettings, IsolationLevel isolation) {
+        private static void StartTransaction(IConnection connection, IsolationLevel isolation) {
             if (TransactionCounter <= 0) {
                 TransactionCounter = 0;
-                ActiveConnection = Connection(connectionStringSettings);
+                ActiveConnection = Connection(connection);
                 ActiveTransaction = ActiveConnection.BeginTransaction(isolation);
             }
             TransactionCounter++;
         }
 
-        /// <summary>
-        /// Creates an open connection for a given named connection string, using the provider name
-        /// to select the proper implementation
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns>The open connection</returns>
-        public static IDbConnection Connection(string name) {
-            ConnectionStringSettings connectionString = ConfigurationManager.ConnectionStrings[name];
-            if (connectionString == null)
-                throw new InvalidOperationException("Could not find connnection string: " + name);
-
-            return Connection(connectionString);
-        }
-
-        /// <summary>
-        /// Creates an open connection for a given connection string setting, using the provider
-        /// name of select the proper implementation
-        /// </summary>
-        /// <param name="connectionString">ConnectionStringSetting node</param>
-        /// <returns>The open connection</returns>
-        public static IDbConnection Connection(ConnectionStringSettings connectionString) {
-            if (connectionString == null)
-                throw new InvalidOperationException("Null ConnectionStringSettings specified");
-
-            IDbConnection connection;
-
-            if (connectionString.ProviderName == string.Empty || connectionString.ProviderName.Equals("System.Data.SqlClient", StringComparison.OrdinalIgnoreCase))
-            {
-                connection = new SqlConnection();
-            }
-            else
-            {
-                var type = Type.GetType(connectionString.ProviderName, false, true);
-                if (type == null)
-                {
-                    Log.Error("The type name '" + connectionString.ProviderName + "' could not be found for connection string: " + connectionString.Name + ".  The provider name must be a type name, followed by the assembly name.  E.g. System.Data.SqlClient.SqlConnection, SystemData.  If this is ambiguous, then you need to specify the fully qualified name like this: System.Data.SqlClient.SqlConnection, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089.");
-                    Environment.Exit(1);
-                }
-                connection = (IDbConnection)Activator.CreateInstance(type);
-                
-            }
-
-            connection.ConnectionString = connectionString.ConnectionString;
-            connection.Open();
-            return connection;
+        public static IDbConnection Connection(IConnection connection)
+        {
+            var cn = connection.GetConnection();
+            cn.Open();
+            return cn;
         }
     }
 }

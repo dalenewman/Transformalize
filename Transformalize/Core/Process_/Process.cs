@@ -48,6 +48,7 @@ namespace Transformalize.Core.Process_ {
         public Options Options = new Options();
         public List<Relationship> Relationships = new List<Relationship>();
         public IEnumerable<Field> RelatedKeys;
+        public Dictionary<string, string> Providers = new Dictionary<string, string>();  
         
         public bool IsReady() {
             return Connections.Select(connection => connection.Value.IsReady()).All(b => b.Equals(true));

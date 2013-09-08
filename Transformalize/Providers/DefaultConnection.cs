@@ -20,22 +20,27 @@ using System;
 using System.Data;
 using System.Data.Common;
 using Transformalize.Core.Entity_;
-using Transformalize.Providers.MySql;
 
-namespace Transformalize.Providers {
-    public class DefaultConnection : IConnection {
+namespace Transformalize.Providers
+{
+    public class DefaultConnection : IConnection
+    {
 
         private readonly IConnectionChecker _connectionChecker;
-        private readonly ICompatibilityReader _compatibilityReader;
         private readonly DbConnectionStringBuilder _builder;
-        
+        private Compatibility _compatibility;
+
         public string Name { get; set; }
         public ProviderSetup Provider { get; set; }
         public int BatchSize { get; set; }
         public int CompatibilityLevel { get; set; }
-        public ConnectionType ConnectionType { get; set; }
         public string Process { get; set; }
         public IScriptRunner ScriptRunner { get; private set; }
+
+        public Compatibility Compatibility
+        {
+            get { return _compatibility ?? (_compatibility = Provider.CompatibilityReader.Read(this)); }
+        }
 
         public string ConnectionString
         {
@@ -58,34 +63,31 @@ namespace Transformalize.Providers {
             }
         }
 
-        public DefaultConnection(string connectionString, ProviderSetup providerSetup, ICompatibilityReader compatibilityReader)
+        public DefaultConnection(string connectionString, ProviderSetup providerSetup)
         {
-            _compatibilityReader = compatibilityReader;
             Provider = providerSetup;
             _builder = new DbConnectionStringBuilder { ConnectionString = connectionString };
             _connectionChecker = new DefaultConnectionChecker();
             ScriptRunner = new DefaultScriptRunner(this);
         }
-        
+
         public IDbConnection GetConnection()
         {
             var type = Type.GetType(Provider.ProviderType, false, true);
-            var connection = (IDbConnection) Activator.CreateInstance(type);
+            var connection = (IDbConnection)Activator.CreateInstance(type);
             connection.ConnectionString = ConnectionString;
             return connection;
         }
 
-        public bool IsReady() {
+        public bool IsReady()
+        {
             return _connectionChecker.Check(this);
-        }
-
-        public bool CanInsertMultipleValues() {
-            return _compatibilityReader.Read(this).CanInsertMultipleRows;
         }
 
         public int NextBatchId(string processName)
         {
-            using (var cn = GetConnection()) {
+            using (var cn = GetConnection())
+            {
                 cn.Open();
                 var cmd = cn.CreateCommand();
                 cmd.CommandText = "SELECT ISNULL(MAX(TflBatchId),0)+1 FROM TflBatch WHERE ProcessName = @ProcessName;";
@@ -93,10 +95,18 @@ namespace Transformalize.Providers {
                 var process = cmd.CreateParameter();
                 process.ParameterName = "@ProcessName";
                 process.Value = processName;
-                
+
                 cmd.Parameters.Add(process);
                 return (int)cmd.ExecuteScalar();
             }
+        }
+
+        public void AddParameter(IDbCommand command, string name, object val)
+        {
+            var parameter = command.CreateParameter();
+            parameter.ParameterName = name;
+            parameter.Value = val ?? DBNull.Value;
+            command.Parameters.Add(parameter);
         }
 
         private static IDbDataParameter CreateParameter(IDbCommand cmd, string name, object value)
@@ -141,7 +151,7 @@ namespace Transformalize.Providers {
         public void LoadEndVersion(Entity entity)
         {
             var sql = string.Format("SELECT MAX({0}) AS {0} FROM {1};", Provider.Enclose(entity.Version.Name), Provider.Enclose(entity.Name));
-            
+
             using (var cn = GetConnection())
             {
                 var command = cn.CreateCommand();

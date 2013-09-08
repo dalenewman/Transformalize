@@ -3,59 +3,28 @@ using System.Collections;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using Transformalize.Providers;
 
 namespace Transformalize.Libs.Rhino.Etl.Core.Operations {
     /// <summary>
     /// Represent an operation that uses the database can occure during the ETL process
     /// </summary>
     public abstract class AbstractDatabaseOperation : AbstractOperation {
+        private readonly IConnection _connection;
 
-        private readonly ConnectionStringSettings _connectionStringSettings;
         private static Hashtable _supportedTypes;
         ///<summary>
         ///The parameter prefix to use when adding parameters
         ///</summary>
         protected string ParamPrefix = "";
 
-        /// <summary>
-        /// Gets the connection string settings.
-        /// </summary>
-        /// <value>The connection string settings.</value>
-        public ConnectionStringSettings ConnectionStringSettings {
-            get { return _connectionStringSettings; }
+        public IConnection Connection {
+            get { return _connection; }
         }
 
-        /// <summary>
-        /// Gets the name of the connection string.
-        /// </summary>
-        /// <value>The name of the connection string.</value>
-        public string ConnectionStringName {
-            get { return _connectionStringSettings.Name; }
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AbstractDatabaseOperation"/> class.
-        /// </summary>
-        /// <param name="connectionStringName">Name of the connection string.</param>
-        protected AbstractDatabaseOperation(string connectionStringName) {
-            Guard.Against<ArgumentException>(string.IsNullOrEmpty(connectionStringName),
-                                             "Connection string name must have a value");
-
-            Guard.Against<ArgumentException>(ConfigurationManager.ConnectionStrings[connectionStringName] == null,
-                                             "Cannot resolve connection strings with name: " + connectionStringName);
-
-            _connectionStringSettings = ConfigurationManager.ConnectionStrings[connectionStringName];
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AbstractDatabaseOperation"/> class.
-        /// </summary>
-        /// <param name="connectionStringSettings">Name of the connection string.</param>
-        protected AbstractDatabaseOperation(ConnectionStringSettings connectionStringSettings) {
-            Guard.Against<ArgumentException>(connectionStringSettings == null,
-                                             "connectionStringSettings must resolve to a value");
-
-            this._connectionStringSettings = connectionStringSettings;
+        protected AbstractDatabaseOperation(IConnection connection)
+        {
+            _connection = connection;
         }
 
         private static void InitializeSupportedTypes() {
@@ -110,7 +79,7 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Operations {
         /// <param name="val">The val.</param>
         protected void AddParameter(IDbCommand command, string name, object val) {
             var parameter = command.CreateParameter();
-            parameter.ParameterName = ParamPrefix + name;
+            parameter.ParameterName = name.StartsWith(ParamPrefix) ? name : ParamPrefix + name;
             parameter.Value = val ?? DBNull.Value;
             command.Parameters.Add(parameter);
         }

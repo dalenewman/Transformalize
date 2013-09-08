@@ -102,7 +102,9 @@
     <Compile Include="Configuration\ConnectionElementCollection.cs" />
     <Compile Include="Configuration\ActionConfigurationElement.cs" />
     <Compile Include="Configuration\ActionElementCollection.cs" />
+    <Compile Include="Configuration\ProviderConfigurationElement.cs" />
     <Compile Include="Configuration\FieldSearchTypeConfigurationElement.cs" />
+    <Compile Include="Configuration\ProviderElementCollection.cs" />
     <Compile Include="Configuration\SearchTypeConfigurationElement.cs" />
     <Compile Include="Configuration\SearchTypeElementCollection.cs" />
     <Compile Include="Configuration\FieldSearchTypeElementCollection.cs" />
@@ -259,7 +261,6 @@
     <Compile Include="Providers\ConnectionFactory.cs" />
     <Compile Include="Providers\DefaultConnection.cs" />
     <Compile Include="Providers\DefaultConnectionChecker.cs" />
-    <Compile Include="Providers\ConnectionType.cs" />
     <Compile Include="Providers\DefaultScriptRunner.cs" />
     <Compile Include="Providers\IScriptReponse.cs" />
     <Compile Include="Providers\IScriptRunner.cs" />

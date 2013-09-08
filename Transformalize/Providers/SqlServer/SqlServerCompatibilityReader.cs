@@ -17,6 +17,9 @@ namespace Transformalize.Providers.SqlServer
                 AddDatabaseParameter(connection, cmd);
 
                 compatibility.CanInsertMultipleRows = (byte)cmd.ExecuteScalar() > 90;
+                compatibility.SupportsLimit = false;
+                compatibility.SupportsNoLock = true;
+                compatibility.SupportsTop = true;
             }
             return compatibility;
         }

@@ -114,24 +114,14 @@ namespace Transformalize.Core.Entity_
             return (!HasRange || !BeginAndEndAreEqual());
         }
 
-        public List<string> SelectKeys()
+        public List<string> SelectKeys(ProviderSetup p)
         {
             var selectKeys = new List<string>();
             foreach (var field in PrimaryKey.ToEnumerable())
             {
-                selectKeys.Add(field.Alias.Equals(field.Name) ? string.Concat("[", field.Name, "]") : string.Format("{0} = [{1}]", field.Alias, field.Name));
+                selectKeys.Add(field.Alias.Equals(field.Name) ? string.Concat(p.L, field.Name, p.R) : string.Format("{0} = {1}", field.Alias, p.Enclose(field.Name)));
             }
             return selectKeys;
-        }
-
-        public List<string> OrderByKeys()
-        {
-            var orderByKeys = new List<string>();
-            foreach (var field in PrimaryKey.ToEnumerable())
-            {
-                orderByKeys.Add(string.Concat("[", field.Name, "]"));
-            }
-            return orderByKeys;
         }
 
         public IFields InputFields()

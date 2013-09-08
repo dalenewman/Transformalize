@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using Transformalize.Libs.Rhino.Etl.Core.Infrastructure;
+using Transformalize.Providers;
 
 namespace Transformalize.Libs.Rhino.Etl.Core.Operations {
     /// <summary>
@@ -30,26 +31,7 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Operations {
             set { _timeout = value; }
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SqlBatchOperation"/> class.
-        /// </summary>
-        /// <param name="connectionString">The connection string.</param>
-        protected SqlBatchOperation(string connectionString)
-            : this(GetConnectionStringSettings(connectionString)) {
-        }
-
-        private static ConnectionStringSettings GetConnectionStringSettings(string connectionString) {
-            return new ConnectionStringSettings {
-                ConnectionString = connectionString,
-            };
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SqlBatchOperation"/> class.
-        /// </summary>
-        /// <param name="connectionStringSettings">The connection string settings to use.</param>
-        protected SqlBatchOperation(ConnectionStringSettings connectionStringSettings)
-            : base(connectionStringSettings) {
+        protected SqlBatchOperation(IConnection connection) : base(connection) {
             base.ParamPrefix = "@";
         }
 
@@ -60,10 +42,10 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Operations {
         /// <returns></returns>
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             Guard.Against<ArgumentException>(rows == null, "SqlBatchOperation cannot accept a null enumerator");
-            using (var connection = (SqlConnection)Use.Connection(ConnectionStringSettings))
-            using (var transaction = BeginTransaction(connection)) {
+            using (var cn = (SqlConnection)Use.Connection(Connection))
+            using (var transaction = BeginTransaction(cn)) {
                 SqlCommandSet commandSet = null;
-                CreateCommandSet(connection, transaction, ref commandSet, _timeout);
+                CreateCommandSet(cn, transaction, ref commandSet, _timeout);
                 foreach (var row in rows) {
                     var command = new SqlCommand();
                     PrepareCommand(row, command);
@@ -76,7 +58,7 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Operations {
                     if (commandSet.CountOfCommands >= _batchSize) {
                         Trace("Executing batch of {0} commands", commandSet.CountOfCommands);
                         commandSet.ExecuteNonQuery();
-                        CreateCommandSet(connection, transaction, ref commandSet, _timeout);
+                        CreateCommandSet(cn, transaction, ref commandSet, _timeout);
                     }
                 }
                 Trace("Executing final batch of {0} commands", commandSet.CountOfCommands);

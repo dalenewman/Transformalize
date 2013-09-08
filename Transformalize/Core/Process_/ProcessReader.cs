@@ -42,6 +42,7 @@ namespace Transformalize.Core.Process_
         private Process _process;
         private readonly ProcessConfigurationElement _config;
         private readonly Options _options;
+        private int _providerCount;
         private int _connectionCount;
         private int _mapCount;
         private int _entityCount;
@@ -78,6 +79,7 @@ namespace Transformalize.Core.Process_
 
             SetupRazorTemplateService();
 
+            _providerCount = ReadProviders();
             _connectionCount = ReadConnections();
             _scriptCount = ReadScripts();
             _templateCount = ReadTemplates(false);
@@ -350,6 +352,17 @@ namespace Transformalize.Core.Process_
             return count;
         }
 
+        private int ReadProviders()
+        {
+            var count = 0;
+            foreach (ProviderConfigurationElement element in _config.Providers)
+            {
+                _process.Providers[element.Name.ToLower()] = element.Type;
+                count++;
+            }
+            return count;
+        }
+
         private int ReadConnections()
         {
             var count = 0;
@@ -360,6 +373,8 @@ namespace Transformalize.Core.Process_
             }
             return count;
         }
+
+
 
         private void GuardAgainstFieldOverlap(Entity entity)
         {

@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Data;
 using Transformalize.Libs.Rhino.Etl.Core.Enumerables;
 using Transformalize.Libs.Rhino.Etl.Core.Infrastructure;
+using Transformalize.Providers;
 
 namespace Transformalize.Libs.Rhino.Etl.Core.Operations
 {
@@ -11,26 +12,8 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Operations
     /// </summary>
     public abstract class OutputCommandOperation : AbstractCommandOperation
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="OutputCommandOperation"/> class.
-        /// </summary>
-        /// <param name="connectionString">The connection string.</param>
-        protected OutputCommandOperation(string connectionString) : this(GetConnectionStringSettings(connectionString))
-        {
-        }
 
-        private static ConnectionStringSettings GetConnectionStringSettings(string connectionString) {
-            return new ConnectionStringSettings {
-                ConnectionString = connectionString,
-            };
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="OutputCommandOperation"/> class.
-        /// </summary>
-        /// <param name="connectionStringSettings">Connection string settings to use.</param>
-        protected OutputCommandOperation(ConnectionStringSettings connectionStringSettings)
-            : base(connectionStringSettings)
+        protected OutputCommandOperation(IConnection connection) : base(connection)
         {
         }
 
@@ -41,12 +24,12 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Operations
         /// <returns></returns>
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
         {
-            using (IDbConnection connection = Use.Connection(ConnectionStringSettings))
-            using (IDbTransaction transaction = BeginTransaction(connection))
+            using (var cn = Use.Connection(Connection))
+            using (var transaction = BeginTransaction(cn))
             {
                 foreach (Row row in new SingleRowEventRaisingEnumerator(this, rows))
                 {
-                    using (IDbCommand cmd = connection.CreateCommand())
+                    using (var cmd = cn.CreateCommand())
                     {
                         currentCommand = cmd;
                         currentCommand.Transaction = transaction;

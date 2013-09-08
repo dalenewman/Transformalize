@@ -1,6 +1,7 @@
 using System.Configuration;
 using System.Data;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
+using Transformalize.Providers;
 
 namespace Transformalize.Libs.Rhino.Etl.Core.ConventionOperations
 {
@@ -12,22 +13,7 @@ namespace Transformalize.Libs.Rhino.Etl.Core.ConventionOperations
     {
         private string command;
 
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ConventionOutputCommandOperation"/> class.
-        /// </summary>
-        /// <param name="connectionStringName">Name of the connection string.</param>
-        public ConventionOutputCommandOperation(string connectionStringName)
-            : this(ConfigurationManager.ConnectionStrings[connectionStringName])
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ConventionOutputCommandOperation"/> class.
-        /// </summary>
-        /// <param name="connectionStringSettings">Connection string settings to use.</param>
-        public ConventionOutputCommandOperation(ConnectionStringSettings connectionStringSettings)
-            : base(connectionStringSettings)
+        public ConventionOutputCommandOperation(IConnection connection) : base(connection)
         {
         }
 

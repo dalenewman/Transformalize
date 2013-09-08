@@ -71,7 +71,7 @@ namespace Transformalize.Operations
         {
             var sql = "SET NOCOUNT ON;\r\n" +
                       SqlTemplates.CreateTableVariable(KEYS_TABLE_VARIABLE, _key, false) +
-                      SqlTemplates.BatchInsertValues(50, KEYS_TABLE_VARIABLE, _key, rows, _entity.InputConnection.CanInsertMultipleValues()) + Environment.NewLine +
+                      SqlTemplates.BatchInsertValues(50, KEYS_TABLE_VARIABLE, _key, rows, _entity.InputConnection.Compatibility.CanInsertMultipleRows) + Environment.NewLine +
                       SqlTemplates.Select(_entity.All, _entity.Name, KEYS_TABLE_VARIABLE);
 
             if (_debugFirstQuery)

@@ -28,7 +28,7 @@ namespace Transformalize.Operations {
         private readonly Entity _entity;
         
         public EntityBatchUpdate(Entity entity)
-            : base(entity.OutputConnection.ConnectionString) {
+            : base(entity.OutputConnection) {
             _entity = entity;
             BatchSize = 50;
             UseTransaction = false;

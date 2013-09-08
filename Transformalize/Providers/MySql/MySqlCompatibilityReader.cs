@@ -4,7 +4,7 @@ namespace Transformalize.Providers.MySql
     {
         public Compatibility Read(IConnection connection)
         {
-            return new Compatibility {CanInsertMultipleRows = true};
+            return new Compatibility {CanInsertMultipleRows = true, SupportsTop = false, SupportsLimit = true, SupportsNoLock = false};
         }
     }
 }

@@ -33,23 +33,23 @@ namespace Transformalize.Operations {
         private readonly Entity _entity;
         private readonly string _operationColumn;
         private const string KEYS_TABLE_VARIABLE = "@KEYS";
-        private readonly string[] _fields;
         private readonly Field[] _key;
 
         public EntityKeysToOperations(Entity entity, string operationColumn = "operation") {
             _entity = entity;
             _operationColumn = operationColumn;
-            _fields = new FieldSqlWriter(_entity.All).ExpandXml().Input().Keys().ToArray();
             _key = new FieldSqlWriter(_entity.PrimaryKey).ToArray();
         }
         
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
         {
+            var fields = new FieldSqlWriter(_entity.All).ExpandXml().Input().Keys().ToArray();
+
             foreach (var batch in _entity.InputKeys.Partition(_entity.InputConnection.BatchSize))
             {
                 var sql = SelectByKeys(batch);
                 var row = new Row();
-                row[_operationColumn] = new EntityDataExtract(_fields, sql, _entity.InputConnection.ConnectionString);
+                row[_operationColumn] = new EntityDataExtract(_entity, fields, sql, _entity.InputConnection);
                 yield return row;
             }
         }
@@ -57,7 +57,7 @@ namespace Transformalize.Operations {
         public string SelectByKeys(IEnumerable<Row> rows) {
             var sql = "SET NOCOUNT ON;\r\n" +
                       SqlTemplates.CreateTableVariable(KEYS_TABLE_VARIABLE, _key, false) +
-                      SqlTemplates.BatchInsertValues(50, KEYS_TABLE_VARIABLE, _key, rows, _entity.InputConnection.CanInsertMultipleValues()) + Environment.NewLine +
+                      SqlTemplates.BatchInsertValues(50, KEYS_TABLE_VARIABLE, _key, rows, _entity.InputConnection.Compatibility.CanInsertMultipleRows) + Environment.NewLine +
                       SqlTemplates.Select(_entity.All, _entity.Name, KEYS_TABLE_VARIABLE);
 
             Trace(sql);

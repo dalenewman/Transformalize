@@ -1,10 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <process>
 
+  <providers>
+    <add name="sqlserver" type="System.Data.SqlClient.SqlConnection, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"/>
+    <add name="mysql" type="MySql.Data.MySqlClient.MySqlConnection, MySql.Data"></add>
+  </providers>
+  
   <connections>
     <add name="input" value="Server=localhost;Database=NorthWind;Trusted_Connection=True;"/>
     <add name="output" value="Server=localhost;Database=NorthWindStar;Trusted_Connection=True;"/>
-    <add name="ssas" value="Data Source=localhost;Catalog=NorthWind;" type="AnalysisServices"></add>
+    <add name="ssas" value="Data Source=localhost;Catalog=NorthWind;" provider="AnalysisServices"></add>
   </connections>
 
   <entities>

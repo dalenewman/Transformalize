@@ -1,5 +1,6 @@
 using System.Configuration;
 using System.Data;
+using Transformalize.Providers;
 
 namespace Transformalize.Libs.Rhino.Etl.Core.Operations {
     /// <summary>
@@ -8,20 +9,9 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Operations {
     /// directly inherited or used
     /// </summary>
     public abstract class AbstractCommandOperation : AbstractDatabaseOperation {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AbstractDatabaseOperation"/> class.
-        /// </summary>
-        /// <param name="connectionStringName">Name of the connection string.</param>
-        protected AbstractCommandOperation(string connectionStringName)
-            : this(ConfigurationManager.ConnectionStrings[connectionStringName]) {
-        }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AbstractDatabaseOperation"/> class.
-        /// </summary>
-        /// <param name="connectionStringSettings">The connection string settings to use.</param>
-        protected AbstractCommandOperation(ConnectionStringSettings connectionStringSettings)
-            : base(connectionStringSettings) {
+        protected AbstractCommandOperation(IConnection connection)
+            : base(connection) {
         }
 
         /// <summary>

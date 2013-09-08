@@ -1,13 +1,9 @@
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Transformalize.Core;
 using Transformalize.Core.Entity_;
-using Transformalize.Core.Field_;
 using Transformalize.Core.Process_;
 using Transformalize.Core.Template_;
-using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Core.Pipelines;
 using Transformalize.Processes;
 using Transformalize.Providers.SqlServer;

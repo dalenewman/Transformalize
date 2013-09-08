@@ -25,7 +25,7 @@ namespace Transformalize.Operations {
     public class EntityBulkInsert : SqlBulkInsertOperation {
         private readonly Entity _entity;
 
-        public EntityBulkInsert(Entity entity) : base(entity.OutputConnection.ConnectionString, entity.OutputName()) {
+        public EntityBulkInsert(Entity entity) : base(entity.OutputConnection, entity.OutputName()) {
             
             _entity = entity;
             UseTransaction = false;
