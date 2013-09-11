@@ -21,7 +21,7 @@ namespace Transformalize.Libs.Rhino.Etl.Core.ConventionOperations
             set { command = value; }
         }
 
-        public ConventionSqlBatchOperation(IConnection connection) : base(connection)
+        public ConventionSqlBatchOperation(AbstractConnection connection) : base(connection)
         {
         }
 

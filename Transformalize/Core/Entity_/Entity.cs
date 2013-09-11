@@ -23,10 +23,8 @@ using System.Globalization;
 using System.Linq;
 using Transformalize.Core.Field_;
 using Transformalize.Core.Fields_;
-using Transformalize.Core.Transform_;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Providers;
-using Transformalize.Providers.SqlServer;
 
 namespace Transformalize.Core.Entity_
 {
@@ -38,8 +36,8 @@ namespace Transformalize.Core.Entity_
         public string Schema { get; set; }
         public string ProcessName { get; set; }
         public string Alias { get; set; }
-        public IConnection InputConnection { get; set; }
-        public IConnection OutputConnection { get; set; }
+        public AbstractConnection InputConnection { get; set; }
+        public AbstractConnection OutputConnection { get; set; }
         public Field Version { get; set; }
         public IFields PrimaryKey { get; set; }
         public IFields Fields { get; set; }
@@ -114,7 +112,7 @@ namespace Transformalize.Core.Entity_
             return (!HasRange || !BeginAndEndAreEqual());
         }
 
-        public List<string> SelectKeys(ProviderSetup p)
+        public List<string> SelectKeys(AbstractProvider p)
         {
             var selectKeys = new List<string>();
             foreach (var field in PrimaryKey.ToEnumerable())
@@ -122,6 +120,16 @@ namespace Transformalize.Core.Entity_
                 selectKeys.Add(field.Alias.Equals(field.Name) ? string.Concat(p.L, field.Name, p.R) : string.Format("{0} = {1}", field.Alias, p.Enclose(field.Name)));
             }
             return selectKeys;
+        }
+
+        public string KeysQuery()
+        {
+            return Version == null ? InputConnection.EntityKeysAllQueryWriter.Write(this) : InputConnection.EntityKeysQueryWriter.Write(this);
+        }
+
+        public string KeysRangeQuery()
+        {
+            return InputConnection.EntityKeysRangeQueryWriter.Write(this);
         }
 
         public IFields InputFields()
@@ -152,6 +160,7 @@ namespace Transformalize.Core.Entity_
 
         public void CheckDelta()
         {
+            if (Version == null) return;
             OutputConnection.LoadBeginVersion(this);
             InputConnection.LoadEndVersion(this);
         }

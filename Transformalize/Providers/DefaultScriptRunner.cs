@@ -1,23 +1,16 @@
 using System;
 using System.Data;
-using Transformalize.Providers.MySql;
 
 namespace Transformalize.Providers
 {
     public class DefaultScriptRunner : IScriptRunner
     {
-        private readonly IConnection _connection;
 
-        public DefaultScriptRunner(IConnection connection)
-        {
-            _connection = connection;
-        }
-
-        public IScriptReponse Execute(string script)
+        public IScriptReponse Execute(AbstractConnection connection, string script)
         {
             var response = new ScriptResponse();
             
-            using (var cn = _connection.GetConnection())
+            using (var cn = connection.GetConnection())
             {
                 try
                 {

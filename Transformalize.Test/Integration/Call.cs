@@ -23,31 +23,46 @@ using Transformalize.Runner;
 
 namespace Transformalize.Test.Integration {
     [TestFixture]
-    public class Call {
-        private const string CONFIGURATION_FILE = @"c:\etl\rhinoetl\tfl\Call.xml";
+    public class Calls {
+        private const string CALLS = @"c:\etl\rhinoetl\tfl\Calls.xml";
+        private const string CAMPAIGNS = @"c:\etl\rhinoetl\tfl\Campaigns.xml";
 
         [Test]
         public void Init()
         {
-            var options = new Options { Mode = Modes.Initialize };
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read(), options).Read();
-            new ProcessRunner(process).Run();
+            var options1 = new Options { Mode = Modes.Initialize };
+            var process1 = new ProcessReader(new ProcessXmlConfigurationReader(CALLS).Read(), options1).Read();
+            new ProcessRunner(process1).Run();
+
+            var options2 = new Options { Mode = Modes.Initialize };
+            var process2 = new ProcessReader(new ProcessXmlConfigurationReader(CAMPAIGNS).Read(), options2).Read();
+            new ProcessRunner(process2).Run();
         }
 
         [Test]
         public void Normal()
         {
-            var options = new Options { Mode = Modes.Normal };
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read(), options).Read();
-            new ProcessRunner(process).Run();
+            var options1 = new Options { Mode = Modes.Normal };
+            
+            var process1 = new ProcessReader(new ProcessXmlConfigurationReader(CALLS).Read(), options1).Read();
+            new ProcessRunner(process1).Run();
+
+            var options2 = new Options { Mode = Modes.Normal };
+            var process2 = new ProcessReader(new ProcessXmlConfigurationReader(CAMPAIGNS).Read(), options2).Read();
+            new ProcessRunner(process2).Run();
         }
 
         [Test]
         public void Test()
         {
-            var options = new Options("{'mode':'test','top':1,'loglevel':'trace'}");
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read(), options).Read();
-            new ProcessRunner(process).Run();
+            var options1 = new Options("{'mode':'test','top':2,'loglevel':'trace'}");
+            var process1 = new ProcessReader(new ProcessXmlConfigurationReader(CALLS).Read(), options1).Read();
+            new ProcessRunner(process1).Run();
+
+            var options2 = new Options("{'mode':'test','top':2,'loglevel':'trace'}");
+            var process2 = new ProcessReader(new ProcessXmlConfigurationReader(CAMPAIGNS).Read(), options2).Read();
+            new ProcessRunner(process2).Run();
+
         }
 
 

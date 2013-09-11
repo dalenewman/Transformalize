@@ -46,17 +46,17 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Infrastructure {
         [ThreadStatic]
         private static int TransactionCounter;
 
-        public static T Transaction<T>(IConnection connection, Func<T> actionToExecute) {
+        public static T Transaction<T>(AbstractConnection connection, Func<T> actionToExecute) {
             T result = default(T);
             Transaction(connection, delegate(IDbCommand command) { result = actionToExecute(command); });
             return result;
         }
 
-        public static void Transaction(IConnection connection, Proc actionToExecute) {
+        public static void Transaction(AbstractConnection connection, Proc actionToExecute) {
             Transaction(connection, IsolationLevel.Unspecified, actionToExecute);
         }
 
-        public static void Transaction(IConnection connection, IsolationLevel isolationLevel, Proc actionToExecute) {
+        public static void Transaction(AbstractConnection connection, IsolationLevel isolationLevel, Proc actionToExecute) {
             StartTransaction(connection, isolationLevel);
             try {
                 using (IDbCommand command = ActiveConnection.CreateCommand()) {
@@ -106,7 +106,7 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Infrastructure {
             }
         }
 
-        private static void StartTransaction(IConnection connection, IsolationLevel isolation) {
+        private static void StartTransaction(AbstractConnection connection, IsolationLevel isolation) {
             if (TransactionCounter <= 0) {
                 TransactionCounter = 0;
                 ActiveConnection = Connection(connection);
@@ -115,7 +115,7 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Infrastructure {
             TransactionCounter++;
         }
 
-        public static IDbConnection Connection(IConnection connection)
+        public static IDbConnection Connection(AbstractConnection connection)
         {
             var cn = connection.GetConnection();
             cn.Open();

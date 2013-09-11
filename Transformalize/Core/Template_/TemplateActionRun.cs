@@ -13,7 +13,7 @@ namespace Transformalize.Core.Template_
                 var script = File.ReadAllText(fileInfo.FullName);
                 if (!string.IsNullOrEmpty(script))
                 {
-                    var response = action.Connection.ScriptRunner.Execute(script);
+                    var response = action.Connection.ExecuteScript(script);
                     if (response.Success)
                     {
                         Log.Info("{0} ran successfully.", action.TemplateName);

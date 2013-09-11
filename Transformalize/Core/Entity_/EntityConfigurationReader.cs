@@ -81,20 +81,23 @@ namespace Transformalize.Core.Entity_
                 fieldIndex++;
             }
 
-            if (entity.All.ContainsKey(element.Version))
+            if (!String.IsNullOrEmpty(element.Version))
             {
-                entity.Version = entity.All[element.Version];
-            }
-            else
-            {
-                if (entity.All.Any(kv => kv.Value.Name.Equals(element.Version, IC)))
+                if (entity.All.ContainsKey(element.Version))
                 {
-                    entity.Version = entity.All.ToEnumerable().First(v => v.Name.Equals(element.Version, IC));
+                    entity.Version = entity.All[element.Version];
                 }
                 else
                 {
-                    _log.Error("version field reference '{0}' is undefined in {1}.", element.Version, element.Name);
-                    Environment.Exit(0);
+                    if (entity.All.Any(kv => kv.Value.Name.Equals(element.Version, IC)))
+                    {
+                        entity.Version = entity.All.ToEnumerable().First(v => v.Name.Equals(element.Version, IC));
+                    }
+                    else
+                    {
+                        _log.Error("version field reference '{0}' is undefined in {1}.", element.Version, element.Name);
+                        Environment.Exit(0);
+                    }
                 }
             }
 

@@ -18,13 +18,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Data.SqlClient;
+using Transformalize.Core;
 using Transformalize.Core.Entity_;
-using Transformalize.Libs.Rhino.Etl.Core;
+using Transformalize.Libs.NLog;
 
 namespace Transformalize.Providers.SqlServer {
-    public class SqlServerEntityVersionWriter : WithLoggingMixin, IEntityVersionWriter {
+
+    public class SqlServerEntityVersionWriter : IEntityVersionWriter {
 
         private readonly Entity _entity;
+        private readonly Logger _log = LogManager.GetCurrentClassLogger();
 
         public SqlServerEntityVersionWriter(Entity entity) {
             _entity = entity;
@@ -35,20 +38,35 @@ namespace Transformalize.Providers.SqlServer {
                 using (var cn = new SqlConnection(_entity.OutputConnection.ConnectionString)) {
                     cn.Open();
                     var command = new SqlCommand(PrepareSql(), cn);
+
                     command.Parameters.Add(new SqlParameter("@TflBatchId", _entity.TflBatchId));
                     command.Parameters.Add(new SqlParameter("@ProcessName", _entity.ProcessName));
                     command.Parameters.Add(new SqlParameter("@EntityName", _entity.Alias));
-                    command.Parameters.Add(new SqlParameter("@End", end));
                     command.Parameters.Add(new SqlParameter("@TflUpdate", DateTime.Now));
                     command.Parameters.Add(new SqlParameter("@Count", count));
+
+                    if(_entity.Version != null)
+                        command.Parameters.Add(new SqlParameter("@End", new ConversionFactory().Convert(end, _entity.Version.SimpleType)));
+
+                    _log.Debug(command.CommandText);
+
                     command.ExecuteNonQuery();
                 }
             }
 
-            Info("Processed {0} rows in {1}", count, _entity.Alias);
+            _log.Info("Processed {0} rows in {1}", count, _entity.Alias);
         }
 
         private string PrepareSql() {
+
+            if (_entity.Version == null)
+            {
+                return @"
+                    INSERT INTO [TflBatch](TflBatchId, ProcessName, EntityName, TflUpdate, Rows)
+                    VALUES(@TflBatchId, @ProcessName, @EntityName, @TflUpdate, @Count);
+                ";
+            }
+
             var field = _entity.Version.SimpleType.Replace("rowversion", "Binary").Replace("byte[]","Binary") + "Version";
             return string.Format(@"
                 INSERT INTO [TflBatch](TflBatchId, ProcessName, EntityName, [{0}], TflUpdate, Rows)

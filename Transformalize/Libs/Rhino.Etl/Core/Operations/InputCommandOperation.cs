@@ -10,7 +10,7 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Operations {
     /// </summary>
     public abstract class InputCommandOperation : AbstractCommandOperation {
         
-        protected InputCommandOperation(IConnection connection) : base(connection)
+        protected InputCommandOperation(AbstractConnection connection) : base(connection)
         {
             UseTransaction = false;
         }

@@ -21,10 +21,10 @@ using Transformalize.Core.Entity_;
 
 namespace Transformalize.Providers.SqlServer {
     public class SqlServerEntityCounter : IEntityCounter {
-        private readonly IConnectionChecker _connectionChecker;
+        private readonly AbstractConnectionChecker _connectionChecker;
         private readonly SqlServerEntityExists _entityExists;
 
-        public SqlServerEntityCounter(IConnectionChecker connectionChecker = null) {
+        public SqlServerEntityCounter(AbstractConnectionChecker connectionChecker = null) {
             _connectionChecker = connectionChecker ?? new DefaultConnectionChecker();
             _entityExists = new SqlServerEntityExists();
         }

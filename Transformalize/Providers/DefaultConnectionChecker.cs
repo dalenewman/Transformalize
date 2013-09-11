@@ -6,7 +6,7 @@ using Transformalize.Libs.NLog;
 namespace Transformalize.Providers
 {
     
-    public class DefaultConnectionChecker : IConnectionChecker
+    public class DefaultConnectionChecker : AbstractConnectionChecker
     {
         private static readonly Dictionary<string, bool> CachedResults = new Dictionary<string, bool>();
         private readonly int _timeOut;
@@ -17,7 +17,7 @@ namespace Transformalize.Providers
             _timeOut = timeOut;
         }
 
-        public bool Check(IConnection connection)
+        public bool Check(AbstractConnection connection)
         {
             if (CachedResults.ContainsKey(connection.ConnectionString))
             {

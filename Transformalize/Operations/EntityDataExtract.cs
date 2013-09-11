@@ -17,7 +17,7 @@ namespace Transformalize.Operations
         private readonly string _sql;
 
 
-        public EntityDataExtract(Entity entity, string[] fields, string sql, IConnection connection ) : base(connection)
+        public EntityDataExtract(Entity entity, string[] fields, string sql, AbstractConnection connection ) : base(connection)
         {
             _entity = entity;
             _fields = fields;

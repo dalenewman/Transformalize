@@ -53,14 +53,17 @@ namespace Transformalize.Operations {
             return rows;
         }
 
-        private void CreateEntity() {
+        private void CreateEntity()
+        {
+            var provider = _entity.OutputConnection.Provider;
+
             if (_entityExists.OutputExists(_entity)) return;
 
             var primaryKey = _entity.IsMaster()
-                ? _writer.FieldType(FieldType.MasterKey).Alias().Asc().Values()
-                : _writer.FieldType(FieldType.PrimaryKey).Alias().Asc().Values();
-            var defs = _writer.Reload().ExpandXml().AddSurrogateKey().AddBatchId().Output().Alias().DataType().AppendIf(" NOT NULL", FieldType.MasterKey, FieldType.PrimaryKey).Values();
-            var sql = SqlTemplates.CreateTable(_entity.OutputName(), defs, primaryKey, ignoreDups: true);
+                ? _writer.FieldType(FieldType.MasterKey).Alias(provider).Asc().Values()
+                : _writer.FieldType(FieldType.PrimaryKey).Alias(provider).Asc().Values();
+            var defs = _writer.Reload().ExpandXml().AddSurrogateKey().AddBatchId().Output().Alias(provider).DataType().AppendIf(" NOT NULL", FieldType.MasterKey, FieldType.PrimaryKey).Values();
+            var sql = _entity.OutputConnection.TableQueryWriter.Write(_entity.OutputName(), defs, primaryKey, ignoreDups: true);
 
             Debug(sql);
 

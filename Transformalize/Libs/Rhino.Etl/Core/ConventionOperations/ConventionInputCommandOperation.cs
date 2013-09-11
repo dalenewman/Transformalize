@@ -22,7 +22,7 @@ namespace Transformalize.Libs.Rhino.Etl.Core.ConventionOperations {
         ///</summary>
         public int Timeout { get; set; }
 
-        public ConventionInputCommandOperation(IConnection connection) : base(connection) {
+        public ConventionInputCommandOperation(AbstractConnection connection) : base(connection) {
             UseTransaction = false;
             Timeout = 0;
         }

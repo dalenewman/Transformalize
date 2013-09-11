@@ -11,7 +11,7 @@ namespace Transformalize.Core.Template_
         public string Url;
         public string From;
         public string To;
-        public IConnection Connection;
+        public AbstractConnection Connection;
         public string ProcessName;
         public string TemplateName;
     }

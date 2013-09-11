@@ -29,15 +29,6 @@ namespace Transformalize.Providers {
 
     public static class SqlTemplates {
 
-        private const string CREATE_TABLE_TEMPLATE = @"
-CREATE TABLE [{0}].[{1}](
-    {2},
-    CONSTRAINT [Pk_{3}_{4}] PRIMARY KEY (
-        {5}
-    ) {6}
-);
-";
-
         public static string TruncateTable(string name, string schema = "dbo") {
             return string.Format(@"
                 IF EXISTS(
@@ -60,59 +51,31 @@ CREATE TABLE [{0}].[{1}](
             ", schema, name);
         }
 
-        public static string CreateTable(string name, IEnumerable<string> defs, IEnumerable<string> primaryKey, string schema = "dbo", bool ignoreDups = false) {
-            var pk = primaryKey.ToArray();
-            var defList = string.Join(",\r\n    ", defs);
-            var keyName = string.Join("_", pk).Replace("[", string.Empty).Replace("]", string.Empty).Replace(" ", "_");
-            var keyList = string.Join(", ", pk);
-            return string.Format(
-                CREATE_TABLE_TEMPLATE,
-                schema,
-                name.Length > 128 ? name.Substring(0, 128) : name,
-                defList,
-                name.Replace(" ", string.Empty),
-                keyName.Length > 128 ? keyName.Substring(0, 128) : keyName,
-                keyList,
-                ignoreDups ? "WITH (IGNORE_DUP_KEY = ON)" : string.Empty
-            );
+        public static string Select(IFields fields, string leftTable, string rightTable, AbstractProvider provider, string leftSchema = "dbo", string rightSchema = "dbo")
+        {
+            var maxDop = provider.Supports.MaxDop ? "OPTION (MAXDOP 2);" : ";";
+            string sqlPattern = "\r\nSELECT\r\n    {0}\r\nFROM {1} l\r\nINNER JOIN {2} r ON ({3})\r\n" + maxDop;
+
+            var columns = new FieldSqlWriter(fields).ExpandXml().Input().Select(provider).Prepend("l.").ToAlias(provider, true).Write(",\r\n    ");
+            var join = new FieldSqlWriter(fields).FieldType(FieldType.MasterKey, FieldType.PrimaryKey).Name(provider).Set("l", "r").Write(" AND ");
+
+            return string.Format(sqlPattern, columns, SafeTable(leftTable, provider, leftSchema), SafeTable(rightTable, provider, rightSchema), @join);
         }
 
-        public static string CreateTableVariable(string name, Field[] fields, bool useAlias = true) {
-            var defs = useAlias ? new FieldSqlWriter(fields).Alias().DataType().Write() : new FieldSqlWriter(fields).Name().DataType().Write();
-            return string.Format(@"DECLARE @{0} AS TABLE({1});", name.TrimStart("@".ToCharArray()), defs);
-        }
-
-        /// <summary>
-        /// Select all the fields from the leftTable, inner joined on the rightTable using leftTable's primary key
-        /// </summary>
-        /// <param name="fields"></param>
-        /// <param name="leftTable"></param>
-        /// <param name="rightTable"></param>
-        /// <param name="leftSchema">defaults to dbo</param>
-        /// <param name="rightSchema">defaults to dbo</param>
-        /// <returns>SQL Statement</returns>
-        public static string Select(IFields fields, string leftTable, string rightTable, string leftSchema = "dbo", string rightSchema = "dbo") {
-
-            const string sqlPattern = "\r\nSELECT\r\n    {0}\r\nFROM {1} l\r\nINNER JOIN {2} r ON ({3})\r\nOPTION (MAXDOP 2);";
-
-            var columns = new FieldSqlWriter(fields).ExpandXml().Input().Select().Prepend("l.").ToAlias(true).Write(",\r\n    ");
-            var join = new FieldSqlWriter(fields).FieldType(FieldType.MasterKey, FieldType.PrimaryKey).Name().Set("l", "r").Write(" AND ");
-
-            return string.Format(sqlPattern, columns, SafeTable(leftTable, leftSchema), SafeTable(rightTable, rightSchema), @join);
-        }
-
-        private static string InsertUnionedValues(int size, string name, Field[] fields, IEnumerable<Row> rows) {
+        private static string InsertUnionedValues(int size, string name, Field[] fields, IEnumerable<Row> rows, AbstractConnection connection) {
             var sqlBuilder = new StringBuilder();
+            var safeName = connection.Provider.Supports.TableVariable ? name : connection.Provider.Enclose(name);
             foreach (var group in rows.Partition(size)) {
-                sqlBuilder.Append(string.Format("\r\nINSERT INTO {0}\r\nSELECT {1};", name, string.Join("\r\nUNION ALL SELECT ", RowsToValues(fields, group))));
+                sqlBuilder.Append(string.Format("\r\nINSERT INTO {0}\r\nSELECT {1};", safeName, string.Join("\r\nUNION ALL SELECT ", RowsToValues(fields, group))));
             }
             return sqlBuilder.ToString();
         }
 
-        private static string InsertMultipleValues(int size, string name, Field[] fields, IEnumerable<Row> rows) {
+        private static string InsertMultipleValues(int size, string name, Field[] fields, IEnumerable<Row> rows, AbstractConnection connection) {
             var sqlBuilder = new StringBuilder();
+            var safeName = connection.Provider.Supports.TableVariable ? name : connection.Provider.Enclose(name);
             foreach (var group in rows.Partition(size)) {
-                sqlBuilder.Append(string.Format("\r\nINSERT INTO {0}\r\nVALUES({1});", name, string.Join("),\r\n(", RowsToValues(fields, @group))));
+                sqlBuilder.Append(string.Format("\r\nINSERT INTO {0}\r\nVALUES({1});", safeName, string.Join("),\r\n(", RowsToValues(fields, @group))));
             }
             return sqlBuilder.ToString();
         }
@@ -133,18 +96,18 @@ CREATE TABLE [{0}].[{1}](
             }
         }
 
-        public static string BatchInsertValues(int size, string name, Field[] fields, IEnumerable<Row> rows, bool insertMultipleValues) {
-            return insertMultipleValues ?
-                InsertMultipleValues(size, name, fields, rows):
-                InsertUnionedValues(size, name, fields, rows);
+        public static string BatchInsertValues(int size, string name, Field[] fields, IEnumerable<Row> rows, AbstractConnection connection) {
+            return connection.Provider.Supports.InsertMultipleRows ?
+                InsertMultipleValues(size, name, fields, rows, connection):
+                InsertUnionedValues(size, name, fields, rows, connection);
         }
 
-        private static string SafeTable(string name, string schema = "dbo") {
+        private static string SafeTable(string name, AbstractProvider provider, string schema = "dbo") {
             if (name.StartsWith("@"))
                 return name;
             return schema.Equals("dbo", StringComparison.OrdinalIgnoreCase) ?
-                string.Concat("[", name, "]") :
-                string.Concat("[", schema, "].[", name, "]");
+                string.Concat(provider.L, name, provider.R) :
+                string.Concat(provider.L, schema, string.Format("{0}.{1}",provider.R, provider.L), name, provider.R);
         }
 
     }

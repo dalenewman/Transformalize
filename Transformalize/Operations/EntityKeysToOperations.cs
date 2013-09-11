@@ -22,21 +22,20 @@ using System.Linq;
 using Transformalize.Core.Entity_;
 using Transformalize.Core.Field_;
 using Transformalize.Extensions;
-using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
 using Transformalize.Providers;
-using Transformalize.Providers.SqlServer;
 
 namespace Transformalize.Operations {
     public class EntityKeysToOperations : AbstractOperation {
         private readonly Entity _entity;
         private readonly string _operationColumn;
-        private const string KEYS_TABLE_VARIABLE = "@KEYS";
         private readonly Field[] _key;
+        private readonly AbstractProvider _provider;
 
         public EntityKeysToOperations(Entity entity, string operationColumn = "operation") {
             _entity = entity;
+            _provider = _entity.InputConnection.Provider;
             _operationColumn = operationColumn;
             _key = new FieldSqlWriter(_entity.PrimaryKey).ToArray();
         }
@@ -45,20 +44,25 @@ namespace Transformalize.Operations {
         {
             var fields = new FieldSqlWriter(_entity.All).ExpandXml().Input().Keys().ToArray();
 
+            var count = 0;
             foreach (var batch in _entity.InputKeys.Partition(_entity.InputConnection.BatchSize))
             {
                 var sql = SelectByKeys(batch);
                 var row = new Row();
                 row[_operationColumn] = new EntityDataExtract(_entity, fields, sql, _entity.InputConnection);
+                count++;
                 yield return row;
             }
         }
 
-        public string SelectByKeys(IEnumerable<Row> rows) {
-            var sql = "SET NOCOUNT ON;\r\n" +
-                      SqlTemplates.CreateTableVariable(KEYS_TABLE_VARIABLE, _key, false) +
-                      SqlTemplates.BatchInsertValues(50, KEYS_TABLE_VARIABLE, _key, rows, _entity.InputConnection.Compatibility.CanInsertMultipleRows) + Environment.NewLine +
-                      SqlTemplates.Select(_entity.All, _entity.Name, KEYS_TABLE_VARIABLE);
+        public string SelectByKeys(IEnumerable<Row> rows)
+        {
+            var tableName = _provider.Supports.TableVariable ? "@KEYS" : "KEYS_" + _entity.Name;
+            var noCount = _provider.Supports.NoCount ? "SET NOCOUNT ON;\r\n" : string.Empty;
+            var sql = noCount +
+                      _entity.InputConnection.TableQueryWriter.WriteTemporary(tableName, _key, _provider, false) +
+                      SqlTemplates.BatchInsertValues(50, tableName, _key, rows, _entity.InputConnection) + Environment.NewLine +
+                      SqlTemplates.Select(_entity.All, _entity.Name, tableName, _provider);
 
             Trace(sql);
 

@@ -123,7 +123,7 @@ namespace Transformalize.Libs.Rhino.Etl.Core {
             }
         }
 
-        protected static T ExecuteScalar<T>(IConnection connection, string commandText) {
+        protected static T ExecuteScalar<T>(AbstractConnection connection, string commandText) {
             return Use.Transaction<T>(connection, delegate(IDbCommand cmd) {
                 cmd.CommandText = commandText;
                 var scalar = cmd.ExecuteScalar();

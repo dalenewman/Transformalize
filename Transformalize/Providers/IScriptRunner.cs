@@ -20,6 +20,6 @@ namespace Transformalize.Providers
 {
     public interface IScriptRunner
     {
-        IScriptReponse Execute(string script);
+        IScriptReponse Execute(AbstractConnection connection, string script);
     }
 }

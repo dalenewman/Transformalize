@@ -51,17 +51,24 @@ namespace Transformalize.Operations
 
             if (_process.OutputRecordsExist || _entity.HasForeignKeys())
             {
-                using (var cn = new SqlConnection(_process.MasterEntity.OutputConnection.ConnectionString)) {
+                var connection = _process.MasterEntity.OutputConnection;
+                using (var cn = connection.GetConnection()) {
                     cn.Open();
-                    var cmd = new SqlCommand(PrepareSql(), cn) {CommandTimeout = 0};
+                    var cmd = cn.CreateCommand();
+                    cmd.CommandText = PrepareSql();
+                    cmd.CommandTimeout = 0;
 
                     Debug(cmd.CommandText);
-                    
-                    cmd.Parameters.Add(new SqlParameter("@TflBatchId", _entity.TflBatchId));
+
+                    var parameter = cmd.CreateParameter();
+                    parameter.ParameterName = "@TflBatchId";
+                    parameter.Value = _entity.TflBatchId;
+
+                    cmd.Parameters.Add(parameter);
                     var records = cmd.ExecuteNonQuery();
 
                     Debug("TflBatchId = {0}.", _entity.TflBatchId);
-                    Info("Processed {0} rows in EntityUpdateMaster", records);
+                    Info("Processed {0} rows.  Updated {1} with {2}.", records, _process.MasterEntity.Alias, _entity.Alias);
                 }
             }
             return rows;
@@ -70,12 +77,13 @@ namespace Transformalize.Operations
         private string PrepareSql() {
             var builder = new StringBuilder();
             var masterEntity = _process.MasterEntity;
+            var provider = _entity.OutputConnection.Provider;
 
             var master = string.Format("[{0}]", masterEntity.OutputName());
             var source = string.Format("[{0}]", _entity.OutputName());
             var sets = _process.OutputRecordsExist ?
-                new FieldSqlWriter(_entity.Fields).FieldType(FieldType.ForeignKey).AddBatchId(false).Alias().Set(master, source).Write(",\r\n    ") :
-                new FieldSqlWriter(_entity.Fields).FieldType(FieldType.ForeignKey).Alias().Set(master, source).Write(",\r\n    ");
+                new FieldSqlWriter(_entity.Fields).FieldType(FieldType.ForeignKey).AddBatchId(false).Alias(provider).Set(master, source).Write(",\r\n    ") :
+                new FieldSqlWriter(_entity.Fields).FieldType(FieldType.ForeignKey).Alias(provider).Set(master, source).Write(",\r\n    ");
 
 
             builder.AppendFormat("UPDATE {0}\r\n", master);

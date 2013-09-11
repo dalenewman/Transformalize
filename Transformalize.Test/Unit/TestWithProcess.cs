@@ -55,7 +55,7 @@ namespace Transformalize.Test.Unit {
         public void TestKeysTableVariable() {
             var entity =_process.Entities.First();
             
-            var actual = SqlTemplates.CreateTableVariable("KEYS", entity.PrimaryKey.ToEnumerable().ToArray());
+            var actual = _process.MasterEntity.OutputConnection.WriteTemporaryTable("@KEYS", entity.PrimaryKey.ToEnumerable().ToArray());
             const string expected = "DECLARE @KEYS AS TABLE([OrderDetailKey] INT);";
 
             Assert.AreEqual(expected, actual);
@@ -65,12 +65,13 @@ namespace Transformalize.Test.Unit {
         public void TestKeyInserts() {
 
             var entity =_process.Entities.First();
+            entity.OutputConnection.IsReady();
 
             var rows = TestOperation(_entityKeysExtract.Object);
 
             Assert.AreEqual(4, rows.Count);
 
-            var actual = SqlTemplates.BatchInsertValues(2, "@KEYS", entity.PrimaryKey.ToEnumerable().ToArray(), rows, false);
+            var actual = SqlTemplates.BatchInsertValues(2, "@KEYS", entity.PrimaryKey.ToEnumerable().ToArray(), rows, entity.OutputConnection);
             const string expected = @"
 INSERT INTO @KEYS
 SELECT 1
@@ -87,20 +88,7 @@ UNION ALL SELECT 4;";
 
             var entity =_process.Entities.First();
 
-            var actual = SqlTemplates.Select(entity.All, entity.OutputName(), "@KEYS");
-//            const string expected = @"
-//SELECT
-//    [Color] = l.[Properties].value('(/Properties/Color)[1]', 'NVARCHAR(64)'),
-//    [Gender] = l.[Properties].value('(/Properties/Gender)[1]', 'NVARCHAR(64)'),
-//    l.[OrderDetailKey],
-//    l.[OrderKey],
-//    l.[Price],
-//    l.[ProductKey],
-//    [Quantity] = l.[Qty],
-//    [Size] = l.[Properties].value('(/Properties/Size)[1]', 'NVARCHAR(64)')
-//FROM [TestOrderDetail] l
-//INNER JOIN @KEYS r ON (l.[OrderDetailKey] = r.[OrderDetailKey])
-//OPTION (MAXDOP 2);";
+            var actual = SqlTemplates.Select(entity.All, entity.OutputName(), "@KEYS", entity.OutputConnection.Provider);
 
             const string expected = @"
 SELECT
@@ -109,7 +97,7 @@ SELECT
     l.[Price],
     l.[ProductKey],
     l.[Properties],
-    [Quantity] = l.[Qty]
+    l.[Qty] AS [Quantity]
 FROM [TestOrderDetail] l
 INNER JOIN @KEYS r ON (l.[OrderDetailKey] = r.[OrderDetailKey])
 OPTION (MAXDOP 2);";
@@ -122,7 +110,7 @@ OPTION (MAXDOP 2);";
 
             var entity =_process.Entities.First();
 
-            var keys = TestOperation(
+            TestOperation(
                 _entityKeysExtract.Object, 
                 new EntityInputKeysStore(_process, entity)
             );
@@ -140,11 +128,11 @@ OPTION (MAXDOP 2);";
 
             var actual = new SqlServerViewWriter(_process).CreateSql();
 
-            Assert.AreEqual(@"CREATE VIEW [TestOrderDetailStar] AS
+            Assert.AreEqual(@"CREATE VIEW TestOrderDetailStar AS
 SELECT
-    [TestOrderDetail].[TflKey],
-    [TestOrderDetail].[TflBatchId],
-    b.[TflUpdate],
+    TestOrderDetail.TflKey,
+    TestOrderDetail.TflBatchId,
+    b.TflUpdate,
     [TestOrderDetail].[Color],
     [TestOrderDetail].[Gender],
     [TestOrderDetail].[OrderDetailKey],
@@ -155,20 +143,20 @@ SELECT
     [TestOrderDetail].[Quantity],
     [TestOrderDetail].[Result],
     [TestOrderDetail].[Size],
-    [CustomerKey] = ISNULL([TestOrderDetail].[CustomerKey], 0),
-    [OrderDate] = ISNULL([TestOrder].[OrderDate], '12/31/9999 12:00:00 AM'),
-    [Address] = ISNULL([TestCustomer].[Address], ''),
-    [City] = ISNULL([TestCustomer].[City], ''),
-    [Country] = ISNULL([TestCustomer].[Country], ''),
-    [FirstName] = ISNULL([TestCustomer].[FirstName], ''),
-    [LastName] = ISNULL([TestCustomer].[LastName], ''),
-    [State] = ISNULL([TestCustomer].[State], ''),
-    [ProductName] = ISNULL([TestProduct].[ProductName], 'None')
-FROM [TestOrderDetail]
-INNER JOIN [TflBatch] b ON ([TestOrderDetail].TflBatchId = b.TflBatchId)
-LEFT OUTER JOIN [TestOrder] ON ([TestOrderDetail].[OrderKey] = [TestOrder].[OrderKey])
-LEFT OUTER JOIN [TestCustomer] ON ([TestOrderDetail].[CustomerKey] = [TestCustomer].[CustomerKey])
-LEFT OUTER JOIN [TestProduct] ON ([TestOrderDetail].[ProductKey] = [TestProduct].[ProductKey])
+    ISNULL([TestOrderDetail].[CustomerKey], 0) AS [CustomerKey],
+    ISNULL([TestOrder].[OrderDate], '12/31/9999 12:00:00 AM') AS [OrderDate],
+    ISNULL([TestCustomer].[Address], '') AS [Address],
+    ISNULL([TestCustomer].[City], '') AS [City],
+    ISNULL([TestCustomer].[Country], '') AS [Country],
+    ISNULL([TestCustomer].[FirstName], '') AS [FirstName],
+    ISNULL([TestCustomer].[LastName], '') AS [LastName],
+    ISNULL([TestCustomer].[State], '') AS [State],
+    ISNULL([TestProduct].[ProductName], 'None') AS [ProductName]
+FROM TestOrderDetail
+INNER JOIN TflBatch b ON (TestOrderDetail.TflBatchId = b.TflBatchId AND b.ProcessName = 'Test')
+LEFT OUTER JOIN TestOrder ON (TestOrderDetail.[OrderKey] = TestOrder.[OrderKey])
+LEFT OUTER JOIN TestCustomer ON (TestOrderDetail.[CustomerKey] = TestCustomer.[CustomerKey])
+LEFT OUTER JOIN TestProduct ON (TestOrderDetail.[ProductKey] = TestProduct.[ProductKey])
 ;", actual);
 
             Console.Write(actual);

@@ -37,7 +37,7 @@ namespace Transformalize.Operations {
         protected override void PrepareCommand(Row row, SqlCommand command)
         {
             var writer = new FieldSqlWriter(_entity.Fields, _entity.CalculatedFields).ExpandXml().Output();
-            var sets = writer.Alias().SetParam().Write(",\r\n    ", false);
+            var sets = writer.Alias(_entity.OutputConnection.Provider).SetParam().Write(",\r\n    ", false);
             command.CommandText = string.Format("UPDATE [{0}].[{1}]\r\nSET {2},\r\n    TflBatchId = @TflBatchId\r\nWHERE TflKey = @TflKey;", _entity.Schema, _entity.OutputName(), sets);
             foreach (var r in writer.ToArray()) {
                 AddParameter(command, r.Alias, row[r.Alias]);

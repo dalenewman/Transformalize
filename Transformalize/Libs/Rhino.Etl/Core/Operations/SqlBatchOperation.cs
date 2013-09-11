@@ -31,7 +31,7 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Operations {
             set { _timeout = value; }
         }
 
-        protected SqlBatchOperation(IConnection connection) : base(connection) {
+        protected SqlBatchOperation(AbstractConnection connection) : base(connection) {
             base.ParamPrefix = "@";
         }
 

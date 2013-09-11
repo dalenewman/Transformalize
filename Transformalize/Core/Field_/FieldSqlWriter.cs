@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Core.Fields_;
+using Transformalize.Providers;
 
 namespace Transformalize.Core.Field_ {
 
@@ -166,20 +167,20 @@ namespace Transformalize.Core.Field_ {
             return keys;
         }
 
-        private static string SafeColumn(string name) {
-            return string.Concat("[", name, "]");
+        private static string SafeColumn(string name, AbstractProvider provider) {
+            return string.Concat(provider.L, name, provider.R);
         }
 
-        public FieldSqlWriter Name() {
+        public FieldSqlWriter Name(AbstractProvider provider) {
             foreach (var key in CopyOutputKeys()) {
-                _output[key] = SafeColumn(_original[key].Name);
+                _output[key] = SafeColumn(_original[key].Name, provider);
             }
             return this;
         }
 
-        public FieldSqlWriter Alias() {
+        public FieldSqlWriter Alias(AbstractProvider provider) {
             foreach (var key in CopyOutputKeys()) {
-                _output[key] = SafeColumn(_original[key].Alias);
+                _output[key] = SafeColumn(_original[key].Alias, provider);
             }
             return this;
         }
@@ -200,30 +201,32 @@ namespace Transformalize.Core.Field_ {
             return this;
         }
 
-        public FieldSqlWriter ToAlias(bool ifNecessary = false) {
+        public FieldSqlWriter ToAlias(AbstractProvider provider, bool ifNecessary = false) {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];
                 if (ifNecessary)
                 {
                     if (field.Alias != field.Name)
                     {
-                        _output[key] = string.Concat("[", field.Alias, "] = ", _output[key]);
+                        //_output[key] = string.Concat(provider.L, field.Alias, provider.R, " = ", _output[key]);
+                        _output[key] = string.Concat(_output[key], " AS ", provider.L, field.Alias, provider.R);
                     }
                 }
                 else
                 {
-                    _output[key] = string.Concat("[", field.Alias, "] = ", _output[key]);
+                    //_output[key] = string.Concat(provider.L, field.Alias, provider.R, " = ", _output[key]);
+                    _output[key] = string.Concat(_output[key], " AS ", provider.L, field.Alias, provider.R);
                 }
                     
             }
             return this;
         }
 
-        public FieldSqlWriter AsAlias() {
+        public FieldSqlWriter AsAlias(AbstractProvider provider) {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];
                 if (field.Alias != field.Name || field.FieldType.HasFlag(Field_.FieldType.Xml)) {
-                    _output[key] = string.Concat(_output[key], " AS [", _original[key].Alias, "]");
+                    _output[key] = string.Concat(_output[key], " AS ", provider.L, _original[key].Alias, provider.R);
                 }
             }
             return this;
@@ -293,13 +296,13 @@ namespace Transformalize.Core.Field_ {
         /// Presents the field for a select. 
         /// </summary>
         /// <returns>field's name for a regular field, and the XPath necessary for XML based fields.</returns>
-        public FieldSqlWriter Select() {
+        public FieldSqlWriter Select(AbstractProvider provider) {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];
                 if (field.FieldType.HasFlag(Field_.FieldType.Xml))
                     _output[key] = XmlValue(field);
                 else {
-                    _output[key] = SafeColumn(field.Name);
+                    _output[key] = SafeColumn(field.Name, provider);
                 }
             }
             return this;

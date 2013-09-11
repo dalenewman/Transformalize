@@ -98,7 +98,7 @@ namespace Transformalize.Configuration {
             }
         }
 
-        [ConfigurationProperty(VERSION, IsRequired = true)]
+        [ConfigurationProperty(VERSION, IsRequired = false, DefaultValue = "")]
         public string Version {
             get {
                 return this[VERSION] as string;

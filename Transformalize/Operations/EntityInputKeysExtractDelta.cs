@@ -16,25 +16,19 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
-using Transformalize.Core;
 using Transformalize.Core.Entity_;
-using Transformalize.Core.Process_;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
 
 namespace Transformalize.Operations {
     public class EntityInputKeysExtractDelta : InputCommandOperation {
-        private readonly Process _process;
         private readonly Entity _entity;
         private readonly string[] _fields;
 
-        public EntityInputKeysExtractDelta(Process process, Entity entity)
+        public EntityInputKeysExtractDelta(Entity entity)
             : base(entity.InputConnection) {
-            _process = process;
             _entity = entity;
             _fields = _entity.PrimaryKey.ToEnumerable().Select(f => f.Alias).ToArray();
 
@@ -62,7 +56,7 @@ namespace Transformalize.Operations {
 
         protected override void PrepareCommand(IDbCommand cmd) {
             cmd.CommandTimeout = 0;
-            cmd.CommandText = PrepareSql(_entity.HasRange);
+            cmd.CommandText = _entity.HasRange ? _entity.KeysRangeQuery() : _entity.KeysQuery();
             cmd.CommandType = CommandType.Text;
 
             if (_entity.HasRange)
@@ -70,13 +64,6 @@ namespace Transformalize.Operations {
             AddParameter(cmd, "@End", _entity.End);
         }
         
-        public string PrepareSql(bool isRange) {
-            const string sqlPattern = "SELECT {0}{1}\r\nFROM [{2}].[{3}] WITH (NOLOCK)\r\nWHERE {4};";
-            var criteria = string.Format(isRange ? "[{0}] BETWEEN @Begin AND @End" : "[{0}] <= @End", _entity.Version.Name);
-            var top = _process.Options.Top > 0 ? "TOP " + _process.Options.Top + " " : string.Empty;
-            return string.Format(sqlPattern, top, string.Join(", ", _entity.SelectKeys(Connection.Provider)), _entity.Schema, _entity.Name, criteria );
-        }
-
         public bool NeedsToRun() {
             return _entity.NeedsUpdate();
         }

@@ -1,70 +1,22 @@
 using System;
-using System.Data;
-using Transformalize.Core.Entity_;
+using Transformalize.Configuration;
+using Transformalize.Core.Process_;
 using Transformalize.Libs.NLog;
 
 namespace Transformalize.Providers.AnalysisServices
 {
-    public class AnalysisServicesConnection : IConnection
+    public class AnalysisServicesConnection : AbstractConnection
     {
         private const StringSplitOptions RE = StringSplitOptions.RemoveEmptyEntries;
-        private readonly IConnectionChecker _connectionChecker;
         private readonly char[] _semiColen = new[] { ';' };
         private readonly char[] _equal = new[] { '=' };
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
 
-        public string Database { get; private set; }
-        public string Server { get; private set; }
-        public ProviderSetup Provider { get; private set; }
-        public int CompatibilityLevel { get; set; }
-        public int BatchSize { get; set; }
-        public string ConnectionString { get; private set; }
-        public string Process { get; set; }
-        public IScriptRunner ScriptRunner { get; private set; }
-
-        public IDbConnection GetConnection()
+        public AnalysisServicesConnection(ConnectionConfigurationElement element, AbstractProvider provider, AbstractConnectionChecker connectionChecker, IScriptRunner scriptRunner, IProviderSupportsModifier providerScriptModifer)
+            : base(element, provider, connectionChecker, scriptRunner, providerScriptModifer)
         {
-            throw new NotImplementedException();
-        }
-
-        public void LoadEndVersion(Entity entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void LoadBeginVersion(Entity entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Compatibility Compatibility { get; private set; }
-
-        public bool CanInsertMultipleValues()
-        {
-            return false;
-        }
-
-        public int NextBatchId(string processName)
-        {
-            throw new NotImplementedException();
-        }
-
-        public AnalysisServicesConnection(string connectionString)
-        {
-            Provider = new ProviderSetup(null);
-            _connectionChecker = new AnalysisServicesConnectionChecker();
-            ConnectionString = connectionString;
-            CompatibilityLevel = 100;
             ParseConnectionString();
-            ScriptRunner = new AnalysisServicesScriptRunner(this);
         }
-
-        public bool IsReady()
-        {
-            return _connectionChecker.Check(this);
-        }
-
-        public string Name { get; set; }
 
         private void ParseConnectionString()
         {

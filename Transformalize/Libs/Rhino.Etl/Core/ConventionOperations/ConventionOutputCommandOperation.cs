@@ -13,7 +13,7 @@ namespace Transformalize.Libs.Rhino.Etl.Core.ConventionOperations
     {
         private string command;
 
-        public ConventionOutputCommandOperation(IConnection connection) : base(connection)
+        public ConventionOutputCommandOperation(AbstractConnection connection) : base(connection)
         {
         }
 

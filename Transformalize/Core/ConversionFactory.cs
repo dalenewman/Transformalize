@@ -78,7 +78,9 @@ namespace Transformalize.Core {
                         value = " ";
                     return System.Convert.ToChar(value);
                 case "byte[]":
-                    return new byte[0];
+                    return value == string.Empty ? new byte[0] : something;
+                case "rowversion":
+                    return value == string.Empty ? new byte[0] : something;
                 default:
                     return value;
             }

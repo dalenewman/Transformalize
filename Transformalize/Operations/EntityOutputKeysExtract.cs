@@ -39,7 +39,7 @@ namespace Transformalize.Operations
             : base(entity.OutputConnection)
         {
             _entity = entity;
-            _fields = new List<string>(new FieldSqlWriter(entity.PrimaryKey).Alias().Keys()) {"TflKey"};
+            _fields = new List<string>(new FieldSqlWriter(entity.PrimaryKey).Alias(entity.OutputConnection.Provider).Keys()) { "TflKey" };
             _key = new FieldSqlWriter(entity.PrimaryKey).ToArray();
         }
 
@@ -62,16 +62,18 @@ namespace Transformalize.Operations
 
         private string PrepareSql()
         {
-            const string sqlPattern = "{0}\r\nSELECT e.{1}, TflKey\r\nFROM [{2}].[{3}] e WITH (NOLOCK)\r\nINNER JOIN @KEYS k ON ({4})\r\nORDER BY {5};";
+            var connection = _entity.OutputConnection;
+            var provider = connection.Provider;
+            const string sqlPattern = "{0}\r\nSELECT e.{1}, TflKey\r\nFROM [{2}].[{3}] e WITH (NOLOCK)\r\nINNER JOIN @KEYS k ON ({4});";
 
             var builder = new StringBuilder();
-            builder.AppendLine(SqlTemplates.CreateTableVariable("@KEYS", _key));
-            builder.AppendLine(SqlTemplates.BatchInsertValues(50, "@KEYS", _key, _entity.InputKeys, _entity.OutputConnection.Compatibility.CanInsertMultipleRows));
+            builder.AppendLine(_entity.OutputConnection.WriteTemporaryTable("@KEYS", _key));
+            builder.AppendLine(SqlTemplates.BatchInsertValues(50, "@KEYS", _key, _entity.InputKeys, _entity.OutputConnection));
 
-            var selectKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias().Write(", e.", false);
-            var joinKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias().Set("e", "k").Write(" AND ");
-            var orderByKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias().Asc().Write();
-            return string.Format(sqlPattern, builder, selectKeys, _entity.Schema, _entity.OutputName(), joinKeys, orderByKeys);
+            var selectKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias(provider).Write(", e.", false);
+            var joinKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias(provider).Set("e", "k").Write(" AND ");
+            var orderByKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias(provider).Asc().Write();
+            return string.Format(sqlPattern, builder, selectKeys, _entity.Schema, _entity.OutputName(), joinKeys);
         }
 
     }

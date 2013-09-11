@@ -13,7 +13,7 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Operations
     public abstract class OutputCommandOperation : AbstractCommandOperation
     {
 
-        protected OutputCommandOperation(IConnection connection) : base(connection)
+        protected OutputCommandOperation(AbstractConnection connection) : base(connection)
         {
         }
 

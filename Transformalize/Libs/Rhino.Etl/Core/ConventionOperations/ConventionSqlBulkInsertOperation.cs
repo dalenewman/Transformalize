@@ -9,7 +9,7 @@ namespace Transformalize.Libs.Rhino.Etl.Core.ConventionOperations
     public class ConventionSqlBulkInsertOperation : SqlBulkInsertOperation
     {
 
-        public ConventionSqlBulkInsertOperation(IConnection connection, string targetTable)
+        public ConventionSqlBulkInsertOperation(AbstractConnection connection, string targetTable)
             : base(connection, targetTable)
         {
         }

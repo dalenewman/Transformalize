@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 namespace Transformalize.Providers {
-    public interface IConnectionChecker {
-        bool Check(IConnection connection);
+    public interface AbstractConnectionChecker {
+        bool Check(AbstractConnection connection);
     }
 }

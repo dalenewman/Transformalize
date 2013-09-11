@@ -10,7 +10,7 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Operations {
     /// Represent an operation that uses the database can occure during the ETL process
     /// </summary>
     public abstract class AbstractDatabaseOperation : AbstractOperation {
-        private readonly IConnection _connection;
+        private readonly AbstractConnection _connection;
 
         private static Hashtable _supportedTypes;
         ///<summary>
@@ -18,11 +18,11 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Operations {
         ///</summary>
         protected string ParamPrefix = "";
 
-        public IConnection Connection {
+        public AbstractConnection Connection {
             get { return _connection; }
         }
 
-        protected AbstractDatabaseOperation(IConnection connection)
+        protected AbstractDatabaseOperation(AbstractConnection connection)
         {
             _connection = connection;
         }

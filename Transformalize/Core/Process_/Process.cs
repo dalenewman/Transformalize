@@ -27,6 +27,10 @@ using Transformalize.Core.Transform_;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.RazorEngine.Core;
 using Transformalize.Providers;
+using Transformalize.Libs.Ninject;
+using Transformalize.Providers.AnalysisServices;
+using Transformalize.Providers.MySql;
+using Transformalize.Providers.SqlServer;
 
 namespace Transformalize.Core.Process_ {
 
@@ -40,7 +44,7 @@ namespace Transformalize.Core.Process_ {
         public Dictionary<string, Map> MapEndsWith = new Dictionary<string, Map>();
         public Dictionary<string, Script> Scripts = new Dictionary<string, Script>();
         public Dictionary<string, Template> Templates = new Dictionary<string, Template>();
-        public Dictionary<string, IConnection> Connections = new Dictionary<string, IConnection>();
+        public Dictionary<string, AbstractConnection> Connections = new Dictionary<string, AbstractConnection>();
         public bool OutputRecordsExist;
         public List<Entity> Entities = new List<Entity>();
         public IFields CalculatedFields = new Fields();
@@ -48,8 +52,9 @@ namespace Transformalize.Core.Process_ {
         public Options Options = new Options();
         public List<Relationship> Relationships = new List<Relationship>();
         public IEnumerable<Field> RelatedKeys;
-        public Dictionary<string, string> Providers = new Dictionary<string, string>();  
-        
+        public Dictionary<string, string> Providers = new Dictionary<string, string>();
+        public IKernel Kernal = new StandardKernel();
+
         public bool IsReady() {
             return Connections.Select(connection => connection.Value.IsReady()).All(b => b.Equals(true));
         }
@@ -60,6 +65,21 @@ namespace Transformalize.Core.Process_ {
         {
             Name = name;
             GlobalDiagnosticsContext.Set("process", name);
+
+            Kernal.Bind<AbstractProvider>().To<MySqlProvider>().WhenInjectedInto<MySqlConnection>();
+            Kernal.Bind<AbstractConnectionChecker>().To<DefaultConnectionChecker>().WhenInjectedInto<MySqlConnection>();
+            Kernal.Bind<IScriptRunner>().To<DefaultScriptRunner>().WhenInjectedInto<MySqlConnection>();
+            Kernal.Bind<IProviderSupportsModifier>().To<DefaultProviderSupportsModifier>().WhenInjectedInto<MySqlConnection>();
+
+            Kernal.Bind<AbstractProvider>().To<SqlServerProvider>().WhenInjectedInto<SqlServerConnection>();
+            Kernal.Bind<AbstractConnectionChecker>().To<DefaultConnectionChecker>().WhenInjectedInto<SqlServerConnection>();
+            Kernal.Bind<IScriptRunner>().To<DefaultScriptRunner>().WhenInjectedInto<SqlServerConnection>();
+            Kernal.Bind<IProviderSupportsModifier>().To<SqlServerProviderSupportsModifier>().WhenInjectedInto<SqlServerConnection>();
+
+            Kernal.Bind<AbstractProvider>().To<AnalysisServicesProvider>().WhenInjectedInto<AnalysisServicesConnection>();
+            Kernal.Bind<AbstractConnectionChecker>().To<AnalysisServicesConnectionChecker>().WhenInjectedInto<AnalysisServicesConnection>();
+            Kernal.Bind<IScriptRunner>().To<AnalysisServicesScriptRunner>().WhenInjectedInto<AnalysisServicesConnection>();
+            Kernal.Bind<IProviderSupportsModifier>().To<DefaultProviderSupportsModifier>().WhenInjectedInto<AnalysisServicesConnection>();
         }
 
         public IFields OutputFields()

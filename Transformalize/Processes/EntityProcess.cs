@@ -90,7 +90,7 @@ namespace Transformalize.Processes
                 Environment.Exit(1);
             }
 
-            if (_process.Options.WriteEndVersion)
+            if (_process.Options.WriteEndVersion) 
             {
                 new SqlServerEntityVersionWriter(_entity).WriteEndVersion(_entity.End, _entity.RecordsAffected);
             }

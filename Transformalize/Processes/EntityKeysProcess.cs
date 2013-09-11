@@ -41,15 +41,15 @@ namespace Transformalize.Processes
 
         protected override void Initialize()
         {
-            if (_process.OutputRecordsExist && _process.Options.UseBeginVersion)
+            if (_process.OutputRecordsExist && _process.Options.UseBeginVersion && _entity.Version != null)
             {
-                var operation = new EntityInputKeysExtractDelta(_process, _entity);
+                var operation = new EntityInputKeysExtractDelta(_entity);
                 if(operation.NeedsToRun())
                     Register(operation);
             }
             else
             {
-                Register(new EntityInputKeysExtractAll(_process, _entity));
+                Register(new EntityInputKeysExtractAll(_entity));
             }
 
             Register(new EntityInputKeysStore(_process, _entity));

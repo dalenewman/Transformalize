@@ -25,10 +25,13 @@ using Transformalize.Core.Entity_;
 using Transformalize.Core.Field_;
 using Transformalize.Core.Template_;
 using Transformalize.Libs.NLog;
+using Transformalize.Libs.Ninject.Parameters;
+using Transformalize.Libs.Ninject.Syntax;
 using Transformalize.Libs.RazorEngine.Core;
 using Transformalize.Libs.RazorEngine.Core.Configuration.Fluent;
 using Transformalize.Libs.RazorEngine.Core.Templating;
-using Transformalize.Providers;
+using Transformalize.Providers.AnalysisServices;
+using Transformalize.Providers.MySql;
 using Transformalize.Providers.SqlServer;
 
 namespace Transformalize.Core.Process_
@@ -196,6 +199,7 @@ namespace Transformalize.Core.Process_
         private void LogProcessConfiguration()
         {
             _log.Debug("Process Loaded.");
+            _log.Debug("{0} Providers{1}.", _providerCount, _providerCount == 1 ? string.Empty : "s");
             _log.Debug("{0} Connection{1}.", _connectionCount, _connectionCount == 1 ? string.Empty : "s");
             _log.Debug("{0} Entit{1}.", _entityCount, _entityCount == 1 ? "y" : "ies");
             _log.Debug("{0} Relationship{1}.", _relationshipCount, _relationshipCount == 1 ? string.Empty : "s");
@@ -368,7 +372,18 @@ namespace Transformalize.Core.Process_
             var count = 0;
             foreach (ConnectionConfigurationElement element in _config.Connections)
             {
-               _process.Connections.Add(element.Name, new ConnectionFactory(_process).Create(element));
+                switch (element.Provider.ToLower())
+                {
+                    case "mysql":
+                        _process.Connections.Add(element.Name, _process.Kernal.Get<MySqlConnection>(new IParameter[] { new ConstructorArgument("process", _process), new ConstructorArgument("element", element) }));
+                        break;
+                    case "analysisservices":
+                        _process.Connections.Add(element.Name, _process.Kernal.Get<AnalysisServicesConnection>(new IParameter[] { new ConstructorArgument("process", _process), new ConstructorArgument("element", element) }));
+                        break;
+                    default:
+                        _process.Connections.Add(element.Name, _process.Kernal.Get<SqlServerConnection>(new IParameter[] { new ConstructorArgument("process", _process), new ConstructorArgument("element", element) }));
+                        break;
+                }
                 count++;
             }
             return count;

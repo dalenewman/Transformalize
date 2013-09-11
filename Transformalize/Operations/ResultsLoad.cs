@@ -21,24 +21,27 @@ using Transformalize.Core.Field_;
 using Transformalize.Core.Process_;
 using Transformalize.Libs.Rhino.Etl.Core;
 using Transformalize.Libs.Rhino.Etl.Core.Operations;
+using Transformalize.Providers;
 
 namespace Transformalize.Operations
 {
     public class ResultsLoad : SqlBatchOperation
     {
         private readonly Process _process;
+        private readonly AbstractProvider _provider;
 
         public ResultsLoad(Process process)
             : base(process.MasterEntity.OutputConnection)
         {
             _process = process;
             BatchSize = 50;
+            _provider = _process.MasterEntity.OutputConnection.Provider;
             UseTransaction = false;
         }
 
         protected override void PrepareCommand(Row row, SqlCommand command)
         {
-            var sets = new FieldSqlWriter(_process.CalculatedFields).Alias().SetParam().Write();
+            var sets = new FieldSqlWriter(_process.CalculatedFields).Alias(_provider).SetParam().Write();
             command.CommandText = string.Format("UPDATE {0} SET {1} WHERE TflKey = @TflKey;", _process.MasterEntity.OutputName(), sets);
             foreach (var r in _process.CalculatedFields)
             {

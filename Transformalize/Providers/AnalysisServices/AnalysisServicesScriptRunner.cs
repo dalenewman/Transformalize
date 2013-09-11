@@ -7,22 +7,16 @@ namespace Transformalize.Providers.AnalysisServices
     public class AnalysisServicesScriptRunner : IScriptRunner
     {
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
-        private readonly AnalysisServicesConnection _connection;
 
-        public AnalysisServicesScriptRunner(AnalysisServicesConnection connection)
-        {
-            _connection = connection;
-        }
-
-        public IScriptReponse Execute(string script)
+        public IScriptReponse Execute(AbstractConnection connection, string script)
         {
             var response = new ScriptResponse();
             var server = new Server();
 
             try
             {
-                _log.Debug("Connecting to {0} on {1}.", _connection.Database, _connection.Server);
-                server.Connect(_connection.ConnectionString);
+                _log.Debug("Connecting to {0} on {1}.", connection.Database, connection.Server);
+                server.Connect(connection.ConnectionString);
 
                 var results = server.Execute(script);
 
@@ -44,7 +38,7 @@ namespace Transformalize.Providers.AnalysisServices
             {
                 if (server.Connected)
                 {
-                    _log.Debug("Disconnecting from {0} on {1}.", _connection.Database, _connection.Server);
+                    _log.Debug("Disconnecting from {0} on {1}.", connection.Database, connection.Server);
                     server.Disconnect();
                 }
             }

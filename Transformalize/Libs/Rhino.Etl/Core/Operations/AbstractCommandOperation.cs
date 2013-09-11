@@ -10,7 +10,7 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Operations {
     /// </summary>
     public abstract class AbstractCommandOperation : AbstractDatabaseOperation {
 
-        protected AbstractCommandOperation(IConnection connection)
+        protected AbstractCommandOperation(AbstractConnection connection)
             : base(connection) {
         }
 

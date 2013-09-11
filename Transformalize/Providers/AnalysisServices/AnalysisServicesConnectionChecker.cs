@@ -3,9 +3,9 @@ using Microsoft.AnalysisServices;
 
 namespace Transformalize.Providers.AnalysisServices
 {
-    public class AnalysisServicesConnectionChecker : IConnectionChecker
+    public class AnalysisServicesConnectionChecker : AbstractConnectionChecker
     {
-        public bool Check(IConnection connection)
+        public bool Check(AbstractConnection connection)
         {
             bool isReady;
             var server = new Server();

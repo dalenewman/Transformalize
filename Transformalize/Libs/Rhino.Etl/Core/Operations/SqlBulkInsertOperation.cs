@@ -32,7 +32,7 @@ namespace Transformalize.Libs.Rhino.Etl.Core.Operations
         private int _notifyBatchSize;
         private SqlBulkCopyOptions _bulkCopyOptions = SqlBulkCopyOptions.Default;
 
-        protected SqlBulkInsertOperation(IConnection connection, string targetTable, int timeout = 0)
+        protected SqlBulkInsertOperation(AbstractConnection connection, string targetTable, int timeout = 0)
             : base(connection)
         {
             Guard.Against(string.IsNullOrEmpty(targetTable), "TargetTable was not set, but it is mandatory");
