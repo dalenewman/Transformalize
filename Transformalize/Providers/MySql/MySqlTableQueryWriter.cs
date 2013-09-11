@@ -12,7 +12,7 @@ namespace Transformalize.Providers.MySql
                 CONSTRAINT `Pk_{2}_{3}` PRIMARY KEY (
                     {4}
                 )
-            ) ENGINE = MEMORY;
+            );
         ";
 
         public string Write(string name, IEnumerable<string> defs, IEnumerable<string> primaryKey, string schema = "dbo", bool ignoreDups = false)
@@ -35,7 +35,7 @@ namespace Transformalize.Providers.MySql
         {
             var safeName = provider.Enclose(name.TrimStart("@".ToCharArray()));
             var defs = useAlias ? new FieldSqlWriter(fields).Alias(provider).DataType().Write() : new FieldSqlWriter(fields).Name(provider).DataType().Write();
-            return string.Format(@"CREATE TEMPORARY TABLE {0}({1});", safeName, defs);
+            return string.Format(@"CREATE TEMPORARY TABLE {0}({1}) ENGINE = MEMORY;", safeName, defs);
         }
     }
 }
