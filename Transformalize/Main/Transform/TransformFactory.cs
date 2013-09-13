@@ -24,26 +24,21 @@ using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Libs.NLog;
 
-namespace Transformalize.Main
-{
-    public class TransformFactory
-    {
+namespace Transformalize.Main {
+    public class TransformFactory {
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly Process _process;
 
-        public TransformFactory(Process process)
-        {
+        public TransformFactory(Process process) {
             _process = process;
         }
 
         public AbstractTransform Create(TransformConfigurationElement element,
                                         ITransformParametersReader transformParametersReader,
-                                        IParametersReader parametersReader, string fieldName = "")
-        {
-            Parameters parameters = transformParametersReader.Read(element);
+                                        IParametersReader parametersReader, string fieldName = "") {
+            var parameters = transformParametersReader.Read(element);
             AbstractTransform transform = new EmptyTransform();
-            switch (element.Method.ToLower())
-            {
+            switch (element.Method.ToLower()) {
                 case "convert":
                     transform = new ConvertTransform(element.To, parameters);
                     break;
@@ -90,20 +85,19 @@ namespace Transformalize.Main
                     break;
 
                 case "map":
-                    Map equals = _process.MapEquals[element.Map];
-                    Map startsWith = _process.MapStartsWith.ContainsKey(element.Map)
+                    var equals = _process.MapEquals[element.Map];
+                    var startsWith = _process.MapStartsWith.ContainsKey(element.Map)
                                          ? _process.MapStartsWith[element.Map]
                                          : new Map();
-                    Map endsWith = _process.MapEndsWith.ContainsKey(element.Map)
+                    var endsWith = _process.MapEndsWith.ContainsKey(element.Map)
                                        ? _process.MapEndsWith[element.Map]
                                        : new Map();
-                    transform = new MapTransform(new[] {@equals, startsWith, endsWith}, parameters);
+                    transform = new MapTransform(new[] { @equals, startsWith, endsWith }, parameters);
                     break;
 
                 case "javascript":
                     var scripts = new Dictionary<string, Script>();
-                    foreach (TransformScriptConfigurationElement script in element.Scripts)
-                    {
+                    foreach (TransformScriptConfigurationElement script in element.Scripts) {
                         scripts[script.Name] = _process.Scripts[script.Name];
                     }
 
@@ -115,15 +109,14 @@ namespace Transformalize.Main
 
                 case "expression":
                     transform = parameters.Any()
-                                    ? new ExpressionTransform(element.Expression, parameters)
-                                    : new ExpressionTransform(fieldName, element.Expression, parameters);
+                        ? new ExpressionTransform(element.Expression, parameters)
+                        : new ExpressionTransform(fieldName, element.Expression, parameters);
                     break;
 
                 case "template":
 
                     var templates = new Dictionary<string, Template>();
-                    foreach (TransformTemplateConfigurationElement template in element.Templates)
-                    {
+                    foreach (TransformTemplateConfigurationElement template in element.Templates) {
                         templates[template.Name] = _process.Templates[template.Name];
                     }
 
@@ -178,8 +171,7 @@ namespace Transformalize.Main
                     break;
             }
 
-            if (transform.RequiresParameters && !transform.Parameters.Any() || element.Parameter.Equals("*"))
-            {
+            if (transform.RequiresParameters && !transform.Parameters.Any() || element.Parameter.Equals("*")) {
                 transform.Parameters = parametersReader.Read();
             }
 

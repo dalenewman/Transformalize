@@ -1,35 +1,24 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
 // 
-// Copyright (c) 2004-2011 Jaroslaw Kowalski <jaak@jkowalski.net>
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 // 
-// All rights reserved.
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 // 
-// Redistribution and use in source and binary forms, with or without 
-// modification, are permitted provided that the following conditions 
-// are met:
-// 
-// * Redistributions of source code must retain the above copyright notice, 
-//   this list of conditions and the following disclaimer. 
-// 
-// * Redistributions in binary form must reproduce the above copyright notice,
-//   this list of conditions and the following disclaimer in the documentation
-//   and/or other materials provided with the distribution. 
-// 
-// * Neither the name of Jaroslaw Kowalski nor the names of its 
-//   contributors may be used to endorse or promote products derived from this
-//   software without specific prior written permission. 
-// 
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
-// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
-// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
-// THE POSSIBILITY OF SUCH DAMAGE.
-// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
 
 using System;
 using System.Collections;
@@ -41,7 +30,6 @@ using System.IO;
 using System.Reflection;
 using System.Xml;
 using Transformalize.Libs.NLog.Common;
-using Transformalize.Libs.NLog.Filters;
 using Transformalize.Libs.NLog.Internal;
 using Transformalize.Libs.NLog.Layouts;
 using Transformalize.Libs.NLog.Targets;
@@ -67,7 +55,7 @@ namespace Transformalize.Libs.NLog.Config
         /// <param name="fileName">Configuration file to be read.</param>
         public XmlLoggingConfiguration(string fileName)
         {
-            using (XmlReader reader = XmlReader.Create(fileName))
+            using (var reader = XmlReader.Create(fileName))
             {
                 Initialize(reader, fileName, false);
             }
@@ -80,7 +68,7 @@ namespace Transformalize.Libs.NLog.Config
         /// <param name="ignoreErrors">Ignore any errors during configuration.</param>
         public XmlLoggingConfiguration(string fileName, bool ignoreErrors)
         {
-            using (XmlReader reader = XmlReader.Create(fileName))
+            using (var reader = XmlReader.Create(fileName))
             {
                 Initialize(reader, fileName, ignoreErrors);
             }
@@ -121,7 +109,7 @@ namespace Transformalize.Libs.NLog.Config
         {
             using (var stringReader = new StringReader(element.OuterXml))
             {
-                XmlReader reader = XmlReader.Create(stringReader);
+                var reader = XmlReader.Create(stringReader);
 
                 Initialize(reader, fileName, false);
             }
@@ -139,7 +127,7 @@ namespace Transformalize.Libs.NLog.Config
         {
             using (var stringReader = new StringReader(element.OuterXml))
             {
-                XmlReader reader = XmlReader.Create(stringReader);
+                var reader = XmlReader.Create(stringReader);
 
                 Initialize(reader, fileName, ignoreErrors);
             }
@@ -155,7 +143,7 @@ namespace Transformalize.Libs.NLog.Config
         {
             get
             {
-                object o = ConfigurationManager.GetSection("nlog");
+                var o = ConfigurationManager.GetSection("nlog");
                 return o as LoggingConfiguration;
             }
         }
@@ -224,7 +212,7 @@ namespace Transformalize.Libs.NLog.Config
                 return null;
             }
 
-            int p = attributeValue.IndexOf(':');
+            var p = attributeValue.IndexOf(':');
             if (p < 0)
             {
                 return attributeValue;
@@ -265,7 +253,7 @@ namespace Transformalize.Libs.NLog.Config
 #if SILVERLIGHT
                     string key = fileName;
 #else
-                    string key = Path.GetFullPath(fileName);
+                    var key = Path.GetFullPath(fileName);
 #endif
                     visitedFile[key] = true;
 
@@ -298,7 +286,7 @@ namespace Transformalize.Libs.NLog.Config
     // file names are relative to XAP
             string key = fileName;
 #else
-            string key = Path.GetFullPath(fileName);
+            var key = Path.GetFullPath(fileName);
 #endif
             if (visitedFile.ContainsKey(key))
             {
@@ -331,7 +319,7 @@ namespace Transformalize.Libs.NLog.Config
             InternalLogger.Trace("ParseConfigurationElement");
             configurationElement.AssertName("configuration");
 
-            foreach (NLogXmlElement el in configurationElement.Elements("nlog"))
+            foreach (var el in configurationElement.Elements("nlog"))
             {
                 ParseNLogElement(el, baseDirectory);
             }
@@ -352,7 +340,7 @@ namespace Transformalize.Libs.NLog.Config
             InternalLogger.LogLevel = LogLevel.FromString(nlogElement.GetOptionalAttribute("internalLogLevel", InternalLogger.LogLevel.Name));
             LogManager.GlobalThreshold = LogLevel.FromString(nlogElement.GetOptionalAttribute("globalThreshold", LogManager.GlobalThreshold.Name));
 
-            foreach (NLogXmlElement el in nlogElement.Children)
+            foreach (var el in nlogElement.Children)
             {
                 switch (el.LocalName.ToUpper(CultureInfo.InvariantCulture))
                 {
@@ -389,7 +377,7 @@ namespace Transformalize.Libs.NLog.Config
             InternalLogger.Trace("ParseRulesElement");
             rulesElement.AssertName("rules");
 
-            foreach (NLogXmlElement loggerElement in rulesElement.Elements("logger"))
+            foreach (var loggerElement in rulesElement.Elements("logger"))
             {
                 ParseLoggerElement(loggerElement, rulesCollection);
             }
@@ -400,8 +388,8 @@ namespace Transformalize.Libs.NLog.Config
             loggerElement.AssertName("logger");
 
             var rule = new LoggingRule();
-            string namePattern = loggerElement.GetOptionalAttribute("name", "*");
-            string appendTo = loggerElement.GetOptionalAttribute("appendTo", null);
+            var namePattern = loggerElement.GetOptionalAttribute("name", "*");
+            var appendTo = loggerElement.GetOptionalAttribute("appendTo", null);
             if (appendTo == null)
             {
                 appendTo = loggerElement.GetOptionalAttribute("writeTo", null);
@@ -410,10 +398,10 @@ namespace Transformalize.Libs.NLog.Config
             rule.LoggerNamePattern = namePattern;
             if (appendTo != null)
             {
-                foreach (string t in appendTo.Split(','))
+                foreach (var t in appendTo.Split(','))
                 {
-                    string targetName = t.Trim();
-                    Target target = FindTargetByName(targetName);
+                    var targetName = t.Trim();
+                    var target = FindTargetByName(targetName);
 
                     if (target != null)
                     {
@@ -432,27 +420,27 @@ namespace Transformalize.Libs.NLog.Config
 
             if (loggerElement.AttributeValues.TryGetValue("level", out levelString))
             {
-                LogLevel level = LogLevel.FromString(levelString);
+                var level = LogLevel.FromString(levelString);
                 rule.EnableLoggingForLevel(level);
             }
             else if (loggerElement.AttributeValues.TryGetValue("levels", out levelString))
             {
                 levelString = CleanWhitespace(levelString);
 
-                string[] tokens = levelString.Split(',');
-                foreach (string s in tokens)
+                var tokens = levelString.Split(',');
+                foreach (var s in tokens)
                 {
                     if (!string.IsNullOrEmpty(s))
                     {
-                        LogLevel level = LogLevel.FromString(s);
+                        var level = LogLevel.FromString(s);
                         rule.EnableLoggingForLevel(level);
                     }
                 }
             }
             else
             {
-                int minLevel = 0;
-                int maxLevel = LogLevel.MaxLevel.Ordinal;
+                var minLevel = 0;
+                var maxLevel = LogLevel.MaxLevel.Ordinal;
                 string minLevelString;
                 string maxLevelString;
 
@@ -466,13 +454,13 @@ namespace Transformalize.Libs.NLog.Config
                     maxLevel = LogLevel.FromString(maxLevelString).Ordinal;
                 }
 
-                for (int i = minLevel; i <= maxLevel; ++i)
+                for (var i = minLevel; i <= maxLevel; ++i)
                 {
                     rule.EnableLoggingForLevel(LogLevel.FromOrdinal(i));
                 }
             }
 
-            foreach (NLogXmlElement child in loggerElement.Children)
+            foreach (var child in loggerElement.Children)
             {
                 switch (child.LocalName.ToUpper(CultureInfo.InvariantCulture))
                 {
@@ -493,11 +481,11 @@ namespace Transformalize.Libs.NLog.Config
         {
             filtersElement.AssertName("filters");
 
-            foreach (NLogXmlElement filterElement in filtersElement.Children)
+            foreach (var filterElement in filtersElement.Children)
             {
-                string name = filterElement.LocalName;
+                var name = filterElement.LocalName;
 
-                Filter filter = configurationItemFactory.Filters.CreateInstance(name);
+                var filter = configurationItemFactory.Filters.CreateInstance(name);
                 ConfigureObjectFromAttributes(filter, filterElement, false);
                 rule.Filters.Add(filter);
             }
@@ -507,8 +495,8 @@ namespace Transformalize.Libs.NLog.Config
         {
             variableElement.AssertName("variable");
 
-            string name = variableElement.GetRequiredAttribute("name");
-            string value = ExpandVariables(variableElement.GetRequiredAttribute("value"));
+            var name = variableElement.GetRequiredAttribute("name");
+            var value = ExpandVariables(variableElement.GetRequiredAttribute("value"));
 
             variables[name] = value;
         }
@@ -517,14 +505,14 @@ namespace Transformalize.Libs.NLog.Config
         {
             targetsElement.AssertName("targets", "appenders");
 
-            bool asyncWrap = targetsElement.GetOptionalBooleanAttribute("async", false);
+            var asyncWrap = targetsElement.GetOptionalBooleanAttribute("async", false);
             NLogXmlElement defaultWrapperElement = null;
             var typeNameToDefaultTargetParameters = new Dictionary<string, NLogXmlElement>();
 
-            foreach (NLogXmlElement targetElement in targetsElement.Children)
+            foreach (var targetElement in targetsElement.Children)
             {
-                string name = targetElement.LocalName;
-                string type = StripOptionalNamespacePrefix(targetElement.GetOptionalAttribute("type", null));
+                var name = targetElement.LocalName;
+                var type = StripOptionalNamespacePrefix(targetElement.GetOptionalAttribute("type", null));
 
                 switch (name.ToUpper(CultureInfo.InvariantCulture))
                 {
@@ -551,7 +539,7 @@ namespace Transformalize.Libs.NLog.Config
                             throw new NLogConfigurationException("Missing 'type' attribute on <" + name + "/>.");
                         }
 
-                        Target newTarget = configurationItemFactory.Targets.CreateInstance(type);
+                        var newTarget = configurationItemFactory.Targets.CreateInstance(type);
 
                         NLogXmlElement defaults;
                         if (typeNameToDefaultTargetParameters.TryGetValue(type, out defaults))
@@ -585,16 +573,16 @@ namespace Transformalize.Libs.NLog.Config
 
             ConfigureObjectFromAttributes(target, targetElement, true);
 
-            foreach (NLogXmlElement childElement in targetElement.Children)
+            foreach (var childElement in targetElement.Children)
             {
-                string name = childElement.LocalName;
+                var name = childElement.LocalName;
 
                 if (compound != null)
                 {
                     if (IsTargetRefElement(name))
                     {
-                        string targetName = childElement.GetRequiredAttribute("name");
-                        Target newTarget = FindTargetByName(targetName);
+                        var targetName = childElement.GetRequiredAttribute("name");
+                        var newTarget = FindTargetByName(targetName);
                         if (newTarget == null)
                         {
                             throw new NLogConfigurationException("Referenced target '" + targetName + "' not found.");
@@ -606,9 +594,9 @@ namespace Transformalize.Libs.NLog.Config
 
                     if (IsTargetElement(name))
                     {
-                        string type = StripOptionalNamespacePrefix(childElement.GetRequiredAttribute("type"));
+                        var type = StripOptionalNamespacePrefix(childElement.GetRequiredAttribute("type"));
 
-                        Target newTarget = configurationItemFactory.Targets.CreateInstance(type);
+                        var newTarget = configurationItemFactory.Targets.CreateInstance(type);
                         if (newTarget != null)
                         {
                             ParseTargetElement(newTarget, childElement);
@@ -629,8 +617,8 @@ namespace Transformalize.Libs.NLog.Config
                 {
                     if (IsTargetRefElement(name))
                     {
-                        string targetName = childElement.GetRequiredAttribute("name");
-                        Target newTarget = FindTargetByName(targetName);
+                        var targetName = childElement.GetRequiredAttribute("name");
+                        var newTarget = FindTargetByName(targetName);
                         if (newTarget == null)
                         {
                             throw new NLogConfigurationException("Referenced target '" + targetName + "' not found.");
@@ -642,9 +630,9 @@ namespace Transformalize.Libs.NLog.Config
 
                     if (IsTargetElement(name))
                     {
-                        string type = StripOptionalNamespacePrefix(childElement.GetRequiredAttribute("type"));
+                        var type = StripOptionalNamespacePrefix(childElement.GetRequiredAttribute("type"));
 
-                        Target newTarget = configurationItemFactory.Targets.CreateInstance(type);
+                        var newTarget = configurationItemFactory.Targets.CreateInstance(type);
                         if (newTarget != null)
                         {
                             ParseTargetElement(newTarget, childElement);
@@ -675,23 +663,23 @@ namespace Transformalize.Libs.NLog.Config
         {
             extensionsElement.AssertName("extensions");
 
-            foreach (NLogXmlElement addElement in extensionsElement.Elements("add"))
+            foreach (var addElement in extensionsElement.Elements("add"))
             {
-                string prefix = addElement.GetOptionalAttribute("prefix", null);
+                var prefix = addElement.GetOptionalAttribute("prefix", null);
 
                 if (prefix != null)
                 {
                     prefix = prefix + ".";
                 }
 
-                string type = StripOptionalNamespacePrefix(addElement.GetOptionalAttribute("type", null));
+                var type = StripOptionalNamespacePrefix(addElement.GetOptionalAttribute("type", null));
                 if (type != null)
                 {
                     configurationItemFactory.RegisterType(Type.GetType(type, true), prefix);
                 }
 
 #if !WINDOWS_PHONE
-                string assemblyFile = addElement.GetOptionalAttribute("assemblyFile", null);
+                var assemblyFile = addElement.GetOptionalAttribute("assemblyFile", null);
                 if (assemblyFile != null)
                 {
                     try
@@ -702,10 +690,10 @@ namespace Transformalize.Libs.NLog.Config
                                 Assembly asm = assemblyPart.Load(si.Stream);
 #else
 
-                        string fullFileName = Path.Combine(baseDirectory, assemblyFile);
+                        var fullFileName = Path.Combine(baseDirectory, assemblyFile);
                         InternalLogger.Info("Loading assembly file: {0}", fullFileName);
 
-                        Assembly asm = Assembly.LoadFrom(fullFileName);
+                        var asm = Assembly.LoadFrom(fullFileName);
 #endif
                         configurationItemFactory.RegisterItemsFromAssembly(asm, prefix);
                     }
@@ -726,7 +714,7 @@ namespace Transformalize.Libs.NLog.Config
                     continue;
                 }
 
-                string assemblyName = addElement.GetOptionalAttribute("assembly", null);
+                var assemblyName = addElement.GetOptionalAttribute("assembly", null);
                 if (assemblyName != null)
                 {
                     try
@@ -737,7 +725,7 @@ namespace Transformalize.Libs.NLog.Config
                         var assemblyPart = new AssemblyPart();
                         Assembly asm = assemblyPart.Load(si.Stream);
 #else
-                        Assembly asm = Assembly.Load(assemblyName);
+                        var asm = Assembly.Load(assemblyName);
 #endif
 
                         configurationItemFactory.RegisterItemsFromAssembly(asm, prefix);
@@ -766,7 +754,7 @@ namespace Transformalize.Libs.NLog.Config
         {
             includeElement.AssertName("include");
 
-            string newFileName = includeElement.GetRequiredAttribute("file");
+            var newFileName = includeElement.GetRequiredAttribute("file");
 
             try
             {
@@ -827,7 +815,7 @@ namespace Transformalize.Libs.NLog.Config
 
         private bool AddArrayItemFromElement(object o, NLogXmlElement element)
         {
-            string name = element.LocalName;
+            var name = element.LocalName;
 
             PropertyInfo propInfo;
             if (!PropertyHelper.TryGetPropertyInfo(o, name, out propInfo))
@@ -835,11 +823,11 @@ namespace Transformalize.Libs.NLog.Config
                 return false;
             }
 
-            Type elementType = PropertyHelper.GetArrayItemType(propInfo);
+            var elementType = PropertyHelper.GetArrayItemType(propInfo);
             if (elementType != null)
             {
                 var propertyValue = (IList) propInfo.GetValue(o, null);
-                object arrayItem = FactoryHelper.CreateInstance(elementType);
+                var arrayItem = FactoryHelper.CreateInstance(elementType);
                 ConfigureObjectFromAttributes(arrayItem, element, true);
                 ConfigureObjectFromElement(arrayItem, element);
                 propertyValue.Add(arrayItem);
@@ -853,8 +841,8 @@ namespace Transformalize.Libs.NLog.Config
         {
             foreach (var kvp in element.AttributeValues)
             {
-                string childName = kvp.Key;
-                string childValue = kvp.Value;
+                var childName = kvp.Key;
+                var childValue = kvp.Value;
 
                 if (ignoreType && childName.Equals("type", StringComparison.OrdinalIgnoreCase))
                 {
@@ -868,7 +856,7 @@ namespace Transformalize.Libs.NLog.Config
         private bool SetLayoutFromElement(object o, NLogXmlElement layoutElement)
         {
             PropertyInfo targetPropertyInfo;
-            string name = layoutElement.LocalName;
+            var name = layoutElement.LocalName;
 
             // if property exists
             if (PropertyHelper.TryGetPropertyInfo(o, name, out targetPropertyInfo))
@@ -876,13 +864,13 @@ namespace Transformalize.Libs.NLog.Config
                 // and is a Layout
                 if (typeof (Layout).IsAssignableFrom(targetPropertyInfo.PropertyType))
                 {
-                    string layoutTypeName = StripOptionalNamespacePrefix(layoutElement.GetOptionalAttribute("type", null));
+                    var layoutTypeName = StripOptionalNamespacePrefix(layoutElement.GetOptionalAttribute("type", null));
 
                     // and 'type' attribute has been specified
                     if (layoutTypeName != null)
                     {
                         // configure it from current element
-                        Layout layout = configurationItemFactory.Layouts.CreateInstance(ExpandVariables(layoutTypeName));
+                        var layout = configurationItemFactory.Layouts.CreateInstance(ExpandVariables(layoutTypeName));
                         ConfigureObjectFromAttributes(layout, layoutElement, true);
                         ConfigureObjectFromElement(layout, layoutElement);
                         targetPropertyInfo.SetValue(o, layout, null);
@@ -896,7 +884,7 @@ namespace Transformalize.Libs.NLog.Config
 
         private void ConfigureObjectFromElement(object targetObject, NLogXmlElement element)
         {
-            foreach (NLogXmlElement child in element.Children)
+            foreach (var child in element.Children)
             {
                 SetPropertyFromElement(targetObject, child);
             }
@@ -904,9 +892,9 @@ namespace Transformalize.Libs.NLog.Config
 
         private Target WrapWithDefaultWrapper(Target t, NLogXmlElement defaultParameters)
         {
-            string wrapperType = StripOptionalNamespacePrefix(defaultParameters.GetRequiredAttribute("type"));
+            var wrapperType = StripOptionalNamespacePrefix(defaultParameters.GetRequiredAttribute("type"));
 
-            Target wrapperTargetInstance = configurationItemFactory.Targets.CreateInstance(wrapperType);
+            var wrapperTargetInstance = configurationItemFactory.Targets.CreateInstance(wrapperType);
             var wtb = wrapperTargetInstance as WrapperTargetBase;
             if (wtb == null)
             {
@@ -933,7 +921,7 @@ namespace Transformalize.Libs.NLog.Config
 
         private string ExpandVariables(string input)
         {
-            string output = input;
+            var output = input;
 
             // TODO - make this case-insensitive, will probably require a different approach
             foreach (var kvp in variables)

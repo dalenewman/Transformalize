@@ -1,3 +1,25 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
 using System;
 using System.Data;
 using System.Xml;
@@ -34,7 +56,7 @@ namespace Transformalize.Libs.FileHelpers.RunTime
         /// <param name="lengths">The lengths of the fields (one string field will be create for each length)</param>
         public FixedLengthClassBuilder(string className, params int[] lengths) : base(className)
         {
-            for (int i = 0; i < lengths.Length; i++)
+            for (var i = 0; i < lengths.Length; i++)
                 AddField("Field" + ((i + 1).ToString()), lengths[i], typeof (string));
         }
 
@@ -128,7 +150,7 @@ namespace Transformalize.Libs.FileHelpers.RunTime
             if (lengths.Length != mFields.Count)
                 throw new BadUsageException(string.Format("The number of elements is {0} and you pass {1}. This method require the same number of values than fields", mFields.Count, lengths.Length));
 
-            for (int i = 0; i < mFields.Count; i++)
+            for (var i = 0; i < mFields.Count; i++)
                 FieldByIndex(i).FieldLength = lengths[i];
         }
 
@@ -157,7 +179,7 @@ namespace Transformalize.Libs.FileHelpers.RunTime
         {
             var mode = (FixedMode) Enum.Parse(typeof (FixedMode), document.ChildNodes[0].Attributes[0].Value);
 
-            string className = document.ChildNodes.Item(0).SelectNodes("/FixedLengthClass/ClassName").Item(0).InnerText;
+            var className = document.ChildNodes.Item(0).SelectNodes("/FixedLengthClass/ClassName").Item(0).InnerText;
 
             return new FixedLengthClassBuilder(className, mode);
         }

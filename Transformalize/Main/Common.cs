@@ -27,127 +27,54 @@ using System.Runtime.Serialization.Formatters.Binary;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
 
-namespace Transformalize.Main
-{
-    public static class Common
-    {
+namespace Transformalize.Main {
+    public static class Common {
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private const string APPLICATION_FOLDER = @"\Tfl\";
-        private static readonly char[] Slash = new[] {'\\'};
+        private static readonly char[] Slash = new[] { '\\' };
 
-        public static Dictionary<string, Func<string, object>> ConversionMap = new Dictionary
-            <string, Func<string, object>>
-                                                                                   {
-                                                                                       {"string", (x => x)},
-                                                                                       {"xml", (x => x)},
-                                                                                       {
-                                                                                           "int16",
-                                                                                           (x => Convert.ToInt16(x))
-                                                                                       },
-                                                                                       {
-                                                                                           "int32",
-                                                                                           (x => Convert.ToInt32(x))
-                                                                                       },
-                                                                                       {
-                                                                                           "int64",
-                                                                                           (x => Convert.ToInt64(x))
-                                                                                       },
-                                                                                       {
-                                                                                           "long",
-                                                                                           (x => Convert.ToInt64(x))
-                                                                                       },
-                                                                                       {
-                                                                                           "double",
-                                                                                           (x => Convert.ToDouble(x))
-                                                                                       },
-                                                                                       {
-                                                                                           "decimal",
-                                                                                           (x => Convert.ToDecimal(x))
-                                                                                       },
-                                                                                       {
-                                                                                           "char", (x => Convert.ToChar(x))
-                                                                                       },
-                                                                                       {
-                                                                                           "datetime",
-                                                                                           (x => Convert.ToDateTime(x))
-                                                                                       },
-                                                                                       {
-                                                                                           "boolean",
-                                                                                           (x => Convert.ToBoolean(x))
-                                                                                       },
-                                                                                       {
-                                                                                           "single",
-                                                                                           (x => Convert.ToSingle(x))
-                                                                                       }
-                                                                                   };
+        public static Dictionary<string, Func<string, object>> ConversionMap = new Dictionary<string, Func<string, object>> {
+            {"string", (x => x)},
+            {"xml", (x => x)},
+            {"int16", (x => Convert.ToInt16(x))},
+            {"int32", (x => Convert.ToInt32(x))},
+            {"int64", (x => Convert.ToInt64(x))},
+            {"long", (x => Convert.ToInt64(x))},
+            {"double", (x => Convert.ToDouble(x))},
+            {"decimal", (x => Convert.ToDecimal(x))},
+            {"char", (x => Convert.ToChar(x))},
+            {"datetime", (x => Convert.ToDateTime(x))},
+            {"boolean", (x => Convert.ToBoolean(x))},
+            {"single", (x => Convert.ToSingle(x))}
+        };
 
-        public static Dictionary<string, Func<object, object>> ObjectConversionMap = new Dictionary
-            <string, Func<object, object>>
-                                                                                         {
-                                                                                             {"string", (x => x)},
-                                                                                             {"xml", (x => x)},
-                                                                                             {
-                                                                                                 "int16",
-                                                                                                 (x => Convert.ToInt16(x))
-                                                                                             },
-                                                                                             {
-                                                                                                 "int32",
-                                                                                                 (x => Convert.ToInt32(x))
-                                                                                             },
-                                                                                             {
-                                                                                                 "int64",
-                                                                                                 (x => Convert.ToInt64(x))
-                                                                                             },
-                                                                                             {
-                                                                                                 "long",
-                                                                                                 (x => Convert.ToInt64(x))
-                                                                                             },
-                                                                                             {
-                                                                                                 "double",
-                                                                                                 (x => Convert.ToDouble(x))
-                                                                                             },
-                                                                                             {
-                                                                                                 "decimal",
-                                                                                                 (x => Convert.ToDecimal(x))
-                                                                                             },
-                                                                                             {
-                                                                                                 "char",
-                                                                                                 (x => Convert.ToChar(x))
-                                                                                             },
-                                                                                             {
-                                                                                                 "datetime",
-                                                                                                 (x =>
-                                                                                                  Convert.ToDateTime(x))
-                                                                                             },
-                                                                                             {
-                                                                                                 "boolean",
-                                                                                                 (x => Convert.ToBoolean(x))
-                                                                                             },
-                                                                                             {
-                                                                                                 "single",
-                                                                                                 (x => Convert.ToSingle(x))
-                                                                                             }
-                                                                                         };
+        public static Dictionary<string, Func<object, object>> ObjectConversionMap = new Dictionary<string, Func<object, object>> {
+            { "string", (x => x) },
+            { "xml", (x => x) },
+            { "int16", (x => Convert.ToInt16(x)) },
+            { "int32", (x => Convert.ToInt32(x)) },
+            { "int64", (x => Convert.ToInt64(x)) },
+            { "long", (x => Convert.ToInt64(x)) },
+            { "double", (x => Convert.ToDouble(x)) },
+            { "decimal", (x => Convert.ToDecimal(x)) },
+            { "char", (x => Convert.ToChar(x)) },
+            { "datetime", (x => Convert.ToDateTime(x)) },
+            { "boolean", (x => Convert.ToBoolean(x)) },
+            { "single", (x => Convert.ToSingle(x)) }
+        };
 
-        public static Func<KeyValuePair<string, Field>, bool> FieldFinder(ParameterConfigurationElement p)
-        {
+        public static Func<KeyValuePair<string, Field>, bool> FieldFinder(ParameterConfigurationElement p) {
             if (p.Entity != string.Empty)
-                return
-                    f =>
-                    f.Key.Equals(p.Field, IC) && f.Value.Entity.Equals(p.Entity, IC) ||
-                    f.Value.Name.Equals(p.Field, IC) && f.Value.Entity.Equals(p.Entity, IC);
+                return f => f.Key.Equals(p.Field, IC) && f.Value.Entity.Equals(p.Entity, IC) || f.Value.Name.Equals(p.Field, IC) && f.Value.Entity.Equals(p.Entity, IC);
             return f => f.Key.Equals(p.Field, IC) || f.Value.Name.Equals(p.Field, IC);
         }
 
-        public static Func<Field, bool> FieldFinder(string nameOrAlias)
-        {
+        public static Func<Field, bool> FieldFinder(string nameOrAlias) {
             return v => v.Name.Equals(nameOrAlias, IC) || v.Alias.Equals(nameOrAlias, IC);
         }
 
-        public static string GetTemporaryFolder(string processName)
-        {
-            string folder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData).TrimEnd(Slash) +
-                            APPLICATION_FOLDER + processName;
+        public static string GetTemporaryFolder(string processName) {
+            var folder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData).TrimEnd(Slash) + APPLICATION_FOLDER + processName;
 
             if (!Directory.Exists(folder))
                 Directory.CreateDirectory(folder);
@@ -155,8 +82,7 @@ namespace Transformalize.Main
             return folder;
         }
 
-        public static IEnumerable<byte> ObjectToByteArray(object obj)
-        {
+        public static IEnumerable<byte> ObjectToByteArray(object obj) {
             if (obj == null)
                 return null;
             var formatter = new BinaryFormatter();
@@ -165,24 +91,25 @@ namespace Transformalize.Main
             return memory.ToArray();
         }
 
-        public static string ToSimpleType(string type)
-        {
+        public static string ToSimpleType(string type) {
             return type.ToLower().Replace("system.", string.Empty);
         }
 
-        public static int DateTimeToInt32(DateTime date)
-        {
-            return (int) (date - new DateTime(1, 1, 1)).TotalDays + 1;
+        public static int DateTimeToInt32(DateTime date) {
+            return (int)(date - new DateTime(1, 1, 1)).TotalDays + 1;
         }
 
-        public static DateTime Int32ToDateTime(int timeKey)
-        {
+        public static DateTime Int32ToDateTime(int timeKey) {
             return new DateTime(1, 1, 1).AddDays(timeKey - 1);
         }
 
-        public static string LogLength(string value, int totalWidth)
-        {
+        public static string LogLength(string value, int totalWidth) {
             return value.Length > totalWidth ? value.Left(totalWidth) : value.PadRight(totalWidth, '.');
+        }
+
+        public static string EntityOutputName(string entityAlias, string processName)
+        {
+            return string.Concat(processName, entityAlias).Replace(" ", string.Empty);
         }
     }
 }

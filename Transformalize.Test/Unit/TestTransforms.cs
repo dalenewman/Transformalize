@@ -1,27 +1,31 @@
-﻿/*
-Transformalize - Replicate, Transform, and Denormalize Your Data...
-Copyright (C) 2013 Dale Newman
+﻿#region License
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+#endregion
 
 using System.Collections.Generic;
 using Moq;
 using NUnit.Framework;
-using Transformalize.Main;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Main;
 using Transformalize.Operations;
 
 namespace Transformalize.Test.Unit
@@ -78,7 +82,7 @@ namespace Transformalize.Test.Unit
                                                                                                  {"var2", 1.0}
                                                                                              }
                                                                                      });
-            IOperation input = mock.Object;
+            var input = mock.Object;
 
             var parameters = new Parameters
                                  {
@@ -91,7 +95,7 @@ namespace Transformalize.Test.Unit
                              };
             result.Transforms.Add(new ExpressionTransform("if([var1] * [var2] == 7, true, false)", parameters));
 
-            List<Row> rows = TestOperation(
+            var rows = TestOperation(
                 input,
                 new TransformFields(result),
                 new LogOperation()
@@ -126,7 +130,7 @@ namespace Transformalize.Test.Unit
                                                                                                  {"var2", 1.0}
                                                                                              }
                                                                                      });
-            IOperation input = mock.Object;
+            var input = mock.Object;
 
             var parameters = new Parameters
                                  {
@@ -139,7 +143,7 @@ namespace Transformalize.Test.Unit
                              };
             result.Transforms.Add(new ExpressionTransform("[var1] * [var2]", parameters));
 
-            List<Row> rows = TestOperation(
+            var rows = TestOperation(
                 input,
                 new TransformFields(result),
                 new LogOperation()
@@ -177,7 +181,7 @@ namespace Transformalize.Test.Unit
                                                                                                  {"Field2", null}
                                                                                              }
                                                                                      });
-            IOperation input = mock.Object;
+            var input = mock.Object;
 
             var parameters = new Parameters
                                  {
@@ -190,7 +194,7 @@ namespace Transformalize.Test.Unit
                              };
             result.Transforms.Add(new ConcatTransform(parameters));
 
-            List<Row> rows = TestOperation(
+            var rows = TestOperation(
                 input,
                 new TransformFields(result),
                 new LogOperation()
@@ -229,7 +233,7 @@ namespace Transformalize.Test.Unit
                                                                                                  {"Field2", null}
                                                                                              }
                                                                                      });
-            IOperation input = mock.Object;
+            var input = mock.Object;
 
             var parameters = new Parameters
                                  {
@@ -242,7 +246,7 @@ namespace Transformalize.Test.Unit
                              };
             result.Transforms.Add(new FormatTransform("{0}+{1}", parameters));
 
-            List<Row> rows = TestOperation(
+            var rows = TestOperation(
                 input,
                 new TransformFields(result),
                 new LogOperation()
@@ -268,7 +272,7 @@ namespace Transformalize.Test.Unit
                                                             }
                                        };
 
-            List<Row> rows = TestOperation(
+            var rows = TestOperation(
                 _testInput.Object,
                 new ApplyDefaults(entity.All),
                 new TransformFields(entity.All),
@@ -300,7 +304,7 @@ namespace Transformalize.Test.Unit
                                                                                                  {"Field1", null}
                                                                                              }
                                                                                      });
-            IOperation input = mock.Object;
+            var input = mock.Object;
 
             var entity = new Entity();
             var scripts = new Dictionary<string, Script>
@@ -316,7 +320,7 @@ namespace Transformalize.Test.Unit
                                                             }
                                        };
 
-            List<Row> rows = TestOperation(
+            var rows = TestOperation(
                 input,
                 new ApplyDefaults(entity.All),
                 new TransformFields(entity.All),
@@ -352,7 +356,7 @@ namespace Transformalize.Test.Unit
                                                                                                         {"Field1", null}
                                                                                                     }
                                                                                             });
-            IOperation numbers = numbersMock.Object;
+            var numbers = numbersMock.Object;
 
             var entity = new Entity();
             var scripts = new Dictionary<string, Script>();
@@ -367,7 +371,7 @@ namespace Transformalize.Test.Unit
                                            Default = 0
                                        };
 
-            List<Row> rows = TestOperation(
+            var rows = TestOperation(
                 numbers,
                 new ApplyDefaults(entity.All),
                 new TransformFields(entity.All),
@@ -395,7 +399,7 @@ namespace Transformalize.Test.Unit
                                                             }
                                        };
 
-            List<Row> rows = TestOperation(
+            var rows = TestOperation(
                 _testInput.Object,
                 new ApplyDefaults(entity.All),
                 new TransformFields(entity.All),
@@ -435,7 +439,7 @@ namespace Transformalize.Test.Unit
                                                                                                  {"Field2", null}
                                                                                              }
                                                                                      });
-            IOperation input = mock.Object;
+            var input = mock.Object;
 
             var parameters = new Parameters
                                  {
@@ -448,7 +452,7 @@ namespace Transformalize.Test.Unit
                              };
             result.Transforms.Add(new ToJsonTransform(parameters));
 
-            List<Row> rows = TestOperation(
+            var rows = TestOperation(
                 input,
                 new TransformFields(result),
                 new LogOperation()
@@ -482,7 +486,7 @@ namespace Transformalize.Test.Unit
                                                                                                  {"Field2", null}
                                                                                              }
                                                                                      });
-            IOperation input = mock.Object;
+            var input = mock.Object;
 
             var parameters = new Parameters
                                  {
@@ -496,7 +500,7 @@ namespace Transformalize.Test.Unit
                              };
             result.Transforms.Add(new ToJsonTransform(parameters));
 
-            List<Row> rows = TestOperation(
+            var rows = TestOperation(
                 input,
                 new TransformFields(result),
                 new LogOperation()
@@ -521,7 +525,7 @@ namespace Transformalize.Test.Unit
                                            Input = true
                                        };
 
-            List<Row> rows = TestOperation(
+            var rows = TestOperation(
                 _testInput.Object,
                 new TransformFields(entity.All),
                 new LogOperation()
@@ -552,7 +556,7 @@ namespace Transformalize.Test.Unit
                                                             }
                                        };
 
-            List<Row> rows = TestOperation(
+            var rows = TestOperation(
                 _testInput.Object,
                 new TransformFields(entity.All),
                 new LogOperation()
@@ -584,7 +588,7 @@ namespace Transformalize.Test.Unit
                                                             }
                                        };
 
-            List<Row> rows = TestOperation(
+            var rows = TestOperation(
                 _testInput.Object,
                 new TransformFields(entity.All),
                 new LogOperation()
@@ -615,7 +619,7 @@ namespace Transformalize.Test.Unit
                                                             }
                                        };
 
-            List<Row> rows = TestOperation(
+            var rows = TestOperation(
                 _testInput.Object,
                 new TransformFields(entity.All),
                 new LogOperation()
@@ -648,7 +652,7 @@ namespace Transformalize.Test.Unit
                                                                                                  {"Field1", null}
                                                                                              }
                                                                                      });
-            IOperation input = mock.Object;
+            var input = mock.Object;
 
             var entity = new Entity();
             entity.All["Field1"] = new Field(FieldType.Field)
@@ -662,7 +666,7 @@ namespace Transformalize.Test.Unit
                                            Default = "00000"
                                        };
 
-            List<Row> rows = TestOperation(
+            var rows = TestOperation(
                 input,
                 new ApplyDefaults(entity.All),
                 new TransformFields(entity.All),
@@ -698,7 +702,7 @@ namespace Transformalize.Test.Unit
                                                                                                  {"Field1", null}
                                                                                              }
                                                                                      });
-            IOperation input = mock.Object;
+            var input = mock.Object;
 
             var entity = new Entity();
             entity.All["Field1"] = new Field(FieldType.Field)
@@ -712,7 +716,7 @@ namespace Transformalize.Test.Unit
                                            Default = "00000"
                                        };
 
-            List<Row> rows = TestOperation(
+            var rows = TestOperation(
                 input,
                 new ApplyDefaults(entity.All),
                 new TransformFields(entity.All),
@@ -739,7 +743,7 @@ namespace Transformalize.Test.Unit
                                                             }
                                        };
 
-            List<Row> rows = TestOperation(
+            var rows = TestOperation(
                 _testInput.Object,
                 new TransformFields(entity.All),
                 new LogOperation()
@@ -762,7 +766,7 @@ namespace Transformalize.Test.Unit
                                                             }
                                        };
 
-            List<Row> rows = TestOperation(
+            var rows = TestOperation(
                 _testInput.Object,
                 new ApplyDefaults(entity.All),
                 new TransformFields(entity.All),
@@ -787,7 +791,7 @@ namespace Transformalize.Test.Unit
                                                             }
                                        };
 
-            List<Row> rows = TestOperation(
+            var rows = TestOperation(
                 _testInput.Object,
                 new TransformFields(entity.All),
                 new LogOperation()
@@ -811,7 +815,7 @@ namespace Transformalize.Test.Unit
                                            Input = true
                                        };
 
-            List<Row> rows = TestOperation(
+            var rows = TestOperation(
                 _testInput.Object,
                 new TransformFields(entity.All),
                 new LogOperation()
@@ -835,7 +839,7 @@ namespace Transformalize.Test.Unit
                                            Input = true
                                        };
 
-            List<Row> rows = TestOperation(
+            var rows = TestOperation(
                 _testInput.Object,
                 new ApplyDefaults(entity.All),
                 new TransformFields(entity.All),
@@ -870,7 +874,7 @@ namespace Transformalize.Test.Unit
                                                           }
                                      };
 
-            List<Row> rows = TestOperation(
+            var rows = TestOperation(
                 input.Object,
                 new ApplyDefaults(entity.All),
                 new TransformFields(entity.All),
@@ -903,7 +907,7 @@ namespace Transformalize.Test.Unit
                                                                                                  {"Field1", null}
                                                                                              }
                                                                                      });
-            IOperation input = mock.Object;
+            var input = mock.Object;
 
             var entity = new Entity();
             entity.All["Field1"] = new Field(FieldType.Field)
@@ -917,7 +921,7 @@ namespace Transformalize.Test.Unit
                                            Default = ""
                                        };
 
-            List<Row> rows = TestOperation(
+            var rows = TestOperation(
                 input,
                 new ApplyDefaults(entity.All),
                 new TransformFields(entity.All),
@@ -953,7 +957,7 @@ namespace Transformalize.Test.Unit
                                                                                                  {"Field1", null}
                                                                                              }
                                                                                      });
-            IOperation input = mock.Object;
+            var input = mock.Object;
 
             var entity = new Entity();
             entity.All["Field1"] = new Field(FieldType.Field)
@@ -967,7 +971,7 @@ namespace Transformalize.Test.Unit
                                            Default = ""
                                        };
 
-            List<Row> rows = TestOperation(
+            var rows = TestOperation(
                 input,
                 new ApplyDefaults(entity.All),
                 new TransformFields(entity.All),
@@ -998,7 +1002,7 @@ namespace Transformalize.Test.Unit
                                  {"", null}
                              };
 
-            List<Row> rows = TestOperation(
+            var rows = TestOperation(
                 _testInput.Object,
                 new TransformFields(entity.All),
                 new LogOperation()
@@ -1022,7 +1026,7 @@ namespace Transformalize.Test.Unit
                                            Input = true
                                        };
 
-            List<Row> rows = TestOperation(
+            var rows = TestOperation(
                 _testInput.Object,
                 new TransformFields(entity.All),
                 new LogOperation()
@@ -1046,7 +1050,7 @@ namespace Transformalize.Test.Unit
                                                             }
                                        };
 
-            List<Row> rows = TestOperation(
+            var rows = TestOperation(
                 _testInput.Object,
                 new TransformFields(entity.All),
                 new LogOperation()
@@ -1069,7 +1073,7 @@ namespace Transformalize.Test.Unit
                                                             }
                                        };
 
-            List<Row> rows = TestOperation(
+            var rows = TestOperation(
                 _testInput.Object,
                 new TransformFields(entity.All),
                 new LogOperation()
@@ -1094,7 +1098,7 @@ namespace Transformalize.Test.Unit
                                                                                                  {"XmlField", "<xml><item1>something3</item1><item2>4</item2></xml>"}
                                                                                              }
                                                                                      });
-            IOperation xmlInput = mock.Object;
+            var xmlInput = mock.Object;
 
             var parameters = new Parameters
                                  {
@@ -1114,7 +1118,7 @@ namespace Transformalize.Test.Unit
                                              Default = ""
                                          };
 
-            List<Row> rows = TestOperation(
+            var rows = TestOperation(
                 xmlInput,
                 new TransformFields(entity.All),
                 new LogOperation()

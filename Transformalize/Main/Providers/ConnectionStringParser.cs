@@ -21,7 +21,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Transformalize.Main.Providers
@@ -61,13 +60,13 @@ namespace Transformalize.Main.Providers
 
         private static string GetValue(string connectionString, params string[] keyAliases)
         {
-            Dictionary<string, string> keyValuePairs = connectionString.Split(';')
-                                                                       .Where(kvp => kvp.Contains('='))
-                                                                       .Select(kvp => kvp.Split(new[] {'='}, 2))
-                                                                       .ToDictionary(kvp => kvp[0].Trim(),
-                                                                                     kvp => kvp[1].Trim(),
-                                                                                     StringComparer.InvariantCultureIgnoreCase);
-            foreach (string alias in keyAliases)
+            var keyValuePairs = connectionString.Split(';')
+                                                .Where(kvp => kvp.Contains('='))
+                                                .Select(kvp => kvp.Split(new[] {'='}, 2))
+                                                .ToDictionary(kvp => kvp[0].Trim(),
+                                                              kvp => kvp[1].Trim(),
+                                                              StringComparer.InvariantCultureIgnoreCase);
+            foreach (var alias in keyAliases)
             {
                 string value;
                 if (keyValuePairs.TryGetValue(alias, out value))

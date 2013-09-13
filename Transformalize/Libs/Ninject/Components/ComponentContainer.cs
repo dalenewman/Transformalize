@@ -1,12 +1,22 @@
 #region License
 
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
 // 
-// Author: Nate Kohari <nate@enkari.com>
-// Copyright (c) 2007-2010, Enkari, Ltd.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 // 
-// Dual-licensed under the Apache License, Version 2.0, and the Microsoft Public License (Ms-PL).
-// See the file LICENSE.txt for details.
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 // 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
 
 #endregion
 
@@ -46,7 +56,7 @@ namespace Transformalize.Libs.Ninject.Components
         {
             if (disposing && !IsDisposed)
             {
-                foreach (INinjectComponent instance in _instances.Values)
+                foreach (var instance in _instances.Values)
                     instance.Dispose();
 
                 _mappings.Clear();
@@ -99,7 +109,7 @@ namespace Transformalize.Libs.Ninject.Components
         {
             Ensure.ArgumentNotNull(component, "component");
 
-            foreach (Type implementation in _mappings[component])
+            foreach (var implementation in _mappings[component])
             {
                 if (_instances.ContainsKey(implementation))
                     _instances[implementation].Dispose();
@@ -146,8 +156,8 @@ namespace Transformalize.Libs.Ninject.Components
 
             if (component.IsGenericType)
             {
-                Type gtd = component.GetGenericTypeDefinition();
-                Type argument = component.GetGenericArguments()[0];
+                var gtd = component.GetGenericTypeDefinition();
+                var argument = component.GetGenericArguments()[0];
 
 #if WINDOWS_PHONE
                 Type discreteGenericType =
@@ -159,7 +169,7 @@ namespace Transformalize.Libs.Ninject.Components
                     return GetAll(argument).CastSlow(argument);
 #endif
             }
-            Type implementation = _mappings[component].FirstOrDefault();
+            var implementation = _mappings[component].FirstOrDefault();
 
             if (implementation == null)
                 throw new InvalidOperationException(ExceptionFormatter.NoSuchComponentRegistered(component));
@@ -188,8 +198,8 @@ namespace Transformalize.Libs.Ninject.Components
 
         private object CreateNewInstance(Type component, Type implementation)
         {
-            ConstructorInfo constructor = SelectConstructor(component, implementation);
-            object[] arguments = constructor.GetParameters().Select(parameter => Get(parameter.ParameterType)).ToArray();
+            var constructor = SelectConstructor(component, implementation);
+            var arguments = constructor.GetParameters().Select(parameter => Get(parameter.ParameterType)).ToArray();
 
             try
             {
@@ -212,7 +222,7 @@ namespace Transformalize.Libs.Ninject.Components
 
         private static ConstructorInfo SelectConstructor(Type component, Type implementation)
         {
-            ConstructorInfo constructor = implementation.GetConstructors().OrderByDescending(c => c.GetParameters().Length).FirstOrDefault();
+            var constructor = implementation.GetConstructors().OrderByDescending(c => c.GetParameters().Length).FirstOrDefault();
 
             if (constructor == null)
                 throw new InvalidOperationException(ExceptionFormatter.NoConstructorsAvailableForComponent(component, implementation));

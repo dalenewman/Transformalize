@@ -1,20 +1,24 @@
-﻿/*
-Transformalize - Replicate, Transform, and Denormalize Your Data...
-Copyright (C) 2013 Dale Newman
+﻿#region License
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+#endregion
 
 using System.Linq;
 using NUnit.Framework;
@@ -60,7 +64,7 @@ namespace Transformalize.Test.Integration
                                    {"ProductName", "ProductName", null, "System.Object"}
                                };
 
-            IParameters actual = _process.Parameters();
+            var actual = _process.Parameters();
 
             Assert.AreEqual(2, actual.Count);
             Assert.AreEqual(expected["LastName"].Name, actual["LastName"].Name);
@@ -93,7 +97,7 @@ namespace Transformalize.Test.Integration
         [Test]
         public void TestReadConfiguration()
         {
-            ProcessConfigurationElement test = Element;
+            var test = Element;
 
             Assert.AreEqual("Test", test.Name);
             Assert.AreEqual("input", test.Connections[0].Name);

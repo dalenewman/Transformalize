@@ -20,18 +20,16 @@
 
 #endregion
 
-using System.Data;
-
 namespace Transformalize.Main.Providers.SqlServer
 {
     public class SqlServerProviderSupportsModifier : IProviderSupportsModifier
     {
         public void Modify(AbstractConnection connection, ProviderSupports supports)
         {
-            using (IDbConnection cn = connection.GetConnection())
+            using (var cn = connection.GetConnection())
             {
                 cn.Open();
-                IDbCommand cmd = cn.CreateCommand();
+                var cmd = cn.CreateCommand();
                 cmd.CommandText = "SELECT compatibility_level FROM sys.DATABASES WHERE [name] = @Database;";
                 connection.AddParameter(cmd, "@Database", connection.Database);
                 supports.InsertMultipleRows = (byte) cmd.ExecuteScalar() > 90;

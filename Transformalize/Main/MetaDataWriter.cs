@@ -45,10 +45,10 @@ namespace Transformalize.Main
             content.AppendLine("<process>");
             content.AppendLine("  <entities>");
 
-            int count = 0;
-            foreach (Entity entity in _process.Entities)
+            var count = 0;
+            foreach (var entity in _process.Entities)
             {
-                IFields fields = _entityAutoFieldReader.Read(entity, count == 0);
+                var fields = _entityAutoFieldReader.Read(entity, count == 0);
                 content.AppendFormat("    <add name=\"{0}\">\r\n", entity.Name);
                 AppendPrimaryKey(fields, entity, content);
                 AppendFields(fields, content);
@@ -63,7 +63,7 @@ namespace Transformalize.Main
 
         private void AppendFields(IFields all, StringBuilder content)
         {
-            IFields fields = new FieldSqlWriter(all).FieldType(FieldType.Field).Context();
+            var fields = new FieldSqlWriter(all).FieldType(FieldType.Field).Context();
             _log.Debug("Entity auto found {0} field{1}.", fields.Count, fields.Count == 1 ? string.Empty : "s");
 
             content.AppendLine("      <fields>");
@@ -76,7 +76,7 @@ namespace Transformalize.Main
 
         private void AppendPrimaryKey(IFields all, Entity entity, StringBuilder content)
         {
-            IFields keys = new FieldSqlWriter(all).FieldType(FieldType.PrimaryKey, FieldType.MasterKey).Context();
+            var keys = new FieldSqlWriter(all).FieldType(FieldType.PrimaryKey, FieldType.MasterKey).Context();
             if (!keys.Any())
             {
                 _log.Warn(

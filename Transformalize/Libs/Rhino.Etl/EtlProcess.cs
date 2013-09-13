@@ -1,10 +1,32 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.Data;
-using Transformalize.Main.Providers;
 using Transformalize.Libs.Rhino.Etl.Infrastructure;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Libs.Rhino.Etl.Pipelines;
+using Transformalize.Main.Providers;
 
 namespace Transformalize.Libs.Rhino.Etl
 {
@@ -52,7 +74,7 @@ namespace Transformalize.Libs.Rhino.Etl
         /// <filterpriority>2</filterpriority>
         public void Dispose()
         {
-            foreach (IOperation operation in operations)
+            foreach (var operation in operations)
             {
                 operation.Dispose();
             }
@@ -88,7 +110,7 @@ namespace Transformalize.Libs.Rhino.Etl
 
         private void RegisterToOperationsEvents()
         {
-            foreach (IOperation operation in operations)
+            foreach (var operation in operations)
             {
                 operation.OnRowProcessed += OnRowProcessed;
                 operation.OnFinishedProcessing += OnFinishedProcessing;
@@ -140,7 +162,7 @@ namespace Transformalize.Libs.Rhino.Etl
             return Use.Transaction(connection, delegate(IDbCommand cmd)
                                                    {
                                                        cmd.CommandText = commandText;
-                                                       object scalar = cmd.ExecuteScalar();
+                                                       var scalar = cmd.ExecuteScalar();
                                                        return (T) (scalar ?? default(T));
                                                    });
         }
@@ -151,17 +173,17 @@ namespace Transformalize.Libs.Rhino.Etl
         /// <returns></returns>
         public IEnumerable<Exception> GetAllErrors()
         {
-            foreach (Exception error in Errors)
+            foreach (var error in Errors)
             {
                 yield return error;
             }
-            foreach (Exception error in _pipelineExecuter.GetAllErrors())
+            foreach (var error in _pipelineExecuter.GetAllErrors())
             {
                 yield return error;
             }
-            foreach (IOperation operation in operations)
+            foreach (var operation in operations)
             {
-                foreach (Exception exception in operation.GetAllErrors())
+                foreach (var exception in operation.GetAllErrors())
                 {
                     yield return exception;
                 }

@@ -40,20 +40,20 @@ namespace Transformalize.Main.Providers.SqlServer
                 var cmd = new SqlCommand(PrepareSql(), cn);
                 cmd.Parameters.Add(new SqlParameter("@Name", entity.Name));
                 cmd.Parameters.Add(new SqlParameter("@Schema", entity.Schema));
-                SqlDataReader reader = cmd.ExecuteReader();
+                var reader = cmd.ExecuteReader();
 
                 if (!reader.HasRows) return new Fields();
 
                 while (reader.Read())
                 {
-                    string name = reader.GetString(0);
-                    string type = GetSystemType(reader.GetString(2));
-                    string length = reader.GetString(3);
-                    FieldType fieldType = reader.GetBoolean(7) ? (isMaster ? FieldType.MasterKey : FieldType.PrimaryKey) : FieldType.Field;
-                    var field = new Field(type, length, fieldType, true, string.Empty)
-                                    {
+                    var name = reader.GetString(0);
+                    var type = GetSystemType(reader.GetString(2));
+                    var length = reader.GetString(3);
+                    var fieldType = reader.GetBoolean(7) ? (isMaster ? FieldType.MasterKey : FieldType.PrimaryKey) : FieldType.Field;
+                    var field = new Field(type, length, fieldType, true, string.Empty) {
                                         Name = name,
                                         Entity = entity.Name,
+                                        Process = entity.ProcessName,
                                         Index = reader.GetInt32(6),
                                         Schema = entity.Schema,
                                         Input = true,
@@ -72,7 +72,7 @@ namespace Transformalize.Main.Providers.SqlServer
 
         private string GetSystemType(string dataType)
         {
-            bool typeDefined = _dataTypeService.TypesReverse.ContainsKey(dataType);
+            var typeDefined = _dataTypeService.TypesReverse.ContainsKey(dataType);
             if (!typeDefined)
             {
                 _log.Warn("Transformalize hasn't mapped the SQL data type: {0} to a .NET data type.  It will default to string.", dataType);

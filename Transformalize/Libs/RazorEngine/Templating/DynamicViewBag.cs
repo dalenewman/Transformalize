@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -97,12 +119,12 @@ namespace Transformalize.Libs.RazorEngine.Templating
         /// </param>
         public void AddListValues(IList valueList, string keyPropertyName)
         {
-            foreach (object value in valueList)
+            foreach (var value in valueList)
             {
                 if (value == null)
                     throw new ArgumentNullException("Invalid NULL value in initializer list.");
 
-                Type type = value.GetType();
+                var type = value.GetType();
                 object objKey = type.GetProperty(keyPropertyName);
 
                 if (objKey.GetType() != typeof (string))
@@ -126,7 +148,7 @@ namespace Transformalize.Libs.RazorEngine.Templating
         /// </param>
         public void AddDictionaryValues(IDictionary valueDictionary)
         {
-            foreach (object objKey in valueDictionary.Keys)
+            foreach (var objKey in valueDictionary.Keys)
             {
                 if (objKey.GetType() != typeof (string))
                     throw new ArgumentNullException("The Key in valueDictionary must be of type string.");
@@ -136,7 +158,7 @@ namespace Transformalize.Libs.RazorEngine.Templating
                 if (_dict.ContainsKey(strKey))
                     throw new ArgumentException("Attempt to add duplicate value for the '" + strKey + "' property.");
 
-                object value = valueDictionary[strKey];
+                var value = valueDictionary[strKey];
 
                 _dict.Add(strKey, value);
             }
@@ -159,12 +181,12 @@ namespace Transformalize.Libs.RazorEngine.Templating
         /// </remarks>
         public void AddDictionaryValuesEx(IDictionary<string, object> valueDictionary)
         {
-            foreach (string strKey in valueDictionary.Keys)
+            foreach (var strKey in valueDictionary.Keys)
             {
                 if (_dict.ContainsKey(strKey))
                     throw new ArgumentException("Attempt to add duplicate value for the '" + strKey + "' property.");
 
-                object value = valueDictionary[strKey];
+                var value = valueDictionary[strKey];
 
                 _dict.Add(strKey, value);
             }

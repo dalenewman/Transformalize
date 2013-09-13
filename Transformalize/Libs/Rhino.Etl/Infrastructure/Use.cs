@@ -1,7 +1,29 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
 using System;
 using System.Data;
-using Transformalize.Main.Providers;
 using Transformalize.Libs.NLog;
+using Transformalize.Main.Providers;
 
 namespace Transformalize.Libs.Rhino.Etl.Infrastructure
 {
@@ -45,7 +67,7 @@ namespace Transformalize.Libs.Rhino.Etl.Infrastructure
 
         public static T Transaction<T>(AbstractConnection connection, Func<T> actionToExecute)
         {
-            T result = default(T);
+            var result = default(T);
             Transaction(connection, delegate(IDbCommand command) { result = actionToExecute(command); });
             return result;
         }
@@ -60,7 +82,7 @@ namespace Transformalize.Libs.Rhino.Etl.Infrastructure
             StartTransaction(connection, isolationLevel);
             try
             {
-                using (IDbCommand command = ActiveConnection.CreateCommand())
+                using (var command = ActiveConnection.CreateCommand())
                 {
                     command.Transaction = ActiveTransaction;
                     actionToExecute(command);
@@ -128,7 +150,7 @@ namespace Transformalize.Libs.Rhino.Etl.Infrastructure
 
         public static IDbConnection Connection(AbstractConnection connection)
         {
-            IDbConnection cn = connection.GetConnection();
+            var cn = connection.GetConnection();
             cn.Open();
             return cn;
         }

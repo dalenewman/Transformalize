@@ -1,6 +1,22 @@
-#region "  © Copyright 2005-07 to Marcos Meli - http://www.marcosmeli.com.ar" 
+#region License
 
-// Errors, suggestions, contributions, send a mail to: marcos@filehelpers.com.
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
 
 #endregion
 
@@ -237,7 +253,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
                 throw new BadUsageException("The record class must implement the interface IComparable to use the Sort feature.");
 
             var engine = new FileHelperEngine(recordClass);
-            object[] res = engine.ReadFile(fileName);
+            var res = engine.ReadFile(fileName);
 
             if (res.Length == 0)
                 return res;
@@ -258,7 +274,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
                 throw new BadUsageException("The record class must implement the interface IComparable to use the Sort feature.");
 
             var engine = new FileHelperEngine(recordClass);
-            object[] res = engine.ReadFile(sourceFile);
+            var res = engine.ReadFile(sourceFile);
 
             if (res.Length == 0)
                 engine.WriteFile(sortedFile, res);
@@ -278,12 +294,12 @@ namespace Transformalize.Libs.FileHelpers.Engines
         public static void SortFileByField(Type recordClass, string fieldName, bool asc, string sourceFile, string sortedFile)
         {
             var engine = new FileHelperEngine(recordClass);
-            FieldInfo fi = engine.mRecordInfo.GetFieldInfo(fieldName);
+            var fi = engine.mRecordInfo.GetFieldInfo(fieldName);
 
             if (fi == null)
                 throw new BadUsageException("The record class not contains the field " + fieldName);
 
-            object[] res = engine.ReadFile(sourceFile);
+            var res = engine.ReadFile(sourceFile);
 
             IComparer comparer = new FieldComparer(fi, asc);
             Array.Sort(res, comparer);
@@ -312,7 +328,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
             if (records.Length > 0 && records[0] != null)
             {
                 var engine = new FileHelperEngine(records[0].GetType());
-                FieldInfo fi = engine.mRecordInfo.GetFieldInfo(fieldName);
+                var fi = engine.mRecordInfo.GetFieldInfo(fieldName);
 
                 if (fi == null)
                     throw new BadUsageException("The record class not contains the field " + fieldName);
@@ -331,7 +347,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
         {
             if (records.Length > 0 && records[0] != null)
             {
-                Type recordClass = records[0].GetType();
+                var recordClass = records[0].GetType();
 
                 if (typeof (IComparable).IsAssignableFrom(recordClass) == false)
                     throw new BadUsageException("The record class must implement the interface IComparable to use the Sort feature.");
@@ -388,7 +404,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
         public static DataTable RecordsToDataTable(ICollection records, int maxRecords)
         {
             RecordInfo ri = null;
-            foreach (object obj in records)
+            foreach (var obj in records)
             {
                 if (obj != null)
                 {
@@ -614,11 +630,11 @@ namespace Transformalize.Libs.FileHelpers.Engines
 
             var nodup = new ArrayList();
 
-            for (int i = 0; i < arr.Length; i++)
+            for (var i = 0; i < arr.Length; i++)
             {
-                bool isUnique = true;
+                var isUnique = true;
 
-                for (int j = i + 1; j < arr.Length; j++)
+                for (var j = i + 1; j < arr.Length; j++)
                 {
                     if (arr[i].IsEqualRecord(arr[j]))
                     {
@@ -648,7 +664,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
             var reader = new StreamReader(file);
 
             string line;
-            for (int i = 0; i < lines; i++)
+            for (var i = 0; i < lines; i++)
             {
                 line = reader.ReadLine();
                 if (line != null)

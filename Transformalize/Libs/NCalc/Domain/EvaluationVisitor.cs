@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -41,7 +63,7 @@ namespace Transformalize.Libs.NCalc.Domain
         /// <returns></returns>
         private static Type GetMostPreciseType(Type a, Type b)
         {
-            foreach (Type t in CommonTypes)
+            foreach (var t in CommonTypes)
             {
                 if (a == t || b == t)
                 {
@@ -54,7 +76,7 @@ namespace Transformalize.Libs.NCalc.Domain
 
         public int CompareUsingMostPreciseType(object a, object b)
         {
-            Type mpt = GetMostPreciseType(a.GetType(), b.GetType());
+            var mpt = GetMostPreciseType(a.GetType(), b.GetType());
             return Comparer.Default.Compare(Convert.ChangeType(a, mpt), Convert.ChangeType(b, mpt));
         }
 
@@ -62,7 +84,7 @@ namespace Transformalize.Libs.NCalc.Domain
         {
             // Evaluates the left expression and saves the value
             expression.LeftExpression.Accept(this);
-            bool left = Convert.ToBoolean(Result);
+            var left = Convert.ToBoolean(Result);
 
             if (left)
             {
@@ -76,7 +98,7 @@ namespace Transformalize.Libs.NCalc.Domain
 
         private static bool IsReal(object value)
         {
-            TypeCode typeCode = Type.GetTypeCode(value.GetType());
+            var typeCode = Type.GetTypeCode(value.GetType());
 
             return typeCode == TypeCode.Decimal || typeCode == TypeCode.Double || typeCode == TypeCode.Single;
         }
@@ -239,7 +261,7 @@ namespace Transformalize.Libs.NCalc.Domain
             // Don't call parameters right now, instead let the function do it as needed.
             // Some parameters shouldn't be called, for instance, in a if(), the "not" value might be a division by zero
             // Evaluating every value could produce unexpected behaviour
-            for (int i = 0; i < function.Expressions.Length; i++)
+            for (var i = 0; i < function.Expressions.Length; i++)
             {
                 args.Parameters[i] = new Expression(function.Expressions[i], _options);
                 args.Parameters[i].EvaluateFunction += EvaluateFunction;
@@ -452,7 +474,7 @@ namespace Transformalize.Libs.NCalc.Domain
                     if (function.Expressions.Length != 2)
                         throw new ArgumentException("Round() takes exactly 2 arguments");
 
-                    MidpointRounding rounding = (_options & EvaluateOptions.RoundAwayFromZero) == EvaluateOptions.RoundAwayFromZero ? MidpointRounding.AwayFromZero : MidpointRounding.ToEven;
+                    var rounding = (_options & EvaluateOptions.RoundAwayFromZero) == EvaluateOptions.RoundAwayFromZero ? MidpointRounding.AwayFromZero : MidpointRounding.ToEven;
 
                     Result = Math.Round(Convert.ToDouble(Evaluate(function.Expressions[0])), Convert.ToInt16(Evaluate(function.Expressions[1])), rounding);
 
@@ -544,8 +566,8 @@ namespace Transformalize.Libs.NCalc.Domain
                     if (function.Expressions.Length != 2)
                         throw new ArgumentException("Max() takes exactly 2 arguments");
 
-                    object maxleft = Evaluate(function.Expressions[0]);
-                    object maxright = Evaluate(function.Expressions[1]);
+                    var maxleft = Evaluate(function.Expressions[0]);
+                    var maxright = Evaluate(function.Expressions[1]);
 
                     Result = Numbers.Max(maxleft, maxright);
                     break;
@@ -561,8 +583,8 @@ namespace Transformalize.Libs.NCalc.Domain
                     if (function.Expressions.Length != 2)
                         throw new ArgumentException("Min() takes exactly 2 arguments");
 
-                    object minleft = Evaluate(function.Expressions[0]);
-                    object minright = Evaluate(function.Expressions[1]);
+                    var minleft = Evaluate(function.Expressions[0]);
+                    var minright = Evaluate(function.Expressions[1]);
 
                     Result = Numbers.Min(minleft, minright);
                     break;
@@ -578,7 +600,7 @@ namespace Transformalize.Libs.NCalc.Domain
                     if (function.Expressions.Length != 3)
                         throw new ArgumentException("if() takes exactly 3 arguments");
 
-                    bool cond = Convert.ToBoolean(Evaluate(function.Expressions[0]));
+                    var cond = Convert.ToBoolean(Evaluate(function.Expressions[0]));
 
                     Result = cond ? Evaluate(function.Expressions[1]) : Evaluate(function.Expressions[2]);
                     break;
@@ -594,14 +616,14 @@ namespace Transformalize.Libs.NCalc.Domain
                     if (function.Expressions.Length < 2)
                         throw new ArgumentException("in() takes at least 2 arguments");
 
-                    object parameter = Evaluate(function.Expressions[0]);
+                    var parameter = Evaluate(function.Expressions[0]);
 
-                    bool evaluation = false;
+                    var evaluation = false;
 
                     // Goes through any values, and stop whe one is found
-                    for (int i = 1; i < function.Expressions.Length; i++)
+                    for (var i = 1; i < function.Expressions.Length; i++)
                     {
-                        object argument = Evaluate(function.Expressions[i]);
+                        var argument = Evaluate(function.Expressions[i]);
                         if (CompareUsingMostPreciseType(parameter, argument) == 0)
                         {
                             evaluation = true;

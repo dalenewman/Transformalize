@@ -1,20 +1,24 @@
-﻿/*
-Transformalize - Replicate, Transform, and Denormalize Your Data...
-Copyright (C) 2013 Dale Newman
+﻿#region License
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+#endregion
 
 using System;
 using System.Collections.Generic;
@@ -76,7 +80,7 @@ namespace Transformalize.Test.Unit
                                  {"Key1", "Name1", "Value1", "string"},
                                  {"Key2", "Name2", "Value2", "string"},
                              };
-            int count = 0;
+            var count = 0;
             foreach (var pair in actual)
             {
                 if (count == 0)
@@ -112,7 +116,7 @@ namespace Transformalize.Test.Unit
                                  {"Key1", "Name1", "Value2", "string"},
                                  {"Key2", "Name2", "Value2", "string"},
                              };
-            IParameter test = actual["Key3"];
+            var test = actual["Key3"];
         }
 
         [Test]

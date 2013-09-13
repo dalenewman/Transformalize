@@ -115,7 +115,7 @@ namespace Transformalize.Main
 
         private void StartWithFields(IEnumerable<Field> fields)
         {
-            Field[] expanded = fields.ToArray();
+            var expanded = fields.ToArray();
             _original = expanded.ToDictionary(f => f.Alias, f => f);
             _output = new SortedDictionary<string, string>(expanded.ToDictionary(f => f.Alias, f => string.Empty));
         }
@@ -142,7 +142,7 @@ namespace Transformalize.Main
         private void StartWithIFields(params IFields[] fields)
         {
             _original = new Dictionary<string, Field>();
-            foreach (IFields dict in fields)
+            foreach (var dict in fields)
             {
                 if (dict != null)
                     foreach (var pair in dict)
@@ -156,7 +156,7 @@ namespace Transformalize.Main
             _original = new Dictionary<string, Field>();
             foreach (var field in fields)
             {
-                foreach (Field f in field)
+                foreach (var f in field)
                 {
                     _original[f.Alias] = f;
                 }
@@ -166,7 +166,7 @@ namespace Transformalize.Main
 
         public string Write(string separator = ", ", bool flush = true)
         {
-            string result = string.Join(separator, _output.Select(kv => kv.Value));
+            var result = string.Join(separator, _output.Select(kv => kv.Value));
             if (flush)
                 Flush();
             return result;
@@ -201,7 +201,7 @@ namespace Transformalize.Main
 
         public FieldSqlWriter Name(AbstractProvider provider)
         {
-            foreach (string key in CopyOutputKeys())
+            foreach (var key in CopyOutputKeys())
             {
                 _output[key] = SafeColumn(_original[key].Name, provider);
             }
@@ -210,7 +210,7 @@ namespace Transformalize.Main
 
         public FieldSqlWriter Alias(AbstractProvider provider)
         {
-            foreach (string key in CopyOutputKeys())
+            foreach (var key in CopyOutputKeys())
             {
                 _output[key] = SafeColumn(_original[key].Alias, provider);
             }
@@ -219,10 +219,10 @@ namespace Transformalize.Main
 
         public FieldSqlWriter IsNull()
         {
-            foreach (string key in CopyOutputKeys())
+            foreach (var key in CopyOutputKeys())
             {
-                Field field = _original[key];
-                object d = field.Default ?? new ConversionFactory().Convert(string.Empty, field.SimpleType);
+                var field = _original[key];
+                var d = field.Default ?? new ConversionFactory().Convert(string.Empty, field.SimpleType);
 
                 if (field.SimpleType == "byte[]")
                     d = "0x";
@@ -237,9 +237,9 @@ namespace Transformalize.Main
 
         public FieldSqlWriter ToAlias(AbstractProvider provider, bool ifNecessary = false)
         {
-            foreach (string key in CopyOutputKeys())
+            foreach (var key in CopyOutputKeys())
             {
-                Field field = _original[key];
+                var field = _original[key];
                 if (ifNecessary)
                 {
                     if (field.Alias != field.Name)
@@ -259,9 +259,9 @@ namespace Transformalize.Main
 
         public FieldSqlWriter AsAlias(AbstractProvider provider)
         {
-            foreach (string key in CopyOutputKeys())
+            foreach (var key in CopyOutputKeys())
             {
-                Field field = _original[key];
+                var field = _original[key];
                 if (field.Alias != field.Name || field.FieldType.HasFlag(Main.FieldType.Xml))
                 {
                     _output[key] = string.Concat(_output[key], " AS ", provider.L, _original[key].Alias, provider.R);
@@ -272,7 +272,7 @@ namespace Transformalize.Main
 
         public FieldSqlWriter DataType()
         {
-            foreach (string key in CopyOutputKeys())
+            foreach (var key in CopyOutputKeys())
             {
                 _output[key] = string.Concat(_output[key], " ", _original[key].SqlDataType);
             }
@@ -281,16 +281,28 @@ namespace Transformalize.Main
 
         public FieldSqlWriter Prepend(string prefix)
         {
-            foreach (string key in CopyOutputKeys())
+            foreach (var key in CopyOutputKeys())
             {
                 _output[key] = string.Concat(prefix, _output[key]);
             }
             return this;
         }
 
+        public FieldSqlWriter PrependEntityOutput(AbstractProvider provider, string entityName = null)
+        {
+            foreach (var key in CopyOutputKeys())
+            {
+                var field = _original[key];
+                var entity = Common.EntityOutputName(field.Entity, field.Process);
+                var table = SafeColumn(entityName ?? entity, provider);
+                _output[key] = string.Concat(table, ".", _output[key]);
+            }
+            return this;
+        }
+
         public FieldSqlWriter Append(string suffix)
         {
-            foreach (string key in CopyOutputKeys())
+            foreach (var key in CopyOutputKeys())
             {
                 _output[key] = string.Concat(_output[key], suffix);
             }
@@ -311,9 +323,9 @@ namespace Transformalize.Main
 
         public FieldSqlWriter AppendIf(string suffix, params FieldType[] fieldTypes)
         {
-            foreach (string key in CopyOutputKeys())
+            foreach (var key in CopyOutputKeys())
             {
-                Field field = _original[key];
+                var field = _original[key];
                 if (fieldTypes.Any(ft => ft.HasFlag(field.FieldType)))
                     _output[key] = string.Concat(_output[key], suffix);
             }
@@ -322,9 +334,9 @@ namespace Transformalize.Main
 
         public FieldSqlWriter AppendIfNot(string suffix, FieldType fieldType)
         {
-            foreach (string key in CopyOutputKeys())
+            foreach (var key in CopyOutputKeys())
             {
-                Field field = _original[key];
+                var field = _original[key];
                 if (!field.FieldType.HasFlag(fieldType))
                     _output[key] = string.Concat(_output[key], suffix);
             }
@@ -339,7 +351,7 @@ namespace Transformalize.Main
 
         public FieldSqlWriter XmlValue()
         {
-            foreach (string key in CopyOutputKeys())
+            foreach (var key in CopyOutputKeys())
             {
                 _output[key] = XmlValue(_original[key]);
             }
@@ -352,9 +364,9 @@ namespace Transformalize.Main
         /// <returns>field's name for a regular field, and the XPath necessary for XML based fields.</returns>
         public FieldSqlWriter Select(AbstractProvider provider)
         {
-            foreach (string key in CopyOutputKeys())
+            foreach (var key in CopyOutputKeys())
             {
-                Field field = _original[key];
+                var field = _original[key];
                 if (field.FieldType.HasFlag(Main.FieldType.Xml))
                     _output[key] = XmlValue(field);
                 else
@@ -367,9 +379,9 @@ namespace Transformalize.Main
 
         public FieldSqlWriter Output(bool answer = true)
         {
-            foreach (string key in CopyOutputKeys())
+            foreach (var key in CopyOutputKeys())
             {
-                Field field = _original[key];
+                var field = _original[key];
                 if (field.Output != answer)
                     _output.Remove(key);
             }
@@ -378,9 +390,9 @@ namespace Transformalize.Main
 
         public FieldSqlWriter Input(bool answer = true)
         {
-            foreach (string key in CopyOutputKeys())
+            foreach (var key in CopyOutputKeys())
             {
-                Field field = _original[key];
+                var field = _original[key];
                 if (field.Input != answer)
                     _output.Remove(key);
             }
@@ -389,9 +401,9 @@ namespace Transformalize.Main
 
         public FieldSqlWriter Aggregate()
         {
-            foreach (string key in CopyOutputKeys())
+            foreach (var key in CopyOutputKeys())
             {
-                Field field = _original[key];
+                var field = _original[key];
                 if (field.Aggregate == string.Empty || field.FieldType.HasFlag(Main.FieldType.PrimaryKey) ||
                     field.FieldType.HasFlag(Main.FieldType.MasterKey))
                     _output.Remove(key);
@@ -401,9 +413,9 @@ namespace Transformalize.Main
 
         public FieldSqlWriter HasTransform()
         {
-            foreach (string key in CopyOutputKeys())
+            foreach (var key in CopyOutputKeys())
             {
-                Field field = _original[key];
+                var field = _original[key];
                 if (!field.HasTransforms)
                     _output.Remove(key);
             }
@@ -412,9 +424,9 @@ namespace Transformalize.Main
 
         public FieldSqlWriter HasDefault()
         {
-            foreach (string key in CopyOutputKeys())
+            foreach (var key in CopyOutputKeys())
             {
-                Field field = _original[key];
+                var field = _original[key];
                 if (field.Default == null)
                     _output.Remove(key);
             }
@@ -423,9 +435,9 @@ namespace Transformalize.Main
 
         public FieldSqlWriter Xml(bool answer)
         {
-            foreach (string key in CopyOutputKeys())
+            foreach (var key in CopyOutputKeys())
             {
-                Field field = _original[key];
+                var field = _original[key];
                 if (field.InnerXml.Any() != answer)
                     _output.Remove(key);
             }
@@ -434,9 +446,9 @@ namespace Transformalize.Main
 
         public FieldSqlWriter FieldType(params FieldType[] answers)
         {
-            foreach (string key in CopyOutputKeys())
+            foreach (var key in CopyOutputKeys())
             {
-                Field field = _original[key];
+                var field = _original[key];
                 if (!answers.Any(a => field.FieldType.HasFlag(a)))
                     _output.Remove(key);
             }
@@ -445,9 +457,9 @@ namespace Transformalize.Main
 
         public FieldSqlWriter Set(string left, string right)
         {
-            foreach (string key in CopyOutputKeys())
+            foreach (var key in CopyOutputKeys())
             {
-                string name = _output[key];
+                var name = _output[key];
                 _output[key] = string.Concat(left, ".", name, " = ", right, ".", name);
             }
             return this;
@@ -455,9 +467,9 @@ namespace Transformalize.Main
 
         public FieldSqlWriter SetParam()
         {
-            foreach (string key in CopyOutputKeys())
+            foreach (var key in CopyOutputKeys())
             {
-                string name = _output[key];
+                var name = _output[key];
                 _output[key] = string.Concat(name, " = @", name.Trim("[]".ToCharArray()));
             }
             return this;
@@ -465,9 +477,9 @@ namespace Transformalize.Main
 
         public FieldSqlWriter ExpandXml()
         {
-            foreach (string key in CopyOutputKeys())
+            foreach (var key in CopyOutputKeys())
             {
-                Field field = _original[key];
+                var field = _original[key];
                 if (!field.InnerXml.Any()) continue;
 
                 foreach (var xml in field.InnerXml)
@@ -548,9 +560,9 @@ namespace Transformalize.Main
 
         public FieldSqlWriter Remove(string @alias)
         {
-            foreach (string key in CopyOutputKeys())
+            foreach (var key in CopyOutputKeys())
             {
-                Field field = _original[key];
+                var field = _original[key];
                 if (field.Alias == @alias)
                     _output.Remove(key);
             }

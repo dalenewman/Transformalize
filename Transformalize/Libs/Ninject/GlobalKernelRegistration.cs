@@ -1,23 +1,24 @@
-﻿//-------------------------------------------------------------------------------
-// <copyright file="GlobalKernelRegistration.cs" company="Ninject Project Contributors">
-//   Copyright (c) 2009-2011 Ninject Project Contributors
-//   Authors: Remo Gloor (remo.gloor@gmail.com)
-//           
-//   Dual-licensed under the Apache License, Version 2.0, and the Microsoft Public License (Ms-PL).
-//   you may not use this file except in compliance with one of the Licenses.
-//   You may obtain a copy of the License at
-//
-//       http://www.apache.org/licenses/LICENSE-2.0
-//   or
-//       http://www.microsoft.com/opensource/licenses.mspx
-//
-//   Unless required by applicable law or agreed to in writing, software
-//   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//   See the License for the specific language governing permissions and
-//   limitations under the License.
-// </copyright>
-//-------------------------------------------------------------------------------
+﻿#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
 
 using System;
 using System.Collections.Generic;
@@ -37,7 +38,7 @@ namespace Transformalize.Libs.Ninject
 
         internal static void RegisterKernelForType(IKernel kernel, Type type)
         {
-            Registration registration = GetRegistrationForType(type);
+            var registration = GetRegistrationForType(type);
             registration.KernelLock.AcquireWriterLock(Timeout.Infinite);
             try
             {
@@ -51,7 +52,7 @@ namespace Transformalize.Libs.Ninject
 
         internal static void UnregisterKernelForType(IKernel kernel, Type type)
         {
-            Registration registration = GetRegistrationForType(type);
+            var registration = GetRegistrationForType(type);
             RemoveKernels(registration, registration.Kernels.Where(reference => reference.Target == kernel || !reference.IsAlive));
         }
 
@@ -61,13 +62,13 @@ namespace Transformalize.Libs.Ninject
         /// <param name="action">The action.</param>
         protected void MapKernels(Action<IKernel> action)
         {
-            bool requiresCleanup = false;
-            Registration registration = GetRegistrationForType(GetType());
+            var requiresCleanup = false;
+            var registration = GetRegistrationForType(GetType());
             registration.KernelLock.AcquireReaderLock(Timeout.Infinite);
 
             try
             {
-                foreach (WeakReference weakReference in registration.Kernels)
+                foreach (var weakReference in registration.Kernels)
                 {
                     var kernel = weakReference.Target as IKernel;
                     if (kernel != null)
@@ -96,7 +97,7 @@ namespace Transformalize.Libs.Ninject
             registration.KernelLock.AcquireWriterLock(Timeout.Infinite);
             try
             {
-                foreach (WeakReference reference in references.ToArray())
+                foreach (var reference in references.ToArray())
                 {
                     registration.Kernels.Remove(reference);
                 }
@@ -128,7 +129,7 @@ namespace Transformalize.Libs.Ninject
 
         private static Registration CreateNewRegistration(Type type)
         {
-            LockCookie lockCookie = kernelRegistrationsLock.UpgradeToWriterLock(Timeout.Infinite);
+            var lockCookie = kernelRegistrationsLock.UpgradeToWriterLock(Timeout.Infinite);
             try
             {
                 Registration registration;

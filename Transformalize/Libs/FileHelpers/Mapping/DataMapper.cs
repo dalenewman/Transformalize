@@ -1,3 +1,25 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
 #undef GENERICS
 //#define GENERICS
 //#if NET_2_0
@@ -128,14 +150,14 @@ namespace Transformalize.Libs.FileHelpers.Mapping
 #if ! GENERICS
         public object MapRow2Record(DataRow dr)
         {
-            object record = mRecordInfo.CreateRecordObject();
+            var record = mRecordInfo.CreateRecordObject();
 #else
 		public T MapRow2Record(DataRow dr)
         {
 			T record = (T) mRecordInfo.CreateRecordObject();
 #endif
 
-            for (int i = 0; i < mMappings.Count; i++)
+            for (var i = 0; i < mMappings.Count; i++)
             {
                 ((MappingInfo) mMappings[i]).DataToField(dr, record);
             }
@@ -152,7 +174,7 @@ namespace Transformalize.Libs.FileHelpers.Mapping
 #if ! GENERICS
         public object MapRow2Record(IDataReader dr)
         {
-            object record = mRecordInfo.CreateRecordObject();
+            var record = mRecordInfo.CreateRecordObject();
 #else
 		public T MapRow2Record(IDataReader dr)
 		{
@@ -160,7 +182,7 @@ namespace Transformalize.Libs.FileHelpers.Mapping
 #endif
             //TypedReference t = TypedReference.MakeTypedReference(record, new FieldInfo[]) null);
 
-            for (int i = 0; i < mMappings.Count; i++)
+            for (var i = 0; i < mMappings.Count; i++)
             {
                 ((MappingInfo) mMappings[i]).DataToField(dr, record);
             }
@@ -184,7 +206,7 @@ namespace Transformalize.Libs.FileHelpers.Mapping
             List<T> arr = new List<T>(dt.Rows.Count);
 #endif
 
-            FieldInfo[] fields =
+            var fields =
                 mRecordInfo.mRecordType.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.GetField |
                                                   BindingFlags.Instance | BindingFlags.IgnoreCase);
 
@@ -193,7 +215,7 @@ namespace Transformalize.Libs.FileHelpers.Mapping
                 throw new FileHelpersException("The data table has less fields than fields in the Type: " +
                                                mRecordInfo.mRecordType.Name);
 
-            for (int i = 0; i < fields.Length; i++)
+            for (var i = 0; i < fields.Length; i++)
             {
                 var map = new MappingInfo(fields[i]);
                 map.mDataColumnIndex = i;
@@ -204,13 +226,13 @@ namespace Transformalize.Libs.FileHelpers.Mapping
             foreach (DataRow row in dt.Rows)
             {
 #if ! GENERICS
-                object record = mRecordInfo.CreateRecordObject();
+                var record = mRecordInfo.CreateRecordObject();
 #else
 				T record = (T) mRecordInfo.CreateRecordObject();
 #endif
                 //TypedReference t = TypedReference.MakeTypedReference(record, new FieldInfo[]) null);
 
-                for (int i = 0; i < mMappings.Count; i++)
+                for (var i = 0; i < mMappings.Count; i++)
                 {
                     ((MappingInfo) mMappings[i]).DataToField(row, record);
                 }
@@ -245,11 +267,11 @@ namespace Transformalize.Libs.FileHelpers.Mapping
             ExHelper.CheckNullParam(connection, "connection");
             ExHelper.CheckNullOrEmpty(selectSql, "selectSql");
 
-            IDbCommand cmd = connection.CreateCommand();
+            var cmd = connection.CreateCommand();
             cmd.CommandText = selectSql;
 
             IDataReader dr = null;
-            bool connectionOpened = false;
+            var connectionOpened = false;
 
             try
             {
@@ -294,7 +316,7 @@ namespace Transformalize.Libs.FileHelpers.Mapping
             mMappings.TrimToSize();
 
 
-            bool hasRows = true;
+            var hasRows = true;
             if (dr is SqlDataReader)
                 hasRows = ((SqlDataReader) dr).HasRows;
             else if (dr is OleDbDataReader)

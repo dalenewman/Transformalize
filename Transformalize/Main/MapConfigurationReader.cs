@@ -42,7 +42,7 @@ namespace Transformalize.Main
         {
             var map = new Map();
             foreach (
-                ItemConfigurationElement i in
+                var i in
                     _items.Cast<ItemConfigurationElement>().Where(i => i.Operator.Equals(_operator, IC)))
             {
                 map[i.From] = new Item(i.Parameter, i.To);

@@ -1,25 +1,24 @@
-//-------------------------------------------------------------------------------
-// <copyright file="ExceptionFormatter.cs" company="Ninject Project Contributors">
-//   Copyright (c) 2007-2009, Enkari, Ltd.
-//   Copyright (c) 2009-2011 Ninject Project Contributors
-//   Authors: Nate Kohari (nate@enkari.com)
-//            Remo Gloor (remo.gloor@gmail.com)
-//           
-//   Dual-licensed under the Apache License, Version 2.0, and the Microsoft Public License (Ms-PL).
-//   you may not use this file except in compliance with one of the Licenses.
-//   You may obtain a copy of the License at
-//
-//       http://www.apache.org/licenses/LICENSE-2.0
-//   or
-//       http://www.microsoft.com/opensource/licenses.mspx
-//
-//   Unless required by applicable law or agreed to in writing, software
-//   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//   See the License for the specific language governing permissions and
-//   limitations under the License.
-// </copyright>
-//-------------------------------------------------------------------------------
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
 
 using System;
 using System.IO;
@@ -112,7 +111,7 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
                 sw.WriteLine("More than one matching bindings are available.");
 
                 sw.WriteLine("Matching bindings:");
-                for (int i = 0; i < formattedMatchingBindings.Length; i++)
+                for (var i = 0; i < formattedMatchingBindings.Length; i++)
                 {
                     sw.WriteLine("  {0}) {1}", i + 1, formattedMatchingBindings[i]);
                 }
@@ -333,7 +332,7 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
                 sw.WriteLine();
 
                 sw.WriteLine("Constructors:");
-                foreach (ConstructorInjectionDirective constructorInjectionDirective in bestDirectives)
+                foreach (var constructorInjectionDirective in bestDirectives)
                 {
                     FormatConstructor(constructorInjectionDirective.Constructor, sw);
                 }
@@ -365,7 +364,7 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
 
             sw.Write(constructor.DeclaringType.Name);
             sw.Write("(");
-            foreach (ParameterInfo parameterInfo in constructor.GetParameters())
+            foreach (var parameterInfo in constructor.GetParameters())
             {
                 foreach (Attribute attribute in parameterInfo.GetCustomAttributes(false))
                 {
@@ -388,7 +387,7 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
         private static void FormatAttribute(StringWriter sw, Attribute attribute)
         {
             sw.Write("[");
-            string name = attribute.GetType().Format();
+            var name = attribute.GetType().Format();
             name = name.EndsWith("Attribute") ? name.Substring(0, name.Length - 9) : name;
             sw.Write(name);
             sw.Write("]");

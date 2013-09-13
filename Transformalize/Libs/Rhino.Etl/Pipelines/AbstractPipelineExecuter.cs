@@ -1,3 +1,25 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
 using System;
 using System.Collections.Generic;
 using Transformalize.Libs.Rhino.Etl.Operations;
@@ -24,11 +46,11 @@ namespace Transformalize.Libs.Rhino.Etl.Pipelines
         {
             try
             {
-                IEnumerable<Row> enumerablePipeline = PipelineToEnumerable(pipeline, new List<Row>(), translateRows);
+                var enumerablePipeline = PipelineToEnumerable(pipeline, new List<Row>(), translateRows);
                 try
                 {
                     RaiseNotifyExecutionStarting();
-                    DateTime start = DateTime.Now;
+                    var start = DateTime.Now;
                     ExecutePipeline(enumerablePipeline);
                     RaiseNotifyExecutionCompleting();
                     Trace("Completed process {0} in {1}", pipelineName, DateTime.Now - start);
@@ -58,10 +80,10 @@ namespace Transformalize.Libs.Rhino.Etl.Pipelines
             IEnumerable<Row> rows,
             Func<IEnumerable<Row>, IEnumerable<Row>> translateEnumerable)
         {
-            foreach (IOperation operation in pipeline)
+            foreach (var operation in pipeline)
             {
                 operation.PrepareForExecution(this);
-                IEnumerable<Row> enumerator = operation.Execute(rows);
+                var enumerator = operation.Execute(rows);
                 enumerator = translateEnumerable(enumerator);
                 rows = DecorateEnumerableForExecution(operation, enumerator);
             }
@@ -97,7 +119,7 @@ namespace Transformalize.Libs.Rhino.Etl.Pipelines
         /// </summary>
         protected virtual void ExecutePipeline(IEnumerable<Row> pipeline)
         {
-            IEnumerator<Row> enumerator = pipeline.GetEnumerator();
+            var enumerator = pipeline.GetEnumerator();
             try
             {
 #pragma warning disable 642
@@ -116,7 +138,7 @@ namespace Transformalize.Libs.Rhino.Etl.Pipelines
         /// </summary>
         protected void DisposeAllOperations(ICollection<IOperation> operations)
         {
-            foreach (IOperation operation in operations)
+            foreach (var operation in operations)
             {
                 try
                 {

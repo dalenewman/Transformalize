@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
+using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -25,7 +47,7 @@ namespace Transformalize.Libs.RazorEngine.Templating
         internal TemplateCompilationException(CompilerErrorCollection errors, string sourceCode, string template)
             : base("Unable to compile template. " + errors[0].ErrorText + "\n\nOther compilation errors may have occurred. Check the Errors property for more information.")
         {
-            List<CompilerError> list = errors.Cast<CompilerError>().ToList();
+            var list = errors.Cast<CompilerError>().ToList();
             Errors = new ReadOnlyCollection<CompilerError>(list);
             SourceCode = sourceCode;
             Template = template;
@@ -38,12 +60,12 @@ namespace Transformalize.Libs.RazorEngine.Templating
         /// <param name="context">The streaming context.</param>
         protected TemplateCompilationException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            int count = info.GetInt32("Count");
+            var count = info.GetInt32("Count");
 
             var list = new List<CompilerError>();
-            Type type = typeof (CompilerError);
+            var type = typeof (CompilerError);
 
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
                 list.Add((CompilerError) info.GetValue("Errors[" + i + "]", type));
             }
@@ -88,7 +110,7 @@ namespace Transformalize.Libs.RazorEngine.Templating
 
             info.AddValue("Count", Errors.Count);
 
-            for (int i = 0; i < Errors.Count; i++)
+            for (var i = 0; i < Errors.Count; i++)
                 info.AddValue("Errors[" + i + "]", Errors[i]);
 
             info.AddValue("SourceCode", SourceCode ?? string.Empty);

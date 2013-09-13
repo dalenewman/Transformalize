@@ -1,35 +1,24 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
 // 
-// Copyright (c) 2004-2011 Jaroslaw Kowalski <jaak@jkowalski.net>
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 // 
-// All rights reserved.
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 // 
-// Redistribution and use in source and binary forms, with or without 
-// modification, are permitted provided that the following conditions 
-// are met:
-// 
-// * Redistributions of source code must retain the above copyright notice, 
-//   this list of conditions and the following disclaimer. 
-// 
-// * Redistributions in binary form must reproduce the above copyright notice,
-//   this list of conditions and the following disclaimer in the documentation
-//   and/or other materials provided with the distribution. 
-// 
-// * Neither the name of Jaroslaw Kowalski nor the names of its 
-//   contributors may be used to endorse or promote products derived from this
-//   software without specific prior written permission. 
-// 
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
-// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
-// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
-// THE POSSIBILITY OF SUCH DAMAGE.
-// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
 
 using System;
 using System.Collections.Generic;
@@ -390,15 +379,15 @@ namespace Transformalize.Libs.NLog.Targets
 
             foreach (var de in initializedFiles)
             {
-                string fileName = de.Key;
-                DateTime lastWriteTime = de.Value;
+                var fileName = de.Key;
+                var lastWriteTime = de.Value;
                 if (lastWriteTime < cleanupThreshold)
                 {
                     filesToUninitialize.Add(fileName);
                 }
             }
 
-            foreach (string fileName in filesToUninitialize)
+            foreach (var fileName in filesToUninitialize)
             {
                 WriteFooterAndUninitialize(fileName);
             }
@@ -416,7 +405,7 @@ namespace Transformalize.Libs.NLog.Targets
         {
             try
             {
-                for (int i = 0; i < recentAppenders.Length; ++i)
+                for (var i = 0; i < recentAppenders.Length; ++i)
                 {
                     if (recentAppenders[i] == null)
                     {
@@ -538,7 +527,7 @@ namespace Transformalize.Libs.NLog.Targets
         {
             base.CloseTarget();
 
-            foreach (string fileName in new List<string>(initializedFiles.Keys))
+            foreach (var fileName in new List<string>(initializedFiles.Keys))
             {
                 WriteFooterAndUninitialize(fileName);
             }
@@ -550,7 +539,7 @@ namespace Transformalize.Libs.NLog.Targets
                 autoClosingTimer = null;
             }
 
-            for (int i = 0; i < recentAppenders.Length; ++i)
+            for (var i = 0; i < recentAppenders.Length; ++i)
             {
                 if (recentAppenders[i] == null)
                 {
@@ -569,8 +558,8 @@ namespace Transformalize.Libs.NLog.Targets
         /// <param name="logEvent">The logging event.</param>
         protected override void Write(LogEventInfo logEvent)
         {
-            string fileName = FileName.Render(logEvent);
-            byte[] bytes = GetBytesToWrite(logEvent);
+            var fileName = FileName.Render(logEvent);
+            var bytes = GetBytesToWrite(logEvent);
 
             if (ShouldAutoArchive(fileName, logEvent, bytes.Length))
             {
@@ -595,28 +584,28 @@ namespace Transformalize.Libs.NLog.Targets
         /// </remarks>
         protected override void Write(AsyncLogEventInfo[] logEvents)
         {
-            Dictionary<string, List<AsyncLogEventInfo>> buckets = logEvents.BucketSort(c => FileName.Render(c.LogEvent));
+            var buckets = logEvents.BucketSort(c => FileName.Render(c.LogEvent));
             using (var ms = new MemoryStream())
             {
                 var pendingContinuations = new List<AsyncContinuation>();
 
                 foreach (var bucket in buckets)
                 {
-                    string fileName = bucket.Key;
+                    var fileName = bucket.Key;
 
                     ms.SetLength(0);
                     ms.Position = 0;
 
                     LogEventInfo firstLogEvent = null;
 
-                    foreach (AsyncLogEventInfo ev in bucket.Value)
+                    foreach (var ev in bucket.Value)
                     {
                         if (firstLogEvent == null)
                         {
                             firstLogEvent = ev.LogEvent;
                         }
 
-                        byte[] bytes = GetBytesToWrite(ev.LogEvent);
+                        var bytes = GetBytesToWrite(ev.LogEvent);
                         ms.Write(bytes, 0, bytes.Length);
                         pendingContinuations.Add(ev.Continuation);
                     }
@@ -643,7 +632,7 @@ namespace Transformalize.Libs.NLog.Targets
         /// <returns>Array of bytes that are ready to be written.</returns>
         protected virtual byte[] GetBytesToWrite(LogEventInfo logEvent)
         {
-            string renderedText = GetFormattedMessage(logEvent) + NewLineChars;
+            var renderedText = GetFormattedMessage(logEvent) + NewLineChars;
             return TransformBytes(Encoding.GetBytes(renderedText));
         }
 
@@ -659,9 +648,9 @@ namespace Transformalize.Libs.NLog.Targets
 
         private static string ReplaceNumber(string pattern, int value)
         {
-            int firstPart = pattern.IndexOf("{#", StringComparison.Ordinal);
-            int lastPart = pattern.IndexOf("#}", StringComparison.Ordinal) + 2;
-            int numDigits = lastPart - firstPart - 2;
+            var firstPart = pattern.IndexOf("{#", StringComparison.Ordinal);
+            var lastPart = pattern.IndexOf("#}", StringComparison.Ordinal) + 2;
+            var numDigits = lastPart - firstPart - 2;
 
             return pattern.Substring(0, firstPart) + Convert.ToString(value, 10).PadLeft(numDigits, '0') + pattern.Substring(lastPart);
         }
@@ -694,7 +683,7 @@ namespace Transformalize.Libs.NLog.Targets
                 lastException = exception;
             }
 
-            foreach (AsyncContinuation cont in pendingContinuations)
+            foreach (var cont in pendingContinuations)
             {
                 cont(lastException);
             }
@@ -715,7 +704,7 @@ namespace Transformalize.Libs.NLog.Targets
                 return;
             }
 
-            string newFileName = ReplaceNumber(pattern, archiveNumber);
+            var newFileName = ReplaceNumber(pattern, archiveNumber);
             if (File.Exists(fileName))
             {
                 RecursiveRollingRename(newFileName, pattern, archiveNumber + 1);
@@ -729,7 +718,7 @@ namespace Transformalize.Libs.NLog.Targets
             }
             catch (IOException)
             {
-                string dir = Path.GetDirectoryName(newFileName);
+                var dir = Path.GetDirectoryName(newFileName);
                 if (!Directory.Exists(dir))
                 {
                     Directory.CreateDirectory(dir);
@@ -741,17 +730,17 @@ namespace Transformalize.Libs.NLog.Targets
 
         private void SequentialArchive(string fileName, string pattern)
         {
-            string baseNamePattern = Path.GetFileName(pattern);
+            var baseNamePattern = Path.GetFileName(pattern);
 
-            int firstPart = baseNamePattern.IndexOf("{#", StringComparison.Ordinal);
-            int lastPart = baseNamePattern.IndexOf("#}", StringComparison.Ordinal) + 2;
-            int trailerLength = baseNamePattern.Length - lastPart;
+            var firstPart = baseNamePattern.IndexOf("{#", StringComparison.Ordinal);
+            var lastPart = baseNamePattern.IndexOf("#}", StringComparison.Ordinal) + 2;
+            var trailerLength = baseNamePattern.Length - lastPart;
 
-            string fileNameMask = baseNamePattern.Substring(0, firstPart) + "*" + baseNamePattern.Substring(lastPart);
+            var fileNameMask = baseNamePattern.Substring(0, firstPart) + "*" + baseNamePattern.Substring(lastPart);
 
-            string dirName = Path.GetDirectoryName(Path.GetFullPath(pattern));
-            int nextNumber = -1;
-            int minNumber = -1;
+            var dirName = Path.GetDirectoryName(Path.GetFullPath(pattern));
+            var nextNumber = -1;
+            var minNumber = -1;
 
             var number2name = new Dictionary<int, string>();
 
@@ -760,11 +749,11 @@ namespace Transformalize.Libs.NLog.Targets
 #if SILVERLIGHT
                 foreach (string s in Directory.EnumerateFiles(dirName, fileNameMask))
 #else
-                foreach (string s in Directory.GetFiles(dirName, fileNameMask))
+                foreach (var s in Directory.GetFiles(dirName, fileNameMask))
 #endif
                 {
-                    string baseName = Path.GetFileName(s);
-                    string number = baseName.Substring(firstPart, baseName.Length - trailerLength - firstPart);
+                    var baseName = Path.GetFileName(s);
+                    var number = baseName.Substring(firstPart, baseName.Length - trailerLength - firstPart);
                     int num;
 
                     try
@@ -799,8 +788,8 @@ namespace Transformalize.Libs.NLog.Targets
 
             if (minNumber != -1)
             {
-                int minNumberToKeep = nextNumber - MaxArchiveFiles + 1;
-                for (int i = minNumber; i < minNumberToKeep; ++i)
+                var minNumberToKeep = nextNumber - MaxArchiveFiles + 1;
+                for (var i = minNumber; i < minNumberToKeep; ++i)
                 {
                     string s;
 
@@ -811,7 +800,7 @@ namespace Transformalize.Libs.NLog.Targets
                 }
             }
 
-            string newFileName = ReplaceNumber(pattern, nextNumber);
+            var newFileName = ReplaceNumber(pattern, nextNumber);
             File.Move(fileName, newFileName);
         }
 
@@ -828,7 +817,7 @@ namespace Transformalize.Libs.NLog.Targets
 
             if (ArchiveFileName == null)
             {
-                string ext = Path.GetExtension(fileName);
+                var ext = Path.GetExtension(fileName);
                 fileNamePattern = Path.ChangeExtension(fi.FullName, ".{#}" + ext);
             }
             else
@@ -899,8 +888,8 @@ namespace Transformalize.Libs.NLog.Targets
                         break;
                 }
 
-                string ts = lastWriteTime.ToString(formatString, CultureInfo.InvariantCulture);
-                string ts2 = ev.TimeStamp.ToString(formatString, CultureInfo.InvariantCulture);
+                var ts = lastWriteTime.ToString(formatString, CultureInfo.InvariantCulture);
+                var ts2 = ev.TimeStamp.ToString(formatString, CultureInfo.InvariantCulture);
 
                 if (ts != ts2)
                 {
@@ -922,8 +911,8 @@ namespace Transformalize.Libs.NLog.Targets
 
                 try
                 {
-                    DateTime timeToKill = DateTime.Now.AddSeconds(-OpenFileCacheTimeout);
-                    for (int i = 0; i < recentAppenders.Length; ++i)
+                    var timeToKill = DateTime.Now.AddSeconds(-OpenFileCacheTimeout);
+                    for (var i = 0; i < recentAppenders.Length; ++i)
                     {
                         if (recentAppenders[i] == null)
                         {
@@ -932,7 +921,7 @@ namespace Transformalize.Libs.NLog.Targets
 
                         if (recentAppenders[i].OpenTime < timeToKill)
                         {
-                            for (int j = i; j < recentAppenders.Length; ++j)
+                            for (var j = i; j < recentAppenders.Length; ++j)
                             {
                                 if (recentAppenders[j] == null)
                                 {
@@ -963,10 +952,10 @@ namespace Transformalize.Libs.NLog.Targets
         {
             if (ReplaceFileContentsOnEachWrite)
             {
-                using (FileStream fs = File.Create(fileName))
+                using (var fs = File.Create(fileName))
                 {
-                    byte[] headerBytes = GetHeaderBytes();
-                    byte[] footerBytes = GetFooterBytes();
+                    var headerBytes = GetHeaderBytes();
+                    var footerBytes = GetFooterBytes();
 
                     if (headerBytes != null)
                     {
@@ -983,7 +972,7 @@ namespace Transformalize.Libs.NLog.Targets
                 return;
             }
 
-            bool writeHeader = false;
+            var writeHeader = false;
 
             if (!justData)
             {
@@ -1029,9 +1018,9 @@ namespace Transformalize.Libs.NLog.Targets
             // performance should be equivalent to the one of the hashtable.
             //
             BaseFileAppender appenderToWrite = null;
-            int freeSpot = recentAppenders.Length - 1;
+            var freeSpot = recentAppenders.Length - 1;
 
-            for (int i = 0; i < recentAppenders.Length; ++i)
+            for (var i = 0; i < recentAppenders.Length; ++i)
             {
                 if (recentAppenders[i] == null)
                 {
@@ -1046,8 +1035,8 @@ namespace Transformalize.Libs.NLog.Targets
 
                     // file open has a chance of failure
                     // if it fails in the constructor, we won't modify any data structures
-                    BaseFileAppender app = recentAppenders[i];
-                    for (int j = i; j > 0; --j)
+                    var app = recentAppenders[i];
+                    for (var j = i; j > 0; --j)
                     {
                         recentAppenders[j] = recentAppenders[j - 1];
                     }
@@ -1060,7 +1049,7 @@ namespace Transformalize.Libs.NLog.Targets
 
             if (appenderToWrite == null)
             {
-                BaseFileAppender newAppender = appenderFactory.Open(fileName, this);
+                var newAppender = appenderFactory.Open(fileName, this);
 
                 if (recentAppenders[freeSpot] != null)
                 {
@@ -1068,7 +1057,7 @@ namespace Transformalize.Libs.NLog.Targets
                     recentAppenders[freeSpot] = null;
                 }
 
-                for (int j = freeSpot; j > 0; --j)
+                for (var j = freeSpot; j > 0; --j)
                 {
                     recentAppenders[j] = recentAppenders[j - 1];
                 }
@@ -1079,7 +1068,7 @@ namespace Transformalize.Libs.NLog.Targets
 
             if (writeHeader && !justData)
             {
-                byte[] headerBytes = GetHeaderBytes();
+                var headerBytes = GetHeaderBytes();
                 if (headerBytes != null)
                 {
                     appenderToWrite.Write(headerBytes);
@@ -1096,7 +1085,7 @@ namespace Transformalize.Libs.NLog.Targets
                 return null;
             }
 
-            string renderedText = Header.Render(LogEventInfo.CreateNullEvent()) + NewLineChars;
+            var renderedText = Header.Render(LogEventInfo.CreateNullEvent()) + NewLineChars;
             return TransformBytes(Encoding.GetBytes(renderedText));
         }
 
@@ -1107,13 +1096,13 @@ namespace Transformalize.Libs.NLog.Targets
                 return null;
             }
 
-            string renderedText = Footer.Render(LogEventInfo.CreateNullEvent()) + NewLineChars;
+            var renderedText = Footer.Render(LogEventInfo.CreateNullEvent()) + NewLineChars;
             return TransformBytes(Encoding.GetBytes(renderedText));
         }
 
         private void WriteFooterAndUninitialize(string fileName)
         {
-            byte[] footerBytes = GetFooterBytes();
+            var footerBytes = GetFooterBytes();
             if (footerBytes != null)
             {
                 if (File.Exists(fileName))
@@ -1127,7 +1116,7 @@ namespace Transformalize.Libs.NLog.Targets
 
         private bool GetFileInfo(string fileName, out DateTime lastWriteTime, out long fileLength)
         {
-            for (int i = 0; i < recentAppenders.Length; ++i)
+            for (var i = 0; i < recentAppenders.Length; ++i)
             {
                 if (recentAppenders[i] == null)
                 {
@@ -1158,7 +1147,7 @@ namespace Transformalize.Libs.NLog.Targets
 
         private void InvalidateCacheItem(string fileName)
         {
-            for (int i = 0; i < recentAppenders.Length; ++i)
+            for (var i = 0; i < recentAppenders.Length; ++i)
             {
                 if (recentAppenders[i] == null)
                 {
@@ -1168,7 +1157,7 @@ namespace Transformalize.Libs.NLog.Targets
                 if (recentAppenders[i].FileName == fileName)
                 {
                     recentAppenders[i].Close();
-                    for (int j = i; j < recentAppenders.Length - 1; ++j)
+                    for (var j = i; j < recentAppenders.Length - 1; ++j)
                     {
                         recentAppenders[j] = recentAppenders[j + 1];
                     }

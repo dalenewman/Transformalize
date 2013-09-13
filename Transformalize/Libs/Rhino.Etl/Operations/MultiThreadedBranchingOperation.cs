@@ -1,3 +1,25 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -21,10 +43,10 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
 
             var sync = new object();
 
-            foreach (IOperation operation in Operations)
+            foreach (var operation in Operations)
             {
-                IEnumerable<Row> clone = input.Select(r => r.Clone());
-                IEnumerable<Row> result = operation.Execute(clone);
+                var clone = input.Select(r => r.Clone());
+                var result = operation.Execute(clone);
 
                 if (result == null)
                 {
@@ -32,7 +54,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
                     continue;
                 }
 
-                IEnumerator<Row> enumerator = result.GetEnumerator();
+                var enumerator = result.GetEnumerator();
 
                 ThreadPool.QueueUserWorkItem(delegate
                                                  {

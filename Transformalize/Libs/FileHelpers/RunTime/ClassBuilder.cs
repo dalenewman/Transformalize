@@ -1,3 +1,25 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
 using System;
 using System.CodeDom.Compiler;
 using System.Collections;
@@ -7,7 +29,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Xml;
 using Microsoft.CSharp;
-using Microsoft.VisualBasic;
 using Transformalize.Libs.FileHelpers.Enums;
 using Transformalize.Libs.FileHelpers.ErrorHandling;
 using Transformalize.Libs.FileHelpers.Helpers;
@@ -101,9 +122,9 @@ namespace Transformalize.Libs.FileHelpers.RunTime
                 return cr.CompiledAssembly.GetType(className, true, true);
             else
             {
-                Type[] ts = cr.CompiledAssembly.GetTypes();
+                var ts = cr.CompiledAssembly.GetTypes();
                 if (ts.Length > 0)
-                    foreach (Type t in ts)
+                    foreach (var t in ts)
                     {
                         if (t.FullName.StartsWith("My.My") == false)
                             return t;
@@ -159,7 +180,7 @@ namespace Transformalize.Libs.FileHelpers.RunTime
         public static Type ClassFromSourceFile(string filename, string className, NetLanguage lang)
         {
             var reader = new StreamReader(filename);
-            string classDef = reader.ReadToEnd();
+            var classDef = reader.ReadToEnd();
             reader.Close();
 
             return ClassFromString(classDef, className, lang);
@@ -197,7 +218,7 @@ namespace Transformalize.Libs.FileHelpers.RunTime
         public static Type ClassFromBinaryFile(string filename, string className, NetLanguage lang)
         {
             var reader = new StreamReader(filename);
-            string classDef = reader.ReadToEnd();
+            var classDef = reader.ReadToEnd();
             reader.Close();
 
             classDef = Decrypt(classDef, "withthefilehelpers1.0.0youcancodewithoutproblems1.5.0");
@@ -213,7 +234,7 @@ namespace Transformalize.Libs.FileHelpers.RunTime
         /// <returns>The compiled class.</returns>
         public static Type ClassFromXmlFile(string filename)
         {
-            ClassBuilder cb = LoadFromXml(filename);
+            var cb = LoadFromXml(filename);
             return cb.CreateRecordClass();
         }
 
@@ -284,7 +305,7 @@ namespace Transformalize.Libs.FileHelpers.RunTime
         /// <returns>The generated record class</returns>
         public Type CreateRecordClass()
         {
-            string classCode = GetClassSourceCode(NetLanguage.CSharp);
+            var classCode = GetClassSourceCode(NetLanguage.CSharp);
             return ClassFromString(classCode, NetLanguage.CSharp);
         }
 
@@ -502,20 +523,20 @@ namespace Transformalize.Libs.FileHelpers.RunTime
         private static byte[] Encrypt(byte[] clearData, byte[] Key, byte[] IV)
         {
             var ms = new MemoryStream();
-            Rijndael alg = Rijndael.Create();
+            var alg = Rijndael.Create();
             alg.Key = Key;
             alg.IV = IV;
             var cs = new CryptoStream(ms,
                                       alg.CreateEncryptor(), CryptoStreamMode.Write);
             cs.Write(clearData, 0, clearData.Length);
             cs.Close();
-            byte[] encryptedData = ms.ToArray();
+            var encryptedData = ms.ToArray();
             return encryptedData;
         }
 
         private static string Encrypt(string clearText, string Password)
         {
-            byte[] clearBytes = Encoding.Unicode.GetBytes(clearText);
+            var clearBytes = Encoding.Unicode.GetBytes(clearText);
 
             var pdb = new PasswordDeriveBytes(Password,
                                               new byte[]
@@ -523,8 +544,8 @@ namespace Transformalize.Libs.FileHelpers.RunTime
                                                       0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d,
                                                       0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76
                                                   });
-            byte[] encryptedData = Encrypt(clearBytes,
-                                           pdb.GetBytes(32), pdb.GetBytes(16));
+            var encryptedData = Encrypt(clearBytes,
+                                        pdb.GetBytes(32), pdb.GetBytes(16));
             return Convert.ToBase64String(encryptedData);
         }
 
@@ -534,7 +555,7 @@ namespace Transformalize.Libs.FileHelpers.RunTime
                                       byte[] Key, byte[] IV)
         {
             var ms = new MemoryStream();
-            Rijndael alg = Rijndael.Create();
+            var alg = Rijndael.Create();
             alg.Key = Key;
             alg.IV = IV;
 
@@ -544,22 +565,22 @@ namespace Transformalize.Libs.FileHelpers.RunTime
             cs.Write(cipherData, 0, cipherData.Length);
             cs.Close();
 
-            byte[] decryptedData = ms.ToArray();
+            var decryptedData = ms.ToArray();
 
             return decryptedData;
         }
 
         private static string Decrypt(string cipherText, string Password)
         {
-            byte[] cipherBytes = Convert.FromBase64String(cipherText);
+            var cipherBytes = Convert.FromBase64String(cipherText);
             var pdb = new PasswordDeriveBytes(Password,
                                               new byte[]
                                                   {
                                                       0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65,
                                                       0x64, 0x76, 0x65, 0x64, 0x65, 0x76
                                                   });
-            byte[] decryptedData = Decrypt(cipherBytes,
-                                           pdb.GetBytes(32), pdb.GetBytes(16));
+            var decryptedData = Decrypt(cipherBytes,
+                                        pdb.GetBytes(32), pdb.GetBytes(16));
             return Encoding.Unicode.GetString(decryptedData);
         }
 
@@ -711,7 +732,7 @@ namespace Transformalize.Libs.FileHelpers.RunTime
             var document = new XmlDocument();
             document.Load(filename);
 
-            string classtype = document.ChildNodes[0].LocalName;
+            var classtype = document.ChildNodes[0].LocalName;
 
             if (classtype == "DelimitedClass")
                 res = DelimitedClassBuilder.LoadXmlInternal(document);
@@ -801,7 +822,7 @@ namespace Transformalize.Libs.FileHelpers.RunTime
 
             writer.mWriter.WriteStartElement("Fields");
 
-            for (int i = 0; i < mFields.Count; i++)
+            for (var i = 0; i < mFields.Count; i++)
                 ((FieldBuilder) mFields[i]).SaveToXml(writer);
 
             writer.mWriter.WriteEndElement();
@@ -829,7 +850,7 @@ namespace Transformalize.Libs.FileHelpers.RunTime
             if (Char.IsLetter(id[0]) == false && id[0] != '_')
                 return false;
 
-            for (int i = 1; i < id.Length; i++)
+            for (var i = 1; i < id.Length; i++)
             {
                 if (isType && id[i] == '.')
                     continue;
@@ -846,7 +867,7 @@ namespace Transformalize.Libs.FileHelpers.RunTime
         internal static string StringToIdentifier(string name)
         {
             var sb = new StringBuilder(name.Trim());
-            for (int i = 0; i < sb.Length; i++)
+            for (var i = 0; i < sb.Length; i++)
             {
                 if (char.IsLetterOrDigit(sb[i]) || sb[i] == '_')
                     continue;

@@ -1,26 +1,30 @@
-/*
-Transformalize - Replicate, Transform, and Denormalize Your Data...
-Copyright (C) 2013 Dale Newman
+#region License
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+#endregion
 
 using System.Data.SqlClient;
-using Transformalize.Main;
-using Transformalize.Main.Providers;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Main;
+using Transformalize.Main.Providers;
 
 namespace Transformalize.Operations
 {
@@ -40,7 +44,7 @@ namespace Transformalize.Operations
 
         protected override void PrepareCommand(Row row, SqlCommand command)
         {
-            string sets = new FieldSqlWriter(_process.CalculatedFields).Alias(_provider).SetParam().Write();
+            var sets = new FieldSqlWriter(_process.CalculatedFields).Alias(_provider).SetParam().Write();
             command.CommandText = string.Format("UPDATE {0} SET {1} WHERE TflKey = @TflKey;", _process.MasterEntity.OutputName(), sets);
             foreach (var r in _process.CalculatedFields)
             {

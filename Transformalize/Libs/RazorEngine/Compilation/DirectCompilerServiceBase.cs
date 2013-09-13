@@ -1,7 +1,27 @@
-﻿using System;
-using System.CodeDom;
+﻿#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
+using System;
 using System.CodeDom.Compiler;
-using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
@@ -67,8 +87,8 @@ namespace Transformalize.Libs.RazorEngine.Compilation
             if (_disposed)
                 throw new ObjectDisposedException(GetType().Name);
 
-            CodeCompileUnit compileUnit = GetCodeCompileUnit(context.ClassName, context.TemplateContent, context.Namespaces,
-                                                             context.TemplateType, context.ModelType);
+            var compileUnit = GetCodeCompileUnit(context.ClassName, context.TemplateContent, context.Namespaces,
+                                                 context.TemplateType, context.ModelType);
 
             var @params = new CompilerParameters
                               {
@@ -78,13 +98,13 @@ namespace Transformalize.Libs.RazorEngine.Compilation
                                   CompilerOptions = "/target:library /optimize"
                               };
 
-            IEnumerable<string> assemblies = CompilerServicesUtility
+            var assemblies = CompilerServicesUtility
                 .GetLoadedAssemblies()
                 .Where(a => !a.IsDynamic && File.Exists(a.Location))
                 .GroupBy(a => a.GetName().Name).Select(grp => grp.First(y => y.GetName().Version == grp.Max(x => x.GetName().Version))) // only select distinct assemblies based on FullName to avoid loading duplicate assemblies
                 .Select(a => a.Location);
 
-            IEnumerable<string> includeAssemblies = (IncludeAssemblies() ?? Enumerable.Empty<string>());
+            var includeAssemblies = (IncludeAssemblies() ?? Enumerable.Empty<string>());
             assemblies = assemblies.Concat(includeAssemblies)
                                    .Where(a => !string.IsNullOrWhiteSpace(a))
                                    .Distinct(StringComparer.InvariantCultureIgnoreCase);
@@ -116,14 +136,14 @@ namespace Transformalize.Libs.RazorEngine.Compilation
             if (context == null)
                 throw new ArgumentNullException("context");
 
-            Tuple<CompilerResults, string> result = Compile(context);
-            CompilerResults compileResult = result.Item1;
+            var result = Compile(context);
+            var compileResult = result.Item1;
 
             if (compileResult.Errors != null && compileResult.Errors.Count > 0)
             {
                 _log.Warn("The following template content will not compile:");
                 _log.Info(Environment.NewLine + context.TemplateContent);
-                foreach (object error in compileResult.Errors)
+                foreach (var error in compileResult.Errors)
                 {
                     _log.Error(error.ToString().Split(':').Last().Trim(' '));
                 }

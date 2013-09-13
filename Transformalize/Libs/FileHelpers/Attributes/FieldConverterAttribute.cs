@@ -1,6 +1,22 @@
-#region "  © Copyright 2005-07 to Marcos Meli - http://www.marcosmeli.com.ar" 
+#region License
 
-// Errors, suggestions, contributions, send a mail to: marcos@filehelpers.com.
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
 
 #endregion
 
@@ -241,7 +257,7 @@ namespace Transformalize.Libs.FileHelpers.Attributes
 
             var res = new Type[args.Length];
 
-            for (int i = 0; i < args.Length; i++)
+            for (var i = 0; i < args.Length; i++)
             {
                 if (args[i] == null)
                     res[i] = typeof (object);
@@ -254,9 +270,9 @@ namespace Transformalize.Libs.FileHelpers.Attributes
 
         private string ArgsDesc(object[] args)
         {
-            string res = DisplayType(args[0]);
+            var res = DisplayType(args[0]);
 
-            for (int i = 1; i < args.Length; i++)
+            for (var i = 1; i < args.Length; i++)
                 res += ", " + DisplayType(args[i]);
 
             return res;
@@ -274,9 +290,9 @@ namespace Transformalize.Libs.FileHelpers.Attributes
 
         internal void ValidateTypes(FieldInfo fi)
         {
-            bool valid = false;
+            var valid = false;
 
-            Type fieldType = fi.FieldType;
+            var fieldType = fi.FieldType;
 
 #if NET_2_0
 

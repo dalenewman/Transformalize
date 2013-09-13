@@ -24,7 +24,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Libs.NLog;
-using Transformalize.Libs.NLog.Config;
 using Transformalize.Libs.fastJSON;
 
 namespace Transformalize.Main
@@ -49,8 +48,8 @@ namespace Transformalize.Main
 
                     foreach (var option in options)
                     {
-                        string key = option.Key.ToLower();
-                        string value = option.Value.ToString().ToLower();
+                        var key = option.Key.ToLower();
+                        var value = option.Value.ToString().ToLower();
                         bool input;
                         switch (key)
                         {
@@ -70,11 +69,11 @@ namespace Transformalize.Main
                                 break;
                             case "loglevel":
                                 LogLevel = LogLevel.FromString(value);
-                                foreach (LoggingRule rule in LogManager.Configuration.LoggingRules)
+                                foreach (var rule in LogManager.Configuration.LoggingRules)
                                 {
                                     if (rule.Targets.All(t => t.Name != "console")) continue;
 
-                                    foreach (LogLevel level in rule.Levels)
+                                    foreach (var level in rule.Levels)
                                     {
                                         if (level.Ordinal < LogLevel.Ordinal)
                                             rule.DisableLoggingForLevel(level);
@@ -146,7 +145,7 @@ namespace Transformalize.Main
                 }
                 catch (Exception e)
                 {
-                    string message = string.Format("Couldn't parse options: {0}.", settings);
+                    var message = string.Format("Couldn't parse options: {0}.", settings);
                     _log.DebugException(message + " " + e.Message, e);
                     Problems.Add(message);
                 }

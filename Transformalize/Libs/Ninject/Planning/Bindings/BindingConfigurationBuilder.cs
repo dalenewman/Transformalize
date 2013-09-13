@@ -1,25 +1,24 @@
-﻿//-------------------------------------------------------------------------------
-// <copyright file="BindingConfigurationBuilder.cs" company="Ninject Project Contributors">
-//   Copyright (c) 2007-2009, Enkari, Ltd.
-//   Copyright (c) 2009-2011 Ninject Project Contributors
-//   Authors: Nate Kohari (nate@enkari.com)
-//            Remo Gloor (remo.gloor@gmail.com)
-//           
-//   Dual-licensed under the Apache License, Version 2.0, and the Microsoft Public License (Ms-PL).
-//   you may not use this file except in compliance with one of the Licenses.
-//   You may obtain a copy of the License at
-//
-//       http://www.apache.org/licenses/LICENSE-2.0
-//   or
-//       http://www.microsoft.com/opensource/licenses.mspx
-//
-//   Unless required by applicable law or agreed to in writing, software
-//   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//   See the License for the specific language governing permissions and
-//   limitations under the License.
-// </copyright>
-//-------------------------------------------------------------------------------
+﻿#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
 
 using System;
 using System.Linq;
@@ -136,9 +135,9 @@ namespace Transformalize.Libs.Ninject.Planning.Bindings
         {
             BindingConfiguration.Condition = r =>
                                                  {
-                                                     foreach (Type parent in parents)
+                                                     foreach (var parent in parents)
                                                      {
-                                                         bool matches = false;
+                                                         var matches = false;
                                                          if (parent.IsGenericTypeDefinition)
                                                          {
                                                              if (parent.IsInterface)
@@ -219,9 +218,9 @@ namespace Transformalize.Libs.Ninject.Planning.Bindings
         {
             BindingConfiguration.Condition = r =>
                                                  {
-                                                     foreach (Type parent in parents)
+                                                     foreach (var parent in parents)
                                                      {
-                                                         bool matches = false;
+                                                         var matches = false;
                                                          if (parent.IsGenericTypeDefinition)
                                                          {
                                                              matches =
@@ -638,7 +637,7 @@ namespace Transformalize.Libs.Ninject.Planning.Bindings
 
         private static bool DoesAnyAncestorMatch(IRequest request, Predicate<IContext> predicate)
         {
-            IContext parentContext = request.ParentContext;
+            var parentContext = request.ParentContext;
             if (parentContext == null)
             {
                 return false;

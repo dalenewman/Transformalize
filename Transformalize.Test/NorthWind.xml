@@ -14,6 +14,25 @@
     <add name="ssas" value="Data Source=localhost;Catalog=NorthWind;" provider="AnalysisServices"></add>
   </connections>
 
+  <templates path="Templates">
+    <add name="solr-data-handler" file="solr-data-handler.cshtml">
+      <actions>
+        <add action="copy" file="C:\Solr\NorthWind\conf\data-config.xml" />
+      </actions>
+    </add>
+    <add name="solr-schema" file="solr-schema.cshtml">
+      <actions>
+        <add action="copy" file="C:\Solr\NorthWind\conf\schema.xml" />
+      </actions>
+    </add>
+  </templates>
+
+  <search-types>
+    <add name="default" />
+    <add name="facet" type="lowercase" store="true" index="true" />
+    <add name="standard" type="standard_lowercase" store="false" index="true"/>
+  </search-types>
+
   <entities>
     <add name="Order Details" version="RowVersion" auto="true">
       <fields>

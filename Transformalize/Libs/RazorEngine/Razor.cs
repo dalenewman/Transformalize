@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
@@ -123,7 +145,7 @@ namespace Transformalize.Libs.RazorEngine
         [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public static IEnumerable<ITemplate> CreateTemplates<T>(IEnumerable<string> razorTemplates, IEnumerable<T> models, bool parallel = false)
         {
-            List<object> modelList = (from m in models select (object) m).ToList();
+            var modelList = (from m in models select (object) m).ToList();
             return TemplateService.CreateTemplates(razorTemplates, null, modelList, parallel);
         }
 
@@ -182,8 +204,8 @@ namespace Transformalize.Libs.RazorEngine
         [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public static IEnumerable<Type> CreateTemplateTypes(IEnumerable<string> razorTemplates, Type modelType, bool parallel = false)
         {
-            string[] templates = razorTemplates.ToArray();
-            IEnumerable<Type> modelTypes = Enumerable.Repeat(modelType, templates.Count());
+            var templates = razorTemplates.ToArray();
+            var modelTypes = Enumerable.Repeat(modelType, templates.Count());
             return TemplateService.CreateTemplateTypes(templates, modelTypes, parallel);
         }
 
@@ -248,7 +270,7 @@ namespace Transformalize.Libs.RazorEngine
         [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public static IEnumerable<ITemplate> GetTemplates<T>(IEnumerable<string> razorTemplates, IEnumerable<T> models, IEnumerable<string> cacheNames, bool parallel = false)
         {
-            List<object> modelList = (from m in models select (object) m).ToList();
+            var modelList = (from m in models select (object) m).ToList();
             return TemplateService.GetTemplates(razorTemplates, modelList, cacheNames, parallel);
         }
 
@@ -364,12 +386,12 @@ namespace Transformalize.Libs.RazorEngine
             if (models == null)
                 throw new ArgumentException("Expected models list (this parameter may not be NULL).");
 
-            object[] m = models.ToArray();
+            var m = models.ToArray();
 
             if (!m.Any())
                 throw new ArgumentException("Expected at least one entry in models list.");
 
-            List<string> razorTemplateList = Enumerable.Repeat(razorTemplate, m.Count()).ToList();
+            var razorTemplateList = Enumerable.Repeat(razorTemplate, m.Count()).ToList();
             return TemplateService.ParseMany(razorTemplateList, m, null, null, parallel);
         }
 
@@ -477,13 +499,13 @@ namespace Transformalize.Libs.RazorEngine
             if (models == null)
                 throw new ArgumentException("Expected models list (this parameter may not be NULL).");
 
-            T[] ma = models.ToArray();
+            var ma = models.ToArray();
 
             if (!ma.Any())
                 throw new ArgumentException("Expected at least one entry in models list.");
 
-            List<string> razorTemplateList = Enumerable.Repeat(razorTemplate, ma.Count()).ToList();
-            List<object> modelList = (from m in ma select (object) m).ToList();
+            var razorTemplateList = Enumerable.Repeat(razorTemplate, ma.Count()).ToList();
+            var modelList = (from m in ma select (object) m).ToList();
             return TemplateService.ParseMany(razorTemplateList, modelList, null, null, parallel);
         }
 
@@ -501,7 +523,7 @@ namespace Transformalize.Libs.RazorEngine
         [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public static IEnumerable<string> ParseMany<T>(IEnumerable<string> razorTemplates, IEnumerable<T> models, bool parallel = false)
         {
-            List<object> modelList = (from m in models select (object) m).ToList();
+            var modelList = (from m in models select (object) m).ToList();
             return TemplateService.ParseMany(razorTemplates, modelList, null, null, parallel);
         }
 
@@ -523,7 +545,7 @@ namespace Transformalize.Libs.RazorEngine
         [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public static IEnumerable<string> ParseMany<T>(IEnumerable<string> razorTemplates, IEnumerable<T> models, IEnumerable<string> cacheNames, bool parallel = false)
         {
-            List<object> modelList = (from m in models select (object) m).ToList();
+            var modelList = (from m in models select (object) m).ToList();
             return TemplateService.ParseMany(razorTemplates, modelList, null, cacheNames, parallel);
         }
 
@@ -549,7 +571,7 @@ namespace Transformalize.Libs.RazorEngine
         [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public static IEnumerable<string> ParseMany<T>(IEnumerable<string> razorTemplates, IEnumerable<T> models, IEnumerable<DynamicViewBag> viewBags, IEnumerable<string> cacheNames, bool parallel = false)
         {
-            List<object> modelList = (from m in models select (object) m).ToList();
+            var modelList = (from m in models select (object) m).ToList();
             return TemplateService.ParseMany(razorTemplates, modelList, viewBags, cacheNames, parallel);
         }
 

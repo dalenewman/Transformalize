@@ -38,7 +38,7 @@ namespace Transformalize.Main
 
         public void Check()
         {
-            Entity entity = _process.MasterEntity;
+            var entity = _process.MasterEntity;
             _process.OutputRecordsExist = _entityRecordsExist.OutputRecordsExist(entity);
             Debug(
                 _process.OutputRecordsExist

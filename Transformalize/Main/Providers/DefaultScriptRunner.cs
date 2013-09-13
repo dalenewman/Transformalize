@@ -31,12 +31,12 @@ namespace Transformalize.Main.Providers
         {
             var response = new ScriptResponse();
 
-            using (IDbConnection cn = connection.GetConnection())
+            using (var cn = connection.GetConnection())
             {
                 try
                 {
                     cn.Open();
-                    IDbCommand cmd = cn.CreateCommand();
+                    var cmd = cn.CreateCommand();
                     cmd.CommandText = script;
                     cmd.CommandType = CommandType.Text;
                     response.RowsAffected = cmd.ExecuteNonQuery();

@@ -20,6 +20,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -79,37 +80,30 @@ namespace Transformalize.Main.Providers.SqlServer
 
         public string CreateSql()
         {
-            AbstractProvider provider = _process.MasterEntity.OutputConnection.Provider;
+            var provider = _process.MasterEntity.OutputConnection.Provider;
             var builder = new StringBuilder();
             builder.AppendFormat("CREATE VIEW {0} AS\r\n", _process.View);
             builder.AppendFormat("SELECT\r\n    {0}.TflKey,\r\n    {0}.TflBatchId,\r\n    b.TflUpdate,\r\n", _masterEntity.OutputName());
-            foreach (Entity entity in _process.Entities)
-            {
-                if (entity.IsMaster())
-                {
-                    builder.AppendLine(string.Concat(new FieldSqlWriter(entity.PrimaryKey, entity.Fields, _process.CalculatedFields, entity.CalculatedFields).ExpandXml().Output().Alias(provider).Prepend(string.Concat("    [", entity.OutputName(), "].")).Write(",\r\n"), ","));
-                }
-                else
-                {
-                    if (entity.Fields.Any(f => f.Value.FieldType.HasFlag(FieldType.ForeignKey)))
-                    {
-                        builder.AppendLine(string.Concat(new FieldSqlWriter(entity.Fields).ExpandXml().Output().FieldType(FieldType.ForeignKey).Alias(provider).Prepend(string.Concat("[", _masterEntity.OutputName(), "].")).IsNull().ToAlias(provider).Prepend("    ").Write(",\r\n"), ","));
-                    }
-                    FieldSqlWriter writer = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).ExpandXml().Output().FieldType(FieldType.Field, FieldType.Version, FieldType.Xml);
-                    if (writer.Context().Any())
-                        builder.AppendLine(string.Concat(writer.Alias(provider).Prepend(string.Concat(provider.L, entity.OutputName(), provider.R, ".")).IsNull().ToAlias(provider).Prepend("    ").Write(",\r\n"), ","));
-                }
-            }
+
+            var typedFields = new StarFields(_process).TypedFields();
+            builder.AppendLine(string.Concat(new FieldSqlWriter(typedFields[StarFieldType.Master]).Alias(provider).PrependEntityOutput(provider).Prepend("    ").Write(",\r\n"), ","));
+
+            if (typedFields[StarFieldType.Foreign].Any())
+                builder.AppendLine(string.Concat(new FieldSqlWriter(typedFields[StarFieldType.Foreign]).Alias(provider).PrependEntityOutput(provider, _masterEntity.OutputName()).IsNull().ToAlias(provider).Prepend("    ").Write(",\r\n"), ","));
+            
+            if(typedFields[StarFieldType.Other].Any())
+                builder.AppendLine(string.Concat(new FieldSqlWriter(typedFields[StarFieldType.Other]).Alias(provider).PrependEntityOutput(provider).IsNull().ToAlias(provider).Prepend("    ").Write(",\r\n"), ","));
+
             builder.TrimEnd("\r\n,");
             builder.AppendLine();
             builder.AppendFormat("FROM {0}\r\n", _masterEntity.OutputName());
             builder.AppendFormat("INNER JOIN TflBatch b ON ({0}.TflBatchId = b.TflBatchId AND b.ProcessName = '{1}')\r\n", _masterEntity.OutputName(), _process.Name);
 
-            foreach (Entity entity in _process.Entities.Where(e => !e.IsMaster()))
+            foreach (var entity in _process.Entities.Where(e => !e.IsMaster()))
             {
                 builder.AppendFormat("LEFT OUTER JOIN {0} ON (", entity.OutputName());
 
-                foreach (Join join in entity.RelationshipToMaster.First().Join.ToArray())
+                foreach (var join in entity.RelationshipToMaster.First().Join.ToArray())
                 {
                     builder.AppendFormat("{0}.{1} = {2}.{3} AND ", _masterEntity.OutputName(), provider.Enclose(join.LeftField.Alias), entity.OutputName(), provider.Enclose(join.RightField.Alias));
                 }

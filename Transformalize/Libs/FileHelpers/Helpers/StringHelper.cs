@@ -1,6 +1,22 @@
-#region "  © Copyright 2005-07 to Marcos Meli - http://www.marcosmeli.com.ar" 
+#region License
 
-// Errors, suggestions, contributions, send a mail to: marcos@filehelpers.com.
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
 
 #endregion
 
@@ -39,9 +55,9 @@ namespace Transformalize.Libs.FileHelpers.Helpers
             var res = new StringBuilder(32);
             //int lines = 0;
 
-            bool firstFound = false;
+            var firstFound = false;
 
-            int i = line.mCurrentPos + 1;
+            var i = line.mCurrentPos + 1;
             //bool mustContinue = true;
 
             while (line.mLineStr != null)
@@ -109,8 +125,8 @@ namespace Transformalize.Libs.FileHelpers.Helpers
         {
             if (source == null) source = string.Empty;
 
-            string quotedCharStr = quoteChar.ToString();
-            string escapedString = source.Replace(quotedCharStr, quotedCharStr + quotedCharStr);
+            var quotedCharStr = quoteChar.ToString();
+            var escapedString = source.Replace(quotedCharStr, quotedCharStr + quotedCharStr);
 
             sb.Append(quoteChar);
             sb.Append(escapedString);
@@ -124,7 +140,7 @@ namespace Transformalize.Libs.FileHelpers.Helpers
         internal static string RemoveBlanks(string source)
         {
             StringBuilder sb = null;
-            int i = 0;
+            var i = 0;
 
             while (i < source.Length && Char.IsWhiteSpace(source[i]))
             {

@@ -39,7 +39,7 @@ namespace Transformalize.Main
 
         public void Count()
         {
-            foreach (Entity entity in _process.Entities)
+            foreach (var entity in _process.Entities)
             {
                 entity.InputCount = _entityCounter.CountInput(entity);
                 Info("Entity {0} input has {1} records.", entity.Alias, entity.InputCount);

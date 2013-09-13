@@ -1,3 +1,25 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
 #undef GENERICS
 //#define GENERICS
 //#if NET_2_0
@@ -167,7 +189,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
             mFooterText = String.Empty;
 
             var resArray = new ArrayList();
-            int currentRecord = 0;
+            var currentRecord = 0;
 
             var freader = new ForwardReader(reader, mRecordInfo.mIgnoreLast);
             freader.DiscardForward = true;
@@ -185,7 +207,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
 
             if (mRecordInfo.mIgnoreFirst > 0)
             {
-                for (int i = 0; i < mRecordInfo.mIgnoreFirst && currentLine != null; i++)
+                for (var i = 0; i < mRecordInfo.mIgnoreFirst && currentLine != null; i++)
                 {
                     mHeaderText += currentLine + StringHelper.NewLine;
                     currentLine = freader.ReadNextLine();
@@ -193,7 +215,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
                 }
             }
 
-            bool byPass = false;
+            var byPass = false;
 
             if (maxRecords < 0)
                 maxRecords = int.MaxValue;
@@ -210,7 +232,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
 
                     line.ReLoad(currentLine);
 
-                    bool skip = false;
+                    var skip = false;
 #if !MINI
                     ProgressHelper.Notify(mNotifyHandler, mProgressMode, currentRecord, -1);
                     skip = OnBeforeReadRecord(currentLine);
@@ -218,7 +240,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
 
                     if (skip == false)
                     {
-                        object record = mRecordInfo.StringToRecord(line);
+                        var record = mRecordInfo.StringToRecord(line);
 
 #if !MINI
 #if ! GENERICS
@@ -393,7 +415,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
             string currentLine = null;
 
             //ConstructorInfo constr = mType.GetConstructor(new Type[] {});
-            int max = maxRecords;
+            var max = maxRecords;
             if (records is IList)
                 max = Math.Min(max < 0 ? int.MaxValue : max, ((IList) records).Count);
 
@@ -401,11 +423,11 @@ namespace Transformalize.Libs.FileHelpers.Engines
             ProgressHelper.Notify(mNotifyHandler, mProgressMode, 0, max);
 #endif
 
-            int recIndex = 0;
+            var recIndex = 0;
 
-            bool first = true;
+            var first = true;
 #if ! GENERICS
-            foreach (object rec in records)
+            foreach (var rec in records)
 #else
             foreach (T rec in records)
 #endif
@@ -427,7 +449,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
                     }
 
 
-                    bool skip = false;
+                    var skip = false;
 #if !MINI
                     ProgressHelper.Notify(mNotifyHandler, mProgressMode, recIndex + 1, max);
                     skip = OnBeforeWriteRecord(rec);
@@ -497,7 +519,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
             var sb = new StringBuilder();
             var writer = new StringWriter(sb);
             WriteStream(writer, records, maxRecords);
-            string res = writer.ToString();
+            var res = writer.ToString();
             writer.Close();
             return res;
         }
@@ -526,7 +548,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
 		public void AppendToFile(string fileName, IEnumerable<T> records)
 #endif
         {
-            using (TextWriter writer = StreamHelper.CreateFileAppender(fileName, mEncoding, true, false))
+            using (var writer = StreamHelper.CreateFileAppender(fileName, mEncoding, true, false))
             {
                 mHeaderText = String.Empty;
                 mFooterText = String.Empty;
@@ -619,7 +641,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
         /// <returns>The DataTable with the read records.</returns>
         public DataTable ReadStreamAsDT(TextReader reader, int maxRecords)
         {
-            DataTable dt = mRecordInfo.CreateEmptyDataTable();
+            var dt = mRecordInfo.CreateEmptyDataTable();
             dt.BeginLoadData();
             ReadStream(reader, maxRecords, dt);
             dt.EndLoadData();

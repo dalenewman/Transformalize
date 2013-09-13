@@ -32,7 +32,7 @@ namespace Transformalize.Main.Providers.MySql
 
         public string Write(Entity entity)
         {
-            AbstractConnection connection = entity.InputConnection;
+            var connection = entity.InputConnection;
             return string.Format(
                 SQL_PATTERN,
                 string.Join(", ", entity.SelectKeys(connection.Provider)),
@@ -54,7 +54,7 @@ namespace Transformalize.Main.Providers.MySql
 
         public string Write(Entity entity)
         {
-            AbstractConnection connection = entity.InputConnection;
+            var connection = entity.InputConnection;
             return string.Format(
                 SQL_PATTERN,
                 string.Join(", ", entity.SelectKeys(connection.Provider)),

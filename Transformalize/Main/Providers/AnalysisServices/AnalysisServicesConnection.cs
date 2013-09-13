@@ -41,12 +41,12 @@ namespace Transformalize.Main.Providers.AnalysisServices
 
         private void ParseConnectionString()
         {
-            foreach (string pair in ConnectionString.Split(_semiColen, RE))
+            foreach (var pair in ConnectionString.Split(_semiColen, RE))
             {
                 try
                 {
-                    string attribute = pair.Split(_equal, RE)[0].Trim().ToLower();
-                    string value = pair.Split(_equal, RE)[1].Trim();
+                    var attribute = pair.Split(_equal, RE)[0].Trim().ToLower();
+                    var value = pair.Split(_equal, RE)[1].Trim();
 
                     if (attribute == "data source")
                     {

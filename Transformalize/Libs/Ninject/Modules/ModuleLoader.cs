@@ -1,12 +1,22 @@
 #region License
 
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
 // 
-// Author: Nate Kohari <nate@enkari.com>
-// Copyright (c) 2007-2010, Enkari, Ltd.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 // 
-// Dual-licensed under the Apache License, Version 2.0, and the Microsoft Public License (Ms-PL).
-// See the file LICENSE.txt for details.
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 // 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
 
 #endregion
 
@@ -51,16 +61,16 @@ namespace Transformalize.Libs.Ninject.Modules
         /// <param name="patterns">The patterns to search.</param>
         public void LoadModules(IEnumerable<string> patterns)
         {
-            IEnumerable<IModuleLoaderPlugin> plugins = Kernel.Components.GetAll<IModuleLoaderPlugin>();
+            var plugins = Kernel.Components.GetAll<IModuleLoaderPlugin>();
 
-            IEnumerable<IGrouping<string, string>> fileGroups = patterns
+            var fileGroups = patterns
                 .SelectMany(pattern => GetFilesMatchingPattern(pattern))
                 .GroupBy(filename => Path.GetExtension(filename).ToLowerInvariant());
 
             foreach (var fileGroup in fileGroups)
             {
-                string extension = fileGroup.Key;
-                IModuleLoaderPlugin plugin = plugins.Where(p => p.SupportedExtensions.Contains(extension)).FirstOrDefault();
+                var extension = fileGroup.Key;
+                var plugin = plugins.Where(p => p.SupportedExtensions.Contains(extension)).FirstOrDefault();
 
                 if (plugin != null)
                     plugin.LoadModules(fileGroup);
@@ -82,8 +92,8 @@ namespace Transformalize.Libs.Ninject.Modules
 
         private static IEnumerable<string> GetBaseDirectories()
         {
-            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            string searchPath = AppDomain.CurrentDomain.RelativeSearchPath;
+            var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            var searchPath = AppDomain.CurrentDomain.RelativeSearchPath;
 
             return String.IsNullOrEmpty(searchPath)
                        ? new[] {baseDirectory}

@@ -45,10 +45,10 @@ namespace Transformalize.Main.Providers
                 return CachedResults[connection.ConnectionString];
             }
 
-            bool result = false;
+            var result = false;
             try
             {
-                using (IDbConnection cs = connection.GetConnection())
+                using (var cs = connection.GetConnection())
                 {
                     cs.ConnectionString = connection.ConnectionString.TrimEnd(";".ToCharArray()) + string.Format(";Connection Timeout={0};", _timeOut);
                     try

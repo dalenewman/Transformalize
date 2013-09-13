@@ -74,11 +74,11 @@ namespace Transformalize.Main
 
                 if (!string.IsNullOrEmpty(p.Field))
                 {
-                    IFields fields = _process.OutputFields();
+                    var fields = _process.OutputFields();
                     if (fields.Any(Common.FieldFinder(p)))
                     {
-                        Field field = fields.Last(Common.FieldFinder(p)).Value;
-                        string name = string.IsNullOrEmpty(p.Name) ? field.Alias : p.Name;
+                        var field = fields.Last(Common.FieldFinder(p)).Value;
+                        var name = string.IsNullOrEmpty(p.Name) ? field.Alias : p.Name;
                         parameters.Add(field.Alias, name, null, field.Type);
                     }
                     else
@@ -103,7 +103,7 @@ namespace Transformalize.Main
             {
                 if (parameter.Contains("."))
                 {
-                    string[] values = parameter.Split(_dotArray);
+                    var values = parameter.Split(_dotArray);
                     var p = new ParameterConfigurationElement
                                 {
                                     Entity = values[0],

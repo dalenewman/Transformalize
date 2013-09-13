@@ -38,11 +38,11 @@ namespace Transformalize.Main.Template_
 
         public void Manage()
         {
-            string folder = Common.GetTemporaryFolder(_process.Name);
+            var folder = Common.GetTemporaryFolder(_process.Name);
 
             foreach (var pair in _process.Templates)
             {
-                string result = pair.Value.Render();
+                var result = pair.Value.Render();
                 _log.Debug("Rendered {0} template.", pair.Value.Name);
 
                 var renderedInfo = new FileInfo(folder.TrimEnd(_trim) + @"\" + pair.Value.Name + ".temp.txt");
@@ -51,7 +51,7 @@ namespace Transformalize.Main.Template_
                 if (!_process.Options.PerformTemplateActions)
                     continue;
 
-                foreach (TemplateAction action in pair.Value.Actions)
+                foreach (var action in pair.Value.Actions)
                 {
                     action.RenderedFile = renderedInfo.FullName;
                     switch (action.Action.ToLower())

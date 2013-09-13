@@ -1,20 +1,24 @@
-﻿/*
-Transformalize - Replicate, Transform, and Denormalize Your Data...
-Copyright (C) 2013 Dale Newman
+﻿#region License
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+#endregion
 
 using System;
 using System.Collections.Generic;
@@ -22,11 +26,11 @@ using System.Linq;
 using Moq;
 using NUnit.Framework;
 using Transformalize.Configuration;
+using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.SqlServer;
-using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Operations;
 using Transformalize.Runner;
 
@@ -66,14 +70,14 @@ namespace Transformalize.Test.Unit
         [Test]
         public void TestEntityKeysToOperations()
         {
-            Entity entity = _process.Entities.First();
+            var entity = _process.Entities.First();
 
             TestOperation(
                 _entityKeysExtract.Object,
                 new EntityInputKeysStore(_process, entity)
                 );
 
-            List<Row> operations = TestOperation(
+            var operations = TestOperation(
                 new EntityKeysToOperations(entity)
                 );
 
@@ -83,14 +87,14 @@ namespace Transformalize.Test.Unit
         [Test]
         public void TestKeyInserts()
         {
-            Entity entity = _process.Entities.First();
+            var entity = _process.Entities.First();
             entity.OutputConnection.IsReady();
 
-            List<Row> rows = TestOperation(_entityKeysExtract.Object);
+            var rows = TestOperation(_entityKeysExtract.Object);
 
             Assert.AreEqual(4, rows.Count);
 
-            string actual = SqlTemplates.BatchInsertValues(2, "@KEYS", entity.PrimaryKey.ToEnumerable().ToArray(), rows, entity.OutputConnection);
+            var actual = SqlTemplates.BatchInsertValues(2, "@KEYS", entity.PrimaryKey.ToEnumerable().ToArray(), rows, entity.OutputConnection);
             const string expected = @"
 INSERT INTO @KEYS
 SELECT 1
@@ -105,9 +109,9 @@ UNION ALL SELECT 4;";
         [Test]
         public void TestKeysTableVariable()
         {
-            Entity entity = _process.Entities.First();
+            var entity = _process.Entities.First();
 
-            string actual = _process.MasterEntity.OutputConnection.WriteTemporaryTable("@KEYS", entity.PrimaryKey.ToEnumerable().ToArray());
+            var actual = _process.MasterEntity.OutputConnection.WriteTemporaryTable("@KEYS", entity.PrimaryKey.ToEnumerable().ToArray());
             const string expected = "DECLARE @KEYS AS TABLE([OrderDetailKey] INT);";
 
             Assert.AreEqual(expected, actual);
@@ -116,9 +120,9 @@ UNION ALL SELECT 4;";
         [Test]
         public void TestSelectByKeysSql()
         {
-            Entity entity = _process.Entities.First();
+            var entity = _process.Entities.First();
 
-            string actual = SqlTemplates.Select(entity.All, entity.OutputName(), "@KEYS", entity.OutputConnection.Provider);
+            var actual = SqlTemplates.Select(entity.All, entity.OutputName(), "@KEYS", entity.OutputConnection.Provider);
 
             const string expected = @"
 SELECT
@@ -138,7 +142,7 @@ OPTION (MAXDOP 2);";
         [Test]
         public void TestWriteSql()
         {
-            string actual = new SqlServerViewWriter(_process).CreateSql();
+            var actual = new SqlServerViewWriter(_process).CreateSql();
 
             Assert.AreEqual(@"CREATE VIEW TestOrderDetailStar AS
 SELECT
@@ -156,14 +160,14 @@ SELECT
     [TestOrderDetail].[Result],
     [TestOrderDetail].[Size],
     ISNULL([TestOrderDetail].[CustomerKey], 0) AS [CustomerKey],
-    ISNULL([TestOrder].[OrderDate], '12/31/9999 12:00:00 AM') AS [OrderDate],
     ISNULL([TestCustomer].[Address], '') AS [Address],
     ISNULL([TestCustomer].[City], '') AS [City],
     ISNULL([TestCustomer].[Country], '') AS [Country],
     ISNULL([TestCustomer].[FirstName], '') AS [FirstName],
     ISNULL([TestCustomer].[LastName], '') AS [LastName],
-    ISNULL([TestCustomer].[State], '') AS [State],
-    ISNULL([TestProduct].[ProductName], 'None') AS [ProductName]
+    ISNULL([TestOrder].[OrderDate], '12/31/9999 12:00:00 AM') AS [OrderDate],
+    ISNULL([TestProduct].[ProductName], 'None') AS [ProductName],
+    ISNULL([TestCustomer].[State], '') AS [State]
 FROM TestOrderDetail
 INNER JOIN TflBatch b ON (TestOrderDetail.TflBatchId = b.TflBatchId AND b.ProcessName = 'Test')
 LEFT OUTER JOIN TestOrder ON (TestOrderDetail.[OrderKey] = TestOrder.[OrderKey])

@@ -1,3 +1,25 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
 using Transformalize.Libs.FileHelpers.Engines;
 using Transformalize.Libs.FileHelpers.Enums;
 using Transformalize.Libs.FileHelpers.ErrorHandling;
@@ -32,19 +54,19 @@ namespace Transformalize.Libs.FileHelpers.RunTime
 
             if (options.SampleFileName != string.Empty)
             {
-                string firstLine = CommonEngine.RawReadFirstLines(options.SampleFileName, 1);
+                var firstLine = CommonEngine.RawReadFirstLines(options.SampleFileName, 1);
 
                 if (options.HeaderLines > 0)
                 {
-                    foreach (string header in firstLine.Split(options.HeaderDelimiter == char.MinValue ? options.Delimiter : options.HeaderDelimiter))
+                    foreach (var header in firstLine.Split(options.HeaderDelimiter == char.MinValue ? options.Delimiter : options.HeaderDelimiter))
                     {
                         AddField(StringToIdentifier(header));
                     }
                 }
                 else
                 {
-                    int fieldsNbr = firstLine.Split(options.Delimiter).Length;
-                    for (int i = 0; i < fieldsNbr; i++)
+                    var fieldsNbr = firstLine.Split(options.Delimiter).Length;
+                    for (var i = 0; i < fieldsNbr; i++)
                         AddField(options.FieldsPrefix + i.ToString());
                 }
             }
@@ -95,11 +117,11 @@ namespace Transformalize.Libs.FileHelpers.RunTime
         /// <param name="number">The number of fileds to add.</param>
         public void AddFields(int number, string prefix)
         {
-            int initFields = mFields.Count;
+            var initFields = mFields.Count;
 
-            for (int i = 0; i < number; i++)
+            for (var i = 0; i < number; i++)
             {
-                int current = i + initFields + 1;
+                var current = i + initFields + 1;
                 AddField(prefix + (current).ToString());
             }
         }

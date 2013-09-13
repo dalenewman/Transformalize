@@ -21,7 +21,6 @@
 #endregion
 
 using System.IO;
-using Transformalize.Main.Providers;
 
 namespace Transformalize.Main.Template_
 {
@@ -32,10 +31,10 @@ namespace Transformalize.Main.Template_
             var fileInfo = new FileInfo(action.RenderedFile);
             if (fileInfo.Exists)
             {
-                string script = File.ReadAllText(fileInfo.FullName);
+                var script = File.ReadAllText(fileInfo.FullName);
                 if (!string.IsNullOrEmpty(script))
                 {
-                    IScriptReponse response = action.Connection.ExecuteScript(script);
+                    var response = action.Connection.ExecuteScript(script);
                     if (response.Success)
                     {
                         Log.Info("{0} ran successfully.", action.TemplateName);
@@ -45,7 +44,7 @@ namespace Transformalize.Main.Template_
                     else
                     {
                         Log.Warn("{0} failed", action.TemplateName);
-                        foreach (string message in response.Messages)
+                        foreach (var message in response.Messages)
                         {
                             Log.Warn(message);
                         }

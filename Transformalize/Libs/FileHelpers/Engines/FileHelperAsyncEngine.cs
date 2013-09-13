@@ -1,3 +1,25 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
 #undef GENERICS
 //#define GENERICS
 //#if NET_2_0
@@ -115,9 +137,9 @@ namespace Transformalize.Libs.FileHelpers.Engines
 
             if (mRecordInfo.mIgnoreFirst > 0)
             {
-                for (int i = 0; i < mRecordInfo.mIgnoreFirst; i++)
+                for (var i = 0; i < mRecordInfo.mIgnoreFirst; i++)
                 {
-                    string temp = reader.ReadLine();
+                    var temp = reader.ReadLine();
                     mLineNumber++;
                     if (temp != null)
                         mHeaderText += temp + StringHelper.NewLine;
@@ -170,10 +192,10 @@ namespace Transformalize.Libs.FileHelpers.Engines
 
         private void ReadNextRecord()
         {
-            string currentLine = mAsyncReader.ReadNextLine();
+            var currentLine = mAsyncReader.ReadNextLine();
             mLineNumber++;
 
-            bool byPass = false;
+            var byPass = false;
 
 #if ! GENERICS
             mLastRecord = null;
@@ -274,7 +296,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
 
             var arr = new ArrayList(numberOfRecords);
 
-            for (int i = 0; i < numberOfRecords; i++)
+            for (var i = 0; i < numberOfRecords; i++)
             {
                 ReadNextRecord();
                 if (mLastRecord != null)
@@ -455,9 +477,9 @@ namespace Transformalize.Libs.FileHelpers.Engines
             if (records == null)
                 throw new ArgumentNullException("The record to write can´t be null.");
 
-            bool first = true;
+            var first = true;
 #if ! GENERICS
-            foreach (object rec in records)
+            foreach (var rec in records)
 #else
 			foreach (T rec in records)
 #endif
@@ -509,7 +531,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
 
             public bool MoveNext()
             {
-                object res = mEngine.ReadNext();
+                var res = mEngine.ReadNext();
 
                 if (res == null)
                 {

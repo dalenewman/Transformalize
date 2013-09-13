@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -79,7 +101,7 @@ namespace Transformalize.Libs.RazorEngine.Compilation
         /// <returns>A new random class name.</returns>
         public static string GenerateClassName()
         {
-            Guid guid = Guid.NewGuid();
+            var guid = Guid.NewGuid();
             return Regex.Replace(guid.ToString("N"), @"[^A-Za-z]*", "");
         }
 
@@ -93,7 +115,7 @@ namespace Transformalize.Libs.RazorEngine.Compilation
             if (type == null)
                 throw new ArgumentNullException("type");
 
-            ConstructorInfo[] constructors = type
+            var constructors = type
                 .GetConstructors(BindingFlags.Public | BindingFlags.Instance);
 
             return constructors;
@@ -145,7 +167,7 @@ namespace Transformalize.Libs.RazorEngine.Compilation
         public static Type GetFirstGenericInterface(Type type)
         {
             Type firstInterface = null;
-            foreach (Type @interface in type.GetInterfaces())
+            foreach (var @interface in type.GetInterfaces())
             {
                 if (firstInterface == null)
                     firstInterface = @interface;
@@ -163,7 +185,7 @@ namespace Transformalize.Libs.RazorEngine.Compilation
         [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
         public static IEnumerable<Assembly> GetLoadedAssemblies()
         {
-            AppDomain domain = AppDomain.CurrentDomain;
+            var domain = AppDomain.CurrentDomain;
             return domain.GetAssemblies();
         }
 

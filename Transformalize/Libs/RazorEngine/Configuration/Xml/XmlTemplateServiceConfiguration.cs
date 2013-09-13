@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -104,7 +126,7 @@ namespace Transformalize.Libs.RazorEngine.Configuration.Xml
         /// <returns>The instance.</returns>
         private T GetInstance<T>(Type type)
         {
-            Type instanceType = typeof (T);
+            var instanceType = typeof (T);
 
             if (!instanceType.IsAssignableFrom(type))
                 throw new ConfigurationErrorsException("The type '" + type.FullName + "' is not assignable to type '" + instanceType.FullName + "'");
@@ -122,7 +144,7 @@ namespace Transformalize.Libs.RazorEngine.Configuration.Xml
             if (string.IsNullOrWhiteSpace(typeName))
                 return null;
 
-            Type type = Type.GetType(typeName);
+            var type = Type.GetType(typeName);
             if (type == null)
                 throw new ConfigurationErrorsException("The type '" + typeName + "' could not be loaded.");
 
@@ -135,14 +157,14 @@ namespace Transformalize.Libs.RazorEngine.Configuration.Xml
         /// <param name="name">The name of the template service configuration.</param>
         private void InitialiseConfiguration(string name)
         {
-            RazorEngineConfigurationSection config = RazorEngineConfigurationSection.GetConfiguration();
+            var config = RazorEngineConfigurationSection.GetConfiguration();
             if (config == null)
                 throw new ConfigurationErrorsException("No <razorEngine> configuration section has been defined.");
 
-            TemplateServiceConfigurationElement serviceConfig = config.TemplateServices
-                                                                      .OfType<TemplateServiceConfigurationElement>()
-                                                                      .Where(t => t.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
-                                                                      .SingleOrDefault();
+            var serviceConfig = config.TemplateServices
+                                      .OfType<TemplateServiceConfigurationElement>()
+                                      .Where(t => t.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+                                      .SingleOrDefault();
 
             if (serviceConfig == null)
                 throw new ConfigurationErrorsException("No <templateService> configuration element defined with name = '" + name + "'");
@@ -189,7 +211,7 @@ namespace Transformalize.Libs.RazorEngine.Configuration.Xml
         /// <param name="activatorType">The activator type.</param>
         private void SetActivator(string activatorType)
         {
-            Type type = GetType(activatorType);
+            var type = GetType(activatorType);
             if (type != null)
                 Activator = GetInstance<IActivator>(type);
         }
@@ -200,7 +222,7 @@ namespace Transformalize.Libs.RazorEngine.Configuration.Xml
         /// <param name="baseTemplateType">The base template type.</param>
         private void SetBaseTemplateType(string baseTemplateType)
         {
-            Type type = GetType(baseTemplateType);
+            var type = GetType(baseTemplateType);
             if (type != null)
                 BaseTemplateType = type;
         }
@@ -211,7 +233,7 @@ namespace Transformalize.Libs.RazorEngine.Configuration.Xml
         /// <param name="compilerServiceFactoryType">The compiler service factory type.</param>
         private void SetCompilerServiceFactory(string compilerServiceFactoryType)
         {
-            Type type = GetType(compilerServiceFactoryType);
+            var type = GetType(compilerServiceFactoryType);
             if (type != null)
                 CompilerServiceFactory = GetInstance<ICompilerServiceFactory>(type);
         }
@@ -222,7 +244,7 @@ namespace Transformalize.Libs.RazorEngine.Configuration.Xml
         /// <param name="encodedStringFactoryType"></param>
         private void SetEncodedStringFactory(string encodedStringFactoryType)
         {
-            Type type = GetType(encodedStringFactoryType);
+            var type = GetType(encodedStringFactoryType);
             if (type != null)
                 EncodedStringFactory = GetInstance<IEncodedStringFactory>(type);
         }
@@ -233,7 +255,7 @@ namespace Transformalize.Libs.RazorEngine.Configuration.Xml
         /// <param name="templateResolverType">The template resolver type.</param>
         private void SetTemplateResolver(string templateResolverType)
         {
-            Type type = GetType(templateResolverType);
+            var type = GetType(templateResolverType);
             if (type != null)
                 Resolver = GetInstance<ITemplateResolver>(type);
         }

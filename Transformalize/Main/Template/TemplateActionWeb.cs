@@ -28,10 +28,10 @@ namespace Transformalize.Main.Template_
     {
         public override void Handle(TemplateAction action)
         {
-            string method = action.Method.ToLower();
+            var method = action.Method.ToLower();
             if (!string.IsNullOrEmpty(action.Url))
             {
-                WebResponse response = method == "post" ? Web.Post(action.Url, string.Empty) : Web.Get(action.Url);
+                var response = method == "post" ? Web.Post(action.Url, string.Empty) : Web.Get(action.Url);
                 if (response.Code == HttpStatusCode.OK)
                 {
                     Log.Info("Made web request to {0}.", action.Url);

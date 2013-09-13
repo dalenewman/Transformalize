@@ -62,18 +62,15 @@ namespace Transformalize.Main
                 var autoReader = new SqlServerEntityAutoFieldReader();
                 entity.All = autoReader.Read(entity, isMaster);
                 entity.Fields = new FieldSqlWriter(entity.All).FieldType(FieldType.Field).Context();
-                entity.PrimaryKey =
-                    new FieldSqlWriter(entity.All).FieldType(FieldType.PrimaryKey, FieldType.MasterKey).Context();
+                entity.PrimaryKey = new FieldSqlWriter(entity.All).FieldType(FieldType.PrimaryKey, FieldType.MasterKey).Context();
             }
 
-            int pkIndex = 0;
+            var pkIndex = 0;
             foreach (FieldConfigurationElement pk in element.PrimaryKey)
             {
-                FieldType fieldType = isMaster ? FieldType.MasterKey : FieldType.PrimaryKey;
+                var fieldType = isMaster ? FieldType.MasterKey : FieldType.PrimaryKey;
 
-                Field keyField =
-                    new FieldReader(_process, entity, new FieldTransformParametersReader(pk.Alias),
-                                    new EmptyParametersReader()).Read(pk, fieldType);
+                var keyField = new FieldReader(_process, entity, new FieldTransformParametersReader(pk.Alias), new EmptyParametersReader()).Read(pk, fieldType);
                 keyField.Index = pkIndex;
 
                 entity.PrimaryKey[pk.Alias] = keyField;
@@ -82,19 +79,15 @@ namespace Transformalize.Main
                 pkIndex++;
             }
 
-            int fieldIndex = 0;
+            var fieldIndex = 0;
             foreach (FieldConfigurationElement f in element.Fields)
             {
-                Field field =
-                    new FieldReader(_process, entity, new FieldTransformParametersReader(f.Alias),
-                                    new EmptyParametersReader()).Read(f);
+                var field = new FieldReader(_process, entity, new FieldTransformParametersReader(f.Alias), new EmptyParametersReader()).Read(f);
                 field.Index = fieldIndex;
 
                 foreach (XmlConfigurationElement x in f.Xml)
                 {
-                    Field xmlField =
-                        new FieldReader(_process, entity, new FieldTransformParametersReader(x.Alias),
-                                        new EmptyParametersReader()).Read(x, f);
+                    var xmlField = new FieldReader(_process, entity, new FieldTransformParametersReader(x.Alias), new EmptyParametersReader()).Read(x, f);
                     field.InnerXml.Add(x.Alias, xmlField);
                 }
 

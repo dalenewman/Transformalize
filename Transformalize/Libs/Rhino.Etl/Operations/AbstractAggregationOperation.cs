@@ -1,3 +1,25 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
 using System.Collections.Generic;
 
 namespace Transformalize.Libs.Rhino.Etl.Operations
@@ -16,16 +38,16 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
         {
             IDictionary<ObjectArrayKeys, Row> aggregations = new Dictionary<ObjectArrayKeys, Row>();
-            string[] groupBy = GetColumnsToGroupBy();
-            foreach (Row row in rows)
+            var groupBy = GetColumnsToGroupBy();
+            foreach (var row in rows)
             {
-                ObjectArrayKeys key = row.CreateKey(groupBy);
+                var key = row.CreateKey(groupBy);
                 Row aggregate;
                 if (aggregations.TryGetValue(key, out aggregate) == false)
                     aggregations[key] = aggregate = new Row();
                 Accumulate(row, aggregate);
             }
-            foreach (Row row in aggregations.Values)
+            foreach (var row in aggregations.Values)
             {
                 FinishAggregation(row);
                 yield return row;

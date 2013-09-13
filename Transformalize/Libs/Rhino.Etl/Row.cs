@@ -1,3 +1,25 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -97,7 +119,7 @@ namespace Transformalize.Libs.Rhino.Etl
         public ObjectArrayKeys CreateKey(string[] columns)
         {
             var array = new object[columns.Length];
-            for (int i = 0; i < columns.Length; i++)
+            for (var i = 0; i < columns.Length; i++)
             {
                 array[i] = _storage[columns[i]];
             }
@@ -112,8 +134,8 @@ namespace Transformalize.Libs.Rhino.Etl
         public static Row FromReader(IDataReader reader)
         {
             var row = new Row();
-            int count = reader.FieldCount;
-            for (int i = 0; i < count; i++)
+            var count = reader.FieldCount;
+            for (var i = 0; i < count; i++)
             {
                 row[reader.GetName(i)] = reader.GetValue(i);
             }
@@ -132,7 +154,7 @@ namespace Transformalize.Libs.Rhino.Etl
                 return properties;
 
             properties = new List<PropertyInfo>();
-            foreach (PropertyInfo property in obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic))
+            foreach (var property in obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic))
             {
                 if (property.CanRead == false || property.GetIndexParameters().Length > 0)
                     continue;
@@ -149,7 +171,7 @@ namespace Transformalize.Libs.Rhino.Etl
                 return fields;
 
             fields = new List<FieldInfo>();
-            foreach (FieldInfo fieldInfo in obj.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic))
+            foreach (var fieldInfo in obj.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic))
             {
                 if (Attribute.IsDefined(fieldInfo, typeof (CompilerGeneratedAttribute)) == false)
                 {
@@ -170,11 +192,11 @@ namespace Transformalize.Libs.Rhino.Etl
             if (obj == null)
                 throw new ArgumentNullException("obj");
             var row = new Row();
-            foreach (PropertyInfo property in GetProperties(obj))
+            foreach (var property in GetProperties(obj))
             {
                 row[property.Name] = property.GetValue(obj, new object[0]);
             }
-            foreach (FieldInfo field in GetFields(obj))
+            foreach (var field in GetFields(obj))
             {
                 row[field.Name] = field.GetValue(obj);
             }

@@ -40,7 +40,7 @@ namespace Transformalize.Main.Providers.AnalysisServices
                 _log.Debug("Connecting to {0} on {1}.", connection.Database, connection.Server);
                 server.Connect(connection.ConnectionString);
 
-                XmlaResultCollection results = server.Execute(script);
+                var results = server.Execute(script);
 
                 foreach (XmlaResult result in results)
                 {

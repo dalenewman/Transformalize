@@ -45,7 +45,7 @@ ELSE
 
         public bool Exists(string schema, string name)
         {
-            string sql = string.Format(FORMAT, schema, name);
+            var sql = string.Format(FORMAT, schema, name);
             using (var cn = new SqlConnection(_connectionString))
             {
                 cn.Open();

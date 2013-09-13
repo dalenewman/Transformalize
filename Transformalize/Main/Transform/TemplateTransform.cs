@@ -20,7 +20,6 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Text;
 using Transformalize.Libs.NLog;
@@ -67,7 +66,7 @@ namespace Transformalize.Main
 
             _key = key;
 
-            Type type = templateModelType == "dynamic" ? typeof (DynamicViewBag) : typeof (Dictionary<string, object>);
+            var type = templateModelType == "dynamic" ? typeof (DynamicViewBag) : typeof (Dictionary<string, object>);
 
             Razor.Compile(_builder.ToString(), type, _key);
             _log.Debug("Compiled {0} template with key {1}.", templateModelType, _key);

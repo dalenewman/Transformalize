@@ -1,3 +1,25 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -50,7 +72,7 @@ namespace Transformalize.Libs.fastJSON
                     default:
                         {
                             // name
-                            string name = ParseString();
+                            var name = ParseString();
                             if (_ignorecase)
                                 name = name.ToLower();
 
@@ -61,7 +83,7 @@ namespace Transformalize.Libs.fastJSON
                             }
 
                             // value
-                            object value = ParseValue();
+                            var value = ParseValue();
 
                             table[name] = value;
                         }
@@ -132,11 +154,11 @@ namespace Transformalize.Libs.fastJSON
 
             s.Length = 0;
 
-            int runIndex = -1;
+            var runIndex = -1;
 
             while (index < json.Length)
             {
-                char c = json[index++];
+                var c = json[index++];
 
                 if (c == '"')
                 {
@@ -202,11 +224,11 @@ namespace Transformalize.Libs.fastJSON
 
                     case 'u':
                         {
-                            int remainingLength = json.Length - index;
+                            var remainingLength = json.Length - index;
                             if (remainingLength < 4) break;
 
                             // parse the 32 bit hex into an integer codepoint
-                            uint codePoint = ParseUnicode(json[index], json[index + 1], json[index + 2], json[index + 3]);
+                            var codePoint = ParseUnicode(json[index], json[index + 1], json[index + 2], json[index + 3]);
                             s.Append((char) codePoint);
 
                             // skip 4 chars
@@ -233,10 +255,10 @@ namespace Transformalize.Libs.fastJSON
 
         private uint ParseUnicode(char c1, char c2, char c3, char c4)
         {
-            uint p1 = ParseSingleChar(c1, 0x1000);
-            uint p2 = ParseSingleChar(c2, 0x100);
-            uint p3 = ParseSingleChar(c3, 0x10);
-            uint p4 = ParseSingleChar(c4, 1);
+            var p1 = ParseSingleChar(c1, 0x1000);
+            var p2 = ParseSingleChar(c2, 0x100);
+            var p3 = ParseSingleChar(c3, 0x10);
+            var p4 = ParseSingleChar(c4, 1);
 
             return p1 + p2 + p3 + p4;
         }
@@ -244,8 +266,8 @@ namespace Transformalize.Libs.fastJSON
         private long CreateLong(string s)
         {
             long num = 0;
-            bool neg = false;
-            foreach (char cc in s)
+            var neg = false;
+            foreach (var cc in s)
             {
                 if (cc == '-')
                     neg = true;
@@ -266,13 +288,13 @@ namespace Transformalize.Libs.fastJSON
             ConsumeToken();
 
             // Need to start back one place because the first digit is also a token and would have been consumed
-            int startIndex = index - 1;
-            bool dec = false;
+            var startIndex = index - 1;
+            var dec = false;
             do
             {
                 if (index == json.Length)
                     break;
-                char c = json[index];
+                var c = json[index];
 
                 if ((c >= '0' && c <= '9') || c == '.' || c == '-' || c == '+' || c == 'e' || c == 'E')
                 {
@@ -308,7 +330,7 @@ namespace Transformalize.Libs.fastJSON
 
         private Token NextToken()
         {
-            Token result = lookAheadToken != Token.None ? lookAheadToken : NextTokenCore();
+            var result = lookAheadToken != Token.None ? lookAheadToken : NextTokenCore();
 
             lookAheadToken = Token.None;
 

@@ -44,7 +44,7 @@ namespace Transformalize.Main.Providers.SqlServer
                     using (var cn = new SqlConnection(entity.InputConnection.ConnectionString))
                     {
                         cn.Open();
-                        string sql = string.Format("SELECT COUNT(*) FROM [{0}].[{1}] WITH (NOLOCK);", entity.Schema, entity.Alias);
+                        var sql = string.Format("SELECT COUNT(*) FROM [{0}].[{1}] WITH (NOLOCK);", entity.Schema, entity.Alias);
                         var cmd = new SqlCommand(sql, cn);
                         return (int) cmd.ExecuteScalar();
                     }
@@ -62,7 +62,7 @@ namespace Transformalize.Main.Providers.SqlServer
                     using (var cn = new SqlConnection(entity.OutputConnection.ConnectionString))
                     {
                         cn.Open();
-                        string sql = string.Format("SELECT COUNT(*) FROM [dbo].[{0}] WITH (NOLOCK);", entity.OutputName());
+                        var sql = string.Format("SELECT COUNT(*) FROM [dbo].[{0}] WITH (NOLOCK);", entity.OutputName());
                         var cmd = new SqlCommand(sql, cn);
                         return (int) cmd.ExecuteScalar();
                     }

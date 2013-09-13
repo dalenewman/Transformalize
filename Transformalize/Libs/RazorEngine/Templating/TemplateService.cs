@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
@@ -99,8 +121,8 @@ namespace Transformalize.Libs.RazorEngine.Templating
         /// <param name="cacheName">The name of the template type in the cache.</param>
         public void Compile(string razorTemplate, Type modelType, string cacheName)
         {
-            int hashCode = razorTemplate.GetHashCode();
-            Type type = CreateTemplateType(razorTemplate, modelType);
+            var hashCode = razorTemplate.GetHashCode();
+            var type = CreateTemplateType(razorTemplate, modelType);
             var item = new CachedTemplateItem(hashCode, type);
 
             _cache.AddOrUpdate(cacheName, item, (n, i) => item);
@@ -126,12 +148,12 @@ namespace Transformalize.Libs.RazorEngine.Templating
         {
             if (templateType == null)
             {
-                Type modelType = (model == null) ? typeof (object) : model.GetType();
+                var modelType = (model == null) ? typeof (object) : model.GetType();
                 templateType = CreateTemplateType(razorTemplate, modelType);
             }
 
-            InstanceContext context = CreateInstanceContext(templateType);
-            ITemplate instance = _config.Activator.CreateInstance(context);
+            var context = CreateInstanceContext(templateType);
+            var instance = _config.Activator.CreateInstance(context);
             instance.TemplateService = this;
 
             SetModel(instance, model);
@@ -164,11 +186,11 @@ namespace Transformalize.Libs.RazorEngine.Templating
             if ((razorTemplates == null) && (templateTypes == null))
                 throw new ArgumentException("The razorTemplates and templateTypes parameters may not both be null.");
 
-            List<string> razorTemplateList = (razorTemplates == null) ? null : razorTemplates.ToList();
-            List<object> modelList = (models == null) ? null : models.ToList();
-            List<Type> templateTypeList = (templateTypes == null) ? null : templateTypes.ToList();
+            var razorTemplateList = (razorTemplates == null) ? null : razorTemplates.ToList();
+            var modelList = (models == null) ? null : models.ToList();
+            var templateTypeList = (templateTypes == null) ? null : templateTypes.ToList();
 
-            int templateCount = (razorTemplateList != null) ? razorTemplateList.Count() : templateTypeList.Count();
+            var templateCount = (razorTemplateList != null) ? razorTemplateList.Count() : templateTypeList.Count();
 
             if ((razorTemplateList != null) && (razorTemplateList.Count != templateTypeList.Count))
                 throw new ArgumentException("Expected the same number of templateTypes as razorTemplates to be processed.");
@@ -181,7 +203,7 @@ namespace Transformalize.Libs.RazorEngine.Templating
 
             if ((razorTemplateList != null) && (templateTypeList != null))
             {
-                for (int i = 0; (i < templateCount); i++)
+                for (var i = 0; (i < templateCount); i++)
                 {
                     if (razorTemplateList == null)
                     {
@@ -249,16 +271,16 @@ namespace Transformalize.Libs.RazorEngine.Templating
                                   TemplateType = (_config.BaseTemplateType) ?? typeof (TemplateBase<>)
                               };
 
-            foreach (string ns in _config.Namespaces)
+            foreach (var ns in _config.Namespaces)
                 context.Namespaces.Add(ns);
 
-            ICompilerService service = _config
+            var service = _config
                 .CompilerServiceFactory
                 .CreateCompilerService(_config.Language);
             service.Debug = _config.Debug;
             service.CodeInspectors = _config.CodeInspectors ?? Enumerable.Empty<ICodeInspector>();
 
-            Tuple<Type, Assembly> result = service.CompileType(context);
+            var result = service.CompileType(context);
 
             _assemblies.Add(result.Item2);
 
@@ -284,7 +306,7 @@ namespace Transformalize.Libs.RazorEngine.Templating
         {
             Contract.Requires(razorTemplates != null);
 
-            List<Type> modelTypeList = (modelTypes == null) ? null : modelTypes.ToList();
+            var modelTypeList = (modelTypes == null) ? null : modelTypes.ToList();
 
             if (parallel)
                 return GetParallelQueryPlan<string>()
@@ -343,8 +365,8 @@ namespace Transformalize.Libs.RazorEngine.Templating
             Contract.Requires(razorTemplates.Count() == cacheNames.Count(),
                               "Expected same number of cache names as string templates to be processed.");
 
-            List<object> modelList = (models == null) ? null : models.ToList();
-            List<string> cacheNameList = cacheNames.ToList();
+            var modelList = (models == null) ? null : models.ToList();
+            var cacheNameList = cacheNames.ToList();
 
             if (parallel)
                 return GetParallelQueryPlan<string>()
@@ -434,9 +456,9 @@ namespace Transformalize.Libs.RazorEngine.Templating
             if ((cacheNames != null) && (razorTemplates.Count() != cacheNames.Count()))
                 throw new ArgumentException("Expected same number of cacheNames as string templates to be processed.");
 
-            List<object> modelList = (models == null) ? null : models.ToList();
-            List<DynamicViewBag> viewBagList = (viewBags == null) ? null : viewBags.ToList();
-            List<string> cacheNameList = (cacheNames == null) ? null : cacheNames.ToList();
+            var modelList = (models == null) ? null : models.ToList();
+            var viewBagList = (viewBags == null) ? null : viewBags.ToList();
+            var cacheNameList = (cacheNames == null) ? null : cacheNames.ToList();
 
             //
             //  :Matt:
@@ -506,7 +528,7 @@ namespace Transformalize.Libs.RazorEngine.Templating
 
             if (instance == null && _config.Resolver != null)
             {
-                string template = _config.Resolver.Resolve(cacheName);
+                var template = _config.Resolver.Resolve(cacheName);
                 if (!string.IsNullOrWhiteSpace(template))
                     instance = GetTemplate(template, model, cacheName);
             }
@@ -530,7 +552,7 @@ namespace Transformalize.Libs.RazorEngine.Templating
             if (!(_cache.TryGetValue(cacheName, out item)))
                 throw new InvalidOperationException("No template exists with name '" + cacheName + "'");
 
-            ITemplate instance = CreateTemplate(null, item.TemplateType, model);
+            var instance = CreateTemplate(null, item.TemplateType, model);
 
             return Run(instance, viewBag);
         }
@@ -625,18 +647,18 @@ namespace Transformalize.Libs.RazorEngine.Templating
             if (razorTemplate == null)
                 throw new ArgumentNullException("razorTemplate");
 
-            int hashCode = razorTemplate.GetHashCode();
+            var hashCode = razorTemplate.GetHashCode();
 
             CachedTemplateItem item;
             if (!(_cache.TryGetValue(cacheName, out item) && item.CachedHashCode == hashCode))
             {
-                Type type = CreateTemplateType(razorTemplate, (model == null) ? typeof (T) : model.GetType());
+                var type = CreateTemplateType(razorTemplate, (model == null) ? typeof (T) : model.GetType());
                 item = new CachedTemplateItem(hashCode, type);
 
                 _cache.AddOrUpdate(cacheName, item, (n, i) => item);
             }
 
-            ITemplate instance = CreateTemplate(null, item.TemplateType, model);
+            var instance = CreateTemplate(null, item.TemplateType, model);
             return instance;
         }
 
@@ -679,8 +701,8 @@ namespace Transformalize.Libs.RazorEngine.Templating
         /// <param name="model">The model instance.</param>
         private static void SetModelExplicit(ITemplate template, object model)
         {
-            Type type = template.GetType();
-            PropertyInfo prop = type.GetProperty("Model");
+            var type = template.GetType();
+            var prop = type.GetProperty("Model");
 
             if (prop != null)
                 prop.SetValue(template, model, null);

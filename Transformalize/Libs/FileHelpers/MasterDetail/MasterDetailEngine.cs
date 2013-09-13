@@ -1,3 +1,25 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
 #undef GENERICS
 //#define GENERICS
 //#if NET_2_0
@@ -247,11 +269,11 @@ namespace Transformalize.Libs.FileHelpers.MasterDetail
 #if !MINI
             ProgressHelper.Notify(mNotifyHandler, mProgressMode, 0, -1);
 #endif
-            int currentRecord = 0;
+            var currentRecord = 0;
 
             if (mMasterInfo.mIgnoreFirst > 0)
             {
-                for (int i = 0; i < mMasterInfo.mIgnoreFirst && currentLine != null; i++)
+                for (var i = 0; i < mMasterInfo.mIgnoreFirst && currentLine != null; i++)
                 {
                     mHeaderText += currentLine + StringHelper.NewLine;
                     currentLine = freader.ReadNextLine();
@@ -260,7 +282,7 @@ namespace Transformalize.Libs.FileHelpers.MasterDetail
             }
 
 
-            bool byPass = false;
+            var byPass = false;
 
 #if ! GENERICS
             MasterDetails record = null;
@@ -284,7 +306,7 @@ namespace Transformalize.Libs.FileHelpers.MasterDetail
                     ProgressHelper.Notify(mNotifyHandler, mProgressMode, currentRecord, -1);
 #endif
 
-                    RecordAction action = mRecordSelector(currentLine);
+                    var action = mRecordSelector(currentLine);
 
                     switch (action)
                     {
@@ -307,7 +329,7 @@ namespace Transformalize.Libs.FileHelpers.MasterDetail
 #endif
                             tmpDetails.Clear();
 #if ! GENERICS
-                            object lastMaster = mMasterInfo.StringToRecord(line);
+                            var lastMaster = mMasterInfo.StringToRecord(line);
 #else
 							M lastMaster = (M)mMasterInfo.StringToRecord(line);
 #endif
@@ -319,7 +341,7 @@ namespace Transformalize.Libs.FileHelpers.MasterDetail
 
                         case RecordAction.Detail:
 #if ! GENERICS
-                            object lastChild = mRecordInfo.StringToRecord(line);
+                            var lastChild = mRecordInfo.StringToRecord(line);
 #else
 							D lastChild = (D) mRecordInfo.StringToRecord(line);
 #endif
@@ -394,7 +416,7 @@ namespace Transformalize.Libs.FileHelpers.MasterDetail
         public MasterDetails[] ReadString(string source)
         {
             var reader = new StringReader(source);
-            MasterDetails[] res = ReadStream(reader);
+            var res = ReadStream(reader);
             reader.Close();
             return res;
         }
@@ -486,7 +508,7 @@ namespace Transformalize.Libs.FileHelpers.MasterDetail
             string currentLine = null;
 
             //ConstructorInfo constr = mType.GetConstructor(new Type[] {});
-            int max = records.Length;
+            var max = records.Length;
 
             if (maxRecords >= 0)
                 max = Math.Min(records.Length, maxRecords);
@@ -496,7 +518,7 @@ namespace Transformalize.Libs.FileHelpers.MasterDetail
             ProgressHelper.Notify(mNotifyHandler, mProgressMode, 0, max);
 #endif
 
-            for (int i = 0; i < max; i++)
+            for (var i = 0; i < max; i++)
             {
                 try
                 {
@@ -511,7 +533,7 @@ namespace Transformalize.Libs.FileHelpers.MasterDetail
                     writer.WriteLine(currentLine);
 
                     if (records[i].mDetails != null)
-                        for (int d = 0; d < records[i].mDetails.Length; d++)
+                        for (var d = 0; d < records[i].mDetails.Length; d++)
                         {
                             currentLine = mRecordInfo.RecordToString(records[i].mDetails[d]);
                             writer.WriteLine(currentLine);
@@ -570,7 +592,7 @@ namespace Transformalize.Libs.FileHelpers.MasterDetail
             var sb = new StringBuilder();
             var writer = new StringWriter(sb);
             WriteStream(writer, records, maxRecords);
-            string res = writer.ToString();
+            var res = writer.ToString();
             writer.Close();
             return res;
         }
@@ -599,7 +621,7 @@ namespace Transformalize.Libs.FileHelpers.MasterDetail
 		public void AppendToFile(string fileName, MasterDetails<M,D>[] records)
 #endif
         {
-            using (TextWriter writer = StreamHelper.CreateFileAppender(fileName, mEncoding, true, false))
+            using (var writer = StreamHelper.CreateFileAppender(fileName, mEncoding, true, false))
             {
                 mHeaderText = String.Empty;
                 mFooterText = String.Empty;

@@ -1,12 +1,22 @@
 ﻿#region License
 
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
 // 
-// Author: Nate Kohari <nate@enkari.com>
-// Copyright (c) 2007-2010, Enkari, Ltd.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 // 
-// Dual-licensed under the Apache License, Version 2.0, and the Microsoft Public License (Ms-PL).
-// See the file LICENSE.txt for details.
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 // 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
 
 #endregion
 
@@ -39,7 +49,7 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
         {
             using (var sw = new StringWriter())
             {
-                IRequest current = request;
+                var current = request;
 
                 while (current != null)
                 {
@@ -67,7 +77,7 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
                 if (binding.IsImplicit)
                     sw.Write("implicit ");
 
-                IProvider provider = binding.GetProvider(context);
+                var provider = binding.GetProvider(context);
 
                 switch (binding.Target)
                 {
@@ -158,7 +168,7 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
         /// <returns>The type formatted as string.</returns>
         public static string Format(this Type type)
         {
-            string friendlyName = GetFriendlyName(type);
+            var friendlyName = GetFriendlyName(type);
 
 #if !MONO
             if (friendlyName.Contains("AnonymousType"))
@@ -205,7 +215,7 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
                     return "decimal";
             }
 
-            Type[] genericArguments = type.GetGenericArguments();
+            var genericArguments = type.GetGenericArguments();
             if (genericArguments.Length > 0)
                 return FormatGenericType(friendlyName, genericArguments);
 
@@ -214,20 +224,20 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
 
         private static string GetFriendlyName(Type type)
         {
-            string friendlyName = type.FullName ?? type.Name;
+            var friendlyName = type.FullName ?? type.Name;
 
             // remove generic arguments
-            int firstBracket = friendlyName.IndexOf('[');
+            var firstBracket = friendlyName.IndexOf('[');
             if (firstBracket > 0)
                 friendlyName = friendlyName.Substring(0, firstBracket);
 
             // remove assembly info
-            int firstComma = friendlyName.IndexOf(',');
+            var firstComma = friendlyName.IndexOf(',');
             if (firstComma > 0)
                 friendlyName = friendlyName.Substring(0, firstComma);
 
             // remove namespace
-            int lastPeriod = friendlyName.LastIndexOf('.');
+            var lastPeriod = friendlyName.LastIndexOf('.');
             if (lastPeriod >= 0)
                 friendlyName = friendlyName.Substring(lastPeriod + 1);
 
@@ -245,13 +255,13 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
 
             var sb = new StringBuilder(friendlyName.Length + 10);
 
-            int genericArgumentIndex = 0;
-            int startIndex = 0;
-            for (int index = 0; index < friendlyName.Length; index++)
+            var genericArgumentIndex = 0;
+            var startIndex = 0;
+            for (var index = 0; index < friendlyName.Length; index++)
             {
                 if (friendlyName[index] == '`')
                 {
-                    int numArguments = friendlyName[index + 1] - 48;
+                    var numArguments = friendlyName[index + 1] - 48;
 
                     sb.Append(friendlyName.Substring(startIndex, index - startIndex));
                     AppendGenericArguments(sb, genericArguments, genericArgumentIndex, numArguments);
@@ -270,7 +280,7 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
         {
             sb.Append("{");
 
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
                 if (i != 0)
                     sb.Append(", ");

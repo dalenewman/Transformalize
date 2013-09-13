@@ -1,19 +1,28 @@
 #region License
 
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
 // 
-// Author: Nate Kohari <nate@enkari.com>
-// Copyright (c) 2007-2010, Enkari, Ltd.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 // 
-// Dual-licensed under the Apache License, Version 2.0, and the Microsoft Public License (Ms-PL).
-// See the file LICENSE.txt for details.
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 // 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
 
 #endregion
 
 #region Using Directives
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Transformalize.Libs.Ninject.Infrastructure;
@@ -86,8 +95,8 @@ namespace Transformalize.Libs.Ninject.Activation.Providers
                 throw new ActivationException(ExceptionFormatter.NoConstructorsAvailable(context));
             }
 
-            IEnumerable<ConstructorInjectionDirective> directives = context.Plan.GetAll<ConstructorInjectionDirective>();
-            IGrouping<int, ConstructorInjectionDirective> bestDirectives = directives
+            var directives = context.Plan.GetAll<ConstructorInjectionDirective>();
+            var bestDirectives = directives
                 .GroupBy(option => ConstructorScorer.Score(context, option))
                 .OrderByDescending(g => g.Key)
                 .First();
@@ -96,8 +105,8 @@ namespace Transformalize.Libs.Ninject.Activation.Providers
                 throw new ActivationException(ExceptionFormatter.ConstructorsAmbiguous(context, bestDirectives));
             }
 
-            ConstructorInjectionDirective directive = bestDirectives.Single();
-            object[] arguments = directive.Targets.Select(target => GetValue(context, target)).ToArray();
+            var directive = bestDirectives.Single();
+            var arguments = directive.Targets.Select(target => GetValue(context, target)).ToArray();
             return directive.Injector(arguments);
         }
 
@@ -112,7 +121,7 @@ namespace Transformalize.Libs.Ninject.Activation.Providers
             Ensure.ArgumentNotNull(context, "context");
             Ensure.ArgumentNotNull(target, "target");
 
-            IConstructorArgument parameter = context
+            var parameter = context
                 .Parameters.OfType<IConstructorArgument>()
                 .Where(p => p.AppliesToTarget(context, target)).SingleOrDefault();
             return parameter != null ? parameter.GetValue(context, target) : target.ResolveWithin(context);

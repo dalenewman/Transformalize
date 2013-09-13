@@ -1,12 +1,22 @@
 #region License
 
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
 // 
-// Author: Nate Kohari <nate@enkari.com>
-// Copyright (c) 2007-2010, Enkari, Ltd.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 // 
-// Dual-licensed under the Apache License, Version 2.0, and the Microsoft Public License (Ms-PL).
-// See the file LICENSE.txt for details.
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 // 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
 
 #endregion
 
@@ -41,7 +51,7 @@ namespace Transformalize.Libs.Ninject.Injection
             var dynamicMethod = new DynamicMethod(GetAnonymousMethodName(), typeof (object), new[] {typeof (object[])}, true);
 #endif
 
-            ILGenerator il = dynamicMethod.GetILGenerator();
+            var il = dynamicMethod.GetILGenerator();
 
             EmitLoadMethodArguments(il, constructor);
             il.Emit(OpCodes.Newobj, constructor);
@@ -67,7 +77,7 @@ namespace Transformalize.Libs.Ninject.Injection
             var dynamicMethod = new DynamicMethod(GetAnonymousMethodName(), typeof (void), new[] {typeof (object), typeof (object)}, true);
 #endif
 
-            ILGenerator il = dynamicMethod.GetILGenerator();
+            var il = dynamicMethod.GetILGenerator();
 
             il.Emit(OpCodes.Ldarg_0);
             EmitUnboxOrCast(il, property.DeclaringType);
@@ -76,7 +86,7 @@ namespace Transformalize.Libs.Ninject.Injection
             EmitUnboxOrCast(il, property.PropertyType);
 
 #if !SILVERLIGHT
-            bool injectNonPublic = Settings.InjectNonPublic;
+            var injectNonPublic = Settings.InjectNonPublic;
 #else
             const bool injectNonPublic = false;
             #endif
@@ -101,7 +111,7 @@ namespace Transformalize.Libs.Ninject.Injection
             var dynamicMethod = new DynamicMethod(GetAnonymousMethodName(), typeof (void), new[] {typeof (object), typeof (object[])}, true);
 #endif
 
-            ILGenerator il = dynamicMethod.GetILGenerator();
+            var il = dynamicMethod.GetILGenerator();
 
             il.Emit(OpCodes.Ldarg_0);
             EmitUnboxOrCast(il, method.DeclaringType);
@@ -119,10 +129,10 @@ namespace Transformalize.Libs.Ninject.Injection
 
         private static void EmitLoadMethodArguments(ILGenerator il, MethodBase targetMethod)
         {
-            ParameterInfo[] parameters = targetMethod.GetParameters();
-            OpCode ldargOpcode = targetMethod is ConstructorInfo ? OpCodes.Ldarg_0 : OpCodes.Ldarg_1;
+            var parameters = targetMethod.GetParameters();
+            var ldargOpcode = targetMethod is ConstructorInfo ? OpCodes.Ldarg_0 : OpCodes.Ldarg_1;
 
-            for (int idx = 0; idx < parameters.Length; idx++)
+            for (var idx = 0; idx < parameters.Length; idx++)
             {
                 il.Emit(ldargOpcode);
                 il.Emit(OpCodes.Ldc_I4, idx);
@@ -134,13 +144,13 @@ namespace Transformalize.Libs.Ninject.Injection
 
         private static void EmitMethodCall(ILGenerator il, MethodInfo method)
         {
-            OpCode opCode = method.IsFinal ? OpCodes.Call : OpCodes.Callvirt;
+            var opCode = method.IsFinal ? OpCodes.Call : OpCodes.Callvirt;
             il.Emit(opCode, method);
         }
 
         private static void EmitUnboxOrCast(ILGenerator il, Type type)
         {
-            OpCode opCode = type.IsValueType ? OpCodes.Unbox_Any : OpCodes.Castclass;
+            var opCode = type.IsValueType ? OpCodes.Unbox_Any : OpCodes.Castclass;
             il.Emit(opCode, type);
         }
 

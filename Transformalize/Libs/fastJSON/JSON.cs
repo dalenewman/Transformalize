@@ -1,3 +1,25 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -165,7 +187,7 @@ namespace Transformalize.Libs.fastJSON
                 _params.UsingGlobalTypes = false;
             _usingglobals = _params.UsingGlobalTypes;
 
-            object o = new JsonParser(json, Parameters.IgnoreCaseOnDeserialize).Decode();
+            var o = new JsonParser(json, Parameters.IgnoreCaseOnDeserialize).Decode();
             if (o == null)
                 return null;
 
@@ -313,19 +335,19 @@ namespace Transformalize.Libs.fastJSON
             else
             {
                 sd = new SafeDictionary<string, myPropInfo>();
-                PropertyInfo[] pr = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
-                foreach (PropertyInfo p in pr)
+                var pr = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
+                foreach (var p in pr)
                 {
-                    myPropInfo d = CreateMyProp(p.PropertyType, p.Name);
+                    var d = CreateMyProp(p.PropertyType, p.Name);
                     d.Flags |= myPropInfoFlags.CanWrite;
                     d.setter = Reflection.CreateSetMethod(type, p);
                     d.getter = Reflection.CreateGetMethod(type, p);
                     sd.Add(p.Name, d);
                 }
-                FieldInfo[] fi = type.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
-                foreach (FieldInfo f in fi)
+                var fi = type.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
+                foreach (var f in fi)
                 {
-                    myPropInfo d = CreateMyProp(f.FieldType, f.Name);
+                    var d = CreateMyProp(f.FieldType, f.Name);
                     d.setter = Reflection.CreateSetField(type, f);
                     d.getter = Reflection.CreateGetField(type, f);
                     sd.Add(f.Name, d);
@@ -340,7 +362,7 @@ namespace Transformalize.Libs.fastJSON
         {
             var d = new myPropInfo();
             var d_type = myPropInfoType.Unknown;
-            myPropInfoFlags d_flags = myPropInfoFlags.Filled | myPropInfoFlags.CanWrite;
+            var d_flags = myPropInfoFlags.Filled | myPropInfoFlags.CanWrite;
 
             if (t == typeof (int) || t == typeof (int?)) d_type = myPropInfoType.Int;
             else if (t == typeof (long) || t == typeof (long?)) d_type = myPropInfoType.Long;
@@ -420,12 +442,12 @@ namespace Transformalize.Libs.fastJSON
 
         private object RootList(object parse, Type type)
         {
-            Type[] gtypes = type.GetGenericArguments();
+            var gtypes = type.GetGenericArguments();
             var o = (IList) Reflection.Instance.FastCreateInstance(type);
-            foreach (object k in (IList) parse)
+            foreach (var k in (IList) parse)
             {
                 _usingglobals = false;
-                object v = k;
+                var v = k;
                 if (k is Dictionary<string, object>)
                     v = ParseDictionary(k as Dictionary<string, object>, null, gtypes[0], null);
                 else
@@ -438,7 +460,7 @@ namespace Transformalize.Libs.fastJSON
 
         private object RootDictionary(object parse, Type type)
         {
-            Type[] gtypes = type.GetGenericArguments();
+            var gtypes = type.GetGenericArguments();
             if (parse is Dictionary<string, object>)
             {
                 var o = (IDictionary) Reflection.Instance.FastCreateInstance(type);
@@ -446,7 +468,7 @@ namespace Transformalize.Libs.fastJSON
                 foreach (var kv in (Dictionary<string, object>) parse)
                 {
                     object v;
-                    object k = ChangeType(kv.Key, gtypes[0]);
+                    var k = ChangeType(kv.Key, gtypes[0]);
                     if (kv.Value is Dictionary<string, object>)
                         v = ParseDictionary(kv.Value as Dictionary<string, object>, null, gtypes[1], null);
                     else if (kv.Value is List<object>)
@@ -481,7 +503,7 @@ namespace Transformalize.Libs.fastJSON
                 }
             }
 
-            bool found = d.TryGetValue("$type", out tn);
+            var found = d.TryGetValue("$type", out tn);
 #if !SILVERLIGHT
             if (found == false && type == typeof (Object))
             {
@@ -502,15 +524,15 @@ namespace Transformalize.Libs.fastJSON
             if (type == null)
                 throw new Exception("Cannot determine type");
 
-            string typename = type.FullName;
-            object o = input;
+            var typename = type.FullName;
+            var o = input;
             if (o == null)
                 o = Reflection.Instance.FastCreateInstance(type);
 
-            SafeDictionary<string, myPropInfo> props = Getproperties(type, typename);
-            foreach (string n in d.Keys)
+            var props = Getproperties(type, typename);
+            foreach (var n in d.Keys)
             {
-                string name = n;
+                var name = n;
                 if (_params.IgnoreCaseOnDeserialize) name = name.ToLower();
                 if (name == "$map")
                 {
@@ -522,7 +544,7 @@ namespace Transformalize.Libs.fastJSON
                     continue;
                 if ((pi.Flags & (myPropInfoFlags.Filled | myPropInfoFlags.CanWrite)) != 0)
                 {
-                    object v = d[name];
+                    var v = d[name];
 
                     if (v != null)
                     {
@@ -619,9 +641,9 @@ namespace Transformalize.Libs.fastJSON
         {
             foreach (var kv in dic)
             {
-                myPropInfo p = props[kv.Key];
-                object o = p.getter(obj);
-                Type t = Type.GetType((string) kv.Value);
+                var p = props[kv.Key];
+                var o = p.getter(obj);
+                var t = Type.GetType((string) kv.Value);
                 if (t == typeof (Guid))
                     p.setter(obj, CreateGuid((string) o));
             }
@@ -630,10 +652,10 @@ namespace Transformalize.Libs.fastJSON
         private static int CreateInteger(out int num, string s, int index, int count)
         {
             num = 0;
-            bool neg = false;
-            for (int x = 0; x < count; x++, index++)
+            var neg = false;
+            for (var x = 0; x < count; x++, index++)
             {
-                char cc = s[index];
+                var cc = s[index];
 
                 if (cc == '-')
                     neg = true;
@@ -653,10 +675,10 @@ namespace Transformalize.Libs.fastJSON
         internal static long CreateLong(out long num, char[] s, int index, int count)
         {
             num = 0;
-            bool neg = false;
-            for (int x = 0; x < count; x++, index++)
+            var neg = false;
+            for (var x = 0; x < count; x++, index++)
             {
-                char cc = s[index];
+                var cc = s[index];
 
                 if (cc == '-')
                     neg = true;
@@ -693,7 +715,7 @@ namespace Transformalize.Libs.fastJSON
 
         private DateTime CreateDateTime(string value)
         {
-            bool utc = false;
+            var utc = false;
             //                   0123456789012345678
             // datetime format = yyyy-MM-dd HH:mm:ss
             int year; // = (int)CreateLong(value.Substring(0, 4));
@@ -721,11 +743,11 @@ namespace Transformalize.Libs.fastJSON
 
         private object CreateArray(List<object> data, Type pt, Type bt, Dictionary<string, object> globalTypes)
         {
-            Array col = Array.CreateInstance(bt, data.Count);
+            var col = Array.CreateInstance(bt, data.Count);
             // create an array of objects
-            for (int i = 0; i < data.Count; i++) // each (object ob in data)
+            for (var i = 0; i < data.Count; i++) // each (object ob in data)
             {
-                object ob = data[i];
+                var ob = data[i];
                 if (ob is IDictionary)
                     col.SetValue(ParseDictionary((Dictionary<string, object>) ob, globalTypes, bt, null), i);
                 else
@@ -740,7 +762,7 @@ namespace Transformalize.Libs.fastJSON
         {
             var col = (IList) Reflection.Instance.FastCreateInstance(pt);
             // create an array of objects
-            foreach (object ob in data)
+            foreach (var ob in data)
             {
                 if (ob is IDictionary)
                     col.Add(ParseDictionary((Dictionary<string, object>) ob, globalTypes, bt, null));
@@ -768,7 +790,7 @@ namespace Transformalize.Libs.fastJSON
 
             foreach (var values in reader)
             {
-                string key = values.Key; //ChangeType(values.Key, t1);
+                var key = values.Key; //ChangeType(values.Key, t1);
                 object val = null;
                 if (values.Value is Dictionary<string, object>)
                     val = ParseDictionary((Dictionary<string, object>) values.Value, globalTypes, t2, null);
@@ -794,8 +816,8 @@ namespace Transformalize.Libs.fastJSON
 
             foreach (Dictionary<string, object> values in reader)
             {
-                object key = values["k"];
-                object val = values["v"];
+                var key = values["k"];
+                var val = values["v"];
 
                 if (key is Dictionary<string, object>)
                     key = ParseDictionary((Dictionary<string, object>) key, globalTypes, t1, null);
@@ -838,7 +860,7 @@ namespace Transformalize.Libs.fastJSON
                 var rows = (List<object>) pair.Value;
                 if (rows == null) continue;
 
-                DataTable dt = ds.Tables[pair.Key];
+                var dt = ds.Tables[pair.Key];
                 ReadDataTable(rows, dt);
             }
 
@@ -849,7 +871,7 @@ namespace Transformalize.Libs.fastJSON
 
         private void ReadSchema(Dictionary<string, object> reader, DataSet ds, Dictionary<string, object> globalTypes)
         {
-            object schema = reader["$schema"];
+            var schema = reader["$schema"];
 
             if (schema is string)
             {
@@ -862,7 +884,7 @@ namespace Transformalize.Libs.fastJSON
                     (DatasetSchema)
                     ParseDictionary((Dictionary<string, object>) schema, globalTypes, typeof (DatasetSchema), null);
                 ds.DataSetName = ms.Name;
-                for (int i = 0; i < ms.Info.Count; i += 3)
+                for (var i = 0; i < ms.Info.Count; i += 3)
                 {
                     if (ds.Tables.Contains(ms.Info[i]) == false)
                         ds.Tables.Add(ms.Info[i]);
@@ -890,7 +912,7 @@ namespace Transformalize.Libs.fastJSON
             {
                 var v = new object[row.Count];
                 row.CopyTo(v, 0);
-                foreach (int i in guidcols)
+                foreach (var i in guidcols)
                 {
                     var s = (string) v[i];
                     if (s != null && s.Length < 36)
@@ -898,7 +920,7 @@ namespace Transformalize.Libs.fastJSON
                 }
                 if (_params.UseUTCDateTime)
                 {
-                    foreach (int i in datecol)
+                    foreach (var i in datecol)
                     {
                         var s = (string) v[i];
                         if (s != null)
@@ -917,7 +939,7 @@ namespace Transformalize.Libs.fastJSON
             var dt = new DataTable();
 
             // read dataset schema here
-            object schema = reader["$schema"];
+            var schema = reader["$schema"];
 
             if (schema is string)
             {
@@ -930,7 +952,7 @@ namespace Transformalize.Libs.fastJSON
                     (DatasetSchema)
                     ParseDictionary((Dictionary<string, object>) schema, globalTypes, typeof (DatasetSchema), null);
                 dt.TableName = ms.Info[0];
-                for (int i = 0; i < ms.Info.Count; i += 3)
+                for (var i = 0; i < ms.Info.Count; i += 3)
                 {
                     dt.Columns.Add(ms.Info[i + 1], Type.GetType(ms.Info[i + 2]));
                 }

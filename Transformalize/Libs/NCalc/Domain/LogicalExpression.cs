@@ -1,3 +1,25 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
 using System;
 using System.Text;
 
@@ -10,18 +32,18 @@ namespace Transformalize.Libs.NCalc.Domain
         private static string extractString(string text)
         {
             var sb = new StringBuilder(text);
-            int startIndex = 1; // Skip initial quote
-            int slashIndex = -1;
+            var startIndex = 1; // Skip initial quote
+            var slashIndex = -1;
 
             while ((slashIndex = sb.ToString().IndexOf(BS, startIndex)) != -1)
             {
-                char escapeType = sb[slashIndex + 1];
+                var escapeType = sb[slashIndex + 1];
                 switch (escapeType)
                 {
                     case 'u':
-                        string hcode = String.Concat(sb[slashIndex + 4], sb[slashIndex + 5]);
-                        string lcode = String.Concat(sb[slashIndex + 2], sb[slashIndex + 3]);
-                        char unicodeChar = Encoding.Unicode.GetChars(new[] {Convert.ToByte(hcode, 16), Convert.ToByte(lcode, 16)})[0];
+                        var hcode = String.Concat(sb[slashIndex + 4], sb[slashIndex + 5]);
+                        var lcode = String.Concat(sb[slashIndex + 2], sb[slashIndex + 3]);
+                        var unicodeChar = Encoding.Unicode.GetChars(new[] {Convert.ToByte(hcode, 16), Convert.ToByte(lcode, 16)})[0];
                         sb.Remove(slashIndex, 6).Insert(slashIndex, unicodeChar);
                         break;
                     case 'n':

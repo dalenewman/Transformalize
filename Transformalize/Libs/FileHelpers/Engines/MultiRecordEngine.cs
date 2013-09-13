@@ -1,3 +1,25 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
 #undef GENERICS
 //#define GENERICS
 //#if NET_2_0
@@ -76,8 +98,8 @@ namespace Transformalize.Libs.FileHelpers.Engines
 
         private string ListTypes()
         {
-            string res = string.Empty;
-            bool first = true;
+            var res = string.Empty;
+            var first = true;
             foreach (Type t in mRecordInfoHash.Keys)
             {
                 if (first)
@@ -119,7 +141,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
             mTypes = recordTypes;
             mMultiRecordInfo = new RecordInfo[mTypes.Length];
             mRecordInfoHash = new Hashtable(mTypes.Length);
-            for (int i = 0; i < mTypes.Length; i++)
+            for (var i = 0; i < mTypes.Length; i++)
             {
                 if (mTypes[i] == null)
                     throw new BadUsageException("The type at index " + i.ToString() + " is null.");
@@ -262,11 +284,11 @@ namespace Transformalize.Libs.FileHelpers.Engines
 #if !MINI
             ProgressHelper.Notify(mNotifyHandler, mProgressMode, 0, -1);
 #endif
-            int currentRecord = 0;
+            var currentRecord = 0;
 
             if (mMultiRecordInfo[0].mIgnoreFirst > 0)
             {
-                for (int i = 0; i < mMultiRecordInfo[0].mIgnoreFirst && currentLine != null; i++)
+                for (var i = 0; i < mMultiRecordInfo[0].mIgnoreFirst && currentLine != null; i++)
                 {
                     mHeaderText += currentLine + StringHelper.NewLine;
                     currentLine = freader.ReadNextLine();
@@ -275,7 +297,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
             }
 
 
-            bool byPass = false;
+            var byPass = false;
 
             //			MasterDetails record = null;
             var tmpDetails = new ArrayList();
@@ -292,13 +314,13 @@ namespace Transformalize.Libs.FileHelpers.Engines
 
                     line.ReLoad(currentLine);
 
-                    bool skip = false;
+                    var skip = false;
 #if !MINI
                     ProgressHelper.Notify(mNotifyHandler, mProgressMode, currentRecord, -1);
                     skip = OnBeforeReadRecord(currentLine);
 #endif
 
-                    Type currType = mRecordSelector(this, currentLine);
+                    var currType = mRecordSelector(this, currentLine);
 
                     if (currType != null)
                     {
@@ -306,7 +328,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
 
                         if (skip == false)
                         {
-                            object record = info.StringToRecord(line);
+                            var record = info.StringToRecord(line);
 
 #if !MINI
                             skip = OnAfterReadRecord(currentLine, record);
@@ -364,7 +386,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
         public object[] ReadString(string source)
         {
             var reader = new StringReader(source);
-            object[] res = ReadStream(reader);
+            var res = ReadStream(reader);
             reader.Close();
             return res;
         }
@@ -424,7 +446,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
             string currentLine = null;
 
             //ConstructorInfo constr = mType.GetConstructor(new Type[] {});
-            int max = maxRecords;
+            var max = maxRecords;
 
             if (records is IList)
                 max = Math.Min(max < 0 ? int.MaxValue : max, ((IList) records).Count);
@@ -434,9 +456,9 @@ namespace Transformalize.Libs.FileHelpers.Engines
             ProgressHelper.Notify(mNotifyHandler, mProgressMode, 0, max);
 
 #endif
-            int recIndex = 0;
+            var recIndex = 0;
 
-            foreach (object rec in records)
+            foreach (var rec in records)
             {
                 if (recIndex == maxRecords)
                     break;
@@ -445,7 +467,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
                     if (rec == null)
                         throw new BadUsageException("The record at index " + recIndex.ToString() + " is null.");
 
-                    bool skip = false;
+                    var skip = false;
 #if !MINI
                     ProgressHelper.Notify(mNotifyHandler, mProgressMode, recIndex + 1, max);
                     skip = OnBeforeWriteRecord(rec);
@@ -511,7 +533,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
             var sb = new StringBuilder();
             var writer = new StringWriter(sb);
             WriteStream(writer, records, maxRecords);
-            string res = writer.ToString();
+            var res = writer.ToString();
             writer.Close();
             return res;
         }
@@ -529,7 +551,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
         /// <include file='MultiRecordEngine.docs.xml' path='doc/AppendToFile2/*' />
         public void AppendToFile(string fileName, IEnumerable records)
         {
-            using (TextWriter writer = StreamHelper.CreateFileAppender(fileName, mEncoding, true, false))
+            using (var writer = StreamHelper.CreateFileAppender(fileName, mEncoding, true, false))
             {
                 mHeaderText = String.Empty;
                 mFooterText = String.Empty;
@@ -598,9 +620,9 @@ namespace Transformalize.Libs.FileHelpers.Engines
 
             if (mRecordInfo.mIgnoreFirst > 0)
             {
-                for (int i = 0; i < mRecordInfo.mIgnoreFirst; i++)
+                for (var i = 0; i < mRecordInfo.mIgnoreFirst; i++)
                 {
-                    string temp = reader.ReadLine();
+                    var temp = reader.ReadLine();
                     mLineNumber++;
                     if (temp != null)
                         mHeaderText += temp + StringHelper.NewLine;
@@ -706,10 +728,10 @@ namespace Transformalize.Libs.FileHelpers.Engines
 
         private void ReadNextRecord()
         {
-            string currentLine = mAsyncReader.ReadNextLine();
+            var currentLine = mAsyncReader.ReadNextLine();
             mLineNumber++;
 
-            bool byPass = false;
+            var byPass = false;
 
             mLastRecord = null;
 
@@ -725,7 +747,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
                     {
                         mTotalRecords++;
 
-                        Type currType = mRecordSelector(this, currentLine);
+                        var currType = mRecordSelector(this, currentLine);
 
                         line.ReLoad(currentLine);
 
@@ -800,7 +822,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
 
             var arr = new ArrayList(numberOfRecords);
 
-            for (int i = 0; i < numberOfRecords; i++)
+            for (var i = 0; i < numberOfRecords; i++)
             {
                 ReadNextRecord();
                 if (mLastRecord != null)
@@ -836,7 +858,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
 
             public bool MoveNext()
             {
-                object res = mEngine.ReadNext();
+                var res = mEngine.ReadNext();
 
                 if (res == null)
                 {
@@ -914,8 +936,8 @@ namespace Transformalize.Libs.FileHelpers.Engines
             if (records == null)
                 throw new ArgumentNullException("The record to write can´t be null.");
 
-            int nro = 0;
-            foreach (object rec in records)
+            var nro = 0;
+            foreach (var rec in records)
             {
                 nro++;
 
@@ -933,7 +955,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
 
             try
             {
-                bool skip = false;
+                var skip = false;
 //#if !MINI
 //				ProgressHelper.Notify(mNotifyHandler, mProgressMode, i+1, max);
 //				skip = OnBeforeWriteRecord(records[i]);

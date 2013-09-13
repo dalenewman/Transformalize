@@ -1,3 +1,25 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
 using System;
 
 namespace Transformalize.Libs.FileHelpers.Core
@@ -106,7 +128,7 @@ namespace Transformalize.Libs.FileHelpers.Core
             // Check if the chars at pos or right are empty ones
             if (mCustomExtractedString != null)
             {
-                int pos = 0;
+                var pos = 0;
                 while (pos < mCustomExtractedString.Length &&
                        Array.BinarySearch(sortedArray, mCustomExtractedString[pos]) >= 0)
                 {
@@ -117,7 +139,7 @@ namespace Transformalize.Libs.FileHelpers.Core
             }
             else
             {
-                int pos = ExtractedFrom;
+                var pos = ExtractedFrom;
                 while (pos <= ExtractedTo && Array.BinarySearch(sortedArray, mLine.mLine[pos]) >= 0)
                 {
                     pos++;

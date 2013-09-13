@@ -39,6 +39,8 @@ namespace Transformalize.Main.Providers.SqlServer
                     _types = new Dictionary<string, string>
                                  {
                                      {"int64", "BIGINT"},
+                                     {"int", "INT"},
+                                     {"long", "BIGINT"},
                                      {"boolean", "BIT"},
                                      {"string", "NVARCHAR"},
                                      {"datetime", "DATETIME"},
@@ -96,11 +98,11 @@ namespace Transformalize.Main.Providers.SqlServer
 
         public string GetDataType(Field field)
         {
-            string length = (new[] {"string", "char", "binary", "byte[]"}).Any(t => t == field.SimpleType) ? string.Concat("(", field.Length, ")") : string.Empty;
-            string dimensions = field.SimpleType == "decimal" ? string.Format("({0},{1})", field.Precision, field.Scale) : string.Empty;
-            string notNull = field.NotNull ? " NOT NULL" : string.Empty;
-            string surrogate = field.Clustered ? " IDENTITY(1,1) UNIQUE CLUSTERED" : string.Empty;
-            string sqlDataType = Types[field.SimpleType];
+            var length = (new[] {"string", "char", "binary", "byte[]"}).Any(t => t == field.SimpleType) ? string.Concat("(", field.Length, ")") : string.Empty;
+            var dimensions = (new[]{"decimal","double"}).Any(s => s.Equals(field.SimpleType)) ? string.Format("({0},{1})", field.Precision, field.Scale) : string.Empty;
+            var notNull = field.NotNull ? " NOT NULL" : string.Empty;
+            var surrogate = field.Clustered ? " IDENTITY(1,1) UNIQUE CLUSTERED" : string.Empty;
+            var sqlDataType = Types[field.SimpleType];
 
             if (!field.Unicode && sqlDataType.StartsWith("N"))
             {

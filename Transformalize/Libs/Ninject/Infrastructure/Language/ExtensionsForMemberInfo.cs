@@ -1,12 +1,22 @@
 #region License
 
-//
-// Author: Remo Gloor (remo.gloor@bbv.ch)
-// Copyright (c) 2010, bbv Software Engineering AG.
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
 // 
-// Dual-licensed under the Apache License, Version 2.0, and the Microsoft Public License (Ms-PL).
-// See the file LICENSE.txt for details.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 // 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
 
 #endregion
 
@@ -39,7 +49,7 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Language
             {
                 if (parentDefinitionMethodInfo == null)
                 {
-                    Type runtimeAssemblyInfoType = typeof (MethodInfo).Assembly.GetType("System.Reflection.RuntimeMethodInfo");
+                    var runtimeAssemblyInfoType = typeof (MethodInfo).Assembly.GetType("System.Reflection.RuntimeMethodInfo");
                     parentDefinitionMethodInfo = runtimeAssemblyInfoType.GetMethod("GetParentDefinition", Flags);
                 }
 
@@ -120,8 +130,8 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Language
         /// </returns>
         public static bool IsPrivate(this PropertyInfo propertyInfo)
         {
-            MethodInfo getMethod = propertyInfo.GetGetMethod(true);
-            MethodInfo setMethod = propertyInfo.GetSetMethod(true);
+            var getMethod = propertyInfo.GetGetMethod(true);
+            var setMethod = propertyInfo.GetSetMethod(true);
             return (getMethod == null || getMethod.IsPrivate) && (setMethod == null || setMethod.IsPrivate);
         }
 
@@ -152,7 +162,7 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Language
 
         private static PropertyInfo GetParentDefinition(PropertyInfo property)
         {
-            MethodInfo propertyMethod = property.GetGetMethod(true) ?? property.GetSetMethod(true);
+            var propertyMethod = property.GetGetMethod(true) ?? property.GetSetMethod(true);
             if (propertyMethod != null)
             {
                 propertyMethod = propertyMethod.GetParentDefinition(Flags);
@@ -202,7 +212,7 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Language
                     return false;
                 }
 
-                for (PropertyInfo info = GetParentDefinition(element);
+                for (var info = GetParentDefinition(element);
                      info != null;
                      info = GetParentDefinition(info))
                 {
@@ -225,11 +235,11 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Language
                     var attributeUsages = new Dictionary<Type, bool>();
                     var attributes = new List<object>();
                     attributes.AddRange(propertyInfo.GetCustomAttributes(attributeType, false));
-                    for (PropertyInfo info = GetParentDefinition(propertyInfo);
+                    for (var info = GetParentDefinition(propertyInfo);
                          info != null;
                          info = GetParentDefinition(info))
                     {
-                        object[] customAttributes = info.GetCustomAttributes(attributeType, false);
+                        var customAttributes = info.GetCustomAttributes(attributeType, false);
                         AddAttributes(attributes, customAttributes, attributeUsages);
                     }
 
@@ -244,9 +254,9 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Language
 
         private static void AddAttributes(List<object> attributes, object[] customAttributes, Dictionary<Type, bool> attributeUsages)
         {
-            foreach (object attribute in customAttributes)
+            foreach (var attribute in customAttributes)
             {
-                Type type = attribute.GetType();
+                var type = attribute.GetType();
                 if (!attributeUsages.ContainsKey(type))
                 {
                     attributeUsages[type] = InternalGetAttributeUsage(type).Inherited;
@@ -261,7 +271,7 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Language
 
         private static AttributeUsageAttribute InternalGetAttributeUsage(Type type)
         {
-            object[] customAttributes = type.GetCustomAttributes(typeof (AttributeUsageAttribute), true);
+            var customAttributes = type.GetCustomAttributes(typeof (AttributeUsageAttribute), true);
             return (AttributeUsageAttribute) customAttributes[0];
         }
     }

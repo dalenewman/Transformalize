@@ -96,7 +96,7 @@ namespace Transformalize.Main
 
         public string OutputName()
         {
-            return string.Concat(ProcessName, Alias).Replace(" ", string.Empty);
+            return Common.EntityOutputName(Alias, ProcessName);
         }
 
         public bool HasForeignKeys()
@@ -115,7 +115,7 @@ namespace Transformalize.Main
         public List<string> SelectKeys(AbstractProvider p)
         {
             var selectKeys = new List<string>();
-            foreach (Field field in PrimaryKey.ToEnumerable())
+            foreach (var field in PrimaryKey.ToEnumerable())
             {
                 selectKeys.Add(field.Alias.Equals(field.Name)
                                    ? string.Concat(p.L, field.Name, p.R)
@@ -153,8 +153,8 @@ namespace Transformalize.Main
                 var bytes = new[] {"byte[]", "rowversion"};
                 if (bytes.Any(t => t == Version.SimpleType))
                 {
-                    IEnumerable<byte> beginBytes = Common.ObjectToByteArray(Begin);
-                    IEnumerable<byte> endBytes = Common.ObjectToByteArray(End);
+                    var beginBytes = Common.ObjectToByteArray(Begin);
+                    var endBytes = Common.ObjectToByteArray(End);
                     return beginBytes.SequenceEqual(endBytes);
                 }
                 return Begin.Equals(End);

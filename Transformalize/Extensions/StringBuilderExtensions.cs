@@ -1,20 +1,24 @@
-/*
-Transformalize - Replicate, Transform, and Denormalize Your Data...
-Copyright (C) 2013 Dale Newman
+#region License
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+#endregion
 
 using System.Linq;
 using System.Text;
@@ -25,10 +29,10 @@ namespace Transformalize.Extensions
     {
         public static void TrimStart(this StringBuilder sb, string trimChars)
         {
-            int length = sb.Length;
+            var length = sb.Length;
             if (length != 0)
             {
-                int i = 0;
+                var i = 0;
 
                 if (trimChars.Length == 1)
                 {
@@ -54,10 +58,10 @@ namespace Transformalize.Extensions
 
         public static void TrimEnd(this StringBuilder sb, string trimChars)
         {
-            int length = sb.Length;
+            var length = sb.Length;
             if (length != 0)
             {
-                int i = length - 1;
+                var i = length - 1;
 
                 if (trimChars.Length == 1)
                 {
@@ -89,7 +93,7 @@ namespace Transformalize.Extensions
 
         public static void Substring(this StringBuilder sb, int startIndex, int length)
         {
-            int capacity = sb.Length;
+            var capacity = sb.Length;
             if (capacity != 0 && startIndex < capacity)
             {
                 if (startIndex + length > capacity)
@@ -104,10 +108,10 @@ namespace Transformalize.Extensions
 
         public static void PadLeft(this StringBuilder sb, int totalWidth, char paddingChar)
         {
-            int sbLen = sb.Length;
+            var sbLen = sb.Length;
             if (sbLen < totalWidth)
             {
-                for (int i = 0; i < totalWidth - sbLen; i++)
+                for (var i = 0; i < totalWidth - sbLen; i++)
                 {
                     sb.Insert(0, paddingChar);
                 }
@@ -116,10 +120,10 @@ namespace Transformalize.Extensions
 
         public static void PadRight(this StringBuilder sb, int totalWidth, char paddingChar)
         {
-            int sbLen = sb.Length;
+            var sbLen = sb.Length;
             if (sbLen < totalWidth)
             {
-                for (int i = 0; i < totalWidth - sbLen; i++)
+                for (var i = 0; i < totalWidth - sbLen; i++)
                 {
                     sb.Append(paddingChar);
                 }
@@ -138,10 +142,10 @@ namespace Transformalize.Extensions
 
         public static bool IsEqualTo(this StringBuilder sb, string value)
         {
-            int valLen = value.Length;
+            var valLen = value.Length;
             if (sb.Length == valLen)
             {
-                for (int i = 0; i < valLen; i++)
+                for (var i = 0; i < valLen; i++)
                 {
                     if (!sb[i].Equals(value[i]))
                     {
@@ -158,10 +162,10 @@ namespace Transformalize.Extensions
 
         public static bool StartsWith(this StringBuilder sb, string value)
         {
-            int valLen = value.Length;
+            var valLen = value.Length;
             if (valLen < sb.Length)
             {
-                for (int i = 0; i < valLen; i++)
+                for (var i = 0; i < valLen; i++)
                 {
                     if (!sb[i].Equals(value[i]))
                     {
@@ -178,11 +182,11 @@ namespace Transformalize.Extensions
 
         public static bool EndsWith(this StringBuilder sb, string value)
         {
-            int sbLen = sb.Length;
-            int valLen = value.Length;
+            var sbLen = sb.Length;
+            var valLen = value.Length;
             if (valLen < sbLen)
             {
-                for (int i = 0; i < valLen; i++)
+                for (var i = 0; i < valLen; i++)
                 {
                     if (!value[i].Equals(sb[sbLen - valLen + i]))
                     {
@@ -199,7 +203,7 @@ namespace Transformalize.Extensions
 
         public static void ToLower(this StringBuilder sb)
         {
-            for (int i = 0; i < sb.Length; i++)
+            for (var i = 0; i < sb.Length; i++)
             {
                 if (char.IsUpper(sb[i]))
                 {
@@ -210,7 +214,7 @@ namespace Transformalize.Extensions
 
         public static void ToUpper(this StringBuilder sb)
         {
-            for (int i = 0; i < sb.Length; i++)
+            for (var i = 0; i < sb.Length; i++)
             {
                 if (char.IsLower(sb[i]))
                 {

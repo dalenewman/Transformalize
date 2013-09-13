@@ -101,19 +101,16 @@ namespace Transformalize.Main
         public IFields OutputFields()
         {
             var fields = new Fields();
-            foreach (Entity entity in Entities)
+            foreach (var entity in Entities)
             {
-                fields.AddRange(
-                    new FieldSqlWriter(entity.All, entity.CalculatedFields, CalculatedFields).ExpandXml()
-                                                                                             .Output()
-                                                                                             .ToArray());
+                fields.AddRange(new FieldSqlWriter(entity.All, entity.CalculatedFields, CalculatedFields).ExpandXml().Output().ToArray());
             }
             return fields;
         }
 
         public IEnumerable<Field> SearchFields()
         {
-            return OutputFields().ToEnumerable().Where(f => !f.SearchTypes.Any(st => st.Name.Equals("none")));
+            return new StarFields(this).Fields().Where(f => !f.SearchTypes.Any(st => st.Name.Equals("none")));
         }
 
         public IParameters Parameters()

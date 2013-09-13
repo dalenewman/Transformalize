@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
@@ -89,7 +111,7 @@ namespace Transformalize.Libs.NCalc
                 }
 
 
-                foreach (string key in keysToRemove)
+                foreach (var key in keysToRemove)
                 {
                     _compiledExpressions.Remove(key);
                     _log.Debug("Expression released from cache, key: {0}", key);
@@ -130,7 +152,7 @@ namespace Transformalize.Libs.NCalc
                     {
                         //Trace.TraceInformation("Expression retrieved from cache: " + expression);
                         _log.Trace("Expression retrieved from cache: {0}", expression);
-                        WeakReference wr = _compiledExpressions[expression];
+                        var wr = _compiledExpressions[expression];
                         logicalExpression = wr.Target as LogicalExpression;
 
                         if (wr.IsAlive && logicalExpression != null)
@@ -224,21 +246,21 @@ namespace Transformalize.Libs.NCalc
             // if array evaluation, execute the same expression multiple times
             if ((Options & EvaluateOptions.IterateParameters) == EvaluateOptions.IterateParameters)
             {
-                int size = -1;
+                var size = -1;
                 ParametersBackup = new Dictionary<string, object>();
-                foreach (string key in Parameters.Keys)
+                foreach (var key in Parameters.Keys)
                 {
                     ParametersBackup.Add(key, Parameters[key]);
                 }
 
                 ParameterEnumerators = new Dictionary<string, IEnumerator>();
 
-                foreach (object parameter in Parameters.Values)
+                foreach (var parameter in Parameters.Values)
                 {
                     if (parameter is IEnumerable)
                     {
-                        int localsize = 0;
-                        foreach (object o in (IEnumerable) parameter)
+                        var localsize = 0;
+                        foreach (var o in (IEnumerable) parameter)
                         {
                             localsize++;
                         }
@@ -254,7 +276,7 @@ namespace Transformalize.Libs.NCalc
                     }
                 }
 
-                foreach (string key in Parameters.Keys)
+                foreach (var key in Parameters.Keys)
                 {
                     var parameter = Parameters[key] as IEnumerable;
                     if (parameter != null)
@@ -264,11 +286,11 @@ namespace Transformalize.Libs.NCalc
                 }
 
                 var results = new List<object>();
-                for (int i = 0; i < size; i++)
+                for (var i = 0; i < size; i++)
                 {
-                    foreach (string key in ParameterEnumerators.Keys)
+                    foreach (var key in ParameterEnumerators.Keys)
                     {
-                        IEnumerator enumerator = ParameterEnumerators[key];
+                        var enumerator = ParameterEnumerators[key];
                         enumerator.MoveNext();
                         Parameters[key] = enumerator.Current;
                     }

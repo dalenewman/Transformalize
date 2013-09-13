@@ -1,3 +1,25 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
 using System;
 using System.Collections.Generic;
 using Transformalize.Libs.Rhino.Etl.Enumerables;
@@ -87,16 +109,16 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         {
             PrepareForJoin();
 
-            IEnumerable<Row> rightEnumerable = GetRightEnumerable();
+            var rightEnumerable = GetRightEnumerable();
 
-            IEnumerable<Row> execute = left.Execute(leftRegistered ? null : rows);
+            var execute = left.Execute(leftRegistered ? null : rows);
             foreach (Row leftRow in new EventRaisingEnumerator(left, execute))
             {
-                ObjectArrayKeys key = leftRow.CreateKey(leftColumns);
+                var key = leftRow.CreateKey(leftColumns);
                 List<Row> rightRows;
                 if (rightRowsByJoinKey.TryGetValue(key, out rightRows))
                 {
-                    foreach (Row rightRow in rightRows)
+                    foreach (var rightRow in rightRows)
                     {
                         rightRowsWereMatched[rightRow] = null;
                         yield return MergeRows(leftRow, rightRow);
@@ -112,7 +134,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
                     LeftOrphanRow(leftRow);
                 }
             }
-            foreach (Row rightRow in rightEnumerable)
+            foreach (var rightRow in rightEnumerable)
             {
                 if (rightRowsWereMatched.ContainsKey(rightRow))
                     continue;
@@ -142,9 +164,9 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
             IEnumerable<Row> rightEnumerable = new CachingEnumerable<Row>(
                 new EventRaisingEnumerator(right, right.Execute(null))
                 );
-            foreach (Row row in rightEnumerable)
+            foreach (var row in rightEnumerable)
             {
-                ObjectArrayKeys key = row.CreateKey(rightColumns);
+                var key = row.CreateKey(rightColumns);
                 List<Row> rowsForKey;
                 if (rightRowsByJoinKey.TryGetValue(key, out rowsForKey) == false)
                 {
@@ -221,11 +243,11 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// <returns></returns>
         public override IEnumerable<Exception> GetAllErrors()
         {
-            foreach (Exception error in left.GetAllErrors())
+            foreach (var error in left.GetAllErrors())
             {
                 yield return error;
             }
-            foreach (Exception error in right.GetAllErrors())
+            foreach (var error in right.GetAllErrors())
             {
                 yield return error;
             }

@@ -39,7 +39,7 @@ namespace Transformalize.Main
         public override string ToString()
         {
             var builder = new StringBuilder();
-            foreach (Join join in Join)
+            foreach (var join in Join)
             {
                 builder.Append(join);
                 builder.Append(" ");

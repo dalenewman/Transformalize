@@ -66,12 +66,12 @@ namespace Transformalize.Main
             {
                 foreach (var field in entity.Value)
                 {
-                    EntityConfigurationElement entityElement =
+                    var entityElement =
                         _process.Entities.Cast<EntityConfigurationElement>().First(e => e.Alias == entity.Key);
-                    FieldConfigurationElement fieldElement =
+                    var fieldElement =
                         entityElement.Fields.Cast<FieldConfigurationElement>().First(f => f.Alias == field.Key);
-                    int index = entityElement.Fields.IndexOf(fieldElement) + 1;
-                    foreach (FieldConfigurationElement element in field.Value)
+                    var index = entityElement.Fields.IndexOf(fieldElement) + 1;
+                    foreach (var element in field.Value)
                     {
                         entityElement.Fields.InsertAt(element, index);
                         index++;

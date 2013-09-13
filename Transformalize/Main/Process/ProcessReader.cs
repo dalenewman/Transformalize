@@ -147,10 +147,10 @@ namespace Transformalize.Main
 
         private int ReadScripts()
         {
-            var s = new[] { '\\' };
-            ScriptConfigurationElement[] scripts = _config.Scripts.Cast<ScriptConfigurationElement>().ToArray();
-            string path = _config.Scripts.Path;
-            foreach (ScriptConfigurationElement script in scripts)
+            var s = new[] {'\\'};
+            var scripts = _config.Scripts.Cast<ScriptConfigurationElement>().ToArray();
+            var path = _config.Scripts.Path;
+            foreach (var script in scripts)
             {
                 var fileInfo = new FileInfo(path.TrimEnd(s) + @"\" + script.File);
                 if (!fileInfo.Exists)
@@ -170,10 +170,10 @@ namespace Transformalize.Main
 
         private int ReadTemplates()
         {
-            var s = new[] { '\\' };
-            TemplateConfigurationElement[] templates = _config.Templates.Cast<TemplateConfigurationElement>().ToArray();
-            string path = _config.Templates.Path;
-            foreach (TemplateConfigurationElement element in templates)
+            var s = new[] {'\\'};
+            var templates = _config.Templates.Cast<TemplateConfigurationElement>().ToArray();
+            var path = _config.Templates.Path;
+            foreach (var element in templates)
             {
                 var fileInfo = new FileInfo(path.TrimEnd(s) + @"\" + element.File);
                 if (!fileInfo.Exists)
@@ -222,12 +222,12 @@ namespace Transformalize.Main
 
         private IEnumerable<Relationship> ReadRelationshipToMaster(Entity rightEntity)
         {
-            List<Relationship> relationships =
+            var relationships =
                 _process.Relationships.Where(r => r.RightEntity.Equals(rightEntity)).ToList();
 
             if (relationships.Any() && !relationships.Any(r => r.LeftEntity.IsMaster()))
             {
-                Entity leftEntity = relationships.Last().LeftEntity;
+                var leftEntity = relationships.Last().LeftEntity;
                 relationships.AddRange(ReadRelationshipToMaster(leftEntity));
             }
             return relationships;
@@ -254,10 +254,10 @@ namespace Transformalize.Main
         {
             foreach (FieldConfigurationElement field in _config.CalculatedFields)
             {
-                _process.CalculatedFields.Add(field.Alias,
-                                              new FieldReader(_process, null,
-                                                              new ProcessTransformParametersReader(_process),
-                                                              new ProcessParametersReader(_process)).Read(field));
+                var ptr = new ProcessTransformParametersReader(_process);
+                var ppr = new ProcessParametersReader(_process);
+                var fr = new FieldReader(_process, _process.MasterEntity, ptr, ppr);
+                _process.CalculatedFields.Add(field.Alias, fr.Read(field));
             }
 
             return _process.CalculatedFields.Count;
@@ -265,12 +265,12 @@ namespace Transformalize.Main
 
         private int ReadRelationships()
         {
-            int count = 0;
+            var count = 0;
             foreach (RelationshipConfigurationElement r in _config.Relationships)
             {
-                Entity leftEntity = _process.Entities.First(e => e.Alias.Equals(r.LeftEntity, IC));
-                Entity rightEntity = _process.Entities.First(e => e.Alias.Equals(r.RightEntity, IC));
-                List<Join> join = GetJoins(r, leftEntity, rightEntity);
+                var leftEntity = _process.Entities.First(e => e.Alias.Equals(r.LeftEntity, IC));
+                var rightEntity = _process.Entities.First(e => e.Alias.Equals(r.RightEntity, IC));
+                var join = GetJoins(r, leftEntity, rightEntity);
                 var relationship = new Relationship
                                        {
                                            LeftEntity = leftEntity,
@@ -348,11 +348,11 @@ namespace Transformalize.Main
 
         private int ReadEntities()
         {
-            int count = 0;
+            var count = 0;
             foreach (EntityConfigurationElement element in _config.Entities)
             {
                 var reader = new EntityConfigurationReader(_process);
-                Entity entity = reader.Read(element, count == 0);
+                var entity = reader.Read(element, count == 0);
 
                 GuardAgainstFieldOverlap(entity);
 
@@ -366,19 +366,19 @@ namespace Transformalize.Main
 
         private IEnumerable<Field> ReadRelatedKeys()
         {
-            Entity entity = _process.Entities.First(e => e.IsMaster());
+            var entity = _process.Entities.First(e => e.IsMaster());
             return GetRelatedKeys(entity);
         }
 
         private IEnumerable<Field> GetRelatedKeys(Entity entity)
         {
-            List<Field> foreignKeys =
+            var foreignKeys =
                 entity.All.ToEnumerable().Where(f => f.FieldType.HasFlag(FieldType.ForeignKey)).ToList();
             if (foreignKeys.Any())
             {
-                foreach (string alias in foreignKeys.Select(fk => fk.Alias).ToArray())
+                foreach (var alias in foreignKeys.Select(fk => fk.Alias).ToArray())
                 {
-                    Entity nextEntity =
+                    var nextEntity =
                         _process.Relationships.Where(
                             r =>
                             r.LeftEntity.Alias.Equals(entity.Alias) && r.Join.Any(j => j.LeftField.Alias.Equals(alias)))
@@ -392,7 +392,7 @@ namespace Transformalize.Main
 
         private int ReadMaps()
         {
-            int count = 0;
+            var count = 0;
             foreach (MapConfigurationElement m in _config.Maps)
             {
                 if (string.IsNullOrEmpty(m.Connection))
@@ -422,7 +422,7 @@ namespace Transformalize.Main
 
         private int ReadProviders()
         {
-            int count = 0;
+            var count = 0;
             foreach (ProviderConfigurationElement element in _config.Providers)
             {
                 _process.Providers[element.Name.ToLower()] = element.Type;
@@ -433,7 +433,7 @@ namespace Transformalize.Main
 
         private int ReadConnections()
         {
-            int count = 0;
+            var count = 0;
             foreach (ConnectionConfigurationElement element in _config.Connections)
             {
                 switch (element.Provider.ToLower())
@@ -491,7 +491,7 @@ namespace Transformalize.Main
 
             if (!entityKeys.Any()) return;
 
-            int count = entityKeys.Count;
+            var count = entityKeys.Count;
             _log.Error(
                 "field overlap error in {3}.  The field{1}: {0} {2} already defined in previous entities.  You must alias (rename) these.",
                 string.Join(", ", entityKeys), count == 1 ? string.Empty : "s", count == 1 ? "is" : "are", entity.Alias);

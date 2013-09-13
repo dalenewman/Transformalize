@@ -1,3 +1,25 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -31,12 +53,12 @@ namespace Transformalize.Libs.fastJSON
         {
             WriteValue(obj);
 
-            string str = "";
+            var str = "";
             if (_params.UsingGlobalTypes && _globalTypes != null && _globalTypes.Count > 0)
             {
-                StringBuilder sb = _before;
+                var sb = _before;
                 sb.Append("\"$types\":{");
-                bool pendingSeparator = false;
+                var pendingSeparator = false;
                 foreach (var kv in _globalTypes)
                 {
                     if (pendingSeparator) sb.Append(',');
@@ -145,7 +167,7 @@ namespace Transformalize.Libs.fastJSON
         private void WriteDateTime(DateTime dateTime)
         {
             // datetime format standard : yyyy-MM-dd HH:mm:ss
-            DateTime dt = dateTime;
+            var dt = dateTime;
             if (_params.UseUTCDateTime)
                 dt = dateTime.ToUniversalTime();
 
@@ -227,7 +249,7 @@ namespace Transformalize.Libs.fastJSON
                 WritePair("$schema", _params.UseOptimizedDatasetSchema ? (object) GetSchema(ds) : ds.GetXmlSchema());
                 _output.Append(',');
             }
-            bool tablesep = false;
+            var tablesep = false;
             foreach (DataTable table in ds.Tables)
             {
                 if (tablesep) _output.Append(',');
@@ -243,15 +265,15 @@ namespace Transformalize.Libs.fastJSON
             _output.Append('\"');
             _output.Append(table.TableName);
             _output.Append("\":[");
-            DataColumnCollection cols = table.Columns;
-            bool rowseparator = false;
+            var cols = table.Columns;
+            var rowseparator = false;
             foreach (DataRow row in table.Rows)
             {
                 if (rowseparator) _output.Append(',');
                 rowseparator = true;
                 _output.Append('[');
 
-                bool pendingSeperator = false;
+                var pendingSeperator = false;
                 foreach (DataColumn column in cols)
                 {
                     if (pendingSeperator) _output.Append(',');
@@ -304,16 +326,16 @@ namespace Transformalize.Libs.fastJSON
 
 
             var map = new Dictionary<string, string>();
-            Type t = obj.GetType();
-            bool append = false;
+            var t = obj.GetType();
+            var append = false;
             if (_params.UseExtensions)
             {
                 if (_params.UsingGlobalTypes == false)
                     WritePairFast("$type", Reflection.Instance.GetTypeAssemblyName(t));
                 else
                 {
-                    int dt = 0;
-                    string ct = Reflection.Instance.GetTypeAssemblyName(t);
+                    var dt = 0;
+                    var ct = Reflection.Instance.GetTypeAssemblyName(t);
                     if (_globalTypes.TryGetValue(ct, out dt) == false)
                     {
                         dt = _globalTypes.Count + 1;
@@ -324,11 +346,11 @@ namespace Transformalize.Libs.fastJSON
                 append = true;
             }
 
-            List<Getters> g = Reflection.Instance.GetGetters(t);
+            var g = Reflection.Instance.GetGetters(t);
 
-            foreach (Getters p in g)
+            foreach (var p in g)
             {
-                object o = p.Getter(obj);
+                var o = p.Getter(obj);
                 if ((o == null || o is DBNull) && _params.SerializeNullValues == false)
                 {
                     //append = false;
@@ -341,7 +363,7 @@ namespace Transformalize.Libs.fastJSON
                     WritePair(p.Name, o);
                     if (o != null && _params.UseExtensions)
                     {
-                        Type tt = o.GetType();
+                        var tt = o.GetType();
                         if (tt == typeof (Object))
                             map.Add(p.Name, tt.ToString());
                     }
@@ -384,9 +406,9 @@ namespace Transformalize.Libs.fastJSON
         {
             _output.Append('[');
 
-            bool pendingSeperator = false;
+            var pendingSeperator = false;
 
-            foreach (object obj in array)
+            foreach (var obj in array)
             {
                 if (pendingSeperator) _output.Append(',');
 
@@ -401,7 +423,7 @@ namespace Transformalize.Libs.fastJSON
         {
             _output.Append('{');
 
-            bool pendingSeparator = false;
+            var pendingSeparator = false;
 
             foreach (DictionaryEntry entry in dic)
             {
@@ -418,7 +440,7 @@ namespace Transformalize.Libs.fastJSON
         {
             _output.Append('[');
 
-            bool pendingSeparator = false;
+            var pendingSeparator = false;
 
             foreach (DictionaryEntry entry in dic)
             {
@@ -445,11 +467,11 @@ namespace Transformalize.Libs.fastJSON
         {
             _output.Append('\"');
 
-            int runIndex = -1;
+            var runIndex = -1;
 
-            for (int index = 0; index < s.Length; ++index)
+            for (var index = 0; index < s.Length; ++index)
             {
-                char c = s[index];
+                var c = s[index];
 
                 if (_useEscapedUnicode)
                 {

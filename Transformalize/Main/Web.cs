@@ -59,17 +59,17 @@ namespace Transformalize.Main
             request.Method = "POST";
             request.ContentType = "application/x-www-form-urlencoded";
 
-            byte[] byteArray = Encoding.UTF8.GetBytes(postData);
+            var byteArray = Encoding.UTF8.GetBytes(postData);
             request.ContentLength = byteArray.Length;
 
-            using (Stream dataStream = request.GetRequestStream())
+            using (var dataStream = request.GetRequestStream())
                 dataStream.Write(byteArray, 0, byteArray.Length);
 
             try
             {
                 using (var response = (HttpWebResponse) request.GetResponse())
                 {
-                    using (Stream responseStream = response.GetResponseStream())
+                    using (var responseStream = response.GetResponseStream())
                     {
                         if (responseStream == null)
                             return new WebResponse();
@@ -93,7 +93,7 @@ namespace Transformalize.Main
             {
                 using (var response = (HttpWebResponse) request.GetResponse())
                 {
-                    using (Stream responseStream = response.GetResponseStream())
+                    using (var responseStream = response.GetResponseStream())
                     {
                         if (responseStream == null)
                             return new WebResponse();

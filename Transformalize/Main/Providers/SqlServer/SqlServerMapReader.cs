@@ -43,7 +43,7 @@ namespace Transformalize.Main.Providers.SqlServer
             {
                 cn.Open();
                 var cmd = new SqlCommand(_sql, cn);
-                SqlDataReader reader = cmd.ExecuteReader();
+                var reader = cmd.ExecuteReader();
                 if (reader.HasRows)
                 {
                     while (reader.Read())

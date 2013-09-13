@@ -36,7 +36,7 @@ namespace Transformalize.Main.Providers.SqlServer
 
         public void Initialize()
         {
-            string cs = _process.MasterEntity.OutputConnection.ConnectionString;
+            var cs = _process.MasterEntity.OutputConnection.ConnectionString;
 
             if (!new SqlServerTableExists(cs).Exists("dbo", "TflBatch"))
             {
@@ -51,7 +51,7 @@ namespace Transformalize.Main.Providers.SqlServer
 
         private static void Execute(string connectionString, string sqlFormat, params object[] values)
         {
-            string sql = values.Length > 0 ? string.Format(sqlFormat, values) : sqlFormat;
+            var sql = values.Length > 0 ? string.Format(sqlFormat, values) : sqlFormat;
 
             using (var cn = new SqlConnection(connectionString))
             {

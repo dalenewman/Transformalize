@@ -1,3 +1,25 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -80,7 +102,7 @@ namespace Transformalize.Libs.RazorEngine.Templating
             if (Layout != null)
             {
                 // Get the layout template.
-                ITemplate layout = ResolveLayout(Layout);
+                var layout = ResolveLayout(Layout);
 
                 // Push the current body instance onto the stack for later execution.
                 var body = new TemplateWriter(tw => tw.Write(builder.ToString()));
@@ -128,7 +150,7 @@ namespace Transformalize.Libs.RazorEngine.Templating
         /// <returns>The template writer helper.</returns>
         public virtual TemplateWriter Include(string cacheName, object model = null)
         {
-            ITemplate instance = TemplateService.Resolve(cacheName, model);
+            var instance = TemplateService.Resolve(cacheName, model);
             if (instance == null)
                 throw new ArgumentException("No template could be resolved with name '" + cacheName + "'");
 
@@ -183,7 +205,7 @@ namespace Transformalize.Libs.RazorEngine.Templating
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("The name of the section to render must be specified.");
 
-            Action action = _context.GetSectionDelegate(name);
+            var action = _context.GetSectionDelegate(name);
             if (action == null && isRequired)
                 throw new ArgumentException("No section has been defined with name '" + name + "'");
 
@@ -229,8 +251,8 @@ namespace Transformalize.Libs.RazorEngine.Templating
         /// <param name="name">The name of the attribute to be written.</param>
         public virtual void WriteAttributeTo(TextWriter writer, string name, PositionTagged<string> prefix, PositionTagged<string> suffix, params AttributeValue[] values)
         {
-            bool first = true;
-            bool wroteSomething = false;
+            var first = true;
+            var wroteSomething = false;
             if (values.Length == 0)
             {
                 // Explicitly empty attribute, so write the prefix and suffix
@@ -239,10 +261,10 @@ namespace Transformalize.Libs.RazorEngine.Templating
             }
             else
             {
-                for (int i = 0; i < values.Length; i++)
+                for (var i = 0; i < values.Length; i++)
                 {
-                    AttributeValue attrVal = values[i];
-                    PositionTagged<object> val = attrVal.Value;
+                    var attrVal = values[i];
+                    var val = attrVal.Value;
 
                     bool? boolVal = null;
                     if (val.Value is bool)

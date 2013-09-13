@@ -56,11 +56,11 @@ namespace Transformalize.Main.Providers
 
         public static string Select(IFields fields, string leftTable, string rightTable, AbstractProvider provider, string leftSchema = "dbo", string rightSchema = "dbo")
         {
-            string maxDop = provider.Supports.MaxDop ? "OPTION (MAXDOP 2);" : ";";
-            string sqlPattern = "\r\nSELECT\r\n    {0}\r\nFROM {1} l\r\nINNER JOIN {2} r ON ({3})\r\n" + maxDop;
+            var maxDop = provider.Supports.MaxDop ? "OPTION (MAXDOP 2);" : ";";
+            var sqlPattern = "\r\nSELECT\r\n    {0}\r\nFROM {1} l\r\nINNER JOIN {2} r ON ({3})\r\n" + maxDop;
 
-            string columns = new FieldSqlWriter(fields).ExpandXml().Input().Select(provider).Prepend("l.").ToAlias(provider, true).Write(",\r\n    ");
-            string join = new FieldSqlWriter(fields).FieldType(FieldType.MasterKey, FieldType.PrimaryKey).Name(provider).Set("l", "r").Write(" AND ");
+            var columns = new FieldSqlWriter(fields).ExpandXml().Input().Select(provider).Prepend("l.").ToAlias(provider, true).Write(",\r\n    ");
+            var join = new FieldSqlWriter(fields).FieldType(FieldType.MasterKey, FieldType.PrimaryKey).Name(provider).Set("l", "r").Write(" AND ");
 
             return string.Format(sqlPattern, columns, SafeTable(leftTable, provider, leftSchema), SafeTable(rightTable, provider, rightSchema), @join);
         }
@@ -68,7 +68,7 @@ namespace Transformalize.Main.Providers
         private static string InsertUnionedValues(int size, string name, Field[] fields, IEnumerable<Row> rows, AbstractConnection connection)
         {
             var sqlBuilder = new StringBuilder();
-            string safeName = connection.Provider.Supports.TableVariable ? name : connection.Provider.Enclose(name);
+            var safeName = connection.Provider.Supports.TableVariable ? name : connection.Provider.Enclose(name);
             foreach (var group in rows.Partition(size))
             {
                 sqlBuilder.Append(string.Format("\r\nINSERT INTO {0}\r\nSELECT {1};", safeName, string.Join("\r\nUNION ALL SELECT ", RowsToValues(fields, group))));
@@ -79,7 +79,7 @@ namespace Transformalize.Main.Providers
         private static string InsertMultipleValues(int size, string name, Field[] fields, IEnumerable<Row> rows, AbstractConnection connection)
         {
             var sqlBuilder = new StringBuilder();
-            string safeName = connection.Provider.Supports.TableVariable ? name : connection.Provider.Enclose(name);
+            var safeName = connection.Provider.Supports.TableVariable ? name : connection.Provider.Enclose(name);
             foreach (var group in rows.Partition(size))
             {
                 sqlBuilder.Append(string.Format("\r\nINSERT INTO {0}\r\nVALUES({1});", safeName, string.Join("),\r\n(", RowsToValues(fields, @group))));
@@ -89,13 +89,13 @@ namespace Transformalize.Main.Providers
 
         private static IEnumerable<string> RowsToValues(Field[] fields, IEnumerable<Row> rows)
         {
-            Field[] orderedFields = new FieldSqlWriter(fields).ToArray();
-            foreach (Row row in rows)
+            var orderedFields = new FieldSqlWriter(fields).ToArray();
+            foreach (var row in rows)
             {
                 var values = new List<string>();
-                foreach (Field field in orderedFields)
+                foreach (var field in orderedFields)
                 {
-                    string value = row[field.Alias].ToString();
+                    var value = row[field.Alias].ToString();
                     values.Add(
                         field.Quote == string.Empty
                             ? value

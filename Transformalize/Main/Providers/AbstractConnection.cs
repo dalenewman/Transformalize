@@ -72,7 +72,7 @@ namespace Transformalize.Main.Providers
 
         public IDbConnection GetConnection()
         {
-            Type type = Type.GetType(TypeAndAssemblyName, false, true);
+            var type = Type.GetType(TypeAndAssemblyName, false, true);
             var connection = (IDbConnection) Activator.CreateInstance(type);
             connection.ConnectionString = ConnectionString;
             return connection;
@@ -90,7 +90,7 @@ namespace Transformalize.Main.Providers
 
         public bool IsReady()
         {
-            bool isReady = _connectionChecker.Check(this);
+            var isReady = _connectionChecker.Check(this);
             if (isReady)
             {
                 ProviderSupportsModifier.Modify(this, Provider.Supports);
@@ -100,13 +100,13 @@ namespace Transformalize.Main.Providers
 
         public int NextBatchId(string processName)
         {
-            using (IDbConnection cn = GetConnection())
+            using (var cn = GetConnection())
             {
                 cn.Open();
-                IDbCommand cmd = cn.CreateCommand();
+                var cmd = cn.CreateCommand();
                 cmd.CommandText = "SELECT ISNULL(MAX(TflBatchId),0)+1 FROM TflBatch WHERE ProcessName = @ProcessName;";
 
-                IDbDataParameter process = cmd.CreateParameter();
+                var process = cmd.CreateParameter();
                 process.ParameterName = "@ProcessName";
                 process.Value = processName;
 
@@ -117,7 +117,7 @@ namespace Transformalize.Main.Providers
 
         public void AddParameter(IDbCommand command, string name, object val)
         {
-            IDbDataParameter parameter = command.CreateParameter();
+            var parameter = command.CreateParameter();
             parameter.ParameterName = name;
             parameter.Value = val ?? DBNull.Value;
             command.Parameters.Add(parameter);
@@ -125,26 +125,26 @@ namespace Transformalize.Main.Providers
 
         public void LoadBeginVersion(Entity entity)
         {
-            string sql = string.Format(@"
+            var sql = string.Format(@"
                 SELECT {0}
-                FROM TflBatch
-                WHERE TflBatchId = (
-	                SELECT TflBatchId = MAX(TflBatchId)
-	                FROM TflBatch
-	                WHERE ProcessName = @ProcessName 
+                FROM TflBatch b
+                INNER JOIN (
+                    SELECT @ProcessName AS ProcessName, TflBatchId = MAX(TflBatchId)
+                    FROM TflBatch
+                    WHERE ProcessName = @ProcessName
                     AND EntityName = @EntityName
-                );
+                ) m ON (b.ProcessName = m.ProcessName AND b.TflBatchId = m.TflBatchId);
             ", entity.GetVersionField());
 
-            using (IDbConnection cn = GetConnection())
+            using (var cn = GetConnection())
             {
                 cn.Open();
-                IDbCommand cmd = cn.CreateCommand();
+                var cmd = cn.CreateCommand();
                 cmd.CommandText = sql;
                 AddParameter(cmd, "@ProcessName", entity.ProcessName);
                 AddParameter(cmd, "@EntityName", entity.Alias);
 
-                using (IDataReader reader = cmd.ExecuteReader(CommandBehavior.CloseConnection & CommandBehavior.SingleResult))
+                using (var reader = cmd.ExecuteReader(CommandBehavior.CloseConnection & CommandBehavior.SingleResult))
                 {
                     if (reader == null) return;
 
@@ -156,14 +156,14 @@ namespace Transformalize.Main.Providers
 
         public void LoadEndVersion(Entity entity)
         {
-            string sql = string.Format("SELECT MAX({0}) AS {0} FROM {1};", Provider.Enclose(entity.Version.Name), Provider.Enclose(entity.Name));
+            var sql = string.Format("SELECT MAX({0}) AS {0} FROM {1};", Provider.Enclose(entity.Version.Name), Provider.Enclose(entity.Name));
 
-            using (IDbConnection cn = GetConnection())
+            using (var cn = GetConnection())
             {
-                IDbCommand command = cn.CreateCommand();
+                var command = cn.CreateCommand();
                 command.CommandText = sql;
                 cn.Open();
-                using (IDataReader reader = command.ExecuteReader(CommandBehavior.CloseConnection & CommandBehavior.SingleResult))
+                using (var reader = command.ExecuteReader(CommandBehavior.CloseConnection & CommandBehavior.SingleResult))
                 {
                     if (reader == null) return;
 

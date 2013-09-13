@@ -1,6 +1,22 @@
-#region "  © Copyright 2005-07 to Marcos Meli - http://www.marcosmeli.com.ar" 
+#region License
 
-// Errors, suggestions, contributions, send a mail to: marcos@filehelpers.com.
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
 
 #endregion
 
@@ -57,7 +73,7 @@ namespace Transformalize.Libs.FileHelpers.Fields
             mFieldType = mFieldInfo.FieldType;
             mIsStringField = mFieldType == strType;
 
-            object[] attribs = fi.GetCustomAttributes(typeof (FieldConverterAttribute), true);
+            var attribs = fi.GetCustomAttributes(typeof (FieldConverterAttribute), true);
 
             if (attribs.Length > 0)
             {
@@ -154,7 +170,7 @@ namespace Transformalize.Libs.FileHelpers.Fields
                                                 ". Please check the class record.");
             }
 
-            ExtractedInfo info = ExtractFieldString(line);
+            var info = ExtractFieldString(line);
             if (info.mCustomExtractedString == null)
                 line.mCurrentPos = info.ExtractedTo + 1;
 
@@ -242,7 +258,7 @@ namespace Transformalize.Libs.FileHelpers.Fields
                     }
                     else
                     {
-                        string from = fieldString.ExtractedString();
+                        var from = fieldString.ExtractedString();
                         val = mConvertProvider.StringToField(from);
 
                         if (val == null)
@@ -254,7 +270,7 @@ namespace Transformalize.Libs.FileHelpers.Fields
             }
             catch (ConvertException ex)
             {
-                ConvertException e = ConvertException.ReThrowException(ex, mFieldInfo.Name, line.mReader.LineNumber, fieldString.ExtractedFrom + 1);
+                var e = ConvertException.ReThrowException(ex, mFieldInfo.Name, line.mReader.LineNumber, fieldString.ExtractedFrom + 1);
                 _log.Error("{0} {1}", e.Message, e.MessageExtra);
                 Environment.Exit(1);
             }

@@ -63,15 +63,15 @@ namespace Transformalize.Main
 
         public override void Transform(ref Row row, string resultKey)
         {
-            using (XmlReader reader = XmlReader.Create(new StringReader(row[_xmlField].ToString()), _settings))
+            using (var reader = XmlReader.Create(new StringReader(row[_xmlField].ToString()), _settings))
             {
                 while (reader.Read())
                 {
                     if (!reader.IsStartElement()) continue;
                     while (_map.ContainsKey(reader.Name))
                     {
-                        string name = reader.Name;
-                        string value = reader.ReadElementContentAsString();
+                        var name = reader.Name;
+                        var value = reader.ReadElementContentAsString();
                         if (value != string.Empty)
                             row[_map[name]] = Common.ConversionMap[_typeMap[name]](value);
                     }

@@ -47,7 +47,7 @@ ELSE
                 using (var cn = new SqlConnection(entity.OutputConnection.ConnectionString))
                 {
                     cn.Open();
-                    string sql = string.Format(FORMAT, entity.Schema, entity.OutputName());
+                    var sql = string.Format(FORMAT, entity.Schema, entity.OutputName());
                     var cmd = new SqlCommand(sql, cn);
                     return (int) cmd.ExecuteScalar() == 1;
                 }
@@ -62,7 +62,7 @@ ELSE
                 using (var cn = new SqlConnection(entity.InputConnection.ConnectionString))
                 {
                     cn.Open();
-                    string sql = string.Format(FORMAT, entity.Schema, entity.Alias);
+                    var sql = string.Format(FORMAT, entity.Schema, entity.Alias);
                     var cmd = new SqlCommand(sql, cn);
                     return (int) cmd.ExecuteScalar() == 1;
                 }

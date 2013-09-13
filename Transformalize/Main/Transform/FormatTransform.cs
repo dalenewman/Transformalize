@@ -39,7 +39,7 @@ namespace Transformalize.Main
 
         public override void Transform(ref StringBuilder sb)
         {
-            string value = sb.ToString();
+            var value = sb.ToString();
             sb.Clear();
             sb.AppendFormat(_format, value);
         }

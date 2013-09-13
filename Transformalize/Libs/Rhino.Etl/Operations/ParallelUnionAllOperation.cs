@@ -1,3 +1,25 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -30,37 +52,37 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
         {
             var blockingCollection = new BlockingCollection<Row>();
-            int count = _operations.Count;
+            var count = _operations.Count;
 
             if (count == 0)
                 yield break;
 
             Debug("Creating tasks for {0} operations.", count);
 
-            TaskFactory factory = _maxDop > 0 ?
-                                      new TaskFactory(new LimitedConcurrencyLevelTaskScheduler(_maxDop)) :
-                                      new TaskFactory();
+            var factory = _maxDop > 0 ?
+                              new TaskFactory(new LimitedConcurrencyLevelTaskScheduler(_maxDop)) :
+                              new TaskFactory();
 
-            Task[] tasks = _operations.Select(currentOp =>
-                                              factory.StartNew(() =>
-                                                                   {
-                                                                       try
-                                                                       {
-                                                                           foreach (Row row in currentOp.Execute(null))
-                                                                           {
-                                                                               blockingCollection.Add(row);
-                                                                           }
-                                                                       }
-                                                                       finally
-                                                                       {
-                                                                           if (Interlocked.Decrement(ref count) == 0)
-                                                                           {
-                                                                               blockingCollection.CompleteAdding();
-                                                                           }
-                                                                       }
-                                                                   })).ToArray();
+            var tasks = _operations.Select(currentOp =>
+                                           factory.StartNew(() =>
+                                                                {
+                                                                    try
+                                                                    {
+                                                                        foreach (var row in currentOp.Execute(null))
+                                                                        {
+                                                                            blockingCollection.Add(row);
+                                                                        }
+                                                                    }
+                                                                    finally
+                                                                    {
+                                                                        if (Interlocked.Decrement(ref count) == 0)
+                                                                        {
+                                                                            blockingCollection.CompleteAdding();
+                                                                        }
+                                                                    }
+                                                                })).ToArray();
 
-            foreach (Row row in blockingCollection.GetConsumingEnumerable())
+            foreach (var row in blockingCollection.GetConsumingEnumerable())
             {
                 yield return row;
             }
@@ -69,7 +91,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
 
         public override void PrepareForExecution(IPipelineExecuter pipelineExecuter)
         {
-            foreach (IOperation operation in _operations)
+            foreach (var operation in _operations)
             {
                 operation.PrepareForExecution(pipelineExecuter);
             }
@@ -210,7 +232,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
             /// <returns>An enumerable of the tasks currently scheduled.</returns>
             protected override sealed IEnumerable<Task> GetScheduledTasks()
             {
-                bool lockTaken = false;
+                var lockTaken = false;
                 try
                 {
                     Monitor.TryEnter(_tasks, ref lockTaken);

@@ -1,10 +1,13 @@
 ﻿@using System
 @using System.Text
-@using Transformalize.Main
 @using Transformalize.Extensions
+@using Transformalize.Main
 @{
     var process = (Process) Model.Process;
     var connection = process.Connections["output"];
+    var provider = connection.Provider;
+    var l = provider.L;
+    var r = provider.R;
 
     // build query (all fields)
     var builder = new StringBuilder();
@@ -16,23 +19,23 @@
         {
             if (i == 0)
             {
-                builder.AppendLine("    " + field.Alias.ToLower() + ",");
+                builder.AppendLine("    " + l + field.Alias.ToLower() + r + ",");
             }
             else
             {
-                builder.AppendLine("    " + field.Alias + " AS " + field.Alias.ToLower() + field.SearchTypes[i].Name.ToLower() + ",");
+                builder.AppendLine("    " + l + field.Alias + r + " AS " + l + field.Alias.ToLower() + field.SearchTypes[i].Name.ToLower() + r + ",");
             }
         }
     }
     builder.TrimEnd(",\r\n");
     builder.AppendFormat("\r\nFROM {0};", process.View);
     var query = builder + Environment.NewLine;
-    
+
     // build delta import query (all fields filtered by the changed keys)
     builder.TrimEnd(";");
     builder.AppendLine("\r\nWHERE tflkey = ${dataimporter.delta.tflkey};");
-    var deltaImportQuery = builder.ToString();   
-    
+    var deltaImportQuery = builder.ToString();
+
     // build delta query (just the changed keys)
     builder.Clear();
     builder.AppendLine("\r\nSELECT tflkey");
@@ -48,9 +51,9 @@
                 url="jdbc:sqlserver://@connection.Server;databaseName=@connection.Database;responseBuffering=adaptive;"
                 readOnly="true"
                 applicationName="Tfl Solr"
-                user="@connection.User"
-                password="@connection.Password"
-                integratedSecurity="@(connection.TrustedConnection ? "true" : "false")">
+                user="Solr"
+                password="SolrFreePass"
+                integratedSecurity="false"> <!--@(connection.TrustedConnection ? "true" : "false")-->
     </dataSource>
 
     <document>

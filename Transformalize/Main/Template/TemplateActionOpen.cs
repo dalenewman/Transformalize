@@ -28,11 +28,11 @@ namespace Transformalize.Main.Template_
     {
         public override void Handle(TemplateAction action)
         {
-            string actionFile = string.IsNullOrEmpty(action.File)
-                                    ? string.Empty
-                                    : new FileInfo(action.File).FullName;
+            var actionFile = string.IsNullOrEmpty(action.File)
+                                 ? string.Empty
+                                 : new FileInfo(action.File).FullName;
 
-            string openFile = actionFile == string.Empty ? action.RenderedFile : actionFile;
+            var openFile = actionFile == string.Empty ? action.RenderedFile : actionFile;
             System.Diagnostics.Process.Start(openFile);
             Log.Info("Opened file {0}.", openFile);
         }

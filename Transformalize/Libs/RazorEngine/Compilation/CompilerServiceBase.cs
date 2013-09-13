@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
+using System;
 using System.CodeDom;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
@@ -137,16 +159,16 @@ namespace Transformalize.Libs.RazorEngine.Compilation
             if (constructors == null || !constructors.Any())
                 return;
 
-            CodeConstructor[] existingConstructors = codeType.Members.OfType<CodeConstructor>().ToArray();
-            foreach (CodeConstructor existingConstructor in existingConstructors)
+            var existingConstructors = codeType.Members.OfType<CodeConstructor>().ToArray();
+            foreach (var existingConstructor in existingConstructors)
                 codeType.Members.Remove(existingConstructor);
 
-            foreach (ConstructorInfo constructor in constructors)
+            foreach (var constructor in constructors)
             {
                 var ctor = new CodeConstructor();
                 ctor.Attributes = MemberAttributes.Public;
 
-                foreach (ParameterInfo param in constructor.GetParameters())
+                foreach (var param in constructor.GetParameters())
                 {
                     ctor.Parameters.Add(new CodeParameterDeclarationExpression(param.ParameterType, param.Name));
                     ctor.BaseConstructorArgs.Add(new CodeSnippetExpression(param.Name));
@@ -180,17 +202,17 @@ namespace Transformalize.Libs.RazorEngine.Compilation
             templateType = templateType ?? ((modelType == null) ? typeof (TemplateBase) : typeof (TemplateBase<>));
 
             // Create the RazorEngineHost
-            RazorEngineHost host = CreateHost(templateType, modelType, className);
+            var host = CreateHost(templateType, modelType, className);
 
             // Add any required namespace imports
-            foreach (string ns in GetNamespaces(templateType, namespaceImports))
+            foreach (var ns in GetNamespaces(templateType, namespaceImports))
                 host.NamespaceImports.Add(ns);
 
             // Gets the generator result.
-            GeneratorResults result = GetGeneratorResult(host, template);
+            var result = GetGeneratorResult(host, template);
 
             // Add the dynamic model attribute if the type is an anonymous type.
-            CodeTypeDeclaration type = result.GeneratedCode.Namespaces[0].Types[0];
+            var type = result.GeneratedCode.Namespaces[0].Types[0];
             if (modelType != null && CompilerServicesUtility.IsAnonymousType(modelType))
                 type.CustomAttributes.Add(new CodeAttributeDeclaration(new CodeTypeReference(typeof (HasDynamicModelAttribute))));
 
@@ -227,11 +249,11 @@ namespace Transformalize.Libs.RazorEngine.Compilation
         /// <returns>A set of namespace imports.</returns>
         private static IEnumerable<string> GetNamespaces(Type templateType, IEnumerable<string> otherNamespaces)
         {
-            IEnumerable<string> templateNamespaces = templateType.GetCustomAttributes(typeof (RequireNamespacesAttribute), true)
-                                                                 .Cast<RequireNamespacesAttribute>()
-                                                                 .SelectMany(a => a.Namespaces)
-                                                                 .Concat(otherNamespaces)
-                                                                 .Distinct();
+            var templateNamespaces = templateType.GetCustomAttributes(typeof (RequireNamespacesAttribute), true)
+                                                 .Cast<RequireNamespacesAttribute>()
+                                                 .SelectMany(a => a.Namespaces)
+                                                 .Concat(otherNamespaces)
+                                                 .Distinct();
 
             return templateNamespaces;
         }
@@ -244,11 +266,11 @@ namespace Transformalize.Libs.RazorEngine.Compilation
         {
             Contract.Requires(unit != null);
 
-            CodeNamespace ns = unit.Namespaces[0];
-            CodeTypeDeclaration type = ns.Types[0];
-            CodeMemberMethod executeMethod = type.Members.OfType<CodeMemberMethod>().Where(m => m.Name.Equals("Execute")).Single();
+            var ns = unit.Namespaces[0];
+            var type = ns.Types[0];
+            var executeMethod = type.Members.OfType<CodeMemberMethod>().Where(m => m.Name.Equals("Execute")).Single();
 
-            foreach (ICodeInspector inspector in CodeInspectors)
+            foreach (var inspector in CodeInspectors)
                 inspector.Inspect(unit, ns, type, executeMethod);
         }
 

@@ -238,6 +238,7 @@
     <Compile Include="Main\Providers\SqlServer\SqlServerTflWriter.cs" />
     <Compile Include="Main\Providers\SqlServer\SqlServerViewWriter.cs" />
     <Compile Include="Main\Providers\SqlTemplates.cs" />
+    <Compile Include="Main\Providers\StarFields.cs" />
     <Compile Include="Main\Relationship.cs" />
     <Compile Include="Main\Script.cs" />
     <Compile Include="Main\Template\Template.cs" />

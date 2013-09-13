@@ -30,7 +30,7 @@ namespace Transformalize.Main.Providers.SqlServer
 
         public string Write(Entity entity)
         {
-            AbstractConnection connection = entity.InputConnection;
+            var connection = entity.InputConnection;
             return string.Format(
                 SQL_PATTERN,
                 string.Join(", ", entity.SelectKeys(connection.Provider)),

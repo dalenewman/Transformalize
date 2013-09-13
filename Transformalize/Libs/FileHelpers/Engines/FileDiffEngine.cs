@@ -1,3 +1,25 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
 #undef GENERICS
 //#define GENERICS
 //#if NET_2_0
@@ -54,7 +76,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
 #if ! GENERICS
         public object[] OnlyNewRecords(string sourceFile, string newFile)
         {
-            FileHelperEngine engine = CreateEngineAndClearErrors();
+            var engine = CreateEngineAndClearErrors();
 
             var olds = (IComparableRecord[]) engine.ReadFile(sourceFile);
             ErrorManager.AddErrors(engine.ErrorManager);
@@ -91,7 +113,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
 #if ! GENERICS
         public object[] OnlyMissingRecords(string sourceFile, string newFile)
         {
-            FileHelperEngine engine = CreateEngineAndClearErrors();
+            var engine = CreateEngineAndClearErrors();
 
             var olds = (IComparableRecord[]) engine.ReadFile(sourceFile);
             ErrorManager.AddErrors(engine.ErrorManager);
@@ -151,7 +173,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
 #if ! GENERICS
         public object[] OnlyDuplicatedRecords(string file1, string file2)
         {
-            FileHelperEngine engine = CreateEngineAndClearErrors();
+            var engine = CreateEngineAndClearErrors();
 
             var olds = (IComparableRecord[]) engine.ReadFile(file1);
             ErrorManager.AddErrors(engine.ErrorManager);
@@ -197,15 +219,15 @@ namespace Transformalize.Libs.FileHelpers.Engines
 
         private static void ApplyDiff(IComparableRecord[] col1, IComparableRecord[] col2, ArrayList arr, bool addIfIn1)
         {
-            for (int i = 0; i < col1.Length; i++)
+            for (var i = 0; i < col1.Length; i++)
             {
-                bool isNew = false;
+                var isNew = false;
 
                 //OPT: aca podemos hacer algo asi que para cada nuevo 
                 //     que encuentra no empieze en j = i sino en j = i - nuevos =)
                 //     Otra idea de guille es agrear un window y usar el Max de las dos
 
-                IComparableRecord current = col1[i];
+                var current = col1[i];
 #else
 		private static void ApplyDiffInBoth(T[] col1, T[] col2, List<T> arr)
 		{
@@ -230,7 +252,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
 				T current = col1[i];
 #endif
 
-                for (int j = i; j < col2.Length; j++)
+                for (var j = i; j < col2.Length; j++)
                 {
                     if (current.IsEqualRecord(col2[j]))
                     {
@@ -242,7 +264,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
 
                 if (isNew == false)
                 {
-                    for (int j = 0; j < Math.Min(i, col2.Length); j++)
+                    for (var j = 0; j < Math.Min(i, col2.Length); j++)
                     {
                         if (current.IsEqualRecord(col2[j]))
                         {
@@ -267,7 +289,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
 #if ! GENERICS
         public object[] OnlyNoDuplicatedRecords(string file1, string file2)
         {
-            FileHelperEngine engine = CreateEngineAndClearErrors();
+            var engine = CreateEngineAndClearErrors();
 
             var olds = (IComparableRecord[]) engine.ReadFile(file1);
             ErrorManager.AddErrors(engine.ErrorManager);
@@ -311,8 +333,8 @@ namespace Transformalize.Libs.FileHelpers.Engines
 #if ! GENERICS
         public object[] WriteNewRecords(string sourceFile, string newFile, string destFile)
         {
-            FileHelperEngine engine = CreateEngineAndClearErrors();
-            object[] res = OnlyNewRecords(sourceFile, newFile);
+            var engine = CreateEngineAndClearErrors();
+            var res = OnlyNewRecords(sourceFile, newFile);
 #else
 		public T[] WriteNewRecords(string sourceFile, string newFile, string destFile)
 		{

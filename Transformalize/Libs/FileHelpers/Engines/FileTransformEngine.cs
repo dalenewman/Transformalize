@@ -1,3 +1,25 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
 #undef GENERICS
 //#define GENERICS
 //#if NET_2_0
@@ -179,7 +201,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
 
             engine.BeginReadFile(sourceFile);
 #if ! GENERICS
-            foreach (object record in engine)
+            foreach (var record in engine)
 #else
 			foreach (Source record in engine)
 #endif
@@ -203,8 +225,8 @@ namespace Transformalize.Libs.FileHelpers.Engines
             var sourceEngine = new FileHelperEngine(sourceType, mSourceEncoding);
             var destEngine = new FileHelperEngine(destType, mDestinationEncoding);
 
-            object[] source = sourceEngine.ReadStream(sourceFile);
-            object[] transformed = CoreTransformRecords(source, method);
+            var source = sourceEngine.ReadStream(sourceFile);
+            var transformed = CoreTransformRecords(source, method);
 #else
         private Destination[] CoreTransform(StreamReader sourceFile, StreamWriter destFile, Type sourceType, Type destType, MethodInfo method)
         {
@@ -229,7 +251,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
         {
             var res = new ArrayList(sourceRecords.Length);
 
-            for (int i = 0; i < sourceRecords.Length; i++)
+            for (var i = 0; i < sourceRecords.Length; i++)
             {
                 res.Add(CoreTransformOneRecord(sourceRecords[i], method));
             }
@@ -278,7 +300,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
             destEngine.BeginWriteFile(destFile);
 
 #if ! GENERICS
-            foreach (object record in sourceEngine)
+            foreach (var record in sourceEngine)
             {
                 destEngine.WriteNext(CoreTransformOneRecord(record, method));
             }
@@ -360,8 +382,8 @@ namespace Transformalize.Libs.FileHelpers.Engines
         {
             MethodInfo res = null;
 
-            MethodInfo[] methods = sourceType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
-            foreach (MethodInfo m in methods)
+            var methods = sourceType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
+            foreach (var m in methods)
             {
                 if (m.IsDefined(typeof (TransformToRecordAttribute), false))
                 {

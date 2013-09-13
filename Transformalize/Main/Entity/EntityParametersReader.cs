@@ -34,8 +34,8 @@ namespace Transformalize.Main
 
         public IParameters Read()
         {
-            Field[] fields = new FieldSqlWriter(_entity.All).ExpandXml().Input().ToArray();
-            foreach (Field field in fields)
+            var fields = new FieldSqlWriter(_entity.All).ExpandXml().Input().ToArray();
+            foreach (var field in fields)
             {
                 _parameters.Add(field.Alias, field.Alias, null, field.Type);
             }

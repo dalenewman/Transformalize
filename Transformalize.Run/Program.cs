@@ -1,27 +1,30 @@
-﻿/*
-Transformalize - Replicate, Transform, and Denormalize Your Data...
-Copyright (C) 2013 Dale Newman
+﻿#region License
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+#endregion
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Transformalize.Configuration;
-using Transformalize.Main;
 using Transformalize.Libs.NLog;
+using Transformalize.Main;
 using Transformalize.Runner;
 using Process = Transformalize.Main.Process;
 
@@ -43,11 +46,11 @@ namespace Transformalize.Run
                 return;
             }
 
-            string arg = args[0];
+            var arg = args[0];
 
             Timer.Start();
 
-            ProcessConfigurationElement configuration = arg.EndsWith(".xml") ? new ProcessXmlConfigurationReader(arg).Read() : new ProcessConfigurationReader(arg).Read();
+            var configuration = arg.EndsWith(".xml") ? new ProcessXmlConfigurationReader(arg).Read() : new ProcessConfigurationReader(arg).Read();
 
             if (OptionsMayExist(args))
             {
@@ -58,7 +61,7 @@ namespace Transformalize.Run
                 }
                 else
                 {
-                    foreach (string problem in _options.Problems)
+                    foreach (var problem in _options.Problems)
                     {
                         Log.Error(arg + " | " + problem);
                     }

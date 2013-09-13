@@ -37,7 +37,7 @@ namespace Transformalize.Main
 
         public void Drop()
         {
-            foreach (Entity entity in _process.Entities)
+            foreach (var entity in _process.Entities)
             {
                 _dropper.DropOutput(entity);
             }

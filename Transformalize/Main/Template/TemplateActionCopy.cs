@@ -28,9 +28,9 @@ namespace Transformalize.Main.Template_
     {
         public override void Handle(TemplateAction action)
         {
-            string actionFile = string.IsNullOrEmpty(action.File)
-                                    ? string.Empty
-                                    : new FileInfo(action.File).FullName;
+            var actionFile = string.IsNullOrEmpty(action.File)
+                                 ? string.Empty
+                                 : new FileInfo(action.File).FullName;
 
             if (actionFile != string.Empty)
             {

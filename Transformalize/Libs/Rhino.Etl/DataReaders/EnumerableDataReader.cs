@@ -1,3 +1,25 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -68,7 +90,7 @@ namespace Transformalize.Libs.Rhino.Etl.DataReaders
             table.Columns.Add("ColumnOrdinal", typeof (int));
             table.Columns.Add("DataType", typeof (Type));
 
-            for (int i = 0; i < PropertyDescriptors.Count; i++)
+            for (var i = 0; i < PropertyDescriptors.Count; i++)
             {
                 table.Rows.Add(
                     PropertyDescriptors[i].Name,
@@ -98,7 +120,7 @@ namespace Transformalize.Libs.Rhino.Etl.DataReaders
         /// </returns>
         public bool Read()
         {
-            bool next = Enumerator.MoveNext();
+            var next = Enumerator.MoveNext();
             if (next)
                 _rowCount += 1;
             return next;
@@ -220,7 +242,7 @@ namespace Transformalize.Libs.Rhino.Etl.DataReaders
         /// </returns>
         public int GetValues(object[] values)
         {
-            for (int i = 0; i < PropertyDescriptors.Count; i++)
+            for (var i = 0; i < PropertyDescriptors.Count; i++)
             {
                 values[i] = PropertyDescriptors[i].GetValue(Enumerator.Current);
             }
@@ -234,7 +256,7 @@ namespace Transformalize.Libs.Rhino.Etl.DataReaders
         /// <returns>The index of the named field.</returns>
         public int GetOrdinal(string name)
         {
-            for (int i = 0; i < PropertyDescriptors.Count; i++)
+            for (var i = 0; i < PropertyDescriptors.Count; i++)
             {
                 if (string.Equals(PropertyDescriptors[i].Name, name, StringComparison.InvariantCultureIgnoreCase))
                     return i;

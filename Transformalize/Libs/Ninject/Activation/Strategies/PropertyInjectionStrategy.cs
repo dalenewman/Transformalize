@@ -1,12 +1,22 @@
 #region License
 
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
 // 
-// Author: Nate Kohari <nate@enkari.com>
-// Copyright (c) 2007-2010, Enkari, Ltd.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 // 
-// Dual-licensed under the Apache License, Version 2.0, and the Microsoft Public License (Ms-PL).
-// See the file LICENSE.txt for details.
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 // 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
 
 #endregion
 
@@ -71,11 +81,11 @@ namespace Transformalize.Libs.Ninject.Activation.Strategies
             Ensure.ArgumentNotNull(context, "context");
             Ensure.ArgumentNotNull(reference, "reference");
 
-            List<IPropertyValue> propertyValues = context.Parameters.OfType<IPropertyValue>().ToList();
+            var propertyValues = context.Parameters.OfType<IPropertyValue>().ToList();
 
-            foreach (PropertyInjectionDirective directive in context.Plan.GetAll<PropertyInjectionDirective>())
+            foreach (var directive in context.Plan.GetAll<PropertyInjectionDirective>())
             {
-                object value = GetValue(context, directive.Target, propertyValues);
+                var value = GetValue(context, directive.Target, propertyValues);
                 directive.Injector(reference.Instance, value);
             }
 
@@ -90,11 +100,11 @@ namespace Transformalize.Libs.Ninject.Activation.Strategies
         /// <param name="propertyValues">The parameter override value accessors.</param>
         private void AssignProperyOverrides(IContext context, InstanceReference reference, IList<IPropertyValue> propertyValues)
         {
-            PropertyInfo[] properties = reference.Instance.GetType().GetProperties(Flags);
-            foreach (IPropertyValue propertyValue in propertyValues)
+            var properties = reference.Instance.GetType().GetProperties(Flags);
+            foreach (var propertyValue in propertyValues)
             {
-                string propertyName = propertyValue.Name;
-                PropertyInfo propertyInfo = properties.FirstOrDefault(property => string.Equals(property.Name, propertyName, StringComparison.Ordinal));
+                var propertyName = propertyValue.Name;
+                var propertyInfo = properties.FirstOrDefault(property => string.Equals(property.Name, propertyName, StringComparison.Ordinal));
 
                 if (propertyInfo == null)
                 {
@@ -102,7 +112,7 @@ namespace Transformalize.Libs.Ninject.Activation.Strategies
                 }
 
                 var target = new PropertyInjectionDirective(propertyInfo, InjectorFactory.Create(propertyInfo));
-                object value = GetValue(context, target.Target, propertyValues);
+                var value = GetValue(context, target.Target, propertyValues);
                 target.Injector(reference.Instance, value);
             }
         }
@@ -119,7 +129,7 @@ namespace Transformalize.Libs.Ninject.Activation.Strategies
             Ensure.ArgumentNotNull(context, "context");
             Ensure.ArgumentNotNull(target, "target");
 
-            IPropertyValue parameter = allPropertyValues.SingleOrDefault(p => p.Name == target.Name);
+            var parameter = allPropertyValues.SingleOrDefault(p => p.Name == target.Name);
             return parameter != null ? parameter.GetValue(context, target) : target.ResolveWithin(context);
         }
     }

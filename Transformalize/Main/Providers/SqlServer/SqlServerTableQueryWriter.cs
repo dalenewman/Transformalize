@@ -38,10 +38,10 @@ namespace Transformalize.Main.Providers.SqlServer
 
         public string Write(string name, IEnumerable<string> defs, IEnumerable<string> primaryKey, string schema = "dbo", bool ignoreDups = false)
         {
-            string[] pk = primaryKey.ToArray();
-            string defList = string.Join(",\r\n    ", defs);
-            string keyName = string.Join("_", pk).Replace("`", string.Empty).Replace("]", string.Empty).Replace(" ", "_");
-            string keyList = string.Join(", ", pk);
+            var pk = primaryKey.ToArray();
+            var defList = string.Join(",\r\n    ", defs);
+            var keyName = string.Join("_", pk).Replace("`", string.Empty).Replace("]", string.Empty).Replace(" ", "_");
+            var keyList = string.Join(", ", pk);
             return string.Format(
                 CREATE_TABLE_TEMPLATE,
                 schema,
@@ -56,7 +56,7 @@ namespace Transformalize.Main.Providers.SqlServer
 
         public string WriteTemporary(string name, Field[] fields, AbstractProvider provider, bool useAlias = true)
         {
-            string defs = useAlias ? new FieldSqlWriter(fields).Alias(provider).DataType().Write() : new FieldSqlWriter(fields).Name(provider).DataType().Write();
+            var defs = useAlias ? new FieldSqlWriter(fields).Alias(provider).DataType().Write() : new FieldSqlWriter(fields).Name(provider).DataType().Write();
             return string.Format(@"DECLARE @{0} AS TABLE({1});", name.TrimStart("@".ToCharArray()), defs);
         }
     }

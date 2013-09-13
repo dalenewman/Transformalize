@@ -43,7 +43,7 @@ namespace Transformalize.Main
 
         public override void Transform(ref StringBuilder sb)
         {
-            string input = sb.ToString();
+            var input = sb.ToString();
             sb.Clear();
             if (_count > 0)
                 sb.Append(_regex.Replace(input, _replacement, _count));

@@ -73,7 +73,7 @@ namespace Transformalize.Main.Providers.SqlServer
                 ";
             }
 
-            string field = _entity.Version.SimpleType.Replace("rowversion", "Binary").Replace("byte[]", "Binary") + "Version";
+            var field = _entity.Version.SimpleType.Replace("rowversion", "Binary").Replace("byte[]", "Binary") + "Version";
             return string.Format(@"
                 INSERT INTO [TflBatch](TflBatchId, ProcessName, EntityName, [{0}], TflUpdate, Rows)
                 VALUES(@TflBatchId, @ProcessName, @EntityName, @End, @TflUpdate, @Count);

@@ -1,3 +1,25 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
 using System;
 using System.Collections.Generic;
 using Transformalize.Libs.Rhino.Etl.Enumerables;
@@ -53,10 +75,10 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
             var rightEnumerable = new CachingEnumerable<Row>(
                 new EventRaisingEnumerator(right, right.Execute(null))
                 );
-            IEnumerable<Row> execute = left.Execute(leftRegistered ? null : rows);
+            var execute = left.Execute(leftRegistered ? null : rows);
             foreach (Row leftRow in new EventRaisingEnumerator(left, execute))
             {
-                bool leftNeedOuterJoin = true;
+                var leftNeedOuterJoin = true;
                 currentLeftRow = leftRow;
                 foreach (Row rightRow in rightEnumerable)
                 {
@@ -162,11 +184,11 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// <returns></returns>
         public override IEnumerable<Exception> GetAllErrors()
         {
-            foreach (Exception error in left.GetAllErrors())
+            foreach (var error in left.GetAllErrors())
             {
                 yield return error;
             }
-            foreach (Exception error in right.GetAllErrors())
+            foreach (var error in right.GetAllErrors())
             {
                 yield return error;
             }

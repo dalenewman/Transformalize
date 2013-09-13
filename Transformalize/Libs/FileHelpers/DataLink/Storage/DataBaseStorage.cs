@@ -1,6 +1,22 @@
-#region "  © Copyright 2005-07 to Marcos Meli - http://www.marcosmeli.com.ar" 
+#region License
 
-// Errors, suggestions, contributions, send a mail to: marcos@filehelpers.com.
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
 
 #endregion
 
@@ -59,7 +75,7 @@ namespace Transformalize.Libs.FileHelpers.DataLink.Storage
             if (FillRecordCallback == null)
                 throw new BadUsageException("You can´t extract records a null FillRecordCallback. Check the docs for help.");
 
-            object res = mRecordInfo.CreateRecordObject();
+            var res = mRecordInfo.CreateRecordObject();
             FillRecordCallback(res, fieldValues);
             return res;
         }
@@ -141,18 +157,18 @@ namespace Transformalize.Libs.FileHelpers.DataLink.Storage
                 if (mConn.State != ConnectionState.Open)
                     mConn.Open();
 
-                IDbCommand command = mConn.CreateCommand();
+                var command = mConn.CreateCommand();
                 command.Connection = mConn;
                 command.CommandText = GetSelectSql();
 
-                IDataReader reader = command.ExecuteReader();
+                var reader = command.ExecuteReader();
 
                 object currentObj;
                 var values = new object[reader.FieldCount];
 
                 ProgressHelper.Notify(mNotifyHandler, mProgressMode, 0, -1);
 
-                int recordNumber = 0;
+                var recordNumber = 0;
 
                 while (reader.Read())
                 {
@@ -203,15 +219,15 @@ namespace Transformalize.Libs.FileHelpers.DataLink.Storage
                 if (mConn.State != ConnectionState.Open)
                     mConn.Open();
 
-                string SQL = String.Empty;
+                var SQL = String.Empty;
 
                 trans = InitTransaction(mConn);
 
                 ProgressHelper.Notify(mNotifyHandler, mProgressMode, 0, records.Length);
-                int recordNumber = 0;
-                int batchCount = 0;
+                var recordNumber = 0;
+                var batchCount = 0;
 
-                foreach (object record in records)
+                foreach (var record in records)
                 {
                     // Insert Logic Here, must check duplicates
                     recordNumber++;
@@ -270,7 +286,7 @@ namespace Transformalize.Libs.FileHelpers.DataLink.Storage
         {
             InitConnection();
 
-            IDbCommand command = mConn.CreateCommand();
+            var command = mConn.CreateCommand();
             command.Connection = mConn;
             command.CommandText = sql;
 
@@ -279,7 +295,7 @@ namespace Transformalize.Libs.FileHelpers.DataLink.Storage
 
         private int ExecuteAndClose(string sql)
         {
-            int res = -1;
+            var res = -1;
 
             InitConnection();
 
@@ -288,7 +304,7 @@ namespace Transformalize.Libs.FileHelpers.DataLink.Storage
                 if (mConn.State != ConnectionState.Open)
                     mConn.Open();
 
-                IDbCommand command = mConn.CreateCommand();
+                var command = mConn.CreateCommand();
                 command.Connection = mConn;
                 command.CommandText = sql;
 

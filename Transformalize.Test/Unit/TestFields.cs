@@ -1,20 +1,24 @@
-﻿/*
-Transformalize - Replicate, Transform, and Denormalize Your Data...
-Copyright (C) 2013 Dale Newman
+﻿#region License
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+#endregion
 
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -75,7 +79,7 @@ namespace Transformalize.Test.Unit
         public void TestWriteAlias()
         {
             const string expected = "[Field1], [Field2]";
-            string actual = new FieldSqlWriter(_fields).Alias(_sqlServerProvider).Write();
+            var actual = new FieldSqlWriter(_fields).Alias(_sqlServerProvider).Write();
             Assert.AreEqual(expected, actual);
         }
 
@@ -83,7 +87,7 @@ namespace Transformalize.Test.Unit
         public void TestWriteAliasIsNull()
         {
             const string expected = "ISNULL([Field1], 'x'), ISNULL([Field2], 0)";
-            string actual = new FieldSqlWriter(_fields).Alias(_sqlServerProvider).IsNull().Write();
+            var actual = new FieldSqlWriter(_fields).Alias(_sqlServerProvider).IsNull().Write();
             Assert.AreEqual(expected, actual);
         }
 
@@ -91,7 +95,7 @@ namespace Transformalize.Test.Unit
         public void TestWriteName()
         {
             const string expected = "[f1], [f2]";
-            string actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).Write();
+            var actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).Write();
             Assert.AreEqual(expected, actual);
         }
 
@@ -99,7 +103,7 @@ namespace Transformalize.Test.Unit
         public void TestWriteNameDataType()
         {
             const string expected = "[f1] NVARCHAR(10), [f2] INT";
-            string actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).DataType().Write();
+            var actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).DataType().Write();
             Assert.AreEqual(expected, actual);
         }
 
@@ -107,7 +111,7 @@ namespace Transformalize.Test.Unit
         public void TestWriteNameDataTypeNotNull()
         {
             const string expected = "[f1] NVARCHAR(10) NOT NULL, [f2] INT NOT NULL";
-            string actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).DataType().Append(" NOT NULL").Write();
+            var actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).DataType().Append(" NOT NULL").Write();
             Assert.AreEqual(expected, actual);
         }
 
@@ -115,7 +119,7 @@ namespace Transformalize.Test.Unit
         public void TestWriteNameDataTypeNull()
         {
             const string expected = "[f1] NVARCHAR(10) NULL, [f2] INT NULL";
-            string actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).DataType().Append(" NULL").Write();
+            var actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).DataType().Append(" NULL").Write();
             Assert.AreEqual(expected, actual);
         }
 
@@ -123,7 +127,7 @@ namespace Transformalize.Test.Unit
         public void TestWriteNameIsNull()
         {
             const string expected = "ISNULL([f1], 'x'), ISNULL([f2], 0)";
-            string actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).IsNull().Write();
+            var actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).IsNull().Write();
             Assert.AreEqual(expected, actual);
         }
 
@@ -131,7 +135,7 @@ namespace Transformalize.Test.Unit
         public void TestWriteNameIsNullAsAlias()
         {
             const string expected = "ISNULL([f1], 'x') AS [Field1], ISNULL([f2], 0) AS [Field2]";
-            string actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).IsNull().AsAlias(_sqlServerProvider).Write();
+            var actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).IsNull().AsAlias(_sqlServerProvider).Write();
             Assert.AreEqual(expected, actual);
         }
 
@@ -140,7 +144,7 @@ namespace Transformalize.Test.Unit
         {
             //const string expected = "[Field1] = ISNULL([f1], 'x'), [Field2] = ISNULL([f2], 0)";
             const string expected = "ISNULL([f1], 'x') AS [Field1], ISNULL([f2], 0) AS [Field2]";
-            string actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).IsNull().ToAlias(_sqlServerProvider).Write();
+            var actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).IsNull().ToAlias(_sqlServerProvider).Write();
             Assert.AreEqual(expected, actual);
         }
 
@@ -148,7 +152,7 @@ namespace Transformalize.Test.Unit
         public void TestWriteNameOutput()
         {
             const string expected = "[f1]";
-            string actual = new FieldSqlWriter(_fields).Output().Name(_sqlServerProvider).Write();
+            var actual = new FieldSqlWriter(_fields).Output().Name(_sqlServerProvider).Write();
             Assert.AreEqual(expected, actual);
         }
 
@@ -156,7 +160,7 @@ namespace Transformalize.Test.Unit
         public void TestWriteNothing()
         {
             const string expected = ", ";
-            string actual = new FieldSqlWriter(_fields).Write();
+            var actual = new FieldSqlWriter(_fields).Write();
             Assert.AreEqual(expected, actual);
         }
 
@@ -165,7 +169,7 @@ namespace Transformalize.Test.Unit
         {
             //const string expected = "[Field1] = t.[p1].value(N'(/Properties/f1)[1]', N'NVARCHAR(10)'), [Field2] = t.[p2].value(N'(/Properties/f2)[1]', N'INT')";
             const string expected = "t.[p1].value(N'(/Properties/f1)[1]', N'NVARCHAR(10)') AS [Field1], t.[p2].value(N'(/Properties/f2)[1]', N'INT') AS [Field2]";
-            string actual = new FieldSqlWriter(_xmlFields).XmlValue().Prepend("t.").ToAlias(_sqlServerProvider).Write();
+            var actual = new FieldSqlWriter(_xmlFields).XmlValue().Prepend("t.").ToAlias(_sqlServerProvider).Write();
             Assert.AreEqual(expected, actual);
         }
     }

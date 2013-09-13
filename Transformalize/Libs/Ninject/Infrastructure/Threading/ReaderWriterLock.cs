@@ -1,17 +1,24 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ReaderWriterLock.cs" company="">
-//   
-// </copyright>
-// <summary>
-//   A reader-writer lock implementation that is intended to be simple, yet very
-//   efficient.  In particular only 1 interlocked operation is taken for any lock
-//   operation (we use spin locks to achieve this).  The spin lock is never held
-//   for more than a few instructions (in particular, we never call event APIs
-//   or in fact any non-trivial API while holding the spin lock).
-//   Currently this ReaderWriterLock does not support recurision, however it is
-//   not hard to add
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
 
 
 #if SILVERLIGHT || NETCF

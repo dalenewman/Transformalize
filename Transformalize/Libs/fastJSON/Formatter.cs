@@ -1,3 +1,25 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
 using System.Text;
 
 namespace Transformalize.Libs.fastJSON
@@ -13,7 +35,7 @@ namespace Transformalize.Libs.fastJSON
 
         public static bool IsEscaped(StringBuilder sb, int index)
         {
-            bool escaped = false;
+            var escaped = false;
             while (index > 0 && sb[--index] == '\\') escaped = !escaped;
             return escaped;
         }
@@ -22,15 +44,15 @@ namespace Transformalize.Libs.fastJSON
         {
             var output = new StringBuilder(input.Length*2);
             char? quote = null;
-            int depth = 0;
+            var depth = 0;
 
-            for (int i = 0; i < input.Length; ++i)
+            for (var i = 0; i < input.Length; ++i)
             {
-                char ch = input[i];
+                var ch = input[i];
 
                 if (ch == '\"') // found string span
                 {
-                    bool str = true;
+                    var str = true;
                     while (str)
                     {
                         output.Append(ch);

@@ -20,7 +20,6 @@
 
 #endregion
 
-using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Libs.NLog;
 
@@ -61,11 +60,11 @@ namespace Transformalize.Main
 
                 if (!string.IsNullOrEmpty(p.Field))
                 {
-                    IFields fields = new FieldSqlWriter(_entity.All, _entity.CalculatedFields).ExpandXml().Context();
+                    var fields = new FieldSqlWriter(_entity.All, _entity.CalculatedFields).ExpandXml().Context();
                     if (fields.Any(Common.FieldFinder(p)))
                     {
-                        KeyValuePair<string, Field> field = fields.Last(Common.FieldFinder(p));
-                        string key = string.IsNullOrEmpty(p.Name) ? field.Key : p.Name;
+                        var field = fields.Last(Common.FieldFinder(p));
+                        var key = string.IsNullOrEmpty(p.Name) ? field.Key : p.Name;
                         parameters.Add(field.Key, key, null, field.Value.Type);
                     }
                     else

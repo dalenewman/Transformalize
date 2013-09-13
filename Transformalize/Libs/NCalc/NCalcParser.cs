@@ -1,6 +1,24 @@
-// $ANTLR 3.3.0.7239 C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g 2011-08-08 11:08:01
+#region License
 
-// The variable 'variable' is assigned but its value is never used.
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
 
 #pragma warning disable 219
 // Unreachable code detected.
@@ -132,18 +150,18 @@ namespace Transformalize.Libs.NCalc
         private string extractString(string text)
         {
             var sb = new StringBuilder(text);
-            int startIndex = 1; // Skip initial quote
-            int slashIndex = -1;
+            var startIndex = 1; // Skip initial quote
+            var slashIndex = -1;
 
             while ((slashIndex = sb.ToString().IndexOf(BS, startIndex)) != -1)
             {
-                char escapeType = sb[slashIndex + 1];
+                var escapeType = sb[slashIndex + 1];
                 switch (escapeType)
                 {
                     case 'u':
-                        string hcode = String.Concat(sb[slashIndex + 4], sb[slashIndex + 5]);
-                        string lcode = String.Concat(sb[slashIndex + 2], sb[slashIndex + 3]);
-                        char unicodeChar = Encoding.Unicode.GetChars(new[] {Convert.ToByte(hcode, 16), Convert.ToByte(lcode, 16)})[0];
+                        var hcode = String.Concat(sb[slashIndex + 4], sb[slashIndex + 5]);
+                        var lcode = String.Concat(sb[slashIndex + 2], sb[slashIndex + 3]);
+                        var unicodeChar = Encoding.Unicode.GetChars(new[] {Convert.ToByte(hcode, 16), Convert.ToByte(lcode, 16)})[0];
                         sb.Remove(slashIndex, 6).Insert(slashIndex, unicodeChar);
                         break;
                     case 'n':
@@ -185,8 +203,8 @@ namespace Transformalize.Libs.NCalc
                 Errors = new List<string>();
             }
 
-            String hdr = GetErrorHeader(e);
-            String msg = GetErrorMessage(e, tokenNames);
+            var hdr = GetErrorHeader(e);
+            var msg = GetErrorMessage(e, tokenNames);
             Errors.Add(msg + " at " + hdr);
         }
 
@@ -220,7 +238,7 @@ namespace Transformalize.Libs.NCalc
             CommonTree root_0 = null;
 
             IToken EOF2 = null;
-            logicalExpression_return logicalExpression1 = default(logicalExpression_return);
+            var logicalExpression1 = default(logicalExpression_return);
 
             CommonTree EOF2_tree = null;
 
@@ -300,9 +318,9 @@ namespace Transformalize.Libs.NCalc
 
             IToken char_literal3 = null;
             IToken char_literal4 = null;
-            conditionalExpression_return left = default(conditionalExpression_return);
-            conditionalExpression_return middle = default(conditionalExpression_return);
-            conditionalExpression_return right = default(conditionalExpression_return);
+            var left = default(conditionalExpression_return);
+            var middle = default(conditionalExpression_return);
+            var right = default(conditionalExpression_return);
 
             CommonTree char_literal3_tree = null;
             CommonTree char_literal4_tree = null;
@@ -329,14 +347,14 @@ namespace Transformalize.Libs.NCalc
                         retval.value = (left != null ? left.value : default(LogicalExpression));
                         DebugLocation(82, 57);
                         // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:82:57: ( '?' middle= conditionalExpression ':' right= conditionalExpression )?
-                        int alt1 = 2;
+                        var alt1 = 2;
                         try
                         {
                             DebugEnterSubRule(1);
                             try
                             {
                                 DebugEnterDecision(1, decisionCanBacktrack[1]);
-                                int LA1_0 = input.LA(1);
+                                var LA1_0 = input.LA(1);
 
                                 if ((LA1_0 == 41))
                                 {
@@ -438,8 +456,8 @@ namespace Transformalize.Libs.NCalc
             CommonTree root_0 = null;
 
             IToken set5 = null;
-            booleanAndExpression_return left = default(booleanAndExpression_return);
-            conditionalExpression_return right = default(conditionalExpression_return);
+            var left = default(booleanAndExpression_return);
+            var right = default(conditionalExpression_return);
 
             CommonTree set5_tree = null;
 
@@ -473,11 +491,11 @@ namespace Transformalize.Libs.NCalc
                             DebugEnterSubRule(2);
                             while (true)
                             {
-                                int alt2 = 2;
+                                var alt2 = 2;
                                 try
                                 {
                                     DebugEnterDecision(2, decisionCanBacktrack[2]);
-                                    int LA2_0 = input.LA(1);
+                                    var LA2_0 = input.LA(1);
 
                                     if ((LA2_0 == 45 || LA2_0 == 47))
                                     {
@@ -587,8 +605,8 @@ namespace Transformalize.Libs.NCalc
             CommonTree root_0 = null;
 
             IToken set6 = null;
-            bitwiseOrExpression_return left = default(bitwiseOrExpression_return);
-            bitwiseOrExpression_return right = default(bitwiseOrExpression_return);
+            var left = default(bitwiseOrExpression_return);
+            var right = default(bitwiseOrExpression_return);
 
             CommonTree set6_tree = null;
 
@@ -622,11 +640,11 @@ namespace Transformalize.Libs.NCalc
                             DebugEnterSubRule(3);
                             while (true)
                             {
-                                int alt3 = 2;
+                                var alt3 = 2;
                                 try
                                 {
                                     DebugEnterDecision(3, decisionCanBacktrack[3]);
-                                    int LA3_0 = input.LA(1);
+                                    var LA3_0 = input.LA(1);
 
                                     if ((LA3_0 == 22 || LA3_0 == 43))
                                     {
@@ -736,8 +754,8 @@ namespace Transformalize.Libs.NCalc
             CommonTree root_0 = null;
 
             IToken char_literal7 = null;
-            bitwiseXOrExpression_return left = default(bitwiseXOrExpression_return);
-            bitwiseOrExpression_return right = default(bitwiseOrExpression_return);
+            var left = default(bitwiseXOrExpression_return);
+            var right = default(bitwiseOrExpression_return);
 
             CommonTree char_literal7_tree = null;
 
@@ -771,11 +789,11 @@ namespace Transformalize.Libs.NCalc
                             DebugEnterSubRule(4);
                             while (true)
                             {
-                                int alt4 = 2;
+                                var alt4 = 2;
                                 try
                                 {
                                     DebugEnterDecision(4, decisionCanBacktrack[4]);
-                                    int LA4_0 = input.LA(1);
+                                    var LA4_0 = input.LA(1);
 
                                     if ((LA4_0 == 46))
                                     {
@@ -875,8 +893,8 @@ namespace Transformalize.Libs.NCalc
             CommonTree root_0 = null;
 
             IToken char_literal8 = null;
-            bitwiseAndExpression_return left = default(bitwiseAndExpression_return);
-            bitwiseAndExpression_return right = default(bitwiseAndExpression_return);
+            var left = default(bitwiseAndExpression_return);
+            var right = default(bitwiseAndExpression_return);
 
             CommonTree char_literal8_tree = null;
 
@@ -910,11 +928,11 @@ namespace Transformalize.Libs.NCalc
                             DebugEnterSubRule(5);
                             while (true)
                             {
-                                int alt5 = 2;
+                                var alt5 = 2;
                                 try
                                 {
                                     DebugEnterDecision(5, decisionCanBacktrack[5]);
-                                    int LA5_0 = input.LA(1);
+                                    var LA5_0 = input.LA(1);
 
                                     if ((LA5_0 == 42))
                                     {
@@ -1014,8 +1032,8 @@ namespace Transformalize.Libs.NCalc
             CommonTree root_0 = null;
 
             IToken char_literal9 = null;
-            equalityExpression_return left = default(equalityExpression_return);
-            equalityExpression_return right = default(equalityExpression_return);
+            var left = default(equalityExpression_return);
+            var right = default(equalityExpression_return);
 
             CommonTree char_literal9_tree = null;
 
@@ -1049,11 +1067,11 @@ namespace Transformalize.Libs.NCalc
                             DebugEnterSubRule(6);
                             while (true)
                             {
-                                int alt6 = 2;
+                                var alt6 = 2;
                                 try
                                 {
                                     DebugEnterDecision(6, decisionCanBacktrack[6]);
-                                    int LA6_0 = input.LA(1);
+                                    var LA6_0 = input.LA(1);
 
                                     if ((LA6_0 == 23))
                                     {
@@ -1154,8 +1172,8 @@ namespace Transformalize.Libs.NCalc
 
             IToken set10 = null;
             IToken set11 = null;
-            relationalExpression_return left = default(relationalExpression_return);
-            relationalExpression_return right = default(relationalExpression_return);
+            var left = default(relationalExpression_return);
+            var right = default(relationalExpression_return);
 
             CommonTree set10_tree = null;
             CommonTree set11_tree = null;
@@ -1190,11 +1208,11 @@ namespace Transformalize.Libs.NCalc
                             DebugEnterSubRule(8);
                             while (true)
                             {
-                                int alt8 = 2;
+                                var alt8 = 2;
                                 try
                                 {
                                     DebugEnterDecision(8, decisionCanBacktrack[8]);
-                                    int LA8_0 = input.LA(1);
+                                    var LA8_0 = input.LA(1);
 
                                     if ((LA8_0 == 20 || (LA8_0 >= 35 && LA8_0 <= 37)))
                                     {
@@ -1213,14 +1231,14 @@ namespace Transformalize.Libs.NCalc
                                         {
                                             DebugLocation(140, 4);
                                             // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:140:4: ( ( '==' | '=' ) | ( '!=' | '<>' ) )
-                                            int alt7 = 2;
+                                            var alt7 = 2;
                                             try
                                             {
                                                 DebugEnterSubRule(7);
                                                 try
                                                 {
                                                     DebugEnterDecision(7, decisionCanBacktrack[7]);
-                                                    int LA7_0 = input.LA(1);
+                                                    var LA7_0 = input.LA(1);
 
                                                     if (((LA7_0 >= 36 && LA7_0 <= 37)))
                                                     {
@@ -1376,8 +1394,8 @@ namespace Transformalize.Libs.NCalc
             IToken string_literal13 = null;
             IToken char_literal14 = null;
             IToken string_literal15 = null;
-            shiftExpression_return left = default(shiftExpression_return);
-            shiftExpression_return right = default(shiftExpression_return);
+            var left = default(shiftExpression_return);
+            var right = default(shiftExpression_return);
 
             CommonTree char_literal12_tree = null;
             CommonTree string_literal13_tree = null;
@@ -1414,11 +1432,11 @@ namespace Transformalize.Libs.NCalc
                             DebugEnterSubRule(10);
                             while (true)
                             {
-                                int alt10 = 2;
+                                var alt10 = 2;
                                 try
                                 {
                                     DebugEnterDecision(10, decisionCanBacktrack[10]);
-                                    int LA10_0 = input.LA(1);
+                                    var LA10_0 = input.LA(1);
 
                                     if ((LA10_0 == 32 || LA10_0 == 34 || (LA10_0 >= 38 && LA10_0 <= 39)))
                                     {
@@ -1437,7 +1455,7 @@ namespace Transformalize.Libs.NCalc
                                         {
                                             DebugLocation(151, 4);
                                             // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:151:4: ( '<' | '<=' | '>' | '>=' )
-                                            int alt9 = 4;
+                                            var alt9 = 4;
                                             try
                                             {
                                                 DebugEnterSubRule(9);
@@ -1617,8 +1635,8 @@ namespace Transformalize.Libs.NCalc
 
             IToken string_literal16 = null;
             IToken string_literal17 = null;
-            additiveExpression_return left = default(additiveExpression_return);
-            additiveExpression_return right = default(additiveExpression_return);
+            var left = default(additiveExpression_return);
+            var right = default(additiveExpression_return);
 
             CommonTree string_literal16_tree = null;
             CommonTree string_literal17_tree = null;
@@ -1653,11 +1671,11 @@ namespace Transformalize.Libs.NCalc
                             DebugEnterSubRule(12);
                             while (true)
                             {
-                                int alt12 = 2;
+                                var alt12 = 2;
                                 try
                                 {
                                     DebugEnterDecision(12, decisionCanBacktrack[12]);
-                                    int LA12_0 = input.LA(1);
+                                    var LA12_0 = input.LA(1);
 
                                     if ((LA12_0 == 33 || LA12_0 == 40))
                                     {
@@ -1676,14 +1694,14 @@ namespace Transformalize.Libs.NCalc
                                         {
                                             DebugLocation(164, 4);
                                             // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:164:4: ( '<<' | '>>' )
-                                            int alt11 = 2;
+                                            var alt11 = 2;
                                             try
                                             {
                                                 DebugEnterSubRule(11);
                                                 try
                                                 {
                                                     DebugEnterDecision(11, decisionCanBacktrack[11]);
-                                                    int LA11_0 = input.LA(1);
+                                                    var LA11_0 = input.LA(1);
 
                                                     if ((LA11_0 == 33))
                                                     {
@@ -1817,8 +1835,8 @@ namespace Transformalize.Libs.NCalc
 
             IToken char_literal18 = null;
             IToken char_literal19 = null;
-            multiplicativeExpression_return left = default(multiplicativeExpression_return);
-            multiplicativeExpression_return right = default(multiplicativeExpression_return);
+            var left = default(multiplicativeExpression_return);
+            var right = default(multiplicativeExpression_return);
 
             CommonTree char_literal18_tree = null;
             CommonTree char_literal19_tree = null;
@@ -1853,11 +1871,11 @@ namespace Transformalize.Libs.NCalc
                             DebugEnterSubRule(14);
                             while (true)
                             {
-                                int alt14 = 2;
+                                var alt14 = 2;
                                 try
                                 {
                                     DebugEnterDecision(14, decisionCanBacktrack[14]);
-                                    int LA14_0 = input.LA(1);
+                                    var LA14_0 = input.LA(1);
 
                                     if ((LA14_0 == 27 || LA14_0 == 29))
                                     {
@@ -1876,14 +1894,14 @@ namespace Transformalize.Libs.NCalc
                                         {
                                             DebugLocation(175, 4);
                                             // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:175:4: ( '+' | '-' )
-                                            int alt13 = 2;
+                                            var alt13 = 2;
                                             try
                                             {
                                                 DebugEnterSubRule(13);
                                                 try
                                                 {
                                                     DebugEnterDecision(13, decisionCanBacktrack[13]);
-                                                    int LA13_0 = input.LA(1);
+                                                    var LA13_0 = input.LA(1);
 
                                                     if ((LA13_0 == 27))
                                                     {
@@ -2018,8 +2036,8 @@ namespace Transformalize.Libs.NCalc
             IToken char_literal20 = null;
             IToken char_literal21 = null;
             IToken char_literal22 = null;
-            unaryExpression_return left = default(unaryExpression_return);
-            unaryExpression_return right = default(unaryExpression_return);
+            var left = default(unaryExpression_return);
+            var right = default(unaryExpression_return);
 
             CommonTree char_literal20_tree = null;
             CommonTree char_literal21_tree = null;
@@ -2055,11 +2073,11 @@ namespace Transformalize.Libs.NCalc
                             DebugEnterSubRule(16);
                             while (true)
                             {
-                                int alt16 = 2;
+                                var alt16 = 2;
                                 try
                                 {
                                     DebugEnterDecision(16, decisionCanBacktrack[16]);
-                                    int LA16_0 = input.LA(1);
+                                    var LA16_0 = input.LA(1);
 
                                     if ((LA16_0 == 21 || LA16_0 == 26 || LA16_0 == 30))
                                     {
@@ -2078,7 +2096,7 @@ namespace Transformalize.Libs.NCalc
                                         {
                                             DebugLocation(186, 4);
                                             // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:186:4: ( '*' | '/' | '%' )
-                                            int alt15 = 3;
+                                            var alt15 = 3;
                                             try
                                             {
                                                 DebugEnterSubRule(15);
@@ -2241,10 +2259,10 @@ namespace Transformalize.Libs.NCalc
             IToken set24 = null;
             IToken char_literal26 = null;
             IToken char_literal28 = null;
-            primaryExpression_return primaryExpression23 = default(primaryExpression_return);
-            primaryExpression_return primaryExpression25 = default(primaryExpression_return);
-            primaryExpression_return primaryExpression27 = default(primaryExpression_return);
-            primaryExpression_return primaryExpression29 = default(primaryExpression_return);
+            var primaryExpression23 = default(primaryExpression_return);
+            var primaryExpression25 = default(primaryExpression_return);
+            var primaryExpression27 = default(primaryExpression_return);
+            var primaryExpression29 = default(primaryExpression_return);
 
             CommonTree set24_tree = null;
             CommonTree char_literal26_tree = null;
@@ -2257,7 +2275,7 @@ namespace Transformalize.Libs.NCalc
                 try
                 {
                     // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:195:2: ( primaryExpression | ( '!' | 'not' ) primaryExpression | ( '~' ) primaryExpression | '-' primaryExpression )
-                    int alt17 = 4;
+                    var alt17 = 4;
                     try
                     {
                         DebugEnterDecision(17, decisionCanBacktrack[17]);
@@ -2455,10 +2473,10 @@ namespace Transformalize.Libs.NCalc
 
             IToken char_literal30 = null;
             IToken char_literal32 = null;
-            value_return expr = default(value_return);
-            logicalExpression_return logicalExpression31 = default(logicalExpression_return);
-            identifier_return identifier33 = default(identifier_return);
-            arguments_return arguments34 = default(arguments_return);
+            var expr = default(value_return);
+            var logicalExpression31 = default(logicalExpression_return);
+            var identifier33 = default(identifier_return);
+            var arguments34 = default(arguments_return);
 
             CommonTree char_literal30_tree = null;
             CommonTree char_literal32_tree = null;
@@ -2470,7 +2488,7 @@ namespace Transformalize.Libs.NCalc
                 try
                 {
                     // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:202:2: ( '(' logicalExpression ')' |expr= value | identifier ( arguments )? )
-                    int alt19 = 3;
+                    var alt19 = 3;
                     try
                     {
                         DebugEnterDecision(19, decisionCanBacktrack[19]);
@@ -2570,14 +2588,14 @@ namespace Transformalize.Libs.NCalc
                                 retval.value = (identifier33 != null ? identifier33.value : default(Identifier));
                                 DebugLocation(204, 66);
                                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:204:66: ( arguments )?
-                                int alt18 = 2;
+                                var alt18 = 2;
                                 try
                                 {
                                     DebugEnterSubRule(18);
                                     try
                                     {
                                         DebugEnterDecision(18, decisionCanBacktrack[18]);
-                                        int LA18_0 = input.LA(1);
+                                        var LA18_0 = input.LA(1);
 
                                         if ((LA18_0 == 24))
                                         {
@@ -2684,7 +2702,7 @@ namespace Transformalize.Libs.NCalc
                 try
                 {
                     // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:208:2: ( INTEGER | FLOAT | STRING | DATETIME | TRUE | FALSE )
-                    int alt20 = 6;
+                    var alt20 = 6;
                     try
                     {
                         DebugEnterDecision(20, decisionCanBacktrack[20]);
@@ -2896,11 +2914,11 @@ namespace Transformalize.Libs.NCalc
                 try
                 {
                     // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:217:2: ( ID | NAME )
-                    int alt21 = 2;
+                    var alt21 = 2;
                     try
                     {
                         DebugEnterDecision(21, decisionCanBacktrack[21]);
-                        int LA21_0 = input.LA(1);
+                        var LA21_0 = input.LA(1);
 
                         if ((LA21_0 == ID))
                         {
@@ -3006,8 +3024,8 @@ namespace Transformalize.Libs.NCalc
             CommonTree root_0 = null;
 
             IToken char_literal43 = null;
-            logicalExpression_return first = default(logicalExpression_return);
-            logicalExpression_return follow = default(logicalExpression_return);
+            var first = default(logicalExpression_return);
+            var follow = default(logicalExpression_return);
 
             CommonTree char_literal43_tree = null;
 
@@ -3041,11 +3059,11 @@ namespace Transformalize.Libs.NCalc
                             DebugEnterSubRule(22);
                             while (true)
                             {
-                                int alt22 = 2;
+                                var alt22 = 2;
                                 try
                                 {
                                     DebugEnterDecision(22, decisionCanBacktrack[22]);
-                                    int LA22_0 = input.LA(1);
+                                    var LA22_0 = input.LA(1);
 
                                     if ((LA22_0 == 28))
                                     {
@@ -3147,7 +3165,7 @@ namespace Transformalize.Libs.NCalc
 
             IToken char_literal44 = null;
             IToken char_literal46 = null;
-            expressionList_return expressionList45 = default(expressionList_return);
+            var expressionList45 = default(expressionList_return);
 
             CommonTree char_literal44_tree = null;
             CommonTree char_literal46_tree = null;
@@ -3174,14 +3192,14 @@ namespace Transformalize.Libs.NCalc
 
                         DebugLocation(233, 8);
                         // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:233:8: ( expressionList )?
-                        int alt23 = 2;
+                        var alt23 = 2;
                         try
                         {
                             DebugEnterSubRule(23);
                             try
                             {
                                 DebugEnterDecision(23, decisionCanBacktrack[23]);
-                                int LA23_0 = input.LA(1);
+                                var LA23_0 = input.LA(1);
 
                                 if ((LA23_0 == DATETIME || (LA23_0 >= FALSE && LA23_0 <= FLOAT) || (LA23_0 >= ID && LA23_0 <= INTEGER) || (LA23_0 >= NAME && LA23_0 <= TRUE) || LA23_0 == 19 || LA23_0 == 24 || LA23_0 == 29 || LA23_0 == 44 || LA23_0 == 48))
                                 {

@@ -1,12 +1,22 @@
 #region License
 
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
 // 
-// Author: Nate Kohari <nate@enkari.com>
-// Copyright (c) 2007-2010, Enkari, Ltd.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 // 
-// Dual-licensed under the Apache License, Version 2.0, and the Microsoft Public License (Ms-PL).
-// See the file LICENSE.txt for details.
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 // 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
 
 #endregion
 
@@ -15,7 +25,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Transformalize.Libs.Ninject.Activation;
 using Transformalize.Libs.Ninject.Infrastructure;
 using Transformalize.Libs.Ninject.Parameters;
 using Transformalize.Libs.Ninject.Planning.Bindings;
@@ -351,7 +360,7 @@ namespace Transformalize.Libs.Ninject.Syntax
             Ensure.ArgumentNotNull(service, "service");
             Ensure.ArgumentNotNull(parameters, "parameters");
 
-            IRequest request = root.CreateRequest(service, constraint, parameters, isOptional, isUnique);
+            var request = root.CreateRequest(service, constraint, parameters, isOptional, isUnique);
             return root.CanResolve(request);
         }
 
@@ -361,7 +370,7 @@ namespace Transformalize.Libs.Ninject.Syntax
             Ensure.ArgumentNotNull(service, "service");
             Ensure.ArgumentNotNull(parameters, "parameters");
 
-            IRequest request = root.CreateRequest(service, constraint, parameters, isOptional, isUnique);
+            var request = root.CreateRequest(service, constraint, parameters, isOptional, isUnique);
             return root.Resolve(request);
         }
 

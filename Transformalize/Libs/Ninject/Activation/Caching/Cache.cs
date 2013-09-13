@@ -1,16 +1,25 @@
 #region License
 
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
 // 
-// Author: Nate Kohari <nate@enkari.com>
-// Copyright (c) 2007-2010, Enkari, Ltd.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 // 
-// Dual-licensed under the Apache License, Version 2.0, and the Microsoft Public License (Ms-PL).
-// See the file LICENSE.txt for details.
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 // 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Libs.Ninject.Components;
@@ -68,7 +77,7 @@ namespace Transformalize.Libs.Ninject.Activation.Caching
         {
             Ensure.ArgumentNotNull(context, "context");
 
-            object scope = context.GetScope();
+            var scope = context.GetScope();
             var entry = new CacheEntry(context, reference);
 
             lock (entries)
@@ -98,7 +107,7 @@ namespace Transformalize.Libs.Ninject.Activation.Caching
         public object TryGet(IContext context)
         {
             Ensure.ArgumentNotNull(context, "context");
-            object scope = context.GetScope();
+            var scope = context.GetScope();
             if (scope == null)
             {
                 return null;
@@ -112,12 +121,12 @@ namespace Transformalize.Libs.Ninject.Activation.Caching
                     return null;
                 }
 
-                foreach (CacheEntry entry in bindings[context.Binding.BindingConfiguration])
+                foreach (var entry in bindings[context.Binding.BindingConfiguration])
                 {
                     if (context.HasInferredGenericArguments)
                     {
-                        Type[] cachedArguments = entry.Context.GenericArguments;
-                        Type[] arguments = context.GenericArguments;
+                        var cachedArguments = entry.Context.GenericArguments;
+                        var arguments = context.GenericArguments;
 
                         if (!cachedArguments.SequenceEqual(arguments))
                         {
@@ -143,11 +152,11 @@ namespace Transformalize.Libs.Ninject.Activation.Caching
         {
             lock (entries)
             {
-                bool instanceFound = false;
+                var instanceFound = false;
                 foreach (var bindingEntry in entries.Values.SelectMany(bindingEntries => bindingEntries.Values).ToList())
                 {
-                    List<CacheEntry> instanceEntries = bindingEntry.Where(cacheEntry => ReferenceEquals(instance, cacheEntry.Reference.Instance)).ToList();
-                    foreach (CacheEntry cacheEntry in instanceEntries)
+                    var instanceEntries = bindingEntry.Where(cacheEntry => ReferenceEquals(instance, cacheEntry.Reference.Instance)).ToList();
+                    foreach (var cacheEntry in instanceEntries)
                     {
                         Forget(cacheEntry);
                         bindingEntry.Remove(cacheEntry);
@@ -166,7 +175,7 @@ namespace Transformalize.Libs.Ninject.Activation.Caching
         {
             lock (entries)
             {
-                List<KeyValuePair<object, Multimap<IBindingConfiguration, CacheEntry>>> disposedScopes = entries.Where(scope => !((ReferenceEqualWeakReference) scope.Key).IsAlive).Select(scope => scope).ToList();
+                var disposedScopes = entries.Where(scope => !((ReferenceEqualWeakReference) scope.Key).IsAlive).Select(scope => scope).ToList();
                 foreach (var disposedScope in disposedScopes)
                 {
                     Forget(GetAllBindingEntries(disposedScope.Value));
@@ -244,7 +253,7 @@ namespace Transformalize.Libs.Ninject.Activation.Caching
         /// <param name="cacheEntries">The cache entries.</param>
         private void Forget(IEnumerable<CacheEntry> cacheEntries)
         {
-            foreach (CacheEntry entry in cacheEntries.ToList())
+            foreach (var entry in cacheEntries.ToList())
             {
                 Forget(entry);
             }

@@ -1,10 +1,24 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
 // 
-// Author: Nate Kohari <nate@enkari.com>
-// Copyright (c) 2007-2010, Enkari, Ltd.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 // 
-// Dual-licensed under the Apache License, Version 2.0, and the Microsoft Public License (Ms-PL).
-// See the file LICENSE.txt for details.
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 // 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
 
 using System;
 using System.Collections.Generic;
@@ -202,7 +216,7 @@ namespace Transformalize.Libs.Ninject
             Ensure.ArgumentNotNull(m, "modules");
 
             m = m.ToList();
-            foreach (INinjectModule module in m)
+            foreach (var module in m)
             {
                 if (string.IsNullOrEmpty(module.Name))
                 {
@@ -221,7 +235,7 @@ namespace Transformalize.Libs.Ninject
                 modules.Add(module.Name, module);
             }
 
-            foreach (INinjectModule module in m)
+            foreach (var module in m)
             {
                 module.OnVerifyRequiredModules();
             }
@@ -279,14 +293,14 @@ namespace Transformalize.Libs.Ninject
             Ensure.ArgumentNotNull(instance, "instance");
             Ensure.ArgumentNotNull(parameters, "parameters");
 
-            Type service = instance.GetType();
+            var service = instance.GetType();
 
             var planner = Components.Get<IPlanner>();
             var pipeline = Components.Get<IPipeline>();
 
             var binding = new Binding(service);
-            IRequest request = CreateRequest(service, null, parameters, false, false);
-            IContext context = CreateContext(request, binding);
+            var request = CreateRequest(service, null, parameters, false, false);
+            var context = CreateContext(request, binding);
 
             context.Plan = planner.GetPlan(service);
 
@@ -351,8 +365,8 @@ namespace Transformalize.Libs.Ninject
         {
             Ensure.ArgumentNotNull(request, "request");
 
-            IComparer<IBinding> bindingPrecedenceComparer = GetBindingPrecedenceComparer();
-            IEnumerable<IBinding> resolveBindings = Enumerable.Empty<IBinding>();
+            var bindingPrecedenceComparer = GetBindingPrecedenceComparer();
+            var resolveBindings = Enumerable.Empty<IBinding>();
 
             if (CanResolve(request) || HandleMissingBinding(request))
             {
@@ -373,7 +387,7 @@ namespace Transformalize.Libs.Ninject
             if (request.IsUnique)
             {
                 resolveBindings = resolveBindings.OrderByDescending(b => b, bindingPrecedenceComparer).ToList();
-                IBinding model = resolveBindings.First(); // the type (conditonal, implicit, etc) of binding we'll return
+                var model = resolveBindings.First(); // the type (conditonal, implicit, etc) of binding we'll return
                 resolveBindings =
                     resolveBindings.TakeWhile(binding => bindingPrecedenceComparer.Compare(binding, model) == 0);
 
@@ -384,7 +398,7 @@ namespace Transformalize.Libs.Ninject
                         return Enumerable.Empty<object>();
                     }
 
-                    IEnumerable<string> formattedBindings =
+                    var formattedBindings =
                         from binding in resolveBindings
                         let context = CreateContext(request, binding)
                         select binding.Format(context);
@@ -444,7 +458,7 @@ namespace Transformalize.Libs.Ninject
             {
                 if (!bindingCache.ContainsKey(service))
                 {
-                    IEnumerable<IBindingResolver> resolvers = Components.GetAll<IBindingResolver>();
+                    var resolvers = Components.GetAll<IBindingResolver>();
 
                     resolvers
                         .SelectMany(resolver => resolver.Resolve(bindings, service))
@@ -510,10 +524,10 @@ namespace Transformalize.Libs.Ninject
             }
 #pragma warning restore 612,618
 
-            IEnumerable<IMissingBindingResolver> components = Components.GetAll<IMissingBindingResolver>();
+            var components = Components.GetAll<IMissingBindingResolver>();
 
             // Take the first set of bindings that resolve.
-            List<IBinding> bindings = components
+            var bindings = components
                 .Select(c => c.Resolve(this.bindings, request).ToList())
                 .FirstOrDefault(b => b.Any());
 
@@ -596,10 +610,10 @@ namespace Transformalize.Libs.Ninject
                                     b => !b.IsImplicit, // explicit bindings > implicit
                                 };
 
-                IEnumerable<int> q = from func in funcs
-                                     let xVal = func(x)
-                                     where xVal != func(y)
-                                     select xVal ? 1 : -1;
+                var q = from func in funcs
+                        let xVal = func(x)
+                        where xVal != func(y)
+                        select xVal ? 1 : -1;
 
                 // returns the value of the first function that represents a difference
                 // between the bindings, or else returns 0 (equal)

@@ -146,7 +146,7 @@ namespace Transformalize.Main
 
         public void AddRange(IEnumerable<Field> fields)
         {
-            foreach (Field field in fields)
+            foreach (var field in fields)
             {
                 Add(field);
             }

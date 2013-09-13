@@ -1,12 +1,22 @@
 ﻿#region License
 
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
 // 
-// Author: Nate Kohari <nate@enkari.com>
-// Copyright (c) 2007-2010, Enkari, Ltd.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 // 
-// Dual-licensed under the Apache License, Version 2.0, and the Microsoft Public License (Ms-PL).
-// See the file LICENSE.txt for details.
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 // 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
 
 #endregion
 
@@ -154,14 +164,14 @@ namespace Transformalize.Libs.Ninject.Planning.Targets
 
             if (Type.IsArray)
             {
-                Type service = Type.GetElementType();
+                var service = Type.GetElementType();
                 return GetValues(service, parent).CastSlow(service).ToArraySlow(service);
             }
 
             if (Type.IsGenericType)
             {
-                Type gtd = Type.GetGenericTypeDefinition();
-                Type service = Type.GetGenericArguments()[0];
+                var gtd = Type.GetGenericTypeDefinition();
+                var service = Type.GetGenericArguments()[0];
 
                 if (gtd == typeof (List<>) || gtd == typeof (IList<>) || gtd == typeof (ICollection<>))
                     return GetValues(service, parent).CastSlow(service).ToListSlow(service);
@@ -184,7 +194,7 @@ namespace Transformalize.Libs.Ninject.Planning.Targets
             Ensure.ArgumentNotNull(service, "service");
             Ensure.ArgumentNotNull(parent, "parent");
 
-            IRequest request = parent.Request.CreateChild(service, parent, this);
+            var request = parent.Request.CreateChild(service, parent, this);
             request.IsOptional = true;
             return parent.Kernel.Resolve(request);
         }
@@ -200,7 +210,7 @@ namespace Transformalize.Libs.Ninject.Planning.Targets
             Ensure.ArgumentNotNull(service, "service");
             Ensure.ArgumentNotNull(parent, "parent");
 
-            IRequest request = parent.Request.CreateChild(service, parent, this);
+            var request = parent.Request.CreateChild(service, parent, this);
             request.IsUnique = true;
             return parent.Kernel.Resolve(request).SingleOrDefault();
         }

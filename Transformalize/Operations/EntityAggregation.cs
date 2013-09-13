@@ -1,11 +1,33 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using Transformalize.Main;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Main;
 
 namespace Transformalize.Operations
 {
@@ -30,7 +52,7 @@ namespace Transformalize.Operations
             _firstKey = _columnsToGroupBy[0];
             _columnsToAccumulate = new FieldSqlWriter(_entity.All).ExpandXml().Input().Aggregate().ToArray();
 
-            foreach (Field field in _columnsToAccumulate)
+            foreach (var field in _columnsToAccumulate)
             {
                 _builders[field.Alias] = new StringBuilder();
             }
@@ -41,19 +63,19 @@ namespace Transformalize.Operations
             //init
             if (!aggregate.ContainsKey(_firstKey))
             {
-                foreach (string column in _columnsToGroupBy)
+                foreach (var column in _columnsToGroupBy)
                 {
                     aggregate[column] = row[column];
                 }
 
-                foreach (Field field in _columnsToAccumulate)
+                foreach (var field in _columnsToAccumulate)
                 {
                     aggregate[field.Alias] = field.Default ?? new ConversionFactory().Convert(string.Empty, field.SimpleType);
                 }
             }
 
             //accumulate
-            foreach (Field field in _columnsToAccumulate)
+            foreach (var field in _columnsToAccumulate)
             {
                 switch (field.Aggregate)
                 {
@@ -81,11 +103,11 @@ namespace Transformalize.Operations
                         }
                         break;
                     case "join":
-                        string aggregateValue = aggregate[field.Alias].ToString();
-                        bool aggregateIsEmpty = aggregateValue == string.Empty;
+                        var aggregateValue = aggregate[field.Alias].ToString();
+                        var aggregateIsEmpty = aggregateValue == string.Empty;
 
-                        string rowValue = row[field.Alias].ToString().Replace(_separatorString, string.Empty);
-                        bool rowIsEmpty = rowValue == string.Empty;
+                        var rowValue = row[field.Alias].ToString().Replace(_separatorString, string.Empty);
+                        var rowIsEmpty = rowValue == string.Empty;
 
                         if (aggregateIsEmpty && rowIsEmpty)
                             break;
@@ -122,13 +144,13 @@ namespace Transformalize.Operations
         protected override void FinishAggregation(Row aggregate)
         {
             //final accumulate
-            foreach (Field field in _columnsToAccumulate)
+            foreach (var field in _columnsToAccumulate)
             {
                 switch (field.Aggregate)
                 {
                     case "join":
-                        string aggregateValue = aggregate[field.Alias].ToString();
-                        bool aggregateIsEmpty = aggregateValue == string.Empty;
+                        var aggregateValue = aggregate[field.Alias].ToString();
+                        var aggregateIsEmpty = aggregateValue == string.Empty;
 
                         if (aggregateIsEmpty)
                             break;

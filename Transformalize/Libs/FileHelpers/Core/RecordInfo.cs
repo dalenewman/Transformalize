@@ -1,6 +1,22 @@
-#region "  © Copyright 2005-07 to Marcos Meli - http://www.marcosmeli.com.ar" 
+#region License
 
-// Errors, suggestions, contributions, send a mail to: marcos@filehelpers.com.
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
 
 #endregion
 
@@ -88,7 +104,7 @@ namespace Transformalize.Libs.FileHelpers.Core
 
             var dm = new DynamicMethod("_GetAllValues_FH_RT_", MethodAttributes.Static | MethodAttributes.Public, CallingConventions.Standard, typeof (object[]), new[] {typeof (object)}, mRecordType, true);
 
-            ILGenerator generator = dm.GetILGenerator();
+            var generator = dm.GetILGenerator();
 
             generator.DeclareLocal(typeof (object[]));
             generator.DeclareLocal(mRecordType);
@@ -102,9 +118,9 @@ namespace Transformalize.Libs.FileHelpers.Core
             generator.Emit(OpCodes.Stloc_1);
 
 
-            for (int i = 0; i < mFieldCount; i++)
+            for (var i = 0; i < mFieldCount; i++)
             {
-                FieldBase field = mFields[i];
+                var field = mFields[i];
 
                 generator.Emit(OpCodes.Ldloc_0);
                 generator.Emit(OpCodes.Ldc_I4, i);
@@ -143,16 +159,16 @@ namespace Transformalize.Libs.FileHelpers.Core
             var dm = new DynamicMethod("_CreateAndAssing_FH_RT_", MethodAttributes.Static | MethodAttributes.Public, CallingConventions.Standard, typeof (object), new[] {typeof (object[])}, mRecordType, true);
             //dm.InitLocals = false;
 
-            ILGenerator generator = dm.GetILGenerator();
+            var generator = dm.GetILGenerator();
 
             generator.DeclareLocal(mRecordType);
             //generator.DeclareLocal(typeof(object));
             generator.Emit(OpCodes.Newobj, mRecordConstructor);
             generator.Emit(OpCodes.Stloc_0);
 
-            for (int i = 0; i < mFieldCount; i++)
+            for (var i = 0; i < mFieldCount; i++)
             {
-                FieldBase field = mFields[i];
+                var field = mFields[i];
 
                 generator.Emit(OpCodes.Ldloc_0);
                 generator.Emit(OpCodes.Ldarg_0);
@@ -192,7 +208,7 @@ namespace Transformalize.Libs.FileHelpers.Core
 
             var dm = new DynamicMethod("_CreateRecordFast_FH_RT_", MethodAttributes.Static | MethodAttributes.Public, CallingConventions.Standard, typeof (object), new[] {typeof (object[])}, mRecordType, true);
 
-            ILGenerator generator = dm.GetILGenerator();
+            var generator = dm.GetILGenerator();
 
 //			generator.DeclareLocal(mRecordType);
             generator.Emit(OpCodes.Newobj, mRecordConstructor);
@@ -216,7 +232,7 @@ namespace Transformalize.Libs.FileHelpers.Core
                 throw new BadUsageException("The class " + mRecordType.Name + " must be marked with the [DelimitedRecord] or [FixedLengthRecord] Attribute.");
             else
             {
-                object[] attbs = mRecordType.GetCustomAttributes(typeof (TypedRecordAttribute), true);
+                var attbs = mRecordType.GetCustomAttributes(typeof (TypedRecordAttribute), true);
                 recordAttribute = (TypedRecordAttribute) attbs[0];
             }
 
@@ -286,7 +302,7 @@ namespace Transformalize.Libs.FileHelpers.Core
             {
                 // Defines the initial size of the StringBuilder
                 mSizeHint = 0;
-                for (int i = 0; i < mFieldCount; i++)
+                for (var i = 0; i < mFieldCount; i++)
                     mSizeHint += ((FixedLengthField) mFields[i]).mFieldLength;
             }
 
@@ -311,8 +327,8 @@ namespace Transformalize.Libs.FileHelpers.Core
         {
             FieldBase curField;
             var arr = new ArrayList();
-            bool someOptional = false;
-            for (int i = 0; i < fields.Count; i++)
+            var someOptional = false;
+            for (var i = 0; i < fields.Count; i++)
             {
                 var fieldInfo = (FieldInfo) fields[i];
 
@@ -343,7 +359,7 @@ namespace Transformalize.Libs.FileHelpers.Core
 
         internal FieldInfo GetFieldInfo(string name)
         {
-            foreach (FieldBase field in mFields)
+            foreach (var field in mFields)
             {
                 if (field.mFieldInfo.Name.ToLower() == name.ToLower())
                     return field.mFieldInfo;
@@ -384,7 +400,7 @@ namespace Transformalize.Libs.FileHelpers.Core
 
             // array that holds the fields values
 
-            for (int i = 0; i < mFieldCount; i++)
+            for (var i = 0; i < mFieldCount; i++)
             {
                 mValues[i] = mFields[i].ExtractValue(line);
             }
@@ -399,7 +415,7 @@ namespace Transformalize.Libs.FileHelpers.Core
             catch (InvalidCastException)
             {
                 // Occurrs when the a custom converter returns an invalid value for the field.
-                for (int i = 0; i < mFieldCount; i++)
+                for (var i = 0; i < mFieldCount; i++)
                 {
                     if (mValues[i] != null && ! mFields[i].mFieldType.IsInstanceOfType(mValues[i]))
                         throw new ConvertException(null, mFields[i].mFieldType, mFields[i].mFieldInfo.Name, line.mReader.LineNumber, -1, "The converter for the field: " + mFields[i].mFieldInfo.Name + " returns an object of Type: " + mValues[i].GetType().Name + " and the field is of type: " + mFields[i].mFieldType.Name);
@@ -484,9 +500,9 @@ namespace Transformalize.Libs.FileHelpers.Core
 
             CreateGetAllMethod();
 
-            object[] mValues = mGetAllValuesHandler(record);
+            var mValues = mGetAllValuesHandler(record);
 
-            for (int f = 0; f < mFieldCount; f++)
+            for (var f = 0; f < mFieldCount; f++)
             {
                 mFields[f].AssignToString(sb, mValues[f]);
             }
@@ -505,7 +521,7 @@ namespace Transformalize.Libs.FileHelpers.Core
         /// <returns>A record formed with the passed values.</returns>
         public object ValuesToRecord(object[] values)
         {
-            for (int i = 0; i < mFieldCount; i++)
+            for (var i = 0; i < mFieldCount; i++)
             {
                 if (mFields[i].mFieldType == typeof (DateTime) && values[i] is double)
                     values[i] = DoubleToDate((int) (double) values[i]);
@@ -558,7 +574,7 @@ namespace Transformalize.Libs.FileHelpers.Core
 
         internal DataTable RecordsToDataTable(ICollection records, int maxRecords)
         {
-            DataTable res = CreateEmptyDataTable();
+            var res = CreateEmptyDataTable();
 
             res.BeginLoadData();
 
@@ -566,13 +582,13 @@ namespace Transformalize.Libs.FileHelpers.Core
 
             if (maxRecords == -1)
             {
-                foreach (object r in records)
+                foreach (var r in records)
                     res.Rows.Add(RecordToValues(r));
             }
             else
             {
-                int i = 0;
-                foreach (object r in records)
+                var i = 0;
+                foreach (var r in records)
                 {
                     if (i == maxRecords)
                         break;
@@ -590,7 +606,7 @@ namespace Transformalize.Libs.FileHelpers.Core
         {
             var res = new DataTable();
 
-            foreach (FieldBase f in mFields)
+            foreach (var f in mFields)
             {
                 DataColumn column1;
 
@@ -609,7 +625,7 @@ namespace Transformalize.Libs.FileHelpers.Core
         {
             var dm = new DynamicMethod("_GetValue" + fi.Name + "_FH_RT_", MethodAttributes.Static | MethodAttributes.Public, CallingConventions.Standard, typeof (object), new[] {typeof (object)}, fi.DeclaringType, true);
 
-            ILGenerator generator = dm.GetILGenerator();
+            var generator = dm.GetILGenerator();
 
             generator.Emit(OpCodes.Ldarg_0);
             generator.Emit(OpCodes.Castclass, fi.DeclaringType);

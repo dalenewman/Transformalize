@@ -1,6 +1,22 @@
-#region "  © Copyright 2005-06 to Marcos Meli - http://www.marcosmeli.com.ar" 
+#region License
 
-// Errors, suggestions, contributions, send a mail to: marcos@filehelpers.com.
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
 
 #endregion
 
@@ -9,7 +25,6 @@ using System.Collections;
 using System.Data;
 using System.Data.OleDb;
 using System.IO;
-using System.Reflection;
 using Transformalize.Libs.FileHelpers.Enums;
 using Transformalize.Libs.FileHelpers.ErrorHandling;
 
@@ -24,8 +39,8 @@ namespace Transformalize.Libs.FileHelpers.DataLink.Storage
     {
         private static string CreateConnectionString(string file, bool hasHeaders)
         {
-            string mConnectionString = "Provider=Microsoft.Jet.OleDb.4.0;Data Source={0};Extended Properties=\"Excel 8.0;{1}\"";
-            string extProps = string.Empty;
+            var mConnectionString = "Provider=Microsoft.Jet.OleDb.4.0;Data Source={0};Extended Properties=\"Excel 8.0;{1}\"";
+            var extProps = string.Empty;
 
             if (hasHeaders)
                 extProps += " HDR=YES;";
@@ -53,10 +68,10 @@ namespace Transformalize.Libs.FileHelpers.DataLink.Storage
             connExcel.Open();
             var res = new DataTable();
 
-            string sheetName = GetFirstSheet(connExcel);
+            var sheetName = GetFirstSheet(connExcel);
 
-            string sheet = sheetName + (sheetName.EndsWith("$") ? "" : "$");
-            string command = String.Format("SELECT * FROM [{0}]", sheet);
+            var sheet = sheetName + (sheetName.EndsWith("$") ? "" : "$");
+            var command = String.Format("SELECT * FROM [{0}]", sheet);
 
             var cm = new OleDbCommand(command, connExcel);
             var da = new OleDbDataAdapter(cm);
@@ -223,8 +238,8 @@ namespace Transformalize.Libs.FileHelpers.DataLink.Storage
 
             try
             {
-                string sheet = SheetName + (mSheetName.EndsWith("$") ? "" : "$");
-                string command = String.Format("SELECT * FROM [{0}]", sheet);
+                var sheet = SheetName + (mSheetName.EndsWith("$") ? "" : "$");
+                var command = String.Format("SELECT * FROM [{0}]", sheet);
                 var cm = new OleDbCommand(command, mCnExcel);
                 mDaExcel = new OleDbDataAdapter(cm);
                 mDsExcel = new DataSet();
@@ -242,7 +257,7 @@ namespace Transformalize.Libs.FileHelpers.DataLink.Storage
 #if NET_2_0
 			DataTable dt = conn.GetSchema("Tables");
 #else
-            DataTable dt = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+            var dt = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
 #endif
 
             if (dt != null && dt.Rows.Count > 0)
@@ -281,7 +296,7 @@ namespace Transformalize.Libs.FileHelpers.DataLink.Storage
 
             OpenConnection();
 
-            string cmCreate = "";
+            var cmCreate = "";
             if (mSheetName == null || mSheetName == string.Empty)
             {
                 mSheetName = "Sheet1$";
@@ -291,7 +306,7 @@ namespace Transformalize.Libs.FileHelpers.DataLink.Storage
             var cm = new OleDbCommand();
             cm.Connection = mCnExcel;
             cmCreate = string.Format("CREATE TABLE [{0}] (", mSheetName.Replace("$", ""));
-            foreach (FieldInfo field in RecordType.GetFields())
+            foreach (var field in RecordType.GetFields())
             {
                 cmCreate += field.Name + " char(255),";
             }
@@ -318,8 +333,8 @@ namespace Transformalize.Libs.FileHelpers.DataLink.Storage
         {
             #region Build and Add the Insert Command to DataAdapter
 
-            string cmdIns = string.Format("INSERT INTO [{0}] (", mSheetName + (mSheetName.EndsWith("$") ? "" : "$"));
-            string values = "";
+            var cmdIns = string.Format("INSERT INTO [{0}] (", mSheetName + (mSheetName.EndsWith("$") ? "" : "$"));
+            var values = "";
             foreach (DataColumn col in mDtExcel.Columns)
             {
                 cmdIns += col.ColumnName + ",";
@@ -369,8 +384,8 @@ namespace Transformalize.Libs.FileHelpers.DataLink.Storage
             else
             {
                 res = new object[numberOfCols];
-                int counter = 0;
-                int colPos = startCol - 1;
+                var counter = 0;
+                var colPos = startCol - 1;
 
                 //If the numbers of selected columns is Greater Than columns in DataTable
                 while (counter < res.Length && colPos < mDtExcel.Columns.Count)
@@ -400,8 +415,8 @@ namespace Transformalize.Libs.FileHelpers.DataLink.Storage
                 dtRow = mDtExcel.Rows[row];
             }
 
-            int colPos = startCol - 1;
-            int i = 0;
+            var colPos = startCol - 1;
+            var i = 0;
             while (colPos < mDtExcel.Columns.Count && i < values.Length)
             {
                 dtRow[colPos] = values[i];
@@ -423,7 +438,7 @@ namespace Transformalize.Libs.FileHelpers.DataLink.Storage
 
             try
             {
-                int recordNumber = 0;
+                var recordNumber = 0;
                 Notify(mNotifyHandler, mProgressMode, 0, records.Length);
 
                 OpenOrCreateWorkbook(mFileName);
@@ -433,7 +448,7 @@ namespace Transformalize.Libs.FileHelpers.DataLink.Storage
                 //Verify Properties Limits.
                 ValidatePropertiesForInsert(records);
 
-                for (int row = mStartRow - 1; row < records.Length; row++)
+                for (var row = mStartRow - 1; row < records.Length; row++)
                 {
                     recordNumber++;
                     Notify(mNotifyHandler, mProgressMode, recordNumber, records.Length);
@@ -476,7 +491,7 @@ namespace Transformalize.Libs.FileHelpers.DataLink.Storage
 
                 //mStartRow-1 because rows start at 0, and the user
                 //can be assign StartRow =2 
-                for (int recordNumber = mStartRow - 1; recordNumber < mDtExcel.Rows.Count; recordNumber++)
+                for (var recordNumber = mStartRow - 1; recordNumber < mDtExcel.Rows.Count; recordNumber++)
                 {
                     try
                     {
@@ -484,7 +499,7 @@ namespace Transformalize.Libs.FileHelpers.DataLink.Storage
 
                         colValues = RowValues(recordNumber, mStartColumn, mRecordInfo.mFieldCount);
 
-                        object record = ValuesToRecord(colValues);
+                        var record = ValuesToRecord(colValues);
                         res.Add(record);
                     }
                     catch (Exception ex)

@@ -63,8 +63,8 @@ namespace Transformalize.Main
                 //    return new Parameters();
                 //}
 
-                string value = p.HasValue() ? p.Value : null;
-                string alias = p.HasValue() ? p.Name : p.Field;
+                var value = p.HasValue() ? p.Value : null;
+                var alias = p.HasValue() ? p.Name : p.Field;
                 parameters.Add(alias, p.Name, value, p.Type);
             }
 

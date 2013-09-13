@@ -28,11 +28,11 @@ namespace Transformalize.Main
     {
         public object Convert(object something, string type)
         {
-            string simpleType = Common.ToSimpleType(type);
+            var simpleType = Common.ToSimpleType(type);
             if (simpleType == "object")
                 return something;
 
-            string value = something == null ? string.Empty : something.ToString();
+            var value = something == null ? string.Empty : something.ToString();
             switch (simpleType)
             {
                 case "datetime":

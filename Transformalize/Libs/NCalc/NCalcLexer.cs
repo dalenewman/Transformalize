@@ -1,6 +1,24 @@
-// $ANTLR 3.3.0.7239 C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g 2011-08-08 11:08:01
+#region License
 
-// The variable 'variable' is assigned but its value is never used.
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
 
 #pragma warning disable 219
 // Unreachable code detected.
@@ -104,8 +122,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("T__19", 1);
             try
             {
-                int _type = T__19;
-                int _channel = DefaultTokenChannel;
+                var _type = T__19;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:7:7: ( '!' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:7:9: '!'
@@ -139,8 +157,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("T__20", 2);
             try
             {
-                int _type = T__20;
-                int _channel = DefaultTokenChannel;
+                var _type = T__20;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:8:7: ( '!=' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:8:9: '!='
@@ -174,8 +192,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("T__21", 3);
             try
             {
-                int _type = T__21;
-                int _channel = DefaultTokenChannel;
+                var _type = T__21;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:9:7: ( '%' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:9:9: '%'
@@ -209,8 +227,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("T__22", 4);
             try
             {
-                int _type = T__22;
-                int _channel = DefaultTokenChannel;
+                var _type = T__22;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:10:7: ( '&&' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:10:9: '&&'
@@ -244,8 +262,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("T__23", 5);
             try
             {
-                int _type = T__23;
-                int _channel = DefaultTokenChannel;
+                var _type = T__23;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:11:7: ( '&' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:11:9: '&'
@@ -279,8 +297,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("T__24", 6);
             try
             {
-                int _type = T__24;
-                int _channel = DefaultTokenChannel;
+                var _type = T__24;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:12:7: ( '(' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:12:9: '('
@@ -314,8 +332,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("T__25", 7);
             try
             {
-                int _type = T__25;
-                int _channel = DefaultTokenChannel;
+                var _type = T__25;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:13:7: ( ')' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:13:9: ')'
@@ -349,8 +367,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("T__26", 8);
             try
             {
-                int _type = T__26;
-                int _channel = DefaultTokenChannel;
+                var _type = T__26;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:14:7: ( '*' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:14:9: '*'
@@ -384,8 +402,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("T__27", 9);
             try
             {
-                int _type = T__27;
-                int _channel = DefaultTokenChannel;
+                var _type = T__27;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:15:7: ( '+' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:15:9: '+'
@@ -419,8 +437,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("T__28", 10);
             try
             {
-                int _type = T__28;
-                int _channel = DefaultTokenChannel;
+                var _type = T__28;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:16:7: ( ',' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:16:9: ','
@@ -454,8 +472,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("T__29", 11);
             try
             {
-                int _type = T__29;
-                int _channel = DefaultTokenChannel;
+                var _type = T__29;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:17:7: ( '-' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:17:9: '-'
@@ -489,8 +507,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("T__30", 12);
             try
             {
-                int _type = T__30;
-                int _channel = DefaultTokenChannel;
+                var _type = T__30;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:18:7: ( '/' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:18:9: '/'
@@ -524,8 +542,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("T__31", 13);
             try
             {
-                int _type = T__31;
-                int _channel = DefaultTokenChannel;
+                var _type = T__31;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:19:7: ( ':' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:19:9: ':'
@@ -559,8 +577,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("T__32", 14);
             try
             {
-                int _type = T__32;
-                int _channel = DefaultTokenChannel;
+                var _type = T__32;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:20:7: ( '<' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:20:9: '<'
@@ -594,8 +612,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("T__33", 15);
             try
             {
-                int _type = T__33;
-                int _channel = DefaultTokenChannel;
+                var _type = T__33;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:21:7: ( '<<' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:21:9: '<<'
@@ -629,8 +647,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("T__34", 16);
             try
             {
-                int _type = T__34;
-                int _channel = DefaultTokenChannel;
+                var _type = T__34;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:22:7: ( '<=' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:22:9: '<='
@@ -664,8 +682,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("T__35", 17);
             try
             {
-                int _type = T__35;
-                int _channel = DefaultTokenChannel;
+                var _type = T__35;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:23:7: ( '<>' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:23:9: '<>'
@@ -699,8 +717,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("T__36", 18);
             try
             {
-                int _type = T__36;
-                int _channel = DefaultTokenChannel;
+                var _type = T__36;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:24:7: ( '=' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:24:9: '='
@@ -734,8 +752,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("T__37", 19);
             try
             {
-                int _type = T__37;
-                int _channel = DefaultTokenChannel;
+                var _type = T__37;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:25:7: ( '==' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:25:9: '=='
@@ -769,8 +787,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("T__38", 20);
             try
             {
-                int _type = T__38;
-                int _channel = DefaultTokenChannel;
+                var _type = T__38;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:26:7: ( '>' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:26:9: '>'
@@ -804,8 +822,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("T__39", 21);
             try
             {
-                int _type = T__39;
-                int _channel = DefaultTokenChannel;
+                var _type = T__39;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:27:7: ( '>=' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:27:9: '>='
@@ -839,8 +857,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("T__40", 22);
             try
             {
-                int _type = T__40;
-                int _channel = DefaultTokenChannel;
+                var _type = T__40;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:28:7: ( '>>' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:28:9: '>>'
@@ -874,8 +892,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("T__41", 23);
             try
             {
-                int _type = T__41;
-                int _channel = DefaultTokenChannel;
+                var _type = T__41;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:29:7: ( '?' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:29:9: '?'
@@ -909,8 +927,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("T__42", 24);
             try
             {
-                int _type = T__42;
-                int _channel = DefaultTokenChannel;
+                var _type = T__42;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:30:7: ( '^' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:30:9: '^'
@@ -944,8 +962,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("T__43", 25);
             try
             {
-                int _type = T__43;
-                int _channel = DefaultTokenChannel;
+                var _type = T__43;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:31:7: ( 'and' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:31:9: 'and'
@@ -979,8 +997,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("T__44", 26);
             try
             {
-                int _type = T__44;
-                int _channel = DefaultTokenChannel;
+                var _type = T__44;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:32:7: ( 'not' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:32:9: 'not'
@@ -1014,8 +1032,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("T__45", 27);
             try
             {
-                int _type = T__45;
-                int _channel = DefaultTokenChannel;
+                var _type = T__45;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:33:7: ( 'or' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:33:9: 'or'
@@ -1049,8 +1067,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("T__46", 28);
             try
             {
-                int _type = T__46;
-                int _channel = DefaultTokenChannel;
+                var _type = T__46;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:34:7: ( '|' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:34:9: '|'
@@ -1084,8 +1102,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("T__47", 29);
             try
             {
-                int _type = T__47;
-                int _channel = DefaultTokenChannel;
+                var _type = T__47;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:35:7: ( '||' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:35:9: '||'
@@ -1119,8 +1137,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("T__48", 30);
             try
             {
-                int _type = T__48;
-                int _channel = DefaultTokenChannel;
+                var _type = T__48;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:36:7: ( '~' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:36:9: '~'
@@ -1154,8 +1172,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("TRUE", 31);
             try
             {
-                int _type = TRUE;
-                int _channel = DefaultTokenChannel;
+                var _type = TRUE;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:237:2: ( 'true' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:237:4: 'true'
@@ -1189,8 +1207,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("FALSE", 32);
             try
             {
-                int _type = FALSE;
-                int _channel = DefaultTokenChannel;
+                var _type = FALSE;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:241:2: ( 'false' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:241:4: 'false'
@@ -1224,8 +1242,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("ID", 33);
             try
             {
-                int _type = ID;
-                int _channel = DefaultTokenChannel;
+                var _type = ID;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:245:2: ( LETTER ( LETTER | DIGIT )* )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:245:5: LETTER ( LETTER | DIGIT )*
@@ -1239,11 +1257,11 @@ namespace Transformalize.Libs.NCalc
                         DebugEnterSubRule(1);
                         while (true)
                         {
-                            int alt1 = 2;
+                            var alt1 = 2;
                             try
                             {
                                 DebugEnterDecision(1, decisionCanBacktrack[1]);
-                                int LA1_0 = input.LA(1);
+                                var LA1_0 = input.LA(1);
 
                                 if (((LA1_0 >= '0' && LA1_0 <= '9') || (LA1_0 >= 'A' && LA1_0 <= 'Z') || LA1_0 == '_' || (LA1_0 >= 'a' && LA1_0 <= 'z')))
                                 {
@@ -1304,25 +1322,25 @@ namespace Transformalize.Libs.NCalc
             TraceIn("INTEGER", 34);
             try
             {
-                int _type = INTEGER;
-                int _channel = DefaultTokenChannel;
+                var _type = INTEGER;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:249:2: ( ( DIGIT )+ )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:249:4: ( DIGIT )+
                 {
                     DebugLocation(249, 4);
                     // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:249:4: ( DIGIT )+
-                    int cnt2 = 0;
+                    var cnt2 = 0;
                     try
                     {
                         DebugEnterSubRule(2);
                         while (true)
                         {
-                            int alt2 = 2;
+                            var alt2 = 2;
                             try
                             {
                                 DebugEnterDecision(2, decisionCanBacktrack[2]);
-                                int LA2_0 = input.LA(1);
+                                var LA2_0 = input.LA(1);
 
                                 if (((LA2_0 >= '0' && LA2_0 <= '9')))
                                 {
@@ -1388,10 +1406,10 @@ namespace Transformalize.Libs.NCalc
             TraceIn("FLOAT", 35);
             try
             {
-                int _type = FLOAT;
-                int _channel = DefaultTokenChannel;
+                var _type = FLOAT;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:253:2: ( ( DIGIT )* '.' ( DIGIT )+ ( E )? | ( DIGIT )+ E )
-                int alt7 = 2;
+                var alt7 = 2;
                 try
                 {
                     DebugEnterDecision(7, decisionCanBacktrack[7]);
@@ -1422,11 +1440,11 @@ namespace Transformalize.Libs.NCalc
                                 DebugEnterSubRule(3);
                                 while (true)
                                 {
-                                    int alt3 = 2;
+                                    var alt3 = 2;
                                     try
                                     {
                                         DebugEnterDecision(3, decisionCanBacktrack[3]);
-                                        int LA3_0 = input.LA(1);
+                                        var LA3_0 = input.LA(1);
 
                                         if (((LA3_0 >= '0' && LA3_0 <= '9')))
                                         {
@@ -1465,17 +1483,17 @@ namespace Transformalize.Libs.NCalc
                             Match('.');
                             DebugLocation(253, 15);
                             // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:253:15: ( DIGIT )+
-                            int cnt4 = 0;
+                            var cnt4 = 0;
                             try
                             {
                                 DebugEnterSubRule(4);
                                 while (true)
                                 {
-                                    int alt4 = 2;
+                                    var alt4 = 2;
                                     try
                                     {
                                         DebugEnterDecision(4, decisionCanBacktrack[4]);
-                                        int LA4_0 = input.LA(1);
+                                        var LA4_0 = input.LA(1);
 
                                         if (((LA4_0 >= '0' && LA4_0 <= '9')))
                                         {
@@ -1517,14 +1535,14 @@ namespace Transformalize.Libs.NCalc
 
                             DebugLocation(253, 22);
                             // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:253:22: ( E )?
-                            int alt5 = 2;
+                            var alt5 = 2;
                             try
                             {
                                 DebugEnterSubRule(5);
                                 try
                                 {
                                     DebugEnterDecision(5, decisionCanBacktrack[5]);
-                                    int LA5_0 = input.LA(1);
+                                    var LA5_0 = input.LA(1);
 
                                     if ((LA5_0 == 'E' || LA5_0 == 'e'))
                                     {
@@ -1559,17 +1577,17 @@ namespace Transformalize.Libs.NCalc
                         {
                             DebugLocation(254, 4);
                             // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:254:4: ( DIGIT )+
-                            int cnt6 = 0;
+                            var cnt6 = 0;
                             try
                             {
                                 DebugEnterSubRule(6);
                                 while (true)
                                 {
-                                    int alt6 = 2;
+                                    var alt6 = 2;
                                     try
                                     {
                                         DebugEnterDecision(6, decisionCanBacktrack[6]);
-                                        int LA6_0 = input.LA(1);
+                                        var LA6_0 = input.LA(1);
 
                                         if (((LA6_0 >= '0' && LA6_0 <= '9')))
                                         {
@@ -1639,8 +1657,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("STRING", 36);
             try
             {
-                int _type = STRING;
-                int _channel = DefaultTokenChannel;
+                var _type = STRING;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:258:6: ( '\\'' ( EscapeSequence | ( options {greedy=false; } :~ ( '\\u0000' .. '\\u001f' | '\\\\' | '\\'' ) ) )* '\\'' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:258:10: '\\'' ( EscapeSequence | ( options {greedy=false; } :~ ( '\\u0000' .. '\\u001f' | '\\\\' | '\\'' ) ) )* '\\''
@@ -1654,11 +1672,11 @@ namespace Transformalize.Libs.NCalc
                         DebugEnterSubRule(8);
                         while (true)
                         {
-                            int alt8 = 3;
+                            var alt8 = 3;
                             try
                             {
                                 DebugEnterDecision(8, decisionCanBacktrack[8]);
-                                int LA8_0 = input.LA(1);
+                                var LA8_0 = input.LA(1);
 
                                 if ((LA8_0 == '\\'))
                                 {
@@ -1740,8 +1758,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("DATETIME", 37);
             try
             {
-                int _type = DATETIME;
-                int _channel = DefaultTokenChannel;
+                var _type = DATETIME;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:262:3: ( '#' ( options {greedy=false; } : (~ ( '#' ) )* ) '#' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:262:5: '#' ( options {greedy=false; } : (~ ( '#' ) )* ) '#'
@@ -1760,11 +1778,11 @@ namespace Transformalize.Libs.NCalc
                             DebugEnterSubRule(9);
                             while (true)
                             {
-                                int alt9 = 2;
+                                var alt9 = 2;
                                 try
                                 {
                                     DebugEnterDecision(9, decisionCanBacktrack[9]);
-                                    int LA9_0 = input.LA(1);
+                                    var LA9_0 = input.LA(1);
 
                                     if (((LA9_0 >= '\u0000' && LA9_0 <= '\"') || (LA9_0 >= '$' && LA9_0 <= '\uFFFF')))
                                     {
@@ -1829,8 +1847,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("NAME", 38);
             try
             {
-                int _type = NAME;
-                int _channel = DefaultTokenChannel;
+                var _type = NAME;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:265:6: ( '[' ( options {greedy=false; } : (~ ( ']' ) )* ) ']' )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:265:8: '[' ( options {greedy=false; } : (~ ( ']' ) )* ) ']'
@@ -1849,11 +1867,11 @@ namespace Transformalize.Libs.NCalc
                             DebugEnterSubRule(10);
                             while (true)
                             {
-                                int alt10 = 2;
+                                var alt10 = 2;
                                 try
                                 {
                                     DebugEnterDecision(10, decisionCanBacktrack[10]);
-                                    int LA10_0 = input.LA(1);
+                                    var LA10_0 = input.LA(1);
 
                                     if (((LA10_0 >= '\u0000' && LA10_0 <= '\\') || (LA10_0 >= '^' && LA10_0 <= '\uFFFF')))
                                     {
@@ -1918,8 +1936,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("E", 39);
             try
             {
-                int _type = E;
-                int _channel = DefaultTokenChannel;
+                var _type = E;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:268:3: ( ( 'E' | 'e' ) ( '+' | '-' )? ( DIGIT )+ )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:268:5: ( 'E' | 'e' ) ( '+' | '-' )? ( DIGIT )+
@@ -1939,14 +1957,14 @@ namespace Transformalize.Libs.NCalc
 
                     DebugLocation(268, 15);
                     // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:268:15: ( '+' | '-' )?
-                    int alt11 = 2;
+                    var alt11 = 2;
                     try
                     {
                         DebugEnterSubRule(11);
                         try
                         {
                             DebugEnterDecision(11, decisionCanBacktrack[11]);
-                            int LA11_0 = input.LA(1);
+                            var LA11_0 = input.LA(1);
 
                             if ((LA11_0 == '+' || LA11_0 == '-'))
                             {
@@ -1976,17 +1994,17 @@ namespace Transformalize.Libs.NCalc
 
                     DebugLocation(268, 26);
                     // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:268:26: ( DIGIT )+
-                    int cnt12 = 0;
+                    var cnt12 = 0;
                     try
                     {
                         DebugEnterSubRule(12);
                         while (true)
                         {
-                            int alt12 = 2;
+                            var alt12 = 2;
                             try
                             {
                                 DebugEnterDecision(12, decisionCanBacktrack[12]);
-                                int LA12_0 = input.LA(1);
+                                var LA12_0 = input.LA(1);
 
                                 if (((LA12_0 >= '0' && LA12_0 <= '9')))
                                 {
@@ -2140,7 +2158,7 @@ namespace Transformalize.Libs.NCalc
                     Match('\\');
                     DebugLocation(283, 4);
                     // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:283:4: ( 'n' | 'r' | 't' | '\\'' | '\\\\' | UnicodeEscape )
-                    int alt13 = 6;
+                    var alt13 = 6;
                     try
                     {
                         DebugEnterSubRule(13);
@@ -2350,8 +2368,8 @@ namespace Transformalize.Libs.NCalc
             TraceIn("WS", 45);
             try
             {
-                int _type = WS;
-                int _channel = DefaultTokenChannel;
+                var _type = WS;
+                var _channel = DefaultTokenChannel;
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:302:4: ( ( ' ' | '\\r' | '\\t' | '\\u000C' | '\\n' ) )
                 DebugEnterAlt(1);
                 // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:302:7: ( ' ' | '\\r' | '\\t' | '\\u000C' | '\\n' )
@@ -2389,7 +2407,7 @@ namespace Transformalize.Libs.NCalc
         public override void mTokens()
         {
             // C:\\Users\\sebros\\My Projects\\NCalc\\Grammar\\NCalc.g:1:8: ( T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | T__26 | T__27 | T__28 | T__29 | T__30 | T__31 | T__32 | T__33 | T__34 | T__35 | T__36 | T__37 | T__38 | T__39 | T__40 | T__41 | T__42 | T__43 | T__44 | T__45 | T__46 | T__47 | T__48 | TRUE | FALSE | ID | INTEGER | FLOAT | STRING | DATETIME | NAME | E | WS )
-            int alt14 = 40;
+            var alt14 = 40;
             try
             {
                 DebugEnterDecision(14, decisionCanBacktrack[14]);
@@ -2865,9 +2883,9 @@ namespace Transformalize.Libs.NCalc
 
             static DFA14()
             {
-                int numStates = DFA14_transitionS.Length;
+                var numStates = DFA14_transitionS.Length;
                 DFA14_transition = new short[numStates][];
-                for (int i = 0; i < numStates; i++)
+                for (var i = 0; i < numStates; i++)
                 {
                     DFA14_transition[i] = UnpackEncodedString(DFA14_transitionS[i]);
                 }
@@ -2935,9 +2953,9 @@ namespace Transformalize.Libs.NCalc
 
             static DFA7()
             {
-                int numStates = DFA7_transitionS.Length;
+                var numStates = DFA7_transitionS.Length;
                 DFA7_transition = new short[numStates][];
-                for (int i = 0; i < numStates; i++)
+                for (var i = 0; i < numStates; i++)
                 {
                     DFA7_transition[i] = UnpackEncodedString(DFA7_transitionS[i]);
                 }

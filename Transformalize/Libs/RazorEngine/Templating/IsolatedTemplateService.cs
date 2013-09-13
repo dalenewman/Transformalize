@@ -1,4 +1,26 @@
-﻿using System;
+﻿#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -78,8 +100,8 @@ namespace Transformalize.Libs.RazorEngine.Templating
         {
             _appDomain = CreateAppDomain(appDomainFactory ?? new DefaultAppDomainFactory());
 
-            string assemblyName = TemplateServiceType.Assembly.FullName;
-            string typeName = TemplateServiceType.FullName;
+            var assemblyName = TemplateServiceType.Assembly.FullName;
+            var typeName = TemplateServiceType.FullName;
 
             _proxy = (ITemplateService) _appDomain.CreateInstance(
                 assemblyName, typeName, false, BindingFlags.NonPublic | BindingFlags.Instance,
@@ -208,7 +230,7 @@ namespace Transformalize.Libs.RazorEngine.Templating
 
             if (models != null)
             {
-                foreach (object model in models)
+                foreach (var model in models)
                 {
                     if (model != null)
                     {
@@ -261,7 +283,7 @@ namespace Transformalize.Libs.RazorEngine.Templating
 
             if (modelTypes != null)
             {
-                foreach (Type modelType in modelTypes)
+                foreach (var modelType in modelTypes)
                 {
                     if ((modelType != null) && CompilerServicesUtility.IsDynamicType(modelType))
                         throw new ArgumentException("IsolatedTemplateService instances do not support anonymous or dynamic types.");
@@ -319,7 +341,7 @@ namespace Transformalize.Libs.RazorEngine.Templating
 
             if (models != null)
             {
-                foreach (object model in models)
+                foreach (var model in models)
                 {
                     if (model != null)
                     {
@@ -430,7 +452,7 @@ namespace Transformalize.Libs.RazorEngine.Templating
 
             if (models != null)
             {
-                foreach (object model in models)
+                foreach (var model in models)
                 {
                     if ((model != null) && CompilerServicesUtility.IsDynamicType(model.GetType()))
                         throw new ArgumentException("IsolatedTemplateService instances do not support anonymous or dynamic types.");
@@ -483,7 +505,7 @@ namespace Transformalize.Libs.RazorEngine.Templating
         /// </returns>
         private static AppDomain CreateAppDomain(IAppDomainFactory factory)
         {
-            AppDomain domain = factory.CreateAppDomain();
+            var domain = factory.CreateAppDomain();
             if (domain == null)
                 throw new InvalidOperationException("The application domain factory did not create an application domain.");
 

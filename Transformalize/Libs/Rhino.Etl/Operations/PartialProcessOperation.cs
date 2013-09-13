@@ -1,3 +1,25 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
 using System;
 using System.Collections.Generic;
 
@@ -18,14 +40,14 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         {
             add
             {
-                foreach (IOperation operation in operations)
+                foreach (var operation in operations)
                 {
                     operation.OnFinishedProcessing += value;
                 }
             }
             remove
             {
-                foreach (IOperation operation in operations)
+                foreach (var operation in operations)
                 {
                     operation.OnFinishedProcessing -= value;
                 }
@@ -39,7 +61,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         public void PrepareForExecution(IPipelineExecuter pipelineExecuter)
         {
             pipelineExeuter = pipelineExecuter;
-            foreach (IOperation    operation in operations)
+            foreach (var    operation in operations)
             {
                 operation.PrepareForExecution(pipelineExecuter);
             }
@@ -62,14 +84,14 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         {
             add
             {
-                foreach (IOperation operation in operations)
+                foreach (var operation in operations)
                 {
                     operation.OnRowProcessed += value;
                 }
             }
             remove
             {
-                foreach (IOperation operation in operations)
+                foreach (var operation in operations)
                 {
                     operation.OnRowProcessed -= value;
                 }
@@ -93,7 +115,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// <filterpriority>2</filterpriority>
         public void Dispose()
         {
-            foreach (IOperation operation in operations)
+            foreach (var operation in operations)
             {
                 operation.Dispose();
             }
@@ -126,9 +148,9 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// <returns></returns>
         public IEnumerable<Exception> GetAllErrors()
         {
-            foreach (IOperation operation in operations)
+            foreach (var operation in operations)
             {
-                foreach (Exception error in operation.GetAllErrors())
+                foreach (var error in operation.GetAllErrors())
                 {
                     yield return error;
                 }

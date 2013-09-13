@@ -92,7 +92,7 @@ namespace Transformalize.Main
 
         public override object Transform(object value)
         {
-            string valueKey = value.ToString();
+            var valueKey = value.ToString();
 
             if (_hasEquals)
             {
@@ -128,7 +128,7 @@ namespace Transformalize.Main
 
         public override void Transform(ref Row row, string resultKey)
         {
-            string valueKey = row[FirstParameter.Key].ToString();
+            var valueKey = row[FirstParameter.Key].ToString();
 
             if (_hasEquals)
             {
