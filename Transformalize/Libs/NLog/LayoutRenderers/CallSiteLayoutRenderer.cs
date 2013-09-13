@@ -44,34 +44,34 @@ using Transformalize.Libs.NLog.Internal;
 namespace Transformalize.Libs.NLog.LayoutRenderers
 {
     /// <summary>
-    /// The call site (class name, method name and source information).
+    ///     The call site (class name, method name and source information).
     /// </summary>
     [LayoutRenderer("callsite")]
     [ThreadAgnostic]
     public class CallSiteLayoutRenderer : LayoutRenderer, IUsesStackTrace
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CallSiteLayoutRenderer" /> class.
+        ///     Initializes a new instance of the <see cref="CallSiteLayoutRenderer" /> class.
         /// </summary>
         public CallSiteLayoutRenderer()
         {
-            this.ClassName = true;
-            this.MethodName = true;
+            ClassName = true;
+            MethodName = true;
 #if !SILVERLIGHT
-            this.FileName = false;
-            this.IncludeSourcePath = true;
+            FileName = false;
+            IncludeSourcePath = true;
 #endif
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to render the class name.
+        ///     Gets or sets a value indicating whether to render the class name.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         [DefaultValue(true)]
         public bool ClassName { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to render the method name.
+        ///     Gets or sets a value indicating whether to render the method name.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         [DefaultValue(true)]
@@ -79,14 +79,14 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
 
 #if !SILVERLIGHT
         /// <summary>
-        /// Gets or sets a value indicating whether to render the source file name and line number.
+        ///     Gets or sets a value indicating whether to render the source file name and line number.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         [DefaultValue(false)]
         public bool FileName { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to include source file path.
+        ///     Gets or sets a value indicating whether to include source file path.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         [DefaultValue(true)]
@@ -94,14 +94,14 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
 #endif
 
         /// <summary>
-        /// Gets the level of stack trace information required by the implementing class.
+        ///     Gets the level of stack trace information required by the implementing class.
         /// </summary>
         StackTraceUsage IUsesStackTrace.StackTraceUsage
         {
             get
             {
 #if !SILVERLIGHT
-                if (this.FileName)
+                if (FileName)
                 {
                     return StackTraceUsage.Max;
                 }
@@ -112,9 +112,11 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
         }
 
         /// <summary>
-        /// Renders the call site and appends it to the specified <see cref="StringBuilder" />.
+        ///     Renders the call site and appends it to the specified <see cref="StringBuilder" />.
         /// </summary>
-        /// <param name="builder">The <see cref="StringBuilder"/> to append the rendered data to.</param>
+        /// <param name="builder">
+        ///     The <see cref="StringBuilder" /> to append the rendered data to.
+        /// </param>
         /// <param name="logEvent">Logging event.</param>
         protected override void Append(StringBuilder builder, LogEventInfo logEvent)
         {
@@ -122,7 +124,7 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
             if (frame != null)
             {
                 MethodBase method = frame.GetMethod();
-                if (this.ClassName)
+                if (ClassName)
                 {
                     if (method.DeclaringType != null)
                     {
@@ -134,9 +136,9 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
                     }
                 }
 
-                if (this.MethodName)
+                if (MethodName)
                 {
-                    if (this.ClassName)
+                    if (ClassName)
                     {
                         builder.Append(".");
                     }
@@ -152,13 +154,13 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
                 }
 
 #if !SILVERLIGHT
-                if (this.FileName)
+                if (FileName)
                 {
                     string fileName = frame.GetFileName();
                     if (fileName != null)
                     {
                         builder.Append("(");
-                        if (this.IncludeSourcePath)
+                        if (IncludeSourcePath)
                         {
                             builder.Append(fileName);
                         }

@@ -18,20 +18,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Collections.Generic;
-using Transformalize.Core;
-using Transformalize.Core.Process_;
+using System.Diagnostics;
+using Transformalize.Configuration;
+using Transformalize.Main;
 using Transformalize.Libs.NLog;
 using Transformalize.Runner;
+using Process = Transformalize.Main.Process;
 
 namespace Transformalize.Run
 {
-    class Program
+    internal class Program
     {
-        private static readonly System.Diagnostics.Stopwatch Timer = new System.Diagnostics.Stopwatch();
+        private static readonly Stopwatch Timer = new Stopwatch();
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
         private static Options _options = new Options();
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var process = new Process();
 
@@ -41,11 +43,11 @@ namespace Transformalize.Run
                 return;
             }
 
-            var arg = args[0];
+            string arg = args[0];
 
             Timer.Start();
 
-            var configuration = arg.EndsWith(".xml") ? new ProcessXmlConfigurationReader(arg).Read() : new ProcessConfigurationReader(arg).Read();
+            ProcessConfigurationElement configuration = arg.EndsWith(".xml") ? new ProcessXmlConfigurationReader(arg).Read() : new ProcessConfigurationReader(arg).Read();
 
             if (OptionsMayExist(args))
             {
@@ -56,7 +58,7 @@ namespace Transformalize.Run
                 }
                 else
                 {
-                    foreach (var problem in _options.Problems)
+                    foreach (string problem in _options.Problems)
                     {
                         Log.Error(arg + " | " + problem);
                     }

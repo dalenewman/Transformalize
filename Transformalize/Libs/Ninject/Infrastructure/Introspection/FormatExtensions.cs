@@ -1,4 +1,5 @@
 ﻿#region License
+
 // 
 // Author: Nate Kohari <nate@enkari.com>
 // Copyright (c) 2007-2010, Enkari, Ltd.
@@ -6,14 +7,16 @@
 // Dual-licensed under the Apache License, Version 2.0, and the Microsoft Public License (Ms-PL).
 // See the file LICENSE.txt for details.
 // 
+
 #endregion
+
 #region Using Directives
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text;
-using System.Globalization;
 using Transformalize.Libs.Ninject.Activation;
 using Transformalize.Libs.Ninject.Planning.Bindings;
 using Transformalize.Libs.Ninject.Planning.Targets;
@@ -23,12 +26,12 @@ using Transformalize.Libs.Ninject.Planning.Targets;
 namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
 {
     /// <summary>
-    /// Provides extension methods for string formatting
+    ///     Provides extension methods for string formatting
     /// </summary>
     public static class FormatExtensions
     {
         /// <summary>
-        /// Formats the activation path into a meaningful string representation.
+        ///     Formats the activation path into a meaningful string representation.
         /// </summary>
         /// <param name="request">The request to be formatted.</param>
         /// <returns>The activation path formatted as string.</returns>
@@ -49,7 +52,7 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
         }
 
         /// <summary>
-        /// Formats the given binding into a meaningful string representation. 
+        ///     Formats the given binding into a meaningful string representation.
         /// </summary>
         /// <param name="binding">The binding to be formatted.</param>
         /// <param name="context">The context.</param>
@@ -78,7 +81,7 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
 
                     case BindingTarget.Provider:
                         sw.Write("provider binding from {0} to {1} (via {2})", binding.Service.Format(),
-                            provider.Type.Format(), provider.GetType().Format());
+                                 provider.Type.Format(), provider.GetType().Format());
                         break;
 
                     case BindingTarget.Method:
@@ -98,7 +101,7 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
         }
 
         /// <summary>
-        /// Formats the specified request into a meaningful string representation.
+        ///     Formats the specified request into a meaningful string representation.
         /// </summary>
         /// <param name="request">The request to be formatted.</param>
         /// <returns>The request formatted as string.</returns>
@@ -116,7 +119,7 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
         }
 
         /// <summary>
-        /// Formats the specified target into a meaningful string representation..
+        ///     Formats the specified target into a meaningful string representation..
         /// </summary>
         /// <param name="target">The target to be formatted.</param>
         /// <returns>The target formatted as string.</returns>
@@ -149,13 +152,13 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
         }
 
         /// <summary>
-        /// Formats the specified type into a meaningful string representation..
+        ///     Formats the specified type into a meaningful string representation..
         /// </summary>
         /// <param name="type">The type to be formatted.</param>
         /// <returns>The type formatted as string.</returns>
         public static string Format(this Type type)
         {
-            var friendlyName = GetFriendlyName(type);
+            string friendlyName = GetFriendlyName(type);
 
 #if !MONO
             if (friendlyName.Contains("AnonymousType"))
@@ -168,47 +171,63 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
 
             switch (friendlyName.ToLower(CultureInfo.InvariantCulture))
             {
-                case "int16": return "short";
-                case "int32": return "int";
-                case "int64": return "long";
-                case "string": return "string";
-                case "object": return "object";
-                case "boolean": return "bool";
-                case "void": return "void";
-                case "char": return "char";
-                case "byte": return "byte";
-                case "uint16": return "ushort";
-                case "uint32": return "uint";
-                case "uint64": return "ulong";
-                case "sbyte": return "sbyte";
-                case "single": return "float";
-                case "double": return "double";
-                case "decimal": return "decimal";
+                case "int16":
+                    return "short";
+                case "int32":
+                    return "int";
+                case "int64":
+                    return "long";
+                case "string":
+                    return "string";
+                case "object":
+                    return "object";
+                case "boolean":
+                    return "bool";
+                case "void":
+                    return "void";
+                case "char":
+                    return "char";
+                case "byte":
+                    return "byte";
+                case "uint16":
+                    return "ushort";
+                case "uint32":
+                    return "uint";
+                case "uint64":
+                    return "ulong";
+                case "sbyte":
+                    return "sbyte";
+                case "single":
+                    return "float";
+                case "double":
+                    return "double";
+                case "decimal":
+                    return "decimal";
             }
 
-            var genericArguments = type.GetGenericArguments();
-            if(genericArguments.Length > 0)
+            Type[] genericArguments = type.GetGenericArguments();
+            if (genericArguments.Length > 0)
                 return FormatGenericType(friendlyName, genericArguments);
-            
+
             return friendlyName;
         }
 
         private static string GetFriendlyName(Type type)
         {
-            var friendlyName = type.FullName ?? type.Name;
+            string friendlyName = type.FullName ?? type.Name;
 
             // remove generic arguments
-            var firstBracket = friendlyName.IndexOf('[');
+            int firstBracket = friendlyName.IndexOf('[');
             if (firstBracket > 0)
                 friendlyName = friendlyName.Substring(0, firstBracket);
 
             // remove assembly info
-            var firstComma = friendlyName.IndexOf(',');
+            int firstComma = friendlyName.IndexOf(',');
             if (firstComma > 0)
                 friendlyName = friendlyName.Substring(0, firstComma);
 
             // remove namespace
-            var lastPeriod = friendlyName.LastIndexOf('.');
+            int lastPeriod = friendlyName.LastIndexOf('.');
             if (lastPeriod >= 0)
                 friendlyName = friendlyName.Substring(lastPeriod + 1);
 
@@ -226,14 +245,14 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
 
             var sb = new StringBuilder(friendlyName.Length + 10);
 
-            var genericArgumentIndex = 0;
-            var startIndex = 0;
-            for (var index = 0; index < friendlyName.Length; index++)
+            int genericArgumentIndex = 0;
+            int startIndex = 0;
+            for (int index = 0; index < friendlyName.Length; index++)
             {
                 if (friendlyName[index] == '`')
                 {
-                    var numArguments = friendlyName[index+1] - 48;
-                    
+                    int numArguments = friendlyName[index + 1] - 48;
+
                     sb.Append(friendlyName.Substring(startIndex, index - startIndex));
                     AppendGenericArguments(sb, genericArguments, genericArgumentIndex, numArguments);
                     genericArgumentIndex += numArguments;
@@ -251,14 +270,14 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
         {
             sb.Append("{");
 
-            for(int i = 0; i < count; i++)
+            for (int i = 0; i < count; i++)
             {
                 if (i != 0)
                     sb.Append(", ");
 
                 sb.Append(genericArguments[start + i].Format());
             }
-            
+
             sb.Append("}");
         }
     }

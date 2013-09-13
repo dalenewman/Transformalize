@@ -33,12 +33,12 @@ using Transformalize.Libs.Ninject.Planning.Targets;
 namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
 {
     /// <summary>
-    /// Provides meaningful exception messages.
+    ///     Provides meaningful exception messages.
     /// </summary>
     public static class ExceptionFormatter
     {
         /// <summary>
-        /// Generates a message saying that modules without names are not supported.
+        ///     Generates a message saying that modules without names are not supported.
         /// </summary>
         /// <returns>The exception message.</returns>
         public static string ModulesWithNullOrEmptyNamesAreNotSupported()
@@ -47,7 +47,7 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
         }
 
         /// <summary>
-        /// Generates a message saying that modules without names are not supported.
+        ///     Generates a message saying that modules without names are not supported.
         /// </summary>
         /// <returns>The exception message.</returns>
         public static string TargetDoesNotHaveADefaultValue(ITarget target)
@@ -56,7 +56,7 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
         }
 
         /// <summary>
-        /// Generates a message saying that a module with the same name is already loaded.
+        ///     Generates a message saying that a module with the same name is already loaded.
         /// </summary>
         /// <param name="newModule">The new module.</param>
         /// <param name="existingModule">The existing module.</param>
@@ -70,17 +70,17 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
 
                 sw.WriteLine("Suggestions:");
                 sw.WriteLine("  1) Ensure that you have not accidentally loaded the same module twice.");
-                #if !SILVERLIGHT
+#if !SILVERLIGHT
                 sw.WriteLine("  2) If you are using automatic module loading, ensure you have not manually loaded a module");
                 sw.WriteLine("     that may be found by the module loader.");
-                #endif
+#endif
 
                 return sw.ToString();
             }
         }
 
         /// <summary>
-        /// Generates a message saying that no module has been loaded with the specified name.
+        ///     Generates a message saying that no module has been loaded with the specified name.
         /// </summary>
         /// <param name="name">The module name.</param>
         /// <returns>The exception message.</returns>
@@ -99,7 +99,7 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
         }
 
         /// <summary>
-        /// Generates a message saying that the binding could not be uniquely resolved.
+        ///     Generates a message saying that the binding could not be uniquely resolved.
         /// </summary>
         /// <param name="request">The request.</param>
         /// <param name="formattedMatchingBindings">The matching bindings, already formatted as strings</param>
@@ -127,7 +127,7 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
         }
 
         /// <summary>
-        /// Generates a message saying that the binding could not be resolved on the specified request.
+        ///     Generates a message saying that the binding could not be resolved on the specified request.
         /// </summary>
         /// <param name="request">The request.</param>
         /// <returns>The exception message.</returns>
@@ -146,16 +146,16 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
                 sw.WriteLine("  2) If the binding was defined in a module, ensure that the module has been loaded into the kernel.");
                 sw.WriteLine("  3) Ensure you have not accidentally created more than one kernel.");
                 sw.WriteLine("  4) If you are using constructor arguments, ensure that the parameter name matches the constructors parameter name.");
-                #if !SILVERLIGHT
+#if !SILVERLIGHT
                 sw.WriteLine("  5) If you are using automatic module loading, ensure the search path and filters are correct.");
-                #endif
+#endif
 
                 return sw.ToString();
             }
         }
 
         /// <summary>
-        /// Generates a message saying that the specified context has cyclic dependencies.
+        ///     Generates a message saying that the specified context has cyclic dependencies.
         /// </summary>
         /// <param name="context">The context.</param>
         /// <returns>The exception message.</returns>
@@ -181,7 +181,7 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
         }
 
         /// <summary>
-        /// Generates a message saying that an invalid attribute type is used in the binding condition.
+        ///     Generates a message saying that an invalid attribute type is used in the binding condition.
         /// </summary>
         /// <param name="serviceNames">The names of the services.</param>
         /// <param name="methodName">Name of the method.</param>
@@ -206,7 +206,7 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
         }
 
         /// <summary>
-        /// Generates a message saying that no constructors are available on the specified context.
+        ///     Generates a message saying that no constructors are available on the specified context.
         /// </summary>
         /// <param name="context">The context.</param>
         /// <returns>The exception message.</returns>
@@ -228,9 +228,9 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
                 return sw.ToString();
             }
         }
-        
+
         /// <summary>
-        /// Generates a message saying that no constructors are available for the given component.
+        ///     Generates a message saying that no constructors are available for the given component.
         /// </summary>
         /// <param name="component">The component.</param>
         /// <param name="implementation">The implementation.</param>
@@ -251,7 +251,7 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
         }
 
         /// <summary>
-        /// Generates a message saying that the specified component is not registered.
+        ///     Generates a message saying that the specified component is not registered.
         /// </summary>
         /// <param name="component">The component.</param>
         /// <returns>The exception message.</returns>
@@ -274,7 +274,7 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
         }
 
         /// <summary>
-        /// Generates a message saying that the specified property could not be resolved on the specified request.
+        ///     Generates a message saying that the specified property could not be resolved on the specified request.
         /// </summary>
         /// <param name="request">The request.</param>
         /// <param name="propertyName">The property name.</param>
@@ -297,7 +297,7 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
         }
 
         /// <summary>
-        /// Generates a message saying that the provider on the specified context returned null.
+        ///     Generates a message saying that the provider on the specified context returned null.
         /// </summary>
         /// <param name="context">The context.</param>
         /// <returns>The exception message.</returns>
@@ -307,19 +307,19 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
             {
                 sw.WriteLine("Error activating {0} using {1}", context.Request.Service.Format(), context.Binding.Format(context));
                 sw.WriteLine("Provider returned null.");
-                
+
                 sw.WriteLine("Activation path:");
                 sw.WriteLine(context.Request.FormatActivationPath());
 
                 sw.WriteLine("Suggestions:");
                 sw.WriteLine("  1) Ensure that the provider handles creation requests properly.");
-                
+
                 return sw.ToString();
             }
         }
 
         /// <summary>
-        /// Generates a message saying that the constructor is ambiguous.
+        ///     Generates a message saying that the constructor is ambiguous.
         /// </summary>
         /// <param name="context">The context.</param>
         /// <param name="bestDirectives">The best constructor directives.</param>
@@ -331,15 +331,15 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
                 sw.WriteLine("Error activating {0} using {1}", context.Request.Service.Format(), context.Binding.Format(context));
                 sw.WriteLine("Several constructors have the same priority. Please specify the constructor using ToConstructor syntax or add an Inject attribute.");
                 sw.WriteLine();
-                
+
                 sw.WriteLine("Constructors:");
-                foreach (var constructorInjectionDirective in bestDirectives)
+                foreach (ConstructorInjectionDirective constructorInjectionDirective in bestDirectives)
                 {
                     FormatConstructor(constructorInjectionDirective.Constructor, sw);
                 }
 
                 sw.WriteLine();
-                
+
                 sw.WriteLine("Activation path:");
                 sw.WriteLine(context.Request.FormatActivationPath());
 
@@ -352,7 +352,7 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
         }
 
         /// <summary>
-        /// Formats the constructor.
+        ///     Formats the constructor.
         /// </summary>
         /// <param name="constructor">The constructor.</param>
         /// <param name="sw">The string writer.</param>
@@ -365,7 +365,7 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
 
             sw.Write(constructor.DeclaringType.Name);
             sw.Write("(");
-            foreach (var parameterInfo in constructor.GetParameters())
+            foreach (ParameterInfo parameterInfo in constructor.GetParameters())
             {
                 foreach (Attribute attribute in parameterInfo.GetCustomAttributes(false))
                 {
@@ -381,14 +381,14 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Introspection
         }
 
         /// <summary>
-        /// Formats the attribute.
+        ///     Formats the attribute.
         /// </summary>
         /// <param name="sw">The string writer.</param>
         /// <param name="attribute">The attribute.</param>
         private static void FormatAttribute(StringWriter sw, Attribute attribute)
         {
             sw.Write("[");
-            var name = attribute.GetType().Format();
+            string name = attribute.GetType().Format();
             name = name.EndsWith("Attribute") ? name.Substring(0, name.Length - 9) : name;
             sw.Write(name);
             sw.Write("]");

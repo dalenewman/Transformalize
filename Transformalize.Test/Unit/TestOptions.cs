@@ -16,35 +16,19 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Configuration;
 using NUnit.Framework;
 using Transformalize.Configuration;
-using Transformalize.Core;
+using Transformalize.Main;
 
-namespace Transformalize.Test.Unit {
+namespace Transformalize.Test.Unit
+{
     [TestFixture]
-    public class TestOptions {
-
-        [Test]
-        public void TestOptionsWithStrings()
-        {
-
-            const string args = "{ \"Mode\":\"Initialize\", \"RenderTemplates\":\"False\" }";
-
-            var options = new Options(args);
-
-            Assert.IsFalse(options.RenderTemplates);
-            Assert.AreEqual(Modes.Initialize, options.Mode);
-            Assert.IsTrue(options.UseBeginVersion);
-            Assert.IsTrue(options.WriteEndVersion);
-
-        }
-
+    public class TestOptions
+    {
         [Test]
         public void TestOptionsWithBoolean()
         {
-
             const string args = "{ \"Mode\":\"Initialize\", \"RenderTemplates\":false }";
 
             var options = new Options(args);
@@ -53,7 +37,19 @@ namespace Transformalize.Test.Unit {
             Assert.AreEqual(Modes.Initialize, options.Mode);
             Assert.IsTrue(options.UseBeginVersion);
             Assert.IsTrue(options.WriteEndVersion);
+        }
 
+        [Test]
+        public void TestOptionsWithStrings()
+        {
+            const string args = "{ \"Mode\":\"Initialize\", \"RenderTemplates\":\"False\" }";
+
+            var options = new Options(args);
+
+            Assert.IsFalse(options.RenderTemplates);
+            Assert.AreEqual(Modes.Initialize, options.Mode);
+            Assert.IsTrue(options.UseBeginVersion);
+            Assert.IsTrue(options.WriteEndVersion);
         }
 
         [Test]
@@ -62,16 +58,13 @@ namespace Transformalize.Test.Unit {
             var configIn = (TransformalizeConfiguration) ConfigurationManager.GetSection("transformalize");
             var configOut = new TransformalizeConfiguration();
             Assert.IsNotNull(configIn);
-            var xml = configIn.Serialize();
+            string xml = configIn.Serialize();
 
             xml = xml.Replace("\"output\"", "\"OUT\"");
 
             configOut.Deserialize(xml);
-            
+
             Assert.AreEqual("OUT", configOut.Processes[0].Connections[1].Name);
-
         }
-
-
     }
 }

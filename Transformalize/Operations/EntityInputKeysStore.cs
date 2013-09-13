@@ -1,34 +1,37 @@
 using System.Linq;
-using Transformalize.Core.Entity_;
-using Transformalize.Core.Process_;
-using Transformalize.Libs.Rhino.Etl.Core;
-using Transformalize.Libs.Rhino.Etl.Core.Operations;
+using Transformalize.Main;
+using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Libs.Rhino.Etl.Operations;
 
-namespace Transformalize.Operations {
-
-    public class EntityInputKeysStore : AbstractAggregationOperation {
-        private readonly Process _process;
+namespace Transformalize.Operations
+{
+    public class EntityInputKeysStore : AbstractAggregationOperation
+    {
         private readonly Entity _entity;
         private readonly string _firstKey;
         private readonly string[] _keys;
+        private readonly Process _process;
 
-        public EntityInputKeysStore(Process process, Entity entity) {
+        public EntityInputKeysStore(Process process, Entity entity)
+        {
             _process = process;
             _entity = entity;
             _firstKey = _entity.PrimaryKey.First().Key;
-            _keys = _entity.PrimaryKey.ToEnumerable().Select(f=>f.Alias).ToArray();
+            _keys = _entity.PrimaryKey.ToEnumerable().Select(f => f.Alias).ToArray();
         }
 
-        protected override void Accumulate(Row row, Row aggregate) {
-
+        protected override void Accumulate(Row row, Row aggregate)
+        {
             if (aggregate.ContainsKey(_firstKey)) return;
 
-            foreach (var key in _keys) {
+            foreach (string key in _keys)
+            {
                 aggregate[key] = row[key];
             }
         }
 
-        protected override string[] GetColumnsToGroupBy() {
+        protected override string[] GetColumnsToGroupBy()
+        {
             return _keys;
         }
 

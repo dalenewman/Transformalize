@@ -34,33 +34,33 @@
 namespace Transformalize.Libs.NLog.Filters
 {
     /// <summary>
-    /// Filter result.
+    ///     Filter result.
     /// </summary>
     public enum FilterResult
     {
         /// <summary>
-        /// The filter doesn't want to decide whether to log or discard the message.
+        ///     The filter doesn't want to decide whether to log or discard the message.
         /// </summary>
-        Neutral, 
+        Neutral,
 
         /// <summary>
-        /// The message should be logged.
+        ///     The message should be logged.
         /// </summary>
-        Log, 
+        Log,
 
         /// <summary>
-        /// The message should not be logged.
+        ///     The message should not be logged.
         /// </summary>
-        Ignore, 
+        Ignore,
 
         /// <summary>
-        /// The message should be logged and processing should be finished.
+        ///     The message should be logged and processing should be finished.
         /// </summary>
-        LogFinal, 
+        LogFinal,
 
         /// <summary>
-        /// The message should not be logged and processing should be finished.
+        ///     The message should not be logged and processing should be finished.
         /// </summary>
-        IgnoreFinal, 
+        IgnoreFinal,
     }
 }

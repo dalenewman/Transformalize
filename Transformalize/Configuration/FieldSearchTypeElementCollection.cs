@@ -4,18 +4,9 @@ namespace Transformalize.Configuration
 {
     public class FieldSearchTypeElementCollection : ConfigurationElementCollection
     {
-
-        public override bool IsReadOnly()
-        {
-            return false;
-        }
-
         public FieldSearchTypeConfigurationElement this[int index]
         {
-            get
-            {
-                return BaseGet(index) as FieldSearchTypeConfigurationElement;
-            }
+            get { return BaseGet(index) as FieldSearchTypeConfigurationElement; }
             set
             {
                 if (BaseGet(index) != null)
@@ -26,6 +17,11 @@ namespace Transformalize.Configuration
             }
         }
 
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
         protected override ConfigurationElement CreateNewElement()
         {
             return new FieldSearchTypeConfigurationElement();
@@ -33,8 +29,7 @@ namespace Transformalize.Configuration
 
         protected override object GetElementKey(ConfigurationElement element)
         {
-            return ((FieldSearchTypeConfigurationElement)element).Type.ToLower();
+            return ((FieldSearchTypeConfigurationElement) element).Type.ToLower();
         }
-
     }
 }

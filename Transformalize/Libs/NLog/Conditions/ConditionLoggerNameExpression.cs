@@ -34,21 +34,23 @@
 namespace Transformalize.Libs.NLog.Conditions
 {
     /// <summary>
-    /// Condition logger name expression (represented by the <b>logger</b> keyword).
+    ///     Condition logger name expression (represented by the <b>logger</b> keyword).
     /// </summary>
     internal sealed class ConditionLoggerNameExpression : ConditionExpression
     {
         /// <summary>
-        /// Returns a string representation of this expression.
+        ///     Returns a string representation of this expression.
         /// </summary>
-        /// <returns>A <b>logger</b> string.</returns>
+        /// <returns>
+        ///     A <b>logger</b> string.
+        /// </returns>
         public override string ToString()
         {
             return "logger";
         }
 
         /// <summary>
-        /// Evaluates to the logger name.
+        ///     Evaluates to the logger name.
         /// </summary>
         /// <param name="context">Evaluation context.</param>
         /// <returns>The logger name.</returns>

@@ -18,27 +18,51 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Configuration;
 
-namespace Transformalize.Configuration {
-    public class OutputElementCollection : ConfigurationElementCollection {
-
-        public override bool IsReadOnly()
+namespace Transformalize.Configuration
+{
+    public class OutputElementCollection : ConfigurationElementCollection
+    {
+        public EmptyConfigurationElement this[int index]
         {
-            return false;
-        }
-
-        public EmptyConfigurationElement this[int index] {
-            get {
-                return BaseGet(index) as EmptyConfigurationElement;
-            }
-            set {
-                if (BaseGet(index) != null) {
+            get { return BaseGet(index) as EmptyConfigurationElement; }
+            set
+            {
+                if (BaseGet(index) != null)
+                {
                     BaseRemoveAt(index);
                 }
                 BaseAdd(index, value);
             }
         }
 
-        protected override ConfigurationElement CreateNewElement() {
+        [ConfigurationProperty("schema", IsRequired = false, DefaultValue = "dbo")]
+        public string Schema
+        {
+            get { return this["schema"] as string; }
+            set { this["schema"] = value; }
+        }
+
+        [ConfigurationProperty("name", IsRequired = false, DefaultValue = "output")]
+        public string Name
+        {
+            get { return this["name"] as string; }
+            set { this["name"] = value; }
+        }
+
+        [ConfigurationProperty("connection", IsRequired = false, DefaultValue = "output")]
+        public string Connection
+        {
+            get { return this["connection"] as string; }
+            set { this["connection"] = value; }
+        }
+
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
+        protected override ConfigurationElement CreateNewElement()
+        {
             return new EmptyConfigurationElement();
         }
 
@@ -46,30 +70,5 @@ namespace Transformalize.Configuration {
         {
             return element.GetHashCode();
         }
-
-        [ConfigurationProperty("schema", IsRequired = false, DefaultValue = "dbo")]
-        public string Schema {
-            get {
-                return this["schema"] as string;
-            }
-            set { this["schema"] = value; }
-        }
-
-        [ConfigurationProperty("name", IsRequired = false, DefaultValue = "output")]
-        public string Name {
-            get {
-                return this["name"] as string;
-            }
-            set { this["name"] = value; }
-        }
-
-        [ConfigurationProperty("connection", IsRequired = false, DefaultValue = "output")]
-        public string Connection {
-            get {
-                return this["connection"] as string;
-            }
-            set { this["connection"] = value; }
-        }
-
     }
 }

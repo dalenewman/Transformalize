@@ -20,20 +20,18 @@ using System.Configuration;
 
 namespace Transformalize.Configuration
 {
-    public class FieldSearchTypeConfigurationElement : ConfigurationElement {
+    public class FieldSearchTypeConfigurationElement : ConfigurationElement
+    {
+        [ConfigurationProperty("type", IsRequired = true)]
+        public string Type
+        {
+            get { return this["type"] as string; }
+            set { this["type"] = value; }
+        }
 
         public override bool IsReadOnly()
         {
             return false;
         }
-
-        [ConfigurationProperty("type", IsRequired = true)]
-        public string Type {
-            get {
-                return this["type"] as string;
-            }
-            set { this["type"] = value; }
-        }
-
     }
 }

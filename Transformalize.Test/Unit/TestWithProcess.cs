@@ -22,56 +22,75 @@ using System.Linq;
 using Moq;
 using NUnit.Framework;
 using Transformalize.Configuration;
-using Transformalize.Core;
-using Transformalize.Core.Process_;
-using Transformalize.Libs.Rhino.Etl.Core;
-using Transformalize.Libs.Rhino.Etl.Core.Operations;
+using Transformalize.Main;
+using Transformalize.Main.Providers;
+using Transformalize.Main.Providers.SqlServer;
+using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Operations;
-using Transformalize.Providers;
-using Transformalize.Providers.SqlServer;
 using Transformalize.Runner;
 
-namespace Transformalize.Test.Unit {
+namespace Transformalize.Test.Unit
+{
     [TestFixture]
-    public class TestWithProcess : EtlProcessHelper {
-
+    public class TestWithProcess : EtlProcessHelper
+    {
         private readonly Mock<IOperation> _entityKeysExtract;
         private static readonly ProcessConfigurationElement Element = new ProcessConfigurationReader("Test").Read();
         private readonly Process _process = new ProcessReader(Element, new Options()).Read();
 
-        public TestWithProcess() {
-
+        public TestWithProcess()
+        {
             _entityKeysExtract = new Mock<IOperation>();
-            _entityKeysExtract.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row> {
-                new Row {{"OrderDetailKey", 1} },
-                new Row {{"OrderDetailKey", 2} },
-                new Row {{"OrderDetailKey", 3} },
-                new Row {{"OrderDetailKey", 4} }
-            });
-
+            _entityKeysExtract.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row>
+                                                                                                   {
+                                                                                                       new Row
+                                                                                                           {
+                                                                                                               {"OrderDetailKey", 1}
+                                                                                                           },
+                                                                                                       new Row
+                                                                                                           {
+                                                                                                               {"OrderDetailKey", 2}
+                                                                                                           },
+                                                                                                       new Row
+                                                                                                           {
+                                                                                                               {"OrderDetailKey", 3}
+                                                                                                           },
+                                                                                                       new Row
+                                                                                                           {
+                                                                                                               {"OrderDetailKey", 4}
+                                                                                                           }
+                                                                                                   });
         }
 
         [Test]
-        public void TestKeysTableVariable() {
-            var entity =_process.Entities.First();
-            
-            var actual = _process.MasterEntity.OutputConnection.WriteTemporaryTable("@KEYS", entity.PrimaryKey.ToEnumerable().ToArray());
-            const string expected = "DECLARE @KEYS AS TABLE([OrderDetailKey] INT);";
+        public void TestEntityKeysToOperations()
+        {
+            Entity entity = _process.Entities.First();
 
-            Assert.AreEqual(expected, actual);
+            TestOperation(
+                _entityKeysExtract.Object,
+                new EntityInputKeysStore(_process, entity)
+                );
+
+            List<Row> operations = TestOperation(
+                new EntityKeysToOperations(entity)
+                );
+
+            Assert.AreEqual(1, operations.Count);
         }
 
         [Test]
-        public void TestKeyInserts() {
-
-            var entity =_process.Entities.First();
+        public void TestKeyInserts()
+        {
+            Entity entity = _process.Entities.First();
             entity.OutputConnection.IsReady();
 
-            var rows = TestOperation(_entityKeysExtract.Object);
+            List<Row> rows = TestOperation(_entityKeysExtract.Object);
 
             Assert.AreEqual(4, rows.Count);
 
-            var actual = SqlTemplates.BatchInsertValues(2, "@KEYS", entity.PrimaryKey.ToEnumerable().ToArray(), rows, entity.OutputConnection);
+            string actual = SqlTemplates.BatchInsertValues(2, "@KEYS", entity.PrimaryKey.ToEnumerable().ToArray(), rows, entity.OutputConnection);
             const string expected = @"
 INSERT INTO @KEYS
 SELECT 1
@@ -84,11 +103,22 @@ UNION ALL SELECT 4;";
         }
 
         [Test]
-        public void TestSelectByKeysSql() {
+        public void TestKeysTableVariable()
+        {
+            Entity entity = _process.Entities.First();
 
-            var entity =_process.Entities.First();
+            string actual = _process.MasterEntity.OutputConnection.WriteTemporaryTable("@KEYS", entity.PrimaryKey.ToEnumerable().ToArray());
+            const string expected = "DECLARE @KEYS AS TABLE([OrderDetailKey] INT);";
 
-            var actual = SqlTemplates.Select(entity.All, entity.OutputName(), "@KEYS", entity.OutputConnection.Provider);
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void TestSelectByKeysSql()
+        {
+            Entity entity = _process.Entities.First();
+
+            string actual = SqlTemplates.Select(entity.All, entity.OutputName(), "@KEYS", entity.OutputConnection.Provider);
 
             const string expected = @"
 SELECT
@@ -106,27 +136,9 @@ OPTION (MAXDOP 2);";
         }
 
         [Test]
-        public void TestEntityKeysToOperations() {
-
-            var entity =_process.Entities.First();
-
-            TestOperation(
-                _entityKeysExtract.Object, 
-                new EntityInputKeysStore(_process, entity)
-            );
-
-            var operations = TestOperation(
-                new EntityKeysToOperations(entity)
-            );
-
-            Assert.AreEqual(1, operations.Count);
-        }
-
-        [Test]
         public void TestWriteSql()
         {
-
-            var actual = new SqlServerViewWriter(_process).CreateSql();
+            string actual = new SqlServerViewWriter(_process).CreateSql();
 
             Assert.AreEqual(@"CREATE VIEW TestOrderDetailStar AS
 SELECT
@@ -161,7 +173,5 @@ LEFT OUTER JOIN TestProduct ON (TestOrderDetail.[ProductKey] = TestProduct.[Prod
 
             Console.Write(actual);
         }
-
-
     }
 }

@@ -37,10 +37,10 @@ using Transformalize.Libs.NLog.Config;
 namespace Transformalize.Libs.NLog.LayoutRenderers.Wrappers
 {
     /// <summary>
-    /// Applies caching to another layout output.
+    ///     Applies caching to another layout output.
     /// </summary>
     /// <remarks>
-    /// The value of the inner layout will be rendered only once and reused subsequently.
+    ///     The value of the inner layout will be rendered only once and reused subsequently.
     /// </remarks>
     [LayoutRenderer("cached")]
     [AmbientProperty("Cached")]
@@ -50,40 +50,40 @@ namespace Transformalize.Libs.NLog.LayoutRenderers.Wrappers
         private string cachedValue;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CachedLayoutRendererWrapper"/> class.
+        ///     Initializes a new instance of the <see cref="CachedLayoutRendererWrapper" /> class.
         /// </summary>
         public CachedLayoutRendererWrapper()
         {
-            this.Cached = true;
+            Cached = true;
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="CachedLayoutRendererWrapper"/> is enabled.
+        ///     Gets or sets a value indicating whether this <see cref="CachedLayoutRendererWrapper" /> is enabled.
         /// </summary>
         /// <docgen category='Caching Options' order='10' />
         [DefaultValue(true)]
         public bool Cached { get; set; }
 
         /// <summary>
-        /// Initializes the layout renderer.
+        ///     Initializes the layout renderer.
         /// </summary>
         protected override void InitializeLayoutRenderer()
         {
             base.InitializeLayoutRenderer();
-            this.cachedValue = null;
+            cachedValue = null;
         }
 
         /// <summary>
-        /// Closes the layout renderer.
+        ///     Closes the layout renderer.
         /// </summary>
         protected override void CloseLayoutRenderer()
         {
             base.CloseLayoutRenderer();
-            this.cachedValue = null;
+            cachedValue = null;
         }
 
         /// <summary>
-        /// Transforms the output of another layout.
+        ///     Transforms the output of another layout.
         /// </summary>
         /// <param name="text">Output to be transform.</param>
         /// <returns>Transformed text.</returns>
@@ -93,20 +93,20 @@ namespace Transformalize.Libs.NLog.LayoutRenderers.Wrappers
         }
 
         /// <summary>
-        /// Renders the inner layout contents.
+        ///     Renders the inner layout contents.
         /// </summary>
         /// <param name="logEvent">The log event.</param>
         /// <returns>Contents of inner layout.</returns>
         protected override string RenderInner(LogEventInfo logEvent)
         {
-            if (this.Cached)
+            if (Cached)
             {
-                if (this.cachedValue == null)
+                if (cachedValue == null)
                 {
-                    this.cachedValue = base.RenderInner(logEvent);
+                    cachedValue = base.RenderInner(logEvent);
                 }
 
-                return this.cachedValue;
+                return cachedValue;
             }
             else
             {

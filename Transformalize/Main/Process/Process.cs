@@ -1,0 +1,142 @@
+#region License
+
+// /*
+// Transformalize - Replicate, Transform, and Denormalize Your Data...
+// Copyright (C) 2013 Dale Newman
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// */
+
+#endregion
+
+using System.Collections.Generic;
+using System.Linq;
+using Transformalize.Libs.NLog;
+using Transformalize.Libs.Ninject;
+using Transformalize.Libs.RazorEngine;
+using Transformalize.Main.Providers;
+using Transformalize.Main.Providers.AnalysisServices;
+using Transformalize.Main.Providers.MySql;
+using Transformalize.Main.Providers.SqlServer;
+
+namespace Transformalize.Main
+{
+    public class Process
+    {
+        public IFields CalculatedFields = new Fields();
+        public Dictionary<string, AbstractConnection> Connections = new Dictionary<string, AbstractConnection>();
+        public List<Entity> Entities = new List<Entity>();
+        public IKernel Kernal = new StandardKernel();
+        public Dictionary<string, Map> MapEndsWith = new Dictionary<string, Map>();
+        public Dictionary<string, Map> MapEquals = new Dictionary<string, Map>();
+        public Dictionary<string, Map> MapStartsWith = new Dictionary<string, Map>();
+        public Entity MasterEntity;
+        public string Name;
+        public Options Options = new Options();
+        public bool OutputRecordsExist;
+        public Dictionary<string, string> Providers = new Dictionary<string, string>();
+        public IEnumerable<Field> RelatedKeys;
+        public List<Relationship> Relationships = new List<Relationship>();
+        public Dictionary<string, Script> Scripts = new Dictionary<string, Script>();
+        public Dictionary<string, SearchType> SearchTypes = new Dictionary<string, SearchType>();
+        public Encoding TemplateContentType = Encoding.Raw;
+        public Dictionary<string, Template> Templates = new Dictionary<string, Template>();
+        public string View;
+
+        public Process() : this("TEST")
+        {
+        }
+
+        public Process(string name)
+        {
+            Name = name;
+            GlobalDiagnosticsContext.Set("process", name);
+
+            Kernal.Bind<AbstractProvider>().To<MySqlProvider>().WhenInjectedInto<MySqlConnection>();
+            Kernal.Bind<AbstractConnectionChecker>().To<DefaultConnectionChecker>().WhenInjectedInto<MySqlConnection>();
+            Kernal.Bind<IScriptRunner>().To<DefaultScriptRunner>().WhenInjectedInto<MySqlConnection>();
+            Kernal.Bind<IProviderSupportsModifier>()
+                  .To<DefaultProviderSupportsModifier>()
+                  .WhenInjectedInto<MySqlConnection>();
+
+            Kernal.Bind<AbstractProvider>().To<SqlServerProvider>().WhenInjectedInto<SqlServerConnection>();
+            Kernal.Bind<AbstractConnectionChecker>()
+                  .To<DefaultConnectionChecker>()
+                  .WhenInjectedInto<SqlServerConnection>();
+            Kernal.Bind<IScriptRunner>().To<DefaultScriptRunner>().WhenInjectedInto<SqlServerConnection>();
+            Kernal.Bind<IProviderSupportsModifier>()
+                  .To<SqlServerProviderSupportsModifier>()
+                  .WhenInjectedInto<SqlServerConnection>();
+
+            Kernal.Bind<AbstractProvider>()
+                  .To<AnalysisServicesProvider>()
+                  .WhenInjectedInto<AnalysisServicesConnection>();
+            Kernal.Bind<AbstractConnectionChecker>()
+                  .To<AnalysisServicesConnectionChecker>()
+                  .WhenInjectedInto<AnalysisServicesConnection>();
+            Kernal.Bind<IScriptRunner>()
+                  .To<AnalysisServicesScriptRunner>()
+                  .WhenInjectedInto<AnalysisServicesConnection>();
+            Kernal.Bind<IProviderSupportsModifier>()
+                  .To<DefaultProviderSupportsModifier>()
+                  .WhenInjectedInto<AnalysisServicesConnection>();
+        }
+
+        public bool IsReady()
+        {
+            return Connections.Select(connection => connection.Value.IsReady()).All(b => b.Equals(true));
+        }
+
+        public IFields OutputFields()
+        {
+            var fields = new Fields();
+            foreach (Entity entity in Entities)
+            {
+                fields.AddRange(
+                    new FieldSqlWriter(entity.All, entity.CalculatedFields, CalculatedFields).ExpandXml()
+                                                                                             .Output()
+                                                                                             .ToArray());
+            }
+            return fields;
+        }
+
+        public IEnumerable<Field> SearchFields()
+        {
+            return OutputFields().ToEnumerable().Where(f => !f.SearchTypes.Any(st => st.Name.Equals("none")));
+        }
+
+        public IParameters Parameters()
+        {
+            var parameters = new Parameters();
+
+            foreach (var calculatedField in CalculatedFields)
+            {
+                if (calculatedField.Value.HasTransforms)
+                {
+                    foreach (AbstractTransform transform in calculatedField.Value.Transforms)
+                    {
+                        if (transform.HasParameters)
+                        {
+                            foreach (var parameter in transform.Parameters)
+                            {
+                                parameters[parameter.Key] = parameter.Value;
+                            }
+                        }
+                    }
+                }
+            }
+            return parameters;
+        }
+    }
+}

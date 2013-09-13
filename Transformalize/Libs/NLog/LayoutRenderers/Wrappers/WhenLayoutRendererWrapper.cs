@@ -37,7 +37,7 @@ using Transformalize.Libs.NLog.Config;
 namespace Transformalize.Libs.NLog.LayoutRenderers.Wrappers
 {
     /// <summary>
-    /// Only outputs the inner layout when the specified condition has been met.
+    ///     Only outputs the inner layout when the specified condition has been met.
     /// </summary>
     [LayoutRenderer("when")]
     [AmbientProperty("When")]
@@ -45,14 +45,14 @@ namespace Transformalize.Libs.NLog.LayoutRenderers.Wrappers
     public sealed class WhenLayoutRendererWrapper : WrapperLayoutRendererBase
     {
         /// <summary>
-        /// Gets or sets the condition that must be met for the inner layout to be printed.
+        ///     Gets or sets the condition that must be met for the inner layout to be printed.
         /// </summary>
-        /// <docgen category="Transformation Options" order="10"/>
+        /// <docgen category="Transformation Options" order="10" />
         [RequiredParameter]
         public ConditionExpression When { get; set; }
 
         /// <summary>
-        /// Transforms the output of another layout.
+        ///     Transforms the output of another layout.
         /// </summary>
         /// <param name="text">Output to be transform.</param>
         /// <returns>Transformed text.</returns>
@@ -62,15 +62,15 @@ namespace Transformalize.Libs.NLog.LayoutRenderers.Wrappers
         }
 
         /// <summary>
-        /// Renders the inner layout contents.
+        ///     Renders the inner layout contents.
         /// </summary>
         /// <param name="logEvent">The log event.</param>
         /// <returns>
-        /// Contents of inner layout.
+        ///     Contents of inner layout.
         /// </returns>
         protected override string RenderInner(LogEventInfo logEvent)
         {
-            if (true.Equals(this.When.Evaluate(logEvent)))
+            if (true.Equals(When.Evaluate(logEvent)))
             {
                 return base.RenderInner(logEvent);
             }

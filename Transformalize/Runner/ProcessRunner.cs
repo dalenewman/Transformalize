@@ -1,13 +1,11 @@
 using System.IO;
 using System.Linq;
-using Transformalize.Core;
-using Transformalize.Core.Entity_;
-using Transformalize.Core.Process_;
-using Transformalize.Core.Template_;
-using Transformalize.Libs.Rhino.Etl.Core.Pipelines;
+using System.Text;
+using Transformalize.Main;
+using Transformalize.Main.Providers.SqlServer;
+using Transformalize.Main.Template_;
+using Transformalize.Libs.Rhino.Etl.Pipelines;
 using Transformalize.Processes;
-using Transformalize.Providers.SqlServer;
-using Encoding = System.Text.Encoding;
 
 namespace Transformalize.Runner
 {
@@ -30,7 +28,7 @@ namespace Transformalize.Runner
                     new InitializationProcess(_process).Execute();
                     break;
                 case Modes.Metadata:
-                    var fileName = new FileInfo(Path.Combine(Common.GetTemporaryFolder(_process.Name), "MetaData.xml")).FullName;
+                    string fileName = new FileInfo(Path.Combine(Common.GetTemporaryFolder(_process.Name), "MetaData.xml")).FullName;
                     var writer = new MetaDataWriter(_process, new SqlServerEntityAutoFieldReader());
                     File.WriteAllText(fileName, writer.Write(), Encoding.UTF8);
                     System.Diagnostics.Process.Start(fileName);
@@ -76,7 +74,7 @@ namespace Transformalize.Runner
 
         private void ProcessEntities()
         {
-            foreach (var entityKeysProcess in _process.Entities.Select(entity => new EntityKeysProcess(_process, entity)))
+            foreach (EntityKeysProcess entityKeysProcess in _process.Entities.Select(entity => new EntityKeysProcess(_process, entity)))
             {
                 if (_process.Options.Mode == Modes.Test)
                     entityKeysProcess.PipelineExecuter = new SingleThreadedNonCachedPipelineExecuter();
@@ -84,7 +82,7 @@ namespace Transformalize.Runner
                 entityKeysProcess.Execute();
             }
 
-            foreach (var entityProcess in _process.Entities.Select(entity => new EntityProcess(_process, entity)))
+            foreach (EntityProcess entityProcess in _process.Entities.Select(entity => new EntityProcess(_process, entity)))
             {
                 if (_process.Options.Mode == Modes.Test)
                     entityProcess.PipelineExecuter = new SingleThreadedNonCachedPipelineExecuter();

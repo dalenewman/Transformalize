@@ -42,67 +42,67 @@ using Transformalize.Libs.NLog.Layouts;
 namespace Transformalize.Libs.NLog.Targets
 {
     /// <summary>
-    /// Represents logging target.
+    ///     Represents logging target.
     /// </summary>
     [NLogConfigurationItem]
     public abstract class Target : ISupportsInitialize, IDisposable
     {
-        private object lockObject = new object();
+        private readonly object lockObject = new object();
         private List<Layout> allLayouts;
         private Exception initializeException;
 
         /// <summary>
-        /// Gets or sets the name of the target.
+        ///     Gets or sets the name of the target.
         /// </summary>
         /// <docgen category='General Options' order='10' />
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets the object which can be used to synchronize asynchronous operations that must rely on the .
+        ///     Gets the object which can be used to synchronize asynchronous operations that must rely on the .
         /// </summary>
         protected object SyncRoot
         {
-            get { return this.lockObject; }
+            get { return lockObject; }
         }
 
         /// <summary>
-        /// Gets the logging configuration this target is part of.
+        ///     Gets the logging configuration this target is part of.
         /// </summary>
         protected LoggingConfiguration LoggingConfiguration { get; private set; }
 
         /// <summary>
-        /// Gets a value indicating whether the target has been initialized.
+        ///     Gets a value indicating whether the target has been initialized.
         /// </summary>
         protected bool IsInitialized { get; private set; }
 
         /// <summary>
-        /// Initializes this instance.
-        /// </summary>
-        /// <param name="configuration">The configuration.</param>
-        void ISupportsInitialize.Initialize(LoggingConfiguration configuration)
-        {
-            this.Initialize(configuration);
-        }
-
-        /// <summary>
-        /// Closes this instance.
-        /// </summary>
-        void ISupportsInitialize.Close()
-        {
-            this.Close();
-        }
-
-        /// <summary>
-        /// Closes the target.
+        ///     Closes the target.
         /// </summary>
         public void Dispose()
         {
-            this.Dispose(true);
+            Dispose(true);
             GC.SuppressFinalize(this);
         }
 
         /// <summary>
-        /// Flush any pending log messages (in case of asynchronous targets).
+        ///     Initializes this instance.
+        /// </summary>
+        /// <param name="configuration">The configuration.</param>
+        void ISupportsInitialize.Initialize(LoggingConfiguration configuration)
+        {
+            Initialize(configuration);
+        }
+
+        /// <summary>
+        ///     Closes this instance.
+        /// </summary>
+        void ISupportsInitialize.Close()
+        {
+            Close();
+        }
+
+        /// <summary>
+        ///     Flush any pending log messages (in case of asynchronous targets).
         /// </summary>
         /// <param name="asyncContinuation">The asynchronous continuation.</param>
         public void Flush(AsyncContinuation asyncContinuation)
@@ -112,9 +112,9 @@ namespace Transformalize.Libs.NLog.Targets
                 throw new ArgumentNullException("asyncContinuation");
             }
 
-            lock (this.SyncRoot)
+            lock (SyncRoot)
             {
-                if (!this.IsInitialized)
+                if (!IsInitialized)
                 {
                     asyncContinuation(null);
                     return;
@@ -124,7 +124,7 @@ namespace Transformalize.Libs.NLog.Targets
 
                 try
                 {
-                    this.FlushAsync(asyncContinuation);
+                    FlushAsync(asyncContinuation);
                 }
                 catch (Exception exception)
                 {
@@ -139,19 +139,19 @@ namespace Transformalize.Libs.NLog.Targets
         }
 
         /// <summary>
-        /// Calls the <see cref="Layout.Precalculate"/> on each volatile layout
-        /// used by this target.
+        ///     Calls the <see cref="Layout.Precalculate" /> on each volatile layout
+        ///     used by this target.
         /// </summary>
         /// <param name="logEvent">
-        /// The log event.
+        ///     The log event.
         /// </param>
         public void PrecalculateVolatileLayouts(LogEventInfo logEvent)
         {
-            lock (this.SyncRoot)
+            lock (SyncRoot)
             {
-                if (this.IsInitialized)
+                if (IsInitialized)
                 {
-                    foreach (Layout l in this.allLayouts)
+                    foreach (Layout l in allLayouts)
                     {
                         l.Precalculate(logEvent);
                     }
@@ -160,47 +160,47 @@ namespace Transformalize.Libs.NLog.Targets
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String"/> that represents this instance.
+        ///     Returns a <see cref="System.String" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String"/> that represents this instance.
+        ///     A <see cref="System.String" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {
-            var targetAttribute = (TargetAttribute)Attribute.GetCustomAttribute(this.GetType(), typeof(TargetAttribute));
+            var targetAttribute = (TargetAttribute) Attribute.GetCustomAttribute(GetType(), typeof (TargetAttribute));
             if (targetAttribute != null)
             {
-                return targetAttribute.Name + " Target[" + (this.Name ?? "(unnamed)") + "]";
+                return targetAttribute.Name + " Target[" + (Name ?? "(unnamed)") + "]";
             }
 
-            return this.GetType().Name;
+            return GetType().Name;
         }
 
         /// <summary>
-        /// Writes the log to the target.
+        ///     Writes the log to the target.
         /// </summary>
         /// <param name="logEvent">Log event to write.</param>
         public void WriteAsyncLogEvent(AsyncLogEventInfo logEvent)
         {
-            lock (this.SyncRoot)
+            lock (SyncRoot)
             {
-                if (!this.IsInitialized)
+                if (!IsInitialized)
                 {
                     logEvent.Continuation(null);
                     return;
                 }
 
-                if (this.initializeException != null)
+                if (initializeException != null)
                 {
-                    logEvent.Continuation(this.CreateInitException());
+                    logEvent.Continuation(CreateInitException());
                     return;
                 }
 
-                var wrappedContinuation = AsyncHelpers.PreventMultipleCalls(logEvent.Continuation);
+                AsyncContinuation wrappedContinuation = AsyncHelpers.PreventMultipleCalls(logEvent.Continuation);
 
                 try
                 {
-                    this.Write(logEvent.LogEvent.WithContinuation(wrappedContinuation));
+                    Write(logEvent.LogEvent.WithContinuation(wrappedContinuation));
                 }
                 catch (Exception exception)
                 {
@@ -215,16 +215,16 @@ namespace Transformalize.Libs.NLog.Targets
         }
 
         /// <summary>
-        /// Writes the array of log events.
+        ///     Writes the array of log events.
         /// </summary>
         /// <param name="logEvents">The log events.</param>
         public void WriteAsyncLogEvents(params AsyncLogEventInfo[] logEvents)
         {
-            lock (this.SyncRoot)
+            lock (SyncRoot)
             {
-                if (!this.IsInitialized)
+                if (!IsInitialized)
                 {
-                    foreach (var ev in logEvents)
+                    foreach (AsyncLogEventInfo ev in logEvents)
                     {
                         ev.Continuation(null);
                     }
@@ -232,11 +232,11 @@ namespace Transformalize.Libs.NLog.Targets
                     return;
                 }
 
-                if (this.initializeException != null)
+                if (initializeException != null)
                 {
-                    foreach (var ev in logEvents)
+                    foreach (AsyncLogEventInfo ev in logEvents)
                     {
-                        ev.Continuation(this.CreateInitException());
+                        ev.Continuation(CreateInitException());
                     }
 
                     return;
@@ -250,7 +250,7 @@ namespace Transformalize.Libs.NLog.Targets
 
                 try
                 {
-                    this.Write(wrappedEvents);
+                    Write(wrappedEvents);
                 }
                 catch (Exception exception)
                 {
@@ -260,7 +260,7 @@ namespace Transformalize.Libs.NLog.Targets
                     }
 
                     // in case of synchronous failure, assume that nothing is running asynchronously
-                    foreach (var ev in wrappedEvents)
+                    foreach (AsyncLogEventInfo ev in wrappedEvents)
                     {
                         ev.Continuation(exception);
                     }
@@ -269,23 +269,23 @@ namespace Transformalize.Libs.NLog.Targets
         }
 
         /// <summary>
-        /// Initializes this instance.
+        ///     Initializes this instance.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
         internal void Initialize(LoggingConfiguration configuration)
         {
-            lock (this.SyncRoot)
+            lock (SyncRoot)
             {
-                this.LoggingConfiguration = configuration;
+                LoggingConfiguration = configuration;
 
-                if (!this.IsInitialized)
+                if (!IsInitialized)
                 {
                     PropertyHelper.CheckRequiredParameters(this);
-                    this.IsInitialized = true;
+                    IsInitialized = true;
                     try
                     {
-                        this.InitializeTarget();
-                        this.initializeException = null;
+                        InitializeTarget();
+                        initializeException = null;
                     }
                     catch (Exception exception)
                     {
@@ -294,7 +294,7 @@ namespace Transformalize.Libs.NLog.Targets
                             throw;
                         }
 
-                        this.initializeException = exception;
+                        initializeException = exception;
                         InternalLogger.Error("Error initializing target {0} {1}.", this, exception);
                         throw;
                     }
@@ -303,24 +303,24 @@ namespace Transformalize.Libs.NLog.Targets
         }
 
         /// <summary>
-        /// Closes this instance.
+        ///     Closes this instance.
         /// </summary>
         internal void Close()
         {
-            lock (this.SyncRoot)
+            lock (SyncRoot)
             {
-                this.LoggingConfiguration = null;
+                LoggingConfiguration = null;
 
-                if (this.IsInitialized)
+                if (IsInitialized)
                 {
-                    this.IsInitialized = false;
+                    IsInitialized = false;
 
                     try
                     {
-                        if (this.initializeException == null)
+                        if (initializeException == null)
                         {
                             // if Init succeeded, call Close()
-                            this.CloseTarget();
+                            CloseTarget();
                         }
                     }
                     catch (Exception exception)
@@ -362,40 +362,42 @@ namespace Transformalize.Libs.NLog.Targets
                     wrappedLogEventInfos[i] = logEventInfos[i].LogEvent.WithContinuation(wrappedContinuation);
                 }
 
-                this.WriteAsyncLogEvents(wrappedLogEventInfos);
+                WriteAsyncLogEvents(wrappedLogEventInfos);
             }
         }
 
         /// <summary>
-        /// Releases unmanaged and - optionally - managed resources.
+        ///     Releases unmanaged and - optionally - managed resources.
         /// </summary>
-        /// <param name="disposing">True to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        /// <param name="disposing">
+        ///     True to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.
+        /// </param>
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
-                this.CloseTarget();
+                CloseTarget();
             }
         }
 
         /// <summary>
-        /// Initializes the target. Can be used by inheriting classes
-        /// to initialize logging.
+        ///     Initializes the target. Can be used by inheriting classes
+        ///     to initialize logging.
         /// </summary>
         protected virtual void InitializeTarget()
         {
-            this.GetAllLayouts();
+            GetAllLayouts();
         }
 
         /// <summary>
-        /// Closes the target and releases any unmanaged resources.
+        ///     Closes the target and releases any unmanaged resources.
         /// </summary>
         protected virtual void CloseTarget()
         {
         }
 
         /// <summary>
-        /// Flush any pending log messages asynchronously (in case of asynchronous targets).
+        ///     Flush any pending log messages asynchronously (in case of asynchronous targets).
         /// </summary>
         /// <param name="asyncContinuation">The asynchronous continuation.</param>
         protected virtual void FlushAsync(AsyncContinuation asyncContinuation)
@@ -404,11 +406,11 @@ namespace Transformalize.Libs.NLog.Targets
         }
 
         /// <summary>
-        /// Writes logging event to the log target.
-        /// classes.
+        ///     Writes logging event to the log target.
+        ///     classes.
         /// </summary>
         /// <param name="logEvent">
-        /// Logging event to be written out.
+        ///     Logging event to be written out.
         /// </param>
         protected virtual void Write(LogEventInfo logEvent)
         {
@@ -416,15 +418,15 @@ namespace Transformalize.Libs.NLog.Targets
         }
 
         /// <summary>
-        /// Writes log event to the log target. Must be overridden in inheriting
-        /// classes.
+        ///     Writes log event to the log target. Must be overridden in inheriting
+        ///     classes.
         /// </summary>
         /// <param name="logEvent">Log event to be written out.</param>
         protected virtual void Write(AsyncLogEventInfo logEvent)
         {
             try
             {
-                this.Write(logEvent.LogEvent);
+                Write(logEvent.LogEvent);
                 logEvent.Continuation(null);
             }
             catch (Exception exception)
@@ -439,28 +441,28 @@ namespace Transformalize.Libs.NLog.Targets
         }
 
         /// <summary>
-        /// Writes an array of logging events to the log target. By default it iterates on all
-        /// events and passes them to "Write" method. Inheriting classes can use this method to
-        /// optimize batch writes.
+        ///     Writes an array of logging events to the log target. By default it iterates on all
+        ///     events and passes them to "Write" method. Inheriting classes can use this method to
+        ///     optimize batch writes.
         /// </summary>
         /// <param name="logEvents">Logging events to be written out.</param>
         protected virtual void Write(AsyncLogEventInfo[] logEvents)
         {
             for (int i = 0; i < logEvents.Length; ++i)
             {
-                this.Write(logEvents[i]);
+                Write(logEvents[i]);
             }
         }
 
         private Exception CreateInitException()
         {
-            return new NLogRuntimeException("Target " + this + " failed to initialize.", this.initializeException);
+            return new NLogRuntimeException("Target " + this + " failed to initialize.", initializeException);
         }
 
         private void GetAllLayouts()
         {
-            this.allLayouts = new List<Layout>(ObjectGraphScanner.FindReachableObjects<Layout>(this));
-            InternalLogger.Trace("{0} has {1} layouts", this, this.allLayouts.Count);
+            allLayouts = new List<Layout>(ObjectGraphScanner.FindReachableObjects<Layout>(this));
+            InternalLogger.Trace("{0} has {1} layouts", this, allLayouts.Count);
         }
     }
 }

@@ -39,7 +39,7 @@ using Transformalize.Libs.NLog.Config;
 namespace Transformalize.Libs.NLog.LayoutRenderers.Wrappers
 {
     /// <summary>
-    /// Escapes output of another layout using JSON rules.
+    ///     Escapes output of another layout using JSON rules.
     /// </summary>
     [LayoutRenderer("json-encode")]
     [AmbientProperty("JsonEncode")]
@@ -47,28 +47,28 @@ namespace Transformalize.Libs.NLog.LayoutRenderers.Wrappers
     public sealed class JsonEncodeLayoutRendererWrapper : WrapperLayoutRendererBase
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="JsonEncodeLayoutRendererWrapper" /> class.
+        ///     Initializes a new instance of the <see cref="JsonEncodeLayoutRendererWrapper" /> class.
         /// </summary>
         public JsonEncodeLayoutRendererWrapper()
         {
-            this.JsonEncode = true;
+            JsonEncode = true;
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to apply JSON encoding.
+        ///     Gets or sets a value indicating whether to apply JSON encoding.
         /// </summary>
-        /// <docgen category="Transformation Options" order="10"/>
+        /// <docgen category="Transformation Options" order="10" />
         [DefaultValue(true)]
         public bool JsonEncode { get; set; }
 
         /// <summary>
-        /// Post-processes the rendered message. 
+        ///     Post-processes the rendered message.
         /// </summary>
         /// <param name="text">The text to be post-processed.</param>
         /// <returns>JSON-encoded string.</returns>
         protected override string Transform(string text)
         {
-            return this.JsonEncode ? DoJsonEscape(text) : text;
+            return JsonEncode ? DoJsonEscape(text) : text;
         }
 
         private static string DoJsonEscape(string text)
@@ -115,7 +115,7 @@ namespace Transformalize.Libs.NLog.LayoutRenderers.Wrappers
                         if (NeedsEscaping(text[i]))
                         {
                             sb.Append("\\u");
-                            sb.Append(Convert.ToString((int)text[i], 16).PadLeft(4, '0'));
+                            sb.Append(Convert.ToString(text[i], 16).PadLeft(4, '0'));
                         }
                         else
                         {

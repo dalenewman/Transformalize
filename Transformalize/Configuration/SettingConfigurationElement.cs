@@ -20,38 +20,32 @@ using System.Configuration;
 
 namespace Transformalize.Configuration
 {
-    public class SettingConfigurationElement : ConfigurationElement {
-
-        public override bool IsReadOnly()
-        {
-            return false;
-        }
-
+    public class SettingConfigurationElement : ConfigurationElement
+    {
         [ConfigurationProperty("name", IsRequired = false)]
-        public string Name {
-            get {
-                return this["name"] as string;
-            }
+        public string Name
+        {
+            get { return this["name"] as string; }
             set { this["name"] = value; }
         }
 
         [ConfigurationProperty("value", IsRequired = false)]
-        public string Value {
-            get {
-                return this["value"] as string;
-            }
+        public string Value
+        {
+            get { return this["value"] as string; }
             set { this["value"] = value; }
         }
 
         [ConfigurationProperty("type", IsRequired = false, DefaultValue = "System.String")]
         public string Type
         {
-            get
-            {
-                return this["type"] as string;
-            }
+            get { return this["type"] as string; }
             set { this["type"] = value; }
         }
 
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
     }
 }

@@ -38,16 +38,16 @@ using Transformalize.Libs.NLog.Internal;
 namespace Transformalize.Libs.NLog
 {
     /// <summary>
-    /// Nested Diagnostics Context - a thread-local structure that keeps a stack
-    /// of strings and provides methods to output them in layouts
-    /// Mostly for compatibility with log4net.
+    ///     Nested Diagnostics Context - a thread-local structure that keeps a stack
+    ///     of strings and provides methods to output them in layouts
+    ///     Mostly for compatibility with log4net.
     /// </summary>
     public static class NestedDiagnosticsContext
     {
         private static readonly object dataSlot = ThreadLocalStorageHelper.AllocateDataSlot();
 
         /// <summary>
-        /// Gets the top NDC message but doesn't remove it.
+        ///     Gets the top NDC message but doesn't remove it.
         /// </summary>
         /// <returns>The top message. .</returns>
         public static string TopMessage
@@ -72,7 +72,7 @@ namespace Transformalize.Libs.NLog
         }
 
         /// <summary>
-        /// Pushes the specified text on current thread NDC.
+        ///     Pushes the specified text on current thread NDC.
         /// </summary>
         /// <param name="text">The text to be pushed.</param>
         /// <returns>An instance of the object that implements IDisposable that returns the stack to the previous level when IDisposable.Dispose() is called. To be used with C# using() statement.</returns>
@@ -85,7 +85,7 @@ namespace Transformalize.Libs.NLog
         }
 
         /// <summary>
-        /// Pops the top message off the NDC stack.
+        ///     Pops the top message off the NDC stack.
         /// </summary>
         /// <returns>The top message which is no longer on the stack.</returns>
         public static string Pop()
@@ -102,7 +102,7 @@ namespace Transformalize.Libs.NLog
         }
 
         /// <summary>
-        /// Clears current thread NDC stack.
+        ///     Clears current thread NDC stack.
         /// </summary>
         public static void Clear()
         {
@@ -110,7 +110,7 @@ namespace Transformalize.Libs.NLog
         }
 
         /// <summary>
-        /// Gets all messages on the stack.
+        ///     Gets all messages on the stack.
         /// </summary>
         /// <returns>Array of strings on the stack.</returns>
         public static string[] GetAllMessages()
@@ -119,15 +119,15 @@ namespace Transformalize.Libs.NLog
         }
 
         /// <summary>
-        /// Resets the stack to the original count during <see cref="IDisposable.Dispose"/>.
+        ///     Resets the stack to the original count during <see cref="IDisposable.Dispose" />.
         /// </summary>
         private class StackPopper : IDisposable
         {
-            private Stack<string> stack;
-            private int previousCount;
+            private readonly int previousCount;
+            private readonly Stack<string> stack;
 
             /// <summary>
-            /// Initializes a new instance of the <see cref="StackPopper" /> class.
+            ///     Initializes a new instance of the <see cref="StackPopper" /> class.
             /// </summary>
             /// <param name="stack">The stack.</param>
             /// <param name="previousCount">The previous count.</param>
@@ -138,13 +138,13 @@ namespace Transformalize.Libs.NLog
             }
 
             /// <summary>
-            /// Reverts the stack to original item count.
+            ///     Reverts the stack to original item count.
             /// </summary>
             void IDisposable.Dispose()
             {
-                while (this.stack.Count > this.previousCount)
+                while (stack.Count > previousCount)
                 {
-                    this.stack.Pop();
+                    stack.Pop();
                 }
             }
         }

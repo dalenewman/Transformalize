@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
+  <Font Name="Tahoma" Size="8.25" />
+  <Class Name="FileHelpers.EngineBase" Collapsed="true">
+    <Position X="1.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Engines\EngineBase.cs</FileName>
+      <HashCode>AACAAAIAEAIAAAEAAAALAAAAoAAAGAAEAQCCAAEAAAA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ErrorManager" />
+    </ShowAsAssociation>
+    <Members>
+      <Method Name="EngineBase" Hidden="true" />
+      <Field Name="mEncoding" Hidden="true" />
+      <Field Name="mErrorManager" Hidden="true" />
+      <Field Name="mFooterText" Hidden="true" />
+      <Field Name="mHeaderText" Hidden="true" />
+      <Field Name="mLineNumber" Hidden="true" />
+      <Field Name="mNotifyHandler" Hidden="true" />
+      <Field Name="mProgressMode" Hidden="true" />
+      <Field Name="mRecordInfo" Hidden="true" />
+      <Field Name="mRecordType" Hidden="true" />
+      <Field Name="mTotalRecords" Hidden="true" />
+      <Method Name="ResetFields" Hidden="true" />
+    </Members>
+    <AssociationLine Name="ErrorManager" Type="FileHelpers.ErrorManager">
+      <MemberNameLabel ManuallyPlaced="true" ManuallySized="true">
+        <Position X="0.037" Y="0.06" Height="0.16" Width="1.282" />
+      </MemberNameLabel>
+    </AssociationLine>
+  </Class>
+  <Class Name="FileHelpers.FileHelperAsyncEngine" Collapsed="true">
+    <Position X="2.5" Y="1.75" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>Engines\FileHelperAsyncEngine.cs</FileName>
+      <HashCode>AAAAIAACDAAAAIAGAAAABAQAAAgAAAgEAAghAEKIAQA=</HashCode>
+    </TypeIdentifier>
+    <InheritanceLine Type="FileHelpers.EngineBase" FixedToPoint="true">
+      <Path>
+        <Point X="2.25" Y="1.009" />
+        <Point X="2.25" Y="1.258" />
+        <Point X="3.75" Y="1.258" />
+        <Point X="3.75" Y="1.75" />
+      </Path>
+    </InheritanceLine>
+    <Lollipop Position="0.117" />
+  </Class>
+  <Class Name="FileHelpers.FileHelperEngine" Collapsed="true">
+    <Position X="0.5" Y="1.75" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>Engines\FileHelperEngine.cs</FileName>
+      <HashCode>gBAIABAAAAQAQBIABkAAAAAKAIAAAUAIAAAACEBAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FileHelpers.MasterDetail.MasterDetailEngine" Collapsed="true">
+    <Position X="6.75" Y="3" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>MasterDetail\MasterDetailEngine.cs</FileName>
+      <HashCode>ABAAABAAAABgQBAAAgAAAAAAAAAAAQIAAAAACEAAAAA=</HashCode>
+    </TypeIdentifier>
+    <InheritanceLine Type="FileHelpers.EngineBase" ManuallyRouted="true" FixedToPoint="true">
+      <Path>
+        <Point X="2.25" Y="1.009" />
+        <Point X="2.25" Y="1.258" />
+        <Point X="6.646" Y="1.258" />
+        <Point X="6.646" Y="2.906" />
+        <Point X="7.625" Y="2.906" />
+        <Point X="7.625" Y="3" />
+      </Path>
+    </InheritanceLine>
+  </Class>
+  <Class Name="FileHelpers.ErrorManager" Collapsed="true">
+    <Position X="4.5" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>ErrorHandling\ErrorManager.cs</FileName>
+      <HashCode>AEAAAAABABAAAQAAABAAAAIAAAgAAAAMAAAAAAAggAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FileHelpers.FileDiffEngine" Collapsed="true">
+    <Position X="4.75" Y="1.75" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>Engines\FileDiffEngine.cs</FileName>
+      <HashCode>BACAAAAAAAAAAAAFAAAAAgQAAAAAAAgAAAAAAAQAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FileHelpers.MultiRecordEngine" Collapsed="true">
+    <Position X="4.75" Y="3" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>Engines\MultiRecordEngine.cs</FileName>
+      <HashCode>gBAAIBACDAAEQJAGAkCABBQIAIgAAUgMAoghCEKIAQE=</HashCode>
+    </TypeIdentifier>
+    <InheritanceLine Type="FileHelpers.EngineBase" FixedToPoint="true">
+      <Path>
+        <Point X="2.25" Y="1.009" />
+        <Point X="2.25" Y="1.258" />
+        <Point X="4.55" Y="1.258" />
+        <Point X="4.55" Y="2.7" />
+        <Point X="4.938" Y="2.7" />
+        <Point X="4.938" Y="3" />
+      </Path>
+    </InheritanceLine>
+    <Lollipop Position="0.454" />
+  </Class>
+  <Class Name="FileHelpers.FileTransformEngine" Collapsed="true">
+    <Position X="6.75" Y="1.75" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>Engines\FileTransformEngine.cs</FileName>
+      <HashCode>CCACAAAQAAAAEAogUAAKAACCAAABAAQQQAAACAACBAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FileHelpers.DelimitedFileEngine" Collapsed="true">
+    <Position X="0.5" Y="3" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>Engines\DelimitedFileEngine.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FileHelpers.FixedFileEngine" Collapsed="true">
+    <Position X="2.5" Y="3" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>Engines\FixedFileEngine.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAA=</HashCode>
+    </TypeIdentifier>
+    <InheritanceLine Type="FileHelpers.FileHelperEngine" ManuallyRouted="true">
+      <Path>
+        <Point X="1.375" Y="2.38" />
+        <Point X="1.375" Y="2.7" />
+        <Point X="3.375" Y="2.7" />
+        <Point X="3.375" Y="3" />
+      </Path>
+    </InheritanceLine>
+  </Class>
+</ClassDiagram>

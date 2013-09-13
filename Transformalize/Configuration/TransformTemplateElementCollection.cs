@@ -18,34 +18,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Configuration;
 
-namespace Transformalize.Configuration {
-    public class TransformTemplateElementCollection : ConfigurationElementCollection {
-
-        public override bool IsReadOnly()
-        {
-            return false;
-        }
-
+namespace Transformalize.Configuration
+{
+    public class TransformTemplateElementCollection : ConfigurationElementCollection
+    {
         public TransformTemplateConfigurationElement this[int index]
         {
-            get {
-                return BaseGet(index) as TransformTemplateConfigurationElement;
-            }
-            set {
-                if (BaseGet(index) != null) {
+            get { return BaseGet(index) as TransformTemplateConfigurationElement; }
+            set
+            {
+                if (BaseGet(index) != null)
+                {
                     BaseRemoveAt(index);
                 }
                 BaseAdd(index, value);
             }
         }
 
-        protected override ConfigurationElement CreateNewElement() {
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
+        protected override ConfigurationElement CreateNewElement()
+        {
             return new TransformTemplateConfigurationElement();
         }
 
-        protected override object GetElementKey(ConfigurationElement element) {
-            return ((TransformTemplateConfigurationElement)element).Name.ToLower();
+        protected override object GetElementKey(ConfigurationElement element)
+        {
+            return ((TransformTemplateConfigurationElement) element).Name.ToLower();
         }
-
     }
 }

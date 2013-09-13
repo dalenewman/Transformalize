@@ -34,6 +34,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Threading;
 using Transformalize.Libs.NLog.Common;
@@ -45,16 +46,16 @@ using Transformalize.Libs.NLog.Targets;
 namespace Transformalize.Libs.NLog
 {
     /// <summary>
-    /// Implementation of logging engine.
+    ///     Implementation of logging engine.
     /// </summary>
     internal static class LoggerImpl
     {
         private const int StackTraceSkipMethods = 0;
-        private static readonly Assembly nlogAssembly = typeof(LoggerImpl).Assembly;
-        private static readonly Assembly mscorlibAssembly = typeof(string).Assembly;
-        private static readonly Assembly systemAssembly = typeof(Debug).Assembly;
+        private static readonly Assembly nlogAssembly = typeof (LoggerImpl).Assembly;
+        private static readonly Assembly mscorlibAssembly = typeof (string).Assembly;
+        private static readonly Assembly systemAssembly = typeof (Debug).Assembly;
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", Justification = "Using 'NLog' in message.")]
+        [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", Justification = "Using 'NLog' in message.")]
         internal static void Write(Type loggerType, TargetWithFilterChain targets, LogEventInfo logEvent, LogFactory factory)
         {
             if (targets == null)
@@ -82,17 +83,17 @@ namespace Transformalize.Libs.NLog
 
             int originalThreadId = Thread.CurrentThread.ManagedThreadId;
             AsyncContinuation exceptionHandler = ex =>
-                {
-                    if (ex != null)
-                    {
-                        if (factory.ThrowExceptions && Thread.CurrentThread.ManagedThreadId == originalThreadId)
-                        {
-                            throw new NLogRuntimeException("Exception occurred in NLog", ex);
-                        }
-                    }
-                };
+                                                     {
+                                                         if (ex != null)
+                                                         {
+                                                             if (factory.ThrowExceptions && Thread.CurrentThread.ManagedThreadId == originalThreadId)
+                                                             {
+                                                                 throw new NLogRuntimeException("Exception occurred in NLog", ex);
+                                                             }
+                                                         }
+                                                     };
 
-            for (var t = targets; t != null; t = t.NextInChain)
+            for (TargetWithFilterChain t = targets; t != null; t = t.NextInChain)
             {
                 if (!WriteToTargetWithFilterChain(t, logEvent, exceptionHandler))
                 {
@@ -183,14 +184,14 @@ namespace Transformalize.Libs.NLog
         }
 
         /// <summary>
-        /// Gets the filter result.
+        ///     Gets the filter result.
         /// </summary>
         /// <param name="filterChain">The filter chain.</param>
         /// <param name="logEvent">The log event.</param>
         /// <returns>The result of the filter.</returns>
         private static FilterResult GetFilterResult(IEnumerable<Filter> filterChain, LogEventInfo logEvent)
         {
-            FilterResult result = FilterResult.Neutral;
+            var result = FilterResult.Neutral;
 
             try
             {

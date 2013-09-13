@@ -22,60 +22,44 @@ namespace Transformalize.Configuration
 {
     public class ActionConfigurationElement : ConfigurationElement
     {
-        public override bool IsReadOnly()
-        {
-            return false;
-        }
-
         [ConfigurationProperty("action", IsRequired = true)]
         public string Action
         {
-            get
-            {
-                return this["action"] as string;
-            }
+            get { return this["action"] as string; }
             set { this["action"] = value; }
         }
 
         [ConfigurationProperty("file", IsRequired = false)]
         public string File
         {
-            get
-            {
-                return this["file"] as string;
-            }
+            get { return this["file"] as string; }
             set { this["file"] = value; }
         }
 
         [ConfigurationProperty("connection", IsRequired = false)]
         public string Connection
         {
-            get
-            {
-                return this["connection"] as string;
-            }
+            get { return this["connection"] as string; }
             set { this["connection"] = value; }
         }
 
         [ConfigurationProperty("method", IsRequired = false, DefaultValue = "get")]
         public string Method
         {
-            get
-            {
-                return this["method"] as string;
-            }
+            get { return this["method"] as string; }
             set { this["method"] = value; }
         }
 
         [ConfigurationProperty("url", IsRequired = false)]
         public string Url
         {
-            get
-            {
-                return this["url"] as string;
-            }
+            get { return this["url"] as string; }
             set { this["url"] = value; }
         }
 
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
     }
 }

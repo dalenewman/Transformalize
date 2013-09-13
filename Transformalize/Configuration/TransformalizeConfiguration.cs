@@ -23,22 +23,17 @@ using System.Xml;
 
 namespace Transformalize.Configuration
 {
-
     public class TransformalizeConfiguration : ConfigurationSection
     {
+        [ConfigurationProperty("processes")]
+        public ProcessElementCollection Processes
+        {
+            get { return this["processes"] as ProcessElementCollection; }
+        }
 
         public override bool IsReadOnly()
         {
             return false;
-        }
-
-        [ConfigurationProperty("processes")]
-        public ProcessElementCollection Processes
-        {
-            get
-            {
-                return this["processes"] as ProcessElementCollection;
-            }
         }
 
 
@@ -49,14 +44,12 @@ namespace Transformalize.Configuration
 
         public void Deserialize(string serializedConfiguration)
         {
-            var reader = XmlReader.Create(new StringReader(serializedConfiguration));
+            XmlReader reader = XmlReader.Create(new StringReader(serializedConfiguration));
             if (!reader.ReadToFollowing("transformalize")) return;
-            var stringBuilder = new StringBuilder().Append(reader.ReadOuterXml());
+            StringBuilder stringBuilder = new StringBuilder().Append(reader.ReadOuterXml());
             var stringReader = new StringReader(stringBuilder.ToString());
             reader = XmlReader.Create(stringReader);
             DeserializeSection(reader);
         }
-
-
     }
 }

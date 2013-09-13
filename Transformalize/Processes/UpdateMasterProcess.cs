@@ -18,30 +18,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Linq;
-using Transformalize.Core;
-using Transformalize.Core.Process_;
+using Transformalize.Main;
 using Transformalize.Libs.NLog;
-using Transformalize.Libs.Rhino.Etl.Core;
+using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Operations;
 
 namespace Transformalize.Processes
 {
-
     public class UpdateMasterProcess : EtlProcess
     {
-
         private readonly Process _process;
 
         public UpdateMasterProcess(ref Process process) : base(process.Name)
         {
-            GlobalDiagnosticsContext.Set("entity", Common.LogLength("All",20));
+            GlobalDiagnosticsContext.Set("entity", Common.LogLength("All", 20));
             _process = process;
         }
 
         protected override void Initialize()
         {
-            var last = _process.Entities.Last().Alias;
-            foreach (var entity in _process.Entities)
+            string last = _process.Entities.Last().Alias;
+            foreach (Entity entity in _process.Entities)
             {
                 if (entity.Alias.Equals(last))
                     RegisterLast(new EntityUpdateMaster(_process, entity));
@@ -54,11 +51,10 @@ namespace Transformalize.Processes
 
         protected override void PostProcessing()
         {
-
-            var errors = GetAllErrors().ToArray();
+            Exception[] errors = GetAllErrors().ToArray();
             if (errors.Any())
             {
-                foreach (var error in errors)
+                foreach (Exception error in errors)
                 {
                     Error(error.InnerException, "Message: {0}\r\nStackTrace:{1}\r\n", error.Message, error.StackTrace);
                 }
@@ -67,7 +63,5 @@ namespace Transformalize.Processes
 
             base.PostProcessing();
         }
-
     }
-
 }

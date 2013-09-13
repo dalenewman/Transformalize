@@ -41,7 +41,7 @@ using System.Threading;
 namespace Transformalize.Libs.NLog.Internal
 {
     /// <summary>
-    /// Portable implementation of <see cref="ThreadIDHelper"/>.
+    ///     Portable implementation of <see cref="ThreadIDHelper" />.
     /// </summary>
     internal class PortableThreadIDHelper : ThreadIDHelper
     {
@@ -49,19 +49,19 @@ namespace Transformalize.Libs.NLog.Internal
 
         private readonly int currentProcessID;
 
-        private string currentProcessName;
         private string currentProcessBaseName;
+        private string currentProcessName;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PortableThreadIDHelper" /> class.
+        ///     Initializes a new instance of the <see cref="PortableThreadIDHelper" /> class.
         /// </summary>
         public PortableThreadIDHelper()
         {
-            this.currentProcessID = Process.GetCurrentProcess().Id;
+            currentProcessID = Process.GetCurrentProcess().Id;
         }
 
         /// <summary>
-        /// Gets current thread ID.
+        ///     Gets current thread ID.
         /// </summary>
         /// <value></value>
         public override int CurrentThreadID
@@ -70,50 +70,50 @@ namespace Transformalize.Libs.NLog.Internal
         }
 
         /// <summary>
-        /// Gets current process ID.
+        ///     Gets current process ID.
         /// </summary>
         /// <value></value>
         public override int CurrentProcessID
         {
-            get { return this.currentProcessID; }
+            get { return currentProcessID; }
         }
 
         /// <summary>
-        /// Gets current process name.
+        ///     Gets current process name.
         /// </summary>
         /// <value></value>
         public override string CurrentProcessName
         {
             get
             {
-                this.GetProcessName();
-                return this.currentProcessName;
+                GetProcessName();
+                return currentProcessName;
             }
         }
 
         /// <summary>
-        /// Gets current process name (excluding filename extension, if any).
+        ///     Gets current process name (excluding filename extension, if any).
         /// </summary>
         /// <value></value>
         public override string CurrentProcessBaseName
         {
             get
             {
-                this.GetProcessName();
-                return this.currentProcessBaseName;
+                GetProcessName();
+                return currentProcessBaseName;
             }
         }
 
         /// <summary>
-        /// Gets the name of the process.
+        ///     Gets the name of the process.
         /// </summary>
         private void GetProcessName()
         {
-            if (this.currentProcessName == null)
+            if (currentProcessName == null)
             {
                 try
                 {
-                    this.currentProcessName = Process.GetCurrentProcess().MainModule.FileName;
+                    currentProcessName = Process.GetCurrentProcess().MainModule.FileName;
                 }
                 catch (Exception exception)
                 {
@@ -122,10 +122,10 @@ namespace Transformalize.Libs.NLog.Internal
                         throw;
                     }
 
-                    this.currentProcessName = UnknownProcessName;
+                    currentProcessName = UnknownProcessName;
                 }
 
-                this.currentProcessBaseName = Path.GetFileNameWithoutExtension(this.currentProcessName);
+                currentProcessBaseName = Path.GetFileNameWithoutExtension(currentProcessName);
             }
         }
     }

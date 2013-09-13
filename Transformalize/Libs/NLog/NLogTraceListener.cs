@@ -45,11 +45,11 @@ using Transformalize.Libs.NLog.Internal;
 namespace Transformalize.Libs.NLog
 {
     /// <summary>
-    /// TraceListener which routes all messages through NLog.
+    ///     TraceListener which routes all messages through NLog.
     /// </summary>
     public class NLogTraceListener : TraceListener
     {
-        private static readonly Assembly systemAssembly = typeof(Trace).Assembly;
+        private static readonly Assembly systemAssembly = typeof (Trace).Assembly;
         private LogFactory logFactory;
         private LogLevel defaultLogLevel = LogLevel.Debug;
         private bool attributesLoaded;
@@ -59,69 +59,62 @@ namespace Transformalize.Libs.NLog
         private LogLevel forceLogLevel;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NLogTraceListener"/> class.
-        /// </summary>
-        public NLogTraceListener()
-        {
-        }
-
-        /// <summary>
-        /// Gets or sets the log factory to use when outputting messages (null - use LogManager).
+        ///     Gets or sets the log factory to use when outputting messages (null - use LogManager).
         /// </summary>
         public LogFactory LogFactory
         {
             get
             {
-                this.InitAttributes();
-                return this.logFactory;
+                InitAttributes();
+                return logFactory;
             }
 
             set
             {
-                this.attributesLoaded = true;
-                this.logFactory = value;
+                attributesLoaded = true;
+                logFactory = value;
             }
         }
 
         /// <summary>
-        /// Gets or sets the default log level.
+        ///     Gets or sets the default log level.
         /// </summary>
         public LogLevel DefaultLogLevel
         {
             get
             {
-                this.InitAttributes();
-                return this.defaultLogLevel;
+                InitAttributes();
+                return defaultLogLevel;
             }
 
             set
             {
-                this.attributesLoaded = true;
-                this.defaultLogLevel = value;
+                attributesLoaded = true;
+                defaultLogLevel = value;
             }
         }
 
         /// <summary>
-        /// Gets or sets the log which should be always used regardless of source level.
+        ///     Gets or sets the log which should be always used regardless of source level.
         /// </summary>
         public LogLevel ForceLogLevel
         {
             get
             {
-                this.InitAttributes();
-                return this.forceLogLevel;
+                InitAttributes();
+                return forceLogLevel;
             }
 
             set
             {
-                this.attributesLoaded = true;
-                this.forceLogLevel = value;
+                attributesLoaded = true;
+                forceLogLevel = value;
             }
         }
 
 #if !NET_CF
         /// <summary>
-        /// Gets a value indicating whether the trace listener is thread safe.
+        ///     Gets a value indicating whether the trace listener is thread safe.
         /// </summary>
         /// <value></value>
         /// <returns>true if the trace listener is thread safe; otherwise, false. The default is false.</returns>
@@ -131,76 +124,76 @@ namespace Transformalize.Libs.NLog
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to use auto logger name detected from the stack trace.
+        ///     Gets or sets a value indicating whether to use auto logger name detected from the stack trace.
         /// </summary>
         public bool AutoLoggerName
         {
             get
             {
-                this.InitAttributes();
-                return this.autoLoggerName;
+                InitAttributes();
+                return autoLoggerName;
             }
 
             set
             {
-                this.attributesLoaded = true;
-                this.autoLoggerName = value;
+                attributesLoaded = true;
+                autoLoggerName = value;
             }
         }
 #endif
 
         /// <summary>
-        /// When overridden in a derived class, writes the specified message to the listener you create in the derived class.
+        ///     When overridden in a derived class, writes the specified message to the listener you create in the derived class.
         /// </summary>
         /// <param name="message">A message to write.</param>
         public override void Write(string message)
         {
-            this.ProcessLogEventInfo(this.DefaultLogLevel, null, message, null, null);
+            ProcessLogEventInfo(DefaultLogLevel, null, message, null, null);
         }
 
         /// <summary>
-        /// When overridden in a derived class, writes a message to the listener you create in the derived class, followed by a line terminator.
+        ///     When overridden in a derived class, writes a message to the listener you create in the derived class, followed by a line terminator.
         /// </summary>
         /// <param name="message">A message to write.</param>
         public override void WriteLine(string message)
         {
-            this.ProcessLogEventInfo(this.DefaultLogLevel, null, message, null, null);
+            ProcessLogEventInfo(DefaultLogLevel, null, message, null, null);
         }
 
         /// <summary>
-        /// When overridden in a derived class, closes the output stream so it no longer receives tracing or debugging output.
+        ///     When overridden in a derived class, closes the output stream so it no longer receives tracing or debugging output.
         /// </summary>
         public override void Close()
         {
         }
 
         /// <summary>
-        /// Emits an error message.
+        ///     Emits an error message.
         /// </summary>
         /// <param name="message">A message to emit.</param>
         public override void Fail(string message)
         {
-            this.ProcessLogEventInfo(LogLevel.Error, null, message, null, null);
+            ProcessLogEventInfo(LogLevel.Error, null, message, null, null);
         }
 
         /// <summary>
-        /// Emits an error message and a detailed error message.
+        ///     Emits an error message and a detailed error message.
         /// </summary>
         /// <param name="message">A message to emit.</param>
         /// <param name="detailMessage">A detailed message to emit.</param>
         public override void Fail(string message, string detailMessage)
         {
-            this.ProcessLogEventInfo(LogLevel.Error, null, message + " " + detailMessage, null, null);
+            ProcessLogEventInfo(LogLevel.Error, null, message + " " + detailMessage, null, null);
         }
 
         /// <summary>
-        /// Flushes the output buffer.
+        ///     Flushes the output buffer.
         /// </summary>
         public override void Flush()
         {
-            if (this.LogFactory != null)
+            if (LogFactory != null)
             {
-                this.LogFactory.Flush();
+                LogFactory.Flush();
             }
             else
             {
@@ -210,24 +203,32 @@ namespace Transformalize.Libs.NLog
 
 #if !NET_CF
         /// <summary>
-        /// Writes trace information, a data object and event information to the listener specific output.
+        ///     Writes trace information, a data object and event information to the listener specific output.
         /// </summary>
-        /// <param name="eventCache">A <see cref="T:System.Diagnostics.TraceEventCache"/> object that contains the current process ID, thread ID, and stack trace information.</param>
+        /// <param name="eventCache">
+        ///     A <see cref="T:System.Diagnostics.TraceEventCache" /> object that contains the current process ID, thread ID, and stack trace information.
+        /// </param>
         /// <param name="source">A name used to identify the output, typically the name of the application that generated the trace event.</param>
-        /// <param name="eventType">One of the <see cref="T:System.Diagnostics.TraceEventType"/> values specifying the type of event that has caused the trace.</param>
+        /// <param name="eventType">
+        ///     One of the <see cref="T:System.Diagnostics.TraceEventType" /> values specifying the type of event that has caused the trace.
+        /// </param>
         /// <param name="id">A numeric identifier for the event.</param>
         /// <param name="data">The trace data to emit.</param>
         public override void TraceData(TraceEventCache eventCache, string source, TraceEventType eventType, int id, object data)
         {
-            this.TraceData(eventCache, source, eventType, id, new object[] { data });
+            TraceData(eventCache, source, eventType, id, new[] {data});
         }
 
         /// <summary>
-        /// Writes trace information, an array of data objects and event information to the listener specific output.
+        ///     Writes trace information, an array of data objects and event information to the listener specific output.
         /// </summary>
-        /// <param name="eventCache">A <see cref="T:System.Diagnostics.TraceEventCache"/> object that contains the current process ID, thread ID, and stack trace information.</param>
+        /// <param name="eventCache">
+        ///     A <see cref="T:System.Diagnostics.TraceEventCache" /> object that contains the current process ID, thread ID, and stack trace information.
+        /// </param>
         /// <param name="source">A name used to identify the output, typically the name of the application that generated the trace event.</param>
-        /// <param name="eventType">One of the <see cref="T:System.Diagnostics.TraceEventType"/> values specifying the type of event that has caused the trace.</param>
+        /// <param name="eventType">
+        ///     One of the <see cref="T:System.Diagnostics.TraceEventType" /> values specifying the type of event that has caused the trace.
+        /// </param>
         /// <param name="id">A numeric identifier for the event.</param>
         /// <param name="data">An array of objects to emit as data.</param>
         public override void TraceData(TraceEventCache eventCache, string source, TraceEventType eventType, int id, params object[] data)
@@ -245,74 +246,92 @@ namespace Transformalize.Libs.NLog
                 sb.Append("}");
             }
 
-            this.ProcessLogEventInfo(TranslateLogLevel(eventType), source, sb.ToString(), data, id);
+            ProcessLogEventInfo(TranslateLogLevel(eventType), source, sb.ToString(), data, id);
         }
 
         /// <summary>
-        /// Writes trace and event information to the listener specific output.
+        ///     Writes trace and event information to the listener specific output.
         /// </summary>
-        /// <param name="eventCache">A <see cref="T:System.Diagnostics.TraceEventCache"/> object that contains the current process ID, thread ID, and stack trace information.</param>
+        /// <param name="eventCache">
+        ///     A <see cref="T:System.Diagnostics.TraceEventCache" /> object that contains the current process ID, thread ID, and stack trace information.
+        /// </param>
         /// <param name="source">A name used to identify the output, typically the name of the application that generated the trace event.</param>
-        /// <param name="eventType">One of the <see cref="T:System.Diagnostics.TraceEventType"/> values specifying the type of event that has caused the trace.</param>
+        /// <param name="eventType">
+        ///     One of the <see cref="T:System.Diagnostics.TraceEventType" /> values specifying the type of event that has caused the trace.
+        /// </param>
         /// <param name="id">A numeric identifier for the event.</param>
         public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id)
         {
-            this.ProcessLogEventInfo(TranslateLogLevel(eventType), source, string.Empty, null, id);
+            ProcessLogEventInfo(TranslateLogLevel(eventType), source, string.Empty, null, id);
         }
 
         /// <summary>
-        /// Writes trace information, a formatted array of objects and event information to the listener specific output.
+        ///     Writes trace information, a formatted array of objects and event information to the listener specific output.
         /// </summary>
-        /// <param name="eventCache">A <see cref="T:System.Diagnostics.TraceEventCache"/> object that contains the current process ID, thread ID, and stack trace information.</param>
+        /// <param name="eventCache">
+        ///     A <see cref="T:System.Diagnostics.TraceEventCache" /> object that contains the current process ID, thread ID, and stack trace information.
+        /// </param>
         /// <param name="source">A name used to identify the output, typically the name of the application that generated the trace event.</param>
-        /// <param name="eventType">One of the <see cref="T:System.Diagnostics.TraceEventType"/> values specifying the type of event that has caused the trace.</param>
+        /// <param name="eventType">
+        ///     One of the <see cref="T:System.Diagnostics.TraceEventType" /> values specifying the type of event that has caused the trace.
+        /// </param>
         /// <param name="id">A numeric identifier for the event.</param>
-        /// <param name="format">A format string that contains zero or more format items, which correspond to objects in the <paramref name="args"/> array.</param>
+        /// <param name="format">
+        ///     A format string that contains zero or more format items, which correspond to objects in the <paramref name="args" /> array.
+        /// </param>
         /// <param name="args">An object array containing zero or more objects to format.</param>
         public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id, string format, params object[] args)
         {
-            this.ProcessLogEventInfo(TranslateLogLevel(eventType), source, format, args, id);
+            ProcessLogEventInfo(TranslateLogLevel(eventType), source, format, args, id);
         }
 
         /// <summary>
-        /// Writes trace information, a message, and event information to the listener specific output.
+        ///     Writes trace information, a message, and event information to the listener specific output.
         /// </summary>
-        /// <param name="eventCache">A <see cref="T:System.Diagnostics.TraceEventCache"/> object that contains the current process ID, thread ID, and stack trace information.</param>
+        /// <param name="eventCache">
+        ///     A <see cref="T:System.Diagnostics.TraceEventCache" /> object that contains the current process ID, thread ID, and stack trace information.
+        /// </param>
         /// <param name="source">A name used to identify the output, typically the name of the application that generated the trace event.</param>
-        /// <param name="eventType">One of the <see cref="T:System.Diagnostics.TraceEventType"/> values specifying the type of event that has caused the trace.</param>
+        /// <param name="eventType">
+        ///     One of the <see cref="T:System.Diagnostics.TraceEventType" /> values specifying the type of event that has caused the trace.
+        /// </param>
         /// <param name="id">A numeric identifier for the event.</param>
         /// <param name="message">A message to write.</param>
         public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id, string message)
         {
-            this.ProcessLogEventInfo(TranslateLogLevel(eventType), source, message, null, id);
+            ProcessLogEventInfo(TranslateLogLevel(eventType), source, message, null, id);
         }
 
         /// <summary>
-        /// Writes trace information, a message, a related activity identity and event information to the listener specific output.
+        ///     Writes trace information, a message, a related activity identity and event information to the listener specific output.
         /// </summary>
-        /// <param name="eventCache">A <see cref="T:System.Diagnostics.TraceEventCache"/> object that contains the current process ID, thread ID, and stack trace information.</param>
+        /// <param name="eventCache">
+        ///     A <see cref="T:System.Diagnostics.TraceEventCache" /> object that contains the current process ID, thread ID, and stack trace information.
+        /// </param>
         /// <param name="source">A name used to identify the output, typically the name of the application that generated the trace event.</param>
         /// <param name="id">A numeric identifier for the event.</param>
         /// <param name="message">A message to write.</param>
-        /// <param name="relatedActivityId">A <see cref="T:System.Guid"/>  object identifying a related activity.</param>
+        /// <param name="relatedActivityId">
+        ///     A <see cref="T:System.Guid" />  object identifying a related activity.
+        /// </param>
         public override void TraceTransfer(TraceEventCache eventCache, string source, int id, string message, Guid relatedActivityId)
         {
-            this.ProcessLogEventInfo(LogLevel.Debug, source, message, null, id);
+            ProcessLogEventInfo(LogLevel.Debug, source, message, null, id);
         }
 
         /// <summary>
-        /// Gets the custom attributes supported by the trace listener.
+        ///     Gets the custom attributes supported by the trace listener.
         /// </summary>
         /// <returns>
-        /// A string array naming the custom attributes supported by the trace listener, or null if there are no custom attributes.
+        ///     A string array naming the custom attributes supported by the trace listener, or null if there are no custom attributes.
         /// </returns>
         protected override string[] GetSupportedAttributes()
         {
-            return new[] { "defaultLogLevel", "autoLoggerName", "forceLogLevel" };
+            return new[] {"defaultLogLevel", "autoLoggerName", "forceLogLevel"};
         }
 
         /// <summary>
-        /// Translates the event type to level from <see cref="TraceEventType"/>.
+        ///     Translates the event type to level from <see cref="TraceEventType" />.
         /// </summary>
         /// <param name="eventType">Type of the event.</param>
         /// <returns>Translated log level.</returns>
@@ -345,10 +364,10 @@ namespace Transformalize.Libs.NLog
         {
             var ev = new LogEventInfo();
 
-            ev.LoggerName = (loggerName ?? this.Name) ?? string.Empty;
-            
+            ev.LoggerName = (loggerName ?? Name) ?? string.Empty;
+
 #if !NET_CF
-            if (this.AutoLoggerName)
+            if (AutoLoggerName)
             {
                 var stack = new StackTrace();
                 int userFrameIndex = -1;
@@ -356,10 +375,10 @@ namespace Transformalize.Libs.NLog
 
                 for (int i = 0; i < stack.FrameCount; ++i)
                 {
-                    var frame = stack.GetFrame(i);
-                    var method = frame.GetMethod();
+                    StackFrame frame = stack.GetFrame(i);
+                    MethodBase method = frame.GetMethod();
 
-                    if (method.DeclaringType == this.GetType())
+                    if (method.DeclaringType == GetType())
                     {
                         // skip all methods of this type
                         continue;
@@ -390,7 +409,7 @@ namespace Transformalize.Libs.NLog
             ev.TimeStamp = CurrentTimeGetter.Now;
             ev.Message = message;
             ev.Parameters = arguments;
-            ev.Level = this.forceLogLevel ?? logLevel;
+            ev.Level = forceLogLevel ?? logLevel;
 
             if (eventId.HasValue)
             {
@@ -403,27 +422,27 @@ namespace Transformalize.Libs.NLog
 
         private void InitAttributes()
         {
-            if (!this.attributesLoaded)
+            if (!attributesLoaded)
             {
-                this.attributesLoaded = true;
+                attributesLoaded = true;
 #if !NET_CF
-                foreach (DictionaryEntry de in this.Attributes)
+                foreach (DictionaryEntry de in Attributes)
                 {
-                    var key = (string)de.Key;
-                    var value = (string)de.Value;
+                    var key = (string) de.Key;
+                    var value = (string) de.Value;
 
                     switch (key.ToUpperInvariant())
                     {
                         case "DEFAULTLOGLEVEL":
-                            this.defaultLogLevel = LogLevel.FromString(value);
+                            defaultLogLevel = LogLevel.FromString(value);
                             break;
 
                         case "FORCELOGLEVEL":
-                            this.forceLogLevel = LogLevel.FromString(value);
+                            forceLogLevel = LogLevel.FromString(value);
                             break;
 
                         case "AUTOLOGGERNAME":
-                            this.AutoLoggerName = XmlConvert.ToBoolean(value);
+                            AutoLoggerName = XmlConvert.ToBoolean(value);
                             break;
                     }
                 }

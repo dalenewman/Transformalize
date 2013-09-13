@@ -34,7 +34,7 @@
 namespace Transformalize.Libs.NLog.Conditions
 {
     /// <summary>
-    /// Token types for condition expressions.
+    ///     Token types for condition expressions.
     /// </summary>
     internal enum ConditionTokenType
     {

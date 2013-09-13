@@ -20,57 +20,51 @@ using System.Configuration;
 
 namespace Transformalize.Configuration
 {
-    public class ParameterConfigurationElement : ConfigurationElement {
+    public class ParameterConfigurationElement : ConfigurationElement
+    {
+        [ConfigurationProperty("entity", IsRequired = false)]
+        public string Entity
+        {
+            get { return this["entity"] as string; }
+            set { this["entity"] = value; }
+        }
+
+        [ConfigurationProperty("field", IsRequired = false)]
+        public string Field
+        {
+            get { return this["field"] as string; }
+            set { this["field"] = value; }
+        }
+
+        [ConfigurationProperty("name", IsRequired = false)]
+        public string Name
+        {
+            get { return this["name"] as string; }
+            set { this["name"] = value; }
+        }
+
+        [ConfigurationProperty("value", IsRequired = false)]
+        public string Value
+        {
+            get { return this["value"] as string; }
+            set { this["value"] = value; }
+        }
+
+        [ConfigurationProperty("type", IsRequired = false, DefaultValue = "System.String")]
+        public string Type
+        {
+            get { return this["type"] as string; }
+            set { this["type"] = value; }
+        }
 
         public override bool IsReadOnly()
         {
             return false;
         }
 
-        [ConfigurationProperty("entity", IsRequired = false)]
-        public string Entity {
-            get {
-                return this["entity"] as string;
-            }
-            set { this["entity"] = value; }
-        }
-
-        [ConfigurationProperty("field", IsRequired = false)]
-        public string Field {
-            get {
-                return this["field"] as string;
-            }
-            set { this["field"] = value; }
-        }
-
-        [ConfigurationProperty("name", IsRequired = false)]
-        public string Name {
-            get {
-                return this["name"] as string;
-            }
-            set { this["name"] = value; }
-        }
-
-        [ConfigurationProperty("value", IsRequired = false)]
-        public string Value {
-            get {
-                return this["value"] as string;
-            }
-            set { this["value"] = value; }
-        }
-
-        [ConfigurationProperty("type", IsRequired = false, DefaultValue = "System.String")]
-        public string Type {
-            get {
-                return this["type"] as string;
-            }
-            set { this["type"] = value; }
-        }
-
         public bool HasValue()
         {
             return !string.IsNullOrEmpty(Value);
         }
-
     }
 }

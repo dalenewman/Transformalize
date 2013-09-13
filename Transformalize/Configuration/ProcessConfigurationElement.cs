@@ -20,35 +20,22 @@ using System.Configuration;
 
 namespace Transformalize.Configuration
 {
-
     public class ProcessConfigurationElement : ConfigurationElement
     {
-
         private const string TEMPLATE_CONTENT_TYPE = "template-content-type";
         private const string NAME = "name";
-
-        public override bool IsReadOnly()
-        {
-            return false;
-        }
 
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name
         {
-            get
-            {
-                return this[NAME] as string;
-            }
+            get { return this[NAME] as string; }
             set { this[NAME] = value; }
         }
 
         [ConfigurationProperty(TEMPLATE_CONTENT_TYPE, IsRequired = false, DefaultValue = "raw")]
         public string TemplateContentType
         {
-            get
-            {
-                return this[TEMPLATE_CONTENT_TYPE] as string;
-            }
+            get { return this[TEMPLATE_CONTENT_TYPE] as string; }
             set { this[TEMPLATE_CONTENT_TYPE] = value; }
         }
 
@@ -56,83 +43,60 @@ namespace Transformalize.Configuration
         [ConfigurationProperty("connections")]
         public ConnectionElementCollection Connections
         {
-            get
-            {
-                return this["connections"] as ConnectionElementCollection;
-            }
+            get { return this["connections"] as ConnectionElementCollection; }
         }
 
         [ConfigurationProperty("providers")]
         public ProviderElementCollection Providers
         {
-            get
-            {
-                return this["providers"] as ProviderElementCollection;
-            }
+            get { return this["providers"] as ProviderElementCollection; }
         }
 
         [ConfigurationProperty("search-types")]
         public SearchTypeElementCollection SearchTypes
         {
-            get
-            {
-                return this["search-types"] as SearchTypeElementCollection;
-            }
+            get { return this["search-types"] as SearchTypeElementCollection; }
         }
 
         [ConfigurationProperty("maps")]
         public MapElementCollection Maps
         {
-            get
-            {
-                return this["maps"] as MapElementCollection;
-            }
+            get { return this["maps"] as MapElementCollection; }
         }
 
         [ConfigurationProperty("scripts")]
         public ScriptElementCollection Scripts
         {
-            get
-            {
-                return this["scripts"] as ScriptElementCollection;
-            }
+            get { return this["scripts"] as ScriptElementCollection; }
         }
 
         [ConfigurationProperty("entities")]
         public EntityElementCollection Entities
         {
-            get
-            {
-                return this["entities"] as EntityElementCollection;
-            }
+            get { return this["entities"] as EntityElementCollection; }
         }
 
         [ConfigurationProperty("relationships")]
         public RelationshipElementCollection Relationships
         {
-            get
-            {
-                return this["relationships"] as RelationshipElementCollection;
-            }
+            get { return this["relationships"] as RelationshipElementCollection; }
         }
 
         [ConfigurationProperty("calculated-fields")]
         public FieldElementCollection CalculatedFields
         {
-            get
-            {
-                return this["calculated-fields"] as FieldElementCollection;
-            }
+            get { return this["calculated-fields"] as FieldElementCollection; }
         }
 
         [ConfigurationProperty("templates")]
         public TemplateElementCollection Templates
         {
-            get
-            {
-                return this["templates"] as TemplateElementCollection;
-            }
+            get { return this["templates"] as TemplateElementCollection; }
         }
 
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
     }
 }

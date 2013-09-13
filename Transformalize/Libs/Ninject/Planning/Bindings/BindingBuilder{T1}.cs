@@ -30,18 +30,18 @@ using Transformalize.Libs.Ninject.Syntax;
 
 namespace Transformalize.Libs.Ninject.Planning.Bindings
 {
-    #if !NETCF
+#if !NETCF
 #endif
 
     /// <summary>
-    /// Provides a root for the fluent syntax associated with an <see cref="Binding"/>.
+    ///     Provides a root for the fluent syntax associated with an <see cref="Binding" />.
     /// </summary>
     /// <typeparam name="T1">The service type.</typeparam>
     public class BindingBuilder<T1> : BindingBuilder, IBindingToSyntax<T1>
     {
 #pragma warning disable 1584 //mono compiler bug
         /// <summary>
-        /// Initializes a new instance of the <see cref="BindingBuilder{T1}"/> class.
+        ///     Initializes a new instance of the <see cref="BindingBuilder{T1}" /> class.
         /// </summary>
         /// <param name="binding">The binding to build.</param>
         /// <param name="kernel">The kernel.</param>
@@ -51,51 +51,51 @@ namespace Transformalize.Libs.Ninject.Planning.Bindings
         {
             Ensure.ArgumentNotNull(binding, "binding");
             Ensure.ArgumentNotNull(kernel, "kernel");
-            this.Binding = binding;
+            Binding = binding;
         }
 #pragma warning restore 1584
 
         /// <summary>
-        /// Gets the binding being built.
+        ///     Gets the binding being built.
         /// </summary>
         public IBinding Binding { get; private set; }
-      
+
         /// <summary>
-        /// Indicates that the service should be self-bound.
+        ///     Indicates that the service should be self-bound.
         /// </summary>
         /// <returns>The fluent syntax.</returns>
         public IBindingWhenInNamedWithOrOnSyntax<T1> ToSelf()
         {
-            this.Binding.ProviderCallback = StandardProvider.GetCreationCallback(this.Binding.Service);
-            this.Binding.Target = BindingTarget.Self;
+            Binding.ProviderCallback = StandardProvider.GetCreationCallback(Binding.Service);
+            Binding.Target = BindingTarget.Self;
 
-            return new BindingConfigurationBuilder<T1>(this.Binding.BindingConfiguration, this.ServiceNames, this.Kernel);
+            return new BindingConfigurationBuilder<T1>(Binding.BindingConfiguration, ServiceNames, Kernel);
         }
 
         /// <summary>
-        /// Indicates that the service should be bound to the specified implementation type.
+        ///     Indicates that the service should be bound to the specified implementation type.
         /// </summary>
         /// <typeparam name="TImplementation">The implementation type.</typeparam>
         /// <returns>The fluent syntax.</returns>
         public IBindingWhenInNamedWithOrOnSyntax<TImplementation> To<TImplementation>()
             where TImplementation : T1
         {
-            return this.InternalTo<TImplementation>();
+            return InternalTo<TImplementation>();
         }
 
         /// <summary>
-        /// Indicates that the service should be bound to the specified implementation type.
+        ///     Indicates that the service should be bound to the specified implementation type.
         /// </summary>
         /// <param name="implementation">The implementation type.</param>
         /// <returns>The fluent syntax.</returns>
         public IBindingWhenInNamedWithOrOnSyntax<T1> To(Type implementation)
         {
-            return this.InternalTo<T1>(implementation);
+            return InternalTo<T1>(implementation);
         }
 
 #if !NETCF
         /// <summary>
-        /// Indicates that the service should be bound to the speecified constructor.
+        ///     Indicates that the service should be bound to the speecified constructor.
         /// </summary>
         /// <typeparam name="TImplementation">The type of the implementation.</typeparam>
         /// <param name="newExpression">The expression that specifies the constructor.</param>
@@ -104,35 +104,35 @@ namespace Transformalize.Libs.Ninject.Planning.Bindings
             Expression<Func<IConstructorArgumentSyntax, TImplementation>> newExpression)
             where TImplementation : T1
         {
-            return this.InternalToConstructor(newExpression);
+            return InternalToConstructor(newExpression);
         }
 #endif
 
         /// <summary>
-        /// Indicates that the service should be bound to an instance of the specified provider type.
-        /// The instance will be activated via the kernel when an instance of the service is activated.
+        ///     Indicates that the service should be bound to an instance of the specified provider type.
+        ///     The instance will be activated via the kernel when an instance of the service is activated.
         /// </summary>
         /// <typeparam name="TProvider">The type of provider to activate.</typeparam>
         /// <returns>The fluent syntax.</returns>
         public IBindingWhenInNamedWithOrOnSyntax<T1> ToProvider<TProvider>()
             where TProvider : IProvider
         {
-            return this.ToProviderInternal<TProvider, T1>();
+            return ToProviderInternal<TProvider, T1>();
         }
 
         /// <summary>
-        /// Indicates that the service should be bound to an instance of the specified provider type.
-        /// The instance will be activated via the kernel when an instance of the service is activated.
+        ///     Indicates that the service should be bound to an instance of the specified provider type.
+        ///     The instance will be activated via the kernel when an instance of the service is activated.
         /// </summary>
         /// <param name="providerType">The type of provider to activate.</param>
         /// <returns>The fluent syntax.</returns>
         public IBindingWhenInNamedWithOrOnSyntax<T1> ToProvider(Type providerType)
         {
-            return this.ToProviderInternal<T1>(providerType);
+            return ToProviderInternal<T1>(providerType);
         }
 
         /// <summary>
-        /// Indicates that the service should be bound to the specified provider.
+        ///     Indicates that the service should be bound to the specified provider.
         /// </summary>
         /// <typeparam name="TImplementation">The type of the implementation.</typeparam>
         /// <param name="provider">The provider.</param>
@@ -140,21 +140,21 @@ namespace Transformalize.Libs.Ninject.Planning.Bindings
         public IBindingWhenInNamedWithOrOnSyntax<TImplementation> ToProvider<TImplementation>(IProvider<TImplementation> provider)
             where TImplementation : T1
         {
-            return this.InternalToProvider(provider);
+            return InternalToProvider(provider);
         }
 
         /// <summary>
-        /// Indicates that the service should be bound to the specified callback method.
+        ///     Indicates that the service should be bound to the specified callback method.
         /// </summary>
         /// <param name="method">The method.</param>
         /// <returns>The fluent syntax.</returns>
         public IBindingWhenInNamedWithOrOnSyntax<T1> ToMethod(Func<IContext, T1> method)
         {
-            return this.InternalToMethod(method);
+            return InternalToMethod(method);
         }
 
         /// <summary>
-        /// Indicates that the service should be bound to the specified callback method.
+        ///     Indicates that the service should be bound to the specified callback method.
         /// </summary>
         /// <typeparam name="TImplementation">The type of the implementation.</typeparam>
         /// <param name="method">The method.</param>
@@ -162,11 +162,11 @@ namespace Transformalize.Libs.Ninject.Planning.Bindings
         public IBindingWhenInNamedWithOrOnSyntax<TImplementation> ToMethod<TImplementation>(Func<IContext, TImplementation> method)
             where TImplementation : T1
         {
-            return this.InternalToMethod(method);
+            return InternalToMethod(method);
         }
 
         /// <summary>
-        /// Indicates that the service should be bound to the specified constant value.
+        ///     Indicates that the service should be bound to the specified constant value.
         /// </summary>
         /// <typeparam name="TImplementation">The type of the implementation.</typeparam>
         /// <param name="value">The constant value.</param>
@@ -174,7 +174,7 @@ namespace Transformalize.Libs.Ninject.Planning.Bindings
         public IBindingWhenInNamedWithOrOnSyntax<TImplementation> ToConstant<TImplementation>(TImplementation value)
             where TImplementation : T1
         {
-            return this.InternalToConfiguration(value);
+            return InternalToConfiguration(value);
         }
     }
 }

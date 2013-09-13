@@ -36,7 +36,7 @@ using System.Text;
 namespace Transformalize.Libs.NLog.Internal
 {
     /// <summary>
-    /// URL Encoding helper.
+    ///     URL Encoding helper.
     /// </summary>
     internal class UrlHelper
     {
@@ -45,7 +45,7 @@ namespace Transformalize.Libs.NLog.Internal
 
         internal static string UrlEncode(string str, bool spaceAsPlus)
         {
-            StringBuilder result = new StringBuilder(str.Length + 20);
+            var result = new StringBuilder(str.Length + 20);
             for (int i = 0; i < str.Length; ++i)
             {
                 char ch = str[i];

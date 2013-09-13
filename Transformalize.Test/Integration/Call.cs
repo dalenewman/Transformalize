@@ -17,38 +17,51 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using NUnit.Framework;
-using Transformalize.Core;
-using Transformalize.Core.Process_;
+using Transformalize.Main;
 using Transformalize.Runner;
 
-namespace Transformalize.Test.Integration {
+namespace Transformalize.Test.Integration
+{
     [TestFixture]
-    public class Calls {
+    public class Calls
+    {
         private const string CALLS = @"c:\etl\rhinoetl\tfl\Calls.xml";
         private const string CAMPAIGNS = @"c:\etl\rhinoetl\tfl\Campaigns.xml";
 
         [Test]
         public void Init()
         {
-            var options1 = new Options { Mode = Modes.Initialize };
-            var process1 = new ProcessReader(new ProcessXmlConfigurationReader(CALLS).Read(), options1).Read();
+            var options1 = new Options
+                               {
+                                   Mode = Modes.Initialize
+                               };
+            Process process1 = new ProcessReader(new ProcessXmlConfigurationReader(CALLS).Read(), options1).Read();
             new ProcessRunner(process1).Run();
 
-            var options2 = new Options { Mode = Modes.Initialize };
-            var process2 = new ProcessReader(new ProcessXmlConfigurationReader(CAMPAIGNS).Read(), options2).Read();
+            var options2 = new Options
+                               {
+                                   Mode = Modes.Initialize
+                               };
+            Process process2 = new ProcessReader(new ProcessXmlConfigurationReader(CAMPAIGNS).Read(), options2).Read();
             new ProcessRunner(process2).Run();
         }
 
         [Test]
         public void Normal()
         {
-            var options1 = new Options { Mode = Modes.Normal };
-            
-            var process1 = new ProcessReader(new ProcessXmlConfigurationReader(CALLS).Read(), options1).Read();
+            var options1 = new Options
+                               {
+                                   Mode = Modes.Normal
+                               };
+
+            Process process1 = new ProcessReader(new ProcessXmlConfigurationReader(CALLS).Read(), options1).Read();
             new ProcessRunner(process1).Run();
 
-            var options2 = new Options { Mode = Modes.Normal };
-            var process2 = new ProcessReader(new ProcessXmlConfigurationReader(CAMPAIGNS).Read(), options2).Read();
+            var options2 = new Options
+                               {
+                                   Mode = Modes.Normal
+                               };
+            Process process2 = new ProcessReader(new ProcessXmlConfigurationReader(CAMPAIGNS).Read(), options2).Read();
             new ProcessRunner(process2).Run();
         }
 
@@ -56,16 +69,12 @@ namespace Transformalize.Test.Integration {
         public void Test()
         {
             var options1 = new Options("{'mode':'test','top':2,'loglevel':'trace'}");
-            var process1 = new ProcessReader(new ProcessXmlConfigurationReader(CALLS).Read(), options1).Read();
+            Process process1 = new ProcessReader(new ProcessXmlConfigurationReader(CALLS).Read(), options1).Read();
             new ProcessRunner(process1).Run();
 
             var options2 = new Options("{'mode':'test','top':2,'loglevel':'trace'}");
-            var process2 = new ProcessReader(new ProcessXmlConfigurationReader(CAMPAIGNS).Read(), options2).Read();
+            Process process2 = new ProcessReader(new ProcessXmlConfigurationReader(CAMPAIGNS).Read(), options2).Read();
             new ProcessRunner(process2).Run();
-
         }
-
-
-
     }
 }

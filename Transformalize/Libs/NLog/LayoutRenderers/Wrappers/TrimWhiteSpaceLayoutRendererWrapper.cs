@@ -37,7 +37,7 @@ using Transformalize.Libs.NLog.Config;
 namespace Transformalize.Libs.NLog.LayoutRenderers.Wrappers
 {
     /// <summary>
-    /// Trims the whitespace from the result of another layout renderer.
+    ///     Trims the whitespace from the result of another layout renderer.
     /// </summary>
     [LayoutRenderer("trim-whitespace")]
     [AmbientProperty("TrimWhiteSpace")]
@@ -45,29 +45,31 @@ namespace Transformalize.Libs.NLog.LayoutRenderers.Wrappers
     public sealed class TrimWhiteSpaceLayoutRendererWrapper : WrapperLayoutRendererBase
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="TrimWhiteSpaceLayoutRendererWrapper" /> class.
+        ///     Initializes a new instance of the <see cref="TrimWhiteSpaceLayoutRendererWrapper" /> class.
         /// </summary>
         public TrimWhiteSpaceLayoutRendererWrapper()
         {
-            this.TrimWhiteSpace = true;
+            TrimWhiteSpace = true;
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether lower case conversion should be applied.
+        ///     Gets or sets a value indicating whether lower case conversion should be applied.
         /// </summary>
-        /// <value>A value of <c>true</c> if lower case conversion should be applied; otherwise, <c>false</c>.</value>
+        /// <value>
+        ///     A value of <c>true</c> if lower case conversion should be applied; otherwise, <c>false</c>.
+        /// </value>
         /// <docgen category='Transformation Options' order='10' />
         [DefaultValue(true)]
         public bool TrimWhiteSpace { get; set; }
 
         /// <summary>
-        /// Post-processes the rendered message. 
+        ///     Post-processes the rendered message.
         /// </summary>
         /// <param name="text">The text to be post-processed.</param>
         /// <returns>Trimmed string.</returns>
         protected override string Transform(string text)
         {
-            return this.TrimWhiteSpace ? text.Trim() : text;
+            return TrimWhiteSpace ? text.Trim() : text;
         }
     }
 }

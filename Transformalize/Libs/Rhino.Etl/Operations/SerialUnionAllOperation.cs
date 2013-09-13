@@ -1,0 +1,61 @@
+using System.Collections.Generic;
+using System.Linq;
+using Transformalize.Libs.NLog;
+using Transformalize.Operations;
+
+namespace Transformalize.Libs.Rhino.Etl.Operations
+{
+    public class SerialUnionAllOperation : AbstractOperation
+    {
+        private readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private readonly List<IOperation> _operations = new List<IOperation>();
+
+        public SerialUnionAllOperation(string operationColumn = "operation")
+        {
+            OperationColumn = operationColumn;
+        }
+
+        public SerialUnionAllOperation(IEnumerable<IOperation> operations)
+        {
+            _operations.AddRange(operations);
+        }
+
+        public SerialUnionAllOperation(params IOperation[] operations)
+        {
+            _operations.AddRange(operations);
+        }
+
+        public string OperationColumn { get; set; }
+
+        public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
+        {
+            if (_operations.Count > 0)
+            {
+                foreach (Row row in _operations.SelectMany(operation => operation.Execute(null)))
+                {
+                    yield return row;
+                }
+            }
+
+            //todo: try traditional data read
+            foreach (Row innerRow in rows.Select(row => (EntityDataExtract) row[OperationColumn]).SelectMany(operation => operation.Execute(null)))
+            {
+                yield return innerRow;
+            }
+        }
+
+        public SerialUnionAllOperation Add(params IOperation[] operation)
+        {
+            _operations.AddRange(operation);
+            return this;
+        }
+
+        public override void PrepareForExecution(IPipelineExecuter pipelineExecuter)
+        {
+            foreach (IOperation operation in _operations)
+            {
+                operation.PrepareForExecution(pipelineExecuter);
+            }
+        }
+    }
+}

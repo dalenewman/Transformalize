@@ -20,35 +20,31 @@ using System.Configuration;
 
 namespace Transformalize.Configuration
 {
-    public class MapConfigurationElement : ConfigurationElement {
+    public class MapConfigurationElement : ConfigurationElement
+    {
+        [ConfigurationProperty("name", IsRequired = true)]
+        public string Name
+        {
+            get { return this["name"] as string; }
+            set { this["name"] = value; }
+        }
+
+        [ConfigurationProperty("connection", IsRequired = false, DefaultValue = "")]
+        public string Connection
+        {
+            get { return this["connection"] as string; }
+            set { this["connection"] = value; }
+        }
+
+        [ConfigurationProperty("items")]
+        public ItemElementCollection Items
+        {
+            get { return this["items"] as ItemElementCollection; }
+        }
 
         public override bool IsReadOnly()
         {
             return false;
         }
-
-        [ConfigurationProperty("name", IsRequired = true)]
-        public string Name {
-            get {
-                return this["name"] as string;
-            }
-            set { this["name"] = value; }
-        }
-
-        [ConfigurationProperty("connection", IsRequired = false, DefaultValue = "")]
-        public string Connection {
-            get {
-                return this["connection"] as string;
-            }
-            set { this["connection"] = value; }
-        }
-
-        [ConfigurationProperty("items")]
-        public ItemElementCollection Items {
-            get {
-                return this["items"] as ItemElementCollection;
-            }
-        }
-
     }
 }

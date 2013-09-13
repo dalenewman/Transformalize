@@ -1,12 +1,9 @@
-using System;
 using System.Data;
 using System.Linq;
-using Transformalize.Core.Entity_;
-using Transformalize.Core.Field_;
-using Transformalize.Core.Process_;
-using Transformalize.Libs.Rhino.Etl.Core;
-using Transformalize.Libs.Rhino.Etl.Core.Operations;
-using Transformalize.Providers;
+using Transformalize.Main;
+using Transformalize.Main.Providers;
+using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Libs.Rhino.Etl.Operations;
 
 namespace Transformalize.Operations
 {
@@ -20,7 +17,7 @@ namespace Transformalize.Operations
         {
             _entity = entity;
 
-            var connection = _entity.InputConnection;
+            AbstractConnection connection = _entity.InputConnection;
 
             if (entity.Version != null)
             {
@@ -37,7 +34,7 @@ namespace Transformalize.Operations
         protected override Row CreateRowFromReader(IDataReader reader)
         {
             var row = new Row();
-            foreach (var field in _fields)
+            foreach (string field in _fields)
             {
                 row[field] = reader[field];
             }

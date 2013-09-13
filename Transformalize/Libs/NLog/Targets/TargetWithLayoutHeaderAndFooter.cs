@@ -37,31 +37,18 @@ using Transformalize.Libs.NLog.Layouts;
 namespace Transformalize.Libs.NLog.Targets
 {
     /// <summary>
-    /// Represents target that supports string formatting using layouts.
+    ///     Represents target that supports string formatting using layouts.
     /// </summary>
     public abstract class TargetWithLayoutHeaderAndFooter : TargetWithLayout
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="TargetWithLayoutHeaderAndFooter" /> class.
-        /// </summary>
-        /// <remarks>
-        /// The default value of the layout is: <code>${longdate}|${level:uppercase=true}|${logger}|${message}</code>
-        /// </remarks>
-        protected TargetWithLayoutHeaderAndFooter()
-        {
-        }
-
-        /// <summary>
-        /// Gets or sets the text to be rendered.
+        ///     Gets or sets the text to be rendered.
         /// </summary>
         /// <docgen category='Layout Options' order='1' />
         [RequiredParameter]
         public override Layout Layout
         {
-            get
-            {
-                return this.LHF.Layout;
-            }
+            get { return LHF.Layout; }
 
             set
             {
@@ -69,48 +56,48 @@ namespace Transformalize.Libs.NLog.Targets
                 {
                     base.Layout = value;
                 }
-                else if (this.LHF == null)
+                else if (LHF == null)
                 {
-                    this.LHF = new LayoutWithHeaderAndFooter()
-                    {
-                        Layout = value
-                    };
+                    LHF = new LayoutWithHeaderAndFooter
+                              {
+                                  Layout = value
+                              };
                 }
                 else
                 {
-                    this.LHF.Layout = value;
+                    LHF.Layout = value;
                 }
             }
         }
 
         /// <summary>
-        /// Gets or sets the footer.
+        ///     Gets or sets the footer.
         /// </summary>
         /// <docgen category='Layout Options' order='3' />
         public Layout Footer
         {
-            get { return this.LHF.Footer; }
-            set { this.LHF.Footer = value; }
+            get { return LHF.Footer; }
+            set { LHF.Footer = value; }
         }
 
         /// <summary>
-        /// Gets or sets the header.
+        ///     Gets or sets the header.
         /// </summary>
         /// <docgen category='Layout Options' order='2' />
         public Layout Header
         {
-            get { return this.LHF.Header; }
-            set { this.LHF.Header = value; }
+            get { return LHF.Header; }
+            set { LHF.Header = value; }
         }
 
         /// <summary>
-        /// Gets or sets the layout with header and footer.
+        ///     Gets or sets the layout with header and footer.
         /// </summary>
         /// <value>The layout with header and footer.</value>
         private LayoutWithHeaderAndFooter LHF
         {
-            get { return (LayoutWithHeaderAndFooter)base.Layout; }
+            get { return (LayoutWithHeaderAndFooter) base.Layout; }
             set { base.Layout = value; }
         }
-   }
+    }
 }

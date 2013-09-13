@@ -17,101 +17,182 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Collections.Generic;
-using NUnit.Framework;
 using Moq;
-using Transformalize.Core;
-using Transformalize.Core.Field_;
-using Transformalize.Core.Fields_;
-using Transformalize.Core.Parameter_;
-using Transformalize.Core.Parameters_;
-using Transformalize.Core.Template_;
-using Transformalize.Core.Transform_;
-using Transformalize.Libs.Rhino.Etl.Core;
-using Transformalize.Libs.Rhino.Etl.Core.Operations;
+using NUnit.Framework;
+using Transformalize.Main;
+using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Operations;
 
-namespace Transformalize.Test.Unit {
+namespace Transformalize.Test.Unit
+{
     [TestFixture]
-    public class MultiFieldTestTransforms : EtlProcessHelper {
-        
-        [Test]
-        public void TestJavascriptTransformStrings() {
-
-            var parameters = new Parameters { { "FirstName", new Parameter("FirstName", null) }, { "LastName", new Parameter("LastName", null) } };
-
-            var fullName = new Field(FieldType.Field) { Alias = "FullName"};
-            fullName.Transforms.Add(new JavascriptTransform("FirstName + ' ' + LastName", parameters, new Dictionary<string, Script>()));
-
-            var rows = TestOperation(
-                GetTestData(new List<Row> {
-                    new Row { {"FirstName", "Dale"}, {"LastName", "Newman"} },
-                }),
-                new TransformFields(fullName),
-                new LogOperation()
-            );
-
-            Assert.AreEqual("Dale Newman", rows[0]["FullName"]);
+    public class MultiFieldTestTransforms : EtlProcessHelper
+    {
+        private static IOperation GetTestData(IEnumerable<Row> data)
+        {
+            var mock = new Mock<IOperation>();
+            mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(data);
+            return mock.Object;
         }
 
         [Test]
-        public void TestJavascriptTransformNumbers() {
+        public void TestFormatTransform()
+        {
+            var parameters = new Parameters
+                                 {
+                                     {"x", new Parameter("x", null)},
+                                     {"y", new Parameter("y", null)}
+                                 };
 
-            var parameters = new Parameters { { "x", new Parameter("x", null) }, { "y", new Parameter("y", null) } };
-            
-            var z = new Field(FieldType.Field) { Alias = "z"};
-            z.Transforms.Add(new JavascriptTransform("x * y", parameters, new Dictionary<string, Script>()));
-
-            var rows = TestOperation(
-                GetTestData(new List<Row> {
-                    new Row { {"x", 3}, {"y", 11} },
-                }),
-                new TransformFields(z),
-                new LogOperation()
-            );
-
-            Assert.AreEqual(33, rows[0]["z"]);
-        }
-
-        [Test]
-        public void TestFormatTransform() {
-
-            var parameters = new Parameters { { "x", new Parameter("x", null) }, { "y", new Parameter("y", null) } };
-
-            var z = new Field(FieldType.Field) { Alias = "z"};
+            var z = new Field(FieldType.Field)
+                        {
+                            Alias = "z"
+                        };
             z.Transforms.Add(new FormatTransform("{0} {1}", parameters));
 
-            var rows = TestOperation(
-                GetTestData(new List<Row> {
-                    new Row { {"x", "Dale"}, {"y", "Newman"} },
-                }),
+            List<Row> rows = TestOperation(
+                GetTestData(new List<Row>
+                                {
+                                    new Row
+                                        {
+                                            {"x", "Dale"},
+                                            {"y", "Newman"}
+                                        },
+                                }),
                 new TransformFields(z),
                 new LogOperation()
-            );
+                );
 
             Assert.AreEqual("Dale Newman", rows[0]["z"]);
         }
 
         [Test]
-        public void TestTemplateTransformStringsWithDictionary() {
+        public void TestJavascriptTransformNumbers()
+        {
+            var parameters = new Parameters
+                                 {
+                                     {"x", new Parameter("x", null)},
+                                     {"y", new Parameter("y", null)}
+                                 };
 
-            var parameters = new Parameters { { "FirstName", new Parameter("FirstName", null) }, { "LastName", new Parameter("LastName", null) } };
-            var templates = new Dictionary<string, Template>();
+            var z = new Field(FieldType.Field)
+                        {
+                            Alias = "z"
+                        };
+            z.Transforms.Add(new JavascriptTransform("x * y", parameters, new Dictionary<string, Script>()));
 
-            var fullName = new Field(FieldType.Field) { Alias = "FullName"};
-            fullName.Transforms.Add(
-                new TemplateTransform("@{ var fullName = Model[\"FirstName\"] + \" \" + Model[\"LastName\"];}@fullName", "dictionary",
-                "FullName",
-                parameters,
-                templates
-            ));
+            List<Row> rows = TestOperation(
+                GetTestData(new List<Row>
+                                {
+                                    new Row
+                                        {
+                                            {"x", 3},
+                                            {"y", 11}
+                                        },
+                                }),
+                new TransformFields(z),
+                new LogOperation()
+                );
 
-            var rows = TestOperation(
-                GetTestData(new List<Row> {
-                    new Row { {"FirstName", "Dale"}, {"LastName", "Newman"} },
-                }),
+            Assert.AreEqual(33, rows[0]["z"]);
+        }
+
+        [Test]
+        public void TestJavascriptTransformStrings()
+        {
+            var parameters = new Parameters
+                                 {
+                                     {"FirstName", new Parameter("FirstName", null)},
+                                     {"LastName", new Parameter("LastName", null)}
+                                 };
+
+            var fullName = new Field(FieldType.Field)
+                               {
+                                   Alias = "FullName"
+                               };
+            fullName.Transforms.Add(new JavascriptTransform("FirstName + ' ' + LastName", parameters, new Dictionary<string, Script>()));
+
+            List<Row> rows = TestOperation(
+                GetTestData(new List<Row>
+                                {
+                                    new Row
+                                        {
+                                            {"FirstName", "Dale"},
+                                            {"LastName", "Newman"}
+                                        },
+                                }),
                 new TransformFields(fullName),
                 new LogOperation()
-            );
+                );
+
+            Assert.AreEqual("Dale Newman", rows[0]["FullName"]);
+        }
+
+        [Test]
+        public void TestJoinTransformStrings()
+        {
+            var parameters = new Parameters
+                                 {
+                                     {"FirstName", new Parameter("FirstName", null)},
+                                     {"LastName", new Parameter("LastName", null)}
+                                 };
+
+            var fullName = new Field(FieldType.Field)
+                               {
+                                   Alias = "FullName"
+                               };
+            fullName.Transforms.Add(new JoinTransform(" ", parameters));
+
+            List<Row> rows = TestOperation(
+                GetTestData(new List<Row>
+                                {
+                                    new Row
+                                        {
+                                            {"FirstName", "Dale"},
+                                            {"LastName", "Newman"}
+                                        },
+                                }),
+                new TransformFields(fullName),
+                new LogOperation()
+                );
+
+            Assert.AreEqual("Dale Newman", rows[0]["FullName"]);
+        }
+
+        [Test]
+        public void TestTemplateTransformStringsWithDictionary()
+        {
+            var parameters = new Parameters
+                                 {
+                                     {"FirstName", new Parameter("FirstName", null)},
+                                     {"LastName", new Parameter("LastName", null)}
+                                 };
+            var templates = new Dictionary<string, Template>();
+
+            var fullName = new Field(FieldType.Field)
+                               {
+                                   Alias = "FullName"
+                               };
+            fullName.Transforms.Add(
+                new TemplateTransform("@{ var fullName = Model[\"FirstName\"] + \" \" + Model[\"LastName\"];}@fullName", "dictionary",
+                                      "FullName",
+                                      parameters,
+                                      templates
+                    ));
+
+            List<Row> rows = TestOperation(
+                GetTestData(new List<Row>
+                                {
+                                    new Row
+                                        {
+                                            {"FirstName", "Dale"},
+                                            {"LastName", "Newman"}
+                                        },
+                                }),
+                new TransformFields(fullName),
+                new LogOperation()
+                );
 
             Assert.AreEqual("Dale Newman", rows[0]["FullName"]);
         }
@@ -119,54 +200,39 @@ namespace Transformalize.Test.Unit {
         [Test]
         public void TestTemplateTransformStringsWithDynamic()
         {
-
-            var parameters = new Parameters { { "FirstName", new Parameter("FirstName", null) }, { "LastName", new Parameter("LastName", null) } };
+            var parameters = new Parameters
+                                 {
+                                     {"FirstName", new Parameter("FirstName", null)},
+                                     {"LastName", new Parameter("LastName", null)}
+                                 };
             var templates = new Dictionary<string, Template>();
 
-            var fullName = new Field(FieldType.Field) { Alias = "FullName"};
+            var fullName = new Field(FieldType.Field)
+                               {
+                                   Alias = "FullName"
+                               };
             fullName.Transforms.Add(
                 new TemplateTransform("@{ var fullName = Model.FirstName + \" \" + Model.LastName;}@fullName",
-                "FullName",
-                "dynamic",
-                parameters,
-                templates
-            ));
-            
-            var rows = TestOperation(
-                GetTestData(new List<Row> {
-                    new Row { {"FirstName", "Dale"}, {"LastName", "Newman"} },
-                }),
+                                      "FullName",
+                                      "dynamic",
+                                      parameters,
+                                      templates
+                    ));
+
+            List<Row> rows = TestOperation(
+                GetTestData(new List<Row>
+                                {
+                                    new Row
+                                        {
+                                            {"FirstName", "Dale"},
+                                            {"LastName", "Newman"}
+                                        },
+                                }),
                 new TransformFields(fullName),
                 new LogOperation()
-            );
+                );
 
             Assert.AreEqual("Dale Newman", rows[0]["FullName"]);
-        }
-
-
-        [Test]
-        public void TestJoinTransformStrings() {
-
-            var parameters = new Parameters { { "FirstName", new Parameter("FirstName", null) }, { "LastName", new Parameter("LastName", null) } };
-
-            var fullName = new Field(FieldType.Field) { Alias = "FullName"};
-            fullName.Transforms.Add(new JoinTransform(" ",parameters));
-
-            var rows = TestOperation(
-                GetTestData(new List<Row> {
-                    new Row { {"FirstName", "Dale"}, {"LastName", "Newman"} },
-                }),
-                new TransformFields(fullName),
-                new LogOperation()
-            );
-
-            Assert.AreEqual("Dale Newman", rows[0]["FullName"]);
-        }
-
-        private static IOperation GetTestData(IEnumerable<Row> data) {
-            var mock = new Mock<IOperation>();
-            mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(data);
-            return mock.Object;
         }
     }
 }

@@ -36,14 +36,14 @@ using System.Collections.Generic;
 namespace Transformalize.Libs.NLog
 {
     /// <summary>
-    /// Global Diagnostics Context - a dictionary structure to hold per-application-instance values.
+    ///     Global Diagnostics Context - a dictionary structure to hold per-application-instance values.
     /// </summary>
     public static class GlobalDiagnosticsContext
     {
-        private static Dictionary<string, string> dict = new Dictionary<string, string>();
+        private static readonly Dictionary<string, string> dict = new Dictionary<string, string>();
 
         /// <summary>
-        /// Sets the Global Diagnostics Context item to the specified value.
+        ///     Sets the Global Diagnostics Context item to the specified value.
         /// </summary>
         /// <param name="item">Item name.</param>
         /// <param name="value">Item value.</param>
@@ -56,7 +56,7 @@ namespace Transformalize.Libs.NLog
         }
 
         /// <summary>
-        /// Gets the Global Diagnostics Context named item.
+        ///     Gets the Global Diagnostics Context named item.
         /// </summary>
         /// <param name="item">Item name.</param>
         /// <returns>The item value of string.Empty if the value is not present.</returns>
@@ -76,7 +76,7 @@ namespace Transformalize.Libs.NLog
         }
 
         /// <summary>
-        /// Checks whether the specified item exists in the Global Diagnostics Context.
+        ///     Checks whether the specified item exists in the Global Diagnostics Context.
         /// </summary>
         /// <param name="item">Item name.</param>
         /// <returns>A boolean indicating whether the specified item exists in current thread GDC.</returns>
@@ -89,7 +89,7 @@ namespace Transformalize.Libs.NLog
         }
 
         /// <summary>
-        /// Removes the specified item from the Global Diagnostics Context.
+        ///     Removes the specified item from the Global Diagnostics Context.
         /// </summary>
         /// <param name="item">Item name.</param>
         public static void Remove(string item)
@@ -101,7 +101,7 @@ namespace Transformalize.Libs.NLog
         }
 
         /// <summary>
-        /// Clears the content of the GDC.
+        ///     Clears the content of the GDC.
         /// </summary>
         public static void Clear()
         {

@@ -2,8 +2,7 @@ using System;
 using System.IO;
 using System.Xml.Linq;
 using Transformalize.Configuration;
-using Transformalize.Core;
-using Transformalize.Core.Process_;
+using Transformalize.Main;
 using Transformalize.Extensions;
 using Transformalize.Libs.NLog;
 
@@ -29,12 +28,12 @@ namespace Transformalize.Runner
                 Environment.Exit(1);
             }
 
-            var contents = File.ReadAllText(xmlFileInfo.FullName);
+            string contents = File.ReadAllText(xmlFileInfo.FullName);
             try
             {
-                var doc = XDocument.Parse(contents);
+                XDocument doc = XDocument.Parse(contents);
 
-                var process = doc.Element("process");
+                XElement process = doc.Element("process");
                 if (process == null)
                 {
                     _log.Error("Sorry.  I can't find the <process/> element in {0}.", xmlFileInfo.Name);
@@ -42,8 +41,8 @@ namespace Transformalize.Runner
                 }
 
                 var section = new TransformalizeConfiguration();
-                var name = xmlFileInfo.Name.Remove(xmlFileInfo.Name.Length - xmlFileInfo.Extension.Length);
-                var xml = string.Format(@"
+                string name = xmlFileInfo.Name.Remove(xmlFileInfo.Name.Length - xmlFileInfo.Extension.Length);
+                string xml = string.Format(@"
                     <transformalize>
                         <processes>
                             <add name=""{0}"">{1}</add>

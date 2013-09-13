@@ -37,12 +37,12 @@ using System.Reflection;
 namespace Transformalize.Libs.NLog.Internal
 {
     /// <summary>
-    /// Object construction helper.
+    ///     Object construction helper.
     /// </summary>
     internal class FactoryHelper
     {
-        private static Type[] emptyTypes = new Type[0];
-        private static object[] emptyParams = new object[0];
+        private static readonly Type[] emptyTypes = new Type[0];
+        private static readonly object[] emptyParams = new object[0];
 
         private FactoryHelper()
         {

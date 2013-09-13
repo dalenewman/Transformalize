@@ -45,148 +45,148 @@ using Transformalize.Libs.NLog.Layouts;
 namespace Transformalize.Libs.NLog.Targets
 {
     /// <summary>
-    /// Writes log message to the Event Log.
+    ///     Writes log message to the Event Log.
     /// </summary>
     /// <seealso href="http://nlog-project.org/wiki/EventLog_target">Documentation on NLog Wiki</seealso>
     /// <example>
-    /// <p>
-    /// To set up the target in the <a href="config.html">configuration file</a>, 
-    /// use the following syntax:
-    /// </p>
-    /// <code lang="XML" source="examples/targets/Configuration File/EventLog/NLog.config" />
-    /// <p>
-    /// This assumes just one target and a single rule. More configuration
-    /// options are described <a href="config.html">here</a>.
-    /// </p>
-    /// <p>
-    /// To set up the log target programmatically use code like this:
-    /// </p>
-    /// <code lang="C#" source="examples/targets/Configuration API/EventLog/Simple/Example.cs" />
+    ///     <p>
+    ///         To set up the target in the <a href="config.html">configuration file</a>,
+    ///         use the following syntax:
+    ///     </p>
+    ///     <code lang="XML" source="examples/targets/Configuration File/EventLog/NLog.config" />
+    ///     <p>
+    ///         This assumes just one target and a single rule. More configuration
+    ///         options are described <a href="config.html">here</a>.
+    ///     </p>
+    ///     <p>
+    ///         To set up the log target programmatically use code like this:
+    ///     </p>
+    ///     <code lang="C#" source="examples/targets/Configuration API/EventLog/Simple/Example.cs" />
     /// </example>
     [Target("EventLog")]
     public class EventLogTarget : TargetWithLayout, IInstallable
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="EventLogTarget"/> class.
+        ///     Initializes a new instance of the <see cref="EventLogTarget" /> class.
         /// </summary>
         public EventLogTarget()
         {
-            this.Source = AppDomain.CurrentDomain.FriendlyName;
-            this.Log = "Application";
-            this.MachineName = ".";
+            Source = AppDomain.CurrentDomain.FriendlyName;
+            Log = "Application";
+            MachineName = ".";
         }
 
         /// <summary>
-        /// Gets or sets the name of the machine on which Event Log service is running.
+        ///     Gets or sets the name of the machine on which Event Log service is running.
         /// </summary>
         /// <docgen category='Event Log Options' order='10' />
         [DefaultValue(".")]
         public string MachineName { get; set; }
 
         /// <summary>
-        /// Gets or sets the layout that renders event ID.
+        ///     Gets or sets the layout that renders event ID.
         /// </summary>
         /// <docgen category='Event Log Options' order='10' />
         public Layout EventId { get; set; }
 
         /// <summary>
-        /// Gets or sets the layout that renders event Category.
+        ///     Gets or sets the layout that renders event Category.
         /// </summary>
         /// <docgen category='Event Log Options' order='10' />
         public Layout Category { get; set; }
 
         /// <summary>
-        /// Gets or sets the value to be used as the event Source.
+        ///     Gets or sets the value to be used as the event Source.
         /// </summary>
         /// <remarks>
-        /// By default this is the friendly name of the current AppDomain.
+        ///     By default this is the friendly name of the current AppDomain.
         /// </remarks>
         /// <docgen category='Event Log Options' order='10' />
         public string Source { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of the Event Log to write to. This can be System, Application or 
-        /// any user-defined name.
+        ///     Gets or sets the name of the Event Log to write to. This can be System, Application or
+        ///     any user-defined name.
         /// </summary>
         /// <docgen category='Event Log Options' order='10' />
         [DefaultValue("Application")]
         public string Log { get; set; }
 
         /// <summary>
-        /// Performs installation which requires administrative permissions.
+        ///     Performs installation which requires administrative permissions.
         /// </summary>
         /// <param name="installationContext">The installation context.</param>
         public void Install(InstallationContext installationContext)
         {
-            if (EventLog.SourceExists(this.Source, this.MachineName))
+            if (EventLog.SourceExists(Source, MachineName))
             {
-                string currentLogName = EventLog.LogNameFromSourceName(this.Source, this.MachineName);
-                if (currentLogName != this.Log)
+                string currentLogName = EventLog.LogNameFromSourceName(Source, MachineName);
+                if (currentLogName != Log)
                 {
                     // re-create the association between Log and Source
-                    EventLog.DeleteEventSource(this.Source, this.MachineName);
+                    EventLog.DeleteEventSource(Source, MachineName);
 
-                    var escd = new EventSourceCreationData(this.Source, this.Log)
-                    {
-                        MachineName = this.MachineName
-                    };
+                    var escd = new EventSourceCreationData(Source, Log)
+                                   {
+                                       MachineName = MachineName
+                                   };
 
                     EventLog.CreateEventSource(escd);
                 }
             }
             else
             {
-                var escd = new EventSourceCreationData(this.Source, this.Log)
-                {
-                    MachineName = this.MachineName
-                };
+                var escd = new EventSourceCreationData(Source, Log)
+                               {
+                                   MachineName = MachineName
+                               };
 
                 EventLog.CreateEventSource(escd);
             }
         }
 
         /// <summary>
-        /// Performs uninstallation which requires administrative permissions.
+        ///     Performs uninstallation which requires administrative permissions.
         /// </summary>
         /// <param name="installationContext">The installation context.</param>
         public void Uninstall(InstallationContext installationContext)
         {
-            EventLog.DeleteEventSource(this.Source, this.MachineName);
+            EventLog.DeleteEventSource(Source, MachineName);
         }
 
         /// <summary>
-        /// Determines whether the item is installed.
+        ///     Determines whether the item is installed.
         /// </summary>
         /// <param name="installationContext">The installation context.</param>
         /// <returns>
-        /// Value indicating whether the item is installed or null if it is not possible to determine.
+        ///     Value indicating whether the item is installed or null if it is not possible to determine.
         /// </returns>
         public bool? IsInstalled(InstallationContext installationContext)
         {
-            return EventLog.SourceExists(this.Source, this.MachineName);
+            return EventLog.SourceExists(Source, MachineName);
         }
 
         /// <summary>
-        /// Initializes the target.
+        ///     Initializes the target.
         /// </summary>
         protected override void InitializeTarget()
         {
             base.InitializeTarget();
 
-            var s = EventLog.LogNameFromSourceName(this.Source, this.MachineName);
-            if (s != this.Log)
+            string s = EventLog.LogNameFromSourceName(Source, MachineName);
+            if (s != Log)
             {
-                this.CreateEventSourceIfNeeded();
+                CreateEventSourceIfNeeded();
             }
         }
 
         /// <summary>
-        /// Writes the specified logging event to the event log. 
+        ///     Writes the specified logging event to the event log.
         /// </summary>
         /// <param name="logEvent">The logging event.</param>
         protected override void Write(LogEventInfo logEvent)
         {
-            string message = this.Layout.Render(logEvent);
+            string message = Layout.Render(logEvent);
             if (message.Length > 16384)
             {
                 // limitation of EventLog API
@@ -210,19 +210,19 @@ namespace Transformalize.Libs.NLog.Targets
 
             int eventId = 0;
 
-            if (this.EventId != null)
+            if (EventId != null)
             {
-                eventId = Convert.ToInt32(this.EventId.Render(logEvent), CultureInfo.InvariantCulture);
+                eventId = Convert.ToInt32(EventId.Render(logEvent), CultureInfo.InvariantCulture);
             }
 
             short category = 0;
 
-            if (this.Category != null)
+            if (Category != null)
             {
-                category = Convert.ToInt16(this.Category.Render(logEvent), CultureInfo.InvariantCulture);
+                category = Convert.ToInt16(Category.Render(logEvent), CultureInfo.InvariantCulture);
             }
 
-            EventLog.WriteEntry(this.Source, message, entryType, eventId, category);
+            EventLog.WriteEntry(Source, message, entryType, eventId, category);
         }
 
         private void CreateEventSourceIfNeeded()
@@ -230,27 +230,27 @@ namespace Transformalize.Libs.NLog.Targets
             // if we throw anywhere, we remain non-operational
             try
             {
-                if (EventLog.SourceExists(this.Source, this.MachineName))
+                if (EventLog.SourceExists(Source, MachineName))
                 {
-                    string currentLogName = EventLog.LogNameFromSourceName(this.Source, this.MachineName);
-                    if (currentLogName != this.Log)
+                    string currentLogName = EventLog.LogNameFromSourceName(Source, MachineName);
+                    if (currentLogName != Log)
                     {
                         // re-create the association between Log and Source
-                        EventLog.DeleteEventSource(this.Source, this.MachineName);
-                        var escd = new EventSourceCreationData(this.Source, this.Log)
-                        {
-                            MachineName = this.MachineName
-                        };
+                        EventLog.DeleteEventSource(Source, MachineName);
+                        var escd = new EventSourceCreationData(Source, Log)
+                                       {
+                                           MachineName = MachineName
+                                       };
 
                         EventLog.CreateEventSource(escd);
                     }
                 }
                 else
                 {
-                    var escd = new EventSourceCreationData(this.Source, this.Log)
-                    {
-                        MachineName = this.MachineName
-                    };
+                    var escd = new EventSourceCreationData(Source, Log)
+                                   {
+                                       MachineName = MachineName
+                                   };
 
                     EventLog.CreateEventSource(escd);
                 }

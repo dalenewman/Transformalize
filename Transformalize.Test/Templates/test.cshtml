@@ -1,13 +1,13 @@
 ﻿@using System
-@using Transformalize.Configuration;
+@using Transformalize.Main
 @{
-    var process = (ProcessConfigurationElement) Model.Process;
+    var process = (Process) Model.Process;
 }
 
 The answer is @(Model.Settings.Answer).
-The process is @(Model.Process.Name).
+The process is @(process.Name).
 The entities are:
-@foreach (EntityConfigurationElement entity in process.Entities)
+@foreach (var entity in process.Entities)
 {
     @(entity.Name + Environment.NewLine)
 }

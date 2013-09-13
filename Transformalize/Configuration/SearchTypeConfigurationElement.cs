@@ -28,60 +28,44 @@ namespace Transformalize.Configuration
         private const string INDEX = "index";
         private const string MULTI_VALUED = "multi-valued";
 
-        public override bool IsReadOnly()
-        {
-            return false;
-        }
-
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name
         {
-            get
-            {
-                return this[NAME] as string;
-            }
+            get { return this[NAME] as string; }
             set { this[NAME] = value; }
         }
 
         [ConfigurationProperty(TYPE, IsRequired = false, DefaultValue = "inherit")]
         public string Type
         {
-            get
-            {
-                return this[TYPE] as string;
-            }
+            get { return this[TYPE] as string; }
             set { this[TYPE] = value; }
         }
 
         [ConfigurationProperty(STORE, IsRequired = false, DefaultValue = true)]
         public bool Store
         {
-            get
-            {
-                return (bool) this[STORE];
-            }
+            get { return (bool) this[STORE]; }
             set { this[STORE] = value; }
         }
 
         [ConfigurationProperty(INDEX, IsRequired = false, DefaultValue = true)]
         public bool Index
         {
-            get
-            {
-                return (bool)this[INDEX];
-            }
+            get { return (bool) this[INDEX]; }
             set { this[INDEX] = value; }
         }
 
         [ConfigurationProperty(MULTI_VALUED, IsRequired = false, DefaultValue = false)]
         public bool MultiValued
         {
-            get
-            {
-                return (bool)this[MULTI_VALUED];
-            }
+            get { return (bool) this[MULTI_VALUED]; }
             set { this[MULTI_VALUED] = value; }
         }
 
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
     }
 }

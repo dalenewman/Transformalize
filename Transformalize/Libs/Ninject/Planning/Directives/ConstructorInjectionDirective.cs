@@ -1,4 +1,5 @@
 #region License
+
 // 
 // Author: Nate Kohari <nate@enkari.com>
 // Copyright (c) 2007-2010, Enkari, Ltd.
@@ -6,7 +7,9 @@
 // Dual-licensed under the Apache License, Version 2.0, and the Microsoft Public License (Ms-PL).
 // See the file LICENSE.txt for details.
 // 
+
 #endregion
+
 #region Using Directives
 
 using System.Reflection;
@@ -17,17 +20,12 @@ using Transformalize.Libs.Ninject.Injection;
 namespace Transformalize.Libs.Ninject.Planning.Directives
 {
     /// <summary>
-    /// Describes the injection of a constructor.
+    ///     Describes the injection of a constructor.
     /// </summary>
     public class ConstructorInjectionDirective : MethodInjectionDirectiveBase<ConstructorInfo, ConstructorInjector>
     {
         /// <summary>
-        /// The base .ctor definition.
-        /// </summary>
-        public ConstructorInfo Constructor { get; set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ConstructorInjectionDirective"/> class.
+        ///     Initializes a new instance of the <see cref="ConstructorInjectionDirective" /> class.
         /// </summary>
         /// <param name="constructor">The constructor described by the directive.</param>
         /// <param name="injector">The injector that will be triggered.</param>
@@ -36,5 +34,10 @@ namespace Transformalize.Libs.Ninject.Planning.Directives
         {
             Constructor = constructor;
         }
+
+        /// <summary>
+        ///     The base .ctor definition.
+        /// </summary>
+        public ConstructorInfo Constructor { get; set; }
     }
 }

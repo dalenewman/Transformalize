@@ -34,34 +34,34 @@
 namespace Transformalize.Libs.NLog.Config
 {
     /// <summary>
-    /// Value indicating how stack trace should be captured when processing the log event.
+    ///     Value indicating how stack trace should be captured when processing the log event.
     /// </summary>
     public enum StackTraceUsage
     {
         /// <summary>
-        /// Stack trace should not be captured.
+        ///     Stack trace should not be captured.
         /// </summary>
-        None = 0, 
+        None = 0,
 
         /// <summary>
-        /// Stack trace should be captured without source-level information.
+        ///     Stack trace should be captured without source-level information.
         /// </summary>
         WithoutSource = 1,
 
 #if !SILVERLIGHT
         /// <summary>
-        /// Stack trace should be captured including source-level information such as line numbers.
+        ///     Stack trace should be captured including source-level information such as line numbers.
         /// </summary>
         WithSource = 2,
 
         /// <summary>
-        /// Capture maximum amount of the stack trace information supported on the plaform.
+        ///     Capture maximum amount of the stack trace information supported on the plaform.
         /// </summary>
         Max = 2,
 #else
-        /// <summary>
-        /// Capture maximum amount of the stack trace information supported on the plaform.
-        /// </summary>
+    /// <summary>
+    /// Capture maximum amount of the stack trace information supported on the plaform.
+    /// </summary>
         Max = 1,
 #endif
     }

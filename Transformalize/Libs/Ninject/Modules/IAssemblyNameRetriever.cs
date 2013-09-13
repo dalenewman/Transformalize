@@ -25,15 +25,16 @@ using System.Reflection;
 using Transformalize.Libs.Ninject.Components;
 
 #if !NO_ASSEMBLY_SCANNING
+
 namespace Transformalize.Libs.Ninject.Modules
 {
     /// <summary>
-    /// Retrieves assembly names from file names using a temporary app domain.
+    ///     Retrieves assembly names from file names using a temporary app domain.
     /// </summary>
     public interface IAssemblyNameRetriever : INinjectComponent
     {
         /// <summary>
-        /// Gets all assembly names of the assemblies in the given files that match the filter.
+        ///     Gets all assembly names of the assemblies in the given files that match the filter.
         /// </summary>
         /// <param name="filenames">The filenames.</param>
         /// <param name="filter">The filter.</param>
@@ -41,4 +42,5 @@ namespace Transformalize.Libs.Ninject.Modules
         IEnumerable<AssemblyName> GetAssemblyNames(IEnumerable<string> filenames, Predicate<Assembly> filter);
     }
 }
+
 #endif

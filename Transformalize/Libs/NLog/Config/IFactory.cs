@@ -37,7 +37,7 @@ using System.Reflection;
 namespace Transformalize.Libs.NLog.Config
 {
     /// <summary>
-    /// Provides means to populate factories of named items (such as targets, layouts, layout renderers, etc.).
+    ///     Provides means to populate factories of named items (such as targets, layouts, layout renderers, etc.).
     /// </summary>
     internal interface IFactory
     {

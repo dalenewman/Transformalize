@@ -18,22 +18,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Configuration;
 
-namespace Transformalize.Configuration {
-
-    public class TransformTemplateConfigurationElement : ConfigurationElement {
+namespace Transformalize.Configuration
+{
+    public class TransformTemplateConfigurationElement : ConfigurationElement
+    {
+        [ConfigurationProperty("name", IsRequired = true)]
+        public string Name
+        {
+            get { return this["name"] as string; }
+            set { this["name"] = value; }
+        }
 
         public override bool IsReadOnly()
         {
             return false;
         }
-
-        [ConfigurationProperty("name", IsRequired = true)]
-        public string Name {
-            get {
-                return this["name"] as string;
-            }
-            set { this["name"] = value; }
-        }
-
     }
 }

@@ -16,35 +16,45 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Configuration;
+using System.Linq;
 
-namespace Transformalize.Configuration {
-    public class ConnectionElementCollection : ConfigurationElementCollection {
-
-        public override bool IsReadOnly()
+namespace Transformalize.Configuration
+{
+    public class ConnectionElementCollection : ConfigurationElementCollection
+    {
+        public ConnectionConfigurationElement this[int index]
         {
-            return false;
-        }
-
-        public ConnectionConfigurationElement this[int index] {
-            get {
-                return BaseGet(index) as ConnectionConfigurationElement;
-            }
-            set {
-                if (BaseGet(index) != null) {
+            get { return BaseGet(index) as ConnectionConfigurationElement; }
+            set
+            {
+                if (BaseGet(index) != null)
+                {
                     BaseRemoveAt(index);
                 }
                 BaseAdd(index, value);
             }
         }
 
-        protected override ConfigurationElement CreateNewElement() {
+        public new ConnectionConfigurationElement this[string name]
+        {
+            get { return this.Cast<ConnectionConfigurationElement>().FirstOrDefault(element => element.Name.Equals(name, StringComparison.OrdinalIgnoreCase)); }
+        }
+
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
+        protected override ConfigurationElement CreateNewElement()
+        {
             return new ConnectionConfigurationElement();
         }
 
-        protected override object GetElementKey(ConfigurationElement element) {
-            return ((ConnectionConfigurationElement)element).Name.ToLower();
+        protected override object GetElementKey(ConfigurationElement element)
+        {
+            return ((ConnectionConfigurationElement) element).Name.ToLower();
         }
-
     }
 }

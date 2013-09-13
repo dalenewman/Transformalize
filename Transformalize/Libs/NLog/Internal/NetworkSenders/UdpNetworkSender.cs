@@ -32,6 +32,7 @@
 // 
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -42,50 +43,52 @@ using Transformalize.Libs.NLog.Common;
 namespace Transformalize.Libs.NLog.Internal.NetworkSenders
 {
     /// <summary>
-    /// Sends messages over the network as UDP datagrams.
+    ///     Sends messages over the network as UDP datagrams.
     /// </summary>
     internal class UdpNetworkSender : NetworkSender
     {
-        private ISocket socket;
         private EndPoint endpoint;
+        private ISocket socket;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UdpNetworkSender"/> class.
+        ///     Initializes a new instance of the <see cref="UdpNetworkSender" /> class.
         /// </summary>
         /// <param name="url">URL. Must start with udp://.</param>
         /// <param name="addressFamily">The address family.</param>
         public UdpNetworkSender(string url, AddressFamily addressFamily)
             : base(url)
         {
-            this.AddressFamily = addressFamily;
+            AddressFamily = addressFamily;
         }
 
         internal AddressFamily AddressFamily { get; set; }
 
         /// <summary>
-        /// Creates the socket.
+        ///     Creates the socket.
         /// </summary>
         /// <param name="addressFamily">The address family.</param>
         /// <param name="socketType">Type of the socket.</param>
         /// <param name="protocolType">Type of the protocol.</param>
-        /// <returns>Implementation of <see cref="ISocket"/> to use.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Socket is disposed elsewhere.")]
+        /// <returns>
+        ///     Implementation of <see cref="ISocket" /> to use.
+        /// </returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Socket is disposed elsewhere.")]
         protected internal virtual ISocket CreateSocket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType)
         {
             return new SocketProxy(addressFamily, socketType, protocolType);
         }
 
         /// <summary>
-        /// Performs sender-specific initialization.
+        ///     Performs sender-specific initialization.
         /// </summary>
         protected override void DoInitialize()
         {
-            this.endpoint = this.ParseEndpointAddress(new Uri(this.Address), this.AddressFamily);
-            this.socket = this.CreateSocket(this.endpoint.AddressFamily, SocketType.Dgram, ProtocolType.Udp);
+            endpoint = ParseEndpointAddress(new Uri(Address), AddressFamily);
+            socket = CreateSocket(endpoint.AddressFamily, SocketType.Dgram, ProtocolType.Udp);
         }
 
         /// <summary>
-        /// Closes the socket.
+        ///     Closes the socket.
         /// </summary>
         /// <param name="continuation">The continuation.</param>
         protected override void DoClose(AsyncContinuation continuation)
@@ -94,9 +97,9 @@ namespace Transformalize.Libs.NLog.Internal.NetworkSenders
             {
                 try
                 {
-                    if (this.socket != null)
+                    if (socket != null)
                     {
-                        this.socket.Close();
+                        socket.Close();
                     }
                 }
                 catch (Exception exception)
@@ -107,19 +110,19 @@ namespace Transformalize.Libs.NLog.Internal.NetworkSenders
                     }
                 }
 
-                this.socket = null;
+                socket = null;
             }
         }
 
         /// <summary>
-        /// Sends the specified text as a UDP datagram.
+        ///     Sends the specified text as a UDP datagram.
         /// </summary>
         /// <param name="bytes">The bytes to be sent.</param>
         /// <param name="offset">Offset in buffer.</param>
         /// <param name="length">Number of bytes to send.</param>
         /// <param name="asyncContinuation">The async continuation to be invoked after the buffer has been sent.</param>
         /// <remarks>To be overridden in inheriting classes.</remarks>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Dispose() is called in the event handler.")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Dispose() is called in the event handler.")]
         protected override void DoSend(byte[] bytes, int offset, int length, AsyncContinuation asyncContinuation)
         {
             lock (this)
@@ -127,12 +130,12 @@ namespace Transformalize.Libs.NLog.Internal.NetworkSenders
                 var args = new SocketAsyncEventArgs();
                 args.SetBuffer(bytes, offset, length);
                 args.UserToken = asyncContinuation;
-                args.Completed += this.SocketOperationCompleted;
-                args.RemoteEndPoint = this.endpoint;
+                args.Completed += SocketOperationCompleted;
+                args.RemoteEndPoint = endpoint;
 
-                if (!this.socket.SendToAsync(args))
+                if (!socket.SendToAsync(args))
                 {
-                    this.SocketOperationCompleted(this.socket, args);
+                    SocketOperationCompleted(socket, args);
                 }
             }
         }

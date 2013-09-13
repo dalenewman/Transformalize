@@ -32,74 +32,77 @@
 // 
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading;
+using Microsoft.Win32.SafeHandles;
 using Transformalize.Libs.NLog.Common;
 
 namespace Transformalize.Libs.NLog.Internal.FileAppenders
 {
     /// <summary>
-    /// Base class for optimized file appenders.
+    ///     Base class for optimized file appenders.
     /// </summary>
     internal abstract class BaseFileAppender : IDisposable
     {
         private readonly Random random = new Random();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BaseFileAppender" /> class.
+        ///     Initializes a new instance of the <see cref="BaseFileAppender" /> class.
         /// </summary>
         /// <param name="fileName">Name of the file.</param>
         /// <param name="createParameters">The create parameters.</param>
         public BaseFileAppender(string fileName, ICreateFileParameters createParameters)
         {
-            this.CreateFileParameters = createParameters;
-            this.FileName = fileName;
-            this.OpenTime = CurrentTimeGetter.Now;
-            this.LastWriteTime = DateTime.MinValue;
+            CreateFileParameters = createParameters;
+            FileName = fileName;
+            OpenTime = CurrentTimeGetter.Now;
+            LastWriteTime = DateTime.MinValue;
         }
 
         /// <summary>
-        /// Gets the name of the file.
+        ///     Gets the name of the file.
         /// </summary>
         /// <value>The name of the file.</value>
         public string FileName { get; private set; }
 
         /// <summary>
-        /// Gets the last write time.
+        ///     Gets the last write time.
         /// </summary>
         /// <value>The last write time.</value>
         public DateTime LastWriteTime { get; private set; }
 
         /// <summary>
-        /// Gets the open time of the file.
+        ///     Gets the open time of the file.
         /// </summary>
         /// <value>The open time.</value>
         public DateTime OpenTime { get; private set; }
 
         /// <summary>
-        /// Gets the file creation parameters.
+        ///     Gets the file creation parameters.
         /// </summary>
         /// <value>The file creation parameters.</value>
         public ICreateFileParameters CreateFileParameters { get; private set; }
 
         /// <summary>
-        /// Writes the specified bytes.
+        ///     Writes the specified bytes.
         /// </summary>
         /// <param name="bytes">The bytes.</param>
         public abstract void Write(byte[] bytes);
 
         /// <summary>
-        /// Flushes this instance.
+        ///     Flushes this instance.
         /// </summary>
         public abstract void Flush();
 
         /// <summary>
-        /// Closes this instance.
+        ///     Closes this instance.
         /// </summary>
         public abstract void Close();
 
         /// <summary>
-        /// Gets the file info.
+        ///     Gets the file info.
         /// </summary>
         /// <param name="lastWriteTime">The last write time.</param>
         /// <param name="fileLength">Length of the file.</param>
@@ -107,83 +110,89 @@ namespace Transformalize.Libs.NLog.Internal.FileAppenders
         public abstract bool GetFileInfo(out DateTime lastWriteTime, out long fileLength);
 
         /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         public void Dispose()
         {
-            this.Dispose(true);
+            Dispose(true);
             GC.SuppressFinalize(this);
         }
 
         /// <summary>
-        /// Releases unmanaged and - optionally - managed resources.
+        ///     Releases unmanaged and - optionally - managed resources.
         /// </summary>
-        /// <param name="disposing">True to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        /// <param name="disposing">
+        ///     True to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.
+        /// </param>
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
-                this.Close();
+                Close();
             }
         }
 
         /// <summary>
-        /// Records the last write time for a file.
+        ///     Records the last write time for a file.
         /// </summary>
         protected void FileTouched()
         {
-            this.LastWriteTime = CurrentTimeGetter.Now;
+            LastWriteTime = CurrentTimeGetter.Now;
         }
 
         /// <summary>
-        /// Records the last write time for a file to be specific date.
+        ///     Records the last write time for a file to be specific date.
         /// </summary>
         /// <param name="dateTime">Date and time when the last write occurred.</param>
         protected void FileTouched(DateTime dateTime)
         {
-            this.LastWriteTime = dateTime;
+            LastWriteTime = dateTime;
         }
 
         /// <summary>
-        /// Creates the file stream.
+        ///     Creates the file stream.
         /// </summary>
-        /// <param name="allowConcurrentWrite">If set to <c>true</c> allow concurrent writes.</param>
-        /// <returns>A <see cref="FileStream"/> object which can be used to write to the file.</returns>
+        /// <param name="allowConcurrentWrite">
+        ///     If set to <c>true</c> allow concurrent writes.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="FileStream" /> object which can be used to write to the file.
+        /// </returns>
         protected FileStream CreateFileStream(bool allowConcurrentWrite)
         {
-            int currentDelay = this.CreateFileParameters.ConcurrentWriteAttemptDelay;
+            int currentDelay = CreateFileParameters.ConcurrentWriteAttemptDelay;
 
-            InternalLogger.Trace("Opening {0} with concurrentWrite={1}", this.FileName, allowConcurrentWrite);
-            for (int i = 0; i < this.CreateFileParameters.ConcurrentWriteAttempts; ++i)
+            InternalLogger.Trace("Opening {0} with concurrentWrite={1}", FileName, allowConcurrentWrite);
+            for (int i = 0; i < CreateFileParameters.ConcurrentWriteAttempts; ++i)
             {
                 try
                 {
                     try
                     {
-                        return this.TryCreateFileStream(allowConcurrentWrite);
+                        return TryCreateFileStream(allowConcurrentWrite);
                     }
                     catch (DirectoryNotFoundException)
                     {
-                        if (!this.CreateFileParameters.CreateDirs)
+                        if (!CreateFileParameters.CreateDirs)
                         {
                             throw;
                         }
 
-                        Directory.CreateDirectory(Path.GetDirectoryName(this.FileName));
-                        return this.TryCreateFileStream(allowConcurrentWrite);
+                        Directory.CreateDirectory(Path.GetDirectoryName(FileName));
+                        return TryCreateFileStream(allowConcurrentWrite);
                     }
                 }
                 catch (IOException)
                 {
-                    if (!this.CreateFileParameters.ConcurrentWrites || !allowConcurrentWrite || i + 1 == this.CreateFileParameters.ConcurrentWriteAttempts)
+                    if (!CreateFileParameters.ConcurrentWrites || !allowConcurrentWrite || i + 1 == CreateFileParameters.ConcurrentWriteAttempts)
                     {
                         throw; // rethrow
                     }
 
-                    int actualDelay = this.random.Next(currentDelay);
-                    InternalLogger.Warn("Attempt #{0} to open {1} failed. Sleeping for {2}ms", i, this.FileName, actualDelay);
+                    int actualDelay = random.Next(currentDelay);
+                    InternalLogger.Warn("Attempt #{0} to open {1} failed. Sleeping for {2}ms", i, FileName, actualDelay);
                     currentDelay *= 2;
-                    System.Threading.Thread.Sleep(actualDelay);
+                    Thread.Sleep(actualDelay);
                 }
             }
 
@@ -191,7 +200,7 @@ namespace Transformalize.Libs.NLog.Internal.FileAppenders
         }
 
 #if !NET_CF && !SILVERLIGHT
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Objects are disposed elsewhere")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Objects are disposed elsewhere")]
         private FileStream WindowsCreateFile(string fileName, bool allowConcurrentWrite)
         {
             int fileShare = Win32FileNativeMethods.FILE_SHARE_READ;
@@ -201,7 +210,7 @@ namespace Transformalize.Libs.NLog.Internal.FileAppenders
                 fileShare |= Win32FileNativeMethods.FILE_SHARE_WRITE;
             }
 
-            if (this.CreateFileParameters.EnableFileDelete && PlatformDetector.CurrentOS != RuntimeOS.Windows)
+            if (CreateFileParameters.EnableFileDelete && PlatformDetector.CurrentOS != RuntimeOS.Windows)
             {
                 fileShare |= Win32FileNativeMethods.FILE_SHARE_DELETE;
             }
@@ -212,7 +221,7 @@ namespace Transformalize.Libs.NLog.Internal.FileAppenders
                 fileShare,
                 IntPtr.Zero,
                 Win32FileNativeMethods.CreationDisposition.OpenAlways,
-                this.CreateFileParameters.FileAttributes, 
+                CreateFileParameters.FileAttributes,
                 IntPtr.Zero);
 
             if (handle.ToInt32() == -1)
@@ -220,8 +229,8 @@ namespace Transformalize.Libs.NLog.Internal.FileAppenders
                 Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
             }
 
-            var safeHandle = new Microsoft.Win32.SafeHandles.SafeFileHandle(handle, true);
-            var returnValue = new FileStream(safeHandle, FileAccess.Write, this.CreateFileParameters.BufferSize);
+            var safeHandle = new SafeFileHandle(handle, true);
+            var returnValue = new FileStream(safeHandle, FileAccess.Write, CreateFileParameters.BufferSize);
             returnValue.Seek(0, SeekOrigin.End);
             return returnValue;
         }
@@ -229,7 +238,7 @@ namespace Transformalize.Libs.NLog.Internal.FileAppenders
 
         private FileStream TryCreateFileStream(bool allowConcurrentWrite)
         {
-            FileShare fileShare = FileShare.Read;
+            var fileShare = FileShare.Read;
 
             if (allowConcurrentWrite)
             {
@@ -237,7 +246,7 @@ namespace Transformalize.Libs.NLog.Internal.FileAppenders
             }
 
 #if !NET_CF
-            if (this.CreateFileParameters.EnableFileDelete && PlatformDetector.CurrentOS != RuntimeOS.Windows)
+            if (CreateFileParameters.EnableFileDelete && PlatformDetector.CurrentOS != RuntimeOS.Windows)
             {
                 fileShare |= FileShare.Delete;
             }
@@ -246,16 +255,16 @@ namespace Transformalize.Libs.NLog.Internal.FileAppenders
 #if !NET_CF && !SILVERLIGHT
             if (PlatformDetector.IsDesktopWin32)
             {
-                return this.WindowsCreateFile(this.FileName, allowConcurrentWrite);
+                return WindowsCreateFile(FileName, allowConcurrentWrite);
             }
 #endif
 
             return new FileStream(
-                this.FileName, 
-                FileMode.Append, 
-                FileAccess.Write, 
-                fileShare, 
-                this.CreateFileParameters.BufferSize);
+                FileName,
+                FileMode.Append,
+                FileAccess.Write,
+                fileShare,
+                CreateFileParameters.BufferSize);
         }
     }
 }

@@ -42,133 +42,125 @@ using Transformalize.Libs.NLog.Targets;
 namespace Transformalize.Libs.NLog.Config
 {
     /// <summary>
-    /// Represents a logging rule. An equivalent of &lt;logger /&gt; configuration element.
+    ///     Represents a logging rule. An equivalent of &lt;logger /&gt; configuration element.
     /// </summary>
     [NLogConfigurationItem]
     public class LoggingRule
     {
         private readonly bool[] logLevels = new bool[LogLevel.MaxLevel.Ordinal + 1];
 
-        private string loggerNamePattern;
-        private MatchMode loggerNameMatchMode;
         private string loggerNameMatchArgument;
+        private MatchMode loggerNameMatchMode;
+        private string loggerNamePattern;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LoggingRule" /> class.
+        ///     Initializes a new instance of the <see cref="LoggingRule" /> class.
         /// </summary>
         public LoggingRule()
         {
-            this.Filters = new List<Filter>();
-            this.ChildRules = new List<LoggingRule>();
-            this.Targets = new List<Target>();
+            Filters = new List<Filter>();
+            ChildRules = new List<LoggingRule>();
+            Targets = new List<Target>();
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LoggingRule" /> class.
+        ///     Initializes a new instance of the <see cref="LoggingRule" /> class.
         /// </summary>
         /// <param name="loggerNamePattern">Logger name pattern. It may include the '*' wildcard at the beginning, at the end or at both ends.</param>
         /// <param name="minLevel">Minimum log level needed to trigger this rule.</param>
         /// <param name="target">Target to be written to when the rule matches.</param>
         public LoggingRule(string loggerNamePattern, LogLevel minLevel, Target target)
         {
-            this.Filters = new List<Filter>();
-            this.ChildRules = new List<LoggingRule>();
-            this.Targets = new List<Target>();
-            this.LoggerNamePattern = loggerNamePattern;
-            this.Targets.Add(target);
+            Filters = new List<Filter>();
+            ChildRules = new List<LoggingRule>();
+            Targets = new List<Target>();
+            LoggerNamePattern = loggerNamePattern;
+            Targets.Add(target);
             for (int i = minLevel.Ordinal; i <= LogLevel.MaxLevel.Ordinal; ++i)
             {
-                this.EnableLoggingForLevel(LogLevel.FromOrdinal(i));
+                EnableLoggingForLevel(LogLevel.FromOrdinal(i));
             }
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LoggingRule" /> class.
+        ///     Initializes a new instance of the <see cref="LoggingRule" /> class.
         /// </summary>
         /// <param name="loggerNamePattern">Logger name pattern. It may include the '*' wildcard at the beginning, at the end or at both ends.</param>
         /// <param name="target">Target to be written to when the rule matches.</param>
-        /// <remarks>By default no logging levels are defined. You should call <see cref="EnableLoggingForLevel"/> and <see cref="DisableLoggingForLevel"/> to set them.</remarks>
+        /// <remarks>
+        ///     By default no logging levels are defined. You should call <see cref="EnableLoggingForLevel" /> and
+        ///     <see
+        ///         cref="DisableLoggingForLevel" />
+        ///     to set them.
+        /// </remarks>
         public LoggingRule(string loggerNamePattern, Target target)
         {
-            this.Filters = new List<Filter>();
-            this.ChildRules = new List<LoggingRule>();
-            this.Targets = new List<Target>();
-            this.LoggerNamePattern = loggerNamePattern;
-            this.Targets.Add(target);
-        }
-
-        internal enum MatchMode
-        {
-            All,
-            None,
-            Equals,
-            StartsWith,
-            EndsWith,
-            Contains,
+            Filters = new List<Filter>();
+            ChildRules = new List<LoggingRule>();
+            Targets = new List<Target>();
+            LoggerNamePattern = loggerNamePattern;
+            Targets.Add(target);
         }
 
         /// <summary>
-        /// Gets a collection of targets that should be written to when this rule matches.
+        ///     Gets a collection of targets that should be written to when this rule matches.
         /// </summary>
         public IList<Target> Targets { get; private set; }
 
         /// <summary>
-        /// Gets a collection of child rules to be evaluated when this rule matches.
+        ///     Gets a collection of child rules to be evaluated when this rule matches.
         /// </summary>
         public IList<LoggingRule> ChildRules { get; private set; }
 
         /// <summary>
-        /// Gets a collection of filters to be checked before writing to targets.
+        ///     Gets a collection of filters to be checked before writing to targets.
         /// </summary>
         public IList<Filter> Filters { get; private set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to quit processing any further rule when this one matches.
+        ///     Gets or sets a value indicating whether to quit processing any further rule when this one matches.
         /// </summary>
         public bool Final { get; set; }
 
         /// <summary>
-        /// Gets or sets logger name pattern.
+        ///     Gets or sets logger name pattern.
         /// </summary>
         /// <remarks>
-        /// Logger name pattern. It may include the '*' wildcard at the beginning, at the end or at both ends but not anywhere else.
+        ///     Logger name pattern. It may include the '*' wildcard at the beginning, at the end or at both ends but not anywhere else.
         /// </remarks>
         public string LoggerNamePattern
         {
-            get
-            {
-                return this.loggerNamePattern;
-            }
+            get { return loggerNamePattern; }
 
             set
             {
-                this.loggerNamePattern = value;
-                int firstPos = this.loggerNamePattern.IndexOf('*');
-                int lastPos = this.loggerNamePattern.LastIndexOf('*');
+                loggerNamePattern = value;
+                int firstPos = loggerNamePattern.IndexOf('*');
+                int lastPos = loggerNamePattern.LastIndexOf('*');
 
                 if (firstPos < 0)
                 {
-                    this.loggerNameMatchMode = MatchMode.Equals;
-                    this.loggerNameMatchArgument = value;
+                    loggerNameMatchMode = MatchMode.Equals;
+                    loggerNameMatchArgument = value;
                     return;
                 }
 
                 if (firstPos == lastPos)
                 {
-                    string before = this.LoggerNamePattern.Substring(0, firstPos);
-                    string after = this.LoggerNamePattern.Substring(firstPos + 1);
+                    string before = LoggerNamePattern.Substring(0, firstPos);
+                    string after = LoggerNamePattern.Substring(firstPos + 1);
 
                     if (before.Length > 0)
                     {
-                        this.loggerNameMatchMode = MatchMode.StartsWith;
-                        this.loggerNameMatchArgument = before;
+                        loggerNameMatchMode = MatchMode.StartsWith;
+                        loggerNameMatchArgument = before;
                         return;
                     }
 
                     if (after.Length > 0)
                     {
-                        this.loggerNameMatchMode = MatchMode.EndsWith;
-                        this.loggerNameMatchArgument = after;
+                        loggerNameMatchMode = MatchMode.EndsWith;
+                        loggerNameMatchArgument = after;
                         return;
                     }
 
@@ -176,21 +168,21 @@ namespace Transformalize.Libs.NLog.Config
                 }
 
                 // *text*
-                if (firstPos == 0 && lastPos == this.LoggerNamePattern.Length - 1)
+                if (firstPos == 0 && lastPos == LoggerNamePattern.Length - 1)
                 {
-                    string text = this.LoggerNamePattern.Substring(1, this.LoggerNamePattern.Length - 2);
-                    this.loggerNameMatchMode = MatchMode.Contains;
-                    this.loggerNameMatchArgument = text;
+                    string text = LoggerNamePattern.Substring(1, LoggerNamePattern.Length - 2);
+                    loggerNameMatchMode = MatchMode.Contains;
+                    loggerNameMatchArgument = text;
                     return;
                 }
 
-                this.loggerNameMatchMode = MatchMode.None;
-                this.loggerNameMatchArgument = string.Empty;
+                loggerNameMatchMode = MatchMode.None;
+                loggerNameMatchArgument = string.Empty;
             }
         }
 
         /// <summary>
-        /// Gets the collection of log levels enabled by this rule.
+        ///     Gets the collection of log levels enabled by this rule.
         /// </summary>
         public ReadOnlyCollection<LogLevel> Levels
         {
@@ -200,7 +192,7 @@ namespace Transformalize.Libs.NLog.Config
 
                 for (int i = LogLevel.MinLevel.Ordinal; i <= LogLevel.MaxLevel.Ordinal; ++i)
                 {
-                    if (this.logLevels[i])
+                    if (logLevels[i])
                     {
                         levels.Add(LogLevel.FromOrdinal(i));
                     }
@@ -211,45 +203,45 @@ namespace Transformalize.Libs.NLog.Config
         }
 
         /// <summary>
-        /// Enables logging for a particular level.
+        ///     Enables logging for a particular level.
         /// </summary>
         /// <param name="level">Level to be enabled.</param>
         public void EnableLoggingForLevel(LogLevel level)
         {
-            this.logLevels[level.Ordinal] = true;
+            logLevels[level.Ordinal] = true;
         }
 
         /// <summary>
-        /// Disables logging for a particular level.
+        ///     Disables logging for a particular level.
         /// </summary>
         /// <param name="level">Level to be disabled.</param>
         public void DisableLoggingForLevel(LogLevel level)
         {
-            this.logLevels[level.Ordinal] = false;
+            logLevels[level.Ordinal] = false;
         }
 
         /// <summary>
-        /// Returns a string representation of <see cref="LoggingRule"/>. Used for debugging.
+        ///     Returns a string representation of <see cref="LoggingRule" />. Used for debugging.
         /// </summary>
         /// <returns>
-        /// A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+        ///     A <see cref="T:System.String" /> that represents the current <see cref="T:System.Object" />.
         /// </returns>
         public override string ToString()
         {
             var sb = new StringBuilder();
 
-            sb.AppendFormat(CultureInfo.InvariantCulture, "logNamePattern: ({0}:{1})", this.loggerNameMatchArgument, this.loggerNameMatchMode);
+            sb.AppendFormat(CultureInfo.InvariantCulture, "logNamePattern: ({0}:{1})", loggerNameMatchArgument, loggerNameMatchMode);
             sb.Append(" levels: [ ");
-            for (int i = 0; i < this.logLevels.Length; ++i)
+            for (int i = 0; i < logLevels.Length; ++i)
             {
-                if (this.logLevels[0])
+                if (logLevels[0])
                 {
-                    sb.AppendFormat(CultureInfo.InvariantCulture, "{0} ", LogLevel.FromOrdinal(i).ToString());
+                    sb.AppendFormat(CultureInfo.InvariantCulture, "{0} ", LogLevel.FromOrdinal(i));
                 }
             }
 
             sb.Append("] appendTo: [ ");
-            foreach (Target app in this.Targets)
+            foreach (Target app in Targets)
             {
                 sb.AppendFormat(CultureInfo.InvariantCulture, "{0} ", app.Name);
             }
@@ -259,23 +251,27 @@ namespace Transformalize.Libs.NLog.Config
         }
 
         /// <summary>
-        /// Checks whether te particular log level is enabled for this rule.
+        ///     Checks whether te particular log level is enabled for this rule.
         /// </summary>
         /// <param name="level">Level to be checked.</param>
-        /// <returns>A value of <see langword="true"/> when the log level is enabled, <see langword="false" /> otherwise.</returns>
+        /// <returns>
+        ///     A value of <see langword="true" /> when the log level is enabled, <see langword="false" /> otherwise.
+        /// </returns>
         public bool IsLoggingEnabledForLevel(LogLevel level)
         {
-            return this.logLevels[level.Ordinal];
+            return logLevels[level.Ordinal];
         }
 
         /// <summary>
-        /// Checks whether given name matches the logger name pattern.
+        ///     Checks whether given name matches the logger name pattern.
         /// </summary>
         /// <param name="loggerName">String to be matched.</param>
-        /// <returns>A value of <see langword="true"/> when the name matches, <see langword="false" /> otherwise.</returns>
+        /// <returns>
+        ///     A value of <see langword="true" /> when the name matches, <see langword="false" /> otherwise.
+        /// </returns>
         public bool NameMatches(string loggerName)
         {
-            switch (this.loggerNameMatchMode)
+            switch (loggerNameMatchMode)
             {
                 case MatchMode.All:
                     return true;
@@ -285,17 +281,27 @@ namespace Transformalize.Libs.NLog.Config
                     return false;
 
                 case MatchMode.Equals:
-                    return loggerName.Equals(this.loggerNameMatchArgument, StringComparison.Ordinal);
+                    return loggerName.Equals(loggerNameMatchArgument, StringComparison.Ordinal);
 
                 case MatchMode.StartsWith:
-                    return loggerName.StartsWith(this.loggerNameMatchArgument, StringComparison.Ordinal);
+                    return loggerName.StartsWith(loggerNameMatchArgument, StringComparison.Ordinal);
 
                 case MatchMode.EndsWith:
-                    return loggerName.EndsWith(this.loggerNameMatchArgument, StringComparison.Ordinal);
+                    return loggerName.EndsWith(loggerNameMatchArgument, StringComparison.Ordinal);
 
                 case MatchMode.Contains:
-                    return loggerName.IndexOf(this.loggerNameMatchArgument, StringComparison.Ordinal) >= 0;
+                    return loggerName.IndexOf(loggerNameMatchArgument, StringComparison.Ordinal) >= 0;
             }
+        }
+
+        internal enum MatchMode
+        {
+            All,
+            None,
+            Equals,
+            StartsWith,
+            EndsWith,
+            Contains,
         }
     }
 }

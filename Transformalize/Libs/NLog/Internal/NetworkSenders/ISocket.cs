@@ -38,7 +38,7 @@ using System.Net.Sockets;
 namespace Transformalize.Libs.NLog.Internal.NetworkSenders
 {
     /// <summary>
-    /// Interface for mocking socket calls.
+    ///     Interface for mocking socket calls.
     /// </summary>
     internal interface ISocket
     {

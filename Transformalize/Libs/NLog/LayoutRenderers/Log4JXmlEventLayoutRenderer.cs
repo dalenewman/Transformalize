@@ -34,9 +34,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Xml;
 using Transformalize.Libs.NLog.Config;
 using Transformalize.Libs.NLog.Internal;
@@ -45,7 +47,7 @@ using Transformalize.Libs.NLog.Targets;
 namespace Transformalize.Libs.NLog.LayoutRenderers
 {
     /// <summary>
-    /// XML event description compatible with log4j, Chainsaw and NLogViewer.
+    ///     XML event description compatible with log4j, Chainsaw and NLogViewer.
     /// </summary>
     [LayoutRenderer("log4jxmlevent")]
     public class Log4JXmlEventLayoutRenderer : LayoutRenderer, IUsesStackTrace
@@ -57,92 +59,92 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
         private static readonly string dummyNLogNamespace = "http://nlog-project.org/dummynamespace/" + Guid.NewGuid();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Log4JXmlEventLayoutRenderer" /> class.
+        ///     Initializes a new instance of the <see cref="Log4JXmlEventLayoutRenderer" /> class.
         /// </summary>
         public Log4JXmlEventLayoutRenderer()
         {
-            this.IncludeNLogData = true;
-            this.NdcItemSeparator = " ";
+            IncludeNLogData = true;
+            NdcItemSeparator = " ";
 #if NET_CF
             this.AppInfo = ".NET CF Application";
 #elif SILVERLIGHT
             this.AppInfo = "Silverlight Application";
 #else
-            this.AppInfo = string.Format(
+            AppInfo = string.Format(
                 CultureInfo.InvariantCulture,
-                "{0}({1})", 
-                AppDomain.CurrentDomain.FriendlyName, 
+                "{0}({1})",
+                AppDomain.CurrentDomain.FriendlyName,
                 ThreadIDHelper.Instance.CurrentProcessID);
 #endif
-            this.Parameters = new List<NLogViewerParameterInfo>();
+            Parameters = new List<NLogViewerParameterInfo>();
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to include NLog-specific extensions to log4j schema.
+        ///     Gets or sets a value indicating whether to include NLog-specific extensions to log4j schema.
         /// </summary>
         /// <docgen category='Payload Options' order='10' />
         [DefaultValue(true)]
         public bool IncludeNLogData { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the XML should use spaces for indentation.
+        ///     Gets or sets a value indicating whether the XML should use spaces for indentation.
         /// </summary>
         /// <docgen category='Payload Options' order='10' />
         public bool IndentXml { get; set; }
 
         /// <summary>
-        /// Gets or sets the AppInfo field. By default it's the friendly name of the current AppDomain.
+        ///     Gets or sets the AppInfo field. By default it's the friendly name of the current AppDomain.
         /// </summary>
         /// <docgen category='Payload Options' order='10' />
         public string AppInfo { get; set; }
 
 #if !NET_CF
         /// <summary>
-        /// Gets or sets a value indicating whether to include call site (class and method name) in the information sent over the network.
+        ///     Gets or sets a value indicating whether to include call site (class and method name) in the information sent over the network.
         /// </summary>
         /// <docgen category='Payload Options' order='10' />
         public bool IncludeCallSite { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to include source info (file name and line number) in the information sent over the network.
+        ///     Gets or sets a value indicating whether to include source info (file name and line number) in the information sent over the network.
         /// </summary>
         /// <docgen category='Payload Options' order='10' />
         public bool IncludeSourceInfo { get; set; }
 #endif
 
         /// <summary>
-        /// Gets or sets a value indicating whether to include contents of the <see cref="MappedDiagnosticsContext"/> dictionary.
+        ///     Gets or sets a value indicating whether to include contents of the <see cref="MappedDiagnosticsContext" /> dictionary.
         /// </summary>
         /// <docgen category='Payload Options' order='10' />
         public bool IncludeMdc { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to include contents of the <see cref="NestedDiagnosticsContext"/> stack.
+        ///     Gets or sets a value indicating whether to include contents of the <see cref="NestedDiagnosticsContext" /> stack.
         /// </summary>
         /// <docgen category='Payload Options' order='10' />
         public bool IncludeNdc { get; set; }
 
         /// <summary>
-        /// Gets or sets the NDC item separator.
+        ///     Gets or sets the NDC item separator.
         /// </summary>
         /// <docgen category='Payload Options' order='10' />
         [DefaultValue(" ")]
         public string NdcItemSeparator { get; set; }
 
         /// <summary>
-        /// Gets the level of stack trace information required by the implementing class.
+        ///     Gets the level of stack trace information required by the implementing class.
         /// </summary>
         StackTraceUsage IUsesStackTrace.StackTraceUsage
         {
             get
             {
 #if !NET_CF
-                if (this.IncludeSourceInfo)
+                if (IncludeSourceInfo)
                 {
                     return StackTraceUsage.Max;
                 }
 
-                if (this.IncludeCallSite)
+                if (IncludeCallSite)
                 {
                     return StackTraceUsage.WithoutSource;
                 }
@@ -156,22 +158,24 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
 
         internal void AppendToStringBuilder(StringBuilder sb, LogEventInfo logEvent)
         {
-            this.Append(sb, logEvent);
+            Append(sb, logEvent);
         }
 
         /// <summary>
-        /// Renders the XML logging event and appends it to the specified <see cref="StringBuilder" />.
+        ///     Renders the XML logging event and appends it to the specified <see cref="StringBuilder" />.
         /// </summary>
-        /// <param name="builder">The <see cref="StringBuilder"/> to append the rendered data to.</param>
+        /// <param name="builder">
+        ///     The <see cref="StringBuilder" /> to append the rendered data to.
+        /// </param>
         /// <param name="logEvent">Logging event.</param>
         protected override void Append(StringBuilder builder, LogEventInfo logEvent)
         {
             var settings = new XmlWriterSettings
-            {
-                Indent = this.IndentXml,
-                ConformanceLevel = ConformanceLevel.Fragment,
-                IndentChars = "  ",
-            };
+                               {
+                                   Indent = IndentXml,
+                                   ConformanceLevel = ConformanceLevel.Fragment,
+                                   IndentChars = "  ",
+                               };
 
             var sb = new StringBuilder();
             using (XmlWriter xtw = XmlWriter.Create(sb, settings))
@@ -180,13 +184,13 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
                 xtw.WriteAttributeString("xmlns", "nlog", null, dummyNLogNamespace);
                 xtw.WriteAttributeString("logger", logEvent.LoggerName);
                 xtw.WriteAttributeString("level", logEvent.Level.Name.ToUpper(CultureInfo.InvariantCulture));
-                xtw.WriteAttributeString("timestamp", Convert.ToString((long)(logEvent.TimeStamp.ToUniversalTime() - log4jDateBase).TotalMilliseconds, CultureInfo.InvariantCulture));
-                xtw.WriteAttributeString("thread", System.Threading.Thread.CurrentThread.ManagedThreadId.ToString(CultureInfo.InvariantCulture));
+                xtw.WriteAttributeString("timestamp", Convert.ToString((long) (logEvent.TimeStamp.ToUniversalTime() - log4jDateBase).TotalMilliseconds, CultureInfo.InvariantCulture));
+                xtw.WriteAttributeString("thread", Thread.CurrentThread.ManagedThreadId.ToString(CultureInfo.InvariantCulture));
 
                 xtw.WriteElementString("log4j", "message", dummyNamespace, logEvent.FormattedMessage);
-                if (this.IncludeNdc)
+                if (IncludeNdc)
                 {
-                    xtw.WriteElementString("log4j", "NDC", dummyNamespace, string.Join(this.NdcItemSeparator, NestedDiagnosticsContext.GetAllMessages()));
+                    xtw.WriteElementString("log4j", "NDC", dummyNamespace, string.Join(NdcItemSeparator, NestedDiagnosticsContext.GetAllMessages()));
                 }
 
                 if (logEvent.Exception != null)
@@ -197,9 +201,9 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
                 }
 
 #if !NET_CF
-                if (this.IncludeCallSite || this.IncludeSourceInfo)
+                if (IncludeCallSite || IncludeSourceInfo)
                 {
-                    System.Diagnostics.StackFrame frame = logEvent.UserStackFrame;
+                    StackFrame frame = logEvent.UserStackFrame;
                     MethodBase methodBase = frame.GetMethod();
                     Type type = methodBase.DeclaringType;
 
@@ -211,7 +215,7 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
 
                     xtw.WriteAttributeString("method", methodBase.ToString());
 #if !SILVERLIGHT
-                    if (this.IncludeSourceInfo)
+                    if (IncludeSourceInfo)
                     {
                         xtw.WriteAttributeString("file", frame.GetFileName());
                         xtw.WriteAttributeString("line", frame.GetFileLineNumber().ToString(CultureInfo.InvariantCulture));
@@ -219,7 +223,7 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
 #endif
                     xtw.WriteEndElement();
 
-                    if (this.IncludeNLogData)
+                    if (IncludeNLogData)
                     {
                         xtw.WriteElementString("nlog", "eventSequenceNumber", dummyNLogNamespace, logEvent.SequenceID.ToString(CultureInfo.InvariantCulture));
                         xtw.WriteStartElement("nlog", "locationInfo", dummyNLogNamespace);
@@ -234,9 +238,9 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
 #endif
 
                 xtw.WriteStartElement("log4j", "properties", dummyNamespace);
-                if (this.IncludeMdc)
+                if (IncludeMdc)
                 {
-                    foreach (KeyValuePair<string, string> entry in MappedDiagnosticsContext.ThreadDictionary)
+                    foreach (var entry in MappedDiagnosticsContext.ThreadDictionary)
                     {
                         xtw.WriteStartElement("log4j", "data", dummyNamespace);
                         xtw.WriteAttributeString("name", entry.Key);
@@ -245,7 +249,7 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
                     }
                 }
 
-                foreach (NLogViewerParameterInfo parameter in this.Parameters)
+                foreach (NLogViewerParameterInfo parameter in Parameters)
                 {
                     xtw.WriteStartElement("log4j", "data", dummyNamespace);
                     xtw.WriteAttributeString("name", parameter.Name);
@@ -255,7 +259,7 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
 
                 xtw.WriteStartElement("log4j", "data", dummyNamespace);
                 xtw.WriteAttributeString("name", "log4japp");
-                xtw.WriteAttributeString("value", this.AppInfo);
+                xtw.WriteAttributeString("value", AppInfo);
                 xtw.WriteEndElement();
 
                 xtw.WriteStartElement("log4j", "data", dummyNamespace);
@@ -277,7 +281,7 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
                 sb.Replace(" xmlns:log4j=\"" + dummyNamespace + "\"", string.Empty);
                 sb.Replace(" xmlns:nlog=\"" + dummyNLogNamespace + "\"", string.Empty);
 
-                builder.Append(sb.ToString());
+                builder.Append(sb);
             }
         }
     }

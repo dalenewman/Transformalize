@@ -36,6 +36,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
@@ -47,7 +48,7 @@ using Transformalize.Libs.NLog.Targets;
 namespace Transformalize.Libs.NLog
 {
     /// <summary>
-    /// Creates and manages instances of <see cref="T:Transformalize.Libs.NLog.Logger" /> objects.
+    ///     Creates and manages instances of <see cref="T:Transformalize.Libs.NLog.Logger" /> objects.
     /// </summary>
     public class LogFactory : IDisposable
     {
@@ -58,7 +59,7 @@ namespace Transformalize.Libs.NLog
 
         private readonly Dictionary<LoggerCacheKey, WeakReference> loggerCache = new Dictionary<LoggerCacheKey, WeakReference>();
 
-        private static TimeSpan defaultFlushTimeout = TimeSpan.FromSeconds(15);
+        private static readonly TimeSpan defaultFlushTimeout = TimeSpan.FromSeconds(15);
 
 #if !NET_CF && !SILVERLIGHT
         private Timer reloadTimer;
@@ -70,49 +71,52 @@ namespace Transformalize.Libs.NLog
         private int logsEnabled;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LogFactory" /> class.
+        ///     Initializes a new instance of the <see cref="LogFactory" /> class.
         /// </summary>
         public LogFactory()
         {
 #if !NET_CF && !SILVERLIGHT
-            this.watcher = new MultiFileWatcher();
-            this.watcher.OnChange += this.ConfigFileChanged;
+            watcher = new MultiFileWatcher();
+            watcher.OnChange += ConfigFileChanged;
 #endif
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LogFactory" /> class.
+        ///     Initializes a new instance of the <see cref="LogFactory" /> class.
         /// </summary>
         /// <param name="config">The config.</param>
         public LogFactory(LoggingConfiguration config)
             : this()
         {
-            this.Configuration = config;
+            Configuration = config;
         }
 
         /// <summary>
-        /// Occurs when logging <see cref="Configuration" /> changes.
+        ///     Occurs when logging <see cref="Configuration" /> changes.
         /// </summary>
         public event EventHandler<LoggingConfigurationChangedEventArgs> ConfigurationChanged;
 
 #if !NET_CF && !SILVERLIGHT
         /// <summary>
-        /// Occurs when logging <see cref="Configuration" /> gets reloaded.
+        ///     Occurs when logging <see cref="Configuration" /> gets reloaded.
         /// </summary>
         public event EventHandler<LoggingConfigurationReloadedEventArgs> ConfigurationReloaded;
 #endif
 
         /// <summary>
-        /// Gets or sets a value indicating whether exceptions should be thrown.
+        ///     Gets or sets a value indicating whether exceptions should be thrown.
         /// </summary>
-        /// <value>A value of <c>true</c> if exceptiosn should be thrown; otherwise, <c>false</c>.</value>
-        /// <remarks>By default exceptions
-        /// are not thrown under any circumstances.
+        /// <value>
+        ///     A value of <c>true</c> if exceptiosn should be thrown; otherwise, <c>false</c>.
+        /// </value>
+        /// <remarks>
+        ///     By default exceptions
+        ///     are not thrown under any circumstances.
         /// </remarks>
         public bool ThrowExceptions { get; set; }
 
         /// <summary>
-        /// Gets or sets the current logging configuration.
+        ///     Gets or sets the current logging configuration.
         /// </summary>
         public LoggingConfiguration Configuration
         {
@@ -120,22 +124,22 @@ namespace Transformalize.Libs.NLog
             {
                 lock (this)
                 {
-                    if (this.configLoaded)
+                    if (configLoaded)
                     {
-                        return this.config;
+                        return config;
                     }
 
-                    this.configLoaded = true;
+                    configLoaded = true;
 
 #if !NET_CF && !SILVERLIGHT
-                    if (this.config == null)
+                    if (config == null)
                     {
                         // try to load default configuration
-                        this.config = XmlLoggingConfiguration.AppConfig;
+                        config = XmlLoggingConfiguration.AppConfig;
                     }
 #endif
 
-                    if (this.config == null)
+                    if (config == null)
                     {
                         foreach (string configFile in GetCandidateFileNames())
                         {
@@ -143,7 +147,7 @@ namespace Transformalize.Libs.NLog
                             if (File.Exists(configFile))
                             {
                                 InternalLogger.Debug("Attempting to load config from {0}", configFile);
-                                this.config = new XmlLoggingConfiguration(configFile);
+                                config = new XmlLoggingConfiguration(configFile);
                                 break;
                             }
 #else
@@ -159,18 +163,18 @@ namespace Transformalize.Libs.NLog
                     }
 
 #if !NET_CF && !SILVERLIGHT
-                    if (this.config != null)
+                    if (config != null)
                     {
-                        Dump(this.config);
-                        this.watcher.Watch(this.config.FileNamesToWatch);
+                        Dump(config);
+                        watcher.Watch(config.FileNamesToWatch);
                     }
 #endif
-                    if (this.config != null)
+                    if (config != null)
                     {
-                        this.config.InitializeAll();
+                        config.InitializeAll();
                     }
 
-                    return this.config;
+                    return config;
                 }
             }
 
@@ -179,7 +183,7 @@ namespace Transformalize.Libs.NLog
 #if !NET_CF && !SILVERLIGHT
                 try
                 {
-                    this.watcher.StopWatching();
+                    watcher.StopWatching();
                 }
                 catch (Exception exception)
                 {
@@ -194,29 +198,29 @@ namespace Transformalize.Libs.NLog
 
                 lock (this)
                 {
-                    LoggingConfiguration oldConfig = this.config;
+                    LoggingConfiguration oldConfig = config;
                     if (oldConfig != null)
                     {
                         InternalLogger.Info("Closing old configuration.");
 #if !SILVERLIGHT
-                        this.Flush();
+                        Flush();
 #endif
                         oldConfig.Close();
                     }
 
-                    this.config = value;
-                    this.configLoaded = true;
+                    config = value;
+                    configLoaded = true;
 
-                    if (this.config != null)
+                    if (config != null)
                     {
-                        Dump(this.config);
+                        Dump(config);
 
-                        this.config.InitializeAll();
-                        this.ReconfigExistingLoggers(this.config);
+                        config.InitializeAll();
+                        ReconfigExistingLoggers(config);
 #if !NET_CF && !SILVERLIGHT
                         try
                         {
-                            this.watcher.Watch(this.config.FileNamesToWatch);
+                            watcher.Watch(config.FileNamesToWatch);
                         }
                         catch (Exception exception)
                         {
@@ -230,7 +234,7 @@ namespace Transformalize.Libs.NLog
 #endif
                     }
 
-                    var configurationChangedDelegate = this.ConfigurationChanged;
+                    EventHandler<LoggingConfigurationChangedEventArgs> configurationChangedDelegate = ConfigurationChanged;
 
                     if (configurationChangedDelegate != null)
                     {
@@ -241,53 +245,52 @@ namespace Transformalize.Libs.NLog
         }
 
         /// <summary>
-        /// Gets or sets the global log threshold. Log events below this threshold are not logged.
+        ///     Gets or sets the global log threshold. Log events below this threshold are not logged.
         /// </summary>
         public LogLevel GlobalThreshold
         {
-            get
-            {
-                return this.globalThreshold;
-            }
+            get { return globalThreshold; }
 
             set
             {
                 lock (this)
                 {
-                    this.globalThreshold = value;
-                    this.ReconfigExistingLoggers();
+                    globalThreshold = value;
+                    ReconfigExistingLoggers();
                 }
             }
         }
 
         /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         public void Dispose()
         {
-            this.Dispose(true);
+            Dispose(true);
             GC.SuppressFinalize(this);
         }
 
         /// <summary>
-        /// Creates a logger that discards all log messages.
+        ///     Creates a logger that discards all log messages.
         /// </summary>
         /// <returns>Null logger instance.</returns>
         public Logger CreateNullLogger()
         {
-            TargetWithFilterChain[] targetsByLevel = new TargetWithFilterChain[LogLevel.MaxLevel.Ordinal + 1];
-            Logger newLogger = new Logger();
+            var targetsByLevel = new TargetWithFilterChain[LogLevel.MaxLevel.Ordinal + 1];
+            var newLogger = new Logger();
             newLogger.Initialize(string.Empty, new LoggerConfiguration(targetsByLevel), this);
             return newLogger;
         }
 
 #if !NET_CF
         /// <summary>
-        /// Gets the logger named after the currently-being-initialized class.
+        ///     Gets the logger named after the currently-being-initialized class.
         /// </summary>
         /// <returns>The logger.</returns>
-        /// <remarks>This is a slow-running method. 
-        /// Make sure you're not doing this in a loop.</remarks>
+        /// <remarks>
+        ///     This is a slow-running method.
+        ///     Make sure you're not doing this in a loop.
+        /// </remarks>
         [MethodImpl(MethodImplOptions.NoInlining)]
         public Logger GetCurrentClassLogger()
         {
@@ -297,16 +300,18 @@ namespace Transformalize.Libs.NLog
             var frame = new StackFrame(1, false);
 #endif
 
-            return this.GetLogger(frame.GetMethod().DeclaringType.FullName);
+            return GetLogger(frame.GetMethod().DeclaringType.FullName);
         }
 
         /// <summary>
-        /// Gets the logger named after the currently-being-initialized class.
+        ///     Gets the logger named after the currently-being-initialized class.
         /// </summary>
         /// <param name="loggerType">The type of the logger to create. The type must inherit from NLog.Logger.</param>
         /// <returns>The logger.</returns>
-        /// <remarks>This is a slow-running method. 
-        /// Make sure you're not doing this in a loop.</remarks>
+        /// <remarks>
+        ///     This is a slow-running method.
+        ///     Make sure you're not doing this in a loop.
+        /// </remarks>
         [MethodImpl(MethodImplOptions.NoInlining)]
         public Logger GetCurrentClassLogger(Type loggerType)
         {
@@ -316,99 +321,103 @@ namespace Transformalize.Libs.NLog
             var frame = new StackFrame(1);
 #endif
 
-            return this.GetLogger(frame.GetMethod().DeclaringType.FullName, loggerType);
+            return GetLogger(frame.GetMethod().DeclaringType.FullName, loggerType);
         }
 #endif
 
         /// <summary>
-        /// Gets the specified named logger.
+        ///     Gets the specified named logger.
         /// </summary>
         /// <param name="name">Name of the logger.</param>
-        /// <returns>The logger reference. Multiple calls to <c>GetLogger</c> with the same argument aren't guaranteed to return the same logger reference.</returns>
+        /// <returns>
+        ///     The logger reference. Multiple calls to <c>GetLogger</c> with the same argument aren't guaranteed to return the same logger reference.
+        /// </returns>
         public Logger GetLogger(string name)
         {
-            return this.GetLogger(new LoggerCacheKey(typeof(Logger), name));
+            return GetLogger(new LoggerCacheKey(typeof (Logger), name));
         }
 
         /// <summary>
-        /// Gets the specified named logger.
+        ///     Gets the specified named logger.
         /// </summary>
         /// <param name="name">Name of the logger.</param>
         /// <param name="loggerType">The type of the logger to create. The type must inherit from NLog.Logger.</param>
-        /// <returns>The logger reference. Multiple calls to <c>GetLogger</c> with the 
-        /// same argument aren't guaranteed to return the same logger reference.</returns>
+        /// <returns>
+        ///     The logger reference. Multiple calls to <c>GetLogger</c> with the
+        ///     same argument aren't guaranteed to return the same logger reference.
+        /// </returns>
         public Logger GetLogger(string name, Type loggerType)
         {
-            return this.GetLogger(new LoggerCacheKey(loggerType, name));
+            return GetLogger(new LoggerCacheKey(loggerType, name));
         }
 
         /// <summary>
-        /// Loops through all loggers previously returned by GetLogger
-        /// and recalculates their target and filter list. Useful after modifying the configuration programmatically
-        /// to ensure that all loggers have been properly configured.
+        ///     Loops through all loggers previously returned by GetLogger
+        ///     and recalculates their target and filter list. Useful after modifying the configuration programmatically
+        ///     to ensure that all loggers have been properly configured.
         /// </summary>
         public void ReconfigExistingLoggers()
         {
-            this.ReconfigExistingLoggers(this.config);
+            ReconfigExistingLoggers(config);
         }
 
 #if !SILVERLIGHT
         /// <summary>
-        /// Flush any pending log messages (in case of asynchronous targets).
+        ///     Flush any pending log messages (in case of asynchronous targets).
         /// </summary>
         public void Flush()
         {
-            this.Flush(defaultFlushTimeout);
+            Flush(defaultFlushTimeout);
         }
 
         /// <summary>
-        /// Flush any pending log messages (in case of asynchronous targets).
+        ///     Flush any pending log messages (in case of asynchronous targets).
         /// </summary>
         /// <param name="timeout">Maximum time to allow for the flush. Any messages after that time will be discarded.</param>
         public void Flush(TimeSpan timeout)
         {
-            AsyncHelpers.RunSynchronously(cb => this.Flush(cb, timeout));
+            AsyncHelpers.RunSynchronously(cb => Flush(cb, timeout));
         }
 
         /// <summary>
-        /// Flush any pending log messages (in case of asynchronous targets).
+        ///     Flush any pending log messages (in case of asynchronous targets).
         /// </summary>
         /// <param name="timeoutMilliseconds">Maximum time to allow for the flush. Any messages after that time will be discarded.</param>
         public void Flush(int timeoutMilliseconds)
         {
-            this.Flush(TimeSpan.FromMilliseconds(timeoutMilliseconds));
+            Flush(TimeSpan.FromMilliseconds(timeoutMilliseconds));
         }
 #endif
 
         /// <summary>
-        /// Flush any pending log messages (in case of asynchronous targets).
+        ///     Flush any pending log messages (in case of asynchronous targets).
         /// </summary>
         /// <param name="asyncContinuation">The asynchronous continuation.</param>
         public void Flush(AsyncContinuation asyncContinuation)
         {
-            this.Flush(asyncContinuation, TimeSpan.MaxValue);
+            Flush(asyncContinuation, TimeSpan.MaxValue);
         }
 
         /// <summary>
-        /// Flush any pending log messages (in case of asynchronous targets).
+        ///     Flush any pending log messages (in case of asynchronous targets).
         /// </summary>
         /// <param name="asyncContinuation">The asynchronous continuation.</param>
         /// <param name="timeoutMilliseconds">Maximum time to allow for the flush. Any messages after that time will be discarded.</param>
         public void Flush(AsyncContinuation asyncContinuation, int timeoutMilliseconds)
         {
-            this.Flush(asyncContinuation, TimeSpan.FromMilliseconds(timeoutMilliseconds));
+            Flush(asyncContinuation, TimeSpan.FromMilliseconds(timeoutMilliseconds));
         }
 
         /// <summary>
-        /// Flush any pending log messages (in case of asynchronous targets).
+        ///     Flush any pending log messages (in case of asynchronous targets).
         /// </summary>
         /// <param name="asyncContinuation">The asynchronous continuation.</param>
         /// <param name="timeout">Maximum time to allow for the flush. Any messages after that time will be discarded.</param>
         public void Flush(AsyncContinuation asyncContinuation, TimeSpan timeout)
         {
             InternalLogger.Trace("LogFactory.Flush({0})", timeout);
-            
-            var loggingConfiguration = this.Configuration;
+
+            LoggingConfiguration loggingConfiguration = Configuration;
             if (loggingConfiguration != null)
             {
                 InternalLogger.Trace("Flushing all targets...");
@@ -420,20 +429,26 @@ namespace Transformalize.Libs.NLog
             }
         }
 
-        /// <summary>Decreases the log enable counter and if it reaches -1 
-        /// the logs are disabled.</summary>
-        /// <remarks>Logging is enabled if the number of <see cref="EnableLogging"/> calls is greater 
-        /// than or equal to <see cref="DisableLogging"/> calls.</remarks>
-        /// <returns>An object that iplements IDisposable whose Dispose() method
-        /// reenables logging. To be used with C# <c>using ()</c> statement.</returns>
+        /// <summary>
+        ///     Decreases the log enable counter and if it reaches -1
+        ///     the logs are disabled.
+        /// </summary>
+        /// <remarks>
+        ///     Logging is enabled if the number of <see cref="EnableLogging" /> calls is greater
+        ///     than or equal to <see cref="DisableLogging" /> calls.
+        /// </remarks>
+        /// <returns>
+        ///     An object that iplements IDisposable whose Dispose() method
+        ///     reenables logging. To be used with C# <c>using ()</c> statement.
+        /// </returns>
         public IDisposable DisableLogging()
         {
             lock (this)
             {
-                this.logsEnabled--;
-                if (this.logsEnabled == -1)
+                logsEnabled--;
+                if (logsEnabled == -1)
                 {
-                    this.ReconfigExistingLoggers();
+                    ReconfigExistingLoggers();
                 }
             }
 
@@ -441,50 +456,56 @@ namespace Transformalize.Libs.NLog
         }
 
         /// <summary>Increases the log enable counter and if it reaches 0 the logs are disabled.</summary>
-        /// <remarks>Logging is enabled if the number of <see cref="EnableLogging"/> calls is greater 
-        /// than or equal to <see cref="DisableLogging"/> calls.</remarks>
+        /// <remarks>
+        ///     Logging is enabled if the number of <see cref="EnableLogging" /> calls is greater
+        ///     than or equal to <see cref="DisableLogging" /> calls.
+        /// </remarks>
         public void EnableLogging()
         {
             lock (this)
             {
-                this.logsEnabled++;
-                if (this.logsEnabled == 0)
+                logsEnabled++;
+                if (logsEnabled == 0)
                 {
-                    this.ReconfigExistingLoggers();
+                    ReconfigExistingLoggers();
                 }
             }
         }
 
         /// <summary>
-        /// Returns <see langword="true" /> if logging is currently enabled.
+        ///     Returns <see langword="true" /> if logging is currently enabled.
         /// </summary>
-        /// <returns>A value of <see langword="true" /> if logging is currently enabled, 
-        /// <see langword="false"/> otherwise.</returns>
-        /// <remarks>Logging is enabled if the number of <see cref="EnableLogging"/> calls is greater 
-        /// than or equal to <see cref="DisableLogging"/> calls.</remarks>
+        /// <returns>
+        ///     A value of <see langword="true" /> if logging is currently enabled,
+        ///     <see langword="false" /> otherwise.
+        /// </returns>
+        /// <remarks>
+        ///     Logging is enabled if the number of <see cref="EnableLogging" /> calls is greater
+        ///     than or equal to <see cref="DisableLogging" /> calls.
+        /// </remarks>
         public bool IsLoggingEnabled()
         {
-            return this.logsEnabled >= 0;
+            return logsEnabled >= 0;
         }
 
 #if !NET_CF && !SILVERLIGHT
         internal void ReloadConfigOnTimer(object state)
         {
-            LoggingConfiguration configurationToReload = (LoggingConfiguration)state;
+            var configurationToReload = (LoggingConfiguration) state;
 
             InternalLogger.Info("Reloading configuration...");
             lock (this)
             {
-                if (this.reloadTimer != null)
+                if (reloadTimer != null)
                 {
-                    this.reloadTimer.Dispose();
-                    this.reloadTimer = null;
+                    reloadTimer.Dispose();
+                    reloadTimer = null;
                 }
 
-                this.watcher.StopWatching();
+                watcher.StopWatching();
                 try
                 {
-                    if (this.Configuration != configurationToReload)
+                    if (Configuration != configurationToReload)
                     {
                         throw new NLogConfigurationException("Config changed in between. Not reloading.");
                     }
@@ -492,10 +513,10 @@ namespace Transformalize.Libs.NLog
                     LoggingConfiguration newConfig = configurationToReload.Reload();
                     if (newConfig != null)
                     {
-                        this.Configuration = newConfig;
-                        if (this.ConfigurationReloaded != null)
+                        Configuration = newConfig;
+                        if (ConfigurationReloaded != null)
                         {
-                            this.ConfigurationReloaded(true, null);
+                            ConfigurationReloaded(true, null);
                         }
                     }
                     else
@@ -510,9 +531,9 @@ namespace Transformalize.Libs.NLog
                         throw;
                     }
 
-                    this.watcher.Watch(configurationToReload.FileNamesToWatch);
+                    watcher.Watch(configurationToReload.FileNamesToWatch);
 
-                    var configurationReloadedDelegate = this.ConfigurationReloaded;
+                    EventHandler<LoggingConfigurationReloadedEventArgs> configurationReloadedDelegate = ConfigurationReloaded;
                     if (configurationReloadedDelegate != null)
                     {
                         configurationReloadedDelegate(this, new LoggingConfigurationReloadedEventArgs(false, exception));
@@ -529,12 +550,12 @@ namespace Transformalize.Libs.NLog
                 configuration.EnsureInitialized();
             }
 
-            foreach (var loggerWrapper in this.loggerCache.Values.ToList())
+            foreach (WeakReference loggerWrapper in loggerCache.Values.ToList())
             {
-                Logger logger = loggerWrapper.Target as Logger;
+                var logger = loggerWrapper.Target as Logger;
                 if (logger != null)
                 {
-                    logger.SetConfiguration(this.GetConfigurationForLogger(logger.Name, configuration));
+                    logger.SetConfiguration(GetConfigurationForLogger(logger.Name, configuration));
                 }
             }
         }
@@ -550,7 +571,7 @@ namespace Transformalize.Libs.NLog
 
                 for (int i = 0; i <= LogLevel.MaxLevel.Ordinal; ++i)
                 {
-                    if (i < this.GlobalThreshold.Ordinal || !rule.IsLoggingEnabledForLevel(LogLevel.FromOrdinal(i)))
+                    if (i < GlobalThreshold.Ordinal || !rule.IsLoggingEnabledForLevel(LogLevel.FromOrdinal(i)))
                     {
                         continue;
                     }
@@ -571,7 +592,7 @@ namespace Transformalize.Libs.NLog
                     }
                 }
 
-                this.GetTargetsByLevelForLogger(name, rule.ChildRules, targetsByLevel, lastTargetsByLevel);
+                GetTargetsByLevelForLogger(name, rule.ChildRules, targetsByLevel, lastTargetsByLevel);
 
                 if (rule.Final)
                 {
@@ -591,18 +612,18 @@ namespace Transformalize.Libs.NLog
 
         internal LoggerConfiguration GetConfigurationForLogger(string name, LoggingConfiguration configuration)
         {
-            TargetWithFilterChain[] targetsByLevel = new TargetWithFilterChain[LogLevel.MaxLevel.Ordinal + 1];
-            TargetWithFilterChain[] lastTargetsByLevel = new TargetWithFilterChain[LogLevel.MaxLevel.Ordinal + 1];
+            var targetsByLevel = new TargetWithFilterChain[LogLevel.MaxLevel.Ordinal + 1];
+            var lastTargetsByLevel = new TargetWithFilterChain[LogLevel.MaxLevel.Ordinal + 1];
 
-            if (configuration != null && this.IsLoggingEnabled())
+            if (configuration != null && IsLoggingEnabled())
             {
-                this.GetTargetsByLevelForLogger(name, configuration.LoggingRules, targetsByLevel, lastTargetsByLevel);
+                GetTargetsByLevelForLogger(name, configuration.LoggingRules, targetsByLevel, lastTargetsByLevel);
             }
 
             InternalLogger.Debug("Targets for {0} by level:", name);
             for (int i = 0; i <= LogLevel.MaxLevel.Ordinal; ++i)
             {
-                StringBuilder sb = new StringBuilder();
+                var sb = new StringBuilder();
                 sb.AppendFormat(CultureInfo.InvariantCulture, "{0} =>", LogLevel.FromOrdinal(i));
                 for (TargetWithFilterChain afc = targetsByLevel[i]; afc != null; afc = afc.NextInChain)
                 {
@@ -620,20 +641,22 @@ namespace Transformalize.Libs.NLog
         }
 
         /// <summary>
-        /// Releases unmanaged and - optionally - managed resources.
+        ///     Releases unmanaged and - optionally - managed resources.
         /// </summary>
-        /// <param name="disposing">True to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        /// <param name="disposing">
+        ///     True to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.
+        /// </param>
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
 #if !NET_CF && !SILVERLIGHT
-                this.watcher.Dispose();
+                watcher.Dispose();
 
-                if (this.reloadTimer != null)
+                if (reloadTimer != null)
                 {
-                    this.reloadTimer.Dispose();
-                    this.reloadTimer = null;
+                    reloadTimer.Dispose();
+                    reloadTimer = null;
                 }
 #endif
             }
@@ -659,7 +682,7 @@ namespace Transformalize.Libs.NLog
             }
 
             // get path to NLog.dll.nlog only if the assembly is not in the GAC
-            var nlogAssembly = typeof(LogFactory).Assembly;
+            Assembly nlogAssembly = typeof (LogFactory).Assembly;
             if (!nlogAssembly.GlobalAssemblyCache)
             {
                 if (!string.IsNullOrEmpty(nlogAssembly.Location))
@@ -686,9 +709,9 @@ namespace Transformalize.Libs.NLog
             {
                 WeakReference l;
 
-                if (this.loggerCache.TryGetValue(cacheKey, out l))
+                if (loggerCache.TryGetValue(cacheKey, out l))
                 {
-                    Logger existingLogger = l.Target as Logger;
+                    var existingLogger = l.Target as Logger;
                     if (existingLogger != null)
                     {
                         // logger in the cache and still referenced
@@ -698,9 +721,9 @@ namespace Transformalize.Libs.NLog
 
                 Logger newLogger;
 
-                if (cacheKey.ConcreteType != null && cacheKey.ConcreteType != typeof(Logger))
+                if (cacheKey.ConcreteType != null && cacheKey.ConcreteType != typeof (Logger))
                 {
-                    newLogger = (Logger)FactoryHelper.CreateInstance(cacheKey.ConcreteType);
+                    newLogger = (Logger) FactoryHelper.CreateInstance(cacheKey.ConcreteType);
                 }
                 else
                 {
@@ -709,10 +732,10 @@ namespace Transformalize.Libs.NLog
 
                 if (cacheKey.ConcreteType != null)
                 {
-                    newLogger.Initialize(cacheKey.Name, this.GetConfigurationForLogger(cacheKey.Name, this.Configuration), this);
+                    newLogger.Initialize(cacheKey.Name, GetConfigurationForLogger(cacheKey.Name, Configuration), this);
                 }
 
-                this.loggerCache[cacheKey] = new WeakReference(newLogger);
+                loggerCache[cacheKey] = new WeakReference(newLogger);
                 return newLogger;
             }
         }
@@ -729,31 +752,31 @@ namespace Transformalize.Libs.NLog
             // the last change notification comes in.
             lock (this)
             {
-                if (this.reloadTimer == null)
+                if (reloadTimer == null)
                 {
-                    this.reloadTimer = new Timer(
-                        this.ReloadConfigOnTimer,
-                        this.Configuration,
+                    reloadTimer = new Timer(
+                        ReloadConfigOnTimer,
+                        Configuration,
                         ReconfigAfterFileChangedTimeout,
                         Timeout.Infinite);
                 }
                 else
                 {
-                    this.reloadTimer.Change(ReconfigAfterFileChangedTimeout, Timeout.Infinite);
+                    reloadTimer.Change(ReconfigAfterFileChangedTimeout, Timeout.Infinite);
                 }
             }
         }
 #endif
 
         /// <summary>
-        /// Logger cache key.
+        ///     Logger cache key.
         /// </summary>
         internal class LoggerCacheKey
         {
             internal LoggerCacheKey(Type loggerConcreteType, string name)
             {
-                this.ConcreteType = loggerConcreteType;
-                this.Name = name;
+                ConcreteType = loggerConcreteType;
+                Name = name;
             }
 
             internal Type ConcreteType { get; private set; }
@@ -761,18 +784,18 @@ namespace Transformalize.Libs.NLog
             internal string Name { get; private set; }
 
             /// <summary>
-            /// Serves as a hash function for a particular type.
+            ///     Serves as a hash function for a particular type.
             /// </summary>
             /// <returns>
-            /// A hash code for the current <see cref="T:System.Object"/>.
+            ///     A hash code for the current <see cref="T:System.Object" />.
             /// </returns>
             public override int GetHashCode()
             {
-                return this.ConcreteType.GetHashCode() ^ this.Name.GetHashCode();
+                return ConcreteType.GetHashCode() ^ Name.GetHashCode();
             }
 
             /// <summary>
-            /// Determines if two objects are equal in value.
+            ///     Determines if two objects are equal in value.
             /// </summary>
             /// <param name="o">Other object to compare to.</param>
             /// <returns>True if objects are equal, false otherwise.</returns>
@@ -784,19 +807,19 @@ namespace Transformalize.Libs.NLog
                     return false;
                 }
 
-                return (this.ConcreteType == key.ConcreteType) && (key.Name == this.Name);
+                return (ConcreteType == key.ConcreteType) && (key.Name == Name);
             }
         }
 
         /// <summary>
-        /// Enables logging in <see cref="IDisposable.Dispose"/> implementation.
+        ///     Enables logging in <see cref="IDisposable.Dispose" /> implementation.
         /// </summary>
         private class LogEnabler : IDisposable
         {
-            private LogFactory factory;
+            private readonly LogFactory factory;
 
             /// <summary>
-            /// Initializes a new instance of the <see cref="LogEnabler" /> class.
+            ///     Initializes a new instance of the <see cref="LogEnabler" /> class.
             /// </summary>
             /// <param name="factory">The factory.</param>
             public LogEnabler(LogFactory factory)
@@ -805,11 +828,11 @@ namespace Transformalize.Libs.NLog
             }
 
             /// <summary>
-            /// Enables logging.
+            ///     Enables logging.
             /// </summary>
             void IDisposable.Dispose()
             {
-                this.factory.EnableLogging();
+                factory.EnableLogging();
             }
         }
     }

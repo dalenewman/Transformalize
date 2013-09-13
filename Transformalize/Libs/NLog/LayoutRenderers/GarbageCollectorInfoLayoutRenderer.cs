@@ -41,36 +41,38 @@ using System.Text;
 namespace Transformalize.Libs.NLog.LayoutRenderers
 {
     /// <summary>
-    /// The information about the garbage collector.
+    ///     The information about the garbage collector.
     /// </summary>
     [LayoutRenderer("gc")]
     public class GarbageCollectorInfoLayoutRenderer : LayoutRenderer
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="GarbageCollectorInfoLayoutRenderer" /> class.
+        ///     Initializes a new instance of the <see cref="GarbageCollectorInfoLayoutRenderer" /> class.
         /// </summary>
         public GarbageCollectorInfoLayoutRenderer()
         {
-            this.Property = GarbageCollectorProperty.TotalMemory;
+            Property = GarbageCollectorProperty.TotalMemory;
         }
 
         /// <summary>
-        /// Gets or sets the property to retrieve.
+        ///     Gets or sets the property to retrieve.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         [DefaultValue("TotalMemory")]
         public GarbageCollectorProperty Property { get; set; }
-        
+
         /// <summary>
-        /// Renders the selected process information.
+        ///     Renders the selected process information.
         /// </summary>
-        /// <param name="builder">The <see cref="StringBuilder"/> to append the rendered data to.</param>
+        /// <param name="builder">
+        ///     The <see cref="StringBuilder" /> to append the rendered data to.
+        /// </param>
         /// <param name="logEvent">Logging event.</param>
         protected override void Append(StringBuilder builder, LogEventInfo logEvent)
         {
             object value = null;
 
-            switch (this.Property)
+            switch (Property)
             {
                 case GarbageCollectorProperty.TotalMemory:
                     value = GC.GetTotalMemory(false);
@@ -94,7 +96,7 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
                     break;
 
 #endif
-                
+
                 case GarbageCollectorProperty.MaxGeneration:
                     value = GC.MaxGeneration;
                     break;

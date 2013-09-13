@@ -46,7 +46,7 @@ using Transformalize.Libs.NLog.LayoutRenderers.Wrappers;
 namespace Transformalize.Libs.NLog.Layouts
 {
     /// <summary>
-    /// Parses layout strings.
+    ///     Parses layout strings.
     /// </summary>
     internal sealed class LayoutParser
     {
@@ -87,7 +87,7 @@ namespace Transformalize.Libs.NLog.Layouts
                 }
                 else
                 {
-                    literalBuf.Append((char)ch);
+                    literalBuf.Append((char) ch);
                 }
             }
 
@@ -117,7 +117,7 @@ namespace Transformalize.Libs.NLog.Layouts
                     break;
                 }
 
-                nameBuf.Append((char)ch);
+                nameBuf.Append((char) ch);
                 sr.Read();
             }
 
@@ -162,11 +162,11 @@ namespace Transformalize.Libs.NLog.Layouts
                     sr.Read();
 
                     // append next character
-                    nameBuf.Append((char)sr.Read());
+                    nameBuf.Append((char) sr.Read());
                     continue;
                 }
 
-                nameBuf.Append((char)ch);
+                nameBuf.Append((char) ch);
                 sr.Read();
             }
 
@@ -191,11 +191,11 @@ namespace Transformalize.Libs.NLog.Layouts
                     sr.Read();
 
                     // append next character
-                    nameBuf.Append((char)sr.Read());
+                    nameBuf.Append((char) sr.Read());
                     continue;
                 }
 
-                nameBuf.Append((char)ch);
+                nameBuf.Append((char) ch);
                 sr.Read();
             }
 
@@ -255,7 +255,7 @@ namespace Transformalize.Libs.NLog.Layouts
                     }
                     else
                     {
-                        if (typeof(Layout).IsAssignableFrom(pi.PropertyType))
+                        if (typeof (Layout).IsAssignableFrom(pi.PropertyType))
                         {
                             var nestedLayout = new SimpleLayout();
                             string txt;
@@ -264,9 +264,9 @@ namespace Transformalize.Libs.NLog.Layouts
                             nestedLayout.SetRenderers(renderers, txt);
                             pi.SetValue(parameterTarget, nestedLayout, null);
                         }
-                        else if (typeof(ConditionExpression).IsAssignableFrom(pi.PropertyType))
+                        else if (typeof (ConditionExpression).IsAssignableFrom(pi.PropertyType))
                         {
-                            var conditionExpression = ConditionParser.ParseExpression(sr, configurationItemFactory);
+                            ConditionExpression conditionExpression = ConditionParser.ParseExpression(sr, configurationItemFactory);
                             pi.SetValue(parameterTarget, conditionExpression, null);
                         }
                         else
@@ -284,7 +284,7 @@ namespace Transformalize.Libs.NLog.Layouts
 
                     if (PropertyHelper.TryGetPropertyInfo(lr, string.Empty, out pi))
                     {
-                        if (typeof(SimpleLayout) == pi.PropertyType)
+                        if (typeof (SimpleLayout) == pi.PropertyType)
                         {
                             pi.SetValue(lr, new SimpleLayout(parameterName), null);
                         }
@@ -312,14 +312,14 @@ namespace Transformalize.Libs.NLog.Layouts
         {
             for (int i = orderedWrappers.Count - 1; i >= 0; --i)
             {
-                var newRenderer = (WrapperLayoutRendererBase)orderedWrappers[i];
+                var newRenderer = (WrapperLayoutRendererBase) orderedWrappers[i];
                 InternalLogger.Trace("Wrapping {0} with {1}", lr.GetType().Name, newRenderer.GetType().Name);
                 if (CanBeConvertedToLiteral(lr))
                 {
                     lr = ConvertToLiteral(lr);
                 }
 
-                newRenderer.Inner = new SimpleLayout(new[] { lr }, string.Empty, configurationItemFactory);
+                newRenderer.Inner = new SimpleLayout(new[] {lr}, string.Empty, configurationItemFactory);
                 lr = newRenderer;
             }
 
@@ -330,12 +330,12 @@ namespace Transformalize.Libs.NLog.Layouts
         {
             foreach (IRenderable renderable in ObjectGraphScanner.FindReachableObjects<IRenderable>(lr))
             {
-                if (renderable.GetType() == typeof(SimpleLayout))
+                if (renderable.GetType() == typeof (SimpleLayout))
                 {
                     continue;
                 }
 
-                if (!renderable.GetType().IsDefined(typeof(AppDomainFixedOutputAttribute), false))
+                if (!renderable.GetType().IsDefined(typeof (AppDomainFixedOutputAttribute), false))
                 {
                     return false;
                 }

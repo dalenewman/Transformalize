@@ -31,32 +31,33 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 // 
 
+
 #if !NET_CF && !SILVERLIGHT
 
 namespace Transformalize.Libs.NLog.Targets.Wrappers
 {
     /// <summary>
-    /// Impersonation level.
+    ///     Impersonation level.
     /// </summary>
     public enum SecurityImpersonationLevel
     {
         /// <summary>
-        /// Anonymous Level.
+        ///     Anonymous Level.
         /// </summary>
         Anonymous = 0,
 
         /// <summary>
-        /// Identification Level.
+        ///     Identification Level.
         /// </summary>
         Identification = 1,
 
         /// <summary>
-        /// Impersonation Level.
+        ///     Impersonation Level.
         /// </summary>
         Impersonation = 2,
 
         /// <summary>
-        /// Delegation Level.
+        ///     Delegation Level.
         /// </summary>
         Delegation = 3
     }

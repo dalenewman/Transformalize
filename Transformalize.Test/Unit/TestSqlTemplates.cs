@@ -17,26 +17,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using NUnit.Framework;
-using Transformalize.Providers;
+using Transformalize.Main.Providers;
 
-namespace Transformalize.Test.Unit {
+namespace Transformalize.Test.Unit
+{
     [TestFixture]
-    public class TestSqlTemplates {
-
+    public class TestSqlTemplates
+    {
         [Test]
-        public void TestTruncateSql() {
-            Assert.AreEqual(@"
-                IF EXISTS(
-        	        SELECT *
-        	        FROM INFORMATION_SCHEMA.TABLES
-        	        WHERE TABLE_SCHEMA = 'dbo'
-        	        AND TABLE_NAME = 'Test'
-                )	TRUNCATE TABLE [dbo].[Test];
-            ", SqlTemplates.TruncateTable("Test"));
-        }
-
-        [Test]
-        public void TestDropSql() {
+        public void TestDropSql()
+        {
             Assert.AreEqual(@"
                 IF EXISTS(
         	        SELECT *
@@ -46,6 +36,18 @@ namespace Transformalize.Test.Unit {
                 )	DROP TABLE [dbo].[TEST];
             ", SqlTemplates.DropTable("TEST"));
         }
-   
+
+        [Test]
+        public void TestTruncateSql()
+        {
+            Assert.AreEqual(@"
+                IF EXISTS(
+        	        SELECT *
+        	        FROM INFORMATION_SCHEMA.TABLES
+        	        WHERE TABLE_SCHEMA = 'dbo'
+        	        AND TABLE_NAME = 'Test'
+                )	TRUNCATE TABLE [dbo].[Test];
+            ", SqlTemplates.TruncateTable("Test"));
+        }
     }
 }

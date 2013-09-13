@@ -37,20 +37,20 @@ using System.Net.Sockets;
 namespace Transformalize.Libs.NLog.Internal.NetworkSenders
 {
     /// <summary>
-    /// Default implementation of <see cref="INetworkSenderFactory"/>.
+    ///     Default implementation of <see cref="INetworkSenderFactory" />.
     /// </summary>
     internal class NetworkSenderFactory : INetworkSenderFactory
     {
         public static readonly INetworkSenderFactory Default = new NetworkSenderFactory();
 
         /// <summary>
-        /// Creates a new instance of the network sender based on a network URL:.
+        ///     Creates a new instance of the network sender based on a network URL:.
         /// </summary>
         /// <param name="url">
-        /// URL that determines the network sender to be created.
+        ///     URL that determines the network sender to be created.
         /// </param>
         /// <returns>
-        /// A newly created network sender.
+        ///     A newly created network sender.
         /// </returns>
         public NetworkSender Create(string url)
         {

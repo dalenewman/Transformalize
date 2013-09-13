@@ -38,7 +38,7 @@ using Transformalize.Libs.NLog.Config;
 namespace Transformalize.Libs.NLog.LayoutRenderers.Wrappers
 {
     /// <summary>
-    /// Filters characters not allowed in the file names by replacing them with safe character.
+    ///     Filters characters not allowed in the file names by replacing them with safe character.
     /// </summary>
     [LayoutRenderer("filesystem-normalize")]
     [AmbientProperty("FSNormalize")]
@@ -46,29 +46,29 @@ namespace Transformalize.Libs.NLog.LayoutRenderers.Wrappers
     public sealed class FileSystemNormalizeLayoutRendererWrapper : WrapperLayoutRendererBase
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="FileSystemNormalizeLayoutRendererWrapper" /> class.
+        ///     Initializes a new instance of the <see cref="FileSystemNormalizeLayoutRendererWrapper" /> class.
         /// </summary>
         public FileSystemNormalizeLayoutRendererWrapper()
         {
-            this.FSNormalize = true;
+            FSNormalize = true;
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to modify the output of this renderer so it can be used as a part of file path
-        /// (illegal characters are replaced with '_').
+        ///     Gets or sets a value indicating whether to modify the output of this renderer so it can be used as a part of file path
+        ///     (illegal characters are replaced with '_').
         /// </summary>
         /// <docgen category='Advanced Options' order='10' />
         [DefaultValue(true)]
         public bool FSNormalize { get; set; }
 
         /// <summary>
-        /// Post-processes the rendered message. 
+        ///     Post-processes the rendered message.
         /// </summary>
         /// <param name="text">The text to be post-processed.</param>
         /// <returns>Padded and trimmed string.</returns>
         protected override string Transform(string text)
         {
-            if (this.FSNormalize)
+            if (FSNormalize)
             {
                 var builder = new StringBuilder(text);
                 for (int i = 0; i < builder.Length; i++)

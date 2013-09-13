@@ -17,27 +17,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Collections.Generic;
-using Transformalize.Core;
-using Transformalize.Core.Entity_;
-using Transformalize.Libs.NLog;
-using Transformalize.Libs.Rhino.Etl.Core;
-using Transformalize.Libs.Rhino.Etl.Core.Operations;
-using Transformalize.Providers.SqlServer;
+using Transformalize.Main;
+using Transformalize.Main.Providers.SqlServer;
+using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Libs.Rhino.Etl.Operations;
 
-namespace Transformalize.Operations {
-    public class EntityDrop : AbstractOperation {
-        private readonly IEntityDropper _entityDropper;
+namespace Transformalize.Operations
+{
+    public class EntityDrop : AbstractOperation
+    {
         private readonly Entity _entity;
+        private readonly IEntityDropper _entityDropper;
 
-        public EntityDrop(Entity entity, IEntityDropper entityDropper = null) {
+        public EntityDrop(Entity entity, IEntityDropper entityDropper = null)
+        {
             _entity = entity;
             _entityDropper = entityDropper ?? new SqlServerEntityDropper();
         }
 
-        public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
+        public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
+        {
             _entityDropper.DropOutput(_entity);
             return rows;
         }
-
     }
 }

@@ -19,12 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration;
-using Transformalize.Core;
-using Transformalize.Core.Parameters_;
-using Transformalize.Core.Process_;
+using Transformalize.Main;
 using Transformalize.Runner;
 
-namespace Transformalize.Test.Integration {
+namespace Transformalize.Test.Integration
+{
     [TestFixture]
     public class TestConfiguration : EtlProcessHelper
     {
@@ -32,9 +31,69 @@ namespace Transformalize.Test.Integration {
         private readonly Process _process = new ProcessReader(Element, new Options()).Read();
 
         [Test]
+        public void TestFromXmlTransformFieldsToParametersAdapter()
+        {
+            //Assert.AreEqual(3, Element.Entities[0].Fields[4].Transforms[0].Fields.Cast<FieldConfigurationElement>().Count());
+            //Assert.AreEqual(0, Element.Entities[0].Fields[4].Transforms[0].Parameters.Count);
+
+            //new FromXmlTransformFieldsToParametersAdapter(Element).Adapt();
+
+            //Assert.AreEqual(3, Element.Entities[0].Fields[4].Transforms[0].Parameters.Count);
+
+            //// tests combined because they affect one another
+
+            //var initialCount = Element.Entities[0].Fields.Cast<FieldConfigurationElement>().Count();
+            //Assert.AreEqual(3, Element.Entities[0].Fields[4].Transforms[0].Fields.Cast<FieldConfigurationElement>().Count());
+
+            //new FromXmlTransformFieldsMoveAdapter(Element).Adapt();
+
+            Assert.AreEqual(0, Element.Entities[0].Fields[4].Transforms[0].Fields.Cast<FieldConfigurationElement>().Count());
+            Assert.AreEqual(9, Element.Entities[0].Fields.Cast<FieldConfigurationElement>().Count());
+        }
+
+        [Test]
+        public void TestGetAllFieldsNeededForMultiFieldTransformations()
+        {
+            var expected = new Parameters
+                               {
+                                   {"LastName", "LastName", null, "System.Object"},
+                                   {"ProductName", "ProductName", null, "System.Object"}
+                               };
+
+            IParameters actual = _process.Parameters();
+
+            Assert.AreEqual(2, actual.Count);
+            Assert.AreEqual(expected["LastName"].Name, actual["LastName"].Name);
+            Assert.AreEqual(expected["ProductName"].Value, actual["ProductName"].Value);
+        }
+
+        [Test]
+        public void TestProcessReader()
+        {
+            Assert.AreEqual("Test", _process.Name);
+            Assert.AreEqual("server=localhost;database=TestInput;trusted_connection=True", _process.Connections["input"].ConnectionString);
+            Assert.AreEqual("server=localhost;database=TestOutput;trusted_connection=True", _process.Connections["output"].ConnectionString);
+            Assert.AreEqual("server=localhost;database=TestInput;trusted_connection=True", _process.Entities.First().InputConnection.ConnectionString);
+            Assert.AreEqual("OrderDetailKey", _process.Entities.First().PrimaryKey["OrderDetailKey"].Alias);
+            Assert.AreEqual("ProductKey", _process.Entities.First().Fields["ProductKey"].Alias);
+            Assert.AreEqual("RowVersion", _process.Entities.First().Version.Alias);
+
+            Assert.AreEqual("OrderDetail", _process.Relationships[0].LeftEntity.Alias);
+            Assert.AreEqual("Order", _process.Relationships[0].RightEntity.Alias);
+            Assert.AreEqual("OrderKey", _process.Relationships[0].Join[0].LeftField.Name);
+            Assert.AreEqual("OrderKey", _process.Relationships[0].Join[0].RightField.Name);
+
+            Assert.AreEqual(3, _process.RelatedKeys.Count());
+            Assert.AreEqual(0, _process.Entities.First().RelationshipToMaster.Count());
+            Assert.AreEqual(1, _process.Entities.First(e => e.Alias.Equals("Product")).RelationshipToMaster.Count());
+            Assert.AreEqual(1, _process.Entities.First(e => e.Alias.Equals("Order")).RelationshipToMaster.Count());
+            Assert.AreEqual(2, _process.Entities.First(e => e.Alias.Equals("Customer")).RelationshipToMaster.Count());
+        }
+
+        [Test]
         public void TestReadConfiguration()
         {
-            var test = Element;
+            ProcessConfigurationElement test = Element;
 
             Assert.AreEqual("Test", test.Name);
             Assert.AreEqual("input", test.Connections[0].Name);
@@ -50,69 +109,6 @@ namespace Transformalize.Test.Integration {
             Assert.AreEqual("Order", test.Relationships[0].RightEntity);
             Assert.AreEqual("OrderKey", test.Relationships[0].Join[0].LeftField);
             Assert.AreEqual("OrderKey", test.Relationships[0].Join[0].RightField);
-
         }
-
-        [Test]
-        public void TestProcessReader() {
-
-            Assert.AreEqual("Test", _process.Name);
-            Assert.AreEqual("server=localhost;database=TestInput;trusted_connection=True", _process.Connections["input"].ConnectionString);
-            Assert.AreEqual("server=localhost;database=TestOutput;trusted_connection=True", _process.Connections["output"].ConnectionString);
-            Assert.AreEqual("server=localhost;database=TestInput;trusted_connection=True", _process.Entities.First().InputConnection.ConnectionString);
-            Assert.AreEqual("OrderDetailKey",_process.Entities.First().PrimaryKey["OrderDetailKey"].Alias);
-            Assert.AreEqual("ProductKey",_process.Entities.First().Fields["ProductKey"].Alias);
-            Assert.AreEqual("RowVersion",_process.Entities.First().Version.Alias);
-
-            Assert.AreEqual("OrderDetail", _process.Relationships[0].LeftEntity.Alias);
-            Assert.AreEqual("Order", _process.Relationships[0].RightEntity.Alias);
-            Assert.AreEqual("OrderKey", _process.Relationships[0].Join[0].LeftField.Name);
-            Assert.AreEqual("OrderKey", _process.Relationships[0].Join[0].RightField.Name);
-
-            Assert.AreEqual(3, _process.RelatedKeys.Count());
-            Assert.AreEqual(0,_process.Entities.First().RelationshipToMaster.Count());
-            Assert.AreEqual(1,_process.Entities.First(e => e.Alias.Equals("Product")).RelationshipToMaster.Count());
-            Assert.AreEqual(1,_process.Entities.First(e => e.Alias.Equals("Order")).RelationshipToMaster.Count());
-            Assert.AreEqual(2,_process.Entities.First(e => e.Alias.Equals("Customer")).RelationshipToMaster.Count());
-
-        }
-
-        [Test]
-        public void TestGetAllFieldsNeededForMultiFieldTransformations() {
-
-            var expected = new Parameters() {
-                {"LastName", "LastName", null, "System.Object"},
-                {"ProductName", "ProductName", null, "System.Object"}
-            };
-
-            var actual = _process.Parameters();
-
-            Assert.AreEqual(2, actual.Count);
-            Assert.AreEqual(expected["LastName"].Name, actual["LastName"].Name);
-            Assert.AreEqual(expected["ProductName"].Value, actual["ProductName"].Value);
-        }
-
-        [Test]
-        public void TestFromXmlTransformFieldsToParametersAdapter()
-        {
-            //Assert.AreEqual(3, Element.Entities[0].Fields[4].Transforms[0].Fields.Cast<FieldConfigurationElement>().Count());
-            //Assert.AreEqual(0, Element.Entities[0].Fields[4].Transforms[0].Parameters.Count);
-
-            //new FromXmlTransformFieldsToParametersAdapter(Element).Adapt();
-
-            //Assert.AreEqual(3, Element.Entities[0].Fields[4].Transforms[0].Parameters.Count);
-
-            //// tests combined because they affect one another
-            
-            //var initialCount = Element.Entities[0].Fields.Cast<FieldConfigurationElement>().Count();
-            //Assert.AreEqual(3, Element.Entities[0].Fields[4].Transforms[0].Fields.Cast<FieldConfigurationElement>().Count());
-
-            //new FromXmlTransformFieldsMoveAdapter(Element).Adapt();
-
-            Assert.AreEqual(0, Element.Entities[0].Fields[4].Transforms[0].Fields.Cast<FieldConfigurationElement>().Count());
-            Assert.AreEqual(9, Element.Entities[0].Fields.Cast<FieldConfigurationElement>().Count());
-
-        }
-
     }
 }

@@ -17,44 +17,50 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Data;
-using Transformalize.Core.Parameters_;
-using Transformalize.Core.Process_;
-using Transformalize.Libs.Rhino.Etl.Core;
-using Transformalize.Libs.Rhino.Etl.Core.Operations;
 using System.Linq;
+using Transformalize.Main;
+using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Libs.Rhino.Etl.Operations;
 
-namespace Transformalize.Operations {
-    public class ParametersExtract : InputCommandOperation {
+namespace Transformalize.Operations
+{
+    public class ParametersExtract : InputCommandOperation
+    {
         private readonly string _sql;
         private IParameters _parameters;
 
-        private string BuildSql(Process process) {
-            _parameters = process.Parameters();
-            var fields = string.Join(", ", _parameters.Keys);
-            var tflWhereClause = string.Format(" WHERE [TflBatchId] IN ({0})", string.Join(", ", process.Entities.Select(kv=>kv.TflBatchId).Distinct()));
-            var sql = string.Format("SELECT [TflKey], {0} FROM {1}{2};", fields, process.View, tflWhereClause);
-            Debug("SQL:\r\n{0}", sql);
-            return sql;
-        }
-
         public ParametersExtract(Process process)
-            : base(process.MasterEntity.OutputConnection) {
+            : base(process.MasterEntity.OutputConnection)
+        {
             UseTransaction = false;
             _sql = BuildSql(process);
         }
 
-        protected override Row CreateRowFromReader(IDataReader reader) {
+        private string BuildSql(Process process)
+        {
+            _parameters = process.Parameters();
+            string fields = string.Join(", ", _parameters.Keys);
+            string tflWhereClause = string.Format(" WHERE [TflBatchId] IN ({0})", string.Join(", ", process.Entities.Select(kv => kv.TflBatchId).Distinct()));
+            string sql = string.Format("SELECT [TflKey], {0} FROM {1}{2};", fields, process.View, tflWhereClause);
+            Debug("SQL:\r\n{0}", sql);
+            return sql;
+        }
+
+        protected override Row CreateRowFromReader(IDataReader reader)
+        {
             var row = new Row();
-            var index = 1;
+            int index = 1;
             row["TflKey"] = reader.GetValue(0);
-            foreach (var p in _parameters) {
+            foreach (var p in _parameters)
+            {
                 row[p.Key] = reader.GetValue(index);
                 index++;
             }
             return row;
         }
 
-        protected override void PrepareCommand(IDbCommand cmd) {
+        protected override void PrepareCommand(IDbCommand cmd)
+        {
             cmd.CommandText = _sql;
             cmd.CommandTimeout = 0;
         }

@@ -19,77 +19,73 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
-using Transformalize.Core.Parameters_;
+using Transformalize.Main;
 
-namespace Transformalize.Test.Unit {
+namespace Transformalize.Test.Unit
+{
     [TestFixture]
-    public class TestParameters {
+    public class TestParameters
+    {
+        [Test]
+        public void TestAdding1()
+        {
+            var actual = new Parameters
+                             {
+                                 {"Key", "Name", "Value", "string"}
+                             };
+            Assert.AreEqual(1, actual.Count);
+            Assert.AreEqual("Name", actual.First().Value.Name);
+        }
 
         [Test]
-        public void TestConstruction() {
+        public void TestAdding2()
+        {
+            var actual = new Parameters
+                             {
+                                 {"Key1", "Name1", "Value", "string"},
+                                 {"Key2", "Name2", "Value", "string"},
+                             };
+            Assert.AreEqual(2, actual.Count);
+            Assert.AreEqual("Name1", actual.First().Value.Name);
+        }
+
+        [Test]
+        [ExpectedException(typeof (ArgumentException))]
+        public void TestAddingSameKey()
+        {
+            var actual = new Parameters
+                             {
+                                 {"Key1", "Name", "Value", "string"},
+                                 {"Key1", "Name", "Value", "string"},
+                             };
+        }
+
+        [Test]
+        public void TestConstruction()
+        {
             var actual = new Parameters();
             Assert.IsNotNull(actual);
             Assert.False(actual.Any());
         }
 
         [Test]
-        public void TestAdding1() {
-            var actual = new Parameters { { "Key", "Name", "Value", "string" } };
-            Assert.AreEqual(1, actual.Count);
-            Assert.AreEqual("Name", actual.First().Value.Name);
-        }
-
-        [Test]
-        public void TestAdding2() {
-            var actual = new Parameters {
-                { "Key1", "Name1", "Value", "string" },
-                { "Key2", "Name2", "Value", "string" },
-            };
-            Assert.AreEqual(2, actual.Count);
-            Assert.AreEqual("Name1", actual.First().Value.Name);
-        }
-
-        [Test]
-        [ExpectedException(typeof(ArgumentException))]
-        public void TestAddingSameKey() {
-            var actual = new Parameters {
-                { "Key1", "Name", "Value", "string" },
-                { "Key1", "Name", "Value", "string" },
-            };
-        }
-
-        [Test]
-        public void TestGet1() {
-            var actual = new Parameters {
-                { "Key1", "Name1", "Value2", "string" },
-                { "Key2", "Name2", "Value2", "string" },
-            };
-            Assert.AreEqual("Name2", actual["Key2"].Name);
-        }
-
-        [Test]
-        [ExpectedException(typeof(KeyNotFoundException))]
-        public void TestGetBad() {
-            var actual = new Parameters {
-                { "Key1", "Name1", "Value2", "string" },
-                { "Key2", "Name2", "Value2", "string" },
-            };
-            var test = actual["Key3"];
-        }
-
-        [Test]
-        public void TestEnumerate() {
-            var actual = new Parameters {
-                { "Key1", "Name1", "Value1", "string" },
-                { "Key2", "Name2", "Value2", "string" },
-            };
-            var count = 0;
-            foreach (var pair in actual) {
-
-                if (count == 0) {
+        public void TestEnumerate()
+        {
+            var actual = new Parameters
+                             {
+                                 {"Key1", "Name1", "Value1", "string"},
+                                 {"Key2", "Name2", "Value2", "string"},
+                             };
+            int count = 0;
+            foreach (var pair in actual)
+            {
+                if (count == 0)
+                {
                     Assert.AreEqual("Key1", pair.Key);
                     Assert.AreEqual("Value1", pair.Value.Value);
-                } else {
+                }
+                else
+                {
                     Assert.AreEqual("Key2", pair.Key);
                 }
                 count++;
@@ -97,14 +93,38 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void TestValueType() {
-            var actual = new Parameters {
-                { "Key1", "Name1", "0", "System.Int32" },
-                { "Key2", "Name2", "false", "System.Boolean" },
-            };
+        public void TestGet1()
+        {
+            var actual = new Parameters
+                             {
+                                 {"Key1", "Name1", "Value2", "string"},
+                                 {"Key2", "Name2", "Value2", "string"},
+                             };
+            Assert.AreEqual("Name2", actual["Key2"].Name);
+        }
+
+        [Test]
+        [ExpectedException(typeof (KeyNotFoundException))]
+        public void TestGetBad()
+        {
+            var actual = new Parameters
+                             {
+                                 {"Key1", "Name1", "Value2", "string"},
+                                 {"Key2", "Name2", "Value2", "string"},
+                             };
+            IParameter test = actual["Key3"];
+        }
+
+        [Test]
+        public void TestValueType()
+        {
+            var actual = new Parameters
+                             {
+                                 {"Key1", "Name1", "0", "System.Int32"},
+                                 {"Key2", "Name2", "false", "System.Boolean"},
+                             };
             Assert.IsInstanceOf<Int32>(actual["Key1"].Value);
             Assert.IsInstanceOf<Boolean>(actual["Key2"].Value);
         }
-
     }
 }

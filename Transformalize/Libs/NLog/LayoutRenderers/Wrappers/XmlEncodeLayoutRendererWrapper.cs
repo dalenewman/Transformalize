@@ -38,7 +38,7 @@ using Transformalize.Libs.NLog.Config;
 namespace Transformalize.Libs.NLog.LayoutRenderers.Wrappers
 {
     /// <summary>
-    /// Converts the result of another layout output to be XML-compliant.
+    ///     Converts the result of another layout output to be XML-compliant.
     /// </summary>
     [LayoutRenderer("xml-encode")]
     [AmbientProperty("XmlEncode")]
@@ -46,28 +46,28 @@ namespace Transformalize.Libs.NLog.LayoutRenderers.Wrappers
     public sealed class XmlEncodeLayoutRendererWrapper : WrapperLayoutRendererBase
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="XmlEncodeLayoutRendererWrapper" /> class.
+        ///     Initializes a new instance of the <see cref="XmlEncodeLayoutRendererWrapper" /> class.
         /// </summary>
         public XmlEncodeLayoutRendererWrapper()
         {
-            this.XmlEncode = true;
+            XmlEncode = true;
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to apply XML encoding.
+        ///     Gets or sets a value indicating whether to apply XML encoding.
         /// </summary>
-        /// <docgen category="Transformation Options" order="10"/>
+        /// <docgen category="Transformation Options" order="10" />
         [DefaultValue(true)]
         public bool XmlEncode { get; set; }
 
         /// <summary>
-        /// Post-processes the rendered message. 
+        ///     Post-processes the rendered message.
         /// </summary>
         /// <param name="text">The text to be post-processed.</param>
         /// <returns>Padded and trimmed string.</returns>
         protected override string Transform(string text)
         {
-            return this.XmlEncode ? DoXmlEscape(text) : text;
+            return XmlEncode ? DoXmlEscape(text) : text;
         }
 
         private static string DoXmlEscape(string text)

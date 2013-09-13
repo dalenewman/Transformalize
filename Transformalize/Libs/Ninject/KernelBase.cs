@@ -27,15 +27,15 @@ using Transformalize.Libs.Ninject.Syntax;
 namespace Transformalize.Libs.Ninject
 {
     /// <summary>
-    /// The base implementation of an <see cref="IKernel"/>.
+    ///     The base implementation of an <see cref="IKernel" />.
     /// </summary>
     public abstract class KernelBase : BindingRoot, IKernel
     {
         /// <summary>
-        /// Lock used when adding missing bindings.
+        ///     Lock used when adding missing bindings.
         /// </summary>
-        protected readonly object HandleMissingBindingLockObject = new object();        
-        
+        protected readonly object HandleMissingBindingLockObject = new object();
+
         private readonly Multimap<Type, IBinding> bindings = new Multimap<Type, IBinding>();
 
         private readonly Multimap<Type, IBinding> bindingCache = new Multimap<Type, IBinding>();
@@ -43,7 +43,7 @@ namespace Transformalize.Libs.Ninject
         private readonly Dictionary<string, INinjectModule> modules = new Dictionary<string, INinjectModule>();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="KernelBase"/> class.
+        ///     Initializes a new instance of the <see cref="KernelBase" /> class.
         /// </summary>
         protected KernelBase()
             : this(new ComponentContainer(), new NinjectSettings(), new INinjectModule[0])
@@ -51,7 +51,7 @@ namespace Transformalize.Libs.Ninject
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="KernelBase"/> class.
+        ///     Initializes a new instance of the <see cref="KernelBase" /> class.
         /// </summary>
         /// <param name="modules">The modules to load into the kernel.</param>
         protected KernelBase(params INinjectModule[] modules)
@@ -60,7 +60,7 @@ namespace Transformalize.Libs.Ninject
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="KernelBase"/> class.
+        ///     Initializes a new instance of the <see cref="KernelBase" /> class.
         /// </summary>
         /// <param name="settings">The configuration to use.</param>
         /// <param name="modules">The modules to load into the kernel.</param>
@@ -70,7 +70,7 @@ namespace Transformalize.Libs.Ninject
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="KernelBase"/> class.
+        ///     Initializes a new instance of the <see cref="KernelBase" /> class.
         /// </summary>
         /// <param name="components">The component container to use.</param>
         /// <param name="settings">The configuration to use.</param>
@@ -81,49 +81,49 @@ namespace Transformalize.Libs.Ninject
             Ensure.ArgumentNotNull(settings, "settings");
             Ensure.ArgumentNotNull(modules, "modules");
 
-            this.Settings = settings;
+            Settings = settings;
 
-            this.Components = components;
+            Components = components;
             components.Kernel = this;
 
-            this.AddComponents();
+            AddComponents();
 
-            this.Bind<IKernel>().ToConstant(this).InTransientScope();
-            this.Bind<IResolutionRoot>().ToConstant(this).InTransientScope();
+            Bind<IKernel>().ToConstant(this).InTransientScope();
+            Bind<IResolutionRoot>().ToConstant(this).InTransientScope();
 
 #if !NO_ASSEMBLY_SCANNING
-            if (this.Settings.LoadExtensions)
+            if (Settings.LoadExtensions)
             {
-                this.Load(this.Settings.ExtensionSearchPatterns);
+                Load(Settings.ExtensionSearchPatterns);
             }
 #endif
-            this.Load(modules);
+            Load(modules);
         }
 
         /// <summary>
-        /// Gets the kernel settings.
+        ///     Gets the kernel settings.
         /// </summary>
         public INinjectSettings Settings { get; private set; }
 
         /// <summary>
-        /// Gets the component container, which holds components that contribute to Ninject.
+        ///     Gets the component container, which holds components that contribute to Ninject.
         /// </summary>
         public IComponentContainer Components { get; private set; }
 
         /// <summary>
-        /// Releases resources held by the object.
+        ///     Releases resources held by the object.
         /// </summary>
         public override void Dispose(bool disposing)
         {
             if (disposing && !IsDisposed)
             {
-                if (this.Components != null)
+                if (Components != null)
                 {
                     // Deactivate all cached instances before shutting down the kernel.
-                    var cache = this.Components.Get<ICache>();
+                    var cache = Components.Get<ICache>();
                     cache.Clear();
 
-                    this.Components.Dispose();
+                    Components.Dispose();
                 }
             }
 
@@ -131,68 +131,70 @@ namespace Transformalize.Libs.Ninject
         }
 
         /// <summary>
-        /// Unregisters all bindings for the specified service.
+        ///     Unregisters all bindings for the specified service.
         /// </summary>
         /// <param name="service">The service to unbind.</param>
         public override void Unbind(Type service)
         {
             Ensure.ArgumentNotNull(service, "service");
 
-            this.bindings.RemoveAll(service);
+            bindings.RemoveAll(service);
 
-            lock (this.bindingCache)
+            lock (bindingCache)
             {
-                this.bindingCache.Clear();
+                bindingCache.Clear();
             }
         }
 
         /// <summary>
-        /// Registers the specified binding.
+        ///     Registers the specified binding.
         /// </summary>
         /// <param name="binding">The binding to add.</param>
         public override void AddBinding(IBinding binding)
         {
             Ensure.ArgumentNotNull(binding, "binding");
 
-            this.AddBindings(new[] { binding });
+            AddBindings(new[] {binding});
         }
 
         /// <summary>
-        /// Unregisters the specified binding.
+        ///     Unregisters the specified binding.
         /// </summary>
         /// <param name="binding">The binding to remove.</param>
         public override void RemoveBinding(IBinding binding)
         {
             Ensure.ArgumentNotNull(binding, "binding");
 
-            this.bindings.Remove(binding.Service, binding);
+            bindings.Remove(binding.Service, binding);
 
-            lock (this.bindingCache)
-                this.bindingCache.Clear();
+            lock (bindingCache)
+                bindingCache.Clear();
         }
 
         /// <summary>
-        /// Determines whether a module with the specified name has been loaded in the kernel.
+        ///     Determines whether a module with the specified name has been loaded in the kernel.
         /// </summary>
         /// <param name="name">The name of the module.</param>
-        /// <returns><c>True</c> if the specified module has been loaded; otherwise, <c>false</c>.</returns>
+        /// <returns>
+        ///     <c>True</c> if the specified module has been loaded; otherwise, <c>false</c>.
+        /// </returns>
         public bool HasModule(string name)
         {
             Ensure.ArgumentNotNullOrEmpty(name, "name");
-            return this.modules.ContainsKey(name);
+            return modules.ContainsKey(name);
         }
 
         /// <summary>
-        /// Gets the modules that have been loaded into the kernel.
+        ///     Gets the modules that have been loaded into the kernel.
         /// </summary>
         /// <returns>A series of loaded modules.</returns>
         public IEnumerable<INinjectModule> GetModules()
         {
-            return this.modules.Values.ToArray();
+            return modules.Values.ToArray();
         }
 
         /// <summary>
-        /// Loads the module(s) into the kernel.
+        ///     Loads the module(s) into the kernel.
         /// </summary>
         /// <param name="m">The modules to load.</param>
         public void Load(IEnumerable<INinjectModule> m)
@@ -206,17 +208,17 @@ namespace Transformalize.Libs.Ninject
                 {
                     throw new NotSupportedException(ExceptionFormatter.ModulesWithNullOrEmptyNamesAreNotSupported());
                 }
-                
+
                 INinjectModule existingModule;
 
-                if (this.modules.TryGetValue(module.Name, out existingModule))
+                if (modules.TryGetValue(module.Name, out existingModule))
                 {
                     throw new NotSupportedException(ExceptionFormatter.ModuleWithSameNameIsAlreadyLoaded(module, existingModule));
                 }
 
                 module.OnLoad(this);
 
-                this.modules.Add(module.Name, module);
+                modules.Add(module.Name, module);
             }
 
             foreach (INinjectModule module in m)
@@ -227,27 +229,28 @@ namespace Transformalize.Libs.Ninject
 
 #if !NO_ASSEMBLY_SCANNING
         /// <summary>
-        /// Loads modules from the files that match the specified pattern(s).
+        ///     Loads modules from the files that match the specified pattern(s).
         /// </summary>
         /// <param name="filePatterns">The file patterns (i.e. "*.dll", "modules/*.rb") to match.</param>
         public void Load(IEnumerable<string> filePatterns)
         {
-            var moduleLoader = this.Components.Get<IModuleLoader>();
+            var moduleLoader = Components.Get<IModuleLoader>();
             moduleLoader.LoadModules(filePatterns);
         }
 
         /// <summary>
-        /// Loads modules defined in the specified assemblies.
+        ///     Loads modules defined in the specified assemblies.
         /// </summary>
         /// <param name="assemblies">The assemblies to search.</param>
         public void Load(IEnumerable<Assembly> assemblies)
         {
-            this.Load(assemblies.SelectMany(asm => asm.GetNinjectModules()));
+            Load(assemblies.SelectMany(asm => asm.GetNinjectModules()));
         }
-#endif //!NO_ASSEMBLY_SCANNING
+#endif
+        //!NO_ASSEMBLY_SCANNING
 
         /// <summary>
-        /// Unloads the plugin with the specified name.
+        ///     Unloads the plugin with the specified name.
         /// </summary>
         /// <param name="name">The plugin's name.</param>
         public void Unload(string name)
@@ -256,18 +259,18 @@ namespace Transformalize.Libs.Ninject
 
             INinjectModule module;
 
-            if (!this.modules.TryGetValue(name, out module))
+            if (!modules.TryGetValue(name, out module))
             {
                 throw new NotSupportedException(ExceptionFormatter.NoModuleLoadedWithTheSpecifiedName(name));
             }
 
             module.OnUnload(this);
 
-            this.modules.Remove(name);
+            modules.Remove(name);
         }
 
         /// <summary>
-        /// Injects the specified existing instance, without managing its lifecycle.
+        ///     Injects the specified existing instance, without managing its lifecycle.
         /// </summary>
         /// <param name="instance">The instance to inject.</param>
         /// <param name="parameters">The parameters to pass to the request.</param>
@@ -278,60 +281,69 @@ namespace Transformalize.Libs.Ninject
 
             Type service = instance.GetType();
 
-            var planner = this.Components.Get<IPlanner>();
-            var pipeline = this.Components.Get<IPipeline>();
+            var planner = Components.Get<IPlanner>();
+            var pipeline = Components.Get<IPipeline>();
 
             var binding = new Binding(service);
-            var request = this.CreateRequest(service, null, parameters, false, false);
-            var context = this.CreateContext(request, binding);
+            IRequest request = CreateRequest(service, null, parameters, false, false);
+            IContext context = CreateContext(request, binding);
 
             context.Plan = planner.GetPlan(service);
 
-            var reference = new InstanceReference { Instance = instance };
+            var reference = new InstanceReference
+                                {
+                                    Instance = instance
+                                };
             pipeline.Activate(context, reference);
         }
 
         /// <summary>
-        /// Deactivates and releases the specified instance if it is currently managed by Ninject.
+        ///     Deactivates and releases the specified instance if it is currently managed by Ninject.
         /// </summary>
         /// <param name="instance">The instance to release.</param>
-        /// <returns><see langword="True"/> if the instance was found and released; otherwise <see langword="false"/>.</returns>
+        /// <returns>
+        ///     <see langword="True" /> if the instance was found and released; otherwise <see langword="false" />.
+        /// </returns>
         public virtual bool Release(object instance)
         {
             Ensure.ArgumentNotNull(instance, "instance");
-            var cache = this.Components.Get<ICache>();
+            var cache = Components.Get<ICache>();
             return cache.Release(instance);
         }
 
         /// <summary>
-        /// Determines whether the specified request can be resolved.
+        ///     Determines whether the specified request can be resolved.
         /// </summary>
         /// <param name="request">The request.</param>
-        /// <returns><c>True</c> if the request can be resolved; otherwise, <c>false</c>.</returns>
+        /// <returns>
+        ///     <c>True</c> if the request can be resolved; otherwise, <c>false</c>.
+        /// </returns>
         public virtual bool CanResolve(IRequest request)
         {
             Ensure.ArgumentNotNull(request, "request");
-            return this.GetBindings(request.Service).Any(this.SatifiesRequest(request));
+            return GetBindings(request.Service).Any(SatifiesRequest(request));
         }
 
         /// <summary>
-        /// Determines whether the specified request can be resolved.
+        ///     Determines whether the specified request can be resolved.
         /// </summary>
         /// <param name="request">The request.</param>
-        /// <param name="ignoreImplicitBindings">if set to <c>true</c> implicit bindings are ignored.</param>
+        /// <param name="ignoreImplicitBindings">
+        ///     if set to <c>true</c> implicit bindings are ignored.
+        /// </param>
         /// <returns>
         ///     <c>True</c> if the request can be resolved; otherwise, <c>false</c>.
         /// </returns>
         public virtual bool CanResolve(IRequest request, bool ignoreImplicitBindings)
         {
             Ensure.ArgumentNotNull(request, "request");
-            return this.GetBindings(request.Service)
-                .Any(binding => (!ignoreImplicitBindings || !binding.IsImplicit) && this.SatifiesRequest(request)(binding));
+            return GetBindings(request.Service)
+                .Any(binding => (!ignoreImplicitBindings || !binding.IsImplicit) && SatifiesRequest(request)(binding));
         }
 
         /// <summary>
-        /// Resolves instances for the specified request. The instances are not actually resolved
-        /// until a consumer iterates over the enumerator.
+        ///     Resolves instances for the specified request. The instances are not actually resolved
+        ///     until a consumer iterates over the enumerator.
         /// </summary>
         /// <param name="request">The request to resolve.</param>
         /// <returns>An enumerator of instances that match the request.</returns>
@@ -339,14 +351,13 @@ namespace Transformalize.Libs.Ninject
         {
             Ensure.ArgumentNotNull(request, "request");
 
-            var bindingPrecedenceComparer = this.GetBindingPrecedenceComparer();
-            var resolveBindings = Enumerable.Empty<IBinding>();
+            IComparer<IBinding> bindingPrecedenceComparer = GetBindingPrecedenceComparer();
+            IEnumerable<IBinding> resolveBindings = Enumerable.Empty<IBinding>();
 
-            if (this.CanResolve(request) || this.HandleMissingBinding(request))
+            if (CanResolve(request) || HandleMissingBinding(request))
             {
-                resolveBindings = this.GetBindings(request.Service)
-                                      .Where(this.SatifiesRequest(request));
-
+                resolveBindings = GetBindings(request.Service)
+                    .Where(SatifiesRequest(request));
             }
 
             if (!resolveBindings.Any())
@@ -362,7 +373,7 @@ namespace Transformalize.Libs.Ninject
             if (request.IsUnique)
             {
                 resolveBindings = resolveBindings.OrderByDescending(b => b, bindingPrecedenceComparer).ToList();
-                var model = resolveBindings.First(); // the type (conditonal, implicit, etc) of binding we'll return
+                IBinding model = resolveBindings.First(); // the type (conditonal, implicit, etc) of binding we'll return
                 resolveBindings =
                     resolveBindings.TakeWhile(binding => bindingPrecedenceComparer.Compare(binding, model) == 0);
 
@@ -373,31 +384,35 @@ namespace Transformalize.Libs.Ninject
                         return Enumerable.Empty<object>();
                     }
 
-                    var formattedBindings =
+                    IEnumerable<string> formattedBindings =
                         from binding in resolveBindings
-                        let context = this.CreateContext(request, binding)
+                        let context = CreateContext(request, binding)
                         select binding.Format(context);
                     throw new ActivationException(ExceptionFormatter.CouldNotUniquelyResolveBinding(request, formattedBindings.ToArray()));
                 }
             }
 
-            if(resolveBindings.Any(binding => !binding.IsImplicit))
+            if (resolveBindings.Any(binding => !binding.IsImplicit))
             {
                 resolveBindings = resolveBindings.Where(binding => !binding.IsImplicit);
             }
 
             return resolveBindings
-                .Select(binding => this.CreateContext(request, binding).Resolve());
+                .Select(binding => CreateContext(request, binding).Resolve());
         }
 
         /// <summary>
-        /// Creates a request for the specified service.
+        ///     Creates a request for the specified service.
         /// </summary>
         /// <param name="service">The service that is being requested.</param>
         /// <param name="constraint">The constraint to apply to the bindings to determine if they match the request.</param>
         /// <param name="parameters">The parameters to pass to the resolution.</param>
-        /// <param name="isOptional"><c>True</c> if the request is optional; otherwise, <c>false</c>.</param>
-        /// <param name="isUnique"><c>True</c> if the request should return a unique result; otherwise, <c>false</c>.</param>
+        /// <param name="isOptional">
+        ///     <c>True</c> if the request is optional; otherwise, <c>false</c>.
+        /// </param>
+        /// <param name="isUnique">
+        ///     <c>True</c> if the request should return a unique result; otherwise, <c>false</c>.
+        /// </param>
         /// <returns>The created request.</returns>
         public virtual IRequest CreateRequest(Type service, Func<IBindingMetadata, bool> constraint, IEnumerable<IParameter> parameters, bool isOptional, bool isUnique)
         {
@@ -408,7 +423,7 @@ namespace Transformalize.Libs.Ninject
         }
 
         /// <summary>
-        /// Begins a new activation block, which can be used to deterministically dispose resolved instances.
+        ///     Begins a new activation block, which can be used to deterministically dispose resolved instances.
         /// </summary>
         /// <returns>The new activation block.</returns>
         public virtual IActivationBlock BeginBlock()
@@ -417,7 +432,7 @@ namespace Transformalize.Libs.Ninject
         }
 
         /// <summary>
-        /// Gets the bindings registered for the specified service.
+        ///     Gets the bindings registered for the specified service.
         /// </summary>
         /// <param name="service">The service in question.</param>
         /// <returns>A series of bindings that are registered for the service.</returns>
@@ -425,23 +440,23 @@ namespace Transformalize.Libs.Ninject
         {
             Ensure.ArgumentNotNull(service, "service");
 
-            lock (this.bindingCache)
+            lock (bindingCache)
             {
-                if (!this.bindingCache.ContainsKey(service))
+                if (!bindingCache.ContainsKey(service))
                 {
-                    var resolvers = this.Components.GetAll<IBindingResolver>();
+                    IEnumerable<IBindingResolver> resolvers = Components.GetAll<IBindingResolver>();
 
                     resolvers
-                        .SelectMany(resolver => resolver.Resolve(this.bindings, service))
-                        .Map(binding => this.bindingCache.Add(service, binding));
+                        .SelectMany(resolver => resolver.Resolve(bindings, service))
+                        .Map(binding => bindingCache.Add(service, binding));
                 }
 
-                return this.bindingCache[service];
+                return bindingCache[service];
             }
         }
 
         /// <summary>
-        /// Returns an IComparer that is used to determine resolution precedence.
+        ///     Returns an IComparer that is used to determine resolution precedence.
         /// </summary>
         /// <returns>An IComparer that is used to determine resolution precedence.</returns>
         protected virtual IComparer<IBinding> GetBindingPrecedenceComparer()
@@ -450,7 +465,7 @@ namespace Transformalize.Libs.Ninject
         }
 
         /// <summary>
-        /// Returns a predicate that can determine if a given IBinding matches the request.
+        ///     Returns a predicate that can determine if a given IBinding matches the request.
         /// </summary>
         /// <param name="request">The request/</param>
         /// <returns>A predicate that can determine if a given IBinding matches the request.</returns>
@@ -460,15 +475,17 @@ namespace Transformalize.Libs.Ninject
         }
 
         /// <summary>
-        /// Adds components to the kernel during startup.
+        ///     Adds components to the kernel during startup.
         /// </summary>
         protected abstract void AddComponents();
 
         /// <summary>
-        /// Attempts to handle a missing binding for a service.
+        ///     Attempts to handle a missing binding for a service.
         /// </summary>
         /// <param name="service">The service.</param>
-        /// <returns><c>True</c> if the missing binding can be handled; otherwise <c>false</c>.</returns>
+        /// <returns>
+        ///     <c>True</c> if the missing binding can be handled; otherwise <c>false</c>.
+        /// </returns>
         [Obsolete]
         protected virtual bool HandleMissingBinding(Type service)
         {
@@ -476,25 +493,27 @@ namespace Transformalize.Libs.Ninject
         }
 
         /// <summary>
-        /// Attempts to handle a missing binding for a request.
+        ///     Attempts to handle a missing binding for a request.
         /// </summary>
         /// <param name="request">The request.</param>
-        /// <returns><c>True</c> if the missing binding can be handled; otherwise <c>false</c>.</returns>
+        /// <returns>
+        ///     <c>True</c> if the missing binding can be handled; otherwise <c>false</c>.
+        /// </returns>
         protected virtual bool HandleMissingBinding(IRequest request)
         {
             Ensure.ArgumentNotNull(request, "request");
 
 #pragma warning disable 612,618
-            if (this.HandleMissingBinding(request.Service))
+            if (HandleMissingBinding(request.Service))
             {
                 return true;
             }
 #pragma warning restore 612,618
 
-            var components = this.Components.GetAll<IMissingBindingResolver>();
-            
+            IEnumerable<IMissingBindingResolver> components = Components.GetAll<IMissingBindingResolver>();
+
             // Take the first set of bindings that resolve.
-            var bindings = components
+            List<IBinding> bindings = components
                 .Select(c => c.Resolve(this.bindings, request).ToList())
                 .FirstOrDefault(b => b.Any());
 
@@ -503,12 +522,12 @@ namespace Transformalize.Libs.Ninject
                 return false;
             }
 
-            lock (this.HandleMissingBindingLockObject)
+            lock (HandleMissingBindingLockObject)
             {
-                if (!this.CanResolve(request))
+                if (!CanResolve(request))
                 {
                     bindings.Map(binding => binding.IsImplicit = true);
-                    this.AddBindings(bindings);
+                    AddBindings(bindings);
                 }
             }
 
@@ -516,22 +535,24 @@ namespace Transformalize.Libs.Ninject
         }
 
         /// <summary>
-        /// Returns a value indicating whether the specified service is self-bindable.
+        ///     Returns a value indicating whether the specified service is self-bindable.
         /// </summary>
         /// <param name="service">The service.</param>
-        /// <returns><see langword="True"/> if the type is self-bindable; otherwise <see langword="false"/>.</returns>
+        /// <returns>
+        ///     <see langword="True" /> if the type is self-bindable; otherwise <see langword="false" />.
+        /// </returns>
         [Obsolete]
         protected virtual bool TypeIsSelfBindable(Type service)
         {
             return !service.IsInterface
-                && !service.IsAbstract
-                && !service.IsValueType
-                && service != typeof(string)
-                && !service.ContainsGenericParameters;
+                   && !service.IsAbstract
+                   && !service.IsValueType
+                   && service != typeof (string)
+                   && !service.ContainsGenericParameters;
         }
 
         /// <summary>
-        /// Creates a context for the specified request and binding.
+        ///     Creates a context for the specified request and binding.
         /// </summary>
         /// <param name="request">The request.</param>
         /// <param name="binding">The binding.</param>
@@ -541,15 +562,15 @@ namespace Transformalize.Libs.Ninject
             Ensure.ArgumentNotNull(request, "request");
             Ensure.ArgumentNotNull(binding, "binding");
 
-            return new Context(this, request, binding, this.Components.Get<ICache>(), this.Components.Get<IPlanner>(), this.Components.Get<IPipeline>());
+            return new Context(this, request, binding, Components.Get<ICache>(), Components.Get<IPlanner>(), Components.Get<IPipeline>());
         }
 
         private void AddBindings(IEnumerable<IBinding> bindings)
         {
             bindings.Map(binding => this.bindings.Add(binding.Service, binding));
 
-            lock (this.bindingCache)
-                this.bindingCache.Clear();
+            lock (bindingCache)
+                bindingCache.Clear();
         }
 
         object IServiceProvider.GetService(Type service)
@@ -568,17 +589,17 @@ namespace Transformalize.Libs.Ninject
 
                 // Each function represents a level of precedence.
                 var funcs = new List<Func<IBinding, bool>>
-                            {
-                                b => b != null,       // null bindings should never happen, but just in case
-                                b => b.IsConditional, // conditional bindings > unconditional
-                                b => !b.Service.ContainsGenericParameters, // closed generics > open generics
-                                b => !b.IsImplicit,   // explicit bindings > implicit
-                            };
+                                {
+                                    b => b != null, // null bindings should never happen, but just in case
+                                    b => b.IsConditional, // conditional bindings > unconditional
+                                    b => !b.Service.ContainsGenericParameters, // closed generics > open generics
+                                    b => !b.IsImplicit, // explicit bindings > implicit
+                                };
 
-                var q = from func in funcs
-                        let xVal = func(x)
-                        where xVal != func(y) 
-                        select xVal ? 1 : -1;
+                IEnumerable<int> q = from func in funcs
+                                     let xVal = func(x)
+                                     where xVal != func(y)
+                                     select xVal ? 1 : -1;
 
                 // returns the value of the first function that represents a difference
                 // between the bindings, or else returns 0 (equal)

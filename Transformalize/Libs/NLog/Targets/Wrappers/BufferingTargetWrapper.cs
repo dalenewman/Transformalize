@@ -38,7 +38,7 @@ using Transformalize.Libs.NLog.Common;
 namespace Transformalize.Libs.NLog.Targets.Wrappers
 {
     /// <summary>
-    /// A target that buffers log events and sends them in batches to the wrapped target.
+    ///     A target that buffers log events and sends them in batches to the wrapped target.
     /// </summary>
     /// <seealso href="http://nlog-project.org/wiki/BufferingWrapper_target">Documentation on NLog Wiki</seealso>
     [Target("BufferingWrapper", IsWrapper = true)]
@@ -48,7 +48,7 @@ namespace Transformalize.Libs.NLog.Targets.Wrappers
         private Timer flushTimer;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BufferingTargetWrapper" /> class.
+        ///     Initializes a new instance of the <see cref="BufferingTargetWrapper" /> class.
         /// </summary>
         public BufferingTargetWrapper()
             : this(null)
@@ -56,7 +56,7 @@ namespace Transformalize.Libs.NLog.Targets.Wrappers
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BufferingTargetWrapper" /> class.
+        ///     Initializes a new instance of the <see cref="BufferingTargetWrapper" /> class.
         /// </summary>
         /// <param name="wrappedTarget">The wrapped target.</param>
         public BufferingTargetWrapper(Target wrappedTarget)
@@ -65,7 +65,7 @@ namespace Transformalize.Libs.NLog.Targets.Wrappers
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BufferingTargetWrapper" /> class.
+        ///     Initializes a new instance of the <see cref="BufferingTargetWrapper" /> class.
         /// </summary>
         /// <param name="wrappedTarget">The wrapped target.</param>
         /// <param name="bufferSize">Size of the buffer.</param>
@@ -75,110 +75,110 @@ namespace Transformalize.Libs.NLog.Targets.Wrappers
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BufferingTargetWrapper" /> class.
+        ///     Initializes a new instance of the <see cref="BufferingTargetWrapper" /> class.
         /// </summary>
         /// <param name="wrappedTarget">The wrapped target.</param>
         /// <param name="bufferSize">Size of the buffer.</param>
         /// <param name="flushTimeout">The flush timeout.</param>
         public BufferingTargetWrapper(Target wrappedTarget, int bufferSize, int flushTimeout)
         {
-            this.WrappedTarget = wrappedTarget;
-            this.BufferSize = bufferSize;
-            this.FlushTimeout = flushTimeout;
-            this.SlidingTimeout = true;
+            WrappedTarget = wrappedTarget;
+            BufferSize = bufferSize;
+            FlushTimeout = flushTimeout;
+            SlidingTimeout = true;
         }
 
         /// <summary>
-        /// Gets or sets the number of log events to be buffered.
+        ///     Gets or sets the number of log events to be buffered.
         /// </summary>
         /// <docgen category='Buffering Options' order='100' />
         [DefaultValue(100)]
         public int BufferSize { get; set; }
 
         /// <summary>
-        /// Gets or sets the timeout (in milliseconds) after which the contents of buffer will be flushed 
-        /// if there's no write in the specified period of time. Use -1 to disable timed flushes.
+        ///     Gets or sets the timeout (in milliseconds) after which the contents of buffer will be flushed
+        ///     if there's no write in the specified period of time. Use -1 to disable timed flushes.
         /// </summary>
         /// <docgen category='Buffering Options' order='100' />
         [DefaultValue(-1)]
         public int FlushTimeout { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to use sliding timeout.
+        ///     Gets or sets a value indicating whether to use sliding timeout.
         /// </summary>
         /// <remarks>
-        /// This value determines how the inactivity period is determined. If sliding timeout is enabled,
-        /// the inactivity timer is reset after each write, if it is disabled - inactivity timer will 
-        /// count from the first event written to the buffer. 
+        ///     This value determines how the inactivity period is determined. If sliding timeout is enabled,
+        ///     the inactivity timer is reset after each write, if it is disabled - inactivity timer will
+        ///     count from the first event written to the buffer.
         /// </remarks>
         /// <docgen category='Buffering Options' order='100' />
         [DefaultValue(true)]
         public bool SlidingTimeout { get; set; }
 
         /// <summary>
-        /// Flushes pending events in the buffer (if any).
+        ///     Flushes pending events in the buffer (if any).
         /// </summary>
         /// <param name="asyncContinuation">The asynchronous continuation.</param>
         protected override void FlushAsync(AsyncContinuation asyncContinuation)
         {
-            AsyncLogEventInfo[] events = this.buffer.GetEventsAndClear();
+            AsyncLogEventInfo[] events = buffer.GetEventsAndClear();
 
             if (events.Length == 0)
             {
-                this.WrappedTarget.Flush(asyncContinuation);
+                WrappedTarget.Flush(asyncContinuation);
             }
             else
             {
-                this.WrappedTarget.WriteAsyncLogEvents(events, ex => this.WrappedTarget.Flush(asyncContinuation));
+                WrappedTarget.WriteAsyncLogEvents(events, ex => WrappedTarget.Flush(asyncContinuation));
             }
         }
 
         /// <summary>
-        /// Initializes the target.
+        ///     Initializes the target.
         /// </summary>
         protected override void InitializeTarget()
         {
             base.InitializeTarget();
-            this.buffer = new LogEventInfoBuffer(this.BufferSize, false, 0);
-            this.flushTimer = new Timer(this.FlushCallback, null, -1, -1);
+            buffer = new LogEventInfoBuffer(BufferSize, false, 0);
+            flushTimer = new Timer(FlushCallback, null, -1, -1);
         }
 
         /// <summary>
-        /// Closes the target by flushing pending events in the buffer (if any).
+        ///     Closes the target by flushing pending events in the buffer (if any).
         /// </summary>
         protected override void CloseTarget()
         {
             base.CloseTarget();
-            if (this.flushTimer != null)
+            if (flushTimer != null)
             {
-                this.flushTimer.Dispose();
-                this.flushTimer = null;
+                flushTimer.Dispose();
+                flushTimer = null;
             }
         }
 
         /// <summary>
-        /// Adds the specified log event to the buffer and flushes
-        /// the buffer in case the buffer gets full.
+        ///     Adds the specified log event to the buffer and flushes
+        ///     the buffer in case the buffer gets full.
         /// </summary>
         /// <param name="logEvent">The log event.</param>
         protected override void Write(AsyncLogEventInfo logEvent)
         {
-            this.WrappedTarget.PrecalculateVolatileLayouts(logEvent.LogEvent);
+            WrappedTarget.PrecalculateVolatileLayouts(logEvent.LogEvent);
 
-            int count = this.buffer.Append(logEvent);
-            if (count >= this.BufferSize)
+            int count = buffer.Append(logEvent);
+            if (count >= BufferSize)
             {
-                AsyncLogEventInfo[] events = this.buffer.GetEventsAndClear();
-                this.WrappedTarget.WriteAsyncLogEvents(events);
+                AsyncLogEventInfo[] events = buffer.GetEventsAndClear();
+                WrappedTarget.WriteAsyncLogEvents(events);
             }
             else
             {
-                if (this.FlushTimeout > 0)
+                if (FlushTimeout > 0)
                 {
                     // reset the timer on first item added to the buffer or whenever SlidingTimeout is set to true
-                    if (this.SlidingTimeout || count == 1)
+                    if (SlidingTimeout || count == 1)
                     {
-                        this.flushTimer.Change(this.FlushTimeout, -1);
+                        flushTimer.Change(FlushTimeout, -1);
                     }
                 }
             }
@@ -186,14 +186,14 @@ namespace Transformalize.Libs.NLog.Targets.Wrappers
 
         private void FlushCallback(object state)
         {
-            lock (this.SyncRoot)
+            lock (SyncRoot)
             {
-                if (this.IsInitialized)
+                if (IsInitialized)
                 {
-                    AsyncLogEventInfo[] events = this.buffer.GetEventsAndClear();
+                    AsyncLogEventInfo[] events = buffer.GetEventsAndClear();
                     if (events.Length > 0)
                     {
-                        this.WrappedTarget.WriteAsyncLogEvents(events);
+                        WrappedTarget.WriteAsyncLogEvents(events);
                     }
                 }
             }

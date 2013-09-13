@@ -36,7 +36,7 @@ using Transformalize.Libs.NLog.Targets;
 namespace Transformalize.Libs.NLog.Internal.FileAppenders
 {
     /// <summary>
-    /// Interface that provides parameters for create file function.
+    ///     Interface that provides parameters for create file function.
     /// </summary>
     internal interface ICreateFileParameters
     {

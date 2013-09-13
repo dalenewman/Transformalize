@@ -17,29 +17,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using NUnit.Framework;
-using Transformalize.Core.Field_;
+using Transformalize.Main;
 
-namespace Transformalize.Test.Unit {
+namespace Transformalize.Test.Unit
+{
     [TestFixture]
-    public class TestFieldType {
-
+    public class TestFieldType
+    {
         [Test]
-        public void TestEquality() {
-            var x = FieldType.PrimaryKey;
-            var y = FieldType.PrimaryKey;
-            Assert.AreEqual(x, y);
-        }
-
-        [Test]
-        public void TestInequality() {
+        public void TestAdd()
+        {
             var x = FieldType.ForeignKey;
-            var y = FieldType.PrimaryKey;
-            Assert.AreNotEqual(x, y);
+            x |= FieldType.MasterKey;
+            Assert.IsTrue(x.HasFlag(FieldType.ForeignKey));
+            Assert.IsTrue(x.HasFlag(FieldType.MasterKey));
         }
 
         [Test]
-        public void TestCombination() {
-            var x = FieldType.ForeignKey | FieldType.MasterKey;
+        public void TestCombination()
+        {
+            FieldType x = FieldType.ForeignKey | FieldType.MasterKey;
             var y = FieldType.ForeignKey;
             Assert.AreNotEqual(x, y);
             Assert.IsTrue(x.HasFlag(FieldType.ForeignKey));
@@ -47,28 +44,31 @@ namespace Transformalize.Test.Unit {
             Assert.IsTrue(y.HasFlag(FieldType.ForeignKey));
             Assert.IsFalse(y.HasFlag(FieldType.MasterKey));
             Assert.AreNotEqual(x, FieldType.ForeignKey);
-
         }
 
         [Test]
-        public void TestAdd() {
+        public void TestEquality()
+        {
+            var x = FieldType.PrimaryKey;
+            var y = FieldType.PrimaryKey;
+            Assert.AreEqual(x, y);
+        }
+
+        [Test]
+        public void TestInequality()
+        {
             var x = FieldType.ForeignKey;
-            x |= FieldType.MasterKey;
-            Assert.IsTrue(x.HasFlag(FieldType.ForeignKey));
-            Assert.IsTrue(x.HasFlag(FieldType.MasterKey));
-
+            var y = FieldType.PrimaryKey;
+            Assert.AreNotEqual(x, y);
         }
 
         [Test]
-        public void TestNone() {
+        public void TestNone()
+        {
             var x = FieldType.None;
             x |= FieldType.ForeignKey;
             Assert.AreEqual(x, FieldType.ForeignKey);
             Assert.AreNotEqual(x, FieldType.None);
         }
-
-
-
-
     }
 }

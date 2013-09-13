@@ -44,28 +44,28 @@ using Transformalize.Libs.NLog.Internal;
 namespace Transformalize.Libs.NLog.Targets
 {
     /// <summary>
-    /// Calls the specified web service on each log message.
+    ///     Calls the specified web service on each log message.
     /// </summary>
     /// <seealso href="http://nlog-project.org/wiki/WebService_target">Documentation on NLog Wiki</seealso>
     /// <remarks>
-    /// The web service must implement a method that accepts a number of string parameters.
+    ///     The web service must implement a method that accepts a number of string parameters.
     /// </remarks>
     /// <example>
-    /// <p>
-    /// To set up the target in the <a href="config.html">configuration file</a>, 
-    /// use the following syntax:
-    /// </p>
-    /// <code lang="XML" source="examples/targets/Configuration File/WebService/NLog.config" />
-    /// <p>
-    /// This assumes just one target and a single rule. More configuration
-    /// options are described <a href="config.html">here</a>.
-    /// </p>
-    /// <p>
-    /// To set up the log target programmatically use code like this:
-    /// </p>
-    /// <code lang="C#" source="examples/targets/Configuration API/WebService/Simple/Example.cs" />
-    /// <p>The example web service that works with this example is shown below</p>
-    /// <code lang="C#" source="examples/targets/Configuration API/WebService/Simple/WebService1/Service1.asmx.cs" />
+    ///     <p>
+    ///         To set up the target in the <a href="config.html">configuration file</a>,
+    ///         use the following syntax:
+    ///     </p>
+    ///     <code lang="XML" source="examples/targets/Configuration File/WebService/NLog.config" />
+    ///     <p>
+    ///         This assumes just one target and a single rule. More configuration
+    ///         options are described <a href="config.html">here</a>.
+    ///     </p>
+    ///     <p>
+    ///         To set up the log target programmatically use code like this:
+    ///     </p>
+    ///     <code lang="C#" source="examples/targets/Configuration API/WebService/Simple/Example.cs" />
+    ///     <p>The example web service that works with this example is shown below</p>
+    ///     <code lang="C#" source="examples/targets/Configuration API/WebService/Simple/WebService1/Service1.asmx.cs" />
     /// </example>
     [Target("WebService")]
     public sealed class WebServiceTarget : MethodCallTargetBase
@@ -74,47 +74,47 @@ namespace Transformalize.Libs.NLog.Targets
         private const string Soap12EnvelopeNamespace = "http://www.w3.org/2003/05/soap-envelope";
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="WebServiceTarget" /> class.
+        ///     Initializes a new instance of the <see cref="WebServiceTarget" /> class.
         /// </summary>
         public WebServiceTarget()
         {
-            this.Protocol = WebServiceProtocol.Soap11;
-            this.Encoding = Encoding.UTF8;
+            Protocol = WebServiceProtocol.Soap11;
+            Encoding = Encoding.UTF8;
         }
 
         /// <summary>
-        /// Gets or sets the web service URL.
+        ///     Gets or sets the web service URL.
         /// </summary>
         /// <docgen category='Web Service Options' order='10' />
         public Uri Url { get; set; }
 
         /// <summary>
-        /// Gets or sets the Web service method name.
+        ///     Gets or sets the Web service method name.
         /// </summary>
         /// <docgen category='Web Service Options' order='10' />
         public string MethodName { get; set; }
 
         /// <summary>
-        /// Gets or sets the Web service namespace.
+        ///     Gets or sets the Web service namespace.
         /// </summary>
         /// <docgen category='Web Service Options' order='10' />
         public string Namespace { get; set; }
 
         /// <summary>
-        /// Gets or sets the protocol to be used when calling web service.
+        ///     Gets or sets the protocol to be used when calling web service.
         /// </summary>
         /// <docgen category='Web Service Options' order='10' />
         [DefaultValue("Soap11")]
         public WebServiceProtocol Protocol { get; set; }
 
         /// <summary>
-        /// Gets or sets the encoding.
+        ///     Gets or sets the encoding.
         /// </summary>
         /// <docgen category='Web Service Options' order='10' />
         public Encoding Encoding { get; set; }
 
         /// <summary>
-        /// Calls the target method. Must be implemented in concrete classes.
+        ///     Calls the target method. Must be implemented in concrete classes.
         /// </summary>
         /// <param name="parameters">Method call parameters.</param>
         protected override void DoInvoke(object[] parameters)
@@ -124,30 +124,30 @@ namespace Transformalize.Libs.NLog.Targets
         }
 
         /// <summary>
-        /// Invokes the web service method.
+        ///     Invokes the web service method.
         /// </summary>
         /// <param name="parameters">Parameters to be passed.</param>
         /// <param name="continuation">The continuation.</param>
         protected override void DoInvoke(object[] parameters, AsyncContinuation continuation)
         {
-            var request = (HttpWebRequest)WebRequest.Create(this.Url);
+            var request = (HttpWebRequest) WebRequest.Create(Url);
             byte[] postPayload = null;
 
-            switch (this.Protocol)
+            switch (Protocol)
             {
                 case WebServiceProtocol.Soap11:
-                    postPayload = this.PrepareSoap11Request(request, parameters);
+                    postPayload = PrepareSoap11Request(request, parameters);
                     break;
 
                 case WebServiceProtocol.Soap12:
-                    postPayload = this.PrepareSoap12Request(request, parameters);
+                    postPayload = PrepareSoap12Request(request, parameters);
                     break;
 
                 case WebServiceProtocol.HttpGet:
                     throw new NotSupportedException();
 
                 case WebServiceProtocol.HttpPost:
-                    postPayload = this.PreparePostRequest(request, parameters);
+                    postPayload = PreparePostRequest(request, parameters);
                     break;
             }
 
@@ -162,25 +162,25 @@ namespace Transformalize.Libs.NLog.Targets
 
                         request.BeginGetResponse(
                             r =>
-                            {
-                                try
                                 {
-                                    using (var response = request.EndGetResponse(r))
+                                    try
                                     {
-                                    }
+                                        using (WebResponse response = request.EndGetResponse(r))
+                                        {
+                                        }
 
-                                    continuation(null);
-                                }
-                                catch (Exception ex2)
-                                {
-                                    if (ex2.MustBeRethrown())
+                                        continuation(null);
+                                    }
+                                    catch (Exception ex2)
                                     {
-                                        throw;
-                                    }
+                                        if (ex2.MustBeRethrown())
+                                        {
+                                            throw;
+                                        }
 
-                                    continuation(ex2);
-                                }
-                            }, 
+                                        continuation(ex2);
+                                    }
+                                },
                             null);
                     };
 
@@ -219,27 +219,30 @@ namespace Transformalize.Libs.NLog.Targets
         private byte[] PrepareSoap11Request(HttpWebRequest request, object[] parameters)
         {
             request.Method = "POST";
-            request.ContentType = "text/xml; charset=" + this.Encoding.WebName;
+            request.ContentType = "text/xml; charset=" + Encoding.WebName;
 
-            if (this.Namespace.EndsWith("/", StringComparison.Ordinal))
+            if (Namespace.EndsWith("/", StringComparison.Ordinal))
             {
-                request.Headers["SOAPAction"] = this.Namespace + this.MethodName;
+                request.Headers["SOAPAction"] = Namespace + MethodName;
             }
             else
             {
-                request.Headers["SOAPAction"] = this.Namespace + "/" + this.MethodName;
+                request.Headers["SOAPAction"] = Namespace + "/" + MethodName;
             }
 
             using (var ms = new MemoryStream())
             {
-                XmlWriter xtw = XmlWriter.Create(ms, new XmlWriterSettings { Encoding = this.Encoding });
+                XmlWriter xtw = XmlWriter.Create(ms, new XmlWriterSettings
+                                                         {
+                                                             Encoding = Encoding
+                                                         });
 
                 xtw.WriteStartElement("soap", "Envelope", SoapEnvelopeNamespace);
                 xtw.WriteStartElement("Body", SoapEnvelopeNamespace);
-                xtw.WriteStartElement(this.MethodName, this.Namespace);
+                xtw.WriteStartElement(MethodName, Namespace);
                 int i = 0;
 
-                foreach (MethodCallParameter par in this.Parameters)
+                foreach (MethodCallParameter par in Parameters)
                 {
                     xtw.WriteElementString(par.Name, Convert.ToString(parameters[i], CultureInfo.InvariantCulture));
                     i++;
@@ -257,17 +260,20 @@ namespace Transformalize.Libs.NLog.Targets
         private byte[] PrepareSoap12Request(HttpWebRequest request, object[] parameterValues)
         {
             request.Method = "POST";
-            request.ContentType = "text/xml; charset=" + this.Encoding.WebName;
+            request.ContentType = "text/xml; charset=" + Encoding.WebName;
 
             using (var ms = new MemoryStream())
             {
-                XmlWriter xtw = XmlWriter.Create(ms, new XmlWriterSettings { Encoding = this.Encoding });
+                XmlWriter xtw = XmlWriter.Create(ms, new XmlWriterSettings
+                                                         {
+                                                             Encoding = Encoding
+                                                         });
 
                 xtw.WriteStartElement("soap12", "Envelope", Soap12EnvelopeNamespace);
                 xtw.WriteStartElement("Body", Soap12EnvelopeNamespace);
-                xtw.WriteStartElement(this.MethodName, this.Namespace);
+                xtw.WriteStartElement(MethodName, Namespace);
                 int i = 0;
-                foreach (MethodCallParameter par in this.Parameters)
+                foreach (MethodCallParameter par in Parameters)
                 {
                     xtw.WriteElementString(par.Name, Convert.ToString(parameterValues[i], CultureInfo.InvariantCulture));
                     i++;
@@ -285,15 +291,15 @@ namespace Transformalize.Libs.NLog.Targets
         private byte[] PreparePostRequest(HttpWebRequest request, object[] parameterValues)
         {
             request.Method = "POST";
-            request.ContentType = "application/x-www-form-urlencoded; charset=" + this.Encoding.WebName;
+            request.ContentType = "application/x-www-form-urlencoded; charset=" + Encoding.WebName;
 
             string separator = string.Empty;
             using (var ms = new MemoryStream())
             {
-                var sw = new StreamWriter(ms, this.Encoding);
+                var sw = new StreamWriter(ms, Encoding);
                 sw.Write(string.Empty);
                 int i = 0;
-                foreach (MethodCallParameter parameter in this.Parameters)
+                foreach (MethodCallParameter parameter in Parameters)
                 {
                     sw.Write(separator);
                     sw.Write(parameter.Name);

@@ -34,7 +34,7 @@
 namespace Transformalize.Libs.NLog.LogReceiverService
 {
     /// <summary>
-    /// Internal configuration of Log Receiver Service contracts.
+    ///     Internal configuration of Log Receiver Service contracts.
     /// </summary>
     internal static class LogReceiverServiceConfig
     {

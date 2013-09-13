@@ -42,22 +42,22 @@ using Transformalize.Libs.NLog.Layouts;
 namespace Transformalize.Libs.NLog.Targets
 {
     /// <summary>
-    /// Information about database command + parameters.
+    ///     Information about database command + parameters.
     /// </summary>
     [NLogConfigurationItem]
     public class DatabaseCommandInfo
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="DatabaseCommandInfo"/> class.
+        ///     Initializes a new instance of the <see cref="DatabaseCommandInfo" /> class.
         /// </summary>
         public DatabaseCommandInfo()
         {
-            this.Parameters = new List<DatabaseParameterInfo>();
-            this.CommandType = CommandType.Text;
+            Parameters = new List<DatabaseParameterInfo>();
+            CommandType = CommandType.Text;
         }
 
         /// <summary>
-        /// Gets or sets the type of the command.
+        ///     Gets or sets the type of the command.
         /// </summary>
         /// <value>The type of the command.</value>
         /// <docgen category='Command Options' order='10' />
@@ -66,30 +66,30 @@ namespace Transformalize.Libs.NLog.Targets
         public CommandType CommandType { get; set; }
 
         /// <summary>
-        /// Gets or sets the connection string to run the command against. If not provided, connection string from the target is used.
+        ///     Gets or sets the connection string to run the command against. If not provided, connection string from the target is used.
         /// </summary>
         /// <docgen category='Command Options' order='10' />
         public Layout ConnectionString { get; set; }
 
         /// <summary>
-        /// Gets or sets the command text.
+        ///     Gets or sets the command text.
         /// </summary>
         /// <docgen category='Command Options' order='10' />
         [RequiredParameter]
         public Layout Text { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to ignore failures.
+        ///     Gets or sets a value indicating whether to ignore failures.
         /// </summary>
         /// <docgen category='Command Options' order='10' />
         public bool IgnoreFailures { get; set; }
 
         /// <summary>
-        /// Gets the collection of parameters. Each parameter contains a mapping
-        /// between NLog layout and a database named or positional parameter.
+        ///     Gets the collection of parameters. Each parameter contains a mapping
+        ///     between NLog layout and a database named or positional parameter.
         /// </summary>
         /// <docgen category='Command Options' order='10' />
-        [ArrayParameter(typeof(DatabaseParameterInfo), "parameter")]
+        [ArrayParameter(typeof (DatabaseParameterInfo), "parameter")]
         public IList<DatabaseParameterInfo> Parameters { get; private set; }
     }
 }

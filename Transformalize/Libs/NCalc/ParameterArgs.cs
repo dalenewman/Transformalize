@@ -5,6 +5,7 @@ namespace Transformalize.Libs.NCalc
     public class ParameterArgs : EventArgs
     {
         private object _result;
+
         public object Result
         {
             get { return _result; }

@@ -19,13 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
-using Transformalize.Core;
-using Transformalize.Core.Entity_;
-using Transformalize.Core.Field_;
-using Transformalize.Libs.Rhino.Etl.Core;
-using Transformalize.Libs.Rhino.Etl.Core.Operations;
-using Transformalize.Providers;
-using Transformalize.Providers.SqlServer;
+using Transformalize.Main;
+using Transformalize.Main.Providers;
+using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Libs.Rhino.Etl.Operations;
 
 namespace Transformalize.Operations
 {
@@ -39,14 +36,17 @@ namespace Transformalize.Operations
             : base(entity.OutputConnection)
         {
             _entity = entity;
-            _fields = new List<string>(new FieldSqlWriter(entity.PrimaryKey).Alias(entity.OutputConnection.Provider).Keys()) { "TflKey" };
+            _fields = new List<string>(new FieldSqlWriter(entity.PrimaryKey).Alias(entity.OutputConnection.Provider).Keys())
+                          {
+                              "TflKey"
+                          };
             _key = new FieldSqlWriter(entity.PrimaryKey).ToArray();
         }
 
         protected override Row CreateRowFromReader(IDataReader reader)
         {
             var row = new Row();
-            foreach (var field in _fields)
+            foreach (string field in _fields)
             {
                 row[field] = reader[field];
             }
@@ -62,19 +62,18 @@ namespace Transformalize.Operations
 
         private string PrepareSql()
         {
-            var connection = _entity.OutputConnection;
-            var provider = connection.Provider;
+            AbstractConnection connection = _entity.OutputConnection;
+            AbstractProvider provider = connection.Provider;
             const string sqlPattern = "{0}\r\nSELECT e.{1}, TflKey\r\nFROM [{2}].[{3}] e WITH (NOLOCK)\r\nINNER JOIN @KEYS k ON ({4});";
 
             var builder = new StringBuilder();
             builder.AppendLine(_entity.OutputConnection.WriteTemporaryTable("@KEYS", _key));
             builder.AppendLine(SqlTemplates.BatchInsertValues(50, "@KEYS", _key, _entity.InputKeys, _entity.OutputConnection));
 
-            var selectKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias(provider).Write(", e.", false);
-            var joinKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias(provider).Set("e", "k").Write(" AND ");
-            var orderByKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias(provider).Asc().Write();
+            string selectKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias(provider).Write(", e.", false);
+            string joinKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias(provider).Set("e", "k").Write(" AND ");
+            string orderByKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias(provider).Asc().Write();
             return string.Format(sqlPattern, builder, selectKeys, _entity.Schema, _entity.OutputName(), joinKeys);
         }
-
     }
 }

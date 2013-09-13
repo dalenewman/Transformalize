@@ -39,12 +39,12 @@ using Transformalize.Libs.NLog.Common;
 namespace Transformalize.Libs.NLog.Internal
 {
     /// <summary>
-    /// Reflection helpers.
+    ///     Reflection helpers.
     /// </summary>
     internal static class ReflectionHelpers
     {
         /// <summary>
-        /// Gets all usable exported types from the given assembly.
+        ///     Gets all usable exported types from the given assembly.
         /// </summary>
         /// <param name="assembly">Assembly to scan.</param>
         /// <returns>Usable types from the given assembly.</returns>
@@ -60,13 +60,13 @@ namespace Transformalize.Libs.NLog.Internal
             }
             catch (ReflectionTypeLoadException typeLoadException)
             {
-                foreach (var ex in typeLoadException.LoaderExceptions)
+                foreach (Exception ex in typeLoadException.LoaderExceptions)
                 {
                     InternalLogger.Warn("Type load exception: {0}", ex);
                 }
 
                 var loadedTypes = new List<Type>();
-                foreach (var t in typeLoadException.Types)
+                foreach (Type t in typeLoadException.Types)
                 {
                     if (t != null)
                     {

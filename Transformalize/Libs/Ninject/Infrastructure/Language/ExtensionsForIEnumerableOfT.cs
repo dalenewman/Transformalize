@@ -1,4 +1,5 @@
 #region License
+
 // 
 // Author: Nate Kohari <nate@enkari.com>
 // Copyright (c) 2007-2010, Enkari, Ltd.
@@ -6,7 +7,9 @@
 // Dual-licensed under the Apache License, Version 2.0, and the Microsoft Public License (Ms-PL).
 // See the file LICENSE.txt for details.
 // 
+
 #endregion
+
 #region Using Directives
 
 using System;
@@ -18,12 +21,12 @@ using System.Linq;
 namespace Transformalize.Libs.Ninject.Infrastructure.Language
 {
     /// <summary>
-    /// Provides extension methods for see cref="IEnumerable{T}"/>
+    ///     Provides extension methods for see cref="IEnumerable{T}"/>
     /// </summary>
     public static class ExtensionsForIEnumerableOfT
     {
         /// <summary>
-        /// Executes the given action for each of the elements in the enumerable.
+        ///     Executes the given action for each of the elements in the enumerable.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="series">The series.</param>
@@ -35,7 +38,7 @@ namespace Transformalize.Libs.Ninject.Infrastructure.Language
         }
 
         /// <summary>
-        /// Converts the given enumerable type to prevent changed on the type behind.
+        ///     Converts the given enumerable type to prevent changed on the type behind.
         /// </summary>
         /// <typeparam name="T">The type of the enumerable.</typeparam>
         /// <param name="series">The series.</param>

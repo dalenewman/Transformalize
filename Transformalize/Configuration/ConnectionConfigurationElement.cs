@@ -17,73 +17,78 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Configuration;
+using System.Data.Common;
 
 namespace Transformalize.Configuration
 {
-    public class ConnectionConfigurationElement : ConfigurationElement {
-
+    public class ConnectionConfigurationElement : ConfigurationElement
+    {
         private const string NAME = "name";
         private const string VALUE = "value";
         private const string COMPATABILITY_LEVEL = "compatabilityLevel";
         private const string PROVIDER = "provider";
         private const string BATCH_SIZE = "batchSize";
         private const string ENABLED = "enabled";
-
-        public override bool IsReadOnly()
-        {
-            return false;
-        }
+        private DbConnectionStringBuilder _dbConnectionStringBuilder;
 
         [ConfigurationProperty(NAME, IsRequired = true)]
-        public string Name {
-            get {
-                return this[NAME] as string;
-            }
+        public string Name
+        {
+            get { return this[NAME] as string; }
             set { this[NAME] = value; }
         }
 
         [ConfigurationProperty(VALUE, IsRequired = true)]
-        public string Value {
-            get {
-                return this[VALUE] as string;
-            }
+        public string Value
+        {
+            get { return this[VALUE] as string; }
             set { this[VALUE] = value; }
         }
 
         [ConfigurationProperty(COMPATABILITY_LEVEL, IsRequired = false, DefaultValue = 0)]
-        public int CompatabilityLevel {
-            get {
-                return (int)this[COMPATABILITY_LEVEL];
-            }
+        public int CompatabilityLevel
+        {
+            get { return (int) this[COMPATABILITY_LEVEL]; }
             set { this[COMPATABILITY_LEVEL] = value; }
         }
 
         [RegexStringValidator(@"(?i)SqlServer|AnalysisServices|MySql")]
         [ConfigurationProperty(PROVIDER, IsRequired = false, DefaultValue = "SqlServer")]
-        public string Provider {
-            get {
-                return this[PROVIDER] as string;
-            }
+        public string Provider
+        {
+            get { return this[PROVIDER] as string; }
             set { this[PROVIDER] = value; }
         }
 
         [ConfigurationProperty(BATCH_SIZE, IsRequired = false, DefaultValue = 500)]
-        public int BatchSize {
-            get {
-                return (int)this[BATCH_SIZE];
-            }
+        public int BatchSize
+        {
+            get { return (int) this[BATCH_SIZE]; }
             set { this[BATCH_SIZE] = value; }
         }
 
         [ConfigurationProperty(ENABLED, IsRequired = false, DefaultValue = true)]
         public bool Enabled
         {
-            get
-            {
-                return (bool)this[ENABLED];
-            }
+            get { return (bool) this[ENABLED]; }
             set { this[ENABLED] = value; }
         }
 
+        public DbConnectionStringBuilder DbConnectionStringBuilder
+        {
+            get
+            {
+                return _dbConnectionStringBuilder ??
+                       (_dbConnectionStringBuilder = new DbConnectionStringBuilder
+                                                         {
+                                                             ConnectionString = Value
+                                                         });
+            }
+        }
+
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
     }
 }

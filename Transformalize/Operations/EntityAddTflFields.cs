@@ -17,32 +17,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Collections.Generic;
-using Transformalize.Core.Entity_;
-using Transformalize.Libs.Rhino.Etl.Core;
-using Transformalize.Libs.Rhino.Etl.Core.Operations;
+using Transformalize.Main;
+using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Libs.Rhino.Etl.Operations;
 
-namespace Transformalize.Operations {
-    public class EntityAddTflFields : AbstractOperation {
+namespace Transformalize.Operations
+{
+    public class EntityAddTflFields : AbstractOperation
+    {
         private readonly Entity _entity;
 
-        public EntityAddTflFields(Entity entity) {
+        public EntityAddTflFields(Entity entity)
+        {
             _entity = entity;
             UseTransaction = false;
         }
 
-        public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
+        public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
+        {
             OnFinishedProcessing += EntityAddTflFields_OnFinishedProcessing;
-            foreach (var row in rows) {
+            foreach (Row row in rows)
+            {
                 row["TflBatchId"] = _entity.TflBatchId;
                 yield return row;
             }
         }
 
-        void EntityAddTflFields_OnFinishedProcessing(IOperation obj) {
+        private void EntityAddTflFields_OnFinishedProcessing(IOperation obj)
+        {
             _entity.RecordsAffected = obj.Statistics.OutputtedRows;
         }
-
-
-
     }
 }

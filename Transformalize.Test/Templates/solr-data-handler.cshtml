@@ -1,0 +1,65 @@
+﻿@using System
+@using System.Text
+@using Transformalize.Main
+@using Transformalize.Extensions
+@{
+    var process = (Process) Model.Process;
+    var connection = process.Connections["output"];
+
+    // build query (all fields)
+    var builder = new StringBuilder();
+    builder.AppendLine("\r\nSELECT");
+    builder.AppendLine("    tflkey,");
+    foreach (var field in process.SearchFields())
+    {
+        for (var i = 0; i < field.SearchTypes.Count; i++)
+        {
+            if (i == 0)
+            {
+                builder.AppendLine("    " + field.Alias.ToLower() + ",");
+            }
+            else
+            {
+                builder.AppendLine("    " + field.Alias + " AS " + field.Alias.ToLower() + field.SearchTypes[i].Name.ToLower() + ",");
+            }
+        }
+    }
+    builder.TrimEnd(",\r\n");
+    builder.AppendFormat("\r\nFROM {0};", process.View);
+    var query = builder + Environment.NewLine;
+    
+    // build delta import query (all fields filtered by the changed keys)
+    builder.TrimEnd(";");
+    builder.AppendLine("\r\nWHERE tflkey = ${dataimporter.delta.tflkey};");
+    var deltaImportQuery = builder.ToString();   
+    
+    // build delta query (just the changed keys)
+    builder.Clear();
+    builder.AppendLine("\r\nSELECT tflkey");
+    builder.AppendFormat("FROM {0}\r\n", process.View);
+    builder.AppendLine("WHERE tflupdate &gt; '${dataimporter.last_index_time}';");
+    var deltaQuery = builder.ToString();
+    builder.Clear();
+}
+<dataConfig>
+    
+    <dataSource type="JdbcDataSource"
+                driver="com.microsoft.sqlserver.jdbc.SQLServerDriver"
+                url="jdbc:sqlserver://@connection.Server;databaseName=@connection.Database;responseBuffering=adaptive;"
+                readOnly="true"
+                applicationName="Tfl Solr"
+                user="@connection.User"
+                password="@connection.Password"
+                integratedSecurity="@(connection.TrustedConnection ? "true" : "false")">
+    </dataSource>
+
+    <document>
+        <entity name="@process.Name"
+                query="@query"
+                deltaQuery="@deltaQuery"
+                deltaImportQuery="@deltaImportQuery">
+
+            <field column="tflkey" name="tflkey"/>
+        </entity>
+    </document>
+</dataConfig>

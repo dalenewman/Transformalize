@@ -1,4 +1,5 @@
 #region License
+
 // 
 // Author: Nate Kohari <nate@enkari.com>
 // Copyright (c) 2007-2010, Enkari, Ltd.
@@ -6,7 +7,9 @@
 // Dual-licensed under the Apache License, Version 2.0, and the Microsoft Public License (Ms-PL).
 // See the file LICENSE.txt for details.
 // 
+
 #endregion
+
 #region Using Directives
 
 using Transformalize.Libs.Ninject.Infrastructure;
@@ -17,12 +20,12 @@ using Transformalize.Libs.Ninject.Infrastructure.Language;
 namespace Transformalize.Libs.Ninject.Activation.Strategies
 {
     /// <summary>
-    /// Executes actions defined on the binding during activation and deactivation.
+    ///     Executes actions defined on the binding during activation and deactivation.
     /// </summary>
     public class BindingActionStrategy : ActivationStrategy
     {
         /// <summary>
-        /// Calls the activation actions defined on the binding.
+        ///     Calls the activation actions defined on the binding.
         /// </summary>
         /// <param name="context">The context.</param>
         /// <param name="reference">A reference to the instance being activated.</param>
@@ -33,7 +36,7 @@ namespace Transformalize.Libs.Ninject.Activation.Strategies
         }
 
         /// <summary>
-        /// Calls the deactivation actions defined on the binding.
+        ///     Calls the deactivation actions defined on the binding.
         /// </summary>
         /// <param name="context">The context.</param>
         /// <param name="reference">A reference to the instance being deactivated.</param>

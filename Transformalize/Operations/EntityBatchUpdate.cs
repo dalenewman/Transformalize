@@ -17,18 +17,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Data.SqlClient;
-using System.Linq;
-using Transformalize.Core.Entity_;
-using Transformalize.Core.Field_;
-using Transformalize.Libs.Rhino.Etl.Core;
-using Transformalize.Libs.Rhino.Etl.Core.Operations;
+using Transformalize.Main;
+using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Libs.Rhino.Etl.Operations;
 
-namespace Transformalize.Operations {
-    public class EntityBatchUpdate : SqlBatchOperation {
+namespace Transformalize.Operations
+{
+    public class EntityBatchUpdate : SqlBatchOperation
+    {
         private readonly Entity _entity;
-        
+
         public EntityBatchUpdate(Entity entity)
-            : base(entity.OutputConnection) {
+            : base(entity.OutputConnection)
+        {
             _entity = entity;
             BatchSize = 50;
             UseTransaction = false;
@@ -36,10 +37,11 @@ namespace Transformalize.Operations {
 
         protected override void PrepareCommand(Row row, SqlCommand command)
         {
-            var writer = new FieldSqlWriter(_entity.Fields, _entity.CalculatedFields).ExpandXml().Output();
-            var sets = writer.Alias(_entity.OutputConnection.Provider).SetParam().Write(",\r\n    ", false);
+            FieldSqlWriter writer = new FieldSqlWriter(_entity.Fields, _entity.CalculatedFields).ExpandXml().Output();
+            string sets = writer.Alias(_entity.OutputConnection.Provider).SetParam().Write(",\r\n    ", false);
             command.CommandText = string.Format("UPDATE [{0}].[{1}]\r\nSET {2},\r\n    TflBatchId = @TflBatchId\r\nWHERE TflKey = @TflKey;", _entity.Schema, _entity.OutputName(), sets);
-            foreach (var r in writer.ToArray()) {
+            foreach (Field r in writer.ToArray())
+            {
                 AddParameter(command, r.Alias, row[r.Alias]);
             }
             AddParameter(command, "TflKey", row["TflKey"]);
@@ -47,6 +49,5 @@ namespace Transformalize.Operations {
 
             Debug(command.CommandText);
         }
-
     }
 }

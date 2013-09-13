@@ -44,11 +44,11 @@ using Transformalize.Libs.NLog.Layouts;
 namespace Transformalize.Libs.NLog.Internal
 {
     /// <summary>
-    /// Reflection helpers for accessing properties.
+    ///     Reflection helpers for accessing properties.
     /// </summary>
     internal static class PropertyHelper
     {
-        private static Dictionary<Type, Dictionary<string, PropertyInfo>> parameterInfoCache = new Dictionary<Type, Dictionary<string, PropertyInfo>>();
+        private static readonly Dictionary<Type, Dictionary<string, PropertyInfo>> parameterInfoCache = new Dictionary<Type, Dictionary<string, PropertyInfo>>();
 
         internal static void SetPropertyFromString(object o, string name, string value, ConfigurationItemFactory configurationItemFactory)
         {
@@ -63,7 +63,7 @@ namespace Transformalize.Libs.NLog.Internal
 
             try
             {
-                if (propInfo.IsDefined(typeof(ArrayParameterAttribute), false))
+                if (propInfo.IsDefined(typeof (ArrayParameterAttribute), false))
                 {
                     throw new NotSupportedException("Parameter " + name + " of " + o.GetType().Name + " is an array and cannot be assigned a scalar value.");
                 }
@@ -114,7 +114,7 @@ namespace Transformalize.Libs.NLog.Internal
                 throw new NotSupportedException("Parameter " + name + " not supported on " + t.Name);
             }
 
-            return propInfo.IsDefined(typeof(ArrayParameterAttribute), false);
+            return propInfo.IsDefined(typeof (ArrayParameterAttribute), false);
         }
 
         internal static bool TryGetPropertyInfo(object o, string propertyName, out PropertyInfo result)
@@ -143,7 +143,7 @@ namespace Transformalize.Libs.NLog.Internal
 
         internal static Type GetArrayItemType(PropertyInfo propInfo)
         {
-            var arrayParameterAttribute = (ArrayParameterAttribute)Attribute.GetCustomAttribute(propInfo, typeof(ArrayParameterAttribute));
+            var arrayParameterAttribute = (ArrayParameterAttribute) Attribute.GetCustomAttribute(propInfo, typeof (ArrayParameterAttribute));
             if (arrayParameterAttribute != null)
             {
                 return arrayParameterAttribute.ItemType;
@@ -155,8 +155,8 @@ namespace Transformalize.Libs.NLog.Internal
         internal static IEnumerable<PropertyInfo> GetAllReadableProperties(Type type)
         {
 #if NETCF2_0
-            // .NET Compact Framework 2.0 understands 'Public' differently
-            // it only returns properties where getter and setter are public
+    // .NET Compact Framework 2.0 understands 'Public' differently
+    // it only returns properties where getter and setter are public
 
             var allProperties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
             var readableProperties = new List<PropertyInfo>();
@@ -177,9 +177,9 @@ namespace Transformalize.Libs.NLog.Internal
 
         internal static void CheckRequiredParameters(object o)
         {
-            foreach (PropertyInfo propInfo in PropertyHelper.GetAllReadableProperties(o.GetType()))
+            foreach (PropertyInfo propInfo in GetAllReadableProperties(o.GetType()))
             {
-                if (propInfo.IsDefined(typeof(RequiredParameterAttribute), false))
+                if (propInfo.IsDefined(typeof (RequiredParameterAttribute), false))
                 {
                     object value = propInfo.GetValue(o, null);
                     if (value == null)
@@ -193,26 +193,26 @@ namespace Transformalize.Libs.NLog.Internal
 
         private static bool TryImplicitConversion(Type resultType, string value, out object result)
         {
-            MethodInfo operatorImplicitMethod = resultType.GetMethod("op_Implicit", BindingFlags.Public | BindingFlags.Static, null, new Type[] { typeof(string) }, null);
+            MethodInfo operatorImplicitMethod = resultType.GetMethod("op_Implicit", BindingFlags.Public | BindingFlags.Static, null, new[] {typeof (string)}, null);
             if (operatorImplicitMethod == null)
             {
                 result = null;
                 return false;
             }
 
-            result = operatorImplicitMethod.Invoke(null, new object[] { value });
+            result = operatorImplicitMethod.Invoke(null, new object[] {value});
             return true;
         }
 
         private static bool TryNLogSpecificConversion(Type propertyType, string value, out object newValue, ConfigurationItemFactory configurationItemFactory)
         {
-            if (propertyType == typeof(Layout) || propertyType == typeof(SimpleLayout))
+            if (propertyType == typeof (Layout) || propertyType == typeof (SimpleLayout))
             {
                 newValue = new SimpleLayout(value, configurationItemFactory);
                 return true;
             }
 
-            if (propertyType == typeof(ConditionExpression))
+            if (propertyType == typeof (ConditionExpression))
             {
                 newValue = ConditionParser.ParseExpression(value, configurationItemFactory);
                 return true;
@@ -230,7 +230,7 @@ namespace Transformalize.Libs.NLog.Internal
                 return false;
             }
 
-            if (resultType.IsDefined(typeof(FlagsAttribute), false))
+            if (resultType.IsDefined(typeof (FlagsAttribute), false))
             {
                 ulong union = 0;
 
@@ -265,25 +265,25 @@ namespace Transformalize.Libs.NLog.Internal
 
         private static bool TrySpecialConversion(Type type, string value, out object newValue)
         {
-            if (type == typeof(Uri))
+            if (type == typeof (Uri))
             {
                 newValue = new Uri(value, UriKind.RelativeOrAbsolute);
                 return true;
             }
 
-            if (type == typeof(Encoding))
+            if (type == typeof (Encoding))
             {
                 newValue = Encoding.GetEncoding(value);
                 return true;
             }
 
-            if (type == typeof(CultureInfo))
+            if (type == typeof (CultureInfo))
             {
                 newValue = new CultureInfo(value);
                 return true;
             }
 
-            if (type == typeof(Type))
+            if (type == typeof (Type))
             {
                 newValue = Type.GetType(value, true);
                 return true;
@@ -324,7 +324,7 @@ namespace Transformalize.Libs.NLog.Internal
             var retVal = new Dictionary<string, PropertyInfo>(StringComparer.OrdinalIgnoreCase);
             foreach (PropertyInfo propInfo in GetAllReadableProperties(t))
             {
-                var arrayParameterAttribute = (ArrayParameterAttribute)Attribute.GetCustomAttribute(propInfo, typeof(ArrayParameterAttribute));
+                var arrayParameterAttribute = (ArrayParameterAttribute) Attribute.GetCustomAttribute(propInfo, typeof (ArrayParameterAttribute));
 
                 if (arrayParameterAttribute != null)
                 {
@@ -335,7 +335,7 @@ namespace Transformalize.Libs.NLog.Internal
                     retVal[propInfo.Name] = propInfo;
                 }
 
-                if (propInfo.IsDefined(typeof(DefaultParameterAttribute), false))
+                if (propInfo.IsDefined(typeof (DefaultParameterAttribute), false))
                 {
                     // define a property with empty name
                     retVal[string.Empty] = propInfo;

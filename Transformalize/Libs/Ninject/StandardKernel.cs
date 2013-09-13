@@ -35,12 +35,12 @@ using Transformalize.Libs.Ninject.Selection.Heuristics;
 namespace Transformalize.Libs.Ninject
 {
     /// <summary>
-    /// The standard implementation of a kernel.
+    ///     The standard implementation of a kernel.
     /// </summary>
     public class StandardKernel : KernelBase
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="StandardKernel"/> class.
+        ///     Initializes a new instance of the <see cref="StandardKernel" /> class.
         /// </summary>
         /// <param name="modules">The modules to load into the kernel.</param>
         public StandardKernel(params INinjectModule[] modules) : base(modules)
@@ -48,7 +48,7 @@ namespace Transformalize.Libs.Ninject
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StandardKernel"/> class.
+        ///     Initializes a new instance of the <see cref="StandardKernel" /> class.
         /// </summary>
         /// <param name="settings">The configuration to use.</param>
         /// <param name="modules">The modules to load into the kernel.</param>
@@ -57,19 +57,16 @@ namespace Transformalize.Libs.Ninject
         }
 
         /// <summary>
-        /// Gets the kernel.
+        ///     Gets the kernel.
         /// </summary>
         /// <value>The kernel.</value>
         protected override IKernel KernelInstance
         {
-            get
-            {
-                return this;
-            }
+            get { return this; }
         }
-        
+
         /// <summary>
-        /// Adds components to the kernel during startup.
+        ///     Adds components to the kernel during startup.
         /// </summary>
         protected override void AddComponents()
         {
@@ -116,11 +113,11 @@ namespace Transformalize.Libs.Ninject
             Components.Add<IActivationCache, ActivationCache>();
             Components.Add<ICachePruner, GarbageCollectionCachePruner>();
 
-            #if !NO_ASSEMBLY_SCANNING
+#if !NO_ASSEMBLY_SCANNING
             Components.Add<IModuleLoader, ModuleLoader>();
             Components.Add<IModuleLoaderPlugin, CompiledModuleLoaderPlugin>();
             Components.Add<IAssemblyNameRetriever, AssemblyNameRetriever>();
-            #endif
+#endif
         }
     }
 }

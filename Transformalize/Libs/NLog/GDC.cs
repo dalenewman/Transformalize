@@ -36,13 +36,13 @@ using System;
 namespace Transformalize.Libs.NLog
 {
     /// <summary>
-    /// Global Diagnostics Context - used for log4net compatibility.
+    ///     Global Diagnostics Context - used for log4net compatibility.
     /// </summary>
     [Obsolete("Use GlobalDiagnosticsContext instead")]
     public static class GDC
     {
         /// <summary>
-        /// Sets the Global Diagnostics Context item to the specified value.
+        ///     Sets the Global Diagnostics Context item to the specified value.
         /// </summary>
         /// <param name="item">Item name.</param>
         /// <param name="value">Item value.</param>
@@ -52,7 +52,7 @@ namespace Transformalize.Libs.NLog
         }
 
         /// <summary>
-        /// Gets the Global Diagnostics Context named item.
+        ///     Gets the Global Diagnostics Context named item.
         /// </summary>
         /// <param name="item">Item name.</param>
         /// <returns>The item value of string.Empty if the value is not present.</returns>
@@ -62,7 +62,7 @@ namespace Transformalize.Libs.NLog
         }
 
         /// <summary>
-        /// Checks whether the specified item exists in the Global Diagnostics Context.
+        ///     Checks whether the specified item exists in the Global Diagnostics Context.
         /// </summary>
         /// <param name="item">Item name.</param>
         /// <returns>A boolean indicating whether the specified item exists in current thread GDC.</returns>
@@ -72,7 +72,7 @@ namespace Transformalize.Libs.NLog
         }
 
         /// <summary>
-        /// Removes the specified item from the Global Diagnostics Context.
+        ///     Removes the specified item from the Global Diagnostics Context.
         /// </summary>
         /// <param name="item">Item name.</param>
         public static void Remove(string item)
@@ -81,7 +81,7 @@ namespace Transformalize.Libs.NLog
         }
 
         /// <summary>
-        /// Clears the content of the GDC.
+        ///     Clears the content of the GDC.
         /// </summary>
         public static void Clear()
         {

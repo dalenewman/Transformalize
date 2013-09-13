@@ -20,31 +20,25 @@ using System.Configuration;
 
 namespace Transformalize.Configuration
 {
-    public class XmlConfigurationElement : ConfigurationElement {
-
-        public override bool IsReadOnly()
-        {
-            return false;
-        }
-
+    public class XmlConfigurationElement : ConfigurationElement
+    {
         [ConfigurationProperty("schema", IsRequired = false, DefaultValue = "")]
-        public string Schema {
-            get {
-                return this["schema"] as string;
-            }
+        public string Schema
+        {
+            get { return this["schema"] as string; }
             set { this["schema"] = value; }
         }
 
         [ConfigurationProperty("xPath", IsRequired = true)]
-        public string XPath {
-            get {
-                return this["xPath"] as string;
-            }
+        public string XPath
+        {
+            get { return this["xPath"] as string; }
             set { this["xPath"] = value; }
         }
 
         [ConfigurationProperty("alias", IsRequired = false, DefaultValue = "")]
-        public string Alias {
+        public string Alias
+        {
             get
             {
                 var alias = this["alias"] as string;
@@ -54,75 +48,70 @@ namespace Transformalize.Configuration
         }
 
         [ConfigurationProperty("index", IsRequired = false, DefaultValue = 1)]
-        public int Index {
-            get {
-                return (int)this["index"];
-            }
+        public int Index
+        {
+            get { return (int) this["index"]; }
             set { this["index"] = value; }
         }
 
         [ConfigurationProperty("type", IsRequired = false, DefaultValue = "System.String")]
-        public string Type {
-            get {
-                return this["type"] as string;
-            }
+        public string Type
+        {
+            get { return this["type"] as string; }
             set { this["type"] = value; }
         }
 
-        [ConfigurationProperty("length", IsRequired = false, DefaultValue="64")]
-        public string Length {
-            get {
-                return this["length"] as string;
-            }
+        [ConfigurationProperty("length", IsRequired = false, DefaultValue = "64")]
+        public string Length
+        {
+            get { return this["length"] as string; }
             set { this["length"] = value; }
         }
 
         [ConfigurationProperty("precision", IsRequired = false, DefaultValue = 18)]
-        public int Precision {
-            get {
-                return (int)this["precision"];
-            }
+        public int Precision
+        {
+            get { return (int) this["precision"]; }
             set { this["precision"] = value; }
         }
 
         [ConfigurationProperty("scale", IsRequired = false, DefaultValue = 9)]
-        public int Scale {
-            get {
-                return (int)this["scale"];
-            }
+        public int Scale
+        {
+            get { return (int) this["scale"]; }
             set { this["scale"] = value; }
         }
 
         [ConfigurationProperty("output", IsRequired = false, DefaultValue = true)]
-        public bool Output {
-            get {
-                return (bool)this["output"];
-            }
+        public bool Output
+        {
+            get { return (bool) this["output"]; }
             set { this["output"] = value; }
         }
 
         [ConfigurationProperty("default", IsRequired = false, DefaultValue = null)]
-        public string Default {
-            get {
-                return (string)this["default"];
-            }
+        public string Default
+        {
+            get { return (string) this["default"]; }
             set { this["default"] = value; }
         }
 
         [ConfigurationProperty("transforms")]
-        public TransformElementCollection Transforms {
-            get {
-                return this["transforms"] as TransformElementCollection;
-            }
+        public TransformElementCollection Transforms
+        {
+            get { return this["transforms"] as TransformElementCollection; }
         }
 
         [ConfigurationProperty("aggregate", IsRequired = false, DefaultValue = "")]
-        public string Aggregate {
-            get {
-                return (string)this["aggregate"];
-            }
+        public string Aggregate
+        {
+            get { return (string) this["aggregate"]; }
             set { this["aggregate"] = value; }
         }
 
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
     }
 }

@@ -3,29 +3,29 @@
 namespace Transformalize.Libs.Ninject.Activation.Caching
 {
     /// <summary>
-    /// Stores the objects that were activated
+    ///     Stores the objects that were activated
     /// </summary>
     public interface IActivationCache : INinjectComponent
     {
         /// <summary>
-        /// Clears the cache.
+        ///     Clears the cache.
         /// </summary>
         void Clear();
 
         /// <summary>
-        /// Adds an activated instance.
+        ///     Adds an activated instance.
         /// </summary>
         /// <param name="instance">The instance to be added.</param>
         void AddActivatedInstance(object instance);
 
         /// <summary>
-        /// Adds an deactivated instance.
+        ///     Adds an deactivated instance.
         /// </summary>
         /// <param name="instance">The instance to be added.</param>
         void AddDeactivatedInstance(object instance);
-        
+
         /// <summary>
-        /// Determines whether the specified instance is activated.
+        ///     Determines whether the specified instance is activated.
         /// </summary>
         /// <param name="instance">The instance.</param>
         /// <returns>
@@ -34,7 +34,7 @@ namespace Transformalize.Libs.Ninject.Activation.Caching
         bool IsActivated(object instance);
 
         /// <summary>
-        /// Determines whether the specified instance is deactivated.
+        ///     Determines whether the specified instance is deactivated.
         /// </summary>
         /// <param name="instance">The instance.</param>
         /// <returns>

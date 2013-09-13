@@ -41,7 +41,7 @@ using System.Threading;
 namespace Transformalize.Libs.NLog.Internal
 {
     /// <summary>
-    /// Helper for dealing with thread-local storage.
+    ///     Helper for dealing with thread-local storage.
     /// </summary>
     internal static class ThreadLocalStorageHelper
     {
@@ -51,7 +51,7 @@ namespace Transformalize.Libs.NLog.Internal
 #endif
 
         /// <summary>
-        /// Allocates the data slot for storing thread-local information.
+        ///     Allocates the data slot for storing thread-local information.
         /// </summary>
         /// <returns>Allocated slot key.</returns>
         public static object AllocateDataSlot()
@@ -59,17 +59,17 @@ namespace Transformalize.Libs.NLog.Internal
 #if TLS_WORKAROUND
             return Interlocked.Increment(ref nextSlotNumber);
 #else
-            return System.Threading.Thread.AllocateDataSlot();
+            return Thread.AllocateDataSlot();
 #endif
         }
 
         /// <summary>
-        /// Gets the data for a slot in thread-local storage.
+        ///     Gets the data for a slot in thread-local storage.
         /// </summary>
         /// <typeparam name="T">Type of the data.</typeparam>
         /// <param name="slot">The slot to get data for.</param>
         /// <returns>
-        /// Slot data (will create T if null).
+        ///     Slot data (will create T if null).
         /// </returns>
         public static T GetDataForSlot<T>(object slot)
             where T : class, new()
@@ -86,7 +86,7 @@ namespace Transformalize.Libs.NLog.Internal
 
             return (T)v;
 #else
-            LocalDataStoreSlot localDataStoreSlot = (LocalDataStoreSlot)slot;
+            var localDataStoreSlot = (LocalDataStoreSlot) slot;
             object v = Thread.GetData(localDataStoreSlot);
             if (v == null)
             {
@@ -94,7 +94,7 @@ namespace Transformalize.Libs.NLog.Internal
                 Thread.SetData(localDataStoreSlot, v);
             }
 
-            return (T)v;
+            return (T) v;
 #endif
         }
 

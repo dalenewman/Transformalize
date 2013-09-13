@@ -17,11 +17,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Data.SqlClient;
-using Transformalize.Core.Field_;
-using Transformalize.Core.Process_;
-using Transformalize.Libs.Rhino.Etl.Core;
-using Transformalize.Libs.Rhino.Etl.Core.Operations;
-using Transformalize.Providers;
+using Transformalize.Main;
+using Transformalize.Main.Providers;
+using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Libs.Rhino.Etl.Operations;
 
 namespace Transformalize.Operations
 {
@@ -41,7 +40,7 @@ namespace Transformalize.Operations
 
         protected override void PrepareCommand(Row row, SqlCommand command)
         {
-            var sets = new FieldSqlWriter(_process.CalculatedFields).Alias(_provider).SetParam().Write();
+            string sets = new FieldSqlWriter(_process.CalculatedFields).Alias(_provider).SetParam().Write();
             command.CommandText = string.Format("UPDATE {0} SET {1} WHERE TflKey = @TflKey;", _process.MasterEntity.OutputName(), sets);
             foreach (var r in _process.CalculatedFields)
             {

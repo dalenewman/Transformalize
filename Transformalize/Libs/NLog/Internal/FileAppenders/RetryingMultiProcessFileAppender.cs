@@ -37,15 +37,15 @@ using System.IO;
 namespace Transformalize.Libs.NLog.Internal.FileAppenders
 {
     /// <summary>
-    /// Multi-process and multi-host file appender which attempts
-    /// to get exclusive write access and retries if it's not available.
+    ///     Multi-process and multi-host file appender which attempts
+    ///     to get exclusive write access and retries if it's not available.
     /// </summary>
     internal class RetryingMultiProcessFileAppender : BaseFileAppender
     {
         public static readonly IFileAppenderFactory TheFactory = new Factory();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RetryingMultiProcessFileAppender" /> class.
+        ///     Initializes a new instance of the <see cref="RetryingMultiProcessFileAppender" /> class.
         /// </summary>
         /// <param name="fileName">Name of the file.</param>
         /// <param name="parameters">The parameters.</param>
@@ -54,7 +54,7 @@ namespace Transformalize.Libs.NLog.Internal.FileAppenders
         }
 
         /// <summary>
-        /// Writes the specified bytes.
+        ///     Writes the specified bytes.
         /// </summary>
         /// <param name="bytes">The bytes.</param>
         public override void Write(byte[] bytes)
@@ -68,7 +68,7 @@ namespace Transformalize.Libs.NLog.Internal.FileAppenders
         }
 
         /// <summary>
-        /// Flushes this instance.
+        ///     Flushes this instance.
         /// </summary>
         public override void Flush()
         {
@@ -76,7 +76,7 @@ namespace Transformalize.Libs.NLog.Internal.FileAppenders
         }
 
         /// <summary>
-        /// Closes this instance.
+        ///     Closes this instance.
         /// </summary>
         public override void Close()
         {
@@ -84,16 +84,16 @@ namespace Transformalize.Libs.NLog.Internal.FileAppenders
         }
 
         /// <summary>
-        /// Gets the file info.
+        ///     Gets the file info.
         /// </summary>
         /// <param name="lastWriteTime">The last write time.</param>
         /// <param name="fileLength">Length of the file.</param>
         /// <returns>
-        /// True if the operation succeeded, false otherwise.
+        ///     True if the operation succeeded, false otherwise.
         /// </returns>
         public override bool GetFileInfo(out DateTime lastWriteTime, out long fileLength)
         {
-            FileInfo fi = new FileInfo(FileName);
+            var fi = new FileInfo(FileName);
             if (fi.Exists)
             {
                 fileLength = fi.Length;
@@ -109,17 +109,17 @@ namespace Transformalize.Libs.NLog.Internal.FileAppenders
         }
 
         /// <summary>
-        /// Factory class.
+        ///     Factory class.
         /// </summary>
         private class Factory : IFileAppenderFactory
         {
             /// <summary>
-            /// Opens the appender for given file name and parameters.
+            ///     Opens the appender for given file name and parameters.
             /// </summary>
             /// <param name="fileName">Name of the file.</param>
             /// <param name="parameters">Creation parameters.</param>
             /// <returns>
-            /// Instance of <see cref="BaseFileAppender"/> which can be used to write to the file.
+            ///     Instance of <see cref="BaseFileAppender" /> which can be used to write to the file.
             /// </returns>
             BaseFileAppender IFileAppenderFactory.Open(string fileName, ICreateFileParameters parameters)
             {

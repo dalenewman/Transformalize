@@ -32,63 +32,64 @@
 // 
 
 using System.Collections.Generic;
+using System.Threading;
 using Transformalize.Libs.NLog.Common;
 
 namespace Transformalize.Libs.NLog.Targets.Wrappers
 {
     /// <summary>
-    /// Asynchronous request queue.
+    ///     Asynchronous request queue.
     /// </summary>
     internal class AsyncRequestQueue
     {
         private readonly Queue<AsyncLogEventInfo> logEventInfoQueue = new Queue<AsyncLogEventInfo>();
 
         /// <summary>
-        /// Initializes a new instance of the AsyncRequestQueue class.
+        ///     Initializes a new instance of the AsyncRequestQueue class.
         /// </summary>
         /// <param name="requestLimit">Request limit.</param>
         /// <param name="overflowAction">The overflow action.</param>
         public AsyncRequestQueue(int requestLimit, AsyncTargetWrapperOverflowAction overflowAction)
         {
-            this.RequestLimit = requestLimit;
-            this.OnOverflow = overflowAction;
+            RequestLimit = requestLimit;
+            OnOverflow = overflowAction;
         }
 
         /// <summary>
-        /// Gets or sets the request limit.
+        ///     Gets or sets the request limit.
         /// </summary>
         public int RequestLimit { get; set; }
 
         /// <summary>
-        /// Gets or sets the action to be taken when there's no more room in
-        /// the queue and another request is enqueued.
+        ///     Gets or sets the action to be taken when there's no more room in
+        ///     the queue and another request is enqueued.
         /// </summary>
         public AsyncTargetWrapperOverflowAction OnOverflow { get; set; }
 
         /// <summary>
-        /// Gets the number of requests currently in the queue.
+        ///     Gets the number of requests currently in the queue.
         /// </summary>
         public int RequestCount
         {
-            get { return this.logEventInfoQueue.Count; }
+            get { return logEventInfoQueue.Count; }
         }
 
         /// <summary>
-        /// Enqueues another item. If the queue is overflown the appropriate
-        /// action is taken as specified by <see cref="OnOverflow"/>.
+        ///     Enqueues another item. If the queue is overflown the appropriate
+        ///     action is taken as specified by <see cref="OnOverflow" />.
         /// </summary>
         /// <param name="logEventInfo">The log event info.</param>
         public void Enqueue(AsyncLogEventInfo logEventInfo)
         {
             lock (this)
             {
-                if (this.logEventInfoQueue.Count >= this.RequestLimit)
+                if (logEventInfoQueue.Count >= RequestLimit)
                 {
-                    switch (this.OnOverflow)
+                    switch (OnOverflow)
                     {
                         case AsyncTargetWrapperOverflowAction.Discard:
                             // dequeue and discard one element
-                            this.logEventInfoQueue.Dequeue();
+                            logEventInfoQueue.Dequeue();
                             break;
 
                         case AsyncTargetWrapperOverflowAction.Grow:
@@ -96,10 +97,10 @@ namespace Transformalize.Libs.NLog.Targets.Wrappers
 
 #if !NET_CF
                         case AsyncTargetWrapperOverflowAction.Block:
-                            while (this.logEventInfoQueue.Count >= this.RequestLimit)
+                            while (logEventInfoQueue.Count >= RequestLimit)
                             {
                                 InternalLogger.Trace("Blocking...");
-                                System.Threading.Monitor.Wait(this);
+                                Monitor.Wait(this);
                                 InternalLogger.Trace("Entered critical section.");
                             }
 
@@ -109,13 +110,13 @@ namespace Transformalize.Libs.NLog.Targets.Wrappers
                     }
                 }
 
-                this.logEventInfoQueue.Enqueue(logEventInfo);
+                logEventInfoQueue.Enqueue(logEventInfo);
             }
         }
 
         /// <summary>
-        /// Dequeues a maximum of <c>count</c> items from the queue
-        /// and adds returns the list containing them.
+        ///     Dequeues a maximum of <c>count</c> items from the queue
+        ///     and adds returns the list containing them.
         /// </summary>
         /// <param name="count">Maximum number of items to be dequeued.</param>
         /// <returns>The array of log events.</returns>
@@ -127,17 +128,17 @@ namespace Transformalize.Libs.NLog.Targets.Wrappers
             {
                 for (int i = 0; i < count; ++i)
                 {
-                    if (this.logEventInfoQueue.Count <= 0)
+                    if (logEventInfoQueue.Count <= 0)
                     {
                         break;
                     }
 
-                    resultEvents.Add(this.logEventInfoQueue.Dequeue());
+                    resultEvents.Add(logEventInfoQueue.Dequeue());
                 }
 #if !NET_CF
-                if (this.OnOverflow == AsyncTargetWrapperOverflowAction.Block)
+                if (OnOverflow == AsyncTargetWrapperOverflowAction.Block)
                 {
-                    System.Threading.Monitor.PulseAll(this);
+                    Monitor.PulseAll(this);
                 }
 #endif
             }
@@ -146,13 +147,13 @@ namespace Transformalize.Libs.NLog.Targets.Wrappers
         }
 
         /// <summary>
-        /// Clears the queue.
+        ///     Clears the queue.
         /// </summary>
         public void Clear()
         {
             lock (this)
             {
-                this.logEventInfoQueue.Clear();
+                logEventInfoQueue.Clear();
             }
         }
     }

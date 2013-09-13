@@ -34,34 +34,34 @@
 namespace Transformalize.Libs.NLog.Common
 {
     /// <summary>
-    /// Represents the logging event with asynchronous continuation.
+    ///     Represents the logging event with asynchronous continuation.
     /// </summary>
     public struct AsyncLogEventInfo
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AsyncLogEventInfo"/> struct.
+        ///     Initializes a new instance of the <see cref="AsyncLogEventInfo" /> struct.
         /// </summary>
         /// <param name="logEvent">The log event.</param>
         /// <param name="continuation">The continuation.</param>
         public AsyncLogEventInfo(LogEventInfo logEvent, AsyncContinuation continuation)
             : this()
         {
-            this.LogEvent = logEvent;
-            this.Continuation = continuation;
+            LogEvent = logEvent;
+            Continuation = continuation;
         }
 
         /// <summary>
-        /// Gets the log event.
+        ///     Gets the log event.
         /// </summary>
         public LogEventInfo LogEvent { get; private set; }
 
         /// <summary>
-        /// Gets the continuation.
+        ///     Gets the continuation.
         /// </summary>
         public AsyncContinuation Continuation { get; internal set; }
 
         /// <summary>
-        /// Implements the operator ==.
+        ///     Implements the operator ==.
         /// </summary>
         /// <param name="eventInfo1">The event info1.</param>
         /// <param name="eventInfo2">The event info2.</param>
@@ -73,7 +73,7 @@ namespace Transformalize.Libs.NLog.Common
         }
 
         /// <summary>
-        /// Implements the operator ==.
+        ///     Implements the operator ==.
         /// </summary>
         /// <param name="eventInfo1">The event info1.</param>
         /// <param name="eventInfo2">The event info2.</param>
@@ -85,27 +85,29 @@ namespace Transformalize.Libs.NLog.Common
         }
 
         /// <summary>
-        /// Determines whether the specified <see cref="System.Object"/> is equal to this instance.
+        ///     Determines whether the specified <see cref="System.Object" /> is equal to this instance.
         /// </summary>
-        /// <param name="obj">The <see cref="System.Object"/> to compare with this instance.</param>
+        /// <param name="obj">
+        ///     The <see cref="System.Object" /> to compare with this instance.
+        /// </param>
         /// <returns>
-        /// A value of <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
+        ///     A value of <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
         public override bool Equals(object obj)
         {
-            var other = (AsyncLogEventInfo)obj;
+            var other = (AsyncLogEventInfo) obj;
             return this == other;
         }
 
         /// <summary>
-        /// Returns a hash code for this instance.
+        ///     Returns a hash code for this instance.
         /// </summary>
         /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        ///     A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
         /// </returns>
         public override int GetHashCode()
         {
-            return this.LogEvent.GetHashCode() ^ this.Continuation.GetHashCode();
+            return LogEvent.GetHashCode() ^ Continuation.GetHashCode();
         }
     }
 }

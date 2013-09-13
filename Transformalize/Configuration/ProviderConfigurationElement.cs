@@ -20,28 +20,25 @@ using System.Configuration;
 
 namespace Transformalize.Configuration
 {
-    public class ProviderConfigurationElement : ConfigurationElement {
+    public class ProviderConfigurationElement : ConfigurationElement
+    {
+        [ConfigurationProperty("name", IsRequired = true)]
+        public string Name
+        {
+            get { return this["name"] as string; }
+            set { this["name"] = value; }
+        }
+
+        [ConfigurationProperty("type", IsRequired = false, DefaultValue = "SqlServer")]
+        public string Type
+        {
+            get { return this["type"] as string; }
+            set { this["type"] = value; }
+        }
 
         public override bool IsReadOnly()
         {
             return false;
         }
-
-        [ConfigurationProperty("name", IsRequired = true)]
-        public string Name {
-            get {
-                return this["name"] as string;
-            }
-            set { this["name"] = value; }
-        }
-
-        [ConfigurationProperty("type", IsRequired = false, DefaultValue = "SqlServer")]
-        public string Type {
-            get {
-                return this["type"] as string;
-            }
-            set { this["type"] = value; }
-        }
-
     }
 }

@@ -28,106 +28,110 @@ using Transformalize.Libs.Ninject.Parameters;
 namespace Transformalize.Libs.Ninject.Planning.Bindings
 {
     /// <summary>
-    /// The configuration of a binding.
+    ///     The configuration of a binding.
     /// </summary>
     public class BindingConfiguration : IBindingConfiguration
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="BindingConfiguration"/> class.
+        ///     Initializes a new instance of the <see cref="BindingConfiguration" /> class.
         /// </summary>
         public BindingConfiguration()
         {
-            this.Metadata = new BindingMetadata();
-            this.Parameters = new List<IParameter>();
-            this.ActivationActions = new List<Action<IContext, object>>();
-            this.DeactivationActions = new List<Action<IContext, object>>();
-            this.ScopeCallback = StandardScopeCallbacks.Transient;
+            Metadata = new BindingMetadata();
+            Parameters = new List<IParameter>();
+            ActivationActions = new List<Action<IContext, object>>();
+            DeactivationActions = new List<Action<IContext, object>>();
+            ScopeCallback = StandardScopeCallbacks.Transient;
         }
 
         /// <summary>
-        /// Gets the binding's metadata.
+        ///     Gets the binding's metadata.
         /// </summary>
         public IBindingMetadata Metadata { get; private set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the binding was implicitly registered.
+        ///     Gets or sets a value indicating whether the binding was implicitly registered.
         /// </summary>
         public bool IsImplicit { get; set; }
 
         /// <summary>
-        /// Gets a value indicating whether the binding has a condition associated with it.
+        ///     Gets a value indicating whether the binding has a condition associated with it.
         /// </summary>
         public bool IsConditional
         {
-            get { return this.Condition != null; }
+            get { return Condition != null; }
         }
 
         /// <summary>
-        /// Gets or sets the type of target for the binding.
+        ///     Gets or sets the type of target for the binding.
         /// </summary>
         public BindingTarget Target { get; set; }
 
         /// <summary>
-        /// Gets or sets the condition defined for the binding.
+        ///     Gets or sets the condition defined for the binding.
         /// </summary>
         public Func<IRequest, bool> Condition { get; set; }
 
         /// <summary>
-        /// Gets or sets the callback that returns the provider that should be used by the binding.
+        ///     Gets or sets the callback that returns the provider that should be used by the binding.
         /// </summary>
         public Func<IContext, IProvider> ProviderCallback { get; set; }
 
         /// <summary>
-        /// Gets or sets the callback that returns the object that will act as the binding's scope.
+        ///     Gets or sets the callback that returns the object that will act as the binding's scope.
         /// </summary>
         public Func<IContext, object> ScopeCallback { get; set; }
 
         /// <summary>
-        /// Gets the parameters defined for the binding.
+        ///     Gets the parameters defined for the binding.
         /// </summary>
         public ICollection<IParameter> Parameters { get; private set; }
 
         /// <summary>
-        /// Gets the actions that should be called after instances are activated via the binding.
+        ///     Gets the actions that should be called after instances are activated via the binding.
         /// </summary>
         public ICollection<Action<IContext, object>> ActivationActions { get; private set; }
 
         /// <summary>
-        /// Gets the actions that should be called before instances are deactivated via the binding.
+        ///     Gets the actions that should be called before instances are deactivated via the binding.
         /// </summary>
         public ICollection<Action<IContext, object>> DeactivationActions { get; private set; }
 
         /// <summary>
-        /// Gets the provider for the binding.
+        ///     Gets the provider for the binding.
         /// </summary>
         /// <param name="context">The context.</param>
         /// <returns>The provider to use.</returns>
         public IProvider GetProvider(IContext context)
         {
             Ensure.ArgumentNotNull(context, "context");
-            return this.ProviderCallback(context);
+            return ProviderCallback(context);
         }
 
         /// <summary>
-        /// Gets the scope for the binding, if any.
+        ///     Gets the scope for the binding, if any.
         /// </summary>
         /// <param name="context">The context.</param>
-        /// <returns>The object that will act as the scope, or <see langword="null"/> if the service is transient.</returns>
+        /// <returns>
+        ///     The object that will act as the scope, or <see langword="null" /> if the service is transient.
+        /// </returns>
         public object GetScope(IContext context)
         {
             Ensure.ArgumentNotNull(context, "context");
-            return this.ScopeCallback(context);
+            return ScopeCallback(context);
         }
 
         /// <summary>
-        /// Determines whether the specified request satisfies the conditions defined on this binding.
+        ///     Determines whether the specified request satisfies the conditions defined on this binding.
         /// </summary>
         /// <param name="request">The request.</param>
-        /// <returns><c>True</c> if the request satisfies the conditions; otherwise <c>false</c>.</returns>
+        /// <returns>
+        ///     <c>True</c> if the request satisfies the conditions; otherwise <c>false</c>.
+        /// </returns>
         public bool Matches(IRequest request)
         {
             Ensure.ArgumentNotNull(request, "request");
-            return this.Condition == null || this.Condition(request);
-        }    
+            return Condition == null || Condition(request);
+        }
     }
 }

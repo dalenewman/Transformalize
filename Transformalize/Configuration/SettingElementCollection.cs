@@ -18,34 +18,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Configuration;
 
-namespace Transformalize.Configuration {
-    public class SettingElementCollection : ConfigurationElementCollection {
-
-        public override bool IsReadOnly()
+namespace Transformalize.Configuration
+{
+    public class SettingElementCollection : ConfigurationElementCollection
+    {
+        public SettingConfigurationElement this[int index]
         {
-            return false;
-        }
-
-        public SettingConfigurationElement this[int index] {
-            get {
-                return BaseGet(index) as SettingConfigurationElement;
-            }
-            set {
-                if (BaseGet(index) != null) {
+            get { return BaseGet(index) as SettingConfigurationElement; }
+            set
+            {
+                if (BaseGet(index) != null)
+                {
                     BaseRemoveAt(index);
                 }
                 BaseAdd(index, value);
             }
         }
 
-        protected override ConfigurationElement CreateNewElement() {
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
+        protected override ConfigurationElement CreateNewElement()
+        {
             return new SettingConfigurationElement();
         }
 
-        protected override object GetElementKey(ConfigurationElement element) {
-            var setting = (SettingConfigurationElement)element;
+        protected override object GetElementKey(ConfigurationElement element)
+        {
+            var setting = (SettingConfigurationElement) element;
             return setting.Name;
         }
-
     }
 }

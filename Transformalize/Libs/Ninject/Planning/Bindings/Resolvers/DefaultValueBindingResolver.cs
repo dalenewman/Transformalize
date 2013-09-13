@@ -1,4 +1,5 @@
 ﻿#region License
+
 // 
 // Author: Nate Kohari <nate@enkari.com>
 // Copyright (c) 2007-2010, Enkari, Ltd.
@@ -6,7 +7,9 @@
 // Dual-licensed under the Apache License, Version 2.0, and the Microsoft Public License (Ms-PL).
 // See the file LICENSE.txt for details.
 // 
+
 #endregion
+
 #region Using Directives
 
 using System;
@@ -21,20 +24,19 @@ using Transformalize.Libs.Ninject.Planning.Targets;
 
 namespace Transformalize.Libs.Ninject.Planning.Bindings.Resolvers
 {
-
-    ///<summary>
-    ///</summary>
+    /// <summary>
+    /// </summary>
     public class DefaultValueBindingResolver : NinjectComponent, IMissingBindingResolver
     {
         /// <summary>
-        /// Returns any bindings from the specified collection that match the specified service.
+        ///     Returns any bindings from the specified collection that match the specified service.
         /// </summary>
         /// <param name="bindings">The multimap of all registered bindings.</param>
         /// <param name="request">The service in question.</param>
         /// <returns>The series of matching bindings.</returns>
         public IEnumerable<IBinding> Resolve(Multimap<Type, IBinding> bindings, IRequest request)
         {
-            var service = request.Service;
+            Type service = request.Service;
             return HasDefaultValue(request.Target)
                        ? new[]
                              {
@@ -63,7 +65,7 @@ namespace Transformalize.Libs.Ninject.Planning.Bindings.Resolvers
 
             public object Create(IContext context)
             {
-                var target = context.Request.Target;
+                ITarget target = context.Request.Target;
                 return (target == null) ? null : target.DefaultValue;
             }
         }

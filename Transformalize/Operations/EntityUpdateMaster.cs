@@ -17,24 +17,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using System.Data;
 using System.Linq;
 using System.Text;
-using Transformalize.Core;
-using Transformalize.Core.Entity_;
-using Transformalize.Core.Field_;
-using Transformalize.Core.Process_;
+using Transformalize.Main;
+using Transformalize.Main.Providers;
 using Transformalize.Libs.NLog;
-using Transformalize.Libs.Rhino.Etl.Core;
-using Transformalize.Libs.Rhino.Etl.Core.Operations;
+using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Libs.Rhino.Etl.Operations;
 
 namespace Transformalize.Operations
 {
-    public class EntityUpdateMaster : AbstractOperation {
-        private readonly Process _process;
+    public class EntityUpdateMaster : AbstractOperation
+    {
         private readonly Entity _entity;
+        private readonly Process _process;
 
-        public EntityUpdateMaster(Process process, Entity entity) {
+        public EntityUpdateMaster(Process process, Entity entity)
+        {
             GlobalDiagnosticsContext.Set("entity", Common.LogLength(entity.Alias, 20));
             _process = process;
             _entity = entity;
@@ -51,21 +51,22 @@ namespace Transformalize.Operations
 
             if (_process.OutputRecordsExist || _entity.HasForeignKeys())
             {
-                var connection = _process.MasterEntity.OutputConnection;
-                using (var cn = connection.GetConnection()) {
+                AbstractConnection connection = _process.MasterEntity.OutputConnection;
+                using (IDbConnection cn = connection.GetConnection())
+                {
                     cn.Open();
-                    var cmd = cn.CreateCommand();
+                    IDbCommand cmd = cn.CreateCommand();
                     cmd.CommandText = PrepareSql();
                     cmd.CommandTimeout = 0;
 
                     Debug(cmd.CommandText);
 
-                    var parameter = cmd.CreateParameter();
+                    IDbDataParameter parameter = cmd.CreateParameter();
                     parameter.ParameterName = "@TflBatchId";
                     parameter.Value = _entity.TflBatchId;
 
                     cmd.Parameters.Add(parameter);
-                    var records = cmd.ExecuteNonQuery();
+                    int records = cmd.ExecuteNonQuery();
 
                     Debug("TflBatchId = {0}.", _entity.TflBatchId);
                     Info("Processed {0} rows.  Updated {1} with {2}.", records, _process.MasterEntity.Alias, _entity.Alias);
@@ -74,26 +75,28 @@ namespace Transformalize.Operations
             return rows;
         }
 
-        private string PrepareSql() {
+        private string PrepareSql()
+        {
             var builder = new StringBuilder();
-            var masterEntity = _process.MasterEntity;
-            var provider = _entity.OutputConnection.Provider;
+            Entity masterEntity = _process.MasterEntity;
+            AbstractProvider provider = _entity.OutputConnection.Provider;
 
-            var master = string.Format("[{0}]", masterEntity.OutputName());
-            var source = string.Format("[{0}]", _entity.OutputName());
-            var sets = _process.OutputRecordsExist ?
-                new FieldSqlWriter(_entity.Fields).FieldType(FieldType.ForeignKey).AddBatchId(false).Alias(provider).Set(master, source).Write(",\r\n    ") :
-                new FieldSqlWriter(_entity.Fields).FieldType(FieldType.ForeignKey).Alias(provider).Set(master, source).Write(",\r\n    ");
+            string master = string.Format("[{0}]", masterEntity.OutputName());
+            string source = string.Format("[{0}]", _entity.OutputName());
+            string sets = _process.OutputRecordsExist ?
+                              new FieldSqlWriter(_entity.Fields).FieldType(FieldType.ForeignKey).AddBatchId(false).Alias(provider).Set(master, source).Write(",\r\n    ") :
+                              new FieldSqlWriter(_entity.Fields).FieldType(FieldType.ForeignKey).Alias(provider).Set(master, source).Write(",\r\n    ");
 
 
             builder.AppendFormat("UPDATE {0}\r\n", master);
             builder.AppendFormat("SET {0}\r\n", sets);
             builder.AppendFormat("FROM {0}\r\n", source);
 
-            foreach (var relationship in _entity.RelationshipToMaster) {
-                var left = string.Format("[{0}]", relationship.LeftEntity.OutputName());
-                var right = string.Format("[{0}]", relationship.RightEntity.OutputName());
-                var join = string.Join(" AND ", relationship.Join.Select(j => string.Format("{0}.[{1}] = {2}.[{3}]", left, j.LeftField.Alias, right, j.RightField.Alias)));
+            foreach (Relationship relationship in _entity.RelationshipToMaster)
+            {
+                string left = string.Format("[{0}]", relationship.LeftEntity.OutputName());
+                string right = string.Format("[{0}]", relationship.RightEntity.OutputName());
+                string join = string.Join(" AND ", relationship.Join.Select(j => string.Format("{0}.[{1}] = {2}.[{3}]", left, j.LeftField.Alias, right, j.RightField.Alias)));
                 builder.AppendFormat("INNER JOIN {0} ON ({1})\r\n", left, join);
             }
 

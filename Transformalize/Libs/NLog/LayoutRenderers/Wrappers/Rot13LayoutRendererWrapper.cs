@@ -37,10 +37,10 @@ using Transformalize.Libs.NLog.Layouts;
 namespace Transformalize.Libs.NLog.LayoutRenderers.Wrappers
 {
     /// <summary>
-    /// Decodes text "encrypted" with ROT-13.
+    ///     Decodes text "encrypted" with ROT-13.
     /// </summary>
     /// <remarks>
-    /// See <a href="http://en.wikipedia.org/wiki/ROT13">http://en.wikipedia.org/wiki/ROT13</a>.
+    ///     See <a href="http://en.wikipedia.org/wiki/ROT13">http://en.wikipedia.org/wiki/ROT13</a>.
     /// </remarks>
     [LayoutRenderer("rot13")]
     [AppDomainFixedOutput]
@@ -48,19 +48,19 @@ namespace Transformalize.Libs.NLog.LayoutRenderers.Wrappers
     public sealed class Rot13LayoutRendererWrapper : WrapperLayoutRendererBase
     {
         /// <summary>
-        /// Gets or sets the layout to be wrapped.
+        ///     Gets or sets the layout to be wrapped.
         /// </summary>
         /// <value>The layout to be wrapped.</value>
         /// <remarks>This variable is for backwards compatibility</remarks>
         /// <docgen category='Transformation Options' order='10' />
         public Layout Text
         {
-            get { return this.Inner; }
-            set { this.Inner = value; }
+            get { return Inner; }
+            set { Inner = value; }
         }
 
         /// <summary>
-        /// Encodes/Decodes ROT-13-encoded string.
+        ///     Encodes/Decodes ROT-13-encoded string.
         /// </summary>
         /// <param name="encodedValue">The string to be encoded/decoded.</param>
         /// <returns>Encoded/Decoded text.</returns>
@@ -81,7 +81,7 @@ namespace Transformalize.Libs.NLog.LayoutRenderers.Wrappers
         }
 
         /// <summary>
-        /// Transforms the output of another layout.
+        ///     Transforms the output of another layout.
         /// </summary>
         /// <param name="text">Output to be transform.</param>
         /// <returns>Transformed text.</returns>
@@ -94,22 +94,22 @@ namespace Transformalize.Libs.NLog.LayoutRenderers.Wrappers
         {
             if (c >= 'A' && c <= 'M')
             {
-                return (char)('N' + (c - 'A'));
+                return (char) ('N' + (c - 'A'));
             }
 
             if (c >= 'a' && c <= 'm')
             {
-                return (char)('n' + (c - 'a'));
+                return (char) ('n' + (c - 'a'));
             }
 
             if (c >= 'N' && c <= 'Z')
             {
-                return (char)('A' + (c - 'N'));
+                return (char) ('A' + (c - 'N'));
             }
 
             if (c >= 'n' && c <= 'z')
             {
-                return (char)('a' + (c - 'n'));
+                return (char) ('a' + (c - 'n'));
             }
 
             return c;

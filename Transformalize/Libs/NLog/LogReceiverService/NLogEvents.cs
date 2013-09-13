@@ -33,17 +33,18 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
 
 namespace Transformalize.Libs.NLog.LogReceiverService
 {
-    #if WCF_SUPPORTED
+#if WCF_SUPPORTED
     using System.Runtime.Serialization;
     using System.ServiceModel;
 #endif
 
     /// <summary>
-    /// Wire format for NLog event package.
+    ///     Wire format for NLog event package.
     /// </summary>
 #if WCF_SUPPORTED
     [DataContract(Name = "events", Namespace = LogReceiverServiceConfig.WebServiceNamespace)]
@@ -56,7 +57,7 @@ namespace Transformalize.Libs.NLog.LogReceiverService
     public class NLogEvents
     {
         /// <summary>
-        /// Gets or sets the name of the client.
+        ///     Gets or sets the name of the client.
         /// </summary>
         /// <value>The name of the client.</value>
 #if WCF_SUPPORTED
@@ -66,7 +67,7 @@ namespace Transformalize.Libs.NLog.LogReceiverService
         public string ClientName { get; set; }
 
         /// <summary>
-        /// Gets or sets the base time (UTC ticks) for all events in the package.
+        ///     Gets or sets the base time (UTC ticks) for all events in the package.
         /// </summary>
         /// <value>The base time UTC.</value>
 #if WCF_SUPPORTED
@@ -76,7 +77,7 @@ namespace Transformalize.Libs.NLog.LogReceiverService
         public long BaseTimeUtc { get; set; }
 
         /// <summary>
-        /// Gets or sets the collection of layout names which are shared among all events.
+        ///     Gets or sets the collection of layout names which are shared among all events.
         /// </summary>
         /// <value>The layout names.</value>
 #if WCF_SUPPORTED
@@ -84,11 +85,11 @@ namespace Transformalize.Libs.NLog.LogReceiverService
 #endif
         [XmlArray("lts", Order = 100)]
         [XmlArrayItem("l")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "This is needed for serialization.")]
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "This is needed for serialization.")]
         public StringCollection LayoutNames { get; set; }
 
         /// <summary>
-        /// Gets or sets the collection of logger names.
+        ///     Gets or sets the collection of logger names.
         /// </summary>
         /// <value>The logger names.</value>
 #if WCF_SUPPORTED
@@ -96,11 +97,11 @@ namespace Transformalize.Libs.NLog.LogReceiverService
 #endif
         [XmlArray("str", Order = 200)]
         [XmlArrayItem("l")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Setter is needed for serialization.")]
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Setter is needed for serialization.")]
         public StringCollection Strings { get; set; }
 
         /// <summary>
-        /// Gets or sets the list of events.
+        ///     Gets or sets the list of events.
         /// </summary>
         /// <value>The events.</value>
 #if WCF_SUPPORTED
@@ -108,38 +109,38 @@ namespace Transformalize.Libs.NLog.LogReceiverService
 #endif
         [XmlArray("ev", Order = 1000)]
         [XmlArrayItem("e")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Setter is needed for serialization.")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "This is for serialization")]
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Setter is needed for serialization.")]
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "This is for serialization")]
         public NLogEvent[] Events { get; set; }
 
         /// <summary>
-        /// Converts the events to sequence of <see cref="LogEventInfo"/> objects suitable for routing through NLog.
+        ///     Converts the events to sequence of <see cref="LogEventInfo" /> objects suitable for routing through NLog.
         /// </summary>
         /// <param name="loggerNamePrefix">The logger name prefix to prepend in front of each logger name.</param>
         /// <returns>
-        /// Sequence of <see cref="LogEventInfo"/> objects.
+        ///     Sequence of <see cref="LogEventInfo" /> objects.
         /// </returns>
         public IList<LogEventInfo> ToEventInfo(string loggerNamePrefix)
         {
-            var result = new LogEventInfo[this.Events.Length];
+            var result = new LogEventInfo[Events.Length];
 
             for (int i = 0; i < result.Length; ++i)
             {
-                result[i] = this.Events[i].ToEventInfo(this, loggerNamePrefix);
+                result[i] = Events[i].ToEventInfo(this, loggerNamePrefix);
             }
 
             return result;
         }
 
         /// <summary>
-        /// Converts the events to sequence of <see cref="LogEventInfo"/> objects suitable for routing through NLog.
+        ///     Converts the events to sequence of <see cref="LogEventInfo" /> objects suitable for routing through NLog.
         /// </summary>
         /// <returns>
-        /// Sequence of <see cref="LogEventInfo"/> objects.
+        ///     Sequence of <see cref="LogEventInfo" /> objects.
         /// </returns>
         public IList<LogEventInfo> ToEventInfo()
         {
-            return this.ToEventInfo(string.Empty);
+            return ToEventInfo(string.Empty);
         }
     }
 }

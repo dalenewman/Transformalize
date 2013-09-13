@@ -40,7 +40,7 @@ using System.Net.Mail;
 namespace Transformalize.Libs.NLog.Internal
 {
     /// <summary>
-    /// Supports mocking of SMTP Client code.
+    ///     Supports mocking of SMTP Client code.
     /// </summary>
     internal interface ISmtpClient : IDisposable
     {

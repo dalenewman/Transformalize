@@ -36,29 +36,29 @@ using Transformalize.Libs.NLog.LayoutRenderers;
 namespace Transformalize.Libs.NLog.Layouts
 {
     /// <summary>
-    /// A specialized layout that renders Log4j-compatible XML events.
+    ///     A specialized layout that renders Log4j-compatible XML events.
     /// </summary>
     /// <remarks>
-    /// This layout is not meant to be used explicitly. Instead you can use ${log4jxmlevent} layout renderer.
+    ///     This layout is not meant to be used explicitly. Instead you can use ${log4jxmlevent} layout renderer.
     /// </remarks>
     [Layout("Log4JXmlEventLayout")]
     public class Log4JXmlEventLayout : Layout
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Log4JXmlEventLayout" /> class.
+        ///     Initializes a new instance of the <see cref="Log4JXmlEventLayout" /> class.
         /// </summary>
         public Log4JXmlEventLayout()
         {
-            this.Renderer = new Log4JXmlEventLayoutRenderer();
+            Renderer = new Log4JXmlEventLayoutRenderer();
         }
 
         /// <summary>
-        /// Gets the <see cref="Log4JXmlEventLayoutRenderer"/> instance that renders log events.
+        ///     Gets the <see cref="Log4JXmlEventLayoutRenderer" /> instance that renders log events.
         /// </summary>
         public Log4JXmlEventLayoutRenderer Renderer { get; private set; }
 
         /// <summary>
-        /// Renders the layout for the specified logging event by invoking layout renderers.
+        ///     Renders the layout for the specified logging event by invoking layout renderers.
         /// </summary>
         /// <param name="logEvent">The logging event.</param>
         /// <returns>The rendered layout.</returns>
@@ -71,7 +71,7 @@ namespace Transformalize.Libs.NLog.Layouts
                 return cachedValue;
             }
 
-            return logEvent.AddCachedLayoutValue(this, this.Renderer.Render(logEvent));
+            return logEvent.AddCachedLayoutValue(this, Renderer.Render(logEvent));
         }
     }
 }

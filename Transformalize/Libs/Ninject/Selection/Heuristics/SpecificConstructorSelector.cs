@@ -25,14 +25,14 @@ using Transformalize.Libs.Ninject.Planning.Directives;
 namespace Transformalize.Libs.Ninject.Selection.Heuristics
 {
     /// <summary>
-    /// Constructor selector that selects the constructor matching the one passed to the constructor.
+    ///     Constructor selector that selects the constructor matching the one passed to the constructor.
     /// </summary>
     public class SpecificConstructorSelector : NinjectComponent, IConstructorScorer
     {
         private readonly ConstructorInfo constructorInfo;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SpecificConstructorSelector"/> class.
+        ///     Initializes a new instance of the <see cref="SpecificConstructorSelector" /> class.
         /// </summary>
         /// <param name="constructorInfo">The constructor info of the constructor that shall be selected.</param>
         public SpecificConstructorSelector(ConstructorInfo constructorInfo)
@@ -41,7 +41,7 @@ namespace Transformalize.Libs.Ninject.Selection.Heuristics
         }
 
         /// <summary>
-        /// Gets the score for the specified constructor.
+        ///     Gets the score for the specified constructor.
         /// </summary>
         /// <param name="context">The injection context.</param>
         /// <param name="directive">The constructor.</param>

@@ -24,7 +24,7 @@
 namespace Transformalize.Libs.Ninject.Syntax
 {
     /// <summary>
-    /// Used to add additional information or actions to a binding.
+    ///     Used to add additional information or actions to a binding.
     /// </summary>
     /// <typeparam name="T">The service being bound.</typeparam>
     public interface IBindingWithOrOnSyntax<T> : IBindingWithSyntax<T>, IBindingOnSyntax<T>

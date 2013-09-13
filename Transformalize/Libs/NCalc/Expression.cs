@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using Antlr.Runtime;
-using System.Diagnostics;
 using System.Threading;
+using Antlr.Runtime;
 using Transformalize.Libs.NCalc.Domain;
 using Transformalize.Libs.NLog;
 
@@ -12,12 +11,15 @@ namespace Transformalize.Libs.NCalc
     public class Expression
     {
         private static readonly Logger _log = LogManager.GetCurrentClassLogger();
-        public EvaluateOptions Options { get; set; }
 
         /// <summary>
-        /// Textual representation of the expression to evaluate.
+        ///     Textual representation of the expression to evaluate.
         /// </summary>
         protected string OriginalExpression;
+
+        protected Dictionary<string, IEnumerator> ParameterEnumerators;
+        protected Dictionary<string, object> ParametersBackup;
+        private Dictionary<string, object> _parameters;
 
         public Expression(string expression) : this(expression, EvaluateOptions.None)
         {
@@ -26,7 +28,7 @@ namespace Transformalize.Libs.NCalc
         public Expression(string expression, EvaluateOptions options)
         {
             if (String.IsNullOrEmpty(expression))
-                throw new 
+                throw new
                     ArgumentException("Expression can't be empty", "expression");
 
             OriginalExpression = expression;
@@ -48,6 +50,7 @@ namespace Transformalize.Libs.NCalc
         }
 
         #region Cache management
+
         private static bool _cacheEnabled = true;
         private static Dictionary<string, WeakReference> _compiledExpressions = new Dictionary<string, WeakReference>();
         private static readonly ReaderWriterLock Rwl = new ReaderWriterLock();
@@ -55,8 +58,8 @@ namespace Transformalize.Libs.NCalc
         public static bool CacheEnabled
         {
             get { return _cacheEnabled; }
-            set 
-            { 
+            set
+            {
                 _cacheEnabled = value;
 
                 if (!CacheEnabled)
@@ -68,7 +71,7 @@ namespace Transformalize.Libs.NCalc
         }
 
         /// <summary>
-        /// Removed unused entries from cached compiled expression
+        ///     Removed unused entries from cached compiled expression
         /// </summary>
         private static void CleanCache()
         {
@@ -101,6 +104,18 @@ namespace Transformalize.Libs.NCalc
 
         #endregion
 
+        public EvaluateOptions Options { get; set; }
+
+        public string Error { get; private set; }
+
+        public LogicalExpression ParsedExpression { get; private set; }
+
+        public Dictionary<string, object> Parameters
+        {
+            get { return _parameters ?? (_parameters = new Dictionary<string, object>()); }
+            set { _parameters = value; }
+        }
+
         public static LogicalExpression Compile(string expression, bool nocache)
         {
             LogicalExpression logicalExpression = null;
@@ -115,9 +130,9 @@ namespace Transformalize.Libs.NCalc
                     {
                         //Trace.TraceInformation("Expression retrieved from cache: " + expression);
                         _log.Trace("Expression retrieved from cache: {0}", expression);
-                        var wr = _compiledExpressions[expression];
+                        WeakReference wr = _compiledExpressions[expression];
                         logicalExpression = wr.Target as LogicalExpression;
-                    
+
                         if (wr.IsAlive && logicalExpression != null)
                         {
                             return logicalExpression;
@@ -165,8 +180,8 @@ namespace Transformalize.Libs.NCalc
         }
 
         /// <summary>
-        /// Pre-compiles the expression in order to check syntax errors.
-        /// If errors are detected, the Error property contains the message.
+        ///     Pre-compiles the expression in order to check syntax errors.
+        ///     If errors are detected, the Error property contains the message.
         /// </summary>
         /// <returns>True if the expression syntax is correct, otherwiser False</returns>
         public bool HasErrors()
@@ -181,19 +196,12 @@ namespace Transformalize.Libs.NCalc
                 // In case HasErrors() is called multiple times for the same expression
                 return ParsedExpression != null && Error != null;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Error = e.Message;
                 return true;
             }
         }
-
-        public string Error { get; private set; }
-
-        public LogicalExpression ParsedExpression { get; private set; }
-
-        protected Dictionary<string, IEnumerator> ParameterEnumerators;
-        protected Dictionary<string, object> ParametersBackup;
 
         public object Evaluate()
         {
@@ -230,7 +238,7 @@ namespace Transformalize.Libs.NCalc
                     if (parameter is IEnumerable)
                     {
                         int localsize = 0;
-                        foreach (object o in (IEnumerable)parameter)
+                        foreach (object o in (IEnumerable) parameter)
                         {
                             localsize++;
                         }
@@ -274,19 +282,9 @@ namespace Transformalize.Libs.NCalc
 
             ParsedExpression.Accept(visitor);
             return visitor.Result;
-            
         }
 
         public event EvaluateFunctionHandler EvaluateFunction;
         public event EvaluateParameterHandler EvaluateParameter;
-
-        private Dictionary<string, object> _parameters;
-
-        public Dictionary<string, object> Parameters
-        {
-            get { return _parameters ?? (_parameters = new Dictionary<string, object>()); }
-            set { _parameters = value; }
-        }
-
     }
 }

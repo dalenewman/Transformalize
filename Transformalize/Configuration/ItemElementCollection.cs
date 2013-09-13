@@ -18,41 +18,43 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Configuration;
 
-namespace Transformalize.Configuration {
-    public class ItemElementCollection : ConfigurationElementCollection {
-
-        public override bool IsReadOnly()
+namespace Transformalize.Configuration
+{
+    public class ItemElementCollection : ConfigurationElementCollection
+    {
+        public ItemConfigurationElement this[int index]
         {
-            return false;
-        }
-
-        public ItemConfigurationElement this[int index] {
-            get {
-                return BaseGet(index) as ItemConfigurationElement;
-            }
-            set {
-                if (BaseGet(index) != null) {
+            get { return BaseGet(index) as ItemConfigurationElement; }
+            set
+            {
+                if (BaseGet(index) != null)
+                {
                     BaseRemoveAt(index);
                 }
                 BaseAdd(index, value);
             }
         }
 
-        protected override ConfigurationElement CreateNewElement() {
-            return new ItemConfigurationElement();
-        }
-
-        protected override object GetElementKey(ConfigurationElement element) {
-            return ((ItemConfigurationElement)element).From.ToLower();
-        }
-
         [ConfigurationProperty("sql", IsRequired = false, DefaultValue = "")]
-        public string Sql {
-            get {
-                return this["sql"] as string;
-            }
+        public string Sql
+        {
+            get { return this["sql"] as string; }
             set { this["sql"] = value; }
         }
 
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
+        protected override ConfigurationElement CreateNewElement()
+        {
+            return new ItemConfigurationElement();
+        }
+
+        protected override object GetElementKey(ConfigurationElement element)
+        {
+            return ((ItemConfigurationElement) element).From.ToLower();
+        }
     }
 }

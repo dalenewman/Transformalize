@@ -40,15 +40,15 @@ using Transformalize.Libs.NLog.Config;
 namespace Transformalize.Libs.NLog.Internal
 {
     /// <summary>
-    /// Scans (breadth-first) the object graph following all the edges whose are 
-    /// instances have <see cref="NLogConfigurationItemAttribute"/> attached and returns 
-    /// all objects implementing a specified interfaces.
+    ///     Scans (breadth-first) the object graph following all the edges whose are
+    ///     instances have <see cref="NLogConfigurationItemAttribute" /> attached and returns
+    ///     all objects implementing a specified interfaces.
     /// </summary>
     internal class ObjectGraphScanner
     {
         /// <summary>
-        /// Finds the objects which have attached <see cref="NLogConfigurationItemAttribute"/> which are reachable
-        /// from any of the given root objects when traversing the object graph over public properties.
+        ///     Finds the objects which have attached <see cref="NLogConfigurationItemAttribute" /> which are reachable
+        ///     from any of the given root objects when traversing the object graph over public properties.
         /// </summary>
         /// <typeparam name="T">Type of the objects to return.</typeparam>
         /// <param name="rootObjects">The root objects.</param>
@@ -56,11 +56,11 @@ namespace Transformalize.Libs.NLog.Internal
         public static T[] FindReachableObjects<T>(params object[] rootObjects)
             where T : class
         {
-            InternalLogger.Trace("FindReachableObject<{0}>:", typeof(T));
+            InternalLogger.Trace("FindReachableObject<{0}>:", typeof (T));
             var result = new List<T>();
             var visitedObjects = new Dictionary<object, int>();
 
-            foreach (var rootObject in rootObjects)
+            foreach (object rootObject in rootObjects)
             {
                 ScanProperties(result, rootObject, 0, visitedObjects);
             }
@@ -76,7 +76,7 @@ namespace Transformalize.Libs.NLog.Internal
                 return;
             }
 
-            if (!o.GetType().IsDefined(typeof(NLogConfigurationItemAttribute), true))
+            if (!o.GetType().IsDefined(typeof (NLogConfigurationItemAttribute), true))
             {
                 return;
             }
@@ -101,7 +101,7 @@ namespace Transformalize.Libs.NLog.Internal
 
             foreach (PropertyInfo prop in PropertyHelper.GetAllReadableProperties(o.GetType()))
             {
-                if (prop.PropertyType.IsPrimitive || prop.PropertyType.IsEnum || prop.PropertyType == typeof(string))
+                if (prop.PropertyType.IsPrimitive || prop.PropertyType.IsEnum || prop.PropertyType == typeof (string))
                 {
                     continue;
                 }

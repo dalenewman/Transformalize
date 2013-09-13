@@ -41,7 +41,7 @@ using Transformalize.Libs.NLog.Config;
 namespace Transformalize.Libs.NLog.LayoutRenderers
 {
     /// <summary>
-    /// The performance counter.
+    ///     The performance counter.
     /// </summary>
     [LayoutRenderer("performancecounter")]
     public class PerformanceCounterLayoutRenderer : LayoutRenderer
@@ -49,69 +49,71 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
         private PerformanceCounter perfCounter;
 
         /// <summary>
-        /// Gets or sets the name of the counter category.
+        ///     Gets or sets the name of the counter category.
         /// </summary>
         /// <docgen category='Performance Counter Options' order='10' />
         [RequiredParameter]
         public string Category { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of the performance counter.
+        ///     Gets or sets the name of the performance counter.
         /// </summary>
         /// <docgen category='Performance Counter Options' order='10' />
         [RequiredParameter]
         public string Counter { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of the performance counter instance (e.g. this.Global_).
+        ///     Gets or sets the name of the performance counter instance (e.g. this.Global_).
         /// </summary>
         /// <docgen category='Performance Counter Options' order='10' />
         public string Instance { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of the machine to read the performance counter from.
+        ///     Gets or sets the name of the machine to read the performance counter from.
         /// </summary>
         /// <docgen category='Performance Counter Options' order='10' />
         public string MachineName { get; set; }
 
         /// <summary>
-        /// Initializes the layout renderer.
+        ///     Initializes the layout renderer.
         /// </summary>
         protected override void InitializeLayoutRenderer()
         {
             base.InitializeLayoutRenderer();
 
-            if (this.MachineName != null)
+            if (MachineName != null)
             {
-                this.perfCounter = new PerformanceCounter(this.Category, this.Counter, this.Instance, this.MachineName);
+                perfCounter = new PerformanceCounter(Category, Counter, Instance, MachineName);
             }
             else
             {
-                this.perfCounter = new PerformanceCounter(this.Category, this.Counter, this.Instance, true);
+                perfCounter = new PerformanceCounter(Category, Counter, Instance, true);
             }
         }
 
         /// <summary>
-        /// Closes the layout renderer.
+        ///     Closes the layout renderer.
         /// </summary>
         protected override void CloseLayoutRenderer()
         {
             base.CloseLayoutRenderer();
-            if (this.perfCounter != null)
+            if (perfCounter != null)
             {
-                this.perfCounter.Close();
-                this.perfCounter = null;
+                perfCounter.Close();
+                perfCounter = null;
             }
         }
 
         /// <summary>
-        /// Renders the specified environment variable and appends it to the specified <see cref="StringBuilder" />.
+        ///     Renders the specified environment variable and appends it to the specified <see cref="StringBuilder" />.
         /// </summary>
-        /// <param name="builder">The <see cref="StringBuilder"/> to append the rendered data to.</param>
+        /// <param name="builder">
+        ///     The <see cref="StringBuilder" /> to append the rendered data to.
+        /// </param>
         /// <param name="logEvent">Logging event.</param>
         protected override void Append(StringBuilder builder, LogEventInfo logEvent)
         {
-            builder.Append(this.perfCounter.NextValue().ToString(CultureInfo.InvariantCulture));
+            builder.Append(perfCounter.NextValue().ToString(CultureInfo.InvariantCulture));
         }
     }
 }

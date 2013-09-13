@@ -37,47 +37,47 @@ using System.Globalization;
 namespace Transformalize.Libs.NLog.Conditions
 {
     /// <summary>
-    /// Condition literal expression (numeric, <b>LogLevel.XXX</b>, <b>true</b> or <b>false</b>).
+    ///     Condition literal expression (numeric, <b>LogLevel.XXX</b>, <b>true</b> or <b>false</b>).
     /// </summary>
     internal sealed class ConditionLiteralExpression : ConditionExpression
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConditionLiteralExpression" /> class.
+        ///     Initializes a new instance of the <see cref="ConditionLiteralExpression" /> class.
         /// </summary>
         /// <param name="literalValue">Literal value.</param>
         public ConditionLiteralExpression(object literalValue)
         {
-            this.LiteralValue = literalValue;
+            LiteralValue = literalValue;
         }
 
         /// <summary>
-        /// Gets the literal value.
+        ///     Gets the literal value.
         /// </summary>
         /// <value>The literal value.</value>
         public object LiteralValue { get; private set; }
 
         /// <summary>
-        /// Returns a string representation of the expression.
+        ///     Returns a string representation of the expression.
         /// </summary>
         /// <returns>The literal value.</returns>
         public override string ToString()
         {
-            if (this.LiteralValue == null)
+            if (LiteralValue == null)
             {
                 return "null";
             }
 
-            return Convert.ToString(this.LiteralValue, CultureInfo.InvariantCulture);
+            return Convert.ToString(LiteralValue, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
-        /// Evaluates the expression.
+        ///     Evaluates the expression.
         /// </summary>
         /// <param name="context">Evaluation context.</param>
         /// <returns>The literal value as passed in the constructor.</returns>
         protected override object EvaluateNode(LogEventInfo context)
         {
-            return this.LiteralValue;
+            return LiteralValue;
         }
     }
 }

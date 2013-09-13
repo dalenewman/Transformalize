@@ -42,11 +42,11 @@ using Transformalize.Libs.NLog.LayoutRenderers;
 namespace Transformalize.Libs.NLog.Layouts
 {
     /// <summary>
-    /// Represents a string with embedded placeholders that can render contextual information.
+    ///     Represents a string with embedded placeholders that can render contextual information.
     /// </summary>
     /// <remarks>
-    /// This layout is not meant to be used explicitly. Instead you can just use a string containing layout 
-    /// renderers everywhere the layout is required.
+    ///     This layout is not meant to be used explicitly. Instead you can just use a string containing layout
+    ///     renderers everywhere the layout is required.
     /// </remarks>
     [Layout("SimpleLayout")]
     [ThreadAgnostic]
@@ -54,14 +54,14 @@ namespace Transformalize.Libs.NLog.Layouts
     public class SimpleLayout : Layout
     {
         private const int MaxInitialRenderBufferLength = 16384;
-        private int maxRenderedLength;
+        private readonly ConfigurationItemFactory configurationItemFactory;
 
         private string fixedText;
         private string layoutText;
-        private ConfigurationItemFactory configurationItemFactory;
+        private int maxRenderedLength;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SimpleLayout" /> class.
+        ///     Initializes a new instance of the <see cref="SimpleLayout" /> class.
         /// </summary>
         public SimpleLayout()
             : this(string.Empty)
@@ -69,7 +69,7 @@ namespace Transformalize.Libs.NLog.Layouts
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SimpleLayout" /> class.
+        ///     Initializes a new instance of the <see cref="SimpleLayout" /> class.
         /// </summary>
         /// <param name="txt">The layout string to parse.</param>
         public SimpleLayout(string txt)
@@ -78,32 +78,29 @@ namespace Transformalize.Libs.NLog.Layouts
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SimpleLayout"/> class.
+        ///     Initializes a new instance of the <see cref="SimpleLayout" /> class.
         /// </summary>
         /// <param name="txt">The layout string to parse.</param>
         /// <param name="configurationItemFactory">The NLog factories to use when creating references to layout renderers.</param>
         public SimpleLayout(string txt, ConfigurationItemFactory configurationItemFactory)
         {
             this.configurationItemFactory = configurationItemFactory;
-            this.Text = txt;
+            Text = txt;
         }
 
         internal SimpleLayout(LayoutRenderer[] renderers, string text, ConfigurationItemFactory configurationItemFactory)
         {
             this.configurationItemFactory = configurationItemFactory;
-            this.SetRenderers(renderers, text);
+            SetRenderers(renderers, text);
         }
 
         /// <summary>
-        /// Gets or sets the layout text.
+        ///     Gets or sets the layout text.
         /// </summary>
         /// <docgen category='Layout Options' order='10' />
         public string Text
         {
-            get
-            {
-                return this.layoutText;
-            }
+            get { return layoutText; }
 
             set
             {
@@ -111,41 +108,43 @@ namespace Transformalize.Libs.NLog.Layouts
                 string txt;
 
                 renderers = LayoutParser.CompileLayout(
-                    this.configurationItemFactory,
+                    configurationItemFactory,
                     new SimpleStringReader(value),
                     false,
                     out txt);
 
-                this.SetRenderers(renderers, txt);
+                SetRenderers(renderers, txt);
             }
         }
 
         /// <summary>
-        /// Gets a collection of <see cref="LayoutRenderer"/> objects that make up this layout.
+        ///     Gets a collection of <see cref="LayoutRenderer" /> objects that make up this layout.
         /// </summary>
         public ReadOnlyCollection<LayoutRenderer> Renderers { get; private set; }
 
         /// <summary>
-        /// Converts a text to a simple layout.
+        ///     Converts a text to a simple layout.
         /// </summary>
         /// <param name="text">Text to be converted.</param>
-        /// <returns>A <see cref="SimpleLayout"/> object.</returns>
+        /// <returns>
+        ///     A <see cref="SimpleLayout" /> object.
+        /// </returns>
         public static implicit operator SimpleLayout(string text)
         {
             return new SimpleLayout(text);
         }
 
         /// <summary>
-        /// Escapes the passed text so that it can
-        /// be used literally in all places where
-        /// layout is normally expected without being
-        /// treated as layout.
+        ///     Escapes the passed text so that it can
+        ///     be used literally in all places where
+        ///     layout is normally expected without being
+        ///     treated as layout.
         /// </summary>
         /// <param name="text">The text to be escaped.</param>
         /// <returns>The escaped text.</returns>
         /// <remarks>
-        /// Escaping is done by replacing all occurences of
-        /// '${' with '${literal:text=${}'
+        ///     Escaping is done by replacing all occurences of
+        ///     '${' with '${literal:text=${}'
         /// </remarks>
         public static string Escape(string text)
         {
@@ -153,12 +152,14 @@ namespace Transformalize.Libs.NLog.Layouts
         }
 
         /// <summary>
-        /// Evaluates the specified text by expadinging all layout renderers.
+        ///     Evaluates the specified text by expadinging all layout renderers.
         /// </summary>
         /// <param name="text">The text to be evaluated.</param>
         /// <param name="logEvent">Log event to be used for evaluation.</param>
-        /// <returns>The input text with all occurences of ${} replaced with
-        /// values provided by the appropriate layout renderers.</returns>
+        /// <returns>
+        ///     The input text with all occurences of ${} replaced with
+        ///     values provided by the appropriate layout renderers.
+        /// </returns>
         public static string Evaluate(string text, LogEventInfo logEvent)
         {
             var l = new SimpleLayout(text);
@@ -166,54 +167,56 @@ namespace Transformalize.Libs.NLog.Layouts
         }
 
         /// <summary>
-        /// Evaluates the specified text by expadinging all layout renderers
-        /// in new <see cref="LogEventInfo" /> context.
+        ///     Evaluates the specified text by expadinging all layout renderers
+        ///     in new <see cref="LogEventInfo" /> context.
         /// </summary>
         /// <param name="text">The text to be evaluated.</param>
-        /// <returns>The input text with all occurences of ${} replaced with
-        /// values provided by the appropriate layout renderers.</returns>
+        /// <returns>
+        ///     The input text with all occurences of ${} replaced with
+        ///     values provided by the appropriate layout renderers.
+        /// </returns>
         public static string Evaluate(string text)
         {
             return Evaluate(text, LogEventInfo.CreateNullEvent());
         }
 
         /// <summary>
-        /// Returns a <see cref="T:System.String"></see> that represents the current object.
+        ///     Returns a <see cref="T:System.String"></see> that represents the current object.
         /// </summary>
         /// <returns>
-        /// A <see cref="T:System.String"></see> that represents the current object.
+        ///     A <see cref="T:System.String"></see> that represents the current object.
         /// </returns>
         public override string ToString()
         {
-            return "'" + this.Text + "'";
+            return "'" + Text + "'";
         }
 
         internal void SetRenderers(LayoutRenderer[] renderers, string text)
         {
-            this.Renderers = new ReadOnlyCollection<LayoutRenderer>(renderers);
-            if (this.Renderers.Count == 1 && this.Renderers[0] is LiteralLayoutRenderer)
+            Renderers = new ReadOnlyCollection<LayoutRenderer>(renderers);
+            if (Renderers.Count == 1 && Renderers[0] is LiteralLayoutRenderer)
             {
-                this.fixedText = ((LiteralLayoutRenderer)this.Renderers[0]).Text;
+                fixedText = ((LiteralLayoutRenderer) Renderers[0]).Text;
             }
             else
             {
-                this.fixedText = null;
+                fixedText = null;
             }
 
-            this.layoutText = text;
+            layoutText = text;
         }
 
         /// <summary>
-        /// Renders the layout for the specified logging event by invoking layout renderers
-        /// that make up the event.
+        ///     Renders the layout for the specified logging event by invoking layout renderers
+        ///     that make up the event.
         /// </summary>
         /// <param name="logEvent">The logging event.</param>
         /// <returns>The rendered layout.</returns>
         protected override string GetFormattedMessage(LogEventInfo logEvent)
         {
-            if (this.fixedText != null)
+            if (fixedText != null)
             {
-                return this.fixedText;
+                return fixedText;
             }
 
             string cachedValue;
@@ -223,7 +226,7 @@ namespace Transformalize.Libs.NLog.Layouts
                 return cachedValue;
             }
 
-            int initialSize = this.maxRenderedLength;
+            int initialSize = maxRenderedLength;
             if (initialSize > MaxInitialRenderBufferLength)
             {
                 initialSize = MaxInitialRenderBufferLength;
@@ -231,7 +234,7 @@ namespace Transformalize.Libs.NLog.Layouts
 
             var builder = new StringBuilder(initialSize);
 
-            foreach (LayoutRenderer renderer in this.Renderers)
+            foreach (LayoutRenderer renderer in Renderers)
             {
                 try
                 {
@@ -251,9 +254,9 @@ namespace Transformalize.Libs.NLog.Layouts
                 }
             }
 
-            if (builder.Length > this.maxRenderedLength)
+            if (builder.Length > maxRenderedLength)
             {
-                this.maxRenderedLength = builder.Length;
+                maxRenderedLength = builder.Length;
             }
 
             string value = builder.ToString();

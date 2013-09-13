@@ -31,27 +31,28 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 // 
 
+
 #if !NET_CF && !SILVERLIGHT
 
 namespace Transformalize.Libs.NLog.Targets
 {
     /// <summary>
-    /// SMTP authentication modes.
+    ///     SMTP authentication modes.
     /// </summary>
     public enum SmtpAuthenticationMode
     {
         /// <summary>
-        /// No authentication.
+        ///     No authentication.
         /// </summary>
         None,
 
         /// <summary>
-        /// Basic - username and password.
+        ///     Basic - username and password.
         /// </summary>
         Basic,
 
         /// <summary>
-        /// NTLM Authentication.
+        ///     NTLM Authentication.
         /// </summary>
         Ntlm,
     }

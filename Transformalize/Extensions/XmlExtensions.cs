@@ -16,20 +16,20 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Xml;
 using System.Xml.Linq;
 
-namespace Transformalize.Extensions {
-
-    public static class XmlExtensions {
-
+namespace Transformalize.Extensions
+{
+    public static class XmlExtensions
+    {
         public static string InnerXml(this XNode node)
         {
-            using (var reader = node.CreateReader())
+            using (XmlReader reader = node.CreateReader())
             {
                 reader.MoveToContent();
                 return reader.ReadInnerXml();
             }
         }
-
     }
 }

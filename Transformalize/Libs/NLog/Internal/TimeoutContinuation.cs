@@ -38,7 +38,7 @@ using Transformalize.Libs.NLog.Common;
 namespace Transformalize.Libs.NLog.Internal
 {
     /// <summary>
-    /// Wraps <see cref="AsyncContinuation"/> with a timeout.
+    ///     Wraps <see cref="AsyncContinuation" /> with a timeout.
     /// </summary>
     internal class TimeoutContinuation : IDisposable
     {
@@ -46,27 +46,36 @@ namespace Transformalize.Libs.NLog.Internal
         private Timer timeoutTimer;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TimeoutContinuation"/> class.
+        ///     Initializes a new instance of the <see cref="TimeoutContinuation" /> class.
         /// </summary>
         /// <param name="asyncContinuation">The asynchronous continuation.</param>
         /// <param name="timeout">The timeout.</param>
         public TimeoutContinuation(AsyncContinuation asyncContinuation, TimeSpan timeout)
         {
             this.asyncContinuation = asyncContinuation;
-            this.timeoutTimer = new Timer(this.TimerElapsed, null, timeout, TimeSpan.FromMilliseconds(-1));
+            timeoutTimer = new Timer(TimerElapsed, null, timeout, TimeSpan.FromMilliseconds(-1));
         }
 
         /// <summary>
-        /// Continuation function which implements the timeout logic.
+        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            StopTimer();
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        ///     Continuation function which implements the timeout logic.
         /// </summary>
         /// <param name="exception">The exception.</param>
         public void Function(Exception exception)
         {
             try
             {
-                this.StopTimer();
+                StopTimer();
 
-                var cont = Interlocked.Exchange(ref this.asyncContinuation, null);
+                AsyncContinuation cont = Interlocked.Exchange(ref asyncContinuation, null);
                 if (cont != null)
                 {
                     cont(exception);
@@ -83,15 +92,6 @@ namespace Transformalize.Libs.NLog.Internal
             }
         }
 
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            this.StopTimer();
-            GC.SuppressFinalize(this);
-        }
-
         private static void ReportExceptionInHandler(Exception exception)
         {
             InternalLogger.Error("Exception in asynchronous handler {0}", exception);
@@ -101,17 +101,17 @@ namespace Transformalize.Libs.NLog.Internal
         {
             lock (this)
             {
-                if (this.timeoutTimer != null)
+                if (timeoutTimer != null)
                 {
-                    this.timeoutTimer.Dispose();
-                    this.timeoutTimer = null;
+                    timeoutTimer.Dispose();
+                    timeoutTimer = null;
                 }
             }
         }
 
         private void TimerElapsed(object state)
         {
-            this.Function(new TimeoutException("Timeout."));
+            Function(new TimeoutException("Timeout."));
         }
     }
 }

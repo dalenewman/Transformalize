@@ -1,4 +1,5 @@
 #region License
+
 // 
 // Author: Nate Kohari <nate@enkari.com>
 // Copyright (c) 2007-2010, Enkari, Ltd.
@@ -6,7 +7,9 @@
 // Dual-licensed under the Apache License, Version 2.0, and the Microsoft Public License (Ms-PL).
 // See the file LICENSE.txt for details.
 // 
+
 #endregion
+
 #region Using Directives
 
 using System.Reflection;
@@ -18,12 +21,12 @@ using Transformalize.Libs.Ninject.Modules;
 namespace Transformalize.Libs.Ninject.Syntax
 {
     /// <summary>
-    /// Extension methods that enhance module loading.
+    ///     Extension methods that enhance module loading.
     /// </summary>
     public static class ModuleLoadExtensions
     {
         /// <summary>
-        /// Creates a new instance of the module and loads it into the kernel.
+        ///     Creates a new instance of the module and loads it into the kernel.
         /// </summary>
         /// <typeparam name="TModule">The type of the module.</typeparam>
         /// <param name="kernel">The kernel.</param>
@@ -35,7 +38,7 @@ namespace Transformalize.Libs.Ninject.Syntax
         }
 
         /// <summary>
-        /// Loads the module(s) into the kernel.
+        ///     Loads the module(s) into the kernel.
         /// </summary>
         /// <param name="kernel">The kernel.</param>
         /// <param name="modules">The modules to load.</param>
@@ -44,9 +47,9 @@ namespace Transformalize.Libs.Ninject.Syntax
             kernel.Load(modules);
         }
 
-        #if !NO_ASSEMBLY_SCANNING
+#if !NO_ASSEMBLY_SCANNING
         /// <summary>
-        /// Loads modules from the files that match the specified pattern(s).
+        ///     Loads modules from the files that match the specified pattern(s).
         /// </summary>
         /// <param name="kernel">The kernel.</param>
         /// <param name="filePatterns">The file patterns (i.e. "*.dll", "modules/*.rb") to match.</param>
@@ -56,7 +59,7 @@ namespace Transformalize.Libs.Ninject.Syntax
         }
 
         /// <summary>
-        /// Loads modules defined in the specified assemblies.
+        ///     Loads modules defined in the specified assemblies.
         /// </summary>
         /// <param name="kernel">The kernel.</param>
         /// <param name="assemblies">The assemblies to search.</param>
@@ -64,6 +67,6 @@ namespace Transformalize.Libs.Ninject.Syntax
         {
             kernel.Load(assemblies);
         }
-        #endif
+#endif
     }
 }

@@ -27,26 +27,27 @@ using System.Reflection;
 using Transformalize.Libs.Ninject.Components;
 
 #if !NO_ASSEMBLY_SCANNING
+
 namespace Transformalize.Libs.Ninject.Modules
 {
     /// <summary>
-    /// Retrieves assembly names from file names using a temporary app domain.
+    ///     Retrieves assembly names from file names using a temporary app domain.
     /// </summary>
     public class AssemblyNameRetriever : NinjectComponent, IAssemblyNameRetriever
     {
         /// <summary>
-        /// Gets all assembly names of the assemblies in the given files that match the filter.
+        ///     Gets all assembly names of the assemblies in the given files that match the filter.
         /// </summary>
         /// <param name="filenames">The filenames.</param>
         /// <param name="filter">The filter.</param>
         /// <returns>All assembly names of the assemblies in the given files that match the filter.</returns>
         public IEnumerable<AssemblyName> GetAssemblyNames(IEnumerable<string> filenames, Predicate<Assembly> filter)
         {
-            var assemblyCheckerType = typeof(AssemblyChecker);
-            var temporaryDomain = CreateTemporaryAppDomain();
+            Type assemblyCheckerType = typeof (AssemblyChecker);
+            AppDomain temporaryDomain = CreateTemporaryAppDomain();
             try
             {
-                var checker = (AssemblyChecker)temporaryDomain.CreateInstanceAndUnwrap(
+                var checker = (AssemblyChecker) temporaryDomain.CreateInstanceAndUnwrap(
                     assemblyCheckerType.Assembly.FullName,
                     assemblyCheckerType.FullName ?? string.Empty);
 
@@ -59,7 +60,7 @@ namespace Transformalize.Libs.Ninject.Modules
         }
 
         /// <summary>
-        /// Creates a temporary app domain.
+        ///     Creates a temporary app domain.
         /// </summary>
         /// <returns>The created app domain.</returns>
         private static AppDomain CreateTemporaryAppDomain()
@@ -71,12 +72,12 @@ namespace Transformalize.Libs.Ninject.Modules
         }
 
         /// <summary>
-        /// This class is loaded into the temporary appdomain to load and check if the assemblies match the filter.
+        ///     This class is loaded into the temporary appdomain to load and check if the assemblies match the filter.
         /// </summary>
         private class AssemblyChecker : MarshalByRefObject
         {
             /// <summary>
-            /// Gets the assembly names of the assemblies matching the filter.
+            ///     Gets the assembly names of the assemblies matching the filter.
             /// </summary>
             /// <param name="filenames">The filenames.</param>
             /// <param name="filter">The filter.</param>
@@ -84,7 +85,7 @@ namespace Transformalize.Libs.Ninject.Modules
             public IEnumerable<AssemblyName> GetAssemblyNames(IEnumerable<string> filenames, Predicate<Assembly> filter)
             {
                 var result = new List<AssemblyName>();
-                foreach (var filename in filenames)
+                foreach (string filename in filenames)
                 {
                     Assembly assembly;
                     if (File.Exists(filename))
@@ -121,4 +122,5 @@ namespace Transformalize.Libs.Ninject.Modules
         }
     }
 }
+
 #endif

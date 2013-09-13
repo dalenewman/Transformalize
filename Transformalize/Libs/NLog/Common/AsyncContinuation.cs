@@ -36,10 +36,12 @@ using System;
 namespace Transformalize.Libs.NLog.Common
 {
     /// <summary>
-    /// Asynchronous continuation delegate - function invoked at the end of asynchronous
-    /// processing.
+    ///     Asynchronous continuation delegate - function invoked at the end of asynchronous
+    ///     processing.
     /// </summary>
-    /// <param name="exception">Exception during asynchronous processing or null if no exception
-    /// was thrown.</param>
+    /// <param name="exception">
+    ///     Exception during asynchronous processing or null if no exception
+    ///     was thrown.
+    /// </param>
     public delegate void AsyncContinuation(Exception exception);
 }

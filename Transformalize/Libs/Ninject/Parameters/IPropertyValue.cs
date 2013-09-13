@@ -22,9 +22,9 @@
 namespace Transformalize.Libs.Ninject.Parameters
 {
     /// <summary>
-    /// Overrides the injected value of a property.
+    ///     Overrides the injected value of a property.
     /// </summary>
     public interface IPropertyValue : IParameter
-    {        
+    {
     }
 }

@@ -37,68 +37,68 @@ using System.Globalization;
 namespace Transformalize.Libs.NLog.Conditions
 {
     /// <summary>
-    /// Condition relational (<b>==</b>, <b>!=</b>, <b>&lt;</b>, <b>&lt;=</b>,
-    /// <b>&gt;</b> or <b>&gt;=</b>) expression.
+    ///     Condition relational (<b>==</b>, <b>!=</b>, <b>&lt;</b>, <b>&lt;=</b>,
+    ///     <b>&gt;</b> or <b>&gt;=</b>) expression.
     /// </summary>
     internal sealed class ConditionRelationalExpression : ConditionExpression
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConditionRelationalExpression" /> class.
+        ///     Initializes a new instance of the <see cref="ConditionRelationalExpression" /> class.
         /// </summary>
         /// <param name="leftExpression">The left expression.</param>
         /// <param name="rightExpression">The right expression.</param>
         /// <param name="relationalOperator">The relational operator.</param>
         public ConditionRelationalExpression(ConditionExpression leftExpression, ConditionExpression rightExpression, ConditionRelationalOperator relationalOperator)
         {
-            this.LeftExpression = leftExpression;
-            this.RightExpression = rightExpression;
-            this.RelationalOperator = relationalOperator;
+            LeftExpression = leftExpression;
+            RightExpression = rightExpression;
+            RelationalOperator = relationalOperator;
         }
 
         /// <summary>
-        /// Gets the left expression.
+        ///     Gets the left expression.
         /// </summary>
         /// <value>The left expression.</value>
         public ConditionExpression LeftExpression { get; private set; }
 
         /// <summary>
-        /// Gets the right expression.
+        ///     Gets the right expression.
         /// </summary>
         /// <value>The right expression.</value>
         public ConditionExpression RightExpression { get; private set; }
 
         /// <summary>
-        /// Gets the relational operator.
+        ///     Gets the relational operator.
         /// </summary>
         /// <value>The operator.</value>
         public ConditionRelationalOperator RelationalOperator { get; private set; }
 
         /// <summary>
-        /// Returns a string representation of the expression.
+        ///     Returns a string representation of the expression.
         /// </summary>
         /// <returns>
-        /// A <see cref="T:System.String"/> that represents the condition expression.
+        ///     A <see cref="T:System.String" /> that represents the condition expression.
         /// </returns>
         public override string ToString()
         {
-            return "(" + this.LeftExpression + " " + this.GetOperatorString() + " " + this.RightExpression + ")";
+            return "(" + LeftExpression + " " + GetOperatorString() + " " + RightExpression + ")";
         }
 
         /// <summary>
-        /// Evaluates the expression.
+        ///     Evaluates the expression.
         /// </summary>
         /// <param name="context">Evaluation context.</param>
         /// <returns>Expression result.</returns>
         protected override object EvaluateNode(LogEventInfo context)
         {
-            object v1 = this.LeftExpression.Evaluate(context);
-            object v2 = this.RightExpression.Evaluate(context);
+            object v1 = LeftExpression.Evaluate(context);
+            object v2 = RightExpression.Evaluate(context);
 
-            return Compare(v1, v2, this.RelationalOperator);
+            return Compare(v1, v2, RelationalOperator);
         }
 
         /// <summary>
-        /// Compares the specified values using specified relational operator.
+        ///     Compares the specified values using specified relational operator.
         /// </summary>
         /// <param name="leftValue">The first value.</param>
         /// <param name="rightValue">The second value.</param>
@@ -206,7 +206,7 @@ namespace Transformalize.Libs.NLog.Conditions
 
         private string GetOperatorString()
         {
-            switch (this.RelationalOperator)
+            switch (RelationalOperator)
             {
                 case ConditionRelationalOperator.Equal:
                     return "==";
@@ -227,7 +227,7 @@ namespace Transformalize.Libs.NLog.Conditions
                     return "<=";
 
                 default:
-                    throw new NotSupportedException("Relational operator " + this.RelationalOperator + " is not supported.");
+                    throw new NotSupportedException("Relational operator " + RelationalOperator + " is not supported.");
             }
         }
     }

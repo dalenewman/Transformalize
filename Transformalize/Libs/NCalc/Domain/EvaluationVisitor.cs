@@ -4,22 +4,23 @@ using System.Collections.Generic;
 
 namespace Transformalize.Libs.NCalc.Domain
 {
-
-
     public class EvaluationVisitor : LogicalExpressionVisitor
     {
-        private delegate T Func<T>();
-
+        private static readonly Type[] CommonTypes = new[] {typeof (Int64), typeof (Double), typeof (Boolean), typeof (String), typeof (Decimal)};
         private readonly EvaluateOptions _options = EvaluateOptions.None;
-
-        private bool IgnoreCase { get { return (_options & EvaluateOptions.IgnoreCase) == EvaluateOptions.IgnoreCase; } }
 
         public EvaluationVisitor(EvaluateOptions options)
         {
             _options = options;
         }
 
+        private bool IgnoreCase
+        {
+            get { return (_options & EvaluateOptions.IgnoreCase) == EvaluateOptions.IgnoreCase; }
+        }
+
         public object Result { get; private set; }
+        public Dictionary<string, object> Parameters { get; set; }
 
         private object Evaluate(LogicalExpression expression)
         {
@@ -32,10 +33,8 @@ namespace Transformalize.Libs.NCalc.Domain
             throw new Exception("The method or operation is not implemented.");
         }
 
-        private static Type[] CommonTypes = new[] { typeof(Int64), typeof(Double), typeof(Boolean), typeof(String), typeof(Decimal) };
-
-    /// <summary>
-        /// Gets the the most precise type.
+        /// <summary>
+        ///     Gets the the most precise type.
         /// </summary>
         /// <param name="a">Type a.</param>
         /// <param name="b">Type b.</param>
@@ -77,7 +76,7 @@ namespace Transformalize.Libs.NCalc.Domain
 
         private static bool IsReal(object value)
         {
-            var typeCode = Type.GetTypeCode(value.GetType());
+            TypeCode typeCode = Type.GetTypeCode(value.GetType());
 
             return typeCode == TypeCode.Decimal || typeCode == TypeCode.Double || typeCode == TypeCode.Single;
         }
@@ -87,26 +86,26 @@ namespace Transformalize.Libs.NCalc.Domain
             // simulate Lazy<Func<>> behavior for late evaluation
             object leftValue = null;
             Func<object> left = () =>
-                                 {
-                                     if (leftValue == null)
-                                     {
-                                         expression.LeftExpression.Accept(this);
-                                         leftValue = Result;
-                                     }
-                                     return leftValue;
-                                 };
+                                    {
+                                        if (leftValue == null)
+                                        {
+                                            expression.LeftExpression.Accept(this);
+                                            leftValue = Result;
+                                        }
+                                        return leftValue;
+                                    };
 
             // simulate Lazy<Func<>> behavior for late evaluation
             object rightValue = null;
             Func<object> right = () =>
-            {
-                if (rightValue == null)
-                {
-                    expression.RightExpression.Accept(this);
-                    rightValue = Result;
-                }
-                return rightValue;
-            };
+                                     {
+                                         if (rightValue == null)
+                                         {
+                                             expression.RightExpression.Accept(this);
+                                             rightValue = Result;
+                                         }
+                                         return rightValue;
+                                     };
 
             switch (expression.Type)
             {
@@ -240,15 +239,15 @@ namespace Transformalize.Libs.NCalc.Domain
             // Don't call parameters right now, instead let the function do it as needed.
             // Some parameters shouldn't be called, for instance, in a if(), the "not" value might be a division by zero
             // Evaluating every value could produce unexpected behaviour
-            for (int i = 0; i < function.Expressions.Length; i++ )
+            for (int i = 0; i < function.Expressions.Length; i++)
             {
-                args.Parameters[i] =  new Expression(function.Expressions[i], _options);
+                args.Parameters[i] = new Expression(function.Expressions[i], _options);
                 args.Parameters[i].EvaluateFunction += EvaluateFunction;
                 args.Parameters[i].EvaluateParameter += EvaluateParameter;
 
                 // Assign the parameters of the Expression to the arguments so that custom Functions and Parameters can use them
                 args.Parameters[i].Parameters = Parameters;
-            }            
+            }
 
             // Calls external implementation
             OnEvaluateFunction(IgnoreCase ? function.Identifier.Name.ToLower() : function.Identifier.Name, args);
@@ -262,7 +261,8 @@ namespace Transformalize.Libs.NCalc.Domain
 
             switch (function.Identifier.Name.ToLower())
             {
-                #region Abs
+                    #region Abs
+
                 case "abs":
 
                     CheckCase("Abs", function.Identifier.Name);
@@ -276,9 +276,10 @@ namespace Transformalize.Libs.NCalc.Domain
 
                     break;
 
-                #endregion
+                    #endregion
 
-                #region Acos
+                    #region Acos
+
                 case "acos":
 
                     CheckCase("Acos", function.Identifier.Name);
@@ -290,9 +291,10 @@ namespace Transformalize.Libs.NCalc.Domain
 
                     break;
 
-                #endregion
+                    #endregion
 
-                #region Asin
+                    #region Asin
+
                 case "asin":
 
                     CheckCase("Asin", function.Identifier.Name);
@@ -304,9 +306,10 @@ namespace Transformalize.Libs.NCalc.Domain
 
                     break;
 
-                #endregion
+                    #endregion
 
-                #region Atan
+                    #region Atan
+
                 case "atan":
 
                     CheckCase("Atan", function.Identifier.Name);
@@ -318,9 +321,10 @@ namespace Transformalize.Libs.NCalc.Domain
 
                     break;
 
-                #endregion
+                    #endregion
 
-                #region Ceiling
+                    #region Ceiling
+
                 case "ceiling":
 
                     CheckCase("Ceiling", function.Identifier.Name);
@@ -332,9 +336,9 @@ namespace Transformalize.Libs.NCalc.Domain
 
                     break;
 
-                #endregion
+                    #endregion
 
-                #region Cos
+                    #region Cos
 
                 case "cos":
 
@@ -347,9 +351,10 @@ namespace Transformalize.Libs.NCalc.Domain
 
                     break;
 
-                #endregion
+                    #endregion
 
-                #region Exp
+                    #region Exp
+
                 case "exp":
 
                     CheckCase("Exp", function.Identifier.Name);
@@ -361,9 +366,10 @@ namespace Transformalize.Libs.NCalc.Domain
 
                     break;
 
-                #endregion
+                    #endregion
 
-                #region Floor
+                    #region Floor
+
                 case "floor":
 
                     CheckCase("Floor", function.Identifier.Name);
@@ -375,9 +381,10 @@ namespace Transformalize.Libs.NCalc.Domain
 
                     break;
 
-                #endregion
+                    #endregion
 
-                #region IEEERemainder
+                    #region IEEERemainder
+
                 case "ieeeremainder":
 
                     CheckCase("IEEERemainder", function.Identifier.Name);
@@ -389,9 +396,10 @@ namespace Transformalize.Libs.NCalc.Domain
 
                     break;
 
-                #endregion
+                    #endregion
 
-                #region Log
+                    #region Log
+
                 case "log":
 
                     CheckCase("Log", function.Identifier.Name);
@@ -403,9 +411,10 @@ namespace Transformalize.Libs.NCalc.Domain
 
                     break;
 
-                #endregion
+                    #endregion
 
-                #region Log10
+                    #region Log10
+
                 case "log10":
 
                     CheckCase("Log10", function.Identifier.Name);
@@ -417,9 +426,10 @@ namespace Transformalize.Libs.NCalc.Domain
 
                     break;
 
-                #endregion
+                    #endregion
 
-                #region Pow
+                    #region Pow
+
                 case "pow":
 
                     CheckCase("Pow", function.Identifier.Name);
@@ -431,9 +441,10 @@ namespace Transformalize.Libs.NCalc.Domain
 
                     break;
 
-                #endregion
+                    #endregion
 
-                #region Round
+                    #region Round
+
                 case "round":
 
                     CheckCase("Round", function.Identifier.Name);
@@ -447,9 +458,10 @@ namespace Transformalize.Libs.NCalc.Domain
 
                     break;
 
-                #endregion
+                    #endregion
 
-                #region Sign
+                    #region Sign
+
                 case "sign":
 
                     CheckCase("Sign", function.Identifier.Name);
@@ -461,9 +473,10 @@ namespace Transformalize.Libs.NCalc.Domain
 
                     break;
 
-                #endregion
+                    #endregion
 
-                #region Sin
+                    #region Sin
+
                 case "sin":
 
                     CheckCase("Sin", function.Identifier.Name);
@@ -475,9 +488,10 @@ namespace Transformalize.Libs.NCalc.Domain
 
                     break;
 
-                #endregion
+                    #endregion
 
-                #region Sqrt
+                    #region Sqrt
+
                 case "sqrt":
 
                     CheckCase("Sqrt", function.Identifier.Name);
@@ -489,9 +503,10 @@ namespace Transformalize.Libs.NCalc.Domain
 
                     break;
 
-                #endregion
+                    #endregion
 
-                #region Tan
+                    #region Tan
+
                 case "tan":
 
                     CheckCase("Tan", function.Identifier.Name);
@@ -503,9 +518,10 @@ namespace Transformalize.Libs.NCalc.Domain
 
                     break;
 
-                #endregion
+                    #endregion
 
-                #region Truncate
+                    #region Truncate
+
                 case "truncate":
 
                     CheckCase("Truncate", function.Identifier.Name);
@@ -517,9 +533,10 @@ namespace Transformalize.Libs.NCalc.Domain
 
                     break;
 
-                #endregion
-                
-                #region Max
+                    #endregion
+
+                    #region Max
+
                 case "max":
 
                     CheckCase("Max", function.Identifier.Name);
@@ -533,9 +550,10 @@ namespace Transformalize.Libs.NCalc.Domain
                     Result = Numbers.Max(maxleft, maxright);
                     break;
 
-                #endregion
+                    #endregion
 
-                #region Min
+                    #region Min
+
                 case "min":
 
                     CheckCase("Min", function.Identifier.Name);
@@ -549,9 +567,10 @@ namespace Transformalize.Libs.NCalc.Domain
                     Result = Numbers.Min(minleft, minright);
                     break;
 
-                #endregion
+                    #endregion
 
-                #region if
+                    #region if
+
                 case "if":
 
                     CheckCase("if", function.Identifier.Name);
@@ -564,9 +583,10 @@ namespace Transformalize.Libs.NCalc.Domain
                     Result = cond ? Evaluate(function.Expressions[1]) : Evaluate(function.Expressions[2]);
                     break;
 
-                #endregion
+                    #endregion
 
-                #region in
+                    #region in
+
                 case "in":
 
                     CheckCase("in", function.Identifier.Name);
@@ -592,11 +612,11 @@ namespace Transformalize.Libs.NCalc.Domain
                     Result = evaluation;
                     break;
 
-                #endregion
+                    #endregion
 
                 default:
-                    throw new ArgumentException("Function not found", 
-                        function.Identifier.Name);
+                    throw new ArgumentException("Function not found",
+                                                function.Identifier.Name);
             }
         }
 
@@ -634,7 +654,7 @@ namespace Transformalize.Libs.NCalc.Domain
                 if (Parameters[parameter.Name] is Expression)
                 {
                     // The parameter is itself another Expression
-                    var expression = (Expression)Parameters[parameter.Name];
+                    var expression = (Expression) Parameters[parameter.Name];
 
                     // Overloads parameters 
                     foreach (var p in Parameters)
@@ -645,7 +665,7 @@ namespace Transformalize.Libs.NCalc.Domain
                     expression.EvaluateFunction += EvaluateFunction;
                     expression.EvaluateParameter += EvaluateParameter;
 
-                    Result = ((Expression)Parameters[parameter.Name]).Evaluate();
+                    Result = ((Expression) Parameters[parameter.Name]).Evaluate();
                 }
                 else
                     Result = Parameters[parameter.Name];
@@ -673,7 +693,6 @@ namespace Transformalize.Libs.NCalc.Domain
                 EvaluateParameter(name, args);
         }
 
-        public Dictionary<string, object> Parameters { get; set; }
-
+        private delegate T Func<T>();
     }
 }

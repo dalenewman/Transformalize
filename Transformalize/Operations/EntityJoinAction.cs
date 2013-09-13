@@ -17,29 +17,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Linq;
-using Transformalize.Core.Entity_;
-using Transformalize.Libs.Rhino.Etl.Core;
-using Transformalize.Libs.Rhino.Etl.Core.Operations;
+using Transformalize.Main;
+using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Libs.Rhino.Etl.Operations;
 
 namespace Transformalize.Operations
 {
-    public class EntityJoinAction : JoinOperation {
-        private readonly string[] _keys;
+    public class EntityJoinAction : JoinOperation
+    {
         private readonly string _firstKey;
+        private readonly string[] _keys;
         private readonly int _tflBatchId;
 
-        public EntityJoinAction(Entity entity) {
+        public EntityJoinAction(Entity entity)
+        {
             _keys = entity.PrimaryKey.ToEnumerable().Select(e => e.Alias).ToArray();
             _firstKey = _keys[0];
             _tflBatchId = entity.TflBatchId;
         }
 
-        protected override Row MergeRows(Row leftRow, Row rightRow) {
-
-            if (rightRow.ContainsKey(_firstKey)) {
+        protected override Row MergeRows(Row leftRow, Row rightRow)
+        {
+            if (rightRow.ContainsKey(_firstKey))
+            {
                 leftRow["a"] = EntityAction.Update;
                 leftRow["TflKey"] = rightRow["TflKey"];
-            } else {
+            }
+            else
+            {
                 leftRow["a"] = EntityAction.Insert;
                 leftRow["TflBatchId"] = _tflBatchId;
             }
@@ -47,7 +52,8 @@ namespace Transformalize.Operations
             return leftRow;
         }
 
-        protected override void SetupJoinConditions() {
+        protected override void SetupJoinConditions()
+        {
             LeftJoin.Left(_keys).Right(_keys);
         }
     }

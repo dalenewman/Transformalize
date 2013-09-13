@@ -18,23 +18,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Linq;
-using Transformalize.Core;
-using Transformalize.Core.Entity_;
-using Transformalize.Core.Process_;
+using Transformalize.Main;
 using Transformalize.Libs.NLog;
-using Transformalize.Libs.Rhino.Etl.Core;
+using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Operations;
 
 namespace Transformalize.Processes
 {
     public class EntityKeysProcess : EtlProcess
     {
-        private readonly Process _process;
         private readonly Entity _entity;
+        private readonly Process _process;
 
         public EntityKeysProcess(Process process, Entity entity) : base(process.Name)
         {
-            GlobalDiagnosticsContext.Set("entity", Common.LogLength(entity.Alias,20));
+            GlobalDiagnosticsContext.Set("entity", Common.LogLength(entity.Alias, 20));
             _process = process;
             _entity = entity;
         }
@@ -44,7 +42,7 @@ namespace Transformalize.Processes
             if (_process.OutputRecordsExist && _process.Options.UseBeginVersion && _entity.Version != null)
             {
                 var operation = new EntityInputKeysExtractDelta(_entity);
-                if(operation.NeedsToRun())
+                if (operation.NeedsToRun())
                     Register(operation);
             }
             else
@@ -53,16 +51,14 @@ namespace Transformalize.Processes
             }
 
             Register(new EntityInputKeysStore(_process, _entity));
-
         }
 
         protected override void PostProcessing()
         {
-
-            var errors = GetAllErrors().ToArray();
+            Exception[] errors = GetAllErrors().ToArray();
             if (errors.Any())
             {
-                foreach (var error in errors)
+                foreach (Exception error in errors)
                 {
                     Error(error.InnerException, "Message: {0}\r\nStackTrace:{1}\r\n", error.Message, error.StackTrace);
                 }
@@ -71,6 +67,5 @@ namespace Transformalize.Processes
 
             base.PostProcessing();
         }
-
     }
 }

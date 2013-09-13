@@ -17,16 +17,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Data.SqlClient;
-using Transformalize.Core.Entity_;
-using Transformalize.Core.Field_;
-using Transformalize.Libs.Rhino.Etl.Core.Operations;
+using Transformalize.Main;
+using Transformalize.Libs.Rhino.Etl.Operations;
 
-namespace Transformalize.Operations {
-    public class EntityBulkInsert : SqlBulkInsertOperation {
+namespace Transformalize.Operations
+{
+    public class EntityBulkInsert : SqlBulkInsertOperation
+    {
         private readonly Entity _entity;
 
-        public EntityBulkInsert(Entity entity) : base(entity.OutputConnection, entity.OutputName()) {
-            
+        public EntityBulkInsert(Entity entity) : base(entity.OutputConnection, entity.OutputName())
+        {
             _entity = entity;
             UseTransaction = false;
 
@@ -34,22 +35,23 @@ namespace Transformalize.Operations {
             TurnOptionOff(SqlBulkCopyOptions.UseInternalTransaction);
             TurnOptionOff(SqlBulkCopyOptions.CheckConstraints);
             TurnOptionOff(SqlBulkCopyOptions.FireTriggers);
-
         }
 
-        protected override void PrepareSchema() {
+        protected override void PrepareSchema()
+        {
             NotifyBatchSize = 10000;
             BatchSize = _entity.OutputConnection.BatchSize;
 
-            var fields = new FieldSqlWriter(_entity.All, _entity.CalculatedFields).ExpandXml().Output().AddBatchId(false).ToArray();
-            foreach (var field in fields) {
+            Field[] fields = new FieldSqlWriter(_entity.All, _entity.CalculatedFields).ExpandXml().Output().AddBatchId(false).ToArray();
+            foreach (Field field in fields)
+            {
                 Schema[field.Alias] = field.SystemType;
             }
         }
 
-        protected override void OnSqlRowsCopied(object sender, SqlRowsCopiedEventArgs e) {
-           Info("Processed {0} rows in EntityBulkInsert", e.RowsCopied);
+        protected override void OnSqlRowsCopied(object sender, SqlRowsCopiedEventArgs e)
+        {
+            Info("Processed {0} rows in EntityBulkInsert", e.RowsCopied);
         }
-
     }
 }

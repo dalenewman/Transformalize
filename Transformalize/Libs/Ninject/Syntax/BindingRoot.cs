@@ -31,49 +31,49 @@ using Transformalize.Libs.Ninject.Planning.Bindings;
 namespace Transformalize.Libs.Ninject.Syntax
 {
     /// <summary>
-    /// Provides a path to register bindings.
+    ///     Provides a path to register bindings.
     /// </summary>
     public abstract class BindingRoot : DisposableObject, IBindingRoot
     {
         /// <summary>
-        /// Gets the kernel.
+        ///     Gets the kernel.
         /// </summary>
         /// <value>The kernel.</value>
         protected abstract IKernel KernelInstance { get; }
 
         /// <summary>
-        /// Declares a binding for the specified service.
+        ///     Declares a binding for the specified service.
         /// </summary>
         /// <typeparam name="T">The service to bind.</typeparam>
         /// <returns>The fluent syntax</returns>
         public IBindingToSyntax<T> Bind<T>()
         {
-            Type service = typeof(T);
+            Type service = typeof (T);
 
             var binding = new Binding(service);
-            this.AddBinding(binding);
+            AddBinding(binding);
 
-            return new BindingBuilder<T>(binding, this.KernelInstance, service.Format());
+            return new BindingBuilder<T>(binding, KernelInstance, service.Format());
         }
 
         /// <summary>
-        /// Declares a binding for the specified service.
+        ///     Declares a binding for the specified service.
         /// </summary>
         /// <typeparam name="T1">The first service to bind.</typeparam>
         /// <typeparam name="T2">The second service to bind.</typeparam>
         /// <returns>The fluent syntax</returns>
         public IBindingToSyntax<T1, T2> Bind<T1, T2>()
         {
-            var firstBinding = new Binding(typeof(T1));
-            this.AddBinding(firstBinding);
-            this.AddBinding(new Binding(typeof(T2), firstBinding.BindingConfiguration));
-            var servceNames = new[] { typeof(T1).Format(), typeof(T2).Format() };
+            var firstBinding = new Binding(typeof (T1));
+            AddBinding(firstBinding);
+            AddBinding(new Binding(typeof (T2), firstBinding.BindingConfiguration));
+            var servceNames = new[] {typeof (T1).Format(), typeof (T2).Format()};
 
-            return new BindingBuilder<T1, T2>(firstBinding.BindingConfiguration, this.KernelInstance, string.Join(", ", servceNames));
+            return new BindingBuilder<T1, T2>(firstBinding.BindingConfiguration, KernelInstance, string.Join(", ", servceNames));
         }
 
         /// <summary>
-        /// Declares a binding for the specified service.
+        ///     Declares a binding for the specified service.
         /// </summary>
         /// <typeparam name="T1">The first service to bind.</typeparam>
         /// <typeparam name="T2">The second service to bind.</typeparam>
@@ -81,17 +81,17 @@ namespace Transformalize.Libs.Ninject.Syntax
         /// <returns>The fluent syntax</returns>
         public IBindingToSyntax<T1, T2, T3> Bind<T1, T2, T3>()
         {
-            var firstBinding = new Binding(typeof(T1));
-            this.AddBinding(firstBinding);
-            this.AddBinding(new Binding(typeof(T2), firstBinding.BindingConfiguration));
-            this.AddBinding(new Binding(typeof(T3), firstBinding.BindingConfiguration));
-            var servceNames = new[] { typeof(T1).Format(), typeof(T2).Format(), typeof(T3).Format() };
+            var firstBinding = new Binding(typeof (T1));
+            AddBinding(firstBinding);
+            AddBinding(new Binding(typeof (T2), firstBinding.BindingConfiguration));
+            AddBinding(new Binding(typeof (T3), firstBinding.BindingConfiguration));
+            var servceNames = new[] {typeof (T1).Format(), typeof (T2).Format(), typeof (T3).Format()};
 
-            return new BindingBuilder<T1, T2, T3>(firstBinding.BindingConfiguration, this.KernelInstance, string.Join(", ", servceNames));
+            return new BindingBuilder<T1, T2, T3>(firstBinding.BindingConfiguration, KernelInstance, string.Join(", ", servceNames));
         }
 
         /// <summary>
-        /// Declares a binding for the specified service.
+        ///     Declares a binding for the specified service.
         /// </summary>
         /// <typeparam name="T1">The first service to bind.</typeparam>
         /// <typeparam name="T2">The second service to bind.</typeparam>
@@ -100,18 +100,18 @@ namespace Transformalize.Libs.Ninject.Syntax
         /// <returns>The fluent syntax</returns>
         public IBindingToSyntax<T1, T2, T3, T4> Bind<T1, T2, T3, T4>()
         {
-            var firstBinding = new Binding(typeof(T1));
-            this.AddBinding(firstBinding);
-            this.AddBinding(new Binding(typeof(T2), firstBinding.BindingConfiguration));
-            this.AddBinding(new Binding(typeof(T3), firstBinding.BindingConfiguration));
-            this.AddBinding(new Binding(typeof(T4), firstBinding.BindingConfiguration));
-            var servceNames = new[] { typeof(T1).Format(), typeof(T2).Format(), typeof(T3).Format(), typeof(T4).Format() };
+            var firstBinding = new Binding(typeof (T1));
+            AddBinding(firstBinding);
+            AddBinding(new Binding(typeof (T2), firstBinding.BindingConfiguration));
+            AddBinding(new Binding(typeof (T3), firstBinding.BindingConfiguration));
+            AddBinding(new Binding(typeof (T4), firstBinding.BindingConfiguration));
+            var servceNames = new[] {typeof (T1).Format(), typeof (T2).Format(), typeof (T3).Format(), typeof (T4).Format()};
 
-            return new BindingBuilder<T1, T2, T3, T4>(firstBinding.BindingConfiguration, this.KernelInstance, string.Join(", ", servceNames));
+            return new BindingBuilder<T1, T2, T3, T4>(firstBinding.BindingConfiguration, KernelInstance, string.Join(", ", servceNames));
         }
 
         /// <summary>
-        /// Declares a binding for the specified service.
+        ///     Declares a binding for the specified service.
         /// </summary>
         /// <param name="services">The services to bind.</param>
         /// <returns>The fluent syntax</returns>
@@ -120,37 +120,37 @@ namespace Transformalize.Libs.Ninject.Syntax
             Ensure.ArgumentNotNull(services, "service");
             if (services.Length == 0)
             {
-                throw new ArgumentException("The services must contain at least one type", "services");                
+                throw new ArgumentException("The services must contain at least one type", "services");
             }
 
             var firstBinding = new Binding(services[0]);
-            this.AddBinding(firstBinding);
+            AddBinding(firstBinding);
 
-            foreach (var service in services.Skip(1))
+            foreach (Type service in services.Skip(1))
             {
-                this.AddBinding(new Binding(service, firstBinding.BindingConfiguration));                
+                AddBinding(new Binding(service, firstBinding.BindingConfiguration));
             }
 
-            return new BindingBuilder<object>(firstBinding, this.KernelInstance, string.Join(", ", services.Select(service => service.Format()).ToArray()));
+            return new BindingBuilder<object>(firstBinding, KernelInstance, string.Join(", ", services.Select(service => service.Format()).ToArray()));
         }
 
         /// <summary>
-        /// Unregisters all bindings for the specified service.
+        ///     Unregisters all bindings for the specified service.
         /// </summary>
         /// <typeparam name="T">The service to unbind.</typeparam>
         public void Unbind<T>()
         {
-            Unbind(typeof(T));
+            Unbind(typeof (T));
         }
 
         /// <summary>
-        /// Unregisters all bindings for the specified service.
+        ///     Unregisters all bindings for the specified service.
         /// </summary>
         /// <param name="service">The service to unbind.</param>
         public abstract void Unbind(Type service);
 
         /// <summary>
-        /// Removes any existing bindings for the specified service, and declares a new one.
+        ///     Removes any existing bindings for the specified service, and declares a new one.
         /// </summary>
         /// <typeparam name="T1">The first service to re-bind.</typeparam>
         /// <returns>The fluent syntax</returns>
@@ -161,7 +161,7 @@ namespace Transformalize.Libs.Ninject.Syntax
         }
 
         /// <summary>
-        /// Removes any existing bindings for the specified services, and declares a new one.
+        ///     Removes any existing bindings for the specified services, and declares a new one.
         /// </summary>
         /// <typeparam name="T1">The first service to re-bind.</typeparam>
         /// <typeparam name="T2">The second service to re-bind.</typeparam>
@@ -174,7 +174,7 @@ namespace Transformalize.Libs.Ninject.Syntax
         }
 
         /// <summary>
-        /// Removes any existing bindings for the specified services, and declares a new one.
+        ///     Removes any existing bindings for the specified services, and declares a new one.
         /// </summary>
         /// <typeparam name="T1">The first service to re-bind.</typeparam>
         /// <typeparam name="T2">The second service to re-bind.</typeparam>
@@ -189,7 +189,7 @@ namespace Transformalize.Libs.Ninject.Syntax
         }
 
         /// <summary>
-        /// Removes any existing bindings for the specified services, and declares a new one.
+        ///     Removes any existing bindings for the specified services, and declares a new one.
         /// </summary>
         /// <typeparam name="T1">The first service to re-bind.</typeparam>
         /// <typeparam name="T2">The second service to re-bind.</typeparam>
@@ -206,28 +206,28 @@ namespace Transformalize.Libs.Ninject.Syntax
         }
 
         /// <summary>
-        /// Removes any existing bindings for the specified service, and declares a new one.
+        ///     Removes any existing bindings for the specified service, and declares a new one.
         /// </summary>
         /// <param name="services">The services to re-bind.</param>
         /// <returns>The fluent syntax</returns>
         public IBindingToSyntax<object> Rebind(params Type[] services)
         {
-            foreach (var service in services)
+            foreach (Type service in services)
             {
-                Unbind(service);                
+                Unbind(service);
             }
 
             return Bind(services);
         }
 
         /// <summary>
-        /// Registers the specified binding.
+        ///     Registers the specified binding.
         /// </summary>
         /// <param name="binding">The binding to add.</param>
         public abstract void AddBinding(IBinding binding);
 
         /// <summary>
-        /// Unregisters the specified binding.
+        ///     Unregisters the specified binding.
         /// </summary>
         /// <param name="binding">The binding to remove.</param>
         public abstract void RemoveBinding(IBinding binding);

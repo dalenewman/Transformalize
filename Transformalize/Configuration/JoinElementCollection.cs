@@ -18,34 +18,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Configuration;
 
-namespace Transformalize.Configuration {
-    public class JoinElementCollection : ConfigurationElementCollection {
-
-        public override bool IsReadOnly()
+namespace Transformalize.Configuration
+{
+    public class JoinElementCollection : ConfigurationElementCollection
+    {
+        public JoinConfigurationElement this[int index]
         {
-            return false;
-        }
-
-        public JoinConfigurationElement this[int index] {
-            get {
-                return BaseGet(index) as JoinConfigurationElement;
-            }
-            set {
-                if (BaseGet(index) != null) {
+            get { return BaseGet(index) as JoinConfigurationElement; }
+            set
+            {
+                if (BaseGet(index) != null)
+                {
                     BaseRemoveAt(index);
                 }
                 BaseAdd(index, value);
             }
         }
 
-        protected override ConfigurationElement CreateNewElement() {
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
+        protected override ConfigurationElement CreateNewElement()
+        {
             return new JoinConfigurationElement();
         }
 
-        protected override object GetElementKey(ConfigurationElement element) {
-            var join = (JoinConfigurationElement)element;
+        protected override object GetElementKey(ConfigurationElement element)
+        {
+            var join = (JoinConfigurationElement) element;
             return string.Concat(join.LeftField, join.RightField).ToLower();
         }
-
     }
 }

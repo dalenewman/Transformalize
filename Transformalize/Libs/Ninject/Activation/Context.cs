@@ -1,4 +1,5 @@
 #region License
+
 // 
 // Author: Nate Kohari <nate@enkari.com>
 // Copyright (c) 2007-2010, Enkari, Ltd.
@@ -6,7 +7,9 @@
 // Dual-licensed under the Apache License, Version 2.0, and the Microsoft Public License (Ms-PL).
 // See the file LICENSE.txt for details.
 // 
+
 #endregion
+
 #region Using Directives
 
 using System;
@@ -24,64 +27,14 @@ using Transformalize.Libs.Ninject.Planning.Bindings;
 namespace Transformalize.Libs.Ninject.Activation
 {
     /// <summary>
-    /// Contains information about the activation of a single instance.
+    ///     Contains information about the activation of a single instance.
     /// </summary>
     public class Context : IContext
     {
         private WeakReference cachedScope;
 
         /// <summary>
-        /// Gets the kernel that is driving the activation.
-        /// </summary>
-        public IKernel Kernel { get; set; }
-
-        /// <summary>
-        /// Gets the request.
-        /// </summary>
-        public IRequest Request { get; set; }
-
-        /// <summary>
-        /// Gets the binding.
-        /// </summary>
-        public IBinding Binding { get; set; }
-
-        /// <summary>
-        /// Gets or sets the activation plan.
-        /// </summary>
-        public IPlan Plan { get; set; }
-
-        /// <summary>
-        /// Gets the parameters that were passed to manipulate the activation process.
-        /// </summary>
-        public ICollection<IParameter> Parameters { get; set; }
-
-        /// <summary>
-        /// Gets the generic arguments for the request, if any.
-        /// </summary>
-        public Type[] GenericArguments { get; private set; }
-
-        /// <summary>
-        /// Gets a value indicating whether the request involves inferred generic arguments.
-        /// </summary>
-        public bool HasInferredGenericArguments { get; private set; }
-
-        /// <summary>
-        /// Gets or sets the cache component.
-        /// </summary>
-        public ICache Cache { get; private set; }
-
-        /// <summary>
-        /// Gets or sets the planner component.
-        /// </summary>
-        public IPlanner Planner { get; private set; }
-
-        /// <summary>
-        /// Gets or sets the pipeline component.
-        /// </summary>
-        public IPipeline Pipeline { get; private set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Context"/> class.
+        ///     Initializes a new instance of the <see cref="Context" /> class.
         /// </summary>
         /// <param name="kernel">The kernel managing the resolution.</param>
         /// <param name="request">The context's request.</param>
@@ -115,22 +68,72 @@ namespace Transformalize.Libs.Ninject.Activation
         }
 
         /// <summary>
-        /// Gets the scope for the context that "owns" the instance activated therein.
+        ///     Gets or sets the cache component.
+        /// </summary>
+        public ICache Cache { get; private set; }
+
+        /// <summary>
+        ///     Gets or sets the planner component.
+        /// </summary>
+        public IPlanner Planner { get; private set; }
+
+        /// <summary>
+        ///     Gets or sets the pipeline component.
+        /// </summary>
+        public IPipeline Pipeline { get; private set; }
+
+        /// <summary>
+        ///     Gets the kernel that is driving the activation.
+        /// </summary>
+        public IKernel Kernel { get; set; }
+
+        /// <summary>
+        ///     Gets the request.
+        /// </summary>
+        public IRequest Request { get; set; }
+
+        /// <summary>
+        ///     Gets the binding.
+        /// </summary>
+        public IBinding Binding { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the activation plan.
+        /// </summary>
+        public IPlan Plan { get; set; }
+
+        /// <summary>
+        ///     Gets the parameters that were passed to manipulate the activation process.
+        /// </summary>
+        public ICollection<IParameter> Parameters { get; set; }
+
+        /// <summary>
+        ///     Gets the generic arguments for the request, if any.
+        /// </summary>
+        public Type[] GenericArguments { get; private set; }
+
+        /// <summary>
+        ///     Gets a value indicating whether the request involves inferred generic arguments.
+        /// </summary>
+        public bool HasInferredGenericArguments { get; private set; }
+
+        /// <summary>
+        ///     Gets the scope for the context that "owns" the instance activated therein.
         /// </summary>
         /// <returns>The object that acts as the scope.</returns>
         public object GetScope()
         {
-            if (this.cachedScope == null)
+            if (cachedScope == null)
             {
-                var scope = this.Request.GetScope() ?? this.Binding.GetScope(this);
-                this.cachedScope = new WeakReference(scope);
+                object scope = Request.GetScope() ?? Binding.GetScope(this);
+                cachedScope = new WeakReference(scope);
             }
-            
-            return this.cachedScope.Target;
+
+            return cachedScope.Target;
         }
 
         /// <summary>
-        /// Gets the provider that should be used to create the instance for this context.
+        ///     Gets the provider that should be used to create the instance for this context.
         /// </summary>
         /// <returns>The provider that should be used.</returns>
         public IProvider GetProvider()
@@ -139,7 +142,7 @@ namespace Transformalize.Libs.Ninject.Activation
         }
 
         /// <summary>
-        /// Resolves the instance associated with this hook.
+        ///     Resolves the instance associated with this hook.
         /// </summary>
         /// <returns>The resolved instance.</returns>
         public object Resolve()
@@ -149,27 +152,30 @@ namespace Transformalize.Libs.Ninject.Activation
                 if (Request.ActiveBindings.Contains(Binding))
                     throw new ActivationException(ExceptionFormatter.CyclicalDependenciesDetected(this));
 
-                var cachedInstance = Cache.TryGet(this);
+                object cachedInstance = Cache.TryGet(this);
 
                 if (cachedInstance != null)
                     return cachedInstance;
 
                 Request.ActiveBindings.Push(Binding);
 
-                var reference = new InstanceReference { Instance = GetProvider().Create(this) };
+                var reference = new InstanceReference
+                                    {
+                                        Instance = GetProvider().Create(this)
+                                    };
 
                 Request.ActiveBindings.Pop();
 
                 if (reference.Instance == null)
                 {
-                    if (!this.Kernel.Settings.AllowNullInjection)
+                    if (!Kernel.Settings.AllowNullInjection)
                     {
                         throw new ActivationException(ExceptionFormatter.ProviderReturnedNull(this));
                     }
 
-                    if (this.Plan == null)
+                    if (Plan == null)
                     {
-                        this.Plan = this.Planner.GetPlan(this.Request.Service);
+                        Plan = Planner.GetPlan(Request.Service);
                     }
 
                     return null;

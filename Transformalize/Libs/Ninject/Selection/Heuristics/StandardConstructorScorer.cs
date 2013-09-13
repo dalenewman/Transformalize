@@ -35,13 +35,13 @@ using Transformalize.Libs.Ninject.Planning.Targets;
 namespace Transformalize.Libs.Ninject.Selection.Heuristics
 {
     /// <summary>
-    /// Scores constructors by either looking for the existence of an injection marker
-    /// attribute, or by counting the number of parameters.
+    ///     Scores constructors by either looking for the existence of an injection marker
+    ///     attribute, or by counting the number of parameters.
     /// </summary>
     public class StandardConstructorScorer : NinjectComponent, IConstructorScorer
     {
         /// <summary>
-        /// Gets the score for the specified constructor.
+        ///     Gets the score for the specified constructor.
         /// </summary>
         /// <param name="context">The injection context.</param>
         /// <param name="directive">The constructor.</param>
@@ -56,7 +56,7 @@ namespace Transformalize.Libs.Ninject.Selection.Heuristics
                 return int.MaxValue;
             }
 
-            var score = 1;
+            int score = 1;
             foreach (ITarget target in directive.Targets)
             {
                 if (ParameterExists(context, target))
@@ -64,7 +64,7 @@ namespace Transformalize.Libs.Ninject.Selection.Heuristics
                     score++;
                     continue;
                 }
-                
+
                 if (BindingExists(context, target))
                 {
                     score++;
@@ -77,23 +77,23 @@ namespace Transformalize.Libs.Ninject.Selection.Heuristics
                     score += int.MinValue;
                 }
             }
-            
+
             return score;
         }
 
         /// <summary>
-        /// Checkes whether a binding exists for a given target.
+        ///     Checkes whether a binding exists for a given target.
         /// </summary>
         /// <param name="context">The context.</param>
         /// <param name="target">The target.</param>
         /// <returns>Whether a binding exists for the target in the given context.</returns>
         protected virtual bool BindingExists(IContext context, ITarget target)
         {
-			return this.BindingExists(context.Kernel, context, target);
-		}
+            return BindingExists(context.Kernel, context, target);
+        }
 
         /// <summary>
-        /// Checkes whether a binding exists for a given target on the specified kernel.
+        ///     Checkes whether a binding exists for a given target on the specified kernel.
         /// </summary>
         /// <param name="kernel">The kernel.</param>
         /// <param name="context">The context.</param>
@@ -101,20 +101,20 @@ namespace Transformalize.Libs.Ninject.Selection.Heuristics
         /// <returns>Whether a binding exists for the target in the given context.</returns>
         protected virtual bool BindingExists(IKernel kernel, IContext context, ITarget target)
         {
-            var targetType = GetTargetType(target);
+            Type targetType = GetTargetType(target);
             return kernel.GetBindings(targetType).Any(b => !b.IsImplicit)
                    || target.HasDefaultValue;
         }
 
         private Type GetTargetType(ITarget target)
         {
-            var targetType = target.Type;
+            Type targetType = target.Type;
             if (targetType.IsArray)
             {
                 targetType = targetType.GetElementType();
             }
 
-            if (targetType.IsGenericType && targetType.GetInterfaces().Any(type => type == typeof(IEnumerable)))
+            if (targetType.IsGenericType && targetType.GetInterfaces().Any(type => type == typeof (IEnumerable)))
             {
                 targetType = targetType.GetGenericArguments()[0];
             }
@@ -123,7 +123,7 @@ namespace Transformalize.Libs.Ninject.Selection.Heuristics
         }
 
         /// <summary>
-        /// Checks whether any parameters exist for the geiven target..
+        ///     Checks whether any parameters exist for the geiven target..
         /// </summary>
         /// <param name="context">The context.</param>
         /// <param name="target">The target.</param>

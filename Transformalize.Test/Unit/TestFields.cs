@@ -18,113 +18,155 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
 using NUnit.Framework;
-using Transformalize.Core.Field_;
-using Transformalize.Providers;
-using Transformalize.Providers.MySql;
-using Transformalize.Providers.SqlServer;
+using Transformalize.Main;
+using Transformalize.Main.Providers;
+using Transformalize.Main.Providers.MySql;
+using Transformalize.Main.Providers.SqlServer;
 
-namespace Transformalize.Test.Unit {
+namespace Transformalize.Test.Unit
+{
     [TestFixture]
-    public class TestFields {
-
+    public class TestFields
+    {
         private readonly AbstractProvider _sqlServerProvider = new SqlServerProvider();
         private readonly AbstractProvider _mySqlProvider = new MySqlProvider();
 
-        private readonly List<Field> _fields = new List<Field> {
-            new Field("system.string", "10", FieldType.PrimaryKey, true, "") {Alias = "Field1", Name="f1", Default="x", Parent="p1"},
-            new Field("system.int32", "8", FieldType.Field, false, "0") {Alias = "Field2", Name="f2", Default=0, Parent="p2"}
-        };
+        private readonly List<Field> _fields = new List<Field>
+                                                   {
+                                                       new Field("system.string", "10", FieldType.PrimaryKey, true, "")
+                                                           {
+                                                               Alias = "Field1",
+                                                               Name = "f1",
+                                                               Default = "x",
+                                                               Parent = "p1"
+                                                           },
+                                                       new Field("system.int32", "8", FieldType.Field, false, "0")
+                                                           {
+                                                               Alias = "Field2",
+                                                               Name = "f2",
+                                                               Default = 0,
+                                                               Parent = "p2"
+                                                           }
+                                                   };
 
-        private readonly List<Field> _xmlFields = new List<Field> {
-            new Field("system.string", "10", FieldType.Xml, true, "") {Alias = "Field1", Name="f1", Default="x", XPath = "/Properties/f1", Index=1, Parent="p1"},
-            new Field("system.int32", "8", FieldType.Xml, false, "0") {Alias = "Field2", Name="f2", Default=0, XPath = "/Properties/f2", Index=1, Parent="p2"}
-        };
+        private readonly List<Field> _xmlFields = new List<Field>
+                                                      {
+                                                          new Field("system.string", "10", FieldType.Xml, true, "")
+                                                              {
+                                                                  Alias = "Field1",
+                                                                  Name = "f1",
+                                                                  Default = "x",
+                                                                  XPath = "/Properties/f1",
+                                                                  Index = 1,
+                                                                  Parent = "p1"
+                                                              },
+                                                          new Field("system.int32", "8", FieldType.Xml, false, "0")
+                                                              {
+                                                                  Alias = "Field2",
+                                                                  Name = "f2",
+                                                                  Default = 0,
+                                                                  XPath = "/Properties/f2",
+                                                                  Index = 1,
+                                                                  Parent = "p2"
+                                                              }
+                                                      };
 
         [Test]
-        public void TestWriteNothing() {
-            const string expected = ", ";
-            var actual = new FieldSqlWriter(_fields).Write();
-            Assert.AreEqual(expected, actual);
-        }
-
-        [Test]
-        public void TestWriteName() {
-            const string expected = "[f1], [f2]";
-            var actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).Write();
-            Assert.AreEqual(expected, actual);
-        }
-
-        [Test]
-        public void TestWriteAlias() {
+        public void TestWriteAlias()
+        {
             const string expected = "[Field1], [Field2]";
-            var actual = new FieldSqlWriter(_fields).Alias(_sqlServerProvider).Write();
+            string actual = new FieldSqlWriter(_fields).Alias(_sqlServerProvider).Write();
             Assert.AreEqual(expected, actual);
         }
 
         [Test]
-        public void TestWriteNameIsNull() {
-            const string expected = "ISNULL([f1], 'x'), ISNULL([f2], 0)";
-            var actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).IsNull().Write();
-            Assert.AreEqual(expected, actual);
-        }
-
-        [Test]
-        public void TestWriteAliasIsNull() {
+        public void TestWriteAliasIsNull()
+        {
             const string expected = "ISNULL([Field1], 'x'), ISNULL([Field2], 0)";
-            var actual = new FieldSqlWriter(_fields).Alias(_sqlServerProvider).IsNull().Write();
+            string actual = new FieldSqlWriter(_fields).Alias(_sqlServerProvider).IsNull().Write();
             Assert.AreEqual(expected, actual);
         }
 
         [Test]
-        public void TestWriteNameIsNullToAlias() {
+        public void TestWriteName()
+        {
+            const string expected = "[f1], [f2]";
+            string actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).Write();
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void TestWriteNameDataType()
+        {
+            const string expected = "[f1] NVARCHAR(10), [f2] INT";
+            string actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).DataType().Write();
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void TestWriteNameDataTypeNotNull()
+        {
+            const string expected = "[f1] NVARCHAR(10) NOT NULL, [f2] INT NOT NULL";
+            string actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).DataType().Append(" NOT NULL").Write();
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void TestWriteNameDataTypeNull()
+        {
+            const string expected = "[f1] NVARCHAR(10) NULL, [f2] INT NULL";
+            string actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).DataType().Append(" NULL").Write();
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void TestWriteNameIsNull()
+        {
+            const string expected = "ISNULL([f1], 'x'), ISNULL([f2], 0)";
+            string actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).IsNull().Write();
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void TestWriteNameIsNullAsAlias()
+        {
+            const string expected = "ISNULL([f1], 'x') AS [Field1], ISNULL([f2], 0) AS [Field2]";
+            string actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).IsNull().AsAlias(_sqlServerProvider).Write();
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void TestWriteNameIsNullToAlias()
+        {
             //const string expected = "[Field1] = ISNULL([f1], 'x'), [Field2] = ISNULL([f2], 0)";
             const string expected = "ISNULL([f1], 'x') AS [Field1], ISNULL([f2], 0) AS [Field2]";
-            var actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).IsNull().ToAlias(_sqlServerProvider).Write();
+            string actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).IsNull().ToAlias(_sqlServerProvider).Write();
             Assert.AreEqual(expected, actual);
         }
 
         [Test]
-        public void TestWriteNameIsNullAsAlias() {
-            const string expected = "ISNULL([f1], 'x') AS [Field1], ISNULL([f2], 0) AS [Field2]";
-            var actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).IsNull().AsAlias(_sqlServerProvider).Write();
+        public void TestWriteNameOutput()
+        {
+            const string expected = "[f1]";
+            string actual = new FieldSqlWriter(_fields).Output().Name(_sqlServerProvider).Write();
             Assert.AreEqual(expected, actual);
         }
 
         [Test]
-        public void TestWriteNameDataType() {
-            const string expected = "[f1] NVARCHAR(10), [f2] INT";
-            var actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).DataType().Write();
+        public void TestWriteNothing()
+        {
+            const string expected = ", ";
+            string actual = new FieldSqlWriter(_fields).Write();
             Assert.AreEqual(expected, actual);
         }
 
         [Test]
-        public void TestWriteNameDataTypeNull() {
-            const string expected = "[f1] NVARCHAR(10) NULL, [f2] INT NULL";
-            var actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).DataType().Append(" NULL").Write();
-            Assert.AreEqual(expected, actual);
-        }
-
-        [Test]
-        public void TestWriteNameDataTypeNotNull() {
-            const string expected = "[f1] NVARCHAR(10) NOT NULL, [f2] INT NOT NULL";
-            var actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).DataType().Append(" NOT NULL").Write();
-            Assert.AreEqual(expected, actual);
-        }
-
-        [Test]
-        public void TestWriteXmlValueToAlias() {
+        public void TestWriteXmlValueToAlias()
+        {
             //const string expected = "[Field1] = t.[p1].value(N'(/Properties/f1)[1]', N'NVARCHAR(10)'), [Field2] = t.[p2].value(N'(/Properties/f2)[1]', N'INT')";
             const string expected = "t.[p1].value(N'(/Properties/f1)[1]', N'NVARCHAR(10)') AS [Field1], t.[p2].value(N'(/Properties/f2)[1]', N'INT') AS [Field2]";
-            var actual = new FieldSqlWriter(_xmlFields).XmlValue().Prepend("t.").ToAlias(_sqlServerProvider).Write();
+            string actual = new FieldSqlWriter(_xmlFields).XmlValue().Prepend("t.").ToAlias(_sqlServerProvider).Write();
             Assert.AreEqual(expected, actual);
         }
-
-        [Test]
-        public void TestWriteNameOutput() {
-            const string expected = "[f1]";
-            var actual = new FieldSqlWriter(_fields).Output().Name(_sqlServerProvider).Write();
-            Assert.AreEqual(expected, actual);
-        }
-
     }
 }

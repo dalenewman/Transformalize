@@ -18,35 +18,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Linq;
-using Transformalize.Core;
-using Transformalize.Core.Process_;
+using Transformalize.Main;
 using Transformalize.Libs.NLog;
-using Transformalize.Libs.Rhino.Etl.Core;
+using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Operations;
 
-namespace Transformalize.Processes {
-
-    public class TransformProcess : EtlProcess {
-
+namespace Transformalize.Processes
+{
+    public class TransformProcess : EtlProcess
+    {
         private readonly Process _process;
 
-        public TransformProcess(Process process) : base(process.Name) {
+        public TransformProcess(Process process) : base(process.Name)
+        {
             GlobalDiagnosticsContext.Set("entity", Common.LogLength("All", 20));
             _process = process;
         }
 
-        protected override void Initialize() {
+        protected override void Initialize()
+        {
             Register(new ParametersExtract(_process));
             Register(new ApplyDefaults(_process.CalculatedFields));
             Register(new TransformFields(_process.CalculatedFields));
             RegisterLast(new ResultsLoad(_process));
         }
 
-        protected override void PostProcessing() {
-
-            var errors = GetAllErrors().ToArray();
-            if (errors.Any()) {
-                foreach (var error in errors) {
+        protected override void PostProcessing()
+        {
+            Exception[] errors = GetAllErrors().ToArray();
+            if (errors.Any())
+            {
+                foreach (Exception error in errors)
+                {
                     Error(error.InnerException, "Message: {0}\r\nStackTrace:{1}\r\n", error.Message, error.StackTrace);
                 }
                 Environment.Exit(1);
@@ -54,6 +57,5 @@ namespace Transformalize.Processes {
 
             base.PostProcessing();
         }
-
     }
 }

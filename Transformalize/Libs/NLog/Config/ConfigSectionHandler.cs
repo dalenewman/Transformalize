@@ -42,12 +42,12 @@ using Transformalize.Libs.NLog.Internal;
 namespace Transformalize.Libs.NLog.Config
 {
     /// <summary>
-    /// NLog configuration section handler class for configuring NLog from App.config.
+    ///     NLog configuration section handler class for configuring NLog from App.config.
     /// </summary>
     public sealed class ConfigSectionHandler : IConfigurationSectionHandler
     {
         /// <summary>
-        /// Creates a configuration section handler.
+        ///     Creates a configuration section handler.
         /// </summary>
         /// <param name="parent">Parent object.</param>
         /// <param name="configContext">Configuration context object.</param>
@@ -59,7 +59,7 @@ namespace Transformalize.Libs.NLog.Config
             {
                 string configFileName = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
 
-                return new XmlLoggingConfiguration((XmlElement)section, configFileName);
+                return new XmlLoggingConfiguration((XmlElement) section, configFileName);
             }
             catch (Exception exception)
             {

@@ -37,12 +37,12 @@ using System.Threading;
 namespace Transformalize.Libs.NLog.Internal
 {
     /// <summary>
-    /// Helper class for dealing with exceptions.
+    ///     Helper class for dealing with exceptions.
     /// </summary>
     internal static class ExceptionHelper
     {
         /// <summary>
-        /// Determines whether the exception must be rethrown.
+        ///     Determines whether the exception must be rethrown.
         /// </summary>
         /// <param name="exception">The exception.</param>
         /// <returns>True if the exception must be rethrown, false otherwise.</returns>

@@ -18,39 +18,43 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Configuration;
 
-namespace Transformalize.Configuration {
-    public class ParameterElementCollection : ConfigurationElementCollection {
-
-        public override bool IsReadOnly()
+namespace Transformalize.Configuration
+{
+    public class ParameterElementCollection : ConfigurationElementCollection
+    {
+        public ParameterConfigurationElement this[int index]
         {
-            return false;
-        }
-
-        public ParameterConfigurationElement this[int index] {
-            get {
-                return BaseGet(index) as ParameterConfigurationElement;
-            }
-            set {
-                if (BaseGet(index) != null) {
+            get { return BaseGet(index) as ParameterConfigurationElement; }
+            set
+            {
+                if (BaseGet(index) != null)
+                {
                     BaseRemoveAt(index);
                 }
                 BaseAdd(index, value);
             }
         }
 
-        protected override ConfigurationElement CreateNewElement() {
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
+        protected override ConfigurationElement CreateNewElement()
+        {
             return new ParameterConfigurationElement();
         }
 
-        protected override object GetElementKey(ConfigurationElement element) {
-            var parameter = (ParameterConfigurationElement)element;
-            var key = string.IsNullOrEmpty(parameter.Name) ? parameter.Field : parameter.Name;
+        protected override object GetElementKey(ConfigurationElement element)
+        {
+            var parameter = (ParameterConfigurationElement) element;
+            string key = string.IsNullOrEmpty(parameter.Name) ? parameter.Field : parameter.Name;
             return string.Concat(parameter.Entity, key).ToLower();
         }
 
         public void Insert(ParameterConfigurationElement element)
         {
-            BaseAdd(0,element);
+            BaseAdd(0, element);
         }
 
         public void Add(ParameterConfigurationElement element)

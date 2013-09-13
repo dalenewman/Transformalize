@@ -40,7 +40,7 @@ using Transformalize.Libs.NLog.Common;
 namespace Transformalize.Libs.NLog.Conditions
 {
     /// <summary>
-    /// Condition method invocation expression (represented by <b>method(p1,p2,p3)</b> syntax).
+    ///     Condition method invocation expression (represented by <b>method(p1,p2,p3)</b> syntax).
     /// </summary>
     internal sealed class ConditionMethodExpression : ConditionExpression
     {
@@ -48,25 +48,27 @@ namespace Transformalize.Libs.NLog.Conditions
         private readonly string conditionMethodName;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConditionMethodExpression" /> class.
+        ///     Initializes a new instance of the <see cref="ConditionMethodExpression" /> class.
         /// </summary>
         /// <param name="conditionMethodName">Name of the condition method.</param>
-        /// <param name="methodInfo"><see cref="MethodInfo"/> of the condition method.</param>
+        /// <param name="methodInfo">
+        ///     <see cref="MethodInfo" /> of the condition method.
+        /// </param>
         /// <param name="methodParameters">The method parameters.</param>
         public ConditionMethodExpression(string conditionMethodName, MethodInfo methodInfo, IEnumerable<ConditionExpression> methodParameters)
         {
-            this.MethodInfo = methodInfo;
+            MethodInfo = methodInfo;
             this.conditionMethodName = conditionMethodName;
-            this.MethodParameters = new List<ConditionExpression>(methodParameters).AsReadOnly();
+            MethodParameters = new List<ConditionExpression>(methodParameters).AsReadOnly();
 
-            ParameterInfo[] formalParameters = this.MethodInfo.GetParameters();
-            if (formalParameters.Length > 0 && formalParameters[0].ParameterType == typeof(LogEventInfo))
+            ParameterInfo[] formalParameters = MethodInfo.GetParameters();
+            if (formalParameters.Length > 0 && formalParameters[0].ParameterType == typeof (LogEventInfo))
             {
-                this.acceptsLogEvent = true;
+                acceptsLogEvent = true;
             }
 
-            int actualParameterCount = this.MethodParameters.Count;
-            if (this.acceptsLogEvent)
+            int actualParameterCount = MethodParameters.Count;
+            if (acceptsLogEvent)
             {
                 actualParameterCount++;
             }
@@ -86,30 +88,30 @@ namespace Transformalize.Libs.NLog.Conditions
         }
 
         /// <summary>
-        /// Gets the method info.
+        ///     Gets the method info.
         /// </summary>
         public MethodInfo MethodInfo { get; private set; }
 
         /// <summary>
-        /// Gets the method parameters.
+        ///     Gets the method parameters.
         /// </summary>
         /// <value>The method parameters.</value>
         public IList<ConditionExpression> MethodParameters { get; private set; }
 
         /// <summary>
-        /// Returns a string representation of the expression.
+        ///     Returns a string representation of the expression.
         /// </summary>
         /// <returns>
-        /// A <see cref="T:System.String"/> that represents the condition expression.
+        ///     A <see cref="T:System.String" /> that represents the condition expression.
         /// </returns>
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append(this.conditionMethodName);
+            sb.Append(conditionMethodName);
             sb.Append("(");
 
             string separator = string.Empty;
-            foreach (ConditionExpression expr in this.MethodParameters)
+            foreach (ConditionExpression expr in MethodParameters)
             {
                 sb.Append(separator);
                 sb.Append(expr);
@@ -121,27 +123,27 @@ namespace Transformalize.Libs.NLog.Conditions
         }
 
         /// <summary>
-        /// Evaluates the expression.
+        ///     Evaluates the expression.
         /// </summary>
         /// <param name="context">Evaluation context.</param>
         /// <returns>Expression result.</returns>
         protected override object EvaluateNode(LogEventInfo context)
         {
-            int parameterOffset = this.acceptsLogEvent ? 1 : 0;
+            int parameterOffset = acceptsLogEvent ? 1 : 0;
 
-            var callParameters = new object[this.MethodParameters.Count + parameterOffset];
+            var callParameters = new object[MethodParameters.Count + parameterOffset];
             int i = 0;
-            foreach (ConditionExpression ce in this.MethodParameters)
+            foreach (ConditionExpression ce in MethodParameters)
             {
                 callParameters[i++ + parameterOffset] = ce.Evaluate(context);
             }
 
-            if (this.acceptsLogEvent)
+            if (acceptsLogEvent)
             {
                 callParameters[0] = context;
             }
 
-            return this.MethodInfo.Invoke(null, callParameters);
+            return MethodInfo.Invoke(null, callParameters);
         }
     }
 }

@@ -34,23 +34,23 @@
 namespace Transformalize.Libs.NLog.Targets.Wrappers
 {
     /// <summary>
-    /// The action to be taken when the queue overflows.
+    ///     The action to be taken when the queue overflows.
     /// </summary>
     public enum AsyncTargetWrapperOverflowAction
     {
         /// <summary>
-        /// Grow the queue.
+        ///     Grow the queue.
         /// </summary>
         Grow,
 
         /// <summary>
-        /// Discard the overflowing item.
+        ///     Discard the overflowing item.
         /// </summary>
         Discard,
 
 #if !NET_CF
         /// <summary>
-        /// Block until there's more room in the queue.
+        ///     Block until there's more room in the queue.
         /// </summary>
         Block,
 #endif

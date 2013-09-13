@@ -16,21 +16,19 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Linq;
-using Transformalize.Core;
-using Transformalize.Core.Process_;
+using Transformalize.Main;
+using Transformalize.Main.Providers;
+using Transformalize.Main.Providers.SqlServer;
 using Transformalize.Libs.NLog;
-using Transformalize.Libs.Rhino.Etl.Core;
+using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Operations;
-using Transformalize.Providers;
-using Transformalize.Providers.SqlServer;
 
 namespace Transformalize.Processes
 {
-
     public class InitializationProcess : EtlProcess
     {
-
         private readonly Process _process;
         private readonly ITflWriter _tflWriter;
         private readonly IViewWriter _viewWriter;
@@ -49,7 +47,7 @@ namespace Transformalize.Processes
 
         protected override void Initialize()
         {
-            foreach (var entity in _process.Entities)
+            foreach (Entity entity in _process.Entities)
             {
                 Register(new EntityDrop(entity));
                 Register(new EntityCreate(entity, _process));
@@ -58,21 +56,18 @@ namespace Transformalize.Processes
 
         protected override void PostProcessing()
         {
-
-            var errors = GetAllErrors().ToArray();
+            Exception[] errors = GetAllErrors().ToArray();
             if (errors.Any())
             {
-                foreach (var error in errors)
+                foreach (Exception error in errors)
                 {
                     Error(error.InnerException, "Message: {0}\r\nStackTrace:{1}\r\n", error.Message, error.StackTrace);
                 }
-                System.Environment.Exit(1);
+                Environment.Exit(1);
             }
 
             _viewWriter.Create();
             base.PostProcessing();
         }
-
     }
-
 }

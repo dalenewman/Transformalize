@@ -39,65 +39,65 @@ using System.Xml;
 namespace Transformalize.Libs.NLog.Config
 {
     /// <summary>
-    /// Represents simple XML element with case-insensitive attribute semantics.
+    ///     Represents simple XML element with case-insensitive attribute semantics.
     /// </summary>
     internal class NLogXmlElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="NLogXmlElement"/> class.
+        ///     Initializes a new instance of the <see cref="NLogXmlElement" /> class.
         /// </summary>
         /// <param name="inputUri">The input URI.</param>
         public NLogXmlElement(string inputUri)
             : this()
         {
-            using (var reader = XmlReader.Create(inputUri))
+            using (XmlReader reader = XmlReader.Create(inputUri))
             {
                 reader.MoveToContent();
-                this.Parse(reader);
+                Parse(reader);
             }
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NLogXmlElement"/> class.
+        ///     Initializes a new instance of the <see cref="NLogXmlElement" /> class.
         /// </summary>
         /// <param name="reader">The reader to initialize element from.</param>
         public NLogXmlElement(XmlReader reader)
             : this()
         {
-            this.Parse(reader);
+            Parse(reader);
         }
 
         /// <summary>
-        /// Prevents a default instance of the <see cref="NLogXmlElement"/> class from being created.
+        ///     Prevents a default instance of the <see cref="NLogXmlElement" /> class from being created.
         /// </summary>
         private NLogXmlElement()
         {
-            this.AttributeValues = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            this.Children = new List<NLogXmlElement>();
+            AttributeValues = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            Children = new List<NLogXmlElement>();
         }
 
         /// <summary>
-        /// Gets the element name.
+        ///     Gets the element name.
         /// </summary>
         public string LocalName { get; private set; }
 
         /// <summary>
-        /// Gets the dictionary of attribute values.
+        ///     Gets the dictionary of attribute values.
         /// </summary>
         public Dictionary<string, string> AttributeValues { get; private set; }
 
         /// <summary>
-        /// Gets the collection of child elements.
+        ///     Gets the collection of child elements.
         /// </summary>
         public IList<NLogXmlElement> Children { get; private set; }
 
         /// <summary>
-        /// Gets the value of the element.
+        ///     Gets the value of the element.
         /// </summary>
         public string Value { get; private set; }
 
         /// <summary>
-        /// Returns children elements with the specified element name.
+        ///     Returns children elements with the specified element name.
         /// </summary>
         /// <param name="elementName">Name of the element.</param>
         /// <returns>Children elements with the specified element name.</returns>
@@ -105,7 +105,7 @@ namespace Transformalize.Libs.NLog.Config
         {
             var result = new List<NLogXmlElement>();
 
-            foreach (var ch in this.Children)
+            foreach (NLogXmlElement ch in Children)
             {
                 if (ch.LocalName.Equals(elementName, StringComparison.OrdinalIgnoreCase))
                 {
@@ -117,24 +117,24 @@ namespace Transformalize.Libs.NLog.Config
         }
 
         /// <summary>
-        /// Gets the required attribute.
+        ///     Gets the required attribute.
         /// </summary>
         /// <param name="attributeName">Name of the attribute.</param>
         /// <returns>Attribute value.</returns>
         /// <remarks>Throws if the attribute is not specified.</remarks>
         public string GetRequiredAttribute(string attributeName)
         {
-            string value = this.GetOptionalAttribute(attributeName, null);
+            string value = GetOptionalAttribute(attributeName, null);
             if (value == null)
             {
-                throw new NLogConfigurationException("Expected " + attributeName + " on <" + this.LocalName + " />");
+                throw new NLogConfigurationException("Expected " + attributeName + " on <" + LocalName + " />");
             }
 
             return value;
         }
 
         /// <summary>
-        /// Gets the optional boolean attribute value.
+        ///     Gets the optional boolean attribute value.
         /// </summary>
         /// <param name="attributeName">Name of the attribute.</param>
         /// <param name="defaultValue">Default value to return if the attribute is not found.</param>
@@ -143,7 +143,7 @@ namespace Transformalize.Libs.NLog.Config
         {
             string value;
 
-            if (!this.AttributeValues.TryGetValue(attributeName, out value))
+            if (!AttributeValues.TryGetValue(attributeName, out value))
             {
                 return defaultValue;
             }
@@ -152,7 +152,7 @@ namespace Transformalize.Libs.NLog.Config
         }
 
         /// <summary>
-        /// Gets the optional attribute value.
+        ///     Gets the optional attribute value.
         /// </summary>
         /// <param name="attributeName">Name of the attribute.</param>
         /// <param name="defaultValue">The default value.</param>
@@ -161,7 +161,7 @@ namespace Transformalize.Libs.NLog.Config
         {
             string value;
 
-            if (!this.AttributeValues.TryGetValue(attributeName, out value))
+            if (!AttributeValues.TryGetValue(attributeName, out value))
             {
                 value = defaultValue;
             }
@@ -170,20 +170,20 @@ namespace Transformalize.Libs.NLog.Config
         }
 
         /// <summary>
-        /// Asserts that the name of the element is among specified element names.
+        ///     Asserts that the name of the element is among specified element names.
         /// </summary>
         /// <param name="allowedNames">The allowed names.</param>
         public void AssertName(params string[] allowedNames)
         {
-            foreach (var en in allowedNames)
+            foreach (string en in allowedNames)
             {
-                if (this.LocalName.Equals(en, StringComparison.OrdinalIgnoreCase))
+                if (LocalName.Equals(en, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
             }
 
-            throw new InvalidOperationException("Assertion failed. Expected element name '" + string.Join("|", allowedNames) + "', actual: '" + this.LocalName + "'.");
+            throw new InvalidOperationException("Assertion failed. Expected element name '" + string.Join("|", allowedNames) + "', actual: '" + LocalName + "'.");
         }
 
         private void Parse(XmlReader reader)
@@ -192,14 +192,13 @@ namespace Transformalize.Libs.NLog.Config
             {
                 do
                 {
-                    this.AttributeValues.Add(reader.LocalName, reader.Value);
-                }
-                while (reader.MoveToNextAttribute());
+                    AttributeValues.Add(reader.LocalName, reader.Value);
+                } while (reader.MoveToNextAttribute());
 
                 reader.MoveToElement();
             }
 
-            this.LocalName = reader.LocalName;
+            LocalName = reader.LocalName;
 
             if (!reader.IsEmptyElement)
             {
@@ -212,13 +211,13 @@ namespace Transformalize.Libs.NLog.Config
 
                     if (reader.NodeType == XmlNodeType.CDATA || reader.NodeType == XmlNodeType.Text)
                     {
-                        this.Value += reader.Value;
+                        Value += reader.Value;
                         continue;
                     }
 
                     if (reader.NodeType == XmlNodeType.Element)
                     {
-                        this.Children.Add(new NLogXmlElement(reader));
+                        Children.Add(new NLogXmlElement(reader));
                     }
                 }
             }

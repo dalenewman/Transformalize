@@ -38,14 +38,14 @@ using Transformalize.Libs.NLog.Internal;
 namespace Transformalize.Libs.NLog.Conditions
 {
     /// <summary>
-    /// Base class for representing nodes in condition expression trees.
+    ///     Base class for representing nodes in condition expression trees.
     /// </summary>
     [NLogConfigurationItem]
     [ThreadAgnostic]
     public abstract class ConditionExpression
     {
         /// <summary>
-        /// Converts condition text to a condition expression tree.
+        ///     Converts condition text to a condition expression tree.
         /// </summary>
         /// <param name="conditionExpressionText">Condition text to be converted.</param>
         /// <returns>Condition expression tree.</returns>
@@ -55,7 +55,7 @@ namespace Transformalize.Libs.NLog.Conditions
         }
 
         /// <summary>
-        /// Evaluates the expression.
+        ///     Evaluates the expression.
         /// </summary>
         /// <param name="context">Evaluation context.</param>
         /// <returns>Expression result.</returns>
@@ -63,7 +63,7 @@ namespace Transformalize.Libs.NLog.Conditions
         {
             try
             {
-                return this.EvaluateNode(context);
+                return EvaluateNode(context);
             }
             catch (Exception exception)
             {
@@ -77,15 +77,15 @@ namespace Transformalize.Libs.NLog.Conditions
         }
 
         /// <summary>
-        /// Returns a string representation of the expression.
+        ///     Returns a string representation of the expression.
         /// </summary>
         /// <returns>
-        /// A <see cref="T:System.String"/> that represents the condition expression.
+        ///     A <see cref="T:System.String" /> that represents the condition expression.
         /// </returns>
         public abstract override string ToString();
 
         /// <summary>
-        /// Evaluates the expression.
+        ///     Evaluates the expression.
         /// </summary>
         /// <param name="context">Evaluation context.</param>
         /// <returns>Expression result.</returns>

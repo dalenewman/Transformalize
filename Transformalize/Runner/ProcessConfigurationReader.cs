@@ -1,15 +1,15 @@
 using System;
 using System.Configuration;
 using Transformalize.Configuration;
-using Transformalize.Core;
+using Transformalize.Main;
 using Transformalize.Libs.NLog;
 
 namespace Transformalize.Runner
 {
     public class ProcessConfigurationReader : IReader<ProcessConfigurationElement>
     {
-        private readonly string _name;
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private readonly string _name;
 
         public ProcessConfigurationReader(string name)
         {
@@ -18,7 +18,7 @@ namespace Transformalize.Runner
 
         public ProcessConfigurationElement Read()
         {
-            var config = ((TransformalizeConfiguration)ConfigurationManager.GetSection("transformalize")).Processes.Get(_name);
+            ProcessConfigurationElement config = ((TransformalizeConfiguration) ConfigurationManager.GetSection("transformalize")).Processes.Get(_name);
             if (config == null)
             {
                 _log.Warn("Sorry.  I can't find a process named {0}.", _name);

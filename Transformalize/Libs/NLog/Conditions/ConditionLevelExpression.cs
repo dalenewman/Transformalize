@@ -34,24 +34,28 @@
 namespace Transformalize.Libs.NLog.Conditions
 {
     /// <summary>
-    /// Condition level expression (represented by the <b>level</b> keyword).
+    ///     Condition level expression (represented by the <b>level</b> keyword).
     /// </summary>
     internal sealed class ConditionLevelExpression : ConditionExpression
     {
         /// <summary>
-        /// Returns a string representation of the expression.
+        ///     Returns a string representation of the expression.
         /// </summary>
-        /// <returns>The '<b>level</b>' string.</returns>
+        /// <returns>
+        ///     The '<b>level</b>' string.
+        /// </returns>
         public override string ToString()
         {
             return "level";
         }
 
         /// <summary>
-        /// Evaluates to the current log level.
+        ///     Evaluates to the current log level.
         /// </summary>
         /// <param name="context">Evaluation context. Ignored.</param>
-        /// <returns>The <see cref="LogLevel"/> object representing current log level.</returns>
+        /// <returns>
+        ///     The <see cref="LogLevel" /> object representing current log level.
+        /// </returns>
         protected override object EvaluateNode(LogEventInfo context)
         {
             return context.Level;

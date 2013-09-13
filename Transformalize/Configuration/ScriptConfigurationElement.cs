@@ -18,32 +18,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Configuration;
 
-namespace Transformalize.Configuration {
-
-    public class ScriptConfigurationElement : ConfigurationElement {
-
-        public override bool IsReadOnly()
-        {
-            return false;
-        }
-
+namespace Transformalize.Configuration
+{
+    public class ScriptConfigurationElement : ConfigurationElement
+    {
         [ConfigurationProperty("name", IsRequired = true)]
-        public string Name {
-            get {
-                return this["name"] as string;
-            }
+        public string Name
+        {
+            get { return this["name"] as string; }
             set { this["name"] = value; }
         }
 
         [ConfigurationProperty("file", IsRequired = true)]
         public string File
         {
-            get
-            {
-                return this["file"] as string;
-            }
+            get { return this["file"] as string; }
             set { this["file"] = value; }
         }
 
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
     }
 }

@@ -18,52 +18,47 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Configuration;
 
-namespace Transformalize.Configuration {
-    public class RelationshipConfigurationElement : ConfigurationElement {
+namespace Transformalize.Configuration
+{
+    public class RelationshipConfigurationElement : ConfigurationElement
+    {
+        [ConfigurationProperty("leftEntity", IsRequired = true)]
+        public string LeftEntity
+        {
+            get { return this["leftEntity"] as string; }
+            set { this["leftEntity"] = value; }
+        }
+
+        [ConfigurationProperty("rightEntity", IsRequired = true)]
+        public string RightEntity
+        {
+            get { return this["rightEntity"] as string; }
+            set { this["rightEntity"] = value; }
+        }
+
+        [ConfigurationProperty("leftField", IsRequired = false, DefaultValue = "")]
+        public string LeftField
+        {
+            get { return this["leftField"] as string; }
+            set { this["leftField"] = value; }
+        }
+
+        [ConfigurationProperty("rightField", IsRequired = false, DefaultValue = "")]
+        public string RightField
+        {
+            get { return this["rightField"] as string; }
+            set { this["rightField"] = value; }
+        }
+
+        [ConfigurationProperty("join")]
+        public JoinElementCollection Join
+        {
+            get { return this["join"] as JoinElementCollection; }
+        }
 
         public override bool IsReadOnly()
         {
             return false;
         }
-
-        [ConfigurationProperty("leftEntity", IsRequired = true)]
-        public string LeftEntity {
-            get {
-                return this["leftEntity"] as string;
-            }
-            set { this["leftEntity"] = value; }
-        }
-
-        [ConfigurationProperty("rightEntity", IsRequired = true)]
-        public string RightEntity {
-            get {
-                return this["rightEntity"] as string;
-            }
-            set { this["rightEntity"] = value; }
-        }
-
-        [ConfigurationProperty("leftField", IsRequired = false, DefaultValue = "")]
-        public string LeftField {
-            get {
-                return this["leftField"] as string;
-            }
-            set { this["leftField"] = value; }
-        }
-
-        [ConfigurationProperty("rightField", IsRequired = false, DefaultValue = "")]
-        public string RightField {
-            get {
-                return this["rightField"] as string;
-            }
-            set { this["rightField"] = value; }
-        }
-
-        [ConfigurationProperty("join")]
-        public JoinElementCollection Join {
-            get {
-                return this["join"] as JoinElementCollection;
-            }
-        }
-
     }
 }

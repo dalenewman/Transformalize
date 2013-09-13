@@ -40,7 +40,7 @@ using Transformalize.Libs.NLog.Internal;
 namespace Transformalize.Libs.NLog.Config
 {
     /// <summary>
-    /// Factory for locating methods.
+    ///     Factory for locating methods.
     /// </summary>
     /// <typeparam name="TClassAttributeType">The type of the class marker attribute.</typeparam>
     /// <typeparam name="TMethodAttributeType">The type of the method marker attribute.</typeparam>
@@ -51,22 +51,22 @@ namespace Transformalize.Libs.NLog.Config
         private readonly Dictionary<string, MethodInfo> nameToMethodInfo = new Dictionary<string, MethodInfo>();
 
         /// <summary>
-        /// Gets a collection of all registered items in the factory.
+        ///     Gets a collection of all registered items in the factory.
         /// </summary>
         /// <returns>
-        /// Sequence of key/value pairs where each key represents the name
-        /// of the item and value is the <see cref="MethodInfo"/> of
-        /// the item.
+        ///     Sequence of key/value pairs where each key represents the name
+        ///     of the item and value is the <see cref="MethodInfo" /> of
+        ///     the item.
         /// </returns>
         public IDictionary<string, MethodInfo> AllRegisteredItems
         {
-            get { return this.nameToMethodInfo; }
+            get { return nameToMethodInfo; }
         }
 
         /// <summary>
-        /// Scans the assembly for classes marked with <typeparamref name="TClassAttributeType"/>
-        /// and methods marked with <typeparamref name="TMethodAttributeType"/> and adds them 
-        /// to the factory.
+        ///     Scans the assembly for classes marked with <typeparamref name="TClassAttributeType" />
+        ///     and methods marked with <typeparamref name="TMethodAttributeType" /> and adds them
+        ///     to the factory.
         /// </summary>
         /// <param name="theAssembly">The assembly.</param>
         /// <param name="prefix">The prefix to use for names.</param>
@@ -74,10 +74,10 @@ namespace Transformalize.Libs.NLog.Config
         {
             try
             {
-                InternalLogger.Debug("ScanAssembly('{0}','{1}','{2}')", theAssembly.FullName, typeof(TClassAttributeType), typeof(TMethodAttributeType));
+                InternalLogger.Debug("ScanAssembly('{0}','{1}','{2}')", theAssembly.FullName, typeof (TClassAttributeType), typeof (TMethodAttributeType));
                 foreach (Type t in theAssembly.SafeGetTypes())
                 {
-                    this.RegisterType(t, prefix);
+                    RegisterType(t, prefix);
                 }
             }
             catch (Exception exception)
@@ -92,56 +92,58 @@ namespace Transformalize.Libs.NLog.Config
         }
 
         /// <summary>
-        /// Registers the type.
+        ///     Registers the type.
         /// </summary>
         /// <param name="type">The type to register.</param>
         /// <param name="itemNamePrefix">The item name prefix.</param>
         public void RegisterType(Type type, string itemNamePrefix)
         {
-            if (type.IsDefined(typeof(TClassAttributeType), false))
+            if (type.IsDefined(typeof (TClassAttributeType), false))
             {
                 foreach (MethodInfo mi in type.GetMethods())
                 {
-                    var methodAttributes = (TMethodAttributeType[])mi.GetCustomAttributes(typeof(TMethodAttributeType), false);
+                    var methodAttributes = (TMethodAttributeType[]) mi.GetCustomAttributes(typeof (TMethodAttributeType), false);
                     foreach (TMethodAttributeType attr in methodAttributes)
                     {
-                        this.RegisterDefinition(itemNamePrefix + attr.Name, mi);
+                        RegisterDefinition(itemNamePrefix + attr.Name, mi);
                     }
                 }
             }
         }
 
         /// <summary>
-        /// Clears contents of the factory.
+        ///     Clears contents of the factory.
         /// </summary>
         public void Clear()
         {
-            this.nameToMethodInfo.Clear();
+            nameToMethodInfo.Clear();
         }
 
         /// <summary>
-        /// Registers the definition of a single method.
+        ///     Registers the definition of a single method.
         /// </summary>
         /// <param name="name">The method name.</param>
         /// <param name="methodInfo">The method info.</param>
         public void RegisterDefinition(string name, MethodInfo methodInfo)
         {
-            this.nameToMethodInfo[name] = methodInfo;
+            nameToMethodInfo[name] = methodInfo;
         }
 
         /// <summary>
-        /// Tries to retrieve method by name.
+        ///     Tries to retrieve method by name.
         /// </summary>
         /// <param name="name">The method name.</param>
         /// <param name="result">The result.</param>
-        /// <returns>A value of <c>true</c> if the method was found, <c>false</c> otherwise.</returns>
+        /// <returns>
+        ///     A value of <c>true</c> if the method was found, <c>false</c> otherwise.
+        /// </returns>
         public bool TryCreateInstance(string name, out MethodInfo result)
         {
-            return this.nameToMethodInfo.TryGetValue(name, out result);
+            return nameToMethodInfo.TryGetValue(name, out result);
         }
 
         /// <summary>
-        /// Retrieves method by name.
+        ///     Retrieves method by name.
         /// </summary>
         /// <param name="name">Method name.</param>
         /// <returns>MethodInfo object.</returns>
@@ -149,7 +151,7 @@ namespace Transformalize.Libs.NLog.Config
         {
             MethodInfo result;
 
-            if (this.TryCreateInstance(name, out result))
+            if (TryCreateInstance(name, out result))
             {
                 return result;
             }
@@ -158,14 +160,16 @@ namespace Transformalize.Libs.NLog.Config
         }
 
         /// <summary>
-        /// Tries to get method definition.
+        ///     Tries to get method definition.
         /// </summary>
         /// <param name="name">The method .</param>
         /// <param name="result">The result.</param>
-        /// <returns>A value of <c>true</c> if the method was found, <c>false</c> otherwise.</returns>
+        /// <returns>
+        ///     A value of <c>true</c> if the method was found, <c>false</c> otherwise.
+        /// </returns>
         public bool TryGetDefinition(string name, out MethodInfo result)
         {
-            return this.nameToMethodInfo.TryGetValue(name, out result);
+            return nameToMethodInfo.TryGetValue(name, out result);
         }
     }
 }

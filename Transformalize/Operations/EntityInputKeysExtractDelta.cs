@@ -18,43 +18,50 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Data;
 using System.Linq;
-using Transformalize.Core.Entity_;
-using Transformalize.Libs.Rhino.Etl.Core;
-using Transformalize.Libs.Rhino.Etl.Core.Operations;
+using Transformalize.Main;
+using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Libs.Rhino.Etl.Operations;
 
-namespace Transformalize.Operations {
-    public class EntityInputKeysExtractDelta : InputCommandOperation {
+namespace Transformalize.Operations
+{
+    public class EntityInputKeysExtractDelta : InputCommandOperation
+    {
         private readonly Entity _entity;
         private readonly string[] _fields;
 
         public EntityInputKeysExtractDelta(Entity entity)
-            : base(entity.InputConnection) {
+            : base(entity.InputConnection)
+        {
             _entity = entity;
             _fields = _entity.PrimaryKey.ToEnumerable().Select(f => f.Alias).ToArray();
 
             _entity.CheckDelta();
 
-            if (!_entity.HasRows) {
+            if (!_entity.HasRows)
+            {
                 Debug("No data detected in {0}.", _entity.Alias);
             }
 
             if (!_entity.HasRange) return;
 
-            if (_entity.BeginAndEndAreEqual()) {
+            if (_entity.BeginAndEndAreEqual())
+            {
                 Debug("No changes detected in {0}.", _entity.Alias);
             }
         }
 
-        protected override Row CreateRowFromReader(IDataReader reader) {
+        protected override Row CreateRowFromReader(IDataReader reader)
+        {
             var row = new Row();
-            foreach (var field in _fields)
+            foreach (string field in _fields)
             {
                 row[field] = reader[field];
             }
             return row;
         }
 
-        protected override void PrepareCommand(IDbCommand cmd) {
+        protected override void PrepareCommand(IDbCommand cmd)
+        {
             cmd.CommandTimeout = 0;
             cmd.CommandText = _entity.HasRange ? _entity.KeysRangeQuery() : _entity.KeysQuery();
             cmd.CommandType = CommandType.Text;
@@ -63,10 +70,10 @@ namespace Transformalize.Operations {
                 AddParameter(cmd, "@Begin", _entity.Begin);
             AddParameter(cmd, "@End", _entity.End);
         }
-        
-        public bool NeedsToRun() {
+
+        public bool NeedsToRun()
+        {
             return _entity.NeedsUpdate();
         }
-
     }
 }

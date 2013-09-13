@@ -13,6 +13,5 @@ namespace Transformalize.Libs.NCalc
             : base(message, innerException)
         {
         }
-
     }
 }

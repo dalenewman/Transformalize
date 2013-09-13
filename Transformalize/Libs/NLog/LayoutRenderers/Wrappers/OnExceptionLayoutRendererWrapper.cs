@@ -36,14 +36,14 @@ using Transformalize.Libs.NLog.Config;
 namespace Transformalize.Libs.NLog.LayoutRenderers.Wrappers
 {
     /// <summary>
-    /// Only outputs the inner layout when exception has been defined for log message.
+    ///     Only outputs the inner layout when exception has been defined for log message.
     /// </summary>
     [LayoutRenderer("onexception")]
     [ThreadAgnostic]
     public sealed class OnExceptionLayoutRendererWrapper : WrapperLayoutRendererBase
     {
         /// <summary>
-        /// Transforms the output of another layout.
+        ///     Transforms the output of another layout.
         /// </summary>
         /// <param name="text">Output to be transform.</param>
         /// <returns>Transformed text.</returns>
@@ -53,11 +53,11 @@ namespace Transformalize.Libs.NLog.LayoutRenderers.Wrappers
         }
 
         /// <summary>
-        /// Renders the inner layout contents.
+        ///     Renders the inner layout contents.
         /// </summary>
         /// <param name="logEvent">The log event.</param>
         /// <returns>
-        /// Contents of inner layout.
+        ///     Contents of inner layout.
         /// </returns>
         protected override string RenderInner(LogEventInfo logEvent)
         {

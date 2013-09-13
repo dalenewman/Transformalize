@@ -40,54 +40,37 @@ using Transformalize.Libs.NLog.Internal;
 namespace Transformalize.Libs.NLog.LayoutRenderers
 {
     /// <summary>
-    /// Render environmental information related to logging events.
+    ///     Render environmental information related to logging events.
     /// </summary>
     [NLogConfigurationItem]
     public abstract class LayoutRenderer : ISupportsInitialize, IRenderable, IDisposable
     {
         private const int MaxInitialRenderBufferLength = 16384;
-        private int maxRenderedLength;
         private bool isInitialized;
+        private int maxRenderedLength;
 
         /// <summary>
-        /// Gets the logging configuration this target is part of.
+        ///     Gets the logging configuration this target is part of.
         /// </summary>
         protected LoggingConfiguration LoggingConfiguration { get; private set; }
 
         /// <summary>
-        /// Returns a <see cref="System.String"/> that represents this instance.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="System.String"/> that represents this instance.
-        /// </returns>
-        public override string ToString()
-        {
-            var lra = (LayoutRendererAttribute)Attribute.GetCustomAttribute(this.GetType(), typeof(LayoutRendererAttribute));
-            if (lra != null)
-            {
-                return "Layout Renderer: ${" + lra.Name + "}";
-            }
-
-            return this.GetType().Name;
-        }
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         public void Dispose()
         {
-            this.Dispose(true);
+            Dispose(true);
             GC.SuppressFinalize(this);
         }
 
         /// <summary>
-        /// Renders the the value of layout renderer in the context of the specified log event.
+        ///     Renders the the value of layout renderer in the context of the specified log event.
         /// </summary>
         /// <param name="logEvent">The log event.</param>
         /// <returns>String representation of a layout renderer.</returns>
         public string Render(LogEventInfo logEvent)
         {
-            int initialLength = this.maxRenderedLength;
+            int initialLength = maxRenderedLength;
             if (initialLength > MaxInitialRenderBufferLength)
             {
                 initialLength = MaxInitialRenderBufferLength;
@@ -95,70 +78,87 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
 
             var builder = new StringBuilder(initialLength);
 
-            this.Render(builder, logEvent);
-            if (builder.Length > this.maxRenderedLength)
+            Render(builder, logEvent);
+            if (builder.Length > maxRenderedLength)
             {
-                this.maxRenderedLength = builder.Length;
+                maxRenderedLength = builder.Length;
             }
 
             return builder.ToString();
         }
 
         /// <summary>
-        /// Initializes this instance.
+        ///     Initializes this instance.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
         void ISupportsInitialize.Initialize(LoggingConfiguration configuration)
         {
-            this.Initialize(configuration);
+            Initialize(configuration);
         }
 
         /// <summary>
-        /// Closes this instance.
+        ///     Closes this instance.
         /// </summary>
         void ISupportsInitialize.Close()
         {
-            this.Close();
+            Close();
         }
 
         /// <summary>
-        /// Initializes this instance.
+        ///     Returns a <see cref="System.String" /> that represents this instance.
+        /// </summary>
+        /// <returns>
+        ///     A <see cref="System.String" /> that represents this instance.
+        /// </returns>
+        public override string ToString()
+        {
+            var lra = (LayoutRendererAttribute) Attribute.GetCustomAttribute(GetType(), typeof (LayoutRendererAttribute));
+            if (lra != null)
+            {
+                return "Layout Renderer: ${" + lra.Name + "}";
+            }
+
+            return GetType().Name;
+        }
+
+        /// <summary>
+        ///     Initializes this instance.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
         internal void Initialize(LoggingConfiguration configuration)
         {
-            if (!this.isInitialized)
+            if (!isInitialized)
             {
-                this.LoggingConfiguration = configuration;
-                this.isInitialized = true;
-                this.InitializeLayoutRenderer();
+                LoggingConfiguration = configuration;
+                isInitialized = true;
+                InitializeLayoutRenderer();
             }
         }
 
         /// <summary>
-        /// Closes this instance.
+        ///     Closes this instance.
         /// </summary>
         internal void Close()
         {
-            if (this.isInitialized)
+            if (isInitialized)
             {
-                this.LoggingConfiguration = null;
-                this.isInitialized = false;
-                this.CloseLayoutRenderer();
+                LoggingConfiguration = null;
+                isInitialized = false;
+                CloseLayoutRenderer();
             }
         }
 
         internal void Render(StringBuilder builder, LogEventInfo logEvent)
         {
-            if (!this.isInitialized)
+            if (!isInitialized)
             {
-                this.isInitialized = true;
-                this.InitializeLayoutRenderer();
+                isInitialized = true;
+                InitializeLayoutRenderer();
             }
 
             try
             {
-                this.Append(builder, logEvent);
+                Append(builder, logEvent);
             }
             catch (Exception exception)
             {
@@ -172,35 +172,39 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
         }
 
         /// <summary>
-        /// Renders the specified environmental information and appends it to the specified <see cref="StringBuilder" />.
+        ///     Renders the specified environmental information and appends it to the specified <see cref="StringBuilder" />.
         /// </summary>
-        /// <param name="builder">The <see cref="StringBuilder"/> to append the rendered data to.</param>
+        /// <param name="builder">
+        ///     The <see cref="StringBuilder" /> to append the rendered data to.
+        /// </param>
         /// <param name="logEvent">Logging event.</param>
         protected abstract void Append(StringBuilder builder, LogEventInfo logEvent);
 
         /// <summary>
-        /// Initializes the layout renderer.
+        ///     Initializes the layout renderer.
         /// </summary>
         protected virtual void InitializeLayoutRenderer()
         {
         }
 
         /// <summary>
-        /// Closes the layout renderer.
-        /// </summary>      
+        ///     Closes the layout renderer.
+        /// </summary>
         protected virtual void CloseLayoutRenderer()
         {
         }
 
         /// <summary>
-        /// Releases unmanaged and - optionally - managed resources.
+        ///     Releases unmanaged and - optionally - managed resources.
         /// </summary>
-        /// <param name="disposing">True to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        /// <param name="disposing">
+        ///     True to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.
+        /// </param>
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
-                this.Close();
+                Close();
             }
         }
     }

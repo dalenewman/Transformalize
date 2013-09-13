@@ -17,36 +17,43 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using NUnit.Framework;
-using Transformalize.Core;
-using Transformalize.Core.Process_;
+using Transformalize.Main;
 using Transformalize.Runner;
 
-namespace Transformalize.Test.Integration {
+namespace Transformalize.Test.Integration
+{
     [TestFixture]
-    public class Es {
+    public class Es
+    {
         private const string CONFIGURATION_FILE = @"c:\etl\rhinoetl\tfl\Es.xml";
+
+        [Test]
+        public void Init()
+        {
+            var options = new Options
+                              {
+                                  Mode = Modes.Initialize
+                              };
+            Process process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read(), options).Read();
+            new ProcessRunner(process).Run();
+        }
 
         [Test]
         public void MetaData()
         {
             var options = new Options("{'mode':'metadata'}");
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read(), options).Read();
-            new ProcessRunner(process).Run();
-        }
-
-        [Test]
-        public void Init()
-        {
-            var options = new Options { Mode = Modes.Initialize };
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read(), options).Read();
+            Process process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read(), options).Read();
             new ProcessRunner(process).Run();
         }
 
         [Test]
         public void Normal()
         {
-            var options = new Options { Mode = Modes.Normal };
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read(), options).Read();
+            var options = new Options
+                              {
+                                  Mode = Modes.Normal
+                              };
+            Process process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read(), options).Read();
             new ProcessRunner(process).Run();
         }
 
@@ -54,11 +61,8 @@ namespace Transformalize.Test.Integration {
         public void Test()
         {
             var options = new Options("{'mode':'test','top':1,'loglevel':'trace'}");
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read(), options).Read();
+            Process process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read(), options).Read();
             new ProcessRunner(process).Run();
         }
-
-
-
     }
 }

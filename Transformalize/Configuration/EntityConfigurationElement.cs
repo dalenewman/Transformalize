@@ -18,9 +18,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Configuration;
 
-namespace Transformalize.Configuration {
-    public class EntityConfigurationElement : ConfigurationElement {
-
+namespace Transformalize.Configuration
+{
+    public class EntityConfigurationElement : ConfigurationElement
+    {
         private const string SCHEMA = "schema";
         private const string NAME = "name";
         private const string ALIAS = "alias";
@@ -35,24 +36,17 @@ namespace Transformalize.Configuration {
         private const string PREFIX = "prefix";
         private const string GROUP = "group";
 
-        public override bool IsReadOnly()
-        {
-            return false;
-        }
-
         [ConfigurationProperty(SCHEMA, IsRequired = false, DefaultValue = "dbo")]
-        public string Schema {
-            get {
-                return this[SCHEMA] as string;
-            }
+        public string Schema
+        {
+            get { return this[SCHEMA] as string; }
             set { this[SCHEMA] = value; }
         }
 
         [ConfigurationProperty(NAME, IsRequired = true)]
-        public string Name {
-            get {
-                return this[NAME] as string;
-            }
+        public string Name
+        {
+            get { return this[NAME] as string; }
             set { this[NAME] = value; }
         }
 
@@ -68,81 +62,73 @@ namespace Transformalize.Configuration {
         }
 
         [ConfigurationProperty(CONNECTION, IsRequired = false, DefaultValue = "input")]
-        public string Connection {
-            get {
-                return this[CONNECTION] as string;
-            }
+        public string Connection
+        {
+            get { return this[CONNECTION] as string; }
             set { this[CONNECTION] = value; }
         }
 
         [ConfigurationProperty(PRIMARY_KEY)]
-        public FieldElementCollection PrimaryKey {
-            get {
-                return this[PRIMARY_KEY] as FieldElementCollection;
-            }
+        public FieldElementCollection PrimaryKey
+        {
+            get { return this[PRIMARY_KEY] as FieldElementCollection; }
         }
 
         [ConfigurationProperty(FIELDS)]
-        public FieldElementCollection Fields {
-            get {
-                return this[FIELDS] as FieldElementCollection;
-            }
+        public FieldElementCollection Fields
+        {
+            get { return this[FIELDS] as FieldElementCollection; }
         }
 
         [ConfigurationProperty(CALCULATED_FIELDS)]
         public FieldElementCollection CalculatedFields
         {
-            get
-            {
-                return this[CALCULATED_FIELDS] as FieldElementCollection;
-            }
+            get { return this[CALCULATED_FIELDS] as FieldElementCollection; }
         }
 
         [ConfigurationProperty(VERSION, IsRequired = false, DefaultValue = "")]
-        public string Version {
-            get {
-                return this[VERSION] as string;
-            }
+        public string Version
+        {
+            get { return this[VERSION] as string; }
             set { this[VERSION] = value; }
         }
 
         [ConfigurationProperty(OUTPUT)]
-        public OutputElementCollection Output {
-            get {
-                return this[OUTPUT] as OutputElementCollection;
-            }
+        public OutputElementCollection Output
+        {
+            get { return this[OUTPUT] as OutputElementCollection; }
         }
 
         [ConfigurationProperty(TRANSFORMS)]
-        public TransformElementCollection Transforms {
-            get {
-                return this[TRANSFORMS] as TransformElementCollection;
-            }
+        public TransformElementCollection Transforms
+        {
+            get { return this[TRANSFORMS] as TransformElementCollection; }
         }
 
         [ConfigurationProperty(AUTO, IsRequired = false, DefaultValue = false)]
-        public bool Auto {
-            get {
-                return (bool) this[AUTO];
-            }
+        public bool Auto
+        {
+            get { return (bool) this[AUTO]; }
             set { this[AUTO] = value; }
         }
 
         [ConfigurationProperty(PREFIX, IsRequired = false, DefaultValue = "Default")]
-        public string Prefix {
-            get {
-                return this[PREFIX] as string;
-            }
+        public string Prefix
+        {
+            get { return this[PREFIX] as string; }
             set { this[PREFIX] = value; }
         }
 
         [ConfigurationProperty(GROUP, IsRequired = false, DefaultValue = false)]
-        public bool Group {
-            get {
-                return (bool) this[GROUP];
-            }
+        public bool Group
+        {
+            get { return (bool) this[GROUP]; }
             set { this[GROUP] = value; }
         }
 
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
     }
 }

@@ -40,38 +40,40 @@ using System.Text;
 namespace Transformalize.Libs.NLog.LayoutRenderers
 {
     /// <summary>
-    /// Thread Windows identity information (username).
+    ///     Thread Windows identity information (username).
     /// </summary>
     [LayoutRenderer("windows-identity")]
     public class WindowsIdentityLayoutRenderer : LayoutRenderer
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="WindowsIdentityLayoutRenderer" /> class.
+        ///     Initializes a new instance of the <see cref="WindowsIdentityLayoutRenderer" /> class.
         /// </summary>
         public WindowsIdentityLayoutRenderer()
         {
-            this.UserName = true;
-            this.Domain = true;
+            UserName = true;
+            Domain = true;
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether domain name should be included.
+        ///     Gets or sets a value indicating whether domain name should be included.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         [DefaultValue(true)]
         public bool Domain { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether username should be included.
+        ///     Gets or sets a value indicating whether username should be included.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         [DefaultValue(true)]
         public bool UserName { get; set; }
 
         /// <summary>
-        /// Renders the current thread windows identity information and appends it to the specified <see cref="StringBuilder" />.
+        ///     Renders the current thread windows identity information and appends it to the specified <see cref="StringBuilder" />.
         /// </summary>
-        /// <param name="builder">The <see cref="StringBuilder"/> to append the rendered data to.</param>
+        /// <param name="builder">
+        ///     The <see cref="StringBuilder" /> to append the rendered data to.
+        /// </param>
         /// <param name="logEvent">Logging event.</param>
         protected override void Append(StringBuilder builder, LogEventInfo logEvent)
         {
@@ -80,9 +82,9 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
             {
                 string output = string.Empty;
 
-                if (this.UserName)
+                if (UserName)
                 {
-                    if (this.Domain)
+                    if (Domain)
                     {
                         // username && domain
                         output = currentIdentity.Name;
@@ -104,7 +106,7 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
                 else
                 {
                     // no username
-                    if (!this.Domain)
+                    if (!Domain)
                     {
                         // nothing to output
                         return;

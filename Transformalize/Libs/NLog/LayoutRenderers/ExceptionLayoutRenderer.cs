@@ -43,8 +43,8 @@ using Transformalize.Libs.NLog.Internal;
 namespace Transformalize.Libs.NLog.LayoutRenderers
 {
     /// <summary>
-    /// Exception information provided through 
-    /// a call to one of the Logger.*Exception() methods.
+    ///     Exception information provided through
+    ///     a call to one of the Logger.*Exception() methods.
     /// </summary>
     [LayoutRenderer("exception")]
     [ThreadAgnostic]
@@ -54,86 +54,82 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
         private string innerFormat = string.Empty;
         private ExceptionDataTarget[] exceptionDataTargets;
         private ExceptionDataTarget[] innerExceptionDataTargets;
-        
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="ExceptionLayoutRenderer" /> class.
+        ///     Initializes a new instance of the <see cref="ExceptionLayoutRenderer" /> class.
         /// </summary>
         public ExceptionLayoutRenderer()
         {
-            this.Format = "message";
-            this.Separator = " ";
-            this.InnerExceptionSeparator = EnvironmentHelper.NewLine;
-            this.MaxInnerExceptionLevel = 0;
+            Format = "message";
+            Separator = " ";
+            InnerExceptionSeparator = EnvironmentHelper.NewLine;
+            MaxInnerExceptionLevel = 0;
         }
 
         private delegate void ExceptionDataTarget(StringBuilder sb, Exception ex);
 
         /// <summary>
-        /// Gets or sets the format of the output. Must be a comma-separated list of exception
-        /// properties: Message, Type, ShortType, ToString, Method, StackTrace.
-        /// This parameter value is case-insensitive.
+        ///     Gets or sets the format of the output. Must be a comma-separated list of exception
+        ///     properties: Message, Type, ShortType, ToString, Method, StackTrace.
+        ///     This parameter value is case-insensitive.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         [DefaultParameter]
         public string Format
         {
-            get
-            {
-                return this.format;
-            }
+            get { return format; }
 
             set
             {
-                this.format = value;
-                this.exceptionDataTargets = CompileFormat(value);
+                format = value;
+                exceptionDataTargets = CompileFormat(value);
             }
         }
 
         /// <summary>
-        /// Gets or sets the format of the output of inner exceptions. Must be a comma-separated list of exception
-        /// properties: Message, Type, ShortType, ToString, Method, StackTrace.
-        /// This parameter value is case-insensitive.
+        ///     Gets or sets the format of the output of inner exceptions. Must be a comma-separated list of exception
+        ///     properties: Message, Type, ShortType, ToString, Method, StackTrace.
+        ///     This parameter value is case-insensitive.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         public string InnerFormat
         {
-            get
-            {
-                return this.innerFormat;
-            }
+            get { return innerFormat; }
 
             set
             {
-                this.innerFormat = value;
-                this.innerExceptionDataTargets = CompileFormat(value);
+                innerFormat = value;
+                innerExceptionDataTargets = CompileFormat(value);
             }
         }
 
         /// <summary>
-        /// Gets or sets the separator used to concatenate parts specified in the Format.
+        ///     Gets or sets the separator used to concatenate parts specified in the Format.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         [DefaultValue(" ")]
         public string Separator { get; set; }
 
         /// <summary>
-        /// Gets or sets the maximum number of inner exceptions to include in the output.
-        /// By default inner exceptions are not enabled for compatibility with NLog 1.0.
+        ///     Gets or sets the maximum number of inner exceptions to include in the output.
+        ///     By default inner exceptions are not enabled for compatibility with NLog 1.0.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         [DefaultValue(0)]
         public int MaxInnerExceptionLevel { get; set; }
 
         /// <summary>
-        /// Gets or sets the separator between inner exceptions.
+        ///     Gets or sets the separator between inner exceptions.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         public string InnerExceptionSeparator { get; set; }
 
         /// <summary>
-        /// Renders the specified exception information and appends it to the specified <see cref="StringBuilder" />.
+        ///     Renders the specified exception information and appends it to the specified <see cref="StringBuilder" />.
         /// </summary>
-        /// <param name="builder">The <see cref="StringBuilder"/> to append the rendered data to.</param>
+        /// <param name="builder">
+        ///     The <see cref="StringBuilder" /> to append the rendered data to.
+        /// </param>
         /// <param name="logEvent">Logging event.</param>
         protected override void Append(StringBuilder builder, LogEventInfo logEvent)
         {
@@ -142,33 +138,33 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
                 var sb2 = new StringBuilder(128);
                 string separator = string.Empty;
 
-                foreach (ExceptionDataTarget targetRenderFunc in this.exceptionDataTargets)
+                foreach (ExceptionDataTarget targetRenderFunc in exceptionDataTargets)
                 {
                     sb2.Append(separator);
                     targetRenderFunc(sb2, logEvent.Exception);
-                    separator = this.Separator;
+                    separator = Separator;
                 }
 
                 Exception currentException = logEvent.Exception.InnerException;
                 int currentLevel = 0;
-                while (currentException != null && currentLevel < this.MaxInnerExceptionLevel)
+                while (currentException != null && currentLevel < MaxInnerExceptionLevel)
                 {
                     // separate inner exceptions
-                    sb2.Append(this.InnerExceptionSeparator);
+                    sb2.Append(InnerExceptionSeparator);
 
                     separator = string.Empty;
-                    foreach (ExceptionDataTarget targetRenderFunc in this.innerExceptionDataTargets ?? this.exceptionDataTargets)
+                    foreach (ExceptionDataTarget targetRenderFunc in innerExceptionDataTargets ?? exceptionDataTargets)
                     {
                         sb2.Append(separator);
                         targetRenderFunc(sb2, currentException);
-                        separator = this.Separator;
+                        separator = Separator;
                     }
 
                     currentException = currentException.InnerException;
                     currentLevel++;
                 }
 
-                builder.Append(sb2.ToString());
+                builder.Append(sb2);
             }
         }
 
@@ -184,7 +180,7 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
 #else
             if (ex.TargetSite != null)
             {
-                sb.Append(ex.TargetSite.ToString());
+                sb.Append(ex.TargetSite);
             }
 #endif
         }
@@ -196,7 +192,7 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
 
         private static void AppendToString(StringBuilder sb, Exception ex)
         {
-            sb.Append(ex.ToString());
+            sb.Append(ex);
         }
 
         private static void AppendType(StringBuilder sb, Exception ex)

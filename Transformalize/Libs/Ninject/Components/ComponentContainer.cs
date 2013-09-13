@@ -1,4 +1,5 @@
 #region License
+
 // 
 // Author: Nate Kohari <nate@enkari.com>
 // Copyright (c) 2007-2010, Enkari, Ltd.
@@ -6,7 +7,9 @@
 // Dual-licensed under the Apache License, Version 2.0, and the Microsoft Public License (Ms-PL).
 // See the file LICENSE.txt for details.
 // 
+
 #endregion
+
 #region Using Directives
 
 using System;
@@ -23,7 +26,7 @@ using Transformalize.Libs.Ninject.Infrastructure.Language;
 namespace Transformalize.Libs.Ninject.Components
 {
     /// <summary>
-    /// An internal container that manages and resolves components that contribute to Ninject.
+    ///     An internal container that manages and resolves components that contribute to Ninject.
     /// </summary>
     public class ComponentContainer : DisposableObject, IComponentContainer
     {
@@ -32,12 +35,12 @@ namespace Transformalize.Libs.Ninject.Components
         private readonly HashSet<KeyValuePair<Type, Type>> transients = new HashSet<KeyValuePair<Type, Type>>();
 
         /// <summary>
-        /// Gets or sets the kernel that owns the component container.
+        ///     Gets or sets the kernel that owns the component container.
         /// </summary>
         public IKernel Kernel { get; set; }
 
         /// <summary>
-        /// Releases resources held by the object.
+        ///     Releases resources held by the object.
         /// </summary>
         public override void Dispose(bool disposing)
         {
@@ -54,7 +57,7 @@ namespace Transformalize.Libs.Ninject.Components
         }
 
         /// <summary>
-        /// Registers a component in the container.
+        ///     Registers a component in the container.
         /// </summary>
         /// <typeparam name="TComponent">The component type.</typeparam>
         /// <typeparam name="TImplementation">The component's implementation type.</typeparam>
@@ -62,11 +65,11 @@ namespace Transformalize.Libs.Ninject.Components
             where TComponent : INinjectComponent
             where TImplementation : TComponent, INinjectComponent
         {
-            _mappings.Add(typeof(TComponent), typeof(TImplementation));
+            _mappings.Add(typeof (TComponent), typeof (TImplementation));
         }
 
         /// <summary>
-        /// Registers a transient component in the container.
+        ///     Registers a transient component in the container.
         /// </summary>
         /// <typeparam name="TComponent">The component type.</typeparam>
         /// <typeparam name="TImplementation">The component's implementation type.</typeparam>
@@ -74,22 +77,22 @@ namespace Transformalize.Libs.Ninject.Components
             where TComponent : INinjectComponent
             where TImplementation : TComponent, INinjectComponent
         {
-            this.Add<TComponent, TImplementation>();
-            this.transients.Add(new KeyValuePair<Type, Type>(typeof(TComponent), typeof(TImplementation)));
+            Add<TComponent, TImplementation>();
+            transients.Add(new KeyValuePair<Type, Type>(typeof (TComponent), typeof (TImplementation)));
         }
-        
+
         /// <summary>
-        /// Removes all registrations for the specified component.
+        ///     Removes all registrations for the specified component.
         /// </summary>
         /// <typeparam name="T">The component type.</typeparam>
         public void RemoveAll<T>()
             where T : INinjectComponent
         {
-            RemoveAll(typeof(T));
+            RemoveAll(typeof (T));
         }
 
         /// <summary>
-        /// Removes all registrations for the specified component.
+        ///     Removes all registrations for the specified component.
         /// </summary>
         /// <param name="component">The component type.</param>
         public void RemoveAll(Type component)
@@ -108,29 +111,29 @@ namespace Transformalize.Libs.Ninject.Components
         }
 
         /// <summary>
-        /// Gets one instance of the specified component.
+        ///     Gets one instance of the specified component.
         /// </summary>
         /// <typeparam name="T">The component type.</typeparam>
         /// <returns>The instance of the component.</returns>
         public T Get<T>()
             where T : INinjectComponent
         {
-            return (T) Get(typeof(T));
+            return (T) Get(typeof (T));
         }
 
         /// <summary>
-        /// Gets all available instances of the specified component.
+        ///     Gets all available instances of the specified component.
         /// </summary>
         /// <typeparam name="T">The component type.</typeparam>
         /// <returns>A series of instances of the specified component.</returns>
         public IEnumerable<T> GetAll<T>()
             where T : INinjectComponent
         {
-            return GetAll(typeof(T)).Cast<T>();
+            return GetAll(typeof (T)).Cast<T>();
         }
 
         /// <summary>
-        /// Gets one instance of the specified component.
+        ///     Gets one instance of the specified component.
         /// </summary>
         /// <param name="component">The component type.</param>
         /// <returns>The instance of the component.</returns>
@@ -138,7 +141,7 @@ namespace Transformalize.Libs.Ninject.Components
         {
             Ensure.ArgumentNotNull(component, "component");
 
-            if (component == typeof(IKernel))
+            if (component == typeof (IKernel))
                 return Kernel;
 
             if (component.IsGenericType)
@@ -165,7 +168,7 @@ namespace Transformalize.Libs.Ninject.Components
         }
 
         /// <summary>
-        /// Gets all available instances of the specified component.
+        ///     Gets all available instances of the specified component.
         /// </summary>
         /// <param name="component">The component type.</param>
         /// <returns>A series of instances of the specified component.</returns>
@@ -186,16 +189,16 @@ namespace Transformalize.Libs.Ninject.Components
         private object CreateNewInstance(Type component, Type implementation)
         {
             ConstructorInfo constructor = SelectConstructor(component, implementation);
-            var arguments = constructor.GetParameters().Select(parameter => Get(parameter.ParameterType)).ToArray();
+            object[] arguments = constructor.GetParameters().Select(parameter => Get(parameter.ParameterType)).ToArray();
 
             try
             {
                 var instance = constructor.Invoke(arguments) as INinjectComponent;
                 instance.Settings = Kernel.Settings;
 
-                if (!this.transients.Contains(new KeyValuePair<Type, Type>(component, implementation)))
+                if (!transients.Contains(new KeyValuePair<Type, Type>(component, implementation)))
                 {
-                    _instances.Add(implementation, instance);                    
+                    _instances.Add(implementation, instance);
                 }
 
                 return instance;
@@ -209,7 +212,7 @@ namespace Transformalize.Libs.Ninject.Components
 
         private static ConstructorInfo SelectConstructor(Type component, Type implementation)
         {
-            var constructor = implementation.GetConstructors().OrderByDescending(c => c.GetParameters().Length).FirstOrDefault();
+            ConstructorInfo constructor = implementation.GetConstructors().OrderByDescending(c => c.GetParameters().Length).FirstOrDefault();
 
             if (constructor == null)
                 throw new InvalidOperationException(ExceptionFormatter.NoConstructorsAvailableForComponent(component, implementation));

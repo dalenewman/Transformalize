@@ -42,7 +42,7 @@ using Transformalize.Libs.NLog.Internal;
 namespace Transformalize.Libs.NLog.LayoutRenderers
 {
     /// <summary>
-    /// The machine name that the process is running on.
+    ///     The machine name that the process is running on.
     /// </summary>
     [LayoutRenderer("machinename")]
     [AppDomainFixedOutput]
@@ -52,14 +52,14 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
         internal string MachineName { get; private set; }
 
         /// <summary>
-        /// Initializes the layout renderer.
+        ///     Initializes the layout renderer.
         /// </summary>
         protected override void InitializeLayoutRenderer()
         {
             base.InitializeLayoutRenderer();
             try
             {
-                this.MachineName = Environment.MachineName;
+                MachineName = Environment.MachineName;
             }
             catch (Exception exception)
             {
@@ -69,18 +69,20 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
                 }
 
                 InternalLogger.Error("Error getting machine name {0}", exception);
-                this.MachineName = string.Empty;
+                MachineName = string.Empty;
             }
         }
 
         /// <summary>
-        /// Renders the machine name and appends it to the specified <see cref="StringBuilder" />.
+        ///     Renders the machine name and appends it to the specified <see cref="StringBuilder" />.
         /// </summary>
-        /// <param name="builder">The <see cref="StringBuilder"/> to append the rendered data to.</param>
+        /// <param name="builder">
+        ///     The <see cref="StringBuilder" /> to append the rendered data to.
+        /// </param>
         /// <param name="logEvent">Logging event.</param>
         protected override void Append(StringBuilder builder, LogEventInfo logEvent)
         {
-            builder.Append(this.MachineName);
+            builder.Append(MachineName);
         }
     }
 }

@@ -16,30 +16,32 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Configuration;
 
-namespace Transformalize.Configuration {
-    public class TransformElementCollection : ConfigurationElementCollection {
-
-        public override bool IsReadOnly()
+namespace Transformalize.Configuration
+{
+    public class TransformElementCollection : ConfigurationElementCollection
+    {
+        public TransformConfigurationElement this[int index]
         {
-            return false;
-        }
-
-        public TransformConfigurationElement this[int index] {
-            get {
-                return BaseGet(index) as TransformConfigurationElement;
-            }
-            set {
-                if (BaseGet(index) != null) {
+            get { return BaseGet(index) as TransformConfigurationElement; }
+            set
+            {
+                if (BaseGet(index) != null)
+                {
                     BaseRemoveAt(index);
                 }
                 BaseAdd(index, value);
             }
         }
 
-        protected override ConfigurationElement CreateNewElement() {
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
+        protected override ConfigurationElement CreateNewElement()
+        {
             return new TransformConfigurationElement();
         }
 

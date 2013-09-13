@@ -20,26 +20,28 @@ using System.Configuration;
 
 namespace Transformalize.Configuration
 {
-    public class EntityElementCollection : ConfigurationElementCollection {
-
-        public override bool IsReadOnly()
+    public class EntityElementCollection : ConfigurationElementCollection
+    {
+        public EntityConfigurationElement this[int index]
         {
-            return false;
-        }
-
-        public EntityConfigurationElement this[int index] {
-            get {
-                return BaseGet(index) as EntityConfigurationElement;
-            }
-            set {
-                if (BaseGet(index) != null) {
+            get { return BaseGet(index) as EntityConfigurationElement; }
+            set
+            {
+                if (BaseGet(index) != null)
+                {
                     BaseRemoveAt(index);
                 }
                 BaseAdd(index, value);
             }
         }
 
-        protected override ConfigurationElement CreateNewElement() {
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
+        protected override ConfigurationElement CreateNewElement()
+        {
             return new EntityConfigurationElement();
         }
 
@@ -48,6 +50,5 @@ namespace Transformalize.Configuration
             var entity = ((EntityConfigurationElement) element);
             return entity.Alias != string.Empty ? entity.Alias.ToLower() : entity.Name.ToLower();
         }
-        
     }
 }

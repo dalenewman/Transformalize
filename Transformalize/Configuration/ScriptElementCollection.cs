@@ -16,46 +16,45 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Configuration;
 
-namespace Transformalize.Configuration {
-    public class ScriptElementCollection : ConfigurationElementCollection {
-
-        public override bool IsReadOnly()
+namespace Transformalize.Configuration
+{
+    public class ScriptElementCollection : ConfigurationElementCollection
+    {
+        public ScriptConfigurationElement this[int index]
         {
-            return false;
-        }
-
-        public ScriptConfigurationElement this[int index] {
-            get {
-                return BaseGet(index) as ScriptConfigurationElement;
-            }
-            set {
-                if (BaseGet(index) != null) {
+            get { return BaseGet(index) as ScriptConfigurationElement; }
+            set
+            {
+                if (BaseGet(index) != null)
+                {
                     BaseRemoveAt(index);
                 }
                 BaseAdd(index, value);
             }
         }
 
-        protected override ConfigurationElement CreateNewElement() {
-            return new ScriptConfigurationElement();
-        }
-
-        protected override object GetElementKey(ConfigurationElement element) {
-            return ((ScriptConfigurationElement)element).Name.ToLower();
-        }
-
         [ConfigurationProperty("path", IsRequired = false, DefaultValue = "")]
         public string Path
         {
-            get
-            {
-                return this["path"] as string;
-            }
+            get { return this["path"] as string; }
             set { this["path"] = value; }
         }
 
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
+        protected override ConfigurationElement CreateNewElement()
+        {
+            return new ScriptConfigurationElement();
+        }
+
+        protected override object GetElementKey(ConfigurationElement element)
+        {
+            return ((ScriptConfigurationElement) element).Name.ToLower();
+        }
     }
 }

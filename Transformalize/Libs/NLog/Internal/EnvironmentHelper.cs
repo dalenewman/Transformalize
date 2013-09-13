@@ -37,7 +37,7 @@ using System.Security;
 namespace Transformalize.Libs.NLog.Internal
 {
     /// <summary>
-    /// Safe way to get environment variables.
+    ///     Safe way to get environment variables.
     /// </summary>
     internal static class EnvironmentHelper
     {

@@ -16,17 +16,18 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace Transformalize.Extensions {
-
-    public static class StringExtensions {
-
-        public static string Left(this string s, int length) {
+namespace Transformalize.Extensions
+{
+    public static class StringExtensions
+    {
+        public static string Left(this string s, int length)
+        {
             return s.Substring(0, length);
         }
 
-        public static string Right(this string s, int length) {
+        public static string Right(this string s, int length)
+        {
             return s.Substring(s.Length - length, length);
         }
-
     }
 }

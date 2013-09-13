@@ -38,28 +38,28 @@ using System.Collections.Generic;
 namespace Transformalize.Libs.NLog.Internal
 {
     /// <summary>
-    /// LINQ-like helpers (cannot use LINQ because we must work with .NET 2.0 profile).
+    ///     LINQ-like helpers (cannot use LINQ because we must work with .NET 2.0 profile).
     /// </summary>
     internal static class EnumerableHelpers
     {
         /// <summary>
-        /// Filters the given enumerable to return only items of the specified type.
+        ///     Filters the given enumerable to return only items of the specified type.
         /// </summary>
         /// <typeparam name="T">
-        /// Type of the item.
+        ///     Type of the item.
         /// </typeparam>
         /// <param name="enumerable">
-        /// The enumerable.
+        ///     The enumerable.
         /// </param>
         /// <returns>
-        /// Items of specified type.
+        ///     Items of specified type.
         /// </returns>
         public static IEnumerable<T> OfType<T>(this IEnumerable enumerable)
             where T : class
         {
             foreach (object o in enumerable)
             {
-                T t = o as T;
+                var t = o as T;
                 if (t != null)
                 {
                     yield return t;
@@ -68,27 +68,27 @@ namespace Transformalize.Libs.NLog.Internal
         }
 
         /// <summary>
-        /// Reverses the specified enumerable.
+        ///     Reverses the specified enumerable.
         /// </summary>
         /// <typeparam name="T">
-        /// Type of enumerable item.
+        ///     Type of enumerable item.
         /// </typeparam>
         /// <param name="enumerable">
-        /// The enumerable.
+        ///     The enumerable.
         /// </param>
         /// <returns>
-        /// Reversed enumerable.
+        ///     Reversed enumerable.
         /// </returns>
         public static IEnumerable<T> Reverse<T>(this IEnumerable<T> enumerable)
             where T : class
         {
-            List<T> tmp = new List<T>(enumerable);
+            var tmp = new List<T>(enumerable);
             tmp.Reverse();
             return tmp;
         }
 
         /// <summary>
-        /// Determines is the given predicate is met by any element of the enumerable.
+        ///     Determines is the given predicate is met by any element of the enumerable.
         /// </summary>
         /// <typeparam name="T">Element type.</typeparam>
         /// <param name="enumerable">The enumerable.</param>
@@ -96,7 +96,7 @@ namespace Transformalize.Libs.NLog.Internal
         /// <returns>True if predicate returns true for any element of the collection, false otherwise.</returns>
         public static bool Any<T>(this IEnumerable<T> enumerable, Predicate<T> predicate)
         {
-            foreach (var t in enumerable)
+            foreach (T t in enumerable)
             {
                 if (predicate(t))
                 {
@@ -108,7 +108,7 @@ namespace Transformalize.Libs.NLog.Internal
         }
 
         /// <summary>
-        /// Converts the enumerable to list.
+        ///     Converts the enumerable to list.
         /// </summary>
         /// <typeparam name="T">Type of the list element.</typeparam>
         /// <param name="enumerable">The enumerable.</param>

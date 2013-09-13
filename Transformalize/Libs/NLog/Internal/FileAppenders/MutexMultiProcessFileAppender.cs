@@ -32,6 +32,7 @@
 // 
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Threading;
@@ -42,15 +43,15 @@ using Transformalize.Libs.NLog.Common;
 namespace Transformalize.Libs.NLog.Internal.FileAppenders
 {
     /// <summary>
-    /// Provides a multiprocess-safe atomic file appends while
-    /// keeping the files open.
+    ///     Provides a multiprocess-safe atomic file appends while
+    ///     keeping the files open.
     /// </summary>
     /// <remarks>
-    /// On Unix you can get all the appends to be atomic, even when multiple 
-    /// processes are trying to write to the same file, because setting the file
-    /// pointer to the end of the file and appending can be made one operation.
-    /// On Win32 we need to maintain some synchronization between processes
-    /// (global named mutex is used for this)
+    ///     On Unix you can get all the appends to be atomic, even when multiple
+    ///     processes are trying to write to the same file, because setting the file
+    ///     pointer to the end of the file and appending can be made one operation.
+    ///     On Win32 we need to maintain some synchronization between processes
+    ///     (global named mutex is used for this)
     /// </remarks>
     internal class MutexMultiProcessFileAppender : BaseFileAppender
     {
@@ -60,7 +61,7 @@ namespace Transformalize.Libs.NLog.Internal.FileAppenders
         private Mutex mutex;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MutexMultiProcessFileAppender" /> class.
+        ///     Initializes a new instance of the <see cref="MutexMultiProcessFileAppender" /> class.
         /// </summary>
         /// <param name="fileName">Name of the file.</param>
         /// <param name="parameters">The parameters.</param>
@@ -68,21 +69,21 @@ namespace Transformalize.Libs.NLog.Internal.FileAppenders
         {
             try
             {
-                this.mutex = new Mutex(false, GetMutexName(fileName));
-                this.file = CreateFileStream(true);
+                mutex = new Mutex(false, GetMutexName(fileName));
+                file = CreateFileStream(true);
             }
             catch
             {
-                if (this.mutex != null)
+                if (mutex != null)
                 {
-                    this.mutex.Close();
-                    this.mutex = null;
+                    mutex.Close();
+                    mutex = null;
                 }
 
-                if (this.file != null)
+                if (file != null)
                 {
-                    this.file.Close();
-                    this.file = null;
+                    file.Close();
+                    file = null;
                 }
 
                 throw;
@@ -90,19 +91,19 @@ namespace Transformalize.Libs.NLog.Internal.FileAppenders
         }
 
         /// <summary>
-        /// Writes the specified bytes.
+        ///     Writes the specified bytes.
         /// </summary>
         /// <param name="bytes">The bytes to be written.</param>
         public override void Write(byte[] bytes)
         {
-            if (this.mutex == null)
+            if (mutex == null)
             {
                 return;
             }
 
             try
             {
-                this.mutex.WaitOne();
+                mutex.WaitOne();
             }
             catch (AbandonedMutexException)
             {
@@ -113,40 +114,40 @@ namespace Transformalize.Libs.NLog.Internal.FileAppenders
 
             try
             {
-                this.file.Seek(0, SeekOrigin.End);
-                this.file.Write(bytes, 0, bytes.Length);
-                this.file.Flush();
+                file.Seek(0, SeekOrigin.End);
+                file.Write(bytes, 0, bytes.Length);
+                file.Flush();
                 FileTouched();
             }
             finally
             {
-                this.mutex.ReleaseMutex();
+                mutex.ReleaseMutex();
             }
         }
 
         /// <summary>
-        /// Closes this instance.
+        ///     Closes this instance.
         /// </summary>
         public override void Close()
         {
             InternalLogger.Trace("Closing '{0}'", FileName);
-            if (this.mutex != null)
+            if (mutex != null)
             {
-                this.mutex.Close();
+                mutex.Close();
             }
 
-            if (this.file != null)
+            if (file != null)
             {
-                this.file.Close();
+                file.Close();
             }
 
-            this.mutex = null;
-            this.file = null;
+            mutex = null;
+            file = null;
             FileTouched();
         }
 
         /// <summary>
-        /// Flushes this instance.
+        ///     Flushes this instance.
         /// </summary>
         public override void Flush()
         {
@@ -154,17 +155,17 @@ namespace Transformalize.Libs.NLog.Internal.FileAppenders
         }
 
         /// <summary>
-        /// Gets the file info.
+        ///     Gets the file info.
         /// </summary>
         /// <param name="lastWriteTime">The last write time.</param>
         /// <param name="fileLength">Length of the file.</param>
         /// <returns>
-        /// True if the operation succeeded, false otherwise.
+        ///     True if the operation succeeded, false otherwise.
         /// </returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Runtime.InteropServices.SafeHandle.DangerousGetHandle", Justification = "Optimization")]
+        [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Runtime.InteropServices.SafeHandle.DangerousGetHandle", Justification = "Optimization")]
         public override bool GetFileInfo(out DateTime lastWriteTime, out long fileLength)
         {
-            return FileInfoHelper.Helper.GetFileInfo(FileName, this.file.SafeFileHandle.DangerousGetHandle(), out lastWriteTime, out fileLength);
+            return FileInfoHelper.Helper.GetFileInfo(FileName, file.SafeFileHandle.DangerousGetHandle(), out lastWriteTime, out fileLength);
         }
 
         private static string GetMutexName(string fileName)
@@ -179,17 +180,17 @@ namespace Transformalize.Libs.NLog.Internal.FileAppenders
         }
 
         /// <summary>
-        /// Factory class.
+        ///     Factory class.
         /// </summary>
         private class Factory : IFileAppenderFactory
         {
             /// <summary>
-            /// Opens the appender for given file name and parameters.
+            ///     Opens the appender for given file name and parameters.
             /// </summary>
             /// <param name="fileName">Name of the file.</param>
             /// <param name="parameters">Creation parameters.</param>
             /// <returns>
-            /// Instance of <see cref="BaseFileAppender"/> which can be used to write to the file.
+            ///     Instance of <see cref="BaseFileAppender" /> which can be used to write to the file.
             /// </returns>
             BaseFileAppender IFileAppenderFactory.Open(string fileName, ICreateFileParameters parameters)
             {

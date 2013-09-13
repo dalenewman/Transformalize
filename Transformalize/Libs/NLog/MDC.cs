@@ -36,13 +36,13 @@ using System;
 namespace Transformalize.Libs.NLog
 {
     /// <summary>
-    /// Mapped Diagnostics Context - used for log4net compatibility.
+    ///     Mapped Diagnostics Context - used for log4net compatibility.
     /// </summary>
     [Obsolete("Use MappedDiagnosticsContext instead")]
     public static class MDC
     {
         /// <summary>
-        /// Sets the current thread MDC item to the specified value.
+        ///     Sets the current thread MDC item to the specified value.
         /// </summary>
         /// <param name="item">Item name.</param>
         /// <param name="value">Item value.</param>
@@ -52,7 +52,7 @@ namespace Transformalize.Libs.NLog
         }
 
         /// <summary>
-        /// Gets the current thread MDC named item.
+        ///     Gets the current thread MDC named item.
         /// </summary>
         /// <param name="item">Item name.</param>
         /// <returns>The item value of string.Empty if the value is not present.</returns>
@@ -62,7 +62,7 @@ namespace Transformalize.Libs.NLog
         }
 
         /// <summary>
-        /// Checks whether the specified item exists in current thread MDC.
+        ///     Checks whether the specified item exists in current thread MDC.
         /// </summary>
         /// <param name="item">Item name.</param>
         /// <returns>A boolean indicating whether the specified item exists in current thread MDC.</returns>
@@ -72,7 +72,7 @@ namespace Transformalize.Libs.NLog
         }
 
         /// <summary>
-        /// Removes the specified item from current thread MDC.
+        ///     Removes the specified item from current thread MDC.
         /// </summary>
         /// <param name="item">Item name.</param>
         public static void Remove(string item)
@@ -81,7 +81,7 @@ namespace Transformalize.Libs.NLog
         }
 
         /// <summary>
-        /// Clears the content of current thread MDC.
+        ///     Clears the content of current thread MDC.
         /// </summary>
         public static void Clear()
         {

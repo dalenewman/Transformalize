@@ -18,56 +18,54 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using Transformalize.Core;
-using Transformalize.Core.Entity_;
-using Transformalize.Core.Field_;
-using Transformalize.Core.Fields_;
-using Transformalize.Core.Process_;
-using Transformalize.Libs.NLog;
-using Transformalize.Libs.Rhino.Etl.Core;
-using Transformalize.Libs.Rhino.Etl.Core.Operations;
-using Transformalize.Providers;
-using Transformalize.Providers.SqlServer;
 using System.Linq;
+using Transformalize.Main;
+using Transformalize.Main.Providers;
+using Transformalize.Main.Providers.SqlServer;
+using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Libs.Rhino.Etl.Operations;
 
-namespace Transformalize.Operations {
-
-    public class EntityCreate : AbstractOperation {
-        
+namespace Transformalize.Operations
+{
+    public class EntityCreate : AbstractOperation
+    {
         private readonly Entity _entity;
         private readonly IEntityExists _entityExists;
         private readonly FieldSqlWriter _writer;
 
-        public EntityCreate(Entity entity, Process process, IEntityExists entityExists = null) {
+        public EntityCreate(Entity entity, Process process, IEntityExists entityExists = null)
+        {
             _entity = entity;
-           
+
             _writer = _entity.IsMaster() ?
-                new FieldSqlWriter(entity.All, process.CalculatedFields, entity.CalculatedFields, GetRelationshipFields(process)) :
-                new FieldSqlWriter(entity.All, entity.CalculatedFields);
+                          new FieldSqlWriter(entity.All, process.CalculatedFields, entity.CalculatedFields, GetRelationshipFields(process)) :
+                          new FieldSqlWriter(entity.All, entity.CalculatedFields);
 
             _entityExists = entityExists ?? new SqlServerEntityExists();
         }
 
-        public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
+        public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
+        {
             CreateEntity();
             return rows;
         }
 
         private void CreateEntity()
         {
-            var provider = _entity.OutputConnection.Provider;
+            AbstractProvider provider = _entity.OutputConnection.Provider;
 
             if (_entityExists.OutputExists(_entity)) return;
 
-            var primaryKey = _entity.IsMaster()
-                ? _writer.FieldType(FieldType.MasterKey).Alias(provider).Asc().Values()
-                : _writer.FieldType(FieldType.PrimaryKey).Alias(provider).Asc().Values();
-            var defs = _writer.Reload().ExpandXml().AddSurrogateKey().AddBatchId().Output().Alias(provider).DataType().AppendIf(" NOT NULL", FieldType.MasterKey, FieldType.PrimaryKey).Values();
-            var sql = _entity.OutputConnection.TableQueryWriter.Write(_entity.OutputName(), defs, primaryKey, ignoreDups: true);
+            IEnumerable<string> primaryKey = _entity.IsMaster()
+                                                 ? _writer.FieldType(FieldType.MasterKey).Alias(provider).Asc().Values()
+                                                 : _writer.FieldType(FieldType.PrimaryKey).Alias(provider).Asc().Values();
+            IEnumerable<string> defs = _writer.Reload().ExpandXml().AddSurrogateKey().AddBatchId().Output().Alias(provider).DataType().AppendIf(" NOT NULL", FieldType.MasterKey, FieldType.PrimaryKey).Values();
+            string sql = _entity.OutputConnection.TableQueryWriter.Write(_entity.OutputName(), defs, primaryKey, ignoreDups: true);
 
             Debug(sql);
 
-            using (var cn = new SqlConnection(_entity.OutputConnection.ConnectionString)) {
+            using (var cn = new SqlConnection(_entity.OutputConnection.ConnectionString))
+            {
                 cn.Open();
                 var cmd = new SqlCommand(sql, cn);
                 cmd.ExecuteNonQuery();
@@ -77,24 +75,24 @@ namespace Transformalize.Operations {
 
         private IFields GetRelationshipFields(Process process)
         {
-            var relationships = process.Relationships.Where(r => r.LeftEntity.Alias != _entity.Alias && r.RightEntity.Alias != _entity.Alias).ToArray();
+            Relationship[] relationships = process.Relationships.Where(r => r.LeftEntity.Alias != _entity.Alias && r.RightEntity.Alias != _entity.Alias).ToArray();
             var fields = new Fields();
             if (relationships.Any())
             {
-                foreach (var relationship in relationships)
+                foreach (Relationship relationship in relationships)
                 {
-                    var leftSide = relationship.LeftEntity.RelationshipToMaster.Count();
-                    var rightSide = relationship.RightEntity.RelationshipToMaster.Count();
+                    int leftSide = relationship.LeftEntity.RelationshipToMaster.Count();
+                    int rightSide = relationship.RightEntity.RelationshipToMaster.Count();
                     if (leftSide <= rightSide)
                     {
-                        foreach (var join in relationship.Join)
+                        foreach (Join join in relationship.Join)
                         {
                             fields.Add(join.LeftField);
                         }
                     }
                     else
                     {
-                        foreach (var join in relationship.Join)
+                        foreach (Join join in relationship.Join)
                         {
                             fields.Add(join.RightField);
                         }

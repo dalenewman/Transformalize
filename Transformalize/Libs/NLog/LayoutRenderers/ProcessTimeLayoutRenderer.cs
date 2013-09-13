@@ -38,16 +38,18 @@ using Transformalize.Libs.NLog.Config;
 namespace Transformalize.Libs.NLog.LayoutRenderers
 {
     /// <summary>
-    /// The process time in format HH:mm:ss.mmm.
+    ///     The process time in format HH:mm:ss.mmm.
     /// </summary>
     [LayoutRenderer("processtime")]
     [ThreadAgnostic]
     public class ProcessTimeLayoutRenderer : LayoutRenderer
     {
         /// <summary>
-        /// Renders the current process running time and appends it to the specified <see cref="StringBuilder" />.
+        ///     Renders the current process running time and appends it to the specified <see cref="StringBuilder" />.
         /// </summary>
-        /// <param name="builder">The <see cref="StringBuilder"/> to append the rendered data to.</param>
+        /// <param name="builder">
+        ///     The <see cref="StringBuilder" /> to append the rendered data to.
+        /// </param>
         /// <param name="logEvent">Logging event.</param>
         protected override void Append(StringBuilder builder, LogEventInfo logEvent)
         {

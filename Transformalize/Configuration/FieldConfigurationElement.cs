@@ -20,8 +20,8 @@ using System.Configuration;
 
 namespace Transformalize.Configuration
 {
-    public class FieldConfigurationElement : ConfigurationElement {
-
+    public class FieldConfigurationElement : ConfigurationElement
+    {
         private const string AGGREGATE = "aggregate";
         private const string NAME = "name";
         private const string ALIAS = "alias";
@@ -39,22 +39,18 @@ namespace Transformalize.Configuration
         private const string SEARCH_TYPE = "search-type";
         private const string SEARCH_TYPES = "search-types";
 
-        public override bool IsReadOnly()
-        {
-            return false;
-        }
-
         [ConfigurationProperty(NAME, IsRequired = true)]
-        public string Name {
-            get {
-                return this[NAME] as string;
-            }
+        public string Name
+        {
+            get { return this[NAME] as string; }
             set { this[NAME] = value; }
         }
 
         [ConfigurationProperty(ALIAS, IsRequired = false, DefaultValue = "")]
-        public string Alias {
-            get {
+        public string Alias
+        {
+            get
+            {
                 var alias = this[ALIAS] as string;
                 return alias == null || alias.Equals(string.Empty) ? Name : alias;
             }
@@ -62,10 +58,9 @@ namespace Transformalize.Configuration
         }
 
         [ConfigurationProperty(TYPE, IsRequired = false, DefaultValue = "string")]
-        public string Type {
-            get {
-                return this[TYPE] as string;
-            }
+        public string Type
+        {
+            get { return this[TYPE] as string; }
             set { this[TYPE] = value; }
         }
 
@@ -73,107 +68,94 @@ namespace Transformalize.Configuration
         [ConfigurationProperty(SEARCH_TYPE, IsRequired = false, DefaultValue = "default")]
         public string SearchType
         {
-            get
-            {
-                return this[SEARCH_TYPE] as string;
-            }
+            get { return this[SEARCH_TYPE] as string; }
             set { this[SEARCH_TYPE] = value; }
         }
 
         [ConfigurationProperty(XML)]
-        public XmlElementCollection Xml {
-            get {
-                return this[XML] as XmlElementCollection;
-            }
+        public XmlElementCollection Xml
+        {
+            get { return this[XML] as XmlElementCollection; }
         }
 
         [ConfigurationProperty(SEARCH_TYPES)]
         public FieldSearchTypeElementCollection SearchTypes
         {
-            get
-            {
-                return this[SEARCH_TYPES] as FieldSearchTypeElementCollection;
-            }
+            get { return this[SEARCH_TYPES] as FieldSearchTypeElementCollection; }
         }
 
         [ConfigurationProperty(LENGTH, IsRequired = false, DefaultValue = "64")]
-        public string Length {
-            get {
-                return this[LENGTH] as string;
-            }
+        public string Length
+        {
+            get { return this[LENGTH] as string; }
             set { this[LENGTH] = value; }
         }
 
         [ConfigurationProperty(PRECISION, IsRequired = false, DefaultValue = 18)]
-        public int Precision {
-            get {
-                return (int)this[PRECISION];
-            }
+        public int Precision
+        {
+            get { return (int) this[PRECISION]; }
             set { this[PRECISION] = value; }
         }
 
         [ConfigurationProperty(SCALE, IsRequired = false, DefaultValue = 9)]
-        public int Scale {
-            get {
-                return (int)this[SCALE];
-            }
+        public int Scale
+        {
+            get { return (int) this[SCALE]; }
             set { this[SCALE] = value; }
         }
 
         [ConfigurationProperty(INPUT, IsRequired = false, DefaultValue = true)]
-        public bool Input {
-            get {
-                return (bool)this[INPUT];
-            }
+        public bool Input
+        {
+            get { return (bool) this[INPUT]; }
             set { this[INPUT] = value; }
         }
 
         [ConfigurationProperty(OUTPUT, IsRequired = false, DefaultValue = true)]
-        public bool Output {
-            get {
-                return (bool) this[OUTPUT];
-            }
+        public bool Output
+        {
+            get { return (bool) this[OUTPUT]; }
             set { this[OUTPUT] = value; }
         }
 
         [ConfigurationProperty(UNICODE, IsRequired = false, DefaultValue = true)]
-        public bool Unicode {
-            get {
-                return (bool)this[UNICODE];
-            }
+        public bool Unicode
+        {
+            get { return (bool) this[UNICODE]; }
             set { this[UNICODE] = value; }
         }
 
         [ConfigurationProperty(VARIABLE_LENGTH, IsRequired = false, DefaultValue = true)]
-        public bool VariableLength {
-            get {
-                return (bool)this[VARIABLE_LENGTH];
-            }
+        public bool VariableLength
+        {
+            get { return (bool) this[VARIABLE_LENGTH]; }
             set { this[VARIABLE_LENGTH] = value; }
         }
 
         [ConfigurationProperty(DEFAULT, IsRequired = false, DefaultValue = "")]
-        public string Default {
-            get {
-                return (string) this[DEFAULT];
-            }
+        public string Default
+        {
+            get { return (string) this[DEFAULT]; }
             set { this[DEFAULT] = value; }
         }
 
         [ConfigurationProperty(TRANSFORMS)]
-        public TransformElementCollection Transforms {
-            get {
-                return this[TRANSFORMS] as TransformElementCollection;
-            }
+        public TransformElementCollection Transforms
+        {
+            get { return this[TRANSFORMS] as TransformElementCollection; }
         }
 
         [ConfigurationProperty(AGGREGATE, IsRequired = false, DefaultValue = "")]
-        public string Aggregate {
-            get {
-                return (string)this[AGGREGATE];
-            }
+        public string Aggregate
+        {
+            get { return (string) this[AGGREGATE]; }
             set { this[AGGREGATE] = value; }
         }
 
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
     }
 }

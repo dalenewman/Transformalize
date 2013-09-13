@@ -18,27 +18,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Configuration;
 
-namespace Transformalize.Configuration {
-    public class ActionElementCollection : ConfigurationElementCollection {
-
-        public override bool IsReadOnly()
+namespace Transformalize.Configuration
+{
+    public class ActionElementCollection : ConfigurationElementCollection
+    {
+        public ActionConfigurationElement this[int index]
         {
-            return false;
-        }
-
-        public ActionConfigurationElement this[int index] {
-            get {
-                return BaseGet(index) as ActionConfigurationElement;
-            }
-            set {
-                if (BaseGet(index) != null) {
+            get { return BaseGet(index) as ActionConfigurationElement; }
+            set
+            {
+                if (BaseGet(index) != null)
+                {
                     BaseRemoveAt(index);
                 }
                 BaseAdd(index, value);
             }
         }
 
-        protected override ConfigurationElement CreateNewElement() {
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
+        protected override ConfigurationElement CreateNewElement()
+        {
             return new ActionConfigurationElement();
         }
 
@@ -46,6 +49,5 @@ namespace Transformalize.Configuration {
         {
             return element.GetHashCode();
         }
-
     }
 }

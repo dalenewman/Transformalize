@@ -18,66 +18,52 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Configuration;
 
-namespace Transformalize.Configuration {
-
-    public class TemplateConfigurationElement : ConfigurationElement {
-
+namespace Transformalize.Configuration
+{
+    public class TemplateConfigurationElement : ConfigurationElement
+    {
         private const string CONTENT_TYPE = "content-type";
         private const string FILE = "file";
         private const string SETTINGS = "settings";
         private const string ACTIONS = "actions";
         private const string NAME = "name";
 
-        public override bool IsReadOnly()
-        {
-            return false;
-        }
-
         [ConfigurationProperty(NAME, IsRequired = true)]
-        public string Name {
-            get {
-                return this[NAME] as string;
-            }
+        public string Name
+        {
+            get { return this[NAME] as string; }
             set { this[NAME] = value; }
         }
 
         [ConfigurationProperty(FILE, IsRequired = true)]
         public string File
         {
-            get
-            {
-                return this[FILE] as string;
-            }
+            get { return this[FILE] as string; }
             set { this[FILE] = value; }
         }
 
         [ConfigurationProperty(CONTENT_TYPE, IsRequired = false, DefaultValue = "raw")]
         public string ContentType
         {
-            get
-            {
-                return this[CONTENT_TYPE] as string;
-            }
+            get { return this[CONTENT_TYPE] as string; }
             set { this[CONTENT_TYPE] = value; }
         }
 
         [ConfigurationProperty(SETTINGS)]
         public SettingElementCollection Settings
         {
-            get
-            {
-                return this[SETTINGS] as SettingElementCollection;
-            }
+            get { return this[SETTINGS] as SettingElementCollection; }
         }
 
         [ConfigurationProperty(ACTIONS)]
         public ActionElementCollection Actions
         {
-            get
-            {
-                return this[ACTIONS] as ActionElementCollection;
-            }
+            get { return this[ACTIONS] as ActionElementCollection; }
         }
 
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
     }
 }

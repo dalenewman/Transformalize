@@ -31,207 +31,208 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 // 
 
+
 #if !NET_CF && !MONO && !SILVERLIGHT
 
 namespace Transformalize.Libs.NLog.LayoutRenderers
 {
     /// <summary>
-    /// Property of System.Diagnostics.Process to retrieve.
+    ///     Property of System.Diagnostics.Process to retrieve.
     /// </summary>
     public enum ProcessInfoProperty
     {
         /// <summary>
-        /// Base Priority.
+        ///     Base Priority.
         /// </summary>
         BasePriority,
 
         /// <summary>
-        /// Exit Code.
+        ///     Exit Code.
         /// </summary>
         ExitCode,
 
         /// <summary>
-        /// Exit Time.
+        ///     Exit Time.
         /// </summary>
         ExitTime,
 
         /// <summary>
-        /// Process Handle.
+        ///     Process Handle.
         /// </summary>
         Handle,
 
         /// <summary>
-        /// Handle Count.
+        ///     Handle Count.
         /// </summary>
         HandleCount,
 
         /// <summary>
-        /// Whether process has exited.
+        ///     Whether process has exited.
         /// </summary>
         HasExited,
 
         /// <summary>
-        /// Process ID.
+        ///     Process ID.
         /// </summary>
         Id,
 
         /// <summary>
-        /// Machine name.
+        ///     Machine name.
         /// </summary>
         MachineName,
 
         /// <summary>
-        /// Handle of the main window.
+        ///     Handle of the main window.
         /// </summary>
         MainWindowHandle,
 
         /// <summary>
-        /// Title of the main window.
+        ///     Title of the main window.
         /// </summary>
         MainWindowTitle,
 
         /// <summary>
-        /// Maximum Working Set.
+        ///     Maximum Working Set.
         /// </summary>
         MaxWorkingSet,
 
         /// <summary>
-        /// Minimum Working Set.
+        ///     Minimum Working Set.
         /// </summary>
         MinWorkingSet,
 
         /// <summary>
-        /// Non-paged System Memory Size.
+        ///     Non-paged System Memory Size.
         /// </summary>
         NonPagedSystemMemorySize,
 
         /// <summary>
-        /// Non-paged System Memory Size (64-bit).
+        ///     Non-paged System Memory Size (64-bit).
         /// </summary>
         NonPagedSystemMemorySize64,
 
         /// <summary>
-        /// Paged Memory Size.
+        ///     Paged Memory Size.
         /// </summary>
         PagedMemorySize,
 
         /// <summary>
-        /// Paged Memory Size (64-bit)..
+        ///     Paged Memory Size (64-bit)..
         /// </summary>
         PagedMemorySize64,
 
         /// <summary>
-        /// Paged System Memory Size.
+        ///     Paged System Memory Size.
         /// </summary>
         PagedSystemMemorySize,
 
         /// <summary>
-        /// Paged System Memory Size (64-bit).
+        ///     Paged System Memory Size (64-bit).
         /// </summary>
         PagedSystemMemorySize64,
 
         /// <summary>
-        /// Peak Paged Memory Size.
+        ///     Peak Paged Memory Size.
         /// </summary>
         PeakPagedMemorySize,
 
         /// <summary>
-        /// Peak Paged Memory Size (64-bit).
+        ///     Peak Paged Memory Size (64-bit).
         /// </summary>
         PeakPagedMemorySize64,
 
         /// <summary>
-        /// Peak Vitual Memory Size.
+        ///     Peak Vitual Memory Size.
         /// </summary>
         PeakVirtualMemorySize,
 
         /// <summary>
-        /// Peak Virtual Memory Size (64-bit)..
+        ///     Peak Virtual Memory Size (64-bit)..
         /// </summary>
         PeakVirtualMemorySize64,
 
         /// <summary>
-        /// Peak Working Set Size.
+        ///     Peak Working Set Size.
         /// </summary>
         PeakWorkingSet,
 
         /// <summary>
-        /// Peak Working Set Size (64-bit).
+        ///     Peak Working Set Size (64-bit).
         /// </summary>
         PeakWorkingSet64,
 
         /// <summary>
-        /// Whether priority boost is enabled.
+        ///     Whether priority boost is enabled.
         /// </summary>
         PriorityBoostEnabled,
 
         /// <summary>
-        /// Priority Class.
+        ///     Priority Class.
         /// </summary>
         PriorityClass,
 
         /// <summary>
-        /// Private Memory Size.
+        ///     Private Memory Size.
         /// </summary>
         PrivateMemorySize,
 
         /// <summary>
-        /// Private Memory Size (64-bit).
+        ///     Private Memory Size (64-bit).
         /// </summary>
         PrivateMemorySize64,
 
         /// <summary>
-        /// Privileged Processor Time.
+        ///     Privileged Processor Time.
         /// </summary>
         PrivilegedProcessorTime,
 
         /// <summary>
-        /// Process Name.
+        ///     Process Name.
         /// </summary>
         ProcessName,
 
         /// <summary>
-        /// Whether process is responding.
+        ///     Whether process is responding.
         /// </summary>
         Responding,
 
         /// <summary>
-        /// Session ID.
+        ///     Session ID.
         /// </summary>
         SessionId,
 
         /// <summary>
-        /// Process Start Time.
+        ///     Process Start Time.
         /// </summary>
         StartTime,
 
         /// <summary>
-        /// Total Processor Time.
+        ///     Total Processor Time.
         /// </summary>
         TotalProcessorTime,
 
         /// <summary>
-        /// User Processor Time.
+        ///     User Processor Time.
         /// </summary>
         UserProcessorTime,
 
         /// <summary>
-        /// Virtual Memory Size.
+        ///     Virtual Memory Size.
         /// </summary>
         VirtualMemorySize,
 
         /// <summary>
-        /// Virtual Memory Size (64-bit).
+        ///     Virtual Memory Size (64-bit).
         /// </summary>
         VirtualMemorySize64,
 
         /// <summary>
-        /// Working Set Size.
+        ///     Working Set Size.
         /// </summary>
         WorkingSet,
 
         /// <summary>
-        /// Working Set Size (64-bit).
+        ///     Working Set Size (64-bit).
         /// </summary>
         WorkingSet64,
     }

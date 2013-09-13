@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Text;
 using System.Globalization;
+using System.Text;
 
 namespace Transformalize.Libs.NCalc.Domain
 {
@@ -11,7 +11,10 @@ namespace Transformalize.Libs.NCalc.Domain
         public SerializationVisitor()
         {
             Result = new StringBuilder();
-            _numberFormatInfo = new NumberFormatInfo {NumberDecimalSeparator = "."};
+            _numberFormatInfo = new NumberFormatInfo
+                                    {
+                                        NumberDecimalSeparator = "."
+                                    };
         }
 
         public StringBuilder Result { get; protected set; }
@@ -141,11 +144,11 @@ namespace Transformalize.Libs.NCalc.Domain
             switch (expression.Type)
             {
                 case ValueType.Boolean:
-                    Result.Append(expression.Value.ToString()).Append(" ");
+                    Result.Append(expression.Value).Append(" ");
                     break;
 
                 case ValueType.DateTime:
-                    Result.Append("#").Append(expression.Value.ToString()).Append("#").Append(" ");
+                    Result.Append("#").Append(expression.Value).Append("#").Append(" ");
                     break;
 
                 case ValueType.Float:
@@ -153,11 +156,11 @@ namespace Transformalize.Libs.NCalc.Domain
                     break;
 
                 case ValueType.Integer:
-                    Result.Append(expression.Value.ToString()).Append(" ");
+                    Result.Append(expression.Value).Append(" ");
                     break;
 
                 case ValueType.String:
-                    Result.Append("'").Append(expression.Value.ToString()).Append("'").Append(" ");
+                    Result.Append("'").Append(expression.Value).Append("'").Append(" ");
                     break;
             }
         }
@@ -168,10 +171,10 @@ namespace Transformalize.Libs.NCalc.Domain
 
             Result.Append("(");
 
-            for(int i=0; i<function.Expressions.Length; i++)
+            for (int i = 0; i < function.Expressions.Length; i++)
             {
                 function.Expressions[i].Accept(this);
-                if (i < function.Expressions.Length-1)
+                if (i < function.Expressions.Length - 1)
                 {
                     Result.Remove(Result.Length - 1, 1);
                     Result.Append(", ");
@@ -200,14 +203,13 @@ namespace Transformalize.Libs.NCalc.Domain
             {
                 Result.Append("(");
                 expression.Accept(this);
-                
+
                 // trim spaces before adding a closing paren
-                while(Result[Result.Length - 1] == ' ')
+                while (Result[Result.Length - 1] == ' ')
                     Result.Remove(Result.Length - 1, 1);
-                
+
                 Result.Append(") ");
             }
         }
-
     }
 }

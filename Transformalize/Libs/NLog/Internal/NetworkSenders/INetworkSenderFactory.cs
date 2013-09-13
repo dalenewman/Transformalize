@@ -34,18 +34,18 @@
 namespace Transformalize.Libs.NLog.Internal.NetworkSenders
 {
     /// <summary>
-    /// Creates instances of <see cref="NetworkSender"/> objects for given URLs.
+    ///     Creates instances of <see cref="NetworkSender" /> objects for given URLs.
     /// </summary>
     internal interface INetworkSenderFactory
     {
         /// <summary>
-        /// Creates a new instance of the network sender based on a network URL.
+        ///     Creates a new instance of the network sender based on a network URL.
         /// </summary>
         /// <param name="url">
-        /// URL that determines the network sender to be created.
+        ///     URL that determines the network sender to be created.
         /// </param>
         /// <returns>
-        /// A newly created network sender.
+        ///     A newly created network sender.
         /// </returns>
         NetworkSender Create(string url);
     }

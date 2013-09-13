@@ -1,11 +1,14 @@
 ﻿@functions {
-    string Double(object input)
+
+    private string Double(object input)
     {
-        var i = input.ToString();
-        if (i == string.Empty) {
+        string i = input.ToString();
+        if (i == string.Empty)
+        {
             return string.Empty;
         }
 
         return i + i;
     }
+
 }

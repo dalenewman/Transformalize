@@ -18,25 +18,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Linq;
-using Transformalize.Core;
-using Transformalize.Core.Entity_;
-using Transformalize.Core.Field_;
-using Transformalize.Core.Fields_;
-using Transformalize.Core.Process_;
+using Transformalize.Main;
+using Transformalize.Main.Providers.SqlServer;
 using Transformalize.Libs.NLog;
-using Transformalize.Libs.Rhino.Etl.Core;
-using Transformalize.Libs.Rhino.Etl.Core.Operations;
+using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Operations;
-using Transformalize.Providers.SqlServer;
 
 namespace Transformalize.Processes
 {
-
     public class EntityProcess : EtlProcess
     {
+        private readonly IFields _fieldsWithTransforms;
         private readonly Process _process;
         private Entity _entity;
-        private readonly IFields _fieldsWithTransforms;
 
         public EntityProcess(Process process, Entity entity) : base(process.Name)
         {
@@ -60,13 +55,13 @@ namespace Transformalize.Processes
             if (_process.OutputRecordsExist)
             {
                 Register(new EntityJoinAction(_entity).Right(new EntityOutputKeysExtract(_entity)));
-                var branch = new BranchingOperation()
+                AbstractBranchingOperation branch = new BranchingOperation()
                     .Add(new PartialProcessOperation()
-                        .Register(new EntityActionFilter(ref _entity, EntityAction.Insert))
-                        .RegisterLast(new EntityBulkInsert(_entity)))
+                             .Register(new EntityActionFilter(ref _entity, EntityAction.Insert))
+                             .RegisterLast(new EntityBulkInsert(_entity)))
                     .Add(new PartialProcessOperation()
-                        .Register(new EntityActionFilter(ref _entity, EntityAction.Update))
-                        .RegisterLast(new EntityBatchUpdate(_entity)));
+                             .Register(new EntityActionFilter(ref _entity, EntityAction.Update))
+                             .RegisterLast(new EntityBatchUpdate(_entity)));
                 RegisterLast(branch);
             }
             else
@@ -74,23 +69,21 @@ namespace Transformalize.Processes
                 Register(new EntityAddTflFields(_entity));
                 RegisterLast(new EntityBulkInsert(_entity));
             }
-
         }
 
         protected override void PostProcessing()
         {
-
-            var errors = GetAllErrors().ToArray();
+            Exception[] errors = GetAllErrors().ToArray();
             if (errors.Any())
             {
-                foreach (var error in errors)
+                foreach (Exception error in errors)
                 {
                     Error(error.InnerException, "Message: {0}\r\nStackTrace:{1}\r\n", error.Message, error.StackTrace);
                 }
                 Environment.Exit(1);
             }
 
-            if (_process.Options.WriteEndVersion) 
+            if (_process.Options.WriteEndVersion)
             {
                 new SqlServerEntityVersionWriter(_entity).WriteEndVersion(_entity.End, _entity.RecordsAffected);
             }
@@ -98,6 +91,5 @@ namespace Transformalize.Processes
             _entity.InputKeys = null;
             base.PostProcessing();
         }
-
     }
 }

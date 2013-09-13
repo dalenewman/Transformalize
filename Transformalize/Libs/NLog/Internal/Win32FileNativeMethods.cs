@@ -41,9 +41,14 @@ namespace Transformalize.Libs.NLog.Internal
 {
     internal static class Win32FileNativeMethods
     {
-        public const int FILE_SHARE_READ = 1;
-        public const int FILE_SHARE_WRITE = 2;
-        public const int FILE_SHARE_DELETE = 4;
+        public enum CreationDisposition : uint
+        {
+            New = 1,
+            CreateAlways = 2,
+            OpenExisting = 3,
+            OpenAlways = 4,
+            TruncateExisting = 5,
+        }
 
         [Flags]
         public enum FileAccess : uint
@@ -54,14 +59,9 @@ namespace Transformalize.Libs.NLog.Internal
             GenericAll = 0x10000000,
         }
 
-        public enum CreationDisposition : uint
-        {
-            New = 1,
-            CreateAlways = 2,
-            OpenExisting = 3,
-            OpenAlways = 4,
-            TruncateExisting = 5,
-        }
+        public const int FILE_SHARE_READ = 1;
+        public const int FILE_SHARE_WRITE = 2;
+        public const int FILE_SHARE_DELETE = 4;
 
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         public static extern IntPtr CreateFile(

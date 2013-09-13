@@ -41,7 +41,7 @@ using Transformalize.Libs.NLog.Internal;
 namespace Transformalize.Libs.NLog.LayoutRenderers
 {
     /// <summary>
-    /// The identifier of the current process.
+    ///     The identifier of the current process.
     /// </summary>
     [LayoutRenderer("processid")]
     [AppDomainFixedOutput]
@@ -49,9 +49,11 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
     public class ProcessIdLayoutRenderer : LayoutRenderer
     {
         /// <summary>
-        /// Renders the current process ID.
+        ///     Renders the current process ID.
         /// </summary>
-        /// <param name="builder">The <see cref="StringBuilder"/> to append the rendered data to.</param>
+        /// <param name="builder">
+        ///     The <see cref="StringBuilder" /> to append the rendered data to.
+        /// </param>
         /// <param name="logEvent">Logging event.</param>
         protected override void Append(StringBuilder builder, LogEventInfo logEvent)
         {

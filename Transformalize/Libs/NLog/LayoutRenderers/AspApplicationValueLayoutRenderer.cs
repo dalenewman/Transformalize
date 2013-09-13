@@ -43,13 +43,13 @@ using Transformalize.Libs.NLog.Internal;
 namespace Transformalize.Libs.NLog.LayoutRenderers
 {
     /// <summary>
-    /// ASP Application variable.
+    ///     ASP Application variable.
     /// </summary>
     [LayoutRenderer("asp-application")]
     public class AspApplicationValueLayoutRenderer : LayoutRenderer
     {
         /// <summary>
-        /// Gets or sets the ASP Application variable name.
+        ///     Gets or sets the ASP Application variable name.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         [RequiredParameter]
@@ -57,18 +57,20 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
         public string Variable { get; set; }
 
         /// <summary>
-        /// Renders the specified ASP Application variable and appends it to the specified <see cref="StringBuilder" />.
+        ///     Renders the specified ASP Application variable and appends it to the specified <see cref="StringBuilder" />.
         /// </summary>
-        /// <param name="builder">The <see cref="StringBuilder"/> to append the rendered data to.</param>
+        /// <param name="builder">
+        ///     The <see cref="StringBuilder" /> to append the rendered data to.
+        /// </param>
         /// <param name="logEvent">Logging event.</param>
         protected override void Append(StringBuilder builder, LogEventInfo logEvent)
         {
             AspHelper.IApplicationObject app = AspHelper.GetApplicationObject();
             if (app != null)
             {
-                if (this.Variable != null)
+                if (Variable != null)
                 {
-                    object variableValue = app.GetValue(this.Variable);
+                    object variableValue = app.GetValue(Variable);
 
                     builder.Append(Convert.ToString(variableValue, CultureInfo.InvariantCulture));
                 }
@@ -78,4 +80,5 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
         }
     }
 }
+
 #endif

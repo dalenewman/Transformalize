@@ -18,7 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Transformalize.Operations
 {
-    public enum EntityAction {
+    public enum EntityAction
+    {
         Update,
         Insert
     }

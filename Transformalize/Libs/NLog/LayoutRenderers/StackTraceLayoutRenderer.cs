@@ -31,6 +31,7 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 // 
 
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
@@ -42,45 +43,45 @@ using Transformalize.Libs.NLog.Internal;
 namespace Transformalize.Libs.NLog.LayoutRenderers
 {
     /// <summary>
-    /// Stack trace renderer.
+    ///     Stack trace renderer.
     /// </summary>
     [LayoutRenderer("stacktrace")]
     [ThreadAgnostic]
     public class StackTraceLayoutRenderer : LayoutRenderer, IUsesStackTrace
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="StackTraceLayoutRenderer" /> class.
+        ///     Initializes a new instance of the <see cref="StackTraceLayoutRenderer" /> class.
         /// </summary>
         public StackTraceLayoutRenderer()
         {
-            this.Separator = " => ";
-            this.TopFrames = 3;
-            this.Format = StackTraceFormat.Flat;
+            Separator = " => ";
+            TopFrames = 3;
+            Format = StackTraceFormat.Flat;
         }
 
         /// <summary>
-        /// Gets or sets the output format of the stack trace.
+        ///     Gets or sets the output format of the stack trace.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         [DefaultValue("Flat")]
         public StackTraceFormat Format { get; set; }
 
         /// <summary>
-        /// Gets or sets the number of top stack frames to be rendered.
+        ///     Gets or sets the number of top stack frames to be rendered.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         [DefaultValue(3)]
         public int TopFrames { get; set; }
 
         /// <summary>
-        /// Gets or sets the stack frame separator string.
+        ///     Gets or sets the stack frame separator string.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         [DefaultValue(" => ")]
         public string Separator { get; set; }
 
         /// <summary>
-        /// Gets the level of stack trace information required by the implementing class.
+        ///     Gets the level of stack trace information required by the implementing class.
         /// </summary>
         /// <value></value>
         StackTraceUsage IUsesStackTrace.StackTraceUsage
@@ -89,26 +90,28 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
         }
 
         /// <summary>
-        /// Renders the call site and appends it to the specified <see cref="StringBuilder" />.
+        ///     Renders the call site and appends it to the specified <see cref="StringBuilder" />.
         /// </summary>
-        /// <param name="builder">The <see cref="StringBuilder"/> to append the rendered data to.</param>
+        /// <param name="builder">
+        ///     The <see cref="StringBuilder" /> to append the rendered data to.
+        /// </param>
         /// <param name="logEvent">Logging event.</param>
         protected override void Append(StringBuilder builder, LogEventInfo logEvent)
         {
             bool first = true;
-            int startingFrame = logEvent.UserStackFrameNumber + this.TopFrames - 1;
+            int startingFrame = logEvent.UserStackFrameNumber + TopFrames - 1;
             if (startingFrame >= logEvent.StackTrace.FrameCount)
             {
                 startingFrame = logEvent.StackTrace.FrameCount - 1;
             }
 
-            switch (this.Format)
+            switch (Format)
             {
                 case StackTraceFormat.Raw:
                     for (int i = startingFrame; i >= logEvent.UserStackFrameNumber; --i)
                     {
                         StackFrame f = logEvent.StackTrace.GetFrame(i);
-                        builder.Append(f.ToString());
+                        builder.Append(f);
                     }
 
                     break;
@@ -119,10 +122,10 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
                         StackFrame f = logEvent.StackTrace.GetFrame(i);
                         if (!first)
                         {
-                            builder.Append(this.Separator);
+                            builder.Append(Separator);
                         }
 
-                        var type = f.GetMethod().DeclaringType;
+                        Type type = f.GetMethod().DeclaringType;
 
                         if (type != null)
                         {
@@ -146,7 +149,7 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
                         StackFrame f = logEvent.StackTrace.GetFrame(i);
                         if (!first)
                         {
-                            builder.Append(this.Separator);
+                            builder.Append(Separator);
                         }
 
                         builder.Append("[");

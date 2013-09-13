@@ -34,13 +34,13 @@
 namespace Transformalize.Libs.NLog.Common
 {
     /// <summary>
-    /// Asynchronous action.
+    ///     Asynchronous action.
     /// </summary>
     /// <param name="asyncContinuation">Continuation to be invoked at the end of action.</param>
     public delegate void AsynchronousAction(AsyncContinuation asyncContinuation);
 
     /// <summary>
-    /// Asynchronous action with one argument.
+    ///     Asynchronous action with one argument.
     /// </summary>
     /// <typeparam name="T">Type of the argument.</typeparam>
     /// <param name="argument">Argument to the action.</param>

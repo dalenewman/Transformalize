@@ -33,6 +33,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net.Sockets;
 using Transformalize.Libs.NLog.Common;
@@ -42,132 +43,134 @@ using Transformalize.Libs.NLog.Common;
 namespace Transformalize.Libs.NLog.Internal.NetworkSenders
 {
     /// <summary>
-    /// Sends messages over a TCP network connection.
+    ///     Sends messages over a TCP network connection.
     /// </summary>
     internal class TcpNetworkSender : NetworkSender
     {
         private readonly Queue<SocketAsyncEventArgs> pendingRequests = new Queue<SocketAsyncEventArgs>();
 
-        private ISocket socket;
-        private Exception pendingError;
         private bool asyncOperationInProgress;
         private AsyncContinuation closeContinuation;
         private AsyncContinuation flushContinuation;
+        private Exception pendingError;
+        private ISocket socket;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TcpNetworkSender"/> class.
+        ///     Initializes a new instance of the <see cref="TcpNetworkSender" /> class.
         /// </summary>
         /// <param name="url">URL. Must start with tcp://.</param>
         /// <param name="addressFamily">The address family.</param>
         public TcpNetworkSender(string url, AddressFamily addressFamily)
             : base(url)
         {
-            this.AddressFamily = addressFamily;
+            AddressFamily = addressFamily;
         }
 
         internal AddressFamily AddressFamily { get; set; }
 
         /// <summary>
-        /// Creates the socket with given parameters. 
+        ///     Creates the socket with given parameters.
         /// </summary>
         /// <param name="addressFamily">The address family.</param>
         /// <param name="socketType">Type of the socket.</param>
         /// <param name="protocolType">Type of the protocol.</param>
-        /// <returns>Instance of <see cref="ISocket" /> which represents the socket.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "This is a factory method")]
+        /// <returns>
+        ///     Instance of <see cref="ISocket" /> which represents the socket.
+        /// </returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "This is a factory method")]
         protected internal virtual ISocket CreateSocket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType)
         {
             return new SocketProxy(addressFamily, socketType, protocolType);
         }
 
         /// <summary>
-        /// Performs sender-specific initialization.
+        ///     Performs sender-specific initialization.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Object is disposed in the event handler.")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Object is disposed in the event handler.")]
         protected override void DoInitialize()
         {
             var args = new MySocketAsyncEventArgs();
-            args.RemoteEndPoint = this.ParseEndpointAddress(new Uri(this.Address), this.AddressFamily);
-            args.Completed += this.SocketOperationCompleted;
+            args.RemoteEndPoint = ParseEndpointAddress(new Uri(Address), AddressFamily);
+            args.Completed += SocketOperationCompleted;
             args.UserToken = null;
 
-            this.socket = this.CreateSocket(args.RemoteEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            this.asyncOperationInProgress = true;
+            socket = CreateSocket(args.RemoteEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            asyncOperationInProgress = true;
 
-            if (!this.socket.ConnectAsync(args))
+            if (!socket.ConnectAsync(args))
             {
-                this.SocketOperationCompleted(this.socket, args);
+                SocketOperationCompleted(socket, args);
             }
         }
 
         /// <summary>
-        /// Closes the socket.
+        ///     Closes the socket.
         /// </summary>
         /// <param name="continuation">The continuation.</param>
         protected override void DoClose(AsyncContinuation continuation)
         {
             lock (this)
             {
-                if (this.asyncOperationInProgress)
+                if (asyncOperationInProgress)
                 {
-                    this.closeContinuation = continuation;
+                    closeContinuation = continuation;
                 }
                 else
                 {
-                    this.CloseSocket(continuation);
+                    CloseSocket(continuation);
                 }
             }
         }
 
         /// <summary>
-        /// Performs sender-specific flush.
+        ///     Performs sender-specific flush.
         /// </summary>
         /// <param name="continuation">The continuation.</param>
         protected override void DoFlush(AsyncContinuation continuation)
         {
             lock (this)
             {
-                if (!this.asyncOperationInProgress && this.pendingRequests.Count == 0)
+                if (!asyncOperationInProgress && pendingRequests.Count == 0)
                 {
                     continuation(null);
                 }
                 else
                 {
-                    this.flushContinuation = continuation;
+                    flushContinuation = continuation;
                 }
             }
         }
 
         /// <summary>
-        /// Sends the specified text over the connected socket.
+        ///     Sends the specified text over the connected socket.
         /// </summary>
         /// <param name="bytes">The bytes to be sent.</param>
         /// <param name="offset">Offset in buffer.</param>
         /// <param name="length">Number of bytes to send.</param>
         /// <param name="asyncContinuation">The async continuation to be invoked after the buffer has been sent.</param>
         /// <remarks>To be overridden in inheriting classes.</remarks>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Object is disposed in the event handler.")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Object is disposed in the event handler.")]
         protected override void DoSend(byte[] bytes, int offset, int length, AsyncContinuation asyncContinuation)
         {
             var args = new MySocketAsyncEventArgs();
             args.SetBuffer(bytes, offset, length);
             args.UserToken = asyncContinuation;
-            args.Completed += this.SocketOperationCompleted;
+            args.Completed += SocketOperationCompleted;
 
             lock (this)
             {
-                this.pendingRequests.Enqueue(args);
+                pendingRequests.Enqueue(args);
             }
 
-            this.ProcessNextQueuedItem();
+            ProcessNextQueuedItem();
         }
 
         private void CloseSocket(AsyncContinuation continuation)
         {
             try
             {
-                var sock = this.socket;
-                this.socket = null;
+                ISocket sock = socket;
+                socket = null;
 
                 if (sock != null)
                 {
@@ -191,23 +194,23 @@ namespace Transformalize.Libs.NLog.Internal.NetworkSenders
         {
             lock (this)
             {
-                this.asyncOperationInProgress = false;
+                asyncOperationInProgress = false;
                 var asyncContinuation = e.UserToken as AsyncContinuation;
 
                 if (e.SocketError != SocketError.Success)
                 {
-                    this.pendingError = new IOException("Error: " + e.SocketError);
+                    pendingError = new IOException("Error: " + e.SocketError);
                 }
 
                 e.Dispose();
 
                 if (asyncContinuation != null)
                 {
-                    asyncContinuation(this.pendingError);
+                    asyncContinuation(pendingError);
                 }
             }
 
-            this.ProcessNextQueuedItem();
+            ProcessNextQueuedItem();
         }
 
         private void ProcessNextQueuedItem()
@@ -216,61 +219,61 @@ namespace Transformalize.Libs.NLog.Internal.NetworkSenders
 
             lock (this)
             {
-                if (this.asyncOperationInProgress)
+                if (asyncOperationInProgress)
                 {
                     return;
                 }
 
-                if (this.pendingError != null)
+                if (pendingError != null)
                 {
-                    while (this.pendingRequests.Count != 0)
+                    while (pendingRequests.Count != 0)
                     {
-                        args = this.pendingRequests.Dequeue();
-                        var asyncContinuation = (AsyncContinuation)args.UserToken;
-                        asyncContinuation(this.pendingError);
+                        args = pendingRequests.Dequeue();
+                        var asyncContinuation = (AsyncContinuation) args.UserToken;
+                        asyncContinuation(pendingError);
                     }
                 }
 
-                if (this.pendingRequests.Count == 0)
+                if (pendingRequests.Count == 0)
                 {
-                    var fc = this.flushContinuation;
+                    AsyncContinuation fc = flushContinuation;
                     if (fc != null)
                     {
-                        this.flushContinuation = null;
-                        fc(this.pendingError);
+                        flushContinuation = null;
+                        fc(pendingError);
                     }
 
-                    var cc = this.closeContinuation;
+                    AsyncContinuation cc = closeContinuation;
                     if (cc != null)
                     {
-                        this.closeContinuation = null;
-                        this.CloseSocket(cc);
+                        closeContinuation = null;
+                        CloseSocket(cc);
                     }
 
                     return;
                 }
 
-                args = this.pendingRequests.Dequeue();
+                args = pendingRequests.Dequeue();
 
-                this.asyncOperationInProgress = true;
-                if (!this.socket.SendAsync(args))
+                asyncOperationInProgress = true;
+                if (!socket.SendAsync(args))
                 {
-                    this.SocketOperationCompleted(this.socket, args);
+                    SocketOperationCompleted(socket, args);
                 }
             }
         }
 
         /// <summary>
-        /// Facilitates mocking of <see cref="SocketAsyncEventArgs"/> class.
+        ///     Facilitates mocking of <see cref="SocketAsyncEventArgs" /> class.
         /// </summary>
         internal class MySocketAsyncEventArgs : SocketAsyncEventArgs
         {
             /// <summary>
-            /// Raises the Completed event.
+            ///     Raises the Completed event.
             /// </summary>
             public void RaiseCompleted()
             {
-                this.OnCompleted(this);
+                OnCompleted(this);
             }
         }
     }

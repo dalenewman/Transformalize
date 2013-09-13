@@ -20,22 +20,25 @@ using System.Text;
 using NUnit.Framework;
 using Transformalize.Extensions;
 
-namespace Transformalize.Test.Unit {
+namespace Transformalize.Test.Unit
+{
     [TestFixture]
-    public class TestStringBuilderExtensions {
-
+    public class TestStringBuilderExtensions
+    {
         [Test]
-        public void TestToUpper() {
-            var sb = new StringBuilder(".Net");
-            sb.ToUpper();
-            Assert.AreEqual(".NET", sb.ToString());
-        }
-
-        [Test]
-        public void TestToLower() {
+        public void TestToLower()
+        {
             var sb = new StringBuilder(".Net");
             sb.ToLower();
             Assert.AreEqual(".net", sb.ToString());
+        }
+
+        [Test]
+        public void TestToUpper()
+        {
+            var sb = new StringBuilder(".Net");
+            sb.ToUpper();
+            Assert.AreEqual(".NET", sb.ToString());
         }
     }
 }

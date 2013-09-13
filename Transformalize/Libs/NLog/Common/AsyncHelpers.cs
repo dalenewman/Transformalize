@@ -33,6 +33,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Threading;
 using Transformalize.Libs.NLog.Internal;
@@ -40,18 +41,20 @@ using Transformalize.Libs.NLog.Internal;
 namespace Transformalize.Libs.NLog.Common
 {
     /// <summary>
-    /// Helpers for asynchronous operations.
+    ///     Helpers for asynchronous operations.
     /// </summary>
     public static class AsyncHelpers
     {
         /// <summary>
-        /// Iterates over all items in the given collection and runs the specified action
-        /// in sequence (each action executes only after the preceding one has completed without an error).
+        ///     Iterates over all items in the given collection and runs the specified action
+        ///     in sequence (each action executes only after the preceding one has completed without an error).
         /// </summary>
         /// <typeparam name="T">Type of each item.</typeparam>
         /// <param name="items">The items to iterate.</param>
-        /// <param name="asyncContinuation">The asynchronous continuation to invoke once all items
-        /// have been iterated.</param>
+        /// <param name="asyncContinuation">
+        ///     The asynchronous continuation to invoke once all items
+        ///     have been iterated.
+        /// </param>
         /// <param name="action">The action to invoke for each item.</param>
         public static void ForEachItemSequentially<T>(IEnumerable<T> items, AsyncContinuation asyncContinuation, AsynchronousAction<T> action)
         {
@@ -60,27 +63,27 @@ namespace Transformalize.Libs.NLog.Common
             IEnumerator<T> enumerator = items.GetEnumerator();
 
             invokeNext = ex =>
-            {
-                if (ex != null)
-                {
-                    asyncContinuation(ex);
-                    return;
-                }
+                             {
+                                 if (ex != null)
+                                 {
+                                     asyncContinuation(ex);
+                                     return;
+                                 }
 
-                if (!enumerator.MoveNext())
-                {
-                    asyncContinuation(null);
-                    return;
-                }
+                                 if (!enumerator.MoveNext())
+                                 {
+                                     asyncContinuation(null);
+                                     return;
+                                 }
 
-                action(enumerator.Current, PreventMultipleCalls(invokeNext));
-            };
+                                 action(enumerator.Current, PreventMultipleCalls(invokeNext));
+                             };
 
             invokeNext(null);
         }
 
         /// <summary>
-        /// Repeats the specified asynchronous action multiple times and invokes asynchronous continuation at the end.
+        ///     Repeats the specified asynchronous action multiple times and invokes asynchronous continuation at the end.
         /// </summary>
         /// <param name="repeatCount">The repeat count.</param>
         /// <param name="asyncContinuation">The asynchronous continuation to invoke at the end.</param>
@@ -92,27 +95,27 @@ namespace Transformalize.Libs.NLog.Common
             int remaining = repeatCount;
 
             invokeNext = ex =>
-                {
-                    if (ex != null)
-                    {
-                        asyncContinuation(ex);
-                        return;
-                    }
+                             {
+                                 if (ex != null)
+                                 {
+                                     asyncContinuation(ex);
+                                     return;
+                                 }
 
-                    if (remaining-- <= 0)
-                    {
-                        asyncContinuation(null);
-                        return;
-                    }
+                                 if (remaining-- <= 0)
+                                 {
+                                     asyncContinuation(null);
+                                     return;
+                                 }
 
-                    action(PreventMultipleCalls(invokeNext));
-                };
+                                 action(PreventMultipleCalls(invokeNext));
+                             };
 
             invokeNext(null);
         }
 
         /// <summary>
-        /// Modifies the continuation by pre-pending given action to execute just before it.
+        ///     Modifies the continuation by pre-pending given action to execute just before it.
         /// </summary>
         /// <param name="asyncContinuation">The async continuation.</param>
         /// <param name="action">The action to pre-pend.</param>
@@ -123,42 +126,44 @@ namespace Transformalize.Libs.NLog.Common
 
             AsyncContinuation continuation =
                 ex =>
-                {
-                    if (ex != null)
                     {
-                        // if got exception from from original invocation, don't execute action
-                        asyncContinuation(ex);
-                        return;
-                    }
+                        if (ex != null)
+                        {
+                            // if got exception from from original invocation, don't execute action
+                            asyncContinuation(ex);
+                            return;
+                        }
 
-                    // call the action and continue
-                    action(PreventMultipleCalls(asyncContinuation));
-                };
+                        // call the action and continue
+                        action(PreventMultipleCalls(asyncContinuation));
+                    };
 
             return continuation;
         }
 
         /// <summary>
-        /// Attaches a timeout to a continuation which will invoke the continuation when the specified
-        /// timeout has elapsed.
+        ///     Attaches a timeout to a continuation which will invoke the continuation when the specified
+        ///     timeout has elapsed.
         /// </summary>
         /// <param name="asyncContinuation">The asynchronous continuation.</param>
         /// <param name="timeout">The timeout.</param>
         /// <returns>Wrapped continuation.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Continuation will be disposed of elsewhere.")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Continuation will be disposed of elsewhere.")]
         public static AsyncContinuation WithTimeout(AsyncContinuation asyncContinuation, TimeSpan timeout)
         {
             return new TimeoutContinuation(asyncContinuation, timeout).Function;
         }
 
         /// <summary>
-        /// Iterates over all items in the given collection and runs the specified action
-        /// in parallel (each action executes on a thread from thread pool).
+        ///     Iterates over all items in the given collection and runs the specified action
+        ///     in parallel (each action executes on a thread from thread pool).
         /// </summary>
         /// <typeparam name="T">Type of each item.</typeparam>
         /// <param name="values">The items to iterate.</param>
-        /// <param name="asyncContinuation">The asynchronous continuation to invoke once all items
-        /// have been iterated.</param>
+        /// <param name="asyncContinuation">
+        ///     The asynchronous continuation to invoke once all items
+        ///     have been iterated.
+        /// </param>
         /// <param name="action">The action to invoke for each item.</param>
         public static void ForEachItemInParallel<T>(IEnumerable<T> values, AsyncContinuation asyncContinuation, AsynchronousAction<T> action)
         {
@@ -207,19 +212,23 @@ namespace Transformalize.Libs.NLog.Common
         }
 
         /// <summary>
-        /// Runs the specified asynchronous action synchronously (blocks until the continuation has
-        /// been invoked).
+        ///     Runs the specified asynchronous action synchronously (blocks until the continuation has
+        ///     been invoked).
         /// </summary>
         /// <param name="action">The action.</param>
         /// <remarks>
-        /// Using this method is not recommended because it will block the calling thread.
+        ///     Using this method is not recommended because it will block the calling thread.
         /// </remarks>
         public static void RunSynchronously(AsynchronousAction action)
         {
             var ev = new ManualResetEvent(false);
             Exception lastException = null;
 
-            action(PreventMultipleCalls(ex => { lastException = ex; ev.Set(); }));
+            action(PreventMultipleCalls(ex =>
+                                            {
+                                                lastException = ex;
+                                                ev.Set();
+                                            }));
             ev.WaitOne();
             if (lastException != null)
             {
@@ -228,8 +237,8 @@ namespace Transformalize.Libs.NLog.Common
         }
 
         /// <summary>
-        /// Wraps the continuation with a guard which will only make sure that the continuation function
-        /// is invoked only once.
+        ///     Wraps the continuation with a guard which will only make sure that the continuation function
+        ///     is invoked only once.
         /// </summary>
         /// <param name="asyncContinuation">The asynchronous continuation.</param>
         /// <returns>Wrapped asynchronous continuation.</returns>
@@ -247,7 +256,7 @@ namespace Transformalize.Libs.NLog.Common
         }
 
         /// <summary>
-        /// Gets the combined exception from all exceptions in the list.
+        ///     Gets the combined exception from all exceptions in the list.
         /// </summary>
         /// <param name="exceptions">The exceptions.</param>
         /// <returns>Combined exception or null if no exception was thrown.</returns>
@@ -266,10 +275,10 @@ namespace Transformalize.Libs.NLog.Common
             var sb = new StringBuilder();
             string separator = string.Empty;
             string newline = EnvironmentHelper.NewLine;
-            foreach (var ex in exceptions)
+            foreach (Exception ex in exceptions)
             {
                 sb.Append(separator);
-                sb.Append(ex.ToString());
+                sb.Append(ex);
                 sb.Append(newline);
                 separator = newline;
             }
@@ -280,41 +289,41 @@ namespace Transformalize.Libs.NLog.Common
         private static AsynchronousAction ExceptionGuard(AsynchronousAction action)
         {
             return cont =>
-            {
-                try
-                {
-                    action(cont);
-                }
-                catch (Exception exception)
-                {
-                    if (exception.MustBeRethrown())
-                    {
-                        throw;
-                    }
+                       {
+                           try
+                           {
+                               action(cont);
+                           }
+                           catch (Exception exception)
+                           {
+                               if (exception.MustBeRethrown())
+                               {
+                                   throw;
+                               }
 
-                    cont(exception);
-                }
-            };
+                               cont(exception);
+                           }
+                       };
         }
 
         private static AsynchronousAction<T> ExceptionGuard<T>(AsynchronousAction<T> action)
         {
             return (T argument, AsyncContinuation cont) =>
-            {
-                try
-                {
-                    action(argument, cont);
-                }
-                catch (Exception exception)
-                {
-                    if (exception.MustBeRethrown())
-                    {
-                        throw;
-                    }
+                       {
+                           try
+                           {
+                               action(argument, cont);
+                           }
+                           catch (Exception exception)
+                           {
+                               if (exception.MustBeRethrown())
+                               {
+                                   throw;
+                               }
 
-                    cont(exception);
-                }
-            };
+                               cont(exception);
+                           }
+                       };
         }
     }
 }

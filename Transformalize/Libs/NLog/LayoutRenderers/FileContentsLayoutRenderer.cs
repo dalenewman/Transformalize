@@ -42,67 +42,69 @@ using Transformalize.Libs.NLog.Layouts;
 namespace Transformalize.Libs.NLog.LayoutRenderers
 {
     /// <summary>
-    /// Renders contents of the specified file.
+    ///     Renders contents of the specified file.
     /// </summary>
     [LayoutRenderer("file-contents")]
     public class FileContentsLayoutRenderer : LayoutRenderer
     {
-        private string lastFileName;
         private string currentFileContents;
+        private string lastFileName;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FileContentsLayoutRenderer" /> class.
+        ///     Initializes a new instance of the <see cref="FileContentsLayoutRenderer" /> class.
         /// </summary>
         public FileContentsLayoutRenderer()
         {
 #if SILVERLIGHT
             this.Encoding = Encoding.UTF8;
 #else
-            this.Encoding = Encoding.Default;
+            Encoding = Encoding.Default;
 #endif
-            this.lastFileName = string.Empty;
+            lastFileName = string.Empty;
         }
 
         /// <summary>
-        /// Gets or sets the name of the file.
+        ///     Gets or sets the name of the file.
         /// </summary>
         /// <docgen category='File Options' order='10' />
         [DefaultParameter]
         public Layout FileName { get; set; }
 
         /// <summary>
-        /// Gets or sets the encoding used in the file.
+        ///     Gets or sets the encoding used in the file.
         /// </summary>
         /// <value>The encoding.</value>
         /// <docgen category='File Options' order='10' />
         public Encoding Encoding { get; set; }
 
         /// <summary>
-        /// Renders the contents of the specified file and appends it to the specified <see cref="StringBuilder" />.
+        ///     Renders the contents of the specified file and appends it to the specified <see cref="StringBuilder" />.
         /// </summary>
-        /// <param name="builder">The <see cref="StringBuilder"/> to append the rendered data to.</param>
+        /// <param name="builder">
+        ///     The <see cref="StringBuilder" /> to append the rendered data to.
+        /// </param>
         /// <param name="logEvent">Logging event.</param>
         protected override void Append(StringBuilder builder, LogEventInfo logEvent)
         {
             lock (this)
             {
-                string fileName = this.FileName.Render(logEvent);
+                string fileName = FileName.Render(logEvent);
 
-                if (fileName != this.lastFileName)
+                if (fileName != lastFileName)
                 {
-                    this.currentFileContents = this.ReadFileContents(fileName);
-                    this.lastFileName = fileName;
+                    currentFileContents = ReadFileContents(fileName);
+                    lastFileName = fileName;
                 }
             }
 
-            builder.Append(this.currentFileContents);
+            builder.Append(currentFileContents);
         }
 
         private string ReadFileContents(string fileName)
         {
             try
             {
-                using (var reader = new StreamReader(fileName, this.Encoding))
+                using (var reader = new StreamReader(fileName, Encoding))
                 {
                     return reader.ReadToEnd();
                 }

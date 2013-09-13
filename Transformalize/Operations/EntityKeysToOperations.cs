@@ -19,35 +19,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Transformalize.Core.Entity_;
-using Transformalize.Core.Field_;
+using Transformalize.Main;
+using Transformalize.Main.Providers;
 using Transformalize.Extensions;
-using Transformalize.Libs.Rhino.Etl.Core;
-using Transformalize.Libs.Rhino.Etl.Core.Operations;
-using Transformalize.Providers;
+using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Libs.Rhino.Etl.Operations;
 
-namespace Transformalize.Operations {
-    public class EntityKeysToOperations : AbstractOperation {
+namespace Transformalize.Operations
+{
+    public class EntityKeysToOperations : AbstractOperation
+    {
         private readonly Entity _entity;
-        private readonly string _operationColumn;
         private readonly Field[] _key;
+        private readonly string _operationColumn;
         private readonly AbstractProvider _provider;
 
-        public EntityKeysToOperations(Entity entity, string operationColumn = "operation") {
+        public EntityKeysToOperations(Entity entity, string operationColumn = "operation")
+        {
             _entity = entity;
             _provider = _entity.InputConnection.Provider;
             _operationColumn = operationColumn;
             _key = new FieldSqlWriter(_entity.PrimaryKey).ToArray();
         }
-        
+
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
         {
-            var fields = new FieldSqlWriter(_entity.All).ExpandXml().Input().Keys().ToArray();
+            string[] fields = new FieldSqlWriter(_entity.All).ExpandXml().Input().Keys().ToArray();
 
-            var count = 0;
+            int count = 0;
             foreach (var batch in _entity.InputKeys.Partition(_entity.InputConnection.BatchSize))
             {
-                var sql = SelectByKeys(batch);
+                string sql = SelectByKeys(batch);
                 var row = new Row();
                 row[_operationColumn] = new EntityDataExtract(_entity, fields, sql, _entity.InputConnection);
                 count++;
@@ -57,12 +59,12 @@ namespace Transformalize.Operations {
 
         public string SelectByKeys(IEnumerable<Row> rows)
         {
-            var tableName = _provider.Supports.TableVariable ? "@KEYS" : "KEYS_" + _entity.Name;
-            var noCount = _provider.Supports.NoCount ? "SET NOCOUNT ON;\r\n" : string.Empty;
-            var sql = noCount +
-                      _entity.InputConnection.TableQueryWriter.WriteTemporary(tableName, _key, _provider, false) +
-                      SqlTemplates.BatchInsertValues(50, tableName, _key, rows, _entity.InputConnection) + Environment.NewLine +
-                      SqlTemplates.Select(_entity.All, _entity.Name, tableName, _provider);
+            string tableName = _provider.Supports.TableVariable ? "@KEYS" : "KEYS_" + _entity.Name;
+            string noCount = _provider.Supports.NoCount ? "SET NOCOUNT ON;\r\n" : string.Empty;
+            string sql = noCount +
+                         _entity.InputConnection.TableQueryWriter.WriteTemporary(tableName, _key, _provider, false) +
+                         SqlTemplates.BatchInsertValues(50, tableName, _key, rows, _entity.InputConnection) + Environment.NewLine +
+                         SqlTemplates.Select(_entity.All, _entity.Name, tableName, _provider);
 
             Trace(sql);
 

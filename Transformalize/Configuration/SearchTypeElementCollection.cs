@@ -22,18 +22,9 @@ namespace Transformalize.Configuration
 {
     public class SearchTypeElementCollection : ConfigurationElementCollection
     {
-
-        public override bool IsReadOnly()
-        {
-            return false;
-        }
-
         public SearchTypeConfigurationElement this[int index]
         {
-            get
-            {
-                return BaseGet(index) as SearchTypeConfigurationElement;
-            }
+            get { return BaseGet(index) as SearchTypeConfigurationElement; }
             set
             {
                 if (BaseGet(index) != null)
@@ -44,6 +35,11 @@ namespace Transformalize.Configuration
             }
         }
 
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
         protected override ConfigurationElement CreateNewElement()
         {
             return new SearchTypeConfigurationElement();
@@ -51,8 +47,7 @@ namespace Transformalize.Configuration
 
         protected override object GetElementKey(ConfigurationElement element)
         {
-            return ((SearchTypeConfigurationElement)element).Name.ToLower();
+            return ((SearchTypeConfigurationElement) element).Name.ToLower();
         }
-
     }
 }

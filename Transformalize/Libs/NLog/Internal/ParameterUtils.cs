@@ -36,12 +36,12 @@ using System;
 namespace Transformalize.Libs.NLog.Internal
 {
     /// <summary>
-    /// Parameter validation utilities.
+    ///     Parameter validation utilities.
     /// </summary>
     internal static class ParameterUtils
     {
         /// <summary>
-        /// Asserts that the value is not null and throws <see cref="ArgumentNullException"/> otherwise.
+        ///     Asserts that the value is not null and throws <see cref="ArgumentNullException" /> otherwise.
         /// </summary>
         /// <param name="value">The value to check.</param>
         /// <param name="parameterName">Name of the parameter.</param>

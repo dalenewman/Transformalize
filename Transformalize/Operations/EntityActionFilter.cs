@@ -18,28 +18,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
 using System.Linq;
-using Transformalize.Core.Entity_;
-using Transformalize.Libs.Rhino.Etl.Core;
-using Transformalize.Libs.Rhino.Etl.Core.Operations;
+using Transformalize.Main;
+using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Libs.Rhino.Etl.Operations;
 
-namespace Transformalize.Operations {
-    public class EntityActionFilter : AbstractOperation {
+namespace Transformalize.Operations
+{
+    public class EntityActionFilter : AbstractOperation
+    {
         private readonly Entity _entity;
         private readonly EntityAction _entityAction;
 
-        public EntityActionFilter(ref Entity entity, EntityAction entityAction) {
+        public EntityActionFilter(ref Entity entity, EntityAction entityAction)
+        {
             _entity = entity;
             _entityAction = entityAction;
         }
 
-        public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
+        public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
+        {
             OnFinishedProcessing += EntityActionFilter_OnFinishedProcessing;
             return rows.Where(r => r["a"].Equals(_entityAction));
         }
 
-        void EntityActionFilter_OnFinishedProcessing(IOperation obj) {
+        private void EntityActionFilter_OnFinishedProcessing(IOperation obj)
+        {
             _entity.RecordsAffected += obj.Statistics.OutputtedRows;
         }
-
     }
 }

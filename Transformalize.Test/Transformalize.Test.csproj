@@ -84,12 +84,14 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EtlProcessHelper.cs" />
     <Compile Include="Integration\Call.cs" />
+    <Compile Include="Integration\Files.cs" />
     <Compile Include="Integration\NorthWindHandleUpdates.cs" />
     <Compile Include="Integration\Es.cs" />
     <Compile Include="Integration\NorthWind.cs" />
@@ -114,6 +116,12 @@
     </None>
     <None Include="packages.config" />
     <None Include="Templates\double.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Templates\solr-data-handler.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Templates\solr-schema.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Templates\test.cshtml">

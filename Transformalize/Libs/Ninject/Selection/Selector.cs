@@ -1,4 +1,5 @@
 #region License
+
 // 
 // Author: Nate Kohari <nate@enkari.com>
 // Copyright (c) 2007-2010, Enkari, Ltd.
@@ -6,7 +7,9 @@
 // Dual-licensed under the Apache License, Version 2.0, and the Microsoft Public License (Ms-PL).
 // See the file LICENSE.txt for details.
 // 
+
 #endregion
+
 #region Using Directives
 
 using System;
@@ -23,39 +26,14 @@ using Transformalize.Libs.Ninject.Selection.Heuristics;
 namespace Transformalize.Libs.Ninject.Selection
 {
     /// <summary>
-    /// Selects members for injection.
+    ///     Selects members for injection.
     /// </summary>
     public class Selector : NinjectComponent, ISelector
     {
         private const BindingFlags DefaultFlags = BindingFlags.Public | BindingFlags.Instance;
 
         /// <summary>
-        /// Gets the default binding flags.
-        /// </summary>
-        protected virtual BindingFlags Flags
-        {
-            get
-            {
-                #if !NO_LCG && !SILVERLIGHT
-                return Settings.InjectNonPublic ? (DefaultFlags | BindingFlags.NonPublic) : DefaultFlags;
-                #else
-                return DefaultFlags;
-                #endif
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the constructor scorer.
-        /// </summary>
-        public IConstructorScorer ConstructorScorer { get; set; }
-
-        /// <summary>
-        /// Gets the property injection heuristics.
-        /// </summary>
-        public ICollection<IInjectionHeuristic> InjectionHeuristics { get; private set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Selector"/> class.
+        ///     Initializes a new instance of the <see cref="Selector" /> class.
         /// </summary>
         /// <param name="constructorScorer">The constructor scorer.</param>
         /// <param name="injectionHeuristics">The injection heuristics.</param>
@@ -69,37 +47,64 @@ namespace Transformalize.Libs.Ninject.Selection
         }
 
         /// <summary>
-        /// Selects the constructor to call on the specified type, by using the constructor scorer.
+        ///     Gets the default binding flags.
+        /// </summary>
+        protected virtual BindingFlags Flags
+        {
+            get
+            {
+#if !NO_LCG && !SILVERLIGHT
+                return Settings.InjectNonPublic ? (DefaultFlags | BindingFlags.NonPublic) : DefaultFlags;
+#else
+                return DefaultFlags;
+                #endif
+            }
+        }
+
+        /// <summary>
+        ///     Gets or sets the constructor scorer.
+        /// </summary>
+        public IConstructorScorer ConstructorScorer { get; set; }
+
+        /// <summary>
+        ///     Gets the property injection heuristics.
+        /// </summary>
+        public ICollection<IInjectionHeuristic> InjectionHeuristics { get; private set; }
+
+        /// <summary>
+        ///     Selects the constructor to call on the specified type, by using the constructor scorer.
         /// </summary>
         /// <param name="type">The type.</param>
-        /// <returns>The selected constructor, or <see langword="null"/> if none were available.</returns>
-        public  virtual IEnumerable<ConstructorInfo> SelectConstructorsForInjection(Type type)
+        /// <returns>
+        ///     The selected constructor, or <see langword="null" /> if none were available.
+        /// </returns>
+        public virtual IEnumerable<ConstructorInfo> SelectConstructorsForInjection(Type type)
         {
             Ensure.ArgumentNotNull(type, "type");
 
-            var constructors = type.GetConstructors( Flags );
+            ConstructorInfo[] constructors = type.GetConstructors(Flags);
             return constructors.Length == 0 ? null : constructors;
         }
 
         /// <summary>
-        /// Selects properties that should be injected.
+        ///     Selects properties that should be injected.
         /// </summary>
         /// <param name="type">The type.</param>
         /// <returns>A series of the selected properties.</returns>
         public virtual IEnumerable<PropertyInfo> SelectPropertiesForInjection(Type type)
         {
             Ensure.ArgumentNotNull(type, "type");
-            List<PropertyInfo> properties = new List<PropertyInfo>();
+            var properties = new List<PropertyInfo>();
             properties.AddRange(
-                type.GetProperties(this.Flags)
-                       .Select(p => p.GetPropertyFromDeclaredType(p, this.Flags))
-                       .Where(p => this.InjectionHeuristics.Any(h => h.ShouldInject(p))));
+                type.GetProperties(Flags)
+                    .Select(p => p.GetPropertyFromDeclaredType(p, Flags))
+                    .Where(p => InjectionHeuristics.Any(h => h.ShouldInject(p))));
 #if !SILVERLIGHT
-            if (this.Settings.InjectParentPrivateProperties)
+            if (Settings.InjectParentPrivateProperties)
             {
                 for (Type parentType = type.BaseType; parentType != null; parentType = parentType.BaseType)
                 {
-                    properties.AddRange(this.GetPrivateProperties(type.BaseType));
+                    properties.AddRange(GetPrivateProperties(type.BaseType));
                 }
             }
 #endif
@@ -107,14 +112,8 @@ namespace Transformalize.Libs.Ninject.Selection
             return properties;
         }
 
-        private IEnumerable<PropertyInfo> GetPrivateProperties(Type type)
-        {
-            return type.GetProperties(this.Flags).Where(p => p.DeclaringType == type && p.IsPrivate())
-                .Where(p => this.InjectionHeuristics.Any(h => h.ShouldInject(p)));
-        }
-
         /// <summary>
-        /// Selects methods that should be injected.
+        ///     Selects methods that should be injected.
         /// </summary>
         /// <param name="type">The type.</param>
         /// <returns>A series of the selected methods.</returns>
@@ -122,6 +121,12 @@ namespace Transformalize.Libs.Ninject.Selection
         {
             Ensure.ArgumentNotNull(type, "type");
             return type.GetMethods(Flags).Where(m => InjectionHeuristics.Any(h => h.ShouldInject(m)));
+        }
+
+        private IEnumerable<PropertyInfo> GetPrivateProperties(Type type)
+        {
+            return type.GetProperties(Flags).Where(p => p.DeclaringType == type && p.IsPrivate())
+                       .Where(p => InjectionHeuristics.Any(h => h.ShouldInject(p)));
         }
     }
 }

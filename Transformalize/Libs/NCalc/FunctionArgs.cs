@@ -4,21 +4,20 @@ namespace Transformalize.Libs.NCalc
 {
     public class FunctionArgs : EventArgs
     {
-
+        private Expression[] _parameters = new Expression[0];
         private object _result;
+
         public object Result
         {
             get { return _result; }
-            set 
-            { 
+            set
+            {
                 _result = value;
                 HasResult = true;
             }
         }
 
         public bool HasResult { get; set; }
-
-        private Expression[] _parameters = new Expression[0];
 
         public Expression[] Parameters
         {

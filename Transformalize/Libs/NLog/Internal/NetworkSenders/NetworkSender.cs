@@ -41,69 +41,69 @@ using Transformalize.Libs.NLog.Common;
 namespace Transformalize.Libs.NLog.Internal.NetworkSenders
 {
     /// <summary>
-    /// A base class for all network senders. Supports one-way sending of messages
-    /// over various protocols.
+    ///     A base class for all network senders. Supports one-way sending of messages
+    ///     over various protocols.
     /// </summary>
     internal abstract class NetworkSender : IDisposable
     {
         private static int currentSendTime;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NetworkSender" /> class.
+        ///     Initializes a new instance of the <see cref="NetworkSender" /> class.
         /// </summary>
         /// <param name="url">The network URL.</param>
         protected NetworkSender(string url)
         {
-            this.Address = url;
-            this.LastSendTime = Interlocked.Increment(ref currentSendTime);
+            Address = url;
+            LastSendTime = Interlocked.Increment(ref currentSendTime);
         }
 
         /// <summary>
-        /// Finalizes an instance of the NetworkSender class.
+        ///     Finalizes an instance of the NetworkSender class.
         /// </summary>
         ~NetworkSender()
         {
-            this.Dispose(false);
+            Dispose(false);
         }
 
         /// <summary>
-        /// Gets the address of the network endpoint.
+        ///     Gets the address of the network endpoint.
         /// </summary>
         public string Address { get; private set; }
 
         /// <summary>
-        /// Gets the last send time.
+        ///     Gets the last send time.
         /// </summary>
         public int LastSendTime { get; private set; }
 
         /// <summary>
-        /// Initializes this network sender.
+        ///     Initializes this network sender.
         /// </summary>
         public void Initialize()
         {
-            this.DoInitialize();
+            DoInitialize();
         }
 
         /// <summary>
-        /// Closes the sender and releases any unmanaged resources.
+        ///     Closes the sender and releases any unmanaged resources.
         /// </summary>
         /// <param name="continuation">The continuation.</param>
         public void Close(AsyncContinuation continuation)
         {
-            this.DoClose(continuation);
+            DoClose(continuation);
         }
 
         /// <summary>
-        /// Flushes any pending messages and invokes a continuation.
+        ///     Flushes any pending messages and invokes a continuation.
         /// </summary>
         /// <param name="continuation">The continuation.</param>
         public void FlushAsync(AsyncContinuation continuation)
         {
-            this.DoFlush(continuation);
+            DoFlush(continuation);
         }
 
         /// <summary>
-        /// Send the given text over the specified protocol.
+        ///     Send the given text over the specified protocol.
         /// </summary>
         /// <param name="bytes">Bytes to be sent.</param>
         /// <param name="offset">Offset in buffer.</param>
@@ -111,28 +111,28 @@ namespace Transformalize.Libs.NLog.Internal.NetworkSenders
         /// <param name="asyncContinuation">The asynchronous continuation.</param>
         public void Send(byte[] bytes, int offset, int length, AsyncContinuation asyncContinuation)
         {
-            this.LastSendTime = Interlocked.Increment(ref currentSendTime);
-            this.DoSend(bytes, offset, length, asyncContinuation);
+            LastSendTime = Interlocked.Increment(ref currentSendTime);
+            DoSend(bytes, offset, length, asyncContinuation);
         }
 
         /// <summary>
-        /// Closes the sender and releases any unmanaged resources.
+        ///     Closes the sender and releases any unmanaged resources.
         /// </summary>
         public void Dispose()
         {
-            this.Dispose(true);
+            Dispose(true);
             GC.SuppressFinalize(this);
         }
 
         /// <summary>
-        /// Performs sender-specific initialization.
+        ///     Performs sender-specific initialization.
         /// </summary>
         protected virtual void DoInitialize()
         {
         }
 
         /// <summary>
-        /// Performs sender-specific close operation.
+        ///     Performs sender-specific close operation.
         /// </summary>
         /// <param name="continuation">The continuation.</param>
         protected virtual void DoClose(AsyncContinuation continuation)
@@ -141,7 +141,7 @@ namespace Transformalize.Libs.NLog.Internal.NetworkSenders
         }
 
         /// <summary>
-        /// Performs sender-specific flush.
+        ///     Performs sender-specific flush.
         /// </summary>
         /// <param name="continuation">The continuation.</param>
         protected virtual void DoFlush(AsyncContinuation continuation)
@@ -150,7 +150,7 @@ namespace Transformalize.Libs.NLog.Internal.NetworkSenders
         }
 
         /// <summary>
-        /// Actually sends the given text over the specified protocol.
+        ///     Actually sends the given text over the specified protocol.
         /// </summary>
         /// <param name="bytes">The bytes to be sent.</param>
         /// <param name="offset">Offset in buffer.</param>
@@ -161,7 +161,7 @@ namespace Transformalize.Libs.NLog.Internal.NetworkSenders
 
 #if !WINDOWS_PHONE_7
         /// <summary>
-        /// Parses the URI into an endpoint address.
+        ///     Parses the URI into an endpoint address.
         /// </summary>
         /// <param name="uri">The URI to parse.</param>
         /// <param name="addressFamily">The address family.</param>
@@ -179,8 +179,8 @@ namespace Transformalize.Libs.NLog.Internal.NetworkSenders
 
                 default:
                     {
-                        var addresses = Dns.GetHostEntry(uri.Host).AddressList;
-                        foreach (var addr in addresses)
+                        IPAddress[] addresses = Dns.GetHostEntry(uri.Host).AddressList;
+                        foreach (IPAddress addr in addresses)
                         {
                             if (addr.AddressFamily == addressFamily || addressFamily == AddressFamily.Unspecified)
                             {
@@ -199,7 +199,7 @@ namespace Transformalize.Libs.NLog.Internal.NetworkSenders
         {
             if (disposing)
             {
-                this.Close(ex => { });
+                Close(ex => { });
             }
         }
     }

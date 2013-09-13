@@ -17,11 +17,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Collections.Generic;
-using Transformalize.Core.Field_;
-using Transformalize.Core.Fields_;
-using Transformalize.Libs.Rhino.Etl.Core;
-using Transformalize.Libs.Rhino.Etl.Core.Operations;
 using System.Linq;
+using Transformalize.Main;
+using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Libs.Rhino.Etl.Operations;
 
 namespace Transformalize.Operations
 {
@@ -32,7 +31,7 @@ namespace Transformalize.Operations
 
         public TransformFields(IFields fields)
         {
-            _fields = fields.ToEnumerable().OrderBy(f=>f.Index).ToArray();
+            _fields = fields.ToEnumerable().OrderBy(f => f.Index).ToArray();
             _transformCount = _fields.Any() ? _fields.Sum(f => f.Transforms.Count) : 0;
             UseTransaction = false;
         }
@@ -40,11 +39,11 @@ namespace Transformalize.Operations
         public TransformFields(params IFields[] fields)
         {
             var temp = new List<Field>();
-            foreach (var f in fields)
+            foreach (IFields f in fields)
             {
                 temp.AddRange(f.ToEnumerable());
             }
-            _fields = temp.OrderBy(f=>f.Index).ToArray();
+            _fields = temp.OrderBy(f => f.Index).ToArray();
 
             _transformCount = _fields.Any() ? _fields.Sum(f => f.Transforms.Count) : 0;
             UseTransaction = false;
@@ -52,18 +51,18 @@ namespace Transformalize.Operations
 
         public TransformFields(Field field)
         {
-            _fields = new [] { field };
+            _fields = new[] {field};
             _transformCount = _fields.Any() ? _fields.Sum(f => f.Transforms.Count) : 0;
             UseTransaction = false;
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
         {
-            foreach (var row in rows)
+            foreach (Row row in rows)
             {
                 if (_transformCount > 0)
                 {
-                    foreach (var field in _fields)
+                    foreach (Field field in _fields)
                     {
                         field.Transform(row);
                     }
@@ -73,5 +72,4 @@ namespace Transformalize.Operations
             }
         }
     }
-
 }

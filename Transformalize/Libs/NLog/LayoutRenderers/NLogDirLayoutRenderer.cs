@@ -40,7 +40,7 @@ using Transformalize.Libs.NLog.Config;
 namespace Transformalize.Libs.NLog.LayoutRenderers
 {
     /// <summary>
-    /// The directory where NLog.dll is located.
+    ///     The directory where NLog.dll is located.
     /// </summary>
     [LayoutRenderer("nlogdir")]
     [AppDomainFixedOutput]
@@ -48,25 +48,25 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
     public class NLogDirLayoutRenderer : LayoutRenderer
     {
         /// <summary>
-        /// Initializes static members of the NLogDirLayoutRenderer class.
+        ///     Initializes static members of the NLogDirLayoutRenderer class.
         /// </summary>
         static NLogDirLayoutRenderer()
         {
 #if !NET_CF
-            NLogDir = Path.GetDirectoryName(typeof(LogManager).Assembly.Location);
+            NLogDir = Path.GetDirectoryName(typeof (LogManager).Assembly.Location);
 #else
             NLogDir = Path.GetDirectoryName(typeof(LogManager).Assembly.GetName().CodeBase);
 #endif
         }
 
         /// <summary>
-        /// Gets or sets the name of the file to be Path.Combine()'d with the directory name.
+        ///     Gets or sets the name of the file to be Path.Combine()'d with the directory name.
         /// </summary>
         /// <docgen category='Advanced Options' order='10' />
         public string File { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of the directory to be Path.Combine()'d with the directory name.
+        ///     Gets or sets the name of the directory to be Path.Combine()'d with the directory name.
         /// </summary>
         /// <docgen category='Advanced Options' order='10' />
         public string Dir { get; set; }
@@ -74,21 +74,23 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
         private static string NLogDir { get; set; }
 
         /// <summary>
-        /// Renders the directory where NLog is located and appends it to the specified <see cref="StringBuilder" />.
+        ///     Renders the directory where NLog is located and appends it to the specified <see cref="StringBuilder" />.
         /// </summary>
-        /// <param name="builder">The <see cref="StringBuilder"/> to append the rendered data to.</param>
+        /// <param name="builder">
+        ///     The <see cref="StringBuilder" /> to append the rendered data to.
+        /// </param>
         /// <param name="logEvent">Logging event.</param>
         protected override void Append(StringBuilder builder, LogEventInfo logEvent)
         {
             string baseDir = NLogDir;
 
-            if (this.File != null)
+            if (File != null)
             {
-                builder.Append(Path.Combine(baseDir, this.File));
+                builder.Append(Path.Combine(baseDir, File));
             }
-            else if (this.Dir != null)
+            else if (Dir != null)
             {
-                builder.Append(Path.Combine(baseDir, this.Dir));
+                builder.Append(Path.Combine(baseDir, Dir));
             }
             else
             {

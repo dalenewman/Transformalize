@@ -53,78 +53,52 @@ namespace Transformalize.Configuration
         private const string FIELDS = "fields";
         private const string TO = "to";
 
-        public override bool IsReadOnly()
-        {
-            return false;
-        }
-
         [ConfigurationProperty(METHOD, IsRequired = true)]
         public string Method
         {
-            get
-            {
-                return this[METHOD] as string;
-            }
+            get { return this[METHOD] as string; }
             set { this[METHOD] = value; }
         }
 
         [ConfigurationProperty(NAME, IsRequired = false, DefaultValue = "")]
         public string Name
         {
-            get
-            {
-                return this[NAME] as string;
-            }
+            get { return this[NAME] as string; }
             set { this[NAME] = value; }
         }
 
         [ConfigurationProperty(TO, IsRequired = false, DefaultValue = "")]
         public string To
         {
-            get
-            {
-                return this[TO] as string;
-            }
+            get { return this[TO] as string; }
             set { this[TO] = value; }
         }
-        
+
         [ConfigurationProperty(VALUE, IsRequired = false, DefaultValue = "")]
         public string Value
         {
-            get
-            {
-                return this[VALUE] as string;
-            }
+            get { return this[VALUE] as string; }
             set { this[VALUE] = value; }
         }
 
         [ConfigurationProperty(PATTERN, IsRequired = false, DefaultValue = "")]
         public string Pattern
         {
-            get
-            {
-                return this[PATTERN] as string;
-            }
+            get { return this[PATTERN] as string; }
             set { this[PATTERN] = value; }
         }
 
         [ConfigurationProperty(REPLACEMENT, IsRequired = false, DefaultValue = "")]
         public string Replacement
         {
-            get
-            {
-                return this[REPLACEMENT] as string;
-            }
+            get { return this[REPLACEMENT] as string; }
             set { this[REPLACEMENT] = value; }
         }
 
         [ConfigurationProperty(OLD_VALUE, IsRequired = false, DefaultValue = "")]
         public string OldValue
         {
-            get
-            {
-                return this[OLD_VALUE] as string;
-            }
+            get { return this[OLD_VALUE] as string; }
             set { this[OLD_VALUE] = value; }
         }
 
@@ -132,70 +106,49 @@ namespace Transformalize.Configuration
         [ConfigurationProperty(NEW_VALUE, IsRequired = false, DefaultValue = "")]
         public string NewValue
         {
-            get
-            {
-                return this[NEW_VALUE] as string;
-            }
+            get { return this[NEW_VALUE] as string; }
             set { this[NEW_VALUE] = value; }
         }
 
         [ConfigurationProperty(TRIM_CHARS, IsRequired = false, DefaultValue = " ")]
         public string TrimChars
         {
-            get
-            {
-                return this[TRIM_CHARS] as string;
-            }
+            get { return this[TRIM_CHARS] as string; }
             set { this[TRIM_CHARS] = value; }
         }
 
         [ConfigurationProperty(INDEX, IsRequired = false, DefaultValue = 0)]
         public int Index
         {
-            get
-            {
-                return (int)this[INDEX];
-            }
+            get { return (int) this[INDEX]; }
             set { this[INDEX] = value; }
         }
 
         [ConfigurationProperty(COUNT, IsRequired = false, DefaultValue = 0)]
         public int Count
         {
-            get
-            {
-                return (int)this[COUNT];
-            }
+            get { return (int) this[COUNT]; }
             set { this[COUNT] = value; }
         }
 
         [ConfigurationProperty(START_INDEX, IsRequired = false, DefaultValue = 0)]
         public int StartIndex
         {
-            get
-            {
-                return (int)this[START_INDEX];
-            }
+            get { return (int) this[START_INDEX]; }
             set { this[START_INDEX] = value; }
         }
 
         [ConfigurationProperty(LENGTH, IsRequired = false, DefaultValue = 0)]
         public int Length
         {
-            get
-            {
-                return (int)this[LENGTH];
-            }
+            get { return (int) this[LENGTH]; }
             set { this[LENGTH] = value; }
         }
 
         [ConfigurationProperty(TOTAL_WIDTH, IsRequired = false, DefaultValue = 0)]
         public int TotalWidth
         {
-            get
-            {
-                return (int)this[TOTAL_WIDTH];
-            }
+            get { return (int) this[TOTAL_WIDTH]; }
             set { this[TOTAL_WIDTH] = value; }
         }
 
@@ -203,20 +156,14 @@ namespace Transformalize.Configuration
         [ConfigurationProperty(PADDING_CHAR, IsRequired = false, DefaultValue = "0")]
         public string PaddingChar
         {
-            get
-            {
-                return (string)this[PADDING_CHAR];
-            }
+            get { return (string) this[PADDING_CHAR]; }
             set { this[PADDING_CHAR] = value; }
         }
 
         [ConfigurationProperty(MAP, IsRequired = false, DefaultValue = "")]
         public string Map
         {
-            get
-            {
-                return this[MAP] as string;
-            }
+            get { return this[MAP] as string; }
             set { this[MAP] = value; }
         }
 
@@ -224,90 +171,63 @@ namespace Transformalize.Configuration
         [ConfigurationProperty(ROOT, IsRequired = false, DefaultValue = "")]
         public string Root
         {
-            get
-            {
-                return this[ROOT] as string;
-            }
+            get { return this[ROOT] as string; }
             set { this[ROOT] = value; }
         }
- 
+
         [ConfigurationProperty(SCRIPT, IsRequired = false, DefaultValue = "")]
         public string Script
         {
-            get
-            {
-                return this[SCRIPT] as string;
-            }
+            get { return this[SCRIPT] as string; }
             set { this[SCRIPT] = value; }
         }
 
         [ConfigurationProperty(TEMPLATE, IsRequired = false, DefaultValue = "")]
         public string Template
         {
-            get
-            {
-                return this[TEMPLATE] as string;
-            }
+            get { return this[TEMPLATE] as string; }
             set { this[TEMPLATE] = value; }
         }
 
         [ConfigurationProperty(FORMAT, IsRequired = false, DefaultValue = "")]
         public string Format
         {
-            get
-            {
-                return this[FORMAT] as string;
-            }
+            get { return this[FORMAT] as string; }
             set { this[FORMAT] = value; }
         }
 
         [ConfigurationProperty(PARAMETER, IsRequired = false, DefaultValue = "")]
         public string Parameter
         {
-            get
-            {
-                return this[PARAMETER] as string;
-            }
+            get { return this[PARAMETER] as string; }
             set { this[PARAMETER] = value; }
         }
 
         [ConfigurationProperty(RESULT, IsRequired = false, DefaultValue = "")]
         public string Result
         {
-            get
-            {
-                return this[RESULT] as string;
-            }
+            get { return this[RESULT] as string; }
             set { this[RESULT] = value; }
         }
 
         [ConfigurationProperty(SEPARATOR, IsRequired = false, DefaultValue = ",")]
         public string Separator
         {
-            get
-            {
-                return this[SEPARATOR] as string;
-            }
+            get { return this[SEPARATOR] as string; }
             set { this[SEPARATOR] = value; }
         }
 
         [ConfigurationProperty(MODEL, IsRequired = false, DefaultValue = "dynamic")]
         public string Model
         {
-            get
-            {
-                return this[MODEL] as string;
-            }
+            get { return this[MODEL] as string; }
             set { this[MODEL] = value; }
         }
 
         [ConfigurationProperty(EXPRESSION, IsRequired = false, DefaultValue = "")]
         public string Expression
         {
-            get
-            {
-                return this[EXPRESSION] as string;
-            }
+            get { return this[EXPRESSION] as string; }
             set { this[EXPRESSION] = value; }
         }
 
@@ -315,19 +235,13 @@ namespace Transformalize.Configuration
         [ConfigurationProperty(PARAMETERS)]
         public ParameterElementCollection Parameters
         {
-            get
-            {
-                return this[PARAMETERS] as ParameterElementCollection;
-            }
+            get { return this[PARAMETERS] as ParameterElementCollection; }
         }
 
         [ConfigurationProperty(SCRIPTS)]
         public TransformScriptElementCollection Scripts
         {
-            get
-            {
-                return this[SCRIPTS] as TransformScriptElementCollection;
-            }
+            get { return this[SCRIPTS] as TransformScriptElementCollection; }
         }
 
         [ConfigurationProperty(TEMPLATES)]
@@ -339,21 +253,19 @@ namespace Transformalize.Configuration
         [ConfigurationProperty(TYPE, IsRequired = false, DefaultValue = "")]
         public string Type
         {
-            get
-            {
-                return this[TYPE] as string;
-            }
+            get { return this[TYPE] as string; }
             set { this[TYPE] = value; }
         }
 
         [ConfigurationProperty(FIELDS)]
         public FieldElementCollection Fields
         {
-            get
-            {
-                return this[FIELDS] as FieldElementCollection;
-            }
+            get { return this[FIELDS] as FieldElementCollection; }
         }
 
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
     }
 }

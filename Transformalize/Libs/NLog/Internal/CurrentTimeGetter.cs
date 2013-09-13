@@ -36,7 +36,7 @@ using System;
 namespace Transformalize.Libs.NLog.Internal
 {
     /// <summary>
-    /// Optimized methods to get current time.
+    ///     Optimized methods to get current time.
     /// </summary>
     internal class CurrentTimeGetter
     {
@@ -44,7 +44,7 @@ namespace Transformalize.Libs.NLog.Internal
         private static DateTime lastDateTime = DateTime.MinValue;
 
         /// <summary>
-        /// Gets the current time in an optimized fashion.
+        ///     Gets the current time in an optimized fashion.
         /// </summary>
         /// <value>Current time.</value>
         public static DateTime Now
