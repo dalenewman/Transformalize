@@ -24,6 +24,6 @@ namespace Transformalize.Main
 {
     public interface IEntityVersionWriter
     {
-        void WriteEndVersion(object end, long count);
+        void WriteEndVersion();
     }
 }

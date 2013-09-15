@@ -24,24 +24,19 @@ using System;
 using System.Data.SqlClient;
 using Transformalize.Libs.NLog;
 
-namespace Transformalize.Main.Providers.SqlServer
-{
-    public class SqlServerEntityVersionWriter : IEntityVersionWriter
-    {
+namespace Transformalize.Main.Providers.SqlServer {
+    public class SqlServerEntityVersionWriter : IEntityVersionWriter {
         private readonly Entity _entity;
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
 
-        public SqlServerEntityVersionWriter(Entity entity)
-        {
+        public SqlServerEntityVersionWriter(Entity entity) {
             _entity = entity;
         }
 
-        public void WriteEndVersion(object end, long count)
-        {
-            if (count > 0)
-            {
-                using (var cn = new SqlConnection(_entity.OutputConnection.ConnectionString))
-                {
+        public void WriteEndVersion() {
+
+            if (_entity.Inserts > 0) {
+                using (var cn = new SqlConnection(_entity.OutputConnection.ConnectionString)) {
                     cn.Open();
                     var command = new SqlCommand(PrepareSql(), cn);
 
@@ -49,10 +44,14 @@ namespace Transformalize.Main.Providers.SqlServer
                     command.Parameters.Add(new SqlParameter("@ProcessName", _entity.ProcessName));
                     command.Parameters.Add(new SqlParameter("@EntityName", _entity.Alias));
                     command.Parameters.Add(new SqlParameter("@TflUpdate", DateTime.Now));
-                    command.Parameters.Add(new SqlParameter("@Count", count));
+                    command.Parameters.Add(new SqlParameter("@Inserts", _entity.Inserts));
+                    command.Parameters.Add(new SqlParameter("@Updates", _entity.Updates));
+                    command.Parameters.Add(new SqlParameter("@Deletes", _entity.Deletes));
 
-                    if (_entity.Version != null)
-                        command.Parameters.Add(new SqlParameter("@End", new ConversionFactory().Convert(end, _entity.Version.SimpleType)));
+                    if (_entity.Version != null) {
+                        var end = new ConversionFactory().Convert(_entity.End, _entity.Version.SimpleType);
+                        command.Parameters.Add(new SqlParameter("@End", end));
+                    }
 
                     _log.Debug(command.CommandText);
 
@@ -60,23 +59,21 @@ namespace Transformalize.Main.Providers.SqlServer
                 }
             }
 
-            _log.Info("Processed {0} rows in {1}", count, _entity.Alias);
+            _log.Info("Processed {0} rows in {1}", _entity.Inserts, _entity.Alias);
         }
 
-        private string PrepareSql()
-        {
-            if (_entity.Version == null)
-            {
+        private string PrepareSql() {
+            if (_entity.Version == null) {
                 return @"
-                    INSERT INTO [TflBatch](TflBatchId, ProcessName, EntityName, TflUpdate, Rows)
-                    VALUES(@TflBatchId, @ProcessName, @EntityName, @TflUpdate, @Count);
+                    INSERT INTO [TflBatch](TflBatchId, ProcessName, EntityName, TflUpdate, Inserts, Updates, Deletes)
+                    VALUES(@TflBatchId, @ProcessName, @EntityName, @TflUpdate, @Inserts, @Updates, @Deletes);
                 ";
             }
 
             var field = _entity.Version.SimpleType.Replace("rowversion", "Binary").Replace("byte[]", "Binary") + "Version";
             return string.Format(@"
-                INSERT INTO [TflBatch](TflBatchId, ProcessName, EntityName, [{0}], TflUpdate, Rows)
-                VALUES(@TflBatchId, @ProcessName, @EntityName, @End, @TflUpdate, @Count);
+                INSERT INTO [TflBatch](TflBatchId, ProcessName, EntityName, [{0}], TflUpdate, Inserts, Updates, Deletes)
+                VALUES(@TflBatchId, @ProcessName, @EntityName, @End, @TflUpdate, @Inserts, @Updates, @Deletes);
             ", field);
         }
     }

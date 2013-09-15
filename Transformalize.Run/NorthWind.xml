@@ -2,28 +2,74 @@
 
 <process>
 
+  <providers>
+    <add name="sqlserver"
+         type="System.Data.SqlClient.SqlConnection, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+    <add name="mysql" type="MySql.Data.MySqlClient.MySqlConnection, MySql.Data"></add>
+  </providers>
+
   <connections>
     <add name="input" value="Server=localhost;Database=NorthWind;Trusted_Connection=True;" />
     <add name="output" value="Server=localhost;Database=NorthWindStar;Trusted_Connection=True;" />
+    <add name="ssas" value="Data Source=localhost;Catalog=NorthWind;" provider="AnalysisServices"></add>
   </connections>
+
+  <templates path="Templates">
+    <add name="solr-data-handler" file="solr-data-handler.cshtml">
+      <actions>
+        <add action="copy" file="C:\Solr\NorthWind\conf\data-config.xml" />
+      </actions>
+    </add>
+    <add name="solr-schema" file="solr-schema.cshtml">
+      <actions>
+        <add action="copy" file="C:\Solr\NorthWind\conf\schema.xml" />
+      </actions>
+    </add>
+  </templates>
+
+  <search-types>
+    <add name="default" />
+    <add name="facet" type="lowercase" store="true" index="true" />
+    <add name="standard" type="standard_lowercase" store="false" index="true"/>
+  </search-types>
 
   <entities>
     <add name="Order Details" version="RowVersion" auto="true">
       <fields>
         <add name="RowVersion" alias="OrderDetailsRowVersion" type="byte[]" output="false"></add>
       </fields>
-      <transforms>
-        <add method="javascript" script="OrderDetailsQuantity * OrderDetailsUnitPrice">
-          <results>
-            <add name="OrderDetailsExtendedPrice" type="Decimal" precision="19" scale="4" />
-          </results>
+      <calculated-fields>
+        <add name="OrderDetailsExtendedPrice" type="Decimal" precision="19" scale="4">
+          <transforms>
+            <add method="javascript" script="OrderDetailsQuantity * OrderDetailsUnitPrice" parameter="*" />
+          </transforms>
         </add>
-      </transforms>
+      </calculated-fields>
     </add>
     <add name="Orders" version="RowVersion" auto="true">
       <fields>
         <add name="RowVersion" alias="OrdersRowVersion" type="byte[]" output="false"></add>
       </fields>
+
+      <calculated-fields>
+        <add name="TimeOrderMonth" length="6" default="12-DEC">
+          <transforms>
+            <add method="dateformat" format="MM-MMM" parameter="OrdersOrderDate" />
+            <add method="toUpper" />
+          </transforms>
+        </add>
+        <add name="TimeOrderDate" length="10" default="9999-12-31">
+          <transforms>
+            <add method="dateformat" format="yyyy-MM-dd" parameter="OrdersOrderDate" />
+          </transforms>
+        </add>
+        <add name="TimeOrderYear" length="4" default="9999">
+          <transforms>
+            <add method="dateformat" format="yyyy" parameter="OrdersOrderDate" />
+          </transforms>
+        </add>
+      </calculated-fields>
+
     </add>
     <add name="Customers" version="RowVersion" auto="true">
       <fields>
@@ -38,7 +84,18 @@
             <add method="map" map="Managers"></add>
           </transforms>
         </add>
+        <add name="Photo" alias="EmployeesPhoto" input="false"></add>
+        <add name="PhotoPath" alias="EmployeesPhotoPath" input="false"></add>
       </fields>
+      <transforms>
+        <add method="join" separator=" " result="Employee">
+          <parameters>
+            <!--<add field="TitleOfCourtesy"></add>-->
+            <add field="FirstName"></add>
+            <add field="LastName"></add>
+          </parameters>
+        </add>
+      </transforms>
     </add>
     <add name="Products" version="RowVersion" auto="true">
       <fields>
@@ -52,7 +109,8 @@
     </add>
     <add name="Categories" version="RowVersion" auto="true">
       <fields>
-        <add name="RowVersion" alias="CategoriesRowVersion" type="byte[]" output="false"></add>
+        <add name="RowVersion" alias="CategoriesRowVersion" type="byte[]" input="false"></add>
+        <add name="Picture" alias="CategoriesPicture" type="byte[]" input="false"></add>
       </fields>
     </add>
     <add name="Shippers" version="RowVersion" auto="true">

@@ -49,7 +49,7 @@ namespace Transformalize.Operations
 
         private void EntityAddTflFields_OnFinishedProcessing(IOperation obj)
         {
-            _entity.RecordsAffected = obj.Statistics.OutputtedRows;
+            _entity.Inserts = obj.Statistics.OutputtedRows;
         }
     }
 }

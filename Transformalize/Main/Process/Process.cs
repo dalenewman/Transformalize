@@ -20,6 +20,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Libs.NLog;
@@ -34,6 +35,7 @@ namespace Transformalize.Main
 {
     public class Process
     {
+        private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         public IFields CalculatedFields = new Fields();
         public Dictionary<string, AbstractConnection> Connections = new Dictionary<string, AbstractConnection>();
         public List<Entity> Entities = new List<Entity>();
@@ -44,7 +46,7 @@ namespace Transformalize.Main
         public Entity MasterEntity;
         public string Name;
         public Options Options = new Options();
-        public bool OutputRecordsExist;
+        public bool IsFirstRun;
         public Dictionary<string, string> Providers = new Dictionary<string, string>();
         public IEnumerable<Field> RelatedKeys;
         public List<Relationship> Relationships = new List<Relationship>();
@@ -134,6 +136,13 @@ namespace Transformalize.Main
                 }
             }
             return parameters;
+        }
+
+        public Entity this[string entity] {
+            get
+            {
+                return Entities.Find(e => e.Alias.Equals(entity, IC) || e.Name.Equals(entity, IC));
+            }
         }
     }
 }

@@ -67,14 +67,32 @@ namespace Transformalize.Runner
             }
         }
 
-        private void RenderTemplates()
-        {
-            if (_process.Options.RenderTemplates)
-                new TemplateManager(_process).Manage();
+        private void ProcessEntities() {
+
+            foreach (var entityKeysProcess in _process.Entities.Select(entity => new EntityKeysProcess(_process, entity))) {
+                if (_process.Options.Mode == Modes.Test)
+                    entityKeysProcess.PipelineExecuter = new SingleThreadedNonCachedPipelineExecuter();
+
+                entityKeysProcess.Execute();
+            }
+
+            foreach (var entityProcess in _process.Entities.Select(entity => new EntityProcess(_process, entity))) {
+                if (_process.Options.Mode == Modes.Test)
+                    entityProcess.PipelineExecuter = new SingleThreadedNonCachedPipelineExecuter();
+
+                entityProcess.Execute();
+            }
         }
 
-        private void ProcessTransforms()
-        {
+        private void ProcessMaster() {
+            var updateMasterProcess = new UpdateMasterProcess(ref _process);
+            if (_process.Options.Mode == Modes.Test)
+                updateMasterProcess.PipelineExecuter = new SingleThreadedNonCachedPipelineExecuter();
+
+            updateMasterProcess.Execute();
+        }
+
+        private void ProcessTransforms() {
             if (_process.CalculatedFields.Count <= 0) return;
 
             var transformProcess = new TransformProcess(_process);
@@ -85,32 +103,11 @@ namespace Transformalize.Runner
             transformProcess.Execute();
         }
 
-        private void ProcessMaster()
+        private void RenderTemplates()
         {
-            var updateMasterProcess = new UpdateMasterProcess(ref _process);
-            if (_process.Options.Mode == Modes.Test)
-                updateMasterProcess.PipelineExecuter = new SingleThreadedNonCachedPipelineExecuter();
-
-            updateMasterProcess.Execute();
+            if (_process.Options.RenderTemplates)
+                new TemplateManager(_process).Manage();
         }
 
-        private void ProcessEntities()
-        {
-            foreach (var entityKeysProcess in _process.Entities.Select(entity => new EntityKeysProcess(_process, entity)))
-            {
-                if (_process.Options.Mode == Modes.Test)
-                    entityKeysProcess.PipelineExecuter = new SingleThreadedNonCachedPipelineExecuter();
-
-                entityKeysProcess.Execute();
-            }
-
-            foreach (var entityProcess in _process.Entities.Select(entity => new EntityProcess(_process, entity)))
-            {
-                if (_process.Options.Mode == Modes.Test)
-                    entityProcess.PipelineExecuter = new SingleThreadedNonCachedPipelineExecuter();
-
-                entityProcess.Execute();
-            }
-        }
     }
 }

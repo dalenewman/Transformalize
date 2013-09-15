@@ -76,7 +76,9 @@ namespace Transformalize.Main.Providers.SqlServer
                     [Int16Version] SMALLINT NULL,
                     [ByteVersion] TINYINT NULL,
 	                [TflUpdate] DATETIME NOT NULL,
-                    [Rows] BIGINT NOT NULL,
+                    [Inserts] BIGINT NOT NULL,
+                    [Updates] BIGINT NOT NULL,
+                    [Deletes] BIGINT NOT NULL,
 					CONSTRAINT Pk_TflBatch_TflBatchId PRIMARY KEY (
 						TflBatchId,
                         ProcessName

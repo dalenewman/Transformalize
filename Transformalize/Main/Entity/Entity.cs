@@ -58,7 +58,6 @@ namespace Transformalize.Main
         public IFields Xml { get; set; }
         public IFields All { get; set; }
         public Dictionary<string, Relationship> Joins { get; set; }
-        public long RecordsAffected { get; set; }
         public object Begin { get; set; }
         public object End { get; set; }
         public int InputCount { get; set; }
@@ -73,6 +72,10 @@ namespace Transformalize.Main
         public IFields CalculatedFields { get; set; }
         public bool HasRows { get; set; }
         public bool HasRange { get; set; }
+
+        public long Updates { get; set; }
+        public long Inserts { get; set; }
+        public long Deletes { get; set; }
 
         public int TflBatchId
         {

@@ -39,9 +39,9 @@ namespace Transformalize.Main
         public void Check()
         {
             var entity = _process.MasterEntity;
-            _process.OutputRecordsExist = _entityRecordsExist.OutputRecordsExist(entity);
+            _process.IsFirstRun = !_entityRecordsExist.OutputRecordsExist(entity);
             Debug(
-                _process.OutputRecordsExist
+                _process.IsFirstRun
                     ? "{0}.{1} has records; delta run."
                     : "{0}.{1} is empty; initial run.",
                 entity.Schema,

@@ -26,28 +26,27 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
-namespace Transformalize.Operations
-{
-    public class EntityActionFilter : AbstractOperation
-    {
+namespace Transformalize.Operations {
+    public class EntityActionFilter : AbstractOperation {
         private readonly Entity _entity;
         private readonly EntityAction _entityAction;
 
-        public EntityActionFilter(ref Entity entity, EntityAction entityAction)
-        {
+        public EntityActionFilter(ref Entity entity, EntityAction entityAction) {
             _entity = entity;
             _entityAction = entityAction;
         }
 
-        public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
-        {
+        public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             OnFinishedProcessing += EntityActionFilter_OnFinishedProcessing;
             return rows.Where(r => r["a"].Equals(_entityAction));
         }
 
-        private void EntityActionFilter_OnFinishedProcessing(IOperation obj)
-        {
-            _entity.RecordsAffected += obj.Statistics.OutputtedRows;
+        private void EntityActionFilter_OnFinishedProcessing(IOperation obj) {
+            if (_entityAction == EntityAction.Insert) {
+                _entity.Inserts += obj.Statistics.OutputtedRows;
+            } else {
+                _entity.Updates += obj.Statistics.OutputtedRows;
+            }
         }
     }
 }

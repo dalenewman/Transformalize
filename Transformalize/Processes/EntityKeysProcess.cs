@@ -27,43 +27,35 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 using Transformalize.Operations;
 
-namespace Transformalize.Processes
-{
-    public class EntityKeysProcess : EtlProcess
-    {
+namespace Transformalize.Processes {
+    public class EntityKeysProcess : EtlProcess {
         private readonly Entity _entity;
         private readonly Process _process;
 
-        public EntityKeysProcess(Process process, Entity entity) : base(process.Name)
-        {
+        public EntityKeysProcess(Process process, Entity entity)
+            : base(process.Name) {
             GlobalDiagnosticsContext.Set("entity", Common.LogLength(entity.Alias, 20));
             _process = process;
             _entity = entity;
         }
 
-        protected override void Initialize()
-        {
-            if (_process.OutputRecordsExist && _process.Options.UseBeginVersion && _entity.Version != null)
-            {
+        protected override void Initialize() {
+            
+            if (!_process.IsFirstRun && _process.Options.UseBeginVersion && _entity.Version != null) {
                 var operation = new EntityInputKeysExtractDelta(_entity);
                 if (operation.NeedsToRun())
                     Register(operation);
-            }
-            else
-            {
+            } else {
                 Register(new EntityInputKeysExtractAll(_entity));
             }
 
             Register(new EntityInputKeysStore(_process, _entity));
         }
 
-        protected override void PostProcessing()
-        {
+        protected override void PostProcessing() {
             var errors = GetAllErrors().ToArray();
-            if (errors.Any())
-            {
-                foreach (var error in errors)
-                {
+            if (errors.Any()) {
+                foreach (var error in errors) {
                     Error(error.InnerException, "Message: {0}\r\nStackTrace:{1}\r\n", error.Message, error.StackTrace);
                 }
                 Environment.Exit(1);

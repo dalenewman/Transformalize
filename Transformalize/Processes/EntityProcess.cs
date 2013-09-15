@@ -29,24 +29,21 @@ using Transformalize.Main;
 using Transformalize.Main.Providers.SqlServer;
 using Transformalize.Operations;
 
-namespace Transformalize.Processes
-{
-    public class EntityProcess : EtlProcess
-    {
+namespace Transformalize.Processes {
+    public class EntityProcess : EtlProcess {
         private readonly IFields _fieldsWithTransforms;
         private readonly Process _process;
         private Entity _entity;
 
-        public EntityProcess(Process process, Entity entity) : base(process.Name)
-        {
+        public EntityProcess(Process process, Entity entity)
+            : base(process.Name) {
             GlobalDiagnosticsContext.Set("entity", Common.LogLength(entity.Alias, 20));
             _process = process;
             _entity = entity;
             _fieldsWithTransforms = new FieldSqlWriter(entity.All).ExpandXml().HasTransform().Context();
         }
 
-        protected override void Initialize()
-        {
+        protected override void Initialize() {
             Register(new EntityKeysToOperations(_entity));
             Register(new SerialUnionAllOperation());
             Register(new ApplyDefaults(_entity.All, _entity.CalculatedFields));
@@ -56,43 +53,36 @@ namespace Transformalize.Processes
             if (_entity.Group)
                 Register(new EntityAggregation(_entity));
 
-            if (_process.OutputRecordsExist)
-            {
+            if (_process.IsFirstRun) {
+                Register(new EntityAddTflFields(_entity));
+                RegisterLast(new EntityBulkInsert(_entity));
+            } else {
                 Register(new EntityJoinAction(_entity).Right(new EntityOutputKeysExtract(_entity)));
                 var branch = new BranchingOperation()
                     .Add(new PartialProcessOperation()
-                             .Register(new EntityActionFilter(ref _entity, EntityAction.Insert))
-                             .RegisterLast(new EntityBulkInsert(_entity)))
+                        .Register(new EntityActionFilter(ref _entity, EntityAction.Insert))
+                        .RegisterLast(new EntityBulkInsert(_entity)))
                     .Add(new PartialProcessOperation()
-                             .Register(new EntityActionFilter(ref _entity, EntityAction.Update))
-                             .RegisterLast(new EntityBatchUpdate(_entity)));
+                        .Register(new EntityActionFilter(ref _entity, EntityAction.Update))
+                        .RegisterLast(new EntityBatchUpdate(_entity)));
                 RegisterLast(branch);
-            }
-            else
-            {
-                Register(new EntityAddTflFields(_entity));
-                RegisterLast(new EntityBulkInsert(_entity));
             }
         }
 
-        protected override void PostProcessing()
-        {
+        protected override void PostProcessing() {
             var errors = GetAllErrors().ToArray();
-            if (errors.Any())
-            {
-                foreach (var error in errors)
-                {
+            if (errors.Any()) {
+                foreach (var error in errors) {
                     Error(error.InnerException, "Message: {0}\r\nStackTrace:{1}\r\n", error.Message, error.StackTrace);
                 }
                 Environment.Exit(1);
             }
 
-            if (_process.Options.WriteEndVersion)
-            {
-                new SqlServerEntityVersionWriter(_entity).WriteEndVersion(_entity.End, _entity.RecordsAffected);
+            if (_process.Options.WriteEndVersion) {
+                new SqlServerEntityVersionWriter(_entity).WriteEndVersion();
             }
 
-            _entity.InputKeys = null;
+            //_entity.InputKeys = null;
             base.PostProcessing();
         }
     }

@@ -141,6 +141,7 @@
     <Compile Include="Configuration\TransformalizeConfiguration.cs" />
     <Compile Include="Configuration\XmlConfigurationElement.cs" />
     <Compile Include="Configuration\XmlElementCollection.cs" />
+    <Compile Include="Libs\Dapper\SqlMapper.cs" />
     <Compile Include="Main\Common.cs" />
     <Compile Include="Main\Entity\EntityParametersReader.cs" />
     <Compile Include="Main\Field\SearchType.cs" />
@@ -1041,6 +1042,7 @@
     <Content Include="Antlr3.Runtime.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Libs\Dapper\License.txt" />
     <Content Include="Libs\FileHelpers\Engines\Examples.xml" />
     <Content Include="Libs\FileHelpers\Engines\FileHelperAsyncEngine.docs.xml" />
     <Content Include="Libs\FileHelpers\Engines\FileHelperEngine.docs.xml" />
