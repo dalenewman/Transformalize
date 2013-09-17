@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
@@ -110,6 +111,33 @@ namespace Transformalize.Main {
         public static string EntityOutputName(string entityAlias, string processName)
         {
             return string.Concat(processName, entityAlias).Replace(" ", string.Empty);
+        }
+
+        [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
+        static extern int memcmp(byte[] b1, byte[] b2, long count);
+
+        public static bool AreEqual(byte[] b1, byte[] b2) {
+            return b1.Length == b2.Length && memcmp(b1, b2, b1.Length) == 0;
+        }
+
+        public static byte[] Max(byte[] b1, byte[] b2)
+        {
+            var minLength = Math.Min(b1.Length, b2.Length);
+            if (minLength == 0)
+            {
+                return b1.Length > b2.Length ? b1 : b2;
+            }
+
+            var result = memcmp(b1, b2, minLength);
+            if (result == 0)
+            {
+                if (b1.Length == b2.Length)
+                {
+                    return b1;
+                }
+                return b1.Length > b2.Length ? b1 : b2;
+            }
+            return result > 0 ? b1 : b2;
         }
     }
 }

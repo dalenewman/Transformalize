@@ -33,7 +33,7 @@ namespace Transformalize.Processes
     {
         private readonly Process _process;
 
-        public TransformProcess(Process process) : base(process.Name)
+        public TransformProcess(Process process)
         {
             GlobalDiagnosticsContext.Set("entity", Common.LogLength("All", 20));
             _process = process;

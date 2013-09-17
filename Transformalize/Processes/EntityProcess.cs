@@ -30,13 +30,13 @@ using Transformalize.Main.Providers.SqlServer;
 using Transformalize.Operations;
 
 namespace Transformalize.Processes {
+
     public class EntityProcess : EtlProcess {
         private readonly IFields _fieldsWithTransforms;
         private readonly Process _process;
         private Entity _entity;
 
-        public EntityProcess(Process process, Entity entity)
-            : base(process.Name) {
+        public EntityProcess(Process process, Entity entity) {
             GlobalDiagnosticsContext.Set("entity", Common.LogLength(entity.Alias, 20));
             _process = process;
             _entity = entity;
@@ -70,6 +70,9 @@ namespace Transformalize.Processes {
         }
 
         protected override void PostProcessing() {
+
+            _entity.InputKeys.Clear();
+
             var errors = GetAllErrors().ToArray();
             if (errors.Any()) {
                 foreach (var error in errors) {
@@ -78,11 +81,8 @@ namespace Transformalize.Processes {
                 Environment.Exit(1);
             }
 
-            if (_process.Options.WriteEndVersion) {
-                new SqlServerEntityVersionWriter(_entity).WriteEndVersion();
-            }
+            new SqlServerEntityVersionWriter(_entity).WriteEndVersion();
 
-            //_entity.InputKeys = null;
             base.PostProcessing();
         }
     }

@@ -327,7 +327,7 @@ namespace Transformalize.Libs.FileHelpers.Fields
                     val = mNullValue;
                 }
             }
-            else if (mFieldType == fieldValue)
+            else if (mFieldType == (Type) fieldValue)
                 val = fieldValue;
             else
             {

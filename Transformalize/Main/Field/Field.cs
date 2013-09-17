@@ -155,11 +155,6 @@ namespace Transformalize.Main
             Transforms = new Transforms();
             Default = new ConversionFactory().Convert(@default, SimpleType);
             SearchTypes = new List<SearchType>();
-
-            if (SimpleType.Equals("rowversion"))
-            {
-                Output = false;
-            }
         }
 
         public string AsJoin(string left, string right)

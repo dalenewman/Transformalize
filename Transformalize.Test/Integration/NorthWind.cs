@@ -32,10 +32,7 @@ namespace Transformalize.Test.Integration
         [Test]
         public void Init()
         {
-            var options = new Options
-                              {
-                                  Mode = Modes.Initialize
-                              };
+            var options = new Options { Mode = Modes.Initialize };
             var process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.xml").Read(), options).Read();
             new ProcessRunner(process).Run();
         }
@@ -51,11 +48,7 @@ namespace Transformalize.Test.Integration
         [Test]
         public void Test()
         {
-            var options = new Options
-                              {
-                                  Mode = Modes.Test,
-                                  Top = 1
-                              };
+            var options = new Options { Mode = Modes.Test, Top = 1 };
             var process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.xml").Read(), options).Read();
             new ProcessRunner(process).Run();
         }

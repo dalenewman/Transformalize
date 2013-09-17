@@ -20,22 +20,30 @@
 
 #endregion
 
+using System;
+using System.Linq;
 using NUnit.Framework;
+using Transformalize.Libs.NLog;
 using Transformalize.Main;
 using Transformalize.Runner;
 using Transformalize.Libs.Dapper;
 
 namespace Transformalize.Test.Integration {
     [TestFixture]
-    public class NorthWindUpdates {
+    public class NorthWindUpdates
+    {
+
+        private readonly Logger _log = LogManager.GetCurrentClassLogger();
+
         [Test]
         public void Go() {
-            // initialize (destroy and create)
+
+            _log.Info("***** RUN 00 * INITIALIZE ******");
             var options = new Options { Mode = Modes.Initialize};
             var process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.xml").Read(), options).Read();
             new ProcessRunner(process).Run();
 
-            // first run
+            _log.Info("***** RUN 01 * FIRST RUN ******");
             options = new Options { Mode = Modes.Normal, RenderTemplates = false };
             process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.xml").Read(), options).Read();
             new ProcessRunner(process).Run();
@@ -49,7 +57,7 @@ namespace Transformalize.Test.Integration {
             Assert.AreEqual(8, process["Categories"].Inserts);
             Assert.AreEqual(3, process["Shippers"].Inserts);
 
-            // second run
+            _log.Info("***** RUN 02 * NO CHANGES ******");
             options = new Options { Mode = Modes.Normal, RenderTemplates = false };
             process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.xml").Read(), options).Read();
             new ProcessRunner(process).Run();
@@ -63,31 +71,138 @@ namespace Transformalize.Test.Integration {
             Assert.AreEqual(0, process["Categories"].Inserts);
             Assert.AreEqual(0, process["Shippers"].Inserts);
 
-            // add 1 fact
+
+            
+            _log.Info("***** RUN 03 * ADD 1 ORDER DETAIL ******");
             using (var cn = process["Order Details"].InputConnection.GetConnection())
             {
                 cn.Open();
                 cn.Execute("insert into [Order Details](OrderID, ProductID, UnitPrice, Quantity, Discount) values(10261,41,7.70,2,0);");
             }
 
-            // third run
             options = new Options { Mode = Modes.Normal, RenderTemplates = false };
             process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.xml").Read(), options).Read();
             new ProcessRunner(process).Run();
 
             Assert.AreEqual(1, process["Order Details"].Inserts);
-            Assert.AreEqual(0, process["Orders"].Inserts);
-            Assert.AreEqual(0, process["Customers"].Inserts);
-            Assert.AreEqual(0, process["Employees"].Inserts);
-            Assert.AreEqual(0, process["Products"].Inserts);
-            Assert.AreEqual(0, process["Suppliers"].Inserts);
-            Assert.AreEqual(0, process["Categories"].Inserts);
-            Assert.AreEqual(0, process["Shippers"].Inserts);
 
-            //put things back
+
+            
+            _log.Info("***** RUN 04 * ADD 1 ORDER ******");
+            using (var cn = process["Orders"].InputConnection.GetConnection()) {
+                cn.Open();
+                cn.Execute("insert into [Orders](CustomerID,EmployeeID,OrderDate,RequiredDate,ShippedDate,ShipVia,Freight,ShipName,ShipAddress,ShipCity,ShipRegion,ShipPostalCode,ShipCountry)values('HILAA',6,GETDATE(),GETDATE(),GETDATE(),3,1.00,'Test Name 1','Test Address 1','Test City 1',NULL,'11111','USA')");
+            }
+
+            options = new Options { Mode = Modes.Normal, RenderTemplates = false };
+            process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.xml").Read(), options).Read();
+            new ProcessRunner(process).Run();
+
+            Assert.AreEqual(1, process["Orders"].Inserts);
+
+            
+            
+            _log.Info("***** RUN 05 * ADD 2 CUSTOMERS ******");
+            using (var cn = process["Customers"].InputConnection.GetConnection()) {
+                cn.Open();
+                cn.Execute("insert into [Customers](CustomerId,CompanyName,ContactName,ContactTitle,[Address],City,PostalCode,Country,Phone) values ('AAAAA','Company A','A','A','A','A','AAAAA','USA','111-222-3333'), ('BBBBB','Company B','B','B','B','B','BBBBB','USB','111-222-3333');");
+            }
+
+            options = new Options { Mode = Modes.Normal, RenderTemplates = false };
+            process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.xml").Read(), options).Read();
+            new ProcessRunner(process).Run();
+
+            Assert.AreEqual(2, process["Customers"].Inserts);
+
+
+            
+            
+
+
+            _log.Info("***** RUN 06 * INCREASE PRICE OF PRODUCT(23) ******");
+            decimal inputSum;
+            using (var cn = process["Order Details"].InputConnection.GetConnection()) {
+                cn.Open();
+                inputSum =  cn.Query<decimal>("SELECT SUM(UnitPrice) FROM [Order Details] WHERE ProductID = 57;").First();
+            }
+
+            using (var cn = process["Order Details"].InputConnection.GetConnection()) {
+                cn.Open();
+                cn.Execute("update [Order Details] set UnitPrice = UnitPrice + .99 where ProductID = 57");
+            }
+
+            options = new Options { Mode = Modes.Normal, RenderTemplates = false };
+            process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.xml").Read(), options).Read();
+            new ProcessRunner(process).Run();
+
+            decimal outputSum;
+            using (var cn = process["Order Details"].OutputConnection.GetConnection()) {
+                cn.Open();
+                outputSum = cn.Query<decimal>("SELECT SUM(OrderDetailsUnitPrice) FROM NorthWindOrderDetails WHERE OrderDetailsProductID = 57;").First();
+            }
+
+            Assert.AreEqual(23, process["Order Details"].Updates);
+            Assert.AreEqual(inputSum + (23 * .99M), outputSum);
+
+
+            _log.Info("***** RUN 07 * UPDATE SHIP COUNTRY WHICH SHOULD AFFECT COUNTRY EXCHANGE CALCULATED FIELD ******");
+
+            using (var cn = process["Orders"].InputConnection.GetConnection()) {
+                cn.Open();
+                cn.Execute("update Orders set ShipCountry = 'USA' where OrderID = 10250;");
+            }
+            string preUpdate;
+            using (var cn = process["Orders"].OutputConnection.GetConnection()) {
+                cn.Open();
+                preUpdate = cn.Query<string>("SELECT TOP 1 CountryExchange FROM NorthWindOrderDetails WHERE OrderDetailsOrderID = 10250 ORDER BY OrderDetailsProductID ASC;").First();
+            }
+
+            options = new Options { Mode = Modes.Normal, RenderTemplates = false };
+            process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.xml").Read(), options).Read();
+            new ProcessRunner(process).Run();
+
+            string postUpdate;
+            using (var cn = process["Orders"].OutputConnection.GetConnection()) {
+                cn.Open();
+                postUpdate = cn.Query<string>("SELECT TOP 1 CountryExchange FROM NorthWindOrderDetails WHERE OrderDetailsOrderID = 10250 ORDER BY OrderDetailsProductID ASC;").First();
+            }
+
+            Assert.AreNotEqual(preUpdate, postUpdate);
+            
+            _log.Info("***** RUN 08 * UPDATE PART OF ORDER DETAIL KEY, INTERPRETED AS AN INSERT, AND SUBSEQUENT DELETE ******");
+            using (var cn = process["Order Details"].InputConnection.GetConnection()) {
+                cn.Open();
+                cn.Execute("UPDATE [Order Details] SET ProductID = 10 WHERE OrderId = 10248 AND ProductID = 11;");
+            }
+
+            options = new Options { Mode = Modes.Normal, RenderTemplates = false };
+            process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.xml").Read(), options).Read();
+            new ProcessRunner(process).Run();
+
+            Assert.AreEqual(1, process["Order Details"].Inserts);
+
+            
+            
+            
+            _log.Info("***** RUN 09 * HANDLE DELETE ******");
+            options = new Options { Mode = Modes.Delete };
+            process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.xml").Read(), options).Read();
+            new ProcessRunner(process).Run();
+
+            Assert.AreEqual(1, process["Order Details"].Deletes);
+
+            
+            
+            
+            _log.Info("***** RESET ******");
             using (var cn = process["Order Details"].InputConnection.GetConnection()) {
                 cn.Open();
                 cn.Execute("delete from [Order Details] where OrderID = 10261 and ProductID = 41;");
+                cn.Execute("delete from [Orders] where OrderID = (select top 1 OrderId from Orders order by OrderID desc)");
+                cn.Execute("delete from [Customers]	WHERE CustomerId IN ('AAAAA','BBBBB')");
+                cn.Execute("update [Order Details] set UnitPrice = UnitPrice - .99 where ProductID = 57;");
+                cn.Execute("update Orders set ShipCountry = 'Brazil' where OrderID = 10250;");
+                cn.Execute("update [Order Details] set ProductID = 11 where OrderId = 10248 and ProductID = 10;");
             }
 
         }

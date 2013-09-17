@@ -29,23 +29,35 @@ namespace Transformalize.Operations
 {
     public class EntityJoinAction : JoinOperation
     {
+        private readonly Entity _entity;
         private readonly string _firstKey;
         private readonly string[] _keys;
         private readonly int _tflBatchId;
+        private readonly string _rowVersion;
 
         public EntityJoinAction(Entity entity)
         {
-            _keys = entity.PrimaryKey.ToEnumerable().Select(e => e.Alias).ToArray();
+            _entity = entity;
+            _keys = entity.PrimaryKey.Keys.ToArray();
             _firstKey = _keys[0];
             _tflBatchId = entity.TflBatchId;
+            _rowVersion = entity.CanDetectChanges() ? entity.Version.Alias : null;
         }
 
         protected override Row MergeRows(Row leftRow, Row rightRow)
         {
             if (rightRow.ContainsKey(_firstKey))
             {
-                leftRow["a"] = EntityAction.Update;
-                leftRow["TflKey"] = rightRow["TflKey"];
+                if (_rowVersion == null || UpdateIsNecessary(ref leftRow, ref rightRow))
+                {
+                    leftRow["a"] = EntityAction.Update;
+                    leftRow["TflKey"] = rightRow["TflKey"];
+                }
+                else
+                {
+                    leftRow["a"] = EntityAction.None;
+                }
+
             }
             else
             {
@@ -59,6 +71,21 @@ namespace Transformalize.Operations
         protected override void SetupJoinConditions()
         {
             LeftJoin.Left(_keys).Right(_keys);
+        }
+        
+        private bool UpdateIsNecessary(ref Row leftRow, ref Row rightRow)
+        {
+            var bytes = new[] { "byte[]", "rowversion" };
+            if (bytes.Any(t => t == _entity.Version.SimpleType)) {
+                //var beginBytes = Common.ObjectToByteArray(leftRow[_entity.Version.Alias]);
+                //var endBytes = Common.ObjectToByteArray(rightRow[_entity.Version.Alias]);
+                //return !beginBytes.SequenceEqual(endBytes);
+                var beginBytes = (byte[]) leftRow[_entity.Version.Alias];
+                var endBytes = (byte[]) rightRow[_entity.Version.Alias];
+                return Common.AreEqual(beginBytes, endBytes);
+            }
+            return !leftRow[_entity.Version.Alias].Equals(rightRow[_entity.Version.Alias]);
+
         }
     }
 }

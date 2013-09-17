@@ -34,9 +34,9 @@ namespace Transformalize.Libs.Rhino.Etl.Enumerables
     /// <typeparam name="T"></typeparam>
     public class ThreadSafeEnumerator<T> : IEnumerable<T>, IEnumerator<T>
     {
-        private readonly Queue<T> cached = new Queue<T>();
-        private bool active = true;
-        private T current;
+        private readonly Queue<T> _cached = new Queue<T>();
+        private bool _active = true;
+        private T _current;
 
         /// <summary>
         ///     Returns an enumerator that iterates through the collection.
@@ -67,7 +67,7 @@ namespace Transformalize.Libs.Rhino.Etl.Enumerables
         /// <returns>The element in the collection at the current position of the enumerator.</returns>
         public T Current
         {
-            get { return current; }
+            get { return _current; }
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace Transformalize.Libs.Rhino.Etl.Enumerables
         /// </summary>
         public void Dispose()
         {
-            cached.Clear();
+            _cached.Clear();
         }
 
         /// <summary>
@@ -87,15 +87,15 @@ namespace Transformalize.Libs.Rhino.Etl.Enumerables
         /// <exception cref="T:System.InvalidOperationException">The collection was modified after the enumerator was created. </exception>
         public bool MoveNext()
         {
-            lock (cached)
+            lock (_cached)
             {
-                while (cached.Count == 0 && active)
-                    Monitor.Wait(cached);
+                while (_cached.Count == 0 && _active)
+                    Monitor.Wait(_cached);
 
-                if (active == false && cached.Count == 0)
+                if (_active == false && _cached.Count == 0)
                     return false;
 
-                current = cached.Dequeue();
+                _current = _cached.Dequeue();
 
                 return true;
             }
@@ -127,10 +127,10 @@ namespace Transformalize.Libs.Rhino.Etl.Enumerables
         /// <param name="item">The item.</param>
         public void AddItem(T item)
         {
-            lock (cached)
+            lock (_cached)
             {
-                cached.Enqueue(item);
-                Monitor.Pulse(cached);
+                _cached.Enqueue(item);
+                Monitor.Pulse(_cached);
             }
         }
 
@@ -139,10 +139,10 @@ namespace Transformalize.Libs.Rhino.Etl.Enumerables
         /// </summary>
         public void MarkAsFinished()
         {
-            lock (cached)
+            lock (_cached)
             {
-                active = false;
-                Monitor.Pulse(cached);
+                _active = false;
+                Monitor.Pulse(_cached);
             }
         }
     }

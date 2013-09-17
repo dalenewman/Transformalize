@@ -21,7 +21,7 @@
 #endregion
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using Transformalize.Main.Providers;
@@ -33,13 +33,13 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
     /// </summary>
     public abstract class AbstractDatabaseOperation : AbstractOperation
     {
-        private static Hashtable _supportedTypes;
+        private static Dictionary<Type, Type> _supportedTypes;
         private readonly AbstractConnection _connection;
 
         /// <summary>
         ///     The parameter prefix to use when adding parameters
         /// </summary>
-        protected string ParamPrefix = "";
+        protected string ParamPrefix = string.Empty;
 
         protected AbstractDatabaseOperation(AbstractConnection connection)
         {
@@ -51,7 +51,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
             get { return _connection; }
         }
 
-        private static Hashtable SupportedTypes
+        private static Dictionary<Type, Type> SupportedTypes
         {
             get
             {
@@ -65,7 +65,8 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
 
         private static void InitializeSupportedTypes()
         {
-            _supportedTypes = new Hashtable();
+            //_supportedTypes = new Hashtable();
+            _supportedTypes = new Dictionary<Type, Type>();
             _supportedTypes[typeof (byte[])] = typeof (byte[]);
             _supportedTypes[typeof (Guid)] = typeof (Guid);
             _supportedTypes[typeof (Object)] = typeof (Object);

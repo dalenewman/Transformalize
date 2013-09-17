@@ -44,12 +44,12 @@ namespace Transformalize.Test
             private readonly List<Row> _returnRows = new List<Row>();
             private readonly IEnumerable<IOperation> testOperations;
 
-            public TestProcess(params IOperation[] testOperations) : base("Test")
+            public TestProcess(params IOperation[] testOperations)
             {
                 this.testOperations = testOperations;
             }
 
-            public TestProcess(IEnumerable<IOperation> testOperations) : base("Test")
+            public TestProcess(IEnumerable<IOperation> testOperations)
             {
                 this.testOperations = testOperations;
             }

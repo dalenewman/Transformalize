@@ -26,25 +26,19 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
-namespace Transformalize.Operations
-{
-    public class EntityInputKeysExtractAll : InputCommandOperation
-    {
+namespace Transformalize.Operations {
+    public class EntityInputKeysExtractAll : InputCommandOperation {
         private readonly Entity _entity;
         private readonly string[] _fields;
 
         public EntityInputKeysExtractAll(Entity entity)
-            : base(entity.InputConnection)
-        {
+            : base(entity.InputConnection) {
             _entity = entity;
 
             var connection = _entity.InputConnection;
-
-            if (entity.Version != null)
-            {
+            if (entity.CanDetectChanges()) {
                 connection.LoadEndVersion(_entity);
-                if (!_entity.HasRows)
-                {
+                if (!_entity.HasRows) {
                     Debug("No data detected in {0}.", _entity.Alias);
                 }
             }
@@ -52,18 +46,15 @@ namespace Transformalize.Operations
             _fields = new FieldSqlWriter(entity.PrimaryKey).Alias(connection.Provider).Keys().ToArray();
         }
 
-        protected override Row CreateRowFromReader(IDataReader reader)
-        {
+        protected override Row CreateRowFromReader(IDataReader reader) {
             var row = new Row();
-            foreach (var field in _fields)
-            {
+            foreach (var field in _fields) {
                 row[field] = reader[field];
             }
             return row;
         }
 
-        protected override void PrepareCommand(IDbCommand cmd)
-        {
+        protected override void PrepareCommand(IDbCommand cmd) {
             cmd.CommandTimeout = 0;
             cmd.CommandText = _entity.KeysQuery();
             AddParameter(cmd, "@End", _entity.End);

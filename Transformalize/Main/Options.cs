@@ -93,28 +93,6 @@ namespace Transformalize.Main
                                     RecordBadValue(option, typeof (bool));
                                 }
                                 break;
-                            case "usebeginversion":
-                                if (bool.TryParse(value, out input))
-                                {
-                                    UseBeginVersion = input;
-                                }
-                                else
-                                {
-                                    RecordBadValue(option, typeof (bool));
-                                }
-
-                                break;
-                            case "writeendversion":
-                                if (bool.TryParse(value, out input))
-                                {
-                                    WriteEndVersion = input;
-                                }
-                                else
-                                {
-                                    RecordBadValue(option, typeof (bool));
-                                }
-                                break;
-
                             case "performtemplateactions":
                                 if (bool.TryParse(value, out input))
                                 {
@@ -153,8 +131,6 @@ namespace Transformalize.Main
         }
 
         public Modes Mode { get; set; }
-        public bool UseBeginVersion { get; set; }
-        public bool WriteEndVersion { get; set; }
         public bool RenderTemplates { get; set; }
         public bool PerformTemplateActions { get; set; }
         public int Top { get; set; }
@@ -178,8 +154,6 @@ namespace Transformalize.Main
 
         private void SetDefaults()
         {
-            UseBeginVersion = true;
-            WriteEndVersion = true;
             RenderTemplates = true;
             PerformTemplateActions = true;
             Mode = Modes.Normal;

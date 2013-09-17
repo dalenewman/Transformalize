@@ -38,14 +38,20 @@ namespace Transformalize.Operations {
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             OnFinishedProcessing += EntityActionFilter_OnFinishedProcessing;
-            return rows.Where(r => r["a"].Equals(_entityAction));
+            return rows.Where(row => row["a"].Equals(_entityAction));
         }
 
         private void EntityActionFilter_OnFinishedProcessing(IOperation obj) {
-            if (_entityAction == EntityAction.Insert) {
-                _entity.Inserts += obj.Statistics.OutputtedRows;
-            } else {
-                _entity.Updates += obj.Statistics.OutputtedRows;
+            switch (_entityAction) {
+                case EntityAction.Insert:
+                    _entity.Inserts += obj.Statistics.OutputtedRows;
+                    break;
+                case EntityAction.Update:
+                    _entity.Updates += obj.Statistics.OutputtedRows;
+                    break;
+                case EntityAction.Delete:
+                    _entity.Deletes += obj.Statistics.OutputtedRows;
+                    break;
             }
         }
     }

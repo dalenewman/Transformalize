@@ -629,6 +629,9 @@
     <Compile Include="Libs\Rhino.Etl\Row.cs" />
     <Compile Include="Libs\Rhino.Etl\WithLoggingMixin.cs" />
     <Compile Include="Operations\EntityDataExtract.cs" />
+    <Compile Include="Operations\EntityDelete.cs" />
+    <Compile Include="Processes\EntityDeleteProcess.cs" />
+    <Compile Include="Operations\EntityDetectDeletes.cs" />
     <Compile Include="Processes\EntityKeysProcess.cs" />
     <Compile Include="Extensions\XmlExtensions.cs" />
     <Compile Include="Extensions\LinqExtensions.cs" />

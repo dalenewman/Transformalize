@@ -55,6 +55,9 @@ namespace Transformalize.Runner
                     File.WriteAllText(fileName, writer.Write(), Encoding.UTF8);
                     System.Diagnostics.Process.Start(fileName);
                     break;
+                case Modes.Delete:
+                    ProcessEntityDeletes();
+                    break;
                 default:
                     new EntityRecordsExist(ref _process).Check();
 
@@ -64,6 +67,13 @@ namespace Transformalize.Runner
                     RenderTemplates();
 
                     break;
+            }
+        }
+
+        private void ProcessEntityDeletes()
+        {
+            foreach (var entityDeleteProcess in _process.Entities.Select(entity => new EntityDeleteProcess(entity))) {
+                entityDeleteProcess.Execute();
             }
         }
 

@@ -129,9 +129,9 @@ namespace Transformalize.Main
 
         public string KeysQuery()
         {
-            return Version == null
-                       ? InputConnection.EntityKeysAllQueryWriter.Write(this)
-                       : InputConnection.EntityKeysQueryWriter.Write(this);
+            return CanDetectChanges()
+                ? InputConnection.EntityKeysQueryWriter.Write(this)
+                : InputConnection.EntityKeysAllQueryWriter.Write(this);
         }
 
         public string KeysRangeQuery()
@@ -156,18 +156,21 @@ namespace Transformalize.Main
                 var bytes = new[] {"byte[]", "rowversion"};
                 if (bytes.Any(t => t == Version.SimpleType))
                 {
-                    var beginBytes = Common.ObjectToByteArray(Begin);
-                    var endBytes = Common.ObjectToByteArray(End);
-                    return beginBytes.SequenceEqual(endBytes);
+                    //var beginBytes = Common.ObjectToByteArray(Begin);
+                    //var endBytes = Common.ObjectToByteArray(End);
+                    //return beginBytes.SequenceEqual(endBytes);
+                    var beginBytes = (byte[]) Begin;
+                    var endBytes = (byte[]) End;
+                    return Common.AreEqual(beginBytes, endBytes);
                 }
                 return Begin.Equals(End);
             }
             return false;
         }
 
-        public void CheckDelta()
+        public void CheckForChanges()
         {
-            if (Version == null) return;
+            if (!CanDetectChanges()) return;
             OutputConnection.LoadBeginVersion(this);
             InputConnection.LoadEndVersion(this);
         }
@@ -189,6 +192,11 @@ namespace Transformalize.Main
         private int NextBatchId()
         {
             return OutputConnection.NextBatchId(ProcessName);
+        }
+
+        public bool CanDetectChanges()
+        {
+            return Version != null;
         }
     }
 }

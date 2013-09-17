@@ -25,52 +25,38 @@ using System.Linq;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
-using Transformalize.Main.Providers;
-using Transformalize.Main.Providers.SqlServer;
 using Transformalize.Operations;
 
-namespace Transformalize.Processes
-{
-    public class InitializationProcess : EtlProcess
-    {
-        private readonly Process _process;
-        private readonly ITflWriter _tflWriter;
-        private readonly IViewWriter _viewWriter;
+namespace Transformalize.Processes {
 
-        public InitializationProcess(Process process, ITflWriter tflWriter = null, IViewWriter viewWriter = null)
-        {
-            GlobalDiagnosticsContext.Set("entity", Common.LogLength("All", 3));
+    public class EntityDeleteProcess : EtlProcess {
 
-            _process = process;
-            _tflWriter = tflWriter ?? new SqlServerTflWriter(ref process);
-            _viewWriter = viewWriter ?? new SqlServerViewWriter(process);
+        private Entity _entity;
 
-            _tflWriter.Initialize();
-            _viewWriter.Drop();
+        public EntityDeleteProcess(Entity entity) {
+            GlobalDiagnosticsContext.Set("entity", Common.LogLength(entity.Alias, 20));
+            _entity = entity;
         }
 
-        protected override void Initialize()
-        {
-            foreach (var entity in _process.Entities)
-            {
-                Register(new EntityDrop(entity));
-                Register(new EntityCreate(entity, _process));
-            }
+        protected override void Initialize() {
+            Register(new EntityInputKeysExtractAll(_entity));
+            Register(new EntityDetectDeletes(_entity).Right(new EntityOutputKeysExtractAll(_entity)));
+            Register(new EntityActionFilter(ref _entity, EntityAction.Delete));
+            Register(new EntityDelete(_entity));
         }
 
-        protected override void PostProcessing()
-        {
+        protected override void PostProcessing() {
+
+            _entity.InputKeys.Clear();
+
             var errors = GetAllErrors().ToArray();
-            if (errors.Any())
-            {
-                foreach (var error in errors)
-                {
+            if (errors.Any()) {
+                foreach (var error in errors) {
                     Error(error.InnerException, "Message: {0}\r\nStackTrace:{1}\r\n", error.Message, error.StackTrace);
                 }
                 Environment.Exit(1);
             }
 
-            _viewWriter.Create();
             base.PostProcessing();
         }
     }

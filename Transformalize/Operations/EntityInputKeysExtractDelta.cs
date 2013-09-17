@@ -39,7 +39,7 @@ namespace Transformalize.Operations
             _entity = entity;
             _fields = _entity.PrimaryKey.ToEnumerable().Select(f => f.Alias).ToArray();
 
-            _entity.CheckDelta();
+            _entity.CheckForChanges();
 
             if (!_entity.HasRows)
             {

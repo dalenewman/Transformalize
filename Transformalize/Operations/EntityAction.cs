@@ -25,6 +25,8 @@ namespace Transformalize.Operations
     public enum EntityAction
     {
         Update,
-        Insert
+        Insert,
+        None,
+        Delete
     }
 }

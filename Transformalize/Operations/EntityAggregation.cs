@@ -85,8 +85,6 @@ namespace Transformalize.Operations
                             case "int32":
                                 aggregate[field.Alias] = (int) aggregate[field.Alias] + (int) row[field.Alias];
                                 break;
-                            default:
-                                break;
                         }
                         break;
                     case "max":
@@ -98,7 +96,8 @@ namespace Transformalize.Operations
                             case "int64":
                                 aggregate[field.Alias] = Math.Max((long) aggregate[field.Alias], (long) row[field.Alias]);
                                 break;
-                            default:
+                            case "byte[]":
+                                aggregate[field.Alias] = Common.Max((byte[]) aggregate[field.Alias], (byte[]) row[field.Alias]);
                                 break;
                         }
                         break;

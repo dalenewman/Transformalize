@@ -27,6 +27,7 @@ namespace Transformalize.Main
         Initialize,
         Normal,
         Test,
-        Metadata
+        Metadata,
+        Delete
     }
 }

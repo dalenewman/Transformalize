@@ -24,6 +24,7 @@ using System;
 using System.Linq;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Libs.Rhino.Etl.Pipelines;
 using Transformalize.Main;
 using Transformalize.Operations;
 
@@ -32,8 +33,7 @@ namespace Transformalize.Processes {
         private readonly Entity _entity;
         private readonly Process _process;
 
-        public EntityKeysProcess(Process process, Entity entity)
-            : base(process.Name) {
+        public EntityKeysProcess(Process process, Entity entity) {
             GlobalDiagnosticsContext.Set("entity", Common.LogLength(entity.Alias, 20));
             _process = process;
             _entity = entity;
@@ -41,12 +41,14 @@ namespace Transformalize.Processes {
 
         protected override void Initialize() {
             
-            if (!_process.IsFirstRun && _process.Options.UseBeginVersion && _entity.Version != null) {
+            if (_process.IsFirstRun || !_entity.CanDetectChanges()) {
+                Register(new EntityInputKeysExtractAll(_entity));
+            } else {
                 var operation = new EntityInputKeysExtractDelta(_entity);
                 if (operation.NeedsToRun())
+                {
                     Register(operation);
-            } else {
-                Register(new EntityInputKeysExtractAll(_entity));
+                }
             }
 
             Register(new EntityInputKeysStore(_process, _entity));

@@ -26,39 +26,36 @@ using Transformalize.Configuration;
 using Transformalize.Libs.NLog;
 using Transformalize.Main.Providers.SqlServer;
 
-namespace Transformalize.Main
-{
-    public class EntityConfigurationReader : IEntityReader
-    {
+namespace Transformalize.Main {
+
+    public class EntityConfigurationReader : IEntityReader {
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly Process _process;
 
-        public EntityConfigurationReader(Process process)
-        {
+        public EntityConfigurationReader(Process process) {
             _process = process;
         }
 
-        public Entity Read(EntityConfigurationElement element, bool isMaster)
-        {
-            var entity = new Entity
-                             {
-                                 ProcessName = _process.Name,
-                                 Schema = element.Schema,
-                                 Name = element.Name,
-                                 InputConnection = _process.Connections[element.Connection],
-                                 OutputConnection = _process.Connections["output"],
-                                 Prefix =
-                                     element.Prefix == "Default"
-                                         ? element.Name.Replace(" ", string.Empty)
-                                         : element.Prefix,
-                                 Group = element.Group,
-                                 Auto = element.Auto,
-                                 Alias = string.IsNullOrEmpty(element.Alias) ? element.Name : element.Alias,
-                             };
+        public Entity Read(EntityConfigurationElement element, bool isMaster) {
+            var entity = new Entity {
+                ProcessName = _process.Name,
+                Schema = element.Schema,
+                Name = element.Name,
+                InputConnection = _process.Connections[element.Connection],
+                OutputConnection = _process.Connections["output"],
+                Prefix =
+                    element.Prefix == "Default"
+                        ? element.Name.Replace(" ", string.Empty)
+                        : element.Prefix,
+                Group = element.Group,
+                Auto = element.Auto,
+                Alias = string.IsNullOrEmpty(element.Alias) ? element.Name : element.Alias,
+            };
 
-            if (entity.Auto)
-            {
+            GuardAgainstInvalidGrouping(element, entity);
+
+            if (entity.Auto) {
                 var autoReader = new SqlServerEntityAutoFieldReader();
                 entity.All = autoReader.Read(entity, isMaster);
                 entity.Fields = new FieldSqlWriter(entity.All).FieldType(FieldType.Field).Context();
@@ -66,8 +63,7 @@ namespace Transformalize.Main
             }
 
             var pkIndex = 0;
-            foreach (FieldConfigurationElement pk in element.PrimaryKey)
-            {
+            foreach (FieldConfigurationElement pk in element.PrimaryKey) {
                 var fieldType = isMaster ? FieldType.MasterKey : FieldType.PrimaryKey;
 
                 var keyField = new FieldReader(_process, entity, new FieldTransformParametersReader(pk.Alias), new EmptyParametersReader()).Read(pk, fieldType);
@@ -80,19 +76,16 @@ namespace Transformalize.Main
             }
 
             var fieldIndex = 0;
-            foreach (FieldConfigurationElement f in element.Fields)
-            {
+            foreach (FieldConfigurationElement f in element.Fields) {
                 var field = new FieldReader(_process, entity, new FieldTransformParametersReader(f.Alias), new EmptyParametersReader()).Read(f);
                 field.Index = fieldIndex;
 
-                foreach (XmlConfigurationElement x in f.Xml)
-                {
+                foreach (XmlConfigurationElement x in f.Xml) {
                     var xmlField = new FieldReader(_process, entity, new FieldTransformParametersReader(x.Alias), new EmptyParametersReader()).Read(x, f);
                     field.InnerXml.Add(x.Alias, xmlField);
                 }
 
-                if (entity.Auto && entity.Fields.ContainsKey(field.Name))
-                {
+                if (entity.Auto && entity.Fields.ContainsKey(field.Name)) {
                     entity.Fields.Remove(field.Name);
                     entity.All.Remove(field.Name);
                 }
@@ -103,28 +96,22 @@ namespace Transformalize.Main
                 fieldIndex++;
             }
 
-            if (!String.IsNullOrEmpty(element.Version))
-            {
-                if (entity.All.ContainsKey(element.Version))
-                {
+            if (!String.IsNullOrEmpty(element.Version)) {
+                if (entity.All.ContainsKey(element.Version)) {
                     entity.Version = entity.All[element.Version];
-                }
-                else
-                {
-                    if (entity.All.Any(kv => kv.Value.Name.Equals(element.Version, IC)))
-                    {
+                } else {
+                    if (entity.All.Any(kv => kv.Value.Name.Equals(element.Version, IC))) {
                         entity.Version = entity.All.ToEnumerable().First(v => v.Name.Equals(element.Version, IC));
-                    }
-                    else
-                    {
+                    } else {
                         _log.Error("version field reference '{0}' is undefined in {1}.", element.Version, element.Name);
                         Environment.Exit(0);
                     }
                 }
+                entity.Version.Input = true;
+                entity.Version.Output = true;
             }
 
-            foreach (FieldConfigurationElement field in element.CalculatedFields)
-            {
+            foreach (FieldConfigurationElement field in element.CalculatedFields) {
                 entity.CalculatedFields.Add(field.Alias,
                                             new FieldReader(_process, entity,
                                                             new EntityTransformParametersReader(entity),
@@ -132,6 +119,18 @@ namespace Transformalize.Main
             }
 
             return entity;
+        }
+
+        private void GuardAgainstInvalidGrouping(EntityConfigurationElement element, Entity entity)
+        {
+            if (entity.Group)
+            {
+                if (element.Fields.Cast<FieldConfigurationElement>().Any(f => string.IsNullOrEmpty(f.Aggregate)))
+                {
+                    _log.Error("Entity {0} is set to group, but not all your fields have aggregate defined.", entity.Alias);
+                    Environment.Exit(1);
+                }
+            }
         }
     }
 }

@@ -26,46 +26,64 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
-namespace Transformalize.Operations
-{
-    public class ParametersExtract : InputCommandOperation
-    {
+namespace Transformalize.Operations {
+    public class ParametersExtract : InputCommandOperation {
         private readonly string _sql;
         private IParameters _parameters;
+        private int[] _batchIds;
 
         public ParametersExtract(Process process)
-            : base(process.MasterEntity.OutputConnection)
-        {
+            : base(process.MasterEntity.OutputConnection) {
             UseTransaction = false;
             _sql = BuildSql(process);
         }
 
-        private string BuildSql(Process process)
-        {
+        private string BuildSql(Process process) {
+            string where;
+
             _parameters = process.Parameters();
             var fields = string.Join(", ", _parameters.Keys);
-            var tflWhereClause = string.Format(" WHERE [TflBatchId] IN ({0})", string.Join(", ", process.Entities.Select(kv => kv.TflBatchId).Distinct()));
-            var sql = string.Format("SELECT [TflKey], {0} FROM {1}{2};", fields, process.View, tflWhereClause);
+            _batchIds = process.Entities.Select(kv => kv.TflBatchId).Distinct().ToArray();
+
+            if (_batchIds.Length == 1) {
+                where = " WHERE [TflBatchId] = @TflBatchId";
+            } else
+            {
+                where = " WHERE [TflBatchId] IN (";
+                for (var i = 0; i < _batchIds.Length; i++)
+                {
+                    where += "@TflBatchId" + i + ", ";
+                }
+                where = where.TrimEnd(", ".ToCharArray()) + ")";
+            }
+
+            var sql = string.Format("SELECT [TflKey], {0} FROM {1}{2};", fields, process.View, where);
             Debug("SQL:\r\n{0}", sql);
             return sql;
         }
 
-        protected override Row CreateRowFromReader(IDataReader reader)
-        {
+        protected override Row CreateRowFromReader(IDataReader reader) {
             var row = new Row();
             var index = 1;
             row["TflKey"] = reader.GetValue(0);
-            foreach (var p in _parameters)
-            {
+            foreach (var p in _parameters) {
                 row[p.Key] = reader.GetValue(index);
                 index++;
             }
             return row;
         }
 
-        protected override void PrepareCommand(IDbCommand cmd)
-        {
+        protected override void PrepareCommand(IDbCommand cmd) {
             cmd.CommandText = _sql;
+
+            if (_batchIds.Length == 1) {
+                AddParameter(cmd, "@TflBatchId", _batchIds[0]);                
+            } else {
+                for (var i = 0; i < _batchIds.Length; i++) {
+                    AddParameter(cmd, "@TflBatchId" + i, _batchIds[i]);
+                }
+            }
+
             cmd.CommandTimeout = 0;
         }
     }

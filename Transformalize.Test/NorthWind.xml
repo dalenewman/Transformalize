@@ -34,21 +34,20 @@
   </search-types>
 
   <entities>
+    
     <add name="Order Details" version="RowVersion" auto="true">
-      <fields>
-        <add name="RowVersion" alias="OrderDetailsRowVersion" type="byte[]" output="false"></add>
-      </fields>
       <calculated-fields>
         <add name="OrderDetailsExtendedPrice" type="Decimal" precision="19" scale="4">
           <transforms>
-            <add method="javascript" script="OrderDetailsQuantity * OrderDetailsUnitPrice" parameter="*" />
+            <add method="javascript" script="OrderDetailsQuantity * (OrderDetailsUnitPrice * OrderDetailsDiscount)" parameter="*" />
           </transforms>
         </add>
       </calculated-fields>
     </add>
+
     <add name="Orders" version="RowVersion" auto="true">
       <fields>
-        <add name="RowVersion" alias="OrdersRowVersion" type="byte[]" output="false"></add>
+        <add name="RowVersion" alias="OrdersRowVersion" type="byte[]"></add>
       </fields>
 
       <calculated-fields>
@@ -69,55 +68,44 @@
           </transforms>
         </add>
       </calculated-fields>
-
     </add>
-    <add name="Customers" version="RowVersion" auto="true">
-      <fields>
-        <add name="RowVersion" alias="CustomersRowVersion" type="byte[]" output="false"></add>
-      </fields>
-    </add>
+    
+    <add name="Customers" version="RowVersion" auto="true"/>
+    
     <add name="Employees" version="RowVersion" auto="true">
       <fields>
-        <add name="RowVersion" alias="EmployeesRowVersion" type="byte[]" output="false"></add>
+        <add name="RowVersion" alias="EmployeesRowVersion" type="byte[]"></add>
         <add name="ReportsTo" alias="EmployeesManager" type="string" length="64">
           <transforms>
             <add method="map" map="Managers"></add>
           </transforms>
         </add>
-        <add name="Photo" alias="EmployeesPhoto" input="false"></add>
-        <add name="PhotoPath" alias="EmployeesPhotoPath" input="false"></add>
+        <add name="Photo" alias="EmployeesPhoto" input="false" output="false"></add>
+        <add name="PhotoPath" alias="EmployeesPhotoPath" input="false" output="false"></add>
       </fields>
       <transforms>
         <add method="join" separator=" " result="Employee">
           <parameters>
-            <!--<add field="TitleOfCourtesy"></add>-->
             <add field="FirstName"></add>
             <add field="LastName"></add>
           </parameters>
         </add>
       </transforms>
     </add>
-    <add name="Products" version="RowVersion" auto="true">
-      <fields>
-        <add name="RowVersion" alias="ProductsRowVersion" type="byte[]" output="false"></add>
-      </fields>
-    </add>
-    <add name="Suppliers" version="RowVersion" auto="true">
-      <fields>
-        <add name="RowVersion" alias="SuppliersRowVersion" type="byte[]" output="false"></add>
-      </fields>
-    </add>
+    
+    <add name="Products" version="RowVersion" auto="true"/>
+    
+    <add name="Suppliers" version="RowVersion" auto="true"/>
+    
     <add name="Categories" version="RowVersion" auto="true">
       <fields>
         <add name="RowVersion" alias="CategoriesRowVersion" type="byte[]" input="false"></add>
         <add name="Picture" alias="CategoriesPicture" type="byte[]" input="false"></add>
       </fields>
     </add>
-    <add name="Shippers" version="RowVersion" auto="true">
-      <fields>
-        <add name="RowVersion" alias="ShippersRowVersion" type="byte[]" output="false"></add>
-      </fields>
-    </add>
+    
+    <add name="Shippers" version="RowVersion" auto="true"/>
+    
   </entities>
 
   <relationships>
@@ -130,6 +118,19 @@
     <add leftEntity="Products" leftField="CategoryID" rightEntity="Categories" rightField="CategoryID" />
   </relationships>
 
+  <calculated-fields>
+    <add name="CountryExchange" length="128">
+      <transforms>
+        <add method="format" format="{0} to {1}">
+          <parameters>
+            <add field="SuppliersCountry"></add>
+            <add field="OrdersShipCountry"></add>
+          </parameters>
+        </add>
+      </transforms>
+    </add>
+  </calculated-fields>
+  
   <maps>
     <add name="Managers" connection="input">
       <items sql="select EmployeeID, FirstName + ' ' + LastName FROM Employees;" />

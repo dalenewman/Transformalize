@@ -39,8 +39,6 @@ namespace Transformalize.Test.Unit
 
             Assert.IsFalse(options.RenderTemplates);
             Assert.AreEqual(Modes.Initialize, options.Mode);
-            Assert.IsTrue(options.UseBeginVersion);
-            Assert.IsTrue(options.WriteEndVersion);
         }
 
         [Test]
@@ -52,8 +50,6 @@ namespace Transformalize.Test.Unit
 
             Assert.IsFalse(options.RenderTemplates);
             Assert.AreEqual(Modes.Initialize, options.Mode);
-            Assert.IsTrue(options.UseBeginVersion);
-            Assert.IsTrue(options.WriteEndVersion);
         }
 
         [Test]

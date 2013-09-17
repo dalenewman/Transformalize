@@ -21,7 +21,6 @@
 #endregion
 
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Text;
 using Transformalize.Libs.NLog;
@@ -38,7 +37,6 @@ namespace Transformalize.Operations {
         private readonly Process _process;
 
         public EntityUpdateMaster(Process process, Entity entity) {
-            GlobalDiagnosticsContext.Set("entity", Common.LogLength(entity.Alias, 20));
             _process = process;
             _entity = entity;
             UseTransaction = false;
@@ -46,13 +44,15 @@ namespace Transformalize.Operations {
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
 
+            GlobalDiagnosticsContext.Set("entity", Common.LogLength(_entity.Alias, 20));
+
             //escape 1
             if (_entity.IsMaster() || !_entity.HasForeignKeys())
                 return rows;
 
             //escape 2
             var entityChanged = _entity.Inserts + _entity.Updates > 0;
-            var masterChanged = _process.MasterEntity.Inserts + _process.MasterEntity.Updates > 0;
+            var masterChanged = _process.MasterEntity.Inserts > 0;
             if (!entityChanged && !masterChanged)
                 return rows;
 
@@ -78,18 +78,20 @@ namespace Transformalize.Operations {
                 }
 
                 Debug("TflBatchId = {0}.", _entity.TflBatchId);
-                Info("Processed {0} rows.  Updated {1} with {2}.", records, _process.MasterEntity.Alias, _entity.Alias);
+                Info("Processed {0} rows. Updated {1} with {2}.", records, _process.MasterEntity.Alias, _entity.Alias);
             }
             return rows;
         }
 
         private string PrepareSql(string master, string entity, AbstractProvider provider) {
+            //note: TflBatchId is updated and next process depends it.
+
             var builder = new StringBuilder();
 
             var sets = new FieldSqlWriter(_entity.Fields).FieldType(FieldType.ForeignKey).Alias(provider).Set(master, entity).Write(",\r\n    ");
 
             builder.AppendFormat("UPDATE {0}\r\n", master);
-            builder.AppendFormat("SET {0}\r\n", sets);
+            builder.AppendFormat("SET {0}, {1}.TflBatchId = @TflBatchId\r\n", sets, master);
             builder.AppendFormat("FROM {0}\r\n", entity);
 
             foreach (var relationship in _entity.RelationshipToMaster) {

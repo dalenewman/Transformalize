@@ -62,24 +62,13 @@ namespace Transformalize.Libs.Rhino.Etl.Infrastructure
         {
             instance = Activator.CreateInstance(sqlCmdSetType, true);
 
-            timeoutSetter = (PropSetter<int>)
-                            Delegate.CreateDelegate(typeof (PropSetter<int>),
-                                                    instance, "set_CommandTimeout");
-            connectionSetter = (PropSetter<SqlConnection>)
-                               Delegate.CreateDelegate(typeof (PropSetter<SqlConnection>),
-                                                       instance, "set_Connection");
-            transactionSetter = (PropSetter<SqlTransaction>)
-                                Delegate.CreateDelegate(typeof (PropSetter<SqlTransaction>),
-                                                        instance, "set_Transaction");
-            connectionGetter = (PropGetter<SqlConnection>)
-                               Delegate.CreateDelegate(typeof (PropGetter<SqlConnection>),
-                                                       instance, "get_Connection");
-            commandGetter =
-                (PropGetter<SqlCommand>) Delegate.CreateDelegate(typeof (PropGetter<SqlCommand>), instance, "get_BatchCommand");
+            timeoutSetter = (PropSetter<int>) Delegate.CreateDelegate(typeof (PropSetter<int>), instance, "set_CommandTimeout");
+            connectionSetter = (PropSetter<SqlConnection>) Delegate.CreateDelegate(typeof (PropSetter<SqlConnection>), instance, "set_Connection");
+            transactionSetter = (PropSetter<SqlTransaction>) Delegate.CreateDelegate(typeof (PropSetter<SqlTransaction>), instance, "set_Transaction");
+            connectionGetter = (PropGetter<SqlConnection>) Delegate.CreateDelegate(typeof (PropGetter<SqlConnection>), instance, "get_Connection");
+            commandGetter = (PropGetter<SqlCommand>) Delegate.CreateDelegate(typeof (PropGetter<SqlCommand>), instance, "get_BatchCommand");
             doAppend = (AppendCommand) Delegate.CreateDelegate(typeof (AppendCommand), instance, "Append");
-            doExecuteNonQuery = (ExecuteNonQueryCommand)
-                                Delegate.CreateDelegate(typeof (ExecuteNonQueryCommand),
-                                                        instance, "ExecuteNonQuery");
+            doExecuteNonQuery = (ExecuteNonQueryCommand) Delegate.CreateDelegate(typeof (ExecuteNonQueryCommand), instance, "ExecuteNonQuery");
             doDispose = (DisposeCommand) Delegate.CreateDelegate(typeof (DisposeCommand), instance, "Dispose");
         }
 
@@ -179,8 +168,7 @@ namespace Transformalize.Libs.Rhino.Etl.Infrastructure
         /// </returns>
         public int ExecuteNonQuery()
         {
-            Guard.Against<ArgumentException>(Connection == null,
-                                             "Connection was not set! You must set the connection property before calling ExecuteNonQuery()");
+            Guard.Against<ArgumentException>(Connection == null, "Connection was not set! You must set the connection property before calling ExecuteNonQuery()");
             if (CountOfCommands == 0)
                 return 0;
             return doExecuteNonQuery();
