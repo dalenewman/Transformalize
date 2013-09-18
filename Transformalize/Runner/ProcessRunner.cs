@@ -26,7 +26,6 @@ using System.Text;
 using Transformalize.Libs.Rhino.Etl.Pipelines;
 using Transformalize.Main;
 using Transformalize.Main.Providers.SqlServer;
-using Transformalize.Main.Template_;
 using Transformalize.Processes;
 
 namespace Transformalize.Runner

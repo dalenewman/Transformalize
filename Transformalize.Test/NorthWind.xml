@@ -15,12 +15,12 @@
   </connections>
 
   <templates path="Templates">
-    <add name="solr-data-handler" file="solr-data-handler.cshtml">
+    <add name="solr-data-handler" file="solr-data-handler.cshtml" cache="true">
       <actions>
         <add action="copy" file="C:\Solr\NorthWind\conf\data-config.xml" />
       </actions>
     </add>
-    <add name="solr-schema" file="solr-schema.cshtml">
+    <add name="solr-schema" file="solr-schema.cshtml" cache="true">
       <actions>
         <add action="copy" file="C:\Solr\NorthWind\conf\schema.xml" />
       </actions>

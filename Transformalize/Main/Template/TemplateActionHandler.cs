@@ -22,7 +22,7 @@
 
 using Transformalize.Libs.NLog;
 
-namespace Transformalize.Main.Template_
+namespace Transformalize.Main
 {
     public abstract class TemplateActionHandler
     {

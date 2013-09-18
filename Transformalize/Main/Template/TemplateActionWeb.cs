@@ -22,7 +22,7 @@
 
 using System.Net;
 
-namespace Transformalize.Main.Template_
+namespace Transformalize.Main
 {
     public class TemplateActionWeb : TemplateActionHandler
     {

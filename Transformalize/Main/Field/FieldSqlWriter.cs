@@ -224,7 +224,7 @@ namespace Transformalize.Main
                 var field = _original[key];
                 var d = field.Default ?? new ConversionFactory().Convert(string.Empty, field.SimpleType);
 
-                if (field.SimpleType == "byte[]")
+                if (field.SimpleType == "byte[]" || field.SimpleType == "rowversion")
                     d = "0x";
 
                 if (field.SimpleType.StartsWith("bool"))

@@ -22,7 +22,7 @@
 
 using System.IO;
 
-namespace Transformalize.Main.Template_
+namespace Transformalize.Main
 {
     public class TemplateActionRun : TemplateActionHandler
     {

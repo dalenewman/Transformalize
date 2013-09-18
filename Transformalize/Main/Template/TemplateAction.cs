@@ -22,7 +22,7 @@
 
 using Transformalize.Main.Providers;
 
-namespace Transformalize.Main.Template_
+namespace Transformalize.Main
 {
     public class TemplateAction
     {

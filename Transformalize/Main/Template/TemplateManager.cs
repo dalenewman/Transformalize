@@ -23,27 +23,21 @@
 using System.IO;
 using Transformalize.Libs.NLog;
 
-namespace Transformalize.Main.Template_
-{
-    public class TemplateManager
-    {
+namespace Transformalize.Main {
+    public class TemplateManager {
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly Process _process;
-        private readonly char[] _trim = new[] {'\\'};
+        private readonly char[] _trim = new[] { '\\' };
 
-        public TemplateManager(Process process)
-        {
+        public TemplateManager(Process process) {
             _process = process;
         }
 
-        public void Manage()
-        {
+        public void Manage() {
             var folder = Common.GetTemporaryFolder(_process.Name);
 
-            foreach (var pair in _process.Templates)
-            {
+            foreach (var pair in _process.Templates) {
                 var result = pair.Value.Render();
-                _log.Debug("Rendered {0} template.", pair.Value.Name);
 
                 var renderedInfo = new FileInfo(folder.TrimEnd(_trim) + @"\" + pair.Value.Name + ".temp.txt");
                 File.WriteAllText(renderedInfo.FullName, result);
@@ -51,11 +45,9 @@ namespace Transformalize.Main.Template_
                 if (!_process.Options.PerformTemplateActions)
                     continue;
 
-                foreach (var action in pair.Value.Actions)
-                {
+                foreach (var action in pair.Value.Actions) {
                     action.RenderedFile = renderedInfo.FullName;
-                    switch (action.Action.ToLower())
-                    {
+                    switch (action.Action.ToLower()) {
                         case "copy":
                             new TemplateActionCopy().Handle(action);
                             break;

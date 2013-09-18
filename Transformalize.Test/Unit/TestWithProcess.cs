@@ -34,42 +34,26 @@ using Transformalize.Main.Providers.SqlServer;
 using Transformalize.Operations;
 using Transformalize.Runner;
 
-namespace Transformalize.Test.Unit
-{
+namespace Transformalize.Test.Unit {
     [TestFixture]
-    public class TestWithProcess : EtlProcessHelper
-    {
+    public class TestWithProcess : EtlProcessHelper {
+
         private readonly Mock<IOperation> _entityKeysExtract;
         private static readonly ProcessConfigurationElement Element = new ProcessConfigurationReader("Test").Read();
         private readonly Process _process = new ProcessReader(Element, new Options()).Read();
 
-        public TestWithProcess()
-        {
+        public TestWithProcess() {
             _entityKeysExtract = new Mock<IOperation>();
-            _entityKeysExtract.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row>
-                                                                                                   {
-                                                                                                       new Row
-                                                                                                           {
-                                                                                                               {"OrderDetailKey", 1}
-                                                                                                           },
-                                                                                                       new Row
-                                                                                                           {
-                                                                                                               {"OrderDetailKey", 2}
-                                                                                                           },
-                                                                                                       new Row
-                                                                                                           {
-                                                                                                               {"OrderDetailKey", 3}
-                                                                                                           },
-                                                                                                       new Row
-                                                                                                           {
-                                                                                                               {"OrderDetailKey", 4}
-                                                                                                           }
-                                                                                                   });
+            _entityKeysExtract.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row> {
+                new Row { {"OrderDetailKey", 1} },
+                new Row { {"OrderDetailKey", 2} },
+                new Row { {"OrderDetailKey", 3} },
+                new Row { {"OrderDetailKey", 4} }
+            });
         }
 
         [Test]
-        public void TestEntityKeysToOperations()
-        {
+        public void TestEntityKeysToOperations() {
             var entity = _process.Entities.First();
 
             TestOperation(
@@ -85,8 +69,7 @@ namespace Transformalize.Test.Unit
         }
 
         [Test]
-        public void TestKeyInserts()
-        {
+        public void TestKeyInserts() {
             var entity = _process.Entities.First();
             entity.OutputConnection.IsReady();
 
@@ -107,8 +90,7 @@ UNION ALL SELECT 4;";
         }
 
         [Test]
-        public void TestKeysTableVariable()
-        {
+        public void TestKeysTableVariable() {
             var entity = _process.Entities.First();
 
             var actual = _process.MasterEntity.OutputConnection.WriteTemporaryTable("@KEYS", entity.PrimaryKey.ToEnumerable().ToArray());
@@ -118,8 +100,7 @@ UNION ALL SELECT 4;";
         }
 
         [Test]
-        public void TestSelectByKeysSql()
-        {
+        public void TestSelectByKeysSql() {
             var entity = _process.Entities.First();
 
             var actual = SqlTemplates.Select(entity.All, entity.OutputName(), "@KEYS", entity.OutputConnection.Provider);
@@ -127,6 +108,7 @@ UNION ALL SELECT 4;";
             const string expected = @"
 SELECT
     l.[OrderDetailKey],
+    l.[RowVersion] AS [OrderDetailRowVersion],
     l.[OrderKey],
     l.[Price],
     l.[ProductKey],
@@ -140,8 +122,7 @@ OPTION (MAXDOP 2);";
         }
 
         [Test]
-        public void TestWriteSql()
-        {
+        public void TestWriteSql() {
             var actual = new SqlServerViewWriter(_process).CreateSql();
 
             Assert.AreEqual(@"CREATE VIEW TestOrderDetailStar AS
@@ -152,6 +133,7 @@ SELECT
     [TestOrderDetail].[Color],
     [TestOrderDetail].[Gender],
     [TestOrderDetail].[OrderDetailKey],
+    [TestOrderDetail].[OrderDetailRowVersion],
     [TestOrderDetail].[OrderKey],
     [TestOrderDetail].[Price],
     [TestOrderDetail].[ProductKey],
@@ -163,10 +145,13 @@ SELECT
     ISNULL([TestCustomer].[Address], '') AS [Address],
     ISNULL([TestCustomer].[City], '') AS [City],
     ISNULL([TestCustomer].[Country], '') AS [Country],
+    ISNULL([TestCustomer].[CustomerRowVersion], 0x) AS [CustomerRowVersion],
     ISNULL([TestCustomer].[FirstName], '') AS [FirstName],
     ISNULL([TestCustomer].[LastName], '') AS [LastName],
     ISNULL([TestOrder].[OrderDate], '12/31/9999 12:00:00 AM') AS [OrderDate],
+    ISNULL([TestOrder].[OrderRowVersion], 0x) AS [OrderRowVersion],
     ISNULL([TestProduct].[ProductName], 'None') AS [ProductName],
+    ISNULL([TestProduct].[ProductRowVersion], 0x) AS [ProductRowVersion],
     ISNULL([TestCustomer].[State], '') AS [State]
 FROM TestOrderDetail
 INNER JOIN TflBatch b ON (TestOrderDetail.TflBatchId = b.TflBatchId AND b.ProcessName = 'Test')

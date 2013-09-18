@@ -34,12 +34,9 @@ using Transformalize.Libs.RazorEngine.Templating;
 using Transformalize.Main.Providers.AnalysisServices;
 using Transformalize.Main.Providers.MySql;
 using Transformalize.Main.Providers.SqlServer;
-using Transformalize.Main.Template_;
 
-namespace Transformalize.Main
-{
-    public class ProcessReader : IReader<Process>
-    {
+namespace Transformalize.Main {
+    public class ProcessReader : IReader<Process> {
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private readonly ProcessConfigurationElement _config;
         private readonly ConversionFactory _conversionFactory = new ConversionFactory();
@@ -56,26 +53,22 @@ namespace Transformalize.Main
         private int _templateCount;
         private int _transformCount;
 
-        public ProcessReader(ProcessConfigurationElement process, Options options)
-        {
+        public ProcessReader(ProcessConfigurationElement process, Options options) {
             _config = Adapt(process);
             _options = options;
         }
 
-        public Process Read()
-        {
-            if (_config == null)
-            {
+        public Process Read() {
+            if (_config == null) {
                 _log.Error("Sorry.  I can't find a process named {0}.", _processName);
                 return new Process();
             }
 
-            _process = new Process(_config.Name)
-                           {
-                               Options = _options,
-                               TemplateContentType =
-                                   _config.TemplateContentType.Equals("raw") ? Encoding.Raw : Encoding.Html
-                           };
+            _process = new Process(_config.Name) {
+                Options = _options,
+                TemplateContentType =
+                    _config.TemplateContentType.Equals("raw") ? Encoding.Raw : Encoding.Html
+            };
 
             SetupRazorTemplateService();
 
@@ -94,11 +87,9 @@ namespace Transformalize.Main
             _process.RelatedKeys = ReadRelatedKeys();
             _process.View = _process.MasterEntity.OutputName() + "Star";
 
-            foreach (var entity in _process.Entities)
-            {
+            foreach (var entity in _process.Entities) {
                 entity.RelationshipToMaster = ReadRelationshipToMaster(entity);
-                if (!entity.RelationshipToMaster.Any() && !entity.IsMaster())
-                {
+                if (!entity.RelationshipToMaster.Any() && !entity.IsMaster()) {
                     _log.Error("The entity {0} must have a relationship to the master entity {1}.", entity.Name,
                                _process.MasterEntity.Name);
                     Environment.Exit(1);
@@ -109,56 +100,45 @@ namespace Transformalize.Main
             return _process;
         }
 
-        private static ProcessConfigurationElement Adapt(ProcessConfigurationElement process)
-        {
+        private static ProcessConfigurationElement Adapt(ProcessConfigurationElement process) {
             new FromXmlTransformFieldsToParametersAdapter(process).Adapt();
             new FromXmlTransformFieldsMoveAdapter(process).Adapt();
             return process;
         }
 
-        private Dictionary<string, SearchType> ReadSearchTypes()
-        {
+        private Dictionary<string, SearchType> ReadSearchTypes() {
             var searchTypes = new Dictionary<string, SearchType>();
 
-            searchTypes["none"] = new SearchType
-                                      {
-                                          Name = "none",
-                                          Index = false,
-                                          Store = false,
-                                          Type = "inherit"
-                                      };
+            searchTypes["none"] = new SearchType {
+                Name = "none",
+                Index = false,
+                Store = false,
+                Type = "inherit"
+            };
 
             var configuredTypes = _config.SearchTypes.Cast<SearchTypeConfigurationElement>().ToArray();
-            if (configuredTypes.Any())
-            {
-                foreach (var st in configuredTypes)
-                {
-                    searchTypes[st.Name] = new SearchType
-                                               {
-                                                   Index = st.Index,
-                                                   Name = st.Name,
-                                                   Store = st.Store,
-                                                   Type = st.Type
-                                               };
+            if (configuredTypes.Any()) {
+                foreach (var st in configuredTypes) {
+                    searchTypes[st.Name] = new SearchType {
+                        Index = st.Index,
+                        Name = st.Name,
+                        Store = st.Store,
+                        Type = st.Type
+                    };
                 }
             }
             return searchTypes;
         }
 
-        private int ReadScripts()
-        {
-            var s = new[] {'\\'};
+        private int ReadScripts() {
+            var s = new[] { '\\' };
             var scripts = _config.Scripts.Cast<ScriptConfigurationElement>().ToArray();
             var path = _config.Scripts.Path;
-            foreach (var script in scripts)
-            {
+            foreach (var script in scripts) {
                 var fileInfo = new FileInfo(path.TrimEnd(s) + @"\" + script.File);
-                if (!fileInfo.Exists)
-                {
+                if (!fileInfo.Exists) {
                     _log.Warn("Missing Script: {0}.", fileInfo.FullName);
-                }
-                else
-                {
+                } else {
                     _process.Scripts[script.Name] = new Script(script.Name, File.ReadAllText(fileInfo.FullName),
                                                                fileInfo.FullName);
                     _log.Debug("Loaded script {0}.", fileInfo.FullName);
@@ -168,43 +148,35 @@ namespace Transformalize.Main
             return scripts.Count();
         }
 
-        private int ReadTemplates()
-        {
-            var s = new[] {'\\'};
+        private int ReadTemplates() {
+
+            var s = new[] { '\\' };
             var templates = _config.Templates.Cast<TemplateConfigurationElement>().ToArray();
             var path = _config.Templates.Path;
-            foreach (var element in templates)
-            {
+            
+            foreach (var element in templates) {
                 var fileInfo = new FileInfo(path.TrimEnd(s) + @"\" + element.File);
-                if (!fileInfo.Exists)
-                {
+                if (!fileInfo.Exists) {
                     _log.Warn("Missing Template {0}.", fileInfo.FullName);
-                }
-                else
-                {
-                    var template = new Template(element.Name, File.ReadAllText(fileInfo.FullName), fileInfo.FullName,
-                                                element.ContentType, _process);
+                } else {
+                    var template = new Template(_process, element, File.ReadAllText(fileInfo.FullName), fileInfo.FullName);
 
-                    foreach (SettingConfigurationElement setting in element.Settings)
-                    {
+                    foreach (SettingConfigurationElement setting in element.Settings) {
                         template.Settings[setting.Name] = _conversionFactory.Convert(setting.Value, setting.Type);
                     }
 
-                    foreach (ActionConfigurationElement action in element.Actions)
-                    {
-                        var templateAction = new TemplateAction
-                                                 {
-                                                     Action = action.Action,
-                                                     File = action.File,
-                                                     Method = action.Method,
-                                                     Url = action.Url,
-                                                     ProcessName = _process.Name,
-                                                     TemplateName = template.Name
-                                                 };
+                    foreach (ActionConfigurationElement action in element.Actions) {
+                        var templateAction = new TemplateAction {
+                            Action = action.Action,
+                            File = action.File,
+                            Method = action.Method,
+                            Url = action.Url,
+                            ProcessName = _process.Name,
+                            TemplateName = template.Name
+                        };
 
                         if (!String.IsNullOrEmpty(action.Connection) &&
-                            _process.Connections.ContainsKey(action.Connection))
-                        {
+                            _process.Connections.ContainsKey(action.Connection)) {
                             templateAction.Connection = _process.Connections[action.Connection];
                         }
 
@@ -220,21 +192,18 @@ namespace Transformalize.Main
             return templates.Count();
         }
 
-        private IEnumerable<Relationship> ReadRelationshipToMaster(Entity rightEntity)
-        {
+        private IEnumerable<Relationship> ReadRelationshipToMaster(Entity rightEntity) {
             var relationships =
                 _process.Relationships.Where(r => r.RightEntity.Equals(rightEntity)).ToList();
 
-            if (relationships.Any() && !relationships.Any(r => r.LeftEntity.IsMaster()))
-            {
+            if (relationships.Any() && !relationships.Any(r => r.LeftEntity.IsMaster())) {
                 var leftEntity = relationships.Last().LeftEntity;
                 relationships.AddRange(ReadRelationshipToMaster(leftEntity));
             }
             return relationships;
         }
 
-        private void LogProcessConfiguration()
-        {
+        private void LogProcessConfiguration() {
             _log.Debug("Process Loaded.");
             _log.Debug("{0} Providers{1}.", _providerCount, _providerCount == 1 ? string.Empty : "s");
             _log.Debug("{0} Connection{1}.", _connectionCount, _connectionCount == 1 ? string.Empty : "s");
@@ -250,10 +219,8 @@ namespace Transformalize.Main
             _log.Debug("{0} Transform{1}.", _transformCount, _transformCount == 1 ? string.Empty : "s");
         }
 
-        private int ReadProcessCalculatedFields()
-        {
-            foreach (FieldConfigurationElement field in _config.CalculatedFields)
-            {
+        private int ReadProcessCalculatedFields() {
+            foreach (FieldConfigurationElement field in _config.CalculatedFields) {
                 var ptr = new ProcessTransformParametersReader(_process);
                 var ppr = new ProcessParametersReader(_process);
                 var fr = new FieldReader(_process, _process.MasterEntity, ptr, ppr);
@@ -263,20 +230,17 @@ namespace Transformalize.Main
             return _process.CalculatedFields.Count;
         }
 
-        private int ReadRelationships()
-        {
+        private int ReadRelationships() {
             var count = 0;
-            foreach (RelationshipConfigurationElement r in _config.Relationships)
-            {
+            foreach (RelationshipConfigurationElement r in _config.Relationships) {
                 var leftEntity = _process.Entities.First(e => e.Alias.Equals(r.LeftEntity, IC));
                 var rightEntity = _process.Entities.First(e => e.Alias.Equals(r.RightEntity, IC));
                 var join = GetJoins(r, leftEntity, rightEntity);
-                var relationship = new Relationship
-                                       {
-                                           LeftEntity = leftEntity,
-                                           RightEntity = rightEntity,
-                                           Join = join
-                                       };
+                var relationship = new Relationship {
+                    LeftEntity = leftEntity,
+                    RightEntity = rightEntity,
+                    Join = join
+                };
 
                 _process.Relationships.Add(relationship);
                 count++;
@@ -284,10 +248,8 @@ namespace Transformalize.Main
             return count;
         }
 
-        private List<Join> GetJoins(RelationshipConfigurationElement r, Entity leftEntity, Entity rightEntity)
-        {
-            if (string.IsNullOrEmpty(r.LeftField))
-            {
+        private List<Join> GetJoins(RelationshipConfigurationElement r, Entity leftEntity, Entity rightEntity) {
+            if (string.IsNullOrEmpty(r.LeftField)) {
                 return (
                            from JoinConfigurationElement j in r.Join
                            select GetJoin(leftEntity, j.LeftField, rightEntity, j.RightField)
@@ -301,11 +263,9 @@ namespace Transformalize.Main
                        };
         }
 
-        public Join GetJoin(Entity leftEntity, string leftField, Entity rightEntity, string rightField)
-        {
+        public Join GetJoin(Entity leftEntity, string leftField, Entity rightEntity, string rightField) {
             if (!leftEntity.All.ContainsKey(leftField) &&
-                !leftEntity.All.ToEnumerable().Any(Common.FieldFinder(leftField)))
-            {
+                !leftEntity.All.ToEnumerable().Any(Common.FieldFinder(leftField))) {
                 _log.Error(
                     "The left entity {0} does not have a field named {1} for joining to the right entity {2} with field {3}.",
                     leftEntity.Alias, leftField, rightEntity.Alias, rightField);
@@ -313,44 +273,37 @@ namespace Transformalize.Main
             }
 
             if (!rightEntity.All.ContainsKey(rightField) &&
-                !rightEntity.All.ToEnumerable().Any(Common.FieldFinder(rightField)))
-            {
+                !rightEntity.All.ToEnumerable().Any(Common.FieldFinder(rightField))) {
                 _log.Error(
                     "The right entity {0} does not have a field named {1} for joining to the left entity {2} with field {3}.",
                     rightEntity.Alias, rightField, leftEntity.Alias, leftField);
                 Environment.Exit(0);
             }
 
-            var join = new Join
-                           {
-                               LeftField =
-                                   leftEntity.All.ContainsKey(leftField)
-                                       ? leftEntity.All[leftField]
-                                       : leftEntity.All.ToEnumerable().First(Common.FieldFinder(leftField)),
-                               RightField =
-                                   rightEntity.All.ContainsKey(rightField)
-                                       ? rightEntity.All[rightField]
-                                       : rightEntity.All.ToEnumerable().First(Common.FieldFinder(rightField))
-                           };
+            var join = new Join {
+                LeftField =
+                    leftEntity.All.ContainsKey(leftField)
+                        ? leftEntity.All[leftField]
+                        : leftEntity.All.ToEnumerable().First(Common.FieldFinder(leftField)),
+                RightField =
+                    rightEntity.All.ContainsKey(rightField)
+                        ? rightEntity.All[rightField]
+                        : rightEntity.All.ToEnumerable().First(Common.FieldFinder(rightField))
+            };
 
             if (join.LeftField.FieldType.HasFlag(FieldType.MasterKey) ||
-                join.LeftField.FieldType.HasFlag(FieldType.PrimaryKey))
-            {
+                join.LeftField.FieldType.HasFlag(FieldType.PrimaryKey)) {
                 join.LeftField.FieldType |= FieldType.ForeignKey;
-            }
-            else
-            {
+            } else {
                 join.LeftField.FieldType = FieldType.ForeignKey;
             }
 
             return join;
         }
 
-        private int ReadEntities()
-        {
+        private int ReadEntities() {
             var count = 0;
-            foreach (EntityConfigurationElement element in _config.Entities)
-            {
+            foreach (EntityConfigurationElement element in _config.Entities) {
                 var reader = new EntityConfigurationReader(_process);
                 var entity = reader.Read(element, count == 0);
 
@@ -364,20 +317,16 @@ namespace Transformalize.Main
             return count;
         }
 
-        private IEnumerable<Field> ReadRelatedKeys()
-        {
+        private IEnumerable<Field> ReadRelatedKeys() {
             var entity = _process.Entities.First(e => e.IsMaster());
             return GetRelatedKeys(entity);
         }
 
-        private IEnumerable<Field> GetRelatedKeys(Entity entity)
-        {
+        private IEnumerable<Field> GetRelatedKeys(Entity entity) {
             var foreignKeys =
                 entity.All.ToEnumerable().Where(f => f.FieldType.HasFlag(FieldType.ForeignKey)).ToList();
-            if (foreignKeys.Any())
-            {
-                foreach (var alias in foreignKeys.Select(fk => fk.Alias).ToArray())
-                {
+            if (foreignKeys.Any()) {
+                foreach (var alias in foreignKeys.Select(fk => fk.Alias).ToArray()) {
                     var nextEntity =
                         _process.Relationships.Where(
                             r =>
@@ -390,27 +339,19 @@ namespace Transformalize.Main
             return foreignKeys;
         }
 
-        private int ReadMaps()
-        {
+        private int ReadMaps() {
             var count = 0;
-            foreach (MapConfigurationElement m in _config.Maps)
-            {
-                if (string.IsNullOrEmpty(m.Connection))
-                {
+            foreach (MapConfigurationElement m in _config.Maps) {
+                if (string.IsNullOrEmpty(m.Connection)) {
                     _process.MapEquals[m.Name] = new MapConfigurationReader(m.Items, "equals").Read();
                     _process.MapStartsWith[m.Name] = new MapConfigurationReader(m.Items, "startswith").Read();
                     _process.MapEndsWith[m.Name] = new MapConfigurationReader(m.Items, "endswith").Read();
-                }
-                else
-                {
-                    if (_process.Connections.ContainsKey(m.Connection))
-                    {
+                } else {
+                    if (_process.Connections.ContainsKey(m.Connection)) {
                         _process.MapEquals[m.Name] =
                             new SqlServerMapReader(m.Items.Sql, _process.Connections[m.Connection].ConnectionString)
                                 .Read();
-                    }
-                    else
-                    {
+                    } else {
                         _log.Error("Map {0} references connection {1}, which does not exist.", m.Name, m.Connection);
                         Environment.Exit(0);
                     }
@@ -420,24 +361,19 @@ namespace Transformalize.Main
             return count;
         }
 
-        private int ReadProviders()
-        {
+        private int ReadProviders() {
             var count = 0;
-            foreach (ProviderConfigurationElement element in _config.Providers)
-            {
+            foreach (ProviderConfigurationElement element in _config.Providers) {
                 _process.Providers[element.Name.ToLower()] = element.Type;
                 count++;
             }
             return count;
         }
 
-        private int ReadConnections()
-        {
+        private int ReadConnections() {
             var count = 0;
-            foreach (ConnectionConfigurationElement element in _config.Connections)
-            {
-                switch (element.Provider.ToLower())
-                {
+            foreach (ConnectionConfigurationElement element in _config.Connections) {
+                switch (element.Provider.ToLower()) {
                     case "mysql":
                         _process.Connections.Add(element.Name,
                                                  _process.Kernal.Get<MySqlConnection>(new Libs.Ninject.Parameters.IParameter[]
@@ -479,8 +415,7 @@ namespace Transformalize.Main
         }
 
 
-        private void GuardAgainstFieldOverlap(Entity entity)
-        {
+        private void GuardAgainstFieldOverlap(Entity entity) {
             var entityKeys = new HashSet<string>(entity.Fields.ToEnumerable().Where(f => f.Output).Select(f => f.Alias));
             var processKeys =
                 new HashSet<string>(
@@ -498,8 +433,7 @@ namespace Transformalize.Main
             Environment.Exit(0);
         }
 
-        private void SetupRazorTemplateService()
-        {
+        private void SetupRazorTemplateService() {
             var config = new FluentTemplateServiceConfiguration(c => c.WithEncoding(_process.TemplateContentType));
             var templateService = new TemplateService(config);
             Razor.SetTemplateService(templateService);
