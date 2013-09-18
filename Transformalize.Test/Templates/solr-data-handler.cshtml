@@ -28,7 +28,7 @@
         }
     }
     builder.TrimEnd(",\r\n");
-    builder.AppendFormat("\r\nFROM {0};", process.View);
+    builder.AppendFormat("\r\nFROM {0};", process.Star);
     var query = builder + Environment.NewLine;
 
     // build delta import query (all fields filtered by the changed keys)
@@ -39,7 +39,7 @@
     // build delta query (just the changed keys)
     builder.Clear();
     builder.AppendLine("\r\nSELECT tflkey");
-    builder.AppendFormat("FROM {0}\r\n", process.View);
+    builder.AppendFormat("FROM {0}\r\n", process.Star);
     builder.AppendLine("WHERE tflupdate &gt; '${dataimporter.last_index_time}';");
     var deltaQuery = builder.ToString();
     builder.Clear();

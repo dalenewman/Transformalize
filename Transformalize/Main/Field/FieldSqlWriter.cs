@@ -63,7 +63,7 @@ namespace Transformalize.Main
             StartWithEnumerable(fields);
         }
 
-        public FieldSqlWriter(params IFields[] fields)
+        public FieldSqlWriter(params Fields[] fields)
         {
             StartWithIFields(fields);
         }
@@ -139,7 +139,7 @@ namespace Transformalize.Main
             _output = new SortedDictionary<string, string>(_original.ToDictionary(f => f.Key, f => string.Empty));
         }
 
-        private void StartWithIFields(params IFields[] fields)
+        private void StartWithIFields(params Fields[] fields)
         {
             _original = new Dictionary<string, Field>();
             foreach (var dict in fields)
@@ -538,7 +538,7 @@ namespace Transformalize.Main
             return Write();
         }
 
-        public IFields Context()
+        public Fields Context()
         {
             var results = new Fields();
             foreach (var pair in _output)

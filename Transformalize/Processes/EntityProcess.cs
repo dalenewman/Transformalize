@@ -32,7 +32,7 @@ using Transformalize.Operations;
 namespace Transformalize.Processes {
 
     public class EntityProcess : EtlProcess {
-        private readonly IFields _fieldsWithTransforms;
+        private readonly Fields _fieldsWithTransforms;
         private readonly Process _process;
         private Entity _entity;
 

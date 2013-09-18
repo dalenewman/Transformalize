@@ -36,9 +36,9 @@ namespace Transformalize.Main
     public class Process
     {
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
-        public IFields CalculatedFields = new Fields();
+        public Fields CalculatedFields = new Fields();
         public Dictionary<string, AbstractConnection> Connections = new Dictionary<string, AbstractConnection>();
-        public List<Entity> Entities = new List<Entity>();
+        public Entities Entities = new Entities();
         public IKernel Kernal = new StandardKernel();
         public Dictionary<string, Map> MapEndsWith = new Dictionary<string, Map>();
         public Dictionary<string, Map> MapEquals = new Dictionary<string, Map>();
@@ -48,13 +48,12 @@ namespace Transformalize.Main
         public Options Options = new Options();
         public bool IsFirstRun;
         public Dictionary<string, string> Providers = new Dictionary<string, string>();
-        public IEnumerable<Field> RelatedKeys;
         public List<Relationship> Relationships = new List<Relationship>();
         public Dictionary<string, Script> Scripts = new Dictionary<string, Script>();
         public Dictionary<string, SearchType> SearchTypes = new Dictionary<string, SearchType>();
         public Encoding TemplateContentType = Encoding.Raw;
         public Dictionary<string, Template> Templates = new Dictionary<string, Template>();
-        public string View;
+        public string Star;
 
         public Process() : this("TEST")
         {
@@ -68,31 +67,17 @@ namespace Transformalize.Main
             Kernal.Bind<AbstractProvider>().To<MySqlProvider>().WhenInjectedInto<MySqlConnection>();
             Kernal.Bind<AbstractConnectionChecker>().To<DefaultConnectionChecker>().WhenInjectedInto<MySqlConnection>();
             Kernal.Bind<IScriptRunner>().To<DefaultScriptRunner>().WhenInjectedInto<MySqlConnection>();
-            Kernal.Bind<IProviderSupportsModifier>()
-                  .To<DefaultProviderSupportsModifier>()
-                  .WhenInjectedInto<MySqlConnection>();
+            Kernal.Bind<IProviderSupportsModifier>().To<DefaultProviderSupportsModifier>().WhenInjectedInto<MySqlConnection>();
 
             Kernal.Bind<AbstractProvider>().To<SqlServerProvider>().WhenInjectedInto<SqlServerConnection>();
-            Kernal.Bind<AbstractConnectionChecker>()
-                  .To<DefaultConnectionChecker>()
-                  .WhenInjectedInto<SqlServerConnection>();
+            Kernal.Bind<AbstractConnectionChecker>().To<DefaultConnectionChecker>().WhenInjectedInto<SqlServerConnection>();
             Kernal.Bind<IScriptRunner>().To<DefaultScriptRunner>().WhenInjectedInto<SqlServerConnection>();
-            Kernal.Bind<IProviderSupportsModifier>()
-                  .To<SqlServerProviderSupportsModifier>()
-                  .WhenInjectedInto<SqlServerConnection>();
+            Kernal.Bind<IProviderSupportsModifier>().To<SqlServerProviderSupportsModifier>().WhenInjectedInto<SqlServerConnection>();
 
-            Kernal.Bind<AbstractProvider>()
-                  .To<AnalysisServicesProvider>()
-                  .WhenInjectedInto<AnalysisServicesConnection>();
-            Kernal.Bind<AbstractConnectionChecker>()
-                  .To<AnalysisServicesConnectionChecker>()
-                  .WhenInjectedInto<AnalysisServicesConnection>();
-            Kernal.Bind<IScriptRunner>()
-                  .To<AnalysisServicesScriptRunner>()
-                  .WhenInjectedInto<AnalysisServicesConnection>();
-            Kernal.Bind<IProviderSupportsModifier>()
-                  .To<DefaultProviderSupportsModifier>()
-                  .WhenInjectedInto<AnalysisServicesConnection>();
+            Kernal.Bind<AbstractProvider>().To<AnalysisServicesProvider>().WhenInjectedInto<AnalysisServicesConnection>();
+            Kernal.Bind<AbstractConnectionChecker>().To<AnalysisServicesConnectionChecker>().WhenInjectedInto<AnalysisServicesConnection>();
+            Kernal.Bind<IScriptRunner>().To<AnalysisServicesScriptRunner>().WhenInjectedInto<AnalysisServicesConnection>();
+            Kernal.Bind<IProviderSupportsModifier>().To<DefaultProviderSupportsModifier>().WhenInjectedInto<AnalysisServicesConnection>();
         }
 
         public bool IsReady()
@@ -100,7 +85,7 @@ namespace Transformalize.Main
             return Connections.Select(connection => connection.Value.IsReady()).All(b => b.Equals(true));
         }
 
-        public IFields OutputFields()
+        public Fields OutputFields()
         {
             var fields = new Fields();
             foreach (var entity in Entities)

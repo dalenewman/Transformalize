@@ -28,7 +28,7 @@ using Transformalize.Main.Providers.SqlServer;
 
 namespace Transformalize.Main {
 
-    public class EntityConfigurationReader : IEntityReader {
+    public class EntityConfigurationReader {
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly Process _process;
@@ -79,11 +79,6 @@ namespace Transformalize.Main {
             foreach (FieldConfigurationElement f in element.Fields) {
                 var field = new FieldReader(_process, entity, new FieldTransformParametersReader(f.Alias), new EmptyParametersReader()).Read(f);
                 field.Index = fieldIndex;
-
-                foreach (XmlConfigurationElement x in f.Xml) {
-                    var xmlField = new FieldReader(_process, entity, new FieldTransformParametersReader(x.Alias), new EmptyParametersReader()).Read(x, f);
-                    field.InnerXml.Add(x.Alias, xmlField);
-                }
 
                 if (entity.Auto && entity.Fields.ContainsKey(field.Name)) {
                     entity.Fields.Remove(field.Name);

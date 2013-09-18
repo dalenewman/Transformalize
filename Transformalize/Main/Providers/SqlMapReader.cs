@@ -20,34 +20,26 @@
 
 #endregion
 
-using System.Data.SqlClient;
-
-namespace Transformalize.Main.Providers.SqlServer
-{
-    public class SqlServerMapReader : IMapReader
-    {
-        private readonly string _connectionString;
+namespace Transformalize.Main.Providers {
+    public class SqlMapReader : IMapReader {
         private readonly string _sql;
+        private readonly AbstractConnection _connection;
 
-        public SqlServerMapReader(string sql, string connectionString)
-        {
+        public SqlMapReader(string sql, AbstractConnection connection) {
             _sql = sql;
-            _connectionString = connectionString;
+            _connection = connection;
         }
 
-        public Map Read()
-        {
+        public Map Read() {
             var map = new Map();
 
-            using (var cn = new SqlConnection(_connectionString))
-            {
+            using (var cn = _connection.GetConnection()) {
                 cn.Open();
-                var cmd = new SqlCommand(_sql, cn);
+                var cmd = cn.CreateCommand();
+                cmd.CommandText = _sql;
                 var reader = cmd.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
+                if (reader != null) {
+                    while (reader.Read()) {
                         map[reader.GetValue(0).ToString()] = new Item(reader.GetValue(1));
                     }
                 }

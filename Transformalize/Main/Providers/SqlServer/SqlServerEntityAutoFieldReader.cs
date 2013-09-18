@@ -32,7 +32,7 @@ namespace Transformalize.Main.Providers.SqlServer
         private readonly List<Field> _fields = new List<Field>();
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
 
-        public IFields Read(Entity entity, bool isMaster)
+        public Fields Read(Entity entity, bool isMaster)
         {
             using (var cn = new SqlConnection(entity.InputConnection.ConnectionString))
             {

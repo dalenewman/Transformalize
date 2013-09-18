@@ -77,12 +77,9 @@ namespace Transformalize.Operations
         {
             var bytes = new[] { "byte[]", "rowversion" };
             if (bytes.Any(t => t == _entity.Version.SimpleType)) {
-                //var beginBytes = Common.ObjectToByteArray(leftRow[_entity.Version.Alias]);
-                //var endBytes = Common.ObjectToByteArray(rightRow[_entity.Version.Alias]);
-                //return !beginBytes.SequenceEqual(endBytes);
                 var beginBytes = (byte[]) leftRow[_entity.Version.Alias];
                 var endBytes = (byte[]) rightRow[_entity.Version.Alias];
-                return Common.AreEqual(beginBytes, endBytes);
+                return !beginBytes.SequenceEqual(endBytes);
             }
             return !leftRow[_entity.Version.Alias].Equals(rightRow[_entity.Version.Alias]);
 

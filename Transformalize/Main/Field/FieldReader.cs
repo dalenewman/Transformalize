@@ -66,31 +66,6 @@ namespace Transformalize.Main {
             return field;
         }
 
-        public Field Read(XmlConfigurationElement element, FieldConfigurationElement parent) {
-            var xmlField = new Field(element.Type, element.Length, FieldType.Xml, element.Output, element.Default) {
-                Entity = _entity.Alias,
-                Schema = _entity.Schema,
-                Parent = parent.Name,
-                XPath = parent.Xml.XPath + element.XPath,
-                Name = element.XPath,
-                Alias = element.Alias,
-                Index = element.Index,
-                Precision = element.Precision,
-                Scale = element.Scale,
-                Aggregate = element.Aggregate.ToLower(),
-                AsParameter =
-                    new Parameter(element.Alias, null) {
-                        SimpleType =
-                            Common.ToSimpleType(element.Type)
-                    }
-            };
-
-            // todo: FieldSearchTypesLoader(xmlField, element);
-            FieldTransformLoader(xmlField, element.Transforms);
-
-            return xmlField;
-        }
-
         private void FieldSearchTypesLoader(Field field, FieldConfigurationElement element) {
             var searchType = element.SearchType.ToLower();
             if (_process.SearchTypes.ContainsKey(searchType)) {

@@ -62,7 +62,7 @@ namespace Transformalize.Main.Providers.SqlServer
 
                 _log.Debug(createCommand.CommandText);
                 createCommand.ExecuteNonQuery();
-                _log.Debug("Created Output {0}.", _process.View);
+                _log.Debug("Created Output {0}.", _process.Star);
             }
         }
 
@@ -75,14 +75,14 @@ namespace Transformalize.Main.Providers.SqlServer
 	AND TABLE_NAME = '{0}'
 )
 	DROP VIEW [{0}];";
-            return string.Format(format, _process.View);
+            return string.Format(format, _process.Star);
         }
 
         public string CreateSql()
         {
             var provider = _process.MasterEntity.OutputConnection.Provider;
             var builder = new StringBuilder();
-            builder.AppendFormat("CREATE VIEW {0} AS\r\n", _process.View);
+            builder.AppendFormat("CREATE VIEW {0} AS\r\n", _process.Star);
             builder.AppendFormat("SELECT\r\n    {0}.TflKey,\r\n    {0}.TflBatchId,\r\n    b.TflUpdate,\r\n", _masterEntity.OutputName());
 
             var typedFields = new StarFields(_process).TypedFields();

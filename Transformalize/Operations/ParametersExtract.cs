@@ -57,7 +57,7 @@ namespace Transformalize.Operations {
                 where = where.TrimEnd(", ".ToCharArray()) + ")";
             }
 
-            var sql = string.Format("SELECT [TflKey], {0} FROM {1}{2};", fields, process.View, where);
+            var sql = string.Format("SELECT [TflKey], {0} FROM {1}{2};", fields, process.Star, where);
             Debug("SQL:\r\n{0}", sql);
             return sql;
         }

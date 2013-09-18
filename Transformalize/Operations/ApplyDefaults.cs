@@ -31,13 +31,13 @@ namespace Transformalize.Operations
     {
         private readonly Field[] _fields;
 
-        public ApplyDefaults(params IFields[] fields)
+        public ApplyDefaults(params Fields[] fields)
         {
             _fields = PrepareFields(fields);
             UseTransaction = false;
         }
 
-        private static Field[] PrepareFields(IEnumerable<IFields> fields)
+        private static Field[] PrepareFields(IEnumerable<Fields> fields)
         {
             var list = new List<Field>();
             foreach (var fieldArray in fields)

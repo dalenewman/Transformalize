@@ -76,7 +76,7 @@ namespace Transformalize.Operations
             }
         }
 
-        private IFields GetRelationshipFields(Process process)
+        private Fields GetRelationshipFields(Process process)
         {
             var relationships = process.Relationships.Where(r => r.LeftEntity.Alias != _entity.Alias && r.RightEntity.Alias != _entity.Alias).ToArray();
             var fields = new Fields();

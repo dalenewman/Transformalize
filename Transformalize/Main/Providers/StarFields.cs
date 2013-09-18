@@ -40,8 +40,8 @@ namespace Transformalize.Main.Providers
             _process = process;
         }
 
-        public Dictionary<StarFieldType, IFields> TypedFields() {
-            var fields = new Dictionary<StarFieldType, IFields>();
+        public Dictionary<StarFieldType, Fields> TypedFields() {
+            var fields = new Dictionary<StarFieldType, Fields>();
 
             fields[StarFieldType.Master] = new Fields();
             fields[StarFieldType.Foreign] = new Fields();

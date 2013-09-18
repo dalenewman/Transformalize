@@ -27,6 +27,5 @@ namespace Transformalize.Main
     public interface IFieldReader
     {
         Field Read(FieldConfigurationElement element, FieldType fieldType = FieldType.Field);
-        Field Read(XmlConfigurationElement element, FieldConfigurationElement parent);
     }
 }

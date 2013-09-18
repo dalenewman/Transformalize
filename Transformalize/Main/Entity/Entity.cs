@@ -53,10 +53,10 @@ namespace Transformalize.Main
         public AbstractConnection InputConnection { get; set; }
         public AbstractConnection OutputConnection { get; set; }
         public Field Version { get; set; }
-        public IFields PrimaryKey { get; set; }
-        public IFields Fields { get; set; }
-        public IFields Xml { get; set; }
-        public IFields All { get; set; }
+        public Fields PrimaryKey { get; set; }
+        public Fields Fields { get; set; }
+        public Fields Xml { get; set; }
+        public Fields All { get; set; }
         public Dictionary<string, Relationship> Joins { get; set; }
         public object Begin { get; set; }
         public object End { get; set; }
@@ -69,7 +69,7 @@ namespace Transformalize.Main
         public bool Group { get; set; }
         public bool Auto { get; set; }
         public string Name { get; set; }
-        public IFields CalculatedFields { get; set; }
+        public Fields CalculatedFields { get; set; }
         public bool HasRows { get; set; }
         public bool HasRange { get; set; }
 
@@ -139,7 +139,7 @@ namespace Transformalize.Main
             return InputConnection.EntityKeysRangeQueryWriter.Write(this);
         }
 
-        public IFields InputFields()
+        public Fields InputFields()
         {
             return new FieldSqlWriter(All, CalculatedFields).ExpandXml().Input().Context();
         }

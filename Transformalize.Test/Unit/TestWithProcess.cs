@@ -125,7 +125,7 @@ OPTION (MAXDOP 2);";
         public void TestWriteSql() {
             var actual = new SqlServerViewWriter(_process).CreateSql();
 
-            Assert.AreEqual(@"CREATE VIEW TestOrderDetailStar AS
+            Assert.AreEqual(@"CREATE VIEW TestStar AS
 SELECT
     TestOrderDetail.TflKey,
     TestOrderDetail.TflBatchId,

@@ -87,7 +87,6 @@ namespace Transformalize.Test.Integration
             Assert.AreEqual("OrderKey", _process.Relationships[0].Join[0].LeftField.Name);
             Assert.AreEqual("OrderKey", _process.Relationships[0].Join[0].RightField.Name);
 
-            Assert.AreEqual(3, _process.RelatedKeys.Count());
             Assert.AreEqual(0, _process.Entities.First().RelationshipToMaster.Count());
             Assert.AreEqual(1, _process.Entities.First(e => e.Alias.Equals("Product")).RelationshipToMaster.Count());
             Assert.AreEqual(1, _process.Entities.First(e => e.Alias.Equals("Order")).RelationshipToMaster.Count());

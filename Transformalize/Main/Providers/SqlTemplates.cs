@@ -54,7 +54,7 @@ namespace Transformalize.Main.Providers
             ", schema, name);
         }
 
-        public static string Select(IFields fields, string leftTable, string rightTable, AbstractProvider provider, string leftSchema = "dbo", string rightSchema = "dbo")
+        public static string Select(Fields fields, string leftTable, string rightTable, AbstractProvider provider, string leftSchema = "dbo", string rightSchema = "dbo")
         {
             var maxDop = provider.Supports.MaxDop ? "OPTION (MAXDOP 2);" : ";";
             var sqlPattern = "\r\nSELECT\r\n    {0}\r\nFROM {1} l\r\nINNER JOIN {2} r ON ({3})\r\n" + maxDop;

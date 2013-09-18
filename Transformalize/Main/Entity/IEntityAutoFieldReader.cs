@@ -24,6 +24,6 @@ namespace Transformalize.Main
 {
     public interface IEntityAutoFieldReader
     {
-        IFields Read(Entity entity, bool isMaster);
+        Fields Read(Entity entity, bool isMaster);
     }
 }

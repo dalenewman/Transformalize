@@ -27,7 +27,7 @@ using System.Linq;
 
 namespace Transformalize.Main
 {
-    public class Fields : IFields, IEnumerable<KeyValuePair<string, Field>>
+    public class Fields : IEnumerable<KeyValuePair<string, Field>>
     {
         private readonly IDictionary<string, Field> _items = new Dictionary<string, Field>();
 
@@ -75,6 +75,11 @@ namespace Transformalize.Main
             return _items.Select(kv => kv.Value).OrderBy(f => f.Alias);
         }
 
+        public IEnumerable<string> OutputKeys()
+        {
+            return ToEnumerable().Where(f => f.Output).Select(f => f.Alias);
+        }
+
         public Field this[string key]
         {
             get { return _items[key]; }
@@ -86,7 +91,7 @@ namespace Transformalize.Main
             _items[key] = field;
         }
 
-        public void AddRange(IFields fields)
+        public void AddRange(Fields fields)
         {
             foreach (var field in fields)
             {

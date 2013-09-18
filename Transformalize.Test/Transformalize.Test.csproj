@@ -96,7 +96,6 @@
     <Compile Include="Integration\Es.cs" />
     <Compile Include="Integration\NorthWind.cs" />
     <Compile Include="Integration\Test.cs" />
-    <Compile Include="Integration\TestNorthWindConfiguration.cs" />
     <Compile Include="Integration\TestConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Unit\TestOptions.cs" />

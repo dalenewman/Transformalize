@@ -61,7 +61,7 @@ namespace Transformalize.Main
             return content.ToString();
         }
 
-        private void AppendFields(IFields all, StringBuilder content)
+        private void AppendFields(Fields all, StringBuilder content)
         {
             var fields = new FieldSqlWriter(all).FieldType(FieldType.Field).Context();
             _log.Debug("Entity auto found {0} field{1}.", fields.Count, fields.Count == 1 ? string.Empty : "s");
@@ -74,7 +74,7 @@ namespace Transformalize.Main
             content.AppendLine("      </fields>");
         }
 
-        private void AppendPrimaryKey(IFields all, Entity entity, StringBuilder content)
+        private void AppendPrimaryKey(Fields all, Entity entity, StringBuilder content)
         {
             var keys = new FieldSqlWriter(all).FieldType(FieldType.PrimaryKey, FieldType.MasterKey).Context();
             if (!keys.Any())

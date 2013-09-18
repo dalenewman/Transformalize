@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using Transformalize.Configuration;
@@ -112,32 +113,31 @@ namespace Transformalize.Main {
         {
             return string.Concat(processName, entityAlias).Replace(" ", string.Empty);
         }
-
-        [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
-        static extern int memcmp(byte[] b1, byte[] b2, long count);
-
-        public static bool AreEqual(byte[] b1, byte[] b2) {
-            return b1.Length == b2.Length && memcmp(b1, b2, b1.Length) == 0;
+        
+        public static bool AreEqual(byte[] b1, byte[] b2)
+        {
+            return b1.Length == b2.Length && b1.SequenceEqual(b2);
         }
 
         public static byte[] Max(byte[] b1, byte[] b2)
         {
             var minLength = Math.Min(b1.Length, b2.Length);
-            if (minLength == 0)
+            if (minLength == 0)  // return longest, when comparable are equal
             {
                 return b1.Length > b2.Length ? b1 : b2;
             }
 
-            var result = memcmp(b1, b2, minLength);
-            if (result == 0)
+            for (var i = 0; i < minLength; i++)
             {
-                if (b1.Length == b2.Length)
+                if (b1[i] != b2[i])
                 {
-                    return b1;
+                    return b1[i] > b2[i] ? b1 : b2;  // return first one with a bigger byte
                 }
-                return b1.Length > b2.Length ? b1 : b2;
             }
-            return result > 0 ? b1 : b2;
+
+            return b1.Length > b2.Length ? b1 : b2; // return longest, when comparable are equal
+
         }
+
     }
 }

@@ -33,14 +33,14 @@ namespace Transformalize.Operations
         private readonly Field[] _fields;
         private readonly int _transformCount;
 
-        public TransformFields(IFields fields)
+        public TransformFields(Fields fields)
         {
             _fields = fields.ToEnumerable().OrderBy(f => f.Index).ToArray();
             _transformCount = _fields.Any() ? _fields.Sum(f => f.Transforms.Count) : 0;
             UseTransaction = false;
         }
 
-        public TransformFields(params IFields[] fields)
+        public TransformFields(params Fields[] fields)
         {
             var temp = new List<Field>();
             foreach (var f in fields)

@@ -28,12 +28,19 @@ namespace Transformalize.Configuration
     {
         private const string TEMPLATE_CONTENT_TYPE = "template-content-type";
         private const string NAME = "name";
+        private const string STAR = "star";
 
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name
         {
             get { return this[NAME] as string; }
             set { this[NAME] = value; }
+        }
+
+        [ConfigurationProperty(STAR, IsRequired = false, DefaultValue = "")]
+        public string Star {
+            get { return this[STAR] as string; }
+            set { this[STAR] = value; }
         }
 
         [ConfigurationProperty(TEMPLATE_CONTENT_TYPE, IsRequired = false, DefaultValue = "raw")]

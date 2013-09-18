@@ -76,12 +76,6 @@ namespace Transformalize.Configuration
             set { this[SEARCH_TYPE] = value; }
         }
 
-        [ConfigurationProperty(XML)]
-        public XmlElementCollection Xml
-        {
-            get { return this[XML] as XmlElementCollection; }
-        }
-
         [ConfigurationProperty(SEARCH_TYPES)]
         public FieldSearchTypeElementCollection SearchTypes
         {
