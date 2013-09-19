@@ -256,8 +256,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         {
             var copy = new SqlBulkCopy(connection, _bulkCopyOptions, transaction)
                            {
-                               BatchSize = _batchSize,
-                               EnableStreaming = true
+                               BatchSize = _batchSize //,EnableStreaming = true //.NET45
                            };
             foreach (var pair in Mappings)
             {
