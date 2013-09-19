@@ -17,10 +17,8 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Threading;
 using System.Text.RegularExpressions;
-using System.Diagnostics;
 
-
-namespace Dapper
+namespace Transformalize.Libs.Dapper
 {
     /// <summary>
     /// Dapper, a light weight object mapper for ADO.NET
