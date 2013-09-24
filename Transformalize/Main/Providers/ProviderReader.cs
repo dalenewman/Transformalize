@@ -17,6 +17,10 @@ namespace Transformalize.Main.Providers {
                 providers[element.Name.ToLower()] = element.Type;
             }
 
+            if (providers.Count == 0) {
+                providers.Add("sqlserver", "System.Data.SqlClient.SqlConnection, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
+            }
+
             return providers;
         }
     }

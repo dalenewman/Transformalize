@@ -116,7 +116,7 @@ namespace Transformalize.Configuration
             set { this[AUTO] = value; }
         }
 
-        [ConfigurationProperty(PREFIX, IsRequired = false, DefaultValue = "Default")]
+        [ConfigurationProperty(PREFIX, IsRequired = false, DefaultValue = "")]
         public string Prefix
         {
             get { return this[PREFIX] as string; }

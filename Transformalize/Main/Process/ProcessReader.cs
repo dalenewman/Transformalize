@@ -62,7 +62,7 @@ namespace Transformalize.Main {
             new MapLoader(ref _process, _config.Maps).Load();
 
             //depend on the shared process properties
-            _process.Entities = new EntitiesReader(ref _process, _config.Entities).Read();
+            new EntitiesLoader(ref _process, _config.Entities).Load();
             _process.Relationships = new RelationshipsReader(_process, _config.Relationships).Read();
             new ProcessCalculatedFieldLoader(ref _process, _config.CalculatedFields).Load();
             _process.Star = string.IsNullOrEmpty(_config.Star) ? _process.Name + "Star" : _config.Star;

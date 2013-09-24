@@ -29,11 +29,11 @@ namespace Transformalize.Main.Providers.SqlServer
     public class SqlServerEntityAutoFieldReader : IEntityAutoFieldReader
     {
         private readonly IDataTypeService _dataTypeService = new SqlServerDataTypeService();
-        private readonly List<Field> _fields = new List<Field>();
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
 
         public Fields Read(Entity entity, bool isMaster)
         {
+            var fields = new Fields();
             using (var cn = new SqlConnection(entity.InputConnection.ConnectionString))
             {
                 cn.Open();
@@ -51,23 +51,23 @@ namespace Transformalize.Main.Providers.SqlServer
                     var length = reader.GetString(3);
                     var fieldType = reader.GetBoolean(7) ? (isMaster ? FieldType.MasterKey : FieldType.PrimaryKey) : FieldType.Field;
                     var field = new Field(type, length, fieldType, true, string.Empty) {
-                                        Name = name,
-                                        Entity = entity.Name,
-                                        Process = entity.ProcessName,
-                                        Index = reader.GetInt32(6),
-                                        Schema = entity.Schema,
-                                        Input = true,
-                                        Precision = reader.GetByte(4),
-                                        Scale = reader.GetInt32(5),
-                                        Transforms = new Transforms(),
-                                        Auto = true,
-                                        Alias = entity.Prefix + name
-                                    };
-                    _fields.Add(field);
+                        Name = name,
+                        Entity = entity.Name,
+                        Process = entity.ProcessName,
+                        Index = reader.GetInt32(6),
+                        Schema = entity.Schema,
+                        Input = true,
+                        Precision = reader.GetByte(4),
+                        Scale = reader.GetInt32(5),
+                        Transforms = new Transforms(),
+                        Auto = true,
+                        Alias = entity.Prefix + name
+                    };
+                    fields.Add(field);
                 }
             }
 
-            return new Fields(_fields);
+            return fields;
         }
 
         private string GetSystemType(string dataType)

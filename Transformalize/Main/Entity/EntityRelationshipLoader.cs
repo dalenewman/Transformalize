@@ -4,6 +4,7 @@ using System.Linq;
 using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main {
+
     public class EntityRelationshipLoader {
         private readonly Process _process;
 
@@ -17,8 +18,12 @@ namespace Transformalize.Main {
             foreach (var entity in _process.Entities) {
                 entity.RelationshipToMaster = ReadRelationshipToMaster(entity);
                 if (!entity.RelationshipToMaster.Any() && !entity.IsMaster()) {
-                    _log.Error("The entity {0} must have a relationship to the master entity {1}.", entity.Name, _process.MasterEntity.Name);
-                    Environment.Exit(1);
+                    if (_process.Options.Mode == Modes.Metadata) {
+                        _log.Warn("The entity {0} must have a relationship to the master entity {1}.", entity.Name, _process.MasterEntity == null ? "undefined" : _process.MasterEntity.Name);
+                    } else {
+                        _log.Error("The entity {0} must have a relationship to the master entity {1}.", entity.Name, _process.MasterEntity == null ? "undefined" : _process.MasterEntity.Name);
+                        Environment.Exit(1);
+                    }
                 }
             }
         }

@@ -28,12 +28,6 @@ namespace Transformalize.Main
     public class FieldTransformParametersReader : ITransformParametersReader
     {
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
-        private readonly string _name;
-
-        public FieldTransformParametersReader(string name)
-        {
-            _name = name;
-        }
 
         public Parameters Read(TransformConfigurationElement transform)
         {
@@ -51,9 +45,7 @@ namespace Transformalize.Main
             {
                 if (string.IsNullOrEmpty(p.Name))
                 {
-                    _log.Warn(
-                        "The field {0} has a {1} transform parameter without a name attribute.  Field parameters require names and values.",
-                        _name, transform.Method);
+                    _log.Warn("Detected a {0} transform parameter without a name attribute.  Field parameters require names and values.", transform.Method);
                     return new Parameters();
                 }
 

@@ -28,12 +28,12 @@ using Transformalize.Main.Providers.SqlServer;
 
 namespace Transformalize.Main {
 
-    public class EntityConfigurationReader {
+    public class EntityConfigurationLoader {
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly Process _process;
 
-        public EntityConfigurationReader(Process process) {
+        public EntityConfigurationLoader(Process process) {
             _process = process;
         }
 
@@ -44,10 +44,7 @@ namespace Transformalize.Main {
                 Name = element.Name,
                 InputConnection = _process.Connections[element.Connection],
                 OutputConnection = _process.Connections["output"],
-                Prefix =
-                    element.Prefix == "Default"
-                        ? element.Name.Replace(" ", string.Empty)
-                        : element.Prefix,
+                Prefix = element.Prefix,
                 Group = element.Group,
                 Auto = element.Auto,
                 Alias = string.IsNullOrEmpty(element.Alias) ? element.Name : element.Alias,
@@ -66,18 +63,18 @@ namespace Transformalize.Main {
             foreach (FieldConfigurationElement pk in element.PrimaryKey) {
                 var fieldType = isMaster ? FieldType.MasterKey : FieldType.PrimaryKey;
 
-                var keyField = new FieldReader(_process, entity, new FieldTransformParametersReader(pk.Alias), new EmptyParametersReader()).Read(pk, fieldType);
+                var keyField = new FieldReader(_process, entity, new FieldTransformParametersReader(), new EmptyParametersReader()).Read(pk, fieldType);
                 keyField.Index = pkIndex;
 
-                entity.PrimaryKey[pk.Alias] = keyField;
-                entity.All[pk.Alias] = keyField;
+                entity.PrimaryKey[keyField.Alias] = keyField;
+                entity.All[keyField.Alias] = keyField;
 
                 pkIndex++;
             }
 
             var fieldIndex = 0;
             foreach (FieldConfigurationElement f in element.Fields) {
-                var field = new FieldReader(_process, entity, new FieldTransformParametersReader(f.Alias), new EmptyParametersReader()).Read(f);
+                var field = new FieldReader(_process, entity, new FieldTransformParametersReader(), new EmptyParametersReader()).Read(f);
                 field.Index = fieldIndex;
 
                 if (entity.Auto && entity.Fields.ContainsKey(field.Name)) {
@@ -85,8 +82,8 @@ namespace Transformalize.Main {
                     entity.All.Remove(field.Name);
                 }
 
-                entity.Fields[f.Alias] = field;
-                entity.All[f.Alias] = field;
+                entity.Fields[field.Alias] = field;
+                entity.All[field.Alias] = field;
 
                 fieldIndex++;
             }
@@ -106,11 +103,12 @@ namespace Transformalize.Main {
                 entity.Version.Output = true;
             }
 
-            foreach (FieldConfigurationElement field in element.CalculatedFields) {
-                entity.CalculatedFields.Add(field.Alias,
-                                            new FieldReader(_process, entity,
-                                                            new EntityTransformParametersReader(entity),
-                                                            new EntityParametersReader(entity)).Read(field));
+            foreach (FieldConfigurationElement field in element.CalculatedFields)
+            {
+                var transformParametersReader = new EntityTransformParametersReader(entity);
+                var parametersReader = new EntityParametersReader(entity);
+                var fieldReader = new FieldReader(_process, entity, transformParametersReader, parametersReader);
+                entity.CalculatedFields.Add(field.Alias, fieldReader.Read(field));
             }
 
             return entity;

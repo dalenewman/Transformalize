@@ -41,23 +41,23 @@ namespace Transformalize.Main {
             _entity = entity ?? new Entity();
         }
 
-        public Field Read(FieldConfigurationElement element, FieldType fieldType = FieldType.Field) {
+        public Field Read(FieldConfigurationElement element, FieldType fieldType = FieldType.Field)
+        {
+            var alias = element.Alias.Equals(element.Name) && !string.IsNullOrEmpty(_entity.Prefix) ? _entity.Prefix + element.Name : element.Alias;
+
             var field = new Field(element.Type, element.Length, fieldType, element.Output, element.Default) {
                 Process = _process.Name,
                 Entity = _entity.Alias,
                 Schema = _entity.Schema,
                 Name = element.Name,
-                Alias = element.Alias,
+                Alias = alias,
                 Precision = element.Precision,
                 Scale = element.Scale,
                 Input = element.Input,
                 Unicode = element.Unicode,
                 VariableLength = element.VariableLength,
                 Aggregate = element.Aggregate.ToLower(),
-                AsParameter =
-                    new Parameter(element.Alias, null) {
-                        SimpleType = Common.ToSimpleType(element.Type)
-                    }
+                AsParameter = new Parameter(alias, null) { SimpleType = Common.ToSimpleType(element.Type)}
             };
 
             FieldSearchTypesLoader(field, element);

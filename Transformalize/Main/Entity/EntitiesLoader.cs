@@ -6,36 +6,34 @@ using Transformalize.Extensions;
 using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main {
-    public class EntitiesReader
+
+    public class EntitiesLoader
     {
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly Process _process;
         private readonly EntityElementCollection _elements;
 
-        public EntitiesReader(ref Process process, EntityElementCollection elements)
+        public EntitiesLoader(ref Process process, EntityElementCollection elements)
         {
             _process = process;
             _elements = elements;
         }
 
-        public Entities Read()
+        public void Load()
         {
-            var entities = new Entities();
             var count = 0;
 
             foreach (EntityConfigurationElement element in _elements) {
-                var reader = new EntityConfigurationReader(_process);
+                var reader = new EntityConfigurationLoader(_process);
                 var entity = reader.Read(element, count == 0);
 
                 GuardAgainstFieldOverlap(entity);
 
-                entities.Add(entity);
+                _process.Entities.Add(entity);
                 if (entity.IsMaster())
                     _process.MasterEntity = entity;
                 count++;
             }
-            return entities;
-
         }
 
         private void GuardAgainstFieldOverlap(Entity entity) {

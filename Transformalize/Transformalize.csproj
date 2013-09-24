@@ -145,7 +145,7 @@
     <Compile Include="Libs\Dapper\SqlMapper.cs" />
     <Compile Include="Main\Common.cs" />
     <Compile Include="Main\Entity\Entities.cs" />
-    <Compile Include="Main\Entity\EntitiesReader.cs" />
+    <Compile Include="Main\Entity\EntitiesLoader.cs" />
     <Compile Include="Main\Entity\EntityParametersReader.cs" />
     <Compile Include="Main\Entity\EntityRelationshipLoader.cs" />
     <Compile Include="Main\MapLoader.cs" />
@@ -155,7 +155,7 @@
     <Compile Include="Main\SearchType.cs" />
     <Compile Include="Main\MapConfigurationReader.cs" />
     <Compile Include="Main\ConversionFactory.cs" />
-    <Compile Include="Main\Entity\EntityConfigurationReader.cs" />
+    <Compile Include="Main\Entity\EntityConfigurationLoader.cs" />
     <Compile Include="Main\Item.cs" />
     <Compile Include="Main\Map.cs" />
     <Compile Include="Main\Entity\Entity.cs" />
