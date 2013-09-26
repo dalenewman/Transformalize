@@ -22,11 +22,14 @@
 
 using System;
 using Microsoft.AnalysisServices;
+using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main.Providers.AnalysisServices
 {
-    public class AnalysisServicesConnectionChecker : AbstractConnectionChecker
+    public class AnalysisServicesConnectionChecker : IConnectionChecker
     {
+        private readonly Logger _log = LogManager.GetCurrentClassLogger();
+
         public bool Check(AbstractConnection connection)
         {
             bool isReady;
@@ -37,8 +40,9 @@ namespace Transformalize.Main.Providers.AnalysisServices
                 isReady = server.Connected;
                 server.Disconnect();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _log.Warn("Error checking {0} connection. {1}", connection.Name, e.Message);
                 return false;
             }
             return isReady;

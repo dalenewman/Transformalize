@@ -30,14 +30,22 @@ using Transformalize.Libs.RazorEngine.Configuration.Fluent;
 using Transformalize.Libs.RazorEngine.Templating;
 
 namespace Transformalize.Main {
+    
     public class Template
     {
+        private const string TEMPLATE_CACHE_FOLDER = "TemplateCache";
+        private const string RENDERED_TEMPLATE_CACHE_FOLDER = "RenderedTemplateCache";
 
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly Process _process;
-        private readonly string _cacheFolder;
-        private readonly string _cacheFile;
-        private readonly string _cacheContent;
+
+        private readonly string _renderedTemplateFile;
+        private readonly string _renderedTemplateContent;
+        private readonly bool _renderedTemplateContentExists;
+
+        private readonly string _templateFile;
+        private readonly string _templateContent;
+        private readonly bool _templateContentExists;
 
         public List<TemplateAction> Actions = new List<TemplateAction>();
         public Dictionary<string, object> Settings = new Dictionary<string, object>();
@@ -46,37 +54,61 @@ namespace Transformalize.Main {
         public string File { get; private set; }
         public bool Cache { get; private set; }
         public Encoding ContentType { get; private set; }
-        
+
         public Template(Process process, TemplateConfigurationElement element, string content, string file) {
             File = file;
             Cache = element.Cache;
             Name = element.Name;
             Content = content;
             ContentType = element.ContentType.Equals("raw") ? Encoding.Raw : Encoding.Html;
-            _process = process;
-            _cacheFolder = Path.Combine(Common.GetTemporaryFolder(_process.Name), "CachedTemplates");
-            _cacheFile = new FileInfo(Path.Combine(_cacheFolder, Name + ".txt")).FullName;
-            
-            if (Cache) {
-                if (!Directory.Exists(_cacheFolder)) {
-                    Directory.CreateDirectory(_cacheFolder);
-                }
-                if (System.IO.File.Exists(_cacheFile))
-                {
-                    _cacheContent = System.IO.File.ReadAllText(_cacheFile);
-                }
-            }
 
+            _process = process;
+
+            _renderedTemplateFile = GetFileName(RENDERED_TEMPLATE_CACHE_FOLDER);
+            _renderedTemplateContentExists = TryRead(_renderedTemplateFile, out _renderedTemplateContent);
+
+            _templateFile = GetFileName(TEMPLATE_CACHE_FOLDER);
+            _templateContentExists = TryRead(_templateFile, out _templateContent);
+
+        }
+
+        private string GetFileName(string folderName) {
+            var folder = PrepareFolder(folderName);
+            return new FileInfo(Path.Combine(folder, Name + ".txt")).FullName;
+        }
+
+        private string PrepareFolder(string folder) {
+            var f = Path.Combine(Common.GetTemporaryFolder(_process.Name), folder);
+            if (!Directory.Exists(f)) {
+                Directory.CreateDirectory(f);
+            }
+            return f;
+        }
+
+        private static bool TryRead(string fileName, out string contents) {
+            var exists = System.IO.File.Exists(fileName);
+            contents = exists ? System.IO.File.ReadAllText(fileName) : string.Empty;
+            return exists;
         }
 
         public string Render() {
 
-            if (Cache && !string.IsNullOrEmpty(_cacheContent))
+            if (CacheIsUsable())
             {
                 _log.Debug("Returning {0} template output from cache.", Name);
-                return _cacheContent;
+                return _renderedTemplateContent;
             }
 
+            return CacheContent(RenderContent());
+        }
+
+        private bool CacheIsUsable()
+        {
+            return Cache && _renderedTemplateContentExists && _templateContentExists && _templateContent.Equals(Content);
+        }
+
+        private string RenderContent()
+        {
             var config = new FluentTemplateServiceConfiguration(c => c.WithEncoding(ContentType));
             var templateService = new TemplateService(config);
             Razor.SetTemplateService(templateService);
@@ -87,19 +119,23 @@ namespace Transformalize.Main {
             }
             ((IDictionary<string, object>)settings).Add("Process", _process);
 
-            var content = Razor.Parse(Content, new {
+            var renderedContent = Razor.Parse(Content, new {
                 Process = _process,
                 Settings = settings
             });
 
             _log.Debug("Rendered {0} template.", Name);
-            if (Cache && !string.IsNullOrEmpty(content))
-            {
-                System.IO.File.WriteAllText(_cacheFile, content);
+            return renderedContent;
+        }
+
+        private string CacheContent(string renderedContent)
+        {
+            if (Cache && !string.IsNullOrEmpty(renderedContent)) {
+                System.IO.File.WriteAllText(_renderedTemplateFile, renderedContent);
+                System.IO.File.WriteAllText(_templateFile, this.Content);
                 _log.Debug("Cached {0} template output.", Name);
             }
-
-            return content;
+            return renderedContent;
         }
     }
 }

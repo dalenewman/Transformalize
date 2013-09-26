@@ -107,7 +107,7 @@ namespace Transformalize.Main {
             {
                 var transformParametersReader = new EntityTransformParametersReader(entity);
                 var parametersReader = new EntityParametersReader(entity);
-                var fieldReader = new FieldReader(_process, entity, transformParametersReader, parametersReader);
+                var fieldReader = new FieldReader(_process, entity, transformParametersReader, parametersReader, usePrefix:false);
                 entity.CalculatedFields.Add(field.Alias, fieldReader.Read(field));
             }
 

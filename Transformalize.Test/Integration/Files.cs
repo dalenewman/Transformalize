@@ -25,6 +25,8 @@ using Rhino.Etl.Core.Files;
 using Transformalize.Libs.FileHelpers.RunTime;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Main;
+using Transformalize.Runner;
 
 namespace Transformalize.Test.Integration
 {
@@ -50,6 +52,15 @@ namespace Transformalize.Test.Integration
                     _log.Info("{0}|{1}", row["CampaignId"], row["Number"]);
                 }
             }
+        }
+
+        [Test]
+        public void Hellog()
+        {
+            var options = new Options { Mode = Modes.Initialize };
+            var process = new ProcessReader(new ProcessConfigurationReader("File").Read(), options).Read();
+            new ProcessRunner(process).Run();
+            
         }
     }
 }

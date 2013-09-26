@@ -33,14 +33,14 @@ namespace Transformalize.Test.Integration
         public void Init()
         {
             var options = new Options { Mode = Modes.Initialize };
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(@"c:\tfl\NorthWind.xml").Read(), options).Read();
+            var process = new ProcessReader(new ProcessXmlConfigurationReader(@"NorthWind.xml").Read(), options).Read();
             new ProcessRunner(process).Run();
         }
 
         [Test]
         public void Metadata() {
             var options = new Options { Mode = Modes.Metadata };
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(@"c:\tfl\NorthWind.xml").Read(), options).Read();
+            var process = new ProcessReader(new ProcessXmlConfigurationReader(@"NorthWind.xml").Read(), options).Read();
             new ProcessRunner(process).Run();
         }
 
@@ -48,7 +48,7 @@ namespace Transformalize.Test.Integration
         public void Normal()
         {
             var options = new Options();
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(@"c:\tfl\NorthWind.xml").Read(), options).Read();
+            var process = new ProcessReader(new ProcessXmlConfigurationReader(@"NorthWind.xml").Read(), options).Read();
             new ProcessRunner(process).Run();
         }
 

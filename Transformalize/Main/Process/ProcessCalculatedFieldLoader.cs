@@ -16,7 +16,7 @@ namespace Transformalize.Main {
             foreach (FieldConfigurationElement field in _elements) {
                 var transformParametersReader = new ProcessTransformParametersReader(_process);
                 var parametersReader = new ProcessParametersReader(_process);
-                var fr = new FieldReader(_process, _process.MasterEntity, transformParametersReader, parametersReader);
+                var fr = new FieldReader(_process, _process.MasterEntity, transformParametersReader, parametersReader, usePrefix:false);
                 _process.CalculatedFields.Add(field.Alias, fr.Read(field));
             }
         }

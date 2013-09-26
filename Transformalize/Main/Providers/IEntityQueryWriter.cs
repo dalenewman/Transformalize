@@ -20,10 +20,8 @@
 
 #endregion
 
-namespace Transformalize.Main.Providers
-{
-    public interface IEntityQueryWriter
-    {
+namespace Transformalize.Main.Providers {
+    public interface IEntityQueryWriter {
         string Write(Entity entity);
     }
 }

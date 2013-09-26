@@ -20,10 +20,8 @@
 
 #endregion
 
-namespace Transformalize.Main.Providers
-{
-    public interface IScriptRunner
-    {
+namespace Transformalize.Main.Providers {
+    public interface IScriptRunner {
         IScriptReponse Execute(AbstractConnection connection, string script);
     }
 }

@@ -31,19 +31,21 @@ namespace Transformalize.Main {
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private readonly Entity _entity;
         private readonly IParametersReader _parametersReader;
+        private readonly bool _usePrefix;
         private readonly Process _process;
         private readonly ITransformParametersReader _transformParametersReader;
 
-        public FieldReader(Process process, Entity entity, ITransformParametersReader transformParametersReader, IParametersReader parametersReader) {
+        public FieldReader(Process process, Entity entity, ITransformParametersReader transformParametersReader, IParametersReader parametersReader, bool usePrefix = true) {
             _process = process;
             _transformParametersReader = transformParametersReader;
             _parametersReader = parametersReader;
+            _usePrefix = usePrefix;
             _entity = entity ?? new Entity();
         }
 
         public Field Read(FieldConfigurationElement element, FieldType fieldType = FieldType.Field)
         {
-            var alias = element.Alias.Equals(element.Name) && !string.IsNullOrEmpty(_entity.Prefix) ? _entity.Prefix + element.Name : element.Alias;
+            var alias = _usePrefix && element.Alias.Equals(element.Name) && !string.IsNullOrEmpty(_entity.Prefix) ? _entity.Prefix + element.Name : element.Alias;
 
             var field = new Field(element.Type, element.Length, fieldType, element.Output, element.Default) {
                 Process = _process.Name,

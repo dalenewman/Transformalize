@@ -28,6 +28,7 @@ using Transformalize.Libs.Ninject;
 using Transformalize.Libs.RazorEngine;
 using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.AnalysisServices;
+using Transformalize.Main.Providers.File;
 using Transformalize.Main.Providers.MySql;
 using Transformalize.Main.Providers.SqlServer;
 
@@ -64,20 +65,30 @@ namespace Transformalize.Main
             Name = name;
             GlobalDiagnosticsContext.Set("process", name);
 
+            // MySql
             Kernal.Bind<AbstractProvider>().To<MySqlProvider>().WhenInjectedInto<MySqlConnection>();
-            Kernal.Bind<AbstractConnectionChecker>().To<DefaultConnectionChecker>().WhenInjectedInto<MySqlConnection>();
+            Kernal.Bind<IConnectionChecker>().To<DefaultConnectionChecker>().WhenInjectedInto<MySqlConnection>();
             Kernal.Bind<IScriptRunner>().To<DefaultScriptRunner>().WhenInjectedInto<MySqlConnection>();
             Kernal.Bind<IProviderSupportsModifier>().To<DefaultProviderSupportsModifier>().WhenInjectedInto<MySqlConnection>();
 
+            //SqlServer
             Kernal.Bind<AbstractProvider>().To<SqlServerProvider>().WhenInjectedInto<SqlServerConnection>();
-            Kernal.Bind<AbstractConnectionChecker>().To<DefaultConnectionChecker>().WhenInjectedInto<SqlServerConnection>();
+            Kernal.Bind<IConnectionChecker>().To<DefaultConnectionChecker>().WhenInjectedInto<SqlServerConnection>();
             Kernal.Bind<IScriptRunner>().To<DefaultScriptRunner>().WhenInjectedInto<SqlServerConnection>();
             Kernal.Bind<IProviderSupportsModifier>().To<SqlServerProviderSupportsModifier>().WhenInjectedInto<SqlServerConnection>();
 
+            //Analysis Services
             Kernal.Bind<AbstractProvider>().To<AnalysisServicesProvider>().WhenInjectedInto<AnalysisServicesConnection>();
-            Kernal.Bind<AbstractConnectionChecker>().To<AnalysisServicesConnectionChecker>().WhenInjectedInto<AnalysisServicesConnection>();
+            Kernal.Bind<IConnectionChecker>().To<AnalysisServicesConnectionChecker>().WhenInjectedInto<AnalysisServicesConnection>();
             Kernal.Bind<IScriptRunner>().To<AnalysisServicesScriptRunner>().WhenInjectedInto<AnalysisServicesConnection>();
             Kernal.Bind<IProviderSupportsModifier>().To<DefaultProviderSupportsModifier>().WhenInjectedInto<AnalysisServicesConnection>();
+
+            //File
+            Kernal.Bind<AbstractProvider>().To<FileProvider>().WhenInjectedInto<FileConnection>();
+            Kernal.Bind<IConnectionChecker>().To<FileConnectionChecker>().WhenInjectedInto<FileConnection>();
+            Kernal.Bind<IScriptRunner>().To<EmptyScriptRunner>().WhenInjectedInto<FileConnection>();
+            Kernal.Bind<IProviderSupportsModifier>().To<DefaultProviderSupportsModifier>().WhenInjectedInto<FileConnection>();
+
         }
 
         public bool IsReady()

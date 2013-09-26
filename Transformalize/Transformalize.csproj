@@ -150,6 +150,12 @@
     <Compile Include="Main\Entity\EntityRelationshipLoader.cs" />
     <Compile Include="Main\MapLoader.cs" />
     <Compile Include="Main\Process\ProcessCalculatedFieldLoader.cs" />
+    <Compile Include="Main\Providers\EmptyQueryWriter.cs" />
+    <Compile Include="Main\Providers\EmptyScriptRunner.cs" />
+    <Compile Include="Main\Providers\EmptyTableQueryWriter.cs" />
+    <Compile Include="Main\Providers\File\FileConnectionChecker.cs" />
+    <Compile Include="Main\Providers\File\FileConnection.cs" />
+    <Compile Include="Main\Providers\File\FileProvider.cs" />
     <Compile Include="Main\Providers\ProviderReader.cs" />
     <Compile Include="Main\RelationshipsReader.cs" />
     <Compile Include="Main\SearchType.cs" />

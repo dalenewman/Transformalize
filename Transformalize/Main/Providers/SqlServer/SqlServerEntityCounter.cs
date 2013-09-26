@@ -26,10 +26,10 @@ namespace Transformalize.Main.Providers.SqlServer
 {
     public class SqlServerEntityCounter : IEntityCounter
     {
-        private readonly AbstractConnectionChecker _connectionChecker;
+        private readonly IConnectionChecker _connectionChecker;
         private readonly SqlServerEntityExists _entityExists;
 
-        public SqlServerEntityCounter(AbstractConnectionChecker connectionChecker = null)
+        public SqlServerEntityCounter(IConnectionChecker connectionChecker = null)
         {
             _connectionChecker = connectionChecker ?? new DefaultConnectionChecker();
             _entityExists = new SqlServerEntityExists();

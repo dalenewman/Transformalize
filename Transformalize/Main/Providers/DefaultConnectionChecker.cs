@@ -27,7 +27,7 @@ using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main.Providers
 {
-    public class DefaultConnectionChecker : AbstractConnectionChecker
+    public class DefaultConnectionChecker : IConnectionChecker
     {
         private static readonly Dictionary<string, bool> CachedResults = new Dictionary<string, bool>();
         private readonly Logger _log = LogManager.GetCurrentClassLogger();

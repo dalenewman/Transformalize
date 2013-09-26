@@ -29,23 +29,22 @@ namespace Transformalize.Main.Providers
 {
     public abstract class AbstractConnection
     {
-        private readonly AbstractConnectionChecker _connectionChecker;
+        private readonly IConnectionChecker _connectionChecker;
 
-        protected AbstractConnection(ConnectionConfigurationElement element, AbstractProvider provider, AbstractConnectionChecker connectionChecker, IScriptRunner scriptRunner, IProviderSupportsModifier providerSupportsModifier)
+        protected AbstractConnection(ConnectionConfigurationElement element, AbstractProvider provider, IConnectionChecker connectionChecker, IScriptRunner scriptRunner, IProviderSupportsModifier providerSupportsModifier)
         {
             Provider = provider;
             BatchSize = element.BatchSize;
             Name = element.Name;
 
-            ConnectionString = (new DbConnectionStringBuilder
-                                    {
-                                        ConnectionString = element.Value
-                                    }).ConnectionString;
+            ConnectionString = (new DbConnectionStringBuilder { ConnectionString = element.Value }).ConnectionString;
+
             Server = ConnectionStringParser.GetServerName(ConnectionString);
             Database = ConnectionStringParser.GetDatabaseName(ConnectionString);
             User = ConnectionStringParser.GetUsername(ConnectionString);
             Password = ConnectionStringParser.GetPassword(ConnectionString);
             TrustedConnection = ConnectionStringParser.GetTrustedConnection(ConnectionString);
+            File = ConnectionStringParser.GetFileName(ConnectionString);
 
             _connectionChecker = connectionChecker;
             ScriptRunner = scriptRunner;
@@ -69,6 +68,7 @@ namespace Transformalize.Main.Providers
         public string User { get; set; }
         public string Password { get; set; }
         public bool TrustedConnection { get; set; }
+        public string File { get; set; }
 
         public IDbConnection GetConnection()
         {

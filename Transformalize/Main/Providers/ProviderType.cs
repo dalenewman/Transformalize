@@ -26,6 +26,7 @@ namespace Transformalize.Main.Providers
     {
         SqlServer,
         MySql,
-        AnalysisServices
+        AnalysisServices,
+        File
     }
 }

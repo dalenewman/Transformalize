@@ -32,6 +32,7 @@ namespace Transformalize.Main.Providers
         private static readonly string[] UsernameAliases = {"user id", "uid", "username", "user name", "user"};
         private static readonly string[] PasswordAliases = {"password", "pwd"};
         private static readonly string[] TrustedAliases = {"trusted_connection", "integrated security"};
+        private static readonly string[] FileAliases = {"data source", "datasource", "file", "filename"};
 
         public static string GetPassword(string connectionString)
         {
@@ -51,6 +52,10 @@ namespace Transformalize.Main.Providers
         public static string GetServerName(string connectionString)
         {
             return GetValue(connectionString, ServerAliases);
+        }
+
+        public static string GetFileName(string connectionString) {
+            return GetValue(connectionString, FileAliases);
         }
 
         public static bool GetTrustedConnection(string connectionString)

@@ -22,7 +22,7 @@
 
 namespace Transformalize.Main.Providers
 {
-    public interface AbstractConnectionChecker
+    public interface IConnectionChecker
     {
         bool Check(AbstractConnection connection);
     }
