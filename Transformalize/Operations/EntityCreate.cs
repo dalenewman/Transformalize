@@ -44,8 +44,8 @@ namespace Transformalize.Operations
             _process = process;
 
             _writer = _entity.IsMaster() ?
-                          new FieldSqlWriter(entity.All, process.CalculatedFields, entity.CalculatedFields, GetRelationshipFields(process)) :
-                          new FieldSqlWriter(entity.All, entity.CalculatedFields);
+                new FieldSqlWriter(entity.All, process.CalculatedFields, entity.CalculatedFields, GetRelationshipFields(process)) :
+                new FieldSqlWriter(entity.All, entity.CalculatedFields);
 
             _entityExists = entityExists ?? new SqlServerEntityExists();
         }
@@ -63,8 +63,8 @@ namespace Transformalize.Operations
             if (_entityExists.Exists(_process.OutputConnection, _entity.Schema, _entity.Alias)) return;
 
             var primaryKey = _entity.IsMaster()
-                                 ? _writer.FieldType(FieldType.MasterKey).Alias(provider).Asc().Values()
-                                 : _writer.FieldType(FieldType.PrimaryKey).Alias(provider).Asc().Values();
+                ? _writer.FieldType(FieldType.MasterKey).Alias(provider).Asc().Values()
+                : _writer.FieldType(FieldType.PrimaryKey).Alias(provider).Asc().Values();
             var defs = _writer.Reload().ExpandXml().AddSurrogateKey().AddBatchId().Output().Alias(provider).DataType().AppendIf(" NOT NULL", FieldType.MasterKey, FieldType.PrimaryKey).Values();
             var sql = _process.OutputConnection.TableQueryWriter.Write(_entity.OutputName(), defs, primaryKey, ignoreDups: true);
 

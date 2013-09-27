@@ -23,6 +23,7 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Pipelines;
 using Transformalize.Main;
 using Transformalize.Main.Providers.SqlServer;
@@ -67,6 +68,8 @@ namespace Transformalize.Runner
 
                     break;
             }
+
+            LogManager.Flush();
         }
 
         private void ProcessEntityDeletes()

@@ -53,7 +53,7 @@ namespace Transformalize.Main.Providers.SqlServer
                                      {"byte", "TINYINT"},
                                      {"byte[]", "VARBINARY"},
                                      {"guid", "UNIQUEIDENTIFIER"},
-                                     {"rowversion", "ROWVERSION"},
+                                     {"rowversion", "BINARY"},
                                      {"xml", "XML"}
                                  };
                 }
@@ -98,7 +98,7 @@ namespace Transformalize.Main.Providers.SqlServer
 
         public string GetDataType(Field field)
         {
-            var length = (new[] {"string", "char", "binary", "byte[]"}).Any(t => t == field.SimpleType) ? string.Concat("(", field.Length, ")") : string.Empty;
+            var length = (new[] {"string", "char", "binary", "byte[]", "rowversion", "varbinary"}).Any(t => t == field.SimpleType) ? string.Concat("(", field.Length, ")") : string.Empty;
             var dimensions = (new[]{"decimal","double"}).Any(s => s.Equals(field.SimpleType)) ? string.Format("({0},{1})", field.Precision, field.Scale) : string.Empty;
             var notNull = field.NotNull ? " NOT NULL" : string.Empty;
             var surrogate = field.Clustered ? " IDENTITY(1,1) UNIQUE CLUSTERED" : string.Empty;
