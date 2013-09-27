@@ -54,6 +54,7 @@ namespace Transformalize.Main
         public Dictionary<string, SearchType> SearchTypes = new Dictionary<string, SearchType>();
         public Encoding TemplateContentType = Encoding.Raw;
         public Dictionary<string, Template> Templates = new Dictionary<string, Template>();
+        public AbstractConnection OutputConnection;
         public string Star;
 
         public Process() : this("TEST")
@@ -70,24 +71,28 @@ namespace Transformalize.Main
             Kernal.Bind<IConnectionChecker>().To<DefaultConnectionChecker>().WhenInjectedInto<MySqlConnection>();
             Kernal.Bind<IScriptRunner>().To<DefaultScriptRunner>().WhenInjectedInto<MySqlConnection>();
             Kernal.Bind<IProviderSupportsModifier>().To<DefaultProviderSupportsModifier>().WhenInjectedInto<MySqlConnection>();
+            Kernal.Bind<IEntityRecordsExist>().To<MySqlEntityRecordsExist>().WhenInjectedInto<MySqlConnection>();
 
             //SqlServer
             Kernal.Bind<AbstractProvider>().To<SqlServerProvider>().WhenInjectedInto<SqlServerConnection>();
             Kernal.Bind<IConnectionChecker>().To<DefaultConnectionChecker>().WhenInjectedInto<SqlServerConnection>();
             Kernal.Bind<IScriptRunner>().To<DefaultScriptRunner>().WhenInjectedInto<SqlServerConnection>();
             Kernal.Bind<IProviderSupportsModifier>().To<SqlServerProviderSupportsModifier>().WhenInjectedInto<SqlServerConnection>();
+            Kernal.Bind<IEntityRecordsExist>().To<SqlServerEntityRecordsExist>().WhenInjectedInto<SqlServerConnection>();
 
             //Analysis Services
             Kernal.Bind<AbstractProvider>().To<AnalysisServicesProvider>().WhenInjectedInto<AnalysisServicesConnection>();
             Kernal.Bind<IConnectionChecker>().To<AnalysisServicesConnectionChecker>().WhenInjectedInto<AnalysisServicesConnection>();
             Kernal.Bind<IScriptRunner>().To<AnalysisServicesScriptRunner>().WhenInjectedInto<AnalysisServicesConnection>();
             Kernal.Bind<IProviderSupportsModifier>().To<DefaultProviderSupportsModifier>().WhenInjectedInto<AnalysisServicesConnection>();
+            Kernal.Bind<IEntityRecordsExist>().To<FalseEntityRecordsExist>().WhenInjectedInto<AnalysisServicesConnection>();
 
             //File
             Kernal.Bind<AbstractProvider>().To<FileProvider>().WhenInjectedInto<FileConnection>();
             Kernal.Bind<IConnectionChecker>().To<FileConnectionChecker>().WhenInjectedInto<FileConnection>();
             Kernal.Bind<IScriptRunner>().To<EmptyScriptRunner>().WhenInjectedInto<FileConnection>();
             Kernal.Bind<IProviderSupportsModifier>().To<DefaultProviderSupportsModifier>().WhenInjectedInto<FileConnection>();
+            Kernal.Bind<IEntityRecordsExist>().To<FileEntityRecordsExist>().WhenInjectedInto<FileConnection>();
 
         }
 

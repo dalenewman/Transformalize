@@ -27,19 +27,17 @@ namespace Transformalize.Main
 {
     public class EntityRecordsExist : WithLoggingMixin
     {
-        private readonly IEntityRecordsExist _entityRecordsExist;
         private readonly Process _process;
 
-        public EntityRecordsExist(ref Process process, IEntityRecordsExist entityRecordsExist = null)
+        public EntityRecordsExist(ref Process process)
         {
             _process = process;
-            _entityRecordsExist = entityRecordsExist ?? new SqlServerEntityRecordsExist();
         }
 
         public void Check()
         {
             var entity = _process.MasterEntity;
-            _process.IsFirstRun = !_entityRecordsExist.OutputRecordsExist(entity);
+            _process.IsFirstRun = !entity.OutputRecordsExist();
             Debug(
                 _process.IsFirstRun
                     ? "{0}.{1} has records; delta run."

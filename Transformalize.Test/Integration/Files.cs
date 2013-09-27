@@ -55,12 +55,20 @@ namespace Transformalize.Test.Integration
         }
 
         [Test]
-        public void Hellog()
+        public void Init()
         {
             var options = new Options { Mode = Modes.Initialize };
             var process = new ProcessReader(new ProcessConfigurationReader("File").Read(), options).Read();
             new ProcessRunner(process).Run();
-            
         }
+
+        [Test]
+        public void Normal()
+        {
+            var options = new Options() { Mode = Modes.Test };
+            var process = new ProcessReader(new ProcessConfigurationReader("File").Read(), options).Read();
+            new ProcessRunner(process).Run();
+        }
+
     }
 }

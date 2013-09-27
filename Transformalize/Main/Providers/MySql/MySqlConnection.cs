@@ -26,8 +26,8 @@ namespace Transformalize.Main.Providers.MySql
 {
     public class MySqlConnection : AbstractConnection
     {
-        public MySqlConnection(Process process, ConnectionConfigurationElement element, AbstractProvider provider, IConnectionChecker connectionChecker, IScriptRunner scriptRunner, IProviderSupportsModifier providerScriptModifer)
-            : base(element, provider, connectionChecker, scriptRunner, providerScriptModifer)
+        public MySqlConnection(Process process, ConnectionConfigurationElement element, AbstractProvider provider, IConnectionChecker connectionChecker, IScriptRunner scriptRunner, IProviderSupportsModifier providerScriptModifer, IEntityRecordsExist recordsExist)
+            : base(element, provider, connectionChecker, scriptRunner, providerScriptModifer, recordsExist)
         {
             TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
 

@@ -24,14 +24,9 @@ namespace Transformalize.Main.Providers.SqlServer
 {
     public class SqlServerEntityExists : IEntityExists
     {
-        public bool OutputExists(Entity entity)
+        public bool Exists(AbstractConnection connection, string schema, string name)
         {
-            return new SqlServerTableExists(entity.OutputConnection.ConnectionString).Exists("dbo", entity.OutputName());
-        }
-
-        public bool InputExists(Entity entity)
-        {
-            return new SqlServerTableExists(entity.InputConnection.ConnectionString).Exists(entity.Schema, entity.Alias);
+            return new SqlServerTableExists(connection.ConnectionString).Exists(schema, name);
         }
     }
 }

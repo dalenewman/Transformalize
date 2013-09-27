@@ -20,11 +20,12 @@
 
 #endregion
 
+using Transformalize.Main.Providers;
+
 namespace Transformalize.Main
 {
     public interface IEntityExists
     {
-        bool OutputExists(Entity entity);
-        bool InputExists(Entity entity);
+        bool Exists(AbstractConnection connection, string schema, string name);
     }
 }

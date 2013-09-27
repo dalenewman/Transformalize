@@ -25,14 +25,12 @@ using System.Data;
 using System.Data.Common;
 using Transformalize.Configuration;
 
-namespace Transformalize.Main.Providers
-{
-    public abstract class AbstractConnection
-    {
+namespace Transformalize.Main.Providers {
+    public abstract class AbstractConnection {
         private readonly IConnectionChecker _connectionChecker;
+        private readonly IEntityRecordsExist _entityRecordsExist;
 
-        protected AbstractConnection(ConnectionConfigurationElement element, AbstractProvider provider, IConnectionChecker connectionChecker, IScriptRunner scriptRunner, IProviderSupportsModifier providerSupportsModifier)
-        {
+        protected AbstractConnection(ConnectionConfigurationElement element, AbstractProvider provider, IConnectionChecker connectionChecker, IScriptRunner scriptRunner, IProviderSupportsModifier providerSupportsModifier, IEntityRecordsExist recordsExist) {
             Provider = provider;
             BatchSize = element.BatchSize;
             Name = element.Name;
@@ -49,6 +47,7 @@ namespace Transformalize.Main.Providers
             _connectionChecker = connectionChecker;
             ScriptRunner = scriptRunner;
             ProviderSupportsModifier = providerSupportsModifier;
+            _entityRecordsExist = recordsExist;
         }
 
         public string Name { get; set; }
@@ -70,38 +69,31 @@ namespace Transformalize.Main.Providers
         public bool TrustedConnection { get; set; }
         public string File { get; set; }
 
-        public IDbConnection GetConnection()
-        {
+        public IDbConnection GetConnection() {
             var type = Type.GetType(TypeAndAssemblyName, false, true);
-            var connection = (IDbConnection) Activator.CreateInstance(type);
+            var connection = (IDbConnection)Activator.CreateInstance(type);
             connection.ConnectionString = ConnectionString;
             return connection;
         }
 
-        public IScriptReponse ExecuteScript(string script)
-        {
+        public IScriptReponse ExecuteScript(string script) {
             return ScriptRunner.Execute(this, script);
         }
 
-        public string WriteTemporaryTable(string name, Field[] fields, bool useAlias = true)
-        {
+        public string WriteTemporaryTable(string name, Field[] fields, bool useAlias = true) {
             return TableQueryWriter.WriteTemporary(name, fields, Provider, useAlias);
         }
 
-        public bool IsReady()
-        {
+        public bool IsReady() {
             var isReady = _connectionChecker.Check(this);
-            if (isReady)
-            {
+            if (isReady) {
                 ProviderSupportsModifier.Modify(this, Provider.Supports);
             }
             return isReady;
         }
 
-        public int NextBatchId(string processName)
-        {
-            using (var cn = GetConnection())
-            {
+        public int NextBatchId(string processName) {
+            using (var cn = GetConnection()) {
                 cn.Open();
                 var cmd = cn.CreateCommand();
                 cmd.CommandText = "SELECT ISNULL(MAX(TflBatchId),0)+1 FROM TflBatch WHERE ProcessName = @ProcessName;";
@@ -111,20 +103,18 @@ namespace Transformalize.Main.Providers
                 process.Value = processName;
 
                 cmd.Parameters.Add(process);
-                return (int) cmd.ExecuteScalar();
+                return (int)cmd.ExecuteScalar();
             }
         }
 
-        public void AddParameter(IDbCommand command, string name, object val)
-        {
+        public void AddParameter(IDbCommand command, string name, object val) {
             var parameter = command.CreateParameter();
             parameter.ParameterName = name;
             parameter.Value = val ?? DBNull.Value;
             command.Parameters.Add(parameter);
         }
 
-        public void LoadBeginVersion(Entity entity)
-        {
+        public void LoadBeginVersion(Entity entity) {
             var sql = string.Format(@"
                 SELECT {0}
                 FROM TflBatch b
@@ -136,16 +126,14 @@ namespace Transformalize.Main.Providers
                 ) m ON (b.ProcessName = m.ProcessName AND b.TflBatchId = m.TflBatchId);
             ", entity.GetVersionField());
 
-            using (var cn = GetConnection())
-            {
+            using (var cn = GetConnection()) {
                 cn.Open();
                 var cmd = cn.CreateCommand();
                 cmd.CommandText = sql;
                 AddParameter(cmd, "@ProcessName", entity.ProcessName);
                 AddParameter(cmd, "@EntityName", entity.Alias);
 
-                using (var reader = cmd.ExecuteReader(CommandBehavior.CloseConnection & CommandBehavior.SingleResult))
-                {
+                using (var reader = cmd.ExecuteReader(CommandBehavior.CloseConnection & CommandBehavior.SingleResult)) {
                     if (reader == null) return;
 
                     entity.HasRange = reader.Read();
@@ -154,23 +142,24 @@ namespace Transformalize.Main.Providers
             }
         }
 
-        public void LoadEndVersion(Entity entity)
-        {
+        public void LoadEndVersion(Entity entity) {
             var sql = string.Format("SELECT MAX({0}) AS {0} FROM {1};", Provider.Enclose(entity.Version.Name), Provider.Enclose(entity.Name));
 
-            using (var cn = GetConnection())
-            {
+            using (var cn = GetConnection()) {
                 var command = cn.CreateCommand();
                 command.CommandText = sql;
                 cn.Open();
-                using (var reader = command.ExecuteReader(CommandBehavior.CloseConnection & CommandBehavior.SingleResult))
-                {
+                using (var reader = command.ExecuteReader(CommandBehavior.CloseConnection & CommandBehavior.SingleResult)) {
                     if (reader == null) return;
 
                     entity.HasRows = reader.Read();
                     entity.End = entity.HasRows ? reader.GetValue(0) : null;
                 }
             }
+        }
+
+        public bool RecordsExist(string schema, string name) {
+            return _entityRecordsExist.RecordsExist(this, schema, name);
         }
     }
 }

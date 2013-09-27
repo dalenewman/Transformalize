@@ -57,7 +57,7 @@ namespace Transformalize.Operations
         {
             var provider = _entity.OutputConnection.Provider;
 
-            if (_entityExists.OutputExists(_entity)) return;
+            if (_entityExists.Exists(_entity.OutputConnection, _entity.Schema, _entity.Alias)) return;
 
             var primaryKey = _entity.IsMaster()
                                  ? _writer.FieldType(FieldType.MasterKey).Alias(provider).Asc().Values()

@@ -35,36 +35,16 @@ namespace Transformalize.Main.Providers.SqlServer
             _entityExists = new SqlServerEntityExists();
         }
 
-        public int CountInput(Entity entity)
+        public int Count(AbstractConnection connection, string schema, string name)
         {
-            if (_connectionChecker == null || _connectionChecker.Check(entity.InputConnection))
-            {
-                if (_entityExists.InputExists(entity))
-                {
-                    using (var cn = new SqlConnection(entity.InputConnection.ConnectionString))
-                    {
+            if (_connectionChecker == null || _connectionChecker.Check(connection)) {
+                if (_entityExists.Exists(connection, schema, name)) {
+                    using (var cn = connection.GetConnection()) {
                         cn.Open();
-                        var sql = string.Format("SELECT COUNT(*) FROM [{0}].[{1}] WITH (NOLOCK);", entity.Schema, entity.Alias);
-                        var cmd = new SqlCommand(sql, cn);
-                        return (int) cmd.ExecuteScalar();
-                    }
-                }
-            }
-            return 0;
-        }
-
-        public int CountOutput(Entity entity)
-        {
-            if (_connectionChecker == null || _connectionChecker.Check(entity.OutputConnection))
-            {
-                if (_entityExists.OutputExists(entity))
-                {
-                    using (var cn = new SqlConnection(entity.OutputConnection.ConnectionString))
-                    {
-                        cn.Open();
-                        var sql = string.Format("SELECT COUNT(*) FROM [dbo].[{0}] WITH (NOLOCK);", entity.OutputName());
-                        var cmd = new SqlCommand(sql, cn);
-                        return (int) cmd.ExecuteScalar();
+                        var sql = string.Format("SELECT COUNT(*) FROM [{0}].[{1}] WITH (NOLOCK);", schema, name);
+                        var cmd = cn.CreateCommand();
+                        cmd.CommandText = sql;
+                        return (int)cmd.ExecuteScalar();
                     }
                 }
             }

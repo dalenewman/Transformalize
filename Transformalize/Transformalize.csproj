@@ -148,7 +148,10 @@
     <Compile Include="Main\Entity\EntitiesLoader.cs" />
     <Compile Include="Main\Entity\EntityParametersReader.cs" />
     <Compile Include="Main\Entity\EntityRelationshipLoader.cs" />
+    <Compile Include="Main\Providers\File\FileEntityRecordsExist.cs" />
+    <Compile Include="Main\Providers\FalseEntityRecordsExist.cs" />
     <Compile Include="Main\MapLoader.cs" />
+    <Compile Include="Main\Providers\MySql\MySqlEntityRecordsExist.cs" />
     <Compile Include="Main\Process\ProcessCalculatedFieldLoader.cs" />
     <Compile Include="Main\Providers\EmptyQueryWriter.cs" />
     <Compile Include="Main\Providers\EmptyScriptRunner.cs" />

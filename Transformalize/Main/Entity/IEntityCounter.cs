@@ -20,11 +20,12 @@
 
 #endregion
 
+using Transformalize.Main.Providers;
+
 namespace Transformalize.Main
 {
     public interface IEntityCounter
     {
-        int CountInput(Entity entity);
-        int CountOutput(Entity entity);
+        int Count(AbstractConnection connection, string schema, string name);
     }
 }

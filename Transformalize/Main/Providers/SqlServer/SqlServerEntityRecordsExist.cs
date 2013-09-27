@@ -20,10 +20,9 @@
 
 #endregion
 
-using System.Data.SqlClient;
-
 namespace Transformalize.Main.Providers.SqlServer
 {
+
     public class SqlServerEntityRecordsExist : IEntityRecordsExist
     {
         private const string FORMAT = @"
@@ -33,38 +32,22 @@ IF EXISTS(
 )	SELECT 1
 ELSE
 	SELECT 0;";
-        private readonly SqlServerEntityExists _entityExists;
+        private readonly IEntityExists _entityExists;
 
-        public SqlServerEntityRecordsExist()
+        public SqlServerEntityRecordsExist( )
         {
             _entityExists = new SqlServerEntityExists();
         }
 
-        public bool OutputRecordsExist(Entity entity)
+        public bool RecordsExist(AbstractConnection connection, string schema, string name)
         {
-            if (_entityExists.OutputExists(entity))
-            {
-                using (var cn = new SqlConnection(entity.OutputConnection.ConnectionString))
-                {
+            if (_entityExists.Exists(connection, schema, name)) {
+                using (var cn = connection.GetConnection()) {
                     cn.Open();
-                    var sql = string.Format(FORMAT, entity.Schema, entity.OutputName());
-                    var cmd = new SqlCommand(sql, cn);
-                    return (int) cmd.ExecuteScalar() == 1;
-                }
-            }
-            return false;
-        }
-
-        public bool InputRecordsExist(Entity entity)
-        {
-            if (_entityExists.InputExists(entity))
-            {
-                using (var cn = new SqlConnection(entity.InputConnection.ConnectionString))
-                {
-                    cn.Open();
-                    var sql = string.Format(FORMAT, entity.Schema, entity.Alias);
-                    var cmd = new SqlCommand(sql, cn);
-                    return (int) cmd.ExecuteScalar() == 1;
+                    var sql = string.Format(FORMAT, schema, name);
+                    var cmd = cn.CreateCommand();
+                    cmd.CommandText = sql;
+                    return (int)cmd.ExecuteScalar() == 1;
                 }
             }
             return false;

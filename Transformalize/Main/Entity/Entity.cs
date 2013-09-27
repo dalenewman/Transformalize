@@ -51,7 +51,6 @@ namespace Transformalize.Main
         public string ProcessName { get; set; }
         public string Alias { get; set; }
         public AbstractConnection InputConnection { get; set; }
-        public AbstractConnection OutputConnection { get; set; }
         public Field Version { get; set; }
         public Fields PrimaryKey { get; set; }
         public Fields Fields { get; set; }
@@ -197,6 +196,11 @@ namespace Transformalize.Main
         public bool CanDetectChanges()
         {
             return Version != null;
+        }
+
+        public bool OutputRecordsExist()
+        {
+            return OutputConnection.RecordsExist(Schema, OutputName());
         }
     }
 }

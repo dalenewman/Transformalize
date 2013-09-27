@@ -31,7 +31,7 @@ namespace Transformalize.Main.Providers.SqlServer
 
         public void DropOutput(Entity entity)
         {
-            if (!new SqlServerEntityExists().OutputExists(entity)) return;
+            if (!new SqlServerEntityExists().Exists(entity.OutputConnection, entity.Schema, entity.OutputName())) return;
 
             using (var cn = new SqlConnection(entity.OutputConnection.ConnectionString))
             {
