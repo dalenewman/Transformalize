@@ -20,6 +20,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
@@ -31,10 +32,12 @@ namespace Transformalize.Main
 {
     public class Entity
     {
-        private int _tflBatchId;
+        private readonly int _tflBatchId;
+        private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
-        public Entity()
+        public Entity(int batchId)
         {
+            _tflBatchId = batchId;
             Name = string.Empty;
             Alias = string.Empty;
             Schema = string.Empty;
@@ -76,15 +79,7 @@ namespace Transformalize.Main
         public long Inserts { get; set; }
         public long Deletes { get; set; }
 
-        public int TflBatchId
-        {
-            get
-            {
-                if (_tflBatchId == 0)
-                    _tflBatchId = NextBatchId();
-                return _tflBatchId;
-            }
-        }
+        public int TflBatchId { get { return _tflBatchId; } }
 
         public string FirstKey()
         {
@@ -155,9 +150,6 @@ namespace Transformalize.Main
                 var bytes = new[] {"byte[]", "rowversion"};
                 if (bytes.Any(t => t == Version.SimpleType))
                 {
-                    //var beginBytes = Common.ObjectToByteArray(Begin);
-                    //var endBytes = Common.ObjectToByteArray(End);
-                    //return beginBytes.SequenceEqual(endBytes);
                     var beginBytes = (byte[]) Begin;
                     var endBytes = (byte[]) End;
                     return Common.AreEqual(beginBytes, endBytes);
@@ -167,10 +159,10 @@ namespace Transformalize.Main
             return false;
         }
 
-        public void CheckForChanges()
+        public void CheckForChanges(Process process)
         {
             if (!CanDetectChanges()) return;
-            OutputConnection.LoadBeginVersion(this);
+            process.OutputConnection.LoadBeginVersion(this);
             InputConnection.LoadEndVersion(this);
         }
 
@@ -188,19 +180,14 @@ namespace Transformalize.Main
             }
         }
 
-        private int NextBatchId()
-        {
-            return OutputConnection.NextBatchId(ProcessName);
-        }
-
         public bool CanDetectChanges()
         {
             return Version != null;
         }
 
-        public bool OutputRecordsExist()
+        public bool NeedsSchema()
         {
-            return OutputConnection.RecordsExist(Schema, OutputName());
+            return !(string.IsNullOrEmpty(Schema) || Schema.Equals("dbo", IC));
         }
     }
 }

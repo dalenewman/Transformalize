@@ -22,10 +22,11 @@ namespace Transformalize.Main {
         public void Load()
         {
             var count = 0;
+            var batchId = _process.GetNextBatchId();
 
             foreach (EntityConfigurationElement element in _elements) {
                 var reader = new EntityConfigurationLoader(_process);
-                var entity = reader.Read(element, count == 0);
+                var entity = reader.Read(batchId, element, count == 0);
 
                 GuardAgainstFieldOverlap(entity);
 
@@ -33,6 +34,7 @@ namespace Transformalize.Main {
                 if (entity.IsMaster())
                     _process.MasterEntity = entity;
                 count++;
+                batchId++;
             }
         }
 

@@ -20,12 +20,12 @@
 
 #endregion
 
-using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using Transformalize.Extensions;
 using Transformalize.Libs.NLog;
+using Transformalize.Libs.Dapper;
 
 namespace Transformalize.Main.Providers.SqlServer
 {
@@ -43,25 +43,26 @@ namespace Transformalize.Main.Providers.SqlServer
 
         public void Drop()
         {
-            using (var cn = new SqlConnection(_masterEntity.OutputConnection.ConnectionString))
+            using (var cn = _process.OutputConnection.GetConnection())
             {
                 cn.Open();
-                var dropCommand = new SqlCommand(DropSql(), cn);
-                dropCommand.ExecuteNonQuery();
+                var sql = DropSql();
+                _log.Debug(sql);
+                cn.Execute(sql);
+                _log.Debug("Dropped Output {0}.", _process.Star);
             }
         }
 
         public void Create()
         {
             Drop();
-            using (var cn = new SqlConnection(_masterEntity.OutputConnection.ConnectionString))
+            using (var cn = _process.OutputConnection.GetConnection())
             {
                 cn.Open();
-
-                var createCommand = new SqlCommand(CreateSql(), cn);
-
-                _log.Debug(createCommand.CommandText);
-                createCommand.ExecuteNonQuery();
+                var sql = CreateSql();
+                
+                _log.Debug(sql);
+                cn.Execute(sql);
                 _log.Debug("Created Output {0}.", _process.Star);
             }
         }
@@ -80,7 +81,7 @@ namespace Transformalize.Main.Providers.SqlServer
 
         public string CreateSql()
         {
-            var provider = _process.MasterEntity.OutputConnection.Provider;
+            var provider = _process.OutputConnection.Provider;
             var builder = new StringBuilder();
             builder.AppendFormat("CREATE VIEW {0} AS\r\n", _process.Star);
             builder.AppendFormat("SELECT\r\n    {0}.TflKey,\r\n    {0}.TflBatchId,\r\n    b.TflUpdate,\r\n", _masterEntity.OutputName());

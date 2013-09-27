@@ -40,7 +40,7 @@ namespace Transformalize.Main {
             _transformParametersReader = transformParametersReader;
             _parametersReader = parametersReader;
             _usePrefix = usePrefix;
-            _entity = entity ?? new Entity();
+            _entity = entity;
         }
 
         public Field Read(FieldConfigurationElement element, FieldType fieldType = FieldType.Field)

@@ -33,8 +33,8 @@ namespace Transformalize.Main.Providers.AnalysisServices
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly char[] _semiColen = new[] {';'};
 
-        public AnalysisServicesConnection(ConnectionConfigurationElement element, AbstractProvider provider, IConnectionChecker connectionChecker, IScriptRunner scriptRunner, IProviderSupportsModifier providerScriptModifer, IEntityRecordsExist recordsExist)
-            : base(element, provider, connectionChecker, scriptRunner, providerScriptModifer, recordsExist)
+        public AnalysisServicesConnection(ConnectionConfigurationElement element, AbstractProvider provider, IConnectionChecker connectionChecker, IScriptRunner scriptRunner, IProviderSupportsModifier providerScriptModifer, IEntityRecordsExist recordsExist, IEntityDropper dropper)
+            : base(element, provider, connectionChecker, scriptRunner, providerScriptModifer, recordsExist, dropper)
         {
             ParseConnectionString();
         }

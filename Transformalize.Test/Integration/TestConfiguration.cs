@@ -80,7 +80,7 @@ namespace Transformalize.Test.Integration
             Assert.AreEqual("server=localhost;database=TestInput;trusted_connection=True", _process.Entities.First().InputConnection.ConnectionString);
             Assert.AreEqual("OrderDetailKey", _process.Entities.First().PrimaryKey["OrderDetailKey"].Alias);
             Assert.AreEqual("ProductKey", _process.Entities.First().Fields["ProductKey"].Alias);
-            Assert.AreEqual("RowVersion", _process.Entities.First().Version.Alias);
+            Assert.AreEqual("OrderDetailRowVersion", _process.Entities.First().Version.Alias);
 
             Assert.AreEqual("OrderDetail", _process.Relationships[0].LeftEntity.Alias);
             Assert.AreEqual("Order", _process.Relationships[0].RightEntity.Alias);

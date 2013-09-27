@@ -71,13 +71,13 @@ namespace Transformalize.Test.Unit {
         [Test]
         public void TestKeyInserts() {
             var entity = _process.Entities.First();
-            entity.OutputConnection.IsReady();
+            _process.OutputConnection.IsReady();
 
             var rows = TestOperation(_entityKeysExtract.Object);
 
             Assert.AreEqual(4, rows.Count);
 
-            var actual = SqlTemplates.BatchInsertValues(2, "@KEYS", entity.PrimaryKey.ToEnumerable().ToArray(), rows, entity.OutputConnection);
+            var actual = SqlTemplates.BatchInsertValues(2, "@KEYS", entity.PrimaryKey.ToEnumerable().ToArray(), rows, _process.OutputConnection);
             const string expected = @"
 INSERT INTO @KEYS
 SELECT 1
@@ -93,7 +93,7 @@ UNION ALL SELECT 4;";
         public void TestKeysTableVariable() {
             var entity = _process.Entities.First();
 
-            var actual = _process.MasterEntity.OutputConnection.WriteTemporaryTable("@KEYS", entity.PrimaryKey.ToEnumerable().ToArray());
+            var actual = _process.OutputConnection.WriteTemporaryTable("@KEYS", entity.PrimaryKey.ToEnumerable().ToArray());
             const string expected = "DECLARE @KEYS AS TABLE([OrderDetailKey] INT);";
 
             Assert.AreEqual(expected, actual);
@@ -103,7 +103,7 @@ UNION ALL SELECT 4;";
         public void TestSelectByKeysSql() {
             var entity = _process.Entities.First();
 
-            var actual = SqlTemplates.Select(entity.All, entity.OutputName(), "@KEYS", entity.OutputConnection.Provider);
+            var actual = SqlTemplates.Select(entity.All, entity.OutputName(), "@KEYS", _process.OutputConnection.Provider);
 
             const string expected = @"
 SELECT

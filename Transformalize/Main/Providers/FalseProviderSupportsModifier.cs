@@ -22,7 +22,7 @@
 
 namespace Transformalize.Main.Providers
 {
-    public class DefaultProviderSupportsModifier : IProviderSupportsModifier
+    public class FalseProviderSupportsModifier : IProviderSupportsModifier
     {
         public void Modify(AbstractConnection connection, ProviderSupports supports)
         {

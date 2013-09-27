@@ -30,19 +30,20 @@ using Transformalize.Operations;
 namespace Transformalize.Processes {
 
     public class EntityDeleteProcess : EtlProcess {
-
+        private readonly Process _process;
         private Entity _entity;
 
-        public EntityDeleteProcess(Entity entity) {
+        public EntityDeleteProcess(Process process, Entity entity) {
             GlobalDiagnosticsContext.Set("entity", Common.LogLength(entity.Alias, 20));
+            _process = process;
             _entity = entity;
         }
 
         protected override void Initialize() {
             Register(new EntityInputKeysExtractAll(_entity));
-            Register(new EntityDetectDeletes(_entity).Right(new EntityOutputKeysExtractAll(_entity)));
+            Register(new EntityDetectDeletes(_entity).Right(new EntityOutputKeysExtractAll(_process, _entity)));
             Register(new EntityActionFilter(ref _entity, EntityAction.Delete));
-            Register(new EntityDelete(_entity));
+            Register(new EntityDelete(_process, _entity));
         }
 
         protected override void PostProcessing() {

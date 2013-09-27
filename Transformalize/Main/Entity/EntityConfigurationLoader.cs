@@ -37,13 +37,13 @@ namespace Transformalize.Main {
             _process = process;
         }
 
-        public Entity Read(EntityConfigurationElement element, bool isMaster) {
-            var entity = new Entity {
+        public Entity Read(int batchId, EntityConfigurationElement element, bool isMaster)
+        {
+            var entity = new Entity(batchId) {
                 ProcessName = _process.Name,
                 Schema = element.Schema,
                 Name = element.Name,
                 InputConnection = _process.Connections[element.Connection],
-                OutputConnection = _process.Connections["output"],
                 Prefix = element.Prefix,
                 Group = element.Group,
                 Auto = element.Auto,

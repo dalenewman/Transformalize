@@ -20,26 +20,21 @@
 
 #endregion
 
-using Transformalize.Main.Providers.SqlServer;
+using Transformalize.Libs.Dapper;
+using System.Linq;
 
-namespace Transformalize.Main
+namespace Transformalize.Main.Providers
 {
-    public class EntityDropper
+    public class DatabaseEntityBatchReader : IEntityBatchReader
     {
-        private readonly IEntityDropper _dropper;
-        private readonly Process _process;
+        private const string SQL = "SELECT ISNULL(MAX(TflBatchId),0)+1 FROM dbo.TflBatch WHERE ProcessName = @ProcessName;";
 
-        public EntityDropper(Process process, IEntityDropper dropper = null)
+        public int ReadNext(Process process, Entity entity)
         {
-            _process = process;
-            _dropper = dropper ?? new SqlServerEntityDropper();
-        }
-
-        public void Drop()
-        {
-            foreach (var entity in _process.Entities)
+            using (var cn = process.OutputConnection.GetConnection())
             {
-                _dropper.DropOutput(entity);
+                cn.Open();
+                return cn.Query<int>(SQL, new {ProcessName = process.Name}).First();
             }
         }
     }

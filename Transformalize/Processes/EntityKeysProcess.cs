@@ -44,7 +44,7 @@ namespace Transformalize.Processes {
             if (_process.IsFirstRun || !_entity.CanDetectChanges()) {
                 Register(new EntityInputKeysExtractAll(_entity));
             } else {
-                var operation = new EntityInputKeysExtractDelta(_entity);
+                var operation = new EntityInputKeysExtractDelta(_process, _entity);
                 if (operation.NeedsToRun())
                 {
                     Register(operation);

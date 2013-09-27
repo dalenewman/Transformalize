@@ -36,7 +36,7 @@ namespace Transformalize.Main.Providers.SqlServer
 
         public void Initialize()
         {
-            var cs = _process.MasterEntity.OutputConnection.ConnectionString;
+            var cs = _process.OutputConnection.ConnectionString;
 
             if (!new SqlServerTableExists(cs).Exists("dbo", "TflBatch"))
             {

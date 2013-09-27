@@ -20,24 +20,24 @@
 
 #endregion
 
-using System.Data.SqlClient;
-using Transformalize.Libs.Rhino.Etl;
-
-namespace Transformalize.Main.Providers.SqlServer
+namespace Transformalize.Main
 {
-    public class SqlServerEntityDropper : WithLoggingMixin, IEntityDropper
+    public class EntitiesDropper
     {
-        private const string FORMAT = "DROP TABLE [{0}].[{1}];";
+        private readonly IEntityDropper _dropper;
+        private readonly Process _process;
 
-        public void DropOutput(Entity entity)
+        public EntitiesDropper(Process process, IEntityDropper dropper)
         {
-            if (!new SqlServerEntityExists().Exists(entity.OutputConnection, entity.Schema, entity.OutputName())) return;
+            _process = process;
+            _dropper = dropper;
+        }
 
-            using (var cn = new SqlConnection(entity.OutputConnection.ConnectionString))
+        public void Drop()
+        {
+            foreach (var entity in _process.Entities)
             {
-                cn.Open();
-                new SqlCommand(string.Format(FORMAT, entity.Schema, entity.OutputName()), cn).ExecuteNonQuery();
-                Debug("Dropped Output {0}.{1}", entity.Schema, entity.OutputName());
+                _dropper.Drop(_process.OutputConnection, entity.Schema, entity.OutputName());
             }
         }
     }

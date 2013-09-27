@@ -33,13 +33,13 @@ namespace Transformalize.Operations
         private readonly Entity _entity;
         private readonly string[] _fields;
 
-        public EntityInputKeysExtractDelta(Entity entity)
+        public EntityInputKeysExtractDelta(Process process, Entity entity)
             : base(entity.InputConnection)
         {
             _entity = entity;
             _fields = _entity.PrimaryKey.ToEnumerable().Select(f => f.Alias).ToArray();
 
-            _entity.CheckForChanges();
+            _entity.CheckForChanges(process);
 
             if (!_entity.HasRows)
             {

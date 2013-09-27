@@ -20,10 +20,12 @@
 
 #endregion
 
+using Transformalize.Main.Providers;
+
 namespace Transformalize.Main
 {
     public interface IEntityDropper
     {
-        void DropOutput(Entity entity);
+        void Drop(AbstractConnection connection, string schema, string name);
     }
 }

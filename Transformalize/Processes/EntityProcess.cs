@@ -26,7 +26,7 @@ using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
-using Transformalize.Main.Providers.SqlServer;
+using Transformalize.Main.Providers;
 using Transformalize.Operations;
 
 namespace Transformalize.Processes {
@@ -55,16 +55,16 @@ namespace Transformalize.Processes {
 
             if (_process.IsFirstRun) {
                 Register(new EntityAddTflFields(_entity));
-                RegisterLast(new EntityBulkInsert(_entity));
+                RegisterLast(new EntityBulkInsert(_process, _entity));
             } else {
-                Register(new EntityJoinAction(_entity).Right(new EntityOutputKeysExtract(_entity)));
+                Register(new EntityJoinAction(_entity).Right(new EntityOutputKeysExtract(_process, _entity)));
                 var branch = new BranchingOperation()
                     .Add(new PartialProcessOperation()
                         .Register(new EntityActionFilter(ref _entity, EntityAction.Insert))
-                        .RegisterLast(new EntityBulkInsert(_entity)))
+                        .RegisterLast(new EntityBulkInsert(_process, _entity)))
                     .Add(new PartialProcessOperation()
                         .Register(new EntityActionFilter(ref _entity, EntityAction.Update))
-                        .RegisterLast(new EntityBatchUpdate(_entity)));
+                        .RegisterLast(new EntityBatchUpdate(_process, _entity)));
                 RegisterLast(branch);
             }
         }
@@ -81,7 +81,7 @@ namespace Transformalize.Processes {
                 Environment.Exit(1);
             }
 
-            new SqlServerEntityVersionWriter(_entity).WriteEndVersion();
+            new DatabaseEntityVersionWriter(_process, _entity).WriteEndVersion();
 
             base.PostProcessing();
         }

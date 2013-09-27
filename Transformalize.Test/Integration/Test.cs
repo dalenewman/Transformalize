@@ -32,10 +32,7 @@ namespace Transformalize.Test.Integration
         [Test]
         public void Init()
         {
-            var options = new Options
-                              {
-                                  Mode = Modes.Initialize
-                              };
+            var options = new Options { Mode = Modes.Initialize };
             var process = new ProcessReader(new ProcessConfigurationReader("Test").Read(), options).Read();
             new ProcessRunner(process).Run();
         }
@@ -43,10 +40,7 @@ namespace Transformalize.Test.Integration
         [Test]
         public void Normal()
         {
-            var options = new Options
-                              {
-                                  RenderTemplates = true
-                              };
+            var options = new Options { RenderTemplates = true };
             var process = new ProcessReader(new ProcessConfigurationReader("Test").Read(), options).Read();
             new ProcessRunner(process).Run();
         }

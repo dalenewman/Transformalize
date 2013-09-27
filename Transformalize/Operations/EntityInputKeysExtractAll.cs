@@ -31,6 +31,7 @@ namespace Transformalize.Operations {
         private readonly Entity _entity;
         private readonly string[] _fields;
 
+        //todo: you can't use input command operation to import file
         public EntityInputKeysExtractAll(Entity entity)
             : base(entity.InputConnection) {
             _entity = entity;

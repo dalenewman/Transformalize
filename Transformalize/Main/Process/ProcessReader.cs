@@ -56,6 +56,8 @@ namespace Transformalize.Main {
 
             //shared across the process
             _process.Connections = new ConnectionFactory(_process, _config.Connections).Create();
+            _process.OutputConnection = _process.Connections["output"];
+
             _process.Scripts = new ScriptReader(_config.Scripts).Read();
             _process.Templates = new TemplateReader(_process, _config.Templates).Read();
             _process.SearchTypes = new SearchTypeReader(_config.SearchTypes).Read();

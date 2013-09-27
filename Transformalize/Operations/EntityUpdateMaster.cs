@@ -56,11 +56,11 @@ namespace Transformalize.Operations {
             if (!entityChanged && !masterChanged)
                 return rows;
 
-            var provider = _entity.OutputConnection.Provider;
+            var provider = _process.OutputConnection.Provider;
             var master = provider.L + _process.MasterEntity.OutputName() + provider.R;
             var entity = provider.L + _entity.OutputName() + provider.R;
 
-            using (var cn = _process.MasterEntity.OutputConnection.GetConnection()) {
+            using (var cn = _process.OutputConnection.GetConnection()) {
                 cn.Open();
 
                 int records;

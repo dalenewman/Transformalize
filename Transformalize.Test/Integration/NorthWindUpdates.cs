@@ -136,7 +136,7 @@ namespace Transformalize.Test.Integration {
             new ProcessRunner(process).Run();
 
             decimal outputSum;
-            using (var cn = process["Order Details"].OutputConnection.GetConnection()) {
+            using (var cn = process.OutputConnection.GetConnection()) {
                 cn.Open();
                 outputSum = cn.Query<decimal>("SELECT SUM(OrderDetailsUnitPrice) FROM NorthWindOrderDetails WHERE OrderDetailsProductID = 57;").First();
             }
@@ -152,7 +152,7 @@ namespace Transformalize.Test.Integration {
                 cn.Execute("update Orders set ShipCountry = 'USA' where OrderID = 10250;");
             }
             string preUpdate;
-            using (var cn = process["Orders"].OutputConnection.GetConnection()) {
+            using (var cn = process.OutputConnection.GetConnection()) {
                 cn.Open();
                 preUpdate = cn.Query<string>("SELECT TOP 1 CountryExchange FROM NorthWindOrderDetails WHERE OrderDetailsOrderID = 10250 ORDER BY OrderDetailsProductID ASC;").First();
             }
@@ -162,7 +162,7 @@ namespace Transformalize.Test.Integration {
             new ProcessRunner(process).Run();
 
             string postUpdate;
-            using (var cn = process["Orders"].OutputConnection.GetConnection()) {
+            using (var cn = process.OutputConnection.GetConnection()) {
                 cn.Open();
                 postUpdate = cn.Query<string>("SELECT TOP 1 CountryExchange FROM NorthWindOrderDetails WHERE OrderDetailsOrderID = 10250 ORDER BY OrderDetailsProductID ASC;").First();
             }

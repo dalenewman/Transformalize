@@ -33,7 +33,7 @@ namespace Transformalize.Operations {
         private int[] _batchIds;
 
         public ParametersExtract(Process process)
-            : base(process.MasterEntity.OutputConnection) {
+            : base(process.OutputConnection) {
             UseTransaction = false;
             _sql = BuildSql(process);
         }

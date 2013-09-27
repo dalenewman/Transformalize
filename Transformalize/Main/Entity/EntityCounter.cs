@@ -43,7 +43,7 @@ namespace Transformalize.Main
             {
                 entity.InputCount = _entityCounter.Count(entity.InputConnection, entity.Schema, entity.Alias);
                 Info("Entity {0} input has {1} records.", entity.Alias, entity.InputCount);
-                entity.OutputCount = _entityCounter.Count(entity.OutputConnection, entity.Schema, entity.OutputName());
+                entity.OutputCount = _entityCounter.Count(_process.OutputConnection, entity.Schema, entity.OutputName());
                 Info("Entity {0} output has {1} records.", entity.Alias, entity.OutputCount);
             }
         }

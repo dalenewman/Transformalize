@@ -24,6 +24,6 @@ namespace Transformalize.Main
 {
     public interface IEntityBatchReader
     {
-        int ReadNext(Entity entity);
+        int ReadNext(Process process, Entity entity);
     }
 }

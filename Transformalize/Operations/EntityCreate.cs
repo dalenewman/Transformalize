@@ -27,18 +27,21 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 using Transformalize.Main.Providers.SqlServer;
+using Transformalize.Libs.Dapper;
 
 namespace Transformalize.Operations
 {
     public class EntityCreate : AbstractOperation
     {
         private readonly Entity _entity;
+        private readonly Process _process;
         private readonly IEntityExists _entityExists;
         private readonly FieldSqlWriter _writer;
 
         public EntityCreate(Entity entity, Process process, IEntityExists entityExists = null)
         {
             _entity = entity;
+            _process = process;
 
             _writer = _entity.IsMaster() ?
                           new FieldSqlWriter(entity.All, process.CalculatedFields, entity.CalculatedFields, GetRelationshipFields(process)) :
@@ -55,24 +58,23 @@ namespace Transformalize.Operations
 
         private void CreateEntity()
         {
-            var provider = _entity.OutputConnection.Provider;
+            var provider = _process.OutputConnection.Provider;
 
-            if (_entityExists.Exists(_entity.OutputConnection, _entity.Schema, _entity.Alias)) return;
+            if (_entityExists.Exists(_process.OutputConnection, _entity.Schema, _entity.Alias)) return;
 
             var primaryKey = _entity.IsMaster()
                                  ? _writer.FieldType(FieldType.MasterKey).Alias(provider).Asc().Values()
                                  : _writer.FieldType(FieldType.PrimaryKey).Alias(provider).Asc().Values();
             var defs = _writer.Reload().ExpandXml().AddSurrogateKey().AddBatchId().Output().Alias(provider).DataType().AppendIf(" NOT NULL", FieldType.MasterKey, FieldType.PrimaryKey).Values();
-            var sql = _entity.OutputConnection.TableQueryWriter.Write(_entity.OutputName(), defs, primaryKey, ignoreDups: true);
+            var sql = _process.OutputConnection.TableQueryWriter.Write(_entity.OutputName(), defs, primaryKey, ignoreDups: true);
 
             Debug(sql);
 
-            using (var cn = new SqlConnection(_entity.OutputConnection.ConnectionString))
+            using (var cn = _process.OutputConnection.GetConnection())
             {
                 cn.Open();
-                var cmd = new SqlCommand(sql, cn);
-                cmd.ExecuteNonQuery();
-                Info("Initialized {0} in {1} on {2}.", _entity.OutputName(), _entity.OutputConnection.Database, _entity.OutputConnection.Server);
+                cn.Execute(sql);
+                Info("Initialized {0} in {1} on {2}.", _entity.OutputName(), _process.OutputConnection.Database, _process.OutputConnection.Server);
             }
         }
 

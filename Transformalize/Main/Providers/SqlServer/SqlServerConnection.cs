@@ -26,8 +26,8 @@ namespace Transformalize.Main.Providers.SqlServer
 {
     public class SqlServerConnection : AbstractConnection
     {
-        public SqlServerConnection(Process process, ConnectionConfigurationElement element, AbstractProvider provider, IConnectionChecker connectionChecker, IScriptRunner scriptRunner, IProviderSupportsModifier providerScriptModifer, IEntityRecordsExist recordsExist)
-            : base(element, provider, connectionChecker, scriptRunner, providerScriptModifer, recordsExist)
+        public SqlServerConnection(Process process, ConnectionConfigurationElement element, AbstractProvider provider, IConnectionChecker connectionChecker, IScriptRunner scriptRunner, IProviderSupportsModifier providerScriptModifer, IEntityRecordsExist recordsExist, IEntityDropper dropper)
+            : base(element, provider, connectionChecker, scriptRunner, providerScriptModifer, recordsExist, dropper)
         {
             TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
 

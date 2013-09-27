@@ -30,18 +30,18 @@ namespace Transformalize.Operations
 {
     public class EntityDrop : AbstractOperation
     {
+        private readonly Process _process;
         private readonly Entity _entity;
-        private readonly IEntityDropper _entityDropper;
 
-        public EntityDrop(Entity entity, IEntityDropper entityDropper = null)
+        public EntityDrop(Process process, Entity entity)
         {
+            _process = process;
             _entity = entity;
-            _entityDropper = entityDropper ?? new SqlServerEntityDropper();
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
         {
-            _entityDropper.DropOutput(_entity);
+            _process.Drop(_entity);
             return rows;
         }
     }

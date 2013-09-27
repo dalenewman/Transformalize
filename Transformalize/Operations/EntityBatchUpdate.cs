@@ -24,14 +24,17 @@ using System.Data.SqlClient;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
+using Transformalize.Main.Providers;
 
 namespace Transformalize.Operations {
     public class EntityBatchUpdate : SqlBatchOperation {
         private readonly Entity _entity;
+        private readonly AbstractProvider _provider;
 
-        public EntityBatchUpdate(Entity entity)
-            : base(entity.OutputConnection) {
+        public EntityBatchUpdate(Process process, Entity entity)
+            : base(process.OutputConnection) {
             _entity = entity;
+            _provider = process.OutputConnection.Provider;
             BatchSize = 50;
             UseTransaction = false;
         }
@@ -39,7 +42,7 @@ namespace Transformalize.Operations {
         protected override void PrepareCommand(Row row, SqlCommand command) {
             
             var writer = new FieldSqlWriter(_entity.Fields, _entity.CalculatedFields).ExpandXml().Output();
-            var sets = writer.Alias(_entity.OutputConnection.Provider).SetParam().Write(", ", false);
+            var sets = writer.Alias(_provider).SetParam().Write(", ", false);
 
             command.CommandText = string.Format(@"
                 UPDATE [{0}].[{1}]

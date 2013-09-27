@@ -34,11 +34,11 @@ namespace Transformalize.Operations
         private readonly AbstractProvider _provider;
 
         public ResultsLoad(Process process)
-            : base(process.MasterEntity.OutputConnection)
+            : base(process.OutputConnection)
         {
             _process = process;
             BatchSize = 50;
-            _provider = _process.MasterEntity.OutputConnection.Provider;
+            _provider = _process.OutputConnection.Provider;
             UseTransaction = false;
         }
 

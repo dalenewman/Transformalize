@@ -71,7 +71,7 @@ namespace Transformalize.Runner
 
         private void ProcessEntityDeletes()
         {
-            foreach (var entityDeleteProcess in _process.Entities.Select(entity => new EntityDeleteProcess(entity))) {
+            foreach (var entityDeleteProcess in _process.Entities.Select(entity => new EntityDeleteProcess(_process, entity))) {
                 entityDeleteProcess.Execute();
             }
         }

@@ -9,7 +9,7 @@ namespace Transformalize.Operations
     {
         private readonly Entity _entity;
 
-        public EntityDelete(Entity entity) : base(entity.OutputConnection)
+        public EntityDelete(Process process, Entity entity) : base(process.OutputConnection)
         {
             _entity = entity;
         }

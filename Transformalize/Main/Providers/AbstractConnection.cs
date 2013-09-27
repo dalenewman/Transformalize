@@ -29,8 +29,9 @@ namespace Transformalize.Main.Providers {
     public abstract class AbstractConnection {
         private readonly IConnectionChecker _connectionChecker;
         private readonly IEntityRecordsExist _entityRecordsExist;
+        private readonly IEntityDropper _dropper;
 
-        protected AbstractConnection(ConnectionConfigurationElement element, AbstractProvider provider, IConnectionChecker connectionChecker, IScriptRunner scriptRunner, IProviderSupportsModifier providerSupportsModifier, IEntityRecordsExist recordsExist) {
+        protected AbstractConnection(ConnectionConfigurationElement element, AbstractProvider provider, IConnectionChecker connectionChecker, IScriptRunner scriptRunner, IProviderSupportsModifier providerSupportsModifier, IEntityRecordsExist recordsExist, IEntityDropper dropper) {
             Provider = provider;
             BatchSize = element.BatchSize;
             Name = element.Name;
@@ -48,6 +49,7 @@ namespace Transformalize.Main.Providers {
             ScriptRunner = scriptRunner;
             ProviderSupportsModifier = providerSupportsModifier;
             _entityRecordsExist = recordsExist;
+            _dropper = dropper;
         }
 
         public string Name { get; set; }
@@ -160,6 +162,11 @@ namespace Transformalize.Main.Providers {
 
         public bool RecordsExist(string schema, string name) {
             return _entityRecordsExist.RecordsExist(this, schema, name);
+        }
+
+        public void Drop(Entity entity)
+        {
+            _dropper.Drop(this, entity.Schema, entity.OutputName());
         }
     }
 }

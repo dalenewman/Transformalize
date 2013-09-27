@@ -53,7 +53,7 @@ namespace Transformalize.Processes
         {
             foreach (var entity in _process.Entities)
             {
-                Register(new EntityDrop(entity));
+                Register(new EntityDrop(_process, entity));
                 Register(new EntityCreate(entity, _process));
             }
         }

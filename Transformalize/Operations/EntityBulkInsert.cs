@@ -28,10 +28,12 @@ namespace Transformalize.Operations
 {
     public class EntityBulkInsert : SqlBulkInsertOperation
     {
+        private readonly Process _process;
         private readonly Entity _entity;
 
-        public EntityBulkInsert(Entity entity) : base(entity.OutputConnection, entity.OutputName())
+        public EntityBulkInsert(Process process, Entity entity) : base(process.OutputConnection, entity.OutputName())
         {
+            _process = process;
             _entity = entity;
             UseTransaction = false;
 
@@ -44,7 +46,7 @@ namespace Transformalize.Operations
         protected override void PrepareSchema()
         {
             NotifyBatchSize = 10000;
-            BatchSize = _entity.OutputConnection.BatchSize;
+            BatchSize = _process.OutputConnection.BatchSize;
 
             var fields = new FieldSqlWriter(_entity.All, _entity.CalculatedFields).ExpandXml().Output().AddBatchId(false).ToArray();
             foreach (var field in fields)

@@ -21,58 +21,63 @@
 #endregion
 
 using System;
-using System.Data.SqlClient;
+using System.Data;
 using Transformalize.Libs.NLog;
+using Transformalize.Extensions;
 
-namespace Transformalize.Main.Providers.SqlServer {
-    public class SqlServerEntityVersionWriter : IEntityVersionWriter {
+namespace Transformalize.Main.Providers {
+    public class DatabaseEntityVersionWriter : IEntityVersionWriter {
+        private readonly Process _process;
         private readonly Entity _entity;
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
 
-        public SqlServerEntityVersionWriter(Entity entity) {
+        public DatabaseEntityVersionWriter(Process process, Entity entity) {
+            _process = process;
             _entity = entity;
         }
 
         public void WriteEndVersion() {
 
             if (_entity.Inserts + _entity.Updates > 0) {
-                using (var cn = new SqlConnection(_entity.OutputConnection.ConnectionString)) {
+                using (var cn = _process.OutputConnection.GetConnection()) {
                     cn.Open();
-                    var command = new SqlCommand(PrepareSql(), cn);
 
-                    command.Parameters.Add(new SqlParameter("@TflBatchId", _entity.TflBatchId));
-                    command.Parameters.Add(new SqlParameter("@ProcessName", _entity.ProcessName));
-                    command.Parameters.Add(new SqlParameter("@EntityName", _entity.Alias));
-                    command.Parameters.Add(new SqlParameter("@TflUpdate", DateTime.Now));
-                    command.Parameters.Add(new SqlParameter("@Inserts", _entity.Inserts));
-                    command.Parameters.Add(new SqlParameter("@Updates", _entity.Updates));
-                    command.Parameters.Add(new SqlParameter("@Deletes", _entity.Deletes));
+                    var cmd = cn.CreateCommand();
+                    cmd.CommandText = PrepareSql();
+                    cmd.CommandType = CommandType.Text;
+
+                    _process.OutputConnection.AddParameter(cmd, "@TflBatchId", _entity.TflBatchId);
+                    _process.OutputConnection.AddParameter(cmd, "@ProcessName", _process.Name);
+                    _process.OutputConnection.AddParameter(cmd, "@EntityName", _entity.Alias);
+                    _process.OutputConnection.AddParameter(cmd, "@TflUpdate", DateTime.Now);
+                    _process.OutputConnection.AddParameter(cmd, "@Inserts", _entity.Inserts);
+                    _process.OutputConnection.AddParameter(cmd, "@Updates", _entity.Updates);
+                    _process.OutputConnection.AddParameter(cmd, "@Deletes", _entity.Deletes);
 
                     if (_entity.CanDetectChanges()) {
                         var end = new ConversionFactory().Convert(_entity.End, _entity.Version.SimpleType);
-                        command.Parameters.Add(new SqlParameter("@End", end));
+                        _process.OutputConnection.AddParameter(cmd, "@End", end);
                     }
 
-                    _log.Debug(command.CommandText);
-
-                    command.ExecuteNonQuery();
+                    _log.Debug(cmd.CommandText);
+                    cmd.ExecuteNonQuery();
                 }
             }
 
-            _log.Info("Processed {0} insert{1}, and {2} update{3} in {4}.", _entity.Inserts, _entity.Inserts == 1 ? string.Empty : "s", _entity.Updates, _entity.Updates == 1 ? string.Empty : "s", _entity.Alias);
+            _log.Info("Processed {0} insert{1}, and {2} update{3} in {4}.", _entity.Inserts, _entity.Inserts.Plural(), _entity.Updates, _entity.Updates.Plural(), _entity.Alias);
         }
 
         private string PrepareSql() {
             if (!_entity.CanDetectChanges()) {
                 return @"
-                    INSERT INTO [TflBatch](TflBatchId, ProcessName, EntityName, TflUpdate, Inserts, Updates, Deletes)
+                    INSERT INTO TflBatch(TflBatchId, ProcessName, EntityName, TflUpdate, Inserts, Updates, Deletes)
                     VALUES(@TflBatchId, @ProcessName, @EntityName, @TflUpdate, @Inserts, @Updates, @Deletes);
                 ";
             }
 
             var field = _entity.Version.SimpleType.Replace("rowversion", "Binary").Replace("byte[]", "Binary") + "Version";
             return string.Format(@"
-                INSERT INTO [TflBatch](TflBatchId, ProcessName, EntityName, [{0}], TflUpdate, Inserts, Updates, Deletes)
+                INSERT INTO TflBatch(TflBatchId, ProcessName, EntityName, {0}, TflUpdate, Inserts, Updates, Deletes)
                 VALUES(@TflBatchId, @ProcessName, @EntityName, @End, @TflUpdate, @Inserts, @Updates, @Deletes);
             ", field);
         }
