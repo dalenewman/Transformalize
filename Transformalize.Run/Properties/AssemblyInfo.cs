@@ -28,11 +28,11 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 
 [assembly: AssemblyTitle("Transformalize.Run")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Combining De-normalization, Transformation, and Replication.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("Transformalize.Run")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2013")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("Transformalize")]
+[assembly: AssemblyCopyright("Copyright © Dale Newman 2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
