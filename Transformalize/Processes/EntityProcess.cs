@@ -44,8 +44,12 @@ namespace Transformalize.Processes {
         }
 
         protected override void Initialize() {
-            Register(new EntityKeysToOperations(_entity));
-            Register(new SerialUnionAllOperation());
+            if (_entity.InputConnection.Provider.Type == ProviderType.File) {
+                Register(new FileFixedLengthImporter(_entity));
+            } else {
+                Register(new EntityKeysToOperations(_entity));
+                Register(new SerialUnionAllOperation());
+            }
             Register(new ApplyDefaults(_entity.All, _entity.CalculatedFields));
             Register(new TransformFields(_fieldsWithTransforms));
             Register(new TransformFields(_entity.CalculatedFields));

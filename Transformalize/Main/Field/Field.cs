@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using Transformalize.Libs.Rhino.Etl;
@@ -149,7 +150,7 @@ namespace Transformalize.Main
             UseStringBuilder = (new[] {"string", "char"}).Any(t => t.Equals(SimpleType));
             FieldType = fieldType;
             Output = output || MustBeOutput();
-            SystemType = System.Type.GetType(typeName);
+            SystemType = System.Type.GetType(typeName.StartsWith("System.") ? typeName : "System." + typeName[0].ToString(CultureInfo.InvariantCulture).ToUpper() + typeName.Substring(1));
             StringBuilder = UseStringBuilder ? new StringBuilder() : null;
             InnerXml = new Dictionary<string, Field>();
             Transforms = new Transforms();

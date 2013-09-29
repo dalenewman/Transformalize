@@ -43,27 +43,23 @@ namespace Transformalize.Test.Unit
         [Test]
         public void TestFormatTransform()
         {
-            var parameters = new Parameters
-                                 {
-                                     {"x", new Parameter("x", null)},
-                                     {"y", new Parameter("y", null)}
-                                 };
+            var parameters = new Parameters {
+                {"x", new Parameter("x", null)},
+                {"y", new Parameter("y", null)}
+            };
 
-            var z = new Field(FieldType.Field)
-                        {
-                            Alias = "z"
-                        };
+            var z = new Field(FieldType.Field) {
+                Alias = "z"
+            };
             z.Transforms.Add(new FormatTransform("{0} {1}", parameters));
 
             var rows = TestOperation(
-                GetTestData(new List<Row>
-                                {
-                                    new Row
-                                        {
-                                            {"x", "Dale"},
-                                            {"y", "Newman"}
-                                        },
-                                }),
+                GetTestData(new List<Row> {
+                    new Row {
+                        {"x", "Dale"},
+                        {"y", "Newman"}
+                    },
+                }),
                 new TransformFields(z),
                 new LogOperation()
                 );
@@ -74,27 +70,23 @@ namespace Transformalize.Test.Unit
         [Test]
         public void TestJavascriptTransformNumbers()
         {
-            var parameters = new Parameters
-                                 {
-                                     {"x", new Parameter("x", null)},
-                                     {"y", new Parameter("y", null)}
-                                 };
+            var parameters = new Parameters {
+                {"x", new Parameter("x", null)},
+                {"y", new Parameter("y", null)}
+            };
 
-            var z = new Field(FieldType.Field)
-                        {
-                            Alias = "z"
-                        };
+            var z = new Field(FieldType.Field) {
+                Alias = "z"
+            };
             z.Transforms.Add(new JavascriptTransform("x * y", parameters, new Dictionary<string, Script>()));
 
             var rows = TestOperation(
-                GetTestData(new List<Row>
-                                {
-                                    new Row
-                                        {
-                                            {"x", 3},
-                                            {"y", 11}
-                                        },
-                                }),
+                GetTestData(new List<Row> {
+                    new Row {
+                        {"x", 3},
+                        {"y", 11}
+                    },
+                }),
                 new TransformFields(z),
                 new LogOperation()
                 );
@@ -105,30 +97,25 @@ namespace Transformalize.Test.Unit
         [Test]
         public void TestJavascriptTransformStrings()
         {
-            var parameters = new Parameters
-                                 {
-                                     {"FirstName", new Parameter("FirstName", null)},
-                                     {"LastName", new Parameter("LastName", null)}
-                                 };
+            var parameters = new Parameters {
+                {"FirstName", new Parameter("FirstName", null)},
+                {"LastName", new Parameter("LastName", null)}
+            };
 
-            var fullName = new Field(FieldType.Field)
-                               {
-                                   Alias = "FullName"
-                               };
+            var fullName = new Field(FieldType.Field) {
+                Alias = "FullName"
+            };
             fullName.Transforms.Add(new JavascriptTransform("FirstName + ' ' + LastName", parameters, new Dictionary<string, Script>()));
 
             var rows = TestOperation(
-                GetTestData(new List<Row>
-                                {
-                                    new Row
-                                        {
-                                            {"FirstName", "Dale"},
-                                            {"LastName", "Newman"}
-                                        },
-                                }),
+                GetTestData(new List<Row> { new Row {
+                        {"FirstName", "Dale"},
+                        {"LastName", "Newman"}
+                    },
+                }),
                 new TransformFields(fullName),
                 new LogOperation()
-                );
+            );
 
             Assert.AreEqual("Dale Newman", rows[0]["FullName"]);
         }

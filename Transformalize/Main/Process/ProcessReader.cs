@@ -77,8 +77,10 @@ namespace Transformalize.Main {
         }
 
         private static ProcessConfigurationElement Adapt(ProcessConfigurationElement process) {
-            new FromXmlTransformFieldsToParametersAdapter(process).Adapt();
-            new FromXmlTransformFieldsMoveAdapter(process).Adapt();
+            new TransformFieldsToParametersAdapter(process).Adapt("fromxml");
+            new TransformFieldsMoveAdapter(process).Adapt("fromxml");
+            new TransformFieldsToParametersAdapter(process).Adapt("fromregex");
+            new TransformFieldsMoveAdapter(process).Adapt("fromregex");
             return process;
         }
 

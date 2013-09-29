@@ -84,6 +84,10 @@ namespace Transformalize.Main {
                     transform = new RightTransform(element.Length, parameters);
                     break;
 
+                case "gethashcode":
+                    transform = new GetHashCodeTransform(parameters);
+                    break;
+
                 case "map":
                     var equals = _process.MapEquals[element.Map];
                     var startsWith = _process.MapStartsWith.ContainsKey(element.Map)
@@ -168,6 +172,10 @@ namespace Transformalize.Main {
 
                 case "fromxml":
                     transform = new FromXmlTransform(fieldName, parameters);
+                    break;
+
+                case "fromregex":
+                    transform = new FromRegexTransform(fieldName, element.Pattern, parameters);
                     break;
             }
 

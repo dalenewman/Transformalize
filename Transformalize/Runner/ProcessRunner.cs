@@ -26,6 +26,7 @@ using System.Text;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Pipelines;
 using Transformalize.Main;
+using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.SqlServer;
 using Transformalize.Processes;
 
@@ -81,7 +82,7 @@ namespace Transformalize.Runner
 
         private void ProcessEntities() {
 
-            foreach (var entityKeysProcess in _process.Entities.Select(entity => new EntityKeysProcess(_process, entity))) {
+            foreach (var entityKeysProcess in _process.Entities.Where(e=>e.InputConnection.Provider.Type != ProviderType.File).Select(entity => new EntityKeysProcess(_process, entity))) {
                 if (_process.Options.Mode == Modes.Test)
                     entityKeysProcess.PipelineExecuter = new SingleThreadedNonCachedPipelineExecuter();
 

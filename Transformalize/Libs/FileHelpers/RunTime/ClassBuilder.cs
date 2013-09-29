@@ -23,6 +23,7 @@
 using System;
 using System.CodeDom.Compiler;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Security.Cryptography;
@@ -91,7 +92,7 @@ namespace Transformalize.Libs.FileHelpers.RunTime
             switch (lang)
             {
                 case NetLanguage.CSharp:
-                    code.Append("using System; using Transformalize.Libs.FileHelpers.Attributes; using System.Data; ");
+                    code.Append("using System; using Transformalize.Libs.FileHelpers.Attributes; using Transformalize.Libs.FileHelpers.Enums; using System.Data; ");
                     break;
 
                 case NetLanguage.VbNet:
@@ -803,7 +804,7 @@ namespace Transformalize.Libs.FileHelpers.RunTime
             WriteHeaderElement(writer);
 
             writer.WriteElement("ClassName", ClassName);
-            writer.WriteElement("Namespace", Namespace, string.Empty);
+            writer.WriteElement("Namespace", string.Join(",",Namespace), string.Empty);
 
             writer.WriteElement("SealedClass", SealedClass);
             writer.WriteElement("Visibility", Visibility.ToString(), "Public");

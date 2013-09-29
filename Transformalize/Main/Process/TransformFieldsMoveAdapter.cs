@@ -25,34 +25,27 @@ using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 
-namespace Transformalize.Main
-{
-    public class FromXmlTransformFieldsMoveAdapter
-    {
+namespace Transformalize.Main {
+    public class TransformFieldsMoveAdapter {
         private readonly ProcessConfigurationElement _process;
 
-        public FromXmlTransformFieldsMoveAdapter(ProcessConfigurationElement process)
-        {
+        public TransformFieldsMoveAdapter(ProcessConfigurationElement process) {
             _process = process;
         }
 
-        public void Adapt()
-        {
+        public void Adapt(string transformName) {
             var fields = new Dictionary<string, Dictionary<string, List<FieldConfigurationElement>>>();
 
-            foreach (EntityConfigurationElement entity in _process.Entities)
-            {
+            foreach (EntityConfigurationElement entity in _process.Entities) {
+
                 fields[entity.Alias] = new Dictionary<string, List<FieldConfigurationElement>>();
 
-                foreach (FieldConfigurationElement field in entity.Fields)
-                {
-                    foreach (TransformConfigurationElement transform in field.Transforms)
-                    {
-                        if (!transform.Method.Equals("fromxml", StringComparison.OrdinalIgnoreCase)) continue;
+                foreach (FieldConfigurationElement field in entity.Fields) {
+                    foreach (TransformConfigurationElement transform in field.Transforms) {
+                        if (!transform.Method.Equals(transformName, StringComparison.OrdinalIgnoreCase)) continue;
 
                         fields[entity.Alias][field.Alias] = new List<FieldConfigurationElement>();
-                        foreach (FieldConfigurationElement tField in transform.Fields)
-                        {
+                        foreach (FieldConfigurationElement tField in transform.Fields) {
                             tField.Input = false;
                             fields[entity.Alias][field.Alias].Add(tField);
                         }
@@ -62,17 +55,12 @@ namespace Transformalize.Main
                 }
             }
 
-            foreach (var entity in fields)
-            {
-                foreach (var field in entity.Value)
-                {
-                    var entityElement =
-                        _process.Entities.Cast<EntityConfigurationElement>().First(e => e.Alias == entity.Key);
-                    var fieldElement =
-                        entityElement.Fields.Cast<FieldConfigurationElement>().First(f => f.Alias == field.Key);
+            foreach (var entity in fields) {
+                foreach (var field in entity.Value) {
+                    var entityElement = _process.Entities.Cast<EntityConfigurationElement>().First(e => e.Alias == entity.Key);
+                    var fieldElement = entityElement.Fields.Cast<FieldConfigurationElement>().First(f => f.Alias == field.Key);
                     var index = entityElement.Fields.IndexOf(fieldElement) + 1;
-                    foreach (var element in field.Value)
-                    {
+                    foreach (var element in field.Value) {
                         entityElement.Fields.InsertAt(element, index);
                         index++;
                     }

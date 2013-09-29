@@ -24,8 +24,8 @@ using System;
 using System.Linq;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Libs.Rhino.Etl.Pipelines;
 using Transformalize.Main;
+using Transformalize.Main.Providers;
 using Transformalize.Operations;
 
 namespace Transformalize.Processes {
@@ -40,13 +40,11 @@ namespace Transformalize.Processes {
         }
 
         protected override void Initialize() {
-            
             if (_process.IsFirstRun || !_entity.CanDetectChanges()) {
                 Register(new EntityInputKeysExtractAll(_entity));
             } else {
                 var operation = new EntityInputKeysExtractDelta(_process, _entity);
-                if (operation.NeedsToRun())
-                {
+                if (operation.NeedsToRun()) {
                     Register(operation);
                 }
             }

@@ -30,7 +30,6 @@ namespace Transformalize.Configuration
         private const string NAME = "name";
         private const string ALIAS = "alias";
         private const string TYPE = "type";
-        private const string XML = "xml";
         private const string LENGTH = "length";
         private const string PRECISION = "precision";
         private const string SCALE = "scale";
@@ -42,6 +41,7 @@ namespace Transformalize.Configuration
         private const string TRANSFORMS = "transforms";
         private const string SEARCH_TYPE = "search-type";
         private const string SEARCH_TYPES = "search-types";
+        private const string PRIMARY_KEY = "primary-key";
 
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name
@@ -61,7 +61,7 @@ namespace Transformalize.Configuration
             set { this[ALIAS] = value; }
         }
 
-        [ConfigurationProperty(TYPE, IsRequired = false, DefaultValue = "string")]
+        [ConfigurationProperty(TYPE, IsRequired = false, DefaultValue = "System.String")]
         public string Type
         {
             get { return this[TYPE] as string; }
@@ -107,6 +107,12 @@ namespace Transformalize.Configuration
         public bool Input
         {
             get { return (bool) this[INPUT]; }
+            set { this[INPUT] = value; }
+        }
+
+        [ConfigurationProperty(PRIMARY_KEY, IsRequired = false, DefaultValue = false)]
+        public bool PrimaryKey {
+            get { return (bool)this[PRIMARY_KEY]; }
             set { this[INPUT] = value; }
         }
 

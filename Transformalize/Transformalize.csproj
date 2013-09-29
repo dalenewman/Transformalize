@@ -206,8 +206,8 @@
     <Compile Include="Main\Parameters\Parameters.cs" />
     <Compile Include="Main\Parameter\IParameter.cs" />
     <Compile Include="Main\Parameter\Parameter.cs" />
-    <Compile Include="Main\Process\FromXmlTransformFieldsMoveAdapter.cs" />
-    <Compile Include="Main\Process\FromXmlTransformFieldsToParametersAdapter.cs" />
+    <Compile Include="Main\Process\TransformFieldsMoveAdapter.cs" />
+    <Compile Include="Main\Process\TransformFieldsToParametersAdapter.cs" />
     <Compile Include="Main\Process\Process.cs" />
     <Compile Include="Main\Process\ProcessParametersReader.cs" />
     <Compile Include="Main\Process\ProcessReader.cs" />
@@ -281,6 +281,8 @@
     <Compile Include="Main\Transform\AbstractTransform.cs" />
     <Compile Include="Main\Transform\ConcatTransform.cs" />
     <Compile Include="Main\Transform\ConvertTransform.cs" />
+    <Compile Include="Main\Transform\GetHashCodeTransform.cs" />
+    <Compile Include="Main\Transform\FromRegexTransform.cs" />
     <Compile Include="Main\Transform\DateFormatTransform.cs" />
     <Compile Include="Main\Transform\EmptyTransform.cs" />
     <Compile Include="Main\Transform\ExpressionTransform.cs" />
@@ -1038,6 +1040,7 @@
     <Compile Include="Operations\EntityJoinAction.cs" />
     <Compile Include="Operations\EntityInputKeysStore.cs" />
     <Compile Include="Operations\EntityInputKeysStoreExtract.cs" />
+    <Compile Include="Operations\FileFixedLengthImporter.cs" />
     <Compile Include="Processes\InitializationProcess.cs" />
     <Compile Include="Processes\EntityProcess.cs" />
     <Compile Include="Processes\TransformProcess.cs" />

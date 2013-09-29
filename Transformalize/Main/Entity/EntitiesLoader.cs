@@ -31,11 +31,12 @@ namespace Transformalize.Main {
                 GuardAgainstFieldOverlap(entity);
 
                 _process.Entities.Add(entity);
-                if (entity.IsMaster())
+                if (_process.MasterEntity == null)
                     _process.MasterEntity = entity;
                 count++;
                 batchId++;
             }
+
         }
 
         private void GuardAgainstFieldOverlap(Entity entity) {

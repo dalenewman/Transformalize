@@ -21,27 +21,24 @@
 #endregion
 
 using System.Collections.Generic;
-using System.IO;
-using System.Xml;
+using System.Text;
+using System.Text.RegularExpressions;
 using Transformalize.Libs.Rhino.Etl;
 
 namespace Transformalize.Main {
 
-    public class FromXmlTransform : AbstractTransform {
+    public class FromRegexTransform : AbstractTransform {
+
         private readonly Dictionary<string, string> _map = new Dictionary<string, string>();
         private readonly Dictionary<string, string> _typeMap = new Dictionary<string, string>();
-        private readonly string _xmlField;
-        private readonly XmlReaderSettings _settings = new XmlReaderSettings {
-            IgnoreWhitespace = true,
-            IgnoreComments = true
-        };
+        private readonly string _alias;
+        private readonly Regex _regex;
 
-        public FromXmlTransform(string xmlField, IParameters parameters)
+        public FromRegexTransform(string alias, string pattern, IParameters parameters)
             : base(parameters) {
-            RequiresRow = true;
-            Name = "From XML";
-
-            _xmlField = xmlField;
+            _alias = alias;
+            Name = "From Regex";
+            _regex = new Regex(pattern, RegexOptions.Compiled);
 
             foreach (var field in Parameters) {
                 _map[field.Value.Name] = field.Key;
@@ -54,16 +51,32 @@ namespace Transformalize.Main {
             }
         }
 
+        public override void Transform(ref StringBuilder sb) {
+            var input = sb.ToString();
+            var match = _regex.Match(input);
+            if (!match.Success) {
+                return;
+            }
+            sb.Clear();
+            sb.Append(match.Value);
+        }
+
+        public override object Transform(object value) {
+            var input = value.ToString();
+            var match = _regex.Match(input);
+            return match.Success ? match.Value : value;
+        }
+
         public override void Transform(ref Row row, string resultKey) {
-            using (var reader = XmlReader.Create(new StringReader(row[_xmlField].ToString()), _settings)) {
-                while (reader.Read()) {
-                    if (!reader.IsStartElement()) continue;
-                    while (_map.ContainsKey(reader.Name)) {
-                        var name = reader.Name;
-                        var value = reader.ReadElementContentAsString();
-                        if (value != string.Empty)
-                            row[_map[name]] = Common.ConversionMap[_typeMap[name]](value);
-                    }
+            var match = _regex.Match(row[_alias].ToString());
+
+            if (match.Groups.Count == 0)
+                return;
+
+            foreach (var pair in Parameters) {
+                var group = match.Groups[pair.Key];
+                if (@group != null) {
+                    row[pair.Key] = Common.ConversionMap[pair.Value.SimpleType](@group.Value);
                 }
             }
         }

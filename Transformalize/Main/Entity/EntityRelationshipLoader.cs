@@ -15,6 +15,9 @@ namespace Transformalize.Main {
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
 
         public void Load() {
+            if (_process.Entities.Count == 1)
+                return;
+
             foreach (var entity in _process.Entities) {
                 entity.RelationshipToMaster = ReadRelationshipToMaster(entity);
                 if (!entity.RelationshipToMaster.Any() && !entity.IsMaster()) {
