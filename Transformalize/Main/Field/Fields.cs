@@ -75,11 +75,6 @@ namespace Transformalize.Main
             return _items.Select(kv => kv.Value).OrderBy(f => f.Alias);
         }
 
-        public IEnumerable<string> OutputKeys()
-        {
-            return ToEnumerable().Where(f => f.Output).Select(f => f.Alias);
-        }
-
         public Field this[string key]
         {
             get { return _items[key]; }

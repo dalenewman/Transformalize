@@ -51,15 +51,15 @@ namespace Transformalize.Main {
         }
 
         private Join GetJoin(Entity leftEntity, string leftField, Entity rightEntity, string rightField) {
-            if (!leftEntity.All.ContainsKey(leftField) &&
-                !leftEntity.All.ToEnumerable().Any(Common.FieldFinder(leftField))) {
+            if (!leftEntity.Fields.ContainsKey(leftField) &&
+                !leftEntity.Fields.ToEnumerable().Any(Common.FieldFinder(leftField))) {
                 _log.Error("The left entity {0} does not have a field named {1} for joining to the right entity {2} with field {3}.",
                     leftEntity.Alias, leftField, rightEntity.Alias, rightField);
                 Environment.Exit(1);
             }
 
-            if (!rightEntity.All.ContainsKey(rightField) &&
-                !rightEntity.All.ToEnumerable().Any(Common.FieldFinder(rightField))) {
+            if (!rightEntity.Fields.ContainsKey(rightField) &&
+                !rightEntity.Fields.ToEnumerable().Any(Common.FieldFinder(rightField))) {
                 _log.Error(
                     "The right entity {0} does not have a field named {1} for joining to the left entity {2} with field {3}.",
                     rightEntity.Alias, rightField, leftEntity.Alias, leftField);
@@ -68,13 +68,13 @@ namespace Transformalize.Main {
 
             var join = new Join {
                 LeftField =
-                    leftEntity.All.ContainsKey(leftField)
-                        ? leftEntity.All[leftField]
-                        : leftEntity.All.ToEnumerable().First(Common.FieldFinder(leftField)),
+                    leftEntity.Fields.ContainsKey(leftField)
+                        ? leftEntity.Fields[leftField]
+                        : leftEntity.Fields.ToEnumerable().First(Common.FieldFinder(leftField)),
                 RightField =
-                    rightEntity.All.ContainsKey(rightField)
-                        ? rightEntity.All[rightField]
-                        : rightEntity.All.ToEnumerable().First(Common.FieldFinder(rightField))
+                    rightEntity.Fields.ContainsKey(rightField)
+                        ? rightEntity.Fields[rightField]
+                        : rightEntity.Fields.ToEnumerable().First(Common.FieldFinder(rightField))
             };
 
             if (join.LeftField.FieldType.HasFlag(FieldType.MasterKey) ||

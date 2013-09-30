@@ -68,8 +68,6 @@ namespace Transformalize.Main
         public bool Output { get; set; }
         public bool UseStringBuilder { get; private set; }
         public Type SystemType { get; set; }
-        public Dictionary<string, Field> InnerXml { get; set; }
-        public string XPath { get; set; }
         public int Index { get; set; }
         public bool Unicode { get; set; }
         public bool VariableLength { get; set; }
@@ -152,7 +150,6 @@ namespace Transformalize.Main
             Output = output || MustBeOutput();
             SystemType = System.Type.GetType(typeName.StartsWith("System.") ? typeName : "System." + typeName[0].ToString(CultureInfo.InvariantCulture).ToUpper() + typeName.Substring(1));
             StringBuilder = UseStringBuilder ? new StringBuilder() : null;
-            InnerXml = new Dictionary<string, Field>();
             Transforms = new Transforms();
             Default = new ConversionFactory().Convert(@default, SimpleType);
             SearchTypes = new List<SearchType>();

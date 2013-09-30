@@ -59,7 +59,7 @@ namespace Transformalize.Main.Providers
             var maxDop = provider.Supports.MaxDop ? "OPTION (MAXDOP 2);" : ";";
             var sqlPattern = "\r\nSELECT\r\n    {0}\r\nFROM {1} l\r\nINNER JOIN {2} r ON ({3})\r\n" + maxDop;
 
-            var columns = new FieldSqlWriter(fields).ExpandXml().Input().Select(provider).Prepend("l.").ToAlias(provider, true).Write(",\r\n    ");
+            var columns = new FieldSqlWriter(fields).Input().Select(provider).Prepend("l.").ToAlias(provider, true).Write(",\r\n    ");
             var join = new FieldSqlWriter(fields).FieldType(FieldType.MasterKey, FieldType.PrimaryKey).Name(provider).Set("l", "r").Write(" AND ");
 
             return string.Format(sqlPattern, columns, SafeTable(leftTable, provider, leftSchema), SafeTable(rightTable, provider, rightSchema), @join);

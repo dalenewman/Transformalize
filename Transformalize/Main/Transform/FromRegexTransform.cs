@@ -42,12 +42,10 @@ namespace Transformalize.Main {
 
             foreach (var field in Parameters) {
                 _map[field.Value.Name] = field.Key;
-                // in case of XML, the key should be the field's new alias (if present)
             }
 
             foreach (var field in Parameters) {
                 _typeMap[field.Value.Name] = field.Value.SimpleType;
-                // in case of XML, the name is the name of the XML element or attribute
             }
         }
 

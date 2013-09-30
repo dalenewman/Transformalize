@@ -22,6 +22,7 @@
 
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Text;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
@@ -53,11 +54,34 @@ namespace Transformalize.Operations {
 
         protected override void PrepareCommand(IDbCommand cmd) {
             cmd.CommandTimeout = 0;
-            cmd.CommandText = PrepareSql();
+            cmd.CommandText = _entity.InputKeys.Any() ? PrepareSqlWithInputKeys() : PrepareSql();
             Debug("SQL:\r\n{0}", cmd.CommandText);
         }
 
         private string PrepareSql() {
+            var connection = _process.OutputConnection;
+            var provider = connection.Provider;
+            const string sqlPattern = @"
+SELECT e.{0}, e.TflKey{1}
+FROM {2} e WITH (NOLOCK);
+";
+
+            var rowVersion = string.Empty;
+            if (_entity.CanDetectChanges() && !VersionIsPrimaryKey()) {
+                _fields.Add(_entity.Version.Alias);
+                rowVersion = ", e." + provider.Enclose(_entity.Version.Alias);
+            }
+
+            var selectKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias(provider).Write(", e.", false);
+            return string.Format(sqlPattern, selectKeys, rowVersion, provider.Enclose(_entity.OutputName()));
+        }
+
+        private bool VersionIsPrimaryKey() {
+            var version = _entity.Version.Alias;
+            return _entity.PrimaryKey.Count == 1 && version.Equals(_entity.PrimaryKey.First().Key);
+        }
+
+        private string PrepareSqlWithInputKeys() {
             var connection = _process.OutputConnection;
             var provider = connection.Provider;
             const string sqlPattern = @"

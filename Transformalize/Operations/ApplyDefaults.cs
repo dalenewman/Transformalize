@@ -42,7 +42,7 @@ namespace Transformalize.Operations
             var list = new List<Field>();
             foreach (var fieldArray in fields)
             {
-                list.AddRange(new FieldSqlWriter(fieldArray).ExpandXml().ToArray()); //HasDefault()
+                list.AddRange(new FieldSqlWriter(fieldArray).ToArray()); //HasDefault()
             }
             return list.ToArray();
         }

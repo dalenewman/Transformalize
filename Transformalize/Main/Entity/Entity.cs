@@ -43,7 +43,6 @@ namespace Transformalize.Main
             Schema = string.Empty;
             PrimaryKey = new Fields();
             Fields = new Fields();
-            All = new Fields();
             Joins = new Dictionary<string, Relationship>();
             InputKeys = new List<Row>();
             Prefix = string.Empty;
@@ -57,8 +56,6 @@ namespace Transformalize.Main
         public Field Version { get; set; }
         public Fields PrimaryKey { get; set; }
         public Fields Fields { get; set; }
-        public Fields Xml { get; set; }
-        public Fields All { get; set; }
         public Dictionary<string, Relationship> Joins { get; set; }
         public object Begin { get; set; }
         public object End { get; set; }
@@ -135,7 +132,7 @@ namespace Transformalize.Main
 
         public Fields InputFields()
         {
-            return new FieldSqlWriter(All, CalculatedFields).ExpandXml().Input().Context();
+            return new FieldSqlWriter(Fields, CalculatedFields).Input().Context();
         }
 
         public override string ToString()

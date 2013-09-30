@@ -48,9 +48,9 @@ namespace Transformalize.Operations
             _separator = separator;
             _separatorString = separator.ToString(CultureInfo.InvariantCulture);
             _separatorArray = new[] {separator};
-            _columnsToGroupBy = new FieldSqlWriter(_entity.PrimaryKey).ExpandXml().Input().Context().ToEnumerable().Select(f => f.Alias).ToArray();
+            _columnsToGroupBy = new FieldSqlWriter(_entity.PrimaryKey).Input().Context().ToEnumerable().Select(f => f.Alias).ToArray();
             _firstKey = _columnsToGroupBy[0];
-            _columnsToAccumulate = new FieldSqlWriter(_entity.All).ExpandXml().Input().Aggregate().ToArray();
+            _columnsToAccumulate = new FieldSqlWriter(_entity.Fields).Input().Aggregate().ToArray();
 
             foreach (var field in _columnsToAccumulate)
             {

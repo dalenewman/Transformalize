@@ -51,18 +51,17 @@ namespace Transformalize.Test.Integration
 
             //new FromXmlTransformFieldsMoveAdapter(Element).Adapt();
 
-            Assert.AreEqual(0, Element.Entities[0].Fields[4].Transforms[0].Fields.Cast<FieldConfigurationElement>().Count());
-            Assert.AreEqual(9, Element.Entities[0].Fields.Cast<FieldConfigurationElement>().Count());
+            Assert.AreEqual(0, Element.Entities[0].Fields[5].Transforms[0].Fields.Cast<FieldConfigurationElement>().Count());
+            Assert.AreEqual(10, Element.Entities[0].Fields.Cast<FieldConfigurationElement>().Count());
         }
 
         [Test]
         public void TestGetAllFieldsNeededForMultiFieldTransformations()
         {
-            var expected = new Parameters
-                               {
-                                   {"LastName", "LastName", null, "System.Object"},
-                                   {"ProductName", "ProductName", null, "System.Object"}
-                               };
+            var expected = new Parameters {
+                {"LastName", "LastName", null, "System.Object"},
+                {"ProductName", "ProductName", null, "System.Object"}
+            };
 
             var actual = _process.Parameters();
 
@@ -103,10 +102,10 @@ namespace Transformalize.Test.Integration
             Assert.AreEqual("output", test.Connections[1].Name);
             Assert.AreEqual("OrderDetail", test.Entities[0].Name);
             Assert.AreEqual("input", test.Entities[0].Connection);
-            Assert.AreEqual("OrderDetailKey", test.Entities[0].PrimaryKey[0].Name);
-            Assert.AreEqual("OrderDetailKey", test.Entities[0].PrimaryKey[0].Alias);
-            Assert.AreEqual("OrderKey", test.Entities[0].Fields[0].Name);
-            Assert.AreEqual("OrderKey", test.Entities[0].Fields[0].Alias);
+            Assert.AreEqual("OrderDetailKey", test.Entities[0].Fields[0].Name);
+            Assert.AreEqual("OrderDetailKey", test.Entities[0].Fields[0].Alias);
+            Assert.AreEqual("OrderKey", test.Entities[0].Fields[1].Name);
+            Assert.AreEqual("OrderKey", test.Entities[0].Fields[1].Alias);
             Assert.AreEqual("RowVersion", test.Entities[0].Version);
             Assert.AreEqual("OrderDetail", test.Relationships[0].LeftEntity);
             Assert.AreEqual("Order", test.Relationships[0].RightEntity);

@@ -24,7 +24,6 @@ using System.Collections.Generic;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
-using Transformalize.Main.Providers.SqlServer;
 
 namespace Transformalize.Operations
 {

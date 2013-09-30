@@ -32,11 +32,9 @@ namespace Transformalize.Operations
         private readonly Entity _entity;
         private readonly string _firstKey;
         private readonly string[] _keys;
-        private readonly Process _process;
 
-        public EntityInputKeysStore(Process process, Entity entity)
+        public EntityInputKeysStore(Entity entity)
         {
-            _process = process;
             _entity = entity;
             _firstKey = _entity.PrimaryKey.First().Key;
             _keys = _entity.PrimaryKey.ToEnumerable().Select(f => f.Alias).ToArray();

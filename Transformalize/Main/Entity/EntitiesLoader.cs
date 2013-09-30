@@ -40,15 +40,17 @@ namespace Transformalize.Main {
         }
 
         private void GuardAgainstFieldOverlap(Entity entity) {
-            var entityKeys = new HashSet<string>(entity.Fields.OutputKeys());
-            var processKeys = new HashSet<string>(_process.Entities.OutputKeys());
+            
+            var entityKeys = new HashSet<string>(entity.Fields.ToEnumerable().Where(f => f.Output && !f.FieldType.HasFlag(FieldType.PrimaryKey)).Select(f => f.Alias));
+            var processKeys = new HashSet<string>(_process.Entities.SelectMany(e2 => e2.Fields.ToEnumerable().Where(f => f.Output).Select(f => f.Alias)));
+
             entityKeys.IntersectWith(processKeys);
 
             if (!entityKeys.Any()) return;
 
             var count = entityKeys.Count;
-            _log.Error("field overlap error in {3}.  The field{1}: {0} {2} already defined in previous entities.  You must alias (rename) these.", string.Join(", ", entityKeys), count.Plural(), count == 1 ? "is" : "are", entity.Alias);
-            Environment.Exit(1);
+            _log.Warn("field overlap error in {3}.  The field{1}: {0} {2} already defined in previous entities.  You must alias (rename) these.", string.Join(", ", entityKeys), count.Plural(), count == 1 ? "is" : "are", entity.Alias);
+            //Environment.Exit(1);
         }
     }
 }

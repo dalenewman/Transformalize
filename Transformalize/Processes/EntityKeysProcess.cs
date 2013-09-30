@@ -49,7 +49,7 @@ namespace Transformalize.Processes {
                 }
             }
 
-            Register(new EntityInputKeysStore(_process, _entity));
+            Register(new EntityInputKeysStore(_entity));
         }
 
         protected override void PostProcessing() {

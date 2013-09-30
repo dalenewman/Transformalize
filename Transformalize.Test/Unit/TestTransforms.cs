@@ -263,19 +263,17 @@ namespace Transformalize.Test.Unit
         public void TestInsertTransform()
         {
             var entity = new Entity(1);
-            entity.All["Field1"] = new Field(FieldType.Field)
-                                       {
-                                           Alias = "Field1",
-                                           Transforms = new Transforms
-                                                            {
-                                                                new InsertTransform(1, ".", new Parameters())
-                                                            }
-                                       };
+            entity.Fields["Field1"] = new Field(FieldType.Field) {
+                Alias = "Field1",
+                Transforms = new Transforms {
+                    new InsertTransform(1, ".", new Parameters())
+                }
+            };
 
             var rows = TestOperation(
                 _testInput.Object,
-                new ApplyDefaults(entity.All),
-                new TransformFields(entity.All),
+                new ApplyDefaults(entity.Fields),
+                new TransformFields(entity.Fields),
                 new LogOperation()
                 );
 
@@ -311,7 +309,7 @@ namespace Transformalize.Test.Unit
                               {
                                   {"test", new Script("test", scriptContent, "test.js")}
                               };
-            entity.All["Field1"] = new Field(FieldType.Field)
+            entity.Fields["Field1"] = new Field(FieldType.Field)
                                        {
                                            Alias = "Field1",
                                            Transforms = new Transforms
@@ -322,8 +320,8 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 input,
-                new ApplyDefaults(entity.All),
-                new TransformFields(entity.All),
+                new ApplyDefaults(entity.Fields),
+                new TransformFields(entity.Fields),
                 new LogOperation()
                 );
 
@@ -360,7 +358,7 @@ namespace Transformalize.Test.Unit
 
             var entity = new Entity(1);
             var scripts = new Dictionary<string, Script>();
-            entity.All["Field1"] = new Field("System.Int32", "8", FieldType.Field, true, "0")
+            entity.Fields["Field1"] = new Field("System.Int32", "8", FieldType.Field, true, "0")
                                        {
                                            Alias = "Field1",
                                            Input = true,
@@ -373,8 +371,8 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 numbers,
-                new ApplyDefaults(entity.All),
-                new TransformFields(entity.All),
+                new ApplyDefaults(entity.Fields),
+                new TransformFields(entity.Fields),
                 new LogOperation()
                 );
 
@@ -389,7 +387,7 @@ namespace Transformalize.Test.Unit
         {
             var entity = new Entity(1);
             var scripts = new Dictionary<string, Script>();
-            entity.All["Field1"] = new Field(FieldType.Field)
+            entity.Fields["Field1"] = new Field(FieldType.Field)
                                        {
                                            Alias = "Field1",
                                            Input = true,
@@ -401,8 +399,8 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 _testInput.Object,
-                new ApplyDefaults(entity.All),
-                new TransformFields(entity.All),
+                new ApplyDefaults(entity.Fields),
+                new TransformFields(entity.Fields),
                 new LogOperation()
                 );
 
@@ -515,7 +513,7 @@ namespace Transformalize.Test.Unit
         public void TestLeftTransform()
         {
             var entity = new Entity(1);
-            entity.All["Field1"] = new Field(FieldType.Field)
+            entity.Fields["Field1"] = new Field(FieldType.Field)
                                        {
                                            Alias = "Field1",
                                            Transforms = new Transforms
@@ -527,7 +525,7 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 _testInput.Object,
-                new TransformFields(entity.All),
+                new TransformFields(entity.Fields),
                 new LogOperation()
                 );
 
@@ -547,7 +545,7 @@ namespace Transformalize.Test.Unit
 
             var entity = new Entity(1);
             var parameters = new Parameters();
-            entity.All["Field1"] = new Field(FieldType.Field)
+            entity.Fields["Field1"] = new Field(FieldType.Field)
                                        {
                                            Alias = "Field1",
                                            Transforms = new Transforms
@@ -558,7 +556,7 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 _testInput.Object,
-                new TransformFields(entity.All),
+                new TransformFields(entity.Fields),
                 new LogOperation()
                 );
 
@@ -578,7 +576,7 @@ namespace Transformalize.Test.Unit
 
             var entity = new Entity(1);
             var parameters = new Parameters();
-            entity.All["Field1"] = new Field(FieldType.Field)
+            entity.Fields["Field1"] = new Field(FieldType.Field)
                                        {
                                            Alias = "Field1",
                                            Input = true,
@@ -590,7 +588,7 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 _testInput.Object,
-                new TransformFields(entity.All),
+                new TransformFields(entity.Fields),
                 new LogOperation()
                 );
 
@@ -610,7 +608,7 @@ namespace Transformalize.Test.Unit
 
             var entity = new Entity(1);
             var parameters = new Parameters();
-            entity.All["Field1"] = new Field(FieldType.Field)
+            entity.Fields["Field1"] = new Field(FieldType.Field)
                                        {
                                            Alias = "Field1",
                                            Transforms = new Transforms
@@ -621,7 +619,7 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 _testInput.Object,
-                new TransformFields(entity.All),
+                new TransformFields(entity.Fields),
                 new LogOperation()
                 );
 
@@ -655,7 +653,7 @@ namespace Transformalize.Test.Unit
             var input = mock.Object;
 
             var entity = new Entity(1);
-            entity.All["Field1"] = new Field(FieldType.Field)
+            entity.Fields["Field1"] = new Field(FieldType.Field)
                                        {
                                            Alias = "Field1",
                                            Input = true,
@@ -668,8 +666,8 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 input,
-                new ApplyDefaults(entity.All),
-                new TransformFields(entity.All),
+                new ApplyDefaults(entity.Fields),
+                new TransformFields(entity.Fields),
                 new LogOperation()
                 );
 
@@ -705,7 +703,7 @@ namespace Transformalize.Test.Unit
             var input = mock.Object;
 
             var entity = new Entity(1);
-            entity.All["Field1"] = new Field(FieldType.Field)
+            entity.Fields["Field1"] = new Field(FieldType.Field)
                                        {
                                            Alias = "Field1",
                                            Input = true,
@@ -718,8 +716,8 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 input,
-                new ApplyDefaults(entity.All),
-                new TransformFields(entity.All),
+                new ApplyDefaults(entity.Fields),
+                new TransformFields(entity.Fields),
                 new LogOperation()
                 );
 
@@ -733,7 +731,7 @@ namespace Transformalize.Test.Unit
         public void TestRegexReplaceTransform()
         {
             var entity = new Entity(1);
-            entity.All["Field1"] = new Field(FieldType.Field)
+            entity.Fields["Field1"] = new Field(FieldType.Field)
                                        {
                                            Alias = "Field1",
                                            Transforms = new Transforms
@@ -745,7 +743,7 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 _testInput.Object,
-                new TransformFields(entity.All),
+                new TransformFields(entity.Fields),
                 new LogOperation()
                 );
 
@@ -757,7 +755,7 @@ namespace Transformalize.Test.Unit
         public void TestRemoveTransform()
         {
             var entity = new Entity(1);
-            entity.All["Field1"] = new Field(FieldType.Field)
+            entity.Fields["Field1"] = new Field(FieldType.Field)
                                        {
                                            Alias = "Field1",
                                            Transforms = new Transforms
@@ -768,8 +766,8 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 _testInput.Object,
-                new ApplyDefaults(entity.All),
-                new TransformFields(entity.All),
+                new ApplyDefaults(entity.Fields),
+                new TransformFields(entity.Fields),
                 new LogOperation()
                 );
 
@@ -781,7 +779,7 @@ namespace Transformalize.Test.Unit
         public void TestReplaceTransform()
         {
             var entity = new Entity(1);
-            entity.All["Field1"] = new Field(FieldType.Field)
+            entity.Fields["Field1"] = new Field(FieldType.Field)
                                        {
                                            Alias = "Field1",
                                            Transforms = new Transforms
@@ -793,7 +791,7 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 _testInput.Object,
-                new TransformFields(entity.All),
+                new TransformFields(entity.Fields),
                 new LogOperation()
                 );
 
@@ -805,7 +803,7 @@ namespace Transformalize.Test.Unit
         public void TestRightTransform()
         {
             var entity = new Entity(1);
-            entity.All["Field1"] = new Field(FieldType.Field)
+            entity.Fields["Field1"] = new Field(FieldType.Field)
                                        {
                                            Alias = "Field1",
                                            Transforms = new Transforms
@@ -817,7 +815,7 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 _testInput.Object,
-                new TransformFields(entity.All),
+                new TransformFields(entity.Fields),
                 new LogOperation()
                 );
 
@@ -829,7 +827,7 @@ namespace Transformalize.Test.Unit
         public void TestSubStringTransform()
         {
             var entity = new Entity(1);
-            entity.All["Field1"] = new Field(FieldType.Field)
+            entity.Fields["Field1"] = new Field(FieldType.Field)
                                        {
                                            Alias = "Field1",
                                            Transforms = new Transforms
@@ -841,8 +839,8 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 _testInput.Object,
-                new ApplyDefaults(entity.All),
-                new TransformFields(entity.All),
+                new ApplyDefaults(entity.Fields),
+                new TransformFields(entity.Fields),
                 new LogOperation()
                 );
 
@@ -865,7 +863,7 @@ namespace Transformalize.Test.Unit
 
             var entity = new Entity(1);
             var templates = new Dictionary<string, Template>();
-            entity.All["Name"] = new Field(FieldType.Field)
+            entity.Fields["Name"] = new Field(FieldType.Field)
                                      {
                                          Alias = "Name",
                                          Transforms = new Transforms
@@ -876,8 +874,8 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 input.Object,
-                new ApplyDefaults(entity.All),
-                new TransformFields(entity.All),
+                new ApplyDefaults(entity.Fields),
+                new TransformFields(entity.Fields),
                 new LogOperation()
                 );
 
@@ -910,7 +908,7 @@ namespace Transformalize.Test.Unit
             var input = mock.Object;
 
             var entity = new Entity(1);
-            entity.All["Field1"] = new Field(FieldType.Field)
+            entity.Fields["Field1"] = new Field(FieldType.Field)
                                        {
                                            Alias = "Field1",
                                            Input = true,
@@ -923,8 +921,8 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 input,
-                new ApplyDefaults(entity.All),
-                new TransformFields(entity.All),
+                new ApplyDefaults(entity.Fields),
+                new TransformFields(entity.Fields),
                 new LogOperation()
                 );
 
@@ -960,7 +958,7 @@ namespace Transformalize.Test.Unit
             var input = mock.Object;
 
             var entity = new Entity(1);
-            entity.All["Field1"] = new Field(FieldType.Field)
+            entity.Fields["Field1"] = new Field(FieldType.Field)
                                        {
                                            Alias = "Field1",
                                            Input = true,
@@ -973,8 +971,8 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 input,
-                new ApplyDefaults(entity.All),
-                new TransformFields(entity.All),
+                new ApplyDefaults(entity.Fields),
+                new TransformFields(entity.Fields),
                 new LogOperation()
                 );
 
@@ -988,7 +986,7 @@ namespace Transformalize.Test.Unit
         public void TestTrimEndTransform1()
         {
             var entity = new Entity(1);
-            entity.All["Field1"] = new Field(FieldType.Field)
+            entity.Fields["Field1"] = new Field(FieldType.Field)
                                        {
                                            Alias = "Field1",
                                            Transforms = new Transforms
@@ -1004,7 +1002,7 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 _testInput.Object,
-                new TransformFields(entity.All),
+                new TransformFields(entity.Fields),
                 new LogOperation()
                 );
 
@@ -1016,7 +1014,7 @@ namespace Transformalize.Test.Unit
         public void TestTrimEndTransform2()
         {
             var entity = new Entity(1);
-            entity.All["Field1"] = new Field(FieldType.Field)
+            entity.Fields["Field1"] = new Field(FieldType.Field)
                                        {
                                            Alias = "Field1",
                                            Transforms = new Transforms
@@ -1028,7 +1026,7 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 _testInput.Object,
-                new TransformFields(entity.All),
+                new TransformFields(entity.Fields),
                 new LogOperation()
                 );
 
@@ -1041,7 +1039,7 @@ namespace Transformalize.Test.Unit
         public void TestTrimStartTransform()
         {
             var entity = new Entity(1);
-            entity.All["Field1"] = new Field(FieldType.Field)
+            entity.Fields["Field1"] = new Field(FieldType.Field)
                                        {
                                            Alias = "Field1",
                                            Transforms = new Transforms
@@ -1052,7 +1050,7 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 _testInput.Object,
-                new TransformFields(entity.All),
+                new TransformFields(entity.Fields),
                 new LogOperation()
                 );
 
@@ -1064,7 +1062,7 @@ namespace Transformalize.Test.Unit
         public void TestTrimTransform()
         {
             var entity = new Entity(1);
-            entity.All["Field1"] = new Field(FieldType.Field)
+            entity.Fields["Field1"] = new Field(FieldType.Field)
                                        {
                                            Alias = "Field1",
                                            Transforms = new Transforms
@@ -1075,7 +1073,7 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 _testInput.Object,
-                new TransformFields(entity.All),
+                new TransformFields(entity.Fields),
                 new LogOperation()
                 );
 
@@ -1107,7 +1105,7 @@ namespace Transformalize.Test.Unit
                                  };
 
             var entity = new Entity(1);
-            entity.All["XmlField"] = new Field(FieldType.Field)
+            entity.Fields["XmlField"] = new Field(FieldType.Field)
                                          {
                                              Alias = "XmlField",
                                              Input = true,
@@ -1120,7 +1118,7 @@ namespace Transformalize.Test.Unit
 
             var rows = TestOperation(
                 xmlInput,
-                new TransformFields(entity.All),
+                new TransformFields(entity.Fields),
                 new LogOperation()
                 );
 

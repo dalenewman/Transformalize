@@ -48,7 +48,7 @@ namespace Transformalize.Operations
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
         {
-            var fields = new FieldSqlWriter(_entity.All).ExpandXml().Input().Keys().ToArray();
+            var fields = new FieldSqlWriter(_entity.Fields).Input().Keys().ToArray();
 
             var count = 0;
             foreach (var batch in _entity.InputKeys.Partition(_entity.InputConnection.BatchSize))
@@ -68,7 +68,7 @@ namespace Transformalize.Operations
             var sql = noCount +
                       _entity.InputConnection.TableQueryWriter.WriteTemporary(tableName, _key, _provider, false) +
                       SqlTemplates.BatchInsertValues(50, tableName, _key, rows, _entity.InputConnection) + Environment.NewLine +
-                      SqlTemplates.Select(_entity.All, _entity.Name, tableName, _provider);
+                      SqlTemplates.Select(_entity.Fields, _entity.Name, tableName, _provider);
 
             Trace(sql);
 

@@ -37,8 +37,7 @@ namespace Transformalize.Main {
             _process = process;
         }
 
-        public Entity Read(int batchId, EntityConfigurationElement element, bool isMaster)
-        {
+        public Entity Read(int batchId, EntityConfigurationElement element, bool isMaster) {
             var entity = new Entity(batchId) {
                 ProcessName = _process.Name,
                 Schema = element.Schema,
@@ -54,76 +53,91 @@ namespace Transformalize.Main {
 
             if (entity.Auto) {
                 var autoReader = new SqlServerEntityAutoFieldReader();
-                entity.All = autoReader.Read(entity, isMaster);
-                entity.Fields = new FieldSqlWriter(entity.All).FieldType(FieldType.Field).Context();
-                entity.PrimaryKey = new FieldSqlWriter(entity.All).FieldType(FieldType.PrimaryKey, FieldType.MasterKey).Context();
-            }
-
-            var pkIndex = 0;
-            foreach (FieldConfigurationElement pk in element.PrimaryKey) {
-                var fieldType = isMaster ? FieldType.MasterKey : FieldType.PrimaryKey;
-
-                var keyField = new FieldReader(_process, entity, new FieldTransformParametersReader(), new EmptyParametersReader()).Read(pk, fieldType);
-                keyField.Index = pkIndex;
-
-                entity.PrimaryKey[keyField.Alias] = keyField;
-                entity.All[keyField.Alias] = keyField;
-
-                pkIndex++;
+                var fields = autoReader.Read(entity, isMaster);
+                entity.Fields = new FieldSqlWriter(fields).FieldType(FieldType.Field, FieldType.PrimaryKey, FieldType.MasterKey).Context();
+                entity.PrimaryKey = new FieldSqlWriter(fields).FieldType(FieldType.PrimaryKey, FieldType.MasterKey).Context();
             }
 
             var fieldIndex = 0;
             foreach (FieldConfigurationElement f in element.Fields) {
-                var field = new FieldReader(_process, entity, new FieldTransformParametersReader(), new EmptyParametersReader()).Read(f);
+                var fieldType = GetFieldType(f, isMaster);
+
+                var field = new FieldReader(_process, entity, new FieldTransformParametersReader(), new EmptyParametersReader()).Read(f, fieldType);
                 field.Index = fieldIndex;
 
                 if (entity.Auto && entity.Fields.ContainsKey(field.Name)) {
                     entity.Fields.Remove(field.Name);
-                    entity.All.Remove(field.Name);
                 }
 
                 entity.Fields[field.Alias] = field;
-                entity.All[field.Alias] = field;
+
+                if (f.PrimaryKey) {
+                    entity.PrimaryKey[field.Alias] = field;
+                }
 
                 fieldIndex++;
             }
 
-            if (!String.IsNullOrEmpty(element.Version)) {
-                if (entity.All.ContainsKey(element.Version)) {
-                    entity.Version = entity.All[element.Version];
+            foreach (FieldConfigurationElement cf in element.CalculatedFields) {
+                var transformParametersReader = new EntityTransformParametersReader(entity);
+                var parametersReader = new EntityParametersReader(entity);
+                var fieldReader = new FieldReader(_process, entity, transformParametersReader, parametersReader, usePrefix: false);
+                var fieldType = GetFieldType(cf, isMaster);
+                var field = fieldReader.Read(cf, fieldType);
+                field.Index = fieldIndex;
+                entity.CalculatedFields.Add(cf.Alias, field);
+                if (cf.PrimaryKey) {
+                    entity.PrimaryKey[cf.Alias] = field;
+                }
+                fieldIndex++;
+            }
+
+            LoadVersion(element, entity);
+
+            return entity;
+        }
+
+        private void LoadVersion(EntityConfigurationElement element, Entity entity) {
+            if (String.IsNullOrEmpty(element.Version))
+                return;
+
+            if (entity.Fields.ContainsKey(element.Version)) {
+                entity.Version = entity.Fields[element.Version];
+            } else {
+                if (entity.Fields.Any(kv => kv.Value.Name.Equals(element.Version, IC))) {
+                    entity.Version = entity.Fields.ToEnumerable().First(v => v.Name.Equals(element.Version, IC));
                 } else {
-                    if (entity.All.Any(kv => kv.Value.Name.Equals(element.Version, IC))) {
-                        entity.Version = entity.All.ToEnumerable().First(v => v.Name.Equals(element.Version, IC));
+                    if (entity.CalculatedFields.ContainsKey(element.Version)) {
+                        entity.Version = entity.CalculatedFields[element.Version];
                     } else {
                         _log.Error("version field reference '{0}' is undefined in {1}.", element.Version, element.Name);
                         Environment.Exit(0);
                     }
                 }
-                entity.Version.Input = true;
-                entity.Version.Output = true;
             }
-
-            foreach (FieldConfigurationElement field in element.CalculatedFields)
-            {
-                var transformParametersReader = new EntityTransformParametersReader(entity);
-                var parametersReader = new EntityParametersReader(entity);
-                var fieldReader = new FieldReader(_process, entity, transformParametersReader, parametersReader, usePrefix:false);
-                entity.CalculatedFields.Add(field.Alias, fieldReader.Read(field));
-            }
-
-            return entity;
+            entity.Version.Input = true;
+            entity.Version.Output = true;
         }
 
-        private void GuardAgainstInvalidGrouping(EntityConfigurationElement element, Entity entity)
-        {
-            if (entity.Group)
-            {
-                if (element.Fields.Cast<FieldConfigurationElement>().Any(f => string.IsNullOrEmpty(f.Aggregate)))
-                {
-                    _log.Error("Entity {0} is set to group, but not all your fields have aggregate defined.", entity.Alias);
-                    Environment.Exit(1);
-                }
+        private void GuardAgainstInvalidGrouping(EntityConfigurationElement element, Entity entity) {
+            if (!entity.Group)
+                return;
+
+            if (!element.Fields.Cast<FieldConfigurationElement>().Any(f => string.IsNullOrEmpty(f.Aggregate)))
+                return;
+
+            _log.Error("Entity {0} is set to group, but not all your fields have aggregate defined.", entity.Alias);
+            Environment.Exit(1);
+        }
+
+        private static FieldType GetFieldType(FieldConfigurationElement element, bool isMaster) {
+            FieldType fieldType;
+            if (element.PrimaryKey) {
+                fieldType = isMaster ? FieldType.MasterKey : FieldType.PrimaryKey;
+            } else {
+                fieldType = FieldType.Field;
             }
+            return fieldType;
         }
     }
 }

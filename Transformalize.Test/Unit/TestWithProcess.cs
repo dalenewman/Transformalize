@@ -58,7 +58,7 @@ namespace Transformalize.Test.Unit {
 
             TestOperation(
                 _entityKeysExtract.Object,
-                new EntityInputKeysStore(_process, entity)
+                new EntityInputKeysStore(entity)
                 );
 
             var operations = TestOperation(
@@ -103,7 +103,7 @@ UNION ALL SELECT 4;";
         public void TestSelectByKeysSql() {
             var entity = _process.Entities.First();
 
-            var actual = SqlTemplates.Select(entity.All, entity.OutputName(), "@KEYS", _process.OutputConnection.Provider);
+            var actual = SqlTemplates.Select(entity.Fields, entity.OutputName(), "@KEYS", _process.OutputConnection.Provider);
 
             const string expected = @"
 SELECT

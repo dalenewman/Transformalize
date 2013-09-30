@@ -49,12 +49,12 @@ namespace Transformalize.Main.Providers
 
             foreach (var entity in _process.Entities) {
                 if (entity.IsMaster()) {
-                    fields[StarFieldType.Master].AddRange(new FieldSqlWriter(entity.PrimaryKey, entity.Fields, _process.CalculatedFields, entity.CalculatedFields).ExpandXml().Output().Context());
+                    fields[StarFieldType.Master].AddRange(new FieldSqlWriter(entity.Fields, _process.CalculatedFields, entity.CalculatedFields).Output().Context());
                 } else {
                     if (entity.Fields.Any(f => f.Value.FieldType.HasFlag(FieldType.ForeignKey))) {
-                        fields[StarFieldType.Foreign].AddRange(new FieldSqlWriter(entity.Fields).ExpandXml().Output().FieldType(FieldType.ForeignKey).Context());
+                        fields[StarFieldType.Foreign].AddRange(new FieldSqlWriter(entity.Fields).Output().FieldType(FieldType.ForeignKey).Context());
                     }
-                    fields[StarFieldType.Other].AddRange(new FieldSqlWriter(entity.Fields, entity.CalculatedFields).ExpandXml().Output().FieldType(FieldType.Field, FieldType.Version, FieldType.Xml).Context());
+                    fields[StarFieldType.Other].AddRange(new FieldSqlWriter(entity.Fields, entity.CalculatedFields).Output().FieldType(FieldType.Field, FieldType.Version).Context());
                 }
             }
 

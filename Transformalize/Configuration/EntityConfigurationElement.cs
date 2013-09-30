@@ -72,12 +72,6 @@ namespace Transformalize.Configuration
             set { this[CONNECTION] = value; }
         }
 
-        [ConfigurationProperty(PRIMARY_KEY)]
-        public FieldElementCollection PrimaryKey
-        {
-            get { return this[PRIMARY_KEY] as FieldElementCollection; }
-        }
-
         [ConfigurationProperty(FIELDS)]
         public FieldElementCollection Fields
         {

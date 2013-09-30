@@ -40,7 +40,7 @@ namespace Transformalize.Processes {
             GlobalDiagnosticsContext.Set("entity", Common.LogLength(entity.Alias, 20));
             _process = process;
             _entity = entity;
-            _fieldsWithTransforms = new FieldSqlWriter(entity.All).ExpandXml().HasTransform().Context();
+            _fieldsWithTransforms = new FieldSqlWriter(entity.Fields).HasTransform().Context();
         }
 
         protected override void Initialize() {
@@ -50,7 +50,7 @@ namespace Transformalize.Processes {
                 Register(new EntityKeysToOperations(_entity));
                 Register(new SerialUnionAllOperation());
             }
-            Register(new ApplyDefaults(_entity.All, _entity.CalculatedFields));
+            Register(new ApplyDefaults(_entity.Fields, _entity.CalculatedFields));
             Register(new TransformFields(_fieldsWithTransforms));
             Register(new TransformFields(_entity.CalculatedFields));
 

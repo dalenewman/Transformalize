@@ -15,7 +15,7 @@ namespace Transformalize.Operations {
 
         public FileFixedLengthImporter(Entity entity) {
             _entity = entity;
-            _fields = new FieldSqlWriter(_entity.All).Input().Context().ToEnumerable().OrderBy(f => f.Index).ToArray();
+            _fields = new FieldSqlWriter(_entity.Fields).Input().Context().ToEnumerable().OrderBy(f => f.Index).ToArray();
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

@@ -32,10 +32,8 @@ using Transformalize.Main.Providers.File;
 using Transformalize.Main.Providers.MySql;
 using Transformalize.Main.Providers.SqlServer;
 
-namespace Transformalize.Main
-{
-    public class Process
-    {
+namespace Transformalize.Main {
+    public class Process {
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         public Fields CalculatedFields = new Fields();
         public Dictionary<string, AbstractConnection> Connections = new Dictionary<string, AbstractConnection>();
@@ -57,12 +55,11 @@ namespace Transformalize.Main
         public AbstractConnection OutputConnection;
         public string Star;
 
-        public Process() : this("TEST")
-        {
+        public Process()
+            : this("TEST") {
         }
 
-        public Process(string name)
-        {
+        public Process(string name) {
             Name = name;
             GlobalDiagnosticsContext.Set("process", name);
 
@@ -83,7 +80,7 @@ namespace Transformalize.Main
             Kernal.Bind<IEntityRecordsExist>().To<SqlServerEntityRecordsExist>().WhenInjectedInto<SqlServerConnection>();
             Kernal.Bind<IEntityDropper>().To<SqlServerEntityDropper>().WhenInjectedInto<SqlServerConnection>();
             Kernal.Bind<IEntityExists>().To<SqlServerEntityExists>().WhenInjectedInto<SqlServerEntityDropper>();
-            
+
             //Analysis Services
             Kernal.Bind<AbstractProvider>().To<AnalysisServicesProvider>().WhenInjectedInto<AnalysisServicesConnection>();
             Kernal.Bind<IConnectionChecker>().To<AnalysisServicesConnectionChecker>().WhenInjectedInto<AnalysisServicesConnection>();
@@ -91,7 +88,7 @@ namespace Transformalize.Main
             Kernal.Bind<IProviderSupportsModifier>().To<FalseProviderSupportsModifier>().WhenInjectedInto<AnalysisServicesConnection>();
             Kernal.Bind<IEntityRecordsExist>().To<FalseEntityRecordsExist>().WhenInjectedInto<AnalysisServicesConnection>();
             Kernal.Bind<IEntityDropper>().To<FalseEntityDropper>().WhenInjectedInto<AnalysisServicesConnection>();
-            
+
             //File
             Kernal.Bind<AbstractProvider>().To<FileProvider>().WhenInjectedInto<FileConnection>();
             Kernal.Bind<IConnectionChecker>().To<FileConnectionChecker>().WhenInjectedInto<FileConnection>();
@@ -102,40 +99,30 @@ namespace Transformalize.Main
             Kernal.Bind<IEntityExists>().To<FileEntityExists>().WhenInjectedInto<FileEntityDropper>();
         }
 
-        public bool IsReady()
-        {
+        public bool IsReady() {
             return Connections.Select(connection => connection.Value.IsReady()).All(b => b.Equals(true));
         }
 
-        public Fields OutputFields()
-        {
+        public Fields OutputFields() {
             var fields = new Fields();
-            foreach (var entity in Entities)
-            {
-                fields.AddRange(new FieldSqlWriter(entity.All, entity.CalculatedFields, CalculatedFields).ExpandXml().Output().ToArray());
+            foreach (var entity in Entities) {
+                fields.AddRange(new FieldSqlWriter(entity.Fields, entity.CalculatedFields, CalculatedFields).Output().ToArray());
             }
             return fields;
         }
 
-        public IEnumerable<Field> SearchFields()
-        {
+        public IEnumerable<Field> SearchFields() {
             return new StarFields(this).Fields().Where(f => !f.SearchTypes.Any(st => st.Name.Equals("none")));
         }
 
-        public IParameters Parameters()
-        {
+        public IParameters Parameters() {
             var parameters = new Parameters();
 
-            foreach (var calculatedField in CalculatedFields)
-            {
-                if (calculatedField.Value.HasTransforms)
-                {
-                    foreach (AbstractTransform transform in calculatedField.Value.Transforms)
-                    {
-                        if (transform.HasParameters)
-                        {
-                            foreach (var parameter in transform.Parameters)
-                            {
+            foreach (var calculatedField in CalculatedFields) {
+                if (calculatedField.Value.HasTransforms) {
+                    foreach (AbstractTransform transform in calculatedField.Value.Transforms) {
+                        if (transform.HasParameters) {
+                            foreach (var parameter in transform.Parameters) {
                                 parameters[parameter.Key] = parameter.Value;
                             }
                         }
@@ -146,24 +133,20 @@ namespace Transformalize.Main
         }
 
         public Entity this[string entity] {
-            get
-            {
+            get {
                 return Entities.Find(e => e.Alias.Equals(entity, IC) || e.Name.Equals(entity, IC));
             }
         }
 
-        public void Drop(Entity entity)
-        {
+        public void Drop(Entity entity) {
             OutputConnection.Drop(entity);
         }
 
-        public bool OutputRecordsExist(string schema, string outputName)
-        {
+        public bool OutputRecordsExist(string schema, string outputName) {
             return OutputConnection.RecordsExist(schema, outputName);
         }
 
-        public int GetNextBatchId()
-        {
+        public int GetNextBatchId() {
             return OutputConnection.NextBatchId(Name);
         }
     }
