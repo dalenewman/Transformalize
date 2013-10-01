@@ -60,8 +60,6 @@ namespace Transformalize.Runner
                     ProcessEntityDeletes();
                     break;
                 default:
-                    new EntityRecordsExist(ref _process).Check();
-
                     ProcessEntities();
                     ProcessMaster();
                     ProcessTransforms();

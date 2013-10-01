@@ -71,12 +71,11 @@ namespace Transformalize.Main
         public Fields CalculatedFields { get; set; }
         public bool HasRows { get; set; }
         public bool HasRange { get; set; }
-
         public long Updates { get; set; }
         public long Inserts { get; set; }
         public long Deletes { get; set; }
-
         public int TflBatchId { get { return _tflBatchId; } }
+        public bool IsFirstRun { get; set; }
 
         public string FirstKey()
         {

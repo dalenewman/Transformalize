@@ -44,8 +44,14 @@ namespace Transformalize.Processes {
         }
 
         protected override void Initialize() {
+            _entity.IsFirstRun = !_process.OutputConnection.RecordsExist(_entity.Schema, _entity.OutputName());
+
             if (_entity.InputConnection.Provider.Type == ProviderType.File) {
-                Register(new FileFixedLengthImporter(_entity));
+                if (_entity.InputConnection.IsDelimited()) {
+                    Register(new FileDelimitedImporter(_entity));
+                } else {
+                    Register(new FileFixedLengthImporter(_entity));
+                }
             } else {
                 Register(new EntityKeysToOperations(_entity));
                 Register(new SerialUnionAllOperation());
@@ -57,7 +63,7 @@ namespace Transformalize.Processes {
             if (_entity.Group)
                 Register(new EntityAggregation(_entity));
 
-            if (_process.IsFirstRun) {
+            if (_entity.IsFirstRun) {
                 Register(new EntityAddTflFields(_entity));
                 RegisterLast(new EntityBulkInsert(_process, _entity));
             } else {

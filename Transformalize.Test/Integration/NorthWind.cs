@@ -29,18 +29,20 @@ namespace Transformalize.Test.Integration
     [TestFixture]
     public class NorthWind
     {
+        private const string FILE = @"NorthWind.xml";
+
         [Test]
         public void Init()
         {
             var options = new Options { Mode = Modes.Initialize };
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(@"NorthWind.xml").Read(), options).Read();
+            var process = new ProcessReader(new ProcessXmlConfigurationReader(FILE).Read(), options).Read();
             new ProcessRunner(process).Run();
         }
 
         [Test]
         public void Metadata() {
             var options = new Options { Mode = Modes.Metadata };
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(@"NorthWind.xml").Read(), options).Read();
+            var process = new ProcessReader(new ProcessXmlConfigurationReader(FILE).Read(), options).Read();
             new ProcessRunner(process).Run();
         }
 
@@ -48,7 +50,7 @@ namespace Transformalize.Test.Integration
         public void Normal()
         {
             var options = new Options();
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(@"NorthWind.xml").Read(), options).Read();
+            var process = new ProcessReader(new ProcessXmlConfigurationReader(FILE).Read(), options).Read();
             new ProcessRunner(process).Run();
         }
 
@@ -56,7 +58,7 @@ namespace Transformalize.Test.Integration
         public void Test()
         {
             var options = new Options { Mode = Modes.Test, Top = 1 };
-            var process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.xml").Read(), options).Read();
+            var process = new ProcessReader(new ProcessXmlConfigurationReader(FILE).Read(), options).Read();
             new ProcessRunner(process).Run();
         }
     }

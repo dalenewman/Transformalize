@@ -44,6 +44,7 @@ namespace Transformalize.Main.Providers {
             Password = ConnectionStringParser.GetPassword(ConnectionString);
             TrustedConnection = ConnectionStringParser.GetTrustedConnection(ConnectionString);
             File = ConnectionStringParser.GetFileName(ConnectionString);
+            Delimiter = element.Delimiter;
 
             _connectionChecker = connectionChecker;
             ScriptRunner = scriptRunner;
@@ -70,6 +71,7 @@ namespace Transformalize.Main.Providers {
         public string Password { get; set; }
         public bool TrustedConnection { get; set; }
         public string File { get; set; }
+        public string Delimiter { get; set; }
 
         public IDbConnection GetConnection() {
             var type = Type.GetType(TypeAndAssemblyName, false, true);
@@ -164,9 +166,12 @@ namespace Transformalize.Main.Providers {
             return _entityRecordsExist.RecordsExist(this, schema, name);
         }
 
-        public void Drop(Entity entity)
-        {
+        public void Drop(Entity entity) {
             _dropper.Drop(this, entity.Schema, entity.OutputName());
+        }
+
+        public bool IsDelimited() {
+            return !string.IsNullOrEmpty(Delimiter);
         }
     }
 }

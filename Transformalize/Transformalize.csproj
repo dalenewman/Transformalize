@@ -178,7 +178,6 @@
     <Compile Include="Main\Entity\Entity.cs" />
     <Compile Include="Main\Entity\EntityCounter.cs" />
     <Compile Include="Main\Entity\EntitiesDropper.cs" />
-    <Compile Include="Main\Entity\EntityRecordsExist.cs" />
     <Compile Include="Main\Entity\EntityTransformParametersReader.cs" />
     <Compile Include="Main\Entity\IEntityAutoFieldReader.cs" />
     <Compile Include="Main\Entity\IEntityBatchReader.cs" />
@@ -660,6 +659,7 @@
     <Compile Include="Operations\EntityDataExtract.cs" />
     <Compile Include="Operations\EntityDelete.cs" />
     <Compile Include="Operations\EntityOutputKeysExtractAll.cs" />
+    <Compile Include="Operations\FileDelimitedImporter.cs" />
     <Compile Include="Processes\EntityDeleteProcess.cs" />
     <Compile Include="Operations\EntityDetectDeletes.cs" />
     <Compile Include="Processes\EntityKeysProcess.cs" />

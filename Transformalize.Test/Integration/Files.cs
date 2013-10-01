@@ -35,31 +35,8 @@ namespace Transformalize.Test.Integration {
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
 
         [Test]
-        public void File() {
-            var cb = new DelimitedClassBuilder("Campaigns");
-            cb.AddField("CampaignId", typeof(int));
-            cb.AddField("Number", typeof(int));
-            cb.Delimiter = ",";
-            cb.IgnoreEmptyLines = true;
-
-            using (var file = new FluentFile(cb.CreateRecordClass()).From(@"c:\temp\campaign.txt")) {
-                foreach (var obj in file) {
-                    var row = Row.FromObject(obj);
-                    _log.Info("{0}|{1}", row["CampaignId"], row["Number"]);
-                }
-            }
-        }
-
-        [Test]
         public void Init() {
             var options = new Options { Mode = Modes.Initialize };
-            var process = new ProcessReader(new ProcessConfigurationReader("File").Read(), options).Read();
-            new ProcessRunner(process).Run();
-        }
-
-        [Test]
-        public void Test() {
-            var options = new Options() { Mode = Modes.Test };
             var process = new ProcessReader(new ProcessConfigurationReader("File").Read(), options).Read();
             new ProcessRunner(process).Run();
         }
@@ -70,5 +47,20 @@ namespace Transformalize.Test.Integration {
             var process = new ProcessReader(new ProcessConfigurationReader("File").Read(), options).Read();
             new ProcessRunner(process).Run();
         }
+
+        [Test]
+        public void InitOwnLogs() {
+            var options = new Options { Mode = Modes.Initialize };
+            var process = new ProcessReader(new ProcessConfigurationReader("MyLogs").Read(), options).Read();
+            new ProcessRunner(process).Run();
+        }
+
+        [Test]
+        public void NormalOwnLogs() {
+            var options = new Options();
+            var process = new ProcessReader(new ProcessConfigurationReader("MyLogs").Read(), options).Read();
+            new ProcessRunner(process).Run();
+        }
+
     }
 }

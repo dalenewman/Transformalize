@@ -191,11 +191,14 @@ namespace Transformalize.Test.Integration {
 
             Assert.AreEqual(1, process["Order Details"].Deletes);
 
-            
-            
-            
+            Reset(process);
+        }
+
+        private void Reset(Process process)
+        {
             _log.Info("***** RESET ******");
-            using (var cn = process["Order Details"].InputConnection.GetConnection()) {
+            using (var cn = process["Order Details"].InputConnection.GetConnection())
+            {
                 cn.Open();
                 cn.Execute("delete from [Order Details] where OrderID = 10261 and ProductID = 41;");
                 cn.Execute("delete from [Orders] where OrderID = (select top 1 OrderId from Orders order by OrderID desc)");
@@ -204,7 +207,6 @@ namespace Transformalize.Test.Integration {
                 cn.Execute("update Orders set ShipCountry = 'Brazil' where OrderID = 10250;");
                 cn.Execute("update [Order Details] set ProductID = 11 where OrderId = 10248 and ProductID = 10;");
             }
-
         }
     }
 }

@@ -33,6 +33,7 @@ namespace Transformalize.Configuration
         private const string PROVIDER = "provider";
         private const string BATCH_SIZE = "batchSize";
         private const string ENABLED = "enabled";
+        private const string DELIMITER = "delimiter";
         private DbConnectionStringBuilder _dbConnectionStringBuilder;
 
         [ConfigurationProperty(NAME, IsRequired = true)]
@@ -47,6 +48,12 @@ namespace Transformalize.Configuration
         {
             get { return this[VALUE] as string; }
             set { this[VALUE] = value; }
+        }
+
+        [ConfigurationProperty(DELIMITER, IsRequired = false, DefaultValue = "")]
+        public string Delimiter {
+            get { return this[DELIMITER] as string; }
+            set { this[DELIMITER] = value; }
         }
 
         [ConfigurationProperty(COMPATABILITY_LEVEL, IsRequired = false, DefaultValue = 0)]
@@ -82,11 +89,7 @@ namespace Transformalize.Configuration
         {
             get
             {
-                return _dbConnectionStringBuilder ??
-                       (_dbConnectionStringBuilder = new DbConnectionStringBuilder
-                                                         {
-                                                             ConnectionString = Value
-                                                         });
+                return _dbConnectionStringBuilder ?? (_dbConnectionStringBuilder = new DbConnectionStringBuilder { ConnectionString = Value });
             }
         }
 

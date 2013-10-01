@@ -45,7 +45,6 @@ namespace Transformalize.Main {
         public Entity MasterEntity;
         public string Name;
         public Options Options = new Options();
-        public bool IsFirstRun;
         public Dictionary<string, string> Providers = new Dictionary<string, string>();
         public List<Relationship> Relationships = new List<Relationship>();
         public Dictionary<string, Script> Scripts = new Dictionary<string, Script>();
