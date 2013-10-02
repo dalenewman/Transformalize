@@ -21,6 +21,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Text;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.RazorEngine;
@@ -52,6 +53,7 @@ namespace Transformalize.Main
 
             Razor.Compile(_builder.ToString(), typeof (object), key);
             _log.Debug("Compiled template with key {0}.", key);
+
         }
 
         public TemplateTransform(string template, string key, string templateModelType, IParameters parameters,
@@ -106,13 +108,12 @@ namespace Transformalize.Main
         {
             foreach (var pair in Parameters)
             {
-                _dynamicViewBagContext.AddValue(pair.Value.Name, pair.Value.Value ?? row[pair.Key]);
+                _dynamicViewBagContext.SetValue(pair.Value.Name, pair.Value.Value ?? row[pair.Key]);
             }
             row[resultKey] = Razor.Run(_key, _dynamicViewBagContext);
         }
 
-        private static void CombineTemplates(IEnumerable<KeyValuePair<string, Template>> templates,
-                                             ref StringBuilder builder)
+        private static void CombineTemplates(IEnumerable<KeyValuePair<string, Template>> templates, ref StringBuilder builder)
         {
             foreach (var pair in templates)
             {

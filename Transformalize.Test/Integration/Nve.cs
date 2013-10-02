@@ -29,12 +29,19 @@ namespace Transformalize.Test.Integration
     [TestFixture]
     public class Nve
     {
-        private const string FILE = @"c:\etl\RhinoEtl\Tfl\NVE.xml";
+        private const string FILE = @"c:\etl\RhinoEtl\Tfl\Nve.xml";
 
         [Test]
         public void Init()
         {
             var options = new Options { Mode = "init" };
+            var process = new ProcessReader(new ProcessXmlConfigurationReader(FILE).Read(), options).Read();
+            new ProcessRunner(process).Run();
+        }
+
+        [Test]
+        public void First() {
+            var options = new Options { Mode = "first" };
             var process = new ProcessReader(new ProcessXmlConfigurationReader(FILE).Read(), options).Read();
             new ProcessRunner(process).Run();
         }

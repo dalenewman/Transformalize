@@ -37,7 +37,7 @@ namespace Transformalize.Configuration
         private const string COUNT = "count";
         private const string START_INDEX = "start-index";
         private const string LENGTH = "length";
-        private const string TOTAL_WIDTH = "totalWidth";
+        private const string TOTAL_WIDTH = "total-width";
         private const string PADDING_CHAR = "padding-char";
         private const string MAP = "map";
         private const string SCRIPT = "script";

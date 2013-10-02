@@ -87,6 +87,12 @@ namespace Transformalize.Libs.RazorEngine.Templating
 
         #region Helper Methods
 
+
+        public void SetValue(string propertyName, object value)
+        {
+            _dict[propertyName] = value;
+        }
+
         /// <summary>
         ///     Add a value to this instance of DynamicViewBag.
         /// </summary>

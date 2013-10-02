@@ -1,8 +1,8 @@
 <ul class="download">
-    <li><a href="Tfl64.zip">Download Tfl64.zip - 2.3 MB</a></li>
+    <li><a href="Tfl64.zip">Download (64-bit) - 2.3 MB</a></li>
 </ul>
 
-Transformalize aims to transform and denormalize relational data in near real-time.  The resulting data may be used in several ways:
+<p>Transformalize aims to transform and denormalize relational data in near real-time.  The resulting data may be used in several ways:</p>
 
 <ul>
     <li>As an OLAP cube data source</li>
@@ -17,92 +17,75 @@ Transformalize aims to transform and denormalize relational data in near real-ti
 
 Start with an XML configuration:
 
-<pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+<pre lang="xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
 &lt;process&gt;
-	&lt;connections&gt;
-		&lt;add name=&quot;input&quot; /&gt;
-		&lt;add name=&quot;output&quot; /&gt;
-	&lt;/connections&gt;
-	&lt;entities/&gt;
-	&lt;relationships/&gt;
-&lt;/process&gt;
-</pre>
-
-Specify the <a href="http://www.microsoft.com/en-us/download/details.aspx?id=23654">NorthWind</a> database as an input, and another as the output.  The default input and output connection provider is SQL Server 2005+.
-
-<pre>
-&lt;connections&gt;
-	&lt;add name=&quot;input&quot; value=&quot;<strong>server=localhost;Database=NorthWind;Trusted_Connection=True;</strong>&quot;/&gt;
-	&lt;add name=&quot;output&quot; value=&quot;<strong>Server=localhost;Database=NorthWindOutput;Trusted_Connection=True;</strong>&quot;/&gt;
-&lt;/connections&gt;
-</pre>
-
-The NorthWind database:
-<div>
-    <img width="646" src="NorthWindOrderDetails.png" />
-</div>
-
-Add Order Details and save the file as NorthWind.xml.
-
-<pre>
-&lt;entities&gt;
-	<strong>&lt;add name=&quot;Order Details&quot;/&gt;</strong>
-&lt;/entities&gt;
-</pre>
-
-Run Transformalize in &quot;metadata&quot; mode:
-<pre>tfl NorthWind.xml {'mode':'metadata'}</pre>
-Metadata mode opens an XML file with Order Detail's primary key and field definitions.  Copy them into NorthWind.xml:
-<pre>
-&lt;entities&gt;
-	&lt;add name=&quot;Order Details&quot;&gt;
-		<strong>&lt;fields&gt;
-			&lt;add name=&quot;OrderID&quot; type=&quot;System.Int32&quot; primary-key=&quot;true&quot; /&gt;
-			&lt;add name=&quot;ProductID&quot; type=&quot;System.Int32&quot; primary-key=&quot;true&quot; /&gt;
-			&lt;add name=&quot;Discount&quot; type=&quot;System.Single&quot; /&gt;
-			&lt;add name=&quot;Quantity&quot; type=&quot;System.Int16&quot; /&gt;
-			&lt;add name=&quot;UnitPrice&quot; type=&quot;System.Decimal&quot; precision=&quot;19&quot; scale=&quot;4&quot;/&gt;
-		&lt;/fields&gt;</strong>
-	&lt;/add&gt;
-&lt;/entities&gt;
-</pre>
-Run Transformalize in Initialize mode:
-<pre>tfl NorthWind.xml {'mode':'<strong>init</strong>'}
+    &lt;connections&gt;
+        &lt;add name=&quot;input&quot; /&gt;
+        &lt;add name=&quot;output&quot; /&gt;
+    &lt;/connections&gt;
+    &lt;entities/&gt;
+    &lt;relationships/&gt;
+&lt;/process&gt;</pre>
+<p>Specify the <a href="http://www.microsoft.com/en-us/download/details.aspx?id=23654">NorthWind</a> database as an input, and another as the output.  The default input and output connection provider is SQL Server 2005+.</p>
+<pre lang="xml">&lt;connections&gt;
+    &lt;add name=&quot;input&quot; value=&quot;<strong>server=localhost;Database=NorthWind;Trusted_Connection=True;</strong>&quot;/&gt;
+    &lt;add name=&quot;output&quot; value=&quot;<strong>Server=localhost;Database=NorthWindOutput;Trusted_Connection=True;</strong>&quot;/&gt;
+&lt;/connections&gt;</pre>
+<p>The NorthWind database:</p>
+<p>
+    <img width="646" src="NorthWindOrderDetails.png" /></p>
+<p>Add Order Details and save the file as <em>NorthWind.xml</em>.</p>
+<pre lang="xml">&lt;entities&gt;
+    <strong>&lt;add name=&quot;Order Details&quot;/&gt;</strong>
+&lt;/entities&gt;</pre>
+<p>Run Transformalize in &quot;metadata&quot; mode:</p>
+<pre lang="xml">tfl NorthWind.xml {'mode':'metadata'}</pre>
+<p>Metadata mode opens an XML file with Order Detail's primary key and field definitions. Copy them into <em>NorthWind.xml</em>:</p>
+<pre lang="xml">&lt;entities&gt;
+    &lt;add name=&quot;Order Details&quot;&gt;
+        <strong>&lt;fields&gt;
+            &lt;add name=&quot;OrderID&quot; type=&quot;System.Int32&quot; primary-key=&quot;true&quot; /&gt;
+            &lt;add name=&quot;ProductID&quot; type=&quot;System.Int32&quot; primary-key=&quot;true&quot; /&gt;
+            &lt;add name=&quot;Discount&quot; type=&quot;System.Single&quot; /&gt;
+            &lt;add name=&quot;Quantity&quot; type=&quot;System.Int16&quot; /&gt;
+            &lt;add name=&quot;UnitPrice&quot; type=&quot;System.Decimal&quot; 
+                           precision=&quot;19&quot; scale=&quot;4&quot;/&gt;
+        &lt;/fields&gt;</strong>
+    &lt;/add&gt;
+&lt;/entities&gt;</pre>
+<p>Run Transformalize in Initialize mode:</p>
+<pre lang="text">tfl NorthWind.xml {'mode':'<strong>init</strong>'}
 23:38:57 | Info | NorthWind | All | Initialized TrAnSfOrMaLiZeR.
 23:38:57 | Info | NorthWind | All | Initialized NorthWindOrderDetails in NorthWindOutput on localhost.
-23:38:57 | Info | NorthWind | All | Process completed in 00:00:00.5585967.
-</pre>
-Run it without specifying a mode:
-<pre>tfl NorthWind.xml
+23:38:57 | Info | NorthWind | All | Process completed in 00:00:00.5585967.</pre>
+<p>Run it without specifying a mode:</p>
+<pre lang="xml">tfl NorthWind.xml
 23:43:01 | Info | NorthWind | Order Details....... | Processed <strong>2155 inserts</strong>, and 0 updates in Order Details.
-23:43:01 | Info | NorthWind | Order Details....... | Process completed in 00:00:00.7455880.
-</pre>
-It copied the data.  Run it again.
-<pre>tfl NorthWind.xml
+23:43:01 | Info | NorthWind | Order Details....... | Process completed in 00:00:00.7455880.</pre>
+<p>It copied the data.  Run it again.</p>
+<pre lang="text">tfl NorthWind.xml
 23:44:18 | Info | NorthWind | Order Details....... | Processed 0 inserts, and <strong>2155 updates</strong> in Order Details.
-23:44:18 | Info | NorthWind | Order Details....... | Process completed in 00:00:01.0926105.
-</pre>
-It updated the data.  It copies new and updates existing data, but it is inefficient. It updates data unnecessarily. 
+23:44:18 | Info | NorthWind | Order Details....... | Process completed in 00:00:01.0926105.</pre>
+<p>
+    It updated the data.  It copies new and updates existing data, but it is inefficient. It updates data unnecessarily. 
 So, add a column to Order Details that will increment anytime a record is inserted or updated.
-<pre>ALTER TABLE [Order Details] ADD RowVersion ROWVERSION;
-</pre>
-Update the Order Details entity to use RowVersion:
-<pre>
-&lt;entities&gt;
-	&lt;add name=&quot;Order Details&quot; <strong>version=&quot;RowVersion&quot;</strong>&gt;
-		&lt;fields&gt;
-			&lt;add name=&quot;OrderID&quot; type=&quot;System.Int32&quot; primary-key=&quot;true&quot; /&gt;
-			&lt;add name=&quot;ProductID&quot; type=&quot;System.Int32&quot; primary-key=&quot;true&quot; /&gt;
-			&lt;add name=&quot;Discount&quot; type=&quot;System.Single&quot; /&gt;
-			&lt;add name=&quot;Quantity&quot; type=&quot;System.Int16&quot; /&gt;
-			&lt;add name=&quot;RowVersion&quot; type=&quot;System.Byte[]&quot; length=&quot;8&quot; /&gt;
-			&lt;add name=&quot;UnitPrice&quot; type=&quot;System.Decimal&quot; precision=&quot;19&quot; scale=&quot;4&quot;/&gt;
-		&lt;/fields&gt;
-	&lt;/add&gt;
-&lt;/entities&gt;
-</pre>
-Re-initialize and run twice:
-<pre>tfl NorthWind.xml {'mode':'init'}
+</p>
+<pre lang="sql">ALTER TABLE [Order Details] ADD RowVersion ROWVERSION;</pre>
+<p>Update the Order Details entity to use RowVersion:</p>
+<pre lang="xml">&lt;entities&gt;
+    &lt;add name=&quot;Order Details&quot; <strong>version=&quot;RowVersion&quot;</strong>&gt;
+        &lt;fields&gt;
+            &lt;add name=&quot;OrderID&quot; type=&quot;System.Int32&quot; primary-key=&quot;true&quot; /&gt;
+            &lt;add name=&quot;ProductID&quot; type=&quot;System.Int32&quot; primary-key=&quot;true&quot; /&gt;
+            &lt;add name=&quot;Discount&quot; type=&quot;System.Single&quot; /&gt;
+            &lt;add name=&quot;Quantity&quot; type=&quot;System.Int16&quot; /&gt;
+            &lt;add name=&quot;RowVersion&quot; type=&quot;System.Byte[]&quot; length=&quot;8&quot; /&gt;
+            &lt;add name=&quot;UnitPrice&quot; type=&quot;System.Decimal&quot; precision=&quot;19&quot; scale=&quot;4&quot;/&gt;
+        &lt;/fields&gt;
+    &lt;/add&gt;
+&lt;/entities&gt;</pre>
+<p>Re-initialize and run twice:</p>
+<pre lang="text">tfl NorthWind.xml {'mode':'init'}
 23:58:52 | Info | NorthWind | All | Initialized TrAnSfOrMaLiZeR.
 23:58:52 | Info | NorthWind | All | Initialized NorthWindOrderDetails in NorthWindOutput on localhost.
 23:58:52 | Info | NorthWind | All | Process completed in 00:00:00.5504415.
@@ -113,11 +96,9 @@ tfl NorthWind.xml
 
 tfl NorthWind.xml
 00:00:23 | Info | NorthWind | Order Details....... | Processed 0 inserts, and <strong>0 updates</strong> in Order Details.
-00:00:23 | Info | NorthWind | Order Details....... | Process completed in 00:00:00.6042720.
-</pre>
-
-Now it doesn't update data unnecessarily.  View the output.
-<pre>SELECT TOP 10 Discount, OrderID, ProductID, Quantity, UnitPrice
+00:00:23 | Info | NorthWind | Order Details....... | Process completed in 00:00:00.6042720.</pre>
+<p>Now it doesn't update data unnecessarily.  View the output.</p>
+<pre lang="sql">SELECT TOP 10 Discount, OrderID, ProductID, Quantity, UnitPrice
 FROM NorthWindStar;
 
 Discount      OrderID     ProductID   Quantity UnitPrice
@@ -131,59 +112,58 @@ Discount      OrderID     ProductID   Quantity UnitPrice
 0.15          10250       51          35       42.4000
 0.15          10250       65          15       16.8000
 0.05          10251       22          6        16.8000
-0.05          10251       57          15       15.6000
-</pre>
-
-Review the NorthWind diagram.  The closest tables to Order Details are Orders and Products.<br />
+0.05          10251       57          15       15.6000</pre>
+<p>
+    Review the NorthWind diagram.  The closest tables to Order Details are Orders and Products. 
 Add the Orders entity. Hint: Add entity &lt;add name=&quot;Orders&quot;/&gt; and run Tfl in metadata mode.
-<pre>
-&lt;add name=&quot;Orders&quot; version=&quot;RowVersion&quot;&gt;
-	&lt;fields&gt;
-		&lt;add name=&quot;OrderID&quot; type=&quot;System.Int32&quot; primary-key=&quot;true&quot; &gt;&lt;/add&gt;
-		&lt;add name=&quot;Discount&quot; type=&quot;System.Single&quot; &gt;&lt;/add&gt;
-		&lt;add name=&quot;Quantity&quot; type=&quot;System.Int16&quot; &gt;&lt;/add&gt;
-		&lt;add name=&quot;RowVersion&quot; type=&quot;System.Byte[]&quot; length=&quot;8&quot; &gt;&lt;/add&gt;
-		&lt;add name=&quot;UnitPrice&quot; type=&quot;System.Decimal&quot; precision=&quot;19&quot; scale=&quot;4&quot;&gt;&lt;/add&gt;
-		&lt;add name=&quot;CustomerID&quot; type=&quot;System.Char&quot; length=&quot;5&quot; &gt;&lt;/add&gt;
-		&lt;add name=&quot;EmployeeID&quot; type=&quot;System.Int32&quot; &gt;&lt;/add&gt;
-		&lt;add name=&quot;Freight&quot; type=&quot;System.Decimal&quot; precision=&quot;19&quot; scale=&quot;4&quot;&gt;&lt;/add&gt;
-		&lt;add name=&quot;OrderDate&quot; type=&quot;System.DateTime&quot; &gt;&lt;/add&gt;
-		&lt;add name=&quot;RequiredDate&quot; type=&quot;System.DateTime&quot; &gt;&lt;/add&gt;
-		&lt;add name=&quot;RowVersion&quot; type=&quot;System.Byte[]&quot; length=&quot;8&quot; &gt;&lt;/add&gt;
-		&lt;add name=&quot;ShipAddress&quot; length=&quot;60&quot; &gt;&lt;/add&gt;
-		&lt;add name=&quot;ShipCity&quot; length=&quot;15&quot; &gt;&lt;/add&gt;
-		&lt;add name=&quot;ShipCountry&quot; length=&quot;15&quot; &gt;&lt;/add&gt;
-		&lt;add name=&quot;ShipName&quot; length=&quot;40&quot; &gt;&lt;/add&gt;
-		&lt;add name=&quot;ShippedDate&quot; type=&quot;System.DateTime&quot; &gt;&lt;/add&gt;
-		&lt;add name=&quot;ShipPostalCode&quot; length=&quot;10&quot; &gt;&lt;/add&gt;
-		&lt;add name=&quot;ShipRegion&quot; length=&quot;15&quot; &gt;&lt;/add&gt;
-		&lt;add name=&quot;ShipVia&quot; type=&quot;System.Int32&quot; &gt;&lt;/add&gt;
-	&lt;/fields&gt;
-&lt;/add&gt;
-</pre>
-Re-initialize.
-<pre>tfl NorthWind.xml {'mode':'init'}
-22:32:14 | Error | NorthWind | The entity <strong>Orders</strong> must have a relationship to the master entity <strong>Order Details</strong>.
-</pre>
-When another table is added, it must be related to the master table.  The master table is the first table defined.  In this case, it's Order Details.  So, add a relationship:
-<pre>
-	&lt;/entities&gt;
-	<strong>&lt;relationships&gt;
-		&lt;add leftEntity=&quot;Order Details&quot; leftField=&quot;OrderID&quot; rightEntity=&quot;Orders&quot; rightField=&quot;OrderID&quot;/&gt;
-	&lt;/relationships&gt;</strong>
-&lt;/process&gt;
-</pre>
-Re-initialize.
-<pre>tfl NorthWind.xml {'mode':'init'}
-23:13:31 | Error | NorthWind | field overlap error in Orders.  The field: RowVersion is already defined in a previous entity.  You must alias (rename) it.
-</pre>
-Multiple entities can introduce identical field names.  If it does, you have rename them.
-<pre>
-&lt;add name=&quot;Orders&quot; version=&quot;RowVersion&quot;&gt;
-		&lt;add name=&quot;RowVersion&quot; <strong>alias=&quot;OrdersRowVersion&quot;</strong> type=&quot;System.Byte[]&quot; length=&quot;8&quot; &gt;&lt;/add&gt;
-</pre>
-Re-initialize and run twice.
-<pre>tfl NorthWind.xml {'mode':'init'}
+</p>
+<pre lang="xml">&lt;add name=&quot;Orders&quot; version=&quot;RowVersion&quot;&gt;
+    &lt;fields&gt;
+        &lt;add name=&quot;OrderID&quot; type=&quot;System.Int32&quot; primary-key=&quot;true&quot; &gt;&lt;/add&gt;
+        &lt;add name=&quot;Discount&quot; type=&quot;System.Single&quot; &gt;&lt;/add&gt;
+        &lt;add name=&quot;Quantity&quot; type=&quot;System.Int16&quot; &gt;&lt;/add&gt;
+        &lt;add name=&quot;RowVersion&quot; type=&quot;System.Byte[]&quot; length=&quot;8&quot; &gt;&lt;/add&gt;
+        &lt;add name=&quot;UnitPrice&quot; type=&quot;System.Decimal&quot; precision=&quot;19&quot; scale=&quot;4&quot;&gt;&lt;/add&gt;
+        &lt;add name=&quot;CustomerID&quot; type=&quot;System.Char&quot; length=&quot;5&quot; &gt;&lt;/add&gt;
+        &lt;add name=&quot;EmployeeID&quot; type=&quot;System.Int32&quot; &gt;&lt;/add&gt;
+        &lt;add name=&quot;Freight&quot; type=&quot;System.Decimal&quot; precision=&quot;19&quot; scale=&quot;4&quot;&gt;&lt;/add&gt;
+        &lt;add name=&quot;OrderDate&quot; type=&quot;System.DateTime&quot; &gt;&lt;/add&gt;
+        &lt;add name=&quot;RequiredDate&quot; type=&quot;System.DateTime&quot; &gt;&lt;/add&gt;
+        &lt;add name=&quot;RowVersion&quot; type=&quot;System.Byte[]&quot; length=&quot;8&quot; &gt;&lt;/add&gt;
+        &lt;add name=&quot;ShipAddress&quot; length=&quot;60&quot; &gt;&lt;/add&gt;
+        &lt;add name=&quot;ShipCity&quot; length=&quot;15&quot; &gt;&lt;/add&gt;
+        &lt;add name=&quot;ShipCountry&quot; length=&quot;15&quot; &gt;&lt;/add&gt;
+        &lt;add name=&quot;ShipName&quot; length=&quot;40&quot; &gt;&lt;/add&gt;
+        &lt;add name=&quot;ShippedDate&quot; type=&quot;System.DateTime&quot; &gt;&lt;/add&gt;
+        &lt;add name=&quot;ShipPostalCode&quot; length=&quot;10&quot; &gt;&lt;/add&gt;
+        &lt;add name=&quot;ShipRegion&quot; length=&quot;15&quot; &gt;&lt;/add&gt;
+        &lt;add name=&quot;ShipVia&quot; type=&quot;System.Int32&quot; &gt;&lt;/add&gt;
+    &lt;/fields&gt;
+&lt;/add&gt;</pre>
+<p>Re-initialize.</p>
+<pre lang="text">tfl NorthWind.xml {'mode':'init'}
+22:32:14 | Error | NorthWind | The entity <strong>Orders</strong> must 
+   have a relationship to the master entity <strong>Order Details</strong>.</pre>
+<p>
+    When another table is added, it must be related to the master table.  The master table is the first table defined. 
+In this case, it's Order Details.  So, add a relationship:
+</p>
+<pre lang="xml">&lt;/entities&gt;
+    <strong>&lt;relationships&gt;
+        &lt;add leftEntity=&quot;Order Details&quot; leftField=&quot;OrderID&quot; 
+                rightEntity=&quot;Orders&quot; rightField=&quot;OrderID&quot;/&gt;
+    &lt;/relationships&gt;</strong>
+&lt;/process&gt;</pre>
+<p>Re-initialize.</p>
+<pre lang="text">tfl NorthWind.xml {'mode':'init'}
+23:13:31 | Error | NorthWind | field overlap error in Orders. 
+  The field: RowVersion is already defined in a previous entity.  You must alias (rename) it.</pre>
+<p>Multiple entities can introduce identical field names.  If it does, you have to rename them.</p>
+<pre lang="text">&lt;add name=&quot;Orders&quot; version=&quot;RowVersion&quot;&gt;
+    &lt;add name=&quot;RowVersion&quot; <strong>alias=&quot;OrdersRowVersion&quot;</strong> 
+        type=&quot;System.Byte[]&quot; length=&quot;8&quot; &gt;&lt;/add&gt;</pre>
+<p>Re-initialize and run twice.</p>
+<pre lang="text">tfl NorthWind.xml {'mode':'init'}
 23:23:47 | Info | NorthWind | All | Initialized TrAnSfOrMaLiZeR.
 23:23:47 | Info | NorthWind | All | Initialized NorthWindOrderDetails in NorthWindOutput on localhost.
 23:23:47 | Info | NorthWind | All | Initialized NorthWindOrders in NorthWindOutput on localhost.
@@ -197,58 +177,59 @@ tfl NorthWind.xml
 tfl NorthWind.xml
 23:24:35 | Info | NorthWind | Order Details....... | Processed <strong>0 inserts</strong>, and <strong>0 updates</strong> in Order Details.
 23:24:35 | Info | NorthWind | Orders.............. | Processed <strong>0 inserts</strong>, and <strong>0 updates</strong> in Orders.
-23:24:35 | Info | NorthWind | Orders.............. | Process completed in 00:00:00.7284382.
-</pre>
-View the output:
-<pre>SELECT TOP 10 Discount, OrderID, ProductID, Quantity, UnitPrice, CustomerID, EmployeeID, Freight, OrderDate, RequiredDate, ShipAddress, ShipCity, ShippedDate, ShipPostalCode, ShipRegion, ShipVia
+23:24:35 | Info | NorthWind | Orders.............. | Process completed in 00:00:00.7284382.</pre>
+<p>View the output:</p>
+<pre class="small-text" lang="text">SELECT TOP 10 Discount, OrderID, ProductID, Quantity, UnitPrice, 
+  CustomerID, EmployeeID, Freight, OrderDate, RequiredDate, 
+  ShipAddress, ShipCity, ShippedDate, ShipPostalCode, ShipRegion, ShipVia
 FROM NorthWindStar;
 
-Discount      OrderID     ProductID   Quantity UnitPrice	CustomerID EmployeeID  Freight	OrderDate               RequiredDate            ShipAddress                                                  ShipCity        ShippedDate             ShipPostalCode ShipRegion      ShipVia
-------------- ----------- ----------- -------- ---------	---------- ----------- --------	----------------------- ----------------------- ------------------------------------------------------------ --------------- ----------------------- -------------- --------------- -----------
-0.2           10248       11          12       14.0000		VINET      5           32.3800	1996-07-04 00:00:00.000 1996-08-01 00:00:00.000 59 rue de l'Abbaye                                           Reims           1996-07-16 00:00:00.000 51100                          3
-0             10248       42          10       9.8000		VINET      5           32.3800	1996-07-04 00:00:00.000 1996-08-01 00:00:00.000 59 rue de l'Abbaye                                           Reims           1996-07-16 00:00:00.000 51100                          3
-0             10248       72          5        34.8000		VINET      5           32.3800	1996-07-04 00:00:00.000 1996-08-01 00:00:00.000 59 rue de l'Abbaye                                           Reims           1996-07-16 00:00:00.000 51100                          3
-0             10249       14          9        18.6000		TOMSP      6           11.6100	1996-07-05 00:00:00.000 1996-08-16 00:00:00.000 Luisenstr. 48                                                Münster         1996-07-10 00:00:00.000 44087                          1
-0             10249       51          40       42.4000		TOMSP      6           11.6100	1996-07-05 00:00:00.000 1996-08-16 00:00:00.000 Luisenstr. 48                                                Münster         1996-07-10 00:00:00.000 44087                          1
-0             10250       41          10       7.7000		HANAR      4           65.8300	1996-07-08 00:00:00.000 1996-08-05 00:00:00.000 Rua do Paço, 67                                              Rio de Janeiro  1996-07-12 00:00:00.000 05454-876      RJ              2
-0.15          10250       51          35       42.4000		HANAR      4           65.8300	1996-07-08 00:00:00.000 1996-08-05 00:00:00.000 Rua do Paço, 67                                              Rio de Janeiro  1996-07-12 00:00:00.000 05454-876      RJ              2
-0.15          10250       65          15       16.8000		HANAR      4           65.8300	1996-07-08 00:00:00.000 1996-08-05 00:00:00.000 Rua do Paço, 67                                              Rio de Janeiro  1996-07-12 00:00:00.000 05454-876      RJ              2
-0.05          10251       22          6        16.8000		VICTE      3           41.3400	1996-07-08 00:00:00.000 1996-08-05 00:00:00.000 2, rue du Commerce                                           Lyon            1996-07-15 00:00:00.000 69004                          1
-0.05          10251       57          15       15.6000		VICTE      3           41.3400	1996-07-08 00:00:00.000 1996-08-05 00:00:00.000 2, rue du Commerce                                           Lyon            1996-07-15 00:00:00.000 69004                          1
-</pre>
-
-Consult the NorthWind diagram.  Continue to add entities and relationships until the relationships look like this:
-
-<pre>
-&lt;relationships&gt;
-	&lt;add leftEntity=&quot;Order Details&quot; leftField=&quot;OrderID&quot; rightEntity=&quot;Orders&quot; rightField=&quot;OrderID&quot; /&gt;
-	<strong>&lt;add leftEntity=&quot;Order Details&quot; leftField=&quot;ProductID&quot; rightEntity=&quot;Products&quot; rightField=&quot;ProductID&quot; /&gt;
-	&lt;add leftEntity=&quot;Orders&quot; leftField=&quot;CustomerID&quot; rightEntity=&quot;Customers&quot; rightField=&quot;CustomerID&quot; /&gt;
-	&lt;add leftEntity=&quot;Orders&quot; leftField=&quot;EmployeeID&quot; rightEntity=&quot;Employees&quot; rightField=&quot;EmployeeID&quot; /&gt;
-	&lt;add leftEntity=&quot;Orders&quot; leftField=&quot;ShipVia&quot; rightEntity=&quot;Shippers&quot; rightField=&quot;ShipperID&quot; /&gt;
-	&lt;add leftEntity=&quot;Products&quot; leftField=&quot;SupplierID&quot; rightEntity=&quot;Suppliers&quot; rightField=&quot;SupplierID&quot; /&gt;
-	&lt;add leftEntity=&quot;Products&quot; leftField=&quot;CategoryID&quot; rightEntity=&quot;Categories&quot; rightField=&quot;CategoryID&quot; /&gt;</strong>
-&lt;/relationships&gt;
-</pre>
-
-Adding all these entities creates many duplicate field names. Instead of renaming each one, add a prefix to the entity.  A prefix aliases all the fields as prefix + name.
-
-<pre>&lt;add name=&quot;Employees&quot; version=&quot;RowVersion&quot; <strong>prefix=&quot;Employee&quot;</strong>&gt;
-	&lt;fields&gt;
-		&lt;add name=&quot;EmployeeID&quot; type=&quot;System.Int32&quot; primary-key=&quot;true&quot; &gt;&lt;/add&gt;
-		&lt;add name=&quot;Address&quot; length=&quot;60&quot; &gt;&lt;/add&gt;
-		&lt;add name=&quot;BirthDate&quot; type=&quot;System.DateTime&quot; &gt;&lt;/add&gt;
-		&lt;add name=&quot;City&quot; length=&quot;15&quot; &gt;&lt;/add&gt;
-		&lt;add name=&quot;Country&quot; length=&quot;15&quot; &gt;&lt;/add&gt;
-		&lt;add name=&quot;Extension&quot; length=&quot;4&quot; &gt;&lt;/add&gt;
-		&lt;add name=&quot;FirstName&quot; length=&quot;10&quot; &gt;&lt;/add&gt;
-		
-	&lt;/fields&gt;
-&lt;/add&gt;
-</pre>
-
-Initialize, and run twice. Console output should look like this:
-<pre>tfl NorthWind.xml {'mode':'init'}
+Discount      OrderID     ProductID   Quantity UnitPrice    CustomerID EmployeeID  Freight    OrderDate               RequiredDate            ShipAddress                                                  ShipCity        ShippedDate             ShipPostalCode ShipRegion      ShipVia
+------------- ----------- ----------- -------- ---------    ---------- ----------- --------    ----------------------- ----------------------- ------------------------------------------------------------ --------------- ----------------------- -------------- --------------- -----------
+0.2           10248       11          12       14.0000        VINET      5           32.3800    1996-07-04 00:00:00.000 1996-08-01 00:00:00.000 59 rue de l'Abbaye                                           Reims           1996-07-16 00:00:00.000 51100                          3
+0             10248       42          10       9.8000        VINET      5           32.3800    1996-07-04 00:00:00.000 1996-08-01 00:00:00.000 59 rue de l'Abbaye                                           Reims           1996-07-16 00:00:00.000 51100                          3
+0             10248       72          5        34.8000        VINET      5           32.3800    1996-07-04 00:00:00.000 1996-08-01 00:00:00.000 59 rue de l'Abbaye                                           Reims           1996-07-16 00:00:00.000 51100                          3
+0             10249       14          9        18.6000        TOMSP      6           11.6100    1996-07-05 00:00:00.000 1996-08-16 00:00:00.000 Luisenstr. 48                                                Münster         1996-07-10 00:00:00.000 44087                          1
+0             10249       51          40       42.4000        TOMSP      6           11.6100    1996-07-05 00:00:00.000 1996-08-16 00:00:00.000 Luisenstr. 48                                                Münster         1996-07-10 00:00:00.000 44087                          1
+0             10250       41          10       7.7000        HANAR      4           65.8300    1996-07-08 00:00:00.000 1996-08-05 00:00:00.000 Rua do Paço, 67                                              Rio de Janeiro  1996-07-12 00:00:00.000 05454-876      RJ              2
+0.15          10250       51          35       42.4000        HANAR      4           65.8300    1996-07-08 00:00:00.000 1996-08-05 00:00:00.000 Rua do Paço, 67                                              Rio de Janeiro  1996-07-12 00:00:00.000 05454-876      RJ              2
+0.15          10250       65          15       16.8000        HANAR      4           65.8300    1996-07-08 00:00:00.000 1996-08-05 00:00:00.000 Rua do Paço, 67                                              Rio de Janeiro  1996-07-12 00:00:00.000 05454-876      RJ              2
+0.05          10251       22          6        16.8000        VICTE      3           41.3400    1996-07-08 00:00:00.000 1996-08-05 00:00:00.000 2, rue du Commerce                                           Lyon            1996-07-15 00:00:00.000 69004                          1
+0.05          10251       57          15       15.6000        VICTE      3           41.3400    1996-07-08 00:00:00.000 1996-08-05 00:00:00.000 2, rue du Commerce                                           Lyon            1996-07-15 00:00:00.000 69004                          1</pre>
+<p>Consult the NorthWind diagram.  Continue to add entities and relationships until the relationships look like this:</p>
+<pre lang="xml">&lt;relationships&gt;
+    &lt;add leftEntity=&quot;Order Details&quot; leftField=&quot;OrderID&quot; 
+      rightEntity=&quot;Orders&quot; rightField=&quot;OrderID&quot; /&gt;
+    <strong>&lt;add leftEntity=&quot;Order Details&quot; leftField=&quot;ProductID&quot; 
+      rightEntity=&quot;Products&quot; rightField=&quot;ProductID&quot; /&gt;
+    &lt;add leftEntity=&quot;Orders&quot; leftField=&quot;CustomerID&quot; 
+      rightEntity=&quot;Customers&quot; rightField=&quot;CustomerID&quot; /&gt;
+    &lt;add leftEntity=&quot;Orders&quot; leftField=&quot;EmployeeID&quot; 
+      rightEntity=&quot;Employees&quot; rightField=&quot;EmployeeID&quot; /&gt;
+    &lt;add leftEntity=&quot;Orders&quot; leftField=&quot;ShipVia&quot; 
+      rightEntity=&quot;Shippers&quot; rightField=&quot;ShipperID&quot; /&gt;
+    &lt;add leftEntity=&quot;Products&quot; leftField=&quot;SupplierID&quot; 
+      rightEntity=&quot;Suppliers&quot; rightField=&quot;SupplierID&quot; /&gt;
+    &lt;add leftEntity=&quot;Products&quot; leftField=&quot;CategoryID&quot; 
+      rightEntity=&quot;Categories&quot; rightField=&quot;CategoryID&quot; /&gt;</strong>
+&lt;/relationships&gt;</pre>
+<p>
+    Adding all these entities creates many duplicate field names. Instead of renaming each one, add a prefix to the entity. 
+A prefix aliases all the fields as prefix + name.
+</p>
+<pre lang="xml">&lt;add name=&quot;Employees&quot; version=&quot;RowVersion&quot; <strong>prefix=&quot;Employee&quot;</strong>&gt;
+    &lt;fields&gt;
+        &lt;add name=&quot;EmployeeID&quot; type=&quot;System.Int32&quot; primary-key=&quot;true&quot; &gt;&lt;/add&gt;
+        &lt;add name=&quot;Address&quot; length=&quot;60&quot; &gt;&lt;/add&gt;
+        &lt;add name=&quot;BirthDate&quot; type=&quot;System.DateTime&quot; &gt;&lt;/add&gt;
+        &lt;add name=&quot;City&quot; length=&quot;15&quot; &gt;&lt;/add&gt;
+        &lt;add name=&quot;Country&quot; length=&quot;15&quot; &gt;&lt;/add&gt;
+        &lt;add name=&quot;Extension&quot; length=&quot;4&quot; &gt;&lt;/add&gt;
+        &lt;add name=&quot;FirstName&quot; length=&quot;10&quot; &gt;&lt;/add&gt;
+    &lt;/fields&gt;
+&lt;/add&gt;</pre>
+<p>Initialize, and run twice. Console output should look like this:</p>
+<pre lang="text">tfl NorthWind.xml {'mode':'init'}
 19:41:53 | Info | NorthWind | All | Initialized TrAnSfOrMaLiZeR.
 19:41:53 | Info | NorthWind | All | Initialized NorthWindOrderDetails in NorthWindOutput on localhost.
 19:41:53 | Info | NorthWind | All | Initialized NorthWindOrders in NorthWindOutput on localhost.
@@ -282,24 +263,20 @@ tfl NorthWind.xml
 19:42:13 | Info | NorthWind | Shippers............ | Processed 0 inserts, and 0 updates in Shippers.
 19:42:13 | Info | NorthWind | Suppliers........... | Processed 0 inserts, and 0 updates in Suppliers.
 19:42:13 | Info | NorthWind | Categories.......... | Processed 0 inserts, and 0 updates in Categories.
-19:42:13 | Info | NorthWind | All................. | Process completed in 00:00:00.7708553.
-</pre>
-
-Now there are 81 fields available in NorthWindStar:
-<pre>SELECT COUNT(*) AS FieldCount
+19:42:13 | Info | NorthWind | All................. | Process completed in 00:00:00.7708553.</pre>
+<p>Now there are 81 fields available in NorthWindStar:</p>
+<pre lang="sql">SELECT COUNT(*) AS FieldCount
 FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_NAME = 'NorthWindStar'
 
 FieldCount
 -----------
-81
-
-</pre>
-<div>
-    <img width="646" src="NorthWindOrderDetailsStar.png" />
-</div>
+81</pre>
 <p>
-    Open up <a href="http://technet.microsoft.com/en-us/library/ms173767%28v=sql.105%29.aspx">BIDS</a>, and create an Analysis Services Project (or cube) to browse the data.
+    <img width="646" src="NorthWindOrderDetailsStar.png" /></p>
+<p>
+    Open up <a href="http://technet.microsoft.com/en-us/library/ms173767%28v=sql.105%29.aspx">BIDS</a>, and create an Analysis Services Project (or cube) 
+to browse the data.
 </p>
 <ul>
     <li>Set the data source to your NorthWindOutput database</li>
@@ -308,99 +285,102 @@ FieldCount
     <li>Create a cube with a couple measures (e.g. UnitPrice, Quantity) and connect it to the Properties dimension.</li>
     <li>Process the cube and browse it.  Note: You may have to grant NT AUTHORITY\LOCAL SERVICE read writes to the NorthWindOutput database.</li>
 </ul>
-
 <p>
-</p>
-<div>
-    <img width="646" src="NorthWindBrowse1.png" />
-</div>
-<br />
-As you can see, slicing the measures by order date isn't ideal.  Moreover, the unit price 
+    <img width="646" src="NorthWindBrowse1.png" /></p>
+<p>
+    As you can see, slicing the measures by order date isn't ideal.  Moreover, the unit price 
 and quantity measures don't help much.  This cube needs a time hierarchy and revenue.  We can add them with Transformalize. 
-First, add three calculated fields based on &quot;order date&quot; to create a time hierarchy: 
-<pre>
-		&lt;add name=&quot;ShipRegion&quot; length=&quot;15&quot; &gt;&lt;/add&gt;
-		&lt;add name=&quot;ShipVia&quot; type=&quot;System.Int32&quot; &gt;&lt;/add&gt;
-	&lt;/fields&gt;
-	<strong>&lt;calculated-fields&gt;
-	  &lt;add name=&quot;TimeDate&quot; length=&quot;10&quot; default=&quot;9999-12-31&quot;&gt;
-		&lt;transforms&gt;
-			&lt;add method=&quot;dateFormat&quot; format=&quot;yyyy-MM-dd&quot; parameter=&quot;OrderDate&quot; /&gt;
-		&lt;/transforms&gt;
-	  &lt;/add&gt;
-	  &lt;add name=&quot;TimeMonth&quot; length=&quot;6&quot; default=&quot;12-DEC&quot;&gt;
-		&lt;transforms&gt;
-			&lt;add method=&quot;dateFormat&quot; format=&quot;MM-MMM&quot; parameter=&quot;OrderDate&quot; /&gt;
-			&lt;add method=&quot;toUpper&quot; /&gt;
-		&lt;/transforms&gt;
-	  &lt;/add&gt;
-	  &lt;add name=&quot;TimeYear&quot; type=&quot;System.Int16&quot; default=&quot;9999&quot;&gt;
-		&lt;transforms&gt;
-			&lt;add method=&quot;dateFormat&quot; format=&quot;yyyy&quot; parameter=&quot;OrderDate&quot; /&gt;
-		&lt;/transforms&gt;
-	  &lt;/add&gt;
-	&lt;/calculated-fields&gt;</strong>
-&lt;/add&gt;
-</pre>
+First, add three calculated fields based on &quot;order date&quot; to create a time hierarchy:
+</p>
+<pre lang="xml">&lt;add name=&quot;ShipRegion&quot; length=&quot;15&quot; &gt;&lt;/add&gt;
+        &lt;add name=&quot;ShipVia&quot; type=&quot;System.Int32&quot; &gt;&lt;/add&gt;
+    &lt;/fields&gt;
+    <strong>&lt;calculated-fields&gt;
+      &lt;add name=&quot;TimeDate&quot; length=&quot;10&quot; default=&quot;9999-12-31&quot;&gt;
+        &lt;transforms&gt;
+            &lt;add method=&quot;dateFormat&quot; format=&quot;yyyy-MM-dd&quot; parameter=&quot;OrderDate&quot; /&gt;
+        &lt;/transforms&gt;
+      &lt;/add&gt;
+      &lt;add name=&quot;TimeMonth&quot; length=&quot;6&quot; default=&quot;12-DEC&quot;&gt;
+        &lt;transforms&gt;
+            &lt;add method=&quot;dateFormat&quot; format=&quot;MM-MMM&quot; parameter=&quot;OrderDate&quot; /&gt;
+            &lt;add method=&quot;toUpper&quot; /&gt;
+        &lt;/transforms&gt;
+      &lt;/add&gt;
+      &lt;add name=&quot;TimeYear&quot; type=&quot;System.Int16&quot; default=&quot;9999&quot;&gt;
+        &lt;transforms&gt;
+            &lt;add method=&quot;dateFormat&quot; format=&quot;yyyy&quot; parameter=&quot;OrderDate&quot; /&gt;
+        &lt;/transforms&gt;
+      &lt;/add&gt;
+    &lt;/calculated-fields&gt;</strong>
+&lt;/add&gt;</pre>
 <p>
     Calculated fields project new fields based on the values of other fields and transforms.  They are used at the entity level, 
 or at the process level. In an entity, they have access to any field within their entity. In a process, they 
 have access to any field.  To control which fields they have access to, use parameters like this:
 </p>
-<pre>	&lt;transform method=&quot;format&quot; format=&quot;{0} is a big city!&quot;&gt;
-		<strong>&lt;parameters&gt;
-			&lt;add field=&quot;City&quot; /&gt;
-		&lt;/parameters&gt;</strong>
-	&lt;/transform&gt;
-</pre>
+<pre lang="xml">&lt;transform method=&quot;format&quot; format=&quot;{0} is a big city!&quot;&gt;
+    <strong>&lt;parameters&gt;
+        &lt;add field=&quot;City&quot; /&gt;
+    &lt;/parameters&gt;</strong>
+&lt;/transform&gt;</pre>
 <p>
     You may add multiple parameters in this way.  If you only have a single parameter, you can specify it in the parameter attribute 
 in the transform element, like this:
 </p>
-<pre>	&lt;transform method=&quot;format&quot; format=&quot;{0} is a big city!&quot; <strong>parameter=&quot;City&quot;</strong> /&gt;
-</pre>
+<pre lang="xml">&lt;transform method=&quot;format&quot; format=&quot;{0} is a big city!&quot; 
+        <strong>parameter=&quot;City&quot;</strong> /&gt;</pre>
 <p>
     Another short-cut is to set the parameter attribute to &quot;*&quot; to include all fields.
 </p>
-There are 26 different transforms built in, and if you can't find one that does what you want, you can use &quot;javascript&quot; or &quot;template&quot; transforms to define your own. Use a javascript transform to calculate revenue:
-<pre>
-&lt;calculated-fields&gt;
-	&lt;add name=&quot;Revenue&quot; type=&quot;System.Decimal&quot; &gt;
-		&lt;transforms&gt;
-			&lt;add method=&quot;javascript&quot; script=&quot;(UnitPrice * (1 - Discount)) * Quantity&quot; parameter=&quot;*&quot; /&gt;
-		&lt;/transforms&gt;
-	&lt;/add&gt;
-&lt;/calculated-fields&gt;
-</pre>
 <p>
-    Re-initialize and run Tfl.  Then, using the new time fields and revenue, see if it improves the cube browsing experience.
+    There are 26 different transforms built in, and if you can't find one that does what you want, you can use &quot;JavaScript&quot; 
+or &quot;template&quot; transforms to define your own. Use a JavaScript transform to calculate revenue:
 </p>
-<div>
-    <img width="646" src="NorthWindBrowse2.png" />
-</div>
-<br />
-The cube looks better now.  In order to update it when Transformalizer runs, add a connection and a template action:
-<pre>&lt;connections&gt;
-	&lt;add name=&quot;input&quot; value=&quot;server=localhost;Database=NorthWind;Trusted_Connection=True;&quot;/&gt;
-	&lt;add name=&quot;output&quot; value=&quot;Server=localhost;Database=NorthWindOutput;Trusted_Connection=True;&quot;/&gt;
-	<strong>&lt;add name=&quot;cube&quot; value=&quot;Data Source=localhost;Catalog=NorthWind;&quot; provider=&quot;AnalysisServices&quot;/&gt;</strong>
+<pre lang="xml">&lt;calculated-fields&gt;
+    &lt;add name=&quot;Revenue&quot; type=&quot;System.Decimal&quot; &gt;
+        &lt;transforms&gt;
+            &lt;add method=&quot;javascript&quot; 
+              script=&quot;(UnitPrice * (1 - Discount)) * Quantity&quot; parameter=&quot;*&quot; /&gt;
+        &lt;/transforms&gt;
+    &lt;/add&gt;
+&lt;/calculated-fields&gt;</pre>
+<p>Re-initialize and run Tfl.  Then, using the new time fields and revenue, see if it improves the cube browsing experience.</p>
+<p>
+    <img width="646" src="NorthWindBrowse2.png" /></p>
+<p>The cube looks better now.  In order to update it when Transformalizer runs, add a connection and a template action:</p>
+<pre lang="xml">&lt;connections&gt;
+    &lt;add name=&quot;input&quot; 
+      value=&quot;server=localhost;Database=NorthWind;Trusted_Connection=True;&quot;/&gt;
+    &lt;add name=&quot;output&quot; 
+      value=&quot;Server=localhost;Database=NorthWindOutput;Trusted_Connection=True;&quot;/&gt;
+    <strong>&lt;add name=&quot;cube&quot; 
+      value=&quot;Data Source=localhost;Catalog=NorthWind;&quot; 
+      provider=&quot;AnalysisServices&quot;/&gt;</strong>
 &lt;/connections&gt;
  
 <strong>&lt;templates path=&quot;C:\Tfl\&quot;&gt;
-	&lt;add name=&quot;process-cube&quot; file=&quot;process-cube.xmla&quot; cache=&quot;true&quot;&gt;
-		&lt;settings&gt;
-			&lt;add name=&quot;DatabaseID&quot; value=&quot;NorthWind2&quot;&gt;&lt;/add&gt;
-		&lt;/settings&gt;	
-		&lt;actions&gt;
-			&lt;add action=&quot;run&quot; connection=&quot;cube&quot;&gt;&lt;/add&gt;
-		&lt;/actions&gt;
-	&lt;/add&gt;
-&lt;/templates&gt;</strong>
-</pre>
-Transformalizer &quot;templates&quot; use <a href="http://haacked.com/archive/2011/01/06/razor-syntax-quick-reference.aspx">C# Razor syntax</a>. 
+    &lt;add name=&quot;process-cube&quot; file=&quot;process-cube.xmla&quot; cache=&quot;true&quot;&gt;
+        &lt;settings&gt;
+            &lt;add name=&quot;DatabaseID&quot; value=&quot;NorthWind2&quot;&gt;&lt;/add&gt;
+        &lt;/settings&gt;    
+        &lt;actions&gt;
+            &lt;add action=&quot;run&quot; connection=&quot;cube&quot;&gt;&lt;/add&gt;
+        &lt;/actions&gt;
+    &lt;/add&gt;
+&lt;/templates&gt;</strong></pre>
+<p>
+    Transformalizer &quot;templates&quot; use <a href="http://haacked.com/archive/2011/01/06/razor-syntax-quick-reference.aspx">C# Razor syntax</a>. 
 Settings are passed into the template and used like this:
+</p>
 <pre>&lt;Batch xmlns=&quot;http://schemas.microsoft.com/analysisservices/2003/engine&quot;&gt;
-  &lt;Process xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:ddl2=&quot;http://schemas.microsoft.com/analysisservices/2003/engine/2&quot; xmlns:ddl2_2=&quot;http://schemas.microsoft.com/analysisservices/2003/engine/2/2&quot; xmlns:ddl100_100=&quot;http://schemas.microsoft.com/analysisservices/2008/engine/100/100&quot; xmlns:ddl200=&quot;http://schemas.microsoft.com/analysisservices/2010/engine/200&quot; xmlns:ddl200_200=&quot;http://schemas.microsoft.com/analysisservices/2010/engine/200/200&quot;&gt;
+  &lt;Process xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; 
+        xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; 
+        xmlns:ddl2=&quot;http://schemas.microsoft.com/analysisservices/2003/engine/2&quot; 
+        xmlns:ddl2_2=&quot;http://schemas.microsoft.com/analysisservices/2003/engine/2/2&quot; 
+        xmlns:ddl100_100=&quot;http://schemas.microsoft.com/analysisservices/2008/engine/100/100&quot; 
+        xmlns:ddl200=&quot;http://schemas.microsoft.com/analysisservices/2010/engine/200&quot; 
+        xmlns:ddl200_200=&quot;http://schemas.microsoft.com/analysisservices/2010/engine/200/200&quot;&gt;
     &lt;Object&gt;
       &lt;DatabaseID&gt;<strong>@Model.Settings.DatabaseID</strong>&lt;/DatabaseID&gt;
     &lt;/Object&gt;
@@ -423,76 +403,71 @@ The &quot;run&quot; action executes the rendered content against the designated 
 00:14:28 | Info | NorthWind | Orders.............. | Processed 2155 rows. Updated Order Details with Orders.
 00:14:29 | Info | NorthWind | Products............ | Processed 2155 rows. Updated Order Details with Products.
 <strong>00:14:31 | Info | NorthWind | Categories.......... | process-cube ran successfully.</strong>
-00:14:31 | Info | NorthWind | All................. | Process completed in 00:00:03.8312882.
-</pre>
-With some more complex templating, and an Apache <a href="http://lucene.apache.org/solr/">SOLR</a> server, 
+00:14:31 | Info | NorthWind | All................. | Process completed in 00:00:03.8312882.</pre>
+<p>
+    With some more complex templating, and an Apache <a href="http://lucene.apache.org/solr/">SOLR</a> server, 
 it is possible to integrate full text search into the process as well...
+</p>
+<pre lang="xml">&lt;templates&gt;
 
-<pre style="font-size: 0.7em;">&lt;templates&gt;
+    <strong>&lt;add name=&quot;solr-data-handler&quot; 
+          file=&quot;solr-data-handler.cshtml&quot; cache=&quot;true&quot;&gt;
+      &lt;actions&gt;
+        &lt;add action=&quot;copy&quot; file=&quot;C:\Solr\NorthWind\conf\data-config.xml&quot;/&gt;
+      &lt;/actions&gt;
+    &lt;/add&gt;
 
-	<strong>&lt;add name=&quot;solr-data-handler&quot; file=&quot;solr-data-handler.cshtml&quot; cache=&quot;true&quot;&gt;
-	  &lt;actions&gt;
-		&lt;add action=&quot;copy&quot; file=&quot;C:\Solr\NorthWind\conf\data-config.xml&quot;/&gt;
-	  &lt;/actions&gt;
-	&lt;/add&gt;
-
-	&lt;add name=&quot;solr-schema&quot; file=&quot;solr-schema.cshtml&quot; cache=&quot;true&quot;&gt;
-	  &lt;actions&gt;
-		&lt;add action=&quot;copy&quot; file=&quot;C:\Solr\NorthWind\conf\schema.xml&quot;/&gt;
-		&lt;add action=&quot;web&quot; url=&quot;http://localhost:8983/solr/NorthWind/dataimport?command=full-import&amp;amp;clean=true&amp;amp;commit=true&amp;amp;optimize=true&quot;/&gt;
-	  &lt;/actions&gt;
-	&lt;/add&gt;</strong>
+    &lt;add name=&quot;solr-schema&quot; file=&quot;solr-schema.cshtml&quot; cache=&quot;true&quot;&gt;
+      &lt;actions&gt;
+        &lt;add action=&quot;copy&quot; file=&quot;C:\Solr\NorthWind\conf\schema.xml&quot;/&gt;
+        &lt;add action=&quot;web&quot; 
+           url=&quot;http://localhost:8983/solr/NorthWind/dataimport?command=full-
+             import&amp;amp;clean=true&amp;amp;commit=true&amp;amp;optimize=true&quot;/&gt;
+      &lt;/actions&gt;
+    &lt;/add&gt;</strong>
 
 &lt;/templates&gt;
 
 <strong>&lt;search-types&gt;
-	&lt;add name=&quot;default&quot; /&gt;
-	&lt;add name=&quot;facet&quot; type=&quot;lowercase&quot; store=&quot;true&quot; index=&quot;true&quot; /&gt;
-	&lt;add name=&quot;standard&quot; type=&quot;standard_lowercase&quot; store=&quot;false&quot; index=&quot;true&quot;/&gt;
-&lt;/search-types&gt;</strong>
-
-</pre>
+    &lt;add name=&quot;default&quot; /&gt;
+    &lt;add name=&quot;facet&quot; type=&quot;lowercase&quot; store=&quot;true&quot; index=&quot;true&quot; /&gt;
+    &lt;add name=&quot;standard&quot; type=&quot;standard_lowercase&quot; store=&quot;false&quot; index=&quot;true&quot;/&gt;
+&lt;/search-types&gt;</strong></pre>
 <p>
-    The Razor templates &quot;solr-data-handler.cshtml&quot; and &quot;solr-schema.cshtml&quot; render configuration files for SOLR.  
+    The Razor templates &quot;<em>solr-data-handler.cshtml</em>&quot; and &quot;<em>solr-schema.cshtml</em>&quot; render configuration files for SOLR. 
 This is possible because the template manager passes the NorthWind configuration into the templates. To control how the fields are handled, 
-&quot;search types&quot; are applied to each &lt;field/&gt; or &lt;calculated-field/&gt;.  By default, each field is indexed and stored 
+&quot;search types&quot; are applied to each <code>&lt;field/&gt;</code> or 
+    <code>&lt;calculated-field/&gt;</code>.  By default, each field is indexed and stored 
 in the search index according to it's data type.  To assign more complex text analysis, you can set the search-type attribute 
 to facet, or standard, or any others you define.  To exclude a field from search, set search-type to &quot;none.&quot;
 </p>
-Running Tfl now produces:
-<pre>tfl NorthWind.xml
+<p>Running Tfl now produces:</p>
+<pre lang="text">tfl NorthWind.xml
 ...
 00:48:25 | Info | NorthWind | Products............ | Processed 2155 rows. Updated Order Details with Products.
 00:48:28 | Info | NorthWind | Categories.......... | process-cube ran successfully.
 <strong>00:48:28 | Info | NorthWind | Categories.......... | Copied solr-data-handler template output to C:\Solr\NorthWind\conf\data-config.xml.
 00:48:29 | Info | NorthWind | Categories.......... | Copied solr-schema template output to C:\Solr\NorthWind\conf\schema.xml.
-00:48:29 | Info | NorthWind | Categories.......... | Made web request to http://localhost:8983/solr/NorthWind/dataimport?command=full-import&amp;clean=true&amp;commit=true&amp;optimize=true.</strong>
-00:48:29 | Info | NorthWind | Categories.......... | Process completed in 00:00:04.8287386.
-</pre>
+00:48:29 | Info | NorthWind | Categories.......... | Made web request to 
+    http://localhost:8983/solr/NorthWind/dataimport?command=full-import&amp;clean=true&amp;commit=true&amp;optimize=true.</strong>
+00:48:29 | Info | NorthWind | Categories.......... | Process completed in 00:00:04.8287386.</pre>
 <p>
-    The template action &quot;web&quot; triggers SOLR to update the index.  In a production environment, you'd want to reload the schema 
-when it changes, and make use of full and delta imports appropriately. In this example, it just does a full import every time.
-If all goes well, you see this in the SOLR admin:
+In this example, the template action &quot;web&quot; triggers SOLR to clean and re-import the index.  In a production environment, 
+you'd want to reload the schema when it changes, and make use of full and delta imports appropriately.  If all goes well, you see this in the SOLR admin:
 </p>
-
-<div>
-    <img width="646" src="NorthWindSolrDataImport.png" />
-</div>
 <p>
-    Now, if you schedule Transformalizer to run every couple minutes, you have near real-time OLAP and search engine services.
+    <img width="646" src="NorthWindSolrDataImport.png" /></p>
+<p>
+    Now, if you schedule Transformalizer to run every couple minutes, you have near real-time OLAP and search engine services. 
 An OLAP cube supports high level reporting needs, and a search engine, well, you know...  If your users 
-want to see the data in different ways, and they will, you can add transforms and new calculated fields and re-initialize your output. 
+want to see the data in different ways, and they will, add transforms and/or new calculated fields and re-initialize your output. 
 When Transformalizer reads your production databases, it attempts to do so introducing as little contention as possible.
 </p>
 <h3>Wrap Up, Disclaimers, Credits, Insights...</h3>
-<p>
-    The NorthWind data is fairly clean. In reality, you'll face more challenging data sources.
-</p>
-<p>
-    I should warn you, that at the time of this writing, Transformalizer:
-</p>
+<p>The NorthWind data is fairly clean. In reality, you'll face more challenging data sources.</p>
+<p>I should warn you, that at the time of this writing, Transformalizer:</p>
 <ol>
-    <li>Doesn't help you with <a href="http://en.wikipedia.org/wiki/Slowly_changing_dimension">slowly changing dimensions.</a></li>
+    <li>Doesn't handle type 2 <a href="http://en.wikipedia.org/wiki/Slowly_changing_dimension">slowly changing dimensions</a> (which preserve history)</li>
     <li>Only handles deletes if you run in &quot;delete&quot; mode or re-initialize.</li>
     <li>Aggregations are a work in progress.</li>
     <li>Analysis Services and MySql providers require downloads (per licensing).</li>
@@ -515,8 +490,8 @@ Visual Studio 2012 Professional to work with it.  You'll notice it uses several 
     <li><a href="https://github.com/SamSaffron/dapper-dot-net">Dapper-dot-net</a></li>
     <li><a href="http://filehelpers.sourceforge.net/">File Helpers</a></li>
 </ol>
-Where possible, I've included source code from these projects rather than the Nuget packages. The upside 
-in doing this is I get to step into and learn from other people's code.  The downside is it's a bit harder to 
-keep these libraries up to date.<p>
-    Well, that's all.  I hope you've enjoyed Transformalizing NorthWind and will attempt to transformalize your own database.
+<p>
+    Where possible, I've included source code from these projects rather than the Nuget packages. The upside 
+in doing this is I get to step into and learn from other people's code.  The downside is it's a bit harder to keep these libraries up to date.
 </p>
+<p>Well, that's all.  I hope you've enjoyed Transformalizing NorthWind and will attempt to transformalize your own database.</p>

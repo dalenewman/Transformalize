@@ -28,33 +28,39 @@ using Transformalize.Main;
 
 namespace Transformalize.Operations {
     public class ParametersExtract : InputCommandOperation {
+        private readonly Process _process;
         private readonly string _sql;
         private IParameters _parameters;
         private int[] _batchIds;
 
         public ParametersExtract(Process process)
             : base(process.OutputConnection) {
+            _process = process;
             UseTransaction = false;
             _sql = BuildSql(process);
         }
 
         private string BuildSql(Process process) {
-            string where;
+            string where = string.Empty;
 
             _parameters = process.Parameters();
             var fields = string.Join(", ", _parameters.Keys);
-            _batchIds = process.Entities.Select(kv => kv.TflBatchId).Distinct().ToArray();
 
-            if (_batchIds.Length == 1) {
-                where = " WHERE [TflBatchId] = @TflBatchId";
-            } else
+            if (!_process.MasterEntity.IsFirstRun)
             {
-                where = " WHERE [TflBatchId] IN (";
-                for (var i = 0; i < _batchIds.Length; i++)
-                {
-                    where += "@TflBatchId" + i + ", ";
+                _batchIds = process.Entities.Select(kv => kv.TflBatchId).Distinct().ToArray();
+                if (_batchIds.Length == 1) {
+                    where = " WHERE [TflBatchId] = @TflBatchId";
+                } else {
+                    //where = " WHERE [TflBatchId] IN (";
+                    //for (var i = 0; i < _batchIds.Length; i++)
+                    //{
+                    //    where += "@TflBatchId" + i + ", ";
+                    //}
+                    //where = where.TrimEnd(", ".ToCharArray()) + ")";
+                    where = string.Format(" WHERE TflBatchId BETWEEN {0} AND {1}", _batchIds.Min(), _batchIds.Max());
                 }
-                where = where.TrimEnd(", ".ToCharArray()) + ")";
+                
             }
 
             var sql = string.Format("SELECT [TflKey], {0} FROM {1}{2};", fields, process.Star, where);
@@ -76,12 +82,17 @@ namespace Transformalize.Operations {
         protected override void PrepareCommand(IDbCommand cmd) {
             cmd.CommandText = _sql;
 
-            if (_batchIds.Length == 1) {
-                AddParameter(cmd, "@TflBatchId", _batchIds[0]);                
-            } else {
-                for (var i = 0; i < _batchIds.Length; i++) {
-                    AddParameter(cmd, "@TflBatchId" + i, _batchIds[i]);
+            if (!_process.MasterEntity.IsFirstRun)
+            {
+                if (_batchIds.Length == 1) {
+                    AddParameter(cmd, "@TflBatchId", _batchIds[0]);
                 }
+                //} else {
+                //    for (var i = 0; i < _batchIds.Length; i++) {
+                //        AddParameter(cmd, "@TflBatchId" + i, _batchIds[i]);
+                //    }
+                //}
+                
             }
 
             cmd.CommandTimeout = 0;
