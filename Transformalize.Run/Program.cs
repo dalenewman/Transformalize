@@ -80,7 +80,7 @@ namespace Transformalize.Run
 
             Log.Info("Process completed in {0}.", Timer.Elapsed);
 
-            if (_options.Mode != Modes.Test) return;
+            if (_options.Mode != "test") return;
 
             Console.WriteLine("Press any key to continue.");
             Console.ReadKey();

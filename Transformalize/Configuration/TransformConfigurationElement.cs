@@ -234,8 +234,7 @@ namespace Transformalize.Configuration
             get { return this[EXPRESSION] as string; }
             set { this[EXPRESSION] = value; }
         }
-
-
+        
         [ConfigurationProperty(PARAMETERS)]
         public ParameterElementCollection Parameters
         {

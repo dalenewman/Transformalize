@@ -46,15 +46,7 @@ namespace Transformalize.Main {
                         bool input;
                         switch (key) {
                             case "mode":
-                                if (value.StartsWith("init")) {
-                                    Mode = Modes.Initialize;
-                                } else if (value.Equals("test")) {
-                                    Mode = Modes.Test;
-                                } else if (value.Equals("metadata")) {
-                                    Mode = Modes.Metadata;
-                                } else if (value.Equals("delete")) {
-                                    Mode = Modes.Delete;
-                                }
+                                Mode = value;
                                 break;
                             case "loglevel":
                                 LogLevel = LogLevel.FromString(value);
@@ -107,7 +99,7 @@ namespace Transformalize.Main {
             }
         }
 
-        public Modes Mode { get; set; }
+        public string Mode { get; set; }
         public bool RenderTemplates { get; set; }
         public bool PerformTemplateActions { get; set; }
         public int Top { get; set; }
@@ -129,7 +121,7 @@ namespace Transformalize.Main {
         private void SetDefaults() {
             RenderTemplates = true;
             PerformTemplateActions = true;
-            Mode = Modes.Normal;
+            Mode = "default";
             Top = 0;
             LogLevel = LogLevel.Info;
         }

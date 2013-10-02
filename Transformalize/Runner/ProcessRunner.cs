@@ -47,17 +47,19 @@ namespace Transformalize.Runner
 
             switch (_process.Options.Mode)
             {
-                case Modes.Initialize:
+                case "init":
                     new InitializationProcess(_process).Execute();
+                    RenderTemplates();
                     break;
-                case Modes.Metadata:
+                case "metadata":
                     var fileName = new FileInfo(Path.Combine(Common.GetTemporaryFolder(_process.Name), "MetaData.xml")).FullName;
                     var writer = new MetaDataWriter(_process, new SqlServerEntityAutoFieldReader());
                     File.WriteAllText(fileName, writer.Write(), Encoding.UTF8);
                     System.Diagnostics.Process.Start(fileName);
                     break;
-                case Modes.Delete:
+                case "delete":
                     ProcessEntityDeletes();
+                    RenderTemplates();
                     break;
                 default:
                     ProcessEntities();
@@ -81,14 +83,14 @@ namespace Transformalize.Runner
         private void ProcessEntities() {
 
             foreach (var entityKeysProcess in _process.Entities.Where(e=>e.InputConnection.Provider.Type != ProviderType.File).Select(entity => new EntityKeysProcess(_process, entity))) {
-                if (_process.Options.Mode == Modes.Test)
+                if (_process.Options.Mode == "test")
                     entityKeysProcess.PipelineExecuter = new SingleThreadedNonCachedPipelineExecuter();
 
                 entityKeysProcess.Execute();
             }
 
             foreach (var entityProcess in _process.Entities.Select(entity => new EntityProcess(_process, entity))) {
-                if (_process.Options.Mode == Modes.Test)
+                if (_process.Options.Mode == "test")
                     entityProcess.PipelineExecuter = new SingleThreadedNonCachedPipelineExecuter();
 
                 entityProcess.Execute();
@@ -97,7 +99,7 @@ namespace Transformalize.Runner
 
         private void ProcessMaster() {
             var updateMasterProcess = new UpdateMasterProcess(ref _process);
-            if (_process.Options.Mode == Modes.Test)
+            if (_process.Options.Mode == "test")
                 updateMasterProcess.PipelineExecuter = new SingleThreadedNonCachedPipelineExecuter();
 
             updateMasterProcess.Execute();
@@ -108,7 +110,7 @@ namespace Transformalize.Runner
 
             var transformProcess = new TransformProcess(_process);
 
-            if (_process.Options.Mode == Modes.Test)
+            if (_process.Options.Mode == "test")
                 transformProcess.PipelineExecuter = new SingleThreadedNonCachedPipelineExecuter();
 
             transformProcess.Execute();

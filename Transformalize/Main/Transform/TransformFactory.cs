@@ -105,10 +105,9 @@ namespace Transformalize.Main {
                         scripts[script.Name] = _process.Scripts[script.Name];
                     }
 
-                    transform =
-                        parameters.Any()
-                            ? new JavascriptTransform(element.Script, parameters, scripts)
-                            : new JavascriptTransform(element.Script, fieldName, scripts);
+                    transform = parameters.Any()
+                        ? new JavascriptTransform(element.Script, parameters, scripts)
+                        : new JavascriptTransform(element.Script, fieldName, scripts);
                     break;
 
                 case "expression":

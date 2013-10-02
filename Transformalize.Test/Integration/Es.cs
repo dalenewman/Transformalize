@@ -34,10 +34,7 @@ namespace Transformalize.Test.Integration
         [Test]
         public void Init()
         {
-            var options = new Options
-                              {
-                                  Mode = Modes.Initialize
-                              };
+            var options = new Options { Mode = "init" };
             var process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read(), options).Read();
             new ProcessRunner(process).Run();
         }
@@ -53,10 +50,7 @@ namespace Transformalize.Test.Integration
         [Test]
         public void Normal()
         {
-            var options = new Options
-                              {
-                                  Mode = Modes.Normal
-                              };
+            var options = new Options();
             var process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read(), options).Read();
             new ProcessRunner(process).Run();
         }

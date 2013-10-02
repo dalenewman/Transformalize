@@ -24,7 +24,9 @@ using System.IO;
 using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main {
+
     public class TemplateManager {
+
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly Process _process;
         private readonly char[] _trim = new[] { '\\' };

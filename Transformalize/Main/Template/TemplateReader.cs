@@ -9,7 +9,9 @@ using Transformalize.Libs.RazorEngine.Configuration.Fluent;
 using Transformalize.Libs.RazorEngine.Templating;
 
 namespace Transformalize.Main {
+
     public class TemplateReader {
+        private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly Process _process;
@@ -41,21 +43,25 @@ namespace Transformalize.Main {
                     }
 
                     foreach (ActionConfigurationElement action in element.Actions) {
-                        var templateAction = new TemplateAction {
-                            Action = action.Action,
-                            File = action.File,
-                            Method = action.Method,
-                            Url = action.Url,
-                            ProcessName = _process.Name,
-                            TemplateName = template.Name
-                        };
+                        var modes = GetModes(action).ToList();
+                        if (modes.Contains("*") || modes.Any(m => m.Equals(_process.Options.Mode, IC))) {
 
-                        if (!String.IsNullOrEmpty(action.Connection) &&
-                            _process.Connections.ContainsKey(action.Connection)) {
-                            templateAction.Connection = _process.Connections[action.Connection];
+                            var templateAction = new TemplateAction {
+                                Action = action.Action,
+                                File = action.File,
+                                Method = action.Method,
+                                Url = action.Url,
+                                TemplateName = template.Name,
+                                Modes = modes
+                            };
+
+                            if (!String.IsNullOrEmpty(action.Connection) &&
+                                _process.Connections.ContainsKey(action.Connection)) {
+                                templateAction.Connection = _process.Connections[action.Connection];
+                            }
+
+                            template.Actions.Add(templateAction);
                         }
-
-                        template.Actions.Add(templateAction);
                     }
 
                     templates[element.Name] = template;
@@ -65,6 +71,17 @@ namespace Transformalize.Main {
 
             return templates;
 
+        }
+
+        private static IEnumerable<string> GetModes(ActionConfigurationElement action) {
+            var modes = new List<string>();
+
+            if (action.Mode != string.Empty) {
+                modes.Add(action.Mode);
+            }
+
+            modes.AddRange(from ModeConfigurationElement mode in action.Modes select mode.Mode);
+            return modes;
         }
 
         private void SetupRazorTemplateService() {

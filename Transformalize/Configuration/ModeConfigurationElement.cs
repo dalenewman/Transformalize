@@ -20,14 +20,21 @@
 
 #endregion
 
-namespace Transformalize.Main
-{
-    public enum Modes
-    {
-        Initialize,
-        Normal,
-        Test,
-        Metadata,
-        Delete
+using System.Configuration;
+
+namespace Transformalize.Configuration {
+    public class ModeConfigurationElement : ConfigurationElement {
+
+        private const string MODE = "mode";
+
+        [ConfigurationProperty(MODE, IsRequired = true)]
+        public string Mode {
+            get { return this[MODE] as string; }
+            set { this[MODE] = value; }
+        }
+
+        public override bool IsReadOnly() {
+            return false;
+        }
     }
 }

@@ -59,9 +59,9 @@ namespace Transformalize.Operations
         {
             var provider = _process.OutputConnection.Provider;
 
-            if (_entityExists.Exists(_process.OutputConnection, _entity.Schema, _entity.Alias)) return;
+            if (_entityExists.Exists(_process.OutputConnection, _entity.Schema, _entity.OutputName())) return;
 
-            var primaryKey = _writer.FieldType(FieldType.MasterKey, FieldType.PrimaryKey).Alias(provider).Asc().Values();
+            var primaryKey = _writer.FieldType(_entity.IsMaster() ? FieldType.MasterKey : FieldType.PrimaryKey).Alias(provider).Asc().Values();
             var defs = _writer.Reload().AddSurrogateKey().AddBatchId().Output().Alias(provider).DataType().AppendIf(" NOT NULL", FieldType.MasterKey, FieldType.PrimaryKey).Values();
             var sql = _process.OutputConnection.TableQueryWriter.Write(_entity.OutputName(), defs, primaryKey, ignoreDups: true);
 

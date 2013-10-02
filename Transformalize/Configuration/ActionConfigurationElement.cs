@@ -22,47 +22,59 @@
 
 using System.Configuration;
 
-namespace Transformalize.Configuration
-{
-    public class ActionConfigurationElement : ConfigurationElement
-    {
-        [ConfigurationProperty("action", IsRequired = true)]
-        public string Action
-        {
-            get { return this["action"] as string; }
-            set { this["action"] = value; }
+namespace Transformalize.Configuration {
+    public class ActionConfigurationElement : ConfigurationElement {
+
+        private const string MODE = "mode";
+        private const string FILE = "file";
+        private const string ACTION = "action";
+        private const string CONNECTION = "connection";
+        private const string METHOD = "method";
+        private const string URL = "url";
+        private const string MODES = "modes";
+
+        [ConfigurationProperty(ACTION, IsRequired = true)]
+        public string Action {
+            get { return this[ACTION] as string; }
+            set { this[ACTION] = value; }
         }
 
-        [ConfigurationProperty("file", IsRequired = false)]
-        public string File
-        {
-            get { return this["file"] as string; }
-            set { this["file"] = value; }
+        [ConfigurationProperty(FILE, IsRequired = false)]
+        public string File {
+            get { return this[FILE] as string; }
+            set { this[FILE] = value; }
         }
 
-        [ConfigurationProperty("connection", IsRequired = false)]
-        public string Connection
-        {
-            get { return this["connection"] as string; }
-            set { this["connection"] = value; }
+        [ConfigurationProperty(MODE, IsRequired = false, DefaultValue = "default")]
+        public string Mode {
+            get { return this[MODE] as string; }
+            set { this[MODE] = value; }
         }
 
-        [ConfigurationProperty("method", IsRequired = false, DefaultValue = "get")]
-        public string Method
-        {
-            get { return this["method"] as string; }
-            set { this["method"] = value; }
+        [ConfigurationProperty(CONNECTION, IsRequired = false)]
+        public string Connection {
+            get { return this[CONNECTION] as string; }
+            set { this[CONNECTION] = value; }
         }
 
-        [ConfigurationProperty("url", IsRequired = false)]
-        public string Url
-        {
-            get { return this["url"] as string; }
-            set { this["url"] = value; }
+        [ConfigurationProperty(METHOD, IsRequired = false, DefaultValue = "get")]
+        public string Method {
+            get { return this[METHOD] as string; }
+            set { this[METHOD] = value; }
         }
 
-        public override bool IsReadOnly()
-        {
+        [ConfigurationProperty(URL, IsRequired = false)]
+        public string Url {
+            get { return this[URL] as string; }
+            set { this[URL] = value; }
+        }
+
+        [ConfigurationProperty(MODES)]
+        public ModeElementCollection Modes {
+            get { return this[MODES] as ModeElementCollection; }
+        }
+
+        public override bool IsReadOnly() {
             return false;
         }
     }

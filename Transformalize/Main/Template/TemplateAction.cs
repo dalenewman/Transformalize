@@ -20,6 +20,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using Transformalize.Main.Providers;
 
 namespace Transformalize.Main
@@ -31,10 +32,10 @@ namespace Transformalize.Main
         public string File;
         public string From;
         public string Method;
-        public string ProcessName;
         public string RenderedFile;
         public string TemplateName;
         public string To;
         public string Url;
+        public IEnumerable<string> Modes = new List<string>();
     }
 }

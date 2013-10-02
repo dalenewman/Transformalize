@@ -22,7 +22,7 @@ namespace Transformalize.Main {
         public void Load()
         {
             var count = 0;
-            var batchId = _process.Options.Mode == Modes.Initialize ? 1 : _process.GetNextBatchId();
+            var batchId = _process.Options.Mode == "init" ? 1 : _process.GetNextBatchId();
 
             foreach (EntityConfigurationElement element in _elements) {
                 var reader = new EntityConfigurationLoader(_process);

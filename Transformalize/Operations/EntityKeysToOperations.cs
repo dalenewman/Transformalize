@@ -55,7 +55,7 @@ namespace Transformalize.Operations
             {
                 var sql = SelectByKeys(batch);
                 var row = new Row();
-                row[_operationColumn] = new EntityDataExtract(_entity, fields, sql, _entity.InputConnection);
+                row[_operationColumn] = new EntityDataExtract(fields, sql, _entity.InputConnection);
                 count++;
                 yield return row;
             }

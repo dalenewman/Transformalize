@@ -50,7 +50,6 @@ namespace Transformalize.Main
             {
                 var fields = _entityAutoFieldReader.Read(entity, count == 0);
                 content.AppendFormat("    <add name=\"{0}\">\r\n", entity.Name);
-                AppendPrimaryKey(fields, entity, content);
                 AppendFields(fields, content);
                 content.AppendLine("    </add>");
                 count++;
@@ -63,7 +62,7 @@ namespace Transformalize.Main
 
         private void AppendFields(Fields all, StringBuilder content)
         {
-            var fields = new FieldSqlWriter(all).FieldType(FieldType.Field).Context();
+            var fields = new FieldSqlWriter(all).Context();
             _log.Debug("Entity auto found {0} field{1}.", fields.Count, fields.Count == 1 ? string.Empty : "s");
 
             content.AppendLine("      <fields>");
@@ -74,35 +73,15 @@ namespace Transformalize.Main
             content.AppendLine("      </fields>");
         }
 
-        private void AppendPrimaryKey(Fields all, Entity entity, StringBuilder content)
-        {
-            var keys = new FieldSqlWriter(all).FieldType(FieldType.PrimaryKey, FieldType.MasterKey).Context();
-            if (!keys.Any())
-            {
-                _log.Warn(
-                    "Entity auto could not find a primary key on {0}.  You will need to define one in <fields><primaryKey> element.",
-                    entity.Name);
-            }
-            content.AppendLine("      <primaryKey>");
-            foreach (var f in keys)
-            {
-                AppendField(content, f);
-            }
-            content.AppendLine("      </primaryKey>");
-        }
-
         private static void AppendField(StringBuilder content, KeyValuePair<string, Field> f)
         {
-            content.AppendFormat("        <add name=\"{0}\" {1}{2}{3}{4}></add>\r\n",
-                                 f.Value.Name,
-                                 f.Value.SimpleType.Equals("string") ? string.Empty : "type=\"" + f.Value.Type + "\" ",
-                                 f.Value.Length != "0" ? "length=\"" + f.Value.Length + "\" " : string.Empty,
-                                 f.Value.SimpleType == "decimal" && f.Value.Precision > 0
-                                     ? "precision=\"" + f.Value.Precision + "\" "
-                                     : string.Empty,
-                                 f.Value.SimpleType == "decimal" && f.Value.Scale > 0
-                                     ? "scale=\"" + f.Value.Scale + "\""
-                                     : string.Empty);
+            content.AppendFormat("        <add name=\"{0}\" {1}{2}{3}{4}{5}></add>\r\n",
+                f.Value.Name,
+                f.Value.SimpleType.Equals("string") ? string.Empty : "type=\"" + f.Value.Type + "\" ",
+                f.Value.Length != "0" ? "length=\"" + f.Value.Length + "\" " : string.Empty,
+                f.Value.SimpleType == "decimal" && f.Value.Precision > 0 ? "precision=\"" + f.Value.Precision + "\" " : string.Empty,
+                f.Value.SimpleType == "decimal" && f.Value.Scale > 0 ? "scale=\"" + f.Value.Scale + "\"" : string.Empty,
+                f.Value.FieldType.HasFlag(FieldType.PrimaryKey) || f.Value.FieldType.HasFlag(FieldType.MasterKey) ? "primary-key=\"true\"" : string.Empty);
         }
     }
 }

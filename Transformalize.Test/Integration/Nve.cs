@@ -21,41 +21,45 @@
 #endregion
 
 using NUnit.Framework;
-using Transformalize.Libs.NLog;
 using Transformalize.Main;
 using Transformalize.Runner;
 
-namespace Transformalize.Test.Integration {
+namespace Transformalize.Test.Integration
+{
     [TestFixture]
-    public class Files {
+    public class Nve
+    {
+        private const string FILE = @"c:\etl\RhinoEtl\Tfl\NVE.xml";
 
         [Test]
-        public void Init() {
+        public void Init()
+        {
             var options = new Options { Mode = "init" };
-            var process = new ProcessReader(new ProcessConfigurationReader("File").Read(), options).Read();
+            var process = new ProcessReader(new ProcessXmlConfigurationReader(FILE).Read(), options).Read();
             new ProcessRunner(process).Run();
         }
 
         [Test]
-        public void Normal() {
+        public void Metadata() {
+            var options = new Options { Mode = "metadata" };
+            var process = new ProcessReader(new ProcessXmlConfigurationReader(FILE).Read(), options).Read();
+            new ProcessRunner(process).Run();
+        }
+
+        [Test]
+        public void Normal()
+        {
             var options = new Options();
-            var process = new ProcessReader(new ProcessConfigurationReader("File").Read(), options).Read();
+            var process = new ProcessReader(new ProcessXmlConfigurationReader(FILE).Read(), options).Read();
             new ProcessRunner(process).Run();
         }
 
         [Test]
-        public void InitOwnLogs() {
-            var options = new Options { Mode = "init" };
-            var process = new ProcessReader(new ProcessConfigurationReader("MyLogs").Read(), options).Read();
+        public void Test()
+        {
+            var options = new Options { Mode = "test", Top = 1 };
+            var process = new ProcessReader(new ProcessXmlConfigurationReader(FILE).Read(), options).Read();
             new ProcessRunner(process).Run();
         }
-
-        [Test]
-        public void NormalOwnLogs() {
-            var options = new Options();
-            var process = new ProcessReader(new ProcessConfigurationReader("MyLogs").Read(), options).Read();
-            new ProcessRunner(process).Run();
-        }
-
     }
 }

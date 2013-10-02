@@ -35,17 +35,11 @@ namespace Transformalize.Test.Integration
         [Test]
         public void Init()
         {
-            var options1 = new Options
-                               {
-                                   Mode = Modes.Initialize
-                               };
+            var options1 = new Options { Mode = "init" };
             var process1 = new ProcessReader(new ProcessXmlConfigurationReader(CALLS).Read(), options1).Read();
             new ProcessRunner(process1).Run();
 
-            var options2 = new Options
-                               {
-                                   Mode = Modes.Initialize
-                               };
+            var options2 = new Options { Mode = "init" };
             var process2 = new ProcessReader(new ProcessXmlConfigurationReader(CAMPAIGNS).Read(), options2).Read();
             new ProcessRunner(process2).Run();
         }
@@ -53,18 +47,11 @@ namespace Transformalize.Test.Integration
         [Test]
         public void Normal()
         {
-            var options1 = new Options
-                               {
-                                   Mode = Modes.Normal
-                               };
-
+            var options1 = new Options();
             var process1 = new ProcessReader(new ProcessXmlConfigurationReader(CALLS).Read(), options1).Read();
             new ProcessRunner(process1).Run();
 
-            var options2 = new Options
-                               {
-                                   Mode = Modes.Normal
-                               };
+            var options2 = new Options();
             var process2 = new ProcessReader(new ProcessXmlConfigurationReader(CAMPAIGNS).Read(), options2).Read();
             new ProcessRunner(process2).Run();
         }

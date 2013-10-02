@@ -22,7 +22,6 @@
 
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Text;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
@@ -54,7 +53,8 @@ namespace Transformalize.Operations {
 
         protected override void PrepareCommand(IDbCommand cmd) {
             cmd.CommandTimeout = 0;
-            cmd.CommandText = _entity.InputKeys.Any() ? PrepareSqlWithInputKeys() : PrepareSql();
+            
+            cmd.CommandText = _entity.CanDetectChanges() ? PrepareSqlWithInputKeys() : PrepareSql();
             Debug("SQL:\r\n{0}", cmd.CommandText);
         }
 

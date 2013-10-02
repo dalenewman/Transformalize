@@ -29,11 +29,15 @@ namespace Transformalize.Configuration
     {
         private const string NAME = "name";
         private const string VALUE = "value";
-        private const string COMPATABILITY_LEVEL = "compatabilityLevel";
+        private const string COMPATABILITY_LEVEL = "compatability-level";
         private const string PROVIDER = "provider";
         private const string BATCH_SIZE = "batchSize";
         private const string ENABLED = "enabled";
         private const string DELIMITER = "delimiter";
+        private const string DATABASE = "database";
+        private const string SERVER = "server";
+        private const string TRUSTED = "trusted";
+        private const string FILE = "file";
         private DbConnectionStringBuilder _dbConnectionStringBuilder;
 
         [ConfigurationProperty(NAME, IsRequired = true)]
@@ -54,6 +58,18 @@ namespace Transformalize.Configuration
         public string Delimiter {
             get { return this[DELIMITER] as string; }
             set { this[DELIMITER] = value; }
+        }
+
+        [ConfigurationProperty(DATABASE, IsRequired = false, DefaultValue = "")]
+        public string Database {
+            get { return this[DATABASE] as string; }
+            set { this[DATABASE] = value; }
+        }
+
+        [ConfigurationProperty(SERVER, IsRequired = false, DefaultValue = "localhost")]
+        public string Server {
+            get { return this[SERVER] as string; }
+            set { this[SERVER] = value; }
         }
 
         [ConfigurationProperty(COMPATABILITY_LEVEL, IsRequired = false, DefaultValue = 0)]
@@ -83,6 +99,12 @@ namespace Transformalize.Configuration
         {
             get { return (bool) this[ENABLED]; }
             set { this[ENABLED] = value; }
+        }
+
+        [ConfigurationProperty(TRUSTED, IsRequired = false, DefaultValue = true)]
+        public bool Trusted {
+            get { return (bool)this[TRUSTED]; }
+            set { this[TRUSTED] = value; }
         }
 
         public DbConnectionStringBuilder DbConnectionStringBuilder

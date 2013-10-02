@@ -32,22 +32,29 @@ namespace Transformalize.Test.Integration
         private const string FILE = @"NorthWind.xml";
 
         [Test]
-        public void Init()
+        public void InitMode()
         {
-            var options = new Options { Mode = Modes.Initialize };
+            var options = new Options { Mode = "init" };
             var process = new ProcessReader(new ProcessXmlConfigurationReader(FILE).Read(), options).Read();
             new ProcessRunner(process).Run();
         }
 
         [Test]
         public void Metadata() {
-            var options = new Options { Mode = Modes.Metadata };
+            var options = new Options { Mode = "metadata" };
             var process = new ProcessReader(new ProcessXmlConfigurationReader(FILE).Read(), options).Read();
             new ProcessRunner(process).Run();
         }
 
         [Test]
-        public void Normal()
+        public void FirstTimeMode() {
+            var options = new Options() { Mode = "first"};
+            var process = new ProcessReader(new ProcessXmlConfigurationReader(FILE).Read(), options).Read();
+            new ProcessRunner(process).Run();
+        }
+
+        [Test]
+        public void DefaultMode()
         {
             var options = new Options();
             var process = new ProcessReader(new ProcessXmlConfigurationReader(FILE).Read(), options).Read();
@@ -57,7 +64,7 @@ namespace Transformalize.Test.Integration
         [Test]
         public void Test()
         {
-            var options = new Options { Mode = Modes.Test, Top = 1 };
+            var options = new Options { Mode = "test", Top = 1 };
             var process = new ProcessReader(new ProcessXmlConfigurationReader(FILE).Read(), options).Read();
             new ProcessRunner(process).Run();
         }

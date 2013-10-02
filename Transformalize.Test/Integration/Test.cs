@@ -32,7 +32,7 @@ namespace Transformalize.Test.Integration
         [Test]
         public void Init()
         {
-            var options = new Options { Mode = Modes.Initialize };
+            var options = new Options { Mode = "init" };
             var process = new ProcessReader(new ProcessConfigurationReader("Test").Read(), options).Read();
             new ProcessRunner(process).Run();
         }

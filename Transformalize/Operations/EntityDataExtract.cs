@@ -23,39 +23,31 @@
 using System.Data;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
-using Transformalize.Main;
 using Transformalize.Main.Providers;
 
-namespace Transformalize.Operations
-{
-    public class EntityDataExtract : InputCommandOperation
-    {
-        private readonly Entity _entity;
+namespace Transformalize.Operations {
+    public class EntityDataExtract : InputCommandOperation {
         private readonly string[] _fields;
         private readonly string _sql;
+        //private readonly ObjectPool<Row> _objectPool = new ObjectPool<Row>(() => new Row());
 
-
-        public EntityDataExtract(Entity entity, string[] fields, string sql, AbstractConnection connection) : base(connection)
-        {
-            _entity = entity;
+        public EntityDataExtract(string[] fields, string sql, AbstractConnection connection)
+            : base(connection) {
             _fields = fields;
             _sql = sql;
-
             UseTransaction = false;
         }
 
-        protected override Row CreateRowFromReader(IDataReader reader)
-        {
+        protected override Row CreateRowFromReader(IDataReader reader) {
+            //var row = _objectPool.GetObject();
             var row = new Row();
-            foreach (var field in _fields)
-            {
+            foreach (var field in _fields) {
                 row[field] = reader[field];
             }
             return row;
         }
 
-        protected override void PrepareCommand(IDbCommand cmd)
-        {
+        protected override void PrepareCommand(IDbCommand cmd) {
             cmd.CommandText = _sql;
             cmd.CommandTimeout = 0;
             cmd.CommandType = CommandType.Text;

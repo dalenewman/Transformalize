@@ -21,7 +21,10 @@
     </add>
     <add name="solr-schema" file="solr-schema.cshtml" cache="true">
       <actions>
-        <add action="copy" file="C:\Solr\NorthWind\conf\schema.xml" />
+        <add action="copy" file="C:\Solr\NorthWind\conf\schema.xml"/>
+        <add action="web" mode="init" url="http://localhost:8983/solr/admin/cores?action=RELOAD&amp;core=NorthWind"/>
+        <add action="web" mode="first" url="http://localhost:8983/solr/NorthWind/dataimport?command=full-import&amp;clean=true&amp;commit=true&amp;optimize=true"/>
+        <add action="web" mode="default" url="http://localhost:8983/solr/NorthWind/dataimport?command=delta-import&amp;clean=false&amp;commit=true&amp;optimize=true"/>
       </actions>
     </add>
   </templates>
