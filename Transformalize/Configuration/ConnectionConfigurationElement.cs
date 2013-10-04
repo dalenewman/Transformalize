@@ -21,14 +21,12 @@
 #endregion
 
 using System.Configuration;
-using System.Data.Common;
 
 namespace Transformalize.Configuration
 {
     public class ConnectionConfigurationElement : ConfigurationElement
     {
         private const string NAME = "name";
-        private const string VALUE = "value";
         private const string COMPATABILITY_LEVEL = "compatability-level";
         private const string PROVIDER = "provider";
         private const string BATCH_SIZE = "batchSize";
@@ -36,9 +34,11 @@ namespace Transformalize.Configuration
         private const string DELIMITER = "delimiter";
         private const string DATABASE = "database";
         private const string SERVER = "server";
-        private const string TRUSTED = "trusted";
+        private const string PORT = "port";
         private const string FILE = "file";
-        private DbConnectionStringBuilder _dbConnectionStringBuilder;
+        private const string USER = "user";
+        private const string PASSWORD = "password";
+        private const string CONNECTION_STRING = "connection-string";
 
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name
@@ -47,11 +47,34 @@ namespace Transformalize.Configuration
             set { this[NAME] = value; }
         }
 
-        [ConfigurationProperty(VALUE, IsRequired = true)]
-        public string Value
-        {
-            get { return this[VALUE] as string; }
-            set { this[VALUE] = value; }
+        [ConfigurationProperty(USER, IsRequired = false, DefaultValue = "")]
+        public string User {
+            get { return this[USER] as string; }
+            set { this[USER] = value; }
+        }
+
+        [ConfigurationProperty(PORT, IsRequired = false, DefaultValue = 0)]
+        public int Port {
+            get { return (int) this[PORT]; }
+            set { this[PORT] = value; }
+        }
+
+        [ConfigurationProperty(CONNECTION_STRING, IsRequired = false, DefaultValue = "")]
+        public string ConnectionString {
+            get { return this[CONNECTION_STRING] as string; }
+            set { this[CONNECTION_STRING] = value; }
+        }
+
+        [ConfigurationProperty(PASSWORD, IsRequired = false, DefaultValue = "")]
+        public string Password {
+            get { return this[PASSWORD] as string; }
+            set { this[PASSWORD] = value; }
+        }
+
+        [ConfigurationProperty(FILE, IsRequired = false, DefaultValue = "")]
+        public string File {
+            get { return this[FILE] as string; }
+            set { this[FILE] = value; }
         }
 
         [ConfigurationProperty(DELIMITER, IsRequired = false, DefaultValue = "")]
@@ -79,7 +102,7 @@ namespace Transformalize.Configuration
             set { this[COMPATABILITY_LEVEL] = value; }
         }
 
-        [RegexStringValidator(@"(?i)SqlServer|AnalysisServices|MySql|File")]
+        [RegexStringValidator(@"(?i)SqlServer|AnalysisServices|MySql|File|Excel")]
         [ConfigurationProperty(PROVIDER, IsRequired = false, DefaultValue = "SqlServer")]
         public string Provider
         {
@@ -99,20 +122,6 @@ namespace Transformalize.Configuration
         {
             get { return (bool) this[ENABLED]; }
             set { this[ENABLED] = value; }
-        }
-
-        [ConfigurationProperty(TRUSTED, IsRequired = false, DefaultValue = true)]
-        public bool Trusted {
-            get { return (bool)this[TRUSTED]; }
-            set { this[TRUSTED] = value; }
-        }
-
-        public DbConnectionStringBuilder DbConnectionStringBuilder
-        {
-            get
-            {
-                return _dbConnectionStringBuilder ?? (_dbConnectionStringBuilder = new DbConnectionStringBuilder { ConnectionString = Value });
-            }
         }
 
         public override bool IsReadOnly()

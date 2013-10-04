@@ -26,6 +26,13 @@ namespace Transformalize.Main.Providers.MySql
 {
     public class MySqlConnection : AbstractConnection
     {
+        public override string UserProperty { get { return "Uid"; } }
+        public override string PasswordProperty { get { return "Pwd"; } }
+        public override string PortProperty { get { return "Port"; } }
+        public override string DatabaseProperty { get { return "Database"; } }
+        public override string ServerProperty { get { return "Server"; } }
+        public override string TrustedProperty { get { return string.Empty; } }
+
         public MySqlConnection(Process process, ConnectionConfigurationElement element, AbstractProvider provider, IConnectionChecker connectionChecker, IScriptRunner scriptRunner, IProviderSupportsModifier providerScriptModifer, IEntityRecordsExist recordsExist, IEntityDropper dropper)
             : base(element, provider, connectionChecker, scriptRunner, providerScriptModifer, recordsExist, dropper)
         {

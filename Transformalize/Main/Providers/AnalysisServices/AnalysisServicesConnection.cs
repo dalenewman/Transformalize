@@ -33,6 +33,13 @@ namespace Transformalize.Main.Providers.AnalysisServices
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly char[] _semiColen = new[] {';'};
 
+        public override string UserProperty { get { return string.Empty; } }
+        public override string PasswordProperty { get { return string.Empty; } }
+        public override string PortProperty { get { return string.Empty; } }
+        public override string DatabaseProperty { get { return "Catalog"; } }
+        public override string ServerProperty { get { return "Data Source"; } }
+        public override string TrustedProperty { get { return string.Empty; } }
+        
         public AnalysisServicesConnection(ConnectionConfigurationElement element, AbstractProvider provider, IConnectionChecker connectionChecker, IScriptRunner scriptRunner, IProviderSupportsModifier providerScriptModifer, IEntityRecordsExist recordsExist, IEntityDropper dropper)
             : base(element, provider, connectionChecker, scriptRunner, providerScriptModifer, recordsExist, dropper)
         {
@@ -67,5 +74,6 @@ namespace Transformalize.Main.Providers.AnalysisServices
                 }
             }
         }
+
     }
 }

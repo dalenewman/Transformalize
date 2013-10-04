@@ -1,4 +1,4 @@
-﻿//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // 
 //  Copyright (c) Microsoft Corporation.  All rights reserved. 
 // 
@@ -12,7 +12,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Transformalize.Operations
+namespace Transformalize.Extensions
 {
     /// <summary>Debug view for the IProducerConsumerCollection.</summary>
     /// <typeparam name="T">Specifies the type of the data being aggregated.</typeparam>

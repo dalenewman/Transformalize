@@ -61,7 +61,7 @@ namespace Transformalize.Main {
         public Process(string name) {
             Name = name;
             GlobalDiagnosticsContext.Set("process", name);
-
+            
             // MySql
             Kernal.Bind<AbstractProvider>().To<MySqlProvider>().WhenInjectedInto<MySqlConnection>();
             Kernal.Bind<IConnectionChecker>().To<DefaultConnectionChecker>().WhenInjectedInto<MySqlConnection>();

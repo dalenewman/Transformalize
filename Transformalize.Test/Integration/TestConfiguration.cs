@@ -74,9 +74,9 @@ namespace Transformalize.Test.Integration
         public void TestProcessReader()
         {
             Assert.AreEqual("Test", _process.Name);
-            Assert.AreEqual("server=localhost;database=TestInput;trusted_connection=True", _process.Connections["input"].ConnectionString);
-            Assert.AreEqual("server=localhost;database=TestOutput;trusted_connection=True", _process.Connections["output"].ConnectionString);
-            Assert.AreEqual("server=localhost;database=TestInput;trusted_connection=True", _process.Entities.First().InputConnection.ConnectionString);
+            Assert.AreEqual("Server=localhost;Database=TestInput;Trusted_Connection=True", _process.Connections["input"].ConnectionString);
+            Assert.AreEqual("Server=localhost;Database=TestOutput;Trusted_Connection=True", _process.Connections["output"].ConnectionString);
+            Assert.AreEqual("Server=localhost;Database=TestInput;Trusted_Connection=True", _process.Entities.First().InputConnection.ConnectionString);
             Assert.AreEqual("OrderDetailKey", _process.Entities.First().PrimaryKey["OrderDetailKey"].Alias);
             Assert.AreEqual("ProductKey", _process.Entities.First().Fields["ProductKey"].Alias);
             Assert.AreEqual("OrderDetailRowVersion", _process.Entities.First().Version.Alias);

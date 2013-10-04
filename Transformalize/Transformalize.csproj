@@ -172,7 +172,123 @@
     <Compile Include="Configuration\TransformalizeConfiguration.cs" />
     <Compile Include="Extensions\LongExtensions.cs" />
     <Compile Include="Extensions\IntExtensions.cs" />
+    <Compile Include="Extensions\ObjectPool.cs" />
+    <Compile Include="Extensions\ProducerConsumerCollectionBase.cs" />
     <Compile Include="Libs\Dapper\SqlMapper.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\Enums.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsBiffBlankCell.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsBiffBOF.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsBiffBoundSheet.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsBiffContinue.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsBiffDbCell.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsBiffDimensions.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsBiffEOF.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsBiffFormulaCell.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsBiffFormulaString.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsBiffIndex.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsBiffIntegerCell.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsBiffInterfaceHdr.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsBiffLabelCell.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsBiffLabelSSTCell.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsBiffMulBlankCell.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsBiffMulRKCell.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsBiffNumberCell.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsBiffRecord.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsBiffRKCell.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsBiffRow.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsBiffSimpleValueRecord.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsBiffSST.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsBiffStream.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsBiffUncalced.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsBiffWindow1.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsDirectoryEntry.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsFat.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsFormattedUnicodeString.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsHeader.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsRootDirectory.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsStream.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsWorkbookGlobals.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsWorksheet.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\Helpers.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\OpenXmlFormat\XlsxDimension.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\OpenXmlFormat\XlsxNumFmt.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\OpenXmlFormat\XlsxSST.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\OpenXmlFormat\XlsxStyles.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\OpenXmlFormat\XlsxWorkbook.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\OpenXmlFormat\XlsxWorksheet.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\OpenXmlFormat\XlsxXf.cs" />
+    <Compile Include="Libs\ExcelDataReader\Core\ZipWorker.cs" />
+    <Compile Include="Libs\ExcelDataReader\Errors.cs" />
+    <Compile Include="Libs\ExcelDataReader\ExcelBinaryReader.cs" />
+    <Compile Include="Libs\ExcelDataReader\ExcelOpenXmlReader.cs" />
+    <Compile Include="Libs\ExcelDataReader\ExcelReaderFactory.cs" />
+    <Compile Include="Libs\ExcelDataReader\Exceptions\BiffRecordException.cs" />
+    <Compile Include="Libs\ExcelDataReader\Exceptions\HeaderException.cs" />
+    <Compile Include="Libs\ExcelDataReader\IExcelDataReader.cs" />
+    <Compile Include="Libs\Rhino.Etl\Operations\AbstractSortedAggregationOperation.cs" />
+    <Compile Include="Libs\Rhino.Etl\Operations\SortMergeJoinOperation.cs" />
+    <Compile Include="Libs\SharpZLib\BZip2\BZip2.cs" />
+    <Compile Include="Libs\SharpZLib\BZip2\BZip2Constants.cs" />
+    <Compile Include="Libs\SharpZLib\BZip2\BZip2Exception.cs" />
+    <Compile Include="Libs\SharpZLib\BZip2\BZip2InputStream.cs" />
+    <Compile Include="Libs\SharpZLib\BZip2\BZip2OutputStream.cs" />
+    <Compile Include="Libs\SharpZLib\Checksums\Adler32.cs" />
+    <Compile Include="Libs\SharpZLib\Checksums\CRC32.cs" />
+    <Compile Include="Libs\SharpZLib\Checksums\IChecksum.cs" />
+    <Compile Include="Libs\SharpZLib\Checksums\StrangeCRC.cs" />
+    <Compile Include="Libs\SharpZLib\Core\FileSystemScanner.cs" />
+    <Compile Include="Libs\SharpZLib\Core\INameTransform.cs" />
+    <Compile Include="Libs\SharpZLib\Core\IScanFilter.cs" />
+    <Compile Include="Libs\SharpZLib\Core\NameFilter.cs" />
+    <Compile Include="Libs\SharpZLib\Core\PathFilter.cs" />
+    <Compile Include="Libs\SharpZLib\Core\StreamUtils.cs" />
+    <Compile Include="Libs\SharpZLib\Core\WindowsPathUtils.cs" />
+    <Compile Include="Libs\SharpZLib\Encryption\PkzipClassic.cs" />
+    <Compile Include="Libs\SharpZLib\Encryption\ZipAESStream.cs" />
+    <Compile Include="Libs\SharpZLib\Encryption\ZipAESTransform.cs" />
+    <Compile Include="Libs\SharpZLib\GZip\GZIPConstants.cs" />
+    <Compile Include="Libs\SharpZLib\GZip\GZipException.cs" />
+    <Compile Include="Libs\SharpZLib\GZip\GzipInputStream.cs" />
+    <Compile Include="Libs\SharpZLib\GZip\GzipOutputStream.cs" />
+    <Compile Include="Libs\SharpZLib\Lzw\LzwConstants.cs" />
+    <Compile Include="Libs\SharpZLib\Lzw\LzwException.cs" />
+    <Compile Include="Libs\SharpZLib\Lzw\LzwInputStream.cs" />
+    <Compile Include="Libs\SharpZLib\Main.cs" />
+    <Compile Include="Libs\SharpZLib\SharpZipBaseException.cs" />
+    <Compile Include="Libs\SharpZLib\Tar\InvalidHeaderException.cs" />
+    <Compile Include="Libs\SharpZLib\Tar\TarArchive.cs" />
+    <Compile Include="Libs\SharpZLib\Tar\TarBuffer.cs" />
+    <Compile Include="Libs\SharpZLib\Tar\TarEntry.cs" />
+    <Compile Include="Libs\SharpZLib\Tar\TarException.cs" />
+    <Compile Include="Libs\SharpZLib\Tar\TarHeader.cs" />
+    <Compile Include="Libs\SharpZLib\Tar\TarInputStream.cs" />
+    <Compile Include="Libs\SharpZLib\Tar\TarOutputStream.cs" />
+    <Compile Include="Libs\SharpZLib\Zip\Compression\Deflater.cs" />
+    <Compile Include="Libs\SharpZLib\Zip\Compression\DeflaterConstants.cs" />
+    <Compile Include="Libs\SharpZLib\Zip\Compression\DeflaterEngine.cs" />
+    <Compile Include="Libs\SharpZLib\Zip\Compression\DeflaterHuffman.cs" />
+    <Compile Include="Libs\SharpZLib\Zip\Compression\DeflaterPending.cs" />
+    <Compile Include="Libs\SharpZLib\Zip\Compression\Inflater.cs" />
+    <Compile Include="Libs\SharpZLib\Zip\Compression\InflaterDynHeader.cs" />
+    <Compile Include="Libs\SharpZLib\Zip\Compression\InflaterHuffmanTree.cs" />
+    <Compile Include="Libs\SharpZLib\Zip\Compression\PendingBuffer.cs" />
+    <Compile Include="Libs\SharpZLib\Zip\Compression\Streams\DeflaterOutputStream.cs" />
+    <Compile Include="Libs\SharpZLib\Zip\Compression\Streams\InflaterInputStream.cs" />
+    <Compile Include="Libs\SharpZLib\Zip\Compression\Streams\OutputWindow.cs" />
+    <Compile Include="Libs\SharpZLib\Zip\Compression\Streams\StreamManipulator.cs" />
+    <Compile Include="Libs\SharpZLib\Zip\FastZip.cs" />
+    <Compile Include="Libs\SharpZLib\Zip\IEntryFactory.cs" />
+    <Compile Include="Libs\SharpZLib\Zip\WindowsNameTransform.cs" />
+    <Compile Include="Libs\SharpZLib\Zip\ZipConstants.cs" />
+    <Compile Include="Libs\SharpZLib\Zip\ZipEntry.cs" />
+    <Compile Include="Libs\SharpZLib\Zip\ZipEntryFactory.cs" />
+    <Compile Include="Libs\SharpZLib\Zip\ZipException.cs" />
+    <Compile Include="Libs\SharpZLib\Zip\ZipExtraData.cs" />
+    <Compile Include="Libs\SharpZLib\Zip\ZipFile.cs" />
+    <Compile Include="Libs\SharpZLib\Zip\ZipHelperStream.cs" />
+    <Compile Include="Libs\SharpZLib\Zip\ZipInputStream.cs" />
+    <Compile Include="Libs\SharpZLib\Zip\ZipNameTransform.cs" />
+    <Compile Include="Libs\SharpZLib\Zip\ZipOutputStream.cs" />
     <Compile Include="Main\Common.cs" />
     <Compile Include="Main\Entity\Entities.cs" />
     <Compile Include="Main\Entity\EntitiesLoader.cs" />
@@ -688,8 +804,6 @@
     <Compile Include="Operations\EntityDelete.cs" />
     <Compile Include="Operations\EntityOutputKeysExtractAll.cs" />
     <Compile Include="Operations\FileDelimitedImporter.cs" />
-    <Compile Include="Operations\ObjectPool.cs" />
-    <Compile Include="Operations\ProducerConsumerCollectionBase.cs" />
     <Compile Include="Processes\EntityDeleteProcess.cs" />
     <Compile Include="Operations\EntityDetectDeletes.cs" />
     <Compile Include="Processes\EntityKeysProcess.cs" />
@@ -1100,6 +1214,7 @@
     <None Include="Libs\NCalc\NCalc.tokens" />
     <None Include="Libs\RazorEngine\ClassDiagram.cd" />
     <None Include="Libs\RazorEngine\packages.config" />
+    <None Include="Libs\SharpZLib\obj\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -1117,6 +1232,10 @@
     <Content Include="Libs\Ninject\LICENSE.txt" />
     <Content Include="Libs\NLog\LICENSE.txt" />
     <Content Include="Libs\Rhino.Etl\license.txt" />
+    <Content Include="Libs\SharpZLib\COPYING.txt" />
+    <Content Include="Libs\SharpZLib\obj\Debug\ICSharpCode.SharpZipLib.dll" />
+    <Content Include="Libs\SharpZLib\obj\Debug\ICSharpCode.SharpZipLib.pdb" />
+    <Content Include="Libs\SharpZLib\obj\Debug\ICSharpCode.SharpZLib.csproj.FileListAbsolute.txt" />
     <Content Include="LICENSE.txt" />
     <Content Include="Microsoft.AnalysisServices.DLL">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -1128,7 +1247,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Libs\SharpZLib\obj\Debug\TempPE\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

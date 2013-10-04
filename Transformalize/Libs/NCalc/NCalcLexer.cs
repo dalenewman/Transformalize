@@ -1,25 +1,8 @@
 #region License
-
 // /*
-// Transformalize - Replicate, Transform, and Denormalize Your Data...
-// Copyright (C) 2013 Dale Newman
-// 
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-// 
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// See license included in this library folder.
 // */
-
 #endregion
-
 #pragma warning disable 219
 // Unreachable code detected.
 #pragma warning disable 162
@@ -2798,80 +2781,80 @@ namespace Transformalize.Libs.NCalc
                 "\x43\xFFFF}>";
 
             private static readonly string[] DFA14_transitionS =
-                {
-                    "\x2\x1F\x1\xFFFF\x2\x1F\x12\xFFFF\x1\x1F\x1\x1\x1\xFFFF\x1\x1C\x1\xFFFF" +
-                    "\x1\x2\x1\x3\x1\x1B\x1\x4\x1\x5\x1\x6\x1\x7\x1\x8\x1\x9\x1\x1A\x1\xA" +
-                    "\xA\x19\x1\xB\x1\xFFFF\x1\xC\x1\xD\x1\xE\x1\xF\x1\xFFFF\x4\x1E\x1\x18" +
-                    "\x15\x1E\x1\x1D\x2\xFFFF\x1\x10\x1\x1E\x1\xFFFF\x1\x11\x3\x1E\x1\x18" +
-                    "\x1\x17\x7\x1E\x1\x12\x1\x13\x4\x1E\x1\x16\x6\x1E\x1\xFFFF\x1\x14\x1" +
-                    "\xFFFF\x1\x15",
-                    "\x1\x20",
-                    "",
-                    "\x1\x22",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "\x1\x24\x1\x25\x1\x26",
-                    "\x1\x28",
-                    "\x1\x2A\x1\x2B",
-                    "",
-                    "",
-                    "\x1\x2D",
-                    "\x1\x2E",
-                    "\x1\x2F",
-                    "\x1\x30",
-                    "",
-                    "\x1\x32",
-                    "\x1\x33",
-                    "\x1\x35\x1\xFFFF\x1\x35\x2\xFFFF\xA\x34",
-                    "\x1\x1A\x1\xFFFF\xA\x19\xB\xFFFF\x1\x1A\x1F\xFFFF\x1\x1A",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "\x1\x37",
-                    "\x1\x38",
-                    "\xA\x1E\x7\xFFFF\x1A\x1E\x4\xFFFF\x1\x1E\x1\xFFFF\x1A\x1E",
-                    "",
-                    "",
-                    "\x1\x3A",
-                    "\x1\x3B",
-                    "\xA\x34",
-                    "",
-                    "",
-                    "\xA\x1E\x7\xFFFF\x1A\x1E\x4\xFFFF\x1\x1E\x1\xFFFF\x1A\x1E",
-                    "\xA\x1E\x7\xFFFF\x1A\x1E\x4\xFFFF\x1\x1E\x1\xFFFF\x1A\x1E",
-                    "",
-                    "\x1\x3E",
-                    "\x1\x3F",
-                    "",
-                    "",
-                    "\xA\x1E\x7\xFFFF\x1A\x1E\x4\xFFFF\x1\x1E\x1\xFFFF\x1A\x1E",
-                    "\x1\x41",
-                    "",
-                    "\xA\x1E\x7\xFFFF\x1A\x1E\x4\xFFFF\x1\x1E\x1\xFFFF\x1A\x1E",
-                    ""
-                };
+            {
+                "\x2\x1F\x1\xFFFF\x2\x1F\x12\xFFFF\x1\x1F\x1\x1\x1\xFFFF\x1\x1C\x1\xFFFF" +
+                "\x1\x2\x1\x3\x1\x1B\x1\x4\x1\x5\x1\x6\x1\x7\x1\x8\x1\x9\x1\x1A\x1\xA" +
+                "\xA\x19\x1\xB\x1\xFFFF\x1\xC\x1\xD\x1\xE\x1\xF\x1\xFFFF\x4\x1E\x1\x18" +
+                "\x15\x1E\x1\x1D\x2\xFFFF\x1\x10\x1\x1E\x1\xFFFF\x1\x11\x3\x1E\x1\x18" +
+                "\x1\x17\x7\x1E\x1\x12\x1\x13\x4\x1E\x1\x16\x6\x1E\x1\xFFFF\x1\x14\x1" +
+                "\xFFFF\x1\x15",
+                "\x1\x20",
+                "",
+                "\x1\x22",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "\x1\x24\x1\x25\x1\x26",
+                "\x1\x28",
+                "\x1\x2A\x1\x2B",
+                "",
+                "",
+                "\x1\x2D",
+                "\x1\x2E",
+                "\x1\x2F",
+                "\x1\x30",
+                "",
+                "\x1\x32",
+                "\x1\x33",
+                "\x1\x35\x1\xFFFF\x1\x35\x2\xFFFF\xA\x34",
+                "\x1\x1A\x1\xFFFF\xA\x19\xB\xFFFF\x1\x1A\x1F\xFFFF\x1\x1A",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "\x1\x37",
+                "\x1\x38",
+                "\xA\x1E\x7\xFFFF\x1A\x1E\x4\xFFFF\x1\x1E\x1\xFFFF\x1A\x1E",
+                "",
+                "",
+                "\x1\x3A",
+                "\x1\x3B",
+                "\xA\x34",
+                "",
+                "",
+                "\xA\x1E\x7\xFFFF\x1A\x1E\x4\xFFFF\x1\x1E\x1\xFFFF\x1A\x1E",
+                "\xA\x1E\x7\xFFFF\x1A\x1E\x4\xFFFF\x1\x1E\x1\xFFFF\x1A\x1E",
+                "",
+                "\x1\x3E",
+                "\x1\x3F",
+                "",
+                "",
+                "\xA\x1E\x7\xFFFF\x1A\x1E\x4\xFFFF\x1\x1E\x1\xFFFF\x1A\x1E",
+                "\x1\x41",
+                "",
+                "\xA\x1E\x7\xFFFF\x1A\x1E\x4\xFFFF\x1\x1E\x1\xFFFF\x1A\x1E",
+                ""
+            };
 
             private static readonly short[] DFA14_eot = UnpackEncodedString(DFA14_eotS);
             private static readonly short[] DFA14_eof = UnpackEncodedString(DFA14_eofS);
@@ -2936,12 +2919,12 @@ namespace Transformalize.Libs.NCalc
                 "\x4\xFFFF}>";
 
             private static readonly string[] DFA7_transitionS =
-                {
-                    "\x1\x2\x1\xFFFF\xA\x1",
-                    "\x1\x2\x1\xFFFF\xA\x1\xB\xFFFF\x1\x3\x1F\xFFFF\x1\x3",
-                    "",
-                    ""
-                };
+            {
+                "\x1\x2\x1\xFFFF\xA\x1",
+                "\x1\x2\x1\xFFFF\xA\x1\xB\xFFFF\x1\x3\x1F\xFFFF\x1\x3",
+                "",
+                ""
+            };
 
             private static readonly short[] DFA7_eot = UnpackEncodedString(DFA7_eotS);
             private static readonly short[] DFA7_eof = UnpackEncodedString(DFA7_eofS);

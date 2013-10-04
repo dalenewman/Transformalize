@@ -8,9 +8,9 @@
   </providers>
 
   <connections>
-    <add name="input" value="Server=localhost;Database=NorthWind;Trusted_Connection=True;" />
-    <add name="output" value="Server=localhost;Database=NorthWindStar;Trusted_Connection=True;" />
-    <add name="ssas" value="Data Source=localhost;Catalog=NorthWind;" provider="AnalysisServices"></add>
+    <add name="input" connection-string="Server=localhost;Database=NorthWind;Trusted_Connection=True;" />
+    <add name="output" database="NorthWindStar" port="1433" />
+    <add name="ssas" database="NorthWind" provider="AnalysisServices"></add>
   </connections>
 
   <templates path="Templates">

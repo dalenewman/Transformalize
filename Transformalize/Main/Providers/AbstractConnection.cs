@@ -27,31 +27,10 @@ using Transformalize.Configuration;
 
 namespace Transformalize.Main.Providers {
     public abstract class AbstractConnection {
+        private readonly ConnectionConfigurationElement _element;
         private readonly IConnectionChecker _connectionChecker;
         private readonly IEntityRecordsExist _entityRecordsExist;
         private readonly IEntityDropper _dropper;
-
-        protected AbstractConnection(ConnectionConfigurationElement element, AbstractProvider provider, IConnectionChecker connectionChecker, IScriptRunner scriptRunner, IProviderSupportsModifier providerSupportsModifier, IEntityRecordsExist recordsExist, IEntityDropper dropper) {
-            Provider = provider;
-            BatchSize = element.BatchSize;
-            Name = element.Name;
-
-            ConnectionString = (new DbConnectionStringBuilder { ConnectionString = element.Value }).ConnectionString;
-
-            Server = ConnectionStringParser.GetServerName(ConnectionString);
-            Database = ConnectionStringParser.GetDatabaseName(ConnectionString);
-            User = ConnectionStringParser.GetUsername(ConnectionString);
-            Password = ConnectionStringParser.GetPassword(ConnectionString);
-            TrustedConnection = ConnectionStringParser.GetTrustedConnection(ConnectionString);
-            File = ConnectionStringParser.GetFileName(ConnectionString);
-            Delimiter = element.Delimiter;
-
-            _connectionChecker = connectionChecker;
-            ScriptRunner = scriptRunner;
-            ProviderSupportsModifier = providerSupportsModifier;
-            _entityRecordsExist = recordsExist;
-            _dropper = dropper;
-        }
 
         public string Name { get; set; }
         protected string TypeAndAssemblyName { get; set; }
@@ -69,9 +48,66 @@ namespace Transformalize.Main.Providers {
         public string Server { get; set; }
         public string User { get; set; }
         public string Password { get; set; }
-        public bool TrustedConnection { get; set; }
         public string File { get; set; }
         public string Delimiter { get; set; }
+        public int Port { get; set; }
+
+        public abstract string UserProperty { get; }
+        public abstract string PasswordProperty { get; }
+        public abstract string PortProperty { get; }
+        public abstract string DatabaseProperty { get; }
+        public abstract string ServerProperty { get; }
+        public abstract string TrustedProperty { get; }
+
+        protected AbstractConnection(ConnectionConfigurationElement element, AbstractProvider provider, IConnectionChecker connectionChecker, IScriptRunner scriptRunner, IProviderSupportsModifier providerSupportsModifier, IEntityRecordsExist recordsExist, IEntityDropper dropper) {
+            _element = element;
+            _connectionChecker = connectionChecker;
+            _entityRecordsExist = recordsExist;
+            _dropper = dropper;
+
+            Provider = provider;
+            BatchSize = element.BatchSize;
+            Name = element.Name;
+            Server = element.Server;
+            Database = element.Database;
+            User = element.User;
+            Password = element.Password;
+            File = element.File;
+            Delimiter = element.Delimiter;
+            ScriptRunner = scriptRunner;
+            ProviderSupportsModifier = providerSupportsModifier;
+            ConnectionString = GetConnectionString();
+        }
+
+        private string GetConnectionString() {
+
+            if (!string.IsNullOrEmpty(File))
+                return string.Empty;
+
+            if (_element.ConnectionString != string.Empty) {
+                Database = ConnectionStringParser.GetDatabaseName(_element.ConnectionString);
+                Server = ConnectionStringParser.GetServerName(_element.ConnectionString);
+                return _element.ConnectionString;
+            }
+
+            var builder = new DbConnectionStringBuilder { { ServerProperty, Server }, { DatabaseProperty, Database } };
+            if (!String.IsNullOrEmpty(User)) {
+                builder.Add(UserProperty, User);
+                builder.Add(PasswordProperty, Password);
+            } else {
+                if (!String.IsNullOrEmpty(TrustedProperty)) {
+                    builder.Add(TrustedProperty, true);
+                }
+            }
+            if (Port > 0) {
+                if (PortProperty == string.Empty) {
+                    builder[ServerProperty] += "," + Port;
+                } else {
+                    builder.Add("Port", Port);
+                }
+            }
+            return builder.ConnectionString;
+        }
 
         public IDbConnection GetConnection() {
             var type = Type.GetType(TypeAndAssemblyName, false, true);
