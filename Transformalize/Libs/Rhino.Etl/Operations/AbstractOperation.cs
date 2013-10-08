@@ -14,6 +14,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
     /// </summary>
     public abstract class AbstractOperation : WithLoggingMixin, IOperation
     {
+        private string _name;
         private readonly OperationStatistics _statistics = new OperationStatistics();
 
         /// <summary>
@@ -26,9 +27,10 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         ///     Gets the name of this instance
         /// </summary>
         /// <value>The name.</value>
-        public virtual string Name
+        public string Name
         {
-            get { return GetType().Name; }
+            get { return _name ?? GetType().Name; }
+            set { _name = value; }
         }
 
         /// <summary>

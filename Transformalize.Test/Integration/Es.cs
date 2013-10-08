@@ -52,7 +52,7 @@ namespace Transformalize.Test.Integration {
 
         [Test]
         public void Test() {
-            var options = new Options("{'mode':'test','top':10,'loglevel':'info'}");
+            var options = new Options("{'mode':'test','loglevel':'info'}");
             var process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read(), options).Read();
             process.Run();
         }

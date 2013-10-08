@@ -36,6 +36,7 @@ namespace Transformalize.Operations {
             _fields = fields;
             _sql = sql;
             UseTransaction = false;
+            Name = "EntityDataExtract";
         }
 
         protected override Row CreateRowFromReader(IDataReader reader) {
