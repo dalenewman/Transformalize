@@ -37,7 +37,7 @@
 
   <entities>
     
-    <add name="Order Details" version="RowVersion" auto="true" prefix="OrderDetails">
+    <add name="Order Details" version="RowVersion" auto="true" prefix="OrderDetails" use-bcp="true">
       <calculated-fields>
         <add name="OrderDetailsExtendedPrice" type="Decimal" precision="19" scale="4">
           <transforms>

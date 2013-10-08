@@ -24,6 +24,7 @@ using System;
 using System.Data;
 using System.Data.Common;
 using Transformalize.Configuration;
+using Transformalize.Libs.Dapper;
 
 namespace Transformalize.Main.Providers {
     public abstract class AbstractConnection {
@@ -50,6 +51,7 @@ namespace Transformalize.Main.Providers {
         public string Password { get; set; }
         public string File { get; set; }
         public string Delimiter { get; set; }
+        public string LineDelimiter { get; set; }
         public int Port { get; set; }
 
         public abstract string UserProperty { get; }
@@ -74,6 +76,7 @@ namespace Transformalize.Main.Providers {
             Password = element.Password;
             File = element.File;
             Delimiter = element.Delimiter;
+            LineDelimiter = element.LineDelimiter;
             ScriptRunner = scriptRunner;
             ProviderSupportsModifier = providerSupportsModifier;
             ConnectionString = GetConnectionString();
@@ -87,6 +90,8 @@ namespace Transformalize.Main.Providers {
             if (_element.ConnectionString != string.Empty) {
                 Database = ConnectionStringParser.GetDatabaseName(_element.ConnectionString);
                 Server = ConnectionStringParser.GetServerName(_element.ConnectionString);
+                User = ConnectionStringParser.GetUsername(_element.ConnectionString);
+                Password = ConnectionStringParser.GetPassword(_element.ConnectionString);
                 return _element.ConnectionString;
             }
 
@@ -174,7 +179,8 @@ namespace Transformalize.Main.Providers {
                 AddParameter(cmd, "@EntityName", entity.Alias);
 
                 using (var reader = cmd.ExecuteReader(CommandBehavior.CloseConnection & CommandBehavior.SingleResult)) {
-                    if (reader == null) return;
+                    if (reader == null)
+                        return;
 
                     entity.HasRange = reader.Read();
                     entity.Begin = entity.HasRange ? reader.GetValue(0) : null;
@@ -190,7 +196,8 @@ namespace Transformalize.Main.Providers {
                 command.CommandText = sql;
                 cn.Open();
                 using (var reader = command.ExecuteReader(CommandBehavior.CloseConnection & CommandBehavior.SingleResult)) {
-                    if (reader == null) return;
+                    if (reader == null)
+                        return;
 
                     entity.HasRows = reader.Read();
                     entity.End = entity.HasRows ? reader.GetValue(0) : null;
@@ -209,5 +216,40 @@ namespace Transformalize.Main.Providers {
         public bool IsDelimited() {
             return !string.IsNullOrEmpty(Delimiter);
         }
+
+        public bool IsTrusted() {
+            return string.IsNullOrEmpty(User);
+        }
+
+        public void DropPrimaryKey(Entity entity) {
+            var primaryKey = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).FieldType(entity.IsMaster() ? FieldType.MasterKey : FieldType.PrimaryKey).Alias(this.Provider).Asc().Values();
+            using (var cn = GetConnection()) {
+                cn.Open();
+                cn.Execute(TableQueryWriter.DropPrimaryKey(entity.OutputName(), entity.Schema, primaryKey));
+            }
+        }
+
+        public void AddPrimaryKey(Entity entity) {
+            var primaryKey = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).FieldType(entity.IsMaster() ? FieldType.MasterKey : FieldType.PrimaryKey).Alias(this.Provider).Asc().Values();
+            using (var cn = GetConnection()) {
+                cn.Open();
+                cn.Execute(TableQueryWriter.AddPrimaryKey(entity.OutputName(), entity.Schema, primaryKey));
+            }
+        }
+
+        public void AddUniqueClusteredIndex(Entity entity) {
+            using (var cn = GetConnection()) {
+                cn.Open();
+                cn.Execute(TableQueryWriter.AddUniqueClusteredIndex(entity.OutputName(), entity.Schema));
+            }
+        }
+
+        public void DropUniqueClusteredIndex(Entity entity) {
+            using (var cn = GetConnection()) {
+                cn.Open();
+                cn.Execute(TableQueryWriter.DropUniqueClusteredIndex(entity.OutputName(), entity.Schema));
+            }
+        }
+
     }
 }

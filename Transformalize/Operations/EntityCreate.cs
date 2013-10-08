@@ -28,17 +28,14 @@ using Transformalize.Main;
 using Transformalize.Main.Providers.SqlServer;
 using Transformalize.Libs.Dapper;
 
-namespace Transformalize.Operations
-{
-    public class EntityCreate : AbstractOperation
-    {
+namespace Transformalize.Operations {
+    public class EntityCreate : AbstractOperation {
         private readonly Entity _entity;
         private readonly Process _process;
         private readonly IEntityExists _entityExists;
         private readonly FieldSqlWriter _writer;
 
-        public EntityCreate(Entity entity, Process process, IEntityExists entityExists = null)
-        {
+        public EntityCreate(Entity entity, Process process, IEntityExists entityExists = null) {
             _entity = entity;
             _process = process;
 
@@ -49,53 +46,51 @@ namespace Transformalize.Operations
             _entityExists = entityExists ?? new SqlServerEntityExists();
         }
 
-        public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
-        {
+        public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             CreateEntity();
             return rows;
         }
 
-        private void CreateEntity()
-        {
+        private void CreateEntity() {
             var provider = _process.OutputConnection.Provider;
 
-            if (_entityExists.Exists(_process.OutputConnection, _entity.Schema, _entity.OutputName())) return;
+            if (_entityExists.Exists(_process.OutputConnection, _entity.Schema, _entity.OutputName()))
+                return;
 
             var primaryKey = _writer.FieldType(_entity.IsMaster() ? FieldType.MasterKey : FieldType.PrimaryKey).Alias(provider).Asc().Values();
-            var defs = _writer.Reload().AddSurrogateKey().AddBatchId().Output().Alias(provider).DataType().AppendIf(" NOT NULL", FieldType.MasterKey, FieldType.PrimaryKey).Values();
-            var sql = _process.OutputConnection.TableQueryWriter.Write(_entity.OutputName(), defs, primaryKey, ignoreDups: true);
+            var defs = _writer.Reload().AddSurrogateKey().AddBatchId().Output().Alias(provider).DataType().AppendIf(" NOT NULL", _entity.IsMaster() ? FieldType.MasterKey : FieldType.PrimaryKey).Values();
 
-            Debug(sql);
+            var createSql = _process.OutputConnection.TableQueryWriter.CreateTable(_entity.OutputName(), defs, _entity.Schema);
+            Debug(createSql);
 
-            using (var cn = _process.OutputConnection.GetConnection())
-            {
+            var indexSql = _process.OutputConnection.TableQueryWriter.AddUniqueClusteredIndex(_entity.OutputName(), _entity.Schema);
+            Debug(indexSql);
+
+            var keySql = _process.OutputConnection.TableQueryWriter.AddPrimaryKey(_entity.OutputName(), _entity.Schema, primaryKey);
+            Debug(keySql);
+
+            using (var cn = _process.OutputConnection.GetConnection()) {
                 cn.Open();
-                cn.Execute(sql);
+                cn.Execute(createSql);
+                cn.Execute(indexSql);
+                cn.Execute(keySql);
                 Info("Initialized {0} in {1} on {2}.", _entity.OutputName(), _process.OutputConnection.Database, _process.OutputConnection.Server);
             }
         }
 
-        private Fields GetRelationshipFields(Process process)
-        {
+        private Fields GetRelationshipFields(Process process) {
             var relationships = process.Relationships.Where(r => r.LeftEntity.Alias != _entity.Alias && r.RightEntity.Alias != _entity.Alias).ToArray();
             var fields = new Fields();
-            if (relationships.Any())
-            {
-                foreach (var relationship in relationships)
-                {
+            if (relationships.Any()) {
+                foreach (var relationship in relationships) {
                     var leftSide = relationship.LeftEntity.RelationshipToMaster.Count();
                     var rightSide = relationship.RightEntity.RelationshipToMaster.Count();
-                    if (leftSide <= rightSide)
-                    {
-                        foreach (var join in relationship.Join)
-                        {
+                    if (leftSide <= rightSide) {
+                        foreach (var join in relationship.Join) {
                             fields.Add(join.LeftField);
                         }
-                    }
-                    else
-                    {
-                        foreach (var join in relationship.Join)
-                        {
+                    } else {
+                        foreach (var join in relationship.Join) {
                             fields.Add(join.RightField);
                         }
                     }

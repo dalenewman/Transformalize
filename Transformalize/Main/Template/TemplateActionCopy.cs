@@ -22,23 +22,22 @@
 
 using System.IO;
 
-namespace Transformalize.Main
-{
-    public class TemplateActionCopy : TemplateActionHandler
-    {
-        public override void Handle(TemplateAction action)
-        {
+namespace Transformalize.Main {
+    public class TemplateActionCopy : TemplateActionHandler {
+        public override void Handle(TemplateAction action) {
             var actionFile = string.IsNullOrEmpty(action.File)
                                  ? string.Empty
                                  : new FileInfo(action.File).FullName;
 
-            if (actionFile != string.Empty)
-            {
-                File.Copy(action.RenderedFile, actionFile, true);
-                Log.Info("Copied {0} template output to {1}.", action.TemplateName, actionFile);
-            }
-            else
-            {
+            if (actionFile != string.Empty) {
+                var fileInfo = new FileInfo(actionFile);
+                if (fileInfo.Directory == null || fileInfo.Directory != null && fileInfo.Directory.Exists) {
+                    File.Copy(action.RenderedFile, actionFile, true);
+                    Log.Info("Copied {0} template output to {1}.", action.TemplateName, actionFile);
+                } else {
+                    Log.Warn("Unable to copy file to folder {0}.  The folder doesn't exist.", fileInfo.DirectoryName);
+                }
+            } else {
                 Log.Warn("Can't copy {0} template output without file attribute set.", action.TemplateName);
             }
         }

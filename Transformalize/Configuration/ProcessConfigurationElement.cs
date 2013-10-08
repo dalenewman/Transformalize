@@ -29,6 +29,7 @@ namespace Transformalize.Configuration
         private const string TEMPLATE_CONTENT_TYPE = "template-content-type";
         private const string NAME = "name";
         private const string STAR = "star";
+        private const string BCP = "bcp";
 
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name
@@ -103,6 +104,12 @@ namespace Transformalize.Configuration
         public TemplateElementCollection Templates
         {
             get { return this["templates"] as TemplateElementCollection; }
+        }
+
+        [ConfigurationProperty(BCP, IsRequired = false, DefaultValue = "")]
+        public string Bcp {
+            get { return this[BCP] as string; }
+            set { this[BCP] = value; }
         }
 
         public override bool IsReadOnly()

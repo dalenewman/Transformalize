@@ -21,51 +21,53 @@
 #endregion
 
 using NUnit.Framework;
+using Transformalize.Libs.NLog;
 using Transformalize.Main;
 using Transformalize.Runner;
 
-namespace Transformalize.Test.Integration
-{
+namespace Transformalize.Test.Integration {
     [TestFixture]
-    public class Calls
-    {
+    public class Calls {
         private const string CALLS = @"c:\etl\rhinoetl\tfl\Calls.xml";
         private const string CAMPAIGNS = @"c:\etl\rhinoetl\tfl\Campaigns.xml";
 
+        [SetUp]
+        public void SetUp() {
+            LogManager.Configuration.LoggingRules[0].EnableLoggingForLevel(LogLevel.Debug);
+            LogManager.ReconfigExistingLoggers();
+        }
+
         [Test]
-        public void Init()
-        {
+        public void Init() {
             var options1 = new Options { Mode = "init" };
             var process1 = new ProcessReader(new ProcessXmlConfigurationReader(CALLS).Read(), options1).Read();
-            new ProcessRunner(process1).Run();
+            process1.Run();
 
             var options2 = new Options { Mode = "init" };
             var process2 = new ProcessReader(new ProcessXmlConfigurationReader(CAMPAIGNS).Read(), options2).Read();
-            new ProcessRunner(process2).Run();
+            process2.Run();
         }
 
         [Test]
-        public void Normal()
-        {
+        public void Normal() {
             var options1 = new Options();
             var process1 = new ProcessReader(new ProcessXmlConfigurationReader(CALLS).Read(), options1).Read();
-            new ProcessRunner(process1).Run();
+            process1.Run();
 
             var options2 = new Options();
             var process2 = new ProcessReader(new ProcessXmlConfigurationReader(CAMPAIGNS).Read(), options2).Read();
-            new ProcessRunner(process2).Run();
+            process2.Run();
         }
 
         [Test]
-        public void Test()
-        {
+        public void Test() {
             var options1 = new Options("{'mode':'test','top':2,'loglevel':'trace'}");
             var process1 = new ProcessReader(new ProcessXmlConfigurationReader(CALLS).Read(), options1).Read();
-            new ProcessRunner(process1).Run();
+            process1.Run();
 
             var options2 = new Options("{'mode':'test','top':2,'loglevel':'trace'}");
             var process2 = new ProcessReader(new ProcessXmlConfigurationReader(CAMPAIGNS).Read(), options2).Read();
-            new ProcessRunner(process2).Run();
+            process2.Run();
         }
     }
 }

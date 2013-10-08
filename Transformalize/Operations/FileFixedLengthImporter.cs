@@ -22,7 +22,7 @@ namespace Transformalize.Operations {
            
             var cb = new FixedLengthClassBuilder("Tfl" + _entity.Alias) { IgnoreEmptyLines = true, FixedMode = FixedMode.AllowVariableLength };
             foreach (var field in _fields) {
-                cb.AddField(field.Alias, Convert.ToInt32(field.Length), field.SystemType);
+                cb.AddField(field.Alias, Convert.ToInt32(field.Length), typeof(string));
             }
 
             using (var file = new FluentFile(cb.CreateRecordClass()).From(_entity.InputConnection.File)) {

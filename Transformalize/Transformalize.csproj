@@ -170,10 +170,12 @@
     <Compile Include="Configuration\ProcessConfigurationElement.cs" />
     <Compile Include="Configuration\ProcessElementCollection.cs" />
     <Compile Include="Configuration\TransformalizeConfiguration.cs" />
+    <Compile Include="Extensions\ExceptionExtensions.cs" />
     <Compile Include="Extensions\LongExtensions.cs" />
     <Compile Include="Extensions\IntExtensions.cs" />
     <Compile Include="Extensions\ObjectPool.cs" />
     <Compile Include="Extensions\ProducerConsumerCollectionBase.cs" />
+    <Compile Include="Libs\Dapper\SqlBuilder.cs" />
     <Compile Include="Libs\Dapper\SqlMapper.cs" />
     <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\Enums.cs" />
     <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsBiffBlankCell.cs" />
@@ -800,6 +802,7 @@
     <Compile Include="Libs\Rhino.Etl\Pipelines\ThreadPoolPipelineExecuter.cs" />
     <Compile Include="Libs\Rhino.Etl\Row.cs" />
     <Compile Include="Libs\Rhino.Etl\WithLoggingMixin.cs" />
+    <Compile Include="Operations\BcpExtract.cs" />
     <Compile Include="Operations\EntityDataExtract.cs" />
     <Compile Include="Operations\EntityDelete.cs" />
     <Compile Include="Operations\EntityOutputKeysExtractAll.cs" />
@@ -1197,6 +1200,10 @@
     <Compile Include="Operations\ResultsLoad.cs" />
     <Compile Include="Operations\ApplyDefaults.cs" />
     <Compile Include="Operations\TransformFields.cs" />
+    <Compile Include="Runner\DeleteRunner.cs" />
+    <Compile Include="Runner\InitializeRunner.cs" />
+    <Compile Include="Runner\IProcessRunner.cs" />
+    <Compile Include="Runner\MetadataRunner.cs" />
     <Compile Include="Runner\ProcessRunner.cs" />
     <Compile Include="Runner\ProcessConfigurationReader.cs" />
     <Compile Include="Runner\ProcessXmlConfigurationReader.cs" />

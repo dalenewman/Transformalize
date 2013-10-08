@@ -32,6 +32,12 @@ namespace Transformalize.Test.Integration {
     public class NorthWindUpdates
     {
 
+        [SetUp]
+        public void SetUp() {
+            LogManager.Configuration.LoggingRules[0].EnableLoggingForLevel(LogLevel.Info);
+            LogManager.ReconfigExistingLoggers();
+        }
+
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
 
         [Test]
@@ -40,12 +46,12 @@ namespace Transformalize.Test.Integration {
             _log.Info("***** RUN 00 * INITIALIZE ******");
             var options = new Options { Mode = "init"};
             var process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.xml").Read(), options).Read();
-            new ProcessRunner(process).Run();
+            process.Run();
 
             _log.Info("***** RUN 01 * FIRST RUN ******");
             options = new Options { RenderTemplates = false };
             process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.xml").Read(), options).Read();
-            new ProcessRunner(process).Run();
+            process.Run();
 
             Assert.AreEqual(2155, process["Order Details"].Inserts);
             Assert.AreEqual(830, process["Orders"].Inserts);
@@ -59,7 +65,7 @@ namespace Transformalize.Test.Integration {
             _log.Info("***** RUN 02 * NO CHANGES ******");
             options = new Options { RenderTemplates = false };
             process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.xml").Read(), options).Read();
-            new ProcessRunner(process).Run();
+            process.Run();
 
             Assert.AreEqual(0, process["Order Details"].Inserts);
             Assert.AreEqual(0, process["Orders"].Inserts);
@@ -81,7 +87,7 @@ namespace Transformalize.Test.Integration {
 
             options = new Options { RenderTemplates = false };
             process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.xml").Read(), options).Read();
-            new ProcessRunner(process).Run();
+            process.Run();
 
             Assert.AreEqual(1, process["Order Details"].Inserts);
 
@@ -95,7 +101,7 @@ namespace Transformalize.Test.Integration {
 
             options = new Options { RenderTemplates = false };
             process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.xml").Read(), options).Read();
-            new ProcessRunner(process).Run();
+            process.Run();
 
             Assert.AreEqual(1, process["Orders"].Inserts);
 
@@ -109,7 +115,7 @@ namespace Transformalize.Test.Integration {
 
             options = new Options { RenderTemplates = false };
             process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.xml").Read(), options).Read();
-            new ProcessRunner(process).Run();
+            process.Run();
 
             Assert.AreEqual(2, process["Customers"].Inserts);
 
@@ -132,7 +138,7 @@ namespace Transformalize.Test.Integration {
 
             options = new Options { RenderTemplates = false };
             process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.xml").Read(), options).Read();
-            new ProcessRunner(process).Run();
+            process.Run();
 
             decimal outputSum;
             using (var cn = process.OutputConnection.GetConnection()) {
@@ -158,7 +164,7 @@ namespace Transformalize.Test.Integration {
 
             options = new Options { RenderTemplates = false };
             process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.xml").Read(), options).Read();
-            new ProcessRunner(process).Run();
+            process.Run();
 
             string postUpdate;
             using (var cn = process.OutputConnection.GetConnection()) {
@@ -176,7 +182,7 @@ namespace Transformalize.Test.Integration {
 
             options = new Options { RenderTemplates = false };
             process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.xml").Read(), options).Read();
-            new ProcessRunner(process).Run();
+            process.Run();
 
             Assert.AreEqual(1, process["Order Details"].Inserts);
 
@@ -186,7 +192,7 @@ namespace Transformalize.Test.Integration {
             _log.Info("***** RUN 09 * HANDLE DELETE ******");
             options = new Options { Mode = "delete" };
             process = new ProcessReader(new ProcessXmlConfigurationReader("NorthWind.xml").Read(), options).Read();
-            new ProcessRunner(process).Run();
+            process.Run();
 
             Assert.AreEqual(1, process["Order Details"].Deletes);
 

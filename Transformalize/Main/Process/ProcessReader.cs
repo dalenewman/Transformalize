@@ -51,7 +51,8 @@ namespace Transformalize.Main {
             _process = new Process(_config.Name) {
                 Options = _options,
                 TemplateContentType = _config.TemplateContentType.Equals("raw") ? Encoding.Raw : Encoding.Html,
-                Providers = new ProviderReader(_config.Providers).Read()
+                Providers = new ProviderReader(_config.Providers).Read(),
+                Bcp = _config.Bcp
             };
 
             //shared across the process
@@ -63,7 +64,7 @@ namespace Transformalize.Main {
             _process.SearchTypes = new SearchTypeReader(_config.SearchTypes).Read();
             new MapLoader(ref _process, _config.Maps).Load();
 
-            //depend on the shared process properties
+            //these depend on the shared process properties
             new EntitiesLoader(ref _process, _config.Entities).Load();
             _process.Relationships = new RelationshipsReader(_process, _config.Relationships).Read();
             new ProcessCalculatedFieldLoader(ref _process, _config.CalculatedFields).Load();

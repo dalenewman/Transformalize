@@ -24,43 +24,37 @@ using NUnit.Framework;
 using Transformalize.Main;
 using Transformalize.Runner;
 
-namespace Transformalize.Test.Integration
-{
+namespace Transformalize.Test.Integration {
     [TestFixture]
-    public class Es
-    {
-        private const string CONFIGURATION_FILE = @"c:\etl\rhinoetl\tfl\Es.xml";
+    public class Es {
+        private const string CONFIGURATION_FILE = @"C:\Code\TflConfiguration\Es.xml";
 
         [Test]
-        public void Init()
-        {
+        public void Init() {
             var options = new Options { Mode = "init" };
             var process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read(), options).Read();
-            new ProcessRunner(process).Run();
+            process.Run();
         }
 
         [Test]
-        public void MetaData()
-        {
+        public void MetaData() {
             var options = new Options("{'mode':'metadata'}");
             var process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read(), options).Read();
-            new ProcessRunner(process).Run();
+            process.Run();
         }
 
         [Test]
-        public void Normal()
-        {
+        public void Normal() {
             var options = new Options();
             var process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read(), options).Read();
-            new ProcessRunner(process).Run();
+            process.Run();
         }
 
         [Test]
-        public void Test()
-        {
-            var options = new Options("{'mode':'test','top':1,'loglevel':'trace'}");
+        public void Test() {
+            var options = new Options("{'mode':'test','top':10,'loglevel':'info'}");
             var process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read(), options).Read();
-            new ProcessRunner(process).Run();
+            process.Run();
         }
     }
 }

@@ -47,6 +47,7 @@ namespace Transformalize.Main {
                 Group = element.Group,
                 Auto = element.Auto,
                 Alias = string.IsNullOrEmpty(element.Alias) ? element.Name : element.Alias,
+                UseBcp = element.UseBcp
             };
 
             GuardAgainstInvalidGrouping(element, entity);

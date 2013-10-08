@@ -1,7 +1,8 @@
 <ul class="download">
-    <li><a href="Tfl64.zip">Download (64-bit) - 2.3 MB</a></li>
+    <li><a href="Tfl64.zip">Download (64-bit) - 2.4 MB</a></li>
 </ul>
 
+<h2>Introduction</h2>
 <p>Transformalize aims to transform and denormalize relational data in near real-time.  The resulting data may be used in several ways:</p>
 
 <ul>
@@ -15,6 +16,7 @@
     Transformalize is an open source .NET 4 Microsoft Windows console application. It is hosted on <a href="https://github.com/dalenewman/Transformalize">GitHub</a>.
 </p>
 
+<h2>Demo</h2>
 Start with an XML configuration:
 
 <pre lang="xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
@@ -28,13 +30,14 @@ Start with an XML configuration:
 &lt;/process&gt;</pre>
 <p>Specify the <a href="http://www.microsoft.com/en-us/download/details.aspx?id=23654">NorthWind</a> database as an input, and another as the output.  The default input and output connection provider is SQL Server 2005+.</p>
 <pre lang="xml">&lt;connections&gt;
-    &lt;add name=&quot;input&quot; value=&quot;<strong>server=localhost;Database=NorthWind;Trusted_Connection=True;</strong>&quot;/&gt;
-    &lt;add name=&quot;output&quot; value=&quot;<strong>Server=localhost;Database=NorthWindOutput;Trusted_Connection=True;</strong>&quot;/&gt;
+    &lt;add name=&quot;input&quot; connection-string=&quot;<strong>server=localhost;Database=NorthWind;Trusted_Connection=True;</strong>&quot;/&gt;
+    &lt;add name=&quot;output&quot; connection-string=&quot;<strong>Server=localhost;Database=NorthWindOutput;Trusted_Connection=True;</strong>&quot;/&gt;
 &lt;/connections&gt;</pre>
 <p>The NorthWind database:</p>
 <p>
-    <img width="646" src="NorthWindOrderDetails.png" /></p>
-<p>Add Order Details and save the file as <em>NorthWind.xml</em>.</p>
+    <img width="646" src="NorthWindOrderDetails.png" />
+</p>
+<p>Add <code>Order Details</code> and save the file as <em>NorthWind.xml</em>.</p>
 <pre lang="xml">&lt;entities&gt;
     <strong>&lt;add name=&quot;Order Details&quot;/&gt;</strong>
 &lt;/entities&gt;</pre>
@@ -52,8 +55,8 @@ Start with an XML configuration:
                            precision=&quot;19&quot; scale=&quot;4&quot;/&gt;
         &lt;/fields&gt;</strong>
     &lt;/add&gt;
-&lt;/entities&gt;</pre>
-<p>Run Transformalize in Initialize mode:</p>
+&lt;/entities&gt;&nbsp;</pre>
+<p>Run Transformalize in Initialize mode:&nbsp;</p>
 <pre lang="text">tfl NorthWind.xml {'mode':'<strong>init</strong>'}
 23:38:57 | Info | NorthWind | All | Initialized TrAnSfOrMaLiZeR.
 23:38:57 | Info | NorthWind | All | Initialized NorthWindOrderDetails in NorthWindOutput on localhost.
@@ -68,10 +71,10 @@ Start with an XML configuration:
 23:44:18 | Info | NorthWind | Order Details....... | Process completed in 00:00:01.0926105.</pre>
 <p>
     It updated the data.  It copies new and updates existing data, but it is inefficient. It updates data unnecessarily. 
-So, add a column to Order Details that will increment anytime a record is inserted or updated.
+So, add a column to <code>Order Details</code> that will increment anytime a record is inserted or updated.
 </p>
 <pre lang="sql">ALTER TABLE [Order Details] ADD RowVersion ROWVERSION;</pre>
-<p>Update the Order Details entity to use RowVersion:</p>
+<p>Update the <code>Order Details</code> entity to use RowVersion:</p>
 <pre lang="xml">&lt;entities&gt;
     &lt;add name=&quot;Order Details&quot; <strong>version=&quot;RowVersion&quot;</strong>&gt;
         &lt;fields&gt;
@@ -114,8 +117,8 @@ Discount      OrderID     ProductID   Quantity UnitPrice
 0.05          10251       22          6        16.8000
 0.05          10251       57          15       15.6000</pre>
 <p>
-    Review the NorthWind diagram.  The closest tables to Order Details are Orders and Products. 
-Add the Orders entity. Hint: Add entity &lt;add name=&quot;Orders&quot;/&gt; and run Tfl in metadata mode.
+    Review the NorthWind diagram.  The next closest tables to <code>Order Details</code> are <code>Orders</code> and <code>Products</code>. 
+Add the <code>Orders</code> entity. Hint: Add entity &lt;add name=&quot;Orders&quot;/&gt; and run Tfl in metadata mode.
 </p>
 <pre lang="xml">&lt;add name=&quot;Orders&quot; version=&quot;RowVersion&quot;&gt;
     &lt;fields&gt;
@@ -146,7 +149,7 @@ Add the Orders entity. Hint: Add entity &lt;add name=&quot;Orders&quot;/&gt; and
    have a relationship to the master entity <strong>Order Details</strong>.</pre>
 <p>
     When another table is added, it must be related to the master table.  The master table is the first table defined. 
-In this case, it's Order Details.  So, add a relationship:
+In this case, it's <code>Order Details</code>.  So, add a relationship:
 </p>
 <pre lang="xml">&lt;/entities&gt;
     <strong>&lt;relationships&gt;
@@ -264,7 +267,7 @@ tfl NorthWind.xml
 19:42:13 | Info | NorthWind | Suppliers........... | Processed 0 inserts, and 0 updates in Suppliers.
 19:42:13 | Info | NorthWind | Categories.......... | Processed 0 inserts, and 0 updates in Categories.
 19:42:13 | Info | NorthWind | All................. | Process completed in 00:00:00.7708553.</pre>
-<p>Now there are 81 fields available in NorthWindStar:</p>
+<p>Now there are 81 fields available in the output <code>NorthWindStar</code>:</p>
 <pre lang="sql">SELECT COUNT(*) AS FieldCount
 FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_NAME = 'NorthWindStar'
@@ -273,7 +276,8 @@ FieldCount
 -----------
 81</pre>
 <p>
-    <img width="646" src="NorthWindOrderDetailsStar.png" /></p>
+    <img width="646" src="NorthWindOrderDetailsStar.png" />
+</p>
 <p>
     Open up <a href="http://technet.microsoft.com/en-us/library/ms173767%28v=sql.105%29.aspx">BIDS</a>, and create an Analysis Services Project (or cube) 
 to browse the data.
@@ -286,7 +290,8 @@ to browse the data.
     <li>Process the cube and browse it.  Note: You may have to grant NT AUTHORITY\LOCAL SERVICE read writes to the NorthWindOutput database.</li>
 </ul>
 <p>
-    <img width="646" src="NorthWindBrowse1.png" /></p>
+    <img width="646" src="NorthWindBrowse1.png" />
+</p>
 <p>
     As you can see, slicing the measures by order date isn't ideal.  Moreover, the unit price 
 and quantity measures don't help much.  This cube needs a time hierarchy and revenue.  We can add them with Transformalize. 
@@ -334,7 +339,7 @@ in the transform element, like this:
     Another short-cut is to set the parameter attribute to &quot;*&quot; to include all fields.
 </p>
 <p>
-    There are 26 different transforms built in, and if you can't find one that does what you want, you can use &quot;JavaScript&quot; 
+    There are <a href="https://github.com/dalenewman/Transformalize/wiki/Transforms">28</a>&nbsp;different transforms built in, and if you can't find one that does what you want, you can use &quot;JavaScript&quot; 
 or &quot;template&quot; transforms to define your own. Use a JavaScript transform to calculate revenue:
 </p>
 <pre lang="xml">&lt;calculated-fields&gt;
@@ -347,7 +352,8 @@ or &quot;template&quot; transforms to define your own. Use a JavaScript transfor
 &lt;/calculated-fields&gt;</pre>
 <p>Re-initialize and run Tfl.  Then, using the new time fields and revenue, see if it improves the cube browsing experience.</p>
 <p>
-    <img width="646" src="NorthWindBrowse2.png" /></p>
+    <img width="646" src="NorthWindBrowse2.png" />
+</p>
 <p>The cube looks better now.  In order to update it when Transformalizer runs, add a connection and a template action:</p>
 <pre lang="xml">&lt;connections&gt;
     &lt;add name=&quot;input&quot; 
@@ -452,18 +458,19 @@ to facet, or standard, or any others you define.  To exclude a field from search
     http://localhost:8983/solr/NorthWind/dataimport?command=full-import&amp;clean=true&amp;commit=true&amp;optimize=true.</strong>
 00:48:29 | Info | NorthWind | Categories.......... | Process completed in 00:00:04.8287386.</pre>
 <p>
-In this example, the template action &quot;web&quot; triggers SOLR to clean and re-import the index.  In a production environment, 
+    In this example, the template action &quot;web&quot; triggers SOLR to clean and re-import the index.  In a production environment, 
 you'd want to reload the schema when it changes, and make use of full and delta imports appropriately.  If all goes well, you see this in the SOLR admin:
 </p>
 <p>
-    <img width="646" src="NorthWindSolrDataImport.png" /></p>
+    <img width="646" src="NorthWindSolrDataImport.png" />
+</p>
 <p>
     Now, if you schedule Transformalizer to run every couple minutes, you have near real-time OLAP and search engine services. 
 An OLAP cube supports high level reporting needs, and a search engine, well, you know...  If your users 
 want to see the data in different ways, and they will, add transforms and/or new calculated fields and re-initialize your output. 
 When Transformalizer reads your production databases, it attempts to do so introducing as little contention as possible.
 </p>
-<h3>Wrap Up, Disclaimers, Credits, Insights...</h3>
+<h2>Summary</h2>
 <p>The NorthWind data is fairly clean. In reality, you'll face more challenging data sources.</p>
 <p>I should warn you, that at the time of this writing, Transformalizer:</p>
 <ol>
@@ -471,13 +478,15 @@ When Transformalizer reads your production databases, it attempts to do so intro
     <li>Only handles deletes if you run in &quot;delete&quot; mode or re-initialize.</li>
     <li>Aggregations are a work in progress.</li>
     <li>Analysis Services and MySql providers require downloads (per licensing).</li>
-    <li>Is still under development.</li>
-    <li>Has little documentation (other than this article).</li>
+    <li>Is under development.</li>
+    <li>Has little documentation (other than this article), but I'm working on it.</li>
 </ol>
 
 <p>
-    If you clone it from <a href="https://github.com/dalenewman/Transformalize">GitHub</a>, you'll need 
-Visual Studio 2012 Professional to work with it.  You'll notice it uses several other open source projects including:
+    If you want to "Transformalize" something, download the Tfl64.zip binaries (above).  If you'd like to contribute, 
+    clone it from <a href="https://github.com/dalenewman/Transformalize">GitHub</a>.  I use Visual Studio 
+    2012 Professional, but it also seems to build fine in <a href="http://www.icsharpcode.net/opensource/sd/">SharpDevelop</a>. 
+    You'll notice it uses several other open source projects including:
 </p>
 <ol>
     <li><a href="https://github.com/hibernating-rhinos/rhino-etl">Rhino ETL</a></li>
@@ -489,6 +498,7 @@ Visual Studio 2012 Professional to work with it.  You'll notice it uses several 
     <li><a href="http://www.codeproject.com/Articles/159450/fastJSON">fastJSON</a></li>
     <li><a href="https://github.com/SamSaffron/dapper-dot-net">Dapper-dot-net</a></li>
     <li><a href="http://filehelpers.sourceforge.net/">File Helpers</a></li>
+    <li><a href="http://exceldatareader.codeplex.com/">Excel Data Reader</a></li>
 </ol>
 <p>
     Where possible, I've included source code from these projects rather than the Nuget packages. The upside 

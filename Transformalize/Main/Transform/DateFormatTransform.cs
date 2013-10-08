@@ -43,7 +43,7 @@ namespace Transformalize.Main
 
         public override void Transform(ref Row row, string resultKey)
         {
-            row[resultKey] = ((DateTime) row[FirstParameter.Key]).ToString(_format);
+            row[resultKey] = Convert.ToDateTime(row[FirstParameter.Key]).ToString(_format);
         }
     }
 }

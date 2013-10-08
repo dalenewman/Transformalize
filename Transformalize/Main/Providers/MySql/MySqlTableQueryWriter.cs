@@ -21,35 +21,41 @@
 #endregion
 
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Transformalize.Main.Providers.MySql
 {
     public class MySqlTableQueryWriter : ITableQueryWriter
     {
-        private const string CREATE_TABLE_TEMPLATE = @"
-            CREATE TABLE `{0}`(
-                {1},
-                CONSTRAINT `Pk_{2}_{3}` PRIMARY KEY (
-                    {4}
-                )
-            );
-        ";
+        private const string CREATE_TABLE_TEMPLATE = "CREATE TABLE `{0}`({1});";
 
-        public string Write(string name, IEnumerable<string> defs, IEnumerable<string> primaryKey, string schema = "dbo", bool ignoreDups = false)
+        public string CreateTable(string name, IEnumerable<string> defs, string schema)
         {
-            var pk = primaryKey.ToArray();
             var defList = string.Join(",\r\n    ", defs);
-            var keyName = string.Join("_", pk).Replace("`", string.Empty).Replace(" ", "_");
-            var keyList = string.Join(", ", pk);
             return string.Format(
                 CREATE_TABLE_TEMPLATE,
                 name.Length > 128 ? name.Substring(0, 128) : name,
-                defList,
-                name.Replace(" ", string.Empty),
-                keyName.Length > 128 ? keyName.Substring(0, 128) : keyName,
-                keyList
-                );
+                defList
+            );
+        }
+
+        public string AddPrimaryKey(string name, string schema, IEnumerable<string> primaryKey)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public string DropPrimaryKey(string name, string schema, IEnumerable<string> primaryKey)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public string AddUniqueClusteredIndex(string name, string schema)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public string DropUniqueClusteredIndex(string name, string schema)
+        {
+            throw new System.NotImplementedException();
         }
 
         public string WriteTemporary(string name, Field[] fields, AbstractProvider provider, bool useAlias = true)

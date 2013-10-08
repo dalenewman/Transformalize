@@ -25,8 +25,8 @@ namespace Transformalize.Main {
             var batchId = _process.Options.Mode == "init" ? 1 : _process.GetNextBatchId();
 
             foreach (EntityConfigurationElement element in _elements) {
-                var reader = new EntityConfigurationLoader(_process);
-                var entity = reader.Read(batchId, element, count == 0);
+                var loader = new EntityConfigurationLoader(_process);
+                var entity = loader.Read(batchId, element, count == 0);
 
                 GuardAgainstFieldOverlap(entity);
 

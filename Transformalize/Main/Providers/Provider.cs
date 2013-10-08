@@ -28,6 +28,7 @@ namespace Transformalize.Main.Providers
         public ProviderType Type { get; set; }
         public string L { get; set; }
         public string R { get; set; }
+        public bool IsDatabase { get; set; }
 
         public string Enclose(string name)
         {

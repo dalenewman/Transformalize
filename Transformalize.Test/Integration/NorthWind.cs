@@ -21,52 +21,54 @@
 #endregion
 
 using NUnit.Framework;
+using Transformalize.Libs.NLog;
 using Transformalize.Main;
 using Transformalize.Runner;
 
-namespace Transformalize.Test.Integration
-{
+namespace Transformalize.Test.Integration {
     [TestFixture]
-    public class NorthWind
-    {
+    public class NorthWind {
         private const string FILE = @"NorthWind.xml";
 
+        [SetUp]
+        public void SetUp() {
+            LogManager.Configuration.LoggingRules[0].EnableLoggingForLevel(LogLevel.Debug);
+            LogManager.ReconfigExistingLoggers();
+        }
+
         [Test]
-        public void InitMode()
-        {
+        public void InitMode() {
             var options = new Options { Mode = "init" };
             var process = new ProcessReader(new ProcessXmlConfigurationReader(FILE).Read(), options).Read();
-            new ProcessRunner(process).Run();
+            process.Run();
         }
 
         [Test]
         public void Metadata() {
             var options = new Options { Mode = "metadata" };
             var process = new ProcessReader(new ProcessXmlConfigurationReader(FILE).Read(), options).Read();
-            new ProcessRunner(process).Run();
+            process.Run();
         }
 
         [Test]
         public void FirstTimeMode() {
-            var options = new Options() { Mode = "first"};
+            var options = new Options() { Mode = "first" };
             var process = new ProcessReader(new ProcessXmlConfigurationReader(FILE).Read(), options).Read();
-            new ProcessRunner(process).Run();
+            process.Run();
         }
 
         [Test]
-        public void DefaultMode()
-        {
+        public void DefaultMode() {
             var options = new Options();
             var process = new ProcessReader(new ProcessXmlConfigurationReader(FILE).Read(), options).Read();
-            new ProcessRunner(process).Run();
+            process.Run();
         }
 
         [Test]
-        public void Test()
-        {
-            var options = new Options { Mode = "test", Top = 1 };
+        public void Test() {
+            var options = new Options { Mode = "test", Top = 1, LogLevel = LogLevel.Trace };
             var process = new ProcessReader(new ProcessXmlConfigurationReader(FILE).Read(), options).Read();
-            new ProcessRunner(process).Run();
+            process.Run();
         }
     }
 }

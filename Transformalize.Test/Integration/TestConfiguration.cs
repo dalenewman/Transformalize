@@ -23,6 +23,7 @@
 using System.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration;
+using Transformalize.Libs.NLog;
 using Transformalize.Main;
 using Transformalize.Runner;
 
@@ -31,6 +32,12 @@ namespace Transformalize.Test.Integration
     [TestFixture]
     public class TestConfiguration : EtlProcessHelper
     {
+        [SetUp]
+        public void SetUp() {
+            LogManager.Configuration.LoggingRules[0].EnableLoggingForLevel(LogLevel.Debug);
+            LogManager.ReconfigExistingLoggers();
+        }
+
         private static readonly ProcessConfigurationElement Element = new ProcessConfigurationReader("Test").Read();
         private readonly Process _process = new ProcessReader(Element, new Options()).Read();
 

@@ -83,14 +83,12 @@ namespace Transformalize.Main {
         }
 
         private void StartWithField(Field field) {
-            _original = new Dictionary<string, Field>
-                            {
-                                {field.Alias, field}
-                            };
-            _output = new SortedDictionary<string, string>
-                          {
-                              {field.Alias, string.Empty}
-                          };
+            _original = new Dictionary<string, Field> {
+                {field.Alias, field}
+            };
+            _output = new SortedDictionary<string, string> {
+                {field.Alias, string.Empty}
+            };
         }
 
         private void StartEmpty() {
@@ -268,8 +266,9 @@ namespace Transformalize.Main {
         public FieldSqlWriter AppendIf(string suffix, params FieldType[] fieldTypes) {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];
-                if (fieldTypes.Any(ft => ft.HasFlag(field.FieldType)))
+                if(fieldTypes.Any(ft => field.FieldType.HasFlag(ft))) {
                     _output[key] = string.Concat(_output[key], suffix);
+                }
             }
             return this;
         }
@@ -379,22 +378,13 @@ namespace Transformalize.Main {
         public FieldSqlWriter AddSurrogateKey(bool forCreate = true) {
             if (forCreate)
                 _original[SURROGATE_KEY] = new Field("System.Int32", "8", Main.FieldType.Field, true, "0") {
-                    Alias =
-                        SURROGATE_KEY,
-                    NotNull
-                        =
-                        true,
-                    Clustered
-                        =
-                        true,
-                    Identity
-                        =
-                        true
+                    Alias = SURROGATE_KEY,
+                    NotNull = true,
+                    Identity = true
                 };
             else
                 _original[SURROGATE_KEY] = new Field("System.Int32", "8", Main.FieldType.Field, true, "0") {
-                    Alias =
-                        SURROGATE_KEY
+                    Alias = SURROGATE_KEY
                 };
 
             _output[SURROGATE_KEY] = string.Empty;

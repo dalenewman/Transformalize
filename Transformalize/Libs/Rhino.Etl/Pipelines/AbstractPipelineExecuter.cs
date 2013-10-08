@@ -6,16 +6,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Transformalize.Extensions;
 using Transformalize.Libs.Rhino.Etl.Operations;
 
-namespace Transformalize.Libs.Rhino.Etl.Pipelines
-{
+namespace Transformalize.Libs.Rhino.Etl.Pipelines {
     /// <summary>
     ///     Base class for pipeline executers, handles all the details and leave the actual
     ///     pipeline execution to the
     /// </summary>
-    public abstract class AbstractPipelineExecuter : WithLoggingMixin, IPipelineExecuter
-    {
+    public abstract class AbstractPipelineExecuter : WithLoggingMixin, IPipelineExecuter {
         #region IPipelineExecuter Members
 
         /// <summary>
@@ -26,26 +26,21 @@ namespace Transformalize.Libs.Rhino.Etl.Pipelines
         /// <param name="translateRows">Translate the rows into another representation</param>
         public void Execute(string pipelineName,
                             ICollection<IOperation> pipeline,
-                            Func<IEnumerable<Row>, IEnumerable<Row>> translateRows)
-        {
-            try
-            {
+                            Func<IEnumerable<Row>, IEnumerable<Row>> translateRows) {
+            try {
                 var enumerablePipeline = PipelineToEnumerable(pipeline, new List<Row>(), translateRows);
-                try
-                {
+                try {
                     RaiseNotifyExecutionStarting();
                     var start = DateTime.Now;
                     ExecutePipeline(enumerablePipeline);
                     RaiseNotifyExecutionCompleting();
                     Trace("Completed process {0} in {1}", pipelineName, DateTime.Now - start);
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
+                    Error(e.Message);
                     Error(e, "Failed to execute pipeline {0}", pipelineName);
                 }
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
+                Error(e.Message);
                 Error(e, "Failed to create pipeline {0}", pipelineName);
             }
 
@@ -62,10 +57,8 @@ namespace Transformalize.Libs.Rhino.Etl.Pipelines
         public virtual IEnumerable<Row> PipelineToEnumerable(
             ICollection<IOperation> pipeline,
             IEnumerable<Row> rows,
-            Func<IEnumerable<Row>, IEnumerable<Row>> translateEnumerable)
-        {
-            foreach (var operation in pipeline)
-            {
+            Func<IEnumerable<Row>, IEnumerable<Row>> translateEnumerable) {
+            foreach (var operation in pipeline) {
                 operation.PrepareForExecution(this);
                 var enumerator = operation.Execute(rows);
                 enumerator = translateEnumerable(enumerator);
@@ -78,8 +71,7 @@ namespace Transformalize.Libs.Rhino.Etl.Pipelines
         ///     Gets all errors that occured under this executer
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Exception> GetAllErrors()
-        {
+        public IEnumerable<Exception> GetAllErrors() {
             return Errors;
         }
 
@@ -89,8 +81,7 @@ namespace Transformalize.Libs.Rhino.Etl.Pipelines
         /// <value>
         ///     <c>true</c> if this instance has errors; otherwise, <c>false</c>.
         /// </value>
-        public bool HasErrors
-        {
+        public bool HasErrors {
             get { return Errors.Length != 0; }
         }
 
@@ -101,18 +92,17 @@ namespace Transformalize.Libs.Rhino.Etl.Pipelines
         ///     Since we use a pipeline, we need to force it to execute at some point.
         ///     We aren't really interested in the result, just in that the pipeline would execute.
         /// </summary>
-        protected virtual void ExecutePipeline(IEnumerable<Row> pipeline)
-        {
+        protected virtual void ExecutePipeline(IEnumerable<Row> pipeline) {
             var enumerator = pipeline.GetEnumerator();
-            try
-            {
+            try {
 #pragma warning disable 642
-                while (enumerator.MoveNext()) ;
+                while (enumerator.MoveNext())
+                    ;
 #pragma warning restore 642
-            }
-            catch (Exception e)
-            {
-                Error(e, "Failed to execute operation {0}", enumerator.Current);
+            } catch (Exception e) {
+                foreach (var x in e.FlattenHierarchy()) {
+                    Error("Failed to execute operation {0}. {1}", enumerator.Current, x.Message);
+                }
             }
         }
 
@@ -120,16 +110,11 @@ namespace Transformalize.Libs.Rhino.Etl.Pipelines
         /// <summary>
         ///     Destroys the pipeline.
         /// </summary>
-        protected void DisposeAllOperations(ICollection<IOperation> operations)
-        {
-            foreach (var operation in operations)
-            {
-                try
-                {
+        protected void DisposeAllOperations(ICollection<IOperation> operations) {
+            foreach (var operation in operations) {
+                try {
                     operation.Dispose();
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     Error(e, "Failed to disposed {0}", operation.Name);
                 }
             }
@@ -143,8 +128,7 @@ namespace Transformalize.Libs.Rhino.Etl.Pipelines
         /// <summary>
         ///     Raises the ExecutionStarting event
         /// </summary>
-        private void RaiseNotifyExecutionStarting()
-        {
+        private void RaiseNotifyExecutionStarting() {
             NotifyExecutionStarting(this);
         }
 
@@ -156,8 +140,7 @@ namespace Transformalize.Libs.Rhino.Etl.Pipelines
         /// <summary>
         ///     Raises the ExecutionCompleting event
         /// </summary>
-        private void RaiseNotifyExecutionCompleting()
-        {
+        private void RaiseNotifyExecutionCompleting() {
             NotifyExecutionCompleting(this);
         }
 

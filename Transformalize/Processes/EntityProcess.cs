@@ -53,9 +53,14 @@ namespace Transformalize.Processes {
                     Register(new FileFixedLengthImporter(_entity));
                 }
             } else {
-                Register(new EntityKeysToOperations(_entity));
-                Register(new SerialUnionAllOperation());
+                if (_entity.IsFirstRun && _entity.UseBcp && _entity.InputConnection.Provider.Type == ProviderType.SqlServer) {
+                    Register(new BcpExtract(_process, _entity));
+                } else {
+                    Register(new EntityKeysToOperations(_entity));
+                    Register(new SerialUnionAllOperation());
+                }
             }
+
             Register(new ApplyDefaults(_entity.Fields, _entity.CalculatedFields));
             Register(new TransformFields(_fieldsWithTransforms));
             Register(new TransformFields(_entity.CalculatedFields));
@@ -64,6 +69,10 @@ namespace Transformalize.Processes {
                 Register(new EntityAggregation(_entity));
 
             if (_entity.IsFirstRun) {
+                if (_process.OutputConnection.Provider.IsDatabase) {
+                    _process.OutputConnection.DropUniqueClusteredIndex(_entity);
+                    _process.OutputConnection.DropPrimaryKey(_entity);
+                }
                 Register(new EntityAddTflFields(_entity));
                 RegisterLast(new EntityBulkInsert(_process, _entity));
             } else {
@@ -82,6 +91,10 @@ namespace Transformalize.Processes {
         protected override void PostProcessing() {
 
             _entity.InputKeys.Clear();
+            if (_entity.IsFirstRun && _process.OutputConnection.Provider.IsDatabase) {
+                _process.OutputConnection.AddUniqueClusteredIndex(_entity);
+                _process.OutputConnection.AddPrimaryKey(_entity);
+            }
 
             var errors = GetAllErrors().ToArray();
             if (errors.Any()) {

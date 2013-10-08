@@ -26,6 +26,7 @@ namespace Transformalize.Main.Providers.SqlServer
     {
         public SqlServerProvider()
         {
+            IsDatabase = true;
             Type = ProviderType.SqlServer;
             L = "[";
             R = "]";

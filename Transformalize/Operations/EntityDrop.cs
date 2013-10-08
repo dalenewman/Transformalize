@@ -40,7 +40,7 @@ namespace Transformalize.Operations
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
         {
-            _process.Drop(_entity);
+            _process.OutputConnection.Drop(_entity);
             return rows;
         }
     }

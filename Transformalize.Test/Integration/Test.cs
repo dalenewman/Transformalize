@@ -21,6 +21,7 @@
 #endregion
 
 using NUnit.Framework;
+using Transformalize.Libs.NLog;
 using Transformalize.Main;
 using Transformalize.Runner;
 
@@ -29,12 +30,18 @@ namespace Transformalize.Test.Integration
     [TestFixture]
     public class Test
     {
+        [SetUp]
+        public void SetUp() {
+            LogManager.Configuration.LoggingRules[0].EnableLoggingForLevel(LogLevel.Debug);
+            LogManager.ReconfigExistingLoggers();
+        }
+
         [Test]
         public void Init()
         {
             var options = new Options { Mode = "init" };
             var process = new ProcessReader(new ProcessConfigurationReader("Test").Read(), options).Read();
-            new ProcessRunner(process).Run();
+            process.Run();
         }
 
         [Test]
@@ -42,7 +49,7 @@ namespace Transformalize.Test.Integration
         {
             var options = new Options { RenderTemplates = true };
             var process = new ProcessReader(new ProcessConfigurationReader("Test").Read(), options).Read();
-            new ProcessRunner(process).Run();
+            process.Run();
         }
     }
 }

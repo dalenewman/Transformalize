@@ -23,45 +23,28 @@
 using NUnit.Framework;
 using Transformalize.Libs.NLog;
 using Transformalize.Main;
+using Transformalize.Operations;
 using Transformalize.Runner;
 
 namespace Transformalize.Test.Integration {
     [TestFixture]
-    public class Files {
+    public class Bcp : EtlProcessHelper {
+
+        private const string CONFIGURATION_FILE = @"C:\Code\TflConfiguration\Es.xml";
 
         [SetUp]
         public void SetUp() {
-            LogManager.Configuration.LoggingRules[0].EnableLoggingForLevel(LogLevel.Info);
+            LogManager.Configuration.LoggingRules[0].EnableLoggingForLevel(LogLevel.Debug);
             LogManager.ReconfigExistingLoggers();
         }
 
         [Test]
-        public void Init() {
-            var options = new Options { Mode = "init" };
-            var process = new ProcessReader(new ProcessConfigurationReader("File").Read(), options).Read();
-            process.Run();
+        public void ExportDataWithBcp() {
+            var process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read(), new Options() { Mode = "test" }).Read();
+            var results = TestOperation(
+                new BcpExtract(process, process.MasterEntity)
+            );
+            Assert.AreEqual(137011, results.Count);
         }
-
-        [Test]
-        public void Normal() {
-            var options = new Options();
-            var process = new ProcessReader(new ProcessConfigurationReader("File").Read(), options).Read();
-            process.Run();
-        }
-
-        [Test]
-        public void InitOwnLogs() {
-            var options = new Options { Mode = "init" };
-            var process = new ProcessReader(new ProcessConfigurationReader("MyLogs").Read(), options).Read();
-            process.Run();
-        }
-
-        [Test]
-        public void NormalOwnLogs() {
-            var options = new Options();
-            var process = new ProcessReader(new ProcessConfigurationReader("MyLogs").Read(), options).Read();
-            process.Run();
-        }
-
     }
 }

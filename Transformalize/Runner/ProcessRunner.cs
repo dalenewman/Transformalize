@@ -20,106 +20,60 @@
 
 #endregion
 
-using System.IO;
 using System.Linq;
-using System.Text;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Pipelines;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
-using Transformalize.Main.Providers.SqlServer;
 using Transformalize.Processes;
 
-namespace Transformalize.Runner
-{
-    public class ProcessRunner
-    {
-        private Process _process;
+namespace Transformalize.Runner {
+    public class ProcessRunner : IProcessRunner {
 
-        public ProcessRunner(Process process)
-        {
-            _process = process;
+        private AbstractPipelineExecuter _pipelineExecuter = new ThreadPoolPipelineExecuter();
+
+        public void Run(Process process) {
+            if (!process.IsReady())
+                return;
+
+            if (process.Options.Mode == "test")
+                _pipelineExecuter = new SingleThreadedNonCachedPipelineExecuter();
+
+            ProcessEntities(process);
+            ProcessMaster(process);
+            ProcessTransforms(process);
+
+            if (process.Options.RenderTemplates)
+                new TemplateManager(process).Manage();
+
         }
 
-        public void Run()
-        {
-            if (!_process.IsReady()) return;
+        private void ProcessEntities(Process process) {
 
-            switch (_process.Options.Mode)
-            {
-                case "init":
-                    new InitializationProcess(_process).Execute();
-                    RenderTemplates();
-                    break;
-                case "metadata":
-                    var fileName = new FileInfo(Path.Combine(Common.GetTemporaryFolder(_process.Name), "MetaData.xml")).FullName;
-                    var writer = new MetaDataWriter(_process, new SqlServerEntityAutoFieldReader());
-                    File.WriteAllText(fileName, writer.Write(), Encoding.UTF8);
-                    System.Diagnostics.Process.Start(fileName);
-                    break;
-                case "delete":
-                    ProcessEntityDeletes();
-                    RenderTemplates();
-                    break;
-                default:
-                    ProcessEntities();
-                    ProcessMaster();
-                    ProcessTransforms();
-                    RenderTemplates();
-
-                    break;
-            }
-
-            LogManager.Flush();
-        }
-
-        private void ProcessEntityDeletes()
-        {
-            foreach (var entityDeleteProcess in _process.Entities.Select(entity => new EntityDeleteProcess(_process, entity))) {
-                entityDeleteProcess.Execute();
-            }
-        }
-
-        private void ProcessEntities() {
-
-            foreach (var entityKeysProcess in _process.Entities.Where(e=>e.InputConnection.Provider.Type != ProviderType.File).Select(entity => new EntityKeysProcess(_process, entity))) {
-                if (_process.Options.Mode == "test")
-                    entityKeysProcess.PipelineExecuter = new SingleThreadedNonCachedPipelineExecuter();
-
+            foreach (var entityKeysProcess in process.Entities.Where(e => e.InputConnection.Provider.Type != ProviderType.File).Select(entity => new EntityKeysProcess(process, entity))) {
                 entityKeysProcess.Execute();
             }
 
-            foreach (var entityProcess in _process.Entities.Select(entity => new EntityProcess(_process, entity))) {
-                if (_process.Options.Mode == "test")
-                    entityProcess.PipelineExecuter = new SingleThreadedNonCachedPipelineExecuter();
-
+            foreach (var entityProcess in process.Entities.Select(entity => new EntityProcess(process, entity))) {
+                entityProcess.PipelineExecuter = _pipelineExecuter;
                 entityProcess.Execute();
             }
         }
 
-        private void ProcessMaster() {
-            var updateMasterProcess = new UpdateMasterProcess(ref _process);
-            if (_process.Options.Mode == "test")
-                updateMasterProcess.PipelineExecuter = new SingleThreadedNonCachedPipelineExecuter();
-
+        private void ProcessMaster(Process process) {
+            var updateMasterProcess = new UpdateMasterProcess(ref process) { PipelineExecuter = _pipelineExecuter };
             updateMasterProcess.Execute();
         }
 
-        private void ProcessTransforms() {
-            if (_process.CalculatedFields.Count <= 0) return;
-
-            var transformProcess = new TransformProcess(_process);
-
-            if (_process.Options.Mode == "test")
-                transformProcess.PipelineExecuter = new SingleThreadedNonCachedPipelineExecuter();
-
+        private void ProcessTransforms(Process process) {
+            if (process.CalculatedFields.Count <= 0)
+                return;
+            var transformProcess = new TransformProcess(process) { PipelineExecuter = _pipelineExecuter };
             transformProcess.Execute();
         }
 
-        private void RenderTemplates()
-        {
-            if (_process.Options.RenderTemplates)
-                new TemplateManager(_process).Manage();
+        public void Dispose() {
+            LogManager.Flush();
         }
 
     }

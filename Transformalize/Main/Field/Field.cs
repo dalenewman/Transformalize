@@ -59,7 +59,6 @@ namespace Transformalize.Main
         public string Length { get; private set; }
         public int Precision { get; set; }
         public int Scale { get; set; }
-        public bool Clustered { get; set; }
         public bool NotNull { get; set; }
         public bool Identity { get; set; }
         public KeyValuePair<string, string> References { get; set; }
@@ -142,13 +141,11 @@ namespace Transformalize.Main
             Type = typeName;
             Length = length;
             SimpleType = Common.ToSimpleType(typeName);
-            Quote = (new[] {"string", "char", "datetime", "guid", "xml"}).Any(t => t.Equals(SimpleType))
-                        ? "'"
-                        : string.Empty;
+            Quote = (new[] {"string", "char", "datetime", "guid", "xml"}).Any(t => t.Equals(SimpleType)) ? "'" : string.Empty;
             UseStringBuilder = (new[] {"string", "char"}).Any(t => t.Equals(SimpleType));
             FieldType = fieldType;
             Output = output || MustBeOutput();
-            SystemType = System.Type.GetType(typeName.StartsWith("System.") ? typeName : "System." + typeName[0].ToString(CultureInfo.InvariantCulture).ToUpper() + typeName.Substring(1));
+            SystemType = Common.ToSystemType(SimpleType);
             StringBuilder = UseStringBuilder ? new StringBuilder() : null;
             Transforms = new Transforms();
             Default = new ConversionFactory().Convert(@default, SimpleType);

@@ -25,6 +25,7 @@ using System.Linq;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
+using Transformalize.Main.Providers;
 using Transformalize.Operations;
 
 namespace Transformalize.Processes {
@@ -40,8 +41,12 @@ namespace Transformalize.Processes {
 
         protected override void Initialize() {
             _entity.IsFirstRun = !_process.OutputConnection.RecordsExist(_entity.Schema, _entity.OutputName());
+            var skipKeysExtract = _entity.IsFirstRun && _entity.UseBcp && _entity.InputConnection.Provider.Type == ProviderType.SqlServer;
+
             if (_entity.IsFirstRun || !_entity.CanDetectChanges()) {
-                Register(new EntityInputKeysExtractAll(_entity));
+                if (!skipKeysExtract) {
+                    Register(new EntityInputKeysExtractAll(_entity));
+                }
             } else {
                 var operation = new EntityInputKeysExtractDelta(_process, _entity);
                 if (operation.NeedsToRun()) {

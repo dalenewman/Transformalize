@@ -23,41 +23,74 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Transformalize.Main.Providers.SqlServer
-{
-    public class SqlServerTableQueryWriter : ITableQueryWriter
-    {
-        private const string CREATE_TABLE_TEMPLATE = @"
-            CREATE TABLE [{0}].[{1}](
-                {2},
-                CONSTRAINT [Pk_{3}_{4}] PRIMARY KEY (
-                    {5}
-                ) {6}
-            );
-        ";
+namespace Transformalize.Main.Providers.SqlServer {
+    public class SqlServerTableQueryWriter : ITableQueryWriter {
 
-        public string Write(string name, IEnumerable<string> defs, IEnumerable<string> primaryKey, string schema = "dbo", bool ignoreDups = false)
-        {
-            var pk = primaryKey.ToArray();
-            var defList = string.Join(",\r\n    ", defs);
-            var keyName = string.Join("_", pk).Replace("`", string.Empty).Replace("]", string.Empty).Replace(" ", "_");
-            var keyList = string.Join(", ", pk);
+        private const string CREATE_TABLE_TEMPLATE = "CREATE TABLE [{0}].[{1}]({2});";
+        public string CreateTable(string name, IEnumerable<string> defs, string schema) {
+            var defList = string.Join(",", defs);
             return string.Format(
                 CREATE_TABLE_TEMPLATE,
                 schema,
-                name.Length > 128 ? name.Substring(0, 128) : name,
-                defList,
-                name.Replace(" ", string.Empty),
-                keyName.Length > 128 ? keyName.Substring(0, 128) : keyName,
-                keyList,
-                ignoreDups ? "WITH (IGNORE_DUP_KEY = ON)" : string.Empty
-                );
+                Name128(name),
+                defList
+            );
         }
 
-        public string WriteTemporary(string name, Field[] fields, AbstractProvider provider, bool useAlias = true)
-        {
+        private const string ADD_PRIMARY_KEY = "ALTER TABLE [{0}].[{1}] ADD CONSTRAINT [PK_{1}_{2}] PRIMARY KEY NONCLUSTERED ({3}) WITH (IGNORE_DUP_KEY = ON);";
+        public string AddPrimaryKey(string name, string schema, IEnumerable<string> primaryKey) {
+            var pk = primaryKey.ToArray();
+            var keyList = string.Join(", ", pk);
+            return string.Format(
+                ADD_PRIMARY_KEY,
+                schema,
+                Name128(name),
+                KeyName(pk),
+                keyList
+            );
+        }
+
+        private const string DRP_PRIMARY_KEY = "ALTER TABLE [{0}].[{1}] DROP CONSTRAINT [PK_{1}_{2}];";
+        public string DropPrimaryKey(string name, string schema, IEnumerable<string> primaryKey) {
+            var pk = primaryKey.ToArray();
+            return string.Format(
+                DRP_PRIMARY_KEY,
+                schema,
+                Name128(name),
+                KeyName(pk)
+            );
+        }
+
+        private const string ADD_UNIQUE_CLUSTERED_INDEX = "CREATE UNIQUE CLUSTERED INDEX [UX_{0}_TflKey] ON [{1}].[{0}] (TflKey ASC);";
+        public string AddUniqueClusteredIndex(string name, string schema) {
+            return string.Format(
+                ADD_UNIQUE_CLUSTERED_INDEX,
+                Name128(name),
+                schema
+            );
+        }
+
+        private const string DRP_UNIQUE_CLUSTERED_INDEX = "DROP INDEX [UX_{0}_TflKey] ON [{1}].[{0}];";
+        public string DropUniqueClusteredIndex(string name, string schema) {
+            return string.Format(
+                DRP_UNIQUE_CLUSTERED_INDEX,
+                Name128(name),
+                schema
+            );
+        }
+
+        public string WriteTemporary(string name, Field[] fields, AbstractProvider provider, bool useAlias = true) {
             var defs = useAlias ? new FieldSqlWriter(fields).Alias(provider).DataType().Write() : new FieldSqlWriter(fields).Name(provider).DataType().Write();
             return string.Format(@"DECLARE @{0} AS TABLE({1});", name.TrimStart("@".ToCharArray()), defs);
         }
+
+        private static string Name128(string name) {
+            return name.Length > 128 ? name.Substring(0, 128) : name;
+        }
+
+        private static string KeyName(string[] pk) {
+            return Name128(string.Join("_", pk).Replace("[", string.Empty).Replace("]", string.Empty).Replace(" ", "_"));
+        }
+
     }
 }

@@ -30,7 +30,6 @@ namespace Transformalize.Configuration
         private const string NAME = "name";
         private const string ALIAS = "alias";
         private const string CONNECTION = "connection";
-        private const string PRIMARY_KEY = "primaryKey";
         private const string FIELDS = "fields";
         private const string CALCULATED_FIELDS = "calculated-fields";
         private const string VERSION = "version";
@@ -39,6 +38,7 @@ namespace Transformalize.Configuration
         private const string AUTO = "auto";
         private const string PREFIX = "prefix";
         private const string GROUP = "group";
+        private const string USE_BCP = "use-bcp";
 
         [ConfigurationProperty(SCHEMA, IsRequired = false, DefaultValue = "dbo")]
         public string Schema
@@ -108,6 +108,12 @@ namespace Transformalize.Configuration
         {
             get { return (bool) this[AUTO]; }
             set { this[AUTO] = value; }
+        }
+
+        [ConfigurationProperty(USE_BCP, IsRequired = false, DefaultValue = false)]
+        public bool UseBcp {
+            get { return (bool)this[USE_BCP]; }
+            set { this[USE_BCP] = value; }
         }
 
         [ConfigurationProperty(PREFIX, IsRequired = false, DefaultValue = "")]

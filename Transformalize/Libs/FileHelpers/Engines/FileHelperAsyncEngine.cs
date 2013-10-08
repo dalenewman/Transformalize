@@ -112,7 +112,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
         public void BeginReadStream(TextReader reader)
         {
             if (reader == null)
-                throw new ArgumentNullException("The TextReader can´t be null.");
+                throw new ArgumentNullException("reader", "The TextReader can´t be null.");
 
             ResetFields();
             mHeaderText = String.Empty;
@@ -131,8 +131,7 @@ namespace Transformalize.Libs.FileHelpers.Engines
                 }
             }
 
-            mAsyncReader = new ForwardReader(reader, mRecordInfo.mIgnoreLast, mLineNumber);
-            mAsyncReader.DiscardForward = true;
+            mAsyncReader = new ForwardReader(reader, mRecordInfo.mIgnoreLast, mLineNumber) {DiscardForward = true};
         }
 
         #endregion

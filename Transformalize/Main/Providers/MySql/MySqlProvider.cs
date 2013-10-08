@@ -26,6 +26,7 @@ namespace Transformalize.Main.Providers.MySql
     {
         public MySqlProvider()
         {
+            IsDatabase = true;
             Type = ProviderType.MySql;
             L = "`";
             R = "`";

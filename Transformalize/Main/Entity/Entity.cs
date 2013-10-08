@@ -76,6 +76,7 @@ namespace Transformalize.Main
         public long Deletes { get; set; }
         public int TflBatchId { get { return _tflBatchId; } }
         public bool IsFirstRun { get; set; }
+        public bool UseBcp { get; set; }
 
         public string FirstKey()
         {

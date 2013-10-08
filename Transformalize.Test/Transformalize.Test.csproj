@@ -118,6 +118,7 @@
   <ItemGroup>
     <Compile Include="EtlProcessHelper.cs" />
     <Compile Include="Integration\Call.cs" />
+    <Compile Include="Integration\Bcp.cs" />
     <Compile Include="Integration\Nve.cs" />
     <Compile Include="Integration\Files.cs" />
     <Compile Include="Integration\NorthWindUpdates.cs" />
@@ -166,6 +167,7 @@
     <Content Include="LICENSE.txt" />
     <Content Include="NorthWind.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="Scripts\test.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

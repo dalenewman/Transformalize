@@ -23,94 +23,81 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Transformalize.Main.Providers.SqlServer
-{
-    public class SqlServerDataTypeService : IDataTypeService
-    {
+namespace Transformalize.Main.Providers.SqlServer {
+    public class SqlServerDataTypeService : IDataTypeService {
         private Dictionary<string, string> _reverseTypes;
         private Dictionary<string, string> _types;
 
-        public Dictionary<string, string> Types
-        {
-            get
-            {
-                if (_types == null)
-                {
-                    _types = new Dictionary<string, string>
-                                 {
-                                     {"int64", "BIGINT"},
-                                     {"int", "INT"},
-                                     {"long", "BIGINT"},
-                                     {"boolean", "BIT"},
-                                     {"string", "NVARCHAR"},
-                                     {"datetime", "DATETIME"},
-                                     {"decimal", "DECIMAL"},
-                                     {"double", "FLOAT"},
-                                     {"int32", "INT"},
-                                     {"char", "NCHAR"},
-                                     {"single", "REAL"},
-                                     {"int16", "SMALLINT"},
-                                     {"byte", "TINYINT"},
-                                     {"byte[]", "VARBINARY"},
-                                     {"guid", "UNIQUEIDENTIFIER"},
-                                     {"rowversion", "BINARY"},
-                                     {"xml", "XML"}
-                                 };
+        public Dictionary<string, string> Types {
+            get {
+                if (_types == null) {
+                    _types = new Dictionary<string, string> {
+                        {"int64", "BIGINT"},
+                        {"int", "INT"},
+                        {"long", "BIGINT"},
+                        {"boolean", "BIT"},
+                        {"string", "NVARCHAR"},
+                        {"datetime", "DATETIME"},
+                        {"decimal", "DECIMAL"},
+                        {"double", "FLOAT"},
+                        {"int32", "INT"},
+                        {"char", "NCHAR"},
+                        {"single", "REAL"},
+                        {"int16", "SMALLINT"},
+                        {"byte", "TINYINT"},
+                        {"byte[]", "VARBINARY"},
+                        {"guid", "UNIQUEIDENTIFIER"},
+                        {"rowversion", "BINARY"},
+                        {"xml", "XML"}
+                    };
                 }
                 return _types;
             }
         }
 
-        public Dictionary<string, string> TypesReverse
-        {
-            get
-            {
-                if (_reverseTypes == null)
-                {
-                    _reverseTypes = new Dictionary<string, string>
-                                        {
-                                            {"BIGINT", "System.Int64"},
-                                            {"BIT", "System.Boolean"},
-                                            {"NVARCHAR", "System.String"},
-                                            {"DATETIME", "System.DateTime"},
-                                            {"DECIMAL", "System.Decimal"},
-                                            {"NUMERIC", "System.Decimal"},
-                                            {"MONEY", "System.Decimal"},
-                                            {"FLOAT", "System.Double"},
-                                            {"INT", "System.Int32"},
-                                            {"NCHAR", "System.Char"},
-                                            {"REAL", "System.Single"},
-                                            {"SMALLINT", "System.Int16"},
-                                            {"TINYINT", "System.Byte"},
-                                            {"UNIQUEIDENTIFIER", "System.Guid"},
-                                            {"ROWVERSION", "System.Byte[]"},
-                                            {"TIMESTAMP", "System.Byte[]"},
-                                            {"IMAGE", "System.Byte[]"},
-                                            {"BINARY", "System.Byte[]"},
-                                            {"VARBINARY", "System.Byte[]"},
-                                            {"NTEXT", "System.String"},
-                                            {"XML", "System.Xml"}
-                                        };
+        public Dictionary<string, string> TypesReverse {
+            get {
+                if (_reverseTypes == null) {
+                    _reverseTypes = new Dictionary<string, string> {
+                        {"BIGINT", "System.Int64"},
+                        {"BIT", "System.Boolean"},
+                        {"NVARCHAR", "System.String"},
+                        {"DATETIME", "System.DateTime"},
+                        {"DECIMAL", "System.Decimal"},
+                        {"NUMERIC", "System.Decimal"},
+                        {"MONEY", "System.Decimal"},
+                        {"FLOAT", "System.Double"},
+                        {"INT", "System.Int32"},
+                        {"NCHAR", "System.Char"},
+                        {"REAL", "System.Single"},
+                        {"SMALLINT", "System.Int16"},
+                        {"TINYINT", "System.Byte"},
+                        {"UNIQUEIDENTIFIER", "System.Guid"},
+                        {"ROWVERSION", "System.Byte[]"},
+                        {"TIMESTAMP", "System.Byte[]"},
+                        {"IMAGE", "System.Byte[]"},
+                        {"BINARY", "System.Byte[]"},
+                        {"VARBINARY", "System.Byte[]"},
+                        {"NTEXT", "System.String"},
+                        {"XML", "System.Xml"}
+                    };
                 }
                 return _reverseTypes;
             }
         }
 
-        public string GetDataType(Field field)
-        {
-            var length = (new[] {"string", "char", "binary", "byte[]", "rowversion", "varbinary"}).Any(t => t == field.SimpleType) ? string.Concat("(", field.Length, ")") : string.Empty;
-            var dimensions = (new[]{"decimal","double"}).Any(s => s.Equals(field.SimpleType)) ? string.Format("({0},{1})", field.Precision, field.Scale) : string.Empty;
+        public string GetDataType(Field field) {
+            var length = (new[] { "string", "char", "binary", "byte[]", "rowversion", "varbinary" }).Any(t => t == field.SimpleType) ? string.Concat("(", field.Length, ")") : string.Empty;
+            var dimensions = (new[] { "decimal", "double" }).Any(s => s.Equals(field.SimpleType)) ? string.Format("({0},{1})", field.Precision, field.Scale) : string.Empty;
             var notNull = field.NotNull ? " NOT NULL" : string.Empty;
-            var surrogate = field.Clustered ? " IDENTITY(1,1) UNIQUE CLUSTERED" : string.Empty;
+            var surrogate = field.Identity ? " IDENTITY(1,1) " : string.Empty;
             var sqlDataType = Types[field.SimpleType];
 
-            if (!field.Unicode && sqlDataType.StartsWith("N"))
-            {
+            if (!field.Unicode && sqlDataType.StartsWith("N")) {
                 sqlDataType = sqlDataType.TrimStart("N".ToCharArray());
             }
 
-            if (!field.VariableLength && sqlDataType.EndsWith("VARCHAR"))
-            {
+            if (!field.VariableLength && sqlDataType.EndsWith("VARCHAR")) {
                 sqlDataType = sqlDataType.Replace("VAR", string.Empty);
             }
 

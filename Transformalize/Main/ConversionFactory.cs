@@ -22,19 +22,26 @@
 
 using System;
 
-namespace Transformalize.Main
-{
-    public class ConversionFactory
-    {
-        public object Convert(object something, string type)
-        {
+namespace Transformalize.Main {
+    public class ConversionFactory {
+        public object Convert(object something, string type) {
             var simpleType = Common.ToSimpleType(type);
             if (simpleType == "object")
                 return something;
 
-            var value = something == null ? string.Empty : something.ToString();
-            switch (simpleType)
-            {
+            string value;
+
+            if (something == null) {
+                value = string.Empty;
+            } else {
+                if (type == "byte[]" || type == "rowversion") {
+                    value = something.ToString() == string.Empty ? Common.BytesToHexString(new byte[0]) : Common.BytesToHexString((byte[])something);
+                } else {
+                    value = something.ToString();
+                }
+            }
+
+            switch (simpleType) {
                 case "datetime":
                     if (value == string.Empty)
                         value = "9999-12-31";
@@ -67,6 +74,10 @@ namespace Transformalize.Main
                     if (value == string.Empty)
                         value = "0";
                     return System.Convert.ToInt32(value);
+                case "int":
+                    if (value == string.Empty)
+                        value = "0";
+                    return System.Convert.ToInt32(value);
                 case "int16":
                     if (value == string.Empty)
                         value = "0";
@@ -84,12 +95,69 @@ namespace Transformalize.Main
                         value = " ";
                     return System.Convert.ToChar(value);
                 case "byte[]":
-                    return value == string.Empty ? new byte[0] : something;
+                    if (value == string.Empty)
+                        value = Common.BytesToHexString(new byte[0]);
+                    return Common.HexStringToByteArray(value);
                 case "rowversion":
-                    return value == string.Empty ? new byte[0] : something;
+                    if (value == string.Empty)
+                        value = Common.BytesToHexString(new byte[0]);
+                    return Common.HexStringToByteArray(value);
                 default:
                     return value;
             }
         }
+
+        public object Convert(string value, string type, object def) {
+            value = value ?? string.Empty;
+            var simpleType = Common.ToSimpleType(type);
+            if (simpleType == "object")
+                return value;
+
+            switch (simpleType) {
+                case "string":
+                    return value == string.Empty ? def : value;
+                case "datetime":
+                    return value == string.Empty ? def : System.Convert.ToDateTime(value);
+                case "boolean":
+                    if (value == string.Empty)
+                        return def;
+                    if (value == "0")
+                        value = "false";
+                    if (value == "1")
+                        value = "true";
+                    return System.Convert.ToBoolean(value);
+                case "decimal":
+                    return value == string.Empty ? def : System.Convert.ToDecimal(value);
+                case "double":
+                    return value == string.Empty ? def : System.Convert.ToDouble(value);
+                case "single":
+                    return value == string.Empty ? def : System.Convert.ToSingle(value);
+                case "int64":
+                    return value == string.Empty ? def : System.Convert.ToInt64(value);
+                case "int32":
+                    if (value == string.Empty)
+                        value = "0";
+                    return System.Convert.ToInt32(value);
+                case "int":
+                    return value == string.Empty ? def : System.Convert.ToInt32(value);
+                case "int16":
+                    return value == string.Empty ? def : System.Convert.ToInt16(value);
+                case "byte":
+                    return value == string.Empty ? def : System.Convert.ToByte(value);
+                case "guid":
+                    if (value == string.Empty)
+                        return def;
+                    return value.ToLower() == "new" ? Guid.NewGuid() : Guid.Parse(value);
+                case "char":
+                    return value == string.Empty ? def : System.Convert.ToChar(value);
+                case "byte[]":
+                    return value == string.Empty ? def : Common.HexStringToByteArray(value);
+                case "rowversion":
+                    return value == string.Empty ? def : Common.HexStringToByteArray(value);
+                default:
+                    return value;
+            }
+        }
+
     }
 }

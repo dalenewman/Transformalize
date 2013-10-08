@@ -25,11 +25,26 @@ using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.fastJSON;
+using Transformalize.Runner;
 
 namespace Transformalize.Main {
     public class Options {
+        private string _mode;
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
+        public IProcessRunner ProcessRunner { get; set; }
         public List<string> Problems = new List<string>();
+        public bool RenderTemplates { get; set; }
+        public bool PerformTemplateActions { get; set; }
+        public int Top { get; set; }
+        public LogLevel LogLevel { get; set; }
+
+        public string Mode {
+            get { return _mode; }
+            set {
+                _mode = value;
+                SetProcessRunner(value);
+            }
+        }
 
         public Options(string settings = "") {
             SetDefaults();
@@ -45,23 +60,15 @@ namespace Transformalize.Main {
                         var value = option.Value.ToString().ToLower();
                         bool input;
                         switch (key) {
+
                             case "mode":
                                 Mode = value;
                                 break;
+
                             case "loglevel":
                                 LogLevel = LogLevel.FromString(value);
-                                foreach (var rule in LogManager.Configuration.LoggingRules) {
-                                    if (rule.Targets.All(t => t.Name != "console")) continue;
-
-                                    foreach (var level in rule.Levels) {
-                                        if (level.Ordinal < LogLevel.Ordinal)
-                                            rule.DisableLoggingForLevel(level);
-                                        else
-                                            rule.EnableLoggingForLevel(LogLevel);
-                                    }
-                                }
-                                LogManager.ReconfigExistingLoggers();
                                 break;
+
                             case "rendertemplates":
                                 if (bool.TryParse(value, out input)) {
                                     RenderTemplates = input;
@@ -69,6 +76,7 @@ namespace Transformalize.Main {
                                     RecordBadValue(option, typeof(bool));
                                 }
                                 break;
+
                             case "performtemplateactions":
                                 if (bool.TryParse(value, out input)) {
                                     PerformTemplateActions = input;
@@ -97,21 +105,52 @@ namespace Transformalize.Main {
                     Problems.Add(message);
                 }
             }
+
+            SetLogLevel();
         }
 
-        public string Mode { get; set; }
-        public bool RenderTemplates { get; set; }
-        public bool PerformTemplateActions { get; set; }
-        public int Top { get; set; }
-        public LogLevel LogLevel { get; set; }
+        private void SetProcessRunner(string value) {
+            switch (value) {
+                case "init":
+                    ProcessRunner = new InitializeRunner();
+                    break;
+                case "metadata":
+                    ProcessRunner = new MetadataRunner();
+                    break;
+                case "delete":
+                    ProcessRunner = new DeleteRunner();
+                    break;
+                default:
+                    ProcessRunner = new ProcessRunner();
+                    break;
+            }
+        }
+
+        private void SetLogLevel() {
+
+            if (LogLevel == LogLevel.Info)
+                return;
+
+            foreach (var rule in LogManager.Configuration.LoggingRules) {
+                if (rule.Targets.All(t => t.Name != "console"))
+                    continue;
+
+                foreach (var level in rule.Levels) {
+                    if (level.Ordinal < LogLevel.Ordinal)
+                        rule.DisableLoggingForLevel(level);
+                    else
+                        rule.EnableLoggingForLevel(LogLevel);
+                }
+            }
+            LogManager.ReconfigExistingLoggers();
+        }
 
         public bool Valid() {
             return !Problems.Any();
         }
 
         private void RecordBadValue(KeyValuePair<string, object> option, Type type) {
-            Problems.Add(string.Format("The {0} option value of {1} must evaluate to a {2}.", option.Key, option.Value,
-                                       type));
+            Problems.Add(string.Format("The {0} option value of {1} must evaluate to a {2}.", option.Key, option.Value, type));
         }
 
         private void RecordBadProperty(KeyValuePair<string, object> option) {

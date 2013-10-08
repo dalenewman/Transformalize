@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Ninject;
 using Transformalize.Libs.RazorEngine;
@@ -31,9 +32,14 @@ using Transformalize.Main.Providers.AnalysisServices;
 using Transformalize.Main.Providers.File;
 using Transformalize.Main.Providers.MySql;
 using Transformalize.Main.Providers.SqlServer;
+using Transformalize.Runner;
 
 namespace Transformalize.Main {
-    public class Process {
+
+    public class Process
+    {
+
+        private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         public Fields CalculatedFields = new Fields();
         public Dictionary<string, AbstractConnection> Connections = new Dictionary<string, AbstractConnection>();
@@ -52,16 +58,13 @@ namespace Transformalize.Main {
         public Encoding TemplateContentType = Encoding.Raw;
         public Dictionary<string, Template> Templates = new Dictionary<string, Template>();
         public AbstractConnection OutputConnection;
-        public string Star;
+        public string Star { get; set; }
+        public string Bcp { get; set; }
 
-        public Process()
-            : this("TEST") {
-        }
-
-        public Process(string name) {
+        public Process(string name = "") {
             Name = name;
             GlobalDiagnosticsContext.Set("process", name);
-            
+
             // MySql
             Kernal.Bind<AbstractProvider>().To<MySqlProvider>().WhenInjectedInto<MySqlConnection>();
             Kernal.Bind<IConnectionChecker>().To<DefaultConnectionChecker>().WhenInjectedInto<MySqlConnection>();
@@ -96,10 +99,34 @@ namespace Transformalize.Main {
             Kernal.Bind<IEntityRecordsExist>().To<FileEntityRecordsExist>().WhenInjectedInto<FileConnection>();
             Kernal.Bind<IEntityDropper>().To<FileEntityDropper>().WhenInjectedInto<FileConnection>();
             Kernal.Bind<IEntityExists>().To<FileEntityExists>().WhenInjectedInto<FileEntityDropper>();
+
         }
 
         public bool IsReady() {
             return Connections.Select(connection => connection.Value.IsReady()).All(b => b.Equals(true));
+        }
+
+        public void Run() {
+            Options.ProcessRunner.Run(this);
+            Options.ProcessRunner.Dispose();
+        }
+
+        public void RunMetadata() {
+            using (var runner = new MetadataRunner()) {
+                runner.Run(this);
+            }
+        }
+
+        public void RunDelete() {
+            using (var runner = new DeleteRunner()) {
+                runner.Run(this);
+            }
+        }
+
+        public void RunInitialize() {
+            using (var runner = new InitializeRunner()) {
+                runner.Run(this);
+            }
         }
 
         public Fields OutputFields() {
@@ -135,14 +162,6 @@ namespace Transformalize.Main {
             get {
                 return Entities.Find(e => e.Alias.Equals(entity, IC) || e.Name.Equals(entity, IC));
             }
-        }
-
-        public void Drop(Entity entity) {
-            OutputConnection.Drop(entity);
-        }
-
-        public bool OutputRecordsExist(string schema, string outputName) {
-            return OutputConnection.RecordsExist(schema, outputName);
         }
 
         public int GetNextBatchId() {

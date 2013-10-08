@@ -30,7 +30,7 @@ namespace Transformalize.Libs.Rhino.Etl
             get { return _pipelineExecuter; }
             set
             {
-                Info("Setting PipelineExecutor to {0}", value.GetType().ToString());
+                Debug("Setting PipelineExecutor to {0}", value.GetType().ToString());
                 _pipelineExecuter = value;
             }
         }
