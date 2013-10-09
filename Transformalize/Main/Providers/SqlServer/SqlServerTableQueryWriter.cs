@@ -70,10 +70,25 @@ namespace Transformalize.Main.Providers.SqlServer {
             );
         }
 
-        private const string DRP_UNIQUE_CLUSTERED_INDEX = "DROP INDEX [UX_{0}_TflKey] ON [{1}].[{0}];";
+        //        IF EXISTS(
+        //    SELECT *
+        //    FROM sys.indexes WITH (NOLOCK)
+        //    WHERE [name] = 'UX_UfoUfo_TflKey'
+        //)	DROP INDEX [UX_UfoUfo_TflKey] ON [dbo].[UfoUfo];
+        private const string DROP_UNIQUE_CLUSTERED_INDEX = @"
+            IF EXISTS(
+	            SELECT i.*
+	            FROM sys.indexes i WITH (NOLOCK)
+	            INNER JOIN sys.tables t WITH (NOLOCK) ON (i.object_id = t.object_id)
+	            INNER JOIN sys.schemas s WITH (NOLOCK) ON (t.schema_id = s.schema_id)
+	            WHERE i.[name] = 'UX_{0}_TflKey'
+	            AND t.[name] = '{0}'
+	            AND s.[name] = '{1}'
+            )	DROP INDEX [UX_{0}_TflKey] ON [{1}].[{0}];
+        ";
         public string DropUniqueClusteredIndex(string name, string schema) {
             return string.Format(
-                DRP_UNIQUE_CLUSTERED_INDEX,
+                DROP_UNIQUE_CLUSTERED_INDEX,
                 Name128(name),
                 schema
             );

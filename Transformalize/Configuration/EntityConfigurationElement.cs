@@ -39,6 +39,7 @@ namespace Transformalize.Configuration
         private const string PREFIX = "prefix";
         private const string GROUP = "group";
         private const string USE_BCP = "use-bcp";
+        private const string INDEX_OPTIMIZATIONS = "index-optimizations";
 
         [ConfigurationProperty(SCHEMA, IsRequired = false, DefaultValue = "dbo")]
         public string Schema
@@ -108,6 +109,12 @@ namespace Transformalize.Configuration
         {
             get { return (bool) this[AUTO]; }
             set { this[AUTO] = value; }
+        }
+
+        [ConfigurationProperty(INDEX_OPTIMIZATIONS, IsRequired = false, DefaultValue = true)]
+        public bool IndexOptimizations {
+            get { return (bool)this[INDEX_OPTIMIZATIONS]; }
+            set { this[INDEX_OPTIMIZATIONS] = value; }
         }
 
         [ConfigurationProperty(USE_BCP, IsRequired = false, DefaultValue = false)]

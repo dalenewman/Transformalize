@@ -19,10 +19,11 @@ namespace Transformalize.Operations {
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
-           
+
             var cb = new FixedLengthClassBuilder("Tfl" + _entity.Alias) { IgnoreEmptyLines = true, FixedMode = FixedMode.AllowVariableLength };
             foreach (var field in _fields) {
-                cb.AddField(field.Alias, Convert.ToInt32(field.Length), typeof(string));
+                var length = field.Length.Equals("max", StringComparison.OrdinalIgnoreCase) ? Int32.MaxValue : Convert.ToInt32(field.Length);
+                cb.AddField(field.Alias, length, typeof(string));
             }
 
             using (var file = new FluentFile(cb.CreateRecordClass()).From(_entity.InputConnection.File)) {

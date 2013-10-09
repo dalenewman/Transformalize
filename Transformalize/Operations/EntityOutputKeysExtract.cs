@@ -29,6 +29,7 @@ using Transformalize.Main;
 using Transformalize.Main.Providers;
 
 namespace Transformalize.Operations {
+
     public class EntityOutputKeysExtract : InputCommandOperation {
         private readonly Process _process;
         private readonly Entity _entity;

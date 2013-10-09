@@ -426,6 +426,7 @@
     <Compile Include="Main\Transform\AbstractTransform.cs" />
     <Compile Include="Main\Transform\ConcatTransform.cs" />
     <Compile Include="Main\Transform\ConvertTransform.cs" />
+    <Compile Include="Main\Transform\FromJsonTransform.cs" />
     <Compile Include="Main\Transform\GetHashCodeTransform.cs" />
     <Compile Include="Main\Transform\FromRegexTransform.cs" />
     <Compile Include="Main\Transform\DateFormatTransform.cs" />

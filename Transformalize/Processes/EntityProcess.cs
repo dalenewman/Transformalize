@@ -69,7 +69,7 @@ namespace Transformalize.Processes {
                 Register(new EntityAggregation(_entity));
 
             if (_entity.IsFirstRun) {
-                if (_process.OutputConnection.Provider.IsDatabase) {
+                if (_process.OutputConnection.Provider.IsDatabase && _entity.IndexOptimizations) {
                     _process.OutputConnection.DropUniqueClusteredIndex(_entity);
                     _process.OutputConnection.DropPrimaryKey(_entity);
                 }
@@ -91,7 +91,7 @@ namespace Transformalize.Processes {
         protected override void PostProcessing() {
 
             _entity.InputKeys.Clear();
-            if (_entity.IsFirstRun && _process.OutputConnection.Provider.IsDatabase) {
+            if (_entity.IsFirstRun && _process.OutputConnection.Provider.IsDatabase && _entity.IndexOptimizations) {
                 _process.OutputConnection.AddUniqueClusteredIndex(_entity);
                 _process.OutputConnection.AddPrimaryKey(_entity);
             }

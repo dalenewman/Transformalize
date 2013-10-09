@@ -33,11 +33,11 @@ namespace Transformalize.Main {
             _process = process;
         }
 
-        public AbstractTransform Create(TransformConfigurationElement element,
-                                        ITransformParametersReader transformParametersReader,
-                                        IParametersReader parametersReader, string fieldName = "") {
+        public AbstractTransform Create(TransformConfigurationElement element, ITransformParametersReader transformParametersReader, IParametersReader parametersReader, string fieldName = "") {
+
             var parameters = transformParametersReader.Read(element);
             AbstractTransform transform = new EmptyTransform();
+            
             switch (element.Method.ToLower()) {
                 case "convert":
                     transform = new ConvertTransform(element.To, parameters);
@@ -175,6 +175,10 @@ namespace Transformalize.Main {
 
                 case "fromregex":
                     transform = new FromRegexTransform(fieldName, element.Pattern, parameters);
+                    break;
+
+                case "fromjson":
+                    transform = new FromJsonTransform(fieldName, parameters);
                     break;
             }
 

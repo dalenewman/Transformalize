@@ -82,6 +82,8 @@ namespace Transformalize.Main {
             new TransformFieldsMoveAdapter(process).Adapt("fromxml");
             new TransformFieldsToParametersAdapter(process).Adapt("fromregex");
             new TransformFieldsMoveAdapter(process).Adapt("fromregex");
+            new TransformFieldsToParametersAdapter(process).Adapt("fromjson");
+            new TransformFieldsMoveAdapter(process).Adapt("fromjson");
             return process;
         }
 

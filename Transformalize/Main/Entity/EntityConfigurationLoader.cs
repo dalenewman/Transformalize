@@ -46,6 +46,7 @@ namespace Transformalize.Main {
                 Prefix = element.Prefix,
                 Group = element.Group,
                 Auto = element.Auto,
+                IndexOptimizations = element.IndexOptimizations,
                 Alias = string.IsNullOrEmpty(element.Alias) ? element.Name : element.Alias,
                 UseBcp = element.UseBcp
             };
