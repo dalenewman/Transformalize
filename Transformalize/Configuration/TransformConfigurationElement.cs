@@ -56,6 +56,7 @@ namespace Transformalize.Configuration
         private const string ROOT = "root";
         private const string FIELDS = "fields";
         private const string TO = "to";
+        private const string CLEAN = "clean";
 
         [ConfigurationProperty(METHOD, IsRequired = true)]
         public string Method
@@ -69,6 +70,12 @@ namespace Transformalize.Configuration
         {
             get { return this[NAME] as string; }
             set { this[NAME] = value; }
+        }
+
+        [ConfigurationProperty(CLEAN, IsRequired = false, DefaultValue = false)]
+        public bool Clean {
+            get { return (bool) this[CLEAN]; }
+            set { this[CLEAN] = value; }
         }
 
         [ConfigurationProperty(TO, IsRequired = false, DefaultValue = "")]
@@ -265,6 +272,7 @@ namespace Transformalize.Configuration
         {
             get { return this[FIELDS] as FieldElementCollection; }
         }
+
 
         public override bool IsReadOnly()
         {

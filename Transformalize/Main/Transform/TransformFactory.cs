@@ -40,7 +40,7 @@ namespace Transformalize.Main {
             
             switch (element.Method.ToLower()) {
                 case "convert":
-                    transform = new ConvertTransform(element.To, parameters);
+                    transform = new ConvertTransform(element.To, element.Format, parameters);
                     break;
 
                 case "replace":
@@ -178,7 +178,11 @@ namespace Transformalize.Main {
                     break;
 
                 case "fromjson":
-                    transform = new FromJsonTransform(fieldName, parameters);
+                    transform = new FromJsonTransform(fieldName, element.Clean, parameters);
+                    break;
+
+                case "defaultempty":
+                    transform = new DefaultEmptyTransform(_process, fieldName, parameters);
                     break;
             }
 

@@ -28,6 +28,7 @@ using Transformalize.Libs.Dapper;
 
 namespace Transformalize.Main.Providers {
     public abstract class AbstractConnection {
+        private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private readonly ConnectionConfigurationElement _element;
         private readonly IConnectionChecker _connectionChecker;
         private readonly IEntityRecordsExist _entityRecordsExist;
@@ -53,6 +54,8 @@ namespace Transformalize.Main.Providers {
         public string Delimiter { get; set; }
         public string LineDelimiter { get; set; }
         public int Port { get; set; }
+        public int Start { get; set; }
+        public int End { get; set; }
 
         public abstract string UserProperty { get; }
         public abstract string PasswordProperty { get; }
@@ -71,6 +74,9 @@ namespace Transformalize.Main.Providers {
             BatchSize = element.BatchSize;
             Name = element.Name;
             Server = element.Server;
+            Port = element.Port;
+            Start = element.Start;
+            End = element.End;
             Database = element.Database;
             User = element.User;
             Password = element.Password;
@@ -251,5 +257,8 @@ namespace Transformalize.Main.Providers {
             }
         }
 
+        public bool IsExcel() {
+            return Provider.Type == ProviderType.File && (File.EndsWith(".xlsx", IC) || File.Equals(".xls", IC));
+        }
     }
 }

@@ -119,6 +119,7 @@
     <Compile Include="EtlProcessHelper.cs" />
     <Compile Include="Integration\Call.cs" />
     <Compile Include="Integration\Bcp.cs" />
+    <Compile Include="Integration\Excel.cs" />
     <Compile Include="Integration\Ufo.cs" />
     <Compile Include="Integration\Nve.cs" />
     <Compile Include="Integration\Files.cs" />

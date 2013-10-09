@@ -22,34 +22,45 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using Transformalize.Libs.Rhino.Etl;
 
 namespace Transformalize.Main {
 
     public class ConvertTransform : AbstractTransform {
-
+        private readonly string _format;
         private readonly Dictionary<string, Func<object, object>> _conversionMap;
         private readonly string _to;
+        private readonly Dictionary<string, Func<object, object>> _specialConversionMap = new Dictionary<string, Func<object, object>>();
 
-        private readonly Dictionary<string, Func<object, object>> _specialConversionMap = new Dictionary<string, Func<object, object>> {
-            { "int32", (x => Common.DateTimeToInt32 ((DateTime) x))}
-        };
-
-        public ConvertTransform(string to, IParameters parameters)
+        public ConvertTransform(string to, string format, IParameters parameters)
             : base(parameters) {
+            _format = format;
             Name = "Convert";
             _to = Common.ToSimpleType(to);
 
-            if (HasParameters && FirstParameter.Value.SimpleType == "datetime" && _to == "int32")
+            if (HasParameters && FirstParameter.Value.SimpleType == "datetime" && _to == "int32") {
+                _conversionMap.Add("int32", (x => Common.DateTimeToInt32((DateTime)x)));
                 _conversionMap = _specialConversionMap;
-            else {
-                _conversionMap = Common.ObjectConversionMap;
+            } else {
+                if (_to == "datetime" && !string.IsNullOrEmpty(_format)) {
+                    _specialConversionMap.Add("datetime", (x => DateTime.ParseExact(x.ToString(), _format, System.Globalization.CultureInfo.InvariantCulture)));
+                    _conversionMap = _specialConversionMap;
+                } else {
+                    _conversionMap = Common.ObjectConversionMap;
+                }
             }
 
         }
 
+        public override void Transform(ref StringBuilder sb) {
+            var input = sb.ToString();
+            sb.Clear();
+            sb.Append(_conversionMap[_to](input));
+        }
+
         public override object Transform(object value) {
-            return Common.ObjectConversionMap[_to](value);
+            return _conversionMap[_to](value);
         }
 
         public override void Transform(ref Row row, string resultKey) {

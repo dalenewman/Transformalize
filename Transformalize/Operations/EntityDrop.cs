@@ -34,6 +34,7 @@ namespace Transformalize.Operations
 
         public EntityDrop(Process process, Entity entity)
         {
+            Name = "Entity Drop";
             _process = process;
             _entity = entity;
         }

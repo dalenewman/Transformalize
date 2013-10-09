@@ -42,12 +42,19 @@ namespace Transformalize.Configuration
         private const string SEARCH_TYPE = "search-type";
         private const string SEARCH_TYPES = "search-types";
         private const string PRIMARY_KEY = "primary-key";
+        private const string INDEX = "index";
 
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name
         {
             get { return this[NAME] as string; }
             set { this[NAME] = value; }
+        }
+
+        [ConfigurationProperty(INDEX, IsRequired = false, DefaultValue = 0)]
+        public int Index {
+            get { return (int) this[INDEX]; }
+            set { this[INDEX] = value; }
         }
 
         [ConfigurationProperty(ALIAS, IsRequired = false, DefaultValue = "")]

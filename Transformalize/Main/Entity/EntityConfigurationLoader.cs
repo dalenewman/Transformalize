@@ -65,7 +65,10 @@ namespace Transformalize.Main {
                 var fieldType = GetFieldType(f, isMaster);
 
                 var field = new FieldReader(_process, entity, new FieldTransformParametersReader(), new EmptyParametersReader()).Read(f, fieldType);
-                field.Index = fieldIndex;
+
+                if (field.Index == 0) {
+                    field.Index = fieldIndex;
+                }
 
                 if (entity.Auto && entity.Fields.ContainsKey(field.Name)) {
                     entity.Fields.Remove(field.Name);
@@ -86,7 +89,11 @@ namespace Transformalize.Main {
                 var fieldReader = new FieldReader(_process, entity, transformParametersReader, parametersReader, usePrefix: false);
                 var fieldType = GetFieldType(cf, isMaster);
                 var field = fieldReader.Read(cf, fieldType);
-                field.Index = fieldIndex;
+
+                if (field.Index == 0) {
+                    field.Index = fieldIndex;
+                }
+
                 entity.CalculatedFields.Add(cf.Alias, field);
                 if (cf.PrimaryKey) {
                     entity.PrimaryKey[cf.Alias] = field;

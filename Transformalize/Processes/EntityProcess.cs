@@ -47,10 +47,14 @@ namespace Transformalize.Processes {
             _entity.IsFirstRun = !_process.OutputConnection.RecordsExist(_entity.Schema, _entity.OutputName());
 
             if (_entity.InputConnection.Provider.Type == ProviderType.File) {
-                if (_entity.InputConnection.IsDelimited()) {
-                    Register(new FileDelimitedImporter(_entity));
+                if (_entity.InputConnection.IsExcel()) {
+                    Register(new ExcelImporter(_entity));
                 } else {
-                    Register(new FileFixedLengthImporter(_entity));
+                    if (_entity.InputConnection.IsDelimited()) {
+                        Register(new FileDelimitedImporter(_entity));
+                    } else {
+                        Register(new FileFixedLengthImporter(_entity));
+                    }
                 }
             } else {
                 if (_entity.IsFirstRun && _entity.UseBcp && _entity.InputConnection.Provider.Type == ProviderType.SqlServer) {

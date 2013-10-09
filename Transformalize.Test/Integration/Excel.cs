@@ -27,8 +27,9 @@ using Transformalize.Runner;
 
 namespace Transformalize.Test.Integration {
     [TestFixture]
-    public class Ufo
+    public class Excel
     {
+        private const string FILE = @"c:\code\TflConfiguration\Excel.xml";
 
         [SetUp]
         public void SetUp() {
@@ -37,16 +38,16 @@ namespace Transformalize.Test.Integration {
         }
 
         [Test]
-        public void UfoInit() {
+        public void Init() {
             var options = new Options() { Mode = "init"};
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(@"c:\etl\tfl\Ufo.xml").Read(), options).Read();
+            var process = new ProcessReader(new ProcessXmlConfigurationReader(FILE).Read(), options).Read();
             process.Run();
         }
 
         [Test]
-        public void UfoDefault() {
+        public void Default() {
             var options = new Options() { Mode = "test"};
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(@"c:\etl\tfl\Ufo.xml").Read(), options).Read();
+            var process = new ProcessReader(new ProcessXmlConfigurationReader(FILE).Read(), options).Read();
             process.Run();
         }
 

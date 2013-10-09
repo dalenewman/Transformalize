@@ -43,13 +43,13 @@ namespace Transformalize.Main {
             _entity = entity;
         }
 
-        public Field Read(FieldConfigurationElement element, FieldType fieldType = FieldType.Field)
-        {
+        public Field Read(FieldConfigurationElement element, FieldType fieldType = FieldType.Field) {
             var alias = _usePrefix && element.Alias.Equals(element.Name) && !string.IsNullOrEmpty(_entity.Prefix) ? _entity.Prefix + element.Name : element.Alias;
 
             var field = new Field(element.Type, element.Length, fieldType, element.Output, element.Default) {
                 Process = _process.Name,
                 Entity = _entity.Alias,
+                Index = element.Index,
                 Schema = _entity.Schema,
                 Name = element.Name,
                 Alias = alias,
@@ -59,7 +59,7 @@ namespace Transformalize.Main {
                 Unicode = element.Unicode,
                 VariableLength = element.VariableLength,
                 Aggregate = element.Aggregate.ToLower(),
-                AsParameter = new Parameter(alias, null) { SimpleType = Common.ToSimpleType(element.Type)}
+                AsParameter = new Parameter(alias, null) { SimpleType = Common.ToSimpleType(element.Type) }
             };
 
             FieldSearchTypesLoader(field, element);
@@ -92,8 +92,8 @@ namespace Transformalize.Main {
 
         private void FieldTransformLoader(Field field, IEnumerable transformElements) {
             foreach (TransformConfigurationElement t in transformElements) {
-                field.Transforms.Add(new TransformFactory(_process).Create(t, _transformParametersReader,
-                                                                           _parametersReader, field.Alias));
+                var factory = new TransformFactory(_process);
+                field.Transforms.Add(factory.Create(t, _transformParametersReader, _parametersReader, field.Alias));
             }
         }
     }

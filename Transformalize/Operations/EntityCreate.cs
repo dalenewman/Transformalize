@@ -36,6 +36,7 @@ namespace Transformalize.Operations {
         private readonly FieldSqlWriter _writer;
 
         public EntityCreate(Entity entity, Process process, IEntityExists entityExists = null) {
+            Name = "Entity Create";
             _entity = entity;
             _process = process;
 

@@ -167,5 +167,14 @@ namespace Transformalize.Main {
         public int GetNextBatchId() {
             return OutputConnection.NextBatchId(Name);
         }
+
+        public Field GetField(string alias)
+        {
+            foreach (var entity in Entities.Where(entity => entity.Fields.ContainsKey(alias))) {
+                return entity.Fields[alias];
+            }
+            _log.Warn("Can't find field with alias: {0}.", alias);
+            return new Field(FieldType.Field) { Alias = alias};
+        }
     }
 }

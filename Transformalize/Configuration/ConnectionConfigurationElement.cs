@@ -40,6 +40,8 @@ namespace Transformalize.Configuration
         private const string PASSWORD = "password";
         private const string CONNECTION_STRING = "connection-string";
         private const string LINE_DELIMITER = "line-delimiter";
+        private const string START = "start";
+        private const string END = "end";
 
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name
@@ -58,6 +60,18 @@ namespace Transformalize.Configuration
         public int Port {
             get { return (int) this[PORT]; }
             set { this[PORT] = value; }
+        }
+
+        [ConfigurationProperty(START, IsRequired = false, DefaultValue = 0)]
+        public int Start {
+            get { return (int)this[START]; }
+            set { this[START] = value; }
+        }
+
+        [ConfigurationProperty(END, IsRequired = false, DefaultValue = 0)]
+        public int End {
+            get { return (int)this[END]; }
+            set { this[END] = value; }
         }
 
         [ConfigurationProperty(CONNECTION_STRING, IsRequired = false, DefaultValue = "")]
