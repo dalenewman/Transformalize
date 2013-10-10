@@ -36,11 +36,11 @@ namespace Transformalize.Run {
             var process = new Process();
 
             if (args.Length == 0) {
-                Log.Error("Please provide the process name, file, or address.");
-                Log.Info("Usage:");
-                Log.Info("   tfl fancy                      - looks in tfl.exe.config for fancy process.");
-                Log.Info("   tfl c:\fancy.xml               - looks for fancy.xml file." );
-                Log.Info("   tfl http://localhost/fancy.xml - makes web request for fancy.xml.");
+                Console.WriteLine("Please provide the process name, file, or address.");
+                Console.WriteLine(@"Usage:");
+                Console.WriteLine(@"   tfl fancy                      - looks in tfl.exe.config for fancy process.");
+                Console.WriteLine(@"   tfl c:\fancy.xml               - looks for fancy.xml file.");
+                Console.WriteLine(@"   tfl http://localhost/fancy.xml - makes web request for fancy.xml.");
                 return;
             }
 

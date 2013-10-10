@@ -29,9 +29,9 @@ namespace Transformalize.Main {
 
     public class ConvertTransform : AbstractTransform {
         private readonly string _format;
-        private readonly Dictionary<string, Func<object, object>> _conversionMap;
-        private readonly string _to;
+        private readonly Dictionary<string, Func<object, object>> _conversionMap = new Dictionary<string, Func<object, object>>();
         private readonly Dictionary<string, Func<object, object>> _specialConversionMap = new Dictionary<string, Func<object, object>>();
+        private readonly string _to;
 
         public ConvertTransform(string to, string format, IParameters parameters)
             : base(parameters) {
@@ -40,7 +40,7 @@ namespace Transformalize.Main {
             _to = Common.ToSimpleType(to);
 
             if (HasParameters && FirstParameter.Value.SimpleType == "datetime" && _to == "int32") {
-                _conversionMap.Add("int32", (x => Common.DateTimeToInt32((DateTime)x)));
+                _specialConversionMap.Add("int32", (x => Common.DateTimeToInt32((DateTime)x)));
                 _conversionMap = _specialConversionMap;
             } else {
                 if (_to == "datetime" && !string.IsNullOrEmpty(_format)) {
