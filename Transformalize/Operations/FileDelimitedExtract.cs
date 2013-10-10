@@ -7,12 +7,12 @@ using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
 namespace Transformalize.Operations {
-    public class FileDelimitedImporter : AbstractOperation {
+    public class FileDelimitedExtract : AbstractOperation {
         private readonly Entity _entity;
         private readonly Field[] _fields;
         private readonly ConversionFactory _conversionFactory = new ConversionFactory();
 
-        public FileDelimitedImporter(Entity entity) {
+        public FileDelimitedExtract(Entity entity) {
             _entity = entity;
             _fields = new FieldSqlWriter(_entity.Fields).Input().Context().ToEnumerable().OrderBy(f => f.Index).ToArray();
         }

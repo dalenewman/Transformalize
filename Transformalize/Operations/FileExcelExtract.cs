@@ -7,7 +7,7 @@ using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
 namespace Transformalize.Operations {
-    public class ExcelImporter : AbstractOperation {
+    public class FileExcelExtract : AbstractOperation {
         private readonly Entity _entity;
         private readonly Field[] _fields;
         private readonly ConversionFactory _conversionFactory = new ConversionFactory();
@@ -15,7 +15,7 @@ namespace Transformalize.Operations {
         private readonly int _start;
         private readonly int _end;
 
-        public ExcelImporter(Entity entity) {
+        public FileExcelExtract(Entity entity) {
             _entity = entity;
             _fields = new FieldSqlWriter(_entity.Fields).Input().Context().ToEnumerable().OrderBy(f => f.Index).ToArray();
             _fileInfo = new FileInfo(_entity.InputConnection.File);

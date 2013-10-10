@@ -29,7 +29,7 @@ namespace Transformalize.Test.Integration {
     [TestFixture]
     public class Excel
     {
-        private const string FILE = @"c:\code\TflConfiguration\Excel.xml";
+        private const string FILE = @"http://localhost:8080/Tfl/Excel.xml";
 
         [SetUp]
         public void SetUp() {
@@ -40,14 +40,14 @@ namespace Transformalize.Test.Integration {
         [Test]
         public void Init() {
             var options = new Options() { Mode = "init"};
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(FILE).Read(), options).Read();
+            var process = ProcessFactory.Create(FILE, options);
             process.Run();
         }
 
         [Test]
         public void Default() {
             var options = new Options() { Mode = "test"};
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(FILE).Read(), options).Read();
+            var process = ProcessFactory.Create(FILE, options);
             process.Run();
         }
 

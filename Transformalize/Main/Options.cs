@@ -28,15 +28,31 @@ using Transformalize.Libs.fastJSON;
 using Transformalize.Runner;
 
 namespace Transformalize.Main {
-    public class Options {
-        private string _mode;
+    public class Options
+    {
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
-        public IProcessRunner ProcessRunner { get; set; }
-        public List<string> Problems = new List<string>();
-        public bool RenderTemplates { get; set; }
-        public bool PerformTemplateActions { get; set; }
+        private LogLevel _logLevel = LogLevel.Info;
+        private string _mode = "default";
+        private bool _renderTemplates = true;
+        private bool _performTemplateActions = true;
+        private IProcessRunner _processRunner = new ProcessRunner();
+        private List<string> _problems = new List<string>();
+
         public int Top { get; set; }
-        public LogLevel LogLevel { get; set; }
+
+        public IProcessRunner ProcessRunner { get { return _processRunner; } set { _processRunner = value; } }
+        public List<string> Problems { get { return _problems; } set { _problems = value; } }
+        public bool RenderTemplates { get { return _renderTemplates; } set { _renderTemplates = value; } }
+        public bool PerformTemplateActions { get { return _performTemplateActions; } set { _performTemplateActions = value; } }
+
+        public LogLevel LogLevel
+        {
+            get { return _logLevel; }
+            set { 
+                _logLevel = value;
+                SetLogLevel(value);
+            }
+        }
 
         public string Mode {
             get { return _mode; }
@@ -47,7 +63,7 @@ namespace Transformalize.Main {
         }
 
         public Options(string settings = "") {
-            SetDefaults();
+
             if (!string.IsNullOrEmpty(settings)) {
                 try {
                     if (settings.Contains("'")) {
@@ -106,7 +122,6 @@ namespace Transformalize.Main {
                 }
             }
 
-            SetLogLevel();
         }
 
         private void SetProcessRunner(string value) {
@@ -126,9 +141,9 @@ namespace Transformalize.Main {
             }
         }
 
-        private void SetLogLevel() {
+        private static void SetLogLevel(LogLevel logLevel) {
 
-            if (LogLevel == LogLevel.Info)
+            if (logLevel == LogLevel.Info)
                 return;
 
             foreach (var rule in LogManager.Configuration.LoggingRules) {
@@ -136,10 +151,10 @@ namespace Transformalize.Main {
                     continue;
 
                 foreach (var level in rule.Levels) {
-                    if (level.Ordinal < LogLevel.Ordinal)
+                    if (level.Ordinal < logLevel.Ordinal)
                         rule.DisableLoggingForLevel(level);
                     else
-                        rule.EnableLoggingForLevel(LogLevel);
+                        rule.EnableLoggingForLevel(logLevel);
                 }
             }
             LogManager.ReconfigExistingLoggers();
@@ -157,12 +172,5 @@ namespace Transformalize.Main {
             Problems.Add(string.Format("The {0} property is invalid.", option.Key));
         }
 
-        private void SetDefaults() {
-            RenderTemplates = true;
-            PerformTemplateActions = true;
-            Mode = "default";
-            Top = 0;
-            LogLevel = LogLevel.Info;
-        }
     }
 }

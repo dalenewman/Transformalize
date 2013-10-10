@@ -22,8 +22,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Ninject;
 using Transformalize.Libs.RazorEngine;
@@ -32,13 +32,12 @@ using Transformalize.Main.Providers.AnalysisServices;
 using Transformalize.Main.Providers.File;
 using Transformalize.Main.Providers.MySql;
 using Transformalize.Main.Providers.SqlServer;
-using Transformalize.Runner;
 
 namespace Transformalize.Main {
 
-    public class Process
-    {
+    public class Process {
 
+        private static readonly Stopwatch Timer = new Stopwatch();
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         public Fields CalculatedFields = new Fields();
@@ -62,6 +61,7 @@ namespace Transformalize.Main {
         public string Bcp { get; set; }
 
         public Process(string name = "") {
+
             Name = name;
             GlobalDiagnosticsContext.Set("process", name);
 
@@ -91,7 +91,7 @@ namespace Transformalize.Main {
             Kernal.Bind<IEntityRecordsExist>().To<FalseEntityRecordsExist>().WhenInjectedInto<AnalysisServicesConnection>();
             Kernal.Bind<IEntityDropper>().To<FalseEntityDropper>().WhenInjectedInto<AnalysisServicesConnection>();
 
-            //File
+            //File (including Excel)
             Kernal.Bind<AbstractProvider>().To<FileProvider>().WhenInjectedInto<FileConnection>();
             Kernal.Bind<IConnectionChecker>().To<FileConnectionChecker>().WhenInjectedInto<FileConnection>();
             Kernal.Bind<IScriptRunner>().To<EmptyScriptRunner>().WhenInjectedInto<FileConnection>();
@@ -107,26 +107,11 @@ namespace Transformalize.Main {
         }
 
         public void Run() {
+            Timer.Start();
             Options.ProcessRunner.Run(this);
             Options.ProcessRunner.Dispose();
-        }
-
-        public void RunMetadata() {
-            using (var runner = new MetadataRunner()) {
-                runner.Run(this);
-            }
-        }
-
-        public void RunDelete() {
-            using (var runner = new DeleteRunner()) {
-                runner.Run(this);
-            }
-        }
-
-        public void RunInitialize() {
-            using (var runner = new InitializeRunner()) {
-                runner.Run(this);
-            }
+            Timer.Stop();
+            _log.Info("Process completed in {0}.", Timer.Elapsed);
         }
 
         public Fields OutputFields() {
@@ -168,13 +153,12 @@ namespace Transformalize.Main {
             return OutputConnection.NextBatchId(Name);
         }
 
-        public Field GetField(string alias)
-        {
+        public Field GetField(string alias) {
             foreach (var entity in Entities.Where(entity => entity.Fields.ContainsKey(alias))) {
                 return entity.Fields[alias];
             }
             _log.Warn("Can't find field with alias: {0}.", alias);
-            return new Field(FieldType.Field) { Alias = alias};
+            return new Field(FieldType.Field) { Alias = alias };
         }
     }
 }

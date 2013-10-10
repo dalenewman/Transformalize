@@ -180,7 +180,7 @@ namespace Transformalize.Main
 
         public bool CanDetectChanges()
         {
-            return Version != null;
+            return Version != null && InputConnection.Provider.IsDatabase;
         }
 
         public bool NeedsSchema()

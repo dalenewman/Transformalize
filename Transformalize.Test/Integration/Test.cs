@@ -32,7 +32,7 @@ namespace Transformalize.Test.Integration
     {
         [SetUp]
         public void SetUp() {
-            LogManager.Configuration.LoggingRules[0].EnableLoggingForLevel(LogLevel.Debug);
+            LogManager.Configuration.LoggingRules[0].EnableLoggingForLevel(LogLevel.Info);
             LogManager.ReconfigExistingLoggers();
         }
 

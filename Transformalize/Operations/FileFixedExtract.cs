@@ -9,11 +9,12 @@ using Transformalize.Main;
 using System.Linq;
 
 namespace Transformalize.Operations {
-    public class FileFixedLengthImporter : AbstractOperation {
+    public class FileFixedExtract : AbstractOperation {
+        private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private readonly Entity _entity;
         private readonly Field[] _fields;
 
-        public FileFixedLengthImporter(Entity entity) {
+        public FileFixedExtract(Entity entity) {
             _entity = entity;
             _fields = new FieldSqlWriter(_entity.Fields).Input().Context().ToEnumerable().OrderBy(f => f.Index).ToArray();
         }
@@ -22,7 +23,7 @@ namespace Transformalize.Operations {
 
             var cb = new FixedLengthClassBuilder("Tfl" + _entity.Alias) { IgnoreEmptyLines = true, FixedMode = FixedMode.AllowVariableLength };
             foreach (var field in _fields) {
-                var length = field.Length.Equals("max", StringComparison.OrdinalIgnoreCase) ? Int32.MaxValue : Convert.ToInt32(field.Length);
+                var length = field.Length.Equals("max", IC) ? Int32.MaxValue : Convert.ToInt32(field.Length);
                 cb.AddField(field.Alias, length, typeof(string));
             }
 
@@ -32,5 +33,6 @@ namespace Transformalize.Operations {
                 }
             }
         }
+
     }
 }

@@ -8,19 +8,16 @@ using Transformalize.Main.Providers.MySql;
 using Transformalize.Main.Providers.SqlServer;
 
 namespace Transformalize.Main.Providers {
-
     public class ConnectionFactory {
         private readonly Process _process;
         private readonly ConnectionElementCollection _elements;
 
-        public ConnectionFactory(Process process, ConnectionElementCollection elements)
-        {
+        public ConnectionFactory(Process process, ConnectionElementCollection elements) {
             _process = process;
             _elements = elements;
         }
 
-        public Dictionary<string, AbstractConnection> Create()
-        {
+        public Dictionary<string, AbstractConnection> Create() {
             var connections = new Dictionary<string, AbstractConnection>();
             var processArgument = new ConstructorArgument("process", _process);
 
@@ -45,6 +42,6 @@ namespace Transformalize.Main.Providers {
                 }
             }
             return connections;
-        } 
+        }
     }
 }

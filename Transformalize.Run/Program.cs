@@ -22,15 +22,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Transformalize.Libs.NLog;
 using Transformalize.Main;
-using Transformalize.Runner;
 using Process = Transformalize.Main.Process;
 
 namespace Transformalize.Run {
     internal class Program {
-        private static readonly Stopwatch Timer = new Stopwatch();
+
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
         private static Options _options = new Options();
 
@@ -38,42 +36,33 @@ namespace Transformalize.Run {
             var process = new Process();
 
             if (args.Length == 0) {
-                Log.Error("Please provide the process name (e.g. Tfl MyProcess)");
+                Log.Error("Please provide the process name, file, or address.");
+                Log.Info("Usage:");
+                Log.Info("   tfl fancy                      - looks in tfl.exe.config for fancy process.");
+                Log.Info("   tfl c:\fancy.xml               - looks for fancy.xml file." );
+                Log.Info("   tfl http://localhost/fancy.xml - makes web request for fancy.xml.");
                 return;
             }
 
-            var arg = args[0];
-
-            Timer.Start();
-
-            var configuration = arg.EndsWith(".xml") ? new ProcessXmlConfigurationReader(arg).Read() : new ProcessConfigurationReader(arg).Read();
+            var resource = args[0];
 
             if (OptionsMayExist(args)) {
                 _options = new Options(CombineArguments(args));
                 if (_options.Valid()) {
-                    process = new ProcessReader(configuration, _options).Read();
+                    process = ProcessFactory.Create(resource, _options);
                 } else {
                     foreach (var problem in _options.Problems) {
-                        Log.Error(arg + " | " + problem);
+                        Log.Error(resource + " | " + problem);
                     }
-                    Log.Warn(arg + " | Aborting process.");
+                    Log.Warn(resource + " | Aborting process.");
                     Environment.Exit(1);
                 }
             } else {
-                process = new ProcessReader(configuration, new Options()).Read();
+                process = ProcessFactory.Create(resource);
             }
 
             process.Run();
 
-            Timer.Stop();
-
-            Log.Info("Process completed in {0}.", Timer.Elapsed);
-
-            if (_options.Mode != "test")
-                return;
-
-            Console.WriteLine("Press any key to continue.");
-            Console.ReadKey();
         }
 
         private static string CombineArguments(IEnumerable<string> args) {

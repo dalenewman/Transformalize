@@ -32,28 +32,26 @@ namespace Transformalize.Test.Integration {
         [Test]
         public void Init() {
             var options = new Options { Mode = "init" };
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read(), options).Read();
+            var process = ProcessFactory.Create(CONFIGURATION_FILE, options);
             process.Run();
         }
 
         [Test]
         public void MetaData() {
             var options = new Options("{'mode':'metadata'}");
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read(), options).Read();
+            var process = ProcessFactory.Create(CONFIGURATION_FILE, options);
             process.Run();
         }
 
         [Test]
         public void Normal() {
-            var options = new Options();
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read(), options).Read();
-            process.Run();
+            ProcessFactory.Create(CONFIGURATION_FILE).Run();
         }
 
         [Test]
         public void Test() {
             var options = new Options("{'mode':'test','loglevel':'info'}");
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read(), options).Read();
+            var process = ProcessFactory.Create(CONFIGURATION_FILE, options);
             process.Run();
         }
     }

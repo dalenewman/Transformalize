@@ -48,12 +48,12 @@ namespace Transformalize.Processes {
 
             if (_entity.InputConnection.Provider.Type == ProviderType.File) {
                 if (_entity.InputConnection.IsExcel()) {
-                    Register(new ExcelImporter(_entity));
+                    Register(new FileExcelExtract(_entity));
                 } else {
                     if (_entity.InputConnection.IsDelimited()) {
-                        Register(new FileDelimitedImporter(_entity));
+                        Register(new FileDelimitedExtract(_entity));
                     } else {
-                        Register(new FileFixedLengthImporter(_entity));
+                        Register(new FileFixedExtract(_entity));
                     }
                 }
             } else {

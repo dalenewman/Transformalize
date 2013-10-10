@@ -127,6 +127,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\ConfigurationFactory.cs" />
     <Compile Include="Configuration\ConnectionConfigurationElement.cs" />
     <Compile Include="Configuration\ConnectionElementCollection.cs" />
     <Compile Include="Configuration\ActionConfigurationElement.cs" />
@@ -296,6 +297,7 @@
     <Compile Include="Main\Entity\EntitiesLoader.cs" />
     <Compile Include="Main\Entity\EntityParametersReader.cs" />
     <Compile Include="Main\Entity\EntityRelationshipLoader.cs" />
+    <Compile Include="Main\Process\ProcessFactory.cs" />
     <Compile Include="Main\Providers\FalseEntityExists.cs" />
     <Compile Include="Main\Providers\FileEntityDropper.cs" />
     <Compile Include="Main\Providers\File\FileEntityExists.cs" />
@@ -805,11 +807,11 @@
     <Compile Include="Libs\Rhino.Etl\Row.cs" />
     <Compile Include="Libs\Rhino.Etl\WithLoggingMixin.cs" />
     <Compile Include="Operations\BcpExtract.cs" />
-    <Compile Include="Operations\ExcelImporter.cs" />
+    <Compile Include="Operations\FileExcelExtract.cs" />
     <Compile Include="Operations\EntityDataExtract.cs" />
     <Compile Include="Operations\EntityDelete.cs" />
     <Compile Include="Operations\EntityOutputKeysExtractAll.cs" />
-    <Compile Include="Operations\FileDelimitedImporter.cs" />
+    <Compile Include="Operations\FileDelimitedExtract.cs" />
     <Compile Include="Processes\EntityDeleteProcess.cs" />
     <Compile Include="Operations\EntityDetectDeletes.cs" />
     <Compile Include="Processes\EntityKeysProcess.cs" />
@@ -1190,7 +1192,7 @@
     <Compile Include="Operations\EntityJoinAction.cs" />
     <Compile Include="Operations\EntityInputKeysStore.cs" />
     <Compile Include="Operations\EntityInputKeysStoreExtract.cs" />
-    <Compile Include="Operations\FileFixedLengthImporter.cs" />
+    <Compile Include="Operations\FileFixedExtract.cs" />
     <Compile Include="Processes\InitializationProcess.cs" />
     <Compile Include="Processes\EntityProcess.cs" />
     <Compile Include="Processes\TransformProcess.cs" />
@@ -1203,7 +1205,11 @@
     <Compile Include="Operations\ResultsLoad.cs" />
     <Compile Include="Operations\ApplyDefaults.cs" />
     <Compile Include="Operations\TransformFields.cs" />
+    <Compile Include="Runner\Contents.cs" />
+    <Compile Include="Runner\ContentsFileReader.cs" />
+    <Compile Include="Runner\ContentsWebReader.cs" />
     <Compile Include="Runner\DeleteRunner.cs" />
+    <Compile Include="Runner\IContentsReader.cs" />
     <Compile Include="Runner\InitializeRunner.cs" />
     <Compile Include="Runner\IProcessRunner.cs" />
     <Compile Include="Runner\MetadataRunner.cs" />

@@ -29,6 +29,7 @@ namespace Transformalize.Test.Integration {
     [TestFixture]
     public class Ufo
     {
+        private const string FILE = @"c:\etl\tfl\Ufo.xml";
 
         [SetUp]
         public void SetUp() {
@@ -39,14 +40,14 @@ namespace Transformalize.Test.Integration {
         [Test]
         public void UfoInit() {
             var options = new Options() { Mode = "init"};
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(@"c:\etl\tfl\Ufo.xml").Read(), options).Read();
+            var process = ProcessFactory.Create(FILE, options);
             process.Run();
         }
 
         [Test]
         public void UfoDefault() {
             var options = new Options() { Mode = "test"};
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(@"c:\etl\tfl\Ufo.xml").Read(), options).Read();
+            var process = ProcessFactory.Create(FILE, options);
             process.Run();
         }
 

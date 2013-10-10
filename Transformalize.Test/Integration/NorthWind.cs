@@ -32,42 +32,40 @@ namespace Transformalize.Test.Integration {
 
         [SetUp]
         public void SetUp() {
-            LogManager.Configuration.LoggingRules[0].EnableLoggingForLevel(LogLevel.Debug);
+            LogManager.Configuration.LoggingRules[0].EnableLoggingForLevel(LogLevel.Info);
             LogManager.ReconfigExistingLoggers();
         }
 
         [Test]
-        public void InitMode() {
+        public void AInit() {
             var options = new Options { Mode = "init" };
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(FILE).Read(), options).Read();
+            var process = ProcessFactory.Create(FILE, options);
             process.Run();
         }
 
         [Test]
-        public void Metadata() {
+        public void FMetadata() {
             var options = new Options { Mode = "metadata" };
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(FILE).Read(), options).Read();
+            var process = ProcessFactory.Create(FILE, options);
             process.Run();
         }
 
         [Test]
-        public void FirstTimeMode() {
+        public void BFirstTime() {
             var options = new Options() { Mode = "first" };
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(FILE).Read(), options).Read();
+            var process = ProcessFactory.Create(FILE, options);
             process.Run();
         }
 
         [Test]
-        public void DefaultMode() {
-            var options = new Options();
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(FILE).Read(), options).Read();
-            process.Run();
+        public void CDefault() {
+            ProcessFactory.Create(FILE).Run();
         }
 
         [Test]
-        public void Test() {
+        public void DTest() {
             var options = new Options { Mode = "test", Top = 1, LogLevel = LogLevel.Trace };
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(FILE).Read(), options).Read();
+            var process = ProcessFactory.Create(FILE, options);
             process.Run();
         }
     }

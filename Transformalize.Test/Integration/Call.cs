@@ -23,11 +23,11 @@
 using NUnit.Framework;
 using Transformalize.Libs.NLog;
 using Transformalize.Main;
-using Transformalize.Runner;
 
 namespace Transformalize.Test.Integration {
     [TestFixture]
     public class Calls {
+
         private const string CALLS = @"c:\etl\rhinoetl\tfl\Calls.xml";
         private const string CAMPAIGNS = @"c:\etl\rhinoetl\tfl\Campaigns.xml";
 
@@ -39,35 +39,20 @@ namespace Transformalize.Test.Integration {
 
         [Test]
         public void Init() {
-            var options1 = new Options { Mode = "init" };
-            var process1 = new ProcessReader(new ProcessXmlConfigurationReader(CALLS).Read(), options1).Read();
-            process1.Run();
-
-            var options2 = new Options { Mode = "init" };
-            var process2 = new ProcessReader(new ProcessXmlConfigurationReader(CAMPAIGNS).Read(), options2).Read();
-            process2.Run();
+            ProcessFactory.Create(CALLS, new Options { Mode = "init" }).Run();
+            ProcessFactory.Create(CAMPAIGNS, new Options { Mode = "init" }).Run();
         }
 
         [Test]
         public void Normal() {
-            var options1 = new Options();
-            var process1 = new ProcessReader(new ProcessXmlConfigurationReader(CALLS).Read(), options1).Read();
-            process1.Run();
-
-            var options2 = new Options();
-            var process2 = new ProcessReader(new ProcessXmlConfigurationReader(CAMPAIGNS).Read(), options2).Read();
-            process2.Run();
+            ProcessFactory.Create(CALLS).Run();
+            ProcessFactory.Create(CAMPAIGNS).Run();
         }
 
         [Test]
         public void Test() {
-            var options1 = new Options("{'mode':'test','top':2,'loglevel':'trace'}");
-            var process1 = new ProcessReader(new ProcessXmlConfigurationReader(CALLS).Read(), options1).Read();
-            process1.Run();
-
-            var options2 = new Options("{'mode':'test','top':2,'loglevel':'trace'}");
-            var process2 = new ProcessReader(new ProcessXmlConfigurationReader(CAMPAIGNS).Read(), options2).Read();
-            process2.Run();
+            ProcessFactory.Create(CALLS, new Options("{'mode':'test','top':2,'loglevel':'trace'}")).Run();
+            ProcessFactory.Create(CAMPAIGNS, new Options("{'mode':'test','top':2,'loglevel':'trace'}")).Run();
         }
     }
 }

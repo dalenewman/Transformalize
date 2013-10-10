@@ -24,13 +24,12 @@ using NUnit.Framework;
 using Transformalize.Libs.NLog;
 using Transformalize.Main;
 using Transformalize.Operations;
-using Transformalize.Runner;
 
 namespace Transformalize.Test.Integration {
     [TestFixture]
     public class Bcp : EtlProcessHelper {
 
-        private const string CONFIGURATION_FILE = @"C:\Code\TflConfiguration\Es.xml";
+        private const string FILE = @"C:\Code\TflConfiguration\Es.xml";
 
         [SetUp]
         public void SetUp() {
@@ -40,7 +39,7 @@ namespace Transformalize.Test.Integration {
 
         [Test]
         public void ExportDataWithBcp() {
-            var process = new ProcessReader(new ProcessXmlConfigurationReader(CONFIGURATION_FILE).Read(), new Options() { Mode = "test" }).Read();
+            var process = ProcessFactory.Create(FILE, new Options { Mode = "test" });
             var results = TestOperation(
                 new BcpExtract(process, process.MasterEntity)
             );
