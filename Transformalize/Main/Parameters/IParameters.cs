@@ -29,6 +29,7 @@ namespace Transformalize.Main
         int Count { get; }
         IEnumerable<string> Keys { get; }
         IParameter this[string key] { get; set; }
+        IParameter this[int index] { get; }
         IEnumerator<KeyValuePair<string, IParameter>> GetEnumerator();
         void Add(string field, string name, object value, string type);
         KeyValuePair<string, IParameter> First();

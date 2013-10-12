@@ -54,7 +54,7 @@ namespace Transformalize.Main {
             sb.Append(dict[FirstParameter.Value.Name]);
         }
 
-        public override object Transform(object value) {
+        public override object Transform(object value, string simpleType) {
             var dict = _json.ToObject<Dictionary<string, object>>(value.ToString());
             return Common.ObjectConversionMap[FirstParameter.Value.SimpleType](dict[FirstParameter.Value.Name]);
         }

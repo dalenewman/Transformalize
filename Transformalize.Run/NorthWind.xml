@@ -55,18 +55,18 @@
       <calculated-fields>
         <add name="TimeOrderMonth" length="6" default="12-DEC">
           <transforms>
-            <add method="dateformat" format="MM-MMM" parameter="OrderDate" />
+            <add method="tostring" format="MM-MMM" parameter="OrderDate" />
             <add method="toUpper" />
           </transforms>
         </add>
         <add name="TimeOrderDate" length="10" default="9999-12-31">
           <transforms>
-            <add method="dateformat" format="yyyy-MM-dd" parameter="OrderDate" />
+            <add method="tostring" format="yyyy-MM-dd" parameter="OrderDate" />
           </transforms>
         </add>
         <add name="TimeOrderYear" length="4" default="9999">
           <transforms>
-            <add method="dateformat" format="yyyy" parameter="OrderDate" />
+            <add method="tostring" format="yyyy" parameter="OrderDate" />
           </transforms>
         </add>
       </calculated-fields>

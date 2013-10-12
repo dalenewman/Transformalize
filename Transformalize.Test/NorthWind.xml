@@ -37,7 +37,15 @@
 
   <entities>
     
-    <add name="Order Details" version="RowVersion" auto="true" prefix="OrderDetails" use-bcp="true">
+    <add name="Order Details" version="RowVersion" prefix="OrderDetails" use-bcp="true">
+      <fields>
+        <add name="Discount" type="System.Single" ></add>
+        <add name="OrderID" type="System.Int32" primary-key="true"></add>
+        <add name="ProductID" type="System.Int32" primary-key="true"></add>
+        <add name="Quantity" type="System.Int16" ></add>
+        <add name="RowVersion" type="System.Byte[]" length="8" ></add>
+        <add name="UnitPrice" type="System.Decimal" precision="19" scale="4"></add>
+      </fields>
       <calculated-fields>
         <add name="OrderDetailsExtendedPrice" type="Decimal" precision="19" scale="4">
           <transforms>
@@ -47,43 +55,87 @@
       </calculated-fields>
     </add>
 
-    <add name="Orders" version="RowVersion" auto="true" prefix="Orders">
+    <add name="Orders" version="RowVersion" prefix="Orders">
       <fields>
-        <add name="RowVersion" alias="OrdersRowVersion" type="byte[]"></add>
+        <add name="CustomerID" type="System.Char" length="5" ></add>
+        <add name="EmployeeID" type="System.Int32" ></add>
+        <add name="Freight" type="System.Decimal" precision="19" scale="4"></add>
+        <add name="OrderDate" type="System.DateTime" ></add>
+        <add name="OrderID" type="System.Int32" primary-key="true"></add>
+        <add name="RequiredDate" type="System.DateTime" ></add>
+        <add name="RowVersion" type="System.Byte[]" length="8" ></add>
+        <add name="ShipAddress" length="60" ></add>
+        <add name="ShipCity" length="15" ></add>
+        <add name="ShipCountry" length="15" ></add>
+        <add name="ShipName" length="40" ></add>
+        <add name="ShippedDate" type="System.DateTime" ></add>
+        <add name="ShipPostalCode" length="10" ></add>
+        <add name="ShipRegion" length="15" ></add>
+        <add name="ShipVia" type="System.Int32" ></add>
       </fields>
 
       <calculated-fields>
         <add name="TimeOrderMonth" length="6" default="12-DEC">
           <transforms>
-            <add method="dateformat" format="MM-MMM" parameter="OrderDate" />
+            <add method="tostring" format="MM-MMM" parameter="OrderDate" />
             <add method="toUpper" />
           </transforms>
         </add>
         <add name="TimeOrderDate" length="10" default="9999-12-31">
           <transforms>
-            <add method="dateformat" format="yyyy-MM-dd" parameter="OrderDate" />
+            <add method="tostring" format="yyyy-MM-dd" parameter="OrderDate" />
           </transforms>
         </add>
         <add name="TimeOrderYear" length="4" default="9999">
           <transforms>
-            <add method="dateformat" format="yyyy" parameter="OrderDate" />
+            <add method="tostring" format="yyyy" parameter="OrderDate" />
           </transforms>
         </add>
       </calculated-fields>
     </add>
-    
-    <add name="Customers" version="RowVersion" auto="true" prefix="Customers"/>
-    
-    <add name="Employees" version="RowVersion" auto="true" prefix="Employees">
+
+    <add name="Customers" version="RowVersion" prefix="Customers">
       <fields>
-        <add name="RowVersion" alias="EmployeesRowVersion" type="byte[]"></add>
+        <add name="Address" length="60" ></add>
+        <add name="City" length="15" ></add>
+        <add name="CompanyName" length="40" ></add>
+        <add name="ContactName" length="30" ></add>
+        <add name="ContactTitle" length="30" ></add>
+        <add name="Country" length="15" ></add>
+        <add name="CustomerID" type="System.Char" length="5" primary-key="true"></add>
+        <add name="Fax" length="24" ></add>
+        <add name="Phone" length="24" ></add>
+        <add name="PostalCode" length="10" ></add>
+        <add name="Region" length="15" ></add>
+        <add name="RowVersion" type="System.Byte[]" length="8" ></add>
+      </fields>      
+    </add>
+
+    <add name="Employees" prefix="Employees">
+      <fields>
+        <add name="Address" length="60" ></add>
+        <add name="BirthDate" type="System.DateTime" ></add>
+        <add name="City" length="15" ></add>
+        <add name="Country" length="15" ></add>
+        <add name="EmployeeID" type="System.Int32" primary-key="true"></add>
+        <add name="Extension" length="4" ></add>
+        <add name="FirstName" length="10" ></add>
+        <add name="HireDate" type="System.DateTime" ></add>
+        <add name="HomePhone" length="24" ></add>
+        <add name="LastName" length="20" ></add>
+        <add name="Notes" length="MAX" ></add>
+        <add name="Photo" alias="EmployeesPhoto" input="false" output="false"></add>
+        <add name="PhotoPath" alias="EmployeesPhotoPath" input="false" output="false"></add>
+        <add name="PostalCode" length="10" ></add>
+        <add name="Region" length="15" ></add>
+        <add name="RowVersion" type="System.Byte[]" length="8" ></add>
+        <add name="Title" length="30" ></add>
+        <add name="TitleOfCourtesy" length="25" ></add>
         <add name="ReportsTo" alias="EmployeesManager" type="string" length="64">
           <transforms>
             <add method="map" map="Managers"></add>
           </transforms>
         </add>
-        <add name="Photo" alias="EmployeesPhoto" input="false" output="false"></add>
-        <add name="PhotoPath" alias="EmployeesPhotoPath" input="false" output="false"></add>
       </fields>
       <transforms>
         <add method="join" separator=" " result="Employee">
@@ -94,19 +146,60 @@
         </add>
       </transforms>
     </add>
-    
-    <add name="Products" version="RowVersion" auto="true" prefix="Products"/>
-    
-    <add name="Suppliers" version="RowVersion" auto="true" prefix="Suppliers"/>
-    
-    <add name="Categories" version="RowVersion" auto="true" prefix="Categories">
+
+    <add name="Products" version="RowVersion" prefix="Products">
       <fields>
-        <add name="RowVersion" alias="CategoriesRowVersion" type="byte[]" input="false"></add>
-        <add name="Picture" alias="CategoriesPicture" type="byte[]" input="false"></add>
+        <add name="CategoryID" type="System.Int32" ></add>
+        <add name="Discontinued" type="System.Boolean" ></add>
+        <add name="ProductID" type="System.Int32" primary-key="true"></add>
+        <add name="ProductName" length="40" ></add>
+        <add name="QuantityPerUnit" length="20" ></add>
+        <add name="ReorderLevel" type="System.Int16" ></add>
+        <add name="RowVersion" type="System.Byte[]" length="8" ></add>
+        <add name="SupplierID" type="System.Int32" ></add>
+        <add name="UnitPrice" type="System.Decimal" precision="19" scale="4"></add>
+        <add name="UnitsInStock" type="System.Int16" ></add>
+        <add name="UnitsOnOrder" type="System.Int16" ></add>
+      </fields>
+
+    </add>
+
+    <add name="Suppliers" version="RowVersion" prefix="Suppliers">
+      <fields>
+        <add name="Address" length="60" ></add>
+        <add name="City" length="15" ></add>
+        <add name="CompanyName" length="40" ></add>
+        <add name="ContactName" length="30" ></add>
+        <add name="ContactTitle" length="30" ></add>
+        <add name="Country" length="15" ></add>
+        <add name="Fax" length="24" ></add>
+        <add name="HomePage" length="MAX" ></add>
+        <add name="Phone" length="24" ></add>
+        <add name="PostalCode" length="10" ></add>
+        <add name="Region" length="15" ></add>
+        <add name="RowVersion" type="System.Byte[]" length="8" ></add>
+        <add name="SupplierID" type="System.Int32" primary-key="true"></add>
       </fields>
     </add>
     
-    <add name="Shippers" version="RowVersion" auto="true" prefix="Shippers"/>
+    <add name="Categories" prefix="Categories">
+      <fields>
+        <add name="CategoryID" type="System.Int32" primary-key="true"></add>
+        <add name="CategoryName" length="15" ></add>
+        <add name="Description" length="MAX" ></add>
+        <add name="Picture" type="System.Byte[]" length="MAX" input="false" output="false" ></add>
+        <add name="RowVersion" type="System.Byte[]" length="8" ></add>
+      </fields>
+    </add>
+
+    <add name="Shippers" version="RowVersion" prefix="Shippers">
+      <fields>
+        <add name="CompanyName" length="40" ></add>
+        <add name="Phone" length="24" ></add>
+        <add name="RowVersion" type="System.Byte[]" length="8" ></add>
+        <add name="ShipperID" type="System.Int32" primary-key="true"></add>
+      </fields>      
+    </add>
     
   </entities>
 
@@ -114,10 +207,10 @@
     <add leftEntity="Order Details" leftField="OrderID" rightEntity="Orders" rightField="OrderID" />
     <add leftEntity="Orders" leftField="CustomerID" rightEntity="Customers" rightField="CustomerID" />
     <add leftEntity="Orders" leftField="EmployeeID" rightEntity="Employees" rightField="EmployeeID" />
-    <add leftEntity="Orders" leftField="ShipVia" rightEntity="Shippers" rightField="ShipperID" />
     <add leftEntity="Order Details" leftField="ProductID" rightEntity="Products" rightField="ProductID" />
     <add leftEntity="Products" leftField="SupplierID" rightEntity="Suppliers" rightField="SupplierID" />
     <add leftEntity="Products" leftField="CategoryID" rightEntity="Categories" rightField="CategoryID" />
+    <add leftEntity="Orders" leftField="ShipVia" rightEntity="Shippers" rightField="ShipperID" />
   </relationships>
 
   <calculated-fields>

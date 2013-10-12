@@ -44,7 +44,7 @@ namespace Transformalize.Main
             sb.AppendFormat(_format, value);
         }
 
-        public override object Transform(object value)
+        public override object Transform(object value, string simpleType)
         {
             return string.Format(_format, value);
         }

@@ -31,10 +31,15 @@ namespace Transformalize.Main
     public abstract class AbstractTransform : IDisposable
     {
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
-
-        public Dictionary<string, string> Scripts = new Dictionary<string, string>();
         private IParameters _parameters;
 
+        public Dictionary<string, string> Scripts = new Dictionary<string, string>();
+        protected KeyValuePair<string, IParameter> FirstParameter { get; set; }
+        public bool HasParameters { get; private set; }
+        protected object[] ParameterValues { get; private set; }
+        public bool RequiresRow { get; set; }
+        public bool RequiresParameters { get; set; }
+        public string Name { get; set; }
         /// <summary>
         ///     Used for field level transformations, there are no parameters and the result is inline
         /// </summary>
@@ -53,6 +58,8 @@ namespace Transformalize.Main
             Parameters = parameters;
         }
 
+        protected Logger Log { get { return _log; } }
+
         public IParameters Parameters
         {
             get { return _parameters; }
@@ -62,13 +69,6 @@ namespace Transformalize.Main
                 PrepareParameters(value);
             }
         }
-
-        protected KeyValuePair<string, IParameter> FirstParameter { get; set; }
-        public bool HasParameters { get; private set; }
-        protected object[] ParameterValues { get; private set; }
-        public bool RequiresRow { get; set; }
-        public bool RequiresParameters { get; set; }
-        public string Name { get; set; }
 
         public void Dispose()
         {
@@ -88,7 +88,7 @@ namespace Transformalize.Main
             _log.Error("Transform with StringBuilder is not implemented in {0}!", Name);
         }
 
-        public virtual object Transform(Object value)
+        public virtual object Transform(Object value, string simpleType)
         {
             _log.Error("Transform with object value is not implemented in {0}!", Name);
             return null;

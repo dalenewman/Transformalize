@@ -22,12 +22,11 @@
 
 using NUnit.Framework;
 using Transformalize.Main;
-using Transformalize.Runner;
 
 namespace Transformalize.Test.Integration {
     [TestFixture]
     public class Nve {
-        private const string FILE = @"c:\etl\RhinoEtl\Tfl\Nve.xml";
+        private const string FILE = @"c:\code\TflConfiguration\NVE.xml";
 
         [Test]
         public void Init() {
@@ -57,7 +56,7 @@ namespace Transformalize.Test.Integration {
 
         [Test]
         public void Test() {
-            var options = new Options { Mode = "test", Top = 1 };
+            var options = new Options { Mode = "test", Top = 3 };
             var process = ProcessFactory.Create(FILE, options);
             process.Run();
         }

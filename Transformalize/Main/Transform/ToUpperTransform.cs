@@ -38,7 +38,7 @@ namespace Transformalize.Main
             sb.ToUpper();
         }
 
-        public override object Transform(object value)
+        public override object Transform(object value, string simpleType)
         {
             return value.ToString().ToUpper();
         }

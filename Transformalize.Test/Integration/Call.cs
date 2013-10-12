@@ -28,12 +28,12 @@ namespace Transformalize.Test.Integration {
     [TestFixture]
     public class Calls {
 
-        private const string CALLS = @"c:\etl\rhinoetl\tfl\Calls.xml";
-        private const string CAMPAIGNS = @"c:\etl\rhinoetl\tfl\Campaigns.xml";
+        private const string CALLS = @"c:\code\TflConfiguration\Calls.xml";
+        private const string CAMPAIGNS = @"c:\code\TflConfiguration\Campaigns.xml";
 
         [SetUp]
         public void SetUp() {
-            LogManager.Configuration.LoggingRules[0].EnableLoggingForLevel(LogLevel.Debug);
+            LogManager.Configuration.LoggingRules[0].EnableLoggingForLevel(LogLevel.Info);
             LogManager.ReconfigExistingLoggers();
         }
 

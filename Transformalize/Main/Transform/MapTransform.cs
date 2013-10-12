@@ -90,7 +90,7 @@ namespace Transformalize.Main
             sb.Append(_equals["*"].Value);
         }
 
-        public override object Transform(object value)
+        public override object Transform(object value, string simpleType)
         {
             var valueKey = value.ToString();
 

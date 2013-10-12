@@ -57,7 +57,7 @@ namespace Transformalize.Main
             sb.Append(_expression.Evaluate());
         }
 
-        public override object Transform(object value)
+        public override object Transform(object value, string simpleType)
         {
             _expression.Parameters[_field] = value;
             return _expression.Evaluate();

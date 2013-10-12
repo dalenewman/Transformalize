@@ -1,0 +1,502 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddApplicationSettingsTitle" xml:space="preserve">
+    <value>Add Application Settings</value>
+  </data>
+  <data name="AddConfigurationSourcesTitle" xml:space="preserve">
+    <value>Add Configuration Settings</value>
+  </data>
+  <data name="AddInstrumentationSettingsTitle" xml:space="preserve">
+    <value>Add Instrumentation Settings</value>
+  </data>
+  <data name="AppSettingsSectionMetadataDescription" xml:space="preserve">
+    <value>Application Settings </value>
+  </data>
+  <data name="AppSettingsSectionMetadataDisplayName" xml:space="preserve">
+    <value>Application Settings</value>
+  </data>
+  <data name="CategoryGeneral" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="CategoryLocalization" xml:space="preserve">
+    <value>Localization</value>
+  </data>
+  <data name="CategoryName" xml:space="preserve">
+    <value>(name)</value>
+  </data>
+  <data name="ConfigurationElementManageabilityProviderDataDescription" xml:space="preserve">
+    <value>A manageability provider for a configuration element.</value>
+  </data>
+  <data name="ConfigurationElementManageabilityProviderDataDisplayName" xml:space="preserve">
+    <value>Configuration Element Manageability Provider</value>
+  </data>
+  <data name="ConfigurationElementManageabilityProviderDataNameDescription" xml:space="preserve">
+    <value>The name of the Configuration Element Manageability Provider.</value>
+  </data>
+  <data name="ConfigurationElementManageabilityProviderDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ConfigurationElementManageabilityProviderDataTargetTypeDescription" xml:space="preserve">
+    <value>The type that is managed by the manageability provider.</value>
+  </data>
+  <data name="ConfigurationElementManageabilityProviderDataTargetTypeDisplayName" xml:space="preserve">
+    <value>Target Type</value>
+  </data>
+  <data name="ConfigurationElementManageabilityProviderDataTypeNameDescription" xml:space="preserve">
+    <value>The fully qualified type name of the Configuration Element Manageability Provider.</value>
+  </data>
+  <data name="ConfigurationElementManageabilityProviderDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="ConfigurationSectionManageabilityProviderDataDescription" xml:space="preserve">
+    <value>A manageability provider for a configuration section.</value>
+  </data>
+  <data name="ConfigurationSectionManageabilityProviderDataDisplayName" xml:space="preserve">
+    <value>Configuration Section Manageability Provider</value>
+  </data>
+  <data name="ConfigurationSectionManageabilityProviderDataManageabilityProvidersDescription" xml:space="preserve">
+    <value>A collection of Manageability Providers that the receiver might require to provide 
+manageability to configuration elements.</value>
+  </data>
+  <data name="ConfigurationSectionManageabilityProviderDataManageabilityProvidersDisplayName" xml:space="preserve">
+    <value>Manageability Providers</value>
+  </data>
+  <data name="ConfigurationSectionManageabilityProviderDataNameDescription" xml:space="preserve">
+    <value>The name of the Manageability Provider.</value>
+  </data>
+  <data name="ConfigurationSectionManageabilityProviderDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ConfigurationSectionManageabilityProviderDataTypeNameDescription" xml:space="preserve">
+    <value>The fully qualified type name of the Manageability Provider.</value>
+  </data>
+  <data name="ConfigurationSectionManageabilityProviderDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="ConfigurationSourceElementDescription" xml:space="preserve">
+    <value>The element that represents a configuration source .</value>
+  </data>
+  <data name="ConfigurationSourceElementDisplayName" xml:space="preserve">
+    <value>An element that contains configurtain information.</value>
+  </data>
+  <data name="ConfigurationSourceElementNameDescription" xml:space="preserve">
+    <value>The name of the Configuration Source Element.</value>
+  </data>
+  <data name="ConfigurationSourceElementNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ConfigurationSourceElementTypeNameDescription" xml:space="preserve">
+    <value>The fully qualified type name of the Configuration Source Element.</value>
+  </data>
+  <data name="ConfigurationSourceElementTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="ConfigurationSourceSectionDescription" xml:space="preserve">
+    <value>Configuration settings that determine the sources of configuration information for an application.</value>
+  </data>
+  <data name="ConfigurationSourceSectionDisplayName" xml:space="preserve">
+    <value>Configuration Sources</value>
+  </data>
+  <data name="ConfigurationSourceSectionParentSourceDescription" xml:space="preserve">
+    <value>The name of the Configuration Source containing the section that this Redirected Section will override.</value>
+  </data>
+  <data name="ConfigurationSourceSectionParentSourceDisplayName" xml:space="preserve">
+    <value>Parent Source</value>
+  </data>
+  <data name="ConfigurationSourceSectionRedirectedSectionsDescription" xml:space="preserve">
+    <value>The list of Redirected Sections for this application configuration.</value>
+  </data>
+  <data name="ConfigurationSourceSectionRedirectedSectionsDisplayName" xml:space="preserve">
+    <value>Redirected Sections</value>
+  </data>
+  <data name="ConfigurationSourceSectionSelectedSourceDescription" xml:space="preserve">
+    <value>The name of the default Configuration Source.</value>
+  </data>
+  <data name="ConfigurationSourceSectionSelectedSourceDisplayName" xml:space="preserve">
+    <value>Selected Source</value>
+  </data>
+  <data name="ConfigurationSourceSectionSourcesDescription" xml:space="preserve">
+    <value>The collection of defined configuration sources.</value>
+  </data>
+  <data name="ConfigurationSourceSectionSourcesDisplayName" xml:space="preserve">
+    <value>Sources</value>
+  </data>
+  <data name="FileConfigurationSourceElementDescription" xml:space="preserve">
+    <value>A Configuration Source that reads configuration information from a disk file. 
+The file must contain XML data in the standard .NET configuration format.</value>
+  </data>
+  <data name="FileConfigurationSourceElementDisplayName" xml:space="preserve">
+    <value>File-based Configuration Source</value>
+  </data>
+  <data name="FileConfigurationSourceElementFilePathDescription" xml:space="preserve">
+    <value>The full path and name of the configuration file.</value>
+  </data>
+  <data name="FileConfigurationSourceElementFilePathDisplayName" xml:space="preserve">
+    <value>File Path</value>
+  </data>
+  <data name="FileConfigurationSourceElementFilePathFilter" xml:space="preserve">
+    <value>Configuration files (*.config)|*.config|All Files (*.*)|*.*</value>
+  </data>
+  <data name="FileConfigurationSourceElementNameDescription" xml:space="preserve">
+    <value>The name of the File-based Configuration Source.</value>
+  </data>
+  <data name="FileConfigurationSourceElementNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="FileConfigurationSourceElementTypeNameDescription" xml:space="preserve">
+    <value>The fully qualified type name of the File-based Configuration Source.</value>
+  </data>
+  <data name="FileConfigurationSourceElementTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="InstrumentationConfigurationSectionApplicationInstanceNameDescription" xml:space="preserve">
+    <value>The unique name for the Application Instance to be used by the Instrumentation providers.</value>
+  </data>
+  <data name="InstrumentationConfigurationSectionApplicationInstanceNameDisplayName" xml:space="preserve">
+    <value>Application Instance Name</value>
+  </data>
+  <data name="InstrumentationConfigurationSectionDescription" xml:space="preserve">
+    <value>Configuration settings for Instrumentation for the entire application.</value>
+  </data>
+  <data name="InstrumentationConfigurationSectionDisplayName" xml:space="preserve">
+    <value>Instrumentation Settings</value>
+  </data>
+  <data name="InstrumentationConfigurationSectionEventLoggingEnabledDescription" xml:space="preserve">
+    <value>Specifies if logging to Windows Event Log will take place when instrumented 
+events occur within Enterprise Library.</value>
+  </data>
+  <data name="InstrumentationConfigurationSectionEventLoggingEnabledDisplayName" xml:space="preserve">
+    <value>Event Logging Enabled</value>
+  </data>
+  <data name="InstrumentationConfigurationSectionPerformanceCountersEnabledDescription" xml:space="preserve">
+    <value>Specifies if the Enterprise Library Performance Counters will be exposed and updated 
+when instrumented events occur within Enterprise Library.</value>
+  </data>
+  <data name="InstrumentationConfigurationSectionPerformanceCountersEnabledDisplayName" xml:space="preserve">
+    <value>Performance Counters Enabled</value>
+  </data>
+  <data name="KeyValueConfigurationCollectionMetadataDescription" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="KeyValueConfigurationCollectionMetadataDisplayName" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="KeyValueConfigurationElementMetadataDescription" xml:space="preserve">
+    <value>A custom application settings, such as file paths or XML Web service URLs.</value>
+  </data>
+  <data name="KeyValueConfigurationElementMetadataDisplayName" xml:space="preserve">
+    <value>Setting</value>
+  </data>
+  <data name="KeyValueConfigurationElementMetadataKeyDescription" xml:space="preserve">
+    <value>Key</value>
+  </data>
+  <data name="KeyValueConfigurationElementMetadataKeyDisplayName" xml:space="preserve">
+    <value>Key</value>
+  </data>
+  <data name="KeyValueConfigurationElementMetadataValueDescription" xml:space="preserve">
+    <value>Value</value>
+  </data>
+  <data name="KeyValueConfigurationElementMetadataValueDisplayName" xml:space="preserve">
+    <value>Value</value>
+  </data>
+  <data name="ManageableConfigurationSourceElementApplicationNameDescription" xml:space="preserve">
+    <value>The name of the application. 
+This used to determine the Registry path for the configuration information. 
+This value is required.</value>
+  </data>
+  <data name="ManageableConfigurationSourceElementApplicationNameDisplayName" xml:space="preserve">
+    <value>Application Name</value>
+  </data>
+  <data name="ManageableConfigurationSourceElementConfigurationManageabilityProvidersDescription" xml:space="preserve">
+    <value>The collection of registered types necessary to provide manageability by the configuration source.</value>
+  </data>
+  <data name="ManageableConfigurationSourceElementConfigurationManageabilityProvidersDisplayName" xml:space="preserve">
+    <value>Configuration Manageability Providers</value>
+  </data>
+  <data name="ManageableConfigurationSourceElementDescription" xml:space="preserve">
+    <value>A configuration source that integrates with Group Policy to apply domain-wide or 
+local machine policy overrides to provide centralized configuration management capabilities.</value>
+  </data>
+  <data name="ManageableConfigurationSourceElementDisplayName" xml:space="preserve">
+    <value>Manageable Configuration Source</value>
+  </data>
+  <data name="ManageableConfigurationSourceElementEnableGroupPoliciesDescription" xml:space="preserve">
+    <value>Specifies if the configuration source will take account of domain-wide or 
+local machine policy overrides configured in the Registry through Group Policy settings.</value>
+  </data>
+  <data name="ManageableConfigurationSourceElementEnableGroupPoliciesDisplayName" xml:space="preserve">
+    <value>Group Policy Enabled</value>
+  </data>
+  <data name="ManageableConfigurationSourceElementFilePathDescription" xml:space="preserve">
+    <value>The full path and name of the configuration file.</value>
+  </data>
+  <data name="ManageableConfigurationSourceElementFilePathDisplayName" xml:space="preserve">
+    <value>File Path</value>
+  </data>
+  <data name="ManageableConfigurationSourceElementNameDescription" xml:space="preserve">
+    <value>The name of the Manageable Configuration Source.</value>
+  </data>
+  <data name="ManageableConfigurationSourceElementNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ManageableConfigurationSourceElementTypeNameDescription" xml:space="preserve">
+    <value>The fully qualified type name of the Manageable Configuration Source.</value>
+  </data>
+  <data name="ManageableConfigurationSourceElementTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="NamedConfigurationElementDescription" xml:space="preserve">
+    <value>A configuration element in a collection that is keyed by the name.</value>
+  </data>
+  <data name="NamedConfigurationElementDisplayName" xml:space="preserve">
+    <value>Named Configuration Element</value>
+  </data>
+  <data name="NamedConfigurationElementNameDescription" xml:space="preserve">
+    <value>The name used to identify this item.</value>
+  </data>
+  <data name="NamedConfigurationElementNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="NamedElementCollectionDescription" xml:space="preserve">
+    <value>A collection of Named Configuration elements.</value>
+  </data>
+  <data name="NamedElementCollectionDisplayName" xml:space="preserve">
+    <value>Named Element Collection</value>
+  </data>
+  <data name="NameTypeConfigurationElementCollectionDescription" xml:space="preserve">
+    <value>A collection of Name Type Configuration elements.</value>
+  </data>
+  <data name="NameTypeConfigurationElementCollectionDisplayName" xml:space="preserve">
+    <value>Name Type Configuration Element Collection</value>
+  </data>
+  <data name="NameTypeConfigurationElementDescription" xml:space="preserve">
+    <value>A configuration element in a collection that contains both a type and a name.</value>
+  </data>
+  <data name="NameTypeConfigurationElementDisplayName" xml:space="preserve">
+    <value>Name Type Configuration Element</value>
+  </data>
+  <data name="NameTypeConfigurationElementNameDescription" xml:space="preserve">
+    <value>The name of the Name Type Configuration Element.</value>
+  </data>
+  <data name="NameTypeConfigurationElementNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="NameTypeConfigurationElementTypeNameDescription" xml:space="preserve">
+    <value>The fully qualified type name of the Name Type Configuration Element.</value>
+  </data>
+  <data name="NameTypeConfigurationElementTypeNameDisplayName" xml:space="preserve">
+    <value>Type Name</value>
+  </data>
+  <data name="PolymorphicConfigurationElementCollectionDescription" xml:space="preserve">
+    <value>A base class from which all implementations of polymorphic configuration collections derive.</value>
+  </data>
+  <data name="PolymorphicConfigurationElementCollectionDisplayName" xml:space="preserve">
+    <value>Polymorphic Configuration Element Collection</value>
+  </data>
+  <data name="RedirectedSectionElementDescription" xml:space="preserve">
+    <value>A redirected section for the application configuration. 
+Each section of the configuration can be loaded from a different configuration source if required. 
+Each Redirected Section configured in this list will override the same entire section in 
+the default Configuration Source.</value>
+  </data>
+  <data name="RedirectedSectionElementDisplayName" xml:space="preserve">
+    <value>Redirected Section</value>
+  </data>
+  <data name="RedirectedSectionElementNameDescription" xml:space="preserve">
+    <value>The name of the Redirected Section.</value>
+  </data>
+  <data name="RedirectedSectionElementNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="RedirectedSectionElementSourceNameDescription" xml:space="preserve">
+    <value>The name of the Configuration Source that will handle the redirected section. 
+Must be one of the Configuration Sources defined for the application.</value>
+  </data>
+  <data name="RedirectedSectionElementSourceNameDisplayName" xml:space="preserve">
+    <value>Configuration Source</value>
+  </data>
+  <data name="SerializableConfigurationSectionDescription" xml:space="preserve">
+    <value>Represents a configuration section that can be serialized and deserialized to XML.</value>
+  </data>
+  <data name="SerializableConfigurationSectionDisplayName" xml:space="preserve">
+    <value>Serializable Configuration Section</value>
+  </data>
+  <data name="SystemConfigurationSourceElementDescription" xml:space="preserve">
+    <value>A configuration source that reads configuration data from the default configuration file. 
+Typically this is App.config or Web.config, depending on the application type.</value>
+  </data>
+  <data name="SystemConfigurationSourceElementDisplayName" xml:space="preserve">
+    <value>System Configuration Source</value>
+  </data>
+  <data name="SystemConfigurationSourceElementNameDescription" xml:space="preserve">
+    <value>The name of the System Configuration Source.</value>
+  </data>
+  <data name="SystemConfigurationSourceElementNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="SystemConfigurationSourceElementTypeNameDescription" xml:space="preserve">
+    <value>The fully qualified type name of the System Configuration Source.</value>
+  </data>
+  <data name="SystemConfigurationSourceElementTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="TypeRegistrationProviderElementCollectionDescription" xml:space="preserve">
+    <value>A collection of Type Registration Provider elements.</value>
+  </data>
+  <data name="TypeRegistrationProviderElementCollectionDisplayName" xml:space="preserve">
+    <value>Type Registration Provider Element Collection</value>
+  </data>
+  <data name="TypeRegistrationProviderElementDescription" xml:space="preserve">
+    <value>A provider for registering types.</value>
+  </data>
+  <data name="TypeRegistrationProviderElementDisplayName" xml:space="preserve">
+    <value>Type Registration Provider Element</value>
+  </data>
+  <data name="TypeRegistrationProviderElementNameDescription" xml:space="preserve">
+    <value>The name of the Type Registration Provider Element.</value>
+  </data>
+  <data name="TypeRegistrationProviderElementNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="TypeRegistrationProviderElementProviderTypeNameDescription" xml:space="preserve">
+    <value>The name of the type that implements the Type Registration Provider Element.</value>
+  </data>
+  <data name="TypeRegistrationProviderElementProviderTypeNameDisplayName" xml:space="preserve">
+    <value>Provider Type Name</value>
+  </data>
+  <data name="TypeRegistrationProviderElementSectionNameDescription" xml:space="preserve">
+    <value>The name of the configuration section within the configuration file.</value>
+  </data>
+  <data name="TypeRegistrationProviderElementSectionNameDisplayName" xml:space="preserve">
+    <value>Section Name</value>
+  </data>
+  <data name="TypeRegistrationProvidersConfigurationSectionDescription" xml:space="preserve">
+    <value>The section of the configuration that specifies the Type Registration Providers for the application.</value>
+  </data>
+  <data name="TypeRegistrationProvidersConfigurationSectionDisplayName" xml:space="preserve">
+    <value>Type Registration Providers Configuration Section</value>
+  </data>
+  <data name="TypeRegistrationProvidersConfigurationSectionTypeRegistrationProvidersDescription" xml:space="preserve">
+    <value>A collection of Type Registration providers.</value>
+  </data>
+  <data name="TypeRegistrationProvidersConfigurationSectionTypeRegistrationProvidersDisplayName" xml:space="preserve">
+    <value>Type Registration Providers</value>
+  </data>
+</root>

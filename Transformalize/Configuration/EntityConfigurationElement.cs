@@ -35,7 +35,6 @@ namespace Transformalize.Configuration
         private const string VERSION = "version";
         private const string OUTPUT = "output";
         private const string TRANSFORMS = "transforms";
-        private const string AUTO = "auto";
         private const string PREFIX = "prefix";
         private const string GROUP = "group";
         private const string USE_BCP = "use-bcp";
@@ -102,13 +101,6 @@ namespace Transformalize.Configuration
         public TransformElementCollection Transforms
         {
             get { return this[TRANSFORMS] as TransformElementCollection; }
-        }
-
-        [ConfigurationProperty(AUTO, IsRequired = false, DefaultValue = false)]
-        public bool Auto
-        {
-            get { return (bool) this[AUTO]; }
-            set { this[AUTO] = value; }
         }
 
         [ConfigurationProperty(INDEX_OPTIMIZATIONS, IsRequired = false, DefaultValue = true)]

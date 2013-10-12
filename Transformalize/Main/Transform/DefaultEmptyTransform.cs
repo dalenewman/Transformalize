@@ -50,7 +50,7 @@ namespace Transformalize.Main {
             }
         }
 
-        public override object Transform(object value) {
+        public override object Transform(object value, string simpleType) {
             return value.Equals(string.Empty) ? Field.Default : value;
         }
 

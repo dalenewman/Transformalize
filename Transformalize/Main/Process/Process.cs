@@ -157,6 +157,12 @@ namespace Transformalize.Main {
             foreach (var entity in Entities.Where(entity => entity.Fields.ContainsKey(alias))) {
                 return entity.Fields[alias];
             }
+            foreach (var entity in Entities.Where(e => e.CalculatedFields.ContainsKey(alias))) {
+                return entity.CalculatedFields[alias];
+            }
+            if (CalculatedFields.Any(cf => cf.Key == alias)) {
+                return CalculatedFields.First(cf => cf.Key == alias).Value;
+            }
             _log.Warn("Can't find field with alias: {0}.", alias);
             return new Field(FieldType.Field) { Alias = alias };
         }

@@ -58,8 +58,7 @@ namespace Transformalize.Main {
                 Input = element.Input,
                 Unicode = element.Unicode,
                 VariableLength = element.VariableLength,
-                Aggregate = element.Aggregate.ToLower(),
-                AsParameter = new Parameter(alias, null) { SimpleType = Common.ToSimpleType(element.Type) }
+                Aggregate = element.Aggregate.ToLower()
             };
 
             FieldSearchTypesLoader(field, element);

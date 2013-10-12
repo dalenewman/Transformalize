@@ -27,5 +27,6 @@ namespace Transformalize.Main
         string Name { get; set; }
         object Value { get; set; }
         string SimpleType { get; set; }
+        int Index { get; set; }
     }
 }

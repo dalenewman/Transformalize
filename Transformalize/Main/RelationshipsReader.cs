@@ -77,8 +77,7 @@ namespace Transformalize.Main {
                         : rightEntity.Fields.ToEnumerable().First(Common.FieldFinder(rightField))
             };
 
-            if (join.LeftField.FieldType.HasFlag(FieldType.MasterKey) ||
-                join.LeftField.FieldType.HasFlag(FieldType.PrimaryKey)) {
+            if (join.LeftField.FieldType.HasFlag(FieldType.MasterKey) || join.LeftField.FieldType.HasFlag(FieldType.PrimaryKey)) {
                 join.LeftField.FieldType |= FieldType.ForeignKey;
             } else {
                 join.LeftField.FieldType = FieldType.ForeignKey;

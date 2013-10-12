@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Libs.Rhino.Etl.Pipelines;
 
 namespace Transformalize.Test
 {
@@ -42,21 +43,22 @@ namespace Transformalize.Test
         protected class TestProcess : EtlProcess
         {
             private readonly List<Row> _returnRows = new List<Row>();
-            private readonly IEnumerable<IOperation> testOperations;
+            private readonly IEnumerable<IOperation> _testOperations;
 
             public TestProcess(params IOperation[] testOperations)
             {
-                this.testOperations = testOperations;
+                this.PipelineExecuter = new SingleThreadedNonCachedPipelineExecuter();
+                this._testOperations = testOperations;
             }
 
             public TestProcess(IEnumerable<IOperation> testOperations)
             {
-                this.testOperations = testOperations;
+                this._testOperations = testOperations;
             }
 
             protected override void Initialize()
             {
-                foreach (var testOperation in testOperations)
+                foreach (var testOperation in _testOperations)
                     Register(testOperation);
 
                 Register(new ResultsOperation(_returnRows));

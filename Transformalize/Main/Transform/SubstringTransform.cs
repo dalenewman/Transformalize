@@ -44,7 +44,7 @@ namespace Transformalize.Main
             sb.Substring(_startIndex, _length);
         }
 
-        public override object Transform(object value)
+        public override object Transform(object value, string simpleType)
         {
             return value.ToString().Substring(_startIndex, _length);
         }

@@ -81,7 +81,7 @@ namespace Transformalize.Main
             sb.Append(Razor.Run(_key, _value));
         }
 
-        public override object Transform(object value)
+        public override object Transform(object value, string simpleType)
         {
             _value = value;
             return Razor.Run(_key, _value);

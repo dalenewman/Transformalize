@@ -72,7 +72,6 @@ namespace Transformalize.Main
         public bool VariableLength { get; set; }
         public bool Auto { get; set; }
         public string Aggregate { get; set; }
-        public Parameter AsParameter { get; set; }
 
         public bool HasTransforms
         {
@@ -176,7 +175,7 @@ namespace Transformalize.Main
                     }
                     else
                     {
-                        row[Alias] = t.Transform(row[Alias]);
+                        row[Alias] = t.Transform(row[Alias], SimpleType);
                     }
                 }
             }

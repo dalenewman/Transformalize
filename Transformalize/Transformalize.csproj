@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Transformalize</RootNamespace>
     <AssemblyName>Transformalize</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -83,6 +83,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release 32|x64'">
     <OutputPath>bin\x64\Release 32\</OutputPath>
@@ -92,6 +93,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release 32|x86'">
     <OutputPath>bin\x86\Release 32\</OutputPath>
@@ -101,6 +103,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime, Version=3.3.0.7239, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
@@ -116,8 +119,11 @@
       <HintPath>..\packages\Noesis.Javascript.0.7.1.0\lib\net40\amd64\Noesis.Javascript.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Device" />
     <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
     </Reference>
@@ -178,6 +184,290 @@
     <Compile Include="Extensions\ProducerConsumerCollectionBase.cs" />
     <Compile Include="Libs\Dapper\SqlBuilder.cs" />
     <Compile Include="Libs\Dapper\SqlMapper.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\AssemblyQualifiedTypeNameConverter.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\BlockSectionNames.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\ByteArrayTypeConverter.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\CompositeConfigurationSourceHandler.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\ConfigurationChangedEventArgs.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\ConfigurationElementTypeAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\ConfigurationFileChangedEventArgs.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\ConfigurationFileSourceWatcher.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\ConfigurationSectionCloner.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\ConfigurationSourceBuilder.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\ConfigurationSourceChangedEventArgs.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\ConfigurationSourceElement.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\ConfigurationSourceErrorsException.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\ConfigurationSourceFactory.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\ConfigurationSourceHandler.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\ConfigurationSourceSection.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\ConfigurationSourceWatcher.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\CustomConfigurationElementCollection.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\CustomProviderDataHelper.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\DesignResources.Designer.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Design\AddApplicationBlockCommandAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Design\AddSateliteProviderCommandAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Design\AppSettingsDesignTime.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Design\BaseTypeAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Design\CloneableConfigurationElementTypeAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Design\CommandAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Design\CommonDesignTime.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Design\ConfigurationSourcesDesignTime.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Design\DesignConfigurationSource.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Design\DesigntimeDefaultAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Design\DesignTimeReadOnly.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Design\EditorWithReadOnlyTextAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Design\EnvironmentalOverridesAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Design\FilteredFileNameEditorAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Design\HandlesSectionAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Design\IDesignConfigurationSource.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Design\MergeableConfigurationCollectionTypeAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Design\NamePropertyAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Design\OmitCustomAttributesPropertyAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Design\PromoteCommandsAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Design\ReferenceAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Design\RegisterAsMetadataTypeAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Design\ResourceCategoryAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Design\ResourceDescriptionAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Design\ResourceDisplayNameAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Design\TypePickingCommandAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Design\TypeSelectorIncludes.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Design\Validation\ValidationAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Design\ViewModelAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Design\WizardCommandAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\DictionaryConfigurationSource.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\EnumConverterWithExclusiveSuggestedValues.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\FileBasedConfigurationSource.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\FileConfigurationSource.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\FileConfigurationSourceElement.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\GenericEnumeratorWrapper.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\HierarchicalConfigurationSourceHandler.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\ICloneableConfigurationElement.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\IConfigurationSource.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\IConfigurationSourceTest.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\ICustomProviderData.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\IHelperAssistedCustomConfigurationData.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\IMergeableConfigurationElementCollection.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\IObjectWithName.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\IObjectWithNameAndType.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\IProtectedConfigurationSource.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\MergeableConfigurationCollectionFactory.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\NamedConfigurationElement.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\NamedElementCollection.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\NameTypeConfigurationElement.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\NameTypeConfigurationElementCollection.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\NonNegativeOrInfiniteTimeSpanValidator.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\NonNegativeOrInfiniteTimeSpanValidatorAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\NullConfigurationSource.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\PolymorphicConfigurationElementCollection.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\RedirectedSectionElement.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\SerializableConfigurationSection.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Storage\ConfigurationChangeFileWatcher.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Storage\ConfigurationChangeWatcher.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Storage\ConfigurationChangeWatcherPauser.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\Storage\IConfigurationChangeWatcher.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\SystemConfigurationSource.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\SystemConfigurationSourceElement.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\TimeSpanOrInfiniteConverter.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\GlobalSuppressions.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\IFluentInterface.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Instrumentation\AbstractInstallerBuilder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Libs\EnterpriseLibrary\Common\Instrumentation\AppDomainNameFormatter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Libs\EnterpriseLibrary\Common\Instrumentation\EnterpriseLibraryPerformanceCounter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Libs\EnterpriseLibrary\Common\Instrumentation\EnterpriseLibraryPerformanceCounterFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Libs\EnterpriseLibrary\Common\Instrumentation\EventLogDefinitionAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Libs\EnterpriseLibrary\Common\Instrumentation\EventLogEntryFormatter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Libs\EnterpriseLibrary\Common\Instrumentation\EventLogInstallerBuilder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Libs\EnterpriseLibrary\Common\Instrumentation\HasInstallableResourcesAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Libs\EnterpriseLibrary\Common\Instrumentation\IEventLogEntryFormatter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Libs\EnterpriseLibrary\Common\Instrumentation\IPerformanceCounterNameFormatter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Libs\EnterpriseLibrary\Common\Instrumentation\NoPrefixNameFormatter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Libs\EnterpriseLibrary\Common\Instrumentation\PerformanceCounterAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Libs\EnterpriseLibrary\Common\Instrumentation\PerformanceCounterInstallerBuilder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Libs\EnterpriseLibrary\Common\Instrumentation\PerformanceCounterInstanceName.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Libs\EnterpriseLibrary\Common\Instrumentation\PerformanceCountersDefinitionAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Libs\EnterpriseLibrary\Common\Instrumentation\ReflectionInstaller.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libs\EnterpriseLibrary\Common\ReplacementFormatter.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Resources.Designer.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\ResourceStringLoader.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Utility\ConstantStringResolver.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Utility\DelegateStringResolver.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Utility\EnumerableExtensions.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Utility\Guard.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Utility\IStringResolver.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Utility\ResourceStringResolver.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Utility\StaticReflection.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Utility\TypeExtensions.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Utility\WrappedAsyncOperation.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\AttributeValidatorFactory.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\CompositeValidatorBuilder.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\CompositeValidatorFactory.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\ConfigurationValidatedElement.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\ConfigurationValidatedType.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\ConfigurationValidatorBuilder.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\ConfigurationValidatorFactory.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\AndCompositeValidatorData.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\ConfigurationCultureInfoConverter.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\ContainsCharactersValidatorData.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\CustomValidatorData.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\DateTimeRangeValidatorData.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\DesignResources.Designer.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\DomainConfigurationElement.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\DomainValidatorData.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\EnumConversionValidatorData.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\NotNullValidatorData.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\ObjectCollectionValidatorData.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\ObjectValidatorData.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\OrCompositeValidatorData.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\PropertyComparisonValidatorData.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\RangeValidatorData.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\RangeValidatorData.Generic.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\RegexValidatorData.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\RelativeDateTimeValidatorData.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\StringLengthValidatorData.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\TypeConversionValidatorData.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\ValidatedFieldReference.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\ValidatedFieldReferenceCollection.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\ValidatedMemberReference.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\ValidatedMethodReference.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\ValidatedMethodReferenceCollection.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\ValidatedPropertyReference.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\ValidatedPropertyReferenceCollection.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\ValidatedTypeReference.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\ValidatedTypeReferenceCollection.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\ValidationDesignTime.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\ValidationRulesetData.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\ValidationRulesetDataCollection.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\ValidationSettings.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\ValidatorData.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\ValidatorDataCollection.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Configuration\ValueValidatorData.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\DataErrorInfoHelper.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\GlobalSuppressions.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Integration\IValidationIntegrationProxy.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Integration\ValidationIntegrationHelper.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Integration\ValueConvertEventArgs.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\IValidatedElement.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\IValidatedType.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\IValidatorDescriptor.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\MemberAccessValidatorBuilderFactory.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\MemberValueAccessBuilder.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\MetadataValidatedElement.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\MetadataValidatedParameterElement.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\MetadataValidatedType.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\MetadataValidatorBuilder.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\ParameterValidatorFactory.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\PropertyValidationFactory.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\ReflectionMemberValueAccessBuilder.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Resources.Designer.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\TagFilter.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validation.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\ValidationAttributeValidatedElement.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\ValidationAttributeValidatedType.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\ValidationAttributeValidatorBuilder.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\ValidationAttributeValidatorFactory.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\ValidationFactory.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\ValidationReflectionHelper.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\ValidationResult.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\ValidationResults.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\ValidationSpecificationSource.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validator.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validator.Generic.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\ValidatorBuilderBase.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\ValidatorCacheKey.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\ValidatorFactory.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\AndCompositeValidator.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\BaseValidationAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\ComparisonOperator.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\CompositionType.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\ContainsCharacters.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\ContainsCharactersValidator.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\ContainsCharactersValidatorAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\DateTimeRangeValidator.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\DateTimeRangeValidatorAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\DateTimeUnit.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\DomainValidator.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\DomainValidatorAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\EnumConversionValidator.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\EnumConversionValidatorAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\FieldValueAccess.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\FieldValueValidator.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\GenericValidatorWrapper.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\HasSelfValidationAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\IgnoreNullsAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\MemberAccessValidator.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\MethodReturnValueValidator.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\MethodValueAccess.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\NotNullValidator.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\NotNullValidatorAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\NullIgnoringValidatorWrapper.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\ObjectCollectionValidator.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\ObjectCollectionValidatorAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\ObjectValidator.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\ObjectValidatorAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\OrCompositeValidator.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\PropertyComparisonValidator.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\PropertyComparisonValidatorAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\PropertyValueAccess.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\PropertyValueValidator.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\RangeBoundaryType.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\RangeChecker.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\RangeValidator.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\RangeValidator.Generic.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\RangeValidatorAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\RegexValidator.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\RegexValidatorAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\RelativeDateTimeGenerator.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\RelativeDateTimeValidator.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\RelativeDateTimeValidatorAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\SelfValidationAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\SelfValidationValidator.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\StringLengthValidator.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\StringLengthValidatorAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\TypeConversionValidator.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\TypeConversionValidatorAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\ValidationAttributeValidator.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\ValidatorArgumentsValidatorHelper.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\ValidatorAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\ValidatorCompositionAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\ValueAccess.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\ValueAccessComparisonValidator.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\ValueAccessValidator.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\ValueValidator.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\ValueValidator.Generic.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Validators\ValueValidatorAttribute.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\ValueAccessValidatorBuilder.cs" />
     <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\Enums.cs" />
     <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsBiffBlankCell.cs" />
     <Compile Include="Libs\ExcelDataReader\Core\BinaryFormat\XlsBiffBOF.cs" />
@@ -428,11 +718,12 @@
     <Compile Include="Main\Transform\AbstractTransform.cs" />
     <Compile Include="Main\Transform\ConcatTransform.cs" />
     <Compile Include="Main\Transform\ConvertTransform.cs" />
+    <Compile Include="Main\Transform\DistanceTransform.cs" />
     <Compile Include="Main\Transform\DefaultEmptyTransform.cs" />
     <Compile Include="Main\Transform\FromJsonTransform.cs" />
     <Compile Include="Main\Transform\GetHashCodeTransform.cs" />
     <Compile Include="Main\Transform\FromRegexTransform.cs" />
-    <Compile Include="Main\Transform\DateFormatTransform.cs" />
+    <Compile Include="Main\Transform\ToStringTransform.cs" />
     <Compile Include="Main\Transform\EmptyTransform.cs" />
     <Compile Include="Main\Transform\ExpressionTransform.cs" />
     <Compile Include="Main\Transform\FormatTransform.cs" />
@@ -1265,6 +1556,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Libs\SharpZLib\obj\Debug\TempPE\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Libs\EnterpriseLibrary\Common\Configuration\DesignResources.resx" />
+    <EmbeddedResource Include="Libs\EnterpriseLibrary\Validation\Configuration\DesignResources.resx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

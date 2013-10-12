@@ -53,17 +53,6 @@ namespace Transformalize.Main {
             }
 
             foreach (ParameterConfigurationElement p in transform.Parameters) {
-                //if (!string.IsNullOrEmpty(p.Field) && string.IsNullOrEmpty(p.Entity))
-                //{
-                //    _log.Warn("A process transform with {0} method has a parameter with a field attribute but not an entity attribute.  If you have a field attribute, you must have an entity attribute.", _transform.Method);
-                //    return new Parameters();
-                //}
-
-                //if (string.IsNullOrEmpty(p.Field) && (string.IsNullOrEmpty(p.Name) || string.IsNullOrEmpty(p.Value)))
-                //{
-                //    _log.Warn("The process transform with {0} method has a parameter without a field and entity attributes, or name and value attributes.  Process parameters require one or the other.", _transform.Method);
-                //    return new Parameters();
-                //}
 
                 if (!string.IsNullOrEmpty(p.Field)) {
                     var fields = _process.OutputFields();
@@ -73,7 +62,7 @@ namespace Transformalize.Main {
                         parameters.Add(field.Alias, name, null, field.Type);
                     } else {
                         _log.Warn("A {0} transform references {1}, but I can't find the definition for {1}. You may need to define the entity attribute in the parameter element, or set output to true in the field element.  While field and entity level transforms can use fields that are not output, process transforms rely on fields being output.", transform.Method, p.Field);
-                        return new Parameters();
+                        parameters.Add(p.Name, p.Name, p.Value, p.Type);
                     }
                 } else {
                     parameters.Add(p.Name, p.Name, p.Value, p.Type);

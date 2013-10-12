@@ -1,0 +1,1548 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddValidationSettings" xml:space="preserve">
+    <value>Add Validation Settings</value>
+  </data>
+  <data name="AndCompositeValidatorDataDescription" xml:space="preserve">
+    <value>Provides the capability to create complex validation rules using a hierarchy of nested validators. 
+This validator returns True only when all validators it contains return True for the validated type.</value>
+  </data>
+  <data name="AndCompositeValidatorDataDisplayName" xml:space="preserve">
+    <value>And Composite Validator</value>
+  </data>
+  <data name="AndCompositeValidatorDataMessageTemplateDescription" xml:space="preserve">
+    <value>The template to use when creating the validation message. 
+The template can contain placeholders for values exposed by the individual validation results for each member of the validated type. </value>
+  </data>
+  <data name="AndCompositeValidatorDataMessageTemplateDisplayName" xml:space="preserve">
+    <value>Message Template</value>
+  </data>
+  <data name="AndCompositeValidatorDataMessageTemplateResourceNameDescription" xml:space="preserve">
+    <value>The key in an external resource file for the localized string to use as the validation message. </value>
+  </data>
+  <data name="AndCompositeValidatorDataMessageTemplateResourceNameDisplayName" xml:space="preserve">
+    <value>Template Resource Name</value>
+  </data>
+  <data name="AndCompositeValidatorDataMessageTemplateResourceTypeNameDescription" xml:space="preserve">
+    <value>The type of the external resource file containing the localized string to use as the validation message. </value>
+  </data>
+  <data name="AndCompositeValidatorDataMessageTemplateResourceTypeNameDisplayName" xml:space="preserve">
+    <value>Template Resource Type</value>
+  </data>
+  <data name="AndCompositeValidatorDataNameDescription" xml:space="preserve">
+    <value>The name of the And Composite Validator.</value>
+  </data>
+  <data name="AndCompositeValidatorDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="AndCompositeValidatorDataTagDescription" xml:space="preserve">
+    <value>A user-supplied string value that can be used to identify or classify the validator. 
+It can be accessed from code, and is typically used to sort or categorize the validation results. </value>
+  </data>
+  <data name="AndCompositeValidatorDataTagDisplayName" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="AndCompositeValidatorDataTypeNameDescription" xml:space="preserve">
+    <value>The fully qualified type name of the And Composite Validator.</value>
+  </data>
+  <data name="AndCompositeValidatorDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="AndCompositeValidatorDataValidatorsDescription" xml:space="preserve">
+    <value>The collection of validators nested within this validator, which must all return True for this validator to return True.</value>
+  </data>
+  <data name="AndCompositeValidatorDataValidatorsDisplayName" xml:space="preserve">
+    <value>Validators</value>
+  </data>
+  <data name="ContainsCharactersValidatorDataCharacterSetDescription" xml:space="preserve">
+    <value>The set of characters that may or must occur in the string to be validated.</value>
+  </data>
+  <data name="ContainsCharactersValidatorDataCharacterSetDisplayName" xml:space="preserve">
+    <value>Character Set</value>
+  </data>
+  <data name="ContainsCharactersValidatorDataContainsCharactersDescription" xml:space="preserve">
+    <value>Determines how the validator checks for characters. 
+'Any' (the default) means the value will be valid if it contains any of the characters defined for the Character Set. 
+'All' means that the value must contain all of the characters defined for the Character Set.</value>
+  </data>
+  <data name="ContainsCharactersValidatorDataContainsCharactersDisplayName" xml:space="preserve">
+    <value>Contains Characters</value>
+  </data>
+  <data name="ContainsCharactersValidatorDataDescription" xml:space="preserve">
+    <value>A validator that checks if a string value contains any or all of the characters specified for the Character Set property.</value>
+  </data>
+  <data name="ContainsCharactersValidatorDataDisplayName" xml:space="preserve">
+    <value>Contains Characters Validator</value>
+  </data>
+  <data name="ContainsCharactersValidatorDataMessageTemplateDescription" xml:space="preserve">
+    <value>The template to use when creating the validation message. 
+The template can contain placeholders for values exposed by the individual validation results for each member of the validated type. </value>
+  </data>
+  <data name="ContainsCharactersValidatorDataMessageTemplateDisplayName" xml:space="preserve">
+    <value>Message Template</value>
+  </data>
+  <data name="ContainsCharactersValidatorDataMessageTemplateResourceNameDescription" xml:space="preserve">
+    <value>The key in an external resource file for the localized string to use as the validation message. </value>
+  </data>
+  <data name="ContainsCharactersValidatorDataMessageTemplateResourceNameDisplayName" xml:space="preserve">
+    <value>Template Resource Name</value>
+  </data>
+  <data name="ContainsCharactersValidatorDataMessageTemplateResourceTypeNameDescription" xml:space="preserve">
+    <value>The type of the external resource file containing the localized string to use as the validation message. </value>
+  </data>
+  <data name="ContainsCharactersValidatorDataMessageTemplateResourceTypeNameDisplayName" xml:space="preserve">
+    <value>Template Resource Type</value>
+  </data>
+  <data name="ContainsCharactersValidatorDataNameDescription" xml:space="preserve">
+    <value>The name of the Contains Characters Validator.</value>
+  </data>
+  <data name="ContainsCharactersValidatorDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ContainsCharactersValidatorDataNegatedDescription" xml:space="preserve">
+    <value>Reverses the validation behavior. 
+When set to True, validation will fail (the validator will return False) if the validation rules are satisfied, instead of the default behavior of failing when they are not satisfied. 
+The default is False.</value>
+  </data>
+  <data name="ContainsCharactersValidatorDataNegatedDisplayName" xml:space="preserve">
+    <value>Negated</value>
+  </data>
+  <data name="ContainsCharactersValidatorDataTagDescription" xml:space="preserve">
+    <value>A user-supplied string value that can be used to identify or classify the validator. 
+It can be accessed from code, and is typically used to sort or categorize the validation results. </value>
+  </data>
+  <data name="ContainsCharactersValidatorDataTagDisplayName" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="ContainsCharactersValidatorDataTypeNameDescription" xml:space="preserve">
+    <value>The fully qualified type name of the Contains Characters Validator.</value>
+  </data>
+  <data name="ContainsCharactersValidatorDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="CustomValidatorDataAddCommand" xml:space="preserve">
+    <value>Custom Validator (using type picker)</value>
+  </data>
+  <data name="CustomValidatorDataDescription" xml:space="preserve">
+    <value>Custom implementation of a Validator, added to the Validation Application Block.</value>
+  </data>
+  <data name="CustomValidatorDataDisplayName" xml:space="preserve">
+    <value>Custom Validator</value>
+  </data>
+  <data name="CustomValidatorDataMessageTemplateDescription" xml:space="preserve">
+    <value>The template to use when creating the validation message. 
+The template can contain placeholders for values exposed by the individual validation results for each member of the validated type. </value>
+  </data>
+  <data name="CustomValidatorDataMessageTemplateDisplayName" xml:space="preserve">
+    <value>Message Template</value>
+  </data>
+  <data name="CustomValidatorDataMessageTemplateResourceNameDescription" xml:space="preserve">
+    <value>The key in an external resource file for the localized string to use as the validation message. </value>
+  </data>
+  <data name="CustomValidatorDataMessageTemplateResourceNameDisplayName" xml:space="preserve">
+    <value>Template Resource Name</value>
+  </data>
+  <data name="CustomValidatorDataMessageTemplateResourceTypeNameDescription" xml:space="preserve">
+    <value>The type of the external resource file containing the localized string to use as the validation message. </value>
+  </data>
+  <data name="CustomValidatorDataMessageTemplateResourceTypeNameDisplayName" xml:space="preserve">
+    <value>Template Resource Type</value>
+  </data>
+  <data name="CustomValidatorDataNameDescription" xml:space="preserve">
+    <value>The name of the Custom Validator.</value>
+  </data>
+  <data name="CustomValidatorDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="CustomValidatorDataTagDescription" xml:space="preserve">
+    <value>A user-supplied string value that can be used to identify or classify the validator. 
+It can be accessed from code, and is typically used to sort or categorize the validation results. </value>
+  </data>
+  <data name="CustomValidatorDataTagDisplayName" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="CustomValidatorDataTypeNameDescription" xml:space="preserve">
+    <value>The fully qualified type name of the Custom Validator.</value>
+  </data>
+  <data name="CustomValidatorDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="DateTimeRangeValidatorDataDescription" xml:space="preserve">
+    <value>A validator checks if a DateTime value falls within a specified range.</value>
+  </data>
+  <data name="DateTimeRangeValidatorDataDisplayName" xml:space="preserve">
+    <value>Date Range Validator</value>
+  </data>
+  <data name="DateTimeRangeValidatorDataLowerBoundDescription" xml:space="preserve">
+    <value>The earliest date for which the value is valid.</value>
+  </data>
+  <data name="DateTimeRangeValidatorDataLowerBoundDisplayName" xml:space="preserve">
+    <value>Lower Bound</value>
+  </data>
+  <data name="DateTimeRangeValidatorDataLowerBoundTypeDescription" xml:space="preserve">
+    <value>Determines how to evaluate the Lower Bound value. 
+Ignore (the default) means that the validator ignores the Lower Bound value. 
+Inclusive means that the validator allows values that are equal to the Lower Bound value. 
+Exclusive means that the validator does not allow values that are equal to the Lower Bound value.</value>
+  </data>
+  <data name="DateTimeRangeValidatorDataLowerBoundTypeDisplayName" xml:space="preserve">
+    <value>Lower Bound Type</value>
+  </data>
+  <data name="DateTimeRangeValidatorDataMessageTemplateDescription" xml:space="preserve">
+    <value>The template to use when creating the validation message. 
+The template can contain placeholders for values exposed by the individual validation results for each member of the validated type. </value>
+  </data>
+  <data name="DateTimeRangeValidatorDataMessageTemplateDisplayName" xml:space="preserve">
+    <value>Message Template</value>
+  </data>
+  <data name="DateTimeRangeValidatorDataMessageTemplateResourceNameDescription" xml:space="preserve">
+    <value>The key in an external resource file for the localized string to use as the validation message. </value>
+  </data>
+  <data name="DateTimeRangeValidatorDataMessageTemplateResourceNameDisplayName" xml:space="preserve">
+    <value>Template Resource Name</value>
+  </data>
+  <data name="DateTimeRangeValidatorDataMessageTemplateResourceTypeNameDescription" xml:space="preserve">
+    <value>The type of the external resource file containing the localized string to use as the validation message. </value>
+  </data>
+  <data name="DateTimeRangeValidatorDataMessageTemplateResourceTypeNameDisplayName" xml:space="preserve">
+    <value>Template Resource Type</value>
+  </data>
+  <data name="DateTimeRangeValidatorDataNameDescription" xml:space="preserve">
+    <value>The name of the Date Time Range Validator.</value>
+  </data>
+  <data name="DateTimeRangeValidatorDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="DateTimeRangeValidatorDataNegatedDescription" xml:space="preserve">
+    <value>Reverses the validation behavior. 
+When set to True, validation will fail (the validator will return False) if the validation rules are satisfied, instead of the default behavior of failing when they are not satisfied. 
+The default is False.</value>
+  </data>
+  <data name="DateTimeRangeValidatorDataNegatedDisplayName" xml:space="preserve">
+    <value>Negated</value>
+  </data>
+  <data name="DateTimeRangeValidatorDataTagDescription" xml:space="preserve">
+    <value>A user-supplied string value that can be used to identify or classify the validator. 
+It can be accessed from code, and is typically used to sort or categorize the validation results. </value>
+  </data>
+  <data name="DateTimeRangeValidatorDataTagDisplayName" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="DateTimeRangeValidatorDataTypeNameDescription" xml:space="preserve">
+    <value>The fully qualified type name of the Date Time Range Validator.</value>
+  </data>
+  <data name="DateTimeRangeValidatorDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="DateTimeRangeValidatorDataUpperBoundDescription" xml:space="preserve">
+    <value>The latest date for which the value is valid.</value>
+  </data>
+  <data name="DateTimeRangeValidatorDataUpperBoundDisplayName" xml:space="preserve">
+    <value>Upper Bound</value>
+  </data>
+  <data name="DateTimeRangeValidatorDataUpperBoundTypeDescription" xml:space="preserve">
+    <value>Determines how to evaluate the Upper Bound value. 
+Ignore (the default) means that the validator ignores the Upper Bound value. 
+Inclusive means that the validator allows values that are equal to the Upper Bound value. 
+Exclusive means that the validator does not allow values that are equal to the Upper Bound value.</value>
+  </data>
+  <data name="DateTimeRangeValidatorDataUpperBoundTypeDisplayName" xml:space="preserve">
+    <value>Upper Bound Type</value>
+  </data>
+  <data name="DomainConfigurationElementDescription" xml:space="preserve">
+    <value>An individual value within the domain of valid values.</value>
+  </data>
+  <data name="DomainConfigurationElementDisplayName" xml:space="preserve">
+    <value>Domain Configuration Element</value>
+  </data>
+  <data name="DomainConfigurationElementNameDescription" xml:space="preserve">
+    <value>The name of the Domain Configuration Element.</value>
+  </data>
+  <data name="DomainConfigurationElementNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="DomainValidatorDataDescription" xml:space="preserve">
+    <value>A validator that checks if a value is one of the values in a specified set. 
+For example, it can check that a name is 'Tom', 'Dick', 'Harry', or 'George'; or that an integer is 2, 3, 5, 7, or 11. 
+If the set only contains one value, this validator will effectively check for equality.</value>
+  </data>
+  <data name="DomainValidatorDataDisplayName" xml:space="preserve">
+    <value>Domain Validator</value>
+  </data>
+  <data name="DomainValidatorDataDomainDescription" xml:space="preserve">
+    <value>The set of valid values that validator will compare the specified value against.</value>
+  </data>
+  <data name="DomainValidatorDataDomainDisplayName" xml:space="preserve">
+    <value>Domain</value>
+  </data>
+  <data name="DomainValidatorDataMessageTemplateDescription" xml:space="preserve">
+    <value>The template to use when creating the validation message. 
+The template can contain placeholders for values exposed by the individual validation results for each member of the validated type. </value>
+  </data>
+  <data name="DomainValidatorDataMessageTemplateDisplayName" xml:space="preserve">
+    <value>Message Template</value>
+  </data>
+  <data name="DomainValidatorDataMessageTemplateResourceNameDescription" xml:space="preserve">
+    <value>The key in an external resource file for the localized string to use as the validation message. </value>
+  </data>
+  <data name="DomainValidatorDataMessageTemplateResourceNameDisplayName" xml:space="preserve">
+    <value>Template Resource Name</value>
+  </data>
+  <data name="DomainValidatorDataMessageTemplateResourceTypeNameDescription" xml:space="preserve">
+    <value>The type of the external resource file containing the localized string to use as the validation message. </value>
+  </data>
+  <data name="DomainValidatorDataMessageTemplateResourceTypeNameDisplayName" xml:space="preserve">
+    <value>Template Resource Type</value>
+  </data>
+  <data name="DomainValidatorDataNameDescription" xml:space="preserve">
+    <value>The name of the Domain Validator.</value>
+  </data>
+  <data name="DomainValidatorDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="DomainValidatorDataNegatedDescription" xml:space="preserve">
+    <value>Reverses the validation behavior. 
+When set to True, validation will fail (the validator will return False) if the validation rules are satisfied, instead of the default behavior of failing when they are not satisfied. 
+The default is False.</value>
+  </data>
+  <data name="DomainValidatorDataNegatedDisplayName" xml:space="preserve">
+    <value>Negated</value>
+  </data>
+  <data name="DomainValidatorDataTagDescription" xml:space="preserve">
+    <value>A user-supplied string value that can be used to identify or classify the validator. 
+It can be accessed from code, and is typically used to sort or categorize the validation results. </value>
+  </data>
+  <data name="DomainValidatorDataTagDisplayName" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="DomainValidatorDataTypeNameDescription" xml:space="preserve">
+    <value>The fully qualified type name of the Domain Validator.</value>
+  </data>
+  <data name="DomainValidatorDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="EnumConversionValidatorDataDescription" xml:space="preserve">
+    <value>A validator that checks if a string value can be converted to a value in a specified enumeration. 
+For example, it can check that 'Blue' can be converted to a value in the Color enumeration.</value>
+  </data>
+  <data name="EnumConversionValidatorDataDisplayName" xml:space="preserve">
+    <value>Enum Conversion Validator</value>
+  </data>
+  <data name="EnumConversionValidatorDataEnumTypeNameDescription" xml:space="preserve">
+    <value>The fully qualified type name of enumeration to check against.</value>
+  </data>
+  <data name="EnumConversionValidatorDataEnumTypeNameDisplayName" xml:space="preserve">
+    <value>Enumeration Type</value>
+  </data>
+  <data name="EnumConversionValidatorDataMessageTemplateDescription" xml:space="preserve">
+    <value>The template to use when creating the validation message. 
+The template can contain placeholders for values exposed by the individual validation results for each member of the validated type. </value>
+  </data>
+  <data name="EnumConversionValidatorDataMessageTemplateDisplayName" xml:space="preserve">
+    <value>Message Template</value>
+  </data>
+  <data name="EnumConversionValidatorDataMessageTemplateResourceNameDescription" xml:space="preserve">
+    <value>The key in an external resource file for the localized string to use as the validation message. </value>
+  </data>
+  <data name="EnumConversionValidatorDataMessageTemplateResourceNameDisplayName" xml:space="preserve">
+    <value>Template Resource Name</value>
+  </data>
+  <data name="EnumConversionValidatorDataMessageTemplateResourceTypeNameDescription" xml:space="preserve">
+    <value>The type of the external resource file containing the localized string to use as the validation message. </value>
+  </data>
+  <data name="EnumConversionValidatorDataMessageTemplateResourceTypeNameDisplayName" xml:space="preserve">
+    <value>Template Resource Type</value>
+  </data>
+  <data name="EnumConversionValidatorDataNameDescription" xml:space="preserve">
+    <value>The name of the Enum Conversion Validator.</value>
+  </data>
+  <data name="EnumConversionValidatorDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="EnumConversionValidatorDataNegatedDescription" xml:space="preserve">
+    <value>Reverses the validation behavior. 
+When set to True, validation will fail (the validator will return False) if the validation rules are satisfied, instead of the default behavior of failing when they are not satisfied. 
+The default is False.</value>
+  </data>
+  <data name="EnumConversionValidatorDataNegatedDisplayName" xml:space="preserve">
+    <value>Negated</value>
+  </data>
+  <data name="EnumConversionValidatorDataTagDescription" xml:space="preserve">
+    <value>A user-supplied string value that can be used to identify or classify the validator. 
+It can be accessed from code, and is typically used to sort or categorize the validation results. </value>
+  </data>
+  <data name="EnumConversionValidatorDataTagDisplayName" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="EnumConversionValidatorDataTypeNameDescription" xml:space="preserve">
+    <value>The fully qualified type name of the Enum Conversion Validator.</value>
+  </data>
+  <data name="EnumConversionValidatorDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="NotNullValidatorDataDescription" xml:space="preserve">
+    <value>A validator that checks that a value is not null (C#) or Nothing (Visual Basic).</value>
+  </data>
+  <data name="NotNullValidatorDataDisplayName" xml:space="preserve">
+    <value>Not Null Validator</value>
+  </data>
+  <data name="NotNullValidatorDataMessageTemplateDescription" xml:space="preserve">
+    <value>The template to use when creating the validation message. 
+The template can contain placeholders for values exposed by the individual validation results for each member of the validated type.</value>
+  </data>
+  <data name="NotNullValidatorDataMessageTemplateDisplayName" xml:space="preserve">
+    <value>Message Template</value>
+  </data>
+  <data name="NotNullValidatorDataMessageTemplateResourceNameDescription" xml:space="preserve">
+    <value>The key in an external resource file for the localized string to use as the validation message. </value>
+  </data>
+  <data name="NotNullValidatorDataMessageTemplateResourceNameDisplayName" xml:space="preserve">
+    <value>Template Resource Name</value>
+  </data>
+  <data name="NotNullValidatorDataMessageTemplateResourceTypeNameDescription" xml:space="preserve">
+    <value>The type of the external resource file containing the localized string to use as the validation message. </value>
+  </data>
+  <data name="NotNullValidatorDataMessageTemplateResourceTypeNameDisplayName" xml:space="preserve">
+    <value>Template Resource Type</value>
+  </data>
+  <data name="NotNullValidatorDataNameDescription" xml:space="preserve">
+    <value>The name of the Not Null Validator.</value>
+  </data>
+  <data name="NotNullValidatorDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="NotNullValidatorDataNegatedDescription" xml:space="preserve">
+    <value>Reverses the validation behavior. 
+When set to True, validation will fail (the validator will return False) if the validation rules are satisfied, instead of the default behavior of failing when they are not satisfied. 
+The default is False.</value>
+  </data>
+  <data name="NotNullValidatorDataNegatedDisplayName" xml:space="preserve">
+    <value>Negated</value>
+  </data>
+  <data name="NotNullValidatorDataTagDescription" xml:space="preserve">
+    <value>A user-supplied string value that can be used to identify or classify the validator. 
+It can be accessed from code, and is typically used to sort or categorize the validation results. </value>
+  </data>
+  <data name="NotNullValidatorDataTagDisplayName" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="NotNullValidatorDataTypeNameDescription" xml:space="preserve">
+    <value>The fully qualified type name of the Not Null Validator.</value>
+  </data>
+  <data name="NotNullValidatorDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="ObjectCollectionValidatorDataDescription" xml:space="preserve">
+    <value>A validator that checks if the validated value is a collection of the specified type, and then invokes validation on each element of the collection. 
+If the object to validate is null, validation is ignored. If the object to validate is not a collection, validation fails and self validation is not applied. 
+If there are elements in the collection that are of a different type than the one specified for the Target Type, validation for these elements fails but this does not affect validation for the other elements.</value>
+  </data>
+  <data name="ObjectCollectionValidatorDataDisplayName" xml:space="preserve">
+    <value>Object Collection Validator</value>
+  </data>
+  <data name="ObjectCollectionValidatorDataMessageTemplateDescription" xml:space="preserve">
+    <value>The template to use when creating the validation message. 
+The template can contain placeholders for values exposed by the individual validation results for each member of the validated type. </value>
+  </data>
+  <data name="ObjectCollectionValidatorDataMessageTemplateDisplayName" xml:space="preserve">
+    <value>Message Template</value>
+  </data>
+  <data name="ObjectCollectionValidatorDataMessageTemplateResourceNameDescription" xml:space="preserve">
+    <value>The key in an external resource file for the localized string to use as the validation message. </value>
+  </data>
+  <data name="ObjectCollectionValidatorDataMessageTemplateResourceNameDisplayName" xml:space="preserve">
+    <value>Template Resource Name</value>
+  </data>
+  <data name="ObjectCollectionValidatorDataMessageTemplateResourceTypeNameDescription" xml:space="preserve">
+    <value>The type of the external resource file containing the localized string to use as the validation message. </value>
+  </data>
+  <data name="ObjectCollectionValidatorDataMessageTemplateResourceTypeNameDisplayName" xml:space="preserve">
+    <value>Template Resource Type</value>
+  </data>
+  <data name="ObjectCollectionValidatorDataNameDescription" xml:space="preserve">
+    <value>The name of the Object Collection Validator.</value>
+  </data>
+  <data name="ObjectCollectionValidatorDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ObjectCollectionValidatorDataTagDescription" xml:space="preserve">
+    <value>A user-supplied string value that can be used to identify or classify the validator. 
+It can be accessed from code, and is typically used to sort or categorize the validation results. </value>
+  </data>
+  <data name="ObjectCollectionValidatorDataTagDisplayName" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="ObjectCollectionValidatorDataTargetRulesetDescription" xml:space="preserve">
+    <value> The name of the rule set that will be applied to each element in the collection.</value>
+  </data>
+  <data name="ObjectCollectionValidatorDataTargetRulesetDisplayName" xml:space="preserve">
+    <value>Target Ruleset</value>
+  </data>
+  <data name="ObjectCollectionValidatorDataTargetTypeNameDescription" xml:space="preserve">
+    <value>The fully qualified type name of the collection to validate.</value>
+  </data>
+  <data name="ObjectCollectionValidatorDataTargetTypeNameDisplayName" xml:space="preserve">
+    <value>Target Type</value>
+  </data>
+  <data name="ObjectCollectionValidatorDataTypeNameDescription" xml:space="preserve">
+    <value>The fully qualified type name of the Object Collection Validator.</value>
+  </data>
+  <data name="ObjectCollectionValidatorDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="ObjectValidatorDataDescription" xml:space="preserve">
+    <value>A validator that causes validation to occur on a referenced object. 
+All validators defined for that type will be invoked as if the Validate method had been called on the object. 
+If the object to validate is null, validation is ignored. 
+If the reference is to an instance of a type that is not compatible with the configured target type, validation fails. 
+This validator is useful for validating tree-structured data.</value>
+  </data>
+  <data name="ObjectValidatorDataDisplayName" xml:space="preserve">
+    <value>Object Validator</value>
+  </data>
+  <data name="ObjectValidatorDataMessageTemplateDescription" xml:space="preserve">
+    <value>The template to use when creating the validation message. 
+The template can contain placeholders for values exposed by the individual validation results for each member of the validated type. </value>
+  </data>
+  <data name="ObjectValidatorDataMessageTemplateDisplayName" xml:space="preserve">
+    <value>Message Template</value>
+  </data>
+  <data name="ObjectValidatorDataMessageTemplateResourceNameDescription" xml:space="preserve">
+    <value>The key in an external resource file for the localized string to use as the validation message. </value>
+  </data>
+  <data name="ObjectValidatorDataMessageTemplateResourceNameDisplayName" xml:space="preserve">
+    <value>Template Resource Name</value>
+  </data>
+  <data name="ObjectValidatorDataMessageTemplateResourceTypeNameDescription" xml:space="preserve">
+    <value>The type of the external resource file containing the localized string to use as the validation message. </value>
+  </data>
+  <data name="ObjectValidatorDataMessageTemplateResourceTypeNameDisplayName" xml:space="preserve">
+    <value>Template Resource Type</value>
+  </data>
+  <data name="ObjectValidatorDataNameDescription" xml:space="preserve">
+    <value>The name of the Object Validator.</value>
+  </data>
+  <data name="ObjectValidatorDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ObjectValidatorDataTagDescription" xml:space="preserve">
+    <value>A user-supplied string value that can be used to identify or classify the validator. 
+It can be accessed from code, and is typically used to sort or categorize the validation results. </value>
+  </data>
+  <data name="ObjectValidatorDataTagDisplayName" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="ObjectValidatorDataTargetRulesetDescription" xml:space="preserve">
+    <value> The name of the rule set to apply to the target object.</value>
+  </data>
+  <data name="ObjectValidatorDataTargetRulesetDisplayName" xml:space="preserve">
+    <value>Target Ruleset</value>
+  </data>
+  <data name="ObjectValidatorDataTypeNameDescription" xml:space="preserve">
+    <value>The fully qualified type name of the Object Validator.</value>
+  </data>
+  <data name="ObjectValidatorDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="ObjectValidatorDataValidateActualTypeDescription" xml:space="preserve">
+    <value>A flag indicating whether the value should be validated using the rules for its runtime type, not its static type.</value>
+  </data>
+  <data name="ObjectValidatorDataValidateActualTypeDisplayName" xml:space="preserve">
+    <value>Validate actual type</value>
+  </data>
+  <data name="OrCompositeValidatorDataDescription" xml:space="preserve">
+    <value>Provides the capability to create complex validation rules using a hierarchy of nested validators. 
+This validator returns True when any of the validators it contains returns True for the validated type.</value>
+  </data>
+  <data name="OrCompositeValidatorDataDisplayName" xml:space="preserve">
+    <value>Or Composite Validator</value>
+  </data>
+  <data name="OrCompositeValidatorDataMessageTemplateDescription" xml:space="preserve">
+    <value>The template to use when creating the validation message. 
+The template can contain placeholders for values exposed by the individual validation results for each member of the validated type. </value>
+  </data>
+  <data name="OrCompositeValidatorDataMessageTemplateDisplayName" xml:space="preserve">
+    <value>Message Template</value>
+  </data>
+  <data name="OrCompositeValidatorDataMessageTemplateResourceNameDescription" xml:space="preserve">
+    <value>The key in an external resource file for the localized string to use as the validation message. </value>
+  </data>
+  <data name="OrCompositeValidatorDataMessageTemplateResourceNameDisplayName" xml:space="preserve">
+    <value>Template Resource Name</value>
+  </data>
+  <data name="OrCompositeValidatorDataMessageTemplateResourceTypeNameDescription" xml:space="preserve">
+    <value>The type of the external resource file containing the localized string to use as the validation message. </value>
+  </data>
+  <data name="OrCompositeValidatorDataMessageTemplateResourceTypeNameDisplayName" xml:space="preserve">
+    <value>Template Resource Type</value>
+  </data>
+  <data name="OrCompositeValidatorDataNameDescription" xml:space="preserve">
+    <value>The name of the Or Composite Validator.</value>
+  </data>
+  <data name="OrCompositeValidatorDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="OrCompositeValidatorDataTagDescription" xml:space="preserve">
+    <value>A user-supplied string value that can be used to identify or classify the validator. 
+It can be accessed from code, and is typically used to sort or categorize the validation results. </value>
+  </data>
+  <data name="OrCompositeValidatorDataTagDisplayName" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="OrCompositeValidatorDataTypeNameDescription" xml:space="preserve">
+    <value>The fully qualified type name of the Or Composite Validator.</value>
+  </data>
+  <data name="OrCompositeValidatorDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="OrCompositeValidatorDataValidatorsDescription" xml:space="preserve">
+    <value>The collection of validators nested within this validator, any one of which can return True for this validator to return True.</value>
+  </data>
+  <data name="OrCompositeValidatorDataValidatorsDisplayName" xml:space="preserve">
+    <value>Validators</value>
+  </data>
+  <data name="PropertyComparisonValidatorDataComparisonOperatorDescription" xml:space="preserve">
+    <value>Determines how the two values are compared. 
+The comparisons available are Equal, NotEqual, GreaterThan, GreaterThanEqual, LessThan, and LessThanEqual.</value>
+  </data>
+  <data name="PropertyComparisonValidatorDataComparisonOperatorDisplayName" xml:space="preserve">
+    <value>Comparison Operator</value>
+  </data>
+  <data name="PropertyComparisonValidatorDataDescription" xml:space="preserve">
+    <value>A validator that compares the value to be validated with the value of a specified property of the type being validated.</value>
+  </data>
+  <data name="PropertyComparisonValidatorDataDisplayName" xml:space="preserve">
+    <value>Property Comparison Validator</value>
+  </data>
+  <data name="PropertyComparisonValidatorDataMessageTemplateDescription" xml:space="preserve">
+    <value>The template to use when creating the validation message. 
+The template can contain placeholders for values exposed by the individual validation results for each member of the validated type. </value>
+  </data>
+  <data name="PropertyComparisonValidatorDataMessageTemplateDisplayName" xml:space="preserve">
+    <value>Message Template</value>
+  </data>
+  <data name="PropertyComparisonValidatorDataMessageTemplateResourceNameDescription" xml:space="preserve">
+    <value>The key in an external resource file for the localized string to use as the validation message. </value>
+  </data>
+  <data name="PropertyComparisonValidatorDataMessageTemplateResourceNameDisplayName" xml:space="preserve">
+    <value>Template Resource Name</value>
+  </data>
+  <data name="PropertyComparisonValidatorDataMessageTemplateResourceTypeNameDescription" xml:space="preserve">
+    <value>The type of the external resource file containing the localized string to use as the validation message. </value>
+  </data>
+  <data name="PropertyComparisonValidatorDataMessageTemplateResourceTypeNameDisplayName" xml:space="preserve">
+    <value>Template Resource Type</value>
+  </data>
+  <data name="PropertyComparisonValidatorDataNameDescription" xml:space="preserve">
+    <value>The name of the Property Comparison Validator.</value>
+  </data>
+  <data name="PropertyComparisonValidatorDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="PropertyComparisonValidatorDataNegatedDescription" xml:space="preserve">
+    <value>Reverses the validation behavior. When set to True, validation will fail (the validator will return False) 
+if the validation rules are satisfied, instead of the default behavior of failing when they are not satisfied. The default is False.</value>
+  </data>
+  <data name="PropertyComparisonValidatorDataNegatedDisplayName" xml:space="preserve">
+    <value>Negated</value>
+  </data>
+  <data name="PropertyComparisonValidatorDataPropertyToCompareDescription" xml:space="preserve">
+    <value>The name of the property of the type being validated that will be compared with the value to validate.</value>
+  </data>
+  <data name="PropertyComparisonValidatorDataPropertyToCompareDisplayName" xml:space="preserve">
+    <value>Property To Compare</value>
+  </data>
+  <data name="PropertyComparisonValidatorDataTagDescription" xml:space="preserve">
+    <value>A user-supplied string value that can be used to identify or classify the validator. 
+It can be accessed from code, and is typically used to sort or categorize the validation results. </value>
+  </data>
+  <data name="PropertyComparisonValidatorDataTagDisplayName" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="PropertyComparisonValidatorDataTypeNameDescription" xml:space="preserve">
+    <value>The fully qualified type name of the Property Comparison Validator.</value>
+  </data>
+  <data name="PropertyComparisonValidatorDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="RangeValidatorDataCultureDescription" xml:space="preserve">
+    <value>The culture which is used to deserialized the Lower Bound and Upper Bound values.</value>
+  </data>
+  <data name="RangeValidatorDataCultureDisplayName" xml:space="preserve">
+    <value>Culture</value>
+  </data>
+  <data name="RangeValidatorDataDescription" xml:space="preserve">
+    <value>A validator that checks if a value falls within a specified range. 
+The range may be closed (it has both a lower and an upper bound specified), or open (it only has one bound specified).</value>
+  </data>
+  <data name="RangeValidatorDataDescription1" xml:space="preserve">
+    <value>A validator that checks if a value falls within a specified range. 
+The range may be closed (it has both a lower and an upper bound specified), or open (it only has one bound specified).</value>
+  </data>
+  <data name="RangeValidatorDataDisplayName" xml:space="preserve">
+    <value>Range Validator</value>
+  </data>
+  <data name="RangeValidatorDataDisplayName1" xml:space="preserve">
+    <value>Generic Range Validator</value>
+  </data>
+  <data name="RangeValidatorDataLowerBoundDescription" xml:space="preserve">
+    <value>The lower bound for the value being validated.</value>
+  </data>
+  <data name="RangeValidatorDataLowerBoundDescription1" xml:space="preserve">
+    <value>The lower bound for the value being validated.</value>
+  </data>
+  <data name="RangeValidatorDataLowerBoundDisplayName" xml:space="preserve">
+    <value>Lower Bound</value>
+  </data>
+  <data name="RangeValidatorDataLowerBoundDisplayName1" xml:space="preserve">
+    <value>Lower Bound</value>
+  </data>
+  <data name="RangeValidatorDataLowerBoundTypeDescription" xml:space="preserve">
+    <value>Determines how to evaluate the Lower Bound value. 
+Ignore (the default) means that the validator ignores the Lower Bound value. Inclusive means that the validator allows values that are equal to the Lower Bound value. 
+Exclusive means that the validator does not allow values that are equal to the Lower Bound value.</value>
+  </data>
+  <data name="RangeValidatorDataLowerBoundTypeDescription1" xml:space="preserve">
+    <value>Determines how to evaluate the Lower Bound value. 
+Ignore (the default) means that the validator ignores the Lower Bound value. Inclusive means that the validator allows values that are equal to the Lower Bound value. 
+Exclusive means that the validator does not allow values that are equal to the Lower Bound value.</value>
+  </data>
+  <data name="RangeValidatorDataLowerBoundTypeDisplayName" xml:space="preserve">
+    <value>Lower Bound Type</value>
+  </data>
+  <data name="RangeValidatorDataLowerBoundTypeDisplayName1" xml:space="preserve">
+    <value>Lower Bound Type</value>
+  </data>
+  <data name="RangeValidatorDataMessageTemplateDescription" xml:space="preserve">
+    <value>The template to use when creating the validation message. 
+The template can contain placeholders for values exposed by the individual validation results for each member of the validated type. </value>
+  </data>
+  <data name="RangeValidatorDataMessageTemplateDescription1" xml:space="preserve">
+    <value>The template to use when creating the validation message. 
+The template can contain placeholders for values exposed by the individual validation results for each member of the validated type. </value>
+  </data>
+  <data name="RangeValidatorDataMessageTemplateDisplayName" xml:space="preserve">
+    <value>Message Template</value>
+  </data>
+  <data name="RangeValidatorDataMessageTemplateDisplayName1" xml:space="preserve">
+    <value>Message Template</value>
+  </data>
+  <data name="RangeValidatorDataMessageTemplateResourceNameDescription" xml:space="preserve">
+    <value>The key in an external resource file for the localized string to use as the validation message. </value>
+  </data>
+  <data name="RangeValidatorDataMessageTemplateResourceNameDescription1" xml:space="preserve">
+    <value>The key in an external resource file for the localized string to use as the validation message. </value>
+  </data>
+  <data name="RangeValidatorDataMessageTemplateResourceNameDisplayName" xml:space="preserve">
+    <value>Template Resource Name</value>
+  </data>
+  <data name="RangeValidatorDataMessageTemplateResourceNameDisplayName1" xml:space="preserve">
+    <value>Template Resource Name</value>
+  </data>
+  <data name="RangeValidatorDataMessageTemplateResourceTypeNameDescription" xml:space="preserve">
+    <value>The type of the external resource file containing the localized string to use as the validation message. </value>
+  </data>
+  <data name="RangeValidatorDataMessageTemplateResourceTypeNameDescription1" xml:space="preserve">
+    <value>The type of the external resource file containing the localized string to use as the validation message. </value>
+  </data>
+  <data name="RangeValidatorDataMessageTemplateResourceTypeNameDisplayName" xml:space="preserve">
+    <value>Template Resource Type</value>
+  </data>
+  <data name="RangeValidatorDataMessageTemplateResourceTypeNameDisplayName1" xml:space="preserve">
+    <value>Template Resource Type</value>
+  </data>
+  <data name="RangeValidatorDataNameDescription" xml:space="preserve">
+    <value>The name of the Range Validator.</value>
+  </data>
+  <data name="RangeValidatorDataNameDescription1" xml:space="preserve">
+    <value>The name of the Range Validator.</value>
+  </data>
+  <data name="RangeValidatorDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="RangeValidatorDataNameDisplayName1" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="RangeValidatorDataNegatedDescription" xml:space="preserve">
+    <value>Reverses the validation behavior. When set to True, validation will fail (the validator will return False) 
+if the validation rules are satisfied, instead of the default behavior of failing when they are not satisfied. 
+The default is False.</value>
+  </data>
+  <data name="RangeValidatorDataNegatedDescription1" xml:space="preserve">
+    <value>Reverses the validation behavior. When set to True, validation will fail (the validator will return False) 
+if the validation rules are satisfied, instead of the default behavior of failing when they are not satisfied. 
+The default is False.</value>
+  </data>
+  <data name="RangeValidatorDataNegatedDisplayName" xml:space="preserve">
+    <value>Negated</value>
+  </data>
+  <data name="RangeValidatorDataNegatedDisplayName1" xml:space="preserve">
+    <value>Negated</value>
+  </data>
+  <data name="RangeValidatorDataTagDescription" xml:space="preserve">
+    <value>A user-supplied string value that can be used to identify or classify the validator. 
+It can be accessed from code, and is typically used to sort or categorize the validation results. </value>
+  </data>
+  <data name="RangeValidatorDataTagDescription1" xml:space="preserve">
+    <value>A user-supplied string value that can be used to identify or classify the validator. 
+It can be accessed from code, and is typically used to sort or categorize the validation results. </value>
+  </data>
+  <data name="RangeValidatorDataTagDisplayName" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="RangeValidatorDataTagDisplayName1" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="RangeValidatorDataTypeNameDescription" xml:space="preserve">
+    <value>The fully qualified type name of the Range Validator.</value>
+  </data>
+  <data name="RangeValidatorDataTypeNameDescription1" xml:space="preserve">
+    <value>The fully qualified type name of the Range Validator.</value>
+  </data>
+  <data name="RangeValidatorDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="RangeValidatorDataTypeNameDisplayName1" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="RangeValidatorDataUpperBoundDescription" xml:space="preserve">
+    <value>The upper bound for the value being validated.</value>
+  </data>
+  <data name="RangeValidatorDataUpperBoundDescription1" xml:space="preserve">
+    <value>The upper bound for the value being validated.</value>
+  </data>
+  <data name="RangeValidatorDataUpperBoundDisplayName" xml:space="preserve">
+    <value>Upper Bound</value>
+  </data>
+  <data name="RangeValidatorDataUpperBoundDisplayName1" xml:space="preserve">
+    <value>Upper Bound</value>
+  </data>
+  <data name="RangeValidatorDataUpperBoundTypeDescription" xml:space="preserve">
+    <value>Determines how to evaluate the Upper Bound value. 
+Ignore (the default) means that the validator ignores the Upper Bound value.
+Inclusive means that the validator allows values that are equal to the Upper Bound value. 
+Exclusive means that the validator does not allow values that are equal to the Upper Bound value.</value>
+  </data>
+  <data name="RangeValidatorDataUpperBoundTypeDescription1" xml:space="preserve">
+    <value>Determines how to evaluate the Upper Bound value. 
+Ignore (the default) means that the validator ignores the Upper Bound value. 
+Inclusive means that the validator allows values that are equal to the Upper Bound value. 
+Exclusive means that the validator does not allow values that are equal to the Upper Bound value.</value>
+  </data>
+  <data name="RangeValidatorDataUpperBoundTypeDisplayName" xml:space="preserve">
+    <value>Upper Bound Type</value>
+  </data>
+  <data name="RangeValidatorDataUpperBoundTypeDisplayName1" xml:space="preserve">
+    <value>Upper Bound Type</value>
+  </data>
+  <data name="RegexValidatorDataDescription" xml:space="preserve">
+    <value>A validator that checks if the value matches the pattern specified by a regular expression.</value>
+  </data>
+  <data name="RegexValidatorDataDisplayName" xml:space="preserve">
+    <value>Regular Expression Validator</value>
+  </data>
+  <data name="RegexValidatorDataMessageTemplateDescription" xml:space="preserve">
+    <value>The template to use when creating the validation message. 
+The template can contain placeholders for values exposed by the individual validation results for each member of the validated type. </value>
+  </data>
+  <data name="RegexValidatorDataMessageTemplateDisplayName" xml:space="preserve">
+    <value>Message Template</value>
+  </data>
+  <data name="RegexValidatorDataMessageTemplateResourceNameDescription" xml:space="preserve">
+    <value>The key in an external resource file for the localized string to use as the validation message. </value>
+  </data>
+  <data name="RegexValidatorDataMessageTemplateResourceNameDisplayName" xml:space="preserve">
+    <value>Template Resource Name</value>
+  </data>
+  <data name="RegexValidatorDataMessageTemplateResourceTypeNameDescription" xml:space="preserve">
+    <value>The type of the external resource file containing the localized string to use as the validation message. </value>
+  </data>
+  <data name="RegexValidatorDataMessageTemplateResourceTypeNameDisplayName" xml:space="preserve">
+    <value>Template Resource Type</value>
+  </data>
+  <data name="RegexValidatorDataNameDescription" xml:space="preserve">
+    <value>The name of the Regular Expression Validator.</value>
+  </data>
+  <data name="RegexValidatorDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="RegexValidatorDataNegatedDescription" xml:space="preserve">
+    <value>Reverses the validation behavior. 
+When set to True, validation will fail (the validator will return False) if the validation rules are satisfied, instead of the default behavior of failing when they are not satisfied. The default is False.</value>
+  </data>
+  <data name="RegexValidatorDataNegatedDisplayName" xml:space="preserve">
+    <value>Negated</value>
+  </data>
+  <data name="RegexValidatorDataOptionsDescription" xml:space="preserve">
+    <value>The RegEx options to apply when validating a pattern. 
+Possible values are None (the default), IgnoreCase, Multiline, ExplicitCapture, Compiled, Singleline, IgnorePatternWhiteSpace, and RightToLeft.</value>
+  </data>
+  <data name="RegexValidatorDataOptionsDisplayName" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="RegexValidatorDataPatternDescription" xml:space="preserve">
+    <value>The regular expression or pattern to use to validate the value.</value>
+  </data>
+  <data name="RegexValidatorDataPatternDisplayName" xml:space="preserve">
+    <value>Regular Expression</value>
+  </data>
+  <data name="RegexValidatorDataPatternResourceNameDescription" xml:space="preserve">
+    <value>The key in an external resource file for the localized string to use as the regular expression. </value>
+  </data>
+  <data name="RegexValidatorDataPatternResourceNameDisplayName" xml:space="preserve">
+    <value>RegEx Resource Name</value>
+  </data>
+  <data name="RegexValidatorDataPatternResourceTypeNameDescription" xml:space="preserve">
+    <value>The type of the external resource file containing the localized string to use as the regular expression. </value>
+  </data>
+  <data name="RegexValidatorDataPatternResourceTypeNameDisplayName" xml:space="preserve">
+    <value>RegEx Resource Type</value>
+  </data>
+  <data name="RegexValidatorDataTagDescription" xml:space="preserve">
+    <value>A user-supplied string value that can be used to identify or classify the validator. 
+It can be accessed from code, and is typically used to sort or categorize the validation results. </value>
+  </data>
+  <data name="RegexValidatorDataTagDisplayName" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="RegexValidatorDataTypeNameDescription" xml:space="preserve">
+    <value>The fully qualified type name of the Regular Expression Validator.</value>
+  </data>
+  <data name="RegexValidatorDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="RelativeDateTimeValidatorDataDescription" xml:space="preserve">
+    <value>A validator that checks if a DateTime value falls within a specified range using relative times and dates. </value>
+  </data>
+  <data name="RelativeDateTimeValidatorDataDisplayName" xml:space="preserve">
+    <value>Relative Date Time Validator</value>
+  </data>
+  <data name="RelativeDateTimeValidatorDataLowerBoundDescription" xml:space="preserve">
+    <value>The number of a specific unit of time (such as days) before the date being validated. 
+The result is the minimum valid date and time.</value>
+  </data>
+  <data name="RelativeDateTimeValidatorDataLowerBoundDisplayName" xml:space="preserve">
+    <value>Lower Bound</value>
+  </data>
+  <data name="RelativeDateTimeValidatorDataLowerBoundTypeDescription" xml:space="preserve">
+    <value>Determines how to evaluate the Lower Bound value. 
+Ignore (the default) means that the validator ignores the Lower Bound value. 
+Inclusive means that the validator allows values that are equal to the Lower Bound value. 
+Exclusive means that the validator does not allow values that are equal to the Lower Bound value.</value>
+  </data>
+  <data name="RelativeDateTimeValidatorDataLowerBoundTypeDisplayName" xml:space="preserve">
+    <value>Lower Bound Type</value>
+  </data>
+  <data name="RelativeDateTimeValidatorDataLowerUnitDescription" xml:space="preserve">
+    <value>The unit of time to use when calculating the Lower Bound value. 
+Possible values are None (the default), Second, Minute, Hour, Day, Month, and Year.</value>
+  </data>
+  <data name="RelativeDateTimeValidatorDataLowerUnitDisplayName" xml:space="preserve">
+    <value>Lower Bound Unit</value>
+  </data>
+  <data name="RelativeDateTimeValidatorDataMessageTemplateDescription" xml:space="preserve">
+    <value>The template to use when creating the validation message. 
+The template can contain placeholders for values exposed by the individual validation results for each member of the validated type. </value>
+  </data>
+  <data name="RelativeDateTimeValidatorDataMessageTemplateDisplayName" xml:space="preserve">
+    <value>Message Template</value>
+  </data>
+  <data name="RelativeDateTimeValidatorDataMessageTemplateResourceNameDescription" xml:space="preserve">
+    <value>The key in an external resource file for the localized string to use as the validation message. </value>
+  </data>
+  <data name="RelativeDateTimeValidatorDataMessageTemplateResourceNameDisplayName" xml:space="preserve">
+    <value>Template Resource Name</value>
+  </data>
+  <data name="RelativeDateTimeValidatorDataMessageTemplateResourceTypeNameDescription" xml:space="preserve">
+    <value>The type of the external resource file containing the localized string to use as the validation message. </value>
+  </data>
+  <data name="RelativeDateTimeValidatorDataMessageTemplateResourceTypeNameDisplayName" xml:space="preserve">
+    <value>Template Resource Type</value>
+  </data>
+  <data name="RelativeDateTimeValidatorDataNameDescription" xml:space="preserve">
+    <value>The name of the Relative Date Time Validator.</value>
+  </data>
+  <data name="RelativeDateTimeValidatorDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="RelativeDateTimeValidatorDataNegatedDescription" xml:space="preserve">
+    <value>Reverses the validation behavior. When set to True, validation will fail (the validator will return False) 
+if the validation rules are satisfied, instead of the default behavior of failing when they are not satisfied. The default is False.</value>
+  </data>
+  <data name="RelativeDateTimeValidatorDataNegatedDisplayName" xml:space="preserve">
+    <value>Negated</value>
+  </data>
+  <data name="RelativeDateTimeValidatorDataTagDescription" xml:space="preserve">
+    <value>A user-supplied string value that can be used to identify or classify the validator. 
+It can be accessed from code, and is typically used to sort or categorize the validation results. </value>
+  </data>
+  <data name="RelativeDateTimeValidatorDataTagDisplayName" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="RelativeDateTimeValidatorDataTypeNameDescription" xml:space="preserve">
+    <value>The fully qualified type name of the Relative Date Time Validator.</value>
+  </data>
+  <data name="RelativeDateTimeValidatorDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="RelativeDateTimeValidatorDataUpperBoundDescription" xml:space="preserve">
+    <value>The number of a specific unit of time (such as days) after the date being validated. 
+The result is the maximum valid date and time.</value>
+  </data>
+  <data name="RelativeDateTimeValidatorDataUpperBoundDisplayName" xml:space="preserve">
+    <value>Upper Bound</value>
+  </data>
+  <data name="RelativeDateTimeValidatorDataUpperBoundTypeDescription" xml:space="preserve">
+    <value>Determines how to evaluate the Upper Bound value. 
+Ignore (the default) means that the validator ignores the Upper Bound value. Inclusive means that the validator allows values that are equal to the Upper Bound value. 
+Exclusive means that the validator does not allow values that are equal to the Upper Bound value.</value>
+  </data>
+  <data name="RelativeDateTimeValidatorDataUpperBoundTypeDisplayName" xml:space="preserve">
+    <value>Upper Bound Type</value>
+  </data>
+  <data name="RelativeDateTimeValidatorDataUpperUnitDescription" xml:space="preserve">
+    <value>The unit of time to use when calculating the Upper Bound value. Possible values are None (the default), Second, Minute, Hour, Day, Month, and Year.</value>
+  </data>
+  <data name="RelativeDateTimeValidatorDataUpperUnitDisplayName" xml:space="preserve">
+    <value>Upper Bound Unit</value>
+  </data>
+  <data name="StringLengthValidatorDataDescription" xml:space="preserve">
+    <value>A validator that checks the length of the string is within a specified range. 
+The range may include or exclude the range endpoints by setting the lower or upper bounds and the types of these bounds.</value>
+  </data>
+  <data name="StringLengthValidatorDataDisplayName" xml:space="preserve">
+    <value>String Length Validator</value>
+  </data>
+  <data name="StringLengthValidatorDataLowerBoundDescription" xml:space="preserve">
+    <value>The minimum length of the validated string value.</value>
+  </data>
+  <data name="StringLengthValidatorDataLowerBoundDisplayName" xml:space="preserve">
+    <value>Lower Bound</value>
+  </data>
+  <data name="StringLengthValidatorDataLowerBoundTypeDescription" xml:space="preserve">
+    <value>Determines how to evaluate the Lower Bound value. 
+Ignore (the default) means that the validator ignores the Lower Bound value.
+Inclusive means that the validator allows values that are equal to the Lower Bound value. 
+Exclusive means that the validator does not allow values that are equal to the Lower Bound value.</value>
+  </data>
+  <data name="StringLengthValidatorDataLowerBoundTypeDisplayName" xml:space="preserve">
+    <value>Lower Bound Type</value>
+  </data>
+  <data name="StringLengthValidatorDataMessageTemplateDescription" xml:space="preserve">
+    <value>The template to use when creating the validation message. 
+The template can contain placeholders for values exposed by the individual validation results for each member of the validated type. </value>
+  </data>
+  <data name="StringLengthValidatorDataMessageTemplateDisplayName" xml:space="preserve">
+    <value>Message Template</value>
+  </data>
+  <data name="StringLengthValidatorDataMessageTemplateResourceNameDescription" xml:space="preserve">
+    <value>The key in an external resource file for the localized string to use as the validation message. </value>
+  </data>
+  <data name="StringLengthValidatorDataMessageTemplateResourceNameDisplayName" xml:space="preserve">
+    <value>Template Resource Name</value>
+  </data>
+  <data name="StringLengthValidatorDataMessageTemplateResourceTypeNameDescription" xml:space="preserve">
+    <value>The type of the external resource file containing the localized string to use as the validation message. </value>
+  </data>
+  <data name="StringLengthValidatorDataMessageTemplateResourceTypeNameDisplayName" xml:space="preserve">
+    <value>Template Resource Type</value>
+  </data>
+  <data name="StringLengthValidatorDataNameDescription" xml:space="preserve">
+    <value>The name of the String Length Validator.</value>
+  </data>
+  <data name="StringLengthValidatorDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="StringLengthValidatorDataNegatedDescription" xml:space="preserve">
+    <value>Reverses the validation behavior. 
+When set to True, validation will fail (the validator will return False) if the validation rules are satisfied, instead of the default behavior of failing when they are not satisfied. 
+The default is False.</value>
+  </data>
+  <data name="StringLengthValidatorDataNegatedDisplayName" xml:space="preserve">
+    <value>Negated</value>
+  </data>
+  <data name="StringLengthValidatorDataTagDescription" xml:space="preserve">
+    <value>A user-supplied string value that can be used to identify or classify the validator. 
+It can be accessed from code, and is typically used to sort or categorize the validation results. </value>
+  </data>
+  <data name="StringLengthValidatorDataTagDisplayName" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="StringLengthValidatorDataTypeNameDescription" xml:space="preserve">
+    <value>The fully qualified type name of the String Length Validator.</value>
+  </data>
+  <data name="StringLengthValidatorDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="StringLengthValidatorDataUpperBoundDescription" xml:space="preserve">
+    <value>The maximum length of the validated string value.</value>
+  </data>
+  <data name="StringLengthValidatorDataUpperBoundDisplayName" xml:space="preserve">
+    <value>Upper Bound</value>
+  </data>
+  <data name="StringLengthValidatorDataUpperBoundTypeDescription" xml:space="preserve">
+    <value>Determines how to evaluate the Upper Bound value. 
+Ignore (the default) means that the validator ignores the Upper Bound value. 
+Inclusive means that the validator allows values that are equal to the Upper Bound value. 
+Exclusive means that the validator does not allow values that are equal to the Upper Bound value.</value>
+  </data>
+  <data name="StringLengthValidatorDataUpperBoundTypeDisplayName" xml:space="preserve">
+    <value>Upper Bound Type</value>
+  </data>
+  <data name="TypeConversionValidatorDataDescription" xml:space="preserve">
+    <value>A validator that checks if a string can be converted to a specific type. 
+For example, the validator can check that '6.32' can be converted to a Double type or that '2007-02-09' can be converted to a DateTime type.</value>
+  </data>
+  <data name="TypeConversionValidatorDataDisplayName" xml:space="preserve">
+    <value>Type Conversion Validator</value>
+  </data>
+  <data name="TypeConversionValidatorDataMessageTemplateDescription" xml:space="preserve">
+    <value>The template to use when creating the validation message. 
+The template can contain placeholders for values exposed by the individual validation results for each member of the validated type. </value>
+  </data>
+  <data name="TypeConversionValidatorDataMessageTemplateDisplayName" xml:space="preserve">
+    <value>Message Template</value>
+  </data>
+  <data name="TypeConversionValidatorDataMessageTemplateResourceNameDescription" xml:space="preserve">
+    <value>The key in an external resource file for the localized string to use as the validation message. </value>
+  </data>
+  <data name="TypeConversionValidatorDataMessageTemplateResourceNameDisplayName" xml:space="preserve">
+    <value>Template Resource Name</value>
+  </data>
+  <data name="TypeConversionValidatorDataMessageTemplateResourceTypeNameDescription" xml:space="preserve">
+    <value>The type of the external resource file containing the localized string to use as the validation message. </value>
+  </data>
+  <data name="TypeConversionValidatorDataMessageTemplateResourceTypeNameDisplayName" xml:space="preserve">
+    <value>Template Resource Type</value>
+  </data>
+  <data name="TypeConversionValidatorDataNameDescription" xml:space="preserve">
+    <value>The name of the Type Conversion Validator.</value>
+  </data>
+  <data name="TypeConversionValidatorDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="TypeConversionValidatorDataNegatedDescription" xml:space="preserve">
+    <value>Reverses the validation behavior. 
+When set to True, validation will fail (the validator will return False) if the validation rules are satisfied, instead of the default behavior of failing when they are not satisfied. The default is False.</value>
+  </data>
+  <data name="TypeConversionValidatorDataNegatedDisplayName" xml:space="preserve">
+    <value>Negated</value>
+  </data>
+  <data name="TypeConversionValidatorDataTagDescription" xml:space="preserve">
+    <value>A user-supplied string value that can be used to identify or classify the validator. 
+It can be accessed from code, and is typically used to sort or categorize the validation results. </value>
+  </data>
+  <data name="TypeConversionValidatorDataTagDisplayName" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="TypeConversionValidatorDataTargetTypeNameDescription" xml:space="preserve">
+    <value>The fully qualified type name of the type to test conversion to.</value>
+  </data>
+  <data name="TypeConversionValidatorDataTargetTypeNameDisplayName" xml:space="preserve">
+    <value>Target Type</value>
+  </data>
+  <data name="TypeConversionValidatorDataTypeNameDescription" xml:space="preserve">
+    <value>The fully qualified type name of the Type Conversion Validator.</value>
+  </data>
+  <data name="TypeConversionValidatorDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="ValidatedFieldReferenceCollectionDescription" xml:space="preserve">
+    <value>The collection of fields being validated for this type.</value>
+  </data>
+  <data name="ValidatedFieldReferenceCollectionDisplayName" xml:space="preserve">
+    <value>Validated Field Reference Collection</value>
+  </data>
+  <data name="ValidatedFieldReferenceDescription" xml:space="preserve">
+    <value>A field within the type that will be validated by this rule set.</value>
+  </data>
+  <data name="ValidatedFieldReferenceDisplayName" xml:space="preserve">
+    <value>Field To Validate</value>
+  </data>
+  <data name="ValidatedFieldReferenceNameDescription" xml:space="preserve">
+    <value>The name of the Validated Field Reference.</value>
+  </data>
+  <data name="ValidatedFieldReferenceNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ValidatedFieldReferenceValidatorsDescription" xml:space="preserve">
+    <value>The collection of validators configured for this field of the type being validated.</value>
+  </data>
+  <data name="ValidatedFieldReferenceValidatorsDisplayName" xml:space="preserve">
+    <value>Validators</value>
+  </data>
+  <data name="ValidatedMemberReferenceDescription" xml:space="preserve">
+    <value>A member of the type that will be validated.</value>
+  </data>
+  <data name="ValidatedMemberReferenceDisplayName" xml:space="preserve">
+    <value>Validated Member</value>
+  </data>
+  <data name="ValidatedMemberReferenceNameDescription" xml:space="preserve">
+    <value>The name of the Validated Member.</value>
+  </data>
+  <data name="ValidatedMemberReferenceNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ValidatedMemberReferenceValidatorsDescription" xml:space="preserve">
+    <value>The collection of validators configured for the member of the type being validated.</value>
+  </data>
+  <data name="ValidatedMemberReferenceValidatorsDisplayName" xml:space="preserve">
+    <value>Validators</value>
+  </data>
+  <data name="ValidatedMethodReferenceCollectionDescription" xml:space="preserve">
+    <value>The collection of methods being validated for this type.</value>
+  </data>
+  <data name="ValidatedMethodReferenceCollectionDisplayName" xml:space="preserve">
+    <value>Validated Method Reference Collection</value>
+  </data>
+  <data name="ValidatedMethodReferenceDescription" xml:space="preserve">
+    <value>A method within the type whose return value will be validated by this rule set.</value>
+  </data>
+  <data name="ValidatedMethodReferenceDisplayName" xml:space="preserve">
+    <value>Method To Validate</value>
+  </data>
+  <data name="ValidatedMethodReferenceNameDescription" xml:space="preserve">
+    <value>The name of the method to validate.</value>
+  </data>
+  <data name="ValidatedMethodReferenceNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ValidatedMethodReferenceValidatorsDescription" xml:space="preserve">
+    <value>The collection of validators configured for this method of the type being validated.</value>
+  </data>
+  <data name="ValidatedMethodReferenceValidatorsDisplayName" xml:space="preserve">
+    <value>Validators</value>
+  </data>
+  <data name="ValidatedPropertyReferenceCollectionDescription" xml:space="preserve">
+    <value>The collection of properties being validated for this type.</value>
+  </data>
+  <data name="ValidatedPropertyReferenceCollectionDisplayName" xml:space="preserve">
+    <value>Validated Property Reference Collection</value>
+  </data>
+  <data name="ValidatedPropertyReferenceDescription" xml:space="preserve">
+    <value>A property within the type whose value will be validated by this rule set.</value>
+  </data>
+  <data name="ValidatedPropertyReferenceDisplayName" xml:space="preserve">
+    <value>Property To Validate</value>
+  </data>
+  <data name="ValidatedPropertyReferenceNameDescription" xml:space="preserve">
+    <value>The name of the property to validate.</value>
+  </data>
+  <data name="ValidatedPropertyReferenceNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ValidatedPropertyReferenceValidatorsDescription" xml:space="preserve">
+    <value>The collection of validators configured for this property of the type being validated.</value>
+  </data>
+  <data name="ValidatedPropertyReferenceValidatorsDisplayName" xml:space="preserve">
+    <value>Validators</value>
+  </data>
+  <data name="ValidatedTypeReferenceAssemblyNameDescription" xml:space="preserve">
+    <value>Used to resolve the reference type at design time. This property is ignored at runtime.</value>
+  </data>
+  <data name="ValidatedTypeReferenceAssemblyNameDisplayName" xml:space="preserve">
+    <value>Assembly Name</value>
+  </data>
+  <data name="ValidatedTypeReferenceCollectionDescription" xml:space="preserve">
+    <value>The collection of validation rulesets configured this type.</value>
+  </data>
+  <data name="ValidatedTypeReferenceCollectionDisplayName" xml:space="preserve">
+    <value>Validated Type Reference Collection</value>
+  </data>
+  <data name="ValidatedTypeReferenceDefaultRulesetDescription" xml:space="preserve">
+    <value>The Ruleset to use when validating the type when code does not specify the name of a configured Ruleset.</value>
+  </data>
+  <data name="ValidatedTypeReferenceDefaultRulesetDisplayName" xml:space="preserve">
+    <value>Default Ruleset</value>
+  </data>
+  <data name="ValidatedTypeReferenceDescription" xml:space="preserve">
+    <value>The class or type whose members will be validated by the Validation Application Block</value>
+  </data>
+  <data name="ValidatedTypeReferenceDisplayName" xml:space="preserve">
+    <value>Type To Validate</value>
+  </data>
+  <data name="ValidatedTypeReferenceNameDescription" xml:space="preserve">
+    <value>The name of the type to be validated.</value>
+  </data>
+  <data name="ValidatedTypeReferenceNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ValidatedTypeReferenceRulesetsDescription" xml:space="preserve">
+    <value>The collection of validation rulesets configured this type.</value>
+  </data>
+  <data name="ValidatedTypeReferenceRulesetsDisplayName" xml:space="preserve">
+    <value>Rule Sets</value>
+  </data>
+  <data name="ValidationRulesetDataCollectionDescription" xml:space="preserve">
+    <value>A collection of validated properties.</value>
+  </data>
+  <data name="ValidationRulesetDataCollectionDisplayName" xml:space="preserve">
+    <value>Validation Ruleset Data Collection</value>
+  </data>
+  <data name="ValidationRulesetDataDescription" xml:space="preserve">
+    <value>A set of validation rules to apply when validating instances of this type.</value>
+  </data>
+  <data name="ValidationRulesetDataDisplayName" xml:space="preserve">
+    <value>Validation Ruleset</value>
+  </data>
+  <data name="ValidationRulesetDataFieldsDescription" xml:space="preserve">
+    <value>The collection of fields that will be validated within the type that owns this ruleset.</value>
+  </data>
+  <data name="ValidationRulesetDataFieldsDisplayName" xml:space="preserve">
+    <value>Fields</value>
+  </data>
+  <data name="ValidationRulesetDataMethodsDescription" xml:space="preserve">
+    <value>The collection of methods whose return values will be validated within the type that owns this ruleset.</value>
+  </data>
+  <data name="ValidationRulesetDataMethodsDisplayName" xml:space="preserve">
+    <value>Methods</value>
+  </data>
+  <data name="ValidationRulesetDataNameDescription" xml:space="preserve">
+    <value>The name of the Validation Ruleset.</value>
+  </data>
+  <data name="ValidationRulesetDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ValidationRulesetDataPropertiesDescription" xml:space="preserve">
+    <value>The collection of properties that will be validated within the type that owns this ruleset.</value>
+  </data>
+  <data name="ValidationRulesetDataPropertiesDisplayName" xml:space="preserve">
+    <value>Properties</value>
+  </data>
+  <data name="ValidationRulesetDataValidatorsDescription" xml:space="preserve">
+    <value>The collection of validators defined for the type that owns this ruleset.</value>
+  </data>
+  <data name="ValidationRulesetDataValidatorsDisplayName" xml:space="preserve">
+    <value>Validators</value>
+  </data>
+  <data name="ValidationSettingsDescription" xml:space="preserve">
+    <value>Configuration settings for the Validation Application Block.</value>
+  </data>
+  <data name="ValidationSettingsDisplayName" xml:space="preserve">
+    <value>Validation Settings</value>
+  </data>
+  <data name="ValidationSettingsTypesDescription" xml:space="preserve">
+    <value>The types or classes whose members will be validated by the rules sets defined in the configuration.</value>
+  </data>
+  <data name="ValidationSettingsTypesDisplayName" xml:space="preserve">
+    <value>Validated Types</value>
+  </data>
+  <data name="ValidatorDataCollectionDescription" xml:space="preserve">
+    <value>A collection of validators.</value>
+  </data>
+  <data name="ValidatorDataCollectionDisplayName" xml:space="preserve">
+    <value>Validator Data Collection</value>
+  </data>
+  <data name="ValidatorDataDescription" xml:space="preserve">
+    <value>Base class for all Validators.</value>
+  </data>
+  <data name="ValidatorDataDisplayName" xml:space="preserve">
+    <value>Validator</value>
+  </data>
+  <data name="ValidatorDataMessageTemplateDescription" xml:space="preserve">
+    <value>The template to use when creating the validation message. 
+The template can contain placeholders for values exposed by the individual validation results for each member of the validated type. </value>
+  </data>
+  <data name="ValidatorDataMessageTemplateDisplayName" xml:space="preserve">
+    <value>Message Template</value>
+  </data>
+  <data name="ValidatorDataMessageTemplateResourceNameDescription" xml:space="preserve">
+    <value>The key in an external resource file for the localized string to use as the validation message. </value>
+  </data>
+  <data name="ValidatorDataMessageTemplateResourceNameDisplayName" xml:space="preserve">
+    <value>Template Resource Name</value>
+  </data>
+  <data name="ValidatorDataMessageTemplateResourceTypeNameDescription" xml:space="preserve">
+    <value>The type of the external resource file containing the localized string to use as the validation message. </value>
+  </data>
+  <data name="ValidatorDataMessageTemplateResourceTypeNameDisplayName" xml:space="preserve">
+    <value>Template Resource Type</value>
+  </data>
+  <data name="ValidatorDataNameDescription" xml:space="preserve">
+    <value>The name of the Validator.</value>
+  </data>
+  <data name="ValidatorDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ValidatorDataTagDescription" xml:space="preserve">
+    <value>A user-supplied string value that can be used to identify or classify the validator. 
+It can be accessed from code, and is typically used to sort or categorize the validation results. </value>
+  </data>
+  <data name="ValidatorDataTagDisplayName" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="ValidatorDataTypeNameDescription" xml:space="preserve">
+    <value>The fully qualified type name of the Validator.</value>
+  </data>
+  <data name="ValidatorDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type Name</value>
+  </data>
+  <data name="ValueValidatorDataDescription" xml:space="preserve">
+    <value>A Validator that validates against defined values.</value>
+  </data>
+  <data name="ValueValidatorDataDisplayName" xml:space="preserve">
+    <value>Value Validator</value>
+  </data>
+  <data name="ValueValidatorDataMessageTemplateDescription" xml:space="preserve">
+    <value>The template to use when creating the validation message. 
+The template can contain placeholders for values exposed by the individual validation results for each member of the validated type. </value>
+  </data>
+  <data name="ValueValidatorDataMessageTemplateDisplayName" xml:space="preserve">
+    <value>Message Template</value>
+  </data>
+  <data name="ValueValidatorDataMessageTemplateResourceNameDescription" xml:space="preserve">
+    <value>The key in an external resource file for the localized string to use as the validation message. </value>
+  </data>
+  <data name="ValueValidatorDataMessageTemplateResourceNameDisplayName" xml:space="preserve">
+    <value>Template Resource Name</value>
+  </data>
+  <data name="ValueValidatorDataMessageTemplateResourceTypeNameDescription" xml:space="preserve">
+    <value>The type of the external resource file containing the localized string to use as the validation message. </value>
+  </data>
+  <data name="ValueValidatorDataMessageTemplateResourceTypeNameDisplayName" xml:space="preserve">
+    <value>Template Resource Type</value>
+  </data>
+  <data name="ValueValidatorDataNameDescription" xml:space="preserve">
+    <value>The name of the Validator.</value>
+  </data>
+  <data name="ValueValidatorDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ValueValidatorDataNegatedDescription" xml:space="preserve">
+    <value>Reverses the validation behavior. 
+When set to True, validation will fail (the validator will return False) if the validation rules are satisfied, instead of the default behavior of failing when they are not satisfied. The default is False.</value>
+  </data>
+  <data name="ValueValidatorDataNegatedDisplayName" xml:space="preserve">
+    <value>Negated</value>
+  </data>
+  <data name="ValueValidatorDataTagDescription" xml:space="preserve">
+    <value>A user-supplied string value that can be used to identify or classify the validator. 
+It can be accessed from code, and is typically used to sort or categorize the validation results. </value>
+  </data>
+  <data name="ValueValidatorDataTagDisplayName" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="ValueValidatorDataTypeNameDescription" xml:space="preserve">
+    <value>The fully qualified type name of the Validator.</value>
+  </data>
+  <data name="ValueValidatorDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+</root>

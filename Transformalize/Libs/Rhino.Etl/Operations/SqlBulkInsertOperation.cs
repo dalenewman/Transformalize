@@ -11,13 +11,11 @@ using Transformalize.Libs.Rhino.Etl.DataReaders;
 using Transformalize.Libs.Rhino.Etl.Infrastructure;
 using Transformalize.Main.Providers;
 
-namespace Transformalize.Libs.Rhino.Etl.Operations
-{
+namespace Transformalize.Libs.Rhino.Etl.Operations {
     /// <summary>
     ///     Allows to execute an operation that perform a bulk insert into a sql server database
     /// </summary>
-    public abstract class SqlBulkInsertOperation : AbstractDatabaseOperation
-    {
+    public abstract class SqlBulkInsertOperation : AbstractDatabaseOperation {
         private readonly IDictionary<string, Type> _inputSchema = new Dictionary<string, Type>();
 
         /// <summary>
@@ -39,30 +37,26 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         private int _timeout;
 
         protected SqlBulkInsertOperation(AbstractConnection connection, string targetTable, int timeout = 0)
-            : base(connection)
-        {
+            : base(connection) {
             Guard.Against(string.IsNullOrEmpty(targetTable), "TargetTable was not set, but it is mandatory");
             TargetTable = targetTable;
             _timeout = timeout;
         }
 
         /// <summary>The timeout value of the bulk insert operation</summary>
-        public virtual int Timeout
-        {
+        public virtual int Timeout {
             get { return _timeout; }
             set { _timeout = value; }
         }
 
         /// <summary>The batch size value of the bulk insert operation</summary>
-        public virtual int BatchSize
-        {
+        public virtual int BatchSize {
             get { return _batchSize; }
             set { _batchSize = value; }
         }
 
         /// <summary>The batch size value of the bulk insert operation</summary>
-        public virtual int NotifyBatchSize
-        {
+        public virtual int NotifyBatchSize {
             get { return _notifyBatchSize > 0 ? _notifyBatchSize : _batchSize; }
             set { _notifyBatchSize = value; }
         }
@@ -73,8 +67,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// <summary>
         ///     <c>true</c> to turn the <see cref="SqlBulkCopyOptions.TableLock" /> option on, otherwise <c>false</c>.
         /// </summary>
-        public virtual bool LockTable
-        {
+        public virtual bool LockTable {
             get { return IsOptionOn(SqlBulkCopyOptions.TableLock); }
             set { ToggleOption(SqlBulkCopyOptions.TableLock, value); }
         }
@@ -82,8 +75,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// <summary>
         ///     <c>true</c> to turn the <see cref="SqlBulkCopyOptions.KeepIdentity" /> option on, otherwise <c>false</c>.
         /// </summary>
-        public virtual bool KeepIdentity
-        {
+        public virtual bool KeepIdentity {
             get { return IsOptionOn(SqlBulkCopyOptions.KeepIdentity); }
             set { ToggleOption(SqlBulkCopyOptions.KeepIdentity, value); }
         }
@@ -91,8 +83,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// <summary>
         ///     <c>true</c> to turn the <see cref="SqlBulkCopyOptions.KeepNulls" /> option on, otherwise <c>false</c>.
         /// </summary>
-        public virtual bool KeepNulls
-        {
+        public virtual bool KeepNulls {
             get { return IsOptionOn(SqlBulkCopyOptions.KeepNulls); }
             set { ToggleOption(SqlBulkCopyOptions.KeepNulls, value); }
         }
@@ -100,8 +91,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// <summary>
         ///     <c>true</c> to turn the <see cref="SqlBulkCopyOptions.CheckConstraints" /> option on, otherwise <c>false</c>.
         /// </summary>
-        public virtual bool CheckConstraints
-        {
+        public virtual bool CheckConstraints {
             get { return IsOptionOn(SqlBulkCopyOptions.CheckConstraints); }
             set { ToggleOption(SqlBulkCopyOptions.CheckConstraints, value); }
         }
@@ -109,15 +99,13 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// <summary>
         ///     <c>true</c> to turn the <see cref="SqlBulkCopyOptions.FireTriggers" /> option on, otherwise <c>false</c>.
         /// </summary>
-        public virtual bool FireTriggers
-        {
+        public virtual bool FireTriggers {
             get { return IsOptionOn(SqlBulkCopyOptions.FireTriggers); }
             set { ToggleOption(SqlBulkCopyOptions.FireTriggers, value); }
         }
 
         /// <summary>The table or view's schema information.</summary>
-        public IDictionary<string, Type> Schema
-        {
+        public IDictionary<string, Type> Schema {
             get { return _schema; }
             set { _schema = value; }
         }
@@ -134,14 +122,10 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         ///         name="option" />
         ///     off.
         /// </param>
-        protected void ToggleOption(SqlBulkCopyOptions option, bool on)
-        {
-            if (on)
-            {
+        protected void ToggleOption(SqlBulkCopyOptions option, bool on) {
+            if (on) {
                 TurnOptionOn(option);
-            }
-            else
-            {
+            } else {
                 TurnOptionOff(option);
             }
         }
@@ -153,8 +137,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         ///     The <see cref="SqlBulkCopyOptions" /> option to test for.
         /// </param>
         /// <returns></returns>
-        protected bool IsOptionOn(SqlBulkCopyOptions option)
-        {
+        protected bool IsOptionOn(SqlBulkCopyOptions option) {
             return (_bulkCopyOptions & option) == option;
         }
 
@@ -162,8 +145,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         ///     Turns the <paramref name="option" /> on.
         /// </summary>
         /// <param name="option"></param>
-        protected void TurnOptionOn(SqlBulkCopyOptions option)
-        {
+        protected void TurnOptionOn(SqlBulkCopyOptions option) {
             _bulkCopyOptions |= option;
         }
 
@@ -171,8 +153,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         ///     Turns the <paramref name="option" /> off.
         /// </summary>
         /// <param name="option"></param>
-        protected void TurnOptionOff(SqlBulkCopyOptions option)
-        {
+        protected void TurnOptionOff(SqlBulkCopyOptions option) {
             if (IsOptionOn(option))
                 _bulkCopyOptions ^= option;
         }
@@ -181,10 +162,8 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         ///     Prepares the mapping for use, by default, it uses the schema mapping.
         ///     This is the preferred appraoch
         /// </summary>
-        public virtual void PrepareMapping()
-        {
-            foreach (var pair in _schema)
-            {
+        public virtual void PrepareMapping() {
+            foreach (var pair in _schema) {
                 Mappings[pair.Key] = pair.Key;
             }
         }
@@ -194,10 +173,8 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         ///     operations input schema so it can build the adapter for sending
         ///     to the WriteToServer method.
         /// </summary>
-        public virtual void CreateInputSchema()
-        {
-            foreach (var pair in Mappings)
-            {
+        public virtual void CreateInputSchema() {
+            foreach (var pair in Mappings) {
                 _inputSchema.Add(pair.Key, _schema[pair.Value]);
             }
         }
@@ -205,14 +182,12 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// <summary>
         ///     Executes this operation
         /// </summary>
-        public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
-        {
+        public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             Guard.Against<ArgumentException>(rows == null, "SqlBulkInsertOperation cannot accept a null enumerator");
             PrepareSchema();
             PrepareMapping();
             CreateInputSchema();
-            using (var cn = (SqlConnection) Use.Connection(Connection))
-            {
+            using (var cn = (SqlConnection)Use.Connection(Connection)) {
                 _sqlBulkCopy = CreateSqlBulkCopy(cn, null);
                 var adapter = new DictionaryEnumeratorDataReader(_inputSchema, rows);
                 _sqlBulkCopy.WriteToServer(adapter);
@@ -223,8 +198,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// <summary>
         ///     Handle sql notifications
         /// </summary>
-        protected virtual void OnSqlRowsCopied(object sender, SqlRowsCopiedEventArgs e)
-        {
+        protected virtual void OnSqlRowsCopied(object sender, SqlRowsCopiedEventArgs e) {
             Debug("{0} rows copied to database", e.RowsCopied);
         }
 
@@ -236,14 +210,11 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// <summary>
         ///     Creates the SQL bulk copy instance
         /// </summary>
-        private SqlBulkCopy CreateSqlBulkCopy(SqlConnection connection, SqlTransaction transaction)
-        {
-            var copy = new SqlBulkCopy(connection, _bulkCopyOptions, transaction)
-                           {
-                               BatchSize = _batchSize //,EnableStreaming = true //.NET45
-                           };
-            foreach (var pair in Mappings)
-            {
+        private SqlBulkCopy CreateSqlBulkCopy(SqlConnection connection, SqlTransaction transaction) {
+            var copy = new SqlBulkCopy(connection, _bulkCopyOptions, transaction) {
+                BatchSize = _batchSize, EnableStreaming = true
+            };
+            foreach (var pair in Mappings) {
                 copy.ColumnMappings.Add(pair.Key, pair.Value);
             }
             copy.NotifyAfter = NotifyBatchSize;

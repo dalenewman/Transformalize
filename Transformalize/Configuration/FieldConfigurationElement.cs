@@ -120,7 +120,7 @@ namespace Transformalize.Configuration
         [ConfigurationProperty(PRIMARY_KEY, IsRequired = false, DefaultValue = false)]
         public bool PrimaryKey {
             get { return (bool)this[PRIMARY_KEY]; }
-            set { this[INPUT] = value; }
+            set { this[PRIMARY_KEY] = value; }
         }
 
         [ConfigurationProperty(OUTPUT, IsRequired = false, DefaultValue = true)]
@@ -155,6 +155,7 @@ namespace Transformalize.Configuration
         public TransformElementCollection Transforms
         {
             get { return this[TRANSFORMS] as TransformElementCollection; }
+            set { this[TRANSFORMS] = value; }
         }
 
         [ConfigurationProperty(AGGREGATE, IsRequired = false, DefaultValue = "")]

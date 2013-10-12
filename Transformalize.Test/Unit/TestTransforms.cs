@@ -28,119 +28,103 @@ using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 using Transformalize.Operations;
 
-namespace Transformalize.Test.Unit
-{
+namespace Transformalize.Test.Unit {
     [TestFixture]
-    public class TestTransforms : EtlProcessHelper
-    {
+    public class TestTransforms : EtlProcessHelper {
         [SetUp]
-        public void SetUp()
-        {
-            _testInput.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row>
-                                                                                           {
-                                                                                               new Row
-                                                                                                   {
-                                                                                                       {"Field1", "A b C d E f G"}
-                                                                                                   },
-                                                                                               new Row
-                                                                                                   {
-                                                                                                       {"Field1", "1 2 3 4 5 6 7"}
-                                                                                                   },
-                                                                                               new Row
-                                                                                                   {
-                                                                                                       {"Field1", "    "}
-                                                                                                   },
-                                                                                               new Row
-                                                                                                   {
-                                                                                                       {"Field1", null}
-                                                                                                   }
-                                                                                           });
+        public void SetUp() {
+            _testInput.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row> {
+                new Row { {"Field1", "A b C d E f G"} },
+                new Row { {"Field1", "1 2 3 4 5 6 7"} },
+                new Row { {"Field1", "    "} },
+                new Row { {"Field1", null} }
+            });
         }
 
         private readonly Mock<IOperation> _testInput = new Mock<IOperation>();
 
         [Test]
-        public void TestCalcIfTransform()
-        {
-            var process = new Process("Test");
+        public void TestCalcIfTransform() {
+
             var mock = new Mock<IOperation>();
-            mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row>
-                                                                                     {
-                                                                                         new Row
-                                                                                             {
-                                                                                                 {"var1", 2},
-                                                                                                 {"var2", 3.5}
-                                                                                             },
-                                                                                         new Row
-                                                                                             {
-                                                                                                 {"var1", 1},
-                                                                                                 {"var2", 5.3}
-                                                                                             },
-                                                                                         new Row
-                                                                                             {
-                                                                                                 {"var1", 0},
-                                                                                                 {"var2", 1.0}
-                                                                                             }
-                                                                                     });
+            mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row> { 
+                new Row { {"var1", 2},  {"var2", 3.5} },
+                new Row { {"var1", 1}, {"var2", 5.3} },
+                new Row { {"var1", 0}, {"var2", 1.0} }
+            });
             var input = mock.Object;
 
-            var parameters = new Parameters
-                                 {
-                                     {"var1", new Parameter("var1", null)},
-                                     {"var2", new Parameter("var2", null)}
-                                 };
-            var result = new Field("boolean", "0", FieldType.Field, true, "false")
-                             {
-                                 Alias = "result"
-                             };
+            var parameters = new Parameters {
+                {"var1", new Parameter("var1", null)},
+                {"var2", new Parameter("var2", null)}
+            };
+
+            var result = new Field("boolean", "0", FieldType.Field, true, "false") { Alias = "result" };
             result.Transforms.Add(new ExpressionTransform("if([var1] * [var2] == 7, true, false)", parameters));
 
             var rows = TestOperation(
                 input,
                 new TransformFields(result),
                 new LogOperation()
-                );
+            );
 
             Assert.AreEqual(true, rows[0]["result"]);
             Assert.AreEqual(false, rows[1]["result"]);
             Assert.AreEqual(false, rows[2]["result"]);
         }
 
+
+
+
         [Test]
-        public void TestCalcTransform()
-        {
+        public void TestToStringTransform() {
+
+            const string fieldName = "field";
+
+            var inputOperation = new RowsBuilder()
+                .WithRow().WithField(fieldName, 46.2387m)
+                .ToOperation();
+
+            var field1 = new Field("System.Decimal", "", FieldType.Field, true, "00.0") { Alias = fieldName };
+            field1.Transforms.Add(new ToStringTransform("000.00", new Parameters()));
+
+            var rows = TestOperation(
+                inputOperation,
+                new TransformFields(field1),
+                new LogOperation()
+            );
+
+            Assert.AreEqual(1, rows.Count);
+            Assert.AreEqual("046.24", rows[0][fieldName]);
+        }
+
+        private static IOperation GetInputOperation(IEnumerable<Row> input) {
+            var mock = new Mock<IOperation>();
+            mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(input);
+            var data = mock.Object;
+            return data;
+        }
+
+        [Test]
+        public void TestCalcTransform() {
             var process = new Process("Test");
 
             var mock = new Mock<IOperation>();
-            mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row>
-                                                                                     {
-                                                                                         new Row
-                                                                                             {
-                                                                                                 {"var1", 2},
-                                                                                                 {"var2", 3.5}
-                                                                                             },
-                                                                                         new Row
-                                                                                             {
-                                                                                                 {"var1", 1},
-                                                                                                 {"var2", 5.3}
-                                                                                             },
-                                                                                         new Row
-                                                                                             {
-                                                                                                 {"var1", 0},
-                                                                                                 {"var2", 1.0}
-                                                                                             }
-                                                                                     });
+            mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(
+                new List<Row> { 
+                    new Row { {"var1", 2}, {"var2", 3.5} }, 
+                    new Row { {"var1", 1}, {"var2", 5.3} },
+                    new Row { {"var1", 0}, {"var2", 1.0} }
+                });
             var input = mock.Object;
 
-            var parameters = new Parameters
-                                 {
-                                     {"var1", new Parameter("var1", null)},
-                                     {"var2", new Parameter("var2", null)}
-                                 };
-            var result = new Field(FieldType.Field)
-                             {
-                                 Alias = "result"
-                             };
+            var parameters = new Parameters {
+                {"var1", new Parameter("var1", null)},
+                {"var2", new Parameter("var2", null)}
+            };
+            var result = new Field(FieldType.Field) {
+                Alias = "result"
+            };
             result.Transforms.Add(new ExpressionTransform("[var1] * [var2]", parameters));
 
             var rows = TestOperation(
@@ -155,32 +139,15 @@ namespace Transformalize.Test.Unit
         }
 
         [Test]
-        public void TestConcatTransform()
-        {
+        public void TestConcatTransform() {
             var mock = new Mock<IOperation>();
-            mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row>
-                                                                                     {
-                                                                                         new Row
-                                                                                             {
-                                                                                                 {"Field1", "F1"},
-                                                                                                 {"Field2", "F2"}
-                                                                                             },
-                                                                                         new Row
-                                                                                             {
-                                                                                                 {"Field1", ""},
-                                                                                                 {"Field2", ""}
-                                                                                             },
-                                                                                         new Row
-                                                                                             {
-                                                                                                 {"Field1", " f1 "},
-                                                                                                 {"Field2", " f2 "}
-                                                                                             },
-                                                                                         new Row
-                                                                                             {
-                                                                                                 {"Field1", null},
-                                                                                                 {"Field2", null}
-                                                                                             }
-                                                                                     });
+            mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(
+                new List<Row> {
+                    new Row { {"Field1", "F1"}, {"Field2", "F2"} },
+                    new Row { {"Field1", ""}, {"Field2", ""} },
+                    new Row { {"Field1", " f1 "}, {"Field2", " f2 "} },
+                    new Row { {"Field1", null}, {"Field2", null} }
+                });
             var input = mock.Object;
 
             var parameters = new Parameters
@@ -188,10 +155,9 @@ namespace Transformalize.Test.Unit
                                      {"Field1", new Parameter()},
                                      {"Field2", new Parameter("Field2", null)}
                                  };
-            var result = new Field(FieldType.Field)
-                             {
-                                 Alias = "result"
-                             };
+            var result = new Field(FieldType.Field) {
+                Alias = "result"
+            };
             result.Transforms.Add(new ConcatTransform(parameters));
 
             var rows = TestOperation(
@@ -207,8 +173,7 @@ namespace Transformalize.Test.Unit
         }
 
         [Test]
-        public void TestFormatTransform()
-        {
+        public void TestFormatTransform() {
             var mock = new Mock<IOperation>();
             mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row>
                                                                                      {
@@ -240,10 +205,9 @@ namespace Transformalize.Test.Unit
                                      {"Field1", new Parameter("Field1", null)},
                                      {"Field2", new Parameter("Field2", null)}
                                  };
-            var result = new Field(FieldType.Field)
-                             {
-                                 Alias = "result"
-                             };
+            var result = new Field(FieldType.Field) {
+                Alias = "result"
+            };
             result.Transforms.Add(new FormatTransform("{0}+{1}", parameters));
 
             var rows = TestOperation(
@@ -260,8 +224,7 @@ namespace Transformalize.Test.Unit
 
 
         [Test]
-        public void TestInsertTransform()
-        {
+        public void TestInsertTransform() {
             var entity = new Entity(1);
             entity.Fields["Field1"] = new Field(FieldType.Field) {
                 Alias = "Field1",
@@ -283,8 +246,7 @@ namespace Transformalize.Test.Unit
         }
 
         [Test]
-        public void TestJavscriptFromScript()
-        {
+        public void TestJavscriptFromScript() {
             const string scriptContent = "function Double(input) { if(!input || input == '') { return '';} else { return input + input;} }";
             var mock = new Mock<IOperation>();
             mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row>
@@ -309,14 +271,13 @@ namespace Transformalize.Test.Unit
                               {
                                   {"test", new Script("test", scriptContent, "test.js")}
                               };
-            entity.Fields["Field1"] = new Field(FieldType.Field)
-                                       {
-                                           Alias = "Field1",
-                                           Transforms = new Transforms
+            entity.Fields["Field1"] = new Field(FieldType.Field) {
+                Alias = "Field1",
+                Transforms = new Transforms
                                                             {
                                                                 new JavascriptTransform("Double(Field1);", "Field1", scripts)
                                                             }
-                                       };
+            };
 
             var rows = TestOperation(
                 input,
@@ -332,8 +293,7 @@ namespace Transformalize.Test.Unit
 
 
         [Test]
-        public void TestJavscriptInt32Transform()
-        {
+        public void TestJavscriptInt32Transform() {
             var numbersMock = new Mock<IOperation>();
             numbersMock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row>
                                                                                             {
@@ -358,16 +318,15 @@ namespace Transformalize.Test.Unit
 
             var entity = new Entity(1);
             var scripts = new Dictionary<string, Script>();
-            entity.Fields["Field1"] = new Field("System.Int32", "8", FieldType.Field, true, "0")
-                                       {
-                                           Alias = "Field1",
-                                           Input = true,
-                                           Transforms = new Transforms
+            entity.Fields["Field1"] = new Field("System.Int32", "8", FieldType.Field, true, "0") {
+                Alias = "Field1",
+                Input = true,
+                Transforms = new Transforms
                                                             {
                                                                 new JavascriptTransform("Field1 * 2;", "Field1", scripts)
                                                             },
-                                           Default = 0
-                                       };
+                Default = 0
+            };
 
             var rows = TestOperation(
                 numbers,
@@ -383,19 +342,17 @@ namespace Transformalize.Test.Unit
         }
 
         [Test]
-        public void TestJavscriptStringTransform()
-        {
+        public void TestJavscriptStringTransform() {
             var entity = new Entity(1);
             var scripts = new Dictionary<string, Script>();
-            entity.Fields["Field1"] = new Field(FieldType.Field)
-                                       {
-                                           Alias = "Field1",
-                                           Input = true,
-                                           Transforms = new Transforms
+            entity.Fields["Field1"] = new Field(FieldType.Field) {
+                Alias = "Field1",
+                Input = true,
+                Transforms = new Transforms
                                                             {
                                                                 new JavascriptTransform("Field1.length;", "Field1", scripts)
                                                             }
-                                       };
+            };
 
             var rows = TestOperation(
                 _testInput.Object,
@@ -411,8 +368,7 @@ namespace Transformalize.Test.Unit
         }
 
         [Test]
-        public void TestJsonTransform()
-        {
+        public void TestJsonTransform() {
             var mock = new Mock<IOperation>();
             mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row>
                                                                                      {
@@ -444,10 +400,9 @@ namespace Transformalize.Test.Unit
                                      {"Field1", new Parameter("Field1", null)},
                                      {"Field2", new Parameter("Field2", null)}
                                  };
-            var result = new Field(FieldType.Field)
-                             {
-                                 Alias = "result"
-                             };
+            var result = new Field(FieldType.Field) {
+                Alias = "result"
+            };
             result.Transforms.Add(new ToJsonTransform(parameters));
 
             var rows = TestOperation(
@@ -463,8 +418,7 @@ namespace Transformalize.Test.Unit
         }
 
         [Test]
-        public void TestJsonTransform2()
-        {
+        public void TestJsonTransform2() {
             var mock = new Mock<IOperation>();
             mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row>
                                                                                      {
@@ -492,10 +446,9 @@ namespace Transformalize.Test.Unit
                                      {"Field2", new Parameter("Field2", null)},
                                      {"Field3", new Parameter("Field3", 3)}
                                  };
-            var result = new Field(FieldType.Field)
-                             {
-                                 Alias = "result"
-                             };
+            var result = new Field(FieldType.Field) {
+                Alias = "result"
+            };
             result.Transforms.Add(new ToJsonTransform(parameters));
 
             var rows = TestOperation(
@@ -510,18 +463,16 @@ namespace Transformalize.Test.Unit
         }
 
         [Test]
-        public void TestLeftTransform()
-        {
+        public void TestLeftTransform() {
             var entity = new Entity(1);
-            entity.Fields["Field1"] = new Field(FieldType.Field)
-                                       {
-                                           Alias = "Field1",
-                                           Transforms = new Transforms
+            entity.Fields["Field1"] = new Field(FieldType.Field) {
+                Alias = "Field1",
+                Transforms = new Transforms
                                                             {
                                                                 new LeftTransform(4, new Parameters())
                                                             },
-                                           Input = true
-                                       };
+                Input = true
+            };
 
             var rows = TestOperation(
                 _testInput.Object,
@@ -534,8 +485,7 @@ namespace Transformalize.Test.Unit
         }
 
         [Test]
-        public void TestMapTransformEndsWith()
-        {
+        public void TestMapTransformEndsWith() {
             var mapEquals = new Map();
             var mapStartsWith = new Map();
             var mapEndsWith = new Map();
@@ -545,14 +495,13 @@ namespace Transformalize.Test.Unit
 
             var entity = new Entity(1);
             var parameters = new Parameters();
-            entity.Fields["Field1"] = new Field(FieldType.Field)
-                                       {
-                                           Alias = "Field1",
-                                           Transforms = new Transforms
+            entity.Fields["Field1"] = new Field(FieldType.Field) {
+                Alias = "Field1",
+                Transforms = new Transforms
                                                             {
                                                                 new MapTransform(new[] {mapEquals, mapStartsWith, mapEndsWith}, parameters)
                                                             }
-                                       };
+            };
 
             var rows = TestOperation(
                 _testInput.Object,
@@ -565,8 +514,7 @@ namespace Transformalize.Test.Unit
         }
 
         [Test]
-        public void TestMapTransformMore()
-        {
+        public void TestMapTransformMore() {
             var mapEquals = new Map();
             var mapStartsWith = new Map();
             var mapEndsWith = new Map();
@@ -576,15 +524,14 @@ namespace Transformalize.Test.Unit
 
             var entity = new Entity(1);
             var parameters = new Parameters();
-            entity.Fields["Field1"] = new Field(FieldType.Field)
-                                       {
-                                           Alias = "Field1",
-                                           Input = true,
-                                           Transforms = new Transforms
+            entity.Fields["Field1"] = new Field(FieldType.Field) {
+                Alias = "Field1",
+                Input = true,
+                Transforms = new Transforms
                                                             {
                                                                 new MapTransform(new[] {mapEquals, mapStartsWith, mapEndsWith}, parameters)
                                                             }
-                                       };
+            };
 
             var rows = TestOperation(
                 _testInput.Object,
@@ -597,8 +544,7 @@ namespace Transformalize.Test.Unit
         }
 
         [Test]
-        public void TestMapTransformStartsWith()
-        {
+        public void TestMapTransformStartsWith() {
             var mapEquals = new Map();
             var mapStartsWith = new Map();
             var mapEndsWith = new Map();
@@ -608,14 +554,13 @@ namespace Transformalize.Test.Unit
 
             var entity = new Entity(1);
             var parameters = new Parameters();
-            entity.Fields["Field1"] = new Field(FieldType.Field)
-                                       {
-                                           Alias = "Field1",
-                                           Transforms = new Transforms
+            entity.Fields["Field1"] = new Field(FieldType.Field) {
+                Alias = "Field1",
+                Transforms = new Transforms
                                                             {
                                                                 new MapTransform(new[] {mapEquals, mapStartsWith, mapEndsWith}, parameters)
                                                             }
-                                       };
+            };
 
             var rows = TestOperation(
                 _testInput.Object,
@@ -628,8 +573,7 @@ namespace Transformalize.Test.Unit
         }
 
         [Test]
-        public void TestPadLeftTransform()
-        {
+        public void TestPadLeftTransform() {
             var mock = new Mock<IOperation>();
             mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row>
                                                                                      {
@@ -653,16 +597,15 @@ namespace Transformalize.Test.Unit
             var input = mock.Object;
 
             var entity = new Entity(1);
-            entity.Fields["Field1"] = new Field(FieldType.Field)
-                                       {
-                                           Alias = "Field1",
-                                           Input = true,
-                                           Transforms = new Transforms
+            entity.Fields["Field1"] = new Field(FieldType.Field) {
+                Alias = "Field1",
+                Input = true,
+                Transforms = new Transforms
                                                             {
                                                                 new PadLeftTransform(5, '0', new Parameters())
                                                             },
-                                           Default = "00000"
-                                       };
+                Default = "00000"
+            };
 
             var rows = TestOperation(
                 input,
@@ -678,8 +621,7 @@ namespace Transformalize.Test.Unit
         }
 
         [Test]
-        public void TestPadRightTransform()
-        {
+        public void TestPadRightTransform() {
             var mock = new Mock<IOperation>();
             mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row>
                                                                                      {
@@ -703,16 +645,15 @@ namespace Transformalize.Test.Unit
             var input = mock.Object;
 
             var entity = new Entity(1);
-            entity.Fields["Field1"] = new Field(FieldType.Field)
-                                       {
-                                           Alias = "Field1",
-                                           Input = true,
-                                           Transforms = new Transforms
+            entity.Fields["Field1"] = new Field(FieldType.Field) {
+                Alias = "Field1",
+                Input = true,
+                Transforms = new Transforms
                                                             {
                                                                 new PadRightTransform(5, '0', new Parameters())
                                                             },
-                                           Default = "00000"
-                                       };
+                Default = "00000"
+            };
 
             var rows = TestOperation(
                 input,
@@ -728,18 +669,16 @@ namespace Transformalize.Test.Unit
         }
 
         [Test]
-        public void TestRegexReplaceTransform()
-        {
+        public void TestRegexReplaceTransform() {
             var entity = new Entity(1);
-            entity.Fields["Field1"] = new Field(FieldType.Field)
-                                       {
-                                           Alias = "Field1",
-                                           Transforms = new Transforms
+            entity.Fields["Field1"] = new Field(FieldType.Field) {
+                Alias = "Field1",
+                Transforms = new Transforms
                                                             {
                                                                 new RegexReplaceTransform("[bd]", "X", 0, new Parameters()),
                                                                 new RegexReplaceTransform(@"[\d]{1}$", "DIGIT", 0, new Parameters())
                                                             }
-                                       };
+            };
 
             var rows = TestOperation(
                 _testInput.Object,
@@ -752,17 +691,15 @@ namespace Transformalize.Test.Unit
         }
 
         [Test]
-        public void TestRemoveTransform()
-        {
+        public void TestRemoveTransform() {
             var entity = new Entity(1);
-            entity.Fields["Field1"] = new Field(FieldType.Field)
-                                       {
-                                           Alias = "Field1",
-                                           Transforms = new Transforms
+            entity.Fields["Field1"] = new Field(FieldType.Field) {
+                Alias = "Field1",
+                Transforms = new Transforms
                                                             {
                                                                 new RemoveTransform(2, 2, new Parameters())
                                                             }
-                                       };
+            };
 
             var rows = TestOperation(
                 _testInput.Object,
@@ -776,18 +713,16 @@ namespace Transformalize.Test.Unit
         }
 
         [Test]
-        public void TestReplaceTransform()
-        {
+        public void TestReplaceTransform() {
             var entity = new Entity(1);
-            entity.Fields["Field1"] = new Field(FieldType.Field)
-                                       {
-                                           Alias = "Field1",
-                                           Transforms = new Transforms
+            entity.Fields["Field1"] = new Field(FieldType.Field) {
+                Alias = "Field1",
+                Transforms = new Transforms
                                                             {
                                                                 new ReplaceTransform("b", "B", new Parameters()),
                                                                 new ReplaceTransform("2", "Two", new Parameters())
                                                             }
-                                       };
+            };
 
             var rows = TestOperation(
                 _testInput.Object,
@@ -800,18 +735,16 @@ namespace Transformalize.Test.Unit
         }
 
         [Test]
-        public void TestRightTransform()
-        {
+        public void TestRightTransform() {
             var entity = new Entity(1);
-            entity.Fields["Field1"] = new Field(FieldType.Field)
-                                       {
-                                           Alias = "Field1",
-                                           Transforms = new Transforms
+            entity.Fields["Field1"] = new Field(FieldType.Field) {
+                Alias = "Field1",
+                Transforms = new Transforms
                                                             {
                                                                 new RightTransform(3, new Parameters())
                                                             },
-                                           Input = true
-                                       };
+                Input = true
+            };
 
             var rows = TestOperation(
                 _testInput.Object,
@@ -824,18 +757,16 @@ namespace Transformalize.Test.Unit
         }
 
         [Test]
-        public void TestSubStringTransform()
-        {
+        public void TestSubStringTransform() {
             var entity = new Entity(1);
-            entity.Fields["Field1"] = new Field(FieldType.Field)
-                                       {
-                                           Alias = "Field1",
-                                           Transforms = new Transforms
+            entity.Fields["Field1"] = new Field(FieldType.Field) {
+                Alias = "Field1",
+                Transforms = new Transforms
                                                             {
                                                                 new SubstringTransform(4, 3, new Parameters())
                                                             },
-                                           Input = true
-                                       };
+                Input = true
+            };
 
             var rows = TestOperation(
                 _testInput.Object,
@@ -849,8 +780,7 @@ namespace Transformalize.Test.Unit
         }
 
         [Test]
-        public void TestTemplateTransform()
-        {
+        public void TestTemplateTransform() {
             var input = new Mock<IOperation>();
 
             input.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row>
@@ -863,14 +793,13 @@ namespace Transformalize.Test.Unit
 
             var entity = new Entity(1);
             var templates = new Dictionary<string, Template>();
-            entity.Fields["Name"] = new Field(FieldType.Field)
-                                     {
-                                         Alias = "Name",
-                                         Transforms = new Transforms
+            entity.Fields["Name"] = new Field(FieldType.Field) {
+                Alias = "Name",
+                Transforms = new Transforms
                                                           {
                                                               new TemplateTransform("Hello @Name", "Name", templates)
                                                           }
-                                     };
+            };
 
             var rows = TestOperation(
                 input.Object,
@@ -883,8 +812,7 @@ namespace Transformalize.Test.Unit
         }
 
         [Test]
-        public void TestToLowerTransform()
-        {
+        public void TestToLowerTransform() {
             var mock = new Mock<IOperation>();
             mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row>
                                                                                      {
@@ -908,16 +836,15 @@ namespace Transformalize.Test.Unit
             var input = mock.Object;
 
             var entity = new Entity(1);
-            entity.Fields["Field1"] = new Field(FieldType.Field)
-                                       {
-                                           Alias = "Field1",
-                                           Input = true,
-                                           Transforms = new Transforms
+            entity.Fields["Field1"] = new Field(FieldType.Field) {
+                Alias = "Field1",
+                Input = true,
+                Transforms = new Transforms
                                                             {
                                                                 new ToLowerTransform(null)
                                                             },
-                                           Default = ""
-                                       };
+                Default = ""
+            };
 
             var rows = TestOperation(
                 input,
@@ -933,8 +860,7 @@ namespace Transformalize.Test.Unit
         }
 
         [Test]
-        public void TestToUpperTransform()
-        {
+        public void TestToUpperTransform() {
             var mock = new Mock<IOperation>();
             mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row>
                                                                                      {
@@ -958,16 +884,15 @@ namespace Transformalize.Test.Unit
             var input = mock.Object;
 
             var entity = new Entity(1);
-            entity.Fields["Field1"] = new Field(FieldType.Field)
-                                       {
-                                           Alias = "Field1",
-                                           Input = true,
-                                           Transforms = new Transforms
+            entity.Fields["Field1"] = new Field(FieldType.Field) {
+                Alias = "Field1",
+                Input = true,
+                Transforms = new Transforms
                                                             {
                                                                 new ToUpperTransform(null)
                                                             },
-                                           Default = ""
-                                       };
+                Default = ""
+            };
 
             var rows = TestOperation(
                 input,
@@ -983,18 +908,16 @@ namespace Transformalize.Test.Unit
         }
 
         [Test]
-        public void TestTrimEndTransform1()
-        {
+        public void TestTrimEndTransform1() {
             var entity = new Entity(1);
-            entity.Fields["Field1"] = new Field(FieldType.Field)
-                                       {
-                                           Alias = "Field1",
-                                           Transforms = new Transforms
+            entity.Fields["Field1"] = new Field(FieldType.Field) {
+                Alias = "Field1",
+                Transforms = new Transforms
                                                             {
                                                                 new TrimEndTransform(" ", new Parameters())
                                                             },
-                                           Input = true
-                                       };
+                Input = true
+            };
             var fields = new Dictionary<string, Field>
                              {
                                  {"", null}
@@ -1011,18 +934,16 @@ namespace Transformalize.Test.Unit
 
 
         [Test]
-        public void TestTrimEndTransform2()
-        {
+        public void TestTrimEndTransform2() {
             var entity = new Entity(1);
-            entity.Fields["Field1"] = new Field(FieldType.Field)
-                                       {
-                                           Alias = "Field1",
-                                           Transforms = new Transforms
+            entity.Fields["Field1"] = new Field(FieldType.Field) {
+                Alias = "Field1",
+                Transforms = new Transforms
                                                             {
                                                                 new TrimEndTransform("G ", new Parameters())
                                                             },
-                                           Input = true
-                                       };
+                Input = true
+            };
 
             var rows = TestOperation(
                 _testInput.Object,
@@ -1036,17 +957,15 @@ namespace Transformalize.Test.Unit
         }
 
         [Test]
-        public void TestTrimStartTransform()
-        {
+        public void TestTrimStartTransform() {
             var entity = new Entity(1);
-            entity.Fields["Field1"] = new Field(FieldType.Field)
-                                       {
-                                           Alias = "Field1",
-                                           Transforms = new Transforms
+            entity.Fields["Field1"] = new Field(FieldType.Field) {
+                Alias = "Field1",
+                Transforms = new Transforms
                                                             {
                                                                 new TrimStartTransform("1 ", new Parameters())
                                                             }
-                                       };
+            };
 
             var rows = TestOperation(
                 _testInput.Object,
@@ -1059,17 +978,15 @@ namespace Transformalize.Test.Unit
         }
 
         [Test]
-        public void TestTrimTransform()
-        {
+        public void TestTrimTransform() {
             var entity = new Entity(1);
-            entity.Fields["Field1"] = new Field(FieldType.Field)
-                                       {
-                                           Alias = "Field1",
-                                           Transforms = new Transforms
+            entity.Fields["Field1"] = new Field(FieldType.Field) {
+                Alias = "Field1",
+                Transforms = new Transforms
                                                             {
                                                                 new TrimTransform("1G", new Parameters())
                                                             }
-                                       };
+            };
 
             var rows = TestOperation(
                 _testInput.Object,
@@ -1082,8 +999,7 @@ namespace Transformalize.Test.Unit
         }
 
         [Test]
-        public void TestXmlTransform()
-        {
+        public void TestXmlTransform() {
             var mock = new Mock<IOperation>();
             mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row>
                                                                                      {
@@ -1105,16 +1021,15 @@ namespace Transformalize.Test.Unit
                                  };
 
             var entity = new Entity(1);
-            entity.Fields["XmlField"] = new Field(FieldType.Field)
-                                         {
-                                             Alias = "XmlField",
-                                             Input = true,
-                                             Transforms = new Transforms
+            entity.Fields["XmlField"] = new Field(FieldType.Field) {
+                Alias = "XmlField",
+                Input = true,
+                Transforms = new Transforms
                                                               {
                                                                   new FromXmlTransform("XmlField", parameters)
                                                               },
-                                             Default = ""
-                                         };
+                Default = ""
+            };
 
             var rows = TestOperation(
                 xmlInput,
@@ -1126,6 +1041,55 @@ namespace Transformalize.Test.Unit
             Assert.AreEqual(2, rows[0]["XmlItem2"]);
             Assert.AreEqual("something3", rows[1]["item1"]);
             Assert.AreEqual(4, rows[1]["XmlItem2"]);
+        }
+    }
+
+    public class RowBuilder {
+        private readonly RowsBuilder _rowsBuilder;
+        private readonly Row _row;
+
+        public RowBuilder(ref RowsBuilder rowsBuilder, ref Row row) {
+            _rowsBuilder = rowsBuilder;
+            _row = row;
+        }
+
+        public RowBuilder WithField(string field, object value) {
+            _row[field] = value;
+            return this;
+        }
+
+        public RowBuilder WithRow() {
+            return _rowsBuilder.WithRow();
+        }
+
+        public IEnumerable<Row> ToRows() {
+            return _rowsBuilder.ToRows();
+        }
+
+        public IOperation ToOperation() {
+            return _rowsBuilder.ToOperation();
+        }
+
+    }
+
+    public class RowsBuilder {
+        private readonly IList<Row> _rows = new List<Row>();
+
+        public RowBuilder WithRow() {
+            var row = new Row();
+            _rows.Add(row);
+            var rowsBuilder = this;
+            return new RowBuilder(ref rowsBuilder, ref row);
+        }
+
+        public IEnumerable<Row> ToRows() {
+            return _rows;
+        }
+
+        public IOperation ToOperation() {
+            var mock = new Mock<IOperation>();
+            mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(ToRows());
+            return mock.Object;
         }
     }
 }

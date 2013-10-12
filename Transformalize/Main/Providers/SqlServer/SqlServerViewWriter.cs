@@ -20,32 +20,27 @@
 
 #endregion
 
-using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using Transformalize.Extensions;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Dapper;
 
-namespace Transformalize.Main.Providers.SqlServer
-{
-    public class SqlServerViewWriter : IViewWriter
-    {
+namespace Transformalize.Main.Providers.SqlServer {
+    public class SqlServerViewWriter : IViewWriter {
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly Entity _masterEntity;
         private readonly Process _process;
 
-        public SqlServerViewWriter(Process process)
-        {
+        public SqlServerViewWriter(Process process) {
             _process = process;
             _masterEntity = _process.MasterEntity;
         }
 
-        public void Drop()
-        {
-            using (var cn = _process.OutputConnection.GetConnection())
-            {
+        public void Drop() {
+            using (var cn = _process.OutputConnection.GetConnection()) {
                 cn.Open();
+
                 var sql = DropSql();
                 _log.Debug(sql);
                 cn.Execute(sql);
@@ -53,22 +48,19 @@ namespace Transformalize.Main.Providers.SqlServer
             }
         }
 
-        public void Create()
-        {
+        public void Create() {
             Drop();
-            using (var cn = _process.OutputConnection.GetConnection())
-            {
+            using (var cn = _process.OutputConnection.GetConnection()) {
                 cn.Open();
                 var sql = CreateSql();
-                
+
                 _log.Debug(sql);
                 cn.Execute(sql);
                 _log.Debug("Created Output {0}.", _process.Star);
             }
         }
 
-        private string DropSql()
-        {
+        private string DropSql() {
             const string format = @"IF EXISTS (
 	SELECT *
 	FROM INFORMATION_SCHEMA.VIEWS
@@ -79,8 +71,7 @@ namespace Transformalize.Main.Providers.SqlServer
             return string.Format(format, _process.Star);
         }
 
-        public string CreateSql()
-        {
+        public string CreateSql() {
             var provider = _process.OutputConnection.Provider;
             var builder = new StringBuilder();
             builder.AppendFormat("CREATE VIEW {0} AS\r\n", _process.Star);
@@ -91,8 +82,8 @@ namespace Transformalize.Main.Providers.SqlServer
 
             if (typedFields[StarFieldType.Foreign].Any())
                 builder.AppendLine(string.Concat(new FieldSqlWriter(typedFields[StarFieldType.Foreign]).Alias(provider).PrependEntityOutput(provider, _masterEntity.OutputName()).IsNull().ToAlias(provider).Prepend("    ").Write(",\r\n"), ","));
-            
-            if(typedFields[StarFieldType.Other].Any())
+
+            if (typedFields[StarFieldType.Other].Any())
                 builder.AppendLine(string.Concat(new FieldSqlWriter(typedFields[StarFieldType.Other]).Alias(provider).PrependEntityOutput(provider).IsNull().ToAlias(provider).Prepend("    ").Write(",\r\n"), ","));
 
             builder.TrimEnd("\r\n,");
@@ -100,12 +91,10 @@ namespace Transformalize.Main.Providers.SqlServer
             builder.AppendFormat("FROM {0}\r\n", _masterEntity.OutputName());
             builder.AppendFormat("INNER JOIN TflBatch b ON ({0}.TflBatchId = b.TflBatchId AND b.ProcessName = '{1}')\r\n", _masterEntity.OutputName(), _process.Name);
 
-            foreach (var entity in _process.Entities.Where(e => !e.IsMaster()))
-            {
+            foreach (var entity in _process.Entities.Where(e => !e.IsMaster())) {
                 builder.AppendFormat("LEFT OUTER JOIN {0} ON (", entity.OutputName());
 
-                foreach (var join in entity.RelationshipToMaster.First().Join.ToArray())
-                {
+                foreach (var join in entity.RelationshipToMaster.First().Join.ToArray()) {
                     builder.AppendFormat("{0}.{1} = {2}.{3} AND ", _masterEntity.OutputName(), provider.Enclose(join.LeftField.Alias), entity.OutputName(), provider.Enclose(join.RightField.Alias));
                 }
 

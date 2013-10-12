@@ -43,7 +43,7 @@ namespace Transformalize.Main
             sb.PadLeft(_totalWidth, _paddingChar);
         }
 
-        public override object Transform(object value)
+        public override object Transform(object value, string simpleType)
         {
             return value.ToString().PadLeft(_totalWidth, _paddingChar);
         }

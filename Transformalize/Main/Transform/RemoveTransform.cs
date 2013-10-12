@@ -44,7 +44,7 @@ namespace Transformalize.Main
             sb.Remove(_startIndex, _length);
         }
 
-        public override object Transform(object value)
+        public override object Transform(object value, string simpleType)
         {
             var str = value.ToString();
             if (_startIndex > str.Length) return value;

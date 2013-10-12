@@ -41,7 +41,7 @@ namespace Transformalize.Main
             sb.Append(input.GetHashCode());
         }
 
-        public override object Transform(object value)
+        public override object Transform(object value, string simpleType)
         {
             return value.GetHashCode();
         }

@@ -59,7 +59,7 @@ namespace Transformalize.Main {
             sb.Append(_conversionMap[_to](input));
         }
 
-        public override object Transform(object value) {
+        public override object Transform(object value, string simpleType) {
             return _conversionMap[_to](value);
         }
 

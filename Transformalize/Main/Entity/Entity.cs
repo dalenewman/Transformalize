@@ -66,7 +66,6 @@ namespace Transformalize.Main
         public IDbCommand InputKeysCommand { get; set; }
         public string Prefix { get; set; }
         public bool Group { get; set; }
-        public bool Auto { get; set; }
         public string Name { get; set; }
         public Fields CalculatedFields { get; set; }
         public bool HasRows { get; set; }

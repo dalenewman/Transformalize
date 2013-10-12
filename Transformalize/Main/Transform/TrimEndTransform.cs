@@ -43,7 +43,7 @@ namespace Transformalize.Main
             sb.TrimEnd(_trimChars);
         }
 
-        public override object Transform(object value)
+        public override object Transform(object value, string simpleType)
         {
             return value.ToString().TrimEnd(_trimCharArray);
         }

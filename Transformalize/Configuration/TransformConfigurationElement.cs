@@ -57,6 +57,7 @@ namespace Transformalize.Configuration
         private const string FIELDS = "fields";
         private const string TO = "to";
         private const string CLEAN = "clean";
+        private const string UNITS = "units";
 
         [ConfigurationProperty(METHOD, IsRequired = true)]
         public string Method
@@ -76,6 +77,12 @@ namespace Transformalize.Configuration
         public bool Clean {
             get { return (bool) this[CLEAN]; }
             set { this[CLEAN] = value; }
+        }
+
+        [ConfigurationProperty(UNITS, IsRequired = false, DefaultValue = "meters")]
+        public string Units {
+            get { return this[UNITS] as string; }
+            set { this[UNITS] = value; }
         }
 
         [ConfigurationProperty(TO, IsRequired = false, DefaultValue = "")]

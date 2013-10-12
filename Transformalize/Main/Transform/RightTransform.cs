@@ -41,7 +41,7 @@ namespace Transformalize.Main
             sb.Right(_length);
         }
 
-        public override object Transform(object value)
+        public override object Transform(object value, string simpleType)
         {
             return value.ToString().Right(_length);
         }

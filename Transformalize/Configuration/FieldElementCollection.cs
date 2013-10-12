@@ -64,6 +64,11 @@ namespace Transformalize.Configuration
             BaseAdd(at, element);
         }
 
+        public void Add(FieldConfigurationElement element)
+        {
+            BaseAdd(element);
+        }
+
         public void Clear()
         {
             BaseClear();

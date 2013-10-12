@@ -37,5 +37,6 @@ namespace Transformalize.Main
         public string Name { get; set; }
         public object Value { get; set; }
         public string SimpleType { get; set; }
+        public int Index { get; set; }
     }
 }

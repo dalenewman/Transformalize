@@ -51,7 +51,7 @@ namespace Transformalize.Main
                 sb.Append(_regex.Replace(input, _replacement));
         }
 
-        public override object Transform(object value)
+        public override object Transform(object value, string simpleType)
         {
             if (_count > 0)
                 return _regex.Replace(value.ToString(), _replacement, _count);

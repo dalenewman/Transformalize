@@ -33,7 +33,7 @@ namespace Transformalize.Main {
             _process = process;
         }
 
-        public AbstractTransform Create(TransformConfigurationElement element, ITransformParametersReader transformParametersReader, IParametersReader parametersReader, string fieldName = "") {
+        public AbstractTransform Create(TransformConfigurationElement element, ITransformParametersReader transformParametersReader, IParametersReader parametersReader, string fieldName) {
 
             var parameters = transformParametersReader.Read(element);
             AbstractTransform transform = new EmptyTransform();
@@ -48,8 +48,7 @@ namespace Transformalize.Main {
                     break;
 
                 case "regexreplace":
-                    transform = new RegexReplaceTransform(element.Pattern, element.Replacement, element.Count,
-                                                          parameters);
+                    transform = new RegexReplaceTransform(element.Pattern, element.Replacement, element.Count, parameters);
                     break;
 
                 case "insert":
@@ -141,8 +140,8 @@ namespace Transformalize.Main {
                     transform = new FormatTransform(element.Format, parameters);
                     break;
 
-                case "dateformat":
-                    transform = new DateFormatTransform(element.Format, parameters);
+                case "tostring":
+                    transform = new ToStringTransform(element.Format, parameters);
                     break;
 
                 case "toupper":
@@ -183,6 +182,10 @@ namespace Transformalize.Main {
 
                 case "defaultempty":
                     transform = new DefaultEmptyTransform(_process, fieldName, parameters);
+                    break;
+
+                case "distance":
+                    transform = new DistanceTransform(element.Units, parameters);
                     break;
             }
 

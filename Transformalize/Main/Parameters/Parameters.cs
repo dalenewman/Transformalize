@@ -22,98 +22,86 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
-namespace Transformalize.Main
-{
-    public class Parameters : IParameters, IEnumerable<KeyValuePair<string, IParameter>>
-    {
+namespace Transformalize.Main {
+    public class Parameters : IParameters, IEnumerable<KeyValuePair<string, IParameter>> {
         private readonly ConversionFactory _conversionFactory = new ConversionFactory();
         private readonly IDictionary<string, IParameter> _items = new Dictionary<string, IParameter>();
         private KeyValuePair<string, IParameter> _first;
+        private int _index = 0;
 
-        IEnumerator<KeyValuePair<string, IParameter>> IEnumerable<KeyValuePair<string, IParameter>>.GetEnumerator()
-        {
+        IEnumerator<KeyValuePair<string, IParameter>> IEnumerable<KeyValuePair<string, IParameter>>.GetEnumerator() {
             return _items.GetEnumerator();
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
+        IEnumerator IEnumerable.GetEnumerator() {
             return GetEnumerator();
         }
 
-        public int Count
-        {
+        public int Count {
             get { return _items.Count; }
         }
 
-        public IEnumerable<string> Keys
-        {
+        public IEnumerable<string> Keys {
             get { return _items.Keys; }
         }
 
-        public IEnumerator<KeyValuePair<string, IParameter>> GetEnumerator()
-        {
+        public IEnumerator<KeyValuePair<string, IParameter>> GetEnumerator() {
             return _items.GetEnumerator();
         }
 
-        public IParameter this[string key]
-        {
+        public IParameter this[string key] {
             get { return _items[key]; }
-            set
-            {
+            set {
                 _items[key] = value;
                 RecordFirst(key);
             }
         }
 
-        public void Add(string field, string name, object value, string type)
-        {
-            var parameter = new Parameter
-                                {
-                                    Name = name,
-                                    Value = value == null ? null : _conversionFactory.Convert(value, type),
-                                    SimpleType = Common.ToSimpleType(type)
-                                };
+        public IParameter this[int index] {
+            get { return _items.Where(i => i.Value.Index.Equals(index)).Select(i=>i.Value).First(); }
+        }
+
+        public void Add(string field, string name, object value, string type) {
+            var parameter = new Parameter {
+                Name = name,
+                Value = value == null ? null : _conversionFactory.Convert(value, type),
+                SimpleType = Common.ToSimpleType(type),
+            };
             Add(field, parameter);
         }
 
-        public KeyValuePair<string, IParameter> First()
-        {
+        public KeyValuePair<string, IParameter> First() {
             return _first;
         }
 
-        public bool Any()
-        {
+        public bool Any() {
             return _first.Key != null;
         }
 
-        public void Add(string field, IParameter parameter)
-        {
+        public void Add(string field, IParameter parameter) {
+            parameter.Index = _index;
             _items.Add(field, parameter);
             RecordFirst(field, parameter);
+            _index++;
         }
 
-        private void RecordFirst(string field, IParameter parameter)
-        {
-            if (_first.Key == null)
-            {
+        private void RecordFirst(string field, IParameter parameter) {
+            if (_first.Key == null) {
                 _first = new KeyValuePair<string, IParameter>(field, parameter);
             }
         }
 
-        private void RecordFirst(string key)
-        {
-            if (_first.Key == null)
-            {
+        private void RecordFirst(string key) {
+            if (_first.Key == null) {
                 _first = new KeyValuePair<string, IParameter>(key, _items[key]);
                 ;
             }
         }
 
-        public void AddRange(IParameters parameters)
-        {
-            foreach (var parameter in parameters)
-            {
+        public void AddRange(IParameters parameters) {
+            foreach (var parameter in parameters) {
                 Add(parameter.Key, parameter.Value);
             }
         }

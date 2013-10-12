@@ -59,7 +59,7 @@ namespace Transformalize.Main {
             sb.Append(match.Value);
         }
 
-        public override object Transform(object value) {
+        public override object Transform(object value, string simpleType) {
             var input = value.ToString();
             var match = _regex.Match(input);
             return match.Success ? match.Value : value;

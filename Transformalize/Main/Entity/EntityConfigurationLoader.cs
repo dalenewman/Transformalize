@@ -24,7 +24,6 @@ using System;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Libs.NLog;
-using Transformalize.Main.Providers.SqlServer;
 
 namespace Transformalize.Main {
 
@@ -38,6 +37,9 @@ namespace Transformalize.Main {
         }
 
         public Entity Read(int batchId, EntityConfigurationElement element, bool isMaster) {
+
+            GlobalDiagnosticsContext.Set("entity", Common.LogLength(element.Alias, 20));
+
             var entity = new Entity(batchId) {
                 ProcessName = _process.Name,
                 Schema = element.Schema,
@@ -45,20 +47,13 @@ namespace Transformalize.Main {
                 InputConnection = _process.Connections[element.Connection],
                 Prefix = element.Prefix,
                 Group = element.Group,
-                Auto = element.Auto,
                 IndexOptimizations = element.IndexOptimizations,
                 Alias = string.IsNullOrEmpty(element.Alias) ? element.Name : element.Alias,
                 UseBcp = element.UseBcp
             };
 
             GuardAgainstInvalidGrouping(element, entity);
-
-            if (entity.Auto) {
-                var autoReader = new SqlServerEntityAutoFieldReader();
-                var fields = autoReader.Read(entity, isMaster);
-                entity.Fields = new FieldSqlWriter(fields).FieldType(FieldType.Field, FieldType.PrimaryKey, FieldType.MasterKey).Context();
-                entity.PrimaryKey = new FieldSqlWriter(fields).FieldType(FieldType.PrimaryKey, FieldType.MasterKey).Context();
-            }
+            GuardAgainstMissingPrimaryKey(element);
 
             var fieldIndex = 0;
             foreach (FieldConfigurationElement f in element.Fields) {
@@ -68,10 +63,6 @@ namespace Transformalize.Main {
 
                 if (field.Index == 0) {
                     field.Index = fieldIndex;
-                }
-
-                if (entity.Auto && entity.Fields.ContainsKey(field.Name)) {
-                    entity.Fields.Remove(field.Name);
                 }
 
                 entity.Fields[field.Alias] = field;
@@ -104,6 +95,26 @@ namespace Transformalize.Main {
             LoadVersion(element, entity);
 
             return entity;
+        }
+
+        private void GuardAgainstMissingPrimaryKey(EntityConfigurationElement element) {
+            if (element.Fields.Cast<FieldConfigurationElement>().Any(f => f.PrimaryKey))
+                return;
+
+            if (element.CalculatedFields.Cast<FieldConfigurationElement>().Any(cf => cf.PrimaryKey))
+                return;
+
+            _log.Info("Adding TflHashCode primary key for {0}.", element.Name);
+            var pk = new FieldConfigurationElement {
+                Name = "TflHashCode",
+                Type = "System.Int32",
+                PrimaryKey = true,
+                Transforms = new TransformElementCollection {
+                    new TransformConfigurationElement {Method = "concat", Parameter = "*"},
+                    new TransformConfigurationElement {Method = "gethashcode"}
+                }
+            };
+            element.CalculatedFields.Insert(pk);
         }
 
         private void LoadVersion(EntityConfigurationElement element, Entity entity) {

@@ -64,7 +64,7 @@ namespace Transformalize.Main
             sb.Append(Run());
         }
 
-        public override object Transform(object value)
+        public override object Transform(object value, string simpleType)
         {
             _context.SetParameter(_field, value);
             return Run();
