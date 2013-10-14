@@ -21,7 +21,6 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Linq;
 using Transformalize.Configuration;
 
@@ -30,21 +29,17 @@ namespace Transformalize.Main {
     public class FieldReader : IFieldReader {
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private readonly Entity _entity;
-        private readonly IParametersReader _parametersReader;
         private readonly bool _usePrefix;
         private readonly Process _process;
-        private readonly ITransformParametersReader _transformParametersReader;
 
-        public FieldReader(Process process, Entity entity, ITransformParametersReader transformParametersReader, IParametersReader parametersReader, bool usePrefix = true) {
+        public FieldReader(Process process, Entity entity, bool usePrefix = true) {
             _process = process;
-            _transformParametersReader = transformParametersReader;
-            _parametersReader = parametersReader;
             _usePrefix = usePrefix;
             _entity = entity;
         }
 
         public Field Read(FieldConfigurationElement element, FieldType fieldType = FieldType.Field) {
-            var alias = _usePrefix && element.Alias.Equals(element.Name) && !string.IsNullOrEmpty(_entity.Prefix) ? _entity.Prefix + element.Name : element.Alias;
+            var alias = Common.GetAlias(element, _usePrefix, _entity.Prefix);
 
             var field = new Field(element.Type, element.Length, fieldType, element.Output, element.Default) {
                 Process = _process.Name,
@@ -62,7 +57,6 @@ namespace Transformalize.Main {
             };
 
             FieldSearchTypesLoader(field, element);
-            FieldTransformLoader(field, element.Transforms);
 
             return field;
         }
@@ -89,11 +83,5 @@ namespace Transformalize.Main {
             return newSearchType;
         }
 
-        private void FieldTransformLoader(Field field, IEnumerable transformElements) {
-            foreach (TransformConfigurationElement t in transformElements) {
-                var factory = new TransformFactory(_process);
-                field.Transforms.Add(factory.Create(t, _transformParametersReader, _parametersReader, field.Alias));
-            }
-        }
     }
 }

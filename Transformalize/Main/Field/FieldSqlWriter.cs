@@ -322,15 +322,6 @@ namespace Transformalize.Main {
             return this;
         }
 
-        public FieldSqlWriter HasTransform() {
-            foreach (var key in CopyOutputKeys()) {
-                var field = _original[key];
-                if (!field.HasTransforms)
-                    _output.Remove(key);
-            }
-            return this;
-        }
-
         public FieldSqlWriter HasDefault() {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];

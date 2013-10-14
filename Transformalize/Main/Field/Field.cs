@@ -62,7 +62,6 @@ namespace Transformalize.Main
         public bool NotNull { get; set; }
         public bool Identity { get; set; }
         public KeyValuePair<string, string> References { get; set; }
-        public Transforms Transforms { get; set; }
         public bool Input { get; set; }
         public bool Output { get; set; }
         public bool UseStringBuilder { get; private set; }
@@ -72,12 +71,6 @@ namespace Transformalize.Main
         public bool VariableLength { get; set; }
         public bool Auto { get; set; }
         public string Aggregate { get; set; }
-
-        public bool HasTransforms
-        {
-            get { return Transforms != null && Transforms.Count > 0; }
-        }
-
         public IParameters Parameters { get; set; }
         public bool HasParameters { get; set; }
         public List<SearchType> SearchTypes { get; set; }
@@ -146,7 +139,6 @@ namespace Transformalize.Main
             Output = output || MustBeOutput();
             SystemType = Common.ToSystemType(SimpleType);
             StringBuilder = UseStringBuilder ? new StringBuilder() : null;
-            Transforms = new Transforms();
             Default = new ConversionFactory().Convert(@default, SimpleType);
             SearchTypes = new List<SearchType>();
         }
@@ -154,31 +146,6 @@ namespace Transformalize.Main
         public string AsJoin(string left, string right)
         {
             return string.Format("{0}.[{1}] = {2}.[{1}]", left, Name, right);
-        }
-
-        public void Transform(Row row)
-        {
-            foreach (AbstractTransform t in Transforms)
-            {
-                if (t.RequiresRow || t.HasParameters)
-                {
-                    t.Transform(ref row, Alias);
-                }
-                else
-                {
-                    if (UseStringBuilder)
-                    {
-                        StringBuilder.Clear();
-                        StringBuilder.Append(row[Alias]);
-                        t.Transform(ref StringBuilder);
-                        row[Alias] = StringBuilder.ToString();
-                    }
-                    else
-                    {
-                        row[Alias] = t.Transform(row[Alias], SimpleType);
-                    }
-                }
-            }
         }
 
         public override string ToString()

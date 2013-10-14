@@ -25,6 +25,7 @@ using NUnit.Framework;
 using Transformalize.Configuration;
 using Transformalize.Libs.NLog;
 using Transformalize.Main;
+using Transformalize.Main.Parameters;
 using Transformalize.Runner;
 
 namespace Transformalize.Test.Integration
@@ -70,7 +71,7 @@ namespace Transformalize.Test.Integration
                 {"ProductName", "ProductName", null, "System.Object"}
             };
 
-            var actual = _process.Parameters();
+            var actual = _process.Parameters;
 
             Assert.AreEqual(2, actual.Count);
             Assert.AreEqual(expected["LastName"].Name, actual["LastName"].Name);

@@ -29,7 +29,6 @@ using Transformalize.Main;
 namespace Transformalize.Operations {
     public class ParametersExtract : InputCommandOperation {
         private readonly Process _process;
-        private IParameters _parameters;
         private int[] _batchIds;
 
         public ParametersExtract(Process process) : base(process.OutputConnection) {
@@ -37,18 +36,17 @@ namespace Transformalize.Operations {
             UseTransaction = false;
         }
 
-        private string BuildSql(Process process) {
+        private string PrepareSql() {
             string where = string.Empty;
 
-            _parameters = process.Parameters();
-            var fields = string.Join(", ", _parameters.Keys);
+            var fields = string.Join(", ", _process.Parameters.Keys);
 
             if (!_process.MasterEntity.IsFirstRun) {
-                _batchIds = process.Entities.Select(kv => kv.TflBatchId).Distinct().ToArray();
+                _batchIds = _process.Entities.Select(kv => kv.TflBatchId).Distinct().ToArray();
                 @where = _batchIds.Length == 1 ? " WHERE [TflBatchId] = @TflBatchId" : string.Format(" WHERE TflBatchId BETWEEN {0} AND {1}", _batchIds.Min(), _batchIds.Max());
             }
 
-            var sql = string.Format("SELECT [TflKey], {0} FROM {1}{2};", fields, process.Star, where);
+            var sql = string.Format("SELECT [TflKey], {0} FROM {1}{2};", fields, _process.Star, where);
             Debug("SQL:\r\n{0}", sql);
             return sql;
         }
@@ -57,7 +55,7 @@ namespace Transformalize.Operations {
             var row = new Row();
             var index = 1;
             row["TflKey"] = reader.GetValue(0);
-            foreach (var p in _parameters) {
+            foreach (var p in _process.Parameters) {
                 row[p.Key] = reader.GetValue(index);
                 index++;
             }
@@ -65,7 +63,7 @@ namespace Transformalize.Operations {
         }
 
         protected override void PrepareCommand(IDbCommand cmd) {
-            cmd.CommandText = BuildSql(_process);
+            cmd.CommandText = PrepareSql();
             cmd.CommandTimeout = 0;
 
             if (!_process.MasterEntity.IsFirstRun) {

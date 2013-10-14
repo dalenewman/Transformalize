@@ -27,6 +27,7 @@ using System.Linq;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Ninject;
 using Transformalize.Libs.RazorEngine;
+using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.AnalysisServices;
 using Transformalize.Main.Providers.File;
@@ -57,8 +58,20 @@ namespace Transformalize.Main {
         public Encoding TemplateContentType = Encoding.Raw;
         public Dictionary<string, Template> Templates = new Dictionary<string, Template>();
         public AbstractConnection OutputConnection;
+        private List<IOperation> _transformOperations = new List<IOperation>();
+        private IParameters _parameters = new Parameters.Parameters();
         public string Star { get; set; }
         public string Bcp { get; set; }
+
+        public List<IOperation> TransformOperations {
+            get { return _transformOperations; }
+            set { _transformOperations = value; }
+        }
+
+        public IParameters Parameters {
+            get { return _parameters; }
+            set { _parameters = value; }
+        }
 
         public Process(string name = "") {
 
@@ -126,22 +139,22 @@ namespace Transformalize.Main {
             return new StarFields(this).Fields().Where(f => !f.SearchTypes.Any(st => st.Name.Equals("none")));
         }
 
-        public IParameters Parameters() {
-            var parameters = new Parameters();
+        //public IParameters Parameters() {
+        //    var parameters = new Parameters.Parameters();
 
-            foreach (var calculatedField in CalculatedFields) {
-                if (calculatedField.Value.HasTransforms) {
-                    foreach (AbstractTransform transform in calculatedField.Value.Transforms) {
-                        if (transform.HasParameters) {
-                            foreach (var parameter in transform.Parameters) {
-                                parameters[parameter.Key] = parameter.Value;
-                            }
-                        }
-                    }
-                }
-            }
-            return parameters;
-        }
+        //    foreach (var calculatedField in CalculatedFields) {
+        //        if (calculatedField.Value.HasTransforms) {
+        //            foreach (AbstractTransform transform in calculatedField.Value.Transforms) {
+        //                if (transform.HasParameters) {
+        //                    foreach (var parameter in transform.Parameters) {
+        //                        parameters[parameter.Key] = parameter.Value;
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //    return parameters;
+        //}
 
         public Entity this[string entity] {
             get {

@@ -59,7 +59,7 @@ namespace Transformalize.Main {
             foreach (FieldConfigurationElement f in element.Fields) {
                 var fieldType = GetFieldType(f, isMaster);
 
-                var field = new FieldReader(_process, entity, new FieldTransformParametersReader(), new EmptyParametersReader()).Read(f, fieldType);
+                var field = new FieldReader(_process, entity).Read(f, fieldType);
 
                 if (field.Index == 0) {
                     field.Index = fieldIndex;
@@ -75,9 +75,7 @@ namespace Transformalize.Main {
             }
 
             foreach (FieldConfigurationElement cf in element.CalculatedFields) {
-                var transformParametersReader = new EntityTransformParametersReader(entity);
-                var parametersReader = new EntityParametersReader(entity);
-                var fieldReader = new FieldReader(_process, entity, transformParametersReader, parametersReader, usePrefix: false);
+                var fieldReader = new FieldReader(_process, entity, usePrefix: false);
                 var fieldType = GetFieldType(cf, isMaster);
                 var field = fieldReader.Read(cf, fieldType);
 

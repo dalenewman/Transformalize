@@ -23,7 +23,7 @@
 namespace Transformalize.Main {
     public class EntityParametersReader : IParametersReader {
         private readonly Entity _entity;
-        private readonly IParameters _parameters = new Parameters();
+        private readonly IParameters _parameters = new Parameters.Parameters();
 
         public EntityParametersReader(Entity entity) {
             _entity = entity;

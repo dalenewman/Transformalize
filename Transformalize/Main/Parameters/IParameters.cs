@@ -34,5 +34,6 @@ namespace Transformalize.Main
         void Add(string field, string name, object value, string type);
         KeyValuePair<string, IParameter> First();
         bool Any();
+        IEnumerable<KeyValuePair<string, IParameter>> ToEnumerable();
     }
 }

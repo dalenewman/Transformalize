@@ -58,7 +58,6 @@ namespace Transformalize.Main.Providers.SqlServer
                         Input = true,
                         Precision = reader.GetByte(4),
                         Scale = reader.GetInt32(5),
-                        Transforms = new Transforms(),
                         Auto = true,
                         Alias = entity.Prefix + name
                     };

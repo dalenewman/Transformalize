@@ -24,7 +24,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Transformalize.Main {
+namespace Transformalize.Main.Parameters {
     public class Parameters : IParameters, IEnumerable<KeyValuePair<string, IParameter>> {
         private readonly ConversionFactory _conversionFactory = new ConversionFactory();
         private readonly IDictionary<string, IParameter> _items = new Dictionary<string, IParameter>();
@@ -60,7 +60,7 @@ namespace Transformalize.Main {
         }
 
         public IParameter this[int index] {
-            get { return _items.Where(i => i.Value.Index.Equals(index)).Select(i=>i.Value).First(); }
+            get { return _items.Where(i => i.Value.Index.Equals(index)).Select(i => i.Value).First(); }
         }
 
         public void Add(string field, string name, object value, string type) {
@@ -78,6 +78,11 @@ namespace Transformalize.Main {
 
         public bool Any() {
             return _first.Key != null;
+        }
+
+        public IEnumerable<KeyValuePair<string, IParameter>> ToEnumerable()
+        {
+            return _items.Select(p => p).OrderBy(p => p.Value.Index);
         }
 
         public void Add(string field, IParameter parameter) {

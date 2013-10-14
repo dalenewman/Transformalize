@@ -26,6 +26,7 @@ using System.Data;
 using System.Globalization;
 using System.Linq;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Providers;
 
 namespace Transformalize.Main
@@ -33,6 +34,7 @@ namespace Transformalize.Main
     public class Entity
     {
         private readonly int _tflBatchId;
+        private List<IOperation> _transformOperations = new List<IOperation>();
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
         public Entity(int batchId)
@@ -77,6 +79,11 @@ namespace Transformalize.Main
         public bool IsFirstRun { get; set; }
         public bool UseBcp { get; set; }
         public bool IndexOptimizations { get; set; }
+        public List<IOperation> TransformOperations
+        {
+            get { return _transformOperations; }
+            set { _transformOperations = value; }
+        }
 
         public string FirstKey()
         {

@@ -63,7 +63,7 @@ namespace Transformalize.Test.Integration {
 
         [Test]
         public void DTest() {
-            var options = new Options { Mode = "test", Top = 1, LogLevel = LogLevel.Trace };
+            var options = new Options { Mode = "test", LogLevel = LogLevel.Debug };
             var process = ProcessFactory.Create(FILE, options);
             process.Run();
         }

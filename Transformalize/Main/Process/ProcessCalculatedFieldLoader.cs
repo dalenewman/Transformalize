@@ -10,13 +10,10 @@ namespace Transformalize.Main {
             _elements = elements;
         }
 
-
         // this has to be loader, not a reader, because calculated fields depend on calculated fields as parameters
         public void Load() {
             foreach (FieldConfigurationElement field in _elements) {
-                var transformParametersReader = new ProcessTransformParametersReader(_process);
-                var parametersReader = new ProcessParametersReader(_process);
-                var fr = new FieldReader(_process, _process.MasterEntity, transformParametersReader, parametersReader, usePrefix:false);
+                var fr = new FieldReader(_process, _process.MasterEntity, usePrefix: false);
                 _process.CalculatedFields.Add(field.Alias, fr.Read(field));
             }
         }

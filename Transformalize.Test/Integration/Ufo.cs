@@ -28,7 +28,7 @@ namespace Transformalize.Test.Integration {
     [TestFixture]
     public class Ufo
     {
-        private const string FILE = @"c:\etl\tfl\Ufo.xml";
+        private const string FILE = @"c:\code\TflConfiguration\Ufo.xml";
 
         [SetUp]
         public void SetUp() {
@@ -45,9 +45,7 @@ namespace Transformalize.Test.Integration {
 
         [Test]
         public void UfoDefault() {
-            var options = new Options() { Mode = "test"};
-            var process = ProcessFactory.Create(FILE, options);
-            process.Run();
+            ProcessFactory.Create(FILE).Run();
         }
 
     }

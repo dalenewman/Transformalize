@@ -54,6 +54,7 @@ namespace Transformalize.Main {
         public static Dictionary<string, Func<object, object>> ObjectConversionMap = new Dictionary<string, Func<object, object>> {
             { "string", (x => x) },
             { "xml", (x => x) },
+            { "guid", (x => Guid.Parse(x.ToString()))},
             { "int16", (x => Convert.ToInt16(x)) },
             { "int", (x => Convert.ToInt32(x)) },
             { "int32", (x => Convert.ToInt32(x)) },
@@ -75,6 +76,10 @@ namespace Transformalize.Main {
 
         public static Func<Field, bool> FieldFinder(string nameOrAlias) {
             return v => v.Name.Equals(nameOrAlias, IC) || v.Alias.Equals(nameOrAlias, IC);
+        }
+
+        public static string GetAlias(FieldConfigurationElement element, bool usePrefix, string prefix) {
+            return usePrefix && element.Alias.Equals(element.Name) && !string.IsNullOrEmpty(prefix) ? prefix + element.Name : element.Alias;
         }
 
         public static string GetTemporaryFolder(string processName) {

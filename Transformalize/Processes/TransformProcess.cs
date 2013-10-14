@@ -27,33 +27,31 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 using Transformalize.Operations;
 
-namespace Transformalize.Processes
-{
-    public class TransformProcess : EtlProcess
-    {
+namespace Transformalize.Processes {
+    public class TransformProcess : EtlProcess {
         private readonly Process _process;
 
-        public TransformProcess(Process process)
-        {
+        public TransformProcess(Process process) {
             GlobalDiagnosticsContext.Set("entity", Common.LogLength("All", 20));
             _process = process;
         }
 
-        protected override void Initialize()
-        {
+        protected override void Initialize() {
             Register(new ParametersExtract(_process));
             Register(new ApplyDefaults(_process.CalculatedFields));
-            Register(new TransformFields(_process.CalculatedFields));
+            //Register(new TransformFields(_process.CalculatedFields));
+
+            foreach (var transform in _process.TransformOperations) {
+                Register(transform);
+            }
+
             RegisterLast(new ResultsLoad(_process));
         }
 
-        protected override void PostProcessing()
-        {
+        protected override void PostProcessing() {
             var errors = GetAllErrors().ToArray();
-            if (errors.Any())
-            {
-                foreach (var error in errors)
-                {
+            if (errors.Any()) {
+                foreach (var error in errors) {
                     Error(error.InnerException, "Message: {0}\r\nStackTrace:{1}\r\n", error.Message, error.StackTrace);
                 }
                 Environment.Exit(1);

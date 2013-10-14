@@ -23,30 +23,23 @@
 using Transformalize.Configuration;
 using Transformalize.Libs.NLog;
 
-namespace Transformalize.Main
-{
-    public class FieldTransformParametersReader : ITransformParametersReader
-    {
+namespace Transformalize.Main {
+    public class FieldTransformParametersReader : ITransformParametersReader {
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
 
-        public Parameters Read(TransformConfigurationElement transform)
-        {
-            var parameters = new Parameters();
+        public Parameters.Parameters Read(TransformConfigurationElement transform) {
+            var parameters = new Parameters.Parameters();
 
-            if (transform.Parameter != string.Empty && transform.Parameter != "*")
-            {
-                transform.Parameters.Insert(new ParameterConfigurationElement
-                                                {
-                                                    Field = transform.Parameter
-                                                });
+            if (transform.Parameter != string.Empty && transform.Parameter != "*") {
+                transform.Parameters.Insert(new ParameterConfigurationElement {
+                    Field = transform.Parameter
+                });
             }
 
-            foreach (ParameterConfigurationElement p in transform.Parameters)
-            {
-                if (string.IsNullOrEmpty(p.Name))
-                {
+            foreach (ParameterConfigurationElement p in transform.Parameters) {
+                if (string.IsNullOrEmpty(p.Name)) {
                     _log.Warn("Detected a {0} transform parameter without a name attribute.  Field parameters require names and values.", transform.Method);
-                    return new Parameters();
+                    return new Parameters.Parameters();
                 }
 
                 //if (string.IsNullOrEmpty(p.Value))

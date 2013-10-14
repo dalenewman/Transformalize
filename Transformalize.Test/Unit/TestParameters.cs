@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using Transformalize.Main;
+using Transformalize.Main.Parameters;
 
 namespace Transformalize.Test.Unit
 {

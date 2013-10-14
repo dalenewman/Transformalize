@@ -66,8 +66,11 @@ namespace Transformalize.Main {
 
             //these depend on the shared process properties
             new EntitiesLoader(ref _process, _config.Entities).Load();
+            new TransformsLoader(ref _process, _config.Entities).Load();
+
             _process.Relationships = new RelationshipsReader(_process, _config.Relationships).Read();
-            new ProcessCalculatedFieldLoader(ref _process, _config.CalculatedFields).Load();
+            //new ProcessCalculatedFieldLoader(ref _process, _config.CalculatedFields).Load();
+            new ProcessTransformsLoader(ref _process, _config.CalculatedFields).Load();
             _process.Star = string.IsNullOrEmpty(_config.Star) ? _process.Name + "Star" : _config.Star;
 
             new EntityRelationshipLoader(ref _process).Load();
@@ -103,9 +106,6 @@ namespace Transformalize.Main {
 
             var mapCount = _process.MapStartsWith.Count + _process.MapEquals.Count + _process.MapEndsWith.Count;
             _log.Debug("{0} Map{1}.", mapCount, mapCount.Plural());
-
-            var transformCount = _process.CalculatedFields.ToEnumerable().Sum(f => f.Transforms.Count) + _process.Entities.Sum(e => e.CalculatedFields.ToEnumerable().Sum(f => f.Transforms.Count) + e.Fields.ToEnumerable().Sum(f => f.Transforms.Count));
-            _log.Debug("{0} Transform{1}.", transformCount, transformCount.Plural());
         }
 
     }

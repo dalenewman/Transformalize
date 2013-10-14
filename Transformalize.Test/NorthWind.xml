@@ -111,7 +111,7 @@
       </fields>      
     </add>
 
-    <add name="Employees" prefix="Employees">
+    <add name="Employees" version="RowVersion" prefix="Employees">
       <fields>
         <add name="Address" length="60" ></add>
         <add name="BirthDate" type="System.DateTime" ></add>
@@ -182,7 +182,7 @@
       </fields>
     </add>
     
-    <add name="Categories" prefix="Categories">
+    <add name="Categories" version="RowVersion" prefix="Categories">
       <fields>
         <add name="CategoryID" type="System.Int32" primary-key="true"></add>
         <add name="CategoryName" length="15" ></add>

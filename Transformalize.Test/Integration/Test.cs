@@ -39,17 +39,18 @@ namespace Transformalize.Test.Integration
         [Test]
         public void Init()
         {
-            var options = new Options { Mode = "init" };
-            var process = new ProcessReader(new ProcessConfigurationReader("Test").Read(), options).Read();
-            process.Run();
+            ProcessFactory.Create("Test", new Options { Mode = "init" }).Run();
         }
 
         [Test]
         public void Normal()
         {
-            var options = new Options { RenderTemplates = true };
-            var process = new ProcessReader(new ProcessConfigurationReader("Test").Read(), options).Read();
-            process.Run();
+            ProcessFactory.Create("Test").Run();
+        }
+
+        [Test]
+        public void TestMode() {
+            ProcessFactory.Create("Test", new Options { Mode = "test", Top = 1, LogLevel = LogLevel.Debug}).Run();
         }
     }
 }

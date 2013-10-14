@@ -44,6 +44,12 @@ namespace Transformalize.Test.Integration {
         }
 
         [Test]
+        public void First() {
+            ProcessFactory.Create(CONFIGURATION_FILE, new Options() { Mode = "first"}).Run();
+        }
+
+
+        [Test]
         public void Normal() {
             ProcessFactory.Create(CONFIGURATION_FILE).Run();
         }

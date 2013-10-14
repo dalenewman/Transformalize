@@ -32,7 +32,6 @@ using Transformalize.Operations;
 namespace Transformalize.Processes {
 
     public class EntityProcess : EtlProcess {
-        private readonly Fields _fieldsWithTransforms;
         private readonly Process _process;
         private Entity _entity;
 
@@ -40,7 +39,6 @@ namespace Transformalize.Processes {
             GlobalDiagnosticsContext.Set("entity", Common.LogLength(entity.Alias, 20));
             _process = process;
             _entity = entity;
-            _fieldsWithTransforms = new FieldSqlWriter(entity.Fields).HasTransform().Context();
         }
 
         protected override void Initialize() {
@@ -66,8 +64,9 @@ namespace Transformalize.Processes {
             }
 
             Register(new ApplyDefaults(_entity.Fields, _entity.CalculatedFields));
-            Register(new TransformFields(_fieldsWithTransforms));
-            Register(new TransformFields(_entity.CalculatedFields));
+            foreach (var transform in _entity.TransformOperations) {
+                Register(transform);
+            }
 
             if (_entity.Group)
                 Register(new EntityAggregation(_entity));

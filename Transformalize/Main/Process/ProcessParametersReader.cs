@@ -24,7 +24,7 @@ namespace Transformalize.Main
 {
     public class ProcessParametersReader : IParametersReader
     {
-        private readonly IParameters _parameters = new Parameters();
+        private readonly IParameters _parameters = new Parameters.Parameters();
         private readonly Process _process;
 
         public ProcessParametersReader(Process process)

@@ -32,8 +32,8 @@ namespace Transformalize.Main {
             _entity = entity;
         }
 
-        public Parameters Read(TransformConfigurationElement transform) {
-            var parameters = new Parameters();
+        public Parameters.Parameters Read(TransformConfigurationElement transform) {
+            var parameters = new Parameters.Parameters();
 
             if (transform.Parameter != string.Empty && transform.Parameter != "*") {
                 transform.Parameters.Insert(new ParameterConfigurationElement {

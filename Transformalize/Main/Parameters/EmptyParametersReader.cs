@@ -26,7 +26,7 @@ namespace Transformalize.Main
     {
         public IParameters Read()
         {
-            return new Parameters();
+            return new Parameters.Parameters();
         }
     }
 }
