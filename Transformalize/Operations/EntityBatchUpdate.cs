@@ -41,7 +41,7 @@ namespace Transformalize.Operations {
 
         protected override void PrepareCommand(Row row, SqlCommand command) {
             
-            var writer = new FieldSqlWriter(_entity.Fields, _entity.CalculatedFields).Output();
+            var writer = new FieldSqlWriter(_entity.Fields, _entity.CalculatedFields).AddValidationResults(false).Output();
             var sets = writer.Alias(_provider).SetParam().Write(", ", false);
 
             command.CommandText = string.Format(@"

@@ -24,15 +24,13 @@ using System.Data.SqlClient;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
-namespace Transformalize.Operations
-{
-    public class EntityBulkInsert : SqlBulkInsertOperation
-    {
+namespace Transformalize.Operations {
+    public class EntityBulkInsert : SqlBulkInsertOperation {
         private readonly Process _process;
         private readonly Entity _entity;
 
-        public EntityBulkInsert(Process process, Entity entity) : base(process.OutputConnection, entity.OutputName())
-        {
+        public EntityBulkInsert(Process process, Entity entity)
+            : base(process.OutputConnection, entity.OutputName()) {
             _process = process;
             _entity = entity;
             UseTransaction = false;
@@ -43,20 +41,17 @@ namespace Transformalize.Operations
             TurnOptionOff(SqlBulkCopyOptions.FireTriggers);
         }
 
-        protected override void PrepareSchema()
-        {
+        protected override void PrepareSchema() {
             NotifyBatchSize = 10000;
             BatchSize = _process.OutputConnection.BatchSize;
 
-            var fields = new FieldSqlWriter(_entity.Fields, _entity.CalculatedFields).Output().AddBatchId(false).ToArray();
-            foreach (var field in fields)
-            {
+            var fields = new FieldSqlWriter(_entity.Fields, _entity.CalculatedFields).Output().AddBatchId(false).AddValidationResults(false).ToArray();
+            foreach (var field in fields) {
                 Schema[field.Alias] = field.SystemType;
             }
         }
 
-        protected override void OnSqlRowsCopied(object sender, SqlRowsCopiedEventArgs e)
-        {
+        protected override void OnSqlRowsCopied(object sender, SqlRowsCopiedEventArgs e) {
             Info("Processed {0} rows in EntityBulkInsert", e.RowsCopied);
         }
     }

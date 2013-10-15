@@ -59,7 +59,7 @@ namespace Transformalize.Operations {
                 return;
 
             var primaryKey = _writer.FieldType(_entity.IsMaster() ? FieldType.MasterKey : FieldType.PrimaryKey).Alias(provider).Asc().Values();
-            var defs = _writer.Reload().AddSurrogateKey().AddBatchId().Output().Alias(provider).DataType().AppendIf(" NOT NULL", _entity.IsMaster() ? FieldType.MasterKey : FieldType.PrimaryKey).Values();
+            var defs = _writer.Reload().AddSurrogateKey().AddBatchId().AddValidationResults().Output().Alias(provider).DataType().AppendIf(" NOT NULL", _entity.IsMaster() ? FieldType.MasterKey : FieldType.PrimaryKey).Values();
 
             var createSql = _process.OutputConnection.TableQueryWriter.CreateTable(_entity.OutputName(), defs, _entity.Schema);
             Debug(createSql);

@@ -34,7 +34,8 @@ namespace Transformalize.Main
     public class Entity
     {
         private readonly int _tflBatchId;
-        private List<IOperation> _transformOperations = new List<IOperation>();
+        private List<AbstractOperation> _transformOperations = new List<AbstractOperation>();
+        private List<AbstractOperation> _validatorOperations = new List<AbstractOperation>(); 
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
         public Entity(int batchId)
@@ -79,10 +80,15 @@ namespace Transformalize.Main
         public bool IsFirstRun { get; set; }
         public bool UseBcp { get; set; }
         public bool IndexOptimizations { get; set; }
-        public List<IOperation> TransformOperations
+        public List<AbstractOperation> TransformOperations
         {
             get { return _transformOperations; }
             set { _transformOperations = value; }
+        }
+        public List<AbstractOperation>  ValidatorOperations
+        {
+            get { return _validatorOperations; }
+            set { _validatorOperations = value; }
         }
 
         public string FirstKey()

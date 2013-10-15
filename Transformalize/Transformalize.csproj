@@ -138,6 +138,8 @@
     <Compile Include="Configuration\ConnectionElementCollection.cs" />
     <Compile Include="Configuration\ActionConfigurationElement.cs" />
     <Compile Include="Configuration\ActionElementCollection.cs" />
+    <Compile Include="Configuration\ValidatorConfigurationElement.cs" />
+    <Compile Include="Configuration\ValidatorElementCollection.cs" />
     <Compile Include="Configuration\ModeConfigurationElement.cs" />
     <Compile Include="Configuration\ModeElementCollection.cs" />
     <Compile Include="Configuration\ProviderConfigurationElement.cs" />
@@ -590,6 +592,7 @@
     <Compile Include="Main\Process\ProcessFactory.cs" />
     <Compile Include="Main\Process\ProcessTransformsLoader.cs" />
     <Compile Include="Main\Process\TransformsLoader.cs" />
+    <Compile Include="Main\Process\ValidatorsLoader.cs" />
     <Compile Include="Main\Providers\FalseEntityExists.cs" />
     <Compile Include="Main\Providers\FileEntityDropper.cs" />
     <Compile Include="Main\Providers\File\FileEntityExists.cs" />
@@ -599,7 +602,6 @@
     <Compile Include="Main\Providers\MySql\MySqlEntityDropper.cs" />
     <Compile Include="Main\Providers\MySql\MySqlEntityExists.cs" />
     <Compile Include="Main\Providers\MySql\MySqlEntityRecordsExist.cs" />
-    <Compile Include="Main\Process\ProcessCalculatedFieldLoader.cs" />
     <Compile Include="Main\Providers\EmptyQueryWriter.cs" />
     <Compile Include="Main\Providers\EmptyScriptRunner.cs" />
     <Compile Include="Main\Providers\EmptyTableQueryWriter.cs" />
@@ -1103,6 +1105,9 @@
     <Compile Include="Operations\Transform\TrimEndOperation.cs" />
     <Compile Include="Operations\Transform\TrimOperation.cs" />
     <Compile Include="Operations\Transform\TrimStartOperation.cs" />
+    <Compile Include="Operations\Validate\ContainsCharactersOperation.cs" />
+    <Compile Include="Operations\Validate\EmptyValidatorOperation.cs" />
+    <Compile Include="Operations\Validate\ValidatorOperationFactory.cs" />
     <Compile Include="Processes\EntityDeleteProcess.cs" />
     <Compile Include="Operations\EntityDetectDeletes.cs" />
     <Compile Include="Processes\EntityKeysProcess.cs" />

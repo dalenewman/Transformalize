@@ -37,7 +37,7 @@ namespace Transformalize.Main {
             _process = process;
         }
 
-        public IOperation Create(Field field, TransformConfigurationElement element, IParameters parameters) {
+        public AbstractOperation Create(Field field, TransformConfigurationElement element, IParameters parameters) {
             var hasParameters = parameters.Count > 0;
             var inKey = hasParameters ? parameters[0].Name : field.Alias;
             var inType = hasParameters ? parameters[0].SimpleType : field.SimpleType;

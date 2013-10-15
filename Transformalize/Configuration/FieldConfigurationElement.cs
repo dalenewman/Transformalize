@@ -39,6 +39,7 @@ namespace Transformalize.Configuration
         private const string VARIABLE_LENGTH = "variable-length";
         private const string DEFAULT = "default";
         private const string TRANSFORMS = "transforms";
+        private const string VALIDATORS = "validators";
         private const string SEARCH_TYPE = "search-type";
         private const string SEARCH_TYPES = "search-types";
         private const string PRIMARY_KEY = "primary-key";
@@ -156,6 +157,12 @@ namespace Transformalize.Configuration
         {
             get { return this[TRANSFORMS] as TransformElementCollection; }
             set { this[TRANSFORMS] = value; }
+        }
+
+        [ConfigurationProperty(VALIDATORS)]
+        public ValidatorElementCollection Validators {
+            get { return this[VALIDATORS] as ValidatorElementCollection; }
+            set { this[VALIDATORS] = value; }
         }
 
         [ConfigurationProperty(AGGREGATE, IsRequired = false, DefaultValue = "")]

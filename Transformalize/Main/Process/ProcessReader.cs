@@ -21,7 +21,6 @@
 #endregion
 
 using System;
-using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
 using Transformalize.Libs.NLog;
@@ -66,10 +65,10 @@ namespace Transformalize.Main {
 
             //these depend on the shared process properties
             new EntitiesLoader(ref _process, _config.Entities).Load();
+            new ValidatorsLoader(ref _process, _config.Entities).Load();
             new TransformsLoader(ref _process, _config.Entities).Load();
 
             _process.Relationships = new RelationshipsReader(_process, _config.Relationships).Read();
-            //new ProcessCalculatedFieldLoader(ref _process, _config.CalculatedFields).Load();
             new ProcessTransformsLoader(ref _process, _config.CalculatedFields).Load();
             _process.Star = string.IsNullOrEmpty(_config.Star) ? _process.Name + "Star" : _config.Star;
 
