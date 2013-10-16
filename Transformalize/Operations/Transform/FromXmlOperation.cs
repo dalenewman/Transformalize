@@ -9,7 +9,7 @@ using Transformalize.Main;
 namespace Transformalize.Operations.Transform
 {
     public class FromXmlOperation : AbstractOperation {
-        private readonly string _outKey;
+        private readonly string _inKey;
         private readonly Dictionary<string, string> _map = new Dictionary<string, string>();
         private readonly Dictionary<string, string> _typeMap = new Dictionary<string, string>();
         private static readonly XmlReaderSettings Settings = new XmlReaderSettings {
@@ -17,9 +17,9 @@ namespace Transformalize.Operations.Transform
             IgnoreComments = true
         };
 
-        public FromXmlOperation(string outKey, IParameters parameters) {
+        public FromXmlOperation(string inKey, IParameters parameters) {
 
-            _outKey = outKey;
+            _inKey = inKey;
 
             foreach (var field in parameters) {
                 _map[field.Value.Name] = field.Key;
@@ -34,13 +34,13 @@ namespace Transformalize.Operations.Transform
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
-                using (var reader = XmlReader.Create(new StringReader(row[_outKey].ToString()), Settings)) {
+                using (var reader = XmlReader.Create(new StringReader(row[_inKey].ToString()), Settings)) {
                     while (reader.Read()) {
                         if (!reader.IsStartElement())
                             continue;
                         while (_map.ContainsKey(reader.Name)) {
                             var name = reader.Name;
-                            var value = reader.ReadElementContentAsString();
+                            var value = reader.ReadInnerXml();
                             if (value != string.Empty)
                                 row[_map[name]] = Common.ConversionMap[_typeMap[name]](value);
                         }

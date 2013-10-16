@@ -20,7 +20,10 @@
 
 #endregion
 
+using System;
 using System.Configuration;
+using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
+using Transformalize.Main;
 
 namespace Transformalize.Configuration
 {
@@ -58,6 +61,19 @@ namespace Transformalize.Configuration
         private const string TO = "to";
         private const string CLEAN = "clean";
         private const string UNITS = "units";
+        private const string DOMAIN = "domain";
+
+        //validation
+        private const string APPEND_TO = "append-to";
+        private const string CHARACTERS = "characters";
+        private const string CONTAINS_CHARACTERS = "contains-characters";
+        private const string MESSAGE = "message";
+        private const string NEGATED = "negated";
+        private const string LOWER_BOUND = "lower-bound";
+        private const string LOWER_BOUND_TYPE = "lower-bound-type";
+        private const string UPPER_BOUND = "upper-bound";
+        private const string UPPER_BOUND_TYPE = "upper-bound-type";
+
 
         [ConfigurationProperty(METHOD, IsRequired = true)]
         public string Method
@@ -280,6 +296,69 @@ namespace Transformalize.Configuration
             get { return this[FIELDS] as FieldElementCollection; }
         }
 
+        //validation
+        [ConfigurationProperty(APPEND_TO, IsRequired = false, DefaultValue = "")]
+        public string AppendTo {
+            get { return this[APPEND_TO] as string; }
+            set { this[APPEND_TO] = value; }
+        }
+
+        [ConfigurationProperty(CHARACTERS, IsRequired = false, DefaultValue = "")]
+        public string Characters {
+            get { return this[CHARACTERS] as string; }
+            set { this[CHARACTERS] = value; }
+        }
+
+        [ConfigurationProperty(MESSAGE, IsRequired = false, DefaultValue = "")]
+        public string Message {
+            get { return this[MESSAGE] as string; }
+            set { this[MESSAGE] = value; }
+        }
+
+        [EnumConversionValidator(typeof(ContainsCharacters), MessageTemplate = "{1} must be a valid ContainsCharacters. (e.g. All, Any)")]
+        [ConfigurationProperty(CONTAINS_CHARACTERS, IsRequired = false, DefaultValue = "Any")]
+        public string ContainsCharacters {
+            get { return this[CONTAINS_CHARACTERS] as string; }
+            set { this[CONTAINS_CHARACTERS] = value; }
+        }
+
+        [ConfigurationProperty(NEGATED, IsRequired = false, DefaultValue = false)]
+        public bool Negated {
+            get { return (bool)this[NEGATED]; }
+            set { this[NEGATED] = value; }
+        }
+
+        [ConfigurationProperty(LOWER_BOUND, IsRequired = false)]
+        public DateTime LowerBound {
+            get { return (DateTime)this[LOWER_BOUND]; }
+            set { this[LOWER_BOUND] = value; }
+        }
+
+        [EnumConversionValidator(typeof(RangeBoundaryType),MessageTemplate = "{1} must be a valid RangeBoundaryType. (e.g. Inclusive, Exclusive, or Ignore)")]
+        [ConfigurationProperty(LOWER_BOUND_TYPE, IsRequired = false, DefaultValue = "Inclusive")]
+        public string LowerBoundType {
+            get { return this[LOWER_BOUND_TYPE] as string; }
+            set { this[LOWER_BOUND_TYPE] = value; }
+        }
+
+        [ConfigurationProperty(UPPER_BOUND, IsRequired = false)]
+        public DateTime UpperBound {
+            get { return (DateTime)this[UPPER_BOUND]; }
+            set { this[UPPER_BOUND] = value; }
+        }
+
+        [EnumConversionValidator(typeof(RangeBoundaryType), MessageTemplate = "{1} must be a valid RangeBoundaryType. (e.g. Inclusive, Exclusive, or Ignore)")]
+        [ConfigurationProperty(UPPER_BOUND_TYPE, IsRequired = false, DefaultValue = "Inclusive")]
+        public string UpperBoundType {
+            get { return this[UPPER_BOUND_TYPE] as string; }
+            set { this[UPPER_BOUND_TYPE] = value; }
+        }
+
+        [ConfigurationProperty(DOMAIN, IsRequired = false, DefaultValue = "")]
+        public string Domain {
+            get { return this[DOMAIN] as string; }
+            set { this[DOMAIN] = value; }
+        }
 
         public override bool IsReadOnly()
         {

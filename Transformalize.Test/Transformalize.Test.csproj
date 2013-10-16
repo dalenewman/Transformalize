@@ -132,6 +132,11 @@
     <Compile Include="Integration\Test.cs" />
     <Compile Include="Integration\TestConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Unit\TestValidators.cs" />
+    <Compile Include="Unit\ParameterBuilder.cs" />
+    <Compile Include="Unit\ParametersBuilder.cs" />
+    <Compile Include="Unit\RowBuilder.cs" />
+    <Compile Include="Unit\RowsBuilder.cs" />
     <Compile Include="Unit\TestOptions.cs" />
     <Compile Include="Unit\TestParameters.cs" />
     <Compile Include="Unit\TestFieldType.cs" />

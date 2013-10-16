@@ -17,13 +17,13 @@ namespace Transformalize.Main
         public void Load() {
             foreach (EntityConfigurationElement entityElement in _entities) {
                 var entity = _process.Entities.First(e => e.Alias == entityElement.Alias);
-                var validatorFactory = new ValidatorOperationFactory();
+                var factory = new TransformOperationFactory(_process);
 
                 foreach (FieldConfigurationElement fieldElement in entityElement.Fields) {
                     var alias = Common.GetAlias(fieldElement, true, entityElement.Prefix);
                     var field = _process.GetField(alias);
-                    foreach (ValidatorConfigurationElement validatorElement in fieldElement.Validators) {
-                        entity.TransformOperations.Add(validatorFactory.Create(field.Alias, validatorElement));
+                    foreach(TransformConfigurationElement validatorElement in fieldElement.Validators) {
+                        entity.TransformOperations.Add(factory.Create(field, validatorElement, new Parameters.Parameters()));
                     }
                 }
             }

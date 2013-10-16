@@ -28,7 +28,6 @@ namespace Transformalize.Main {
     public class FieldSqlWriter {
         private const string BATCH_ID = "TflBatchId";
         private const string SURROGATE_KEY = "TflKey";
-        private const string VALIDATION_RESULTS = "TflValidationResults";
         private Dictionary<string, Field> _original;
         private SortedDictionary<string, string> _output;
 
@@ -364,16 +363,6 @@ namespace Transformalize.Main {
             };
 
             _output[BATCH_ID] = string.Empty;
-            return this;
-        }
-
-        public FieldSqlWriter AddValidationResults(bool forCreate = true) {
-            _original[VALIDATION_RESULTS] = new Field("System.String", "1024", Main.FieldType.Field, true, "") {
-                Alias = VALIDATION_RESULTS,
-                NotNull = forCreate
-            };
-
-            _output[VALIDATION_RESULTS] = string.Empty;
             return this;
         }
 

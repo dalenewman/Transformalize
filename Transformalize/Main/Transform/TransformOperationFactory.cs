@@ -20,12 +20,13 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Operations.Transform;
+using Transformalize.Operations.Validate;
+using System.Linq;
 
 namespace Transformalize.Main {
 
@@ -38,11 +39,13 @@ namespace Transformalize.Main {
         }
 
         public AbstractOperation Create(Field field, TransformConfigurationElement element, IParameters parameters) {
+
             var hasParameters = parameters.Count > 0;
             var inKey = hasParameters ? parameters[0].Name : field.Alias;
             var inType = hasParameters ? parameters[0].SimpleType : field.SimpleType;
-            var outKey = field.Alias;
-            var outType = field.SimpleType;
+            var append = !string.IsNullOrEmpty(element.AppendTo);
+            var outKey = append ? element.AppendTo : field.Alias;
+            var outType = append ? _process.GetField(element.AppendTo).SimpleType : field.SimpleType;
 
             switch (element.Method.ToLower()) {
                 case "convert":
@@ -284,6 +287,44 @@ namespace Transformalize.Main {
                         element.Units,
                         parameters
                     );
+
+                // validators
+                case "containscharacters":
+                    return new ContainsCharactersOperation(
+                        inKey,
+                        outKey,
+                        element.Characters,
+                        element.ContainsCharacters,
+                        element.Message,
+                        element.Negated,
+                        append
+                    );
+
+                case "datetimerange":
+                    return new DateTimeRangeOperation(
+                        inKey,
+                        outKey,
+                        element.LowerBound,
+                        element.LowerBoundType,
+                        element.UpperBound,
+                        element.UpperBoundType,
+                        element.Message,
+                        element.Negated,
+                        append
+                    );
+
+                case "domain":
+                    var domain = element.Domain.Split(element.Separator.ToCharArray()).Select(s => Common.ObjectConversionMap[field.SimpleType](s));
+
+                    return new DomainOperation(
+                        inKey,
+                        outKey,
+                        domain,
+                        element.Message,
+                        element.Negated,
+                        append
+                    );
+
             }
 
             _log.Warn("{0} method is undefined.  It will not be used.", element.Method);

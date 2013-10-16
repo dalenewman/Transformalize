@@ -138,7 +138,6 @@
     <Compile Include="Configuration\ConnectionElementCollection.cs" />
     <Compile Include="Configuration\ActionConfigurationElement.cs" />
     <Compile Include="Configuration\ActionElementCollection.cs" />
-    <Compile Include="Configuration\ValidatorConfigurationElement.cs" />
     <Compile Include="Configuration\ValidatorElementCollection.cs" />
     <Compile Include="Configuration\ModeConfigurationElement.cs" />
     <Compile Include="Configuration\ModeElementCollection.cs" />
@@ -1106,8 +1105,11 @@
     <Compile Include="Operations\Transform\TrimOperation.cs" />
     <Compile Include="Operations\Transform\TrimStartOperation.cs" />
     <Compile Include="Operations\Validate\ContainsCharactersOperation.cs" />
-    <Compile Include="Operations\Validate\EmptyValidatorOperation.cs" />
-    <Compile Include="Operations\Validate\ValidatorOperationFactory.cs" />
+    <Compile Include="Operations\Validate\DomainOperation.cs" />
+    <Compile Include="Operations\Validate\DateTimeRangeOperation.cs" />
+    <Compile Include="Operations\Validate\JsonParseOperation.cs" />
+    <Compile Include="Operations\Validate\JsonValidator.cs" />
+    <Compile Include="Operations\Validate\ValidationOperation.cs" />
     <Compile Include="Processes\EntityDeleteProcess.cs" />
     <Compile Include="Operations\EntityDetectDeletes.cs" />
     <Compile Include="Processes\EntityKeysProcess.cs" />

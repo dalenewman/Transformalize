@@ -20,66 +20,173 @@
 
 #endregion
 
-using System.Collections.Generic;
-using Moq;
+using System;
 using NUnit.Framework;
-using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Operations.Transform;
 
 namespace Transformalize.Test.Unit {
     [TestFixture]
-    public class TestTransforms : EtlProcessHelper
-    {
-        
+    public class TestTransforms : EtlProcessHelper {
+        [Test]
+        public void ConcatStrings() {
+            var input = new RowsBuilder().Row().Field("f1", "v1").Field("f2", "v2").ToOperation();
+            var parameters = new ParametersBuilder().Parameters("f1", "f2").ToParameters();
+            var concat = new ConcatOperation("o1", parameters);
+
+            var rows = TestOperation(input, concat);
+
+            Assert.AreEqual("v1v2", rows[0]["o1"]);
+        }
+
+        [Test]
+        public void ConcatNumbers() {
+            var input = new RowsBuilder().Row().Field("f1", 1).Field("f2", 2).ToOperation();
+            var parameters = new ParametersBuilder().Parameter("f1").Type("int32").Parameter("f2").Type("int32").ToParameters();
+            var concat = new ConcatOperation("o1", parameters);
+
+            var rows = TestOperation(input, concat);
+
+            Assert.AreEqual("12", rows[0]["o1"]);
+        }
+
+        [Test]
+        public void ConvertStringToNumber() {
+            var input = new RowsBuilder().Row().Field("f1", "1").ToOperation();
+            var convert = new ConvertOperation("f1", "string", "o1", "int32");
+
+            var rows = TestOperation(input, convert);
+
+            Assert.AreEqual(1, rows[0]["o1"]);
+        }
+
+        [Test]
+        public void ConvertStringToDateTime() {
+            var input = new RowsBuilder().Row().Field("f1", "2013-11-07").ToOperation();
+            var convert = new ConvertOperation("f1", "string", "o1", "datetime", "yyyy-MM-dd");
+
+            var rows = TestOperation(input, convert);
+
+            Assert.AreEqual(new DateTime(2013, 11, 7), rows[0]["o1"]);
+        }
+
+        [Test]
+        public void Distance() {
+
+            var input = new RowsBuilder().Row().Field("toLat", 28.419385d).Field("toLong", -81.581234d).ToOperation();
+            var parameters = new ParametersBuilder()
+                .Parameter("fromLat").Type("double").Value(42.101025d).Parameter("fromLong").Type("double").Value(-86.48423d)
+                .Parameter("toLat").Type("double").Parameter("toLong").Type("double")
+                .ToParameters();
+
+            var distance = new DistanceOperation("o1", "miles", parameters);
+
+            var rows = TestOperation(input, distance);
+
+            Assert.AreEqual(985.32863773508757d, rows[0]["o1"]);
+        }
+
+        [Test]
+        public void ExpressionFunction() {
+            var input = new RowsBuilder().Row().Field("f1", 4).ToOperation();
+            var parameters = new ParametersBuilder().Parameter("f1").ToParameters();
+            var expression = new ExpressionOperation("o1", "Sqrt(f1)", parameters);
+
+            var rows = TestOperation(input, expression);
+
+            Assert.AreEqual(2d, rows[0]["o1"]);
+        }
+
+        [Test]
+        public void ExpressionIf() {
+            var input = new RowsBuilder().Row().Field("f1", 4).ToOperation();
+            var parameters = new ParametersBuilder().Parameter("f1").ToParameters();
+            var expression = new ExpressionOperation("o1", "if(f1 = 4, true, false)", parameters);
+
+            var rows = TestOperation(input, expression);
+
+            Assert.AreEqual(true, rows[0]["o1"]);
+        }
+
+        [Test]
+        public void Format() {
+            var input = new RowsBuilder().Row().Field("f1", true).Field("f2", 8).ToOperation();
+            var parameters = new ParametersBuilder().Parameters("f1", "f2").ToParameters();
+            var expression = new FormatOperation("o1", "{0} and {1}.", parameters);
+
+            var rows = TestOperation(input, expression);
+
+            Assert.AreEqual("True and 8.", rows[0]["o1"]);
+        }
+
+        [Test]
+        public void FromJson() {
+            var input = new RowsBuilder().Row().Field("f1", "{ \"j1\":\"v1\", \"j2\":7 }").ToOperation();
+            var outParameters = new ParametersBuilder().Parameter("j1").Parameter("j2").Type("int32").ToParameters();
+            var expression = new FromJsonOperation("f1", false, outParameters);
+
+            var rows = TestOperation(input, expression);
+
+            Assert.AreEqual("v1", rows[0]["j1"]);
+            Assert.AreEqual(7, rows[0]["j2"]);
+        }
+
+        [Test]
+        public void FromJsonWithExtraDoubleQuotes() {
+            var input = new RowsBuilder().Row().Field("f1", "{ \"j1\":\"v\"1\", \"j2\"\":7 }").ToOperation();
+            var outParameters = new ParametersBuilder().Parameter("j1").Parameter("j2").Type("int32").ToParameters();
+            var expression = new FromJsonOperation("f1", true, outParameters);
+
+            var rows = TestOperation(input, expression);
+
+            Assert.AreEqual("v1", rows[0]["j1"]);
+            Assert.AreEqual(7, rows[0]["j2"]);
+        }
+
+        [Test]
+        public void FromRegex()
+        {
+            var input = new RowsBuilder().Row().Field("f1", "991.1 #Something INFO and a rambling message.").ToOperation();
+            var outParameters = new ParametersBuilder().Parameter("p1").Type("decimal").Parameter("p2").Parameter("p3").ToParameters();
+            var fromRegex = new FromRegexOperation("f1", @"(?<p1>^[\d\.]+).*(?<p2> [A-Z]{4,5} )(?<p3>.*$)", outParameters);
+
+            var rows = TestOperation(input, fromRegex);
+
+            Assert.AreEqual(991.1M, rows[0]["p1"]);
+            Assert.AreEqual(" INFO ", rows[0]["p2"]);
+            Assert.AreEqual("and a rambling message.", rows[0]["p3"]);
+        }
+
+        [Test]
+        public void FromXml() {
+            var input = new RowsBuilder().Row().Field("f1", "<order><id>1</id><total>7.25</total><lines><line product=\"1\"/><line product=\"2\"/></lines></order>").ToOperation();
+            var outParameters = new ParametersBuilder().Parameter("id").Type("int32").Parameter("total").Type("decimal").Parameter("lines").ToParameters();
+            var fromXml = new FromXmlOperation("f1", outParameters);
+
+            var rows = TestOperation(input, fromXml);
+
+            Assert.AreEqual(1, rows[0]["id"]);
+            Assert.AreEqual(7.25M, rows[0]["total"]);
+            Assert.AreEqual("<line product=\"1\" /><line product=\"2\" />", rows[0]["lines"]);
+        }
+
+        //[Test]
+        //public void FromDeeperXml() {
+        //    var input = new RowsBuilder().Row().Field("f1", "<order><id>1</id><total>7.25</total><lines><line>1</line><line>2</line></lines></order>").ToOperation();
+        //    var outParameters = new ParametersBuilder().Parameter("id").Type("int32").Parameter("total").Type("decimal").Parameter("lines").ToParameters();
+        //    var fromXml = new FromXmlOperation("f1", outParameters);
+
+        //    var outParametersDeeper = new ParametersBuilder().Parameter("line").ToParameters();
+        //    var format = new FormatOperation("lines", "<lines>{0}</lines>", new ParametersBuilder().Parameter("lines").ToParameters());
+        //    var fromXmlDeeper = new FromXmlOperation("lines", outParametersDeeper);
+
+
+        //    var rows = TestOperation(input, fromXml, format, fromXmlDeeper);
+
+        //    Assert.AreEqual(1, rows[0]["id"]);
+        //    Assert.AreEqual(7.25M, rows[0]["total"]);
+        //    Assert.AreEqual("<line product=\"1\" /><line product=\"2\" />", rows[0]["lines"]);
+        //}
+
     }
-
-    public class RowBuilder {
-        private readonly RowsBuilder _rowsBuilder;
-        private readonly Row _row;
-
-        public RowBuilder(ref RowsBuilder rowsBuilder, ref Row row) {
-            _rowsBuilder = rowsBuilder;
-            _row = row;
-        }
-
-        public RowBuilder Field(string field, object value) {
-            _row[field] = value;
-            return this;
-        }
-
-        public RowBuilder Row() {
-            return _rowsBuilder.Row();
-        }
-
-        public IEnumerable<Row> ToRows() {
-            return _rowsBuilder.ToRows();
-        }
-
-        public IOperation ToOperation() {
-            return _rowsBuilder.ToOperation();
-        }
-
-    }
-
-    public class RowsBuilder {
-        private readonly IList<Row> _rows = new List<Row>();
-
-        public RowBuilder Row() {
-            var row = new Row();
-            _rows.Add(row);
-            var rowsBuilder = this;
-            return new RowBuilder(ref rowsBuilder, ref row);
-        }
-
-        public IEnumerable<Row> ToRows() {
-            return _rows;
-        }
-
-        public IOperation ToOperation() {
-            var mock = new Mock<IOperation>();
-            mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(ToRows());
-            return mock.Object;
-        }
-    }
-
 }

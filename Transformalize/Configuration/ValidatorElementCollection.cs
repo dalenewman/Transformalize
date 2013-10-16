@@ -25,8 +25,8 @@ using System.Configuration;
 namespace Transformalize.Configuration {
     public class ValidatorElementCollection : ConfigurationElementCollection {
 
-        public ValidatorConfigurationElement this[int index] {
-            get { return BaseGet(index) as ValidatorConfigurationElement; }
+        public TransformConfigurationElement this[int index] {
+            get { return BaseGet(index) as TransformConfigurationElement; }
             set {
                 if (BaseGet(index) != null) {
                     BaseRemoveAt(index);
@@ -40,14 +40,14 @@ namespace Transformalize.Configuration {
         }
 
         protected override ConfigurationElement CreateNewElement() {
-            return new ValidatorConfigurationElement();
+            return new TransformConfigurationElement();
         }
 
         protected override object GetElementKey(ConfigurationElement element) {
             return element.GetHashCode();
         }
 
-        public void Add(ValidatorConfigurationElement element) {
+        public void Add(TransformConfigurationElement element) {
             BaseAdd(element);
         }
     }

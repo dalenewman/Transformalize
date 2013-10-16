@@ -160,8 +160,8 @@ namespace Transformalize.Configuration
         }
 
         [ConfigurationProperty(VALIDATORS)]
-        public ValidatorElementCollection Validators {
-            get { return this[VALIDATORS] as ValidatorElementCollection; }
+        public TransformElementCollection Validators {
+            get { return this[VALIDATORS] as TransformElementCollection; }
             set { this[VALIDATORS] = value; }
         }
 
