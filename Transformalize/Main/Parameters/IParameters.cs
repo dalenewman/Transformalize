@@ -35,5 +35,6 @@ namespace Transformalize.Main
         KeyValuePair<string, IParameter> First();
         bool Any();
         IEnumerable<KeyValuePair<string, IParameter>> ToEnumerable();
+        bool ContainsKey(string key);
     }
 }

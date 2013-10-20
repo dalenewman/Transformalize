@@ -20,16 +20,12 @@
 
 #endregion
 
-namespace Transformalize.Main
-{
-    public class Parameter : IParameter
-    {
-        public Parameter()
-        {
+namespace Transformalize.Main {
+    public class Parameter : IParameter {
+        public Parameter() {
         }
 
-        public Parameter(string name, object value)
-        {
+        public Parameter(string name, object value) {
             Name = name;
             Value = value;
         }
@@ -38,5 +34,9 @@ namespace Transformalize.Main
         public object Value { get; set; }
         public string SimpleType { get; set; }
         public int Index { get; set; }
+
+        public bool HasValue() {
+            return !string.IsNullOrEmpty(Name) && Value != null && !Value.Equals(string.Empty);
+        }
     }
 }

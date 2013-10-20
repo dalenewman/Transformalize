@@ -183,7 +183,7 @@ namespace Transformalize.Main {
         public FieldSqlWriter IsNull() {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];
-                var d = field.Default ?? new ConversionFactory().Convert(string.Empty, field.SimpleType);
+                var d = field.Default ?? new DefaultFactory().Convert(string.Empty, field.SimpleType);
 
                 if (field.SimpleType == "byte[]" || field.SimpleType == "rowversion")
                     d = "0x";
@@ -191,7 +191,8 @@ namespace Transformalize.Main {
                 if (field.SimpleType.StartsWith("bool"))
                     d = (bool)d ? 1 : 0;
 
-                _output[key] = string.Concat("ISNULL(", _output[key], ", ", field.Quote, d, field.Quote, ")");
+                var quote = field.Quote();
+                _output[key] = string.Concat("ISNULL(", _output[key], ", ", quote, d, quote, ")");
             }
             return this;
         }
@@ -201,11 +202,9 @@ namespace Transformalize.Main {
                 var field = _original[key];
                 if (ifNecessary) {
                     if (field.Alias != field.Name) {
-                        //_output[key] = string.Concat(provider.L, field.Alias, provider.R, " = ", _output[key]);
                         _output[key] = string.Concat(_output[key], " AS ", provider.L, field.Alias, provider.R);
                     }
                 } else {
-                    //_output[key] = string.Concat(provider.L, field.Alias, provider.R, " = ", _output[key]);
                     _output[key] = string.Concat(_output[key], " AS ", provider.L, field.Alias, provider.R);
                 }
             }

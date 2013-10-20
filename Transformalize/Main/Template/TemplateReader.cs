@@ -16,7 +16,7 @@ namespace Transformalize.Main {
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly Process _process;
         private readonly TemplateElementCollection _elements;
-        private readonly ConversionFactory _conversionFactory = new ConversionFactory();
+        private readonly DefaultFactory _defaultFactory = new DefaultFactory();
         private readonly char[] _s = new[] { '\\' };
 
         public TemplateReader(Process process, TemplateElementCollection elements) {
@@ -39,7 +39,7 @@ namespace Transformalize.Main {
                     var template = new Template(_process, element, File.ReadAllText(fileInfo.FullName), fileInfo.FullName);
 
                     foreach (SettingConfigurationElement setting in element.Settings) {
-                        template.Settings[setting.Name] = _conversionFactory.Convert(setting.Value, setting.Type);
+                        template.Settings[setting.Name] = _defaultFactory.Convert(setting.Value, setting.Type);
                     }
 
                     foreach (ActionConfigurationElement action in element.Actions) {

@@ -256,7 +256,7 @@ namespace Transformalize.Main {
                 case "fromxml":
                     return new FromXmlOperation(
                         outKey,
-                        parameters
+                        new Fields(_process, parameters)
                     );
 
                 case "fromregex":
@@ -270,6 +270,7 @@ namespace Transformalize.Main {
                     return new FromJsonOperation(
                         outKey,
                         element.Clean,
+                        element.TryParse,
                         parameters
                     );
 
@@ -278,7 +279,7 @@ namespace Transformalize.Main {
                         inKey,
                         outKey,
                         field.Default,
-                        new ConversionFactory().Convert(element.Value, field.SimpleType)
+                        new DefaultFactory().Convert(element.Value, field.SimpleType)
                     );
 
                 case "distance":
@@ -287,6 +288,9 @@ namespace Transformalize.Main {
                         element.Units,
                         parameters
                     );
+
+                case "length":
+                    return new LengthOperation(inKey, outKey);
 
                 // validators
                 case "containscharacters":
@@ -325,10 +329,14 @@ namespace Transformalize.Main {
                         append
                     );
 
+                case "parsejson":
+                    return new ParseJsonOperation(inKey, outKey, append);
+
             }
 
             _log.Warn("{0} method is undefined.  It will not be used.", element.Method);
             return new EmptyOperation();
         }
+
     }
 }

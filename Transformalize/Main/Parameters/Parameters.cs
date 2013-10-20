@@ -26,7 +26,7 @@ using System.Linq;
 
 namespace Transformalize.Main.Parameters {
     public class Parameters : IParameters, IEnumerable<KeyValuePair<string, IParameter>> {
-        private readonly ConversionFactory _conversionFactory = new ConversionFactory();
+        private readonly DefaultFactory _defaultFactory = new DefaultFactory();
         private readonly IDictionary<string, IParameter> _items = new Dictionary<string, IParameter>();
         private KeyValuePair<string, IParameter> _first;
         private int _index = 0;
@@ -66,7 +66,7 @@ namespace Transformalize.Main.Parameters {
         public void Add(string field, string name, object value, string type) {
             var parameter = new Parameter {
                 Name = name,
-                Value = value == null ? null : _conversionFactory.Convert(value, type),
+                Value = value == null ? null : _defaultFactory.Convert(value, type),
                 SimpleType = Common.ToSimpleType(type),
             };
             Add(field, parameter);
@@ -83,6 +83,11 @@ namespace Transformalize.Main.Parameters {
         public IEnumerable<KeyValuePair<string, IParameter>> ToEnumerable()
         {
             return _items.Select(p => p).OrderBy(p => p.Value.Index);
+        }
+
+        public bool ContainsKey(string key)
+        {
+            return _items.ContainsKey(key);
         }
 
         public void Add(string field, IParameter parameter) {

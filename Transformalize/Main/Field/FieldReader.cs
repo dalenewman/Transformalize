@@ -52,6 +52,8 @@ namespace Transformalize.Main {
                 Scale = element.Scale,
                 Input = element.Input,
                 Unicode = element.Unicode,
+                NodeType = element.NodeType,
+                ReadInnerXml = element.ReadInnerXml,
                 VariableLength = element.VariableLength,
                 Aggregate = element.Aggregate.ToLower()
             };

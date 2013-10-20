@@ -62,6 +62,7 @@ namespace Transformalize.Configuration
         private const string CLEAN = "clean";
         private const string UNITS = "units";
         private const string DOMAIN = "domain";
+        private const string TRY_PARSE = "try-parse";
 
         //validation
         private const string APPEND_TO = "append-to";
@@ -73,6 +74,7 @@ namespace Transformalize.Configuration
         private const string LOWER_BOUND_TYPE = "lower-bound-type";
         private const string UPPER_BOUND = "upper-bound";
         private const string UPPER_BOUND_TYPE = "upper-bound-type";
+
 
 
         [ConfigurationProperty(METHOD, IsRequired = true)]
@@ -90,13 +92,22 @@ namespace Transformalize.Configuration
         }
 
         [ConfigurationProperty(CLEAN, IsRequired = false, DefaultValue = false)]
-        public bool Clean {
-            get { return (bool) this[CLEAN]; }
+        public bool Clean
+        {
+            get { return (bool)this[CLEAN]; }
             set { this[CLEAN] = value; }
         }
 
+        [ConfigurationProperty(TRY_PARSE, IsRequired = false, DefaultValue = false)]
+        public bool TryParse
+        {
+            get { return (bool)this[TRY_PARSE]; }
+            set { this[TRY_PARSE] = value; }
+        }
+
         [ConfigurationProperty(UNITS, IsRequired = false, DefaultValue = "meters")]
-        public string Units {
+        public string Units
+        {
             get { return this[UNITS] as string; }
             set { this[UNITS] = value; }
         }
@@ -154,35 +165,35 @@ namespace Transformalize.Configuration
         [ConfigurationProperty(INDEX, IsRequired = false, DefaultValue = 0)]
         public int Index
         {
-            get { return (int) this[INDEX]; }
+            get { return (int)this[INDEX]; }
             set { this[INDEX] = value; }
         }
 
         [ConfigurationProperty(COUNT, IsRequired = false, DefaultValue = 0)]
         public int Count
         {
-            get { return (int) this[COUNT]; }
+            get { return (int)this[COUNT]; }
             set { this[COUNT] = value; }
         }
 
         [ConfigurationProperty(START_INDEX, IsRequired = false, DefaultValue = 0)]
         public int StartIndex
         {
-            get { return (int) this[START_INDEX]; }
+            get { return (int)this[START_INDEX]; }
             set { this[START_INDEX] = value; }
         }
 
         [ConfigurationProperty(LENGTH, IsRequired = false, DefaultValue = 0)]
         public int Length
         {
-            get { return (int) this[LENGTH]; }
+            get { return (int)this[LENGTH]; }
             set { this[LENGTH] = value; }
         }
 
         [ConfigurationProperty(TOTAL_WIDTH, IsRequired = false, DefaultValue = 0)]
         public int TotalWidth
         {
-            get { return (int) this[TOTAL_WIDTH]; }
+            get { return (int)this[TOTAL_WIDTH]; }
             set { this[TOTAL_WIDTH] = value; }
         }
 
@@ -190,7 +201,7 @@ namespace Transformalize.Configuration
         [ConfigurationProperty(PADDING_CHAR, IsRequired = false, DefaultValue = "0")]
         public string PaddingChar
         {
-            get { return (string) this[PADDING_CHAR]; }
+            get { return (string)this[PADDING_CHAR]; }
             set { this[PADDING_CHAR] = value; }
         }
 
@@ -264,7 +275,7 @@ namespace Transformalize.Configuration
             get { return this[EXPRESSION] as string; }
             set { this[EXPRESSION] = value; }
         }
-        
+
         [ConfigurationProperty(PARAMETERS)]
         public ParameterElementCollection Parameters
         {
@@ -298,64 +309,74 @@ namespace Transformalize.Configuration
 
         //validation
         [ConfigurationProperty(APPEND_TO, IsRequired = false, DefaultValue = "")]
-        public string AppendTo {
+        public string AppendTo
+        {
             get { return this[APPEND_TO] as string; }
             set { this[APPEND_TO] = value; }
         }
 
         [ConfigurationProperty(CHARACTERS, IsRequired = false, DefaultValue = "")]
-        public string Characters {
+        public string Characters
+        {
             get { return this[CHARACTERS] as string; }
             set { this[CHARACTERS] = value; }
         }
 
         [ConfigurationProperty(MESSAGE, IsRequired = false, DefaultValue = "")]
-        public string Message {
+        public string Message
+        {
             get { return this[MESSAGE] as string; }
             set { this[MESSAGE] = value; }
         }
 
         [EnumConversionValidator(typeof(ContainsCharacters), MessageTemplate = "{1} must be a valid ContainsCharacters. (e.g. All, Any)")]
         [ConfigurationProperty(CONTAINS_CHARACTERS, IsRequired = false, DefaultValue = "Any")]
-        public string ContainsCharacters {
+        public string ContainsCharacters
+        {
             get { return this[CONTAINS_CHARACTERS] as string; }
             set { this[CONTAINS_CHARACTERS] = value; }
         }
 
         [ConfigurationProperty(NEGATED, IsRequired = false, DefaultValue = false)]
-        public bool Negated {
+        public bool Negated
+        {
             get { return (bool)this[NEGATED]; }
             set { this[NEGATED] = value; }
         }
 
         [ConfigurationProperty(LOWER_BOUND, IsRequired = false)]
-        public DateTime LowerBound {
+        public DateTime LowerBound
+        {
             get { return (DateTime)this[LOWER_BOUND]; }
             set { this[LOWER_BOUND] = value; }
         }
 
-        [EnumConversionValidator(typeof(RangeBoundaryType),MessageTemplate = "{1} must be a valid RangeBoundaryType. (e.g. Inclusive, Exclusive, or Ignore)")]
+        [EnumConversionValidator(typeof(RangeBoundaryType), MessageTemplate = "{1} must be a valid RangeBoundaryType. (e.g. Inclusive, Exclusive, or Ignore)")]
         [ConfigurationProperty(LOWER_BOUND_TYPE, IsRequired = false, DefaultValue = "Inclusive")]
-        public string LowerBoundType {
+        public string LowerBoundType
+        {
             get { return this[LOWER_BOUND_TYPE] as string; }
             set { this[LOWER_BOUND_TYPE] = value; }
         }
 
         [ConfigurationProperty(UPPER_BOUND, IsRequired = false)]
-        public DateTime UpperBound {
+        public DateTime UpperBound
+        {
             get { return (DateTime)this[UPPER_BOUND]; }
             set { this[UPPER_BOUND] = value; }
         }
 
         [EnumConversionValidator(typeof(RangeBoundaryType), MessageTemplate = "{1} must be a valid RangeBoundaryType. (e.g. Inclusive, Exclusive, or Ignore)")]
         [ConfigurationProperty(UPPER_BOUND_TYPE, IsRequired = false, DefaultValue = "Inclusive")]
-        public string UpperBoundType {
+        public string UpperBoundType
+        {
             get { return this[UPPER_BOUND_TYPE] as string; }
             set { this[UPPER_BOUND_TYPE] = value; }
         }
 
         [ConfigurationProperty(DOMAIN, IsRequired = false, DefaultValue = "")]
-        public string Domain {
+        public string Domain
+        {
             get { return this[DOMAIN] as string; }
             set { this[DOMAIN] = value; }
         }

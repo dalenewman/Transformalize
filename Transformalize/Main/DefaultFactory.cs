@@ -23,7 +23,8 @@
 using System;
 
 namespace Transformalize.Main {
-    public class ConversionFactory {
+    public class DefaultFactory {
+
         public object Convert(object something, string type) {
             var simpleType = Common.ToSimpleType(type);
             if (simpleType == "object")

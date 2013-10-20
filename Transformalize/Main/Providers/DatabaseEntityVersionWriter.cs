@@ -55,7 +55,7 @@ namespace Transformalize.Main.Providers {
                     _process.OutputConnection.AddParameter(cmd, "@Deletes", _entity.Deletes);
 
                     if (_entity.CanDetectChanges()) {
-                        var end = new ConversionFactory().Convert(_entity.End, _entity.Version.SimpleType);
+                        var end = new DefaultFactory().Convert(_entity.End, _entity.Version.SimpleType);
                         _process.OutputConnection.AddParameter(cmd, "@End", end);
                     }
 

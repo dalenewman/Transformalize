@@ -29,17 +29,14 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Providers;
 
-namespace Transformalize.Main
-{
-    public class Entity
-    {
+namespace Transformalize.Main {
+    public class Entity {
         private readonly int _tflBatchId;
         private List<AbstractOperation> _transformOperations = new List<AbstractOperation>();
-        private List<AbstractOperation> _validatorOperations = new List<AbstractOperation>(); 
+        private List<AbstractOperation> _validatorOperations = new List<AbstractOperation>();
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
-        public Entity(int batchId)
-        {
+        public Entity(int batchId) {
             _tflBatchId = batchId;
             Name = string.Empty;
             Alias = string.Empty;
@@ -80,88 +77,72 @@ namespace Transformalize.Main
         public bool IsFirstRun { get; set; }
         public bool UseBcp { get; set; }
         public bool IndexOptimizations { get; set; }
-        public List<AbstractOperation> TransformOperations
-        {
+        public List<AbstractOperation> TransformOperations {
             get { return _transformOperations; }
             set { _transformOperations = value; }
         }
-        public List<AbstractOperation>  ValidatorOperations
-        {
+        public List<AbstractOperation> ValidatorOperations {
             get { return _validatorOperations; }
             set { _validatorOperations = value; }
         }
 
-        public string FirstKey()
-        {
+        public string FirstKey() {
             return PrimaryKey.First().Key;
         }
 
-        public bool IsMaster()
-        {
+        public bool IsMaster() {
             return PrimaryKey.Any(kv => kv.Value.FieldType.HasFlag(FieldType.MasterKey));
         }
 
-        public string OutputName()
-        {
+        public string OutputName() {
             return Common.EntityOutputName(Alias, ProcessName);
         }
 
-        public bool HasForeignKeys()
-        {
+        public bool HasForeignKeys() {
             return Fields.Any(f => f.Value.FieldType.HasFlag(FieldType.ForeignKey));
         }
 
-        public bool NeedsUpdate()
-        {
+        public bool NeedsUpdate() {
             if (!HasRows)
                 return false;
 
             return (!HasRange || !BeginAndEndAreEqual());
         }
 
-        public List<string> SelectKeys(AbstractProvider p)
-        {
+        public List<string> SelectKeys(AbstractProvider p) {
             var selectKeys = new List<string>();
-            foreach (var field in PrimaryKey.ToEnumerable())
-            {
+            foreach (var field in PrimaryKey.ToEnumerable().Where(f=>f.Input)) {
                 selectKeys.Add(field.Alias.Equals(field.Name)
-                                   ? string.Concat(p.L, field.Name, p.R)
-                                   : string.Format("{0} = {1}", field.Alias, p.Enclose(field.Name)));
+                    ? string.Concat(p.L, field.Name, p.R)
+                    : string.Format("{0} = {1}", field.Alias, p.Enclose(field.Name)));
             }
             return selectKeys;
         }
 
-        public string KeysQuery()
-        {
+        public string KeysQuery() {
             return CanDetectChanges()
                 ? InputConnection.EntityKeysQueryWriter.Write(this)
                 : InputConnection.EntityKeysAllQueryWriter.Write(this);
         }
 
-        public string KeysRangeQuery()
-        {
+        public string KeysRangeQuery() {
             return InputConnection.EntityKeysRangeQueryWriter.Write(this);
         }
 
-        public Fields InputFields()
-        {
+        public Fields InputFields() {
             return new FieldSqlWriter(Fields, CalculatedFields).Input().Context();
         }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             return Alias;
         }
 
-        public bool BeginAndEndAreEqual()
-        {
-            if (HasRange)
-            {
-                var bytes = new[] {"byte[]", "rowversion"};
-                if (bytes.Any(t => t == Version.SimpleType))
-                {
-                    var beginBytes = (byte[]) Begin;
-                    var endBytes = (byte[]) End;
+        public bool BeginAndEndAreEqual() {
+            if (HasRange) {
+                var bytes = new[] { "byte[]", "rowversion" };
+                if (bytes.Any(t => t == Version.SimpleType)) {
+                    var beginBytes = (byte[])Begin;
+                    var endBytes = (byte[])End;
                     return Common.AreEqual(beginBytes, endBytes);
                 }
                 return Begin.Equals(End);
@@ -169,17 +150,15 @@ namespace Transformalize.Main
             return false;
         }
 
-        public void CheckForChanges(Process process)
-        {
-            if (!CanDetectChanges()) return;
+        public void CheckForChanges(Process process) {
+            if (!CanDetectChanges())
+                return;
             process.OutputConnection.LoadBeginVersion(this);
             InputConnection.LoadEndVersion(this);
         }
 
-        public string GetVersionField()
-        {
-            switch (Version.SimpleType)
-            {
+        public string GetVersionField() {
+            switch (Version.SimpleType) {
                 case "rowversion":
                     return "BinaryVersion";
                 case "byte[]":
@@ -190,13 +169,11 @@ namespace Transformalize.Main
             }
         }
 
-        public bool CanDetectChanges()
-        {
+        public bool CanDetectChanges() {
             return Version != null && InputConnection.Provider.IsDatabase;
         }
 
-        public bool NeedsSchema()
-        {
+        public bool NeedsSchema() {
             return !(string.IsNullOrEmpty(Schema) || Schema.Equals("dbo", IC));
         }
     }

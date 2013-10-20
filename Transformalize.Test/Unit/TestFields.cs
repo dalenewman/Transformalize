@@ -30,6 +30,7 @@ using Transformalize.Main.Providers.SqlServer;
 namespace Transformalize.Test.Unit {
     [TestFixture]
     public class TestFields {
+
         private readonly AbstractProvider _sqlServerProvider = new SqlServerProvider();
         private readonly AbstractProvider _mySqlProvider = new MySqlProvider();
 

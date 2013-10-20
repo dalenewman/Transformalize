@@ -4,24 +4,19 @@ using Transformalize.Libs.Rhino.Etl.Operations;
 
 namespace Transformalize.Operations.Transform
 {
-    public class InsertOperation : AbstractOperation {
+    public class LengthOperation : AbstractOperation {
+
         private readonly string _inKey;
         private readonly string _outKey;
-        private readonly int _startIndex;
-        private readonly string _value;
 
-        public InsertOperation(string inKey, string outKey, int startIndex, string value) {
+        public LengthOperation(string inKey, string outKey) {
             _inKey = inKey;
             _outKey = outKey;
-            _startIndex = startIndex;
-            _value = value;
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
-                var value = row[_inKey].ToString();
-                if (value.Length > _startIndex )
-                    row[_outKey] = value.Insert(_startIndex, _value);
+                row[_outKey] = row[_inKey].ToString().Length;
                 yield return row;
             }
         }

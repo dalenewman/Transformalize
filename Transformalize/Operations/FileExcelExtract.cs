@@ -10,7 +10,7 @@ namespace Transformalize.Operations {
     public class FileExcelExtract : AbstractOperation {
         private readonly Entity _entity;
         private readonly Field[] _fields;
-        private readonly ConversionFactory _conversionFactory = new ConversionFactory();
+        private readonly DefaultFactory _defaultFactory = new DefaultFactory();
         private readonly FileInfo _fileInfo;
         private readonly int _start;
         private readonly int _end;

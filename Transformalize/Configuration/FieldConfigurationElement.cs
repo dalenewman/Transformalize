@@ -44,6 +44,8 @@ namespace Transformalize.Configuration
         private const string SEARCH_TYPES = "search-types";
         private const string PRIMARY_KEY = "primary-key";
         private const string INDEX = "index";
+        private const string NODE_TYPE = "node-type";
+        private const string READ_INNER_XML = "read-inner-xml";
 
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name
@@ -138,6 +140,12 @@ namespace Transformalize.Configuration
             set { this[UNICODE] = value; }
         }
 
+        [ConfigurationProperty(READ_INNER_XML, IsRequired = false, DefaultValue = true)]
+        public bool ReadInnerXml {
+            get { return (bool)this[READ_INNER_XML]; }
+            set { this[READ_INNER_XML] = value; }
+        }
+
         [ConfigurationProperty(VARIABLE_LENGTH, IsRequired = false, DefaultValue = true)]
         public bool VariableLength
         {
@@ -150,6 +158,12 @@ namespace Transformalize.Configuration
         {
             get { return (string) this[DEFAULT]; }
             set { this[DEFAULT] = value; }
+        }
+
+        [ConfigurationProperty(NODE_TYPE, IsRequired = false, DefaultValue = "element")]
+        public string NodeType {
+            get { return (string)this[NODE_TYPE]; }
+            set { this[NODE_TYPE] = value; }
         }
 
         [ConfigurationProperty(TRANSFORMS)]

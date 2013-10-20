@@ -9,6 +9,7 @@ namespace Transformalize.Operations.Transform {
         private readonly string _inKey;
         private readonly string _outKey;
         private readonly string _outType;
+        private readonly Map[] _maps;
         private readonly Map _endsWith;
         private readonly Map _equals;
         private readonly bool _hasEndsWith;
@@ -16,18 +17,19 @@ namespace Transformalize.Operations.Transform {
         private readonly bool _hasStartsWith;
         private readonly Map _startsWith;
 
-        public MapOperation(string inKey, string outKey, string outType, IList<Map> maps) {
+        public MapOperation(string inKey, string outKey, string outType, IEnumerable<Map> maps) {
             _inKey = inKey;
             _outKey = outKey;
             _outType = outType;
+            _maps = maps.ToArray();
 
-            _equals = maps[0];
+            _equals = _maps[0];
             _hasEquals = _equals.Any();
 
-            _startsWith = maps[1];
+            _startsWith = _maps[1];
             _hasStartsWith = _startsWith.Any();
 
-            _endsWith = maps[2];
+            _endsWith = _maps[2];
             _hasEndsWith = _endsWith.Any();
 
             ApplyDataTypes(_equals);
@@ -43,11 +45,6 @@ namespace Transformalize.Operations.Transform {
                 if (_hasEquals) {
                     if (_equals.ContainsKey(value)) {
                         row[_outKey] = _equals[value].Value ?? row[_equals[value].Parameter];
-                        //if (_equals[value].Value == null) {
-                        //    row[_outKey] = row[_equals[value].Parameter];
-                        //} else {
-                        //    row[_outKey] = Common.ObjectConversionMap[_outType](_equals[value].Value);
-                        //}
                         found = true;
                     }
                 }
@@ -55,11 +52,6 @@ namespace Transformalize.Operations.Transform {
                 if (!found && _hasStartsWith) {
                     foreach (var pair in _startsWith.Where(pair => value.StartsWith(pair.Key))) {
                         row[_outKey] = pair.Value.Value ?? row[pair.Value.Parameter];
-                        //if (pair.Value.Value == null) {
-                        //    row[_outKey] = row[pair.Value.Parameter];
-                        //} else {
-                        //    row[_outKey] = Common.ObjectConversionMap[_outType](pair.Value.Value);
-                        //}
                         found = true;
                         break;
                     }
@@ -68,23 +60,18 @@ namespace Transformalize.Operations.Transform {
                 if (!found && _hasEndsWith) {
                     foreach (var pair in _endsWith.Where(pair => value.EndsWith(pair.Key))) {
                         row[_outKey] = pair.Value.Value ?? row[pair.Value.Parameter];
-                        //if (pair.Value.Value == null) {
-                        //    row[_outKey] = row[pair.Value.Parameter];
-                        //} else {
-                        //    row[_outKey] = Common.ObjectConversionMap[_outType](pair.Value.Value);
-                        //}
                         found = true;
                         break;
                     }
                 }
 
                 if (!found && _equals.ContainsKey("*")) {
-                    if (_equals["*"].Value == null) {
-                        row[_outKey] = row[_equals["*"].Parameter];
-                    } else {
-                        row[_outKey] = Common.ObjectConversionMap[_outType](_equals["*"].Value);
-                    }
+                    row[_outKey] = _equals["*"].Value ?? row[_equals["*"].Parameter];
+                    found = true;
+                }
 
+                if (!found) {
+                    row[_outKey] = row[_inKey];
                 }
 
                 yield return row;

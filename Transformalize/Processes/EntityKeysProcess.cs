@@ -40,6 +40,7 @@ namespace Transformalize.Processes {
         }
 
         protected override void Initialize() {
+
             _entity.IsFirstRun = !_process.OutputConnection.RecordsExist(_entity.Schema, _entity.OutputName());
             var skipKeysExtract = _entity.IsFirstRun && _entity.UseBcp && _entity.InputConnection.Provider.Type == ProviderType.SqlServer;
 

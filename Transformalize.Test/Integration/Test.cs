@@ -23,7 +23,6 @@
 using NUnit.Framework;
 using Transformalize.Libs.NLog;
 using Transformalize.Main;
-using Transformalize.Runner;
 
 namespace Transformalize.Test.Integration
 {

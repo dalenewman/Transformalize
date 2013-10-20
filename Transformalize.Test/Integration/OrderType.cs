@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // /*
 // Transformalize - Replicate, Transform, and Denormalize Your Data...
@@ -20,25 +20,33 @@
 
 #endregion
 
-namespace Transformalize.Main {
-    public class Item {
-        public string Parameter = null;
-        public bool UseParameter = false;
-        public object Value = null;
+using NUnit.Framework;
+using Transformalize.Libs.NLog;
+using Transformalize.Main;
 
-        public Item(string parameter, object to) {
+namespace Transformalize.Test.Integration {
+    [TestFixture]
+    public class OrderType
+    {
+        private const string FILE = @"c:\code\TflConfiguration\OrderType.xml";
 
-            if (!string.IsNullOrEmpty(parameter)) {
-                Parameter = parameter;
-                UseParameter = true;
-            } else {
-                Value = to;
-            }
+        [SetUp]
+        public void SetUp() {
+            LogManager.Configuration.LoggingRules[0].EnableLoggingForLevel(LogLevel.Info);
+            LogManager.ReconfigExistingLoggers();
         }
 
-        public Item(object to) {
-            Parameter = null;
-            Value = to;
+        [Test]
+        public void Init() {
+            var options = new Options() { Mode = "init"};
+            var process = ProcessFactory.Create(FILE, options);
+            process.Run();
         }
+
+        [Test]
+        public void Default() {
+            ProcessFactory.Create(FILE, new Options() { Mode = "test" }).Run();
+        }
+
     }
 }

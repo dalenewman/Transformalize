@@ -31,6 +31,10 @@ namespace Transformalize.Test.Unit
             return _parametersBuilder.Parameter(inKey);
         }
 
+        public ParameterBuilder Parameter(string inKey, object value) {
+            return _parametersBuilder.Parameter(inKey, value);
+        }
+
         public Parameters ToParameters() {
             return _parametersBuilder.ToParameters();
         }

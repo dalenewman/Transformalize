@@ -4,8 +4,7 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
-namespace Transformalize.Operations.Transform
-{
+namespace Transformalize.Operations.Transform {
     public class FormatOperation : AbstractOperation {
         private readonly string _outKey;
         private readonly string _format;

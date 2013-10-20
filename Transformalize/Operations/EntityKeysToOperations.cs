@@ -43,7 +43,7 @@ namespace Transformalize.Operations
             _entity = entity;
             _provider = _entity.InputConnection.Provider;
             _operationColumn = operationColumn;
-            _key = new FieldSqlWriter(_entity.PrimaryKey).ToArray();
+            _key = new FieldSqlWriter(_entity.PrimaryKey).Input().ToArray();
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows)

@@ -10,7 +10,7 @@ namespace Transformalize.Operations {
     public class FileDelimitedExtract : AbstractOperation {
         private readonly Entity _entity;
         private readonly Field[] _fields;
-        private readonly ConversionFactory _conversionFactory = new ConversionFactory();
+        private readonly DefaultFactory _defaultFactory = new DefaultFactory();
 
         public FileDelimitedExtract(Entity entity) {
             _entity = entity;
@@ -28,7 +28,7 @@ namespace Transformalize.Operations {
                 foreach (var row in from object obj in file select Row.FromObject(obj)) {
                     foreach (var field in _fields) {
                         if(field.SimpleType != "string")
-                            row[field.Alias] = _conversionFactory.Convert(row[field.Alias].ToString(), field.SimpleType, field.Default);
+                            row[field.Alias] = _defaultFactory.Convert(row[field.Alias].ToString(), field.SimpleType, field.Default);
                     }
                     yield return row;
                 }

@@ -519,6 +519,7 @@
     <Compile Include="Libs\ExcelDataReader\Exceptions\BiffRecordException.cs" />
     <Compile Include="Libs\ExcelDataReader\Exceptions\HeaderException.cs" />
     <Compile Include="Libs\ExcelDataReader\IExcelDataReader.cs" />
+    <Compile Include="Libs\fastJSON\JsonTryParse.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\AbstractSortedAggregationOperation.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\SortMergeJoinOperation.cs" />
     <Compile Include="Libs\SharpZLib\BZip2\BZip2.cs" />
@@ -613,7 +614,7 @@
     <Compile Include="Main\RelationshipsReader.cs" />
     <Compile Include="Main\SearchType.cs" />
     <Compile Include="Main\MapConfigurationReader.cs" />
-    <Compile Include="Main\ConversionFactory.cs" />
+    <Compile Include="Main\DefaultFactory.cs" />
     <Compile Include="Main\Entity\EntityConfigurationLoader.cs" />
     <Compile Include="Main\Item.cs" />
     <Compile Include="Main\Map.cs" />
@@ -1087,6 +1088,7 @@
     <Compile Include="Operations\Transform\JavascriptOperation.cs" />
     <Compile Include="Operations\Transform\JoinOperation.cs" />
     <Compile Include="Operations\Transform\LeftOperation.cs" />
+    <Compile Include="Operations\Transform\LengthOperation.cs" />
     <Compile Include="Operations\Transform\MapOperation.cs" />
     <Compile Include="Operations\Transform\PadLeftOperation.cs" />
     <Compile Include="Operations\Transform\PadRightOperation.cs" />
@@ -1107,7 +1109,7 @@
     <Compile Include="Operations\Validate\ContainsCharactersOperation.cs" />
     <Compile Include="Operations\Validate\DomainOperation.cs" />
     <Compile Include="Operations\Validate\DateTimeRangeOperation.cs" />
-    <Compile Include="Operations\Validate\JsonParseOperation.cs" />
+    <Compile Include="Operations\Validate\ParseJsonOperation.cs" />
     <Compile Include="Operations\Validate\JsonValidator.cs" />
     <Compile Include="Operations\Validate\ValidationOperation.cs" />
     <Compile Include="Processes\EntityDeleteProcess.cs" />

@@ -13,13 +13,18 @@ namespace Transformalize.Test.Unit
             _row = row;
         }
 
-        public RowBuilder Field(string field, object value) {
-            _row[field] = value;
+        public RowBuilder Field(string key, object value) {
+            _row[key] = value;
             return this;
         }
 
         public RowBuilder Row() {
             return _rowsBuilder.Row();
+        }
+
+        public RowBuilder Row(string key, object value)
+        {
+            return _rowsBuilder.Row(key, value);
         }
 
         public IEnumerable<Row> ToRows() {

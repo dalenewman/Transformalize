@@ -29,7 +29,6 @@ namespace Transformalize.Operations {
     public class EntityDataExtract : InputCommandOperation {
         private readonly string[] _fields;
         private readonly string _sql;
-        //private readonly ObjectPool<Row> _objectPool = new ObjectPool<Row>(() => new Row());
 
         public EntityDataExtract(string[] fields, string sql, AbstractConnection connection)
             : base(connection) {
@@ -40,7 +39,6 @@ namespace Transformalize.Operations {
         }
 
         protected override Row CreateRowFromReader(IDataReader reader) {
-            //var row = _objectPool.GetObject();
             var row = new Row();
             foreach (var field in _fields) {
                 row[field] = reader[field];

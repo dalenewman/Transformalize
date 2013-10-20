@@ -43,7 +43,7 @@ namespace Transformalize.Operations {
                 }
             }
 
-            _fields = new FieldSqlWriter(entity.PrimaryKey).Alias(connection.Provider).Keys().ToArray();
+            _fields = new FieldSqlWriter(entity.PrimaryKey).Input().Alias(connection.Provider).Keys().ToArray();
         }
 
         protected override Row CreateRowFromReader(IDataReader reader) {

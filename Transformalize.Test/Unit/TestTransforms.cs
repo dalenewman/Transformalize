@@ -21,8 +21,9 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using NUnit.Framework;
-using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Main;
 using Transformalize.Operations.Transform;
 
 namespace Transformalize.Test.Unit {
@@ -121,9 +122,9 @@ namespace Transformalize.Test.Unit {
 
         [Test]
         public void FromJson() {
-            var input = new RowsBuilder().Row().Field("f1", "{ \"j1\":\"v1\", \"j2\":7 }").ToOperation();
-            var outParameters = new ParametersBuilder().Parameter("j1").Parameter("j2").Type("int32").ToParameters();
-            var expression = new FromJsonOperation("f1", false, outParameters);
+            var input = new RowsBuilder().Row().Field("f1", "{ \"j1\":\"v1\", \"j2\":7, \"array\":[{\"x\":1}] }").ToOperation();
+            var outParameters = new ParametersBuilder().Parameter("j1").Parameter("j2").Type("int32").Parameter("array").ToParameters();
+            var expression = new FromJsonOperation("f1", false, false, outParameters);
 
             var rows = TestOperation(input, expression);
 
@@ -135,7 +136,7 @@ namespace Transformalize.Test.Unit {
         public void FromJsonWithExtraDoubleQuotes() {
             var input = new RowsBuilder().Row().Field("f1", "{ \"j1\":\"v\"1\", \"j2\"\":7 }").ToOperation();
             var outParameters = new ParametersBuilder().Parameter("j1").Parameter("j2").Type("int32").ToParameters();
-            var expression = new FromJsonOperation("f1", true, outParameters);
+            var expression = new FromJsonOperation("f1", true, false, outParameters);
 
             var rows = TestOperation(input, expression);
 
@@ -144,8 +145,7 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void FromRegex()
-        {
+        public void FromRegex() {
             var input = new RowsBuilder().Row().Field("f1", "991.1 #Something INFO and a rambling message.").ToOperation();
             var outParameters = new ParametersBuilder().Parameter("p1").Type("decimal").Parameter("p2").Parameter("p3").ToParameters();
             var fromRegex = new FromRegexOperation("f1", @"(?<p1>^[\d\.]+).*(?<p2> [A-Z]{4,5} )(?<p3>.*$)", outParameters);
@@ -160,8 +160,14 @@ namespace Transformalize.Test.Unit {
         [Test]
         public void FromXml() {
             var input = new RowsBuilder().Row().Field("f1", "<order><id>1</id><total>7.25</total><lines><line product=\"1\"/><line product=\"2\"/></lines></order>").ToOperation();
-            var outParameters = new ParametersBuilder().Parameter("id").Type("int32").Parameter("total").Type("decimal").Parameter("lines").ToParameters();
-            var fromXml = new FromXmlOperation("f1", outParameters);
+
+            var outFields = new FieldsBuilder()
+                .Field("id").Type("int32")
+                .Field("total").Type("decimal")
+                .Field("lines")
+                .ToFields();
+            
+            var fromXml = new FromXmlOperation("f1", outFields);
 
             var rows = TestOperation(input, fromXml);
 
@@ -187,6 +193,177 @@ namespace Transformalize.Test.Unit {
         //    Assert.AreEqual(7.25M, rows[0]["total"]);
         //    Assert.AreEqual("<line product=\"1\" /><line product=\"2\" />", rows[0]["lines"]);
         //}
+
+        [Test]
+        public void GetHashCodeTest() {
+            var expected = "test".GetHashCode();
+
+            var input = new RowsBuilder().Row("f1", "test").ToOperation();
+            var getHashCode = new GetHashCodeOperation("f1", "o1");
+            var output = TestOperation(input, getHashCode);
+
+            Assert.AreEqual(expected, output[0]["o1"]);
+        }
+
+        [Test]
+        public void Insert() {
+            const string expected = "InsertHere";
+
+            var input = new RowsBuilder().Row("f1", "Insertere").ToOperation();
+            var insert = new InsertOperation("f1", "o1", 6, "H");
+            var output = TestOperation(input, insert);
+
+            Assert.AreEqual(expected, output[0]["o1"]);
+        }
+
+        [Test]
+        public void Javascript() {
+            const int expected = 12;
+
+            var input = new RowsBuilder().Row("x", 3).Field("y", 4).ToOperation();
+            var scripts = new Dictionary<string, Script>() { { "script", new Script("script", "function multiply(x,y) { return x*y; }", "") } };
+            var parameters = new ParametersBuilder().Parameters("x", "y").ToParameters();
+            var javascript = new JavascriptOperation("o1", "multiply(x,y)", scripts, parameters);
+            var output = TestOperation(input, javascript);
+
+            Assert.AreEqual(expected, output[0]["o1"]);
+        }
+
+        [Test]
+        public void Join() {
+            var input = new RowsBuilder().Row("x", "X").Field("y", "Y").ToOperation();
+            var parameters = new ParametersBuilder().Parameters("x", "y").ToParameters();
+            var join = new JoinOperation("o1", "|", parameters);
+            var output = TestOperation(input, join);
+            Assert.AreEqual("X|Y", output[0]["o1"]);
+        }
+
+        [Test]
+        public void Left() {
+            var input = new RowsBuilder().Row("left", "left").ToOperation();
+            var parameters = new ParametersBuilder().Parameters("left").ToParameters();
+            var left = new LeftOperation("left", "o1", 3);
+            var output = TestOperation(input, left);
+            Assert.AreEqual("lef", output[0]["o1"]);
+        }
+
+        [Test]
+        public void Length() {
+            var input = new RowsBuilder().Row("left", "left").ToOperation();
+            var parameters = new ParametersBuilder().Parameters("left").ToParameters();
+            var length = new LengthOperation("left", "o1");
+            var output = TestOperation(input, length);
+            Assert.AreEqual(4, output[0]["o1"]);
+        }
+
+        [Test]
+        public void MapEquals() {
+            var input = new RowsBuilder().Row("f1", "x").Row("f1", "a").Row("f1", "d").ToOperation();
+            var maps = new MapsBuilder()
+                .Equals().Item("x", "y").Item("a", "b")
+                .StartsWith()
+                .EndsWith().ToMaps();
+            var map = new MapOperation("f1", "o1", "string", maps);
+            var output = TestOperation(input, map);
+            Assert.AreEqual("y", output[0]["o1"], "x maps to y");
+            Assert.AreEqual("b", output[1]["o1"], "a maps to b");
+            Assert.AreEqual("d", output[2]["o1"], "d stays d");
+        }
+
+        [Test]
+        public void MapStartsWith() {
+            var input = new RowsBuilder().Row("f1", "test1").Row("f1", "test2").Row("f1", "tes").ToOperation();
+            var maps = new MapsBuilder()
+                .Equals().Item("*", "no")
+                .StartsWith().Item("test", "yes")
+                .EndsWith().ToMaps();
+            var map = new MapOperation("f1", "o1", "string", maps);
+            var output = TestOperation(input, map);
+            Assert.AreEqual("yes", output[0]["o1"], "test1 maps to yes");
+            Assert.AreEqual("yes", output[1]["o1"], "test2 maps to yes");
+            Assert.AreEqual("no", output[2]["o1"], "test maps to no (via catch-all)");
+        }
+
+        [Test]
+        public void MapEndsWith() {
+            var input = new RowsBuilder()
+                .Row("f1", "1end")
+                .Row("f1", "2end")
+                .Row("f1", "start").ToOperation();
+            var maps = new MapsBuilder()
+                .Equals().Item("*", "no")
+                .StartsWith()
+                .EndsWith().Item("end", "yes").ToMaps();
+            var mapTransform = new MapOperation("f1", "o1", "string", maps);
+            var output = TestOperation(input, mapTransform);
+
+            Assert.AreEqual("yes", output[0]["o1"]);
+            Assert.AreEqual("yes", output[1]["o1"]);
+            Assert.AreEqual("no", output[2]["o1"]);
+
+        }
+
+        [Test]
+        public void MapEqualsWithParameter() {
+            
+            var input = new RowsBuilder()
+                .Row("f1", "v1").Field("p1", 1).Field("p2", 2).Field("p3", 3)
+                .Row("f1", "v2").Field("p1", 1).Field("p2", 2).Field("p3", 3)
+                .Row("f1", "v3").Field("p1", 1).Field("p2", 2).Field("p3", 3)
+                .ToOperation();
+
+            var parameters = new ParametersBuilder()
+                .Parameters("p1","p2","p3")
+                .ToParameters();
+
+            var maps = new MapsBuilder()
+                .Equals().Item("v1", null, "p1").Item("v2", null, "p2").Item("*", null, "p3")
+                .StartsWith()
+                .EndsWith()
+                .ToMaps();
+
+            var mapTransform = new MapOperation("f1", "o1", "int32", maps);
+            
+            var output = TestOperation(input, mapTransform);
+
+            Assert.AreEqual(1, output[0]["o1"], "v1 maps to 1");
+            Assert.AreEqual(2, output[1]["o1"], "v2 maps to 2");
+            Assert.AreEqual(3, output[2]["o1"], "v3 maps to 3 (via catch-all)");
+        }
+
+        [Test]
+        public void FromXmlWithMultipleRecords() {
+
+            const string xml = @"
+                <order>
+                    <detail product-id=""1"" quantity=""2"" color=""red"" />
+                    <detail product-id=""3"" quantity=""1"" color=""pink"" />
+                </order>
+            ";
+            
+            var input = new RowsBuilder().Row().Field("xml", xml).ToOperation();
+
+            var outFields = new FieldsBuilder()
+                .Field("product-id").Type("int32").NodeType("attribute")
+                .Field("quantity").Type("int32").NodeType("attribute")
+                .Field("color").Type("string").NodeType("attribute")
+                .ToFields();
+
+            var fromXmlTransform = new FromXmlOperation("xml", outFields);
+
+            var output = TestOperation(input, fromXmlTransform);
+
+            Assert.AreEqual(1, output[0]["product-id"]);
+            Assert.AreEqual(2, output[0]["quantity"]);
+            Assert.AreEqual("red", output[0]["color"]);
+
+            Assert.AreEqual(3, output[1]["product-id"]);
+            Assert.AreEqual(1, output[1]["quantity"]);
+            Assert.AreEqual("pink", output[1]["color"]);
+
+        }
+
+
 
     }
 }

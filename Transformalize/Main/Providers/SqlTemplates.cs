@@ -60,7 +60,7 @@ namespace Transformalize.Main.Providers
             var sqlPattern = "\r\nSELECT\r\n    {0}\r\nFROM {1} l\r\nINNER JOIN {2} r ON ({3})\r\n" + maxDop;
 
             var columns = new FieldSqlWriter(fields).Input().Select(provider).Prepend("l.").ToAlias(provider, true).Write(",\r\n    ");
-            var join = new FieldSqlWriter(fields).FieldType(FieldType.MasterKey, FieldType.PrimaryKey).Name(provider).Set("l", "r").Write(" AND ");
+            var join = new FieldSqlWriter(fields).FieldType(FieldType.MasterKey, FieldType.PrimaryKey).Name(provider).Input().Set("l", "r").Write(" AND ");
 
             return string.Format(sqlPattern, columns, SafeTable(leftTable, provider, leftSchema), SafeTable(rightTable, provider, rightSchema), @join);
         }
@@ -96,10 +96,11 @@ namespace Transformalize.Main.Providers
                 foreach (var field in orderedFields)
                 {
                     var value = row[field.Alias].ToString();
+                    var quote = field.Quote();
                     values.Add(
-                        field.Quote == string.Empty
+                        quote == string.Empty
                             ? value
-                            : string.Concat(field.Quote, value.Replace("'", "''"), field.Quote)
+                            : string.Concat(quote, value.Replace("'", "''"), quote)
                         );
                 }
                 yield return string.Join(",", values);

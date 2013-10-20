@@ -3,13 +3,19 @@ using Moq;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 
-namespace Transformalize.Test.Unit
-{
+namespace Transformalize.Test.Unit {
     public class RowsBuilder {
         private readonly IList<Row> _rows = new List<Row>();
 
         public RowBuilder Row() {
-            var row = new Row();
+            return Consume(new Row());
+        }
+
+        public RowBuilder Row(string key, object value) {
+            return Consume(new Row() { { key, value } });
+        }
+
+        private RowBuilder Consume(Row row) {
             _rows.Add(row);
             var rowsBuilder = this;
             return new RowBuilder(ref rowsBuilder, ref row);

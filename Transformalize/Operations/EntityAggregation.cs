@@ -70,7 +70,7 @@ namespace Transformalize.Operations
 
                 foreach (var field in _columnsToAccumulate)
                 {
-                    aggregate[field.Alias] = field.Default ?? new ConversionFactory().Convert(string.Empty, field.SimpleType);
+                    aggregate[field.Alias] = field.Default ?? new DefaultFactory().Convert(string.Empty, field.SimpleType);
                 }
             }
 

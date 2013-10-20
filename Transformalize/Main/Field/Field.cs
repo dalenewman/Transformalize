@@ -22,75 +22,123 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Text;
-using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main.Providers.SqlServer;
 
-namespace Transformalize.Main
-{
-    public class Field
-    {
-        public object Default;
-        public StringBuilder StringBuilder;
-        private FieldType _fieldType;
-        private string _name;
+namespace Transformalize.Main {
+
+    public class Field {
+
+        private readonly string[] _stringTypes = new[] { "string", "char", "datetime", "guid", "xml" };
+
+        private FieldType _fieldType = FieldType.Field;
+        private string _name = "field";
         private string _sqlDataType;
-        private FieldSqlWriter _sqlWriter;
-
-        public Field(FieldType fieldType) : this("System.String", "64", fieldType, true, null)
-        {
-        }
-
-        public Field(string typeName, string length, FieldType fieldType, bool output, string @default)
-        {
-            Initialize(typeName, length, fieldType, output, @default);
-        }
-
-        public string Type { get; private set; }
-        public string SimpleType { get; set; }
-        public string Quote { get; private set; }
+        private string _type = "System.String";
+        private string _simpleType = "string";
+        private bool _input = true;
+        private bool _unicode = true;
+        private bool _variableLength = true;
+        private string _nodeType = "element";
+        private bool _readInnerXml = true;
+        private List<SearchType> _searchTypes = new List<SearchType>();
+        private Type _systemType = typeof(string);
+        private object _default;
+        
         public string Alias { get; set; }
         public string Schema { get; set; }
         public string Entity { get; set; }
         public string Process { get; set; }
         public string Parent { get; set; }
-        public string Length { get; private set; }
+        public string Length { get; set; }
         public int Precision { get; set; }
         public int Scale { get; set; }
         public bool NotNull { get; set; }
         public bool Identity { get; set; }
         public KeyValuePair<string, string> References { get; set; }
-        public bool Input { get; set; }
         public bool Output { get; set; }
-        public bool UseStringBuilder { get; private set; }
-        public Type SystemType { get; set; }
         public int Index { get; set; }
-        public bool Unicode { get; set; }
-        public bool VariableLength { get; set; }
-        public bool Auto { get; set; }
         public string Aggregate { get; set; }
         public IParameters Parameters { get; set; }
         public bool HasParameters { get; set; }
-        public List<SearchType> SearchTypes { get; set; }
 
-        public string SqlDataType
+        public object Default {
+            get { return _default; }
+            set { _default = new DefaultFactory().Convert(value, SimpleType); }
+        }
+
+        public Type SystemType
         {
+            get { return _systemType; }
+        }
+
+        public List<SearchType> SearchTypes
+        {
+            get { return _searchTypes; }
+            set { _searchTypes = value; }
+        }
+
+        public Field(FieldType fieldType)
+            : this("System.String", "64", fieldType, true, null) {
+        }
+
+        public Field(string typeName, string length, FieldType fieldType, bool output, string @default) {
+            Initialize(typeName, length, fieldType, output, @default);
+        }
+
+        public string Type
+        {
+            get { return _type; } 
+            set { 
+                _type = value;
+                _simpleType = Common.ToSimpleType(value);
+                _systemType = Common.ToSystemType(_simpleType);
+                Default = _default; //reset default
+            }
+        }
+
+        public string SimpleType
+        {
+            get { return _simpleType; }
+        }
+
+        public bool Input {
+            get { return _input; }
+            set { _input = value; }
+        }
+
+        public bool Unicode {
+            get { return _unicode; }
+            set { _unicode = value; }
+        }
+
+        public bool VariableLength {
+            get { return _variableLength; }
+            set { _variableLength = value; }
+        }
+
+        public string NodeType {
+            get { return _nodeType; }
+            set { _nodeType = value; }
+        }
+
+        public bool ReadInnerXml {
+            get { return _readInnerXml; }
+            set { _readInnerXml = value; }
+        }
+
+        public string SqlDataType {
             get { return _sqlDataType ?? (_sqlDataType = new SqlServerDataTypeService().GetDataType(this)); }
         }
 
         /// <summary>
         ///     FieldType can affect Output
         /// </summary>
-        public FieldType FieldType
-        {
+        public FieldType FieldType {
             get { return _fieldType; }
-            set
-            {
+            set {
                 _fieldType = value;
-                if (MustBeOutput())
-                {
+                if (MustBeOutput()) {
                     Output = true;
                 }
             }
@@ -99,58 +147,36 @@ namespace Transformalize.Main
         /// <summary>
         ///     Alias follows name if no alias provided
         /// </summary>
-        public string Name
-        {
+        public string Name {
             get { return _name; }
-            set
-            {
+            set {
                 _name = value;
-                if (string.IsNullOrEmpty(Alias))
-                {
+                if (string.IsNullOrEmpty(Alias)) {
                     Alias = Name;
                 }
             }
         }
 
-        public FieldSqlWriter SqlWriter
-        {
-            get { return _sqlWriter ?? (_sqlWriter = new FieldSqlWriter(this)); }
-            set { _sqlWriter = value; }
-        }
-
-        public bool MustBeOutput()
-        {
+        public bool MustBeOutput() {
             return FieldType.HasFlag(FieldType.MasterKey) || FieldType.HasFlag(FieldType.ForeignKey) ||
                    FieldType.HasFlag(FieldType.PrimaryKey);
         }
 
-        private void Initialize(string typeName, string length, FieldType fieldType, bool output, string @default)
-        {
-            Name = "field";
-            Input = true;
-            Unicode = true;
-            VariableLength = true;
+        private void Initialize(string typeName, string length, FieldType fieldType, bool output, string @default) {
             Type = typeName;
             Length = length;
-            SimpleType = Common.ToSimpleType(typeName);
-            Quote = (new[] {"string", "char", "datetime", "guid", "xml"}).Any(t => t.Equals(SimpleType)) ? "'" : string.Empty;
-            UseStringBuilder = (new[] {"string", "char"}).Any(t => t.Equals(SimpleType));
             FieldType = fieldType;
             Output = output || MustBeOutput();
-            SystemType = Common.ToSystemType(SimpleType);
-            StringBuilder = UseStringBuilder ? new StringBuilder() : null;
-            Default = new ConversionFactory().Convert(@default, SimpleType);
-            SearchTypes = new List<SearchType>();
+            Default = @default;
         }
 
-        public string AsJoin(string left, string right)
-        {
-            return string.Format("{0}.[{1}] = {2}.[{1}]", left, Name, right);
+        public string Quote() {
+            return _stringTypes.Any(t => t.Equals(SimpleType)) ? "'" : string.Empty;
         }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             return string.Format("({0}) {1}", Type, Alias);
         }
+
     }
 }

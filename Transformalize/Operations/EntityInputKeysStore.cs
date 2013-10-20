@@ -37,7 +37,7 @@ namespace Transformalize.Operations
         {
             _entity = entity;
             _firstKey = _entity.PrimaryKey.First().Key;
-            _keys = _entity.PrimaryKey.ToEnumerable().Select(f => f.Alias).ToArray();
+            _keys = _entity.PrimaryKey.ToEnumerable().Where(f=>f.Input).Select(f => f.Alias).ToArray();
         }
 
         protected override void Accumulate(Row row, Row aggregate)

@@ -15,14 +15,12 @@ using System.Reflection;
 #if !SILVERLIGHT
 #endif
 
-namespace Transformalize.Libs.fastJSON
-{
+namespace Transformalize.Libs.fastJSON {
     public delegate string Serialize(object data);
 
     public delegate object Deserialize(string data);
 
-    public sealed class JSONParameters
-    {
+    public sealed class JSONParameters {
         /// <summary>
         ///     Anonymous types have read only properties
         /// </summary>
@@ -73,8 +71,7 @@ namespace Transformalize.Libs.fastJSON
         /// </summary>
         public bool UsingGlobalTypes = true;
 
-        public void FixValues()
-        {
+        public void FixValues() {
             if (UseExtensions == false) // disable conflicting params
             {
                 UsingGlobalTypes = false;
@@ -82,18 +79,16 @@ namespace Transformalize.Libs.fastJSON
         }
     }
 
-    public sealed class JSON
-    {
+    public sealed class JSON {
         //public readonly static JSON Instance = new JSON();
-        [ThreadStatic] private static JSON _instance;
+        [ThreadStatic]
+        private static JSON _instance;
 
-        public static JSON Instance
-        {
+        public static JSON Instance {
             get { return _instance ?? (_instance = new JSON()); }
         }
 
-        private JSON()
-        {
+        private JSON() {
         }
 
         /// <summary>
@@ -103,16 +98,14 @@ namespace Transformalize.Libs.fastJSON
 
         private JSONParameters _params;
 
-        public string ToJSON(object obj)
-        {
+        public string ToJSON(object obj) {
             _params = Parameters;
             _params.FixValues();
             Reflection.Instance.ShowReadOnlyProperties = _params.ShowReadOnlyProperties;
             return ToJSON(obj, Parameters);
         }
 
-        public string ToJSON(object obj, JSONParameters param)
-        {
+        public string ToJSON(object obj, JSONParameters param) {
             _params = param;
             _params.FixValues();
             Reflection.Instance.ShowReadOnlyProperties = _params.ShowReadOnlyProperties;
@@ -123,12 +116,11 @@ namespace Transformalize.Libs.fastJSON
 
             if (obj.GetType().IsGenericType)
                 t = obj.GetType().GetGenericTypeDefinition();
-            if (t == typeof (Dictionary<,>) || t == typeof (List<>))
+            if (t == typeof(Dictionary<,>) || t == typeof(List<>))
                 _params.UsingGlobalTypes = false;
 
             // FEATURE : enable extensions when you can deserialize anon types
-            if (_params.EnableAnonymousTypes)
-            {
+            if (_params.EnableAnonymousTypes) {
                 _params.UseExtensions = false;
                 _params.UsingGlobalTypes = false;
                 Reflection.Instance.ShowReadOnlyProperties = true;
@@ -137,37 +129,44 @@ namespace Transformalize.Libs.fastJSON
             return new JSONSerializer(_params).ConvertToJSON(obj);
         }
 
-        public object Parse(string json)
-        {
+        public object Parse(string json) {
             _params = Parameters;
             Reflection.Instance.ShowReadOnlyProperties = _params.ShowReadOnlyProperties;
             return new JsonParser(json, _params.IgnoreCaseOnDeserialize).Decode();
         }
 
-        public dynamic ToDynamic(string json)
-        {
+        public Result Validate(string json) {
+            _params = Parameters;
+            Reflection.Instance.ShowReadOnlyProperties = _params.ShowReadOnlyProperties;
+            return new JsonValidater(json, _params.IgnoreCaseOnDeserialize).Validate();
+        }
+
+        public bool TryParse(string json, out object result) {
+            _params = Parameters;
+            Reflection.Instance.ShowReadOnlyProperties = _params.ShowReadOnlyProperties;
+            return new JsonValidater(json, _params.IgnoreCaseOnDeserialize).TryParse(out result);
+        }
+
+        public dynamic ToDynamic(string json) {
             return new DynamicJson(json);
         }
 
-        public T ToObject<T>(string json)
-        {
-            return (T) ToObject(json, typeof (T));
+        public T ToObject<T>(string json) {
+            return (T)ToObject(json, typeof(T));
         }
 
-        public object ToObject(string json)
-        {
+        public object ToObject(string json) {
             return ToObject(json, null);
         }
 
-        public object ToObject(string json, Type type)
-        {
+        public object ToObject(string json, Type type) {
             _params = Parameters;
             _params.FixValues();
             Reflection.Instance.ShowReadOnlyProperties = _params.ShowReadOnlyProperties;
             Type t = null;
             if (type != null && type.IsGenericType)
                 t = type.GetGenericTypeDefinition();
-            if (t == typeof (Dictionary<,>) || t == typeof (List<>))
+            if (t == typeof(Dictionary<,>) || t == typeof(List<>))
                 _params.UsingGlobalTypes = false;
             _usingglobals = _params.UsingGlobalTypes;
 
@@ -176,28 +175,26 @@ namespace Transformalize.Libs.fastJSON
                 return null;
 
 #if !SILVERLIGHT
-            if (type != null && type == typeof (DataSet))
+            if (type != null && type == typeof(DataSet))
                 return CreateDataset(o as Dictionary<string, object>, null);
 
-            if (type != null && type == typeof (DataTable))
+            if (type != null && type == typeof(DataTable))
                 return CreateDataTable(o as Dictionary<string, object>, null);
 #endif
-            if (o is IDictionary)
-            {
-                if (type != null && type.IsGenericType && type.GetGenericTypeDefinition() == typeof (Dictionary<,>))
+            if (o is IDictionary) {
+                if (type != null && type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>))
                     // deserialize a dictionary
                     return RootDictionary(o, type);
                 else // deserialize an object
                     return ParseDictionary(o as Dictionary<string, object>, null, type, null);
             }
 
-            if (o is List<object>)
-            {
-                if (type != null && type.IsGenericType && type.GetGenericTypeDefinition() == typeof (Dictionary<,>))
+            if (o is List<object>) {
+                if (type != null && type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>))
                     // kv format
                     return RootDictionary(o, type);
 
-                if (type != null && type.IsGenericType && type.GetGenericTypeDefinition() == typeof (List<>))
+                if (type != null && type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>))
                     // deserialize to generic list
                     return RootList(o, type);
                 else
@@ -210,38 +207,33 @@ namespace Transformalize.Libs.fastJSON
             return o;
         }
 
-        public string Beautify(string input)
-        {
+        public string Beautify(string input) {
             return Formatter.PrettyPrint(input);
         }
 
-        public object FillObject(object input, string json)
-        {
+        public object FillObject(object input, string json) {
             _params = Parameters;
             _params.FixValues();
             Reflection.Instance.ShowReadOnlyProperties = _params.ShowReadOnlyProperties;
             var ht = new JsonParser(json, Parameters.IgnoreCaseOnDeserialize).Decode() as Dictionary<string, object>;
-            if (ht == null) return null;
+            if (ht == null)
+                return null;
             return ParseDictionary(ht, null, input.GetType(), input);
         }
 
-        public object DeepCopy(object obj)
-        {
+        public object DeepCopy(object obj) {
             return ToObject(ToJSON(obj));
         }
 
-        public T DeepCopy<T>(T obj)
-        {
+        public T DeepCopy<T>(T obj) {
             return ToObject<T>(ToJSON(obj));
         }
 
         internal SafeDictionary<Type, Serialize> _customSerializer = new SafeDictionary<Type, Serialize>();
         internal SafeDictionary<Type, Deserialize> _customDeserializer = new SafeDictionary<Type, Deserialize>();
 
-        public void RegisterCustomType(Type type, Serialize serializer, Deserialize deserializer)
-        {
-            if (type != null && serializer != null && deserializer != null)
-            {
+        public void RegisterCustomType(Type type, Serialize serializer, Deserialize deserializer) {
+            if (type != null && serializer != null && deserializer != null) {
                 _customSerializer.Add(type, serializer);
                 _customDeserializer.Add(type, deserializer);
                 // reset property cache
@@ -249,8 +241,7 @@ namespace Transformalize.Libs.fastJSON
             }
         }
 
-        internal bool IsTypeRegistered(Type t)
-        {
+        internal bool IsTypeRegistered(Type t) {
             if (_customSerializer.Count == 0)
                 return false;
             Serialize s;
@@ -259,8 +250,7 @@ namespace Transformalize.Libs.fastJSON
 
         #region [   JSON specific reflection   ]
 
-        private enum myPropInfoType
-        {
+        private enum myPropInfoType {
             Int,
             Long,
             String,
@@ -283,14 +273,12 @@ namespace Transformalize.Libs.fastJSON
         }
 
         [Flags]
-        private enum myPropInfoFlags
-        {
+        private enum myPropInfoFlags {
             Filled = 1 << 0,
             CanWrite = 1 << 1
         }
 
-        private struct myPropInfo
-        {
+        private struct myPropInfo {
             public myPropInfoFlags Flags;
             public Type[] GenericTypes;
 
@@ -309,19 +297,14 @@ namespace Transformalize.Libs.fastJSON
         private SafeDictionary<string, SafeDictionary<string, myPropInfo>> _propertycache =
             new SafeDictionary<string, SafeDictionary<string, myPropInfo>>();
 
-        private SafeDictionary<string, myPropInfo> Getproperties(Type type, string typename)
-        {
+        private SafeDictionary<string, myPropInfo> Getproperties(Type type, string typename) {
             SafeDictionary<string, myPropInfo> sd = null;
-            if (_propertycache.TryGetValue(typename, out sd))
-            {
+            if (_propertycache.TryGetValue(typename, out sd)) {
                 return sd;
-            }
-            else
-            {
+            } else {
                 sd = new SafeDictionary<string, myPropInfo>();
                 var pr = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
-                foreach (var p in pr)
-                {
+                foreach (var p in pr) {
                     var d = CreateMyProp(p.PropertyType, p.Name);
                     d.Flags |= myPropInfoFlags.CanWrite;
                     d.setter = Reflection.CreateSetMethod(type, p);
@@ -329,8 +312,7 @@ namespace Transformalize.Libs.fastJSON
                     sd.Add(p.Name, d);
                 }
                 var fi = type.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
-                foreach (var f in fi)
-                {
+                foreach (var f in fi) {
                     var d = CreateMyProp(f.FieldType, f.Name);
                     d.setter = Reflection.CreateSetField(type, f);
                     d.getter = Reflection.CreateGetField(type, f);
@@ -342,39 +324,45 @@ namespace Transformalize.Libs.fastJSON
             }
         }
 
-        private myPropInfo CreateMyProp(Type t, string name)
-        {
+        private myPropInfo CreateMyProp(Type t, string name) {
             var d = new myPropInfo();
             var d_type = myPropInfoType.Unknown;
             var d_flags = myPropInfoFlags.Filled | myPropInfoFlags.CanWrite;
 
-            if (t == typeof (int) || t == typeof (int?)) d_type = myPropInfoType.Int;
-            else if (t == typeof (long) || t == typeof (long?)) d_type = myPropInfoType.Long;
-            else if (t == typeof (string)) d_type = myPropInfoType.String;
-            else if (t == typeof (bool) || t == typeof (bool?)) d_type = myPropInfoType.Bool;
-            else if (t == typeof (DateTime) || t == typeof (DateTime?)) d_type = myPropInfoType.DateTime;
-            else if (t.IsEnum) d_type = myPropInfoType.Enum;
-            else if (t == typeof (Guid) || t == typeof (Guid?)) d_type = myPropInfoType.Guid;
-            else if (t.IsArray)
-            {
+            if (t == typeof(int) || t == typeof(int?))
+                d_type = myPropInfoType.Int;
+            else if (t == typeof(long) || t == typeof(long?))
+                d_type = myPropInfoType.Long;
+            else if (t == typeof(string))
+                d_type = myPropInfoType.String;
+            else if (t == typeof(bool) || t == typeof(bool?))
+                d_type = myPropInfoType.Bool;
+            else if (t == typeof(DateTime) || t == typeof(DateTime?))
+                d_type = myPropInfoType.DateTime;
+            else if (t.IsEnum)
+                d_type = myPropInfoType.Enum;
+            else if (t == typeof(Guid) || t == typeof(Guid?))
+                d_type = myPropInfoType.Guid;
+            else if (t.IsArray) {
                 d.bt = t.GetElementType();
-                if (t == typeof (byte[]))
+                if (t == typeof(byte[]))
                     d_type = myPropInfoType.ByteArray;
                 else
                     d_type = myPropInfoType.Array;
-            }
-            else if (t.Name.Contains("Dictionary"))
-            {
+            } else if (t.Name.Contains("Dictionary")) {
                 d.GenericTypes = t.GetGenericArguments();
-                if (d.GenericTypes.Length > 0 && d.GenericTypes[0] == typeof (string))
+                if (d.GenericTypes.Length > 0 && d.GenericTypes[0] == typeof(string))
                     d_type = myPropInfoType.StringDictionary;
                 else
                     d_type = myPropInfoType.Dictionary;
             }
 #if !SILVERLIGHT
-            else if (t == typeof (Hashtable)) d_type = myPropInfoType.Hashtable;
-            else if (t == typeof (DataSet)) d_type = myPropInfoType.DataSet;
-            else if (t == typeof (DataTable)) d_type = myPropInfoType.DataTable;
+ else if (t == typeof(Hashtable))
+                d_type = myPropInfoType.Hashtable;
+            else if (t == typeof(DataSet))
+                d_type = myPropInfoType.DataSet;
+            else if (t == typeof(DataTable))
+                d_type = myPropInfoType.DataTable;
 #endif
 
             else if (IsTypeRegistered(t))
@@ -382,8 +370,7 @@ namespace Transformalize.Libs.fastJSON
 
             d.IsClass = t.IsClass;
             d.IsValueType = t.IsValueType;
-            if (t.IsGenericType)
-            {
+            if (t.IsGenericType) {
                 d.IsGenericType = true;
                 d.bt = t.GetGenericArguments()[0];
             }
@@ -397,25 +384,24 @@ namespace Transformalize.Libs.fastJSON
             return d;
         }
 
-        private object ChangeType(object value, Type conversionType)
-        {
-            if (conversionType == typeof (int))
-                return (int) ((long) value);
+        private object ChangeType(object value, Type conversionType) {
+            if (conversionType == typeof(int))
+                return (int)((long)value);
 
-            else if (conversionType == typeof (long))
-                return (long) value;
+            else if (conversionType == typeof(long))
+                return (long)value;
 
-            else if (conversionType == typeof (string))
+            else if (conversionType == typeof(string))
                 return value;
 
-            else if (conversionType == typeof (Guid))
-                return CreateGuid((string) value);
+            else if (conversionType == typeof(Guid))
+                return CreateGuid((string)value);
 
             else if (conversionType.IsEnum)
-                return CreateEnum(conversionType, (string) value);
+                return CreateEnum(conversionType, (string)value);
 
             else if (IsTypeRegistered(conversionType))
-                return CreateCustom((string) value, conversionType);
+                return CreateCustom((string)value, conversionType);
 
             return Convert.ChangeType(value, conversionType, CultureInfo.InvariantCulture);
         }
@@ -424,12 +410,10 @@ namespace Transformalize.Libs.fastJSON
 
         #region [   p r i v a t e   m e t h o d s   ]
 
-        private object RootList(object parse, Type type)
-        {
+        private object RootList(object parse, Type type) {
             var gtypes = type.GetGenericArguments();
-            var o = (IList) Reflection.Instance.FastCreateInstance(type);
-            foreach (var k in (IList) parse)
-            {
+            var o = (IList)Reflection.Instance.FastCreateInstance(type);
+            foreach (var k in (IList)parse) {
                 _usingglobals = false;
                 var v = k;
                 if (k is Dictionary<string, object>)
@@ -442,21 +426,18 @@ namespace Transformalize.Libs.fastJSON
             return o;
         }
 
-        private object RootDictionary(object parse, Type type)
-        {
+        private object RootDictionary(object parse, Type type) {
             var gtypes = type.GetGenericArguments();
-            if (parse is Dictionary<string, object>)
-            {
-                var o = (IDictionary) Reflection.Instance.FastCreateInstance(type);
+            if (parse is Dictionary<string, object>) {
+                var o = (IDictionary)Reflection.Instance.FastCreateInstance(type);
 
-                foreach (var kv in (Dictionary<string, object>) parse)
-                {
+                foreach (var kv in (Dictionary<string, object>)parse) {
                     object v;
                     var k = ChangeType(kv.Key, gtypes[0]);
                     if (kv.Value is Dictionary<string, object>)
                         v = ParseDictionary(kv.Value as Dictionary<string, object>, null, gtypes[1], null);
                     else if (kv.Value is List<object>)
-                        v = CreateArray(kv.Value as List<object>, typeof (object), typeof (object), null);
+                        v = CreateArray(kv.Value as List<object>, typeof(object), typeof(object), null);
                     else
                         v = ChangeType(kv.Value, gtypes[1]);
                     o.Add(k, v);
@@ -473,36 +454,30 @@ namespace Transformalize.Libs.fastJSON
         private bool _usingglobals;
 
         private object ParseDictionary(Dictionary<string, object> d, Dictionary<string, object> globaltypes, Type type,
-                                       object input)
-        {
+                                       object input) {
             object tn = "";
 
-            if (d.TryGetValue("$types", out tn))
-            {
+            if (d.TryGetValue("$types", out tn)) {
                 _usingglobals = true;
                 globaltypes = new Dictionary<string, object>();
-                foreach (var kv in (Dictionary<string, object>) tn)
-                {
-                    globaltypes.Add((string) kv.Value, kv.Key);
+                foreach (var kv in (Dictionary<string, object>)tn) {
+                    globaltypes.Add((string)kv.Value, kv.Key);
                 }
             }
 
             var found = d.TryGetValue("$type", out tn);
 #if !SILVERLIGHT
-            if (found == false && type == typeof (Object))
-            {
+            if (found == false && type == typeof(Object)) {
                 return CreateDataset(d, globaltypes);
             }
 #endif
-            if (found)
-            {
-                if (_usingglobals)
-                {
+            if (found) {
+                if (_usingglobals) {
                     object tname = "";
-                    if (globaltypes.TryGetValue((string) tn, out tname))
+                    if (globaltypes.TryGetValue((string)tn, out tname))
                         tn = tname;
                 }
-                type = Reflection.Instance.GetTypeFromCache((string) tn);
+                type = Reflection.Instance.GetTypeFromCache((string)tn);
             }
 
             if (type == null)
@@ -514,89 +489,84 @@ namespace Transformalize.Libs.fastJSON
                 o = Reflection.Instance.FastCreateInstance(type);
 
             var props = Getproperties(type, typename);
-            foreach (var n in d.Keys)
-            {
+            foreach (var n in d.Keys) {
                 var name = n;
-                if (_params.IgnoreCaseOnDeserialize) name = name.ToLower();
-                if (name == "$map")
-                {
-                    ProcessMap(o, props, (Dictionary<string, object>) d[name]);
+                if (_params.IgnoreCaseOnDeserialize)
+                    name = name.ToLower();
+                if (name == "$map") {
+                    ProcessMap(o, props, (Dictionary<string, object>)d[name]);
                     continue;
                 }
                 myPropInfo pi;
                 if (props.TryGetValue(name, out pi) == false)
                     continue;
-                if ((pi.Flags & (myPropInfoFlags.Filled | myPropInfoFlags.CanWrite)) != 0)
-                {
+                if ((pi.Flags & (myPropInfoFlags.Filled | myPropInfoFlags.CanWrite)) != 0) {
                     var v = d[name];
 
-                    if (v != null)
-                    {
+                    if (v != null) {
                         object oset = null;
 
-                        switch (pi.Type)
-                        {
+                        switch (pi.Type) {
                             case myPropInfoType.Int:
-                                oset = (int) ((long) v);
+                                oset = (int)((long)v);
                                 break;
                             case myPropInfoType.Long:
-                                oset = (long) v;
+                                oset = (long)v;
                                 break;
                             case myPropInfoType.String:
                                 oset = v;
                                 break;
                             case myPropInfoType.Bool:
-                                oset = (bool) v;
+                                oset = (bool)v;
                                 break;
                             case myPropInfoType.DateTime:
-                                oset = CreateDateTime((string) v);
+                                oset = CreateDateTime((string)v);
                                 break;
                             case myPropInfoType.Enum:
-                                oset = CreateEnum(pi.pt, (string) v);
+                                oset = CreateEnum(pi.pt, (string)v);
                                 break;
                             case myPropInfoType.Guid:
-                                oset = CreateGuid((string) v);
+                                oset = CreateGuid((string)v);
                                 break;
 
                             case myPropInfoType.Array:
                                 if (!pi.IsValueType)
-                                    oset = CreateArray((List<object>) v, pi.pt, pi.bt, globaltypes);
+                                    oset = CreateArray((List<object>)v, pi.pt, pi.bt, globaltypes);
                                 // what about 'else'?
                                 break;
                             case myPropInfoType.ByteArray:
-                                oset = Convert.FromBase64String((string) v);
+                                oset = Convert.FromBase64String((string)v);
                                 break;
 #if !SILVERLIGHT
                             case myPropInfoType.DataSet:
-                                oset = CreateDataset((Dictionary<string, object>) v, globaltypes);
+                                oset = CreateDataset((Dictionary<string, object>)v, globaltypes);
                                 break;
                             case myPropInfoType.DataTable:
-                                oset = CreateDataTable((Dictionary<string, object>) v, globaltypes);
+                                oset = CreateDataTable((Dictionary<string, object>)v, globaltypes);
                                 break;
                             case myPropInfoType.Hashtable: // same case as Dictionary
 #endif
                             case myPropInfoType.Dictionary:
-                                oset = CreateDictionary((List<object>) v, pi.pt, pi.GenericTypes, globaltypes);
+                                oset = CreateDictionary((List<object>)v, pi.pt, pi.GenericTypes, globaltypes);
                                 break;
                             case myPropInfoType.StringDictionary:
-                                oset = CreateStringKeyDictionary((Dictionary<string, object>) v, pi.pt, pi.GenericTypes,
+                                oset = CreateStringKeyDictionary((Dictionary<string, object>)v, pi.pt, pi.GenericTypes,
                                                                  globaltypes);
                                 break;
 
                             case myPropInfoType.Custom:
-                                oset = CreateCustom((string) v, pi.pt);
+                                oset = CreateCustom((string)v, pi.pt);
                                 break;
-                            default:
-                                {
+                            default: {
                                     if (pi.IsGenericType && pi.IsValueType == false && v is List<object>)
-                                        oset = CreateGenericList((List<object>) v, pi.pt, pi.bt, globaltypes);
+                                        oset = CreateGenericList((List<object>)v, pi.pt, pi.bt, globaltypes);
 
                                     else if (pi.IsClass && v is Dictionary<string, object>)
-                                        oset = ParseDictionary((Dictionary<string, object>) v, globaltypes, pi.pt,
+                                        oset = ParseDictionary((Dictionary<string, object>)v, globaltypes, pi.pt,
                                                                pi.getter(o));
 
                                     else if (v is List<object>)
-                                        oset = CreateArray((List<object>) v, pi.pt, typeof (object), globaltypes);
+                                        oset = CreateArray((List<object>)v, pi.pt, typeof(object), globaltypes);
 
                                     else if (pi.IsValueType)
                                         oset = ChangeType(v, pi.changeType);
@@ -614,73 +584,65 @@ namespace Transformalize.Libs.fastJSON
             return o;
         }
 
-        private object CreateCustom(string v, Type type)
-        {
+        private object CreateCustom(string v, Type type) {
             Deserialize d;
             _customDeserializer.TryGetValue(type, out d);
             return d(v);
         }
 
-        private void ProcessMap(object obj, SafeDictionary<string, myPropInfo> props, Dictionary<string, object> dic)
-        {
-            foreach (var kv in dic)
-            {
+        private void ProcessMap(object obj, SafeDictionary<string, myPropInfo> props, Dictionary<string, object> dic) {
+            foreach (var kv in dic) {
                 var p = props[kv.Key];
                 var o = p.getter(obj);
-                var t = Type.GetType((string) kv.Value);
-                if (t == typeof (Guid))
-                    p.setter(obj, CreateGuid((string) o));
+                var t = Type.GetType((string)kv.Value);
+                if (t == typeof(Guid))
+                    p.setter(obj, CreateGuid((string)o));
             }
         }
 
-        private static int CreateInteger(out int num, string s, int index, int count)
-        {
+        private static int CreateInteger(out int num, string s, int index, int count) {
             num = 0;
             var neg = false;
-            for (var x = 0; x < count; x++, index++)
-            {
+            for (var x = 0; x < count; x++, index++) {
                 var cc = s[index];
 
                 if (cc == '-')
                     neg = true;
                 else if (cc == '+')
                     neg = false;
-                else
-                {
+                else {
                     num *= 10;
                     num += (cc - '0');
                 }
             }
-            if (neg) num = -num;
+            if (neg)
+                num = -num;
 
             return num;
         }
 
-        internal static long CreateLong(out long num, char[] s, int index, int count)
-        {
+        internal static long CreateLong(out long num, char[] s, int index, int count) {
             num = 0;
             var neg = false;
-            for (var x = 0; x < count; x++, index++)
-            {
+            for (var x = 0; x < count; x++, index++) {
                 var cc = s[index];
 
                 if (cc == '-')
                     neg = true;
                 else if (cc == '+')
                     neg = false;
-                else
-                {
+                else {
                     num *= 10;
                     num += (cc - '0');
                 }
             }
-            if (neg) num = -num;
+            if (neg)
+                num = -num;
 
             return num;
         }
 
-        private object CreateEnum(Type pt, string v)
-        {
+        private object CreateEnum(Type pt, string v) {
             // TODO : optimize create enum
 #if !SILVERLIGHT
             return Enum.Parse(pt, v);
@@ -689,16 +651,14 @@ namespace Transformalize.Libs.fastJSON
 #endif
         }
 
-        private Guid CreateGuid(string s)
-        {
+        private Guid CreateGuid(string s) {
             if (s.Length > 30)
                 return new Guid(s);
             else
                 return new Guid(Convert.FromBase64String(s));
         }
 
-        private DateTime CreateDateTime(string value)
-        {
+        private DateTime CreateDateTime(string value) {
             var utc = false;
             //                   0123456789012345678
             // datetime format = yyyy-MM-dd HH:mm:ss
@@ -725,15 +685,14 @@ namespace Transformalize.Libs.fastJSON
                 return new DateTime(year, month, day, hour, min, sec, DateTimeKind.Utc).ToLocalTime();
         }
 
-        private object CreateArray(List<object> data, Type pt, Type bt, Dictionary<string, object> globalTypes)
-        {
+        private object CreateArray(List<object> data, Type pt, Type bt, Dictionary<string, object> globalTypes) {
             var col = Array.CreateInstance(bt, data.Count);
             // create an array of objects
             for (var i = 0; i < data.Count; i++) // each (object ob in data)
             {
                 var ob = data[i];
                 if (ob is IDictionary)
-                    col.SetValue(ParseDictionary((Dictionary<string, object>) ob, globalTypes, bt, null), i);
+                    col.SetValue(ParseDictionary((Dictionary<string, object>)ob, globalTypes, bt, null), i);
                 else
                     col.SetValue(ChangeType(ob, bt), i);
             }
@@ -742,17 +701,15 @@ namespace Transformalize.Libs.fastJSON
         }
 
 
-        private object CreateGenericList(List<object> data, Type pt, Type bt, Dictionary<string, object> globalTypes)
-        {
-            var col = (IList) Reflection.Instance.FastCreateInstance(pt);
+        private object CreateGenericList(List<object> data, Type pt, Type bt, Dictionary<string, object> globalTypes) {
+            var col = (IList)Reflection.Instance.FastCreateInstance(pt);
             // create an array of objects
-            foreach (var ob in data)
-            {
+            foreach (var ob in data) {
                 if (ob is IDictionary)
-                    col.Add(ParseDictionary((Dictionary<string, object>) ob, globalTypes, bt, null));
+                    col.Add(ParseDictionary((Dictionary<string, object>)ob, globalTypes, bt, null));
 
                 else if (ob is List<object>)
-                    col.Add(((List<object>) ob).ToArray());
+                    col.Add(((List<object>)ob).ToArray());
 
                 else
                     col.Add(ChangeType(ob, bt));
@@ -761,23 +718,20 @@ namespace Transformalize.Libs.fastJSON
         }
 
         private object CreateStringKeyDictionary(Dictionary<string, object> reader, Type pt, Type[] types,
-                                                 Dictionary<string, object> globalTypes)
-        {
-            var col = (IDictionary) Reflection.Instance.FastCreateInstance(pt);
+                                                 Dictionary<string, object> globalTypes) {
+            var col = (IDictionary)Reflection.Instance.FastCreateInstance(pt);
             Type t1 = null;
             Type t2 = null;
-            if (types != null)
-            {
+            if (types != null) {
                 t1 = types[0];
                 t2 = types[1];
             }
 
-            foreach (var values in reader)
-            {
+            foreach (var values in reader) {
                 var key = values.Key; //ChangeType(values.Key, t1);
                 object val = null;
                 if (values.Value is Dictionary<string, object>)
-                    val = ParseDictionary((Dictionary<string, object>) values.Value, globalTypes, t2, null);
+                    val = ParseDictionary((Dictionary<string, object>)values.Value, globalTypes, t2, null);
                 else
                     val = ChangeType(values.Value, t2);
                 col.Add(key, val);
@@ -787,29 +741,26 @@ namespace Transformalize.Libs.fastJSON
         }
 
         private object CreateDictionary(List<object> reader, Type pt, Type[] types,
-                                        Dictionary<string, object> globalTypes)
-        {
-            var col = (IDictionary) Reflection.Instance.FastCreateInstance(pt);
+                                        Dictionary<string, object> globalTypes) {
+            var col = (IDictionary)Reflection.Instance.FastCreateInstance(pt);
             Type t1 = null;
             Type t2 = null;
-            if (types != null)
-            {
+            if (types != null) {
                 t1 = types[0];
                 t2 = types[1];
             }
 
-            foreach (Dictionary<string, object> values in reader)
-            {
+            foreach (Dictionary<string, object> values in reader) {
                 var key = values["k"];
                 var val = values["v"];
 
                 if (key is Dictionary<string, object>)
-                    key = ParseDictionary((Dictionary<string, object>) key, globalTypes, t1, null);
+                    key = ParseDictionary((Dictionary<string, object>)key, globalTypes, t1, null);
                 else
                     key = ChangeType(key, t1);
 
                 if (val is Dictionary<string, object>)
-                    val = ParseDictionary((Dictionary<string, object>) val, globalTypes, t2, null);
+                    val = ParseDictionary((Dictionary<string, object>)val, globalTypes, t2, null);
                 else
                     val = ChangeType(val, t2);
 
@@ -819,17 +770,15 @@ namespace Transformalize.Libs.fastJSON
             return col;
         }
 
-        private Type GetChangeType(Type conversionType)
-        {
-            if (conversionType.IsGenericType && conversionType.GetGenericTypeDefinition().Equals(typeof (Nullable<>)))
+        private Type GetChangeType(Type conversionType) {
+            if (conversionType.IsGenericType && conversionType.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
                 return conversionType.GetGenericArguments()[0];
 
             return conversionType;
         }
 
 #if !SILVERLIGHT
-        private DataSet CreateDataset(Dictionary<string, object> reader, Dictionary<string, object> globalTypes)
-        {
+        private DataSet CreateDataset(Dictionary<string, object> reader, Dictionary<string, object> globalTypes) {
             var ds = new DataSet();
             ds.EnforceConstraints = false;
             ds.BeginInit();
@@ -837,12 +786,13 @@ namespace Transformalize.Libs.fastJSON
             // read dataset schema here
             ReadSchema(reader, ds, globalTypes);
 
-            foreach (var pair in reader)
-            {
-                if (pair.Key == "$type" || pair.Key == "$schema") continue;
+            foreach (var pair in reader) {
+                if (pair.Key == "$type" || pair.Key == "$schema")
+                    continue;
 
-                var rows = (List<object>) pair.Value;
-                if (rows == null) continue;
+                var rows = (List<object>)pair.Value;
+                if (rows == null)
+                    continue;
 
                 var dt = ds.Tables[pair.Key];
                 ReadDataTable(rows, dt);
@@ -853,23 +803,18 @@ namespace Transformalize.Libs.fastJSON
             return ds;
         }
 
-        private void ReadSchema(Dictionary<string, object> reader, DataSet ds, Dictionary<string, object> globalTypes)
-        {
+        private void ReadSchema(Dictionary<string, object> reader, DataSet ds, Dictionary<string, object> globalTypes) {
             var schema = reader["$schema"];
 
-            if (schema is string)
-            {
-                TextReader tr = new StringReader((string) schema);
+            if (schema is string) {
+                TextReader tr = new StringReader((string)schema);
                 ds.ReadXmlSchema(tr);
-            }
-            else
-            {
+            } else {
                 var ms =
                     (DatasetSchema)
-                    ParseDictionary((Dictionary<string, object>) schema, globalTypes, typeof (DatasetSchema), null);
+                    ParseDictionary((Dictionary<string, object>)schema, globalTypes, typeof(DatasetSchema), null);
                 ds.DataSetName = ms.Name;
-                for (var i = 0; i < ms.Info.Count; i += 3)
-                {
+                for (var i = 0; i < ms.Info.Count; i += 3) {
                     if (ds.Tables.Contains(ms.Info[i]) == false)
                         ds.Tables.Add(ms.Info[i]);
                     ds.Tables[ms.Info[i]].Columns.Add(ms.Info[i + 1], Type.GetType(ms.Info[i + 2]));
@@ -877,36 +822,30 @@ namespace Transformalize.Libs.fastJSON
             }
         }
 
-        private void ReadDataTable(List<object> rows, DataTable dt)
-        {
+        private void ReadDataTable(List<object> rows, DataTable dt) {
             dt.BeginInit();
             dt.BeginLoadData();
             var guidcols = new List<int>();
             var datecol = new List<int>();
 
-            foreach (DataColumn c in dt.Columns)
-            {
-                if (c.DataType == typeof (Guid) || c.DataType == typeof (Guid?))
+            foreach (DataColumn c in dt.Columns) {
+                if (c.DataType == typeof(Guid) || c.DataType == typeof(Guid?))
                     guidcols.Add(c.Ordinal);
-                if (_params.UseUTCDateTime && (c.DataType == typeof (DateTime) || c.DataType == typeof (DateTime?)))
+                if (_params.UseUTCDateTime && (c.DataType == typeof(DateTime) || c.DataType == typeof(DateTime?)))
                     datecol.Add(c.Ordinal);
             }
 
-            foreach (List<object> row in rows)
-            {
+            foreach (List<object> row in rows) {
                 var v = new object[row.Count];
                 row.CopyTo(v, 0);
-                foreach (var i in guidcols)
-                {
-                    var s = (string) v[i];
+                foreach (var i in guidcols) {
+                    var s = (string)v[i];
                     if (s != null && s.Length < 36)
                         v[i] = new Guid(Convert.FromBase64String(s));
                 }
-                if (_params.UseUTCDateTime)
-                {
-                    foreach (var i in datecol)
-                    {
-                        var s = (string) v[i];
+                if (_params.UseUTCDateTime) {
+                    foreach (var i in datecol) {
+                        var s = (string)v[i];
                         if (s != null)
                             v[i] = CreateDateTime(s);
                     }
@@ -918,36 +857,30 @@ namespace Transformalize.Libs.fastJSON
             dt.EndInit();
         }
 
-        private DataTable CreateDataTable(Dictionary<string, object> reader, Dictionary<string, object> globalTypes)
-        {
+        private DataTable CreateDataTable(Dictionary<string, object> reader, Dictionary<string, object> globalTypes) {
             var dt = new DataTable();
 
             // read dataset schema here
             var schema = reader["$schema"];
 
-            if (schema is string)
-            {
-                TextReader tr = new StringReader((string) schema);
+            if (schema is string) {
+                TextReader tr = new StringReader((string)schema);
                 dt.ReadXmlSchema(tr);
-            }
-            else
-            {
+            } else {
                 var ms =
                     (DatasetSchema)
-                    ParseDictionary((Dictionary<string, object>) schema, globalTypes, typeof (DatasetSchema), null);
+                    ParseDictionary((Dictionary<string, object>)schema, globalTypes, typeof(DatasetSchema), null);
                 dt.TableName = ms.Info[0];
-                for (var i = 0; i < ms.Info.Count; i += 3)
-                {
+                for (var i = 0; i < ms.Info.Count; i += 3) {
                     dt.Columns.Add(ms.Info[i + 1], Type.GetType(ms.Info[i + 2]));
                 }
             }
 
-            foreach (var pair in reader)
-            {
+            foreach (var pair in reader) {
                 if (pair.Key == "$type" || pair.Key == "$schema")
                     continue;
 
-                var rows = (List<object>) pair.Value;
+                var rows = (List<object>)pair.Value;
                 if (rows == null)
                     continue;
 

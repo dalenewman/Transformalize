@@ -6,14 +6,12 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Transformalize.Libs.NLog;
 using Transformalize.Operations;
 
 namespace Transformalize.Libs.Rhino.Etl.Operations
 {
     public class SerialUnionAllOperation : AbstractOperation
     {
-        private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly List<IOperation> _operations = new List<IOperation>();
 
         public SerialUnionAllOperation(string operationColumn = "operation")
