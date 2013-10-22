@@ -20,19 +20,12 @@
 
 #endregion
 
-using System;
 using Transformalize.Configuration;
-using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main.Providers.AnalysisServices
 {
     public class AnalysisServicesConnection : AbstractConnection
     {
-        private const StringSplitOptions RE = StringSplitOptions.RemoveEmptyEntries;
-        private readonly char[] _equal = new[] {'='};
-        private readonly Logger _log = LogManager.GetCurrentClassLogger();
-        private readonly char[] _semiColen = new[] {';'};
-
         public override string UserProperty { get { return string.Empty; } }
         public override string PasswordProperty { get { return string.Empty; } }
         public override string PortProperty { get { return string.Empty; } }
@@ -43,36 +36,6 @@ namespace Transformalize.Main.Providers.AnalysisServices
         public AnalysisServicesConnection(ConnectionConfigurationElement element, AbstractProvider provider, IConnectionChecker connectionChecker, IScriptRunner scriptRunner, IProviderSupportsModifier providerScriptModifer, IEntityRecordsExist recordsExist, IEntityDropper dropper)
             : base(element, provider, connectionChecker, scriptRunner, providerScriptModifer, recordsExist, dropper)
         {
-            ParseConnectionString();
-        }
-
-        private void ParseConnectionString()
-        {
-            foreach (var pair in ConnectionString.Split(_semiColen, RE))
-            {
-                try
-                {
-                    var attribute = pair.Split(_equal, RE)[0].Trim().ToLower();
-                    var value = pair.Split(_equal, RE)[1].Trim();
-
-                    if (attribute == "data source")
-                    {
-                        Server = value;
-                    }
-
-                    if (attribute == "catalog")
-                    {
-                        Database = value;
-                    }
-                }
-                catch (Exception e)
-                {
-                    Server = string.Empty;
-                    Database = string.Empty;
-                    _log.Warn("Could not parse Analysis Services connection string: {0}.", ConnectionString);
-                    _log.Debug(e.Message);
-                }
-            }
         }
 
     }

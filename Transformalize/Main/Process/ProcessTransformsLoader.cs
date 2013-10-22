@@ -1,6 +1,7 @@
 ﻿using Transformalize.Configuration;
 
 namespace Transformalize.Main {
+
     public class ProcessTransformsLoader {
         private readonly Process _process;
         private readonly FieldElementCollection _elements;
@@ -11,11 +12,14 @@ namespace Transformalize.Main {
         }
 
         public void Load() {
+
             foreach (FieldConfigurationElement fieldElement in _elements) {
+
                 var transformParametersReader = new ProcessTransformParametersReader(_process);
                 var parametersReader = new ProcessParametersReader(_process);
                 var fr = new FieldReader(_process, _process.MasterEntity, usePrefix: false);
                 var field = fr.Read(fieldElement);
+                field.Input = false;
                 _process.CalculatedFields.Add(fieldElement.Alias, field);
 
                 foreach (TransformConfigurationElement transformElement in fieldElement.Transforms) {

@@ -98,7 +98,7 @@ namespace Transformalize.Operations.Transform {
         private void AddInnerRow(ref Row innerRow, ref Row outerRow, ref List<Row> innerRows) {
             var r = innerRow.Clone();
 
-            foreach (var column in outerRow.Columns.Where(column => column != _inKey && !r.ContainsKey(column))) {
+            foreach (var column in outerRow.Columns.Where(column => !r.ContainsKey(column))) {
                 r[column] = outerRow[column];
             }
 

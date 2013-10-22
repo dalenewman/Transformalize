@@ -20,7 +20,7 @@
 
 #endregion
 
-using System.Data.SqlClient;
+using System.Data;
 using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main.Providers.SqlServer
@@ -33,15 +33,15 @@ namespace Transformalize.Main.Providers.SqlServer
         public Fields Read(Entity entity, bool isMaster)
         {
             var fields = new Fields();
-            using (var cn = new SqlConnection(entity.InputConnection.ConnectionString))
+            using (var cn = entity.InputConnection.GetConnection())
             {
                 cn.Open();
-                var cmd = new SqlCommand(PrepareSql(), cn);
-                cmd.Parameters.Add(new SqlParameter("@Name", entity.Name));
-                cmd.Parameters.Add(new SqlParameter("@Schema", entity.Schema));
+                var cmd = cn.CreateCommand();
+                cmd.CommandText = PrepareSql();
+                cmd.CommandType = CommandType.Text;
+                entity.InputConnection.AddParameter(cmd, "@Name", entity.Name);
+                entity.InputConnection.AddParameter(cmd, "@Schema", entity.Schema);
                 var reader = cmd.ExecuteReader();
-
-                if (!reader.HasRows) return new Fields();
 
                 while (reader.Read())
                 {

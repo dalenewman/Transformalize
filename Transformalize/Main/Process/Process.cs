@@ -139,23 +139,6 @@ namespace Transformalize.Main {
             return new StarFields(this).Fields().Where(f => !f.SearchTypes.Any(st => st.Name.Equals("none")));
         }
 
-        //public IParameters Parameters() {
-        //    var parameters = new Parameters.Parameters();
-
-        //    foreach (var calculatedField in CalculatedFields) {
-        //        if (calculatedField.Value.HasTransforms) {
-        //            foreach (AbstractTransform transform in calculatedField.Value.Transforms) {
-        //                if (transform.HasParameters) {
-        //                    foreach (var parameter in transform.Parameters) {
-        //                        parameters[parameter.Key] = parameter.Value;
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //    return parameters;
-        //}
-
         public Entity this[string entity] {
             get {
                 return Entities.Find(e => e.Alias.Equals(entity, IC) || e.Name.Equals(entity, IC));

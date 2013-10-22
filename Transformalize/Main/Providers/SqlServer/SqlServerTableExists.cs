@@ -20,12 +20,13 @@
 
 #endregion
 
-using System.Data.SqlClient;
+using System.Data;
 
 namespace Transformalize.Main.Providers.SqlServer
 {
     public class SqlServerTableExists : ITableExists
     {
+        private readonly AbstractConnection _connection;
         private const string FORMAT = @"
 IF EXISTS(
 	SELECT *
@@ -35,21 +36,21 @@ IF EXISTS(
 )	SELECT 1
 ELSE
 	SELECT 0;";
-        private readonly string _connectionString;
 
-
-        public SqlServerTableExists(string connectionString)
+        public SqlServerTableExists(AbstractConnection connection)
         {
-            _connectionString = connectionString;
+            _connection = connection;
         }
 
         public bool Exists(string schema, string name)
         {
             var sql = string.Format(FORMAT, schema, name);
-            using (var cn = new SqlConnection(_connectionString))
+            using (var cn = _connection.GetConnection())
             {
                 cn.Open();
-                var cmd = new SqlCommand(sql, cn);
+                var cmd = cn.CreateCommand();
+                cmd.CommandText = sql;
+                cmd.CommandType = CommandType.Text;
                 return (int) cmd.ExecuteScalar() == 1;
             }
         }

@@ -40,9 +40,9 @@ namespace Transformalize.Main.Providers
 
         public bool Check(AbstractConnection connection)
         {
-            if (CachedResults.ContainsKey(connection.ConnectionString))
+            if (CachedResults.ContainsKey(connection.Name))
             {
-                return CachedResults[connection.ConnectionString];
+                return CachedResults[connection.Name];
             }
 
             var result = false;
@@ -50,7 +50,7 @@ namespace Transformalize.Main.Providers
             {
                 using (var cs = connection.GetConnection())
                 {
-                    cs.ConnectionString = connection.ConnectionString.TrimEnd(";".ToCharArray()) + string.Format(";Connection Timeout={0};", _timeOut);
+                    cs.ConnectionString = connection.GetConnectionString().TrimEnd(";".ToCharArray()) + string.Format(";Connection Timeout={0};", _timeOut);
                     try
                     {
                         cs.Open();
@@ -76,7 +76,7 @@ namespace Transformalize.Main.Providers
                 Environment.Exit(1);
             }
 
-            CachedResults[connection.ConnectionString] = result;
+            CachedResults[connection.Name] = result;
             return result;
         }
     }

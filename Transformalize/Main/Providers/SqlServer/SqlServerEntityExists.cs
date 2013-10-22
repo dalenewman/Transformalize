@@ -26,7 +26,7 @@ namespace Transformalize.Main.Providers.SqlServer
     {
         public bool Exists(AbstractConnection connection, string schema, string name)
         {
-            return new SqlServerTableExists(connection.ConnectionString).Exists(schema, name);
+            return new SqlServerTableExists(connection).Exists(schema, name);
         }
     }
 }

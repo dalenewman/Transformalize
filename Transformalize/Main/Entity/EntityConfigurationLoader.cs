@@ -83,6 +83,7 @@ namespace Transformalize.Main {
                     field.Index = fieldIndex;
                 }
 
+                field.Input = false;
                 entity.CalculatedFields.Add(cf.Alias, field);
                 if (cf.PrimaryKey) {
                     entity.PrimaryKey[cf.Alias] = field;
@@ -133,7 +134,6 @@ namespace Transformalize.Main {
                     }
                 }
             }
-            entity.Version.Input = true;
             entity.Version.Output = true;
         }
 

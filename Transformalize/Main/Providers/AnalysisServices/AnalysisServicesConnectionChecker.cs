@@ -36,7 +36,7 @@ namespace Transformalize.Main.Providers.AnalysisServices
             var server = new Server();
             try
             {
-                server.Connect(connection.ConnectionString);
+                server.Connect(connection.GetConnectionString());
                 isReady = server.Connected;
                 server.Disconnect();
             }

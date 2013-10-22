@@ -20,49 +20,42 @@
 
 #endregion
 
+using System.Data;
 using System.Data.SqlClient;
 using Transformalize.Libs.Rhino.Etl;
 
-namespace Transformalize.Main.Providers.SqlServer
-{
-    public class SqlServerTflWriter : WithLoggingMixin, ITflWriter
-    {
+namespace Transformalize.Main.Providers.SqlServer {
+    public class SqlServerTflWriter : WithLoggingMixin, ITflWriter {
         private readonly Process _process;
 
-        public SqlServerTflWriter(ref Process process)
-        {
+        public SqlServerTflWriter(ref Process process) {
             _process = process;
         }
 
-        public void Initialize()
-        {
-            var cs = _process.OutputConnection.ConnectionString;
-
-            if (!new SqlServerTableExists(cs).Exists("dbo", "TflBatch"))
-            {
-                Execute(cs, CreateSql());
+        public void Initialize() {
+            if (!new SqlServerTableExists(_process.OutputConnection).Exists("dbo", "TflBatch")) {
+                Execute(_process.OutputConnection, CreateSql());
                 Debug("Created TflBatch.");
             }
 
-            Execute(cs, "DELETE FROM TflBatch WHERE ProcessName = '{0}';", _process.Name);
+            Execute(_process.OutputConnection, "DELETE FROM TflBatch WHERE ProcessName = '{0}';", _process.Name);
 
             Info("Initialized TrAnSfOrMaLiZeR.");
         }
 
-        private static void Execute(string connectionString, string sqlFormat, params object[] values)
-        {
+        private static void Execute(AbstractConnection connection, string sqlFormat, params object[] values) {
             var sql = values.Length > 0 ? string.Format(sqlFormat, values) : sqlFormat;
 
-            using (var cn = new SqlConnection(connectionString))
-            {
+            using (var cn = connection.GetConnection()) {
                 cn.Open();
-                var command = new SqlCommand(sql, cn);
-                command.ExecuteNonQuery();
+                var cmd = cn.CreateCommand();
+                cmd.CommandText = sql;
+                cmd.CommandType = CommandType.Text;
+                cmd.ExecuteNonQuery();
             }
         }
 
-        public string CreateSql()
-        {
+        public string CreateSql() {
             return @"
                 CREATE TABLE [TflBatch](
                     [TflBatchId] INT NOT NULL,

@@ -28,8 +28,8 @@ using Transformalize.Libs.Dapper;
 
 namespace Transformalize.Main.Providers {
     public abstract class AbstractConnection {
+
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
-        private readonly ConnectionConfigurationElement _element;
         private readonly IConnectionChecker _connectionChecker;
         private readonly IEntityRecordsExist _entityRecordsExist;
         private readonly IEntityDropper _dropper;
@@ -45,15 +45,17 @@ namespace Transformalize.Main.Providers {
         public IEntityQueryWriter EntityKeysAllQueryWriter { get; set; }
         public ITableQueryWriter TableQueryWriter { get; set; }
         public IProviderSupportsModifier ProviderSupportsModifier { get; set; }
-        public string ConnectionString { get; set; }
+
         public string Database { get; set; }
         public string Server { get; set; }
         public string User { get; set; }
         public string Password { get; set; }
+        public int Port { get; set; }
+
         public string File { get; set; }
         public string Delimiter { get; set; }
         public string LineDelimiter { get; set; }
-        public int Port { get; set; }
+        
         public int Start { get; set; }
         public int End { get; set; }
 
@@ -65,7 +67,7 @@ namespace Transformalize.Main.Providers {
         public abstract string TrustedProperty { get; }
 
         protected AbstractConnection(ConnectionConfigurationElement element, AbstractProvider provider, IConnectionChecker connectionChecker, IScriptRunner scriptRunner, IProviderSupportsModifier providerSupportsModifier, IEntityRecordsExist recordsExist, IEntityDropper dropper) {
-            _element = element;
+
             _connectionChecker = connectionChecker;
             _entityRecordsExist = recordsExist;
             _dropper = dropper;
@@ -73,33 +75,40 @@ namespace Transformalize.Main.Providers {
             Provider = provider;
             BatchSize = element.BatchSize;
             Name = element.Name;
-            Server = element.Server;
-            Port = element.Port;
             Start = element.Start;
             End = element.End;
-            Database = element.Database;
-            User = element.User;
-            Password = element.Password;
             File = element.File;
             Delimiter = element.Delimiter;
             LineDelimiter = element.LineDelimiter;
             ScriptRunner = scriptRunner;
             ProviderSupportsModifier = providerSupportsModifier;
-            ConnectionString = GetConnectionString();
+
+            ProcessConnectionString(element);
+
         }
 
-        private string GetConnectionString() {
-
-            if (!string.IsNullOrEmpty(File))
-                return string.Empty;
-
-            if (_element.ConnectionString != string.Empty) {
-                Database = ConnectionStringParser.GetDatabaseName(_element.ConnectionString);
-                Server = ConnectionStringParser.GetServerName(_element.ConnectionString);
-                User = ConnectionStringParser.GetUsername(_element.ConnectionString);
-                Password = ConnectionStringParser.GetPassword(_element.ConnectionString);
-                return _element.ConnectionString;
+        private void ProcessConnectionString(ConnectionConfigurationElement element)
+        {
+            if (element.ConnectionString != string.Empty) {
+                ProcessConnectionString(element.ConnectionString);
+            } else {
+                Server = element.Server;
+                Database = element.Database;
+                User = element.User;
+                Password = element.Password;
+                Port = element.Port;
             }
+        }
+
+        private void ProcessConnectionString(string connectionString) {
+            Database = ConnectionStringParser.GetDatabaseName(connectionString);
+            Server = ConnectionStringParser.GetServerName(connectionString);
+            User = ConnectionStringParser.GetUsername(connectionString);
+            Password = ConnectionStringParser.GetPassword(connectionString);
+        }
+
+
+        public string GetConnectionString() {
 
             var builder = new DbConnectionStringBuilder { { ServerProperty, Server }, { DatabaseProperty, Database } };
             if (!String.IsNullOrEmpty(User)) {
@@ -123,7 +132,7 @@ namespace Transformalize.Main.Providers {
         public IDbConnection GetConnection() {
             var type = Type.GetType(TypeAndAssemblyName, false, true);
             var connection = (IDbConnection)Activator.CreateInstance(type);
-            connection.ConnectionString = ConnectionString;
+            connection.ConnectionString = GetConnectionString();
             return connection;
         }
 

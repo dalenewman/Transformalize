@@ -21,35 +21,44 @@
 #endregion
 
 using NUnit.Framework;
-using Transformalize.Libs.NLog;
 using Transformalize.Main;
 
 namespace Transformalize.Test.Integration {
     [TestFixture]
-    public class OrderType
-    {
-        private const string FILE = @"c:\code\TflConfiguration\OrderType.xml";
-
-        [SetUp]
-        public void SetUp() {
-            LogManager.Configuration.LoggingRules[0].EnableLoggingForLevel(LogLevel.Info);
-            LogManager.ReconfigExistingLoggers();
-        }
+    public class NveInv {
+        private const string FILE = @"c:\code\TflConfiguration\NveInv.xml";
 
         [Test]
         public void Init() {
-            var options = new Options() { Mode = "init"};
+            var options = new Options { Mode = "init" };
             var process = ProcessFactory.Create(FILE, options);
             process.Run();
         }
 
         [Test]
-        public void Default() {
-            var process = ProcessFactory.Create(FILE, new Options() { Mode = "test" });
-            process.GetField("Project").Default = "Dale";
-            process.Entities[0].InputConnection.Database = "ClevestDale";
+        public void First() {
+            var options = new Options { Mode = "first" };
+            var process = ProcessFactory.Create(FILE, options);
             process.Run();
         }
 
+        [Test]
+        public void Metadata() {
+            var options = new Options { Mode = "metadata" };
+            var process = ProcessFactory.Create(FILE, options);
+            process.Run();
+        }
+
+        [Test]
+        public void Normal() {
+            ProcessFactory.Create(FILE).Run();
+        }
+
+        [Test]
+        public void Test() {
+            var options = new Options { Mode = "test", Top = 3 };
+            var process = ProcessFactory.Create(FILE, options);
+            process.Run();
+        }
     }
 }

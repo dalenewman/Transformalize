@@ -38,7 +38,7 @@ namespace Transformalize.Main.Providers.AnalysisServices
             try
             {
                 _log.Debug("Connecting to {0} on {1}.", connection.Database, connection.Server);
-                server.Connect(connection.ConnectionString);
+                server.Connect(connection.GetConnectionString());
 
                 var results = server.Execute(script);
 

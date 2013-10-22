@@ -8,18 +8,15 @@ using Transformalize.Main;
 
 namespace Transformalize.Operations {
     public class FileExcelExtract : AbstractOperation {
-        private readonly Entity _entity;
         private readonly Field[] _fields;
-        private readonly DefaultFactory _defaultFactory = new DefaultFactory();
         private readonly FileInfo _fileInfo;
         private readonly int _start;
         private readonly int _end;
 
         public FileExcelExtract(Entity entity) {
-            _entity = entity;
-            _fields = new FieldSqlWriter(_entity.Fields).Input().Context().ToEnumerable().OrderBy(f => f.Index).ToArray();
-            _fileInfo = new FileInfo(_entity.InputConnection.File);
-            _start = _entity.InputConnection.Start;
+            _fields = new FieldSqlWriter(entity.Fields).Input().Context().ToEnumerable().OrderBy(f => f.Index).ToArray();
+            _fileInfo = new FileInfo(entity.InputConnection.File);
+            _start = entity.InputConnection.Start;
             _end = entity.InputConnection.End;
         }
 

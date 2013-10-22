@@ -68,7 +68,7 @@ FROM {2} e WITH (NOLOCK);
 ";
 
             var rowVersion = string.Empty;
-            if (_entity.CanDetectChanges() && !VersionIsPrimaryKey()) {
+            if (_entity.Version != null && !VersionIsPrimaryKey()) {
                 _fields.Add(_entity.Version.Alias);
                 rowVersion = ", e." + provider.Enclose(_entity.Version.Alias);
             }
@@ -98,7 +98,7 @@ INNER JOIN @KEYS k ON ({4});
             builder.AppendLine(SqlTemplates.BatchInsertValues(50, "@KEYS", _key, _entity.InputKeys, _process.OutputConnection));
 
             var rowVersion = string.Empty;
-            if (_entity.CanDetectChanges() && !VersionIsPrimaryKey()) {
+            if (_entity.Version != null && !VersionIsPrimaryKey()) {
                 _fields.Add(_entity.Version.Alias);
                 rowVersion = ", e." + provider.Enclose(_entity.Version.Alias);
             }
