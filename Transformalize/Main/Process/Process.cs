@@ -149,16 +149,22 @@ namespace Transformalize.Main {
             return OutputConnection.NextBatchId(Name);
         }
 
-        public Field GetField(string alias) {
-            foreach (var entity in Entities.Where(entity => entity.Fields.ContainsKey(alias))) {
-                return entity.Fields[alias];
+        public Field GetField(string alias, string entity = "") {
+
+            foreach (var fields in Entities.Where(e=> e.Alias == entity || entity == string.Empty).Select(e => e.Fields.ToEnumerable()).Where(fields => fields.Any(Common.FieldFinder(alias)))) {
+                return fields.First(Common.FieldFinder(alias));
             }
-            foreach (var entity in Entities.Where(e => e.CalculatedFields.ContainsKey(alias))) {
-                return entity.CalculatedFields[alias];
+
+            foreach (var fields in Entities.Where(e=> e.Alias == entity || entity == string.Empty).Select(e => e.CalculatedFields.ToEnumerable()).Where(fields => fields.Any(Common.FieldFinder(alias)))) {
+                return fields.First(Common.FieldFinder(alias));
             }
-            if (CalculatedFields.Any(cf => cf.Key == alias)) {
-                return CalculatedFields.First(cf => cf.Key == alias).Value;
+
+            var calculatedfields = CalculatedFields.ToEnumerable().ToArray();
+            if (calculatedfields.Any(Common.FieldFinder(alias)))
+            {
+                return calculatedfields.First(Common.FieldFinder(alias));
             }
+
             _log.Warn("Can't find field with alias: {0}.", alias);
             return new Field(FieldType.Field) { Alias = alias };
         }

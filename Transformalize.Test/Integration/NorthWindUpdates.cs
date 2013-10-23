@@ -24,7 +24,6 @@ using System.Linq;
 using NUnit.Framework;
 using Transformalize.Libs.NLog;
 using Transformalize.Main;
-using Transformalize.Runner;
 using Transformalize.Libs.Dapper;
 
 namespace Transformalize.Test.Integration {

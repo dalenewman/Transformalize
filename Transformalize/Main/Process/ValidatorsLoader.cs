@@ -21,7 +21,7 @@ namespace Transformalize.Main
 
                 foreach (FieldConfigurationElement fieldElement in entityElement.Fields) {
                     var alias = Common.GetAlias(fieldElement, true, entityElement.Prefix);
-                    var field = _process.GetField(alias);
+                    var field = _process.GetField(alias, entity.Alias);
                     foreach(TransformConfigurationElement validatorElement in fieldElement.Validators) {
                         entity.TransformOperations.Add(factory.Create(field, validatorElement, new Parameters.Parameters()));
                     }

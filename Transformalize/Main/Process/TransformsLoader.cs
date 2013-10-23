@@ -18,7 +18,7 @@ namespace Transformalize.Main {
 
                 foreach (FieldConfigurationElement fieldElement in entityElement.Fields) {
                     var alias = Common.GetAlias(fieldElement, true, entityElement.Prefix);
-                    var field = _process.GetField(alias);
+                    var field = _process.GetField(alias, entity.Alias);
                     foreach (TransformConfigurationElement transformElement in fieldElement.Transforms) {
                         var parameters = new FieldTransformParametersReader().Read(transformElement);
                         entity.TransformOperations.Add(transformFactory.Create(field, transformElement, parameters));
@@ -26,7 +26,7 @@ namespace Transformalize.Main {
                 }
 
                 foreach (FieldConfigurationElement calculatedElement in entityElement.CalculatedFields) {
-                    var field = _process.GetField(calculatedElement.Alias);
+                    var field = _process.GetField(calculatedElement.Alias, entity.Alias);
                     foreach (TransformConfigurationElement transformElement in calculatedElement.Transforms) {
                         var parameters = transformElement.Parameter == "*" ? new EntityParametersReader(entity).Read() : new EntityTransformParametersReader(entity).Read(transformElement);
                         entity.TransformOperations.Add(transformFactory.Create(field, transformElement, parameters));

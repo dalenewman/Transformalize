@@ -48,7 +48,8 @@ namespace Transformalize.Main {
             {"char", (x => Convert.ToChar(x))},
             {"datetime", (x => Convert.ToDateTime(x))},
             {"boolean", (x => Convert.ToBoolean(x))},
-            {"single", (x => Convert.ToSingle(x))}
+            {"single", (x => Convert.ToSingle(x))},
+            {"guid", (x => Guid.Parse(x))}
         };
 
         public static Dictionary<string, Func<object, object>> ObjectConversionMap = new Dictionary<string, Func<object, object>> {

@@ -40,7 +40,7 @@ namespace Transformalize.Main {
             AddRange(fields);
         }
 
-        public Fields(Process process, IParameters parameters) {
+        public Fields(Process process, IParameters parameters, string entity) {
             foreach (var parameter in parameters) {
                 if (parameter.Value.HasValue()) {
                     var field = new Field(parameter.Value.SimpleType, "64", FieldType.Field, false, parameter.Value.Value.ToString()) {
@@ -48,7 +48,7 @@ namespace Transformalize.Main {
                     };
                     Add(field);
                 } else {
-                    Add(process.GetField(parameter.Value.Name));
+                    Add(process.GetField(parameter.Value.Name, entity));
                 }
             }
         }

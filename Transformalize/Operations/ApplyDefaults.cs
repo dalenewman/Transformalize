@@ -25,36 +25,27 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
-namespace Transformalize.Operations
-{
-    public class ApplyDefaults : AbstractOperation
-    {
+namespace Transformalize.Operations {
+    public class ApplyDefaults : AbstractOperation {
         private readonly Field[] _fields;
 
-        public ApplyDefaults(params Fields[] fields)
-        {
+        public ApplyDefaults(params Fields[] fields) {
             _fields = PrepareFields(fields);
             UseTransaction = false;
         }
 
-        private static Field[] PrepareFields(IEnumerable<Fields> fields)
-        {
+        private static Field[] PrepareFields(IEnumerable<Fields> fields) {
             var list = new List<Field>();
-            foreach (var fieldArray in fields)
-            {
+            foreach (var fieldArray in fields) {
                 list.AddRange(new FieldSqlWriter(fieldArray).ToArray()); //HasDefault()
             }
             return list.ToArray();
         }
 
-        public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
-        {
-            foreach (var row in rows)
-            {
-                foreach (var field in _fields)
-                {
-                    if (row[field.Alias] == null)
-                    {
+        public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
+            foreach (var row in rows) {
+                foreach (var field in _fields) {
+                    if (row[field.Alias] == null) {
                         row[field.Alias] = field.Default;
                     }
                 }

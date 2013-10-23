@@ -45,7 +45,7 @@ namespace Transformalize.Main {
             var inType = hasParameters ? parameters[0].SimpleType : field.SimpleType;
             var append = !string.IsNullOrEmpty(element.AppendTo);
             var outKey = append ? element.AppendTo : field.Alias;
-            var outType = append ? _process.GetField(element.AppendTo).SimpleType : field.SimpleType;
+            var outType = append ? _process.GetField(element.AppendTo, field.Entity).SimpleType : field.SimpleType;
 
             switch (element.Method.ToLower()) {
                 case "convert":
@@ -256,7 +256,7 @@ namespace Transformalize.Main {
                 case "fromxml":
                     return new FromXmlOperation(
                         outKey,
-                        new Fields(_process, parameters)
+                        new Fields(_process, parameters, field.Entity)
                     );
 
                 case "fromregex":

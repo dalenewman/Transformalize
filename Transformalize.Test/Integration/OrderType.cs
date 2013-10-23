@@ -46,7 +46,8 @@ namespace Transformalize.Test.Integration {
         [Test]
         public void Default() {
             var process = ProcessFactory.Create(FILE, new Options() { Mode = "test" });
-            process.GetField("Project").Default = "Dale";
+            process.GetField("Project","OrderType").Default = "Dale";
+            process.GetField("Project", "HostMessageConfig").Default = "Dale";
             process.Entities[0].InputConnection.Database = "ClevestDale";
             process.Run();
         }
