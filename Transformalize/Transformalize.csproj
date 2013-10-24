@@ -1086,7 +1086,7 @@
     <Compile Include="Operations\Transform\GetHashCodeOperation.cs" />
     <Compile Include="Operations\Transform\InsertOperation.cs" />
     <Compile Include="Operations\Transform\JavascriptOperation.cs" />
-    <Compile Include="Operations\Transform\JoinOperation.cs" />
+    <Compile Include="Operations\Transform\JoinTransformOperation.cs" />
     <Compile Include="Operations\Transform\LeftOperation.cs" />
     <Compile Include="Operations\Transform\LengthOperation.cs" />
     <Compile Include="Operations\Transform\MapOperation.cs" />

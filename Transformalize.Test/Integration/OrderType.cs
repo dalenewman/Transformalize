@@ -49,6 +49,7 @@ namespace Transformalize.Test.Integration {
             process.GetField("Project","OrderType").Default = "Dale";
             process.GetField("Project", "HostMessageConfig").Default = "Dale";
             process.Entities[0].InputConnection.Database = "ClevestDale";
+            process.Entities[0].InputConnection.Server = "localhost";
             process.Run();
         }
 

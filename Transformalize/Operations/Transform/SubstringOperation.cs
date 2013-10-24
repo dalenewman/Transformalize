@@ -19,8 +19,14 @@ namespace Transformalize.Operations.Transform {
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
                 var value = row[_inKey].ToString();
-                if (_startIndex < value.Length)
-                    row[_outKey] = value.Substring(_startIndex, _length);
+                if (_startIndex < value.Length) {
+                    if (_length == 0) {
+                        row[_outKey] = value.Substring(_startIndex);
+                    } else {
+                        row[_outKey] = value.Substring(_startIndex, _length);
+                    }
+                }
+
                 yield return row;
             }
         }

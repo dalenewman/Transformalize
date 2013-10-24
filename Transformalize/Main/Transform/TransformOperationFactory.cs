@@ -235,7 +235,7 @@ namespace Transformalize.Main {
                     );
 
                 case "join":
-                    return new Operations.Transform.JoinOperation(
+                    return new Operations.Transform.JoinTransformOperation(
                         outKey,
                         element.Separator,
                         parameters

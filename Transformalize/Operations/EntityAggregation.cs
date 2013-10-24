@@ -30,7 +30,9 @@ using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
 namespace Transformalize.Operations {
+
     public class EntityAggregation : AbstractAggregationOperation {
+
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private readonly IDictionary<string, StringBuilder> _builders = new Dictionary<string, StringBuilder>();
         private readonly Field[] _fieldsToAccumulate;
@@ -88,6 +90,9 @@ namespace Transformalize.Operations {
                                 break;
                             case "byte[]":
                                 aggregate[field.Alias] = Common.Max((byte[])aggregate[field.Alias], (byte[])row[field.Alias]);
+                                break;
+                            case "string":
+                                aggregate[field.Alias] = (new[] {aggregate[field.Alias].ToString(), row[field.Alias].ToString()}).Max();
                                 break;
                         }
                         break;

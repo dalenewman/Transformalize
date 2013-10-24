@@ -22,8 +22,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using NUnit.Framework;
+using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
+using Transformalize.Main.Parameters;
 using Transformalize.Operations.Transform;
 
 namespace Transformalize.Test.Unit {
@@ -166,7 +169,7 @@ namespace Transformalize.Test.Unit {
                 .Field("total").Type("decimal")
                 .Field("lines")
                 .ToFields();
-            
+
             var fromXml = new FromXmlOperation("f1", outFields);
 
             var rows = TestOperation(input, fromXml);
@@ -176,23 +179,37 @@ namespace Transformalize.Test.Unit {
             Assert.AreEqual("<line product=\"1\" /><line product=\"2\" />", rows[0]["lines"]);
         }
 
-        //[Test]
-        //public void FromDeeperXml() {
-        //    var input = new RowsBuilder().Row().Field("f1", "<order><id>1</id><total>7.25</total><lines><line>1</line><line>2</line></lines></order>").ToOperation();
-        //    var outParameters = new ParametersBuilder().Parameter("id").Type("int32").Parameter("total").Type("decimal").Parameter("lines").ToParameters();
-        //    var fromXml = new FromXmlOperation("f1", outParameters);
+        [Test]
+        public void FromXmlWithMultipleRecords() {
 
-        //    var outParametersDeeper = new ParametersBuilder().Parameter("line").ToParameters();
-        //    var format = new FormatOperation("lines", "<lines>{0}</lines>", new ParametersBuilder().Parameter("lines").ToParameters());
-        //    var fromXmlDeeper = new FromXmlOperation("lines", outParametersDeeper);
+            const string xml = @"
+                <order>
+                    <detail product-id=""1"" quantity=""2"" color=""red"" />
+                    <detail product-id=""3"" quantity=""1"" color=""pink"" />
+                </order>
+            ";
 
+            var input = new RowsBuilder().Row().Field("xml", xml).ToOperation();
 
-        //    var rows = TestOperation(input, fromXml, format, fromXmlDeeper);
+            var outFields = new FieldsBuilder()
+                .Field("product-id").Type("int32").NodeType("attribute")
+                .Field("quantity").Type("int32").NodeType("attribute")
+                .Field("color").Type("string").NodeType("attribute")
+                .ToFields();
 
-        //    Assert.AreEqual(1, rows[0]["id"]);
-        //    Assert.AreEqual(7.25M, rows[0]["total"]);
-        //    Assert.AreEqual("<line product=\"1\" /><line product=\"2\" />", rows[0]["lines"]);
-        //}
+            var fromXmlTransform = new FromXmlOperation("xml", outFields);
+
+            var output = TestOperation(input, fromXmlTransform);
+
+            Assert.AreEqual(1, output[0]["product-id"]);
+            Assert.AreEqual(2, output[0]["quantity"]);
+            Assert.AreEqual("red", output[0]["color"]);
+
+            Assert.AreEqual(3, output[1]["product-id"]);
+            Assert.AreEqual(1, output[1]["quantity"]);
+            Assert.AreEqual("pink", output[1]["color"]);
+
+        }
 
         [Test]
         public void GetHashCodeTest() {
@@ -233,7 +250,7 @@ namespace Transformalize.Test.Unit {
         public void Join() {
             var input = new RowsBuilder().Row("x", "X").Field("y", "Y").ToOperation();
             var parameters = new ParametersBuilder().Parameters("x", "y").ToParameters();
-            var join = new JoinOperation("o1", "|", parameters);
+            var join = new JoinTransformOperation("o1", "|", parameters);
             var output = TestOperation(input, join);
             Assert.AreEqual("X|Y", output[0]["o1"]);
         }
@@ -250,7 +267,6 @@ namespace Transformalize.Test.Unit {
         [Test]
         public void Length() {
             var input = new RowsBuilder().Row("left", "left").ToOperation();
-            var parameters = new ParametersBuilder().Parameters("left").ToParameters();
             var length = new LengthOperation("left", "o1");
             var output = TestOperation(input, length);
             Assert.AreEqual(4, output[0]["o1"]);
@@ -272,13 +288,18 @@ namespace Transformalize.Test.Unit {
 
         [Test]
         public void MapStartsWith() {
+
             var input = new RowsBuilder().Row("f1", "test1").Row("f1", "test2").Row("f1", "tes").ToOperation();
+
             var maps = new MapsBuilder()
                 .Equals().Item("*", "no")
                 .StartsWith().Item("test", "yes")
                 .EndsWith().ToMaps();
+
             var map = new MapOperation("f1", "o1", "string", maps);
+
             var output = TestOperation(input, map);
+
             Assert.AreEqual("yes", output[0]["o1"], "test1 maps to yes");
             Assert.AreEqual("yes", output[1]["o1"], "test2 maps to yes");
             Assert.AreEqual("no", output[2]["o1"], "test maps to no (via catch-all)");
@@ -286,15 +307,19 @@ namespace Transformalize.Test.Unit {
 
         [Test]
         public void MapEndsWith() {
+
             var input = new RowsBuilder()
                 .Row("f1", "1end")
                 .Row("f1", "2end")
                 .Row("f1", "start").ToOperation();
+
             var maps = new MapsBuilder()
                 .Equals().Item("*", "no")
                 .StartsWith()
                 .EndsWith().Item("end", "yes").ToMaps();
+
             var mapTransform = new MapOperation("f1", "o1", "string", maps);
+
             var output = TestOperation(input, mapTransform);
 
             Assert.AreEqual("yes", output[0]["o1"]);
@@ -305,16 +330,12 @@ namespace Transformalize.Test.Unit {
 
         [Test]
         public void MapEqualsWithParameter() {
-            
+
             var input = new RowsBuilder()
                 .Row("f1", "v1").Field("p1", 1).Field("p2", 2).Field("p3", 3)
                 .Row("f1", "v2").Field("p1", 1).Field("p2", 2).Field("p3", 3)
                 .Row("f1", "v3").Field("p1", 1).Field("p2", 2).Field("p3", 3)
                 .ToOperation();
-
-            var parameters = new ParametersBuilder()
-                .Parameters("p1","p2","p3")
-                .ToParameters();
 
             var maps = new MapsBuilder()
                 .Equals().Item("v1", null, "p1").Item("v2", null, "p2").Item("*", null, "p3")
@@ -323,7 +344,7 @@ namespace Transformalize.Test.Unit {
                 .ToMaps();
 
             var mapTransform = new MapOperation("f1", "o1", "int32", maps);
-            
+
             var output = TestOperation(input, mapTransform);
 
             Assert.AreEqual(1, output[0]["o1"], "v1 maps to 1");
@@ -332,38 +353,102 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void FromXmlWithMultipleRecords() {
+        public void PadLeft() {
+            var input = new RowsBuilder().Row("in", "23").Field("out", "").ToOperation();
 
-            const string xml = @"
-                <order>
-                    <detail product-id=""1"" quantity=""2"" color=""red"" />
-                    <detail product-id=""3"" quantity=""1"" color=""pink"" />
-                </order>
-            ";
-            
-            var input = new RowsBuilder().Row().Field("xml", xml).ToOperation();
+            var padLeftTransform = new PadLeftOperation("in", "out", 5, "X");
 
-            var outFields = new FieldsBuilder()
-                .Field("product-id").Type("int32").NodeType("attribute")
-                .Field("quantity").Type("int32").NodeType("attribute")
-                .Field("color").Type("string").NodeType("attribute")
-                .ToFields();
+            var output = TestOperation(input, padLeftTransform);
 
-            var fromXmlTransform = new FromXmlOperation("xml", outFields);
-
-            var output = TestOperation(input, fromXmlTransform);
-
-            Assert.AreEqual(1, output[0]["product-id"]);
-            Assert.AreEqual(2, output[0]["quantity"]);
-            Assert.AreEqual("red", output[0]["color"]);
-
-            Assert.AreEqual(3, output[1]["product-id"]);
-            Assert.AreEqual(1, output[1]["quantity"]);
-            Assert.AreEqual("pink", output[1]["color"]);
+            Assert.AreEqual("XXX23", output[0]["out"]);
 
         }
 
+        [Test]
+        public void PadRight() {
+            var input = new RowsBuilder().Row("in", "23").Field("out", "").ToOperation();
 
+            var padRightTransform = new PadRightOperation("in", "out", 5, "X");
+
+            var output = TestOperation(input, padRightTransform);
+
+            Assert.AreEqual("23XXX", output[0]["out"]);
+
+        }
+
+        [Test]
+        public void RegexReplace() {
+            const int all = 0;
+            var input = new RowsBuilder().Row("in", "int32").Field("out", "").ToOperation();
+
+            const string digitPattern = @"\d";
+            var regexReplaceTransform = new RegexReplaceOperation("in", "out", digitPattern, "X", all);
+
+            var output = TestOperation(input, regexReplaceTransform);
+
+            Assert.AreEqual("intXX", output[0]["out"]);
+        }
+
+        [Test]
+        public void Remove() {
+            var input = new RowsBuilder().Row("in", "sdfkj2334").Field("out", "").ToOperation();
+            var removeTransform = new RemoveOperation("in", "out", 4, 2);
+            var output = TestOperation(input, removeTransform);
+            Assert.AreEqual("sdfk334", output[0]["out"]);
+        }
+
+        [Test]
+        public void Replace() {
+            var input = new RowsBuilder().Row("in", "sdfkj2334").Field("out", "").ToOperation();
+            var replaceTransform = new ReplaceOperation("in", "out", "fkj", ".");
+            var output = TestOperation(input, replaceTransform);
+            Assert.AreEqual("sd.2334", output[0]["out"]);
+        }
+
+        [Test]
+        public void Right() {
+            var input = new RowsBuilder().Row("in", "sdfkj2334").Field("out", "").ToOperation();
+            var rightOperation = new RightOperation("in", "out", 3);
+            var output = TestOperation(input, rightOperation);
+            Assert.AreEqual("334", output[0]["out"]);
+
+        }
+
+        [Test]
+        public void Substring() {
+            var input = new RowsBuilder().Row("in", "sdfkj2334").Field("out", "").ToOperation();
+            var substringOperation = new SubstringOperation("in", "out", 3, 0);
+            var output = TestOperation(input, substringOperation);
+            Assert.AreEqual("kj2334", output[0]["out"]);
+        }
+
+        [Test]
+        public void SubstringWithLength() {
+            var input = new RowsBuilder().Row("in", "sdfkj2334").Field("out", "").ToOperation();
+            var substringOperation = new SubstringOperation("in", "out", 3, 4);
+            var output = TestOperation(input, substringOperation);
+            Assert.AreEqual("kj23", output[0]["out"]);
+        }
+
+        [Test]
+        public void Template() {
+            var input = new RowsBuilder().Row("input", 2).Field("out", "").ToOperation();
+            var templates = new List<KeyValuePair<string, Template>>();
+            var parameters = new ParametersBuilder().Parameter("x", 3).Parameter("input").ToParameters();
+            var templateOperation = new TemplateOperation("out", "@{var result = Model.input * Model.x;}@result", "dynamic", templates, parameters);
+            var output = TestOperation(input, templateOperation);
+            Assert.AreEqual("6", output[0]["out"]);
+        }
+
+        [Test]
+        public void ToJson()
+        {
+            var input = new RowsBuilder().Row("f1", 1).Field("f2", "2").Field("out", "").ToOperation();
+            var parameters = new ParametersBuilder().Parameters("f1", "f2").ToParameters();
+            var toJsonOperation = new ToJsonOperation("out", parameters);
+            var output = TestOperation(input, toJsonOperation);
+            Assert.AreEqual("{\"f1\":1,\"f2\":\"2\"}", output[0]["out"]);
+        }
 
     }
 }
