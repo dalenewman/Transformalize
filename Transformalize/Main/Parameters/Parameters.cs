@@ -26,6 +26,7 @@ using System.Linq;
 
 namespace Transformalize.Main.Parameters {
     public class Parameters : IParameters, IEnumerable<KeyValuePair<string, IParameter>> {
+
         private readonly DefaultFactory _defaultFactory = new DefaultFactory();
         private readonly IDictionary<string, IParameter> _items = new Dictionary<string, IParameter>();
         private KeyValuePair<string, IParameter> _first;

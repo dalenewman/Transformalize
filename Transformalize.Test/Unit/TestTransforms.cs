@@ -22,11 +22,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using NUnit.Framework;
-using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
-using Transformalize.Main.Parameters;
 using Transformalize.Operations.Transform;
 
 namespace Transformalize.Test.Unit {
@@ -220,6 +217,48 @@ namespace Transformalize.Test.Unit {
             var output = TestOperation(input, getHashCode);
 
             Assert.AreEqual(expected, output[0]["o1"]);
+        }
+
+        [Test]
+        public void If() {
+
+            var input = new RowsBuilder()
+                .Row("x", 5).Field("y", 7).Field("z", 10).Field("out", 0)
+                .Row("x", 5).Field("y", 5).Field("z", 11).Field("out", 0).ToOperation();
+
+            var parameters = new ParametersBuilder()
+                .Parameter("x").Type("int32")
+                .Parameter("y").Type("int32")
+                .Parameter("z").Type("int32")
+                .Parameter("v", "1").Name("v").Type("int32")
+                .ToParameters();
+
+            var ifTransform = new IfOperation("x", "=", "y", "z", "v", parameters, "out", "int32");
+
+            var output = TestOperation(input, ifTransform);
+
+            Assert.AreEqual(1, output[0]["out"]);
+            Assert.AreEqual(11, output[1]["out"]);
+        }
+
+        [Test]
+        public void IfEmpty() {
+            var input = new RowsBuilder()
+                .Row("x", "x").Field("y", "").Field("out", "")
+                .Row("x", "").Field("y", "y").Field("out", "").ToOperation();
+
+            var parameters = new ParametersBuilder()
+                .Parameter("x")
+                .Parameter("y")
+                .Parameter("empty", string.Empty).Name("empty")
+                .ToParameters();
+
+            var ifTransform = new IfOperation("x", "=", "empty", "y", "x", parameters, "out", "string");
+
+            var output = TestOperation(input, ifTransform);
+
+            Assert.AreEqual("x", output[0]["out"]);
+            Assert.AreEqual("y", output[1]["out"]);
         }
 
         [Test]
@@ -441,8 +480,7 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void ToJson()
-        {
+        public void ToJson() {
             var input = new RowsBuilder().Row("f1", 1).Field("f2", "2").Field("out", "").ToOperation();
             var parameters = new ParametersBuilder().Parameters("f1", "f2").ToParameters();
             var toJsonOperation = new ToJsonOperation("out", parameters);
@@ -450,5 +488,97 @@ namespace Transformalize.Test.Unit {
             Assert.AreEqual("{\"f1\":1,\"f2\":\"2\"}", output[0]["out"]);
         }
 
+        [Test]
+        public void ToLocalTime()
+        {
+            var now = DateTime.UtcNow;
+            var local = DateTime.Now;
+
+            var input = new RowsBuilder().Row("time", now).ToOperation();
+            var transform = new ToLocalTimeOperation("time", "time", "UTC", "Eastern Standard Time");
+            var output = TestOperation(input, transform);
+            Assert.AreEqual(local, output[0]["time"], "Change to your time zone to get this to pass.");
+        }
+
+        [Test]
+        public void ToLocalTimeDefaults() {
+            var now = DateTime.UtcNow;
+            var local = DateTime.Now;
+
+            var input = new RowsBuilder().Row("time", now).ToOperation();
+            var transform = new ToLocalTimeOperation("time", "time", "", "");
+            var output = TestOperation(input, transform);
+            Assert.AreEqual(local, output[0]["time"], "Change to your time zone to get this to pass.");
+        }
+
+        [Test]
+        public void ToLower()
+        {
+            var input = new RowsBuilder().Row("name", "DalE").ToOperation();
+            var transform = new ToLowerOperation("name", "name");
+            var output = TestOperation(input, transform);
+            Assert.AreEqual("dale", output[0]["name"]);
+        }
+
+        [Test]
+        public void ToStringFromDate()
+        {
+            var date = new DateTime(2013, 10, 30);
+            var input = new RowsBuilder().Row("date", date).ToOperation();
+            var transform = new ToStringOperation("date", "datetime", "date", "yyyy-MM-dd");
+            var output = TestOperation(input, transform);
+            Assert.AreEqual("2013-10-30", output[0]["date"]);
+        }
+
+        [Test]
+        public void ToStringFromInt() {
+            var input = new RowsBuilder().Row("number", 43).ToOperation();
+            var transform = new ToStringOperation("number", "int32", "number", "C");
+            var output = TestOperation(input, transform);
+            Assert.AreEqual("$43.00", output[0]["number"]);
+        }
+
+        [Test]
+        public void ToUpper() {
+            var input = new RowsBuilder().Row("name", "DalE").ToOperation();
+            var transform = new ToUpperOperation("name", "name");
+            var output = TestOperation(input, transform);
+            Assert.AreEqual("DALE", output[0]["name"]);
+        }
+
+        [Test]
+        public void ToTitleCase()
+        {
+            var input = new RowsBuilder().Row("x", "TRANSFORMALIZE").ToOperation();
+            var transform = new ToTitleCaseOperation("x", "x");
+            var output = TestOperation(input, transform);
+            Assert.AreEqual("Transformalize", output[0]["x"]);
+
+        }
+
+        [Test]
+        public void TrimEnd()
+        {
+            var input = new RowsBuilder().Row("y", "SomeTH").ToOperation();
+            var transform = new TrimEndOperation("y", "y", "TH");
+            var output = TestOperation(input, transform);
+            Assert.AreEqual("Some", output[0]["y"]);
+        }
+
+        [Test]
+        public void Trim() {
+            var input = new RowsBuilder().Row("y", "..Some,").ToOperation();
+            var transform = new TrimOperation("y", "y", ",.");
+            var output = TestOperation(input, transform);
+            Assert.AreEqual("Some", output[0]["y"]);
+        }
+
+        [Test]
+        public void TrimStart() {
+            var input = new RowsBuilder().Row("y", "&dTest").ToOperation();
+            var transform = new TrimStartOperation("y", "y", "&d");
+            var output = TestOperation(input, transform);
+            Assert.AreEqual("Test", output[0]["y"]);
+        }
     }
 }

@@ -1084,6 +1084,7 @@
     <Compile Include="Operations\Transform\FromRegexOperation.cs" />
     <Compile Include="Operations\Transform\FromXmlOperation.cs" />
     <Compile Include="Operations\Transform\GetHashCodeOperation.cs" />
+    <Compile Include="Operations\Transform\IfOperation.cs" />
     <Compile Include="Operations\Transform\InsertOperation.cs" />
     <Compile Include="Operations\Transform\JavascriptOperation.cs" />
     <Compile Include="Operations\Transform\JoinTransformOperation.cs" />
@@ -1102,6 +1103,7 @@
     <Compile Include="Operations\Transform\ToLocalTimeOperation.cs" />
     <Compile Include="Operations\Transform\ToLowerOperation.cs" />
     <Compile Include="Operations\Transform\ToStringOperation.cs" />
+    <Compile Include="Operations\Transform\ToTitleCaseOperation.cs" />
     <Compile Include="Operations\Transform\ToUpperOperation.cs" />
     <Compile Include="Operations\Transform\TrimEndOperation.cs" />
     <Compile Include="Operations\Transform\TrimOperation.cs" />

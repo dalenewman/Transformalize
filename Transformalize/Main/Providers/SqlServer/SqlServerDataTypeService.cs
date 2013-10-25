@@ -36,6 +36,7 @@ namespace Transformalize.Main.Providers.SqlServer {
                         {"int", "INT"},
                         {"long", "BIGINT"},
                         {"boolean", "BIT"},
+                        {"bool", "BIT"},
                         {"string", "NVARCHAR"},
                         {"datetime", "DATETIME"},
                         {"decimal", "DECIMAL"},

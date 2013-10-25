@@ -47,6 +47,10 @@ namespace Transformalize.Main {
             var outKey = append ? element.AppendTo : field.Alias;
             var outType = append ? _process.GetField(element.AppendTo, field.Entity).SimpleType : field.SimpleType;
 
+            if (!hasParameters) {
+                parameters.Add(field.Alias, field.Alias, null, field.SimpleType);
+            }
+
             switch (element.Method.ToLower()) {
                 case "convert":
                     return new ConvertOperation(
@@ -80,6 +84,18 @@ namespace Transformalize.Main {
                         outKey,
                         element.Index,
                         element.Value
+                    );
+
+                case "if":
+                    return new IfOperation(
+                        element.Left,
+                        element.Operator,
+                        element.Right,
+                        element.Then,
+                        element.Else,
+                        parameters,
+                        outKey,
+                        outType
                     );
 
                 case "remove":
@@ -214,7 +230,7 @@ namespace Transformalize.Main {
                     }
 
                     return new TemplateOperation(
-                        outKey, 
+                        outKey,
                         element.Template,
                         element.Model,
                         templates,
@@ -223,8 +239,8 @@ namespace Transformalize.Main {
 
                 case "format":
                     return new FormatOperation(
-                        outKey, 
-                        element.Format, 
+                        outKey,
+                        element.Format,
                         parameters
                     );
 
@@ -234,8 +250,14 @@ namespace Transformalize.Main {
                         parameters
                     );
 
+                case "totitlecase":
+                    return new ToTitleCaseOperation(
+                        inKey,
+                        outKey
+                    );
+
                 case "join":
-                    return new Operations.Transform.JoinTransformOperation(
+                    return new JoinTransformOperation(
                         outKey,
                         element.Separator,
                         parameters
@@ -244,7 +266,9 @@ namespace Transformalize.Main {
                 case "tolocaltime":
                     return new ToLocalTimeOperation(
                         inKey,
-                        outKey
+                        outKey,
+                        element.FromTimeZone,
+                        element.ToTimeZone
                     );
 
                 case "tojson":
@@ -261,7 +285,7 @@ namespace Transformalize.Main {
 
                 case "fromregex":
                     return new FromRegexOperation(
-                        outKey, 
+                        outKey,
                         element.Pattern,
                         parameters
                     );

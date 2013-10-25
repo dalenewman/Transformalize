@@ -21,7 +21,20 @@
 #endregion
 
 namespace Transformalize.Main {
+
     public class Parameter : IParameter {
+
+        private string _simpleType = "string";
+
+        public int Index { get; set; }
+        public string Name { get; set; }
+        public object Value { get; set; }
+
+        public string SimpleType {
+            get { return _simpleType; }
+            set { _simpleType = value; }
+        }
+
         public Parameter() {
         }
 
@@ -30,13 +43,8 @@ namespace Transformalize.Main {
             Value = value;
         }
 
-        public string Name { get; set; }
-        public object Value { get; set; }
-        public string SimpleType { get; set; }
-        public int Index { get; set; }
-
         public bool HasValue() {
-            return !string.IsNullOrEmpty(Name) && Value != null && !Value.Equals(string.Empty);
+            return Name != null && Value != null;
         }
     }
 }

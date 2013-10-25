@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Transformalize.Test.Unit {
     public class MapBuilder {
         
-        private MapsBuilder _mapsBuilder;
-        private Main.Map _map;
+        private readonly MapsBuilder _mapsBuilder;
+        private readonly Main.Map _map;
 
         public MapBuilder(ref MapsBuilder mapsBuilder, Main.Map map) {
             _map = map;

@@ -23,7 +23,6 @@
 using System;
 using System.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
-using Transformalize.Main;
 
 namespace Transformalize.Configuration
 {
@@ -63,6 +62,13 @@ namespace Transformalize.Configuration
         private const string UNITS = "units";
         private const string DOMAIN = "domain";
         private const string TRY_PARSE = "try-parse";
+        private const string LEFT = "left";
+        private const string OPERATOR = "operator";
+        private const string RIGHT = "right";
+        private const string THEN = "then";
+        private const string ELSE = "else";
+        private const string FROM_TIME_ZONE = "from-time-zone";
+        private const string TO_TIME_ZONE = "to-time-zone";
 
         //validation
         private const string APPEND_TO = "append-to";
@@ -262,6 +268,18 @@ namespace Transformalize.Configuration
             set { this[SEPARATOR] = value; }
         }
 
+        [ConfigurationProperty(FROM_TIME_ZONE, IsRequired = false, DefaultValue = "")]
+        public string FromTimeZone {
+            get { return this[FROM_TIME_ZONE] as string; }
+            set { this[FROM_TIME_ZONE] = value; }
+        }
+
+        [ConfigurationProperty(TO_TIME_ZONE, IsRequired = false, DefaultValue = "")]
+        public string ToTimeZone {
+            get { return this[TO_TIME_ZONE] as string; }
+            set { this[TO_TIME_ZONE] = value; }
+        }
+
         [ConfigurationProperty(MODEL, IsRequired = false, DefaultValue = "dynamic")]
         public string Model
         {
@@ -380,6 +398,37 @@ namespace Transformalize.Configuration
             get { return this[DOMAIN] as string; }
             set { this[DOMAIN] = value; }
         }
+
+        [ConfigurationProperty(LEFT, IsRequired = false, DefaultValue = "")]
+        public string Left {
+            get { return this[LEFT] as string; }
+            set { this[LEFT] = value; }
+        }
+
+        [ConfigurationProperty(OPERATOR, IsRequired = false, DefaultValue = "=")]
+        public string Operator {
+            get { return this[OPERATOR] as string; }
+            set { this[OPERATOR] = value; }
+        }
+
+        [ConfigurationProperty(RIGHT, IsRequired = false, DefaultValue = "")]
+        public string Right {
+            get { return this[RIGHT] as string; }
+            set { this[RIGHT] = value; }
+        }
+
+        [ConfigurationProperty(THEN, IsRequired = false, DefaultValue = "")]
+        public string Then {
+            get { return this[THEN] as string; }
+            set { this[THEN] = value; }
+        }
+
+        [ConfigurationProperty(ELSE, IsRequired = false, DefaultValue = "")]
+        public string Else {
+            get { return this[ELSE] as string; }
+            set { this[ELSE] = value; }
+        }
+
 
         public override bool IsReadOnly()
         {
