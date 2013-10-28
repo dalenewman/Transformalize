@@ -5,7 +5,13 @@ using Transformalize.Libs.Rhino.Etl.Operations;
 
 namespace Transformalize.Test.Unit {
     public class RowsBuilder {
-        private readonly IList<Row> _rows = new List<Row>();
+
+        private readonly List<Row> _rows = new List<Row>();
+        public RowsBuilder() { }
+
+        public RowsBuilder(IEnumerable<Row> rows) {
+            _rows.AddRange(rows);
+        }
 
         public RowBuilder Row() {
             return Consume(new Row());

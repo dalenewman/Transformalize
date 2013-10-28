@@ -17,9 +17,9 @@ namespace Transformalize.Runner
             }
 
             return new Contents {
-                                    Name = Path.GetFileNameWithoutExtension(xmlFileInfo.FullName),
-                                    Content = File.ReadAllText(xmlFileInfo.FullName)
-                                };
+                Name = Path.GetFileNameWithoutExtension(xmlFileInfo.FullName),
+                Content = File.ReadAllText(xmlFileInfo.FullName)
+            };
 
         }
     }

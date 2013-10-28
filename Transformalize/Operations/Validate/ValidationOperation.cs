@@ -4,23 +4,27 @@ using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 
-namespace Transformalize.Operations.Validate
-{
+namespace Transformalize.Operations.Validate {
+
     public class ValidationOperation : AbstractOperation {
-        private readonly string _inKey;
+
+        private readonly string _keyToValidate;
         private readonly string _outKey;
         private readonly bool _append;
         public Validator Validator { get; set; }
+        public bool ValidateRow { get; set; }
 
-        public ValidationOperation(string inKey, string outKey, bool append) {
-            _inKey = inKey;
+        public ValidationOperation(string keyToValidate, string outKey, bool append) {
+            _keyToValidate = keyToValidate;
             _outKey = outKey;
             _append = append;
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
-                var results = Validator.Validate(row[_inKey]);
+                var results = new ValidationResults();
+                Validator.DoValidate(row[_keyToValidate], row, _keyToValidate, results);
+                //var results = Validator.Validate(ValidateRow ? row : row[_inKey]);
                 if (!results.IsValid) {
                     row[_outKey] = _append ? (row[_outKey] + " " + results.First().Message).Trim(' ') : results.First().Message;
                 }

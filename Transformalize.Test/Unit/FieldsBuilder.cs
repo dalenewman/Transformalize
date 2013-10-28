@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Transformalize.Test.Unit {
+﻿namespace Transformalize.Test.Unit {
 
     public class FieldsBuilder {
 
-        private Main.Fields _fields = new Main.Fields();
+        private readonly Main.Fields _fields = new Main.Fields();
 
         public FieldBuilder Field(string name) {
             var field = new Main.Field(Main.FieldType.Field) { Name = name, Alias = name };
@@ -27,8 +22,8 @@ namespace Transformalize.Test.Unit {
 
     public class FieldBuilder {
 
-        private FieldsBuilder _fieldsBuilder;
-        private Main.Field _field;
+        private readonly FieldsBuilder _fieldsBuilder;
+        private readonly Main.Field _field;
 
         public FieldBuilder(ref FieldsBuilder fieldsBuilder, ref Main.Field field) {
             _fieldsBuilder = fieldsBuilder;
@@ -44,7 +39,12 @@ namespace Transformalize.Test.Unit {
             _field.NodeType = nodeType;
             return this;
         }
-        
+
+        public FieldBuilder ReadInnerXml(bool option) {
+            _field.ReadInnerXml = option;
+            return this;
+        }
+
         public FieldBuilder Field(string name) {
             return _fieldsBuilder.Field(name);
         }

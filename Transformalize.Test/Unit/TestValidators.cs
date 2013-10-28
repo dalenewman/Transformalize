@@ -22,8 +22,6 @@
 
 using System;
 using NUnit.Framework;
-using Transformalize.Main.Parameters;
-using Transformalize.Operations.Transform;
 using Transformalize.Operations.Validate;
 
 namespace Transformalize.Test.Unit {
@@ -31,7 +29,7 @@ namespace Transformalize.Test.Unit {
     public class TestValidators : EtlProcessHelper {
 
         [Test]
-        public void JsonParse() {
+        public void ParseJson() {
             var input = new RowsBuilder()
                 .Row().Field("f1", "{\"i\":\"am\", \"valid\":true}").Field("o1", "")
                 .Row().Field("f1", "{\"i\":\"have\", \"a\":\"Prob\"lem\"}").Field("o1", "").ToOperation();
@@ -44,8 +42,7 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void JsonParse2()
-        {
+        public void ParseJson2() {
             const string goodJson = "{\"updated\": \"Thu, 10 Sep 2009 08:45:12 +0000\", \"links\": [{\"href\": \"http://www.designvitality.com/blog/2007/09/photoshop-text-effect-tutorial/\", \"type\": \"text/html\", \"rel\": \"alternate\"}], \"title\": \"Photoshop Text Effects\", \"author\": \"hotpants1\", \"comments\": \"http://delicious.com/url/90c1b26e451a090452df8b947d6298cb\", \"guidislink\": false, \"title_detail\": {\"base\": \"http://feeds.delicious.com/v2/rss/recent?min=1&count=100\", \"type\": \"text/plain\", \"language\": null, \"value\": \"Photoshop Text Effects\"}, \"link\": \"http://www.designvitality.com/blog/2007/09/photoshop-text-effect-tutorial/\", \"source\": {}, \"wfw_commentrss\": \"http://feeds.delicious.com/v2/rss/url/90c1b26e451a090452df8b947d6298cb\", \"id\": \"http://delicious.com/url/90c1b26e451a090452df8b947d6298cb#hotpants1\", \"tags\": [{\"term\": \"photoshop\", \"scheme\": \"http://delicious.com/hotpants1/\", \"label\": null}]}";
             const string badJson = "{\"updated\": \"Thu, 10 Sep 2009 08:45:12 +0000\", \"links\": [{\"href\": \"http://www.designvitality.com/blog/2007/09/photoshop-text-effect-tutorial/\", \"type\": \"text/html\", \"rel\": \"alternate\"}], \"title\": \"Photoshop Text Effects\", \"author\": \"hotpants1\", \"comments\": \"http://delicious.com/url/90c1b26e451a090452df8b947d6298cb\", \"guidislink\": false, \"title_detail\": {\"base\": \"http://feeds.delicious.com/v2/rss/recent?min=1&count=100\", \"type\": \"text/plain\", \"language\": null, \"value\": \"Photoshop Text Effects\"}, \"link\": \"http://www.designvitality.com/blog/2007/09/photoshop-text-effect-tutorial/\", \"source\": {}, \"wfw_commentrss\": \"http://feeds.delicious.com/v2/rss/url/90c1b26e451a090452df8b947d6298cb\", \"id\": \"http://delicious.com/url/90c1b26e451a090452df8b947d6298cb#hotpants1\", \"tags\": [{\"term\": \"photoshop\", scheme\": \"http://delicious.com/hotpants1/\", \"label\": null}]}";
 
@@ -82,7 +79,53 @@ namespace Transformalize.Test.Unit {
             var output = TestOperation(input, dateTimeRange);
 
             Assert.AreEqual(null, output[0]["o1"]);
-            Assert.AreEqual("Bad!",output[1]["o1"]);
+            Assert.AreEqual("Bad!", output[1]["o1"]);
+        }
+
+        [Test]
+        public void Domain() {
+            var input = new RowsBuilder()
+                .Row("in", "2").Field("out", "")
+                .Row("in", "4").Field("out", "").ToOperation();
+
+            var domainOperation = new DomainOperation("in", "out", new[] { "1", "2", "3" }, "{0} is wrong! {2} can't be {0}.", false, false);
+
+            var output = TestOperation(input, domainOperation);
+
+            Assert.AreEqual("", output[0]["out"]);
+            Assert.AreEqual("4 is wrong! in can't be 4.", output[1]["out"]);
+
+        }
+
+        [Test]
+        public void NotNull() {
+
+            var input = new RowsBuilder()
+                .Row("in", "x").Field("out", "")
+                .Row("in", null).Field("out", "").ToOperation();
+
+            var notNullOperation = new NotNullOperation("in", "out", "{2} can't be null.", false, false);
+
+            var output = TestOperation(input, notNullOperation);
+
+            Assert.AreEqual("", output[0]["out"]);
+            Assert.AreEqual("in can't be null.", output[1]["out"]);
+
+        }
+
+        [Test]
+        public void PropertyComparison()
+        {
+            var input = new RowsBuilder()
+                .Row("in1", "77").Field("in2", null).Field("out", "")
+                .Row("in1", "78").Field("in2", "78").Field("out", "").ToOperation();
+
+            var validator = new PropertyComparisonOperation("in1", "in2", "out", "Equal", "Bad!", false, false);
+
+            var output = TestOperation(input, validator);
+
+            Assert.AreEqual("Bad!", output[0]["out"]);
+            Assert.AreEqual("", output[1]["out"]);
         }
 
 

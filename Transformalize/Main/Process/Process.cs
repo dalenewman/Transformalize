@@ -149,7 +149,30 @@ namespace Transformalize.Main {
             return OutputConnection.NextBatchId(Name);
         }
 
-        public Field GetField(string alias, string entity = "") {
+        public bool TryGetField(string alias, string entity, out Field field)
+        {
+            foreach (var fields in Entities.Where(e => e.Alias == entity || entity == string.Empty).Select(e => e.Fields.ToEnumerable()).Where(fields => fields.Any(Common.FieldFinder(alias)))) {
+                field = fields.First(Common.FieldFinder(alias));
+                return true;
+            }
+
+            foreach (var fields in Entities.Where(e => e.Alias == entity || entity == string.Empty).Select(e => e.CalculatedFields.ToEnumerable()).Where(fields => fields.Any(Common.FieldFinder(alias)))) {
+                field = fields.First(Common.FieldFinder(alias));
+                return true;
+            }
+
+            var calculatedfields = CalculatedFields.ToEnumerable().ToArray();
+            if (calculatedfields.Any(Common.FieldFinder(alias))) {
+                field = calculatedfields.First(Common.FieldFinder(alias));
+                return true;
+            }
+
+            field = new Field(FieldType.Field) { Alias = alias };
+            return false;
+
+        }
+
+        public Field GetField(string alias, string entity) {
 
             foreach (var fields in Entities.Where(e=> e.Alias == entity || entity == string.Empty).Select(e => e.Fields.ToEnumerable()).Where(fields => fields.Any(Common.FieldFinder(alias)))) {
                 return fields.First(Common.FieldFinder(alias));

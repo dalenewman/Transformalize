@@ -34,17 +34,17 @@ namespace Transformalize.Operations.Transform {
         };
 
         private readonly Dictionary<string, Func<object, object, bool>> _compare = new Dictionary<string, Func<object, object, bool>>() {
-            {"=", ((x, y) => x.Equals(y))},
-            {"!=", ((x, y) => !x.Equals(y))},
-            {">", ((x, y) => ((IComparable) x).CompareTo(y) > 0)},
-            {">=", ((x, y) => x.Equals(y) || ((IComparable)x).CompareTo(y) > 0)},
-            {"<", ((x, y) => ((IComparable)x).CompareTo(y) < 0)},
-            {"<=", ((x, y) => x.Equals(y) || ((IComparable)x).CompareTo(y) < 0)}
+            {"equal", ((x, y) => x.Equals(y))},
+            {"notequal", ((x, y) => !x.Equals(y))},
+            {"greaterthan", ((x, y) => ((IComparable) x).CompareTo(y) > 0)},
+            {"greaterthanequal", ((x, y) => x.Equals(y) || ((IComparable)x).CompareTo(y) > 0)},
+            {"lessthan", ((x, y) => ((IComparable)x).CompareTo(y) < 0)},
+            {"lessthanequal", ((x, y) => x.Equals(y) || ((IComparable)x).CompareTo(y) < 0)}
         };
 
         public IfOperation(string leftKey, string op, string rightKey, string thenKey, string elseKey, IParameters parameters, string outKey, string outType) {
 
-            _op = op;
+            _op = op.ToLower();
             _outKey = outKey;
 
             var param = parameters.ToEnumerable().ToArray();
@@ -64,10 +64,10 @@ namespace Transformalize.Operations.Transform {
             _thenValue = _thenHasValue ? Common.ObjectConversionMap[outType](_then.Value.Value) : null;
             _elseValue = _elseHasValue ? Common.ObjectConversionMap[outType](_else.Value.Value) : null;
 
-            if (_compare.ContainsKey(op))
+            if (_compare.ContainsKey(_op))
                 return;
 
-            Error("Operator {0} is invalid.  Try =, !=, >, >=, <, or <=.");
+            Error("Operator {0} is invalid.  Try equal, notequal, greaterthan, greaterthanequal, greaterthan, or greaterthanequal.");
             Environment.Exit(1);
         }
 

@@ -64,11 +64,16 @@ namespace Transformalize.Configuration
         private const string TRY_PARSE = "try-parse";
         private const string LEFT = "left";
         private const string OPERATOR = "operator";
+        private const string FIELD = "field";
         private const string RIGHT = "right";
         private const string THEN = "then";
         private const string ELSE = "else";
         private const string FROM_TIME_ZONE = "from-time-zone";
         private const string TO_TIME_ZONE = "to-time-zone";
+        private const string FROM_LAT = "from-lat";
+        private const string FROM_LONG = "from-long";
+        private const string TO_LAT = "to-lat";
+        private const string TO_LONG = "to-long";
 
         //validation
         private const string APPEND_TO = "append-to";
@@ -405,10 +410,17 @@ namespace Transformalize.Configuration
             set { this[LEFT] = value; }
         }
 
-        [ConfigurationProperty(OPERATOR, IsRequired = false, DefaultValue = "=")]
+        [EnumConversionValidator(typeof(ComparisonOperator), MessageTemplate = "{1} must be a valid ComparisonOperator. (e.g. Equal, NotEqual, LessThan, LessThanEqual, GreaterThan, GreaterThanEqual)")]
+        [ConfigurationProperty(OPERATOR, IsRequired = false, DefaultValue = "Equal")]
         public string Operator {
             get { return this[OPERATOR] as string; }
             set { this[OPERATOR] = value; }
+        }
+
+        [ConfigurationProperty(FIELD, IsRequired = false, DefaultValue = "")]
+        public string Field {
+            get { return this[FIELD] as string; }
+            set { this[FIELD] = value; }
         }
 
         [ConfigurationProperty(RIGHT, IsRequired = false, DefaultValue = "")]
@@ -429,6 +441,29 @@ namespace Transformalize.Configuration
             set { this[ELSE] = value; }
         }
 
+        [ConfigurationProperty(FROM_LAT, IsRequired = false, DefaultValue = "0.0")]
+        public string FromLat {
+            get { return this[FROM_LAT] as string; }
+            set { this[FROM_LAT] = value; }
+        }
+
+        [ConfigurationProperty(FROM_LONG, IsRequired = false, DefaultValue = "0.0")]
+        public string FromLong {
+            get { return this[FROM_LONG] as string; }
+            set { this[FROM_LONG] = value; }
+        }
+
+        [ConfigurationProperty(TO_LAT, IsRequired = false, DefaultValue = "0.0")]
+        public string ToLat {
+            get { return this[TO_LAT] as string; }
+            set { this[TO_LAT] = value; }
+        }
+
+        [ConfigurationProperty(TO_LONG, IsRequired = false, DefaultValue = "0.0")]
+        public string ToLong {
+            get { return this[TO_LONG] as string; }
+            set { this[TO_LONG] = value; }
+        }
 
         public override bool IsReadOnly()
         {

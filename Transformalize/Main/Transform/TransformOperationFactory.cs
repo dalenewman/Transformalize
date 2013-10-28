@@ -307,10 +307,14 @@ namespace Transformalize.Main {
                     );
 
                 case "distance":
+
                     return new DistanceOperation(
                         outKey,
                         element.Units,
-                        parameters
+                        GetParameter(field.Entity, element.FromLat),
+                        GetParameter(field.Entity, element.FromLong),
+                        GetParameter(field.Entity, element.ToLat),
+                        GetParameter(field.Entity, element.ToLong)
                     );
 
                 case "length":
@@ -356,11 +360,23 @@ namespace Transformalize.Main {
                 case "parsejson":
                     return new ParseJsonOperation(inKey, outKey, append);
 
+                case "notnull":
+                    return new NotNullOperation(inKey, outKey, element.Message, element.Negated, append);
+
+                case "fieldcomparison":
+                    return new PropertyComparisonOperation(inKey, element.Field, outKey, element.Operator, element.Message, element.Negated, append);
+
             }
 
             _log.Warn("{0} method is undefined.  It will not be used.", element.Method);
             return new EmptyOperation();
         }
 
+        private IParameter GetParameter(string entity, string parameter) {
+            Field f;
+            return _process.TryGetField(parameter, entity, out f) ?
+                f.ToParameter() :
+                new Parameter(parameter, parameter);
+        }
     }
 }

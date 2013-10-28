@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main.Providers.SqlServer;
 
 namespace Transformalize.Main {
@@ -44,7 +45,7 @@ namespace Transformalize.Main {
         private List<SearchType> _searchTypes = new List<SearchType>();
         private Type _systemType = typeof(string);
         private object _default;
-        
+
         public string Alias { get; set; }
         public string Schema { get; set; }
         public string Entity { get; set; }
@@ -67,13 +68,11 @@ namespace Transformalize.Main {
             set { _default = new DefaultFactory().Convert(value, SimpleType); }
         }
 
-        public Type SystemType
-        {
+        public Type SystemType {
             get { return _systemType; }
         }
 
-        public List<SearchType> SearchTypes
-        {
+        public List<SearchType> SearchTypes {
             get { return _searchTypes; }
             set { _searchTypes = value; }
         }
@@ -86,10 +85,9 @@ namespace Transformalize.Main {
             Initialize(typeName, length, fieldType, output, @default);
         }
 
-        public string Type
-        {
-            get { return _type; } 
-            set { 
+        public string Type {
+            get { return _type; }
+            set {
                 _type = value;
                 _simpleType = Common.ToSimpleType(value);
                 _systemType = Common.ToSystemType(_simpleType);
@@ -97,8 +95,7 @@ namespace Transformalize.Main {
             }
         }
 
-        public string SimpleType
-        {
+        public string SimpleType {
             get { return _simpleType; }
         }
 
@@ -178,5 +175,12 @@ namespace Transformalize.Main {
             return string.Format("({0}) {1}", Type, Alias);
         }
 
+        public Parameter ToParameter(bool useDefaultForValue = false) {
+            return new Parameter() {
+                Name = Alias,
+                SimpleType = SimpleType,
+                Value = useDefaultForValue ? Default : null
+            };
+        }
     }
 }

@@ -4,13 +4,11 @@ using System.Net;
 using Transformalize.Libs.NLog;
 using Transformalize.Main;
 
-namespace Transformalize.Runner
-{
+namespace Transformalize.Runner {
     public class ContentsWebReader : IContentsReader {
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
 
-        public Contents Read(string file)
-        {
+        public Contents Read(string file) {
 
             var uri = new Uri(file);
 
@@ -20,7 +18,10 @@ namespace Transformalize.Runner
                 Environment.Exit(1);
             }
 
-            return new Contents { Content = response.Content, Name = Path.GetFileNameWithoutExtension(uri.LocalPath)};
+            return new Contents {
+                Content = response.Content,
+                Name = Path.GetFileNameWithoutExtension(uri.LocalPath)
+            };
 
         }
     }

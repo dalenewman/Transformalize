@@ -1111,8 +1111,11 @@
     <Compile Include="Operations\Validate\ContainsCharactersOperation.cs" />
     <Compile Include="Operations\Validate\DomainOperation.cs" />
     <Compile Include="Operations\Validate\DateTimeRangeOperation.cs" />
+    <Compile Include="Operations\Validate\NotNullOperation.cs" />
     <Compile Include="Operations\Validate\ParseJsonOperation.cs" />
     <Compile Include="Operations\Validate\JsonValidator.cs" />
+    <Compile Include="Operations\Validate\PropertyComparisonOperation.cs" />
+    <Compile Include="Operations\Validate\RowValueAccess.cs" />
     <Compile Include="Operations\Validate\ValidationOperation.cs" />
     <Compile Include="Processes\EntityDeleteProcess.cs" />
     <Compile Include="Operations\EntityDetectDeletes.cs" />

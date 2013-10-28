@@ -4,8 +4,8 @@ using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 namespace Transformalize.Operations.Validate {
     public class DateTimeRangeOperation : ValidationOperation {
 
-        public DateTimeRangeOperation(string inKey, string outKey, DateTime lowerBound, string lowerBoundary, DateTime upperBound, string upperBoundary, string messageTemplate, bool negated, bool append)
-            : base(inKey, outKey, append) {
+        public DateTimeRangeOperation(string keyToValidate, string outKey, DateTime lowerBound, string lowerBoundary, DateTime upperBound, string upperBoundary, string messageTemplate, bool negated, bool append)
+            : base(keyToValidate, outKey, append) {
             Validator = new DateTimeRangeValidator(
                 lowerBound,
                 (RangeBoundaryType)Enum.Parse(typeof(RangeBoundaryType), lowerBoundary, true),
@@ -13,7 +13,7 @@ namespace Transformalize.Operations.Validate {
                 (RangeBoundaryType)Enum.Parse(typeof(RangeBoundaryType), upperBoundary, true),
                 messageTemplate,
                 negated
-            ) { Tag = inKey };
+            ) { Tag = keyToValidate };
         }
     }
 }

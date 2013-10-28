@@ -75,12 +75,13 @@ namespace Transformalize.Test.Unit {
         public void Distance() {
 
             var input = new RowsBuilder().Row().Field("toLat", 28.419385d).Field("toLong", -81.581234d).ToOperation();
-            var parameters = new ParametersBuilder()
-                .Parameter("fromLat").Type("double").Value(42.101025d).Parameter("fromLong").Type("double").Value(-86.48423d)
-                .Parameter("toLat").Type("double").Parameter("toLong").Type("double")
-                .ToParameters();
 
-            var distance = new DistanceOperation("o1", "miles", parameters);
+            var fromLat = new ParametersBuilder().Parameter("fromLat", 42.101025d).Type("double").ToParameters()[0];
+            var fromLong = new ParametersBuilder().Parameter("fromLong", -86.48423d).Type("double").ToParameters()[0];
+            var toLat = new ParametersBuilder().Parameter("toLat").ToParameters()[0];
+            var toLong = new ParametersBuilder().Parameter("toLong").ToParameters()[0];
+
+            var distance = new DistanceOperation("o1", "miles", fromLat, fromLong, toLat, toLong);
 
             var rows = TestOperation(input, distance);
 
@@ -177,6 +178,39 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
+        public void FromXmlDoublePass() {
+            var input = new RowsBuilder().Row().Field("f1", "<order><id>1</id><total>7.25</total><lines><line product=\"1\"/><line product=\"2\"/></lines></order>").ToOperation();
+
+            var outFields = new FieldsBuilder()
+                .Field("id").Type("int32")
+                .Field("total").Type("decimal")
+                .Field("lines").ReadInnerXml(false)
+                .ToFields();
+
+            var fromXml = new FromXmlOperation("f1", outFields);
+
+            var output = TestOperation(input, fromXml);
+
+            Assert.AreEqual(1, output[0]["id"]);
+            Assert.AreEqual(7.25M, output[0]["total"]);
+            Assert.AreEqual("<lines><line product=\"1\" /><line product=\"2\" /></lines>", output[0]["lines"]);
+
+            //second pass to get lines
+            input = new RowsBuilder(output).ToOperation();
+            outFields = new FieldsBuilder().Field("product").Type("int32").NodeType("attribute").ToFields();
+            fromXml = new FromXmlOperation("lines",outFields);
+            output = TestOperation(input, fromXml);
+
+            Assert.AreEqual(1, output[0]["id"]);
+            Assert.AreEqual(7.25M, output[0]["total"]);
+            Assert.AreEqual(1, output[0]["product"]);
+
+            Assert.AreEqual(1, output[1]["id"]);
+            Assert.AreEqual(7.25M, output[1]["total"]);
+            Assert.AreEqual(2, output[1]["product"]);
+        }
+
+        [Test]
         public void FromXmlWithMultipleRecords() {
 
             const string xml = @"
@@ -233,7 +267,7 @@ namespace Transformalize.Test.Unit {
                 .Parameter("v", "1").Name("v").Type("int32")
                 .ToParameters();
 
-            var ifTransform = new IfOperation("x", "=", "y", "z", "v", parameters, "out", "int32");
+            var ifTransform = new IfOperation("x", "equal", "y", "z", "v", parameters, "out", "int32");
 
             var output = TestOperation(input, ifTransform);
 
@@ -253,7 +287,7 @@ namespace Transformalize.Test.Unit {
                 .Parameter("empty", string.Empty).Name("empty")
                 .ToParameters();
 
-            var ifTransform = new IfOperation("x", "=", "empty", "y", "x", parameters, "out", "string");
+            var ifTransform = new IfOperation("x", "Equal", "empty", "y", "x", parameters, "out", "string");
 
             var output = TestOperation(input, ifTransform);
 
