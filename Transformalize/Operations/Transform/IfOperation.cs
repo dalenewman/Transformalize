@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
@@ -9,7 +10,7 @@ namespace Transformalize.Operations.Transform {
     public class IfOperation : AbstractOperation {
 
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
-        private readonly string _op;
+        private readonly ComparisonOperator _op;
         private readonly string _outKey;
 
         private readonly KeyValuePair<string, IParameter> _left;
@@ -33,18 +34,18 @@ namespace Transformalize.Operations.Transform {
             {string.Empty, new KeyValuePair<string, IParameter>(string.Empty, new Parameter(string.Empty, string.Empty))}
         };
 
-        private readonly Dictionary<string, Func<object, object, bool>> _compare = new Dictionary<string, Func<object, object, bool>>() {
-            {"equal", ((x, y) => x.Equals(y))},
-            {"notequal", ((x, y) => !x.Equals(y))},
-            {"greaterthan", ((x, y) => ((IComparable) x).CompareTo(y) > 0)},
-            {"greaterthanequal", ((x, y) => x.Equals(y) || ((IComparable)x).CompareTo(y) > 0)},
-            {"lessthan", ((x, y) => ((IComparable)x).CompareTo(y) < 0)},
-            {"lessthanequal", ((x, y) => x.Equals(y) || ((IComparable)x).CompareTo(y) < 0)}
+        private readonly Dictionary<ComparisonOperator, Func<object, object, bool>> _compare = new Dictionary<ComparisonOperator, Func<object, object, bool>>() {
+            {ComparisonOperator.Equal, ((x, y) => x.Equals(y))},
+            {ComparisonOperator.NotEqual, ((x, y) => !x.Equals(y))},
+            {ComparisonOperator.GreaterThan, ((x, y) => ((IComparable) x).CompareTo(y) > 0)},
+            {ComparisonOperator.GreaterThanEqual, ((x, y) => x.Equals(y) || ((IComparable)x).CompareTo(y) > 0)},
+            {ComparisonOperator.LessThan, ((x, y) => ((IComparable)x).CompareTo(y) < 0)},
+            {ComparisonOperator.LessThanEqual, ((x, y) => x.Equals(y) || ((IComparable)x).CompareTo(y) < 0)}
         };
 
-        public IfOperation(string leftKey, string op, string rightKey, string thenKey, string elseKey, IParameters parameters, string outKey, string outType) {
+        public IfOperation(string leftKey, ComparisonOperator op, string rightKey, string thenKey, string elseKey, IParameters parameters, string outKey, string outType) {
 
-            _op = op.ToLower();
+            _op = op;
             _outKey = outKey;
 
             var param = parameters.ToEnumerable().ToArray();

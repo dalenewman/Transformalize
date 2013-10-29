@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Main;
 using Transformalize.Operations.Transform;
 
@@ -198,7 +199,7 @@ namespace Transformalize.Test.Unit {
             //second pass to get lines
             input = new RowsBuilder(output).ToOperation();
             outFields = new FieldsBuilder().Field("product").Type("int32").NodeType("attribute").ToFields();
-            fromXml = new FromXmlOperation("lines",outFields);
+            fromXml = new FromXmlOperation("lines", outFields);
             output = TestOperation(input, fromXml);
 
             Assert.AreEqual(1, output[0]["id"]);
@@ -267,7 +268,7 @@ namespace Transformalize.Test.Unit {
                 .Parameter("v", "1").Name("v").Type("int32")
                 .ToParameters();
 
-            var ifTransform = new IfOperation("x", "equal", "y", "z", "v", parameters, "out", "int32");
+            var ifTransform = new IfOperation("x", ComparisonOperator.Equal, "y", "z", "v", parameters, "out", "int32");
 
             var output = TestOperation(input, ifTransform);
 
@@ -287,7 +288,7 @@ namespace Transformalize.Test.Unit {
                 .Parameter("empty", string.Empty).Name("empty")
                 .ToParameters();
 
-            var ifTransform = new IfOperation("x", "Equal", "empty", "y", "x", parameters, "out", "string");
+            var ifTransform = new IfOperation("x", ComparisonOperator.Equal, "empty", "y", "x", parameters, "out", "string");
 
             var output = TestOperation(input, ifTransform);
 
@@ -523,8 +524,7 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void ToLocalTime()
-        {
+        public void ToLocalTime() {
             var now = DateTime.UtcNow;
             var local = DateTime.Now;
 
@@ -546,8 +546,7 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void ToLower()
-        {
+        public void ToLower() {
             var input = new RowsBuilder().Row("name", "DalE").ToOperation();
             var transform = new ToLowerOperation("name", "name");
             var output = TestOperation(input, transform);
@@ -555,8 +554,7 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void ToStringFromDate()
-        {
+        public void ToStringFromDate() {
             var date = new DateTime(2013, 10, 30);
             var input = new RowsBuilder().Row("date", date).ToOperation();
             var transform = new ToStringOperation("date", "datetime", "date", "yyyy-MM-dd");
@@ -581,8 +579,7 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void ToTitleCase()
-        {
+        public void ToTitleCase() {
             var input = new RowsBuilder().Row("x", "TRANSFORMALIZE").ToOperation();
             var transform = new ToTitleCaseOperation("x", "x");
             var output = TestOperation(input, transform);
@@ -591,8 +588,7 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void TrimEnd()
-        {
+        public void TrimEnd() {
             var input = new RowsBuilder().Row("y", "SomeTH").ToOperation();
             var transform = new TrimEndOperation("y", "y", "TH");
             var output = TestOperation(input, transform);

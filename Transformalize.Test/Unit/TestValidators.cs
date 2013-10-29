@@ -22,6 +22,8 @@
 
 using System;
 using NUnit.Framework;
+using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
+using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Operations.Validate;
 
 namespace Transformalize.Test.Unit {
@@ -33,7 +35,7 @@ namespace Transformalize.Test.Unit {
             var input = new RowsBuilder()
                 .Row().Field("f1", "{\"i\":\"am\", \"valid\":true}").Field("o1", "")
                 .Row().Field("f1", "{\"i\":\"have\", \"a\":\"Prob\"lem\"}").Field("o1", "").ToOperation();
-            var isJson = new ParseJsonOperation("f1", "o1", false);
+            var isJson = new JsonValidatorOperation("f1", "o1", false);
 
             var rows = TestOperation(input, isJson);
 
@@ -47,7 +49,7 @@ namespace Transformalize.Test.Unit {
             const string badJson = "{\"updated\": \"Thu, 10 Sep 2009 08:45:12 +0000\", \"links\": [{\"href\": \"http://www.designvitality.com/blog/2007/09/photoshop-text-effect-tutorial/\", \"type\": \"text/html\", \"rel\": \"alternate\"}], \"title\": \"Photoshop Text Effects\", \"author\": \"hotpants1\", \"comments\": \"http://delicious.com/url/90c1b26e451a090452df8b947d6298cb\", \"guidislink\": false, \"title_detail\": {\"base\": \"http://feeds.delicious.com/v2/rss/recent?min=1&count=100\", \"type\": \"text/plain\", \"language\": null, \"value\": \"Photoshop Text Effects\"}, \"link\": \"http://www.designvitality.com/blog/2007/09/photoshop-text-effect-tutorial/\", \"source\": {}, \"wfw_commentrss\": \"http://feeds.delicious.com/v2/rss/url/90c1b26e451a090452df8b947d6298cb\", \"id\": \"http://delicious.com/url/90c1b26e451a090452df8b947d6298cb#hotpants1\", \"tags\": [{\"term\": \"photoshop\", scheme\": \"http://delicious.com/hotpants1/\", \"label\": null}]}";
 
             var input = new RowsBuilder().Row().Field("f1", goodJson).Field("o1", "").Row().Field("f1", badJson).Field("o1", "").ToOperation();
-            var isJson = new ParseJsonOperation("f1", "o1", false);
+            var isJson = new JsonValidatorOperation("f1", "o1", false);
 
             var rows = TestOperation(input, isJson);
 
@@ -58,7 +60,7 @@ namespace Transformalize.Test.Unit {
         [Test]
         public void ContainsCharacters() {
             var input = new RowsBuilder().Row("f1", "test").Row("f1", "abcd").ToOperation();
-            var containsCharacters = new ContainsCharactersOperation("f1", "o1", "abc", "all", "{2} doesn't have abc in it! Your value of '{0}' sucks.", false, false);
+            var containsCharacters = new ContainsCharactersValidatorOperation("f1", "o1", "abc", Libs.EnterpriseLibrary.Validation.Validators.ContainsCharacters.All, "{2} doesn't have abc in it! Your value of '{0}' sucks.", false, false);
 
             var output = TestOperation(input, containsCharacters);
 
@@ -74,7 +76,7 @@ namespace Transformalize.Test.Unit {
             var endDate = new DateTime(2013, 12, 31, 23, 59, 59, 998);
 
             var input = new RowsBuilder().Row("f1", goodDate).Row("f1", badDate).ToOperation();
-            var dateTimeRange = new DateTimeRangeOperation("f1", "o1", startDate, "inclusive", endDate, "inclusive", "Bad!", false, true);
+            var dateTimeRange = new DateTimeRangeValidatorOperation("f1", "o1", startDate, RangeBoundaryType.Inclusive, endDate, RangeBoundaryType.Inclusive, "Bad!", false, true);
 
             var output = TestOperation(input, dateTimeRange);
 
@@ -88,7 +90,7 @@ namespace Transformalize.Test.Unit {
                 .Row("in", "2").Field("out", "")
                 .Row("in", "4").Field("out", "").ToOperation();
 
-            var domainOperation = new DomainOperation("in", "out", new[] { "1", "2", "3" }, "{0} is wrong! {2} can't be {0}.", false, false);
+            var domainOperation = new DomainValidatorOperation("in", "out", new[] { "1", "2", "3" }, "{0} is wrong! {2} can't be {0}.", false, false);
 
             var output = TestOperation(input, domainOperation);
 
@@ -104,7 +106,7 @@ namespace Transformalize.Test.Unit {
                 .Row("in", "x").Field("out", "")
                 .Row("in", null).Field("out", "").ToOperation();
 
-            var notNullOperation = new NotNullOperation("in", "out", "{2} can't be null.", false, false);
+            var notNullOperation = new NotNullValidatorOperation("in", "out", "{2} can't be null.", false, false);
 
             var output = TestOperation(input, notNullOperation);
 
@@ -114,13 +116,12 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void PropertyComparison()
-        {
+        public void PropertyComparison() {
             var input = new RowsBuilder()
                 .Row("in1", "77").Field("in2", null).Field("out", "")
                 .Row("in1", "78").Field("in2", "78").Field("out", "").ToOperation();
 
-            var validator = new PropertyComparisonOperation("in1", "in2", "out", "Equal", "Bad!", false, false);
+            var validator = new PropertyComparisonValidatorOperation("in1", "in2", "out", "Equal", "Bad!", false, false);
 
             var output = TestOperation(input, validator);
 
@@ -128,6 +129,50 @@ namespace Transformalize.Test.Unit {
             Assert.AreEqual("", output[1]["out"]);
         }
 
+        [Test]
+        public void PropertyComparisonGreaterThanNumbers() {
+            var input = new RowsBuilder()
+                .Row("in1", 59).Field("in2", 57).Field("out", "")
+                .Row("in1", 47).Field("in2", 47).Field("out", "").ToOperation();
+
+            var validator = new PropertyComparisonValidatorOperation("in1", "in2", "out", "GreaterThan", "{0} Bad!", false, false);
+
+            var output = TestOperation(input, validator);
+
+            Assert.AreEqual("", output[0]["out"]);
+            Assert.AreEqual("47 Bad!", output[1]["out"]);
+        }
+
+        [Test]
+        public void Range() {
+
+            var input = new RowsBuilder()
+                .Row("in", 5).Field("out", "")
+                .Row("in", 2).Field("out", "").ToOperation();
+
+            var validator = new RangeValidatorOperation("in", "out", 3, RangeBoundaryType.Inclusive, 9, RangeBoundaryType.Inclusive, "{0} is not between and {3} and {5}.", false, false);
+
+            var output = TestOperation(input, validator);
+
+            Assert.AreEqual("", output[0]["out"]);
+            Assert.AreEqual("2 is not between and 3 and 9.", output[1]["out"]);
+
+        }
+
+        [Test]
+        public void Regex() {
+            var input = new RowsBuilder()
+                .Row("in", "789A").Field("out", "")
+                .Row("in", "hjd7").Field("out", "").ToOperation();
+
+            var validator = new RegexValidatorOperation("in", "out", @"^7[0-9]{2}A$", "{0} is no match.", false, false);
+
+            var output = TestOperation(input, validator);
+
+            Assert.AreEqual("", output[0]["out"]);
+            Assert.AreEqual("hjd7 is no match.", output[1]["out"]);
+
+        }
 
     }
 }

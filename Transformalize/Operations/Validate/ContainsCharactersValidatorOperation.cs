@@ -2,14 +2,14 @@
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 
 namespace Transformalize.Operations.Validate {
-    public class ContainsCharactersOperation : ValidationOperation {
+    public class ContainsCharactersValidatorOperation : ValidationOperation {
 
-        public ContainsCharactersOperation(string keyToValidate, string outKey, string characters, string containsCharacters, string messageTemplate, bool negated, bool append)
+        public ContainsCharactersValidatorOperation(string keyToValidate, string outKey, string characters, ContainsCharacters containsCharacters, string messageTemplate, bool negated, bool append)
             : base(keyToValidate, outKey, append) {
 
             Validator = new ContainsCharactersValidator(
                 characters,
-                (ContainsCharacters)Enum.Parse(typeof(ContainsCharacters), containsCharacters, true),
+                containsCharacters,
                 messageTemplate,
                 negated
             ) { Tag = keyToValidate };

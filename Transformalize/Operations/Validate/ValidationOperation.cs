@@ -24,7 +24,6 @@ namespace Transformalize.Operations.Validate {
             foreach (var row in rows) {
                 var results = new ValidationResults();
                 Validator.DoValidate(row[_keyToValidate], row, _keyToValidate, results);
-                //var results = Validator.Validate(ValidateRow ? row : row[_inKey]);
                 if (!results.IsValid) {
                     row[_outKey] = _append ? (row[_outKey] + " " + results.First().Message).Trim(' ') : results.First().Message;
                 }

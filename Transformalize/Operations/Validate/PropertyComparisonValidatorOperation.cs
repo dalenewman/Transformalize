@@ -3,9 +3,9 @@ using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 
 namespace Transformalize.Operations.Validate {
 
-    public class PropertyComparisonOperation : ValidationOperation {
+    public class PropertyComparisonValidatorOperation : ValidationOperation {
 
-        public PropertyComparisonOperation(string keyToValidate, string targetKey, string outKey, string comparisonOperator, string message, bool negated, bool append)
+        public PropertyComparisonValidatorOperation(string keyToValidate, string targetKey, string outKey, string comparisonOperator, string message, bool negated, bool append)
             : base(keyToValidate, outKey, append) {
 
             ValidateRow = true;

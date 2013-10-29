@@ -20,7 +20,6 @@
 
 #endregion
 
-using System;
 using System.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 
@@ -352,8 +351,8 @@ namespace Transformalize.Configuration
             set { this[MESSAGE] = value; }
         }
 
-        [EnumConversionValidator(typeof(ContainsCharacters), MessageTemplate = "{1} must be a valid ContainsCharacters. (e.g. All, Any)")]
-        [ConfigurationProperty(CONTAINS_CHARACTERS, IsRequired = false, DefaultValue = "Any")]
+        [EnumConversionValidator(typeof(ContainsCharacters), MessageTemplate = "{1} must be All, or Any.")]
+        [ConfigurationProperty(CONTAINS_CHARACTERS, IsRequired = false, DefaultValue = "All")]
         public string ContainsCharacters
         {
             get { return this[CONTAINS_CHARACTERS] as string; }
@@ -368,9 +367,9 @@ namespace Transformalize.Configuration
         }
 
         [ConfigurationProperty(LOWER_BOUND, IsRequired = false)]
-        public DateTime LowerBound
+        public string LowerBound
         {
-            get { return (DateTime)this[LOWER_BOUND]; }
+            get { return this[LOWER_BOUND] as string; }
             set { this[LOWER_BOUND] = value; }
         }
 
@@ -383,9 +382,9 @@ namespace Transformalize.Configuration
         }
 
         [ConfigurationProperty(UPPER_BOUND, IsRequired = false)]
-        public DateTime UpperBound
+        public string UpperBound
         {
-            get { return (DateTime)this[UPPER_BOUND]; }
+            get { return this[UPPER_BOUND] as string; }
             set { this[UPPER_BOUND] = value; }
         }
 

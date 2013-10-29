@@ -20,8 +20,11 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using Transformalize.Configuration;
+using Transformalize.Libs.EnterpriseLibrary.Validation;
+using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Operations.Transform;
@@ -33,12 +36,22 @@ namespace Transformalize.Main {
     public class TransformOperationFactory {
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly Process _process;
+        private readonly Validator<TransformConfigurationElement> _validator = ValidationFactory.CreateValidator<TransformConfigurationElement>();
 
         public TransformOperationFactory(Process process) {
             _process = process;
         }
 
         public AbstractOperation Create(Field field, TransformConfigurationElement element, IParameters parameters) {
+
+            var results = _validator.Validate(element);
+            if (!results.IsValid) {
+                _log.Error("There is a problem with the transform element for field {0}.", field.Alias);
+                foreach (var result in results) {
+                    _log.Error(result.Message);
+                }
+                Environment.Exit(1);
+            }
 
             var hasParameters = parameters.Count > 0;
             var inKey = hasParameters ? parameters[0].Name : field.Alias;
@@ -89,7 +102,7 @@ namespace Transformalize.Main {
                 case "if":
                     return new IfOperation(
                         element.Left,
-                        element.Operator,
+                        (ComparisonOperator)Enum.Parse(typeof(ComparisonOperator), element.Operator, true),
                         element.Right,
                         element.Then,
                         element.Else,
@@ -322,24 +335,24 @@ namespace Transformalize.Main {
 
                 // validators
                 case "containscharacters":
-                    return new ContainsCharactersOperation(
+                    return new ContainsCharactersValidatorOperation(
                         inKey,
                         outKey,
                         element.Characters,
-                        element.ContainsCharacters,
+                        (ContainsCharacters)Enum.Parse(typeof(ContainsCharacters), element.ContainsCharacters, true),
                         element.Message,
                         element.Negated,
                         append
                     );
 
                 case "datetimerange":
-                    return new DateTimeRangeOperation(
+                    return new DateTimeRangeValidatorOperation(
                         inKey,
                         outKey,
-                        element.LowerBound,
-                        element.LowerBoundType,
-                        element.UpperBound,
-                        element.UpperBoundType,
+                        (DateTime)Common.ObjectConversionMap[field.SimpleType](element.LowerBound),
+                        (RangeBoundaryType)Enum.Parse(typeof(RangeBoundaryType), element.LowerBoundType, true),
+                        (DateTime)Common.ObjectConversionMap[field.SimpleType](element.UpperBound),
+                        (RangeBoundaryType)Enum.Parse(typeof(RangeBoundaryType), element.UpperBoundType, true),
                         element.Message,
                         element.Negated,
                         append
@@ -348,7 +361,7 @@ namespace Transformalize.Main {
                 case "domain":
                     var domain = element.Domain.Split(element.Separator.ToCharArray()).Select(s => Common.ObjectConversionMap[field.SimpleType](s));
 
-                    return new DomainOperation(
+                    return new DomainValidatorOperation(
                         inKey,
                         outKey,
                         domain,
@@ -357,14 +370,37 @@ namespace Transformalize.Main {
                         append
                     );
 
-                case "parsejson":
-                    return new ParseJsonOperation(inKey, outKey, append);
+                case "json":
+                    return new JsonValidatorOperation(inKey, outKey, append);
 
                 case "notnull":
-                    return new NotNullOperation(inKey, outKey, element.Message, element.Negated, append);
+                    return new NotNullValidatorOperation(inKey, outKey, element.Message, element.Negated, append);
 
                 case "fieldcomparison":
-                    return new PropertyComparisonOperation(inKey, element.Field, outKey, element.Operator, element.Message, element.Negated, append);
+                    return new PropertyComparisonValidatorOperation(inKey, element.Field, outKey, element.Operator, element.Message, element.Negated, append);
+
+                case "range":
+                    return new RangeValidatorOperation(
+                        inKey,
+                        outKey,
+                        (IComparable)Common.ObjectConversionMap[field.SimpleType](element.LowerBound),
+                        (RangeBoundaryType)Enum.Parse(typeof(RangeBoundaryType), element.LowerBoundType, true),
+                        (IComparable)Common.ObjectConversionMap[field.SimpleType](element.UpperBound),
+                        (RangeBoundaryType)Enum.Parse(typeof(RangeBoundaryType), element.UpperBoundType, true),
+                        element.Message,
+                        element.Negated,
+                        append
+                    );
+
+                case "regex":
+                    return new RegexValidatorOperation(
+                        inKey,
+                        outKey,
+                        element.Pattern,
+                        element.Message,
+                        element.Negated,
+                        append
+                    );
 
             }
 
