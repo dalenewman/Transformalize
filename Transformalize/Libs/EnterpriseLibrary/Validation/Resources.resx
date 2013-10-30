@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ContainsCharactersNegatedDefaultMessageTemplate" xml:space="preserve">
+    <value>The value must not contain the characters in "{3}" with mode "{4}".</value>
+  </data>
+  <data name="ContainsCharactersNonNegatedDefaultMessageTemplate" xml:space="preserve">
+    <value>The value must contain the characters in "{3}" with mode "{4}". </value>
+  </data>
+  <data name="EnumConversionNegatedDefaultMessageTemplate" xml:space="preserve">
+    <value>The value must not be defined in the "{3}" enum type.</value>
+  </data>
+  <data name="EnumConversionNonNegatedDefaultMessageTemplate" xml:space="preserve">
+    <value>The value must be defined in the "{3}" enum type.</value>
+  </data>
+  <data name="ExceptionAttemptedValueAccessForInstanceOfInvalidType" xml:space="preserve">
+    <value>Attempted to retrieve value from instance of wrong type.</value>
+  </data>
+  <data name="ExceptionCannotSetResourceBasedMessageTemplatesIfTemplateIsSet" xml:space="preserve">
+    <value>A message template has been set already, resource based message templates are not allowed.</value>
+  </data>
+  <data name="ExceptionCannotSetResourceMessageTemplatesIfResourceTemplateIsSet" xml:space="preserve">
+    <value>A message template resource has been set already; template override is not allowed.</value>
+  </data>
+  <data name="ExceptionInvalidDate" xml:space="preserve">
+    <value>The supplied string is not a valid date representation.</value>
+  </data>
+  <data name="ExceptionInvalidTargetType" xml:space="preserve">
+    <value>Value to validate is not of the expected type: expected {0} but got {1} instead.</value>
+  </data>
+  <data name="ExceptionLowerBoundNull" xml:space="preserve">
+    <value>The lower bound cannot be null unless it's type is Ingore.</value>
+  </data>
+  <data name="ExceptionMethodHasNoReturnValue" xml:space="preserve">
+    <value>Method to access value does not have a return value.</value>
+  </data>
+  <data name="ExceptionMethodHasParameters" xml:space="preserve">
+    <value>Method to access value has parameters.</value>
+  </data>
+  <data name="ExceptionObjectCollectionValidatorDataTargetTypeNotSet" xml:space="preserve">
+    <value>The target element type has not been set in the configuration.</value>
+  </data>
+  <data name="ExceptionPartiallyDefinedResourceForMessageTemplate" xml:space="preserve">
+    <value>Both resource name and resource type must be defined to retrieve the message template.</value>
+  </data>
+  <data name="ExceptionPropertyNotFound" xml:space="preserve">
+    <value>The source property to request validators from does not exist.</value>
+  </data>
+  <data name="ExceptionPropertyNotReadable" xml:space="preserve">
+    <value>The source property to request validators from is not readable.</value>
+  </data>
+  <data name="ExceptionSelfValidationMethodWithInvalidSignature" xml:space="preserve">
+    <value>The self validation method has an invalid signature. It should be "void [method name](ValidationResults)".</value>
+  </data>
+  <data name="ExceptionTypeNotFound" xml:space="preserve">
+    <value>The source type to request validators from has not been found.</value>
+  </data>
+  <data name="ExceptionUpperBoundLowerThanLowerBound" xml:space="preserve">
+    <value>Upper bound cannot be lower than lower bound.</value>
+  </data>
+  <data name="ExceptionUpperBoundNull" xml:space="preserve">
+    <value>The upper bound cannot be null unless it's type is Ingore.</value>
+  </data>
+  <data name="MustImplementOperation" xml:space="preserve">
+    <value>The operation must be implemented by a subclass.</value>
+  </data>
+  <data name="NonNullNegatedValidatorDefaultMessageTemplate" xml:space="preserve">
+    <value>The value must be null.</value>
+  </data>
+  <data name="NonNullNonNegatedValidatorDefaultMessageTemplate" xml:space="preserve">
+    <value>The value cannot be null.</value>
+  </data>
+  <data name="ObjectCollectionValidatorIncompatibleElementInTargetCollection" xml:space="preserve">
+    <value>The element in the validated collection is not compatible with the expected type.</value>
+  </data>
+  <data name="ObjectCollectionValidatorTargetNotCollection" xml:space="preserve">
+    <value>The supplied object is not a collection.</value>
+  </data>
+  <data name="ObjectValidatorInvalidTargetType" xml:space="preserve">
+    <value>The supplied object is not compatible with the expected type.</value>
+  </data>
+  <data name="RangeValidatorNonNegatedDefaultMessageTemplate" xml:space="preserve">
+    <value>The value must fall within the range "{3}" ({4}) - "{5}" ({6}).</value>
+  </data>
+  <data name="RegexValidatorNonNegatedDefaultMessageTemplate" xml:space="preserve">
+    <value>The value must match the regular expression "{3}" with options "{4}".</value>
+  </data>
+  <data name="SelfValidationMethodThrownMessage" xml:space="preserve">
+    <value>The self validation method thrown an exception while evaluating.</value>
+  </data>
+  <data name="SelfValidationValidatorMessage" xml:space="preserve">
+    <value>The reference provided to the self validation method is either null or references an instance of a non-compatible type.</value>
+  </data>
+  <data name="StringLengthValidatorNonNegatedDefaultMessageTemplate" xml:space="preserve">
+    <value>The length of the value must fall within the range "{3}" ({4}) - "{5}" ({6}).</value>
+  </data>
+  <data name="ValueValidatorDefaultMessageTemplate" xml:space="preserve">
+    <value>Value Validator</value>
+  </data>
+  <data name="DomainNonNegatedDefaultMessageTemplate" xml:space="preserve">
+    <value>The value does not belong to the domain.</value>
+  </data>
+  <data name="DomainNegatedDefaultMessageTemplate" xml:space="preserve">
+    <value>The value must not belong to the domain.</value>
+  </data>
+  <data name="RelativeDateTimeNonNegatedDefaultMessageTemplate" xml:space="preserve">
+    <value>The value must fall within the range "{3}" ({4}) - "{5}" ({6}) relative to now.</value>
+  </data>
+  <data name="RelativeDateTimeNegatedDefaultMessageTemplate" xml:space="preserve">
+    <value>The value must not fall within the range "{3}" ({4}) - "{5}" ({6}) relative to now.</value>
+  </data>
+  <data name="RelativeDateTimeValidatorNotValidDateTimeUnit" xml:space="preserve">
+    <value>It's not possible to specify a None DateTime unit if a BoundaryType different from Ignore is used.</value>
+  </data>
+  <data name="StringLengthValidatorNegatedDefaultMessageTemplate" xml:space="preserve">
+    <value>The length of the value must not fall within the range "{3}" ({4}) - "{5}" ({6}).</value>
+  </data>
+  <data name="TypeConversionNonNegatedDefaultMessageTemplate" xml:space="preserve">
+    <value>The value must be convertible to type "{3}".</value>
+  </data>
+  <data name="TypeConversionNegatedDefaultMessageTemplate" xml:space="preserve">
+    <value>The value must not be convertible to type "{3}".</value>
+  </data>
+  <data name="RangeValidatorNegatedDefaultMessageTemplate" xml:space="preserve">
+    <value>The value must not fall within the range "{3}" ({4}) - "{5}" ({6}).</value>
+  </data>
+  <data name="RegexValidatorNegatedDefaultMessageTemplate" xml:space="preserve">
+    <value>The value must not match the regular expression "{3}" with options "{4}".</value>
+  </data>
+  <data name="ErrorValueAccessInvalidType" xml:space="preserve">
+    <value>The value for "{0}" could not be accessed from an instance of "{1}".</value>
+  </data>
+  <data name="ErrorValueAccessNull" xml:space="preserve">
+    <value>The value for "{0}" could not be accessed from null.</value>
+  </data>
+  <data name="ErrorCannotPerfomDefaultConversion" xml:space="preserve">
+    <value>The supplied value could not be converted to the target property type.</value>
+  </data>
+  <data name="ExceptionIntegrationValidatedPropertyNameNotAvailable" xml:space="preserve">
+    <value>The property name required to retrieve validation information for integration is not found.</value>
+  </data>
+  <data name="ExceptionIntegrationValidatedPropertyNotExists" xml:space="preserve">
+    <value>The property name required to retrieve validation information for integration is invalid or does not belong to a public property.</value>
+  </data>
+  <data name="ExceptionIntegrationValidatedPropertyNotReadable" xml:space="preserve">
+    <value>The property name required to retrieve validation information for integration refers to nonreadable property.</value>
+  </data>
+  <data name="ExceptionIntegrationValidatedTypeNotAvailable" xml:space="preserve">
+    <value>The type required to retrieve validation information for integration is not found.</value>
+  </data>
+  <data name="ExceptionShouldNotCall" xml:space="preserve">
+    <value>This method should not have been called.</value>
+  </data>
+  <data name="ValueAccessComparisonValidatorFailureToRetrieveComparand" xml:space="preserve">
+    <value>Failure to retrieve comparand for key "{0}": {1}.</value>
+  </data>
+  <data name="ValueAccessComparisonValidatorNegatedDefaultMessageTemplate" xml:space="preserve">
+    <value>The value should not have succeeded in the comparison with value for key "{4}" using operator "{5}".</value>
+  </data>
+  <data name="ValueAccessComparisonValidatorNonNegatedDefaultMessageTemplate" xml:space="preserve">
+    <value>The value failed the comparison with value for key "{4}" using operator "{5}".</value>
+  </data>
+  <data name="ExceptionPropertyToCompareNotFound" xml:space="preserve">
+    <value>No public readable property with name "{0}" could be found for type "{1}".</value>
+  </data>
+  <data name="ExceptionPropertyToCompareNull" xml:space="preserve">
+    <value>The name for the property to compare is null for PropertyComparisonValidator.</value>
+  </data>
+  <data name="OrCompositeValidatorDefaultMessageTemplate" xml:space="preserve">
+    <value>All validators failed for key "{1}".</value>
+  </data>
+  <data name="IgnoreNullsDefaultMessageTemplate" xml:space="preserve">
+    <value>The value is not null and failed all its validation rules for key "{1}".</value>
+  </data>
+  <data name="BlockName" xml:space="preserve">
+    <value>Enterprise Library Validation Application Block</value>
+  </data>
+  <data name="ConfigurationErrorMessage" xml:space="preserve">
+    <value>Errors reading configuration for Enterprise Library Validation Application Block</value>
+  </data>
+  <data name="ExceptionInvalidField" xml:space="preserve">
+    <value>The field "{0}" on type "{1}" is either missing or non public.</value>
+  </data>
+  <data name="ExceptionInvalidMethod" xml:space="preserve">
+    <value>The method "{0}" on type "{1}" is either missing, non public, void or has parameters.</value>
+  </data>
+  <data name="ExceptionInvalidProperty" xml:space="preserve">
+    <value>The property "{0}" on type "{1}" is either missing, non public or read-only.</value>
+  </data>
+  <data name="ExceptionBoundTypeNotIComparable" xml:space="preserve">
+    <value>The supplied bound type is not compatible with IComparable.</value>
+  </data>
+  <data name="ExceptionCannotIgnoreBothBoundariesInRange" xml:space="preserve">
+    <value>At most one range bound can be ignored.</value>
+  </data>
+  <data name="ExceptionTypeOfBoundsMustMatch" xml:space="preserve">
+    <value>Range bounds must have the same type.</value>
+  </data>
+  <data name="ExceptionCannotConvertBound" xml:space="preserve">
+    <value>The string representing the bound value could not be converted to the bound type.</value>
+  </data>
+  <data name="ValidationAttributeFailed" xml:space="preserve">
+    <value>Validation using {0} threw an exception: {1}</value>
+    <comment>{0} validator type name {1} exception message</comment>
+  </data>
+  <data name="ExceptionContainsNullElements" xml:space="preserve">
+    <value>Enumerable contains null elements.</value>
+  </data>
+  <data name="ExceptionValidationAttributeNotSupported" xml:space="preserve">
+    <value>A validation attribute of type {0} cannot be used to validate values.</value>
+  </data>
+  <data name="IllegalUseOfInjectionValidationSource" xml:space="preserve">
+    <value>The InjectionValidationSource may only be used to configure generic Enterprise Library validator classes.</value>
+  </data>
+  <data name="InvalidValidationSpecificationSource" xml:space="preserve">
+    <value>The Validation Specification Source {0} is invalid.</value>
+  </data>
+  <data name="IllegalUseOfValidationDependencyAttribute" xml:space="preserve">
+    <value>The ValidationDependencyAttribute was applied to a dependency of type {0}, which is a generic Enterprise Library validator class.</value>
+  </data>
+  <data name="ValidationFailedMessage" xml:space="preserve">
+    <value>Parameter validation failed</value>
+  </data>
+  <data name="ValidationResultsHeader" xml:space="preserve">
+    <value>Validation results:</value>
+  </data>
+  <data name="ValidationResultTemplate" xml:space="preserve">
+    <value>    Result: {0} Message: {1}</value>
+  </data>
+  <data name="ValidationResultWithKeyTemplate" xml:space="preserve">
+    <value>    Result: {0} Key: {2} Message: {1}</value>
+  </data>
+  <data name="ExceptionValidatingNullOnValueType" xml:space="preserve">
+    <value>Value to validate is null but expected an instance of the non-reference type {0}.</value>
+  </data>
+  <data name="InvariantCultureCannotBeUsedToDeserializeConfiguration" xml:space="preserve">
+    <value>InvariantCulture cannot be used to deserialize configuration.</value>
+  </data>
+  <data name="ExceptionDefaultConfigurationValidatorFactoryAlreadySet" xml:space="preserve">
+    <value>The ValidationFactory already has a default configuration validator factory set. To overwrite it set the throwIfSet parameter to false.</value>
+  </data>
+  <data name="ExceptionDefaultConfigurationValidatorFactoryNotSet" xml:space="preserve">
+    <value>Default configuration factory not set. Set it with the ValidationFactory.SetDefaultConfigurationValidatorFactory method.</value>
+  </data>
+</root>

@@ -320,7 +320,11 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Libs\EnterpriseLibrary\Common\ReplacementFormatter.cs" />
-    <Compile Include="Libs\EnterpriseLibrary\Common\Resources.Designer.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Common\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Libs\EnterpriseLibrary\Common\ResourceStringLoader.cs" />
     <Compile Include="Libs\EnterpriseLibrary\Common\Utility\ConstantStringResolver.cs" />
     <Compile Include="Libs\EnterpriseLibrary\Common\Utility\DelegateStringResolver.cs" />
@@ -391,7 +395,11 @@
     <Compile Include="Libs\EnterpriseLibrary\Validation\ParameterValidatorFactory.cs" />
     <Compile Include="Libs\EnterpriseLibrary\Validation\PropertyValidationFactory.cs" />
     <Compile Include="Libs\EnterpriseLibrary\Validation\ReflectionMemberValueAccessBuilder.cs" />
-    <Compile Include="Libs\EnterpriseLibrary\Validation\Resources.Designer.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\Validation\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Libs\EnterpriseLibrary\Validation\TagFilter.cs" />
     <Compile Include="Libs\EnterpriseLibrary\Validation\Validation.cs" />
     <Compile Include="Libs\EnterpriseLibrary\Validation\ValidationAttributeValidatedElement.cs" />
@@ -1117,7 +1125,10 @@
     <Compile Include="Operations\Validate\PropertyComparisonValidatorOperation.cs" />
     <Compile Include="Operations\Validate\RangeValidatorOperation.cs" />
     <Compile Include="Operations\Validate\RegexValidatorOperation.cs" />
+    <Compile Include="Operations\Validate\RelativeDateTimeValidatorOperation.cs" />
     <Compile Include="Operations\Validate\RowValueAccess.cs" />
+    <Compile Include="Operations\Validate\StringLengthValidatorOperation.cs" />
+    <Compile Include="Operations\Validate\TypeConversionValidatorOperation.cs" />
     <Compile Include="Operations\Validate\ValidationOperation.cs" />
     <Compile Include="Processes\EntityDeleteProcess.cs" />
     <Compile Include="Operations\EntityDetectDeletes.cs" />
@@ -1576,6 +1587,14 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Libs\EnterpriseLibrary\Common\Configuration\DesignResources.resx" />
+    <EmbeddedResource Include="Libs\EnterpriseLibrary\Common\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\EnterpriseLibrary\Validation\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Libs\EnterpriseLibrary\Validation\Configuration\DesignResources.resx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -23,10 +23,8 @@
 using System.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 
-namespace Transformalize.Configuration
-{
-    public class TransformConfigurationElement : ConfigurationElement
-    {
+namespace Transformalize.Configuration {
+    public class TransformConfigurationElement : ConfigurationElement {
         private const string METHOD = "method";
         private const string VALUE = "value";
         private const string PATTERN = "pattern";
@@ -61,14 +59,17 @@ namespace Transformalize.Configuration
         private const string UNITS = "units";
         private const string DOMAIN = "domain";
         private const string TRY_PARSE = "try-parse";
+        
         private const string LEFT = "left";
         private const string OPERATOR = "operator";
         private const string FIELD = "field";
         private const string RIGHT = "right";
         private const string THEN = "then";
         private const string ELSE = "else";
+        
         private const string FROM_TIME_ZONE = "from-time-zone";
         private const string TO_TIME_ZONE = "to-time-zone";
+
         private const string FROM_LAT = "from-lat";
         private const string FROM_LONG = "from-long";
         private const string TO_LAT = "to-lat";
@@ -81,193 +82,167 @@ namespace Transformalize.Configuration
         private const string MESSAGE = "message";
         private const string NEGATED = "negated";
         private const string LOWER_BOUND = "lower-bound";
-        private const string LOWER_BOUND_TYPE = "lower-bound-type";
+        private const string LOWER_BOUND_TYPE = "lower-boundary-type";
+        private const string LOWER_UNIT = "lower-unit";
         private const string UPPER_BOUND = "upper-bound";
-        private const string UPPER_BOUND_TYPE = "upper-bound-type";
-
-
+        private const string UPPER_BOUND_TYPE = "upper-boundary-type";
+        private const string UPPER_UNIT = "upper-unit";
 
         [ConfigurationProperty(METHOD, IsRequired = true)]
-        public string Method
-        {
+        public string Method {
             get { return this[METHOD] as string; }
             set { this[METHOD] = value; }
         }
 
         [ConfigurationProperty(NAME, IsRequired = false, DefaultValue = "")]
-        public string Name
-        {
+        public string Name {
             get { return this[NAME] as string; }
             set { this[NAME] = value; }
         }
 
         [ConfigurationProperty(CLEAN, IsRequired = false, DefaultValue = false)]
-        public bool Clean
-        {
+        public bool Clean {
             get { return (bool)this[CLEAN]; }
             set { this[CLEAN] = value; }
         }
 
         [ConfigurationProperty(TRY_PARSE, IsRequired = false, DefaultValue = false)]
-        public bool TryParse
-        {
+        public bool TryParse {
             get { return (bool)this[TRY_PARSE]; }
             set { this[TRY_PARSE] = value; }
         }
 
         [ConfigurationProperty(UNITS, IsRequired = false, DefaultValue = "meters")]
-        public string Units
-        {
+        public string Units {
             get { return this[UNITS] as string; }
             set { this[UNITS] = value; }
         }
 
         [ConfigurationProperty(TO, IsRequired = false, DefaultValue = "")]
-        public string To
-        {
+        public string To {
             get { return this[TO] as string; }
             set { this[TO] = value; }
         }
 
         [ConfigurationProperty(VALUE, IsRequired = false, DefaultValue = "")]
-        public string Value
-        {
+        public string Value {
             get { return this[VALUE] as string; }
             set { this[VALUE] = value; }
         }
 
         [ConfigurationProperty(PATTERN, IsRequired = false, DefaultValue = "")]
-        public string Pattern
-        {
+        public string Pattern {
             get { return this[PATTERN] as string; }
             set { this[PATTERN] = value; }
         }
 
         [ConfigurationProperty(REPLACEMENT, IsRequired = false, DefaultValue = "")]
-        public string Replacement
-        {
+        public string Replacement {
             get { return this[REPLACEMENT] as string; }
             set { this[REPLACEMENT] = value; }
         }
 
         [ConfigurationProperty(OLD_VALUE, IsRequired = false, DefaultValue = "")]
-        public string OldValue
-        {
+        public string OldValue {
             get { return this[OLD_VALUE] as string; }
             set { this[OLD_VALUE] = value; }
         }
 
 
         [ConfigurationProperty(NEW_VALUE, IsRequired = false, DefaultValue = "")]
-        public string NewValue
-        {
+        public string NewValue {
             get { return this[NEW_VALUE] as string; }
             set { this[NEW_VALUE] = value; }
         }
 
         [ConfigurationProperty(TRIM_CHARS, IsRequired = false, DefaultValue = " ")]
-        public string TrimChars
-        {
+        public string TrimChars {
             get { return this[TRIM_CHARS] as string; }
             set { this[TRIM_CHARS] = value; }
         }
 
         [ConfigurationProperty(INDEX, IsRequired = false, DefaultValue = 0)]
-        public int Index
-        {
+        public int Index {
             get { return (int)this[INDEX]; }
             set { this[INDEX] = value; }
         }
 
         [ConfigurationProperty(COUNT, IsRequired = false, DefaultValue = 0)]
-        public int Count
-        {
+        public int Count {
             get { return (int)this[COUNT]; }
             set { this[COUNT] = value; }
         }
 
         [ConfigurationProperty(START_INDEX, IsRequired = false, DefaultValue = 0)]
-        public int StartIndex
-        {
+        public int StartIndex {
             get { return (int)this[START_INDEX]; }
             set { this[START_INDEX] = value; }
         }
 
         [ConfigurationProperty(LENGTH, IsRequired = false, DefaultValue = 0)]
-        public int Length
-        {
+        public int Length {
             get { return (int)this[LENGTH]; }
             set { this[LENGTH] = value; }
         }
 
         [ConfigurationProperty(TOTAL_WIDTH, IsRequired = false, DefaultValue = 0)]
-        public int TotalWidth
-        {
+        public int TotalWidth {
             get { return (int)this[TOTAL_WIDTH]; }
             set { this[TOTAL_WIDTH] = value; }
         }
 
         [StringValidator(MaxLength = 1)]
         [ConfigurationProperty(PADDING_CHAR, IsRequired = false, DefaultValue = "0")]
-        public string PaddingChar
-        {
+        public string PaddingChar {
             get { return (string)this[PADDING_CHAR]; }
             set { this[PADDING_CHAR] = value; }
         }
 
         [ConfigurationProperty(MAP, IsRequired = false, DefaultValue = "")]
-        public string Map
-        {
+        public string Map {
             get { return this[MAP] as string; }
             set { this[MAP] = value; }
         }
 
         [SettingsDescription("root, for xml transform.  designates a single XML root to use for parsing xml.")]
         [ConfigurationProperty(ROOT, IsRequired = false, DefaultValue = "")]
-        public string Root
-        {
+        public string Root {
             get { return this[ROOT] as string; }
             set { this[ROOT] = value; }
         }
 
         [ConfigurationProperty(SCRIPT, IsRequired = false, DefaultValue = "")]
-        public string Script
-        {
+        public string Script {
             get { return this[SCRIPT] as string; }
             set { this[SCRIPT] = value; }
         }
 
         [ConfigurationProperty(TEMPLATE, IsRequired = false, DefaultValue = "")]
-        public string Template
-        {
+        public string Template {
             get { return this[TEMPLATE] as string; }
             set { this[TEMPLATE] = value; }
         }
 
         [ConfigurationProperty(FORMAT, IsRequired = false, DefaultValue = "")]
-        public string Format
-        {
+        public string Format {
             get { return this[FORMAT] as string; }
             set { this[FORMAT] = value; }
         }
 
         [ConfigurationProperty(PARAMETER, IsRequired = false, DefaultValue = "")]
-        public string Parameter
-        {
+        public string Parameter {
             get { return this[PARAMETER] as string; }
             set { this[PARAMETER] = value; }
         }
 
         [ConfigurationProperty(RESULT, IsRequired = false, DefaultValue = "")]
-        public string Result
-        {
+        public string Result {
             get { return this[RESULT] as string; }
             set { this[RESULT] = value; }
         }
 
         [ConfigurationProperty(SEPARATOR, IsRequired = false, DefaultValue = ",")]
-        public string Separator
-        {
+        public string Separator {
             get { return this[SEPARATOR] as string; }
             set { this[SEPARATOR] = value; }
         }
@@ -285,120 +260,117 @@ namespace Transformalize.Configuration
         }
 
         [ConfigurationProperty(MODEL, IsRequired = false, DefaultValue = "dynamic")]
-        public string Model
-        {
+        public string Model {
             get { return this[MODEL] as string; }
             set { this[MODEL] = value; }
         }
 
         [ConfigurationProperty(EXPRESSION, IsRequired = false, DefaultValue = "")]
-        public string Expression
-        {
+        public string Expression {
             get { return this[EXPRESSION] as string; }
             set { this[EXPRESSION] = value; }
         }
 
         [ConfigurationProperty(PARAMETERS)]
-        public ParameterElementCollection Parameters
-        {
+        public ParameterElementCollection Parameters {
             get { return this[PARAMETERS] as ParameterElementCollection; }
         }
 
         [ConfigurationProperty(SCRIPTS)]
-        public TransformScriptElementCollection Scripts
-        {
+        public TransformScriptElementCollection Scripts {
             get { return this[SCRIPTS] as TransformScriptElementCollection; }
         }
 
         [ConfigurationProperty(TEMPLATES)]
-        public TransformTemplateElementCollection Templates
-        {
+        public TransformTemplateElementCollection Templates {
             get { return this[TEMPLATES] as TransformTemplateElementCollection; }
         }
 
         [ConfigurationProperty(TYPE, IsRequired = false, DefaultValue = "")]
-        public string Type
-        {
+        public string Type {
             get { return this[TYPE] as string; }
             set { this[TYPE] = value; }
         }
 
         [ConfigurationProperty(FIELDS)]
-        public FieldElementCollection Fields
-        {
+        public FieldElementCollection Fields {
             get { return this[FIELDS] as FieldElementCollection; }
         }
 
         //validation
         [ConfigurationProperty(APPEND_TO, IsRequired = false, DefaultValue = "")]
-        public string AppendTo
-        {
+        public string AppendTo {
             get { return this[APPEND_TO] as string; }
             set { this[APPEND_TO] = value; }
         }
 
         [ConfigurationProperty(CHARACTERS, IsRequired = false, DefaultValue = "")]
-        public string Characters
-        {
+        public string Characters {
             get { return this[CHARACTERS] as string; }
             set { this[CHARACTERS] = value; }
         }
 
         [ConfigurationProperty(MESSAGE, IsRequired = false, DefaultValue = "")]
-        public string Message
-        {
+        public string Message {
             get { return this[MESSAGE] as string; }
             set { this[MESSAGE] = value; }
         }
 
         [EnumConversionValidator(typeof(ContainsCharacters), MessageTemplate = "{1} must be All, or Any.")]
         [ConfigurationProperty(CONTAINS_CHARACTERS, IsRequired = false, DefaultValue = "All")]
-        public string ContainsCharacters
-        {
+        public string ContainsCharacters {
             get { return this[CONTAINS_CHARACTERS] as string; }
             set { this[CONTAINS_CHARACTERS] = value; }
         }
 
         [ConfigurationProperty(NEGATED, IsRequired = false, DefaultValue = false)]
-        public bool Negated
-        {
+        public bool Negated {
             get { return (bool)this[NEGATED]; }
             set { this[NEGATED] = value; }
         }
 
         [ConfigurationProperty(LOWER_BOUND, IsRequired = false)]
-        public string LowerBound
-        {
+        public string LowerBound {
             get { return this[LOWER_BOUND] as string; }
             set { this[LOWER_BOUND] = value; }
         }
 
         [EnumConversionValidator(typeof(RangeBoundaryType), MessageTemplate = "{1} must be a valid RangeBoundaryType. (e.g. Inclusive, Exclusive, or Ignore)")]
         [ConfigurationProperty(LOWER_BOUND_TYPE, IsRequired = false, DefaultValue = "Inclusive")]
-        public string LowerBoundType
-        {
+        public string LowerBoundType {
             get { return this[LOWER_BOUND_TYPE] as string; }
             set { this[LOWER_BOUND_TYPE] = value; }
         }
 
+        [EnumConversionValidator(typeof(DateTimeUnit), MessageTemplate = "{1} must be None, Second, Minute, Hour, Day, Month, or Year.")]
+        [ConfigurationProperty(LOWER_UNIT, IsRequired = false, DefaultValue = "None")]
+        public string LowerUnit {
+            get { return this[LOWER_UNIT] as string; }
+            set { this[LOWER_UNIT] = value; }
+        }
+
         [ConfigurationProperty(UPPER_BOUND, IsRequired = false)]
-        public string UpperBound
-        {
+        public string UpperBound {
             get { return this[UPPER_BOUND] as string; }
             set { this[UPPER_BOUND] = value; }
         }
 
-        [EnumConversionValidator(typeof(RangeBoundaryType), MessageTemplate = "{1} must be a valid RangeBoundaryType. (e.g. Inclusive, Exclusive, or Ignore)")]
+        [EnumConversionValidator(typeof(RangeBoundaryType), MessageTemplate = "{1} must be Inclusive, Exclusive, or Ignore)")]
         [ConfigurationProperty(UPPER_BOUND_TYPE, IsRequired = false, DefaultValue = "Inclusive")]
-        public string UpperBoundType
-        {
+        public string UpperBoundType {
             get { return this[UPPER_BOUND_TYPE] as string; }
             set { this[UPPER_BOUND_TYPE] = value; }
         }
 
+        [EnumConversionValidator(typeof(DateTimeUnit), MessageTemplate = "{1} must be None, Second, Minute, Hour, Day, Month, or Year.")]
+        [ConfigurationProperty(UPPER_UNIT, IsRequired = false, DefaultValue = "None")]
+        public string UpperUnit {
+            get { return this[UPPER_UNIT] as string; }
+            set { this[UPPER_UNIT] = value; }
+        }
+
         [ConfigurationProperty(DOMAIN, IsRequired = false, DefaultValue = "")]
-        public string Domain
-        {
+        public string Domain {
             get { return this[DOMAIN] as string; }
             set { this[DOMAIN] = value; }
         }
@@ -464,8 +436,7 @@ namespace Transformalize.Configuration
             set { this[TO_LONG] = value; }
         }
 
-        public override bool IsReadOnly()
-        {
+        public override bool IsReadOnly() {
             return false;
         }
     }

@@ -115,11 +115,11 @@ namespace Transformalize.Test.Unit {
         public void Format() {
             var input = new RowsBuilder().Row().Field("f1", true).Field("f2", 8).ToOperation();
             var parameters = new ParametersBuilder().Parameters("f1", "f2").ToParameters();
-            var expression = new FormatOperation("o1", "{0} and {1}.", parameters);
+            var expression = new FormatOperation("o1", "{0} and {1:c}.", parameters);
 
             var rows = TestOperation(input, expression);
 
-            Assert.AreEqual("True and 8.", rows[0]["o1"]);
+            Assert.AreEqual("True and $8.00.", rows[0]["o1"]);
         }
 
         [Test]

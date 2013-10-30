@@ -402,6 +402,44 @@ namespace Transformalize.Main {
                         append
                     );
 
+                case "relativedatetime":
+                    return new RelativeDateTimeValidatorOperation(
+                        inKey,
+                        outKey,
+                        Convert.ToInt32(element.LowerBound),
+                        (DateTimeUnit)Enum.Parse(typeof(DateTimeUnit), element.LowerUnit, true),
+                        (RangeBoundaryType)Enum.Parse(typeof(RangeBoundaryType), element.LowerBoundType, true),
+                        Convert.ToInt32(element.UpperBound),
+                        (DateTimeUnit)Enum.Parse(typeof(DateTimeUnit), element.UpperUnit, true),
+                        (RangeBoundaryType)Enum.Parse(typeof(RangeBoundaryType), element.UpperBoundType, true),
+                        element.Message,
+                        element.Negated,
+                        append
+                    );
+
+                case "stringlength":
+                    return new StringLengthValidatorOperation(
+                        inKey,
+                        outKey,
+                        Convert.ToInt32(element.LowerBound),
+                        (RangeBoundaryType)Enum.Parse(typeof(RangeBoundaryType), element.LowerBoundType, true),
+                        Convert.ToInt32(element.UpperBound),
+                        (RangeBoundaryType)Enum.Parse(typeof(RangeBoundaryType), element.UpperBoundType, true),
+                        element.Message,
+                        element.Negated,
+                        append
+                    );
+
+                case "typeconversion":
+                    return new TypeConversionValidatorOperation(
+                        inKey,
+                        outKey,
+                        Common.ToSystemType(element.Type),
+                        element.Message,
+                        element.Negated,
+                        append
+                    );
+
             }
 
             _log.Warn("{0} method is undefined.  It will not be used.", element.Method);

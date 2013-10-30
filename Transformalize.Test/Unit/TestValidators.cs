@@ -24,6 +24,7 @@ using System;
 using NUnit.Framework;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Main;
 using Transformalize.Operations.Validate;
 
 namespace Transformalize.Test.Unit {
@@ -173,6 +174,68 @@ namespace Transformalize.Test.Unit {
             Assert.AreEqual("hjd7 is no match.", output[1]["out"]);
 
         }
+
+        [Test]
+        public void RelativeDateTime() {
+            var date = new DateTime(2013, 11, 01);
+            var badDate = new DateTime(2013, 7, 14);
+
+            var input = new RowsBuilder()
+                .Row("in", date).Field("out", string.Empty)
+                .Row("in", badDate).Field("out", string.Empty).ToOperation();
+
+            var validator = new RelativeDateTimeValidatorOperation(
+                "in",
+                "out",
+                -1,
+                DateTimeUnit.Day,
+                RangeBoundaryType.Inclusive,
+                5,
+                DateTimeUnit.Day,
+                RangeBoundaryType.Inclusive,
+                "I don't like {0:yyyy-MM-dd}!",
+                false,
+                false
+            );
+
+            var output = TestOperation(input, validator);
+
+            Assert.AreEqual("", output[0]["out"]);
+            Assert.AreEqual("I don't like 2013-07-14!", output[1]["out"]);
+        }
+
+        [Test]
+        public void StringLength() {
+            var input = new RowsBuilder()
+                .Row("in", "something").Field("out", string.Empty)
+                .Row("in", "some").Field("out", string.Empty).ToOperation();
+
+            var validator = new StringLengthValidatorOperation("in", "out", 5, RangeBoundaryType.Inclusive, 10, RangeBoundaryType.Inclusive, "Sorry, the length of '{0}' must be between {3} and {5} characters long.", false, false);
+
+            var output = TestOperation(input, validator);
+
+            Assert.AreEqual("", output[0]["out"]);
+            Assert.AreEqual("Sorry, the length of 'some' must be between 5 and 10 characters long.", output[1]["out"]);
+        }
+
+        [Test]
+        public void TypeConversion() {
+
+            var input = new RowsBuilder()
+                .Row("in", "9999-12-31").Field("out", string.Empty)
+                .Row("in", "10/32/2001").Field("out", string.Empty).ToOperation();
+
+            var type = Common.ToSystemType("datetime");
+
+            var validator = new TypeConversionValidatorOperation("in", "out", type, "Can't parse {0} to a {3}.", false, false);
+
+            var output = TestOperation(input, validator);
+
+            Assert.AreEqual("", output[0]["out"]);
+            Assert.AreEqual("Can't parse 10/32/2001 to a System.DateTime.", output[1]["out"]);
+
+        }
+
 
     }
 }
