@@ -22,36 +22,32 @@
 
 using System.Configuration;
 
-namespace Transformalize.Configuration
-{
-    public class MapElementCollection : ConfigurationElementCollection
-    {
-        public MapConfigurationElement this[int index]
-        {
+namespace Transformalize.Configuration {
+    public class MapElementCollection : ConfigurationElementCollection {
+        public MapConfigurationElement this[int index] {
             get { return BaseGet(index) as MapConfigurationElement; }
-            set
-            {
-                if (BaseGet(index) != null)
-                {
+            set {
+                if (BaseGet(index) != null) {
                     BaseRemoveAt(index);
                 }
                 BaseAdd(index, value);
             }
         }
 
-        public override bool IsReadOnly()
-        {
+        public override bool IsReadOnly() {
             return false;
         }
 
-        protected override ConfigurationElement CreateNewElement()
-        {
+        protected override ConfigurationElement CreateNewElement() {
             return new MapConfigurationElement();
         }
 
-        protected override object GetElementKey(ConfigurationElement element)
-        {
-            return ((MapConfigurationElement) element).Name.ToLower();
+        protected override object GetElementKey(ConfigurationElement element) {
+            return ((MapConfigurationElement)element).Name.ToLower();
+        }
+
+        public void Add(MapConfigurationElement map) {
+            BaseAdd(map);
         }
     }
 }

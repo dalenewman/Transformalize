@@ -23,9 +23,9 @@
 using System;
 using NUnit.Framework;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
-using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 using Transformalize.Operations.Validate;
+using Transformalize.Test.Unit.Builders;
 
 namespace Transformalize.Test.Unit {
     [TestFixture]

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
-namespace Transformalize.Test.Unit {
+namespace Transformalize.Test.Unit.Builders {
     public class MapsBuilder {
         private List<Main.Map> _maps = new List<Main.Map>(3);
 

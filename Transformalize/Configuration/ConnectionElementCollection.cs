@@ -24,41 +24,36 @@ using System;
 using System.Configuration;
 using System.Linq;
 
-namespace Transformalize.Configuration
-{
-    public class ConnectionElementCollection : ConfigurationElementCollection
-    {
-        public ConnectionConfigurationElement this[int index]
-        {
+namespace Transformalize.Configuration {
+    public class ConnectionElementCollection : ConfigurationElementCollection {
+        public ConnectionConfigurationElement this[int index] {
             get { return BaseGet(index) as ConnectionConfigurationElement; }
-            set
-            {
-                if (BaseGet(index) != null)
-                {
+            set {
+                if (BaseGet(index) != null) {
                     BaseRemoveAt(index);
                 }
                 BaseAdd(index, value);
             }
         }
 
-        public new ConnectionConfigurationElement this[string name]
-        {
+        public new ConnectionConfigurationElement this[string name] {
             get { return this.Cast<ConnectionConfigurationElement>().FirstOrDefault(element => element.Name.Equals(name, StringComparison.OrdinalIgnoreCase)); }
         }
 
-        public override bool IsReadOnly()
-        {
+        public override bool IsReadOnly() {
             return false;
         }
 
-        protected override ConfigurationElement CreateNewElement()
-        {
+        protected override ConfigurationElement CreateNewElement() {
             return new ConnectionConfigurationElement();
         }
 
-        protected override object GetElementKey(ConfigurationElement element)
-        {
-            return ((ConnectionConfigurationElement) element).Name.ToLower();
+        protected override object GetElementKey(ConfigurationElement element) {
+            return ((ConnectionConfigurationElement)element).Name.ToLower();
+        }
+
+        public void Add(ConnectionConfigurationElement connection) {
+            BaseAdd(connection);
         }
     }
 }

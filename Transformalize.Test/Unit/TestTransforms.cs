@@ -26,6 +26,7 @@ using NUnit.Framework;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Main;
 using Transformalize.Operations.Transform;
+using Transformalize.Test.Unit.Builders;
 
 namespace Transformalize.Test.Unit {
     [TestFixture]
@@ -610,5 +611,6 @@ namespace Transformalize.Test.Unit {
             var output = TestOperation(input, transform);
             Assert.AreEqual("Test", output[0]["y"]);
         }
+
     }
 }

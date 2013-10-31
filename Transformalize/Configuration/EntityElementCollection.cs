@@ -22,37 +22,33 @@
 
 using System.Configuration;
 
-namespace Transformalize.Configuration
-{
-    public class EntityElementCollection : ConfigurationElementCollection
-    {
-        public EntityConfigurationElement this[int index]
-        {
+namespace Transformalize.Configuration {
+    public class EntityElementCollection : ConfigurationElementCollection {
+        public EntityConfigurationElement this[int index] {
             get { return BaseGet(index) as EntityConfigurationElement; }
-            set
-            {
-                if (BaseGet(index) != null)
-                {
+            set {
+                if (BaseGet(index) != null) {
                     BaseRemoveAt(index);
                 }
                 BaseAdd(index, value);
             }
         }
 
-        public override bool IsReadOnly()
-        {
+        public override bool IsReadOnly() {
             return false;
         }
 
-        protected override ConfigurationElement CreateNewElement()
-        {
+        protected override ConfigurationElement CreateNewElement() {
             return new EntityConfigurationElement();
         }
 
-        protected override object GetElementKey(ConfigurationElement element)
-        {
-            var entity = ((EntityConfigurationElement) element);
+        protected override object GetElementKey(ConfigurationElement element) {
+            var entity = ((EntityConfigurationElement)element);
             return entity.Alias != string.Empty ? entity.Alias.ToLower() : entity.Name.ToLower();
+        }
+
+        public void Add(EntityConfigurationElement entity) {
+            BaseAdd(entity);
         }
     }
 }

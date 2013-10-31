@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Transformalize.Test.Unit {
+namespace Transformalize.Test.Unit.Builders {
     public class MapBuilder {
         
         private readonly MapsBuilder _mapsBuilder;

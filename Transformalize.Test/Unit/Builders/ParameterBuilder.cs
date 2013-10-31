@@ -1,7 +1,7 @@
 ﻿using Transformalize.Main;
 using Transformalize.Main.Parameters;
 
-namespace Transformalize.Test.Unit
+namespace Transformalize.Test.Unit.Builders
 {
     public class ParameterBuilder {
         private readonly ParametersBuilder _parametersBuilder;

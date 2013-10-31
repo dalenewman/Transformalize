@@ -133,6 +133,12 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\Builders\ConnectionBuilder.cs" />
+    <Compile Include="Configuration\Builders\EntityBuilder.cs" />
+    <Compile Include="Configuration\Builders\FieldBuilder.cs" />
+    <Compile Include="Configuration\Builders\ItemBuilder.cs" />
+    <Compile Include="Configuration\Builders\MapBuilder.cs" />
+    <Compile Include="Configuration\Builders\ProcessBuilder.cs" />
     <Compile Include="Configuration\ConfigurationFactory.cs" />
     <Compile Include="Configuration\ConnectionConfigurationElement.cs" />
     <Compile Include="Configuration\ConnectionElementCollection.cs" />

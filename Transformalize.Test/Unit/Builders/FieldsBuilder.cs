@@ -1,4 +1,4 @@
-﻿namespace Transformalize.Test.Unit {
+﻿namespace Transformalize.Test.Unit.Builders {
 
     public class FieldsBuilder {
 

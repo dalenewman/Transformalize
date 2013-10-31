@@ -2,7 +2,7 @@
 using Transformalize.Main;
 using Transformalize.Main.Parameters;
 
-namespace Transformalize.Test.Unit
+namespace Transformalize.Test.Unit.Builders
 {
     public class ParametersBuilder {
         private readonly IList<KeyValuePair<string, IParameter>> _params = new List<KeyValuePair<string, IParameter>>();

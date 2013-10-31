@@ -2,7 +2,7 @@
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 
-namespace Transformalize.Test.Unit
+namespace Transformalize.Test.Unit.Builders
 {
     public class RowBuilder {
         private readonly RowsBuilder _rowsBuilder;

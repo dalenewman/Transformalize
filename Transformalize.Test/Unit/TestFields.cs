@@ -108,7 +108,6 @@ namespace Transformalize.Test.Unit {
 
         [Test]
         public void TestWriteNameIsNullToAlias() {
-            //const string expected = "[Field1] = ISNULL([f1], 'x'), [Field2] = ISNULL([f2], 0)";
             const string expected = "ISNULL([f1], 'x') AS [Field1], ISNULL([f2], 0) AS [Field2]";
             var actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).IsNull().ToAlias(_sqlServerProvider).Write();
             Assert.AreEqual(expected, actual);
