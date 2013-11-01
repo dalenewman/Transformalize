@@ -21,37 +21,44 @@
 #endregion
 
 using System.Configuration;
+using Transformalize.Libs.NLog.Internal;
 
-namespace Transformalize.Configuration
-{
-    public class SearchTypeElementCollection : ConfigurationElementCollection
-    {
-        public SearchTypeConfigurationElement this[int index]
-        {
+namespace Transformalize.Configuration {
+    public class SearchTypeElementCollection : ConfigurationElementCollection {
+        public SearchTypeConfigurationElement this[int index] {
             get { return BaseGet(index) as SearchTypeConfigurationElement; }
-            set
-            {
-                if (BaseGet(index) != null)
-                {
+            set {
+                if (BaseGet(index) != null) {
                     BaseRemoveAt(index);
                 }
                 BaseAdd(index, value);
             }
         }
 
-        public override bool IsReadOnly()
-        {
+        public override bool IsReadOnly() {
             return false;
         }
 
-        protected override ConfigurationElement CreateNewElement()
-        {
+        protected override ConfigurationElement CreateNewElement() {
             return new SearchTypeConfigurationElement();
         }
 
-        protected override object GetElementKey(ConfigurationElement element)
-        {
-            return ((SearchTypeConfigurationElement) element).Name.ToLower();
+        protected override object GetElementKey(ConfigurationElement element) {
+            return ((SearchTypeConfigurationElement)element).Name.ToLower();
+        }
+
+        public void Add(params SearchTypeConfigurationElement[] elements) {
+
+            foreach (var element in elements) {
+                var key = element.Name.ToLower();
+                if (BaseGetAllKeys().Any(k => k.Equals(key))) {
+                    BaseRemove(key);
+                }
+            }
+
+            foreach (var element in elements) {
+                BaseAdd(element);
+            }
         }
     }
 }

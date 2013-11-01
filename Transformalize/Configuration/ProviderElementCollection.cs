@@ -21,6 +21,7 @@
 #endregion
 
 using System.Configuration;
+using Transformalize.Libs.NLog.Internal;
 
 namespace Transformalize.Configuration {
     public class ProviderElementCollection : ConfigurationElementCollection {
@@ -47,6 +48,14 @@ namespace Transformalize.Configuration {
         }
 
         public void Add(params ProviderConfigurationElement[] providers) {
+
+            foreach (var p in providers) {
+                var key = p.Name.ToLower();
+                if (BaseGetAllKeys().Any(k => k.Equals(key))) {
+                    BaseRemove(key);
+                }
+            }
+
             foreach (var p in providers) {
                 BaseAdd(p);
             }

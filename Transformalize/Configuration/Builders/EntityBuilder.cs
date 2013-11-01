@@ -1,5 +1,4 @@
-namespace Transformalize.Configuration.Builders
-{
+namespace Transformalize.Configuration.Builders {
     public class EntityBuilder {
         private readonly ProcessBuilder _processBuilder;
         private readonly EntityConfigurationElement _entity;
@@ -30,7 +29,22 @@ namespace Transformalize.Configuration.Builders
         public FieldBuilder Field(string name) {
             var field = new FieldConfigurationElement() { Name = name };
             _entity.Fields.Add(field);
-            return new FieldBuilder(_processBuilder, this, field);
+            return new FieldBuilder(this, field);
+        }
+
+        public RelationshipBuilder Relationship() {
+            return _processBuilder.Relationship();
+        }
+
+        public EntityBuilder Prefix(string prefix) {
+            _entity.Prefix = prefix;
+            return this;
+        }
+
+        public FieldBuilder CalculatedField(string name) {
+            var calculatedField = new FieldConfigurationElement() { Name = name };
+            _entity.CalculatedFields.Add(calculatedField);
+            return new FieldBuilder(this, calculatedField);
         }
     }
 }

@@ -22,6 +22,21 @@ namespace Transformalize.Configuration.Builders {
                 }
             );
 
+            _process.SearchTypes.Add(
+                new SearchTypeConfigurationElement {
+                    Name = "none",
+                    MultiValued = false,
+                    Store = false,
+                    Index = false
+                },
+                new SearchTypeConfigurationElement {
+                    Name = "default",
+                    MultiValued = false,
+                    Store = true,
+                    Index = true
+                }
+            );
+
         }
 
         public ProcessConfigurationElement Process() {
@@ -52,6 +67,23 @@ namespace Transformalize.Configuration.Builders {
             var relationship = new RelationshipConfigurationElement();
             _process.Relationships.Add(relationship);
             return new RelationshipBuilder(this, relationship);
+        }
+
+        public ProcessBuilder Templates(string path) {
+            _process.Templates.Path = path;
+            return this;
+        }
+
+        public TemplateBuilder Template(string name) {
+            var template = new TemplateConfigurationElement { Name = name };
+            _process.Templates.Add(template);
+            return new TemplateBuilder(this, template);
+        }
+
+        public SearchTypeBuilder SearchType(string name) {
+            var searchType = new SearchTypeConfigurationElement() { Name = name };
+            _process.SearchTypes.Add(searchType);
+            return new SearchTypeBuilder(this, searchType);
         }
     }
 }

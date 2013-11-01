@@ -1,5 +1,4 @@
-namespace Transformalize.Configuration.Builders
-{
+namespace Transformalize.Configuration.Builders {
     public class ConnectionBuilder {
         private readonly ProcessBuilder _processBuilder;
         private readonly ConnectionConfigurationElement _connection;
@@ -29,6 +28,16 @@ namespace Transformalize.Configuration.Builders
 
         public MapBuilder Map(string name) {
             return _processBuilder.Map(name);
+        }
+
+        public ConnectionBuilder Provider(string name) {
+            _connection.Provider = name;
+            return this;
+        }
+
+        public ProcessBuilder Templates(string path)
+        {
+            return _processBuilder.Templates(path);
         }
     }
 }

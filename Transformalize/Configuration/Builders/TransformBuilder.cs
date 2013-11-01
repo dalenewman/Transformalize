@@ -256,8 +256,27 @@ namespace Transformalize.Configuration.Builders {
             return _fieldBuilder.Process();
         }
 
-        public TransformBuilder Transform() {
-            return _fieldBuilder.Transform();
+        public TransformBuilder Transform(string method = "") {
+            return _fieldBuilder.Transform(method);
+        }
+
+        public EntityBuilder Entity(string name) {
+            return _fieldBuilder.Entity(name);
+        }
+
+        public FieldBuilder CalculatedField(string name) {
+            return _fieldBuilder.CalculatedField(name);
+        }
+
+        public TransformBuilder ToString(string format) {
+            _transform.Method = "toString";
+            _transform.Format = format;
+            return this;
+        }
+
+        public TransformBuilder Paramater(string name) {
+            _transform.Parameter = name;
+            return this;
         }
     }
 }

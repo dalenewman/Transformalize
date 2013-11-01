@@ -21,9 +21,7 @@
 #endregion
 
 using NUnit.Framework;
-using Transformalize.Configuration;
 using Transformalize.Configuration.Builders;
-using Transformalize.Main;
 
 namespace Transformalize.Test.Unit {
     [TestFixture]
@@ -199,6 +197,7 @@ namespace Transformalize.Test.Unit {
 
         [Test]
         public void TestFieldTransform() {
+
             var process = new ProcessBuilder("p1")
                 .Entity("OrderDetail")
                     .Field("OrderId").Type("int").PrimaryKey()
@@ -227,6 +226,60 @@ namespace Transformalize.Test.Unit {
             Assert.AreEqual("trim", trim.Method);
             Assert.AreEqual("x", trim.TrimChars);
         }
+
+        [Test]
+        public void RealTest() {
+
+            var process = new ProcessBuilder("Test")
+                .Connection("input").Database("NorthWind")
+                .Connection("output").Database("NorthWindStar")
+                .Connection("sass").Database("NorthWind").Provider("AnalysisServices")
+                .Templates("Templates")
+                    .Template("solr-data-handler").File("solr-data-handler.cshtml").Cache(true)
+                        .Action("copy").File(@"C:\Solr\NorthWind\conf\data-config.xml")
+                    .Template("solr-schema").File("solr-schema.cshtml").Cache(true)
+                        .Action("copy").File(@"C:\Solr\NorthWind\conf\schema.xml")
+                        .Action("web").Mode("init").Url("http://localhost:8983/solr/admin/cores?action=RELOAD&amp;core=NorthWind")
+                        .Action("web").Mode("first").Url("http://localhost:8983/solr/NorthWind/dataimport?command=full-import&amp;clean=true&amp;commit=true&amp;optimize=true")
+                        .Action("web").Mode("default").Url("http://localhost:8983/solr/NorthWind/dataimport?command=delta-import&amp;clean=false&amp;commit=true&amp;optimize=true")
+                .SearchType("facet").Type("lowercase").Store(true).Index(true)
+                .SearchType("standard").Type("standard_lowercase").Store(false).Index(true)
+                .Entity("Order Details").Version("RowVersion").Prefix("OrderDetails")
+                    .Field("Discount").Single()
+                    .Field("OrderID").Int32().PrimaryKey()
+                    .Field("ProductID").Int32().PrimaryKey()
+                    .Field("Quantity").Int16()
+                    .Field("UnitPrice").Decimal().Precision(19).Scale(4)
+                    .Field("RowVersion").RowVersion().Length(8)
+                    .CalculatedField("OrderDetailsExtendedPrice").Decimal().Precision(19).Scale(4)
+                        .Transform("javascript").Script("OrderDetailsQuantity * (OrderDetailsUnitPrice * (1-OrderDetailsDiscount))").Parameter("*")
+                .Entity("Orders").Version("RowVersion").Prefix("Orders")
+                    .Field("CustomerID").Char().Length(5)
+                    .Field("EmployeeID").Int32()
+                    .Field("Freight").Decimal(19,4)
+                    .Field("OrderDate").DateTime()
+                    .Field("OrderID").Int32().PrimaryKey()
+                    .Field("RequiredDate").DateTime()
+                    .Field("RowVersion").RowVersion()
+                    .Field("ShipAddress")
+                    .Field("ShipCity").Length(15)
+                    .Field("ShipCountry").Length(15)
+                    .Field("ShipName").Length(40)
+                    .Field("ShippedDate").DateTime()
+                    .Field("ShipPostalCode").Length(10)
+                    .Field("ShipRegion").Length(15)
+                    .Field("ShipVia").Int32()
+                    .CalculatedField("TimeOrderMonth").Length(6).Default("12-DEC")
+                        .Transform("toString").Format("MM-MMM").Parameter("OrderDate")
+                        .Transform("toUpper")
+                    .CalculatedField("TimeOrderDate").Length(10).Default("9999-12-31")
+                        .Transform().ToString("yyyy-MM-dd").Paramater("OrderDate")
+                    .CalculatedField("TimeOrderYear").Length(4).Default("9999")
+                        .Transform().ToString("yyyy").Parameter("OrderDate")
+                .Process();
+
+        }
+
 
     }
 }
