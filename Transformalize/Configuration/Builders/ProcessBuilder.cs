@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 namespace Transformalize.Configuration.Builders {
 
     public class ProcessBuilder {
@@ -48,6 +46,12 @@ namespace Transformalize.Configuration.Builders {
             var entity = new EntityConfigurationElement() { Name = name };
             _process.Entities.Add(entity);
             return new EntityBuilder(this, entity);
+        }
+
+        public RelationshipBuilder Relationship() {
+            var relationship = new RelationshipConfigurationElement();
+            _process.Relationships.Add(relationship);
+            return new RelationshipBuilder(this, relationship);
         }
     }
 }

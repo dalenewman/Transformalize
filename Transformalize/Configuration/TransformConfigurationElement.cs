@@ -62,7 +62,7 @@ namespace Transformalize.Configuration {
         
         private const string LEFT = "left";
         private const string OPERATOR = "operator";
-        private const string FIELD = "field";
+        private const string TARGET_FIELD = "target-field";
         private const string RIGHT = "right";
         private const string THEN = "then";
         private const string ELSE = "else";
@@ -388,10 +388,10 @@ namespace Transformalize.Configuration {
             set { this[OPERATOR] = value; }
         }
 
-        [ConfigurationProperty(FIELD, IsRequired = false, DefaultValue = "")]
-        public string Field {
-            get { return this[FIELD] as string; }
-            set { this[FIELD] = value; }
+        [ConfigurationProperty(TARGET_FIELD, IsRequired = false, DefaultValue = "")]
+        public string TargetField {
+            get { return this[TARGET_FIELD] as string; }
+            set { this[TARGET_FIELD] = value; }
         }
 
         [ConfigurationProperty(RIGHT, IsRequired = false, DefaultValue = "")]

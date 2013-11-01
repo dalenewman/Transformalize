@@ -22,37 +22,33 @@
 
 using System.Configuration;
 
-namespace Transformalize.Configuration
-{
-    public class RelationshipElementCollection : ConfigurationElementCollection
-    {
-        public RelationshipConfigurationElement this[int index]
-        {
+namespace Transformalize.Configuration {
+    public class RelationshipElementCollection : ConfigurationElementCollection {
+        public RelationshipConfigurationElement this[int index] {
             get { return BaseGet(index) as RelationshipConfigurationElement; }
-            set
-            {
-                if (BaseGet(index) != null)
-                {
+            set {
+                if (BaseGet(index) != null) {
                     BaseRemoveAt(index);
                 }
                 BaseAdd(index, value);
             }
         }
 
-        public override bool IsReadOnly()
-        {
+        public override bool IsReadOnly() {
             return false;
         }
 
-        protected override ConfigurationElement CreateNewElement()
-        {
+        protected override ConfigurationElement CreateNewElement() {
             return new RelationshipConfigurationElement();
         }
 
-        protected override object GetElementKey(ConfigurationElement element)
-        {
+        protected override object GetElementKey(ConfigurationElement element) {
             var join = element as RelationshipConfigurationElement;
             return string.Concat(join.LeftEntity, join.RightEntity).ToLower();
+        }
+
+        public void Add(RelationshipConfigurationElement relationship) {
+            BaseAdd(relationship);
         }
     }
 }

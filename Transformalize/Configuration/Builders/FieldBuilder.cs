@@ -1,5 +1,6 @@
-namespace Transformalize.Configuration.Builders
-{
+using System.Runtime.InteropServices;
+
+namespace Transformalize.Configuration.Builders {
     public class FieldBuilder {
         private readonly ProcessBuilder _processBuilder;
         private readonly EntityBuilder _entityBuilder;
@@ -36,6 +37,21 @@ namespace Transformalize.Configuration.Builders
 
         public ProcessConfigurationElement Process() {
             return _processBuilder.Process();
+        }
+
+        public FieldBuilder PrimaryKey() {
+            _field.PrimaryKey = true;
+            return this;
+        }
+
+        public RelationshipBuilder Relationship() {
+            return _processBuilder.Relationship();
+        }
+
+        public TransformBuilder Transform() {
+            var transform = new TransformConfigurationElement();
+            _field.Transforms.Add(transform);
+            return new TransformBuilder(this, transform);
         }
     }
 }

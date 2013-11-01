@@ -377,7 +377,7 @@ namespace Transformalize.Main {
                     return new NotNullValidatorOperation(inKey, outKey, element.Message, element.Negated, append);
 
                 case "fieldcomparison":
-                    return new PropertyComparisonValidatorOperation(inKey, element.Field, outKey, element.Operator, element.Message, element.Negated, append);
+                    return new PropertyComparisonValidatorOperation(inKey, element.TargetField, outKey, element.Operator, element.Message, element.Negated, append);
 
                 case "range":
                     return new RangeValidatorOperation(

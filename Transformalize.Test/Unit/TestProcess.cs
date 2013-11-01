@@ -21,6 +21,7 @@
 #endregion
 
 using NUnit.Framework;
+using Transformalize.Configuration;
 using Transformalize.Configuration.Builders;
 using Transformalize.Main;
 
@@ -30,20 +31,20 @@ namespace Transformalize.Test.Unit {
 
         [Test]
         public void TestDefaultProviders() {
-            var builder = new ProcessBuilder("p1");
-            var process = builder.Process();
+            var process = new ProcessBuilder("p1").Process();
 
             Assert.IsNotNull(process);
             Assert.AreEqual("p1", process.Name);
             Assert.AreEqual("p1Star", process.Star);
             Assert.AreEqual(3, process.Providers.Count);
-            
+
         }
 
         [Test]
         public void TestConnection() {
-            var builder = new ProcessBuilder("p1");
-            var process = builder.Connection("input").Server("localhost").Database("Test").Process();
+            var process = new ProcessBuilder("p1")
+                .Connection("input").Server("localhost").Database("Test")
+                .Process();
 
             Assert.AreEqual("p1", process.Name);
             Assert.AreEqual(1, process.Connections.Count);
@@ -55,8 +56,7 @@ namespace Transformalize.Test.Unit {
 
         [Test]
         public void TestTwoConnections() {
-            var builder = new ProcessBuilder("p1");
-            var process = builder
+            var process = new ProcessBuilder("p1")
                 .Connection("input").Database("I")
                 .Connection("output").Database("O")
                 .Process();
@@ -77,10 +77,8 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void TestMap()
-        {
-            var builder = new ProcessBuilder("p1");
-            var process = builder
+        public void TestMap() {
+            var process = new ProcessBuilder("p1")
                 .Connection("input").Database("I")
                 .Map("m1")
                     .Item().From("one").To("1")
@@ -104,23 +102,131 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void TestEntity()
-        {
-            var builder = new ProcessBuilder("p1");
-            var process = builder
-                .Entity("e1").Version("v1")
-                    .Field("f1").Alias("a1").Type("int").Default("2")
-                    .Field("f2").Alias("a2").Default(".")
-                .Entity("e2").Version("v2")
-                    .Field("f1").Alias("a1").Type("int").Default("2")
-                    .Field("f2").Alias("a2").Default(".")
+        public void TestEntity() {
+            var process = new ProcessBuilder("p1")
+                .Entity("OrderDetail").Version("OrderDetailVersion")
+                    .Field("OrderId").Type("int").PrimaryKey()
+                    .Field("ProductId").Type("int").Default("0").PrimaryKey()
+                .Entity("Order").Version("OrderVersion")
+                    .Field("OrderId").Type("int").PrimaryKey()
+                    .Field("OrderDate").Type("System.DateTime").Default("9999-12-31")
                 .Process();
 
             Assert.AreEqual(2, process.Entities.Count);
-            Assert.AreEqual(2, process.Entities[0].Fields.Count);
-                                  
+
+            var orderDetail = process.Entities[0];
+
+            Assert.AreEqual(2, orderDetail.Fields.Count);
+
+            Assert.AreEqual("OrderDetail", orderDetail.Name);
+            Assert.AreEqual("OrderDetailVersion", orderDetail.Version);
+
+            var orderId = orderDetail.Fields[0];
+            Assert.AreEqual("OrderId", orderId.Name);
+            Assert.AreEqual("int", orderId.Type);
+            Assert.IsTrue(orderId.PrimaryKey);
+
+            var productId = orderDetail.Fields[1];
+            Assert.AreEqual("ProductId", productId.Name);
+            Assert.AreEqual("int", productId.Type);
+            Assert.IsTrue(productId.PrimaryKey);
+            Assert.AreEqual("0", productId.Default);
+
+            var order = process.Entities[1];
+
+            Assert.AreEqual("Order", order.Name);
+            Assert.AreEqual("OrderVersion", order.Version);
+
+            orderId = order.Fields[0];
+            Assert.AreEqual("OrderId", orderId.Name);
+            Assert.AreEqual("int", orderId.Type);
+            Assert.IsTrue(orderId.PrimaryKey);
+
+            var orderDate = order.Fields[1];
+            Assert.AreEqual("OrderDate", orderDate.Name);
+            Assert.AreEqual("System.DateTime", orderDate.Type);
+            Assert.IsFalse(orderDate.PrimaryKey);
+            Assert.AreEqual("9999-12-31", orderDate.Default);
+
         }
 
+        [Test]
+        public void TestRelationship() {
+            var process = new ProcessBuilder("p1")
+                .Entity("OrderDetail").Version("OrderDetailVersion")
+                    .Field("OrderId").Type("int").PrimaryKey()
+                    .Field("ProductId").Type("int").Default("0").PrimaryKey()
+                .Entity("Order").Version("OrderVersion")
+                    .Field("OrderId").Type("int").PrimaryKey()
+                    .Field("OrderDate").Type("System.DateTime").Default("9999-12-31")
+                .Relationship()
+                    .LeftEntity("OrderDetail").LeftField("OrderId")
+                    .RightEntity("Order").RightField("OrderId")
+                .Process();
+
+            Assert.AreEqual(1, process.Relationships.Count);
+
+            var relationship = process.Relationships[0];
+            Assert.AreEqual("OrderDetail", relationship.LeftEntity);
+            Assert.AreEqual("OrderId", relationship.LeftField);
+            Assert.AreEqual("Order", relationship.RightEntity);
+            Assert.AreEqual("OrderId", relationship.RightField);
+        }
+
+        [Test]
+        public void TestJoin() {
+            var process = new ProcessBuilder("p1")
+                .Entity("OrderDetail")
+                    .Field("OrderId").Type("int").PrimaryKey()
+                    .Field("ProductId").Type("int").Default("0").PrimaryKey()
+                .Entity("OrderDetailOptions")
+                    .Field("OrderId").Type("int").PrimaryKey()
+                    .Field("ProductId").Type("int").Default("0").PrimaryKey()
+                    .Field("Color").Default("Silver")
+                .Relationship().LeftEntity("OrderDetail").RightEntity("Order")
+                    .Join().LeftField("OrderId").RightField("OrderId")
+                    .Join().LeftField("ProductId").RightField("ProductId")
+                .Process();
+
+            Assert.AreEqual(1, process.Relationships.Count);
+
+            var relationship = process.Relationships[0];
+            Assert.AreEqual("OrderDetail", relationship.LeftEntity);
+            Assert.AreEqual("OrderId", relationship.Join[0].LeftField);
+            Assert.AreEqual("Order", relationship.RightEntity);
+            Assert.AreEqual("OrderId", relationship.Join[0].RightField);
+        }
+
+        [Test]
+        public void TestFieldTransform() {
+            var process = new ProcessBuilder("p1")
+                .Entity("OrderDetail")
+                    .Field("OrderId").Type("int").PrimaryKey()
+                    .Field("Something1")
+                        .Transform().Method("right").Length(4)
+                    .Field("ProductId").Type("int").Default("0").PrimaryKey()
+                    .Field("Something2")
+                        .Transform().Method("left").Length(5)
+                        .Transform().Method("trim").TrimChars("x")
+                .Process();
+
+            Assert.AreEqual(0, process.Entities[0].Fields[0].Transforms.Count);
+            Assert.AreEqual(1, process.Entities[0].Fields[1].Transforms.Count);
+            Assert.AreEqual(0, process.Entities[0].Fields[2].Transforms.Count);
+            Assert.AreEqual(2, process.Entities[0].Fields[3].Transforms.Count);
+
+            var left = process.Entities[0].Fields[1].Transforms[0];
+            Assert.AreEqual("right", left.Method);
+            Assert.AreEqual(4, left.Length);
+
+            var right = process.Entities[0].Fields[3].Transforms[0];
+            Assert.AreEqual("left", right.Method);
+            Assert.AreEqual(5, right.Length);
+
+            var trim = process.Entities[0].Fields[3].Transforms[1];
+            Assert.AreEqual("trim", trim.Method);
+            Assert.AreEqual("x", trim.TrimChars);
+        }
 
     }
 }

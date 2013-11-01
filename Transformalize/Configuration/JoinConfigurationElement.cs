@@ -26,18 +26,21 @@ namespace Transformalize.Configuration
 {
     public class JoinConfigurationElement : ConfigurationElement
     {
-        [ConfigurationProperty("leftField", IsRequired = true)]
+        private const string LEFT_FIELD = "left-field";
+        private const string RIGHT_FIELD = "right-field";
+
+        [ConfigurationProperty(LEFT_FIELD, IsRequired = true)]
         public string LeftField
         {
-            get { return this["leftField"] as string; }
-            set { this["leftField"] = value; }
+            get { return this[LEFT_FIELD] as string; }
+            set { this[LEFT_FIELD] = value; }
         }
 
-        [ConfigurationProperty("rightField", IsRequired = true)]
+        [ConfigurationProperty(RIGHT_FIELD, IsRequired = true)]
         public string RightField
         {
-            get { return this["rightField"] as string; }
-            set { this["rightField"] = value; }
+            get { return this[RIGHT_FIELD] as string; }
+            set { this[RIGHT_FIELD] = value; }
         }
 
         public override bool IsReadOnly()
