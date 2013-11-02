@@ -20,8 +20,8 @@ namespace Transformalize.Configuration
         private IReader<ProcessConfigurationElement> Reader() {
             if (Path.HasExtension(_name)) {
                 return _name.StartsWith("http", IC) ?
-                           new ProcessXmlConfigurationReader(_name, new ContentsWebReader()) :
-                           new ProcessXmlConfigurationReader(_name, new ContentsFileReader());
+                    new ProcessXmlConfigurationReader(_name, new ContentsWebReader()) :
+                    new ProcessXmlConfigurationReader(_name, new ContentsFileReader());
             }
             return new ProcessConfigurationReader(_name);
         }

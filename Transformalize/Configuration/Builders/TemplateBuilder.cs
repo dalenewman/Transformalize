@@ -40,5 +40,9 @@ namespace Transformalize.Configuration.Builders {
         public SearchTypeBuilder SearchType(string name) {
             return _processBuilder.SearchType(name);
         }
+
+        public MapBuilder Map(string name) {
+            return _processBuilder.Map(name);
+        }
     }
 }

@@ -22,18 +22,15 @@
 
 using System.Configuration;
 
-namespace Transformalize.Configuration
-{
-    public class ProcessConfigurationElement : ConfigurationElement
-    {
+namespace Transformalize.Configuration {
+    public class ProcessConfigurationElement : ConfigurationElement {
         private const string TEMPLATE_CONTENT_TYPE = "template-content-type";
         private const string NAME = "name";
         private const string STAR = "star";
         private const string BCP = "bcp";
 
         [ConfigurationProperty(NAME, IsRequired = true)]
-        public string Name
-        {
+        public string Name {
             get { return this[NAME] as string; }
             set { this[NAME] = value; }
         }
@@ -45,64 +42,54 @@ namespace Transformalize.Configuration
         }
 
         [ConfigurationProperty(TEMPLATE_CONTENT_TYPE, IsRequired = false, DefaultValue = "raw")]
-        public string TemplateContentType
-        {
+        public string TemplateContentType {
             get { return this[TEMPLATE_CONTENT_TYPE] as string; }
             set { this[TEMPLATE_CONTENT_TYPE] = value; }
         }
 
 
         [ConfigurationProperty("connections")]
-        public ConnectionElementCollection Connections
-        {
+        public ConnectionElementCollection Connections {
             get { return this["connections"] as ConnectionElementCollection; }
         }
 
         [ConfigurationProperty("providers")]
-        public ProviderElementCollection Providers
-        {
+        public ProviderElementCollection Providers {
             get { return this["providers"] as ProviderElementCollection; }
         }
 
         [ConfigurationProperty("search-types")]
-        public SearchTypeElementCollection SearchTypes
-        {
+        public SearchTypeElementCollection SearchTypes {
             get { return this["search-types"] as SearchTypeElementCollection; }
         }
 
         [ConfigurationProperty("maps")]
-        public MapElementCollection Maps
-        {
+        public MapElementCollection Maps {
             get { return this["maps"] as MapElementCollection; }
         }
 
         [ConfigurationProperty("scripts")]
-        public ScriptElementCollection Scripts
-        {
+        public ScriptElementCollection Scripts {
             get { return this["scripts"] as ScriptElementCollection; }
         }
 
         [ConfigurationProperty("entities")]
-        public EntityElementCollection Entities
-        {
+        public EntityElementCollection Entities {
             get { return this["entities"] as EntityElementCollection; }
         }
 
         [ConfigurationProperty("relationships")]
-        public RelationshipElementCollection Relationships
-        {
+        public RelationshipElementCollection Relationships {
             get { return this["relationships"] as RelationshipElementCollection; }
         }
 
         [ConfigurationProperty("calculated-fields")]
-        public FieldElementCollection CalculatedFields
-        {
+        public FieldElementCollection CalculatedFields {
             get { return this["calculated-fields"] as FieldElementCollection; }
         }
 
         [ConfigurationProperty("templates")]
-        public TemplateElementCollection Templates
-        {
+        public TemplateElementCollection Templates {
             get { return this["templates"] as TemplateElementCollection; }
         }
 
@@ -112,9 +99,14 @@ namespace Transformalize.Configuration
             set { this[BCP] = value; }
         }
 
-        public override bool IsReadOnly()
-        {
+        public override bool IsReadOnly() {
             return false;
+        }
+
+        public string Serialize() {
+            var config = new TransformalizeConfiguration();
+            config.Processes.Add(this);
+            return config.Serialize(null, "transformalize", ConfigurationSaveMode.Minimal);
         }
     }
 }

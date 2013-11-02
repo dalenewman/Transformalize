@@ -37,5 +37,13 @@ namespace Transformalize.Configuration.Builders {
             _relationship.Join.Add(join);
             return new JoinBuilder(this, join);
         }
+
+        public RelationshipBuilder Relationship() {
+            return _processBuilder.Relationship();
+        }
+
+        public FieldBuilder CalculatedField(string name) {
+            return _processBuilder.CalculatedField(name);
+        }
     }
 }

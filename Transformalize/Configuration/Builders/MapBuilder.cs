@@ -1,5 +1,4 @@
-namespace Transformalize.Configuration.Builders
-{
+namespace Transformalize.Configuration.Builders {
     public class MapBuilder {
         private readonly ProcessBuilder _processBuilder;
         private readonly MapConfigurationElement _map;
@@ -22,6 +21,15 @@ namespace Transformalize.Configuration.Builders
             var item = new ItemConfigurationElement();
             _map.Items.Add(item);
             return new ItemBuilder(_processBuilder, this, item);
+        }
+
+        public SearchTypeBuilder SearchType(string name) {
+            return _processBuilder.SearchType(name);
+        }
+
+        public MapBuilder Sql(string sql) {
+            _map.Items.Sql = sql;
+            return this;
         }
     }
 }

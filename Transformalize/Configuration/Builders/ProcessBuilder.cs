@@ -1,6 +1,6 @@
 namespace Transformalize.Configuration.Builders {
 
-    public class ProcessBuilder {
+    public class ProcessBuilder : IFieldHolder {
 
         private readonly ProcessConfigurationElement _process;
 
@@ -84,6 +84,18 @@ namespace Transformalize.Configuration.Builders {
             var searchType = new SearchTypeConfigurationElement() { Name = name };
             _process.SearchTypes.Add(searchType);
             return new SearchTypeBuilder(this, searchType);
+        }
+
+        public FieldBuilder CalculatedField(string name) {
+            var calculatedField = new FieldConfigurationElement() { Name = name };
+            _process.CalculatedFields.Add(calculatedField);
+            return new FieldBuilder(this, calculatedField);
+        }
+
+        public FieldBuilder Field(string name) {
+            var calculatedField = new FieldConfigurationElement() { Name = name };
+            _process.CalculatedFields.Add(calculatedField);
+            return new FieldBuilder(this, calculatedField);
         }
     }
 }

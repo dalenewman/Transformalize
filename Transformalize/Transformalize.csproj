@@ -140,6 +140,7 @@
     <Compile Include="Configuration\Builders\ItemBuilder.cs" />
     <Compile Include="Configuration\Builders\JoinBuilder.cs" />
     <Compile Include="Configuration\Builders\MapBuilder.cs" />
+    <Compile Include="Configuration\Builders\ParameterBuilder.cs" />
     <Compile Include="Configuration\Builders\ProcessBuilder.cs" />
     <Compile Include="Configuration\Builders\RelationshipBuilder.cs" />
     <Compile Include="Configuration\Builders\SearchTypeBuilder.cs" />

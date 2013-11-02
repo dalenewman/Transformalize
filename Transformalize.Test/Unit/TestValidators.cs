@@ -176,9 +176,11 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void RelativeDateTime() {
-            var date = new DateTime(2013, 11, 01);
-            var badDate = new DateTime(2013, 7, 14);
+        public void RelativeDateTime()
+        {
+            var date = DateTime.Now;
+            var badDate = DateTime.Now.AddDays(3);
+            var badDateString = badDate.ToString("yyyy-MM-dd");
 
             var input = new RowsBuilder()
                 .Row("in", date).Field("out", string.Empty)
@@ -190,7 +192,7 @@ namespace Transformalize.Test.Unit {
                 -1,
                 DateTimeUnit.Day,
                 RangeBoundaryType.Inclusive,
-                5,
+                1,
                 DateTimeUnit.Day,
                 RangeBoundaryType.Inclusive,
                 "I don't like {0:yyyy-MM-dd}!",
@@ -201,7 +203,7 @@ namespace Transformalize.Test.Unit {
             var output = TestOperation(input, validator);
 
             Assert.AreEqual("", output[0]["out"]);
-            Assert.AreEqual("I don't like 2013-07-14!", output[1]["out"]);
+            Assert.AreEqual("I don't like " + badDateString + "!", output[1]["out"]);
         }
 
         [Test]

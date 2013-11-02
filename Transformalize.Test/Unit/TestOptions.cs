@@ -58,7 +58,7 @@ namespace Transformalize.Test.Unit
             var configIn = (TransformalizeConfiguration) ConfigurationManager.GetSection("transformalize");
             var configOut = new TransformalizeConfiguration();
             Assert.IsNotNull(configIn);
-            var xml = configIn.Serialize();
+            var xml = configIn.Serialize(null, "transformalize", ConfigurationSaveMode.Minimal);
 
             xml = xml.Replace("\"output\"", "\"OUT\"");
 

@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+
 namespace Transformalize.Configuration.Builders {
     public class TransformBuilder {
         private readonly FieldBuilder _fieldBuilder;
@@ -112,9 +114,16 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
-        public TransformBuilder Parameter(string parameter) {
-            _transform.Parameter = parameter;
-            return this;
+        public ParameterBuilder Parameter() {
+            var parameter = new ParameterConfigurationElement();
+            _transform.Parameters.Add(parameter);
+            return new ParameterBuilder(this, parameter);
+        }
+
+        public ParameterBuilder Parameter(string field) {
+            var parameter = new ParameterConfigurationElement() { Field = field };
+            _transform.Parameters.Add(parameter);
+            return new ParameterBuilder(this, parameter);
         }
 
         public TransformBuilder Result(string result) {
@@ -274,8 +283,8 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
-        public TransformBuilder Paramater(string name) {
-            _transform.Parameter = name;
+        public TransformBuilder AllParameters() {
+            _transform.Parameter = "*";
             return this;
         }
     }

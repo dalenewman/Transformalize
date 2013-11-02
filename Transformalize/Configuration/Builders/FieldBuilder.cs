@@ -1,13 +1,14 @@
 using System.Globalization;
-using System.Runtime.InteropServices;
 
 namespace Transformalize.Configuration.Builders {
+
     public class FieldBuilder {
-        private readonly EntityBuilder _entityBuilder;
+
+        private readonly IFieldHolder _fieldHolder;
         private readonly FieldConfigurationElement _field;
 
-        public FieldBuilder(EntityBuilder entityBuilder, FieldConfigurationElement field) {
-            _entityBuilder = entityBuilder;
+        public FieldBuilder(IFieldHolder fieldHolder, FieldConfigurationElement field) {
+            _fieldHolder = fieldHolder;
             _field = field;
         }
 
@@ -27,15 +28,15 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public FieldBuilder Field(string name) {
-            return _entityBuilder.Field(name);
+            return _fieldHolder.Field(name);
         }
 
         public EntityBuilder Entity(string name) {
-            return _entityBuilder.Entity(name);
+            return _fieldHolder.Entity(name);
         }
 
         public ProcessConfigurationElement Process() {
-            return _entityBuilder.Process();
+            return _fieldHolder.Process();
         }
 
         public FieldBuilder PrimaryKey(bool isPrimaryKey = true) {
@@ -44,7 +45,7 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public RelationshipBuilder Relationship() {
-            return _entityBuilder.Relationship();
+            return _fieldHolder.Relationship();
         }
 
         public TransformBuilder Transform(string method = "") {
@@ -102,6 +103,7 @@ namespace Transformalize.Configuration.Builders {
 
         public FieldBuilder RowVersion() {
             _field.Type = "rowversion";
+            _field.Length = "8";
             return this;
         }
 
@@ -126,12 +128,44 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public FieldBuilder CalculatedField(string name) {
-            return _entityBuilder.CalculatedField(name);
+            return _fieldHolder.CalculatedField(name);
         }
 
         public FieldBuilder Char() {
             _field.Type = "System.Char";
+            _field.Length = "1";
+            return this;
+        }
+
+        public FieldBuilder Input(bool input) {
+            _field.Input = input;
+            return this;
+        }
+
+        public FieldBuilder Output(bool output) {
+            _field.Output = output;
+            return this;
+        }
+
+        public FieldBuilder ReadInnerXml(bool readInnerXml) {
+            _field.ReadInnerXml = readInnerXml;
+            return this;
+        }
+
+        public FieldBuilder NodeType(string nodeType) {
+            _field.NodeType = nodeType;
+            return this;
+        }
+
+        public FieldBuilder Bool() {
+            _field.Type = "System.Boolean";
+            return this;
+        }
+
+        public FieldBuilder Boolean() {
+            _field.Type = "System.Boolean";
             return this;
         }
     }
+
 }

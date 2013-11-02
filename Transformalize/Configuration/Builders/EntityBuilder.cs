@@ -1,5 +1,7 @@
 namespace Transformalize.Configuration.Builders {
-    public class EntityBuilder {
+
+    public class EntityBuilder : IFieldHolder {
+
         private readonly ProcessBuilder _processBuilder;
         private readonly EntityConfigurationElement _entity;
 
@@ -46,5 +48,14 @@ namespace Transformalize.Configuration.Builders {
             _entity.CalculatedFields.Add(calculatedField);
             return new FieldBuilder(this, calculatedField);
         }
+    }
+
+    public interface IFieldHolder
+    {
+        FieldBuilder CalculatedField(string name);
+        FieldBuilder Field(string name);
+        EntityBuilder Entity(string name);
+        ProcessConfigurationElement Process();
+        RelationshipBuilder Relationship();
     }
 }

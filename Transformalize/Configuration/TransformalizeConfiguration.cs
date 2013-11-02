@@ -40,10 +40,9 @@ namespace Transformalize.Configuration
             return false;
         }
 
-
-        public string Serialize()
+        public string Serialize(ConfigurationElement parentElement, string name, ConfigurationSaveMode saveMode)
         {
-            return SerializeSection(null, "transformalize", ConfigurationSaveMode.Minimal);
+            return SerializeSection(parentElement, name, saveMode);
         }
 
         public void Deserialize(string serializedConfiguration)

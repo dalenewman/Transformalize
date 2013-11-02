@@ -1,5 +1,4 @@
-namespace Transformalize.Configuration.Builders
-{
+namespace Transformalize.Configuration.Builders {
     public class ActionBuilder {
         private readonly TemplateBuilder _templateBuilder;
         private readonly ActionConfigurationElement _action;
@@ -41,9 +40,12 @@ namespace Transformalize.Configuration.Builders
             return _templateBuilder.Entity(name);
         }
 
-        public SearchTypeBuilder SearchType(string name)
-        {
+        public SearchTypeBuilder SearchType(string name) {
             return _templateBuilder.SearchType(name);
+        }
+
+        public MapBuilder Map(string name) {
+            return _templateBuilder.Map(name);
         }
     }
 }

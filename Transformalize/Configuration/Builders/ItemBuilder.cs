@@ -35,8 +35,7 @@ namespace Transformalize.Configuration.Builders
             _item.Operator = "endswith";
             return this;
         }
-
-
+        
         public ItemBuilder Item() {
             return _mapBuilder.Item();
         }
@@ -45,8 +44,8 @@ namespace Transformalize.Configuration.Builders
             return _mapBuilder.Process();
         }
 
-        public MapBuilder Map(string name, string sql = "") {
-            return _processBuilder.Map(name, sql);
+        public MapBuilder Map(string name) {
+            return _processBuilder.Map(name);
         }
     }
 }
