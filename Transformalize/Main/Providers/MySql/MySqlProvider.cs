@@ -20,25 +20,21 @@
 
 #endregion
 
-namespace Transformalize.Main.Providers.MySql
-{
-    public class MySqlProvider : AbstractProvider
-    {
-        public MySqlProvider()
-        {
+namespace Transformalize.Main.Providers.MySql {
+    public class MySqlProvider : AbstractProvider {
+        public MySqlProvider() {
             IsDatabase = true;
             Type = ProviderType.MySql;
             L = "`";
             R = "`";
-            Supports = new ProviderSupports
-                           {
-                               InsertMultipleRows = false,
-                               MaxDop = false,
-                               NoCount = false,
-                               NoLock = false,
-                               TableVariable = false,
-                               Top = false
-                           };
+            Supports = new ProviderSupports {
+                InsertMultipleRows = false,
+                MaxDop = false,
+                NoCount = false,
+                NoLock = false,
+                TableVariable = false,
+                Top = false
+            };
         }
     }
 }

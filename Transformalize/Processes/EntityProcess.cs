@@ -44,15 +44,19 @@ namespace Transformalize.Processes {
         protected override void Initialize() {
             _entity.IsFirstRun = !_process.OutputConnection.RecordsExist(_entity.Schema, _entity.OutputName());
 
-            if (_entity.InputConnection.Provider.Type == ProviderType.File) {
-                if (_entity.InputConnection.IsExcel()) {
-                    Register(new FileExcelExtract(_entity));
-                } else {
-                    if (_entity.InputConnection.IsDelimited()) {
-                        Register(new FileDelimitedExtract(_entity));
+            if (!_entity.InputConnection.Provider.IsDatabase) {
+                if (_entity.InputConnection.Provider.Type == ProviderType.File) {
+                    if (_entity.InputConnection.IsExcel()) {
+                        Register(new FileExcelExtract(_entity));
                     } else {
-                        Register(new FileFixedExtract(_entity));
+                        if (_entity.InputConnection.IsDelimited()) {
+                            Register(new FileDelimitedExtract(_entity));
+                        } else {
+                            Register(new FileFixedExtract(_entity));
+                        }
                     }
+                } else {
+                    Register(_entity.InputConnection.InputOperation);
                 }
             } else {
                 if (_entity.IsFirstRun && _entity.UseBcp && _entity.InputConnection.Provider.Type == ProviderType.SqlServer) {

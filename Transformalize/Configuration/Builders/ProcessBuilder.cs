@@ -19,6 +19,10 @@ namespace Transformalize.Configuration.Builders {
                 new ProviderConfigurationElement {
                     Name = "file",
                     Type = string.Empty
+                },
+                new ProviderConfigurationElement {
+                    Name = "internal",
+                    Type = string.Empty
                 }
             );
 
@@ -108,5 +112,6 @@ namespace Transformalize.Configuration.Builders {
             _process.Scripts.Add(script);
             return new ScriptBuilder(this, script);
         }
+
     }
 }

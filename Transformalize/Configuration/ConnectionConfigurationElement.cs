@@ -21,6 +21,7 @@
 #endregion
 
 using System.Configuration;
+using Transformalize.Libs.Rhino.Etl.Operations;
 
 namespace Transformalize.Configuration
 {
@@ -42,6 +43,8 @@ namespace Transformalize.Configuration
         private const string LINE_DELIMITER = "line-delimiter";
         private const string START = "start";
         private const string END = "end";
+
+        public IOperation InputOperation { get; set; }
 
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name
@@ -123,7 +126,7 @@ namespace Transformalize.Configuration
             set { this[COMPATABILITY_LEVEL] = value; }
         }
 
-        [RegexStringValidator(@"(?i)SqlServer|AnalysisServices|MySql|File|Excel")]
+        [RegexStringValidator(@"(?i)SqlServer|AnalysisServices|MySql|File|Excel|Internal")]
         [ConfigurationProperty(PROVIDER, IsRequired = false, DefaultValue = "SqlServer")]
         public string Provider
         {

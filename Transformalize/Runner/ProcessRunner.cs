@@ -50,7 +50,7 @@ namespace Transformalize.Runner {
 
         private void ProcessEntities(Process process) {
 
-            foreach (var entityKeysProcess in process.Entities.Where(e => e.InputConnection.Provider.Type != ProviderType.File).Select(entity => new EntityKeysProcess(process, entity))) {
+            foreach (var entityKeysProcess in process.Entities.Where(e => e.InputConnection.Provider.IsDatabase).Select(entity => new EntityKeysProcess(process, entity))) {
                 entityKeysProcess.Execute();
             }
 

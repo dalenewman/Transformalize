@@ -4,6 +4,7 @@ using Transformalize.Libs.Ninject.Parameters;
 using Transformalize.Libs.Ninject.Syntax;
 using Transformalize.Main.Providers.AnalysisServices;
 using Transformalize.Main.Providers.File;
+using Transformalize.Main.Providers.Internal;
 using Transformalize.Main.Providers.MySql;
 using Transformalize.Main.Providers.SqlServer;
 
@@ -35,6 +36,9 @@ namespace Transformalize.Main.Providers {
                         break;
                     case "file":
                         connections.Add(element.Name, _process.Kernal.Get<FileConnection>(parameters));
+                        break;
+                    case "internal":
+                        connections.Add(element.Name, _process.Kernal.Get<InternalConnection>(parameters));
                         break;
                     default:
                         connections.Add(element.Name, _process.Kernal.Get<SqlServerConnection>(parameters));

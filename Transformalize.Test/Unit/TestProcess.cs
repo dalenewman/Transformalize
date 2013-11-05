@@ -34,7 +34,7 @@ namespace Transformalize.Test.Unit {
             Assert.IsNotNull(process);
             Assert.AreEqual("p1", process.Name);
             Assert.AreEqual("p1Star", process.Star);
-            Assert.AreEqual(3, process.Providers.Count);
+            Assert.AreEqual(4, process.Providers.Count);
 
         }
 

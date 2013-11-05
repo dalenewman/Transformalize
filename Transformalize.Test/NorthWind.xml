@@ -204,13 +204,13 @@
   </entities>
 
   <relationships>
-    <add leftEntity="Order Details" leftField="OrderID" rightEntity="Orders" rightField="OrderID" />
-    <add leftEntity="Orders" leftField="CustomerID" rightEntity="Customers" rightField="CustomerID" />
-    <add leftEntity="Orders" leftField="EmployeeID" rightEntity="Employees" rightField="EmployeeID" />
-    <add leftEntity="Order Details" leftField="ProductID" rightEntity="Products" rightField="ProductID" />
-    <add leftEntity="Products" leftField="SupplierID" rightEntity="Suppliers" rightField="SupplierID" />
-    <add leftEntity="Products" leftField="CategoryID" rightEntity="Categories" rightField="CategoryID" />
-    <add leftEntity="Orders" leftField="ShipVia" rightEntity="Shippers" rightField="ShipperID" />
+    <add left-entity="Order Details" left-field="OrderID" right-entity="Orders" right-field="OrderID" />
+    <add left-entity="Orders" left-field="CustomerID" right-entity="Customers" right-field="CustomerID" />
+    <add left-entity="Orders" left-field="EmployeeID" right-entity="Employees" right-field="EmployeeID" />
+    <add left-entity="Order Details" left-field="ProductID" right-entity="Products" right-field="ProductID" />
+    <add left-entity="Products" left-field="SupplierID" right-entity="Suppliers" right-field="SupplierID" />
+    <add left-entity="Products" left-field="CategoryID" right-entity="Categories" right-field="CategoryID" />
+    <add left-entity="Orders" left-field="ShipVia" right-entity="Shippers" right-field="ShipperID" />
   </relationships>
 
   <calculated-fields>

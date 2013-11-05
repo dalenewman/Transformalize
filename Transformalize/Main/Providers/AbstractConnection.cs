@@ -25,6 +25,7 @@ using System.Data;
 using System.Data.Common;
 using Transformalize.Configuration;
 using Transformalize.Libs.Dapper;
+using Transformalize.Libs.Rhino.Etl.Operations;
 
 namespace Transformalize.Main.Providers {
     public abstract class AbstractConnection {
@@ -55,7 +56,8 @@ namespace Transformalize.Main.Providers {
         public string File { get; set; }
         public string Delimiter { get; set; }
         public string LineDelimiter { get; set; }
-        
+        public IOperation InputOperation { get; set; }
+
         public int Start { get; set; }
         public int End { get; set; }
 
@@ -84,11 +86,11 @@ namespace Transformalize.Main.Providers {
             ProviderSupportsModifier = providerSupportsModifier;
 
             ProcessConnectionString(element);
+            InputOperation = element.InputOperation;
 
         }
 
-        private void ProcessConnectionString(ConnectionConfigurationElement element)
-        {
+        private void ProcessConnectionString(ConnectionConfigurationElement element) {
             if (element.ConnectionString != string.Empty) {
                 ProcessConnectionString(element.ConnectionString);
             } else {

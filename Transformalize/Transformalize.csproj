@@ -621,6 +621,9 @@
     <Compile Include="Main\Providers\File\FileEntityRecordsExist.cs" />
     <Compile Include="Main\Providers\FalseEntityRecordsExist.cs" />
     <Compile Include="Main\MapLoader.cs" />
+    <Compile Include="Main\Providers\Internal\InternalConnection.cs" />
+    <Compile Include="Main\Providers\Internal\InternalConnectionChecker.cs" />
+    <Compile Include="Main\Providers\Internal\InternalProvider.cs" />
     <Compile Include="Main\Providers\MySql\MySqlEntityDropper.cs" />
     <Compile Include="Main\Providers\MySql\MySqlEntityExists.cs" />
     <Compile Include="Main\Providers\MySql\MySqlEntityRecordsExist.cs" />

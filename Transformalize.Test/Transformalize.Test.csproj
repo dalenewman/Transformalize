@@ -139,6 +139,7 @@
     <Compile Include="Unit\Builders\FieldsBuilder.cs" />
     <Compile Include="Unit\Builders\MapBuilder.cs" />
     <Compile Include="Unit\Builders\MapsBuilder.cs" />
+    <Compile Include="Unit\TestNetInput.cs" />
     <Compile Include="Unit\TestProcess.cs" />
     <Compile Include="Unit\TestValidators.cs" />
     <Compile Include="Unit\Builders\ParameterBuilder.cs" />

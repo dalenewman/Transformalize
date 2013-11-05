@@ -114,6 +114,9 @@ namespace Transformalize.Main {
                 }
             };
             element.CalculatedFields.Insert(pk);
+            if (string.IsNullOrEmpty(element.Version)) {
+                element.Version = "TflHashCode";
+            }
         }
 
         private void LoadVersion(EntityConfigurationElement element, Entity entity) {

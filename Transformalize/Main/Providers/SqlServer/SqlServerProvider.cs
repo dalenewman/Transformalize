@@ -20,25 +20,21 @@
 
 #endregion
 
-namespace Transformalize.Main.Providers.SqlServer
-{
-    public class SqlServerProvider : AbstractProvider
-    {
-        public SqlServerProvider()
-        {
+namespace Transformalize.Main.Providers.SqlServer {
+    public class SqlServerProvider : AbstractProvider {
+        public SqlServerProvider() {
             IsDatabase = true;
             Type = ProviderType.SqlServer;
             L = "[";
             R = "]";
-            Supports = new ProviderSupports
-                           {
-                               InsertMultipleRows = true,
-                               MaxDop = true,
-                               NoCount = true,
-                               NoLock = true,
-                               Top = true,
-                               TableVariable = true
-                           };
+            Supports = new ProviderSupports {
+                InsertMultipleRows = true,
+                MaxDop = true,
+                NoCount = true,
+                NoLock = true,
+                Top = true,
+                TableVariable = true
+            };
         }
     }
 }

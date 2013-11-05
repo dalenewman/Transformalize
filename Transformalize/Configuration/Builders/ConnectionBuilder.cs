@@ -1,3 +1,6 @@
+using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Main.Providers;
+
 namespace Transformalize.Configuration.Builders {
     public class ConnectionBuilder {
         private readonly ProcessBuilder _processBuilder;
@@ -35,6 +38,11 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public ConnectionBuilder Provider(ProviderType providerType) {
+            _connection.Provider = providerType.ToString().ToLower();
+            return this;
+        }
+
         public ProcessBuilder TemplatePath(string path) {
             return _processBuilder.TemplatePath(path);
         }
@@ -49,6 +57,20 @@ namespace Transformalize.Configuration.Builders {
 
         public SearchTypeBuilder SearchType(string name) {
             return _processBuilder.SearchType(name);
+        }
+
+        public ConnectionBuilder Input(IOperation operation) {
+            _connection.InputOperation = operation;
+            return this;
+        }
+
+        public ConnectionBuilder File(string file) {
+            _connection.File = file;
+            return this;
+        }
+
+        public EntityBuilder Entity(string name) {
+            return _processBuilder.Entity(name);
         }
     }
 }
