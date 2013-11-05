@@ -22,7 +22,6 @@
 
 using NUnit.Framework;
 using Transformalize.Configuration.Builders;
-using Transformalize.Main;
 
 namespace Transformalize.Test.Unit {
     [TestFixture]
@@ -229,20 +228,30 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
+        public void TestScript()
+        {
+            var process = new ProcessBuilder("Test")
+                .Script("test").File("test.js")
+                .Script("test2").File("test.js")
+            .Process();
+
+            Assert.AreEqual(2, process.Scripts.Count);
+        }
+
+        [Test]
         public void RealTest() {
 
             var process = new ProcessBuilder("Test")
                 .Connection("input").Database("NorthWind")
                 .Connection("output").Database("NorthWindStar")
                 .Connection("sass").Database("NorthWind").Provider("AnalysisServices")
-                .Templates("Templates")
-                    .Template("solr-data-handler").File("solr-data-handler.cshtml").Cache(true)
-                        .Action("copy").File(@"C:\Solr\NorthWind\conf\data-config.xml")
-                    .Template("solr-schema").File("solr-schema.cshtml").Cache(true)
-                        .Action("copy").File(@"C:\Solr\NorthWind\conf\schema.xml")
-                        .Action("web").Mode("init").Url("http://localhost:8983/solr/admin/cores?action=RELOAD&core=NorthWind")
-                        .Action("web").Mode("first").Url("http://localhost:8983/solr/NorthWind/dataimport?command=full-import&clean=true&commit=true&optimize=true")
-                        .Action("web").Mode("default").Url("http://localhost:8983/solr/NorthWind/dataimport?command=delta-import&clean=false&commit=true&optimize=true")
+                .Template("solr-data-handler").File("solr-data-handler.cshtml").Cache(true)
+                    .Action("copy").File(@"C:\Solr\NorthWind\conf\data-config.xml")
+                .Template("solr-schema").File("solr-schema.cshtml").Cache(true)
+                    .Action("copy").File(@"C:\Solr\NorthWind\conf\schema.xml")
+                    .Action("web").Mode("init").Url("http://localhost:8983/solr/admin/cores?action=RELOAD&core=NorthWind")
+                    .Action("web").Mode("first").Url("http://localhost:8983/solr/NorthWind/dataimport?command=full-import&clean=true&commit=true&optimize=true")
+                    .Action("web").Mode("default").Url("http://localhost:8983/solr/NorthWind/dataimport?command=delta-import&clean=false&commit=true&optimize=true")
                 .Map("Managers").Connection("input").Sql("select EmployeeID, FirstName + ' ' + LastName FROM Employees;")
                 .SearchType("facet").Type("lowercase").Store(true).Index(true)
                 .SearchType("standard").Type("standard_lowercase").Store(false).Index(true)

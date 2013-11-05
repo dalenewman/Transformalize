@@ -34,7 +34,7 @@ namespace Transformalize.Configuration {
             }
         }
 
-        [ConfigurationProperty("path", IsRequired = false, DefaultValue = "")]
+        [ConfigurationProperty("path", IsRequired = false, DefaultValue = "Templates")]
         public string Path {
             get { return this["path"] as string; }
             set { this["path"] = value; }

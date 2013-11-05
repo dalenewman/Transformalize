@@ -69,11 +69,6 @@ namespace Transformalize.Configuration.Builders {
             return new RelationshipBuilder(this, relationship);
         }
 
-        public ProcessBuilder Templates(string path) {
-            _process.Templates.Path = path;
-            return this;
-        }
-
         public TemplateBuilder Template(string name) {
             var template = new TemplateConfigurationElement { Name = name };
             _process.Templates.Add(template);
@@ -96,6 +91,22 @@ namespace Transformalize.Configuration.Builders {
             var calculatedField = new FieldConfigurationElement() { Name = name };
             _process.CalculatedFields.Add(calculatedField);
             return new FieldBuilder(this, calculatedField);
+        }
+
+        public ProcessBuilder TemplatePath(string path) {
+            _process.Templates.Path = path;
+            return this;
+        }
+
+        public ProcessBuilder ScriptPath(string path) {
+            _process.Scripts.Path = path;
+            return this;
+        }
+
+        public ScriptBuilder Script(string name) {
+            var script = new ScriptConfigurationElement() { Name = name };
+            _process.Scripts.Add(script);
+            return new ScriptBuilder(this, script);
         }
     }
 }

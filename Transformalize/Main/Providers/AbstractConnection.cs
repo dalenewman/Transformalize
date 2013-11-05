@@ -209,6 +209,7 @@ namespace Transformalize.Main.Providers {
             using (var cn = GetConnection()) {
                 var command = cn.CreateCommand();
                 command.CommandText = sql;
+                command.CommandTimeout = 0;
                 cn.Open();
                 using (var reader = command.ExecuteReader(CommandBehavior.CloseConnection & CommandBehavior.SingleResult)) {
                     if (reader == null)

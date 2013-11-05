@@ -1,3 +1,5 @@
+using Transformalize.Main;
+
 namespace Transformalize.Configuration.Builders {
     public class MapBuilder {
         private readonly ProcessBuilder _processBuilder;
@@ -30,6 +32,14 @@ namespace Transformalize.Configuration.Builders {
         public MapBuilder Sql(string sql) {
             _map.Items.Sql = sql;
             return this;
+        }
+
+        public TemplateBuilder Template(string name) {
+            return _processBuilder.Template(name);
+        }
+
+        public EntityBuilder Entity(string name) {
+            return _processBuilder.Entity(name);
         }
     }
 }

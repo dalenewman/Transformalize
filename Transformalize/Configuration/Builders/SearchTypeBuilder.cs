@@ -35,5 +35,13 @@ namespace Transformalize.Configuration.Builders {
         public EntityBuilder Entity(string name) {
             return _processBuilder.Entity(name);
         }
+
+        public MapBuilder Map(string name, string sql = "") {
+            return _processBuilder.Map(name, sql);
+        }
+
+        public TemplateBuilder Template(string name) {
+            return _processBuilder.Template(name);
+        }
     }
 }

@@ -35,9 +35,20 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
-        public ProcessBuilder Templates(string path)
-        {
-            return _processBuilder.Templates(path);
+        public ProcessBuilder TemplatePath(string path) {
+            return _processBuilder.TemplatePath(path);
+        }
+
+        public ProcessBuilder ScriptPath(string path) {
+            return _processBuilder.ScriptPath(path);
+        }
+
+        public TemplateBuilder Template(string name) {
+            return _processBuilder.Template(name);
+        }
+
+        public SearchTypeBuilder SearchType(string name) {
+            return _processBuilder.SearchType(name);
         }
     }
 }

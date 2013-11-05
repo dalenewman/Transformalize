@@ -26,7 +26,7 @@ using Transformalize.Main;
 namespace Transformalize.Test.Integration {
     [TestFixture]
     public class Nve {
-        private const string FILE = @"c:\code\TflConfiguration\NVE.xml";
+        private const string FILE = @"http://config.mwf.local/NVE.xml";
 
         [Test]
         public void Init() {

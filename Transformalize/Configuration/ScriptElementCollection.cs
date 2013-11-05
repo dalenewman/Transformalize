@@ -22,17 +22,12 @@
 
 using System.Configuration;
 
-namespace Transformalize.Configuration
-{
-    public class ScriptElementCollection : ConfigurationElementCollection
-    {
-        public ScriptConfigurationElement this[int index]
-        {
+namespace Transformalize.Configuration {
+    public class ScriptElementCollection : ConfigurationElementCollection {
+        public ScriptConfigurationElement this[int index] {
             get { return BaseGet(index) as ScriptConfigurationElement; }
-            set
-            {
-                if (BaseGet(index) != null)
-                {
+            set {
+                if (BaseGet(index) != null) {
                     BaseRemoveAt(index);
                 }
                 BaseAdd(index, value);
@@ -40,25 +35,25 @@ namespace Transformalize.Configuration
         }
 
         [ConfigurationProperty("path", IsRequired = false, DefaultValue = "")]
-        public string Path
-        {
+        public string Path {
             get { return this["path"] as string; }
             set { this["path"] = value; }
         }
 
-        public override bool IsReadOnly()
-        {
+        public override bool IsReadOnly() {
             return false;
         }
 
-        protected override ConfigurationElement CreateNewElement()
-        {
+        protected override ConfigurationElement CreateNewElement() {
             return new ScriptConfigurationElement();
         }
 
-        protected override object GetElementKey(ConfigurationElement element)
-        {
-            return ((ScriptConfigurationElement) element).Name.ToLower();
+        protected override object GetElementKey(ConfigurationElement element) {
+            return ((ScriptConfigurationElement)element).Name.ToLower();
+        }
+
+        public void Add(ScriptConfigurationElement script) {
+            BaseAdd(script);
         }
     }
 }

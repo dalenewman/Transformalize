@@ -44,5 +44,13 @@ namespace Transformalize.Configuration.Builders {
         public MapBuilder Map(string name) {
             return _processBuilder.Map(name);
         }
+
+        public ProcessBuilder TemplatePath(string path) {
+            return _processBuilder.TemplatePath(path);
+        }
+
+        public ProcessBuilder ScriptPath(string path) {
+            return _processBuilder.ScriptPath(path);
+        }
     }
 }
