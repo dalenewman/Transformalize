@@ -59,7 +59,7 @@ namespace Transformalize.Configuration.Builders {
             return _processBuilder.SearchType(name);
         }
 
-        public ConnectionBuilder Input(IOperation operation) {
+        public ConnectionBuilder Input(AbstractOperation operation) {
             _connection.InputOperation = operation;
             return this;
         }

@@ -32,7 +32,8 @@ namespace Transformalize.Main {
             _process = process;
         }
 
-        public void Adapt(string transformName) {
+        public int Adapt(string transformName) {
+            var count = 0;
             foreach (EntityConfigurationElement entity in _process.Entities) {
                 foreach (FieldConfigurationElement field in entity.Fields) {
                     foreach (TransformConfigurationElement transform in field.Transforms) {
@@ -44,10 +45,12 @@ namespace Transformalize.Main {
                                 Field = tField.Alias,
                                 Name = tField.Name
                             });
+                            count++;
                         }
                     }
                 }
             }
+            return count;
         }
     }
 }

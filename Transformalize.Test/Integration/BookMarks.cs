@@ -45,7 +45,7 @@ namespace Transformalize.Test.Integration {
 
         [Test]
         public void Default() {
-            ProcessFactory.Create(FILE).Run();
+            ProcessFactory.Create(FILE, new Options() { Top = 1000}).Run();
         }
 
     }

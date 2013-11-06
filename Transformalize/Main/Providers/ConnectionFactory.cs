@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using Transformalize.Configuration;
+using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.Ninject.Parameters;
 using Transformalize.Libs.Ninject.Syntax;
+using Transformalize.Libs.NLog;
 using Transformalize.Main.Providers.AnalysisServices;
 using Transformalize.Main.Providers.File;
 using Transformalize.Main.Providers.Internal;
@@ -9,7 +11,10 @@ using Transformalize.Main.Providers.MySql;
 using Transformalize.Main.Providers.SqlServer;
 
 namespace Transformalize.Main.Providers {
+
     public class ConnectionFactory {
+
+        private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly Process _process;
         private readonly ConnectionElementCollection _elements;
 
@@ -23,6 +28,8 @@ namespace Transformalize.Main.Providers {
             var processArgument = new ConstructorArgument("process", _process);
 
             foreach (ConnectionConfigurationElement element in _elements) {
+
+                Validate(element);
 
                 var elementArgument = new ConstructorArgument("element", element);
                 var parameters = new Libs.Ninject.Parameters.IParameter[] { processArgument, elementArgument };
@@ -46,6 +53,18 @@ namespace Transformalize.Main.Providers {
                 }
             }
             return connections;
+        }
+
+        private void Validate(ConnectionConfigurationElement element) {
+            var validator = ValidationFactory.CreateValidator<ConnectionConfigurationElement>();
+            var results = validator.Validate(element);
+            if (!results.IsValid) {
+                foreach (var result in results) {
+                    _process.ValidationResults.AddResult(result);
+                    _log.Error(result.Message);
+                }
+                System.Environment.Exit(1);
+            }
         }
     }
 }

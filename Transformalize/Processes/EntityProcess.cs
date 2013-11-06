@@ -50,9 +50,9 @@ namespace Transformalize.Processes {
                         Register(new FileExcelExtract(_entity));
                     } else {
                         if (_entity.InputConnection.IsDelimited()) {
-                            Register(new FileDelimitedExtract(_entity));
+                            Register(new FileDelimitedExtract(_entity, _process.Options.Top));
                         } else {
-                            Register(new FileFixedExtract(_entity));
+                            Register(new FileFixedExtract(_entity, _process.Options.Top));
                         }
                     }
                 } else {

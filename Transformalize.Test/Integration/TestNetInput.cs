@@ -21,17 +21,18 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using NUnit.Framework;
+using Transformalize.Configuration;
 using Transformalize.Configuration.Builders;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
 
-namespace Transformalize.Test.Unit {
+namespace Transformalize.Test.Integration {
     [TestFixture]
     public class TestNetInput {
 
@@ -48,13 +49,44 @@ namespace Transformalize.Test.Unit {
                     .Field("indexString")
                 .Process();
 
-            //ProcessFactory.Create(process, new Options() { Mode = "init" }).Run();
+            ProcessFactory.Create(process, new Options() { Mode = "init" }).Run();
             ProcessFactory.Create(process, new Options() { Mode = "test" }).Run();
-
         }
 
+        [Test]
+        public void TestSpecifyDotNetDbInput()
+        {
+
+            var testDbInput = new TestDbInput();
+            
+            var process = new ProcessBuilder("process2")
+                .Connection("input").Provider(ProviderType.Internal).Input(testDbInput)
+                .Connection("output").Database("TestOutput")
+                .Entity("e1")
+                    .Field("name").Length(128)
+                    .Field("database_id").Int32().PrimaryKey()
+                .Process();
+
+            ProcessFactory.Create(process, new Options() { Mode = "init" }).Run();
+            ProcessFactory.Create(process, new Options() { Mode = "test" }).Run();
+        }
 
     }
+
+    public class TestDbInput : AbstractOperation {
+
+        public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
+            using (var cn = new SqlConnection("server=localhost;database=master;trusted_connection=true;")) {
+                cn.Open();
+                var cmd = new SqlCommand("SELECT name, database_id FROM sys.databases;", cn);
+                var reader = cmd.ExecuteReader();
+                while (reader.Read()) {
+                    yield return Row.FromReader(reader);
+                }
+            }
+        }
+    }
+
 
     public class TestInput : AbstractOperation {
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

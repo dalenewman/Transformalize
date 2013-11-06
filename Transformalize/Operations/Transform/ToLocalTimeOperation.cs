@@ -5,7 +5,9 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 
 namespace Transformalize.Operations.Transform {
+
     public class ToLocalTimeOperation : AbstractOperation {
+
         private readonly string _inKey;
         private readonly string _outKey;
         private readonly TimeSpan _adjustment;

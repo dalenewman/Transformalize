@@ -20,13 +20,18 @@
 
 #endregion
 
+using System;
 using System.Configuration;
+using System.IO;
+using Transformalize.Libs.EnterpriseLibrary.Validation;
+using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
+using Transformalize.Libs.NLog.Internal;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Main.Providers;
 
-namespace Transformalize.Configuration
-{
-    public class ConnectionConfigurationElement : ConfigurationElement
-    {
+namespace Transformalize.Configuration {
+    [HasSelfValidation]
+    public class ConnectionConfigurationElement : ConfigurationElement {
         private const string NAME = "name";
         private const string COMPATABILITY_LEVEL = "compatability-level";
         private const string PROVIDER = "provider";
@@ -43,12 +48,12 @@ namespace Transformalize.Configuration
         private const string LINE_DELIMITER = "line-delimiter";
         private const string START = "start";
         private const string END = "end";
+        private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
-        public IOperation InputOperation { get; set; }
+        public AbstractOperation InputOperation { get; set; }
 
         [ConfigurationProperty(NAME, IsRequired = true)]
-        public string Name
-        {
+        public string Name {
             get { return this[NAME] as string; }
             set { this[NAME] = value; }
         }
@@ -61,7 +66,7 @@ namespace Transformalize.Configuration
 
         [ConfigurationProperty(PORT, IsRequired = false, DefaultValue = 0)]
         public int Port {
-            get { return (int) this[PORT]; }
+            get { return (int)this[PORT]; }
             set { this[PORT] = value; }
         }
 
@@ -120,37 +125,64 @@ namespace Transformalize.Configuration
         }
 
         [ConfigurationProperty(COMPATABILITY_LEVEL, IsRequired = false, DefaultValue = 0)]
-        public int CompatabilityLevel
-        {
-            get { return (int) this[COMPATABILITY_LEVEL]; }
+        public int CompatabilityLevel {
+            get { return (int)this[COMPATABILITY_LEVEL]; }
             set { this[COMPATABILITY_LEVEL] = value; }
         }
 
         [RegexStringValidator(@"(?i)SqlServer|AnalysisServices|MySql|File|Excel|Internal")]
         [ConfigurationProperty(PROVIDER, IsRequired = false, DefaultValue = "SqlServer")]
-        public string Provider
-        {
+        public string Provider {
             get { return this[PROVIDER] as string; }
             set { this[PROVIDER] = value; }
         }
 
+        [RangeValidator(1, RangeBoundaryType.Inclusive, 1, RangeBoundaryType.Ignore, MessageTemplate = "{1} must be greater than 0.")]
         [ConfigurationProperty(BATCH_SIZE, IsRequired = false, DefaultValue = 500)]
-        public int BatchSize
-        {
-            get { return (int) this[BATCH_SIZE]; }
+        public int BatchSize {
+            get { return (int)this[BATCH_SIZE]; }
             set { this[BATCH_SIZE] = value; }
         }
 
         [ConfigurationProperty(ENABLED, IsRequired = false, DefaultValue = true)]
-        public bool Enabled
-        {
-            get { return (bool) this[ENABLED]; }
+        public bool Enabled {
+            get { return (bool)this[ENABLED]; }
             set { this[ENABLED] = value; }
         }
 
-        public override bool IsReadOnly()
-        {
+        public override bool IsReadOnly() {
             return false;
+        }
+
+        [SelfValidation]
+        public void Validate(ValidationResults results) {
+
+            if ((new[] { "sqlserver", "mysql" }).Any(p => p.Equals(Provider, IC))) {
+                if (string.IsNullOrEmpty(ConnectionString) && string.IsNullOrEmpty(Database)) {
+                    var message = string.Format("The {0} provider requires either the ConnectionString or Database property setting.", Provider);
+                    results.AddResult(new ValidationResult(message, this, null, null, null));
+                } else {
+                    if (String.IsNullOrEmpty(Database)) {
+                        var user = ConnectionStringParser.GetUsername(ConnectionString);
+                        var pw = ConnectionStringParser.GetPassword(ConnectionString);
+                        var trusted = ConnectionStringParser.GetTrustedConnection(ConnectionString);
+                        if (!trusted && (String.IsNullOrEmpty(user) || String.IsNullOrEmpty(pw))) {
+                            var message = string.Format("An untrusted connection string like '{0}' must include credentials (i.e. username, password) or be set to trusted (i.e. trusted_connection=true).", ConnectionString);
+                            results.AddResult(new ValidationResult(message, this, null, null, null));
+                        }
+                    }
+                }
+            } else if (Provider.Equals("file", IC)) {
+                if (string.IsNullOrEmpty(File)) {
+                    var message = string.Format("The {0} provider requires the File property setting.", Provider);
+                    results.AddResult(new ValidationResult(message, this, null, null, null));
+                } else {
+                    if (!new FileInfo(File).Exists) {
+                        var message = string.Format("The file '{0}' doesn't exist.", File);
+                        results.AddResult(new ValidationResult(message, this, null, null, null));
+                    }
+                }
+            }
         }
     }
 }

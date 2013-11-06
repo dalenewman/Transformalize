@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Ninject;
 using Transformalize.Libs.RazorEngine;
@@ -38,6 +39,8 @@ using Transformalize.Main.Providers.SqlServer;
 namespace Transformalize.Main {
 
     public class Process {
+
+        private ValidationResults _validationResults = new ValidationResults();
 
         private static readonly Stopwatch Timer = new Stopwatch();
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
@@ -63,6 +66,11 @@ namespace Transformalize.Main {
         private IParameters _parameters = new Parameters.Parameters();
         public string Star { get; set; }
         public string Bcp { get; set; }
+
+        public ValidationResults ValidationResults {
+            get { return _validationResults; }
+            set { _validationResults = value; }
+        }
 
         public List<IOperation> TransformOperations {
             get { return _transformOperations; }
@@ -159,8 +167,7 @@ namespace Transformalize.Main {
             return OutputConnection.NextBatchId(Name);
         }
 
-        public bool TryGetField(string alias, string entity, out Field field)
-        {
+        public bool TryGetField(string alias, string entity, out Field field) {
             foreach (var fields in Entities.Where(e => e.Alias == entity || entity == string.Empty).Select(e => e.Fields.ToEnumerable()).Where(fields => fields.Any(Common.FieldFinder(alias)))) {
                 field = fields.First(Common.FieldFinder(alias));
                 return true;
@@ -184,17 +191,16 @@ namespace Transformalize.Main {
 
         public Field GetField(string alias, string entity) {
 
-            foreach (var fields in Entities.Where(e=> e.Alias == entity || entity == string.Empty).Select(e => e.Fields.ToEnumerable()).Where(fields => fields.Any(Common.FieldFinder(alias)))) {
+            foreach (var fields in Entities.Where(e => e.Alias == entity || entity == string.Empty).Select(e => e.Fields.ToEnumerable()).Where(fields => fields.Any(Common.FieldFinder(alias)))) {
                 return fields.First(Common.FieldFinder(alias));
             }
 
-            foreach (var fields in Entities.Where(e=> e.Alias == entity || entity == string.Empty).Select(e => e.CalculatedFields.ToEnumerable()).Where(fields => fields.Any(Common.FieldFinder(alias)))) {
+            foreach (var fields in Entities.Where(e => e.Alias == entity || entity == string.Empty).Select(e => e.CalculatedFields.ToEnumerable()).Where(fields => fields.Any(Common.FieldFinder(alias)))) {
                 return fields.First(Common.FieldFinder(alias));
             }
 
             var calculatedfields = CalculatedFields.ToEnumerable().ToArray();
-            if (calculatedfields.Any(Common.FieldFinder(alias)))
-            {
+            if (calculatedfields.Any(Common.FieldFinder(alias))) {
                 return calculatedfields.First(Common.FieldFinder(alias));
             }
 

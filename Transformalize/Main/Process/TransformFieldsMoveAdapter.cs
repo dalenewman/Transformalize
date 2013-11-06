@@ -27,13 +27,16 @@ using Transformalize.Configuration;
 
 namespace Transformalize.Main {
     public class TransformFieldsMoveAdapter {
+
         private readonly ProcessConfigurationElement _process;
 
         public TransformFieldsMoveAdapter(ProcessConfigurationElement process) {
             _process = process;
         }
 
-        public void Adapt(string transformName) {
+        public int Adapt(string transformName)
+        {
+            var count = 0;
             var fields = new Dictionary<string, Dictionary<string, List<FieldConfigurationElement>>>();
 
             foreach (EntityConfigurationElement entity in _process.Entities) {
@@ -48,6 +51,7 @@ namespace Transformalize.Main {
                         foreach (FieldConfigurationElement tField in transform.Fields) {
                             tField.Input = false;
                             fields[entity.Alias][field.Alias].Add(tField);
+                            count++;
                         }
 
                         transform.Fields.Clear();
@@ -66,6 +70,7 @@ namespace Transformalize.Main {
                     }
                 }
             }
+            return count;
         }
     }
 }

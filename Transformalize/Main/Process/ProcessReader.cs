@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
 using Transformalize.Libs.NLog;
@@ -35,9 +36,11 @@ namespace Transformalize.Main {
         private readonly Options _options;
         private readonly string _processName = string.Empty;
         private Process _process;
+        private readonly string[] _transformToFields = new[] { "fromxml", "fromregex", "fromjson" };
+
 
         public ProcessReader(ProcessConfigurationElement process, Options options) {
-            _config = Adapt(process);
+            _config = Adapt(process, _transformToFields);
             _options = options;
         }
 
@@ -79,13 +82,14 @@ namespace Transformalize.Main {
             return _process;
         }
 
-        private static ProcessConfigurationElement Adapt(ProcessConfigurationElement process) {
-            new TransformFieldsToParametersAdapter(process).Adapt("fromxml");
-            new TransformFieldsMoveAdapter(process).Adapt("fromxml");
-            new TransformFieldsToParametersAdapter(process).Adapt("fromregex");
-            new TransformFieldsMoveAdapter(process).Adapt("fromregex");
-            new TransformFieldsToParametersAdapter(process).Adapt("fromjson");
-            new TransformFieldsMoveAdapter(process).Adapt("fromjson");
+        private static ProcessConfigurationElement Adapt(ProcessConfigurationElement process, IEnumerable<string> transformToFields) {
+
+            foreach (var field in transformToFields) {
+                while (new TransformFieldsToParametersAdapter(process).Adapt(field) > 0) {
+                    new TransformFieldsMoveAdapter(process).Adapt(field);
+                };
+            }
+
             return process;
         }
 

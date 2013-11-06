@@ -57,7 +57,7 @@ namespace Transformalize.Operations
             _entity.InputConnection.File = _fileInfo.FullName;
             _entity.InputConnection.Delimiter = "\t";
 
-            var fileImport = new FileDelimitedExtract(_entity);
+            var fileImport = new FileDelimitedExtract(_entity, 0);
             fileImport.PrepareForExecution(PipelineExecuter);
             return fileImport.Execute(null);
         }
