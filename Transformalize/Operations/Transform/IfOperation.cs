@@ -43,17 +43,23 @@ namespace Transformalize.Operations.Transform {
             {ComparisonOperator.LessThanEqual, ((x, y) => x.Equals(y) || ((IComparable)x).CompareTo(y) < 0)}
         };
 
-        public IfOperation(string leftKey, ComparisonOperator op, string rightKey, string thenKey, string elseKey, IParameters parameters, string outKey, string outType) {
+        public IfOperation(
+            IParameter leftParameter,
+            ComparisonOperator op,
+            IParameter rightParameter,
+            IParameter thenParameter,
+            IParameter elseParameter,
+            string outKey,
+            string outType
+        ) {
 
             _op = op;
             _outKey = outKey;
 
-            var param = parameters.ToEnumerable().ToArray();
-
-            _left = _builtIns.ContainsKey(leftKey.ToLower()) ? _builtIns[leftKey.ToLower()] : GetPart(param, leftKey);
-            _right = _builtIns.ContainsKey(rightKey.ToLower()) ? _builtIns[rightKey.ToLower()] : GetPart(param, rightKey);
-            _then = _builtIns.ContainsKey(thenKey.ToLower()) ? _builtIns[thenKey.ToLower()] : GetPart(param, thenKey);
-            _else = _builtIns.ContainsKey(elseKey.ToLower()) ? _builtIns[elseKey.ToLower()] : GetPart(param, elseKey);
+            _left = _builtIns.ContainsKey(leftParameter.Name.ToLower()) ? _builtIns[leftParameter.Name.ToLower()] : new KeyValuePair<string, IParameter>(leftParameter.Name, leftParameter);
+            _right = _builtIns.ContainsKey(rightParameter.Name.ToLower()) ? _builtIns[rightParameter.Name.ToLower()] : new KeyValuePair<string, IParameter>(rightParameter.Name, rightParameter);
+            _then = _builtIns.ContainsKey(thenParameter.Name.ToLower()) ? _builtIns[thenParameter.Name.ToLower()] : new KeyValuePair<string, IParameter>(thenParameter.Name, thenParameter);
+            _else = _builtIns.ContainsKey(elseParameter.Name.ToLower()) ? _builtIns[elseParameter.Name.ToLower()] : new KeyValuePair<string, IParameter>(elseParameter.Name, elseParameter);
 
             _leftHasValue = _left.Value.HasValue();
             _rightHasValue = _right.Value.HasValue();
@@ -70,16 +76,6 @@ namespace Transformalize.Operations.Transform {
 
             Error("Operator {0} is invalid.  Try equal, notequal, greaterthan, greaterthanequal, greaterthan, or greaterthanequal.");
             Environment.Exit(1);
-        }
-
-        private static KeyValuePair<string, IParameter> GetPart(KeyValuePair<string, IParameter>[] parameters, string parameter) {
-            if (!parameters.Any(p => p.Value.Name.Equals(parameter, IC))) {
-                //Error("An if transform is missing it's {0} parameter.", parameter);
-                //Environment.Exit(1);
-                return new KeyValuePair<string, IParameter>(parameter, new Parameter(parameter, parameter));
-            }
-
-            return parameters.First(p => p.Value.Name.Equals(parameter, IC));
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

@@ -101,12 +101,11 @@ namespace Transformalize.Main {
 
                 case "if":
                     return new IfOperation(
-                        element.Left,
+                        GetParameter(field.Entity, element.Left, parameters),
                         (ComparisonOperator)Enum.Parse(typeof(ComparisonOperator), element.Operator, true),
-                        element.Right,
-                        element.Then,
-                        element.Else,
-                        parameters,
+                        GetParameter(field.Entity, element.Right, parameters),
+                        GetParameter(field.Entity, element.Then, parameters),
+                        GetParameter(field.Entity, element.Else, parameters),
                         outKey,
                         outType
                     );
@@ -452,5 +451,17 @@ namespace Transformalize.Main {
                 f.ToParameter() :
                 new Parameter(parameter, parameter);
         }
+
+        private IParameter GetParameter(string entity, string parameter, IParameters parameters) {
+            Field f;
+            if (_process.TryGetField(parameter, entity, out f)) {
+                return f.ToParameter();
+            }
+            if (parameters.ContainsKey(parameter)) {
+                return parameters[parameter];
+            }
+            return new Parameter(parameter, parameter);
+        }
+
     }
 }

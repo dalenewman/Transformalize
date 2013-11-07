@@ -30,16 +30,18 @@ namespace Transformalize.Operations {
     public class ParametersExtract : InputCommandOperation {
         private readonly Process _process;
         private int[] _batchIds;
+        private readonly string[] _keys;
 
         public ParametersExtract(Process process) : base(process.OutputConnection) {
             _process = process;
             UseTransaction = false;
+            _keys = _process.Parameters.ToEnumerable().Where(p => !p.Value.HasValue()).Select(p => p.Key).ToArray();
         }
 
         private string PrepareSql() {
             string where = string.Empty;
 
-            var fields = string.Join(", ", _process.Parameters.Keys);
+            var fields = string.Join(", ", _keys);
 
             if (!_process.MasterEntity.IsFirstRun) {
                 _batchIds = _process.Entities.Select(kv => kv.TflBatchId).Distinct().ToArray();
@@ -55,8 +57,8 @@ namespace Transformalize.Operations {
             var row = new Row();
             var index = 1;
             row["TflKey"] = reader.GetValue(0);
-            foreach (var p in _process.Parameters) {
-                row[p.Key] = reader.GetValue(index);
+            foreach (var k in _keys) {
+                row[k] = reader.GetValue(index);
                 index++;
             }
             return row;

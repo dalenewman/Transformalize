@@ -49,7 +49,8 @@ namespace Transformalize.Main {
             {"datetime", (x => Convert.ToDateTime(x))},
             {"boolean", (x => Convert.ToBoolean(x))},
             {"single", (x => Convert.ToSingle(x))},
-            {"guid", (x => Guid.Parse(x))}
+            {"guid", (x => Guid.Parse(x))},
+            { "byte", (x => Convert.ToByte(x))}
         };
 
         public static Dictionary<string, Func<object, object>> ObjectConversionMap = new Dictionary<string, Func<object, object>> {
@@ -66,7 +67,8 @@ namespace Transformalize.Main {
             { "char", (x => Convert.ToChar(x)) },
             { "datetime", (x => Convert.ToDateTime(x)) },
             { "boolean", (x => Convert.ToBoolean(x)) },
-            { "single", (x => Convert.ToSingle(x)) }
+            { "single", (x => Convert.ToSingle(x)) },
+            { "byte", (x => Convert.ToByte(x))}
         };
 
         public static Func<KeyValuePair<string, Field>, bool> FieldFinder(ParameterConfigurationElement p) {

@@ -178,8 +178,8 @@ namespace Transformalize.Main {
         public Parameter ToParameter(bool useDefaultForValue = false) {
             return new Parameter() {
                 Name = Alias,
-                SimpleType = SimpleType,
-                Value = useDefaultForValue ? Default : null
+                Value = useDefaultForValue ? Default : null,
+                SimpleType = SimpleType
             };
         }
     }

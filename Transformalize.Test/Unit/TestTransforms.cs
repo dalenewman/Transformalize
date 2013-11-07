@@ -269,7 +269,7 @@ namespace Transformalize.Test.Unit {
                 .Parameter("v", "1").Name("v").Type("int32")
                 .ToParameters();
 
-            var ifTransform = new IfOperation("x", ComparisonOperator.Equal, "y", "z", "v", parameters, "out", "int32");
+            var ifTransform = new IfOperation(parameters["x"], ComparisonOperator.Equal, parameters["y"], parameters["z"], parameters["v"], "out", "int32");
 
             var output = TestOperation(input, ifTransform);
 
@@ -289,7 +289,7 @@ namespace Transformalize.Test.Unit {
                 .Parameter("empty", string.Empty).Name("empty")
                 .ToParameters();
 
-            var ifTransform = new IfOperation("x", ComparisonOperator.Equal, "empty", "y", "x", parameters, "out", "string");
+            var ifTransform = new IfOperation(parameters["x"], ComparisonOperator.Equal, parameters["empty"], parameters["y"], parameters["x"], "out", "string");
 
             var output = TestOperation(input, ifTransform);
 

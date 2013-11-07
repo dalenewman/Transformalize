@@ -32,7 +32,12 @@ namespace Transformalize.Main {
 
         public string SimpleType {
             get { return _simpleType; }
-            set { _simpleType = value; }
+            set {
+                _simpleType = value;
+                if (Value != null) {
+                    Value = Common.ObjectConversionMap[value](Value);
+                }
+            }
         }
 
         public Parameter() {

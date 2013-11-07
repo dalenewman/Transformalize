@@ -18,7 +18,7 @@ namespace Transformalize.Operations.Transform
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
                 var linqRow = row;
-                row[_outKey] = string.Concat(_parameters.Select(p => linqRow[p.Key] ?? p.Value));
+                row[_outKey] = string.Concat(_parameters.Select(p => linqRow[p.Key] ?? p.Value.Value));
                 yield return row;
             }
         }
