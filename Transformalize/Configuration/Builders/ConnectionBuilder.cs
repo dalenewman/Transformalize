@@ -69,6 +69,16 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public ConnectionBuilder Delimiter(string delimiter) {
+            _connection.Delimiter = delimiter;
+            return this;
+        }
+
+        public ConnectionBuilder Start(int start) {
+            _connection.Start = start;
+            return this;
+        }
+
         public EntityBuilder Entity(string name) {
             return _processBuilder.Entity(name);
         }

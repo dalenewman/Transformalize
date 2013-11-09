@@ -21,7 +21,8 @@ namespace Transformalize.Operations {
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
-            var cb = new DelimitedClassBuilder("Tfl" + _entity.OutputName()) { IgnoreEmptyLines = true, Delimiter = _entity.InputConnection.Delimiter };
+            var ignoreFirstLines = _entity.InputConnection.Start - 1;
+            var cb = new DelimitedClassBuilder("Tfl" + _entity.OutputName()) { IgnoreEmptyLines = true, Delimiter = _entity.InputConnection.Delimiter, IgnoreFirstLines = ignoreFirstLines };
 
             foreach (var field in _fields) {
                 cb.AddField(field.Alias, typeof(string));
