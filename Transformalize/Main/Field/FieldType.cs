@@ -30,8 +30,7 @@ namespace Transformalize.Main
         None = 0,
         ForeignKey = 1,
         Field = 2,
-        Version = 4,
-        PrimaryKey = 8,
-        MasterKey = 16
+        PrimaryKey = 4,
+        MasterKey = 8
     }
 }

@@ -145,15 +145,12 @@ SELECT
     ISNULL([TestCustomer].[Address], '') AS [Address],
     ISNULL([TestCustomer].[City], '') AS [City],
     ISNULL([TestCustomer].[Country], '') AS [Country],
-    ISNULL([TestCustomer].[CustomerRowVersion], 0x) AS [CustomerRowVersion],
     ISNULL([TestCustomer].[CustomerValidation], '') AS [CustomerValidation],
     ISNULL([TestCustomer].[FirstName], '') AS [FirstName],
     ISNULL([TestCustomer].[LastName], '') AS [LastName],
     ISNULL([TestOrder].[OrderDate], '12/31/9999 12:00:00 AM') AS [OrderDate],
-    ISNULL([TestOrder].[OrderRowVersion], 0x) AS [OrderRowVersion],
     ISNULL([TestOrder].[OrderValidation], '') AS [OrderValidation],
     ISNULL([TestProduct].[ProductName], 'None') AS [ProductName],
-    ISNULL([TestProduct].[ProductRowVersion], 0x) AS [ProductRowVersion],
     ISNULL([TestCustomer].[State], '') AS [State]
 FROM TestOrderDetail
 INNER JOIN TflBatch b ON (TestOrderDetail.TflBatchId = b.TflBatchId AND b.ProcessName = 'Test')

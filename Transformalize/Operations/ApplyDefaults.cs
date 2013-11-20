@@ -45,7 +45,9 @@ namespace Transformalize.Operations {
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
                 foreach (var field in _fields) {
-                    if (row[field.Alias] == null) {
+                    if (field.DefaultNull && row[field.Alias] == null) {
+                        row[field.Alias] = field.Default;
+                    } else if (field.DefaultBlank && row[field.Alias] != null && row[field.Alias].Equals(string.Empty)) {
                         row[field.Alias] = field.Default;
                     }
                 }

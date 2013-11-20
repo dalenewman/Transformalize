@@ -55,7 +55,9 @@ namespace Transformalize.Main {
                 NodeType = element.NodeType,
                 ReadInnerXml = element.ReadInnerXml,
                 VariableLength = element.VariableLength,
-                Aggregate = element.Aggregate.ToLower()
+                Aggregate = element.Aggregate.ToLower(),
+                DefaultNull = element.DefaultNull,
+                DefaultBlank = element.DefaultBlank
             };
 
             FieldSearchTypesLoader(field, element);

@@ -66,16 +66,24 @@ namespace Transformalize.Operations.Transform {
             _thenHasValue = _then.Value.HasValue();
             _elseHasValue = _else.Value.HasValue();
 
-            _leftValue = _leftHasValue ? Common.ObjectConversionMap[_left.Value.SimpleType](_left.Value.Value) : null;
-            _rightValue = _rightHasValue ? Common.ObjectConversionMap[_right.Value.SimpleType](_right.Value.Value) : null;
-            _thenValue = _thenHasValue ? Common.ObjectConversionMap[outType](_then.Value.Value) : null;
-            _elseValue = _elseHasValue ? Common.ObjectConversionMap[outType](_else.Value.Value) : null;
+            _leftValue = _leftHasValue ? ComparableValue(_right.Value.SimpleType, _left.Value.Value) : null;
+            _rightValue = _rightHasValue ? ComparableValue(_left.Value.SimpleType, _right.Value.Value) : null;
+            _thenValue = _thenHasValue ? ComparableValue(outType, _then.Value.Value) : null;
+            _elseValue = _elseHasValue ?  ComparableValue(outType, _else.Value.Value) : null;
 
             if (_compare.ContainsKey(_op))
                 return;
 
             Error("Operator {0} is invalid.  Try equal, notequal, greaterthan, greaterthanequal, greaterthan, or greaterthanequal.");
             Environment.Exit(1);
+        }
+
+        private object ComparableValue(string otherType, object value) {
+            if (value.Equals(string.Empty) && !otherType.Equals("string")) {
+                return new DefaultFactory().Convert(value, otherType);
+            }
+
+            return Common.ObjectConversionMap[otherType](value);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

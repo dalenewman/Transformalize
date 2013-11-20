@@ -330,6 +330,15 @@ namespace Transformalize.Main {
             return this;
         }
 
+        public FieldSqlWriter IsNotRowVersion() {
+            foreach (var key in CopyOutputKeys()) {
+                var field = _original[key];
+                if (field.SimpleType.Equals("rowversion"))
+                    _output.Remove(key);
+            }
+            return this;
+        }
+
         public FieldSqlWriter FieldType(params FieldType[] answers) {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];

@@ -21,6 +21,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Transformalize.Main.Providers
 {
@@ -54,7 +55,7 @@ namespace Transformalize.Main.Providers
                     if (entity.Fields.Any(f => f.Value.FieldType.HasFlag(FieldType.ForeignKey))) {
                         fields[StarFieldType.Foreign].AddRange(new FieldSqlWriter(entity.Fields).Output().FieldType(FieldType.ForeignKey).Context());
                     }
-                    fields[StarFieldType.Other].AddRange(new FieldSqlWriter(entity.Fields, entity.CalculatedFields).Output().FieldType(FieldType.Field, FieldType.Version).Context());
+                    fields[StarFieldType.Other].AddRange(new FieldSqlWriter(entity.Fields, entity.CalculatedFields).Output().IsNotRowVersion().FieldType(FieldType.Field).Context());
                 }
             }
 

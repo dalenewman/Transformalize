@@ -38,6 +38,8 @@ namespace Transformalize.Configuration
         private const string UNICODE = "unicode";
         private const string VARIABLE_LENGTH = "variable-length";
         private const string DEFAULT = "default";
+        private const string DEFAULT_NULL = "default-null";
+        private const string DEFAULT_BLANK = "default-blank";
         private const string TRANSFORMS = "transforms";
         private const string VALIDATORS = "validators";
         private const string SEARCH_TYPE = "search-type";
@@ -78,6 +80,17 @@ namespace Transformalize.Configuration
             set { this[TYPE] = value; }
         }
 
+        [ConfigurationProperty(DEFAULT_NULL, IsRequired = false, DefaultValue = true)]
+        public bool DefaultNull {
+            get { return (bool) this[DEFAULT_NULL]; }
+            set { this[DEFAULT_NULL] = value; }
+        }
+
+        [ConfigurationProperty(DEFAULT_BLANK, IsRequired = false, DefaultValue = false)]
+        public bool DefaultBlank {
+            get { return (bool)this[DEFAULT_BLANK]; }
+            set { this[DEFAULT_BLANK] = value; }
+        }
 
         [ConfigurationProperty(SEARCH_TYPE, IsRequired = false, DefaultValue = "default")]
         public string SearchType
