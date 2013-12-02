@@ -74,22 +74,22 @@ namespace Transformalize.Main.Providers.SqlServer {
         public string CreateSql() {
             var provider = _process.OutputConnection.Provider;
             var builder = new StringBuilder();
-            builder.AppendFormat("CREATE VIEW {0} AS\r\n", _process.Star);
-            builder.AppendFormat("SELECT\r\n    {0}.TflKey,\r\n    {0}.TflBatchId,\r\n    b.TflUpdate,\r\n", _masterEntity.OutputName());
+            builder.AppendFormat("CREATE VIEW {0} AS\r\n", provider.Enclose(_process.Star));
+            builder.AppendFormat("SELECT\r\n    d.TflKey,\r\n    d.TflBatchId,\r\n    b.TflUpdate,\r\n");
 
             var typedFields = new StarFields(_process).TypedFields();
-            builder.AppendLine(string.Concat(new FieldSqlWriter(typedFields[StarFieldType.Master]).Alias(provider).PrependEntityOutput(provider).Prepend("    ").Write(",\r\n"), ","));
+            builder.AppendLine(string.Concat(new FieldSqlWriter(typedFields[StarFieldType.Master]).Alias(provider).PrependEntityOutput(provider, "d").Prepend("    ").Write(",\r\n"), ","));
 
             if (typedFields[StarFieldType.Foreign].Any())
-                builder.AppendLine(string.Concat(new FieldSqlWriter(typedFields[StarFieldType.Foreign]).Alias(provider).PrependEntityOutput(provider, _masterEntity.OutputName()).IsNull().ToAlias(provider).Prepend("    ").Write(",\r\n"), ","));
+                builder.AppendLine(string.Concat(new FieldSqlWriter(typedFields[StarFieldType.Foreign]).Alias(provider).PrependEntityOutput(provider, "d").IsNull().ToAlias(provider).Prepend("    ").Write(",\r\n"), ","));
 
             if (typedFields[StarFieldType.Other].Any())
                 builder.AppendLine(string.Concat(new FieldSqlWriter(typedFields[StarFieldType.Other]).Alias(provider).PrependEntityOutput(provider).IsNull().ToAlias(provider).Prepend("    ").Write(",\r\n"), ","));
 
             builder.TrimEnd("\r\n,");
             builder.AppendLine();
-            builder.AppendFormat("FROM {0}\r\n", _masterEntity.OutputName());
-            builder.AppendFormat("INNER JOIN TflBatch b ON ({0}.TflBatchId = b.TflBatchId AND b.ProcessName = '{1}')\r\n", _masterEntity.OutputName(), _process.Name);
+            builder.AppendFormat("FROM {0} d\r\n", provider.Enclose(_masterEntity.OutputName()));
+            builder.AppendFormat("INNER JOIN TflBatch b ON (d.TflBatchId = b.TflBatchId AND b.ProcessName = '{0}')\r\n", _process.Name);
 
             foreach (var entity in _process.Entities.Where(e => !e.IsMaster())) {
                 builder.AppendFormat("LEFT OUTER JOIN {0} ON (", entity.OutputName());

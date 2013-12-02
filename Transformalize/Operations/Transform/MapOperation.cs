@@ -9,7 +9,6 @@ namespace Transformalize.Operations.Transform {
         private readonly string _inKey;
         private readonly string _outKey;
         private readonly string _outType;
-        private readonly Map[] _maps;
         private readonly Map _endsWith;
         private readonly Map _equals;
         private readonly bool _hasEndsWith;
@@ -18,18 +17,20 @@ namespace Transformalize.Operations.Transform {
         private readonly Map _startsWith;
 
         public MapOperation(string inKey, string outKey, string outType, IEnumerable<Map> maps) {
+
+            var m = maps.ToArray();
+
             _inKey = inKey;
             _outKey = outKey;
             _outType = outType;
-            _maps = maps.ToArray();
-
-            _equals = _maps[0];
+            
+            _equals = m[0];
             _hasEquals = _equals.Any();
 
-            _startsWith = _maps[1];
+            _startsWith = m[1];
             _hasStartsWith = _startsWith.Any();
 
-            _endsWith = _maps[2];
+            _endsWith = m[2];
             _hasEndsWith = _endsWith.Any();
 
             ApplyDataTypes(_equals);

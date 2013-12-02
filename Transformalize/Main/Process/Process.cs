@@ -64,8 +64,15 @@ namespace Transformalize.Main {
         public AbstractConnection OutputConnection;
         private List<IOperation> _transformOperations = new List<IOperation>();
         private IParameters _parameters = new Parameters.Parameters();
+        private bool _enabled = true;
         public string Star { get; set; }
         public string Bcp { get; set; }
+
+        public bool Enabled
+        {
+            get { return _enabled; }
+            set { _enabled = value; }
+        }
 
         public ValidationResults ValidationResults {
             get { return _validationResults; }
@@ -134,7 +141,10 @@ namespace Transformalize.Main {
         }
 
         public bool IsReady() {
-            return Connections.Select(connection => connection.Value.IsReady()).All(b => b.Equals(true));
+            if (Enabled || Options.ForceRun)
+                return Connections.Select(connection => connection.Value.IsReady()).All(b => b.Equals(true));
+            _log.Warn("Process is disabled.");
+            return false;
         }
 
         public void Run() {

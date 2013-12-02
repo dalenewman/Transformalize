@@ -24,7 +24,6 @@ using System.Linq;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Pipelines;
 using Transformalize.Main;
-using Transformalize.Main.Providers;
 using Transformalize.Processes;
 
 namespace Transformalize.Runner {

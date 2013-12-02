@@ -37,7 +37,7 @@ namespace Transformalize.Test.Integration {
 
         [Test]
         public void AInit() {
-            var options = new Options { Mode = "init" };
+            var options = new Options { Mode = "init"};
             var process = ProcessFactory.Create(FILE, options);
             process.Run();
         }

@@ -16,7 +16,7 @@ namespace Transformalize.Main {
 
         public void Load() {
             foreach (MapConfigurationElement m in _elements) {
-                if (string.IsNullOrEmpty(m.Connection)) {
+                if (string.IsNullOrEmpty(m.Items.Sql)) {
                     _process.MapEquals[m.Name] = new MapConfigurationReader(m.Items, "equals").Read();
                     _process.MapStartsWith[m.Name] = new MapConfigurationReader(m.Items, "startswith").Read();
                     _process.MapEndsWith[m.Name] = new MapConfigurationReader(m.Items, "endswith").Read();
@@ -25,7 +25,7 @@ namespace Transformalize.Main {
                         _process.MapEquals[m.Name] = new SqlMapReader(m.Items.Sql, _process.Connections[m.Connection]).Read();
                     } else {
                         _log.Error("Map {0} references connection {1}, which does not exist.", m.Name, m.Connection);
-                        Environment.Exit(0);
+                        Environment.Exit(1);
                     }
                 }
             }

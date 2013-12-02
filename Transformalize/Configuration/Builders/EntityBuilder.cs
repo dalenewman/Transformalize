@@ -24,6 +24,11 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public EntityBuilder IndexOptimizations(bool optimize = true) {
+            _entity.IndexOptimizations = optimize;
+            return this;
+        }
+
         public EntityBuilder Entity(string name) {
             return _processBuilder.Entity(name);
         }
@@ -48,14 +53,5 @@ namespace Transformalize.Configuration.Builders {
             _entity.CalculatedFields.Add(calculatedField);
             return new FieldBuilder(this, calculatedField);
         }
-    }
-
-    public interface IFieldHolder
-    {
-        FieldBuilder CalculatedField(string name);
-        FieldBuilder Field(string name);
-        EntityBuilder Entity(string name);
-        ProcessConfigurationElement Process();
-        RelationshipBuilder Relationship();
     }
 }

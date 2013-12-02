@@ -7,22 +7,19 @@ using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main {
 
-    public class EntitiesLoader
-    {
+    public class EntitiesLoader {
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly Process _process;
         private readonly EntityElementCollection _elements;
 
-        public EntitiesLoader(ref Process process, EntityElementCollection elements)
-        {
+        public EntitiesLoader(ref Process process, EntityElementCollection elements) {
             _process = process;
             _elements = elements;
         }
 
-        public void Load()
-        {
+        public void Load() {
             var count = 0;
-            var batchId = _process.Options.Mode == "init" ? 1 : _process.GetNextBatchId();
+            var batchId = _process.Options.Mode.Equals("init", StringComparison.OrdinalIgnoreCase) ? 1 : _process.GetNextBatchId();
 
             foreach (EntityConfigurationElement element in _elements) {
                 var entity = new EntityConfigurationLoader(_process).Read(batchId, element, count == 0);
@@ -39,7 +36,7 @@ namespace Transformalize.Main {
         }
 
         private void GuardAgainstFieldOverlap(Entity entity) {
-            
+
             var entityKeys = new HashSet<string>(entity.Fields.ToEnumerable().Where(f => f.Output && !f.FieldType.HasFlag(FieldType.PrimaryKey)).Select(f => f.Alias));
             var processKeys = new HashSet<string>(_process.Entities.SelectMany(e2 => e2.Fields.ToEnumerable().Where(f => f.Output).Select(f => f.Alias)));
 

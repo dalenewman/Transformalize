@@ -125,23 +125,23 @@ OPTION (MAXDOP 2);";
         public void TestWriteSql() {
             var actual = new SqlServerViewWriter(_process).CreateSql();
 
-            Assert.AreEqual(@"CREATE VIEW TestStar AS
+            Assert.AreEqual(@"CREATE VIEW [TestStar] AS
 SELECT
-    TestOrderDetail.TflKey,
-    TestOrderDetail.TflBatchId,
+    d.TflKey,
+    d.TflBatchId,
     b.TflUpdate,
-    [TestOrderDetail].[Color],
-    [TestOrderDetail].[Gender],
-    [TestOrderDetail].[OrderDetailKey],
-    [TestOrderDetail].[OrderDetailRowVersion],
-    [TestOrderDetail].[OrderKey],
-    [TestOrderDetail].[Price],
-    [TestOrderDetail].[ProductKey],
-    [TestOrderDetail].[Properties],
-    [TestOrderDetail].[Quantity],
-    [TestOrderDetail].[Result],
-    [TestOrderDetail].[Size],
-    ISNULL([TestOrderDetail].[CustomerKey], 0) AS [CustomerKey],
+    [d].[Color],
+    [d].[Gender],
+    [d].[OrderDetailKey],
+    [d].[OrderDetailRowVersion],
+    [d].[OrderKey],
+    [d].[Price],
+    [d].[ProductKey],
+    [d].[Properties],
+    [d].[Quantity],
+    [d].[Result],
+    [d].[Size],
+    ISNULL([d].[CustomerKey], 0) AS [CustomerKey],
     ISNULL([TestCustomer].[Address], '') AS [Address],
     ISNULL([TestCustomer].[City], '') AS [City],
     ISNULL([TestCustomer].[Country], '') AS [Country],
@@ -152,8 +152,8 @@ SELECT
     ISNULL([TestOrder].[OrderValidation], '') AS [OrderValidation],
     ISNULL([TestProduct].[ProductName], 'None') AS [ProductName],
     ISNULL([TestCustomer].[State], '') AS [State]
-FROM TestOrderDetail
-INNER JOIN TflBatch b ON (TestOrderDetail.TflBatchId = b.TflBatchId AND b.ProcessName = 'Test')
+FROM [TestOrderDetail] d
+INNER JOIN TflBatch b ON (d.TflBatchId = b.TflBatchId AND b.ProcessName = 'Test')
 LEFT OUTER JOIN TestOrder ON (TestOrderDetail.[OrderKey] = TestOrder.[OrderKey])
 LEFT OUTER JOIN TestCustomer ON (TestOrderDetail.[CustomerKey] = TestCustomer.[CustomerKey])
 LEFT OUTER JOIN TestProduct ON (TestOrderDetail.[ProductKey] = TestProduct.[ProductKey])

@@ -30,7 +30,7 @@ namespace Transformalize.Operations {
         private readonly Entity _entity;
 
         public EntityBulkInsert(Process process, Entity entity)
-            : base(process.OutputConnection, entity.OutputName()) {
+            : base(process.OutputConnection, process.OutputConnection.Provider.Enclose(entity.OutputName())) {
             _process = process;
             _entity = entity;
             UseTransaction = false;

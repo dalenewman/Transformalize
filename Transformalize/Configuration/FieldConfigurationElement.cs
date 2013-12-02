@@ -40,6 +40,7 @@ namespace Transformalize.Configuration
         private const string DEFAULT = "default";
         private const string DEFAULT_NULL = "default-null";
         private const string DEFAULT_BLANK = "default-blank";
+        private const string DEFAULT_WHITE_SPACE = "default-white-space";
         private const string TRANSFORMS = "transforms";
         private const string VALIDATORS = "validators";
         private const string SEARCH_TYPE = "search-type";
@@ -90,6 +91,12 @@ namespace Transformalize.Configuration
         public bool DefaultBlank {
             get { return (bool)this[DEFAULT_BLANK]; }
             set { this[DEFAULT_BLANK] = value; }
+        }
+
+        [ConfigurationProperty(DEFAULT_WHITE_SPACE, IsRequired = false, DefaultValue = false)]
+        public bool DefaultWhiteSpace {
+            get { return (bool)this[DEFAULT_WHITE_SPACE]; }
+            set { this[DEFAULT_WHITE_SPACE] = value; }
         }
 
         [ConfigurationProperty(SEARCH_TYPE, IsRequired = false, DefaultValue = "default")]

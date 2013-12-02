@@ -23,7 +23,7 @@ namespace Transformalize.Operations {
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
 
             var index = 0;
-            var stream = File.Open(_fileInfo.FullName, FileMode.Open, FileAccess.Read);
+            var stream = File.Open(_fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             var isBinary = _fileInfo.Extension == "xls";
 
             using (var reader = isBinary ? ExcelReaderFactory.CreateBinaryReader(stream) : ExcelReaderFactory.CreateOpenXmlReader(stream)) {

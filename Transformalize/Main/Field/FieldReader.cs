@@ -57,7 +57,8 @@ namespace Transformalize.Main {
                 VariableLength = element.VariableLength,
                 Aggregate = element.Aggregate.ToLower(),
                 DefaultNull = element.DefaultNull,
-                DefaultBlank = element.DefaultBlank
+                DefaultBlank = element.DefaultBlank,
+                DefaultWhiteSpace = element.DefaultWhiteSpace
             };
 
             FieldSearchTypesLoader(field, element);

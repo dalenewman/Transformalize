@@ -24,15 +24,23 @@ using System.Configuration;
 
 namespace Transformalize.Configuration {
     public class ProcessConfigurationElement : ConfigurationElement {
+
         private const string TEMPLATE_CONTENT_TYPE = "template-content-type";
         private const string NAME = "name";
         private const string STAR = "star";
         private const string BCP = "bcp";
+        private const string ENABLED = "enabled";
 
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name {
             get { return this[NAME] as string; }
             set { this[NAME] = value; }
+        }
+
+        [ConfigurationProperty(ENABLED, IsRequired = false, DefaultValue = true)]
+        public bool Enabled {
+            get { return (bool) this[ENABLED]; }
+            set { this[ENABLED] = value; }
         }
 
         [ConfigurationProperty(STAR, IsRequired = false, DefaultValue = "")]

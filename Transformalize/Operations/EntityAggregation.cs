@@ -47,11 +47,11 @@ namespace Transformalize.Operations {
             _separatorString = separator.ToString(CultureInfo.InvariantCulture);
             _separatorArray = new[] { separator };
 
-            _keysToGroupBy = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).Context().ToEnumerable().Where(f=> f.Output && f.Aggregate.Equals("group", IC)).Select(f=>f.Alias).ToArray();
+            _keysToGroupBy = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).Context().ToEnumerable().Where(f => f.Output && f.Aggregate.Equals("group", IC)).Select(f => f.Alias).ToArray();
             _firstKey = _keysToGroupBy[0];
-            
+
             _fieldsToAccumulate = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).Context().ToEnumerable().Where(f => f.Output && !f.Aggregate.Equals("group", IC)).ToArray();
-            
+
 
             foreach (var field in _fieldsToAccumulate) {
                 _builders[field.Alias] = new StringBuilder();
@@ -73,6 +73,13 @@ namespace Transformalize.Operations {
             //accumulate
             foreach (var field in _fieldsToAccumulate) {
                 switch (field.Aggregate) {
+                    case "count":
+                        switch (field.SimpleType) {
+                            case "int32":
+                                aggregate[field.Alias] = (int) aggregate[field.Alias] + 1;
+                                break;
+                        }
+                        break;
                     case "sum":
                         switch (field.SimpleType) {
                             case "int32":
@@ -92,7 +99,7 @@ namespace Transformalize.Operations {
                                 aggregate[field.Alias] = Common.Max((byte[])aggregate[field.Alias], (byte[])row[field.Alias]);
                                 break;
                             case "string":
-                                aggregate[field.Alias] = (new[] {aggregate[field.Alias].ToString(), row[field.Alias].ToString()}).Max();
+                                aggregate[field.Alias] = (new[] { aggregate[field.Alias].ToString(), row[field.Alias].ToString() }).Max();
                                 break;
                         }
                         break;

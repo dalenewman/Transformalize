@@ -113,5 +113,10 @@ namespace Transformalize.Configuration.Builders {
             return new ScriptBuilder(this, script);
         }
 
+        public ProcessBuilder Star(string star) {
+            _process.Star = star;
+            return this;
+        }
+
     }
 }

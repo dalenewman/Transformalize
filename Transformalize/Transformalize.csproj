@@ -137,6 +137,7 @@
     <Compile Include="Configuration\Builders\ConnectionBuilder.cs" />
     <Compile Include="Configuration\Builders\EntityBuilder.cs" />
     <Compile Include="Configuration\Builders\FieldBuilder.cs" />
+    <Compile Include="Configuration\Builders\IFieldHolder.cs" />
     <Compile Include="Configuration\Builders\ItemBuilder.cs" />
     <Compile Include="Configuration\Builders\JoinBuilder.cs" />
     <Compile Include="Configuration\Builders\MapBuilder.cs" />

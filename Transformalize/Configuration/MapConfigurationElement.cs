@@ -33,7 +33,7 @@ namespace Transformalize.Configuration
             set { this["name"] = value; }
         }
 
-        [ConfigurationProperty("connection", IsRequired = false, DefaultValue = "")]
+        [ConfigurationProperty("connection", IsRequired = false, DefaultValue = "input")]
         public string Connection
         {
             get { return this["connection"] as string; }

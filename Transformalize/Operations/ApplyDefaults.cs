@@ -21,6 +21,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Linq;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
@@ -45,14 +46,24 @@ namespace Transformalize.Operations {
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
                 foreach (var field in _fields) {
-                    if (field.DefaultNull && row[field.Alias] == null) {
+                    var obj = row[field.Alias];
+
+                    if (field.DefaultNull && obj == null) {
                         row[field.Alias] = field.Default;
-                    } else if (field.DefaultBlank && row[field.Alias] != null && row[field.Alias].Equals(string.Empty)) {
-                        row[field.Alias] = field.Default;
+                    } else if ((field.DefaultBlank || field.DefaultWhiteSpace) && obj != null) {
+                        if (field.DefaultBlank && obj.Equals(string.Empty))
+                            row[field.Alias] = field.Default;
+                        else if (IsWhiteSpace(obj.ToString())) {
+                            row[field.Alias] = field.Default;
+                        }
                     }
                 }
                 yield return row;
             }
+        }
+
+        public static bool IsWhiteSpace(string value) {
+            return value.All(char.IsWhiteSpace);
         }
     }
 }

@@ -28,8 +28,7 @@ using Transformalize.Libs.fastJSON;
 using Transformalize.Runner;
 
 namespace Transformalize.Main {
-    public class Options
-    {
+    public class Options {
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private LogLevel _logLevel = LogLevel.Info;
         private string _mode = "default";
@@ -45,10 +44,11 @@ namespace Transformalize.Main {
         public bool RenderTemplates { get { return _renderTemplates; } set { _renderTemplates = value; } }
         public bool PerformTemplateActions { get { return _performTemplateActions; } set { _performTemplateActions = value; } }
 
-        public LogLevel LogLevel
-        {
+        public bool ForceRun { get; set; }
+
+        public LogLevel LogLevel {
             get { return _logLevel; }
-            set { 
+            set {
                 _logLevel = value;
                 SetLogLevel(value);
             }
@@ -101,6 +101,13 @@ namespace Transformalize.Main {
                                 }
                                 break;
 
+                            case "forcerun":
+                                if (bool.TryParse(value, out input)) {
+                                    ForceRun = input;
+                                } else {
+                                    RecordBadValue(option, typeof(bool));
+                                }
+                                break;
                             case "top":
                                 int top;
                                 if (int.TryParse(value, out top)) {

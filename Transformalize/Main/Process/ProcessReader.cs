@@ -54,7 +54,8 @@ namespace Transformalize.Main {
                 Options = _options,
                 TemplateContentType = _config.TemplateContentType.Equals("raw") ? Encoding.Raw : Encoding.Html,
                 Providers = new ProviderReader(_config.Providers).Read(),
-                Bcp = _config.Bcp
+                Bcp = _config.Bcp,
+                Enabled = _config.Enabled
             };
 
             //shared across the process

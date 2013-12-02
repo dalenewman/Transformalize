@@ -64,6 +64,7 @@ namespace Transformalize.Main {
         public IParameters Parameters { get; set; }
         public bool HasParameters { get; set; }
         public bool DefaultBlank { get; set; }
+        public bool DefaultWhiteSpace { get; set; }
 
         public bool DefaultNull {
             get { return _defaultNull; }
@@ -99,6 +100,9 @@ namespace Transformalize.Main {
                 _simpleType = Common.ToSimpleType(value);
                 _systemType = Common.ToSystemType(_simpleType);
                 Default = _default; //reset default
+                if (_simpleType.Equals("rowversion", StringComparison.OrdinalIgnoreCase)) {
+                    Length = "8";
+                }
             }
         }
 

@@ -21,6 +21,8 @@
 #endregion
 
 using System;
+using System.ComponentModel;
+using System.Linq;
 using System.Xml.Linq;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
@@ -55,9 +57,9 @@ namespace Transformalize.Runner {
                 var xml = string.Format(@"
                     <transformalize>
                         <processes>
-                            <add name=""{0}"">{1}</add>
+                            <add name=""{0}"" enabled=""{1}"">{2}</add>
                         </processes>
-                    </transformalize>", contents.Name, process.InnerXml());
+                    </transformalize>", contents.Name, SafeAttribute(process, "enabled", true), process.InnerXml());
                 section.Deserialize(xml);
                 return section.Processes[0];
             } catch (Exception e) {
@@ -67,5 +69,13 @@ namespace Transformalize.Runner {
 
             return null;
         }
+
+        private object SafeAttribute(XElement element, string attribute, object defaultValue) {
+            if (element.HasAttributes && element.Attributes().Any(a => a.Name.ToString().Equals(attribute))) {
+                return Convert.ChangeType(element.Attribute("enabled").Value, defaultValue.GetType());
+            }
+            return defaultValue;
+        }
+
     }
 }

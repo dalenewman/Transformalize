@@ -20,9 +20,7 @@
 
 #endregion
 
-using System.Threading.Tasks;
 using NUnit.Framework;
-using Transformalize.Configuration;
 using Transformalize.Libs.NLog;
 using Transformalize.Main;
 
@@ -39,8 +37,6 @@ namespace Transformalize.Test.Integration {
             LogManager.ReconfigExistingLoggers();
         }
 
-
-
         [Test]
         public void Metadata() {
             ProcessFactory.Create(PJ, new Options() { Mode = "metadata" }).Run();
@@ -49,9 +45,15 @@ namespace Transformalize.Test.Integration {
         public void Init() {
             ProcessFactory.Create(PJ, new Options() { Mode = "init"}).Run();
         }
+
         [Test]
         public void Default() {
-            ProcessFactory.Create(PJ, new Options() { Top = 1, Mode = "test", LogLevel  = LogLevel.Trace }).Run();
+            ProcessFactory.Create(PJ).Run();
+        }
+
+        [Test]
+        public void RunTest() {
+            ProcessFactory.Create(PJ, new Options() { Top = 15, Mode = "test", LogLevel  = LogLevel.Info }).Run();
         }
 
 
@@ -59,14 +61,16 @@ namespace Transformalize.Test.Integration {
         public void MetadataB() {
             ProcessFactory.Create(PJB, new Options() { Mode = "metadata" }).Run();
         }
+
+        [Test]
+        public void InitB() {
+            ProcessFactory.Create(PJB, new Options() { Mode = "init" }).Run();
+        }
+
         [Test]
         public void DefaultB()
         {
             ProcessFactory.Create(PJB).Run();
-        }
-        [Test]
-        public void InitB() {
-            ProcessFactory.Create(PJB, new Options() { Mode = "init" }).Run();
         }
 
 

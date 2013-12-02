@@ -155,6 +155,10 @@ namespace Transformalize.Main.Providers {
         }
 
         public int NextBatchId(string processName) {
+            if (!RecordsExist("dbo", "TflBatchId")) {
+                return 1;
+            }
+
             using (var cn = GetConnection()) {
                 cn.Open();
                 var cmd = cn.CreateCommand();
