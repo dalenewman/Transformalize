@@ -95,7 +95,7 @@ namespace Transformalize.Main.Providers.SqlServer {
                 builder.AppendFormat("LEFT OUTER JOIN {0} ON (", entity.OutputName());
 
                 foreach (var join in entity.RelationshipToMaster.First().Join.ToArray()) {
-                    builder.AppendFormat("{0}.{1} = {2}.{3} AND ", _masterEntity.OutputName(), provider.Enclose(join.LeftField.Alias), entity.OutputName(), provider.Enclose(join.RightField.Alias));
+                    builder.AppendFormat("d.{0} = {1}.{2} AND ", provider.Enclose(join.LeftField.Alias), entity.OutputName(), provider.Enclose(join.RightField.Alias));
                 }
 
                 builder.TrimEnd(" AND ");

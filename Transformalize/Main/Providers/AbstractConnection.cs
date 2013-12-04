@@ -155,7 +155,7 @@ namespace Transformalize.Main.Providers {
         }
 
         public int NextBatchId(string processName) {
-            if (!RecordsExist("dbo", "TflBatchId")) {
+            if (!RecordsExist("dbo", "TflBatch")) {
                 return 1;
             }
 

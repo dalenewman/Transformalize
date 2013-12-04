@@ -101,8 +101,16 @@ namespace Transformalize.Operations {
                             case "string":
                                 aggregate[field.Alias] = (new[] { aggregate[field.Alias].ToString(), row[field.Alias].ToString() }).Max();
                                 break;
+                            case "guid":
+                                aggregate[field.Alias] = (new[] { (Guid)aggregate[field.Alias], (Guid) row[field.Alias] }).Max();
+                                break;
+
                         }
                         break;
+                    case "last":
+                        aggregate[field.Alias] = row[field.Alias];
+                        break;
+
                     case "join":
                         var aggregateValue = aggregate[field.Alias].ToString();
                         var aggregateIsEmpty = aggregateValue == string.Empty;

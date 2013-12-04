@@ -154,9 +154,9 @@ SELECT
     ISNULL([TestCustomer].[State], '') AS [State]
 FROM [TestOrderDetail] d
 INNER JOIN TflBatch b ON (d.TflBatchId = b.TflBatchId AND b.ProcessName = 'Test')
-LEFT OUTER JOIN TestOrder ON (TestOrderDetail.[OrderKey] = TestOrder.[OrderKey])
-LEFT OUTER JOIN TestCustomer ON (TestOrderDetail.[CustomerKey] = TestCustomer.[CustomerKey])
-LEFT OUTER JOIN TestProduct ON (TestOrderDetail.[ProductKey] = TestProduct.[ProductKey])
+LEFT OUTER JOIN TestOrder ON (d.[OrderKey] = TestOrder.[OrderKey])
+LEFT OUTER JOIN TestCustomer ON (d.[CustomerKey] = TestCustomer.[CustomerKey])
+LEFT OUTER JOIN TestProduct ON (d.[ProductKey] = TestProduct.[ProductKey])
 ;", actual);
 
             Console.Write(actual);

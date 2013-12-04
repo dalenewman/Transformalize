@@ -56,7 +56,7 @@ namespace Transformalize.Test.Integration {
 
         [Test]
         public void Test() {
-            var options = new Options { Mode = "test", Top = 3 };
+            var options = new Options { Mode = "default" };
             var process = ProcessFactory.Create(FILE, options);
             process.Run();
         }
