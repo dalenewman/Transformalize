@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.Linq;
+using Antlr.Runtime;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Providers;
@@ -34,6 +35,7 @@ namespace Transformalize.Main {
         private readonly int _tflBatchId;
         private List<AbstractOperation> _transformOperations = new List<AbstractOperation>();
         private List<AbstractOperation> _validatorOperations = new List<AbstractOperation>();
+        private IEnumerable<Row> _rows = new List<Row>();
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
         public Entity(int batchId) {
@@ -77,6 +79,12 @@ namespace Transformalize.Main {
         public bool IsFirstRun { get; set; }
         public bool UseBcp { get; set; }
         public bool IndexOptimizations { get; set; }
+
+        public IEnumerable<Row> Rows {
+            get { return _rows; }
+            set { _rows = value; }
+        }
+
         public List<AbstractOperation> TransformOperations {
             get { return _transformOperations; }
             set { _transformOperations = value; }
@@ -111,7 +119,7 @@ namespace Transformalize.Main {
 
         public List<string> SelectKeys(AbstractProvider p) {
             var selectKeys = new List<string>();
-            foreach (var field in PrimaryKey.ToEnumerable().Where(f=>f.Input)) {
+            foreach (var field in PrimaryKey.ToEnumerable().Where(f => f.Input)) {
                 selectKeys.Add(field.Alias.Equals(field.Name)
                     ? string.Concat(p.L, field.Name, p.R)
                     : string.Format("{0} = {1}", field.Alias, p.Enclose(field.Name)));

@@ -34,6 +34,7 @@ using System.Linq;
 namespace Transformalize.Main {
 
     public class TransformOperationFactory {
+
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly Process _process;
         private readonly Validator<TransformConfigurationElement> _validator = ValidationFactory.CreateValidator<TransformConfigurationElement>();
@@ -58,7 +59,7 @@ namespace Transformalize.Main {
             var inType = hasParameters ? parameters[0].SimpleType : field.SimpleType;
             var append = !string.IsNullOrEmpty(element.AppendTo);
             var outKey = append ? element.AppendTo : field.Alias;
-            var outType = append ? _process.GetField(element.AppendTo, field.Entity).SimpleType : field.SimpleType;
+            var outType = append ? _process.GetField(outKey, field.Entity).SimpleType : field.SimpleType;
 
             if (!hasParameters) {
                 parameters.Add(field.Alias, field.Alias, null, field.SimpleType);
@@ -108,6 +109,13 @@ namespace Transformalize.Main {
                         GetParameter(field.Entity, element.Else, parameters),
                         outKey,
                         outType
+                    );
+
+                case "distinctwords":
+                    return new DistinctWordsOperation(
+                        inKey,
+                        outKey,
+                        element.Separator
                     );
 
                 case "remove":
@@ -168,9 +176,15 @@ namespace Transformalize.Main {
                     );
 
                 case "map":
-                    var equals = _process.MapEquals[element.Map];
+                    var equals = _process.MapEquals.ContainsKey(element.Map) ? _process.MapEquals[element.Map] : new Map();
                     var startsWith = _process.MapStartsWith.ContainsKey(element.Map) ? _process.MapStartsWith[element.Map] : new Map();
                     var endsWith = _process.MapEndsWith.ContainsKey(element.Map) ? _process.MapEndsWith[element.Map] : new Map();
+
+                    if (equals.Count == 0 && startsWith.Count == 0 && endsWith.Count == 0) {
+                        _log.Error("Map '{0}' is not defined.", element.Map);
+                        Environment.Exit(1);
+                    }
+
                     return new MapOperation(
                         inKey,
                         outKey,
@@ -331,6 +345,9 @@ namespace Transformalize.Main {
 
                 case "length":
                     return new LengthOperation(inKey, outKey);
+
+                case "timeofday":
+                    return new TimeOfDayOperation(inKey, inType, outKey, outType, element.TimeComponent);
 
                 // validators
                 case "containscharacters":

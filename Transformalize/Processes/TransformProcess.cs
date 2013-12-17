@@ -39,12 +39,12 @@ namespace Transformalize.Processes {
         protected override void Initialize() {
             Register(new ParametersExtract(_process));
             Register(new ApplyDefaults(_process.CalculatedFields));
-            //Register(new TransformFields(_process.CalculatedFields));
 
             foreach (var transform in _process.TransformOperations) {
                 Register(transform);
             }
 
+            Register(new StringLengthOperation(_process.CalculatedFields));
             RegisterLast(new ResultsLoad(_process));
         }
 

@@ -21,11 +21,10 @@
 #endregion
 
 using System.Collections.Generic;
-using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
+using System.Linq;
 using NUnit.Framework;
-using Transformalize.Configuration;
 using Transformalize.Configuration.Builders;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
@@ -69,6 +68,23 @@ namespace Transformalize.Test.Integration {
 
             ProcessFactory.Create(process, new Options() { Mode = "init" }).Run();
             ProcessFactory.Create(process, new Options() { Mode = "test" }).Run();
+        }
+
+        [Test]
+        public void TestInternalOutput()
+        {
+            var input = new TestInput();
+
+            var process = new ProcessBuilder("process")
+                .Connection("input").Provider(ProviderType.Internal).Input(input)
+                .Connection("output").Provider(ProviderType.Internal)
+                .Entity("e")
+                    .Field("index").Int32()
+                    .Field("indexString")
+                .Process();
+
+            var rows = ProcessFactory.Create(process).Run().First();
+            Assert.AreEqual(10, rows.Count());
         }
 
     }

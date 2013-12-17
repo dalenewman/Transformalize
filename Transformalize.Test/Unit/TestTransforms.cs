@@ -612,5 +612,22 @@ namespace Transformalize.Test.Unit {
             Assert.AreEqual("Test", output[0]["y"]);
         }
 
+        [Test]
+        public void TimeOfDaySeconds()
+        {
+            var input = new RowsBuilder().Row("d", DateTime.Parse("1/1/2013 00:01:07.000")).ToOperation();
+            var transform = new TimeOfDayOperation("d", "datetime", "d", "double", "seconds");
+            var output = TestOperation(input, transform);
+            Assert.AreEqual(67, output[0]["d"]);
+        }
+
+        [Test]
+        public void TimeOfDayMinutes() {
+            var input = new RowsBuilder().Row("d", DateTime.Parse("1/1/2013 01:19:00.000")).ToOperation();
+            var transform = new TimeOfDayOperation("d", "datetime", "d", "double", "minutes");
+            var output = TestOperation(input, transform);
+            Assert.AreEqual(79, output[0]["d"]);
+        }
+
     }
 }

@@ -87,6 +87,7 @@ namespace Transformalize.Configuration {
         private const string UPPER_BOUND = "upper-bound";
         private const string UPPER_BOUND_TYPE = "upper-boundary-type";
         private const string UPPER_UNIT = "upper-unit";
+        private const string TIME_COMPONENT = "time-component";
 
         [ConfigurationProperty(METHOD, IsRequired = true)]
         public string Method {
@@ -434,6 +435,13 @@ namespace Transformalize.Configuration {
         public string ToLong {
             get { return this[TO_LONG] as string; }
             set { this[TO_LONG] = value; }
+        }
+
+        [ConfigurationProperty(TIME_COMPONENT, IsRequired = false, DefaultValue = "milliseconds")]
+        public string TimeComponent
+        {
+            get { return this[TIME_COMPONENT] as string; }
+            set { this[TIME_COMPONENT] = value; }
         }
 
         public override bool IsReadOnly() {

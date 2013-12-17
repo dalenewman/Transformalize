@@ -1114,7 +1114,9 @@
     <Compile Include="Operations\Transform\InsertOperation.cs" />
     <Compile Include="Operations\Transform\JavascriptOperation.cs" />
     <Compile Include="Operations\Transform\JoinTransformOperation.cs" />
+    <Compile Include="Operations\Transform\TimeOfDayOperation.cs" />
     <Compile Include="Operations\Transform\LeftOperation.cs" />
+    <Compile Include="Operations\Transform\DistinctWordsOperation.cs" />
     <Compile Include="Operations\Transform\LengthOperation.cs" />
     <Compile Include="Operations\Transform\MapOperation.cs" />
     <Compile Include="Operations\Transform\PadLeftOperation.cs" />
@@ -1148,6 +1150,7 @@
     <Compile Include="Operations\Validate\StringLengthValidatorOperation.cs" />
     <Compile Include="Operations\Validate\TypeConversionValidatorOperation.cs" />
     <Compile Include="Operations\Validate\ValidationOperation.cs" />
+    <Compile Include="Processes\CollectorOperation.cs" />
     <Compile Include="Processes\EntityDeleteProcess.cs" />
     <Compile Include="Operations\EntityDetectDeletes.cs" />
     <Compile Include="Processes\EntityKeysProcess.cs" />
@@ -1531,6 +1534,7 @@
     <Compile Include="Operations\FileFixedExtract.cs" />
     <Compile Include="Processes\InitializationProcess.cs" />
     <Compile Include="Processes\EntityProcess.cs" />
+    <Compile Include="Processes\StringLengthOperation.cs" />
     <Compile Include="Processes\TransformProcess.cs" />
     <Compile Include="Processes\UpdateMasterProcess.cs" />
     <Compile Include="Operations\EntityUpdateMaster.cs" />

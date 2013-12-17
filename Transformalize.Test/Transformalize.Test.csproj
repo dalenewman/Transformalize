@@ -123,6 +123,7 @@
     <Compile Include="Integration\Call.cs" />
     <Compile Include="Integration\Bcp.cs" />
     <Compile Include="Integration\BookMarks.cs" />
+    <Compile Include="Integration\Ouc.cs" />
     <Compile Include="Integration\NveInv.cs" />
     <Compile Include="Integration\Dsl.cs" />
     <Compile Include="Integration\OrderType.cs" />

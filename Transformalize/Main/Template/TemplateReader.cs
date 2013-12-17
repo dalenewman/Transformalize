@@ -55,9 +55,13 @@ namespace Transformalize.Main {
                                 Modes = modes
                             };
 
-                            if (!String.IsNullOrEmpty(action.Connection) &&
-                                _process.Connections.ContainsKey(action.Connection)) {
-                                templateAction.Connection = _process.Connections[action.Connection];
+                            if (!String.IsNullOrEmpty(action.Connection)) {
+                                if (_process.Connections.ContainsKey(action.Connection)) {
+                                    templateAction.Connection = _process.Connections[action.Connection];
+                                } else {
+                                    _log.Error("The template '{0}' refers to an invalid connection named '{1}'.", action.Action, action.Connection);
+                                    Environment.Exit(1);
+                                }
                             }
 
                             template.Actions.Add(templateAction);

@@ -34,6 +34,7 @@ namespace Transformalize.Processes {
     public class EntityProcess : EtlProcess {
         private readonly Process _process;
         private Entity _entity;
+        private readonly CollectorOperation _collector = new CollectorOperation();
 
         public EntityProcess(Process process, Entity entity) {
             GlobalDiagnosticsContext.Set("entity", Common.LogLength(entity.Alias, 20));
@@ -79,23 +80,29 @@ namespace Transformalize.Processes {
             if (_entity.Group)
                 Register(new EntityAggregation(_entity));
 
-            if (_entity.IsFirstRun) {
-                if (_process.OutputConnection.Provider.IsDatabase && _entity.IndexOptimizations) {
-                    _process.OutputConnection.DropUniqueClusteredIndex(_entity);
-                    _process.OutputConnection.DropPrimaryKey(_entity);
-                }
-                Register(new EntityAddTflFields(_entity));
-                RegisterLast(new EntityBulkInsert(_process, _entity));
+            Register(new StringLengthOperation(_entity.Fields, _entity.CalculatedFields));
+
+            if (_process.OutputConnection.Provider.Type == ProviderType.Internal) {
+                RegisterLast(_collector);
             } else {
-                Register(new EntityJoinAction(_entity).Right(new EntityOutputKeysExtract(_process, _entity)));
-                var branch = new BranchingOperation()
-                    .Add(new PartialProcessOperation()
-                        .Register(new EntityActionFilter(ref _entity, EntityAction.Insert))
-                        .RegisterLast(new EntityBulkInsert(_process, _entity)))
-                    .Add(new PartialProcessOperation()
-                        .Register(new EntityActionFilter(ref _entity, EntityAction.Update))
-                        .RegisterLast(new EntityBatchUpdate(_process, _entity)));
-                RegisterLast(branch);
+                if (_entity.IsFirstRun) {
+                    if (_process.OutputConnection.Provider.IsDatabase && _entity.IndexOptimizations) {
+                        _process.OutputConnection.DropUniqueClusteredIndex(_entity);
+                        _process.OutputConnection.DropPrimaryKey(_entity);
+                    }
+                    Register(new EntityAddTflFields(_entity));
+                    RegisterLast(new EntityBulkInsert(_process, _entity));
+                } else {
+                    Register(new EntityJoinAction(_entity).Right(new EntityOutputKeysExtract(_process, _entity)));
+                    var branch = new BranchingOperation()
+                        .Add(new PartialProcessOperation()
+                            .Register(new EntityActionFilter(ref _entity, EntityAction.Insert))
+                            .RegisterLast(new EntityBulkInsert(_process, _entity)))
+                        .Add(new PartialProcessOperation()
+                            .Register(new EntityActionFilter(ref _entity, EntityAction.Update))
+                            .RegisterLast(new EntityBatchUpdate(_process, _entity)));
+                    RegisterLast(branch);
+                }
             }
         }
 
@@ -115,7 +122,11 @@ namespace Transformalize.Processes {
                 Environment.Exit(1);
             }
 
-            new DatabaseEntityVersionWriter(_process, _entity).WriteEndVersion();
+            if (_process.OutputConnection.Provider.Type == ProviderType.Internal) {
+               _entity.Rows  = _collector.Rows;
+            } else {
+                new DatabaseEntityVersionWriter(_process, _entity).WriteEndVersion();
+            }
 
             base.PostProcessing();
         }

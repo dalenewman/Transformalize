@@ -4,7 +4,7 @@ namespace Transformalize.Main.Providers.Internal
     {
         public bool Check(AbstractConnection connection)
         {
-            return connection.InputOperation != null;
+            return connection.Provider.Type == ProviderType.Internal;
         }
     }
 }

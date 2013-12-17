@@ -28,6 +28,7 @@ using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Ninject;
 using Transformalize.Libs.RazorEngine;
+using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.AnalysisServices;
@@ -68,8 +69,7 @@ namespace Transformalize.Main {
         public string Star { get; set; }
         public string Bcp { get; set; }
 
-        public bool Enabled
-        {
+        public bool Enabled {
             get { return _enabled; }
             set { _enabled = value; }
         }
@@ -147,12 +147,13 @@ namespace Transformalize.Main {
             return false;
         }
 
-        public void Run() {
+        public IEnumerable<IEnumerable<Row>> Run() {
             Timer.Start();
-            Options.ProcessRunner.Run(this);
+            var results = Options.ProcessRunner.Run(this);
             Options.ProcessRunner.Dispose();
             Timer.Stop();
             _log.Info("Process completed in {0}.", Timer.Elapsed);
+            return results;
         }
 
         public Fields OutputFields() {

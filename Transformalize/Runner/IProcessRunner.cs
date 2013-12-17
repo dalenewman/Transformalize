@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
+using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 
 namespace Transformalize.Runner
 {
     public interface IProcessRunner : IDisposable {
-        void Run(Process process);
+        IEnumerable<IEnumerable<Row>> Run(Process process);
     }
 }

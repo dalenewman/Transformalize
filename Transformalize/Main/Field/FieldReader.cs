@@ -67,15 +67,20 @@ namespace Transformalize.Main {
         }
 
         private void FieldSearchTypesLoader(Field field, FieldConfigurationElement element) {
+            var searchTypes = element.SearchTypes.Cast<FieldSearchTypeConfigurationElement>().ToArray();
+
+            if (searchTypes.Length > 0) {
+                foreach (var st in searchTypes.Where(st => _process.SearchTypes.ContainsKey(st.Type))) {
+                    field.SearchTypes.Add(InheritType(_process.SearchTypes[st.Type], field));
+                }
+                return;
+            }
+
             var searchType = element.SearchType.ToLower();
             if (_process.SearchTypes.ContainsKey(searchType)) {
                 field.SearchTypes.Add(InheritType(_process.SearchTypes[searchType], field));
             }
 
-            var searchTypes = element.SearchTypes.Cast<FieldSearchTypeConfigurationElement>().ToArray();
-            foreach (var st in searchTypes.Where(st => _process.SearchTypes.ContainsKey(st.Type))) {
-                field.SearchTypes.Add(InheritType(_process.SearchTypes[st.Type], field));
-            }
         }
 
         private static SearchType InheritType(SearchType searchType, Field field) {

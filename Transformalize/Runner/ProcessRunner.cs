@@ -20,10 +20,13 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Libs.NLog;
+using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Pipelines;
 using Transformalize.Main;
+using Transformalize.Main.Providers;
 using Transformalize.Processes;
 
 namespace Transformalize.Runner {
@@ -31,9 +34,12 @@ namespace Transformalize.Runner {
 
         private AbstractPipelineExecuter _pipelineExecuter = new ThreadPoolPipelineExecuter();
 
-        public void Run(Process process) {
+        public IEnumerable<IEnumerable<Row>> Run(Process process)
+        {
+            var results = new List<IEnumerable<Row>>();
+
             if (!process.IsReady())
-                return;
+                return results;
 
             if (process.Options.Mode == "test")
                 _pipelineExecuter = new SingleThreadedNonCachedPipelineExecuter();
@@ -45,6 +51,7 @@ namespace Transformalize.Runner {
             if (process.Options.RenderTemplates)
                 new TemplateManager(process).Manage();
 
+            return process.Entities.Select(e=>e.Rows);
         }
 
         private void ProcessEntities(Process process) {
@@ -60,12 +67,16 @@ namespace Transformalize.Runner {
         }
 
         private void ProcessMaster(Process process) {
+            if (process.OutputConnection.Provider.Type == ProviderType.Internal)
+                return;
             var updateMasterProcess = new UpdateMasterProcess(ref process) { PipelineExecuter = _pipelineExecuter };
             updateMasterProcess.Execute();
         }
 
         private void ProcessTransforms(Process process) {
             if (process.CalculatedFields.Count <= 0)
+                return;
+            if (process.OutputConnection.Provider.Type == ProviderType.Internal)
                 return;
             var transformProcess = new TransformProcess(process) { PipelineExecuter = _pipelineExecuter };
             transformProcess.Execute();
