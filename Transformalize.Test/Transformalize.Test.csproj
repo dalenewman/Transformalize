@@ -128,6 +128,7 @@
     <Compile Include="Integration\Dsl.cs" />
     <Compile Include="Integration\OrderType.cs" />
     <Compile Include="Integration\Excel.cs" />
+    <Compile Include="Integration\ScriptRunners.cs" />
     <Compile Include="Integration\Ufo.cs" />
     <Compile Include="Integration\Nve.cs" />
     <Compile Include="Integration\Files.cs" />

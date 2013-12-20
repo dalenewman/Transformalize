@@ -49,7 +49,7 @@ namespace Transformalize.Main.Providers.AnalysisServices
                         response.Messages.Add(message.Description);
                     }
                 }
-                response.Success = true;
+                response.Success = response.Messages.Count == 0;
             }
             catch (Exception e)
             {
