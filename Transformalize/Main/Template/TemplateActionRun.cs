@@ -38,9 +38,9 @@ namespace Transformalize.Main {
                         Log.Debug("{0} affected {1} rows.", action.TemplateName,
                                   response.RowsAffected < 0 ? 0 : response.RowsAffected);
                     } else {
-                        Log.Error("{0} failed. {1} Error{2}." + Environment.NewLine + string.Join(Environment.NewLine, response.Messages), action.TemplateName, response.Messages.Count, response.Messages.Count.Plural());
+                        Log.Error("{0} failed. {1} Error{2}.", action.TemplateName, response.Messages.Count, response.Messages.Count.Plural());
                         foreach (var message in response.Messages) {
-                            Log.Warn(message);
+                            Log.Error(message);
                         }
                     }
                 } else {
