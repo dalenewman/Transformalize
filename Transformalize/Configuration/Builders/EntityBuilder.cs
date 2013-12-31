@@ -29,6 +29,11 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public EntityBuilder Delete(bool delete = true) {
+            _entity.Delete = delete;
+            return this;
+        }
+
         public EntityBuilder Entity(string name) {
             return _processBuilder.Entity(name);
         }

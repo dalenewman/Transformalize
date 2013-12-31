@@ -30,6 +30,7 @@ namespace Transformalize.Configuration {
         private const string STAR = "star";
         private const string BCP = "bcp";
         private const string ENABLED = "enabled";
+        private const string INHERIT = "inherit";
 
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name {
@@ -37,9 +38,15 @@ namespace Transformalize.Configuration {
             set { this[NAME] = value; }
         }
 
+        [ConfigurationProperty(INHERIT, IsRequired = false, DefaultValue = "")]
+        public string Inherit {
+            get { return this[INHERIT] as string; }
+            set { this[INHERIT] = value; }
+        }
+
         [ConfigurationProperty(ENABLED, IsRequired = false, DefaultValue = true)]
         public bool Enabled {
-            get { return (bool) this[ENABLED]; }
+            get { return (bool)this[ENABLED]; }
             set { this[ENABLED] = value; }
         }
 
@@ -115,6 +122,18 @@ namespace Transformalize.Configuration {
             var config = new TransformalizeConfiguration();
             config.Processes.Add(this);
             return config.Serialize(null, "transformalize", ConfigurationSaveMode.Minimal);
+        }
+
+        public void Merge(ProcessConfigurationElement child) {
+            this.CalculatedFields.Merge(child.CalculatedFields);
+            this.Connections.Merge(child.Connections);
+            this.Entities.Merge(child.Entities);
+            this.Maps.Merge(child.Maps);
+            this.Providers.Merge(child.Providers);
+            this.Relationships.Merge(child.Relationships);
+            this.Scripts.Merge(child.Scripts);
+            this.SearchTypes.Merge(child.SearchTypes);
+            this.Templates.Merge(child.Templates);
         }
     }
 }

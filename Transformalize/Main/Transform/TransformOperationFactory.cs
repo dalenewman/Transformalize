@@ -34,6 +34,9 @@ using System.Linq;
 namespace Transformalize.Main {
 
     public class TransformOperationFactory {
+        private const string DEFAULT = "[default]";
+        private const string SPACE = " ";
+        private const string COMMA = ",";
 
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly Process _process;
@@ -112,6 +115,9 @@ namespace Transformalize.Main {
                     );
 
                 case "distinctwords":
+                    if (element.Separator.Equals(DEFAULT)) {
+                        element.Separator = SPACE;
+                    }
                     return new DistinctWordsOperation(
                         inKey,
                         outKey,
@@ -131,6 +137,17 @@ namespace Transformalize.Main {
                         inKey,
                         outKey,
                         element.TrimChars
+                    );
+
+                case "trimstartappend":
+                    if (element.Separator.Equals(DEFAULT)) {
+                        element.Separator = SPACE;
+                    }
+                    return new TrimStartAppendOperation(
+                        inKey,
+                        outKey,
+                        element.TrimChars,
+                        element.Separator
                     );
 
                 case "trimend":
@@ -283,6 +300,9 @@ namespace Transformalize.Main {
                     );
 
                 case "join":
+                    if (element.Separator.Equals(DEFAULT)) {
+                        element.Separator = SPACE;
+                    }
                     return new JoinTransformOperation(
                         outKey,
                         element.Separator,
@@ -349,6 +369,9 @@ namespace Transformalize.Main {
                 case "timeofday":
                     return new TimeOfDayOperation(inKey, inType, outKey, outType, element.TimeComponent);
 
+                case "xpath":
+                    return new XPathOperation(inKey, outKey, outType, element.XPath);
+
                 // validators
                 case "containscharacters":
                     return new ContainsCharactersValidatorOperation(
@@ -375,6 +398,9 @@ namespace Transformalize.Main {
                     );
 
                 case "domain":
+                    if (element.Separator.Equals(DEFAULT)) {
+                        element.Separator = COMMA;
+                    }
                     var domain = element.Domain.Split(element.Separator.ToCharArray()).Select(s => Common.ObjectConversionMap[field.SimpleType](s));
 
                     return new DomainValidatorOperation(

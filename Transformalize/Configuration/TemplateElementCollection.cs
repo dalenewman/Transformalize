@@ -23,7 +23,7 @@
 using System.Configuration;
 
 namespace Transformalize.Configuration {
-    public class TemplateElementCollection : ConfigurationElementCollection {
+    public class TemplateElementCollection : MyConfigurationElementCollection {
         public TemplateConfigurationElement this[int index] {
             get { return BaseGet(index) as TemplateConfigurationElement; }
             set {

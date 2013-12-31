@@ -23,7 +23,7 @@
 using System.Configuration;
 
 namespace Transformalize.Configuration {
-    public class ScriptElementCollection : ConfigurationElementCollection {
+    public class ScriptElementCollection : MyConfigurationElementCollection {
         public ScriptConfigurationElement this[int index] {
             get { return BaseGet(index) as ScriptConfigurationElement; }
             set {

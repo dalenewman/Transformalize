@@ -59,6 +59,7 @@ namespace Transformalize.Configuration {
         private const string UNITS = "units";
         private const string DOMAIN = "domain";
         private const string TRY_PARSE = "try-parse";
+        private const string XPATH = "xpath";
         
         private const string LEFT = "left";
         private const string OPERATOR = "operator";
@@ -99,6 +100,12 @@ namespace Transformalize.Configuration {
         public string Name {
             get { return this[NAME] as string; }
             set { this[NAME] = value; }
+        }
+
+        [ConfigurationProperty(XPATH, IsRequired = false, DefaultValue = "")]
+        public string XPath {
+            get { return this[XPATH] as string; }
+            set { this[XPATH] = value; }
         }
 
         [ConfigurationProperty(CLEAN, IsRequired = false, DefaultValue = false)]
@@ -242,7 +249,7 @@ namespace Transformalize.Configuration {
             set { this[RESULT] = value; }
         }
 
-        [ConfigurationProperty(SEPARATOR, IsRequired = false, DefaultValue = ",")]
+        [ConfigurationProperty(SEPARATOR, IsRequired = false, DefaultValue = "[default]")]
         public string Separator {
             get { return this[SEPARATOR] as string; }
             set { this[SEPARATOR] = value; }

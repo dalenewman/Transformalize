@@ -23,7 +23,7 @@
 using System.Configuration;
 
 namespace Transformalize.Configuration {
-    public class EntityElementCollection : ConfigurationElementCollection {
+    public class EntityElementCollection : MyConfigurationElementCollection {
         public EntityConfigurationElement this[int index] {
             get { return BaseGet(index) as EntityConfigurationElement; }
             set {
@@ -50,5 +50,6 @@ namespace Transformalize.Configuration {
         public void Add(EntityConfigurationElement entity) {
             BaseAdd(entity);
         }
+
     }
 }

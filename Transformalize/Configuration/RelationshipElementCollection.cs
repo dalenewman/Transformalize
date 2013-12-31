@@ -23,7 +23,7 @@
 using System.Configuration;
 
 namespace Transformalize.Configuration {
-    public class RelationshipElementCollection : ConfigurationElementCollection {
+    public class RelationshipElementCollection : MyConfigurationElementCollection {
         public RelationshipConfigurationElement this[int index] {
             get { return BaseGet(index) as RelationshipConfigurationElement; }
             set {

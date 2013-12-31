@@ -24,7 +24,7 @@ using System.Configuration;
 using Transformalize.Libs.NLog.Internal;
 
 namespace Transformalize.Configuration {
-    public class ProviderElementCollection : ConfigurationElementCollection {
+    public class ProviderElementCollection : MyConfigurationElementCollection {
         public ProviderConfigurationElement this[int index] {
             get { return BaseGet(index) as ProviderConfigurationElement; }
             set {

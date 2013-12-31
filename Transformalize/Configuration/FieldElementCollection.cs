@@ -22,61 +22,29 @@
 
 using System.Configuration;
 
-namespace Transformalize.Configuration
-{
-    public class FieldElementCollection : ConfigurationElementCollection
-    {
-        public FieldConfigurationElement this[int index]
-        {
+namespace Transformalize.Configuration {
+    public class FieldElementCollection : MyConfigurationElementCollection {
+        public FieldConfigurationElement this[int index] {
             get { return BaseGet(index) as FieldConfigurationElement; }
-            set
-            {
-                if (BaseGet(index) != null)
-                {
+            set {
+                if (BaseGet(index) != null) {
                     BaseRemoveAt(index);
                 }
                 BaseAdd(index, value);
             }
         }
 
-        public override bool IsReadOnly()
-        {
+        public override bool IsReadOnly() {
             return false;
         }
 
-        protected override ConfigurationElement CreateNewElement()
-        {
+        protected override ConfigurationElement CreateNewElement() {
             return new FieldConfigurationElement();
         }
 
-        protected override object GetElementKey(ConfigurationElement element)
-        {
-            return ((FieldConfigurationElement) element).Alias.ToLower();
+        protected override object GetElementKey(ConfigurationElement element) {
+            return ((FieldConfigurationElement)element).Alias.ToLower();
         }
 
-        public void Insert(FieldConfigurationElement element)
-        {
-            BaseAdd(0, element);
-        }
-
-        public void InsertAt(FieldConfigurationElement element, int at)
-        {
-            BaseAdd(at, element);
-        }
-
-        public void Add(FieldConfigurationElement element)
-        {
-            BaseAdd(element);
-        }
-
-        public void Clear()
-        {
-            BaseClear();
-        }
-
-        public int IndexOf(FieldConfigurationElement element)
-        {
-            return BaseIndexOf(element);
-        }
     }
 }

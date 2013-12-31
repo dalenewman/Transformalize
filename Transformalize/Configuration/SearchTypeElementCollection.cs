@@ -24,7 +24,7 @@ using System.Configuration;
 using Transformalize.Libs.NLog.Internal;
 
 namespace Transformalize.Configuration {
-    public class SearchTypeElementCollection : ConfigurationElementCollection {
+    public class SearchTypeElementCollection : MyConfigurationElementCollection {
         public SearchTypeConfigurationElement this[int index] {
             get { return BaseGet(index) as SearchTypeConfigurationElement; }
             set {

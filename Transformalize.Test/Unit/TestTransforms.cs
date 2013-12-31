@@ -333,11 +333,36 @@ namespace Transformalize.Test.Unit {
         [Test]
         public void Left() {
             var input = new RowsBuilder().Row("left", "left").ToOperation();
-            var parameters = new ParametersBuilder().Parameters("left").ToParameters();
             var left = new LeftOperation("left", "o1", 3);
             var output = TestOperation(input, left);
             Assert.AreEqual("lef", output[0]["o1"]);
         }
+
+        [Test]
+        public void XPathByAttributeValue()
+        {
+            var input = new RowsBuilder().Row("xml", "<items><item id=\"1\">one</item><item id=\"2\">two</item><item id=\"3\">three</item></items>").ToOperation();
+            var transform = new XPathOperation("xml", "value", "string", "items/item[@id = \"2\"]");
+            var output = TestOperation(input, transform);
+            Assert.AreEqual("two",output[0]["value"]);
+        }
+
+        [Test]
+        public void XPathByElementValue() {
+            var input = new RowsBuilder().Row("xml", "<items><item id=\"1\">one</item><item id=\"2\">two</item><item id=\"3\">three</item></items>").ToOperation();
+            var transform = new XPathOperation("xml", "value", "int", "items/item[. = \"one\"]/@id");
+            var output = TestOperation(input, transform);
+            Assert.AreEqual(1, output[0]["value"]);
+        }
+
+        [Test]
+        public void XPathSample() {
+            var input = new RowsBuilder().Row("xml", "<items><item ro=\"False\"><FcThMtrTypeCodeOld>KW</FcThMtrTypeCodeOld><FcThMtrRdgOld>0.39</FcThMtrRdgOld></item><item ro=\"False\"><FcThMtrTypeCodeOld>KWH</FcThMtrTypeCodeOld><FcThMtrRdgOld>66448</FcThMtrRdgOld></item></items>").ToOperation();
+            var transform = new XPathOperation("xml", "value", "string", "items/item[FcThMtrTypeCodeOld = \"KWH\"]/FcThMtrRdgOld");
+            var output = TestOperation(input, transform);
+            Assert.AreEqual("66448", output[0]["value"]);
+        }
+
 
         [Test]
         public void Length() {
@@ -610,6 +635,14 @@ namespace Transformalize.Test.Unit {
             var transform = new TrimStartOperation("y", "y", "&d");
             var output = TestOperation(input, transform);
             Assert.AreEqual("Test", output[0]["y"]);
+        }
+
+        [Test]
+        public void TrimStartAppend() {
+            var input = new RowsBuilder().Row("OrderNumber", "C000012").ToOperation();
+            var transform = new TrimStartAppendOperation("OrderNumber", "OrderNumber", "C0"," ");
+            var output = TestOperation(input, transform);
+            Assert.AreEqual("C000012 12", output[0]["OrderNumber"]);
         }
 
         [Test]

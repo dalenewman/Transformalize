@@ -48,6 +48,7 @@ namespace Transformalize.Main {
                 Prefix = element.Prefix,
                 Group = element.Group,
                 IndexOptimizations = element.IndexOptimizations,
+                Delete = element.Delete,
                 Alias = string.IsNullOrEmpty(element.Alias) ? element.Name : element.Alias,
                 UseBcp = element.UseBcp
             };

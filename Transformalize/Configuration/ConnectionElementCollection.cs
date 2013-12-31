@@ -25,7 +25,7 @@ using System.Configuration;
 using System.Linq;
 
 namespace Transformalize.Configuration {
-    public class ConnectionElementCollection : ConfigurationElementCollection {
+    public class ConnectionElementCollection : MyConfigurationElementCollection {
         public ConnectionConfigurationElement this[int index] {
             get { return BaseGet(index) as ConnectionConfigurationElement; }
             set {
@@ -52,8 +52,5 @@ namespace Transformalize.Configuration {
             return ((ConnectionConfigurationElement)element).Name.ToLower();
         }
 
-        public void Add(ConnectionConfigurationElement connection) {
-            BaseAdd(connection);
-        }
     }
 }

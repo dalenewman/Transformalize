@@ -34,8 +34,7 @@ namespace Transformalize.Runner {
 
         private AbstractPipelineExecuter _pipelineExecuter = new ThreadPoolPipelineExecuter();
 
-        public IEnumerable<IEnumerable<Row>> Run(Process process)
-        {
+        public IEnumerable<IEnumerable<Row>> Run(Process process) {
             var results = new List<IEnumerable<Row>>();
 
             if (!process.IsReady())
@@ -44,6 +43,7 @@ namespace Transformalize.Runner {
             if (process.Options.Mode == "test")
                 _pipelineExecuter = new SingleThreadedNonCachedPipelineExecuter();
 
+            ProcessDeletes(process);
             ProcessEntities(process);
             ProcessMaster(process);
             ProcessTransforms(process);
@@ -51,12 +51,20 @@ namespace Transformalize.Runner {
             if (process.Options.RenderTemplates)
                 new TemplateManager(process).Manage();
 
-            return process.Entities.Select(e=>e.Rows);
+            return process.Entities.Select(e => e.Rows);
+        }
+
+        private void ProcessDeletes(Process process) {
+            foreach (var entityDeleteProcess in process.Entities.Where(e => e.Delete).Select(entity => new EntityDeleteProcess(process, entity))) {
+                entityDeleteProcess.PipelineExecuter = _pipelineExecuter;
+                entityDeleteProcess.Execute();
+            }
         }
 
         private void ProcessEntities(Process process) {
 
             foreach (var entityKeysProcess in process.Entities.Where(e => e.InputConnection.Provider.IsDatabase).Select(entity => new EntityKeysProcess(process, entity))) {
+                entityKeysProcess.PipelineExecuter = _pipelineExecuter;
                 entityKeysProcess.Execute();
             }
 

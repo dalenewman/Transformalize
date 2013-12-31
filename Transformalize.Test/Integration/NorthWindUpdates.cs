@@ -184,9 +184,6 @@ namespace Transformalize.Test.Integration {
             process.Run();
 
             Assert.AreEqual(1, process["Order Details"].Inserts);
-
-            
-            
             
             _log.Info("***** RUN 09 * HANDLE DELETE ******");
             options = new Options { Mode = "delete" };

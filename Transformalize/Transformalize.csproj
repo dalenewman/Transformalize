@@ -153,6 +153,7 @@
     <Compile Include="Configuration\ConnectionElementCollection.cs" />
     <Compile Include="Configuration\ActionConfigurationElement.cs" />
     <Compile Include="Configuration\ActionElementCollection.cs" />
+    <Compile Include="Configuration\MyConfigurationElementCollection.cs" />
     <Compile Include="Configuration\ValidatorElementCollection.cs" />
     <Compile Include="Configuration\ModeConfigurationElement.cs" />
     <Compile Include="Configuration\ModeElementCollection.cs" />
@@ -1094,6 +1095,7 @@
     <Compile Include="Libs\Rhino.Etl\Row.cs" />
     <Compile Include="Libs\Rhino.Etl\WithLoggingMixin.cs" />
     <Compile Include="Operations\BcpExtract.cs" />
+    <Compile Include="Operations\EntityInputKeysExtractAllForDelete.cs" />
     <Compile Include="Operations\FileExcelExtract.cs" />
     <Compile Include="Operations\EntityDataExtract.cs" />
     <Compile Include="Operations\EntityDelete.cs" />
@@ -1114,6 +1116,7 @@
     <Compile Include="Operations\Transform\InsertOperation.cs" />
     <Compile Include="Operations\Transform\JavascriptOperation.cs" />
     <Compile Include="Operations\Transform\JoinTransformOperation.cs" />
+    <Compile Include="Operations\Transform\XpathOperation.cs" />
     <Compile Include="Operations\Transform\TimeOfDayOperation.cs" />
     <Compile Include="Operations\Transform\LeftOperation.cs" />
     <Compile Include="Operations\Transform\DistinctWordsOperation.cs" />
@@ -1135,6 +1138,7 @@
     <Compile Include="Operations\Transform\ToUpperOperation.cs" />
     <Compile Include="Operations\Transform\TrimEndOperation.cs" />
     <Compile Include="Operations\Transform\TrimOperation.cs" />
+    <Compile Include="Operations\Transform\TrimStartAppendOperation.cs" />
     <Compile Include="Operations\Transform\TrimStartOperation.cs" />
     <Compile Include="Operations\Validate\ContainsCharactersValidatorOperation.cs" />
     <Compile Include="Operations\Validate\DomainValidatorOperation.cs" />

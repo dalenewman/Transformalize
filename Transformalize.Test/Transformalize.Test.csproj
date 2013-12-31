@@ -123,6 +123,7 @@
     <Compile Include="Integration\Call.cs" />
     <Compile Include="Integration\Bcp.cs" />
     <Compile Include="Integration\BookMarks.cs" />
+    <Compile Include="Integration\Duke.cs" />
     <Compile Include="Integration\Ouc.cs" />
     <Compile Include="Integration\NveInv.cs" />
     <Compile Include="Integration\Dsl.cs" />
@@ -143,6 +144,7 @@
     <Compile Include="Unit\Builders\MapsBuilder.cs" />
     <Compile Include="Integration\TestNetInput.cs" />
     <Compile Include="Unit\TestConnectionValidation.cs" />
+    <Compile Include="Unit\TestConfiguration.cs" />
     <Compile Include="Unit\TestProcess.cs" />
     <Compile Include="Unit\TestValidators.cs" />
     <Compile Include="Unit\Builders\ParameterBuilder.cs" />
@@ -185,6 +187,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="LICENSE.txt" />
+    <Content Include="NorthWindExpanded.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="NorthWind.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>

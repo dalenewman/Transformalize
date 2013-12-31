@@ -33,9 +33,10 @@ namespace Transformalize.Operations {
 
         public EntityInputKeysExtractAll(Entity entity)
             : base(entity.InputConnection) {
-            _entity = entity;
 
+            _entity = entity;
             var connection = _entity.InputConnection;
+
             if (entity.CanDetectChanges()) {
                 connection.LoadEndVersion(_entity);
                 if (!_entity.HasRows) {

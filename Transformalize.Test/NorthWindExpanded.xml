@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<process inherit="NorthWind.xml">
+
+  <entities>
+
+    <add name="Order Details" version="RowVersion" prefix="OrderDetails" use-bcp="true">
+      <fields>
+        <add name="Discount" type="System.Single" ></add>
+        <add name="OrderID" type="System.Int32" primary-key="true"></add>
+        <add name="ProductID" type="System.Int32" primary-key="true"></add>
+        <add name="Quantity" type="System.Int32" ></add>
+        <add name="RowVersion" type="System.Byte[]" length="8" ></add>
+        <add name="UnitPrice" type="System.Decimal" precision="19" scale="4"></add>
+      </fields>
+      <calculated-fields>
+        <add name="OrderDetailsExtendedPrice" type="Decimal" precision="19" scale="4">
+          <transforms>
+            <add method="javascript" script="OrderDetailsQuantity * (OrderDetailsUnitPrice * (1-OrderDetailsDiscount))" parameter="*" />
+          </transforms>
+        </add>
+      </calculated-fields>
+    </add>
+
+    <add name="Orders" version="RowVersion" prefix="Orders">
+      <fields>
+        <add name="CustomerID" type="System.Char" length="5" ></add>
+        <add name="EmployeeID" type="System.Int32" ></add>
+        <add name="Freight" type="System.Decimal" precision="19" scale="4"></add>
+        <add name="OrderDate" type="System.DateTime" ></add>
+        <add name="OrderID" type="System.Int32" primary-key="true"></add>
+        <add name="RequiredDate" type="System.DateTime" ></add>
+        <add name="RowVersion" type="System.Byte[]" length="8" ></add>
+        <add name="ShipAddress" length="60" ></add>
+        <add name="ShipCity" length="15" ></add>
+        <add name="ShipCountry" length="15" ></add>
+        <add name="ShipName" length="40" ></add>
+        <add name="ShippedDate" type="System.DateTime" ></add>
+        <add name="ShipPostalCode" length="10" ></add>
+        <add name="ShipRegion" length="15" ></add>
+        <add name="ShipVia" type="System.Int32" ></add>
+      </fields>
+
+      <calculated-fields>
+        <add name="TimeOrderMonth" length="6" default="12-DEC">
+          <transforms>
+            <add method="tostring" format="MM-MMM" parameter="OrderDate" />
+            <add method="toUpper" />
+          </transforms>
+        </add>
+        <add name="TimeOrderDate" length="10" default="9999-12-31">
+          <transforms>
+            <add method="tostring" format="yyyy-MM-dd" parameter="OrderDate" />
+          </transforms>
+        </add>
+        <add name="TimeOrderYear" length="4" default="9999">
+          <transforms>
+            <add method="tostring" format="yyyy" parameter="OrderDate" />
+          </transforms>
+        </add>
+        <add name="TimeOrderYearNumber" type="Int16" default="0">
+          <transforms>
+            <add method="tostring" format="yyyy" parameter="OrderDate" />
+            <add method="convert" to="Int16" />
+          </transforms>
+        </add>
+      </calculated-fields>
+    </add>
+    
+  </entities>
+
+</process>

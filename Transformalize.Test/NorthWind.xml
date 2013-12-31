@@ -137,14 +137,18 @@
           </transforms>
         </add>
       </fields>
-      <transforms>
-        <add method="join" separator=" " result="Employee">
-          <parameters>
-            <add field="FirstName"></add>
-            <add field="LastName"></add>
-          </parameters>
+      <calculated-fields>
+        <add name="Employee">
+          <transforms>
+            <add method="join" separator=" ">
+              <parameters>
+                <add field="FirstName"></add>
+                <add field="LastName"></add>
+              </parameters>
+            </add>
+          </transforms>
         </add>
-      </transforms>
+      </calculated-fields>
     </add>
 
     <add name="Products" version="RowVersion" prefix="Products">

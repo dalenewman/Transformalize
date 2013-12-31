@@ -79,6 +79,7 @@ namespace Transformalize.Main {
         public bool IsFirstRun { get; set; }
         public bool UseBcp { get; set; }
         public bool IndexOptimizations { get; set; }
+        public bool Delete { get; set; }
 
         public IEnumerable<Row> Rows {
             get { return _rows; }
@@ -125,6 +126,10 @@ namespace Transformalize.Main {
                     : string.Format("{0} = {1}", field.Alias, p.Enclose(field.Name)));
             }
             return selectKeys;
+        }
+
+        public string KeysAllQuery() {
+            return InputConnection.EntityKeysAllQueryWriter.Write(this);
         }
 
         public string KeysQuery() {

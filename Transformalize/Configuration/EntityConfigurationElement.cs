@@ -20,12 +20,11 @@
 
 #endregion
 
+using System;
 using System.Configuration;
 
-namespace Transformalize.Configuration
-{
-    public class EntityConfigurationElement : ConfigurationElement
-    {
+namespace Transformalize.Configuration {
+    public class EntityConfigurationElement : ConfigurationElement {
         private const string SCHEMA = "schema";
         private const string NAME = "name";
         private const string ALIAS = "alias";
@@ -34,31 +33,27 @@ namespace Transformalize.Configuration
         private const string CALCULATED_FIELDS = "calculated-fields";
         private const string VERSION = "version";
         private const string OUTPUT = "output";
-        private const string TRANSFORMS = "transforms";
         private const string PREFIX = "prefix";
         private const string GROUP = "group";
         private const string USE_BCP = "use-bcp";
         private const string INDEX_OPTIMIZATIONS = "index-optimizations";
+        private const string DELETE = "delete";
 
         [ConfigurationProperty(SCHEMA, IsRequired = false, DefaultValue = "dbo")]
-        public string Schema
-        {
+        public string Schema {
             get { return this[SCHEMA] as string; }
             set { this[SCHEMA] = value; }
         }
 
         [ConfigurationProperty(NAME, IsRequired = true)]
-        public string Name
-        {
+        public string Name {
             get { return this[NAME] as string; }
             set { this[NAME] = value; }
         }
 
         [ConfigurationProperty(ALIAS, IsRequired = false, DefaultValue = "")]
-        public string Alias
-        {
-            get
-            {
+        public string Alias {
+            get {
                 var alias = this[ALIAS] as string;
                 return alias == string.Empty ? Name : alias;
             }
@@ -66,41 +61,36 @@ namespace Transformalize.Configuration
         }
 
         [ConfigurationProperty(CONNECTION, IsRequired = false, DefaultValue = "input")]
-        public string Connection
-        {
+        public string Connection {
             get { return this[CONNECTION] as string; }
             set { this[CONNECTION] = value; }
         }
 
         [ConfigurationProperty(FIELDS)]
-        public FieldElementCollection Fields
-        {
+        public FieldElementCollection Fields {
             get { return this[FIELDS] as FieldElementCollection; }
         }
 
         [ConfigurationProperty(CALCULATED_FIELDS)]
-        public FieldElementCollection CalculatedFields
-        {
+        public FieldElementCollection CalculatedFields {
             get { return this[CALCULATED_FIELDS] as FieldElementCollection; }
         }
 
         [ConfigurationProperty(VERSION, IsRequired = false, DefaultValue = "")]
-        public string Version
-        {
+        public string Version {
             get { return this[VERSION] as string; }
             set { this[VERSION] = value; }
         }
 
         [ConfigurationProperty(OUTPUT)]
-        public OutputElementCollection Output
-        {
+        public OutputElementCollection Output {
             get { return this[OUTPUT] as OutputElementCollection; }
         }
 
-        [ConfigurationProperty(TRANSFORMS)]
-        public TransformElementCollection Transforms
-        {
-            get { return this[TRANSFORMS] as TransformElementCollection; }
+        [ConfigurationProperty(DELETE, IsRequired = false, DefaultValue = false)]
+        public bool Delete {
+            get { return (bool)this[DELETE]; }
+            set { this[DELETE] = value; }
         }
 
         [ConfigurationProperty(INDEX_OPTIMIZATIONS, IsRequired = false, DefaultValue = true)]
@@ -116,22 +106,20 @@ namespace Transformalize.Configuration
         }
 
         [ConfigurationProperty(PREFIX, IsRequired = false, DefaultValue = "")]
-        public string Prefix
-        {
+        public string Prefix {
             get { return this[PREFIX] as string; }
             set { this[PREFIX] = value; }
         }
 
         [ConfigurationProperty(GROUP, IsRequired = false, DefaultValue = false)]
-        public bool Group
-        {
-            get { return (bool) this[GROUP]; }
+        public bool Group {
+            get { return (bool)this[GROUP]; }
             set { this[GROUP] = value; }
         }
 
-        public override bool IsReadOnly()
-        {
+        public override bool IsReadOnly() {
             return false;
         }
+
     }
 }

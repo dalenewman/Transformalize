@@ -19,6 +19,12 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public TransformBuilder XPath(string xPath)
+        {
+            _transform.XPath = xPath;
+            return this;
+        }
+
         public TransformBuilder Units(string units) {
             _transform.Units = units;
             return this;
