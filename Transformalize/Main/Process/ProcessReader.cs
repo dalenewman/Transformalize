@@ -55,7 +55,9 @@ namespace Transformalize.Main {
                 TemplateContentType = _config.TemplateContentType.Equals("raw") ? Encoding.Raw : Encoding.Html,
                 Providers = new ProviderReader(_config.Providers).Read(),
                 Bcp = _config.Bcp,
-                Enabled = _config.Enabled
+                Enabled = _config.Enabled,
+                Star = string.IsNullOrEmpty(_config.Star) ? _config.Name + "Star" : _config.Star,
+                TimeZone = string.IsNullOrEmpty(_config.TimeZone) ? TimeZoneInfo.Local.Id : _config.TimeZone
             };
 
             //shared across the process
@@ -78,7 +80,6 @@ namespace Transformalize.Main {
 
             _process.Relationships = new RelationshipsReader(_process, _config.Relationships).Read();
             new ProcessTransformsLoader(ref _process, _config.CalculatedFields).Load();
-            _process.Star = string.IsNullOrEmpty(_config.Star) ? _process.Name + "Star" : _config.Star;
 
             new EntityRelationshipLoader(ref _process).Load();
 

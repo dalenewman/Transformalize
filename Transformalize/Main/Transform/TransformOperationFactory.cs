@@ -78,6 +78,9 @@ namespace Transformalize.Main {
                         element.Format
                     );
 
+                case "copy":
+                    return new CopyOperation(inKey, outKey);
+
                 case "replace":
                     return new ReplaceOperation(
                         inKey,
@@ -315,6 +318,15 @@ namespace Transformalize.Main {
                         outKey,
                         element.FromTimeZone,
                         element.ToTimeZone
+                    );
+
+                case "timezone":
+                    var toTimeZone = string.IsNullOrEmpty(element.ToTimeZone) ? _process.TimeZone : element.ToTimeZone;
+                    return new TimeZoneOperation(
+                        inKey,
+                        outKey,
+                        element.FromTimeZone,
+                        toTimeZone
                     );
 
                 case "tojson":

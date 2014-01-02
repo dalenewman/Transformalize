@@ -81,21 +81,23 @@ namespace Transformalize.Main.Parameters {
             return _first.Key != null;
         }
 
-        public IEnumerable<KeyValuePair<string, IParameter>> ToEnumerable()
-        {
+        public IEnumerable<KeyValuePair<string, IParameter>> ToEnumerable() {
             return _items.Select(p => p).OrderBy(p => p.Value.Index);
         }
 
-        public bool ContainsKey(string key)
-        {
+        public bool ContainsKey(string key) {
             return _items.ContainsKey(key);
         }
 
         public void Add(string field, IParameter parameter) {
-            parameter.Index = _index;
-            _items.Add(field, parameter);
-            RecordFirst(field, parameter);
-            _index++;
+            if (_items.ContainsKey(field)) {
+                _items[field] = parameter;
+            } else {
+                parameter.Index = _index;
+                _items.Add(field, parameter);
+                RecordFirst(field, parameter);
+                _index++;
+            }
         }
 
         private void RecordFirst(string field, IParameter parameter) {

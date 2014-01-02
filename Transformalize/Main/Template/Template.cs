@@ -73,16 +73,8 @@ namespace Transformalize.Main {
         }
 
         private string GetFileName(string folderName) {
-            var folder = PrepareFolder(folderName);
+            var folder = Common.GetTemporarySubFolder(_process.Name, folderName);
             return new FileInfo(Path.Combine(folder, Name + ".txt")).FullName;
-        }
-
-        private string PrepareFolder(string folder) {
-            var f = Path.Combine(Common.GetTemporaryFolder(_process.Name), folder);
-            if (!Directory.Exists(f)) {
-                Directory.CreateDirectory(f);
-            }
-            return f;
         }
 
         private static bool TryRead(string fileName, out string contents) {
@@ -104,7 +96,7 @@ namespace Transformalize.Main {
 
         private bool CacheIsUsable()
         {
-            return Cache && _process.Options.Mode != "init" && _renderedTemplateContentExists && _templateContentExists && _templateContent.Equals(Content);
+            return Cache && !_process.Options.ConfigurationUpdated && _process.Options.Mode != "init" && _renderedTemplateContentExists && _templateContentExists && _templateContent.Equals(Content);
         }
 
         private string RenderContent()

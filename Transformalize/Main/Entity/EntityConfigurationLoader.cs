@@ -38,7 +38,7 @@ namespace Transformalize.Main {
 
         public Entity Read(int batchId, EntityConfigurationElement element, bool isMaster) {
 
-            GlobalDiagnosticsContext.Set("entity", Common.LogLength(element.Alias, 20));
+            GlobalDiagnosticsContext.Set("entity", Common.LogLength(element.Alias));
 
             var entity = new Entity(batchId) {
                 ProcessName = _process.Name,

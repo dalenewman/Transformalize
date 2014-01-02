@@ -48,12 +48,13 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentException))]
-        public void TestAddingSameKey() {
+        public void TestAddingSameKeyPreservesLast() {
             var actual = new Parameters {
-                {"Key1", "Name", "Value", "string"},
-                {"Key1", "Name", "Value", "string"},
+                {"Key1", "Name", "Value1", "string"},
+                {"Key1", "Name", "Value2", "string"},
             };
+            Assert.AreEqual(1, actual.Count);
+            Assert.AreEqual("Value2", actual[0].Value);
         }
 
         [Test]

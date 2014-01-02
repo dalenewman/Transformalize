@@ -44,7 +44,8 @@ namespace Transformalize.Main {
         public bool RenderTemplates { get { return _renderTemplates; } set { _renderTemplates = value; } }
         public bool PerformTemplateActions { get { return _performTemplateActions; } set { _performTemplateActions = value; } }
 
-        public bool ForceRun { get; set; }
+        public bool Force { get; set; }
+        public bool ConfigurationUpdated { get; set; }
 
         public LogLevel LogLevel {
             get { return _logLevel; }
@@ -101,9 +102,9 @@ namespace Transformalize.Main {
                                 }
                                 break;
 
-                            case "forcerun":
+                            case "force":
                                 if (bool.TryParse(value, out input)) {
-                                    ForceRun = input;
+                                    Force = input;
                                 } else {
                                     RecordBadValue(option, typeof(bool));
                                 }

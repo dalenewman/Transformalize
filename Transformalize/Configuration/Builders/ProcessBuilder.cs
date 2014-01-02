@@ -118,5 +118,11 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public ProcessBuilder TimeZone(string timeZone)
+        {
+            _process.TimeZone = timeZone;
+            return this;
+        }
+
     }
 }

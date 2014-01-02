@@ -74,6 +74,15 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
+        public void Copy()
+        {
+            var input = new RowsBuilder().Row().Field("f1", 7).ToOperation();
+            var copy = new CopyOperation("f1", "f2");
+            var output = TestOperation(input, copy);
+            Assert.AreEqual(7, output[0]["f2"]);
+        }
+
+        [Test]
         public void Distance() {
 
             var input = new RowsBuilder().Row().Field("toLat", 28.419385d).Field("toLong", -81.581234d).ToOperation();

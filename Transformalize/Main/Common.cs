@@ -94,6 +94,14 @@ namespace Transformalize.Main {
             return folder;
         }
 
+        public static string GetTemporarySubFolder(string processName, string subFolder) {
+            var f = Path.Combine(GetTemporaryFolder(processName), subFolder);
+            if (!Directory.Exists(f)) {
+                Directory.CreateDirectory(f);
+            }
+            return f;
+        }
+
         public static IEnumerable<byte> ObjectToByteArray(object obj) {
             if (obj == null)
                 return null;
@@ -155,7 +163,7 @@ namespace Transformalize.Main {
             return new DateTime(1, 1, 1).AddDays(timeKey - 1);
         }
 
-        public static string LogLength(string value, int totalWidth) {
+        public static string LogLength(string value, int totalWidth = 20) {
             return value.Length > totalWidth ? value.Left(totalWidth) : value.PadRight(totalWidth, '.');
         }
 

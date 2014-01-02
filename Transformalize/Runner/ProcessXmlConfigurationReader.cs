@@ -56,12 +56,13 @@ namespace Transformalize.Runner {
                 var xml = string.Format(@"
                     <transformalize>
                         <processes>
-                            <add name=""{0}"" enabled=""{1}"" inherit=""{2}"">{3}</add>
+                            <add name=""{0}"" enabled=""{1}"" inherit=""{2}"" time-zone=""{3}"">{4}</add>
                         </processes>
                     </transformalize>",
                     contents.Name,
                     SafeAttribute(process, "enabled", true),
                     SafeAttribute(process, "inherit", string.Empty),
+                    SafeAttribute(process, "time-zone", string.Empty),
                     process.InnerXml()
                 );
                 section.Deserialize(xml);

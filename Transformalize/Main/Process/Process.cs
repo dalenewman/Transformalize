@@ -68,6 +68,7 @@ namespace Transformalize.Main {
         private bool _enabled = true;
         public string Star { get; set; }
         public string Bcp { get; set; }
+        public string TimeZone { get; set; }
 
         public bool Enabled {
             get { return _enabled; }
@@ -141,7 +142,7 @@ namespace Transformalize.Main {
         }
 
         public bool IsReady() {
-            if (Enabled || Options.ForceRun)
+            if (Enabled || Options.Force)
                 return Connections.Select(connection => connection.Value.IsReady()).All(b => b.Equals(true));
             _log.Warn("Process is disabled.");
             return false;

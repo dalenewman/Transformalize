@@ -31,6 +31,7 @@ namespace Transformalize.Configuration {
         private const string BCP = "bcp";
         private const string ENABLED = "enabled";
         private const string INHERIT = "inherit";
+        private const string TIMEZONE = "time-zone";
 
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name {
@@ -42,6 +43,12 @@ namespace Transformalize.Configuration {
         public string Inherit {
             get { return this[INHERIT] as string; }
             set { this[INHERIT] = value; }
+        }
+
+        [ConfigurationProperty(TIMEZONE, IsRequired = false, DefaultValue = "")]
+        public string TimeZone {
+            get { return this[TIMEZONE] as string; }
+            set { this[TIMEZONE] = value; }
         }
 
         [ConfigurationProperty(ENABLED, IsRequired = false, DefaultValue = true)]
@@ -125,15 +132,22 @@ namespace Transformalize.Configuration {
         }
 
         public void Merge(ProcessConfigurationElement child) {
-            this.CalculatedFields.Merge(child.CalculatedFields);
-            this.Connections.Merge(child.Connections);
-            this.Entities.Merge(child.Entities);
-            this.Maps.Merge(child.Maps);
-            this.Providers.Merge(child.Providers);
-            this.Relationships.Merge(child.Relationships);
-            this.Scripts.Merge(child.Scripts);
-            this.SearchTypes.Merge(child.SearchTypes);
-            this.Templates.Merge(child.Templates);
+            //properties
+            Name = child.Name;
+            Star = child.Star;
+            TimeZone = child.TimeZone;
+            Enabled = child.Enabled;
+
+            //collections
+            CalculatedFields.Merge(child.CalculatedFields);
+            Connections.Merge(child.Connections);
+            Entities.Merge(child.Entities);
+            Maps.Merge(child.Maps);
+            Providers.Merge(child.Providers);
+            Relationships.Merge(child.Relationships);
+            Scripts.Merge(child.Scripts);
+            SearchTypes.Merge(child.SearchTypes);
+            Templates.Merge(child.Templates);
         }
     }
 }
