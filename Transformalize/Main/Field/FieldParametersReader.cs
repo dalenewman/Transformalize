@@ -24,10 +24,10 @@ using Transformalize.Configuration;
 using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main {
-    public class FieldTransformParametersReader : ITransformParametersReader {
+    public class FieldParametersReader : ITransformParametersReader {
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
 
-        public Parameters.Parameters Read(TransformConfigurationElement transform) {
+        public IParameters Read(TransformConfigurationElement transform) {
             var parameters = new Parameters.Parameters();
 
             if (transform.Parameter != string.Empty && transform.Parameter != "*") {
@@ -41,12 +41,6 @@ namespace Transformalize.Main {
                     _log.Warn("Detected a {0} transform parameter without a name attribute.  Field parameters require names and values.", transform.Method);
                     return new Parameters.Parameters();
                 }
-
-                //if (string.IsNullOrEmpty(p.Value))
-                //{
-                //    _log.Warn("The field {0} has a {1} transform parameter without a value attribute.  Field parameters require names and values.", _name, transform.Method);
-                //    return new Parameters();
-                //}
 
                 var value = p.HasValue() ? p.Value : null;
                 var alias = p.HasValue() ? p.Name : p.Field;

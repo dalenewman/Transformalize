@@ -134,6 +134,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\Builders\ActionBuilder.cs" />
+    <Compile Include="Configuration\Builders\BranchBuilder.cs" />
     <Compile Include="Configuration\Builders\ConnectionBuilder.cs" />
     <Compile Include="Configuration\Builders\EntityBuilder.cs" />
     <Compile Include="Configuration\Builders\FieldBuilder.cs" />
@@ -153,7 +154,9 @@
     <Compile Include="Configuration\ConnectionElementCollection.cs" />
     <Compile Include="Configuration\ActionConfigurationElement.cs" />
     <Compile Include="Configuration\ActionElementCollection.cs" />
+    <Compile Include="Configuration\BranchConfigurationElement.cs" />
     <Compile Include="Configuration\MyConfigurationElementCollection.cs" />
+    <Compile Include="Configuration\BranchElementCollection.cs" />
     <Compile Include="Configuration\ValidatorElementCollection.cs" />
     <Compile Include="Configuration\ModeConfigurationElement.cs" />
     <Compile Include="Configuration\ModeElementCollection.cs" />
@@ -614,9 +617,8 @@
     <Compile Include="Main\Entity\EntityParametersReader.cs" />
     <Compile Include="Main\Entity\EntityRelationshipLoader.cs" />
     <Compile Include="Main\Process\ProcessFactory.cs" />
-    <Compile Include="Main\Process\ProcessTransformsLoader.cs" />
-    <Compile Include="Main\Process\TransformsLoader.cs" />
-    <Compile Include="Main\Process\ValidatorsLoader.cs" />
+    <Compile Include="Main\Process\ProcessOperationsLoader.cs" />
+    <Compile Include="Main\Process\OperationsLoader.cs" />
     <Compile Include="Main\Providers\FalseEntityExists.cs" />
     <Compile Include="Main\Providers\FileEntityDropper.cs" />
     <Compile Include="Main\Providers\File\FileEntityExists.cs" />
@@ -660,7 +662,7 @@
     <Compile Include="Main\Field\Field.cs" />
     <Compile Include="Main\Field\FieldReader.cs" />
     <Compile Include="Main\Field\FieldSqlWriter.cs" />
-    <Compile Include="Main\Field\FieldTransformParametersReader.cs" />
+    <Compile Include="Main\Field\FieldParametersReader.cs" />
     <Compile Include="Main\Field\FieldType.cs" />
     <Compile Include="Main\Field\IFieldReader.cs" />
     <Compile Include="Main\IReader.cs" />

@@ -27,7 +27,7 @@ namespace Transformalize.Test.Integration {
     
     [TestFixture]
     public class Ouc {
-        private const string FILE = @"http://config.mwf.local/OucInv.xml";
+        private const string FILE = @"http://config.mwf.local/Ouc.xml";
 
         [Test]
         public void Init() {

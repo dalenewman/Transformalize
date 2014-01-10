@@ -39,7 +39,7 @@ namespace Transformalize.Main {
         }
 
 
-        public Parameters.Parameters Read(TransformConfigurationElement transform) {
+        public IParameters Read(TransformConfigurationElement transform) {
             var parameters = new Parameters.Parameters();
 
             if (transform.Parameter != string.Empty && transform.Parameter != "*") {

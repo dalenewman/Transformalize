@@ -6,7 +6,8 @@ namespace Transformalize.Operations.Validate {
 
         public RelativeDateTimeValidatorOperation(
             string keyToValidate,
-            string outKey,
+            string resultKey,
+            string messageKey,
             int lowerBound,
             DateTimeUnit lowerUnit,
             RangeBoundaryType lowerBoundaryType,
@@ -15,8 +16,8 @@ namespace Transformalize.Operations.Validate {
             RangeBoundaryType upperBoundaryType,
             string messageTemplate,
             bool negated,
-            bool append)
-            : base(keyToValidate, outKey, append) {
+            bool messageAppend)
+            : base(keyToValidate, resultKey, messageKey, messageAppend) {
 
             Validator = new RelativeDateTimeValidator(
                 lowerBound,

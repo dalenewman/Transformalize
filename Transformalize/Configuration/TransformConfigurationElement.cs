@@ -25,6 +25,7 @@ using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 
 namespace Transformalize.Configuration {
     public class TransformConfigurationElement : ConfigurationElement {
+
         private const string METHOD = "method";
         private const string VALUE = "value";
         private const string PATTERN = "pattern";
@@ -42,6 +43,7 @@ namespace Transformalize.Configuration {
         private const string SCRIPT = "script";
         private const string TEMPLATE = "template";
         private const string PARAMETERS = "parameters";
+        private const string BRANCHES = "branches";
         private const string SCRIPTS = "scripts";
         private const string FORMAT = "format";
         private const string SEPARATOR = "separator";
@@ -49,7 +51,6 @@ namespace Transformalize.Configuration {
         private const string NAME = "name";
         private const string TEMPLATES = "templates";
         private const string PARAMETER = "parameter";
-        private const string RESULT = "result";
         private const string EXPRESSION = "expression";
         private const string TYPE = "type";
         private const string ROOT = "root";
@@ -77,10 +78,12 @@ namespace Transformalize.Configuration {
         private const string TO_LONG = "to-long";
 
         //validation
-        private const string APPEND_TO = "append-to";
         private const string CHARACTERS = "characters";
         private const string CONTAINS_CHARACTERS = "contains-characters";
-        private const string MESSAGE = "message";
+        private const string MESSAGE_TEMPLATE = "message-template";
+        private const string MESSAGE_APPEND = "message-append";
+        private const string MESSAGE_FIELD = "message-field";
+        private const string RESULT_FIELD = "result-field";
         private const string NEGATED = "negated";
         private const string LOWER_BOUND = "lower-bound";
         private const string LOWER_BOUND_TYPE = "lower-boundary-type";
@@ -89,6 +92,11 @@ namespace Transformalize.Configuration {
         private const string UPPER_BOUND_TYPE = "upper-boundary-type";
         private const string UPPER_UNIT = "upper-unit";
         private const string TIME_COMPONENT = "time-component";
+
+        //CONDITIONAL
+        private const string RUN_FIELD = "run-field";
+        private const string RUN_OPERATOR = "run-operator";
+        private const string RUN_VALUE = "run-value";
 
         [ConfigurationProperty(METHOD, IsRequired = true)]
         public string Method {
@@ -243,12 +251,6 @@ namespace Transformalize.Configuration {
             set { this[PARAMETER] = value; }
         }
 
-        [ConfigurationProperty(RESULT, IsRequired = false, DefaultValue = "")]
-        public string Result {
-            get { return this[RESULT] as string; }
-            set { this[RESULT] = value; }
-        }
-
         [ConfigurationProperty(SEPARATOR, IsRequired = false, DefaultValue = "[default]")]
         public string Separator {
             get { return this[SEPARATOR] as string; }
@@ -306,10 +308,22 @@ namespace Transformalize.Configuration {
         }
 
         //validation
-        [ConfigurationProperty(APPEND_TO, IsRequired = false, DefaultValue = "")]
-        public string AppendTo {
-            get { return this[APPEND_TO] as string; }
-            set { this[APPEND_TO] = value; }
+        [ConfigurationProperty(MESSAGE_APPEND, IsRequired = false, DefaultValue = true)]
+        public bool MessageAppend {
+            get { return (bool) this[MESSAGE_APPEND]; }
+            set { this[MESSAGE_APPEND] = value; }
+        }
+
+        [ConfigurationProperty(MESSAGE_FIELD, IsRequired = false, DefaultValue = "[default]")]
+        public string MessageField {
+            get { return this[MESSAGE_FIELD] as string; }
+            set { this[MESSAGE_FIELD] = value; }
+        }
+
+        [ConfigurationProperty(RESULT_FIELD, IsRequired = false, DefaultValue = "[default]")]
+        public string ResultField {
+            get { return this[RESULT_FIELD] as string; }
+            set { this[RESULT_FIELD] = value; }
         }
 
         [ConfigurationProperty(CHARACTERS, IsRequired = false, DefaultValue = "")]
@@ -318,10 +332,10 @@ namespace Transformalize.Configuration {
             set { this[CHARACTERS] = value; }
         }
 
-        [ConfigurationProperty(MESSAGE, IsRequired = false, DefaultValue = "")]
-        public string Message {
-            get { return this[MESSAGE] as string; }
-            set { this[MESSAGE] = value; }
+        [ConfigurationProperty(MESSAGE_TEMPLATE, IsRequired = false, DefaultValue = null)]
+        public string MessageTemplate {
+            get { return this[MESSAGE_TEMPLATE] as string; }
+            set { this[MESSAGE_TEMPLATE] = value; }
         }
 
         [EnumConversionValidator(typeof(ContainsCharacters), MessageTemplate = "{1} must be All, or Any.")]
@@ -451,8 +465,34 @@ namespace Transformalize.Configuration {
             set { this[TIME_COMPONENT] = value; }
         }
 
+        [ConfigurationProperty(BRANCHES)]
+        public BranchElementCollection Branches {
+            get { return this[BRANCHES] as BranchElementCollection; }
+            set { this[BRANCHES] = value; }
+        }
+
+        [ConfigurationProperty(RUN_FIELD, IsRequired = false, DefaultValue = "")]
+        public string RunField {
+            get { return this[RUN_FIELD] as string; }
+            set { this[RUN_FIELD] = value; }
+        }
+
+        [EnumConversionValidator(typeof(ComparisonOperator), MessageTemplate = "{1} must be a valid ComparisonOperator. (e.g. Equal, NotEqual, LessThan, LessThanEqual, GreaterThan, GreaterThanEqual)")]
+        [ConfigurationProperty(RUN_OPERATOR, IsRequired = false, DefaultValue = "Equal")]
+        public string RunOperator {
+            get { return this[RUN_OPERATOR] as string; }
+            set { this[RUN_OPERATOR] = value; }
+        }
+
+        [ConfigurationProperty(RUN_VALUE, IsRequired = false, DefaultValue = "")]
+        public string RunValue {
+            get { return this[RUN_VALUE] as string; }
+            set { this[RUN_VALUE] = value; }
+        }
+
         public override bool IsReadOnly() {
             return false;
         }
+
     }
 }

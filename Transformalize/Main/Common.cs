@@ -35,6 +35,24 @@ namespace Transformalize.Main {
         private const string APPLICATION_FOLDER = @"\Tfl\";
         private static readonly char[] Slash = new[] { '\\' };
 
+        public static Dictionary<string, byte> Validators = new Dictionary<string, byte> {
+            {"containscharacters", 1},
+            {"datetimerange", 1},
+            {"domain", 1},
+            {"json", 1},
+            {"notnull", 1},
+            {"fieldcomparison", 1},
+            {"range", 1},
+            {"regex", 1},
+            {"relativedatetime", 1},
+            {"stringlength", 1},
+            {"typeconversion", 1}
+        };
+
+        public static bool IsValidator(string method) {
+            return Validators.ContainsKey(method.ToLower());
+        }
+
         public static Dictionary<string, Func<string, object>> ConversionMap = new Dictionary<string, Func<string, object>> {
             {"string", (x => x)},
             {"xml", (x => x)},
@@ -67,6 +85,7 @@ namespace Transformalize.Main {
             { "char", (x => Convert.ToChar(x)) },
             { "datetime", (x => Convert.ToDateTime(x)) },
             { "boolean", (x => Convert.ToBoolean(x)) },
+            { "bool", (x => Convert.ToBoolean(x)) },
             { "single", (x => Convert.ToSingle(x)) },
             { "byte", (x => Convert.ToByte(x))}
         };
@@ -138,6 +157,9 @@ namespace Transformalize.Main {
             var result = type.ToLower();
             if (result == "int") {
                 result = "int32";
+            }
+            if (result == "bool") {
+                result = "boolean";
             }
             return result.Replace("system.", string.Empty);
         }

@@ -56,7 +56,7 @@ namespace Transformalize.Main.Providers {
         public string File { get; set; }
         public string Delimiter { get; set; }
         public string LineDelimiter { get; set; }
-        public AbstractOperation InputOperation { get; set; }
+        public IOperation InputOperation { get; set; }
 
         public int Start { get; set; }
         public int End { get; set; }

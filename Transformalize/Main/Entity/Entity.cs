@@ -33,7 +33,7 @@ using Transformalize.Main.Providers;
 namespace Transformalize.Main {
     public class Entity {
         private readonly int _tflBatchId;
-        private List<AbstractOperation> _transformOperations = new List<AbstractOperation>();
+        private List<AbstractOperation> _operations = new List<AbstractOperation>();
         private List<AbstractOperation> _validatorOperations = new List<AbstractOperation>();
         private IEnumerable<Row> _rows = new List<Row>();
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
@@ -86,9 +86,9 @@ namespace Transformalize.Main {
             set { _rows = value; }
         }
 
-        public List<AbstractOperation> TransformOperations {
-            get { return _transformOperations; }
-            set { _transformOperations = value; }
+        public List<AbstractOperation> Operations {
+            get { return _operations; }
+            set { _operations = value; }
         }
         public List<AbstractOperation> ValidatorOperations {
             get { return _validatorOperations; }

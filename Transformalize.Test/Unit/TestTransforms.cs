@@ -22,9 +22,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
+using Transformalize.Configuration.Builders;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Main;
+using Transformalize.Main.Providers;
 using Transformalize.Operations.Transform;
 using Transformalize.Test.Unit.Builders;
 
@@ -669,6 +672,30 @@ namespace Transformalize.Test.Unit {
             var transform = new TimeOfDayOperation("d", "datetime", "d", "double", "minutes");
             var output = TestOperation(input, transform);
             Assert.AreEqual(79, output[0]["d"]);
+        }
+
+        [Test]
+        public void TestCombo()
+        {
+            var input = new RowsBuilder()
+                .Row("MeterNumber", "R00001")
+                .Row("MeterNumber", "000002").ToOperation();
+
+            var cfg = new ProcessBuilder("process")
+                .Connection("input").Provider(ProviderType.Internal).Input(input)
+                .Connection("output").Provider(ProviderType.Internal)
+                .Entity("entity")
+                    .Field("MeterNumber")
+                    .CalculatedField("MeterCategory").Default("None")
+                        .Transform("left").Length(1).Parameters("MeterNumber")
+                        .Transform("if").Left("MeterCategory").Right("R").Then("Reclaim").Else("Domestic")
+                .Process();
+
+            var process = ProcessFactory.Create(cfg);
+            var output = process.Run().First().ToList();
+
+            Assert.AreEqual("Reclaim", output[0]["MeterCategory"]);
+            Assert.AreEqual("Domestic", output[1]["MeterCategory"]);
         }
 
     }

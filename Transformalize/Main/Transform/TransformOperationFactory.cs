@@ -26,6 +26,7 @@ using Transformalize.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.NLog;
+using Transformalize.Libs.NLog.LayoutRenderers;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Operations.Transform;
 using Transformalize.Operations.Validate;
@@ -60,12 +61,18 @@ namespace Transformalize.Main {
             var hasParameters = parameters.Count > 0;
             var inKey = hasParameters ? parameters[0].Name : field.Alias;
             var inType = hasParameters ? parameters[0].SimpleType : field.SimpleType;
-            var append = !string.IsNullOrEmpty(element.AppendTo);
-            var outKey = append ? element.AppendTo : field.Alias;
-            var outType = append ? _process.GetField(outKey, field.Entity).SimpleType : field.SimpleType;
+            var outKey = field.Alias;
+            var outType = field.SimpleType;
+            var resultKey = element.ResultField.Equals(DEFAULT) ? field.Alias + "Result" : element.ResultField;
+            var messageKey = element.MessageField.Equals(DEFAULT) ? field.Alias + "Message" : element.MessageField;
 
             if (!hasParameters) {
                 parameters.Add(field.Alias, field.Alias, null, field.SimpleType);
+            }
+
+            if (!element.RunField.Equals(string.Empty)) {
+                //create delegate, or default true delagate with row parameter
+                //to determine if operation should run...
             }
 
             switch (element.Method.ToLower()) {
@@ -388,25 +395,27 @@ namespace Transformalize.Main {
                 case "containscharacters":
                     return new ContainsCharactersValidatorOperation(
                         inKey,
-                        outKey,
+                        resultKey,
+                        messageKey,
                         element.Characters,
                         (ContainsCharacters)Enum.Parse(typeof(ContainsCharacters), element.ContainsCharacters, true),
-                        element.Message,
+                        element.MessageTemplate,
                         element.Negated,
-                        append
+                        element.MessageAppend
                     );
 
                 case "datetimerange":
                     return new DateTimeRangeValidatorOperation(
                         inKey,
-                        outKey,
+                        resultKey,
+                        messageKey,
                         (DateTime)Common.ObjectConversionMap[field.SimpleType](element.LowerBound),
                         (RangeBoundaryType)Enum.Parse(typeof(RangeBoundaryType), element.LowerBoundType, true),
                         (DateTime)Common.ObjectConversionMap[field.SimpleType](element.UpperBound),
                         (RangeBoundaryType)Enum.Parse(typeof(RangeBoundaryType), element.UpperBoundType, true),
-                        element.Message,
+                        element.MessageTemplate,
                         element.Negated,
-                        append
+                        element.MessageAppend
                     );
 
                 case "domain":
@@ -417,81 +426,87 @@ namespace Transformalize.Main {
 
                     return new DomainValidatorOperation(
                         inKey,
-                        outKey,
+                        resultKey,
+                        messageKey,
                         domain,
-                        element.Message,
+                        element.MessageTemplate,
                         element.Negated,
-                        append
+                        element.MessageAppend
                     );
 
                 case "json":
-                    return new JsonValidatorOperation(inKey, outKey, append);
+                    return new JsonValidatorOperation(inKey, resultKey, messageKey, element.MessageTemplate, element.MessageAppend);
 
                 case "notnull":
-                    return new NotNullValidatorOperation(inKey, outKey, element.Message, element.Negated, append);
+                    return new NotNullValidatorOperation(inKey, resultKey, messageKey, element.MessageTemplate, element.Negated, element.MessageAppend);
 
                 case "fieldcomparison":
-                    return new PropertyComparisonValidatorOperation(inKey, element.TargetField, outKey, element.Operator, element.Message, element.Negated, append);
+                    return new PropertyComparisonValidatorOperation(inKey, element.TargetField, resultKey, messageKey, element.Operator, element.MessageTemplate, element.Negated, element.MessageAppend);
 
                 case "range":
                     return new RangeValidatorOperation(
                         inKey,
-                        outKey,
+                        resultKey,
+                        messageKey,
                         (IComparable)Common.ObjectConversionMap[field.SimpleType](element.LowerBound),
                         (RangeBoundaryType)Enum.Parse(typeof(RangeBoundaryType), element.LowerBoundType, true),
                         (IComparable)Common.ObjectConversionMap[field.SimpleType](element.UpperBound),
                         (RangeBoundaryType)Enum.Parse(typeof(RangeBoundaryType), element.UpperBoundType, true),
-                        element.Message,
+                        element.MessageTemplate,
                         element.Negated,
-                        append
+                        element.MessageAppend
                     );
 
                 case "regex":
                     return new RegexValidatorOperation(
                         inKey,
-                        outKey,
+                        resultKey,
+                        messageKey,
                         element.Pattern,
-                        element.Message,
+                        element.MessageTemplate,
                         element.Negated,
-                        append
+                        element.MessageAppend
                     );
 
                 case "relativedatetime":
                     return new RelativeDateTimeValidatorOperation(
                         inKey,
-                        outKey,
+                        resultKey,
+                        messageKey,
                         Convert.ToInt32(element.LowerBound),
                         (DateTimeUnit)Enum.Parse(typeof(DateTimeUnit), element.LowerUnit, true),
                         (RangeBoundaryType)Enum.Parse(typeof(RangeBoundaryType), element.LowerBoundType, true),
                         Convert.ToInt32(element.UpperBound),
                         (DateTimeUnit)Enum.Parse(typeof(DateTimeUnit), element.UpperUnit, true),
                         (RangeBoundaryType)Enum.Parse(typeof(RangeBoundaryType), element.UpperBoundType, true),
-                        element.Message,
+                        element.MessageTemplate,
                         element.Negated,
-                        append
+                        element.MessageAppend
                     );
 
                 case "stringlength":
                     return new StringLengthValidatorOperation(
                         inKey,
-                        outKey,
+                        resultKey,
+                        messageKey,
                         Convert.ToInt32(element.LowerBound),
                         (RangeBoundaryType)Enum.Parse(typeof(RangeBoundaryType), element.LowerBoundType, true),
                         Convert.ToInt32(element.UpperBound),
                         (RangeBoundaryType)Enum.Parse(typeof(RangeBoundaryType), element.UpperBoundType, true),
-                        element.Message,
+                        element.MessageTemplate,
                         element.Negated,
-                        append
+                        element.MessageAppend
                     );
 
                 case "typeconversion":
                     return new TypeConversionValidatorOperation(
                         inKey,
-                        outKey,
+                        resultKey,
+                        messageKey,
                         Common.ToSystemType(element.Type),
-                        element.Message,
+                        element.MessageTemplate,
                         element.Negated,
-                        append
+                        element.MessageAppend
                     );
 
             }

@@ -6,14 +6,15 @@ namespace Transformalize.Operations.Validate {
 
         public DateTimeRangeValidatorOperation(
             string keyToValidate,
-            string outKey,
+            string resultKey,
+            string messageKey,
             DateTime lowerBound,
             RangeBoundaryType lowerBoundary,
             DateTime upperBound,
             RangeBoundaryType upperBoundary,
             string messageTemplate,
             bool negated,
-            bool append) : base(keyToValidate, outKey, append) {
+            bool messageAppend) : base(keyToValidate, resultKey, messageKey, messageAppend) {
 
             Validator = new DateTimeRangeValidator(
                 lowerBound,

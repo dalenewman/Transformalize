@@ -20,8 +20,10 @@
 
 #endregion
 
+using Transformalize.Configuration;
+
 namespace Transformalize.Main {
-    public class EntityParametersReader : IParametersReader {
+    public class EntityParametersReader : ITransformParametersReader {
         private readonly Entity _entity;
         private readonly IParameters _parameters = new Parameters.Parameters();
 
@@ -29,7 +31,8 @@ namespace Transformalize.Main {
             _entity = entity;
         }
 
-        public IParameters Read() {
+        public IParameters Read(TransformConfigurationElement transform)
+        {
             var fields = new FieldSqlWriter(_entity.Fields).Input().ToArray();
             foreach (var field in fields) {
                 _parameters.Add(field.Alias, field.Alias, null, field.Type);

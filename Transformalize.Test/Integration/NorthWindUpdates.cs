@@ -74,8 +74,6 @@ namespace Transformalize.Test.Integration {
             Assert.AreEqual(0, process["Suppliers"].Inserts);
             Assert.AreEqual(0, process["Categories"].Inserts);
             Assert.AreEqual(0, process["Shippers"].Inserts);
-
-
             
             _log.Info("***** RUN 03 * ADD 1 ORDER DETAIL ******");
             using (var cn = process["Order Details"].InputConnection.GetConnection())
@@ -192,12 +190,14 @@ namespace Transformalize.Test.Integration {
 
             Assert.AreEqual(1, process["Order Details"].Deletes);
 
-            Reset(process);
+            Reset();
         }
 
-        private void Reset(Process process)
+        public void Reset()
         {
             _log.Info("***** RESET ******");
+            var options = new Options { RenderTemplates = false };
+            var process = ProcessFactory.Create(FILE, options);
             using (var cn = process["Order Details"].InputConnection.GetConnection())
             {
                 cn.Open();
@@ -208,6 +208,8 @@ namespace Transformalize.Test.Integration {
                 cn.Execute("update Orders set ShipCountry = 'Brazil' where OrderID = 10250;");
                 cn.Execute("update [Order Details] set ProductID = 11 where OrderId = 10248 and ProductID = 10;");
             }
+
+            Assert.AreEqual(true, true);
         }
     }
 }

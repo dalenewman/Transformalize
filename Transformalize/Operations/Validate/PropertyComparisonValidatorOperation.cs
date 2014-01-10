@@ -5,8 +5,8 @@ namespace Transformalize.Operations.Validate {
 
     public class PropertyComparisonValidatorOperation : ValidationOperation {
 
-        public PropertyComparisonValidatorOperation(string keyToValidate, string targetKey, string outKey, string comparisonOperator, string message, bool negated, bool append)
-            : base(keyToValidate, outKey, append) {
+        public PropertyComparisonValidatorOperation(string keyToValidate, string targetKey, string resultKey, string messageKey, string comparisonOperator, string message, bool negated, bool messageAppend)
+            : base(keyToValidate, resultKey, messageKey, messageAppend) {
 
             ValidateRow = true;
 

@@ -50,7 +50,7 @@ namespace Transformalize.Configuration {
         private const string END = "end";
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
-        public AbstractOperation InputOperation { get; set; }
+        public IOperation InputOperation { get; set; }
 
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name {

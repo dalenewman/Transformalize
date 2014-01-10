@@ -6,15 +6,16 @@ namespace Transformalize.Operations.Validate
     public class RangeValidatorOperation : ValidationOperation {
         public RangeValidatorOperation(
             string keyToValidate,
-            string outKey,
+            string resultKey,
+            string messageKey,
             IComparable lowerBound,
             RangeBoundaryType lowerBoundary,
             IComparable upperBound,
             RangeBoundaryType upperBoundary,
             string messageTemplate,
             bool negated,
-            bool append)
-            : base(keyToValidate, outKey, append) {
+            bool messageAppend)
+            : base(keyToValidate, resultKey, messageKey, messageAppend) {
 
             Validator = new RangeValidator(
                 lowerBound,

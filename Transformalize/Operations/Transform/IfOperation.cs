@@ -78,7 +78,7 @@ namespace Transformalize.Operations.Transform {
             Environment.Exit(1);
         }
 
-        private object ComparableValue(string otherType, object value) {
+        private static object ComparableValue(string otherType, object value) {
             if (value.Equals(string.Empty) && !otherType.Equals("string")) {
                 return new DefaultFactory().Convert(value, otherType);
             }

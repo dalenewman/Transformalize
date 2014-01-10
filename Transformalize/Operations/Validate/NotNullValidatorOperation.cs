@@ -1,11 +1,10 @@
 ﻿using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 
-namespace Transformalize.Operations.Validate
-{
+namespace Transformalize.Operations.Validate {
     public class NotNullValidatorOperation : ValidationOperation {
-        public NotNullValidatorOperation(string keyToValidate, string outKey, string message, bool negated, bool append)
-            : base(keyToValidate, outKey, append) {
-            Validator = new NotNullValidator(negated, message) { Tag = keyToValidate };
-            }
+        public NotNullValidatorOperation(string keyToValidate, string resultKey, string messageKey, string messageTemplate, bool negated, bool messageAppend)
+            : base(keyToValidate, resultKey, messageKey, messageAppend) {
+            Validator = new NotNullValidator(negated, messageTemplate) { Tag = keyToValidate };
+        }
     }
 }

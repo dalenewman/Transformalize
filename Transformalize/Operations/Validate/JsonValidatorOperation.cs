@@ -1,9 +1,9 @@
 ﻿namespace Transformalize.Operations.Validate
 {
     public class JsonValidatorOperation : ValidationOperation {
-        public JsonValidatorOperation(string keyToValidate, string outKey, bool append)
-            : base(keyToValidate, outKey, append) {
-            Validator = new JsonValidator(keyToValidate);
+        public JsonValidatorOperation(string keyToValidate, string resultKey, string messageKey, string messageTemplate, bool messageAppend)
+            : base(keyToValidate, resultKey, messageKey, messageAppend) {
+            Validator = new JsonValidator(messageTemplate, keyToValidate);
         }
     }
 }

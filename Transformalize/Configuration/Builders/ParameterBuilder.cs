@@ -46,15 +46,20 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public ParameterBuilder Parameter(string field) {
-            return _transformBuilder.Parameter(field);
+            return _transformBuilder.Parameters(field);
         }
 
         public ParameterBuilder Parameter() {
-            return _transformBuilder.Parameter();
+            return _transformBuilder.Parameters();
         }
 
         public ProcessConfigurationElement Process() {
             return _transformBuilder.Process();
         }
+
+        public TransformBuilder End() {
+            return _transformBuilder;
+        }
+
     }
 }

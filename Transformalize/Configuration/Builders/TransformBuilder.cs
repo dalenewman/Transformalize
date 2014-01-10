@@ -1,8 +1,9 @@
-using System.Runtime.InteropServices;
-
 namespace Transformalize.Configuration.Builders {
+
     public class TransformBuilder {
+
         private readonly FieldBuilder _fieldBuilder;
+        private readonly BranchBuilder _branchBuilder;
         private readonly TransformConfigurationElement _transform;
 
         public TransformBuilder(FieldBuilder fieldBuilder, TransformConfigurationElement transform) {
@@ -10,8 +11,14 @@ namespace Transformalize.Configuration.Builders {
             _transform = transform;
         }
 
+        public TransformBuilder(BranchBuilder branchBuilder, TransformConfigurationElement transform) {
+            _branchBuilder = branchBuilder;
+            _transform = transform;
+        }
+
         public FieldBuilder Field(string name) {
-            return _fieldBuilder.Field(name);
+
+            return _fieldBuilder == null ? _branchBuilder.Field(name) : _fieldBuilder.Field(name);
         }
 
         public TransformBuilder Method(string method) {
@@ -19,8 +26,7 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
-        public TransformBuilder XPath(string xPath)
-        {
+        public TransformBuilder XPath(string xPath) {
             _transform.XPath = xPath;
             return this;
         }
@@ -120,21 +126,16 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
-        public ParameterBuilder Parameter() {
+        public ParameterBuilder Parameters() {
             var parameter = new ParameterConfigurationElement();
             _transform.Parameters.Add(parameter);
             return new ParameterBuilder(this, parameter);
         }
 
-        public ParameterBuilder Parameter(string field) {
+        public ParameterBuilder Parameters(string field) {
             var parameter = new ParameterConfigurationElement() { Field = field };
             _transform.Parameters.Add(parameter);
             return new ParameterBuilder(this, parameter);
-        }
-
-        public TransformBuilder Result(string result) {
-            _transform.Result = result;
-            return this;
         }
 
         public TransformBuilder Separator(string separator) {
@@ -172,8 +173,8 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
-        public TransformBuilder Message(string message) {
-            _transform.Message = message;
+        public TransformBuilder MessageTemplate(string template) {
+            _transform.MessageTemplate = template;
             return this;
         }
 
@@ -184,6 +185,21 @@ namespace Transformalize.Configuration.Builders {
 
         public TransformBuilder Negated(bool negated) {
             _transform.Negated = negated;
+            return this;
+        }
+
+        public TransformBuilder MessageField(string field) {
+            _transform.MessageField = field;
+            return this;
+        }
+
+        public TransformBuilder MessageAppend(bool append) {
+            _transform.MessageAppend = append;
+            return this;
+        }
+
+        public TransformBuilder ResultField(string field) {
+            _transform.ResultField = field;
             return this;
         }
 
@@ -268,19 +284,19 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public ProcessConfigurationElement Process() {
-            return _fieldBuilder.Process();
+            return _fieldBuilder == null ? _branchBuilder.Process() : _fieldBuilder.Process();
         }
 
         public TransformBuilder Transform(string method = "") {
-            return _fieldBuilder.Transform(method);
+            return _fieldBuilder == null ? _branchBuilder.Transform(method) : _fieldBuilder.Transform(method);
         }
 
         public EntityBuilder Entity(string name) {
-            return _fieldBuilder.Entity(name);
+            return _fieldBuilder == null ? _branchBuilder.Entity(name) : _fieldBuilder.Entity(name);
         }
 
         public FieldBuilder CalculatedField(string name) {
-            return _fieldBuilder.CalculatedField(name);
+            return _fieldBuilder == null ? _branchBuilder.CalculatedField(name) : _fieldBuilder.CalculatedField(name);
         }
 
         public TransformBuilder ToString(string format) {
@@ -289,9 +305,19 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
-        public TransformBuilder AllParameters() {
-            _transform.Parameter = "*";
+        public TransformBuilder Parameter(string alias) {
+            _transform.Parameter = alias;
             return this;
         }
+
+        public BranchBuilder Branch(string name) {
+            if (_fieldBuilder == null) {
+                return _branchBuilder.Branch(name);
+            }
+            var branch = new BranchConfigurationElement() { Name = name };
+            _transform.Branches.Add(branch);
+            return new BranchBuilder(this, branch);
+        }
+
     }
 }

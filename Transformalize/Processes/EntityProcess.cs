@@ -73,7 +73,7 @@ namespace Transformalize.Processes {
             }
 
             Register(new ApplyDefaults(_entity.Fields, _entity.CalculatedFields));
-            foreach (var transform in _entity.TransformOperations) {
+            foreach (var transform in _entity.Operations) {
                 Register(transform);
             }
 
