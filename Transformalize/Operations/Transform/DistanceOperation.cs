@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Device.Location;
 using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
-    public class DistanceOperation : AbstractOperation {
-        private readonly string _outKey;
+
+    public class DistanceOperation : TflOperation {
+
         private readonly string _units;
         private readonly SortedDictionary<string, Tuple<string, object>> _params = new SortedDictionary<string, Tuple<string, object>>();
 
@@ -17,14 +17,14 @@ namespace Transformalize.Operations.Transform {
             {"miles",(x => 0.000621371 * x)},
         };
 
-        public DistanceOperation(string outKey, string units, IParameter fromLat, IParameter fromLong, IParameter toLat, IParameter toLong) {
+        public DistanceOperation(string outKey, string units, IParameter fromLat, IParameter fromLong, IParameter toLat, IParameter toLong)
+            : base(string.Empty, outKey) {
 
             if (!_conversion.ContainsKey(units)) {
                 Error("Error in Distance transform. I do not recognize {0} units.  Try meters, kilometers, or miles.", units);
                 Environment.Exit(1);
             }
 
-            _outKey = outKey;
             _units = units;
 
             _params["fromLat"] = new Tuple<string, object>(fromLat.Name, fromLat.Value);
@@ -36,13 +36,15 @@ namespace Transformalize.Operations.Transform {
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
-                var fromLat = Convert.ToDouble(row[_params["fromLat"].Item1] ?? _params["fromLat"].Item2);
-                var fromLong = Convert.ToDouble(row[_params["fromLong"].Item1] ?? _params["fromLong"].Item2);
-                var toLat = Convert.ToDouble(row[_params["toLat"].Item1] ?? _params["toLat"].Item2);
-                var toLong = Convert.ToDouble(row[_params["toLong"].Item1] ?? _params["toLong"].Item2);
+                if (ShouldRun(row)) {
+                    var fromLat = Convert.ToDouble(row[_params["fromLat"].Item1] ?? _params["fromLat"].Item2);
+                    var fromLong = Convert.ToDouble(row[_params["fromLong"].Item1] ?? _params["fromLong"].Item2);
+                    var toLat = Convert.ToDouble(row[_params["toLat"].Item1] ?? _params["toLat"].Item2);
+                    var toLong = Convert.ToDouble(row[_params["toLong"].Item1] ?? _params["toLong"].Item2);
 
-                var meters = new GeoCoordinate(fromLat, fromLong).GetDistanceTo(new GeoCoordinate(toLat, toLong));
-                row[_outKey] = _conversion[_units](meters);
+                    var meters = new GeoCoordinate(fromLat, fromLong).GetDistanceTo(new GeoCoordinate(toLat, toLong));
+                    row[OutKey] = _conversion[_units](meters);
+                }
                 yield return row;
             }
         }

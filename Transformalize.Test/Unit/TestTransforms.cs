@@ -139,19 +139,7 @@ namespace Transformalize.Test.Unit {
         public void FromJson() {
             var input = new RowsBuilder().Row().Field("f1", "{ \"j1\":\"v1\", \"j2\":7, \"array\":[{\"x\":1}] }").ToOperation();
             var outParameters = new ParametersBuilder().Parameter("j1").Parameter("j2").Type("int32").Parameter("array").ToParameters();
-            var expression = new FromJsonOperation("f1", false, false, outParameters);
-
-            var rows = TestOperation(input, expression);
-
-            Assert.AreEqual("v1", rows[0]["j1"]);
-            Assert.AreEqual(7, rows[0]["j2"]);
-        }
-
-        [Test]
-        public void FromJsonWithExtraDoubleQuotes() {
-            var input = new RowsBuilder().Row().Field("f1", "{ \"j1\":\"v\"1\", \"j2\"\":7 }").ToOperation();
-            var outParameters = new ParametersBuilder().Parameter("j1").Parameter("j2").Type("int32").ToParameters();
-            var expression = new FromJsonOperation("f1", true, false, outParameters);
+            var expression = new FromJsonOperation("f1", outParameters);
 
             var rows = TestOperation(input, expression);
 

@@ -2,33 +2,31 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Libs.Rhino.Etl.Operations;
 
 namespace Transformalize.Operations.Transform {
-    public class DistinctWordsOperation : AbstractOperation {
+    public class DistinctWordsOperation : TflOperation {
 
-        private readonly string _inKey;
-        private readonly string _outKey;
         private readonly string _separator;
         private readonly char[] _separatorArray;
         private readonly bool _inOutDifferent = true;
 
-        public DistinctWordsOperation(string inKey, string outKey, string separator) {
-            _inKey = inKey;
-            _outKey = outKey;
+        public DistinctWordsOperation(string inKey, string outKey, string separator)
+            : base(inKey, outKey) {
             _separator = separator;
             _separatorArray = separator.ToCharArray();
-            _inOutDifferent = !_inKey.Equals(_outKey);
+            _inOutDifferent = !inKey.Equals(outKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
-                var value = row[_inKey].ToString();
-                if (value.Contains(_separator)) {
-                    row[_outKey] = string.Join(_separator, value.Split(_separatorArray, StringSplitOptions.RemoveEmptyEntries).Distinct());
-                } else if (_inOutDifferent) {
+                if (ShouldRun(row)) {
+                    var value = row[InKey].ToString();
+                    if (value.Contains(_separator)) {
+                        row[OutKey] = string.Join(_separator, value.Split(_separatorArray, StringSplitOptions.RemoveEmptyEntries).Distinct());
+                    } else if (_inOutDifferent) {
 
-                    row[_outKey] = row[_inKey];
+                        row[OutKey] = row[InKey];
+                    }
                 }
 
                 yield return row;

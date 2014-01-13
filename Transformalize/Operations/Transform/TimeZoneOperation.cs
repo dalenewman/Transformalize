@@ -2,21 +2,17 @@ using System;
 using System.Collections.Generic;
 using Transformalize.Libs.NLog.Internal;
 using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Libs.Rhino.Etl.Operations;
 
 namespace Transformalize.Operations.Transform {
 
-    public class TimeZoneOperation : AbstractOperation {
+    public class TimeZoneOperation : TflOperation {
 
-        private readonly string _inKey;
-        private readonly string _outKey;
         private readonly TimeZoneInfo _toTimeZoneInfo;
         private readonly TimeSpan _adjustment;
         private readonly TimeSpan _daylightAdjustment;
 
-        public TimeZoneOperation(string inKey, string outKey, string fromTimeZone, string toTimeZone) {
-            _inKey = inKey;
-            _outKey = outKey;
+        public TimeZoneOperation(string inKey, string outKey, string fromTimeZone, string toTimeZone)
+            : base(inKey, outKey) {
 
             fromTimeZone = GuardTimeZone(fromTimeZone, "UTC");
             toTimeZone = GuardTimeZone(toTimeZone, TimeZoneInfo.Local.Id);
@@ -45,11 +41,13 @@ namespace Transformalize.Operations.Transform {
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
-                var date = (DateTime)row[_inKey];
-                if (_toTimeZoneInfo.IsDaylightSavingTime(DateTime.Now)) {
-                    row[_outKey] = date.Add(_daylightAdjustment);
-                } else {
-                    row[_outKey] = date.Add(_adjustment);
+                if (ShouldRun(row)) {
+                    var date = (DateTime)row[InKey];
+                    if (_toTimeZoneInfo.IsDaylightSavingTime(DateTime.Now)) {
+                        row[OutKey] = date.Add(_daylightAdjustment);
+                    } else {
+                        row[OutKey] = date.Add(_adjustment);
+                    }
                 }
                 yield return row;
             }

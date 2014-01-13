@@ -1,23 +1,20 @@
 using System.Collections.Generic;
 using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Libs.Rhino.Etl.Operations;
 
-namespace Transformalize.Operations.Transform
-{
-    public class TrimOperation : AbstractOperation {
-        private readonly string _inKey;
-        private readonly string _outKey;
+namespace Transformalize.Operations.Transform {
+    public class TrimOperation : TflOperation {
         private readonly char[] _trimChars;
 
-        public TrimOperation(string inKey, string outKey, string trimChars) {
-            _inKey = inKey;
-            _outKey = outKey;
+        public TrimOperation(string inKey, string outKey, string trimChars)
+            : base(inKey, outKey) {
             _trimChars = trimChars.ToCharArray();
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
-                row[_outKey] = row[_inKey].ToString().Trim(_trimChars);
+                if (ShouldRun(row)) {
+                    row[OutKey] = row[InKey].ToString().Trim(_trimChars);
+                }
                 yield return row;
             }
 

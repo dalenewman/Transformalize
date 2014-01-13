@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
-    public class IfOperation : AbstractOperation {
+    public class IfOperation : TflOperation {
 
-        private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private readonly ComparisonOperator _op;
-        private readonly string _outKey;
 
         private readonly KeyValuePair<string, IParameter> _left;
         private readonly KeyValuePair<string, IParameter> _right;
@@ -34,15 +30,6 @@ namespace Transformalize.Operations.Transform {
             {string.Empty, new KeyValuePair<string, IParameter>(string.Empty, new Parameter(string.Empty, string.Empty))}
         };
 
-        private readonly Dictionary<ComparisonOperator, Func<object, object, bool>> _compare = new Dictionary<ComparisonOperator, Func<object, object, bool>>() {
-            {ComparisonOperator.Equal, ((x, y) => x.Equals(y))},
-            {ComparisonOperator.NotEqual, ((x, y) => !x.Equals(y))},
-            {ComparisonOperator.GreaterThan, ((x, y) => ((IComparable) x).CompareTo(y) > 0)},
-            {ComparisonOperator.GreaterThanEqual, ((x, y) => x.Equals(y) || ((IComparable)x).CompareTo(y) > 0)},
-            {ComparisonOperator.LessThan, ((x, y) => ((IComparable)x).CompareTo(y) < 0)},
-            {ComparisonOperator.LessThanEqual, ((x, y) => x.Equals(y) || ((IComparable)x).CompareTo(y) < 0)}
-        };
-
         public IfOperation(
             IParameter leftParameter,
             ComparisonOperator op,
@@ -51,10 +38,10 @@ namespace Transformalize.Operations.Transform {
             IParameter elseParameter,
             string outKey,
             string outType
-        ) {
+        )
+            : base(string.Empty, outKey) {
 
             _op = op;
-            _outKey = outKey;
 
             _left = _builtIns.ContainsKey(leftParameter.Name.ToLower()) ? _builtIns[leftParameter.Name.ToLower()] : new KeyValuePair<string, IParameter>(leftParameter.Name, leftParameter);
             _right = _builtIns.ContainsKey(rightParameter.Name.ToLower()) ? _builtIns[rightParameter.Name.ToLower()] : new KeyValuePair<string, IParameter>(rightParameter.Name, rightParameter);
@@ -69,9 +56,9 @@ namespace Transformalize.Operations.Transform {
             _leftValue = _leftHasValue ? ComparableValue(_right.Value.SimpleType, _left.Value.Value) : null;
             _rightValue = _rightHasValue ? ComparableValue(_left.Value.SimpleType, _right.Value.Value) : null;
             _thenValue = _thenHasValue ? ComparableValue(outType, _then.Value.Value) : null;
-            _elseValue = _elseHasValue ?  ComparableValue(outType, _else.Value.Value) : null;
+            _elseValue = _elseHasValue ? ComparableValue(outType, _else.Value.Value) : null;
 
-            if (_compare.ContainsKey(_op))
+            if (Common.CompareMap.ContainsKey(_op))
                 return;
 
             Error("Operator {0} is invalid.  Try equal, notequal, greaterthan, greaterthanequal, greaterthan, or greaterthanequal.");
@@ -89,14 +76,17 @@ namespace Transformalize.Operations.Transform {
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
 
-                var leftValue = _leftHasValue ? _leftValue : row[_left.Key];
-                var rightValue = _rightHasValue ? _rightValue : row[_right.Key];
+                if (ShouldRun(row)) {
+                    var leftValue = _leftHasValue ? _leftValue : row[_left.Key];
+                    var rightValue = _rightHasValue ? _rightValue : row[_right.Key];
 
-                if (_compare[_op](leftValue, rightValue)) {
-                    row[_outKey] = _thenHasValue ? _thenValue : row[_then.Key];
-                } else {
-                    row[_outKey] = _elseHasValue ? _elseValue : row[_else.Key];
+                    if (Common.CompareMap[_op](leftValue, rightValue)) {
+                        row[OutKey] = _thenHasValue ? _thenValue : row[_then.Key];
+                    } else {
+                        row[OutKey] = _elseHasValue ? _elseValue : row[_else.Key];
+                    }
                 }
+
                 yield return row;
             }
         }

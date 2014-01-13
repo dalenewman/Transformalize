@@ -31,6 +31,7 @@ namespace Transformalize.Configuration {
 
         //CONDITIONAL
         private const string RUN_FIELD = "run-field";
+        private const string RUN_TYPE = "run-type";
         private const string RUN_OPERATOR = "run-operator";
         private const string RUN_VALUE = "run-value";
 
@@ -44,6 +45,12 @@ namespace Transformalize.Configuration {
         public string RunField {
             get { return this[RUN_FIELD] as string; }
             set { this[RUN_FIELD] = value; }
+        }
+
+        [ConfigurationProperty(RUN_TYPE, IsRequired = false, DefaultValue = "[default]")]
+        public string RunType {
+            get { return this[RUN_TYPE] as string; }
+            set { this[RUN_TYPE] = value; }
         }
 
         [EnumConversionValidator(typeof(ComparisonOperator), MessageTemplate = "{1} must be a valid ComparisonOperator. (e.g. Equal, NotEqual, LessThan, LessThanEqual, GreaterThan, GreaterThanEqual)")]

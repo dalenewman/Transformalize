@@ -2,15 +2,12 @@ using System;
 using System.Collections.Generic;
 using Transformalize.Libs.NLog.Internal;
 using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
 
-    public class TimeOfDayOperation : AbstractOperation {
+    public class TimeOfDayOperation : TflOperation {
 
-        private readonly string _inKey;
-        private readonly string _outKey;
         private readonly string _outType;
 
         private readonly Dictionary<string, Func<DateTime, double>> _timeMap = new Dictionary<string, Func<DateTime, double>> {
@@ -33,9 +30,8 @@ namespace Transformalize.Operations.Transform {
 
         private readonly Func<DateTime, double> _transformer;
 
-        public TimeOfDayOperation(string inKey, string inType, string outKey, string outType, string timeComponent) {
-            _inKey = inKey;
-            _outKey = outKey;
+        public TimeOfDayOperation(string inKey, string inType, string outKey, string outType, string timeComponent)
+            : base(inKey, outKey) {
             _outType = outType;
 
             if (inType != "datetime") {
@@ -43,7 +39,7 @@ namespace Transformalize.Operations.Transform {
                 Environment.Exit(1);
             }
 
-            if (!(new[]{"double","decimal","float"}).Any(s=>s.Equals(outType, StringComparison.OrdinalIgnoreCase))) {
+            if (!(new[] { "double", "decimal", "float" }).Any(s => s.Equals(outType, StringComparison.OrdinalIgnoreCase))) {
                 Error("TimeOfDay operation output must be double, decimal, or float.  Your output for {0} is {1}.", outKey, outType);
                 Environment.Exit(1);
             }
@@ -59,8 +55,10 @@ namespace Transformalize.Operations.Transform {
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
-                var date = (DateTime)row[_inKey];
-                row[_outKey] = Converter(_transformer(date));
+                if (ShouldRun(row)) {
+                    var date = (DateTime)row[InKey];
+                    row[OutKey] = Converter(_transformer(date));
+                }
                 yield return row;
             }
         }

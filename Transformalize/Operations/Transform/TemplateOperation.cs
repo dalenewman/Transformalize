@@ -4,13 +4,11 @@ using Transformalize.Libs.NLog;
 using Transformalize.Libs.RazorEngine;
 using Transformalize.Libs.RazorEngine.Templating;
 using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
-namespace Transformalize.Operations.Transform
-{
-    public class TemplateOperation : AbstractOperation {
-        private readonly string _outKey;
+namespace Transformalize.Operations.Transform {
+    public class TemplateOperation : TflOperation {
+
         private readonly StringBuilder _builder = new StringBuilder();
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly string _templateModelType;
@@ -18,8 +16,8 @@ namespace Transformalize.Operations.Transform
         private Dictionary<string, object> _dictionaryContext = new Dictionary<string, object>();
         private DynamicViewBag _dynamicViewBagContext = new DynamicViewBag();
 
-        public TemplateOperation(string outKey, string template, string templateModelType, IEnumerable<KeyValuePair<string, Template>> templates, IParameters parameters) {
-            _outKey = outKey;
+        public TemplateOperation(string outKey, string template, string templateModelType, IEnumerable<KeyValuePair<string, Template>> templates, IParameters parameters)
+            : base(string.Empty, outKey) {
             _templateModelType = templateModelType;
             _parameters = parameters;
 
@@ -28,16 +26,18 @@ namespace Transformalize.Operations.Transform
 
             var type = templateModelType == "dynamic" ? typeof(DynamicViewBag) : typeof(Dictionary<string, object>);
 
-            Razor.Compile(_builder.ToString(), type, _outKey);
-            _log.Debug("Compiled {0} template with key {1}.", templateModelType, _outKey);
+            Razor.Compile(_builder.ToString(), type, outKey);
+            _log.Debug("Compiled {0} template with key {1}.", templateModelType, outKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
-                if (_templateModelType == "dynamic")
-                    RunWithDynamic(row);
-                else
-                    RunWithDictionary(row);
+                if (ShouldRun(row)) {
+                    if (_templateModelType == "dynamic")
+                        RunWithDynamic(row);
+                    else
+                        RunWithDictionary(row);
+                }
 
                 yield return row;
             }
@@ -50,19 +50,19 @@ namespace Transformalize.Operations.Transform
         }
 
         private void RunWithDictionary(Row row) {
-            _dictionaryContext.Add(_outKey, row[_outKey]);
+            _dictionaryContext.Add(OutKey, row[OutKey]);
             foreach (var pair in _parameters) {
                 _dictionaryContext[pair.Value.Name] = pair.Value.Value ?? row[pair.Key];
             }
-            row[_outKey] = Razor.Run(_outKey, _dictionaryContext);
+            row[OutKey] = Razor.Run(OutKey, _dictionaryContext);
         }
 
         private void RunWithDynamic(Row row) {
-            _dynamicViewBagContext.SetValue(_outKey, row[_outKey]);
+            _dynamicViewBagContext.SetValue(OutKey, row[OutKey]);
             foreach (var pair in _parameters) {
                 _dynamicViewBagContext.SetValue(pair.Value.Name, pair.Value.Value ?? row[pair.Key]);
             }
-            row[_outKey] = Razor.Run(_outKey, _dynamicViewBagContext);
+            row[OutKey] = Razor.Run(OutKey, _dynamicViewBagContext);
         }
 
         public override void Dispose() {

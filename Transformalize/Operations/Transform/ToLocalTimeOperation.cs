@@ -2,19 +2,15 @@ using System;
 using System.Collections.Generic;
 using Transformalize.Libs.NLog.Internal;
 using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Libs.Rhino.Etl.Operations;
 
 namespace Transformalize.Operations.Transform {
 
-    public class ToLocalTimeOperation : AbstractOperation {
+    public class ToLocalTimeOperation : TflOperation {
 
-        private readonly string _inKey;
-        private readonly string _outKey;
         private readonly TimeSpan _adjustment;
 
-        public ToLocalTimeOperation(string inKey, string outKey, string fromTimeZone, string toTimeZone) {
-            _inKey = inKey;
-            _outKey = outKey;
+        public ToLocalTimeOperation(string inKey, string outKey, string fromTimeZone, string toTimeZone)
+            : base(inKey, outKey) {
 
             fromTimeZone = GuardTimeZone(fromTimeZone, "UTC");
             toTimeZone = GuardTimeZone(toTimeZone, TimeZoneInfo.Local.Id);
@@ -46,8 +42,10 @@ namespace Transformalize.Operations.Transform {
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
-                var date = (DateTime)row[_inKey];
-                row[_outKey] = date.Add(_adjustment);
+                if (ShouldRun(row)) {
+                    var date = (DateTime)row[InKey];
+                    row[OutKey] = date.Add(_adjustment);
+                }
                 yield return row;
             }
         }

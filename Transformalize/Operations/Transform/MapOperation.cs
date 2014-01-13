@@ -1,13 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
-    public class MapOperation : AbstractOperation {
-        private readonly string _inKey;
-        private readonly string _outKey;
+
+    public class MapOperation : TflOperation {
+
         private readonly string _outType;
         private readonly Map _endsWith;
         private readonly Map _equals;
@@ -16,14 +15,13 @@ namespace Transformalize.Operations.Transform {
         private readonly bool _hasStartsWith;
         private readonly Map _startsWith;
 
-        public MapOperation(string inKey, string outKey, string outType, IEnumerable<Map> maps) {
+        public MapOperation(string inKey, string outKey, string outType, IEnumerable<Map> maps)
+            : base(inKey, outKey) {
 
             var m = maps.ToArray();
 
-            _inKey = inKey;
-            _outKey = outKey;
             _outType = outType;
-            
+
             _equals = m[0];
             _hasEquals = _equals.Any();
 
@@ -40,39 +38,44 @@ namespace Transformalize.Operations.Transform {
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
-                var found = false;
-                var value = row[_inKey].ToString();
 
-                if (_hasEquals) {
-                    if (_equals.ContainsKey(value)) {
-                        row[_outKey] = _equals[value].Value ?? row[_equals[value].Parameter];
+                if (ShouldRun(row)) {
+
+                    var found = false;
+                    var value = row[InKey].ToString();
+
+                    if (_hasEquals) {
+                        if (_equals.ContainsKey(value)) {
+                            row[OutKey] = _equals[value].Value ?? row[_equals[value].Parameter];
+                            found = true;
+                        }
+                    }
+
+                    if (!found && _hasStartsWith) {
+                        foreach (var pair in _startsWith.Where(pair => value.StartsWith(pair.Key))) {
+                            row[OutKey] = pair.Value.Value ?? row[pair.Value.Parameter];
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (!found && _hasEndsWith) {
+                        foreach (var pair in _endsWith.Where(pair => value.EndsWith(pair.Key))) {
+                            row[OutKey] = pair.Value.Value ?? row[pair.Value.Parameter];
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (!found && _equals.ContainsKey("*")) {
+                        row[OutKey] = _equals["*"].Value ?? row[_equals["*"].Parameter];
                         found = true;
                     }
-                }
 
-                if (!found && _hasStartsWith) {
-                    foreach (var pair in _startsWith.Where(pair => value.StartsWith(pair.Key))) {
-                        row[_outKey] = pair.Value.Value ?? row[pair.Value.Parameter];
-                        found = true;
-                        break;
+                    if (!found) {
+                        row[OutKey] = row[InKey];
                     }
-                }
 
-                if (!found && _hasEndsWith) {
-                    foreach (var pair in _endsWith.Where(pair => value.EndsWith(pair.Key))) {
-                        row[_outKey] = pair.Value.Value ?? row[pair.Value.Parameter];
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (!found && _equals.ContainsKey("*")) {
-                    row[_outKey] = _equals["*"].Value ?? row[_equals["*"].Parameter];
-                    found = true;
-                }
-
-                if (!found) {
-                    row[_outKey] = row[_inKey];
                 }
 
                 yield return row;

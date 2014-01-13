@@ -56,10 +56,8 @@ namespace Transformalize.Configuration {
         private const string ROOT = "root";
         private const string FIELDS = "fields";
         private const string TO = "to";
-        private const string CLEAN = "clean";
         private const string UNITS = "units";
         private const string DOMAIN = "domain";
-        private const string TRY_PARSE = "try-parse";
         private const string XPATH = "xpath";
         
         private const string LEFT = "left";
@@ -95,6 +93,7 @@ namespace Transformalize.Configuration {
 
         //CONDITIONAL
         private const string RUN_FIELD = "run-field";
+        private const string RUN_TYPE = "run-type";
         private const string RUN_OPERATOR = "run-operator";
         private const string RUN_VALUE = "run-value";
 
@@ -114,18 +113,6 @@ namespace Transformalize.Configuration {
         public string XPath {
             get { return this[XPATH] as string; }
             set { this[XPATH] = value; }
-        }
-
-        [ConfigurationProperty(CLEAN, IsRequired = false, DefaultValue = false)]
-        public bool Clean {
-            get { return (bool)this[CLEAN]; }
-            set { this[CLEAN] = value; }
-        }
-
-        [ConfigurationProperty(TRY_PARSE, IsRequired = false, DefaultValue = false)]
-        public bool TryParse {
-            get { return (bool)this[TRY_PARSE]; }
-            set { this[TRY_PARSE] = value; }
         }
 
         [ConfigurationProperty(UNITS, IsRequired = false, DefaultValue = "meters")]
@@ -475,6 +462,12 @@ namespace Transformalize.Configuration {
         public string RunField {
             get { return this[RUN_FIELD] as string; }
             set { this[RUN_FIELD] = value; }
+        }
+
+        [ConfigurationProperty(RUN_TYPE, IsRequired = false, DefaultValue = "[default]")]
+        public string RunType {
+            get { return this[RUN_TYPE] as string; }
+            set { this[RUN_TYPE] = value; }
         }
 
         [EnumConversionValidator(typeof(ComparisonOperator), MessageTemplate = "{1} must be a valid ComparisonOperator. (e.g. Equal, NotEqual, LessThan, LessThanEqual, GreaterThan, GreaterThanEqual)")]

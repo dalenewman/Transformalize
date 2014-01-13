@@ -27,6 +27,7 @@ using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.NLog.LayoutRenderers;
+using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Operations.Transform;
 using Transformalize.Operations.Validate;
@@ -49,6 +50,7 @@ namespace Transformalize.Main {
 
         public AbstractOperation Create(Field field, TransformConfigurationElement element, IParameters parameters) {
 
+            Func<Row, bool> shouldRun = row => true;
             var results = _validator.Validate(element);
             if (!results.IsValid) {
                 _log.Error("There is a problem with the transform element for field {0}.", field.Alias);
@@ -71,8 +73,11 @@ namespace Transformalize.Main {
             }
 
             if (!element.RunField.Equals(string.Empty)) {
-                //create delegate, or default true delagate with row parameter
-                //to determine if operation should run...
+                var op = (ComparisonOperator)Enum.Parse(typeof(ComparisonOperator), element.RunOperator, true);
+                var simpleType = Common.ToSimpleType(element.RunType);
+                var value = Common.ConversionMap[simpleType](element.RunValue);
+                var key = element.RunField;
+                shouldRun = row => Common.CompareMap[op](row[key], value);
             }
 
             switch (element.Method.ToLower()) {
@@ -83,10 +88,10 @@ namespace Transformalize.Main {
                         outKey,
                         Common.ToSimpleType(element.To),
                         element.Format
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "copy":
-                    return new CopyOperation(inKey, outKey);
+                    return new CopyOperation(inKey, outKey) { ShouldRun = shouldRun };
 
                 case "replace":
                     return new ReplaceOperation(
@@ -94,7 +99,7 @@ namespace Transformalize.Main {
                         outKey,
                         element.OldValue,
                         element.NewValue
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "regexreplace":
                     return new RegexReplaceOperation(
@@ -103,7 +108,7 @@ namespace Transformalize.Main {
                         element.Pattern,
                         element.Replacement,
                         element.Count
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "insert":
                     return new InsertOperation(
@@ -111,7 +116,7 @@ namespace Transformalize.Main {
                         outKey,
                         element.Index,
                         element.Value
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "if":
                     return new IfOperation(
@@ -122,7 +127,7 @@ namespace Transformalize.Main {
                         GetParameter(field.Entity, element.Else, parameters),
                         outKey,
                         outType
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "distinctwords":
                     if (element.Separator.Equals(DEFAULT)) {
@@ -132,7 +137,7 @@ namespace Transformalize.Main {
                         inKey,
                         outKey,
                         element.Separator
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "remove":
                     return new RemoveOperation(
@@ -140,14 +145,14 @@ namespace Transformalize.Main {
                         outKey,
                         element.StartIndex,
                         element.Length
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "trimstart":
                     return new TrimStartOperation(
                         inKey,
                         outKey,
                         element.TrimChars
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "trimstartappend":
                     if (element.Separator.Equals(DEFAULT)) {
@@ -158,21 +163,21 @@ namespace Transformalize.Main {
                         outKey,
                         element.TrimChars,
                         element.Separator
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "trimend":
                     return new TrimEndOperation(
                         inKey,
                         outKey,
                         element.TrimChars
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "trim":
                     return new TrimOperation(
                         inKey,
                         outKey,
                         element.TrimChars
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "substring":
                     return new SubstringOperation(
@@ -180,21 +185,21 @@ namespace Transformalize.Main {
                         outKey,
                         element.StartIndex,
                         element.Length
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "left":
                     return new LeftOperation(
                         inKey,
                         outKey,
                         element.Length
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "right":
                     return new RightOperation(
                         inKey,
                         outKey,
                         element.Length
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "gethashcode":
                     return new GetHashCodeOperation(
@@ -217,7 +222,7 @@ namespace Transformalize.Main {
                         outKey,
                         outType,
                         new[] { @equals, startsWith, endsWith }
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "padleft":
                     return new PadLeftOperation(
@@ -225,7 +230,7 @@ namespace Transformalize.Main {
                         outKey,
                         element.TotalWidth,
                         element.PaddingChar
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "padright":
                     return new PadRightOperation(
@@ -233,7 +238,7 @@ namespace Transformalize.Main {
                         outKey,
                         element.TotalWidth,
                         element.PaddingChar
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "tostring":
                     return new ToStringOperation(
@@ -241,19 +246,19 @@ namespace Transformalize.Main {
                         inType,
                         outKey,
                         element.Format
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "toupper":
                     return new ToUpperOperation(
                         inKey,
                         outKey
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "tolower":
                     return new ToLowerOperation(
                         inKey,
                         outKey
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "javascript":
                     var scripts = new Dictionary<string, Script>();
@@ -266,14 +271,14 @@ namespace Transformalize.Main {
                         element.Script,
                         scripts,
                         parameters
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "expression":
                     return new ExpressionOperation(
                         outKey,
                         element.Expression,
                         parameters
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "template":
 
@@ -288,26 +293,26 @@ namespace Transformalize.Main {
                         element.Model,
                         templates,
                         parameters
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "format":
                     return new FormatOperation(
                         outKey,
                         element.Format,
                         parameters
-                    );
+                        ) {ShouldRun = shouldRun};
 
                 case "concat":
                     return new ConcatOperation(
                         outKey,
                         parameters
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "totitlecase":
                     return new ToTitleCaseOperation(
                         inKey,
                         outKey
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "join":
                     if (element.Separator.Equals(DEFAULT)) {
@@ -317,7 +322,7 @@ namespace Transformalize.Main {
                         outKey,
                         element.Separator,
                         parameters
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "tolocaltime":
                     return new ToLocalTimeOperation(
@@ -325,7 +330,7 @@ namespace Transformalize.Main {
                         outKey,
                         element.FromTimeZone,
                         element.ToTimeZone
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "timezone":
                     var toTimeZone = string.IsNullOrEmpty(element.ToTimeZone) ? _process.TimeZone : element.ToTimeZone;
@@ -334,42 +339,32 @@ namespace Transformalize.Main {
                         outKey,
                         element.FromTimeZone,
                         toTimeZone
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "tojson":
                     return new ToJsonOperation(
                         outKey,
                         parameters
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "fromxml":
                     return new FromXmlOperation(
                         outKey,
                         new Fields(_process, parameters, field.Entity)
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "fromregex":
                     return new FromRegexOperation(
                         outKey,
                         element.Pattern,
                         parameters
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "fromjson":
                     return new FromJsonOperation(
                         outKey,
-                        element.Clean,
-                        element.TryParse,
                         parameters
-                    );
-
-                case "defaultifequal":
-                    return new DefaultIfEqualOperation(
-                        inKey,
-                        outKey,
-                        field.Default,
-                        new DefaultFactory().Convert(element.Value, field.SimpleType)
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "distance":
 
@@ -380,16 +375,16 @@ namespace Transformalize.Main {
                         GetParameter(field.Entity, element.FromLong),
                         GetParameter(field.Entity, element.ToLat),
                         GetParameter(field.Entity, element.ToLong)
-                    );
+                    ) { ShouldRun = shouldRun };
 
                 case "length":
-                    return new LengthOperation(inKey, outKey);
+                    return new LengthOperation(inKey, outKey) { ShouldRun = shouldRun };
 
                 case "timeofday":
-                    return new TimeOfDayOperation(inKey, inType, outKey, outType, element.TimeComponent);
+                    return new TimeOfDayOperation(inKey, inType, outKey, outType, element.TimeComponent) { ShouldRun = shouldRun };
 
                 case "xpath":
-                    return new XPathOperation(inKey, outKey, outType, element.XPath);
+                    return new XPathOperation(inKey, outKey, outType, element.XPath) { ShouldRun = shouldRun };
 
                 // validators
                 case "containscharacters":

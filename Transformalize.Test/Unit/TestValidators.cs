@@ -39,7 +39,7 @@ namespace Transformalize.Test.Unit {
             var input = new RowsBuilder()
                 .Row().Field("f1", "{\"i\":\"am\", \"valid\":true}").Field("o1", "")
                 .Row().Field("f1", "{\"i\":\"have\", \"a\":\"Prob\"lem\"}").Field("o1", "").ToOperation();
-            var isJson = new JsonValidatorOperation("f1", "o1","o2", "{2} in {0}.", false);
+            var isJson = new JsonValidatorOperation("f1", "o1", "o2", "{2} in {0}.", false);
 
             var rows = TestOperation(input, isJson);
 
@@ -55,7 +55,7 @@ namespace Transformalize.Test.Unit {
             const string badJson = "{\"updated\": \"Thu, 10 Sep 2009 08:45:12 +0000\", \"links\": [{\"href\": \"http://www.designvitality.com/blog/2007/09/photoshop-text-effect-tutorial/\", \"type\": \"text/html\", \"rel\": \"alternate\"}], \"title\": \"Photoshop Text Effects\", \"author\": \"hotpants1\", \"comments\": \"http://delicious.com/url/90c1b26e451a090452df8b947d6298cb\", \"guidislink\": false, \"title_detail\": {\"base\": \"http://feeds.delicious.com/v2/rss/recent?min=1&count=100\", \"type\": \"text/plain\", \"language\": null, \"value\": \"Photoshop Text Effects\"}, \"link\": \"http://www.designvitality.com/blog/2007/09/photoshop-text-effect-tutorial/\", \"source\": {}, \"wfw_commentrss\": \"http://feeds.delicious.com/v2/rss/url/90c1b26e451a090452df8b947d6298cb\", \"id\": \"http://delicious.com/url/90c1b26e451a090452df8b947d6298cb#hotpants1\", \"tags\": [{\"term\": \"photoshop\", scheme\": \"http://delicious.com/hotpants1/\", \"label\": null}]}";
 
             var input = new RowsBuilder().Row().Field("f1", goodJson).Field("o1", "").Row().Field("f1", badJson).Field("o1", "").ToOperation();
-            var isJson = new JsonValidatorOperation("f1", "o1","o2", "{2} in {0}.", false);
+            var isJson = new JsonValidatorOperation("f1", "o1", "o2", "{2} in {0}.", false);
 
             var rows = TestOperation(input, isJson);
 
@@ -106,8 +106,7 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void DomainReturningMessage()
-        {
+        public void DomainReturningMessage() {
 
             var input = new RowsBuilder()
                 .Row("in", "2")
@@ -163,7 +162,8 @@ namespace Transformalize.Test.Unit {
 
             var input = new RowsBuilder()
                 .Row("name", "Dale")
-                .Row("name", "Vlad").ToOperation();
+                .Row("name", "Vlad")
+                .Row("name","Tara").ToOperation();
 
             var cfg = new ProcessBuilder("process")
                 .Connection("input").Provider(ProviderType.Internal).Input(input)
@@ -184,16 +184,17 @@ namespace Transformalize.Test.Unit {
                                 .RunIf("is-dale", false)
                                     .Transform("toLower")
                                         .Parameter("name")
-                    
+
                 .Process();
 
             var crap = cfg.Serialize();
-            var process = ProcessFactory.Create(cfg);
+            var process = ProcessFactory.Create(cfg, new Options() { Mode = "test" });
             var output = process.Run().First().ToList();
 
             Assert.AreNotEqual(string.Empty, crap);
             Assert.AreEqual("DALE", output[0]["new-name"]);
             Assert.AreEqual("vlad", output[1]["new-name"]);
+            Assert.AreEqual("tara", output[2]["new-name"]);
         }
 
 
@@ -274,8 +275,7 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void RelativeDateTime()
-        {
+        public void RelativeDateTime() {
             var date = DateTime.Now;
             var badDate = DateTime.Now.AddDays(3);
             var badDateString = badDate.ToString("yyyy-MM-dd");

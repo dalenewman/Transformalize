@@ -2,20 +2,20 @@ using System.Collections.Generic;
 using Noesis.Javascript;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
-    public class JavascriptOperation : AbstractOperation {
+
+    public class JavascriptOperation : TflOperation {
+
         private readonly JavascriptContext _context = new JavascriptContext();
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly string _script;
-        private readonly string _outKey;
         private readonly IParameters _parameters;
 
-        public JavascriptOperation(string outKey, string script, Dictionary<string, Script> scripts, IParameters parameters) {
+        public JavascriptOperation(string outKey, string script, Dictionary<string, Script> scripts, IParameters parameters)
+            : base(string.Empty, outKey) {
             _script = script;
-            _outKey = outKey;
             _parameters = parameters;
 
             foreach (var pair in scripts) {
@@ -26,11 +26,13 @@ namespace Transformalize.Operations.Transform {
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
-                _context.SetParameter(_outKey, row[_outKey]);
-                foreach (var pair in _parameters) {
-                    _context.SetParameter(pair.Value.Name, pair.Value.Value ?? row[pair.Key]);
+                if (ShouldRun(row)) {
+                    _context.SetParameter(OutKey, row[OutKey]);
+                    foreach (var pair in _parameters) {
+                        _context.SetParameter(pair.Value.Name, pair.Value.Value ?? row[pair.Key]);
+                    }
+                    row[OutKey] = _context.Run(_script);
                 }
-                row[_outKey] = _context.Run(_script);
                 yield return row;
             }
         }

@@ -22,7 +22,6 @@
 
 using NUnit.Framework;
 using Transformalize.Main;
-using Transformalize.Runner;
 
 namespace Transformalize.Test.Integration {
     [TestFixture]

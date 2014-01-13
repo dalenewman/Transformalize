@@ -1119,6 +1119,7 @@
     <Compile Include="Operations\Transform\JavascriptOperation.cs" />
     <Compile Include="Operations\Transform\JoinTransformOperation.cs" />
     <Compile Include="Operations\Transform\CopyOperation.cs" />
+    <Compile Include="Operations\Transform\TflOperation.cs" />
     <Compile Include="Operations\Transform\TimeZoneOperation.cs" />
     <Compile Include="Operations\Transform\XpathOperation.cs" />
     <Compile Include="Operations\Transform\TimeOfDayOperation.cs" />

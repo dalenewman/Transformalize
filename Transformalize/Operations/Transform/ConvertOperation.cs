@@ -1,22 +1,18 @@
 using System;
 using System.Collections.Generic;
 using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
-    public class ConvertOperation : AbstractOperation {
+    public class ConvertOperation : TflOperation {
 
-        private readonly string _outKey;
-        private readonly string _inKey;
         private readonly string _inType;
         private readonly string _outType;
         private readonly string _fromFormat;
         private readonly Dictionary<string, Func<object, object>> _map = Common.ObjectConversionMap;
 
-        public ConvertOperation(string inKey, string inType, string outKey, string outType, string fromFormat = "") {
-            _outKey = outKey;
-            _inKey = inKey;
+        public ConvertOperation(string inKey, string inType, string outKey, string outType, string fromFormat = "")
+            : base(inKey, outKey) {
             _inType = inType;
             _outType = outType;
             _fromFormat = fromFormat;
@@ -32,7 +28,9 @@ namespace Transformalize.Operations.Transform {
             }
 
             foreach (var row in rows) {
-                row[_outKey] = _map[_outType](row[_inKey]);
+                if (ShouldRun(row)) {
+                    row[OutKey] = _map[_outType](row[InKey]);
+                }
                 yield return row;
             }
         }

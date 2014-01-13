@@ -1,21 +1,16 @@
 using System.Collections.Generic;
 using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Libs.Rhino.Etl.Operations;
-using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
-    public class GetHashCodeOperation : AbstractOperation {
-        private readonly string _inKey;
-        private readonly string _outKey;
+    public class GetHashCodeOperation : TflOperation {
 
-        public GetHashCodeOperation(string inKey, string outKey) {
-            _inKey = inKey;
-            _outKey = outKey;
-        }
+        public GetHashCodeOperation(string inKey, string outKey) : base(inKey, outKey) { }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
-                row[_outKey] = row[_inKey].GetHashCode();
+                if (ShouldRun(row)) {
+                    row[OutKey] = row[InKey].GetHashCode();
+                }
                 yield return row;
             }
         }
