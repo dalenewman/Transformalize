@@ -62,7 +62,6 @@ namespace Transformalize.Configuration {
         
         private const string LEFT = "left";
         private const string OPERATOR = "operator";
-        private const string TARGET_FIELD = "target-field";
         private const string RIGHT = "right";
         private const string THEN = "then";
         private const string ELSE = "else";
@@ -82,12 +81,13 @@ namespace Transformalize.Configuration {
         private const string MESSAGE_APPEND = "message-append";
         private const string MESSAGE_FIELD = "message-field";
         private const string RESULT_FIELD = "result-field";
+        private const string TARGET_FIELD = "target-field";
         private const string NEGATED = "negated";
         private const string LOWER_BOUND = "lower-bound";
-        private const string LOWER_BOUND_TYPE = "lower-boundary-type";
+        private const string LOWER_BOUND_TYPE = "lower-bound-type";
         private const string LOWER_UNIT = "lower-unit";
         private const string UPPER_BOUND = "upper-bound";
-        private const string UPPER_BOUND_TYPE = "upper-boundary-type";
+        private const string UPPER_BOUND_TYPE = "upper-bound-type";
         private const string UPPER_UNIT = "upper-unit";
         private const string TIME_COMPONENT = "time-component";
 

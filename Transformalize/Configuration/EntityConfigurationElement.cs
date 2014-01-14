@@ -93,7 +93,7 @@ namespace Transformalize.Configuration {
             set { this[DELETE] = value; }
         }
 
-        [ConfigurationProperty(INDEX_OPTIMIZATIONS, IsRequired = false, DefaultValue = true)]
+        [ConfigurationProperty(INDEX_OPTIMIZATIONS, IsRequired = false, DefaultValue = false)]
         public bool IndexOptimizations {
             get { return (bool)this[INDEX_OPTIMIZATIONS]; }
             set { this[INDEX_OPTIMIZATIONS] = value; }

@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Transformalize.Libs.EnterpriseLibrary.Validation;
+﻿using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.fastJSON;
 
@@ -11,7 +10,7 @@ namespace Transformalize.Operations.Validate {
             var result = JSON.Instance.Validate(objectToValidate);
             if (result.IsValid)
                 return;
-            var message = string.Format(MessageTemplate, key, Tag, result.Message);
+            var message = string.Format(MessageTemplate, key, objectToValidate, result.Message);
             validationResults.AddResult(new ValidationResult(message, objectToValidate, key, Tag, this));
         }
 

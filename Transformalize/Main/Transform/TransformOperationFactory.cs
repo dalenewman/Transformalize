@@ -74,10 +74,9 @@ namespace Transformalize.Main {
 
             if (!element.RunField.Equals(string.Empty)) {
                 var op = (ComparisonOperator)Enum.Parse(typeof(ComparisonOperator), element.RunOperator, true);
-                var simpleType = Common.ToSimpleType(element.RunType);
+                var simpleType = Common.ToSimpleType(element.RunType.Equals(DEFAULT) ? "boolean" : element.RunType);
                 var value = Common.ConversionMap[simpleType](element.RunValue);
-                var key = element.RunField;
-                shouldRun = row => Common.CompareMap[op](row[key], value);
+                shouldRun = row => Common.CompareMap[op](row[element.RunField], value);
             }
 
             switch (element.Method.ToLower()) {
@@ -429,7 +428,7 @@ namespace Transformalize.Main {
                         element.MessageAppend
                     );
 
-                case "json":
+                case "isjson":
                     return new JsonValidatorOperation(inKey, resultKey, messageKey, element.MessageTemplate, element.MessageAppend);
 
                 case "notnull":

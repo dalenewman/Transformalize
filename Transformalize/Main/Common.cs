@@ -40,7 +40,7 @@ namespace Transformalize.Main {
             {"containscharacters", 1},
             {"datetimerange", 1},
             {"domain", 1},
-            {"json", 1},
+            {"isjson", 1},
             {"notnull", 1},
             {"fieldcomparison", 1},
             {"range", 1},
