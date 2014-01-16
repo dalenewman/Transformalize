@@ -145,10 +145,10 @@ namespace Transformalize.Main {
             if (!entity.Group)
                 return;
 
-            if (!element.Fields.Cast<FieldConfigurationElement>().Any(f => string.IsNullOrEmpty(f.Aggregate)))
+            if (!element.Fields.Cast<FieldConfigurationElement>().Any(f => f.Output && string.IsNullOrEmpty(f.Aggregate)))
                 return;
 
-            _log.Error("Entity {0} is set to group, but not all your fields have aggregate defined.", entity.Alias);
+            _log.Error("Entity {0} is set to group, but not all your output fields have aggregate defined.", entity.Alias);
             Environment.Exit(1);
         }
 

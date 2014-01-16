@@ -103,8 +103,10 @@ namespace Transformalize.Main {
             Kernal.Bind<IEntityRecordsExist>().To<MySqlEntityRecordsExist>().WhenInjectedInto<MySqlConnection>();
             Kernal.Bind<IEntityDropper>().To<MySqlEntityDropper>().WhenInjectedInto<MySqlConnection>();
             Kernal.Bind<IEntityExists>().To<MySqlEntityExists>().WhenInjectedInto<MySqlEntityDropper>();
+            Kernal.Bind<ITflWriter>().To<MySqlTflWriter>().WhenInjectedInto<MySqlConnection>();
+            Kernal.Bind<IViewWriter>().To<MySqlViewWriter>().WhenInjectedInto<MySqlConnection>();
 
-            //SqlServer
+            // SqlServer
             Kernal.Bind<AbstractProvider>().To<SqlServerProvider>().WhenInjectedInto<SqlServerConnection>();
             Kernal.Bind<IConnectionChecker>().To<DefaultConnectionChecker>().WhenInjectedInto<SqlServerConnection>();
             Kernal.Bind<IScriptRunner>().To<DefaultScriptRunner>().WhenInjectedInto<SqlServerConnection>();
@@ -112,16 +114,21 @@ namespace Transformalize.Main {
             Kernal.Bind<IEntityRecordsExist>().To<SqlServerEntityRecordsExist>().WhenInjectedInto<SqlServerConnection>();
             Kernal.Bind<IEntityDropper>().To<SqlServerEntityDropper>().WhenInjectedInto<SqlServerConnection>();
             Kernal.Bind<IEntityExists>().To<SqlServerEntityExists>().WhenInjectedInto<SqlServerEntityDropper>();
+            Kernal.Bind<ITflWriter>().To<SqlServerTflWriter>().WhenInjectedInto<SqlServerConnection>();
+            Kernal.Bind<IViewWriter>().To<SqlServerViewWriter>().WhenInjectedInto<SqlServerConnection>();
 
-            //Analysis Services
+            // Analysis Services
             Kernal.Bind<AbstractProvider>().To<AnalysisServicesProvider>().WhenInjectedInto<AnalysisServicesConnection>();
             Kernal.Bind<IConnectionChecker>().To<AnalysisServicesConnectionChecker>().WhenInjectedInto<AnalysisServicesConnection>();
             Kernal.Bind<IScriptRunner>().To<AnalysisServicesScriptRunner>().WhenInjectedInto<AnalysisServicesConnection>();
             Kernal.Bind<IProviderSupportsModifier>().To<FalseProviderSupportsModifier>().WhenInjectedInto<AnalysisServicesConnection>();
             Kernal.Bind<IEntityRecordsExist>().To<FalseEntityRecordsExist>().WhenInjectedInto<AnalysisServicesConnection>();
             Kernal.Bind<IEntityDropper>().To<FalseEntityDropper>().WhenInjectedInto<AnalysisServicesConnection>();
+            Kernal.Bind<IEntityExists>().To<FalseEntityExists>().WhenInjectedInto<AnalysisServicesEntityDropper>();
+            Kernal.Bind<ITflWriter>().To<FalseTflWriter>().WhenInjectedInto<AnalysisServicesConnection>();
+            Kernal.Bind<IViewWriter>().To<FalseViewWriter>().WhenInjectedInto<AnalysisServicesConnection>();
 
-            //File (including Excel)
+            // File (including Excel)
             Kernal.Bind<AbstractProvider>().To<FileProvider>().WhenInjectedInto<FileConnection>();
             Kernal.Bind<IConnectionChecker>().To<FileConnectionChecker>().WhenInjectedInto<FileConnection>();
             Kernal.Bind<IScriptRunner>().To<EmptyScriptRunner>().WhenInjectedInto<FileConnection>();
@@ -129,8 +136,10 @@ namespace Transformalize.Main {
             Kernal.Bind<IEntityRecordsExist>().To<FileEntityRecordsExist>().WhenInjectedInto<FileConnection>();
             Kernal.Bind<IEntityDropper>().To<FileEntityDropper>().WhenInjectedInto<FileConnection>();
             Kernal.Bind<IEntityExists>().To<FileEntityExists>().WhenInjectedInto<FileEntityDropper>();
+            Kernal.Bind<ITflWriter>().To<FalseTflWriter>().WhenInjectedInto<FileConnection>();
+            Kernal.Bind<IViewWriter>().To<FalseViewWriter>().WhenInjectedInto<FileConnection>();
 
-            //Internal Operation
+            // Internal Operation
             Kernal.Bind<AbstractProvider>().To<InternalProvider>().WhenInjectedInto<InternalConnection>();
             Kernal.Bind<IConnectionChecker>().To<InternalConnectionChecker>().WhenInjectedInto<InternalConnection>();
             Kernal.Bind<IScriptRunner>().To<EmptyScriptRunner>().WhenInjectedInto<InternalConnection>();
@@ -138,6 +147,8 @@ namespace Transformalize.Main {
             Kernal.Bind<IEntityRecordsExist>().To<FalseEntityRecordsExist>().WhenInjectedInto<InternalConnection>();
             Kernal.Bind<IEntityDropper>().To<FalseEntityDropper>().WhenInjectedInto<InternalConnection>();
             Kernal.Bind<IEntityExists>().To<FalseEntityExists>().WhenInjectedInto<InternalEntityDropper>();
+            Kernal.Bind<ITflWriter>().To<FalseTflWriter>().WhenInjectedInto<InternalConnection>();
+            Kernal.Bind<IViewWriter>().To<FalseViewWriter>().WhenInjectedInto<InternalConnection>();
 
         }
 

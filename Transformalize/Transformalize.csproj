@@ -619,15 +619,19 @@
     <Compile Include="Main\Process\ProcessFactory.cs" />
     <Compile Include="Main\Process\ProcessOperationsLoader.cs" />
     <Compile Include="Main\Process\OperationsLoader.cs" />
+    <Compile Include="Main\Providers\AnalysisServicesEntityDropper.cs" />
     <Compile Include="Main\Providers\FalseEntityExists.cs" />
     <Compile Include="Main\Providers\FileEntityDropper.cs" />
     <Compile Include="Main\Providers\File\FileEntityExists.cs" />
     <Compile Include="Main\Providers\File\FileEntityRecordsExist.cs" />
     <Compile Include="Main\Providers\FalseEntityRecordsExist.cs" />
     <Compile Include="Main\MapLoader.cs" />
+    <Compile Include="Main\Providers\InternalEntityDropper.cs" />
     <Compile Include="Main\Providers\Internal\InternalConnection.cs" />
     <Compile Include="Main\Providers\Internal\InternalConnectionChecker.cs" />
     <Compile Include="Main\Providers\Internal\InternalProvider.cs" />
+    <Compile Include="Main\Providers\Internal\FalseTflWriter.cs" />
+    <Compile Include="Main\Providers\Internal\FalseViewWriter.cs" />
     <Compile Include="Main\Providers\MySql\MySqlEntityDropper.cs" />
     <Compile Include="Main\Providers\MySql\MySqlEntityExists.cs" />
     <Compile Include="Main\Providers\MySql\MySqlEntityRecordsExist.cs" />
@@ -638,6 +642,8 @@
     <Compile Include="Main\Providers\File\FileConnection.cs" />
     <Compile Include="Main\Providers\File\FileProvider.cs" />
     <Compile Include="Main\Providers\FalseEntityDropper.cs" />
+    <Compile Include="Main\Providers\MySql\MySqlTflWriter.cs" />
+    <Compile Include="Main\Providers\MySql\MySqlViewWriter.cs" />
     <Compile Include="Main\Providers\ProviderReader.cs" />
     <Compile Include="Main\Providers\SqlServerEntityDropper.cs" />
     <Compile Include="Main\RelationshipsReader.cs" />
@@ -1121,6 +1127,7 @@
     <Compile Include="Operations\Transform\CopyOperation.cs" />
     <Compile Include="Operations\Transform\TflOperation.cs" />
     <Compile Include="Operations\Transform\TimeZoneOperation.cs" />
+    <Compile Include="Operations\Transform\ValueOperation.cs" />
     <Compile Include="Operations\Transform\XpathOperation.cs" />
     <Compile Include="Operations\Transform\TimeOfDayOperation.cs" />
     <Compile Include="Operations\Transform\LeftOperation.cs" />

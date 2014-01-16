@@ -29,48 +29,36 @@ using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.SqlServer;
 using Transformalize.Operations;
 
-namespace Transformalize.Processes
-{
-    public class InitializationProcess : EtlProcess
-    {
+namespace Transformalize.Processes {
+    public class InitializationProcess : EtlProcess {
         private readonly Process _process;
-        private readonly ITflWriter _tflWriter;
-        private readonly IViewWriter _viewWriter;
 
-        public InitializationProcess(Process process, ITflWriter tflWriter = null, IViewWriter viewWriter = null)
-        {
+        public InitializationProcess(Process process) {
             GlobalDiagnosticsContext.Set("entity", Common.LogLength("All", 3));
 
             _process = process;
-            _tflWriter = tflWriter ?? new SqlServerTflWriter(ref process);
-            _viewWriter = viewWriter ?? new SqlServerViewWriter(process);
 
-            _tflWriter.Initialize();
-            _viewWriter.Drop();
+            process.OutputConnection.TflWriter.Initialize(process);
+            process.OutputConnection.ViewWriter.Drop(process);
         }
 
-        protected override void Initialize()
-        {
-            foreach (var entity in _process.Entities)
-            {
+        protected override void Initialize() {
+            foreach (var entity in _process.Entities) {
                 Register(new EntityDrop(_process, entity));
                 Register(new EntityCreate(entity, _process));
             }
         }
 
-        protected override void PostProcessing()
-        {
+        protected override void PostProcessing() {
             var errors = GetAllErrors().ToArray();
-            if (errors.Any())
-            {
-                foreach (var error in errors)
-                {
+            if (errors.Any()) {
+                foreach (var error in errors) {
                     Error(error.InnerException, "Message: {0}\r\nStackTrace:{1}\r\n", error.Message, error.StackTrace);
                 }
                 Environment.Exit(1);
             }
 
-            _viewWriter.Create();
+            _process.OutputConnection.ViewWriter.Create(_process);
             base.PostProcessing();
         }
     }

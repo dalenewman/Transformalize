@@ -29,38 +29,31 @@ using Transformalize.Libs.Dapper;
 namespace Transformalize.Main.Providers.SqlServer {
     public class SqlServerViewWriter : IViewWriter {
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
-        private readonly Entity _masterEntity;
-        private readonly Process _process;
 
-        public SqlServerViewWriter(Process process) {
-            _process = process;
-            _masterEntity = _process.MasterEntity;
-        }
-
-        public void Drop() {
-            using (var cn = _process.OutputConnection.GetConnection()) {
+        public void Drop(Process process) {
+            using (var cn = process.OutputConnection.GetConnection()) {
                 cn.Open();
 
-                var sql = DropSql();
+                var sql = DropSql(process);
                 _log.Debug(sql);
                 cn.Execute(sql);
-                _log.Debug("Dropped Output {0}.", _process.Star);
+                _log.Debug("Dropped Output {0}.", process.Star);
             }
         }
 
-        public void Create() {
-            Drop();
-            using (var cn = _process.OutputConnection.GetConnection()) {
+        public void Create(Process process) {
+            Drop(process);
+            using (var cn = process.OutputConnection.GetConnection()) {
                 cn.Open();
-                var sql = CreateSql();
+                var sql = CreateSql(process);
 
                 _log.Debug(sql);
                 cn.Execute(sql);
-                _log.Debug("Created Output {0}.", _process.Star);
+                _log.Debug("Created Output {0}.", process.Star);
             }
         }
 
-        private string DropSql() {
+        private static string DropSql(Process process) {
             const string format = @"IF EXISTS (
 	SELECT *
 	FROM INFORMATION_SCHEMA.VIEWS
@@ -68,16 +61,16 @@ namespace Transformalize.Main.Providers.SqlServer {
 	AND TABLE_NAME = '{0}'
 )
 	DROP VIEW [{0}];";
-            return string.Format(format, _process.Star);
+            return string.Format(format, process.Star);
         }
 
-        public string CreateSql() {
-            var provider = _process.OutputConnection.Provider;
+        public string CreateSql(Process process) {
+            var provider = process.OutputConnection.Provider;
             var builder = new StringBuilder();
-            builder.AppendFormat("CREATE VIEW {0} AS\r\n", provider.Enclose(_process.Star));
+            builder.AppendFormat("CREATE VIEW {0} AS\r\n", provider.Enclose(process.Star));
             builder.AppendFormat("SELECT\r\n    d.TflKey,\r\n    d.TflBatchId,\r\n    b.TflUpdate,\r\n");
 
-            var typedFields = new StarFields(_process).TypedFields();
+            var typedFields = new StarFields(process).TypedFields();
             builder.AppendLine(string.Concat(new FieldSqlWriter(typedFields[StarFieldType.Master]).Alias(provider).PrependEntityOutput(provider, "d").Prepend("    ").Write(",\r\n"), ","));
 
             if (typedFields[StarFieldType.Foreign].Any())
@@ -88,10 +81,10 @@ namespace Transformalize.Main.Providers.SqlServer {
 
             builder.TrimEnd("\r\n,");
             builder.AppendLine();
-            builder.AppendFormat("FROM {0} d\r\n", provider.Enclose(_masterEntity.OutputName()));
-            builder.AppendFormat("INNER JOIN TflBatch b ON (d.TflBatchId = b.TflBatchId AND b.ProcessName = '{0}')\r\n", _process.Name);
+            builder.AppendFormat("FROM {0} d\r\n", provider.Enclose(process.MasterEntity.OutputName()));
+            builder.AppendFormat("INNER JOIN TflBatch b ON (d.TflBatchId = b.TflBatchId AND b.ProcessName = '{0}')\r\n", process.Name);
 
-            foreach (var entity in _process.Entities.Where(e => !e.IsMaster())) {
+            foreach (var entity in process.Entities.Where(e => !e.IsMaster())) {
                 builder.AppendFormat("LEFT OUTER JOIN {0} ON (", entity.OutputName());
 
                 foreach (var join in entity.RelationshipToMaster.First().Join.ToArray()) {

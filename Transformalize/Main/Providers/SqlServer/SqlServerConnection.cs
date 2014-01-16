@@ -22,10 +22,8 @@
 
 using Transformalize.Configuration;
 
-namespace Transformalize.Main.Providers.SqlServer
-{
-    public class SqlServerConnection : AbstractConnection
-    {
+namespace Transformalize.Main.Providers.SqlServer {
+    public class SqlServerConnection : AbstractConnection {
         public override string UserProperty { get { return "User Id"; } }
         public override string PasswordProperty { get { return "Password"; } }
         public override string PortProperty { get { return string.Empty; } }
@@ -33,12 +31,31 @@ namespace Transformalize.Main.Providers.SqlServer
         public override string ServerProperty { get { return "Server"; } }
         public override string TrustedProperty { get { return "Trusted_Connection"; } }
 
-        public SqlServerConnection(Process process, ConnectionConfigurationElement element, AbstractProvider provider, IConnectionChecker connectionChecker, IScriptRunner scriptRunner, IProviderSupportsModifier providerScriptModifer, IEntityRecordsExist recordsExist, IEntityDropper dropper)
-            : base(element, provider, connectionChecker, scriptRunner, providerScriptModifer, recordsExist, dropper)
-        {
+        public SqlServerConnection(
+            Process process,
+            ConnectionConfigurationElement element,
+            AbstractProvider provider,
+            IConnectionChecker connectionChecker,
+            IScriptRunner scriptRunner,
+            IProviderSupportsModifier providerScriptModifer,
+            IEntityRecordsExist recordsExist,
+            IEntityDropper dropper,
+            ITflWriter tflWriter,
+            IViewWriter viewWriter)
+            : base(
+                element,
+                provider,
+                connectionChecker,
+                scriptRunner,
+                providerScriptModifer,
+                recordsExist,
+                dropper,
+                tflWriter,
+                viewWriter) {
+
             TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
 
-            EntityKeysQueryWriter = process.Options.Top > 0 ? (IEntityQueryWriter) new SqlServerEntityKeysTopQueryWriter(process.Options.Top) : new SqlServerEntityKeysQueryWriter();
+            EntityKeysQueryWriter = process.Options.Top > 0 ? (IEntityQueryWriter)new SqlServerEntityKeysTopQueryWriter(process.Options.Top) : new SqlServerEntityKeysQueryWriter();
             EntityKeysRangeQueryWriter = new SqlServerEntityKeysRangeQueryWriter();
             EntityKeysAllQueryWriter = new SqlServerEntityKeysAllQueryWriter();
             TableQueryWriter = new SqlServerTableQueryWriter();

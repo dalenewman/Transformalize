@@ -26,6 +26,7 @@ namespace Transformalize.Main
 {
     public interface IEntityDropper
     {
+        IEntityExists EntityExists { get; set; }
         void Drop(AbstractConnection connection, string schema, string name);
     }
 }

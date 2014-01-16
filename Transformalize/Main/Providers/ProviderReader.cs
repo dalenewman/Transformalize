@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Transformalize.Configuration;
+using Transformalize.Libs.Ninject.Activation;
 
 namespace Transformalize.Main.Providers {
     public class ProviderReader {
@@ -19,6 +20,10 @@ namespace Transformalize.Main.Providers {
 
             if (providers.Count == 0) {
                 providers.Add("sqlserver", "System.Data.SqlClient.SqlConnection, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
+            }
+
+            if (!providers.ContainsKey("internal")) {
+                providers.Add("internal", string.Empty);
             }
 
             return providers;

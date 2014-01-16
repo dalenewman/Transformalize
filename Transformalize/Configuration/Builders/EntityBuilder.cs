@@ -58,5 +58,10 @@ namespace Transformalize.Configuration.Builders {
             _entity.CalculatedFields.Add(calculatedField);
             return new FieldBuilder(this, calculatedField);
         }
+
+        public EntityBuilder Group(bool group = true) {
+            _entity.Group = group;
+            return this;
+        }
     }
 }

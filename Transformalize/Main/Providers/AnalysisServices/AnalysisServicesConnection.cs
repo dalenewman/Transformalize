@@ -33,8 +33,8 @@ namespace Transformalize.Main.Providers.AnalysisServices
         public override string ServerProperty { get { return "Data Source"; } }
         public override string TrustedProperty { get { return string.Empty; } }
         
-        public AnalysisServicesConnection(ConnectionConfigurationElement element, AbstractProvider provider, IConnectionChecker connectionChecker, IScriptRunner scriptRunner, IProviderSupportsModifier providerScriptModifer, IEntityRecordsExist recordsExist, IEntityDropper dropper)
-            : base(element, provider, connectionChecker, scriptRunner, providerScriptModifer, recordsExist, dropper)
+        public AnalysisServicesConnection(ConnectionConfigurationElement element, AbstractProvider provider, IConnectionChecker connectionChecker, IScriptRunner scriptRunner, IProviderSupportsModifier providerScriptModifer, IEntityRecordsExist recordsExist, IEntityDropper dropper, ITflWriter tflWriter, IViewWriter viewWriter)
+            : base(element, provider, connectionChecker, scriptRunner, providerScriptModifer, recordsExist, dropper, tflWriter, viewWriter)
         {
         }
 

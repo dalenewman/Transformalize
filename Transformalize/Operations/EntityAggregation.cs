@@ -35,6 +35,7 @@ namespace Transformalize.Operations {
 
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private readonly IDictionary<string, StringBuilder> _builders = new Dictionary<string, StringBuilder>();
+        private readonly IDictionary<string, Dictionary<ObjectArrayKeys, Dictionary<object, byte>>> _distinct = new Dictionary<string, Dictionary<ObjectArrayKeys, Dictionary<object, byte>>>();
         private readonly Field[] _fieldsToAccumulate;
         private readonly string[] _keysToGroupBy;
         private readonly string _firstKey;
@@ -52,9 +53,11 @@ namespace Transformalize.Operations {
 
             _fieldsToAccumulate = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).Context().ToEnumerable().Where(f => f.Output && !f.Aggregate.Equals("group", IC)).ToArray();
 
-
             foreach (var field in _fieldsToAccumulate) {
                 _builders[field.Alias] = new StringBuilder();
+                if (field.Aggregate.Equals("countdistinct", IC)) {
+                    _distinct[field.Alias] = new Dictionary<ObjectArrayKeys, Dictionary<object, byte>>();
+                }
             }
         }
 
@@ -63,10 +66,15 @@ namespace Transformalize.Operations {
             if (!aggregate.ContainsKey(_firstKey)) {
                 foreach (var column in _keysToGroupBy) {
                     aggregate[column] = row[column];
+
                 }
 
                 foreach (var field in _fieldsToAccumulate) {
-                    aggregate[field.Alias] = field.Default ?? new DefaultFactory().Convert(string.Empty, field.SimpleType);
+                    if (field.Aggregate.StartsWith("count", IC)) {
+                        aggregate[field.Alias] = 0;
+                    } else {
+                        aggregate[field.Alias] = field.Default ?? new DefaultFactory().Convert(string.Empty, field.SimpleType);
+                    }
                 }
             }
 
@@ -74,10 +82,18 @@ namespace Transformalize.Operations {
             foreach (var field in _fieldsToAccumulate) {
                 switch (field.Aggregate) {
                     case "count":
-                        switch (field.SimpleType) {
-                            case "int32":
-                                aggregate[field.Alias] = (int) aggregate[field.Alias] + 1;
-                                break;
+                        aggregate[field.Alias] = (int)aggregate[field.Alias] + 1;
+                        break;
+                    case "countdistinct":
+                        var key = row.CreateKey(_keysToGroupBy);
+                        var value = row[field.Name];
+                        if (!_distinct[field.Alias].ContainsKey(key)) {
+                            _distinct[field.Alias].Add(key, new Dictionary<object, byte>());
+                        }
+                        if (!_distinct[field.Alias][key].ContainsKey(value))
+                        {
+                            _distinct[field.Alias][key].Add(value, 0);
+                            aggregate[field.Alias] = (int)aggregate[field.Alias] + 1;
                         }
                         break;
                     case "sum":
@@ -102,7 +118,7 @@ namespace Transformalize.Operations {
                                 aggregate[field.Alias] = (new[] { aggregate[field.Alias].ToString(), row[field.Alias].ToString() }).Max();
                                 break;
                             case "guid":
-                                aggregate[field.Alias] = (new[] { (Guid)aggregate[field.Alias], (Guid) row[field.Alias] }).Max();
+                                aggregate[field.Alias] = (new[] { (Guid)aggregate[field.Alias], (Guid)row[field.Alias] }).Max();
                                 break;
 
                         }

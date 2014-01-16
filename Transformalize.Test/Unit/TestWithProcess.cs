@@ -123,7 +123,7 @@ OPTION (MAXDOP 2);";
 
         [Test]
         public void TestWriteSql() {
-            var actual = new SqlServerViewWriter(_process).CreateSql();
+            var actual = new SqlServerViewWriter().CreateSql(_process);
 
             Assert.AreEqual(@"CREATE VIEW [TestStar] AS
 SELECT

@@ -28,18 +28,18 @@ namespace Transformalize.Main.Providers
 {
     public class DatabaseEntityDropper : IEntityDropper
     {
-        private readonly IEntityExists _entityExists;
+        public IEntityExists EntityExists { get; set; }
         private const string FORMAT = "DROP TABLE {0}{1};";
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
 
         public DatabaseEntityDropper(IEntityExists entityExists)
         {
-            _entityExists = entityExists;
+            EntityExists = entityExists;
         }
 
         public void Drop(AbstractConnection connection, string schema, string name)
         {
-            if (!_entityExists.Exists(connection, schema, name))
+            if (!EntityExists.Exists(connection, schema, name))
                 return;
 
             var provider = connection.Provider;

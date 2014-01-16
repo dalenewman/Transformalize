@@ -45,7 +45,7 @@ namespace Transformalize.Libs.Rhino.Etl.Enumerables
         /// <filterpriority>1</filterpriority>
         IEnumerator<Row> IEnumerable<Row>.GetEnumerator()
         {
-            Guard.Against(inner == null, "Null enuerator detected, are you trying to read from the first operation in the process?");
+            Guard.Against(inner == null, "Null enumerator detected, are you trying to read from the first operation in the process?");
             innerEnumerator = inner.GetEnumerator();
             return this;
         }

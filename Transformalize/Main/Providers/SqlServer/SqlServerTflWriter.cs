@@ -21,26 +21,20 @@
 #endregion
 
 using System.Data;
-using System.Data.SqlClient;
 using Transformalize.Libs.Rhino.Etl;
 
 namespace Transformalize.Main.Providers.SqlServer {
     public class SqlServerTflWriter : WithLoggingMixin, ITflWriter {
-        private readonly Process _process;
 
-        public SqlServerTflWriter(ref Process process) {
-            _process = process;
-        }
-
-        public void Initialize() {
-            if (!new SqlServerTableExists(_process.OutputConnection).Exists("dbo", "TflBatch")) {
-                Execute(_process.OutputConnection, CreateSql());
+        public void Initialize(Process process) {
+            if (!new SqlServerTableExists(process.OutputConnection).Exists("dbo", "TflBatch")) {
+                Execute(process.OutputConnection, CreateSql());
                 Debug("Created TflBatch.");
             }
 
-            Execute(_process.OutputConnection, "DELETE FROM TflBatch WHERE ProcessName = '{0}';", _process.Name);
+            Execute(process.OutputConnection, "DELETE FROM TflBatch WHERE ProcessName = '{0}';", process.Name);
 
-            Info("Initialized TrAnSfOrMaLiZeR.");
+            Info("Initialized TrAnSfOrMaLiZeR {0} connection.", process.OutputConnection.Name);
         }
 
         private static void Execute(AbstractConnection connection, string sqlFormat, params object[] values) {

@@ -68,10 +68,6 @@ namespace Transformalize.Processes {
                 }
             }
 
-            foreach (var validator in _entity.ValidatorOperations) {
-                Register(validator);
-            }
-
             Register(new ApplyDefaults(_entity.Fields, _entity.CalculatedFields));
             foreach (var transform in _entity.Operations) {
                 Register(transform);

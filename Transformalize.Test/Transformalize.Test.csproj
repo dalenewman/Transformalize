@@ -130,6 +130,7 @@
     <Compile Include="Integration\OrderType.cs" />
     <Compile Include="Integration\Excel.cs" />
     <Compile Include="Integration\ScriptRunners.cs" />
+    <Compile Include="Integration\TestXml.cs" />
     <Compile Include="Integration\Ufo.cs" />
     <Compile Include="Integration\Nve.cs" />
     <Compile Include="Integration\Files.cs" />
@@ -146,6 +147,7 @@
     <Compile Include="Unit\TestConnectionValidation.cs" />
     <Compile Include="Unit\TestConfiguration.cs" />
     <Compile Include="Unit\TestProcess.cs" />
+    <Compile Include="Unit\TestAggregations.cs" />
     <Compile Include="Unit\TestValidators.cs" />
     <Compile Include="Unit\Builders\ParameterBuilder.cs" />
     <Compile Include="Unit\Builders\ParametersBuilder.cs" />
@@ -187,6 +189,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="LICENSE.txt" />
+    <Content Include="Test.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="NorthWindExpanded.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

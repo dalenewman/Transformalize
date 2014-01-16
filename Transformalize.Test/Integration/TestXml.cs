@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // /*
 // Transformalize - Replicate, Transform, and Denormalize Your Data...
@@ -20,11 +20,22 @@
 
 #endregion
 
-namespace Transformalize.Main.Providers
+using System.Linq;
+using NUnit.Framework;
+using Transformalize.Libs.NLog;
+using Transformalize.Main;
+
+namespace Transformalize.Test.Integration
 {
-    public interface IViewWriter
+    [TestFixture]
+    public class TestXml
     {
-        void Create(Process process);
-        void Drop(Process process);
+        [Test]
+        public void Run()
+        {
+            var rows = ProcessFactory.Create("Test.xml").Run().First();
+            Assert.AreEqual(62, rows.Count());
+        }
+
     }
 }

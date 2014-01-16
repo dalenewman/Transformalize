@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<process enabled="true">
+
+  <connections>
+    <add name="input" database="Orchard171" />
+    <add name="output" provider="Internal" />
+  </connections>
+
+  <entities>
+    <add name="Scope_Search_ScopeSearchFieldPartRecord">
+      <fields>
+        <add name="Id" type="System.Int32" primary-key="true"/>
+        <add name="SearchFieldDefault" length="255"/>
+        <add name="SearchFieldDynamic" type="System.Boolean"/>
+        <add name="SearchFieldDynamicAlternate" length="255"/>
+        <add name="SearchFieldFacet" type="System.Boolean" default="false"/>
+        <add name="SearchFieldLabel" length="255"/>
+        <add name="SearchFieldName" length="255"/>
+        <add name="SearchFieldResult" type="System.Boolean" default="false"/>
+        <add name="SearchFieldSearch" type="System.Boolean" default="false"/>
+        <add name="SearchFieldSequence" type="System.Int32"/>
+        <add name="SearchFieldWidth" type="System.Int32"/>
+        <add name="SearchPage" length="255"/>
+      </fields>
+    </add>
+  </entities>
+
+</process>

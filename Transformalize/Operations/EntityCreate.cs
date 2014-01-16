@@ -32,10 +32,9 @@ namespace Transformalize.Operations {
     public class EntityCreate : AbstractOperation {
         private readonly Entity _entity;
         private readonly Process _process;
-        private readonly IEntityExists _entityExists;
         private readonly FieldSqlWriter _writer;
 
-        public EntityCreate(Entity entity, Process process, IEntityExists entityExists = null) {
+        public EntityCreate(Entity entity, Process process) {
             Name = "Entity Create";
             _entity = entity;
             _process = process;
@@ -44,7 +43,6 @@ namespace Transformalize.Operations {
                 new FieldSqlWriter(entity.Fields, process.CalculatedFields, entity.CalculatedFields, GetRelationshipFields(process)) :
                 new FieldSqlWriter(entity.Fields, entity.CalculatedFields);
 
-            _entityExists = entityExists ?? new SqlServerEntityExists();
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
@@ -55,7 +53,7 @@ namespace Transformalize.Operations {
         private void CreateEntity() {
             var provider = _process.OutputConnection.Provider;
 
-            if (_entityExists.Exists(_process.OutputConnection, _entity.Schema, _entity.OutputName()))
+            if (_process.OutputConnection.Exists(_entity))
                 return;
 
             var primaryKey = _writer.FieldType(_entity.IsMaster() ? FieldType.MasterKey : FieldType.PrimaryKey).Alias(provider).Asc().Values();

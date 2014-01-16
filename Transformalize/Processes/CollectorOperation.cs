@@ -12,7 +12,7 @@ namespace Transformalize.Processes {
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             _rows = rows;
-            return new List<Row>();
+            yield break;
         }
     }
 }

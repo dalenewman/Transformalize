@@ -166,6 +166,12 @@ namespace Transformalize.Configuration.Builders {
             _field.Type = "System.Boolean";
             return this;
         }
+
+        public FieldBuilder Aggregate(string method) {
+            _field.Aggregate = method;
+            return this;
+        }
+
     }
 
 }

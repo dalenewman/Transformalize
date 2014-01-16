@@ -26,18 +26,18 @@ using Transformalize.Main;
 namespace Transformalize.Test.Integration {
     [TestFixture]
     public class Nve {
-        private const string FILE = @"http://config.mwf.local/NVE.xml";
+        private const string FILE = @"http://config.mwf.local/Nve.xml";
 
         [Test]
         public void Init() {
-            var options = new Options { Mode = "init" };
+            var options = new Options { Mode = "init", Force = true};
             var process = ProcessFactory.Create(FILE, options);
             process.Run();
         }
 
         [Test]
         public void First() {
-            var options = new Options { Mode = "first" };
+            var options = new Options { Mode = "first", Force = true};
             var process = ProcessFactory.Create(FILE, options);
             process.Run();
         }

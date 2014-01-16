@@ -90,10 +90,6 @@ namespace Transformalize.Main {
             get { return _operations; }
             set { _operations = value; }
         }
-        public List<AbstractOperation> ValidatorOperations {
-            get { return _validatorOperations; }
-            set { _validatorOperations = value; }
-        }
 
         public string FirstKey() {
             return PrimaryKey.First().Key;

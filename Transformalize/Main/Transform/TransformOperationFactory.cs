@@ -299,7 +299,7 @@ namespace Transformalize.Main {
                         outKey,
                         element.Format,
                         parameters
-                        ) {ShouldRun = shouldRun};
+                        ) { ShouldRun = shouldRun };
 
                 case "concat":
                     return new ConcatOperation(
@@ -382,8 +382,12 @@ namespace Transformalize.Main {
                 case "timeofday":
                     return new TimeOfDayOperation(inKey, inType, outKey, outType, element.TimeComponent) { ShouldRun = shouldRun };
 
+                case "value":
+                    return new ValueOperation(outKey, outType, element.Value) { ShouldRun = shouldRun };
+
                 case "xpath":
                     return new XPathOperation(inKey, outKey, outType, element.XPath) { ShouldRun = shouldRun };
+
 
                 // validators
                 case "containscharacters":

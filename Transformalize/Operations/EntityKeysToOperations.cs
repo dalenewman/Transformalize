@@ -29,40 +29,42 @@ using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
 
-namespace Transformalize.Operations
-{
-    public class EntityKeysToOperations : AbstractOperation
-    {
+namespace Transformalize.Operations {
+    public class EntityKeysToOperations : AbstractOperation {
         private readonly Entity _entity;
         private readonly Field[] _key;
         private readonly string _operationColumn;
         private readonly AbstractProvider _provider;
 
-        public EntityKeysToOperations(Entity entity, string operationColumn = "operation")
-        {
+        public EntityKeysToOperations(Entity entity, string operationColumn = "operation") {
             _entity = entity;
             _provider = _entity.InputConnection.Provider;
             _operationColumn = operationColumn;
             _key = new FieldSqlWriter(_entity.PrimaryKey).Input().ToArray();
         }
 
-        public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
-        {
+        public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             var fields = new FieldSqlWriter(_entity.Fields).Input().Keys().ToArray();
 
-            var count = 0;
-            foreach (var batch in _entity.InputKeys.Partition(_entity.InputConnection.BatchSize))
-            {
-                var sql = SelectByKeys(batch);
-                var row = new Row();
-                row[_operationColumn] = new EntityDataExtract(fields, sql, _entity.InputConnection);
-                count++;
-                yield return row;
+            var operationRows = new List<Row>();
+
+            if (_entity.InputKeys.Count > 0 && _entity.InputKeys.Count < _entity.InputConnection.BatchSize) {
+                operationRows.Add(GetOperationRow(_entity.InputKeys, fields));
+            } else {
+                operationRows.AddRange(_entity.InputKeys.Partition(_entity.InputConnection.BatchSize).Select(batch => GetOperationRow(batch, fields)));
             }
+
+            return operationRows;
         }
 
-        public string SelectByKeys(IEnumerable<Row> rows)
-        {
+        private Row GetOperationRow(IEnumerable<Row> batch, string[] fields) {
+            var sql = SelectByKeys(batch);
+            var row = new Row();
+            row[_operationColumn] = new EntityDataExtract(fields, sql, _entity.InputConnection);
+            return row;
+        }
+
+        public string SelectByKeys(IEnumerable<Row> rows) {
             var tableName = _provider.Supports.TableVariable ? "@KEYS" : "KEYS_" + _entity.Name;
             var noCount = _provider.Supports.NoCount ? "SET NOCOUNT ON;\r\n" : string.Empty;
             var sql = noCount +

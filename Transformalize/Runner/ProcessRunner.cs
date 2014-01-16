@@ -32,16 +32,11 @@ using Transformalize.Processes;
 namespace Transformalize.Runner {
     public class ProcessRunner : IProcessRunner {
 
-        private AbstractPipelineExecuter _pipelineExecuter = new ThreadPoolPipelineExecuter();
-
         public IEnumerable<IEnumerable<Row>> Run(Process process) {
             var results = new List<IEnumerable<Row>>();
 
             if (!process.IsReady())
                 return results;
-
-            if (process.Options.Mode == "test")
-                _pipelineExecuter = new SingleThreadedNonCachedPipelineExecuter();
 
             ProcessDeletes(process);
             ProcessEntities(process);
@@ -54,39 +49,39 @@ namespace Transformalize.Runner {
             return process.Entities.Select(e => e.Rows);
         }
 
-        private void ProcessDeletes(Process process) {
+        private static void ProcessDeletes(Process process) {
             foreach (var entityDeleteProcess in process.Entities.Where(e => e.Delete).Select(entity => new EntityDeleteProcess(process, entity))) {
-                entityDeleteProcess.PipelineExecuter = _pipelineExecuter;
+                entityDeleteProcess.PipelineExecuter = process.Options.Mode.Equals("test") ? (AbstractPipelineExecuter) new SingleThreadedNonCachedPipelineExecuter() : new ThreadPoolPipelineExecuter();
                 entityDeleteProcess.Execute();
             }
         }
 
-        private void ProcessEntities(Process process) {
+        private static void ProcessEntities(Process process) {
 
             foreach (var entityKeysProcess in process.Entities.Where(e => e.InputConnection.Provider.IsDatabase).Select(entity => new EntityKeysProcess(process, entity))) {
-                entityKeysProcess.PipelineExecuter = _pipelineExecuter;
+                entityKeysProcess.PipelineExecuter = process.Options.Mode.Equals("test") ? (AbstractPipelineExecuter)new SingleThreadedNonCachedPipelineExecuter() : new ThreadPoolPipelineExecuter(); ;
                 entityKeysProcess.Execute();
             }
 
             foreach (var entityProcess in process.Entities.Select(entity => new EntityProcess(process, entity))) {
-                entityProcess.PipelineExecuter = _pipelineExecuter;
+                entityProcess.PipelineExecuter = process.Options.Mode.Equals("test") ? (AbstractPipelineExecuter)new SingleThreadedNonCachedPipelineExecuter() : new ThreadPoolPipelineExecuter(); ;
                 entityProcess.Execute();
             }
         }
 
-        private void ProcessMaster(Process process) {
+        private static void ProcessMaster(Process process) {
             if (process.OutputConnection.Provider.Type == ProviderType.Internal)
                 return;
-            var updateMasterProcess = new UpdateMasterProcess(ref process) { PipelineExecuter = _pipelineExecuter };
+            var updateMasterProcess = new UpdateMasterProcess(ref process) { PipelineExecuter = process.Options.Mode.Equals("test") ? (AbstractPipelineExecuter) new SingleThreadedNonCachedPipelineExecuter() : new ThreadPoolPipelineExecuter() };
             updateMasterProcess.Execute();
         }
 
-        private void ProcessTransforms(Process process) {
+        private static void ProcessTransforms(Process process) {
             if (process.CalculatedFields.Count <= 0)
                 return;
             if (process.OutputConnection.Provider.Type == ProviderType.Internal)
                 return;
-            var transformProcess = new TransformProcess(process) { PipelineExecuter = _pipelineExecuter };
+            var transformProcess = new TransformProcess(process) { PipelineExecuter = process.Options.Mode.Equals("test") ? (AbstractPipelineExecuter) new SingleThreadedNonCachedPipelineExecuter() : new ThreadPoolPipelineExecuter() };
             transformProcess.Execute();
         }
 

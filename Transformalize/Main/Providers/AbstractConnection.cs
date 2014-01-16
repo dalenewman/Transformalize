@@ -46,6 +46,8 @@ namespace Transformalize.Main.Providers {
         public IEntityQueryWriter EntityKeysAllQueryWriter { get; set; }
         public ITableQueryWriter TableQueryWriter { get; set; }
         public IProviderSupportsModifier ProviderSupportsModifier { get; set; }
+        public ITflWriter TflWriter { get; set; }
+        public IViewWriter ViewWriter { get; set; }
 
         public string Database { get; set; }
         public string Server { get; set; }
@@ -68,13 +70,28 @@ namespace Transformalize.Main.Providers {
         public abstract string ServerProperty { get; }
         public abstract string TrustedProperty { get; }
 
-        protected AbstractConnection(ConnectionConfigurationElement element, AbstractProvider provider, IConnectionChecker connectionChecker, IScriptRunner scriptRunner, IProviderSupportsModifier providerSupportsModifier, IEntityRecordsExist recordsExist, IEntityDropper dropper) {
+        protected AbstractConnection(
+            ConnectionConfigurationElement element,
+            AbstractProvider provider,
+            IConnectionChecker connectionChecker,
+            IScriptRunner scriptRunner,
+            IProviderSupportsModifier providerSupportsModifier,
+            IEntityRecordsExist recordsExist,
+            IEntityDropper dropper,
+            ITflWriter tflWriter,
+            IViewWriter viewWriter
+        ) {
 
             _connectionChecker = connectionChecker;
             _entityRecordsExist = recordsExist;
             _dropper = dropper;
 
             Provider = provider;
+            ViewWriter = viewWriter;
+            TflWriter = tflWriter;
+            ScriptRunner = scriptRunner;
+            ProviderSupportsModifier = providerSupportsModifier;
+
             BatchSize = element.BatchSize;
             Name = element.Name;
             Start = element.Start;
@@ -82,8 +99,6 @@ namespace Transformalize.Main.Providers {
             File = element.File;
             Delimiter = element.Delimiter;
             LineDelimiter = element.LineDelimiter;
-            ScriptRunner = scriptRunner;
-            ProviderSupportsModifier = providerSupportsModifier;
 
             ProcessConnectionString(element);
             InputOperation = element.InputOperation;
@@ -233,6 +248,10 @@ namespace Transformalize.Main.Providers {
 
         public void Drop(Entity entity) {
             _dropper.Drop(this, entity.Schema, entity.OutputName());
+        }
+
+        public bool Exists(Entity entity) {
+            return _dropper.EntityExists.Exists(this, entity.Schema, entity.OutputName());
         }
 
         public bool IsDelimited() {

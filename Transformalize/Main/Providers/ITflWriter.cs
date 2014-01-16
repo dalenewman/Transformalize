@@ -24,6 +24,6 @@ namespace Transformalize.Main.Providers
 {
     public interface ITflWriter
     {
-        void Initialize();
+        void Initialize(Process process);
     }
 }

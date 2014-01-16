@@ -33,8 +33,8 @@ namespace Transformalize.Main.Providers.MySql
         public override string ServerProperty { get { return "Server"; } }
         public override string TrustedProperty { get { return string.Empty; } }
 
-        public MySqlConnection(Process process, ConnectionConfigurationElement element, AbstractProvider provider, IConnectionChecker connectionChecker, IScriptRunner scriptRunner, IProviderSupportsModifier providerScriptModifer, IEntityRecordsExist recordsExist, IEntityDropper dropper)
-            : base(element, provider, connectionChecker, scriptRunner, providerScriptModifer, recordsExist, dropper)
+        public MySqlConnection(Process process, ConnectionConfigurationElement element, AbstractProvider provider, IConnectionChecker connectionChecker, IScriptRunner scriptRunner, IProviderSupportsModifier providerScriptModifer, IEntityRecordsExist recordsExist, IEntityDropper dropper, ITflWriter tflWriter, IViewWriter viewWriter)
+            : base(element, provider, connectionChecker, scriptRunner, providerScriptModifer, recordsExist, dropper, tflWriter, viewWriter)
         {
             TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
 
