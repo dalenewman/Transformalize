@@ -34,6 +34,7 @@ using Transformalize.Test.Unit.Builders;
 namespace Transformalize.Test.Unit {
     [TestFixture]
     public class TestTransforms : EtlProcessHelper {
+
         [Test]
         public void ConcatStrings() {
             var input = new RowsBuilder().Row().Field("f1", "v1").Field("f2", "v2").ToOperation();

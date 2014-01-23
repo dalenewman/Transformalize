@@ -18,8 +18,16 @@ namespace Transformalize.Main.Providers {
                 providers[element.Name.ToLower()] = element.Type;
             }
 
-            if (providers.Count == 0) {
+            if (!providers.ContainsKey("sqlserver")) {
                 providers.Add("sqlserver", "System.Data.SqlClient.SqlConnection, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
+            }
+
+            if (!providers.ContainsKey("mysql")) {
+                providers.Add("mysql", "MySql.Data.MySqlClient.MySqlConnection, MySql.Data");
+            }
+
+            if (!providers.ContainsKey("file")) {
+                providers.Add("file", string.Empty);
             }
 
             if (!providers.ContainsKey("internal")) {

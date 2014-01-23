@@ -13,13 +13,17 @@ namespace Transformalize.Operations.Transform {
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly string _templateModelType;
         private readonly IParameters _parameters;
-        private Dictionary<string, object> _dictionaryContext = new Dictionary<string, object>();
-        private DynamicViewBag _dynamicViewBagContext = new DynamicViewBag();
+        private readonly Dictionary<string, object> _dictionaryContext = new Dictionary<string, object>();
+        private readonly DynamicViewBag _dynamicViewBagContext = new DynamicViewBag();
 
         public TemplateOperation(string outKey, string template, string templateModelType, IEnumerable<KeyValuePair<string, Template>> templates, IParameters parameters)
             : base(string.Empty, outKey) {
             _templateModelType = templateModelType;
             _parameters = parameters;
+
+            if (_parameters.ContainsKey(outKey)) {
+                _parameters.Remove(outKey);
+            }
 
             CombineTemplates(templates, ref _builder);
             _builder.Append(template);
@@ -50,7 +54,6 @@ namespace Transformalize.Operations.Transform {
         }
 
         private void RunWithDictionary(Row row) {
-            _dictionaryContext.Add(OutKey, row[OutKey]);
             foreach (var pair in _parameters) {
                 _dictionaryContext[pair.Value.Name] = pair.Value.Value ?? row[pair.Key];
             }
@@ -58,17 +61,11 @@ namespace Transformalize.Operations.Transform {
         }
 
         private void RunWithDynamic(Row row) {
-            _dynamicViewBagContext.SetValue(OutKey, row[OutKey]);
             foreach (var pair in _parameters) {
                 _dynamicViewBagContext.SetValue(pair.Value.Name, pair.Value.Value ?? row[pair.Key]);
             }
             row[OutKey] = Razor.Run(OutKey, _dynamicViewBagContext);
         }
 
-        public override void Dispose() {
-            _dictionaryContext = null;
-            _dynamicViewBagContext = null;
-            base.Dispose();
-        }
     }
 }

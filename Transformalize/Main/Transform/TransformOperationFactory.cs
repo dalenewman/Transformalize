@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Web.Razor.Parser;
 using Transformalize.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
@@ -284,6 +285,7 @@ namespace Transformalize.Main {
                     var templates = new Dictionary<string, Template>();
                     foreach (TransformTemplateConfigurationElement template in element.Templates) {
                         templates[template.Name] = _process.Templates[template.Name];
+                        _process.Templates[template.Name].IsUsedInPipeline = true;
                     }
 
                     return new TemplateOperation(
@@ -388,6 +390,17 @@ namespace Transformalize.Main {
                 case "xpath":
                     return new XPathOperation(inKey, outKey, outType, element.XPath) { ShouldRun = shouldRun };
 
+                case "xmlencode":
+                    return new XmlEncodeOperation(inKey, outKey) { ShouldRun = shouldRun };
+
+                case "filter":
+                    return new FilterOperation(
+                        inKey,
+                        outKey,
+                        outType,
+                        element.Value,
+                        (ComparisonOperator)Enum.Parse(typeof(ComparisonOperator), element.Operator, true)
+                        ) { ShouldRun = shouldRun };
 
                 // validators
                 case "containscharacters":

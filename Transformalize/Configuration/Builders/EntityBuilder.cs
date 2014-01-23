@@ -1,3 +1,5 @@
+using Transformalize.Main;
+
 namespace Transformalize.Configuration.Builders {
 
     public class EntityBuilder : IFieldHolder {
@@ -57,6 +59,11 @@ namespace Transformalize.Configuration.Builders {
             var calculatedField = new FieldConfigurationElement() { Name = name };
             _entity.CalculatedFields.Add(calculatedField);
             return new FieldBuilder(this, calculatedField);
+        }
+
+        public EntityBuilder PipelineThreading(PipelineThreading pipelineThreading) {
+            _entity.PipelineThreading = pipelineThreading.ToString();
+            return this;
         }
 
         public EntityBuilder Group(bool group = true) {

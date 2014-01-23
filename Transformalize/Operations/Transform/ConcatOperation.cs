@@ -16,7 +16,7 @@ namespace Transformalize.Operations.Transform {
             foreach (var row in rows) {
                 if (ShouldRun(row)) {
                     var linqRow = row;
-                    row[OutKey] = string.Concat(_parameters.Select(p => linqRow[p.Key] ?? p.Value.Value));
+                    row[OutKey] = string.Concat(_parameters.Select(p => (linqRow[p.Key] ?? p.Value.Value).ToString()));
                 }
                 yield return row;
             }

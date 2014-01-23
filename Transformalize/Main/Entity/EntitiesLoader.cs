@@ -8,6 +8,7 @@ using Transformalize.Libs.NLog;
 namespace Transformalize.Main {
 
     public class EntitiesLoader {
+        private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly Process _process;
         private readonly EntityElementCollection _elements;
@@ -19,7 +20,7 @@ namespace Transformalize.Main {
 
         public void Load() {
             var count = 0;
-            var batchId = _process.Options.Mode.Equals("init", StringComparison.OrdinalIgnoreCase) ? 1 : _process.GetNextBatchId();
+            var batchId = _process.Options.Mode.Equals("init", IC) || !_process.OutputConnection.Provider.IsDatabase ? 1 : _process.GetNextBatchId();
 
             foreach (EntityConfigurationElement element in _elements) {
                 var entity = new EntityConfigurationLoader(_process).Read(batchId, element, count == 0);

@@ -22,6 +22,8 @@
 
 using System;
 using System.Configuration;
+using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
+using Transformalize.Main;
 
 namespace Transformalize.Configuration {
     public class EntityConfigurationElement : ConfigurationElement {
@@ -38,11 +40,19 @@ namespace Transformalize.Configuration {
         private const string USE_BCP = "use-bcp";
         private const string INDEX_OPTIMIZATIONS = "index-optimizations";
         private const string DELETE = "delete";
+        private const string PIPELINE = "pipeline";
 
         [ConfigurationProperty(SCHEMA, IsRequired = false, DefaultValue = "dbo")]
         public string Schema {
             get { return this[SCHEMA] as string; }
             set { this[SCHEMA] = value; }
+        }
+
+        [EnumConversionValidator(typeof(PipelineThreading), MessageTemplate = "{1} must be SingleThreaded, or MultiThreaded.")]
+        [ConfigurationProperty(PIPELINE, IsRequired = false, DefaultValue = "MultiThreaded")]
+        public string PipelineThreading {
+            get { return this[PIPELINE] as string; }
+            set { this[PIPELINE] = value; }
         }
 
         [ConfigurationProperty(NAME, IsRequired = true)]

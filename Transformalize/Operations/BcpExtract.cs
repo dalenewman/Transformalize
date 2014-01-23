@@ -6,6 +6,7 @@ using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
+using Transformalize.Operations.Extract;
 
 namespace Transformalize.Operations
 {

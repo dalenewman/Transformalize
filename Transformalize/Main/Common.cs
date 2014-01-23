@@ -174,7 +174,9 @@ namespace Transformalize.Main {
             return result.Replace("system.", string.Empty);
         }
 
-        public static Type ToSystemType(string simpleType) {
+        public static Type ToSystemType(string simpleType)
+        {
+            simpleType = ToSimpleType(simpleType);
             if (simpleType == "byte[]")
                 return typeof(byte[]);
             if (simpleType == "int")

@@ -89,6 +89,10 @@ namespace Transformalize.Main.Parameters {
             return _items.ContainsKey(key);
         }
 
+        public void Remove(string key) {
+            _items.Remove(key);
+        }
+
         public void Add(string field, IParameter parameter) {
             if (_items.ContainsKey(field)) {
                 _items[field] = parameter;

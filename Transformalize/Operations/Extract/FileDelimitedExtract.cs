@@ -2,12 +2,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Rhino.Etl.Core.Files;
 using Transformalize.Libs.FileHelpers.RunTime;
-using Transformalize.Libs.NCalc;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
-namespace Transformalize.Operations {
+namespace Transformalize.Operations.Extract {
     public class FileDelimitedExtract : AbstractOperation {
         private readonly Entity _entity;
         private readonly int _top;

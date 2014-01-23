@@ -1,28 +1,90 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
-<process enabled="true">
+<process>
 
   <connections>
-    <add name="input" database="Orchard171" />
+    <add name="input" database="OrchardNve" server="sbsql1.mwf.local" />
     <add name="output" provider="Internal" />
   </connections>
 
+  <templates path="c:\ETL\tfl\Templates">
+    <add name="field" file="ScopeSearchField.cshtml" cache="true"/>
+  </templates>  
+  
   <entities>
     <add name="Scope_Search_ScopeSearchFieldPartRecord">
       <fields>
         <add name="Id" type="System.Int32" primary-key="true"/>
-        <add name="SearchFieldDefault" length="255"/>
+        <add name="SearchFieldDefault" length="255">
+          <transforms>
+            <add method="xmlencode"/>
+          </transforms>
+        </add>
         <add name="SearchFieldDynamic" type="System.Boolean"/>
         <add name="SearchFieldDynamicAlternate" length="255"/>
         <add name="SearchFieldFacet" type="System.Boolean" default="false"/>
-        <add name="SearchFieldLabel" length="255"/>
+        <add name="SearchFieldLabel" length="255">
+          <transforms>
+            <add method="xmlencode"/>
+          </transforms>
+        </add>
         <add name="SearchFieldName" length="255"/>
         <add name="SearchFieldResult" type="System.Boolean" default="false"/>
         <add name="SearchFieldSearch" type="System.Boolean" default="false"/>
         <add name="SearchFieldSequence" type="System.Int32"/>
         <add name="SearchFieldWidth" type="System.Int32"/>
         <add name="SearchPage" length="255"/>
+        <add name="SearchPageNew" input="false" default="UTC-Gas"/>
       </fields>
+      <calculated-fields>
+        <add name="Identifier">
+          <transforms>
+            <add method="join" parameter="*"/>
+            <add method="gethashcode" />
+            <add method="replace" old-value="-" new-value="" />
+            <add method="insert" start-index="0" value="UTC-GAS-"/>
+          </transforms>
+        </add>
+        <add name="SearchWord">
+          <transforms>
+            <add method="If" left="SearchFieldSearch" right="true" then="Search" else=""/>
+          </transforms>
+        </add>
+        <add name="FacetWord">
+          <transforms>
+            <add method="If" left="SearchFieldFacet" right="true" then="Facet" else=""/>
+          </transforms>
+        </add>
+        <add name="ResultWord">
+          <transforms>
+            <add method="If" left="SearchFieldResult" right="true" then="Result" else=""/>
+          </transforms>
+        </add>
+        <add name="Title" length="255">
+          <transforms>
+            <add method="format" format="{0} {1}{2}{3} ({4}) solr: {5}">
+              <parameters>
+                <add field="SearchFieldLabel"/>
+                <add field="SearchWord"/>
+                <add field="FacetWord"/>
+                <add field="ResultWord"/>
+                <add field="SearchPageNew"/>
+                <add field="SearchFieldName"/>
+              </parameters>
+            </add>
+            <add method="regexreplace" pattern="\s{2,}" replacement=" "/>
+          </transforms>
+        </add>
+        <add name="xml" length="4000">
+          <transforms>
+            <add method="template" parameter="*" run-field="SearchPage" run-value="UTC" run-type="string" >
+              <templates>
+                <add name="field"/>
+              </templates>
+            </add>
+          </transforms>
+        </add>
+      </calculated-fields>
     </add>
   </entities>
 

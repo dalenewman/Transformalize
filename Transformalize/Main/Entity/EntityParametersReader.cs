@@ -33,7 +33,7 @@ namespace Transformalize.Main {
 
         public IParameters Read(TransformConfigurationElement transform)
         {
-            var fields = new FieldSqlWriter(_entity.Fields).Input().ToArray();
+            var fields = new FieldSqlWriter(_entity.Fields, _entity.CalculatedFields).ToArray();
             foreach (var field in fields) {
                 _parameters.Add(field.Alias, field.Alias, null, field.Type);
             }

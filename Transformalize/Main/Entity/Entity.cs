@@ -52,6 +52,7 @@ namespace Transformalize.Main {
         }
 
         public string Schema { get; set; }
+        public PipelineThreading PipelineThreading { get; set; }
         public string ProcessName { get; set; }
         public string Alias { get; set; }
         public AbstractConnection InputConnection { get; set; }

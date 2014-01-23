@@ -23,7 +23,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main.Providers.SqlServer;
 
 namespace Transformalize.Main {
@@ -59,6 +58,7 @@ namespace Transformalize.Main {
         public bool Identity { get; set; }
         public KeyValuePair<string, string> References { get; set; }
         public bool Output { get; set; }
+        public bool FileOutput { get; set; }
         public int Index { get; set; }
         public string Aggregate { get; set; }
         public IParameters Parameters { get; set; }
@@ -175,6 +175,7 @@ namespace Transformalize.Main {
             Length = length;
             FieldType = fieldType;
             Output = output || MustBeOutput();
+            FileOutput = output;
             Default = @default;
         }
 

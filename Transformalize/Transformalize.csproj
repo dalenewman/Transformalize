@@ -616,6 +616,7 @@
     <Compile Include="Main\Entity\EntitiesLoader.cs" />
     <Compile Include="Main\Entity\EntityParametersReader.cs" />
     <Compile Include="Main\Entity\EntityRelationshipLoader.cs" />
+    <Compile Include="Main\PipelineThreading.cs" />
     <Compile Include="Main\Process\ProcessFactory.cs" />
     <Compile Include="Main\Process\ProcessOperationsLoader.cs" />
     <Compile Include="Main\Process\OperationsLoader.cs" />
@@ -1104,17 +1105,20 @@
     <Compile Include="Libs\Rhino.Etl\WithLoggingMixin.cs" />
     <Compile Include="Operations\BcpExtract.cs" />
     <Compile Include="Operations\EntityInputKeysExtractAllForDelete.cs" />
-    <Compile Include="Operations\FileExcelExtract.cs" />
+    <Compile Include="Operations\Extract\FileDelimitedExtract.cs" />
+    <Compile Include="Operations\Extract\FileExcelExtract.cs" />
+    <Compile Include="Operations\Extract\FileFixedExtract.cs" />
     <Compile Include="Operations\EntityDataExtract.cs" />
     <Compile Include="Operations\EntityDelete.cs" />
     <Compile Include="Operations\EntityOutputKeysExtractAll.cs" />
-    <Compile Include="Operations\FileDelimitedExtract.cs" />
+    <Compile Include="Operations\Load\FileLoadOperation.cs" />
     <Compile Include="Operations\Transform\ConcatOperation.cs" />
     <Compile Include="Operations\Transform\ConvertOperation.cs" />
     <Compile Include="Operations\Transform\DefaultIfEqualOperation.cs" />
     <Compile Include="Operations\Transform\DistanceOperation.cs" />
     <Compile Include="Operations\Transform\EmptyOperation.cs" />
     <Compile Include="Operations\Transform\ExpressionOperation.cs" />
+    <Compile Include="Operations\Transform\FilterOperation.cs" />
     <Compile Include="Operations\Transform\FormatOperation.cs" />
     <Compile Include="Operations\Transform\FromJsonOperation.cs" />
     <Compile Include="Operations\Transform\FromRegexOperation.cs" />
@@ -1128,6 +1132,7 @@
     <Compile Include="Operations\Transform\TflOperation.cs" />
     <Compile Include="Operations\Transform\TimeZoneOperation.cs" />
     <Compile Include="Operations\Transform\ValueOperation.cs" />
+    <Compile Include="Operations\Transform\XmlEncodeOperation.cs" />
     <Compile Include="Operations\Transform\XpathOperation.cs" />
     <Compile Include="Operations\Transform\TimeOfDayOperation.cs" />
     <Compile Include="Operations\Transform\LeftOperation.cs" />
@@ -1547,7 +1552,6 @@
     <Compile Include="Operations\EntityJoinAction.cs" />
     <Compile Include="Operations\EntityInputKeysStore.cs" />
     <Compile Include="Operations\EntityInputKeysStoreExtract.cs" />
-    <Compile Include="Operations\FileFixedExtract.cs" />
     <Compile Include="Processes\InitializationProcess.cs" />
     <Compile Include="Processes\EntityProcess.cs" />
     <Compile Include="Processes\StringLengthOperation.cs" />
@@ -1620,8 +1624,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Libs\SharpZLib\obj\Debug\TempPE\" />
-    <Folder Include="Operations\Extract\" />
-    <Folder Include="Operations\Load\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Libs\EnterpriseLibrary\Common\Configuration\DesignResources.resx" />

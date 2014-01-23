@@ -100,18 +100,5 @@ namespace Transformalize.Test.Unit {
             Assert.AreEqual("The File provider requires the File property setting.", results.First().Message);
         }
 
-        [Test]
-        public void TestMissigFile() {
-            var c = new ConnectionConfigurationElement { Provider = "File", File = @"c:\missing.txt" };
-
-            var validator = ValidationFactory.CreateValidator<ConnectionConfigurationElement>();
-
-            var results = validator.Validate(c);
-
-            Assert.IsFalse(results.IsValid);
-            Assert.AreEqual("The file 'c:\\missing.txt' doesn't exist.", results.First().Message);
-        }
-
-
     }
 }

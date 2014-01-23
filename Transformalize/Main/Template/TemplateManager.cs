@@ -39,6 +39,9 @@ namespace Transformalize.Main {
             var folder = Common.GetTemporaryFolder(_process.Name);
 
             foreach (var pair in _process.Templates) {
+                if (pair.Value.IsUsedInPipeline)
+                    continue;
+
                 var result = pair.Value.Render();
 
                 var renderedInfo = new FileInfo(folder.TrimEnd(_trim) + @"\" + pair.Value.Name + ".temp.txt");

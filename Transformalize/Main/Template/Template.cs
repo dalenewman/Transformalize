@@ -54,6 +54,7 @@ namespace Transformalize.Main {
         public string File { get; private set; }
         public bool Cache { get; private set; }
         public Encoding ContentType { get; private set; }
+        public bool IsUsedInPipeline { get; set; }
 
         public Template(Process process, TemplateConfigurationElement element, string content, string file) {
             File = file;

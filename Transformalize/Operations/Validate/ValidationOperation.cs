@@ -12,6 +12,7 @@ namespace Transformalize.Operations.Validate {
         private readonly string _resultKey;
         private readonly string _messageKey;
         private readonly bool _messageAppend;
+        private readonly bool _messageOutput;
         public Validator Validator { get; set; }
         public bool ValidateRow { get; set; }
 
@@ -20,17 +21,19 @@ namespace Transformalize.Operations.Validate {
             _resultKey = resultKey;
             _messageKey = messageKey;
             _messageAppend = messageAppend;
+            _messageOutput = !messageKey.Equals(string.Empty);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
 
             foreach (var row in rows) {
                 var results = new ValidationResults();
-                Validator.DoValidate(row[_keyToValidate], row, _keyToValidate, results);
+                var value = this is TypeConversionValidatorOperation ? row[_keyToValidate].ToString() : row[_keyToValidate];
+                Validator.DoValidate(value, row, _keyToValidate, results);
 
                 var valid = results.IsValid;
                 row[_resultKey] = valid;
-                if (!valid) {
+                if (_messageOutput && !valid) {
                     var message = results.First().Message;
                     row[_messageKey] = _messageAppend ?
                         string.Concat(row[_messageKey] ?? string.Empty, " ", message).Trim(' ') :

@@ -28,6 +28,8 @@ using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
 using Transformalize.Operations;
+using Transformalize.Operations.Extract;
+using Transformalize.Operations.Load;
 
 namespace Transformalize.Processes {
 
@@ -48,7 +50,7 @@ namespace Transformalize.Processes {
             if (!_entity.InputConnection.Provider.IsDatabase) {
                 if (_entity.InputConnection.Provider.Type == ProviderType.File) {
                     if (_entity.InputConnection.IsExcel()) {
-                        Register(new FileExcelExtract(_entity));
+                        Register(new FileExcelExtract(_entity, _process.Options.Top));
                     } else {
                         if (_entity.InputConnection.IsDelimited()) {
                             Register(new FileDelimitedExtract(_entity, _process.Options.Top));
@@ -81,23 +83,27 @@ namespace Transformalize.Processes {
             if (_process.OutputConnection.Provider.Type == ProviderType.Internal) {
                 RegisterLast(_collector);
             } else {
-                if (_entity.IsFirstRun) {
-                    if (_process.OutputConnection.Provider.IsDatabase && _entity.IndexOptimizations) {
-                        _process.OutputConnection.DropUniqueClusteredIndex(_entity);
-                        _process.OutputConnection.DropPrimaryKey(_entity);
-                    }
-                    Register(new EntityAddTflFields(_entity));
-                    RegisterLast(new EntityBulkInsert(_process, _entity));
+                if (_process.OutputConnection.Provider.Type == ProviderType.File) {
+                    RegisterLast(new FileLoadOperation(_process, _entity));
                 } else {
-                    Register(new EntityJoinAction(_entity).Right(new EntityOutputKeysExtract(_process, _entity)));
-                    var branch = new BranchingOperation()
-                        .Add(new PartialProcessOperation()
-                            .Register(new EntityActionFilter(ref _entity, EntityAction.Insert))
-                            .RegisterLast(new EntityBulkInsert(_process, _entity)))
-                        .Add(new PartialProcessOperation()
-                            .Register(new EntityActionFilter(ref _entity, EntityAction.Update))
-                            .RegisterLast(new EntityBatchUpdate(_process, _entity)));
-                    RegisterLast(branch);
+                    if (_entity.IsFirstRun) {
+                        if (_process.OutputConnection.Provider.IsDatabase && _entity.IndexOptimizations) {
+                            _process.OutputConnection.DropUniqueClusteredIndex(_entity);
+                            _process.OutputConnection.DropPrimaryKey(_entity);
+                        }
+                        Register(new EntityAddTflFields(_entity));
+                        RegisterLast(new EntityBulkInsert(_process, _entity));
+                    } else {
+                        Register(new EntityJoinAction(_entity).Right(new EntityOutputKeysExtract(_process, _entity)));
+                        var branch = new BranchingOperation()
+                            .Add(new PartialProcessOperation()
+                                .Register(new EntityActionFilter(ref _entity, EntityAction.Insert))
+                                .RegisterLast(new EntityBulkInsert(_process, _entity)))
+                            .Add(new PartialProcessOperation()
+                                .Register(new EntityActionFilter(ref _entity, EntityAction.Update))
+                                .RegisterLast(new EntityBatchUpdate(_process, _entity)));
+                        RegisterLast(branch);
+                    }
                 }
             }
         }
@@ -119,7 +125,7 @@ namespace Transformalize.Processes {
             }
 
             if (_process.OutputConnection.Provider.Type == ProviderType.Internal) {
-               _entity.Rows  = _collector.Rows;
+                _entity.Rows = _collector.Rows;
             } else {
                 new DatabaseEntityVersionWriter(_process, _entity).WriteEndVersion();
             }

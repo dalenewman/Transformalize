@@ -35,26 +35,26 @@ namespace Transformalize.Operations {
         private readonly Field[] _key;
         private readonly string _operationColumn;
         private readonly AbstractProvider _provider;
+        private readonly IList<Row> _keys = new List<Row>();
 
         public EntityKeysToOperations(Entity entity, string operationColumn = "operation") {
             _entity = entity;
             _provider = _entity.InputConnection.Provider;
             _operationColumn = operationColumn;
             _key = new FieldSqlWriter(_entity.PrimaryKey).Input().ToArray();
+            _keys = new List<Row>(_entity.InputKeys.Select(r => r.Clone()));
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             var fields = new FieldSqlWriter(_entity.Fields).Input().Keys().ToArray();
 
-            var operationRows = new List<Row>();
-
-            if (_entity.InputKeys.Count > 0 && _entity.InputKeys.Count < _entity.InputConnection.BatchSize) {
-                operationRows.Add(GetOperationRow(_entity.InputKeys, fields));
+            if (_keys.Count > 0 && _keys.Count < _entity.InputConnection.BatchSize) {
+                yield return GetOperationRow(_keys, fields);
             } else {
-                operationRows.AddRange(_entity.InputKeys.Partition(_entity.InputConnection.BatchSize).Select(batch => GetOperationRow(batch, fields)));
+                foreach (var batch in _keys.Partition(_entity.InputConnection.BatchSize)) {
+                    yield return GetOperationRow(batch, fields);
+                }
             }
-
-            return operationRows;
         }
 
         private Row GetOperationRow(IEnumerable<Row> batch, string[] fields) {

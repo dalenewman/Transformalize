@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Rhino.Etl.Core.Files;
 using Transformalize.Libs.FileHelpers.Enums;
 using Transformalize.Libs.FileHelpers.RunTime;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
-using System.Linq;
 
-namespace Transformalize.Operations {
+namespace Transformalize.Operations.Extract {
     public class FileFixedExtract : AbstractOperation {
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private readonly Entity _entity;

@@ -20,6 +20,7 @@
 
 #endregion
 
+using System.Linq;
 using NUnit.Framework;
 using Transformalize.Libs.NLog;
 using Transformalize.Main;
@@ -51,5 +52,6 @@ namespace Transformalize.Test.Integration
         public void TestMode() {
             ProcessFactory.Create("Test", new Options { Mode = "test", Top = 1, LogLevel = LogLevel.Debug}).Run();
         }
+
     }
 }

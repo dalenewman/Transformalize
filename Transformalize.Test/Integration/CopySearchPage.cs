@@ -22,19 +22,15 @@
 
 using System.Linq;
 using NUnit.Framework;
-using Transformalize.Libs.NLog;
 using Transformalize.Main;
 
-namespace Transformalize.Test.Integration
-{
+namespace Transformalize.Test.Integration {
     [TestFixture]
-    public class TestXml
-    {
+    public class CopySearchPage {
         [Test]
-        public void Run()
-        {
-            var rows = ProcessFactory.Create("Test.xml").Run().First();
-            Assert.AreEqual(62, rows.Count());
+        public void Run() {
+            var entities = ProcessFactory.Create(@"c:\etl\tfl\CopySearchPage.xml", new Options()).Run();
+            Assert.AreEqual(1, entities.Count());
         }
 
     }

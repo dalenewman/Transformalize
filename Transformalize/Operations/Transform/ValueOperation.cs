@@ -2,8 +2,7 @@ using System.Collections.Generic;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 
-namespace Transformalize.Operations.Transform
-{
+namespace Transformalize.Operations.Transform {
     public class ValueOperation : TflOperation {
 
         private readonly object _value;
@@ -11,7 +10,7 @@ namespace Transformalize.Operations.Transform
         public ValueOperation(string outKey, string outType, string value)
             : base(string.Empty, outKey) {
             _value = Common.ObjectConversionMap[Common.ToSimpleType(outType)](value);
-            }
+        }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {

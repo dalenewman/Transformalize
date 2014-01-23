@@ -295,7 +295,7 @@ namespace Transformalize.Configuration {
         }
 
         //validation
-        [ConfigurationProperty(MESSAGE_APPEND, IsRequired = false, DefaultValue = true)]
+        [ConfigurationProperty(MESSAGE_APPEND, IsRequired = false, DefaultValue = false)]
         public bool MessageAppend {
             get { return (bool) this[MESSAGE_APPEND]; }
             set { this[MESSAGE_APPEND] = value; }

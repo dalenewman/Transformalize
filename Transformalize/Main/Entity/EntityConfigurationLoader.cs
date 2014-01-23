@@ -23,6 +23,7 @@
 using System;
 using System.Linq;
 using Transformalize.Configuration;
+using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main {
@@ -38,11 +39,14 @@ namespace Transformalize.Main {
 
         public Entity Read(int batchId, EntityConfigurationElement element, bool isMaster) {
 
+            Validate(element);
+
             GlobalDiagnosticsContext.Set("entity", Common.LogLength(element.Alias));
 
             var entity = new Entity(batchId) {
                 ProcessName = _process.Name,
                 Schema = element.Schema,
+                PipelineThreading = (PipelineThreading)Enum.Parse(typeof(PipelineThreading), element.PipelineThreading, true),
                 Name = element.Name,
                 InputConnection = _process.Connections[element.Connection],
                 Prefix = element.Prefix,
@@ -95,6 +99,21 @@ namespace Transformalize.Main {
             LoadVersion(element, entity);
 
             return entity;
+        }
+
+        private void Validate(EntityConfigurationElement element)
+        {
+            var validator = ValidationFactory.CreateValidator<EntityConfigurationElement>();
+            var results = validator.Validate(element);
+            if (!results.IsValid)
+            {
+                foreach (var result in results)
+                {
+                    _process.ValidationResults.AddResult(result);
+                    _log.Error(result.Message);
+                }
+                Environment.Exit(1);
+            }
         }
 
         private void GuardAgainstMissingPrimaryKey(EntityConfigurationElement element) {

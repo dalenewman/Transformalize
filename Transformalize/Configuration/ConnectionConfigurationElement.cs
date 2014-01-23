@@ -70,7 +70,7 @@ namespace Transformalize.Configuration {
             set { this[PORT] = value; }
         }
 
-        [ConfigurationProperty(START, IsRequired = false, DefaultValue = 0)]
+        [ConfigurationProperty(START, IsRequired = false, DefaultValue = 1)]
         public int Start {
             get { return (int)this[START]; }
             set { this[START] = value; }
@@ -176,11 +176,6 @@ namespace Transformalize.Configuration {
                 if (string.IsNullOrEmpty(File)) {
                     var message = string.Format("The {0} provider requires the File property setting.", Provider);
                     results.AddResult(new ValidationResult(message, this, null, null, null));
-                } else {
-                    if (!new FileInfo(File).Exists) {
-                        var message = string.Format("The file '{0}' doesn't exist.", File);
-                        results.AddResult(new ValidationResult(message, this, null, null, null));
-                    }
                 }
             }
         }
