@@ -44,6 +44,7 @@ namespace Transformalize.Main {
             var field = new Field(element.Type, element.Length, fieldType, element.Output, element.Default) {
                 Process = _process.Name,
                 Entity = _entity.Alias,
+                EntityOutputName = _entity.OutputName(),
                 Index = element.Index,
                 Schema = _entity.Schema,
                 Name = element.Name,

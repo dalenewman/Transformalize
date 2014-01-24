@@ -40,6 +40,7 @@ namespace Transformalize.Configuration {
         private const string USE_BCP = "use-bcp";
         private const string INDEX_OPTIMIZATIONS = "index-optimizations";
         private const string DELETE = "delete";
+        private const string PREPEND_PROCESS_NAME_TO_OUTPUT_NAME = "prepend-process-name-to-output-name";
         private const string PIPELINE = "pipeline";
 
         [ConfigurationProperty(SCHEMA, IsRequired = false, DefaultValue = "dbo")]
@@ -101,6 +102,12 @@ namespace Transformalize.Configuration {
         public bool Delete {
             get { return (bool)this[DELETE]; }
             set { this[DELETE] = value; }
+        }
+
+        [ConfigurationProperty(PREPEND_PROCESS_NAME_TO_OUTPUT_NAME, IsRequired = false, DefaultValue = true)]
+        public bool PrependProcessNameToOutputName {
+            get { return (bool)this[PREPEND_PROCESS_NAME_TO_OUTPUT_NAME]; }
+            set { this[PREPEND_PROCESS_NAME_TO_OUTPUT_NAME] = value; }
         }
 
         [ConfigurationProperty(INDEX_OPTIMIZATIONS, IsRequired = false, DefaultValue = false)]

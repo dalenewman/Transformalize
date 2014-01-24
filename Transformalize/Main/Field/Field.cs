@@ -49,6 +49,7 @@ namespace Transformalize.Main {
         public string Alias { get; set; }
         public string Schema { get; set; }
         public string Entity { get; set; }
+        public string EntityOutputName { get; set; }
         public string Process { get; set; }
         public string Parent { get; set; }
         public string Length { get; set; }

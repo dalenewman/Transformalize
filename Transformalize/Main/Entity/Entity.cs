@@ -81,6 +81,7 @@ namespace Transformalize.Main {
         public bool UseBcp { get; set; }
         public bool IndexOptimizations { get; set; }
         public bool Delete { get; set; }
+        public bool PrependProcessNameToOutputName { get; set; }
 
         public IEnumerable<Row> Rows {
             get { return _rows; }
@@ -92,6 +93,7 @@ namespace Transformalize.Main {
             set { _operations = value; }
         }
 
+
         public string FirstKey() {
             return PrimaryKey.First().Key;
         }
@@ -101,7 +103,7 @@ namespace Transformalize.Main {
         }
 
         public string OutputName() {
-            return Common.EntityOutputName(Alias, ProcessName);
+            return Common.EntityOutputName(this, ProcessName);
         }
 
         public bool HasForeignKeys() {

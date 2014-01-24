@@ -53,5 +53,14 @@ namespace Transformalize.Test.Integration
             ProcessFactory.Create("Test", new Options { Mode = "test", Top = 1, LogLevel = LogLevel.Debug}).Run();
         }
 
+        [Test]
+        public void AdHoc()
+        {
+            var process = ProcessFactory.Create(@"C:\Users\dnewman\AppData\Local\Tfl\South_ReClassification_InstallerLevel1_112713\Configuration.xml");
+            process.Entities[0].PipelineThreading = PipelineThreading.SingleThreaded;
+            process.Run();
+            Assert.AreEqual(true, true);
+        }
+
     }
 }

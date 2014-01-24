@@ -55,6 +55,11 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public EntityBuilder PrependProcessNameToOutputName(bool prepend) {
+            _entity.PrependProcessNameToOutputName = prepend;
+            return this;
+        }
+
         public FieldBuilder CalculatedField(string name) {
             var calculatedField = new FieldConfigurationElement() { Name = name };
             _entity.CalculatedFields.Add(calculatedField);

@@ -201,8 +201,8 @@ namespace Transformalize.Main {
             return value.Length > totalWidth ? value.Left(totalWidth) : value.PadRight(totalWidth, '.');
         }
 
-        public static string EntityOutputName(string entityAlias, string processName) {
-            return string.Concat(processName, entityAlias).Replace(" ", string.Empty);
+        public static string EntityOutputName(Entity entity, string processName) {
+            return entity.PrependProcessNameToOutputName ? string.Concat(processName, entity.Alias).Replace(" ", string.Empty) : entity.Alias;
         }
 
         public static bool AreEqual(byte[] b1, byte[] b2) {

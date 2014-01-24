@@ -42,30 +42,36 @@ namespace Transformalize.Runner {
 
         public ProcessConfigurationElement Read() {
             var contents = _contentsReader.Read(_file);
+            var section = new TransformalizeConfiguration();
 
             try {
                 var doc = XDocument.Parse(contents.Content);
 
                 var process = doc.Element("process");
                 if (process == null) {
-                    _log.Error("Sorry.  I can't find the <process/> element in {0}.", _file);
-                    Environment.Exit(1);
-                }
-
-                var section = new TransformalizeConfiguration();
-                var xml = string.Format(@"
+                    var transformalize = doc.Element("transformalize");
+                    if (transformalize == null) {
+                        _log.Error("Sorry.  I can't find the <process/> or <transformalize/> element in {0}.", _file);
+                        Environment.Exit(1);
+                    } else {
+                        section.Deserialize(transformalize.ToString());
+                    }
+                } else {
+                    var xml = string.Format(@"
                     <transformalize>
                         <processes>
                             <add name=""{0}"" enabled=""{1}"" inherit=""{2}"" time-zone=""{3}"">{4}</add>
                         </processes>
                     </transformalize>",
-                    contents.Name,
-                    SafeAttribute(process, "enabled", true),
-                    SafeAttribute(process, "inherit", string.Empty),
-                    SafeAttribute(process, "time-zone", string.Empty),
-                    process.InnerXml()
-                );
-                section.Deserialize(xml);
+                        contents.Name,
+                        SafeAttribute(process, "enabled", true),
+                        SafeAttribute(process, "inherit", string.Empty),
+                        SafeAttribute(process, "time-zone", string.Empty),
+                        process.InnerXml()
+                    );
+                    section.Deserialize(xml);
+                }
+
                 return section.Processes[0];
             } catch (Exception e) {
                 _log.Error("Sorry.  I couldn't parse the file {0}.  Make sure it is valid XML and try again. {1}", contents.Name, e.Message);

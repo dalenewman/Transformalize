@@ -16,9 +16,6 @@ namespace Transformalize.Operations.Transform {
             _inType = inType;
             _outType = outType;
             _fromFormat = fromFormat;
-        }
-
-        public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
 
             if (_outType == "datetime" && !string.IsNullOrEmpty(_fromFormat)) {
                 _map[_outType] = (x => DateTime.ParseExact(x.ToString(), _fromFormat, System.Globalization.CultureInfo.InvariantCulture));
@@ -26,6 +23,9 @@ namespace Transformalize.Operations.Transform {
             if (_outType == "int32" && _inType == "datetime") {
                 _map[_outType] = (x => Common.DateTimeToInt32((DateTime)x));
             }
+        }
+
+        public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
 
             foreach (var row in rows) {
                 if (ShouldRun(row)) {

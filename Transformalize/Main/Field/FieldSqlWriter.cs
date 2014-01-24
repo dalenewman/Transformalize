@@ -238,8 +238,7 @@ namespace Transformalize.Main {
         public FieldSqlWriter PrependEntityOutput(AbstractProvider provider, string entityName = null) {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];
-                var entity = Common.EntityOutputName(field.Entity, field.Process);
-                var table = SafeColumn(entityName ?? entity, provider);
+                var table = SafeColumn(entityName ?? field.EntityOutputName, provider);
                 _output[key] = string.Concat(table, ".", _output[key]);
             }
             return this;
