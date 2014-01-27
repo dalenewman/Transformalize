@@ -26,11 +26,11 @@ using Transformalize.Main;
 namespace Transformalize.Test.Integration {
     [TestFixture]
     public class Es {
-        private const string CONFIGURATION_FILE = @"C:\Code\TflConfiguration\Es.xml";
+        private const string CONFIGURATION_FILE = @"http://config.mwf.local/Es.xml";
 
         [Test]
         public void Init() {
-            var options = new Options { Mode = "init" };
+            var options = new Options { Mode = "init", Force = true};
             var process = ProcessFactory.Create(CONFIGURATION_FILE, options);
             process.Run();
         }
@@ -44,7 +44,7 @@ namespace Transformalize.Test.Integration {
 
         [Test]
         public void First() {
-            ProcessFactory.Create(CONFIGURATION_FILE, new Options() { Mode = "first"}).Run();
+            ProcessFactory.Create(CONFIGURATION_FILE, new Options() { Mode = "first", Force = true, Top = 10}).Run();
         }
 
 

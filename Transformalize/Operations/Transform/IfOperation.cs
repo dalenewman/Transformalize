@@ -23,6 +23,7 @@ namespace Transformalize.Operations.Transform {
         private readonly object _rightValue;
         private readonly object _thenValue;
         private readonly object _elseValue;
+        private readonly Dictionary<string, Func<object, object>> _conversionMap = Common.GetObjectConversionMap();
 
         private readonly Dictionary<string, KeyValuePair<string, IParameter>> _builtIns = new Dictionary<string, KeyValuePair<string, IParameter>> {
             {"true", new KeyValuePair<string, IParameter>("true", new Parameter("true", true) { SimpleType = "boolean"} )},
@@ -65,12 +66,12 @@ namespace Transformalize.Operations.Transform {
             Environment.Exit(1);
         }
 
-        private static object ComparableValue(string otherType, object value) {
+        private object ComparableValue(string otherType, object value) {
             if (value.Equals(string.Empty) && !otherType.Equals("string")) {
                 return new DefaultFactory().Convert(value, otherType);
             }
 
-            return Common.ObjectConversionMap[otherType](value);
+            return _conversionMap[otherType](value);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

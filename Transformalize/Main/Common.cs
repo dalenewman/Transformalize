@@ -69,36 +69,38 @@ namespace Transformalize.Main {
             {"boolean", (x => Convert.ToBoolean(x))},
             {"single", (x => Convert.ToSingle(x))},
             {"guid", (x => Guid.Parse(x))},
-            { "byte", (x => Convert.ToByte(x))}
+            {"byte", (x => Convert.ToByte(x))}
         };
 
         public static Dictionary<ComparisonOperator, Func<object, object, bool>> CompareMap = new Dictionary<ComparisonOperator, Func<object, object, bool>>() {
             {ComparisonOperator.Equal, ((x, y) => x.Equals(y))},
             {ComparisonOperator.NotEqual, ((x, y) => !x.Equals(y))},
             {ComparisonOperator.GreaterThan, ((x, y) => ((IComparable) x).CompareTo(y) > 0)},
-            {ComparisonOperator.GreaterThanEqual, ((x, y) => x.Equals(y) || ((IComparable)x).CompareTo(y) > 0)},
-            {ComparisonOperator.LessThan, ((x, y) => ((IComparable)x).CompareTo(y) < 0)},
-            {ComparisonOperator.LessThanEqual, ((x, y) => x.Equals(y) || ((IComparable)x).CompareTo(y) < 0)}
+            {ComparisonOperator.GreaterThanEqual, ((x, y) => x.Equals(y) || ((IComparable) x).CompareTo(y) > 0)},
+            {ComparisonOperator.LessThan, ((x, y) => ((IComparable) x).CompareTo(y) < 0)},
+            {ComparisonOperator.LessThanEqual, ((x, y) => x.Equals(y) || ((IComparable) x).CompareTo(y) < 0)}
         };
 
-        public static Dictionary<string, Func<object, object>> ObjectConversionMap = new Dictionary<string, Func<object, object>> {
-            { "string", (x => x) },
-            { "xml", (x => x) },
-            { "guid", (x => Guid.Parse(x.ToString()))},
-            { "int16", (x => Convert.ToInt16(x)) },
-            { "int", (x => Convert.ToInt32(x)) },
-            { "int32", (x => Convert.ToInt32(x)) },
-            { "int64", (x => Convert.ToInt64(x)) },
-            { "long", (x => Convert.ToInt64(x)) },
-            { "double", (x => Convert.ToDouble(x)) },
-            { "decimal", (x => Convert.ToDecimal(x)) },
-            { "char", (x => Convert.ToChar(x)) },
-            { "datetime", (x => Convert.ToDateTime(x)) },
-            { "boolean", (x => Convert.ToBoolean(x)) },
-            { "bool", (x => Convert.ToBoolean(x)) },
-            { "single", (x => Convert.ToSingle(x)) },
-            { "byte", (x => Convert.ToByte(x))}
-        };
+        public static Dictionary<string, Func<object, object>> GetObjectConversionMap() {
+            return new Dictionary<string, Func<object, object>> {
+                {"string", (x => x)},
+                {"xml", (x => x)},
+                {"guid", (x => Guid.Parse(x.ToString()))},
+                {"int16", (x => Convert.ToInt16(x))},
+                {"int", (x => Convert.ToInt32(x))},
+                {"int32", (x => Convert.ToInt32(x))},
+                {"int64", (x => Convert.ToInt64(x))},
+                {"long", (x => Convert.ToInt64(x))},
+                {"double", (x => Convert.ToDouble(x))},
+                {"decimal", (x => Convert.ToDecimal(x))},
+                {"char", (x => Convert.ToChar(x))},
+                {"datetime", (x => Convert.ToDateTime(x))},
+                {"boolean", (x => Convert.ToBoolean(x))},
+                {"bool", (x => Convert.ToBoolean(x))},
+                {"single", (x => Convert.ToSingle(x))},
+                {"byte", (x => Convert.ToByte(x))}
+            };
+        }
 
         public static Func<KeyValuePair<string, Field>, bool> FieldFinder(ParameterConfigurationElement p) {
             if (p.Entity != string.Empty)
@@ -174,8 +176,7 @@ namespace Transformalize.Main {
             return result.Replace("system.", string.Empty);
         }
 
-        public static Type ToSystemType(string simpleType)
-        {
+        public static Type ToSystemType(string simpleType) {
             simpleType = ToSimpleType(simpleType);
             if (simpleType == "byte[]")
                 return typeof(byte[]);

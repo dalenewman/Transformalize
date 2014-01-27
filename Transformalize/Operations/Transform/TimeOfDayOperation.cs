@@ -9,6 +9,7 @@ namespace Transformalize.Operations.Transform {
     public class TimeOfDayOperation : TflOperation {
 
         private readonly string _outType;
+        private readonly Dictionary<string, Func<object, object>> _conversionMap = Common.GetObjectConversionMap(); 
 
         private readonly Dictionary<string, Func<DateTime, double>> _timeMap = new Dictionary<string, Func<DateTime, double>> {
             {"d", (x => x.TimeOfDay.TotalDays)},
@@ -64,7 +65,7 @@ namespace Transformalize.Operations.Transform {
         }
 
         private object Converter(Double d) {
-            return _outType != "double" ? d : Common.ObjectConversionMap[_outType](d);
+            return _outType != "double" ? d : _conversionMap[_outType](d);
         }
     }
 }

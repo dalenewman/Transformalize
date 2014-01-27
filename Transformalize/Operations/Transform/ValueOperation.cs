@@ -9,7 +9,7 @@ namespace Transformalize.Operations.Transform {
 
         public ValueOperation(string outKey, string outType, string value)
             : base(string.Empty, outKey) {
-            _value = Common.ObjectConversionMap[Common.ToSimpleType(outType)](value);
+            _value = Common.GetObjectConversionMap()[Common.ToSimpleType(outType)](value);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Libs.Rhino.Etl;
@@ -14,6 +15,7 @@ namespace Transformalize.Operations.Transform {
         private readonly bool _hasEquals;
         private readonly bool _hasStartsWith;
         private readonly Map _startsWith;
+        private readonly Dictionary<string, Func<object, object>> _conversionMap = Common.GetObjectConversionMap();
 
         public MapOperation(string inKey, string outKey, string outType, IEnumerable<Map> maps)
             : base(inKey, outKey) {
@@ -87,7 +89,7 @@ namespace Transformalize.Operations.Transform {
                 return;
 
             foreach (var pair in _equals.Where(pair => pair.Value.Value != null)) {
-                _equals[pair.Key].Value = Common.ObjectConversionMap[_outType](pair.Value.Value);
+                _equals[pair.Key].Value = _conversionMap[_outType](pair.Value.Value);
             }
         }
     }

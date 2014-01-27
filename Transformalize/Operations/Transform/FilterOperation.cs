@@ -10,7 +10,7 @@ namespace Transformalize.Operations.Transform {
 
         public FilterOperation(string inKey, string outKey, string outType, object value, ComparisonOperator comparisonOperator)
             : base(inKey, outKey) {
-            _value = Common.ObjectConversionMap[outType](value);
+            _value = Common.GetObjectConversionMap()[outType](value);
             _comparisonOperator = comparisonOperator;
         }
 

@@ -155,7 +155,7 @@ namespace Transformalize.Main {
         public bool IsReady() {
             if (Enabled || Options.Force)
                 return Connections.Select(connection => connection.Value.IsReady()).All(b => b.Equals(true));
-            _log.Warn("Process is disabled.");
+            _log.Error("Process is disabled. Data is not being updated.");
             return false;
         }
 

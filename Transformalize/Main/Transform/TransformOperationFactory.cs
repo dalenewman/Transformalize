@@ -22,12 +22,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Web.Razor.Parser;
 using Transformalize.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.NLog;
-using Transformalize.Libs.NLog.LayoutRenderers;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Operations.Transform;
@@ -44,6 +42,7 @@ namespace Transformalize.Main {
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly Process _process;
         private readonly Validator<TransformConfigurationElement> _validator = ValidationFactory.CreateValidator<TransformConfigurationElement>();
+        private readonly Dictionary<string, Func<object, object>> _conversionMap = Common.GetObjectConversionMap();
 
         public TransformOperationFactory(Process process) {
             _process = process;
@@ -420,9 +419,9 @@ namespace Transformalize.Main {
                         inKey,
                         resultKey,
                         messageKey,
-                        (DateTime)Common.ObjectConversionMap[field.SimpleType](element.LowerBound),
+                        (DateTime)_conversionMap[field.SimpleType](element.LowerBound),
                         (RangeBoundaryType)Enum.Parse(typeof(RangeBoundaryType), element.LowerBoundType, true),
-                        (DateTime)Common.ObjectConversionMap[field.SimpleType](element.UpperBound),
+                        (DateTime)_conversionMap[field.SimpleType](element.UpperBound),
                         (RangeBoundaryType)Enum.Parse(typeof(RangeBoundaryType), element.UpperBoundType, true),
                         element.MessageTemplate,
                         element.Negated,
@@ -433,7 +432,7 @@ namespace Transformalize.Main {
                     if (element.Separator.Equals(DEFAULT)) {
                         element.Separator = COMMA;
                     }
-                    var domain = element.Domain.Split(element.Separator.ToCharArray()).Select(s => Common.ObjectConversionMap[field.SimpleType](s));
+                    var domain = element.Domain.Split(element.Separator.ToCharArray()).Select(s => _conversionMap[field.SimpleType](s));
 
                     return new DomainValidatorOperation(
                         inKey,
@@ -459,9 +458,9 @@ namespace Transformalize.Main {
                         inKey,
                         resultKey,
                         messageKey,
-                        (IComparable)Common.ObjectConversionMap[field.SimpleType](element.LowerBound),
+                        (IComparable)_conversionMap[field.SimpleType](element.LowerBound),
                         (RangeBoundaryType)Enum.Parse(typeof(RangeBoundaryType), element.LowerBoundType, true),
-                        (IComparable)Common.ObjectConversionMap[field.SimpleType](element.UpperBound),
+                        (IComparable)_conversionMap[field.SimpleType](element.UpperBound),
                         (RangeBoundaryType)Enum.Parse(typeof(RangeBoundaryType), element.UpperBoundType, true),
                         element.MessageTemplate,
                         element.Negated,

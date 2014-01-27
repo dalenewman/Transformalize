@@ -20,10 +20,14 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
+
 namespace Transformalize.Main {
 
     public class Parameter : IParameter {
 
+        private readonly Dictionary<string, Func<object, object>> _conversionMap = Common.GetObjectConversionMap();
         private string _simpleType = "string";
 
         public int Index { get; set; }
@@ -35,7 +39,7 @@ namespace Transformalize.Main {
             set {
                 _simpleType = value;
                 if (Value != null) {
-                    Value = Common.ObjectConversionMap[value](Value);
+                    Value = _conversionMap[value](Value);
                 }
             }
         }
