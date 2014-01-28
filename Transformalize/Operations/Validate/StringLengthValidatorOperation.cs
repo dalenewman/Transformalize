@@ -1,11 +1,9 @@
 ﻿using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 
-namespace Transformalize.Operations.Validate
-{
+namespace Transformalize.Operations.Validate {
     public class StringLengthValidatorOperation : ValidationOperation {
 
         public StringLengthValidatorOperation(
-
             string keyToValidate,
             string resultKey,
             string messageKey,
@@ -17,7 +15,7 @@ namespace Transformalize.Operations.Validate
             bool negated,
             bool messageAppend)
             : base(keyToValidate, resultKey, messageKey, messageAppend) {
-            
+
             Validator = new StringLengthValidator(
                 lowerBound,
                 lowerBoundaryType,
@@ -26,6 +24,6 @@ namespace Transformalize.Operations.Validate
                 messageTemplate,
                 negated
                 );
-            }
+        }
     }
 }

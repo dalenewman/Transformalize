@@ -39,7 +39,7 @@ namespace Transformalize.Test.Unit {
             var input = new RowsBuilder()
                 .Row().Field("f1", "{\"i\":\"am\", \"valid\":true}").Field("o1", "")
                 .Row().Field("f1", "{\"i\":\"have\", \"a\":\"Prob\"lem\"}").Field("o1", "").ToOperation();
-            var isJson = new JsonValidatorOperation("f1", "o1", "o2", "{2} in {0}.", false);
+            var isJson = new JsonValidatorOperation("f1", "o1", "o2", "{2} in {0}.", false, false);
 
             var rows = TestOperation(input, isJson);
 
@@ -55,7 +55,7 @@ namespace Transformalize.Test.Unit {
             const string badJson = "{\"updated\": \"Thu, 10 Sep 2009 08:45:12 +0000\", \"links\": [{\"href\": \"http://www.designvitality.com/blog/2007/09/photoshop-text-effect-tutorial/\", \"type\": \"text/html\", \"rel\": \"alternate\"}], \"title\": \"Photoshop Text Effects\", \"author\": \"hotpants1\", \"comments\": \"http://delicious.com/url/90c1b26e451a090452df8b947d6298cb\", \"guidislink\": false, \"title_detail\": {\"base\": \"http://feeds.delicious.com/v2/rss/recent?min=1&count=100\", \"type\": \"text/plain\", \"language\": null, \"value\": \"Photoshop Text Effects\"}, \"link\": \"http://www.designvitality.com/blog/2007/09/photoshop-text-effect-tutorial/\", \"source\": {}, \"wfw_commentrss\": \"http://feeds.delicious.com/v2/rss/url/90c1b26e451a090452df8b947d6298cb\", \"id\": \"http://delicious.com/url/90c1b26e451a090452df8b947d6298cb#hotpants1\", \"tags\": [{\"term\": \"photoshop\", scheme\": \"http://delicious.com/hotpants1/\", \"label\": null}]}";
 
             var input = new RowsBuilder().Row().Field("f1", goodJson).Field("o1", "").Row().Field("f1", badJson).Field("o1", "").ToOperation();
-            var isJson = new JsonValidatorOperation("f1", "o1", "o2", "{2} in {0}.", false);
+            var isJson = new JsonValidatorOperation("f1", "o1", "o2", "{2} in {0}.",false, false);
 
             var rows = TestOperation(input, isJson);
 
@@ -72,6 +72,18 @@ namespace Transformalize.Test.Unit {
 
             Assert.AreEqual("f1 doesn't have abc in it! Your value of 'test' sucks.", output[0]["o2"]);
             Assert.AreEqual(null, output[1]["o2"]);
+        }
+
+        [Test]
+        public void StartsWith() {
+            var input = new RowsBuilder().Row("f1", "test").Row("f1", "abcd").ToOperation();
+            var startsWith = new StartsWithValidatorOperation("f1", "abc", "result", "message", "{0} doesn't start with {2}.  It is {1}.",false, false);
+
+            var output = TestOperation(input, startsWith);
+
+            Assert.AreEqual("f1 doesn't start with abc.  It is test.", output[0]["message"]);
+            Assert.IsFalse((bool) output[0]["result"]);
+            Assert.IsTrue((bool)output[1]["result"]);
         }
 
         [Test]

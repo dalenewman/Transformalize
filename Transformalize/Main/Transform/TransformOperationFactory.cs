@@ -445,7 +445,7 @@ namespace Transformalize.Main {
                     );
 
                 case "isjson":
-                    return new JsonValidatorOperation(inKey, resultKey, messageKey, element.MessageTemplate, element.MessageAppend);
+                    return new JsonValidatorOperation(inKey, resultKey, messageKey, element.MessageTemplate, element.Negated, element.MessageAppend);
 
                 case "notnull":
                     return new NotNullValidatorOperation(inKey, resultKey, messageKey, element.MessageTemplate, element.Negated, element.MessageAppend);
@@ -489,6 +489,17 @@ namespace Transformalize.Main {
                         Convert.ToInt32(element.UpperBound),
                         (DateTimeUnit)Enum.Parse(typeof(DateTimeUnit), element.UpperUnit, true),
                         (RangeBoundaryType)Enum.Parse(typeof(RangeBoundaryType), element.UpperBoundType, true),
+                        element.MessageTemplate,
+                        element.Negated,
+                        element.MessageAppend
+                    );
+
+                case "startswith":
+                    return new StartsWithValidatorOperation(
+                        inKey,
+                        element.Value,
+                        resultKey,
+                        messageKey,
                         element.MessageTemplate,
                         element.Negated,
                         element.MessageAppend

@@ -1169,6 +1169,8 @@
     <Compile Include="Operations\Validate\RegexValidatorOperation.cs" />
     <Compile Include="Operations\Validate\RelativeDateTimeValidatorOperation.cs" />
     <Compile Include="Operations\Validate\RowValueAccess.cs" />
+    <Compile Include="Operations\Validate\StartsWithValidator.cs" />
+    <Compile Include="Operations\Validate\StartsWithValidatorOperation.cs" />
     <Compile Include="Operations\Validate\StringLengthValidatorOperation.cs" />
     <Compile Include="Operations\Validate\TypeConversionValidatorOperation.cs" />
     <Compile Include="Operations\Validate\ValidationOperation.cs" />
@@ -1614,6 +1616,12 @@
     <Content Include="Libs\SharpZLib\obj\Debug\ICSharpCode.SharpZLib.csproj.FileListAbsolute.txt" />
     <Content Include="LICENSE.txt" />
     <Content Include="Microsoft.AnalysisServices.DLL">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="msvcp100.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="msvcr100.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
