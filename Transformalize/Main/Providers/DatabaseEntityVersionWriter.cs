@@ -29,7 +29,7 @@ namespace Transformalize.Main.Providers {
     public class DatabaseEntityVersionWriter : IEntityVersionWriter {
         private readonly Process _process;
         private readonly Entity _entity;
-        private readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private readonly Logger _log = LogManager.GetLogger(string.Empty);
 
         public DatabaseEntityVersionWriter(Process process, Entity entity) {
             _process = process;

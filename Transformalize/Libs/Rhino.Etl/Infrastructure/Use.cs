@@ -29,8 +29,6 @@ namespace Transformalize.Libs.Rhino.Etl.Infrastructure
         /// </summary>
         public delegate void Proc(IDbCommand command);
 
-        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
-
         /// <summary>
         ///     Gets or sets the active connection.
         /// </summary>

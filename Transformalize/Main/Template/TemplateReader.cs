@@ -13,7 +13,7 @@ namespace Transformalize.Main {
     public class TemplateReader {
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
-        private readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private readonly Logger _log = LogManager.GetLogger(string.Empty);
         private readonly Process _process;
         private readonly TemplateElementCollection _elements;
         private readonly DefaultFactory _defaultFactory = new DefaultFactory();

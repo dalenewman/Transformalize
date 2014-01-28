@@ -30,7 +30,7 @@ namespace Transformalize.Main {
 
     public class EntityConfigurationLoader {
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
-        private readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private readonly Logger _log = LogManager.GetLogger(string.Empty);
         private readonly Process _process;
 
         public EntityConfigurationLoader(Process process) {

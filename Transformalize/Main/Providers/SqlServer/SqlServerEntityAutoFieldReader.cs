@@ -28,7 +28,7 @@ namespace Transformalize.Main.Providers.SqlServer
     public class SqlServerEntityAutoFieldReader : IEntityAutoFieldReader
     {
         private readonly IDataTypeService _dataTypeService = new SqlServerDataTypeService();
-        private readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private readonly Logger _log = LogManager.GetLogger(string.Empty);
 
         public Fields Read(Entity entity, bool isMaster)
         {

@@ -27,7 +27,7 @@ namespace Transformalize.Main {
 
     public class TemplateManager {
 
-        private readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private readonly Logger _log = LogManager.GetLogger(string.Empty);
         private readonly Process _process;
         private readonly char[] _trim = new[] { '\\' };
 

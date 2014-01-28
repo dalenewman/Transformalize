@@ -116,8 +116,8 @@ namespace Transformalize.Libs.NLog
 #else
             var frame = new StackFrame(1, false);
 #endif
-
-            return globalFactory.GetLogger(frame.GetMethod().DeclaringType.FullName);
+            var method = frame.GetMethod();
+            return method == null ? globalFactory.GetLogger("Null") : globalFactory.GetLogger(method.DeclaringType == null ? "Null" : method.DeclaringType.FullName);
         }
 
         /// <summary>

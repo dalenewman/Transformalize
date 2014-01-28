@@ -33,7 +33,7 @@ namespace Transformalize.Runner {
 
         private readonly string _file;
         private readonly IContentsReader _contentsReader;
-        private readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private readonly Logger _log = LogManager.GetLogger(string.Empty);
 
         public ProcessXmlConfigurationReader(string file, IContentsReader contentsReader) {
             _file = file;

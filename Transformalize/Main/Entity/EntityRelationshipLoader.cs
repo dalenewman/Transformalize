@@ -12,7 +12,7 @@ namespace Transformalize.Main {
             _process = process;
         }
 
-        private readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private readonly Logger _log = LogManager.GetLogger(string.Empty);
 
         public void Load() {
             if (_process.Entities.Count == 1)

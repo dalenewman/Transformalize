@@ -30,7 +30,7 @@ namespace Transformalize.Main.Providers
     public class DefaultConnectionChecker : IConnectionChecker
     {
         private static readonly Dictionary<string, bool> CachedResults = new Dictionary<string, bool>();
-        private readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private readonly Logger _log = LogManager.GetLogger(string.Empty);
         private readonly int _timeOut;
 
         public DefaultConnectionChecker(int timeOut = 3)

@@ -26,7 +26,7 @@ using Transformalize.Libs.NLog;
 namespace Transformalize.Main {
     public class EntityTransformParametersReader : ITransformParametersReader {
         private readonly Entity _entity;
-        private readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private readonly Logger _log = LogManager.GetLogger(string.Empty);
 
         public EntityTransformParametersReader(Entity entity) {
             _entity = entity;

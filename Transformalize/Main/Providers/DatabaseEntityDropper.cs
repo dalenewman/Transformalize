@@ -30,7 +30,7 @@ namespace Transformalize.Main.Providers
     {
         public IEntityExists EntityExists { get; set; }
         private const string FORMAT = "DROP TABLE {0}{1};";
-        private readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private readonly Logger _log = LogManager.GetLogger(string.Empty);
 
         public DatabaseEntityDropper(IEntityExists entityExists)
         {

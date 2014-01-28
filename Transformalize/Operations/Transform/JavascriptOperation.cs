@@ -9,7 +9,7 @@ namespace Transformalize.Operations.Transform {
     public class JavascriptOperation : TflOperation {
 
         private readonly JavascriptContext _context = new JavascriptContext();
-        private readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private readonly Logger _log = LogManager.GetLogger(string.Empty);
         private readonly string _script;
         private readonly IParameters _parameters;
 

@@ -44,7 +44,7 @@ namespace Transformalize.Main {
         private ValidationResults _validationResults = new ValidationResults();
 
         private static readonly Stopwatch Timer = new Stopwatch();
-        private readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private readonly Logger _log = LogManager.GetLogger(string.Empty);
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         public Fields CalculatedFields = new Fields();
         public Dictionary<string, AbstractConnection> Connections = new Dictionary<string, AbstractConnection>();

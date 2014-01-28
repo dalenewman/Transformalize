@@ -1,13 +1,12 @@
 ﻿using System.IO;
 using Transformalize.Configuration;
 using Transformalize.Libs.NLog;
-using Transformalize.Libs.NLog.Layouts;
 
 namespace Transformalize.Main {
 
     public static class ProcessFactory {
 
-        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Log = LogManager.GetLogger(string.Empty);
 
         public static Process Create(string resource, Options options = null) {
             var element = new ConfigurationFactory(resource).Create();

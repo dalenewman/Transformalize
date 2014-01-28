@@ -32,7 +32,7 @@ namespace Transformalize.Main {
 
     public class ProcessReader : IReader<Process> {
         private readonly ProcessConfigurationElement _config;
-        private readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private readonly Logger _log = LogManager.GetLogger(string.Empty);
         private readonly Options _options;
         private readonly string _processName = string.Empty;
         private Process _process;

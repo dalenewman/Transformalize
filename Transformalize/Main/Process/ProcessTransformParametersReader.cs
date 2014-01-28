@@ -30,7 +30,7 @@ namespace Transformalize.Main {
     public class ProcessTransformParametersReader : ITransformParametersReader {
         private readonly char[] _dotArray = new[] { '.' };
         private readonly Field[] _fields;
-        private readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private readonly Logger _log = LogManager.GetLogger(string.Empty);
         private readonly Process _process;
 
         public ProcessTransformParametersReader(Process process) {

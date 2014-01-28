@@ -25,7 +25,7 @@ namespace Transformalize.Libs.Rhino.Etl
         /// </summary>
         protected WithLoggingMixin()
         {
-            _log = LogManager.GetCurrentClassLogger();
+            _log = LogManager.GetLogger(string.Empty);
         }
 
         /// <summary>

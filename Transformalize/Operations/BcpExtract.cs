@@ -12,7 +12,7 @@ namespace Transformalize.Operations
 {
     public class BcpExtract : AbstractOperation {
 
-        private readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private readonly Logger _log = LogManager.GetLogger(string.Empty);
         private readonly Process _process;
         private readonly Entity _entity;
         private readonly string _folder;

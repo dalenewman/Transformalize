@@ -6,7 +6,7 @@ using Transformalize.Main;
 
 namespace Transformalize.Runner {
     public class ContentsWebReader : IContentsReader {
-        private readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private readonly Logger _log = LogManager.GetLogger(string.Empty);
 
         public Contents Read(string file) {
 

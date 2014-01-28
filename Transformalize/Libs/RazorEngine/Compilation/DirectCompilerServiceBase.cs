@@ -24,7 +24,7 @@ namespace Transformalize.Libs.RazorEngine.Compilation
     /// </summary>
     public abstract class DirectCompilerServiceBase : CompilerServiceBase, IDisposable
     {
-        private readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private readonly Logger _log = LogManager.GetLogger(string.Empty);
 
         #region Fields
 

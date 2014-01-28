@@ -16,7 +16,7 @@ namespace Transformalize.Libs.NCalc
 {
     public class Expression
     {
-        private static readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private static readonly Logger _log = LogManager.GetLogger(string.Empty);
 
         /// <summary>
         ///     Textual representation of the expression to evaluate.

@@ -9,7 +9,7 @@ namespace Transformalize.Main {
 
         private readonly Process _process;
         private readonly RelationshipElementCollection _elements;
-        private readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private readonly Logger _log = LogManager.GetLogger(string.Empty);
 
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 

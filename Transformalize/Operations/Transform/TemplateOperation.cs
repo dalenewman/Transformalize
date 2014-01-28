@@ -10,7 +10,7 @@ namespace Transformalize.Operations.Transform {
     public class TemplateOperation : TflOperation {
 
         private readonly StringBuilder _builder = new StringBuilder();
-        private readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private readonly Logger _log = LogManager.GetLogger(string.Empty);
         private readonly string _templateModelType;
         private readonly IParameters _parameters;
         private readonly Dictionary<string, object> _dictionaryContext = new Dictionary<string, object>();

@@ -8,7 +8,7 @@ using Transformalize.Main;
 namespace Transformalize.Operations.Transform {
 
     public class ExpressionOperation : TflOperation {
-        private readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private readonly Logger _log = LogManager.GetLogger(string.Empty);
         private readonly Expression _expression;
         private readonly IParameters _parameters;
 

@@ -5,7 +5,7 @@ using Transformalize.Libs.NLog;
 namespace Transformalize.Runner
 {
     public class ContentsFileReader : IContentsReader {
-        private readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private readonly Logger _log = LogManager.GetLogger(string.Empty);
 
         public Contents Read(string file) {
 

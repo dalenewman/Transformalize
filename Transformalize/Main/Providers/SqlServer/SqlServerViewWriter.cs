@@ -28,7 +28,7 @@ using Transformalize.Libs.Dapper;
 
 namespace Transformalize.Main.Providers.SqlServer {
     public class SqlServerViewWriter : IViewWriter {
-        private readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private readonly Logger _log = LogManager.GetLogger(string.Empty);
 
         public void Drop(Process process) {
             using (var cn = process.OutputConnection.GetConnection()) {

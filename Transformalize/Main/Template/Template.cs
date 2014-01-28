@@ -36,7 +36,7 @@ namespace Transformalize.Main {
         private const string TEMPLATE_CACHE_FOLDER = "TemplateCache";
         private const string RENDERED_TEMPLATE_CACHE_FOLDER = "RenderedTemplateCache";
 
-        private readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private readonly Logger _log = LogManager.GetLogger(string.Empty);
         private readonly Process _process;
 
         private readonly string _renderedTemplateFile;

@@ -31,7 +31,7 @@ namespace Transformalize.Test.Integration {
     public class NorthWindUpdates
     {
         private const string FILE = "NorthWind.xml";
-        private readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private readonly Logger _log = LogManager.GetLogger(string.Empty);
 
         [SetUp]
         public void SetUp() {

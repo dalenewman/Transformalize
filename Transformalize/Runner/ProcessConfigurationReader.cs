@@ -30,7 +30,7 @@ namespace Transformalize.Runner
 {
     public class ProcessConfigurationReader : IReader<ProcessConfigurationElement>
     {
-        private readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private readonly Logger _log = LogManager.GetLogger(string.Empty);
         private readonly string _name;
 
         public ProcessConfigurationReader(string name)

@@ -22,7 +22,7 @@ namespace Transformalize.Libs.FileHelpers.Fields
     {
         #region "  Private & Internal Fields  "
 
-        private readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private readonly Logger _log = LogManager.GetLogger(string.Empty);
         private static readonly Type strType = typeof (string);
 
         internal Type mFieldType;
