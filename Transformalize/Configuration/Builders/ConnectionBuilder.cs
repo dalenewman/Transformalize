@@ -21,6 +21,26 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public ConnectionBuilder User(string userName) {
+            _connection.User = userName;
+            return this;
+        }
+
+        public ConnectionBuilder Password(string password) {
+            _connection.Password = password;
+            return this;
+        }
+
+        public ConnectionBuilder Port(int port) {
+            _connection.Port = port;
+            return this;
+        }
+
+        public ConnectionBuilder ConnectionString(string connectionString) {
+            _connection.ConnectionString = connectionString;
+            return this;
+        }
+
         public ProcessConfigurationElement Process() {
             return _processBuilder.Process();
         }
