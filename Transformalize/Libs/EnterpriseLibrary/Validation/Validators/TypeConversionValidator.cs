@@ -15,14 +15,12 @@ using System.Globalization;
 using Transformalize.Libs.EnterpriseLibrary.Common.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Configuration;
 
-namespace Transformalize.Libs.EnterpriseLibrary.Validation.Validators
-{
+namespace Transformalize.Libs.EnterpriseLibrary.Validation.Validators {
     /// <summary>
     /// Validates a string by checking it represents a value for a given type.
     /// </summary>
     [ConfigurationElementType(typeof(TypeConversionValidatorData))]
-    public class TypeConversionValidator : ValueValidator<string>
-    {
+    public class TypeConversionValidator : ValueValidator<string> {
         private Type targetType;
 
         /// <summary>
@@ -30,8 +28,7 @@ namespace Transformalize.Libs.EnterpriseLibrary.Validation.Validators
         /// </summary>
         /// <param name="targetType">The supplied type used to determine if the string can be converted to it.</param>
         public TypeConversionValidator(Type targetType)
-            : this(targetType, false)
-        { }
+            : this(targetType, false) { }
 
         /// <summary>
         /// <para>Initializes a new instance of the <see cref="TypeConversionValidator"/>.</para>
@@ -39,8 +36,7 @@ namespace Transformalize.Libs.EnterpriseLibrary.Validation.Validators
         /// <param name="negated">True if the validator must negate the result of the validation.</param>
         /// <param name="targetType">The supplied type used to determine if the string can be converted to it.</param>
         public TypeConversionValidator(Type targetType, bool negated)
-            : this(targetType, null, negated)
-        { }
+            : this(targetType, null, negated) { }
 
         /// <summary>
         /// <para>Initializes a new instance of the <see cref="TypeConversionValidator"/>.</para>
@@ -48,8 +44,7 @@ namespace Transformalize.Libs.EnterpriseLibrary.Validation.Validators
         /// <param name="messageTemplate">The message template to use when logging results.</param>
         /// <param name="targetType">The supplied type used to determine if the string can be converted to it.</param>
         public TypeConversionValidator(Type targetType, string messageTemplate)
-            : this(targetType, messageTemplate, false)
-        { }
+            : this(targetType, messageTemplate, false) { }
 
         /// <summary>
         /// <para>Initializes a new instance of the <see cref="TypeConversionValidator"/>.</para>
@@ -58,8 +53,7 @@ namespace Transformalize.Libs.EnterpriseLibrary.Validation.Validators
         /// <param name="messageTemplate">The message template to use when logging results.</param>
         /// <param name="targetType">The supplied type used to determine if the string can be converted to it.</param>
         public TypeConversionValidator(Type targetType, string messageTemplate, bool negated)
-            : base(messageTemplate, null, negated)
-        {
+            : base(messageTemplate, null, negated) {
             ValidatorArgumentsValidatorHelper.ValidateTypeConversionValidator(targetType);
 
             this.targetType = targetType;
@@ -72,37 +66,35 @@ namespace Transformalize.Libs.EnterpriseLibrary.Validation.Validators
         /// <param name="currentTarget">The object on the behalf of which the validation is performed.</param>
         /// <param name="key">The key that identifies the source of <paramref name="objectToValidate"/>.</param>
         /// <param name="validationResults">The validation results to which the outcome of the validation should be stored.</param>
-        protected override void DoValidate(string objectToValidate, object currentTarget, string key, ValidationResults validationResults)
-        {
+        protected override void DoValidate(string objectToValidate, object currentTarget, string key, ValidationResults validationResults) {
             bool logError = false;
             bool isObjectToValidateNull = objectToValidate == null;
 
-            if (!isObjectToValidateNull)
-            {
-                if (string.Empty.Equals(objectToValidate) && IsTheTargetTypeAValueTypeDifferentFromString())
-                {
+            if (!isObjectToValidateNull) {
+                if (string.Empty.Equals(objectToValidate) && IsTheTargetTypeAValueTypeDifferentFromString()) {
                     logError = true;
-                }
-                else
-                {
-                    try
-                    {
-                        TypeConverter typeConverter = TypeDescriptor.GetConverter(targetType);
-                        object convertedValue = typeConverter.ConvertFromString(null, CultureInfo.CurrentCulture, objectToValidate);
-                        if (convertedValue == null)
-                        {
-                            logError = true;
+                } else {
+                    try {
+                        // because typeconverter is failing on decimals with thousands delimiter (e.g. 100,000.00)
+                        if (targetType == typeof(decimal)) {
+                            var output = Decimal.Parse(
+                                objectToValidate, NumberStyles.Float | NumberStyles.AllowThousands | NumberStyles.AllowCurrencySymbol,
+                                (IFormatProvider)CultureInfo.CurrentCulture.GetFormat(typeof(NumberFormatInfo))
+                            );
+                        } else {
+                            TypeConverter typeConverter = TypeDescriptor.GetConverter(targetType);
+                            object convertedValue = typeConverter.ConvertFromString(null, CultureInfo.CurrentCulture, objectToValidate);
+                            if (convertedValue == null) {
+                                logError = true;
+                            }
                         }
-                    }
-                    catch (Exception)
-                    {
+                    } catch (Exception) {
                         logError = true;
                     }
                 }
             }
 
-            if (isObjectToValidateNull || (logError != Negated))
-            {
+            if (isObjectToValidateNull || (logError != Negated)) {
                 this.LogValidationResult(validationResults,
                     GetMessage(objectToValidate, key),
                     currentTarget,
@@ -111,8 +103,7 @@ namespace Transformalize.Libs.EnterpriseLibrary.Validation.Validators
             }
         }
 
-        private bool IsTheTargetTypeAValueTypeDifferentFromString()
-        {
+        private bool IsTheTargetTypeAValueTypeDifferentFromString() {
             TypeCode targetTypeCode = Type.GetTypeCode(targetType);
             return targetTypeCode != TypeCode.Object && targetTypeCode != TypeCode.String;
         }
@@ -124,8 +115,7 @@ namespace Transformalize.Libs.EnterpriseLibrary.Validation.Validators
         /// <param name="objectToValidate">The object for which validation was performed.</param>
         /// <param name="key">The key representing the value being validated for <paramref name="objectToValidate"/>.</param>
         /// <returns>The message representing the validation failure.</returns>
-        protected internal override string GetMessage(object objectToValidate, string key)
-        {
+        protected internal override string GetMessage(object objectToValidate, string key) {
             return string.Format(
                 CultureInfo.CurrentCulture,
                 this.MessageTemplate,
@@ -138,24 +128,21 @@ namespace Transformalize.Libs.EnterpriseLibrary.Validation.Validators
         /// <summary>
         /// Gets the Default Message Template when the validator is non negated.
         /// </summary>
-        protected override string DefaultNonNegatedMessageTemplate
-        {
+        protected override string DefaultNonNegatedMessageTemplate {
             get { return Resources.TypeConversionNonNegatedDefaultMessageTemplate; }
         }
 
         /// <summary>
         /// Gets the Default Message Template when the validator is negated.
         /// </summary>
-        protected override string DefaultNegatedMessageTemplate
-        {
+        protected override string DefaultNegatedMessageTemplate {
             get { return Resources.TypeConversionNegatedDefaultMessageTemplate; }
         }
 
         /// <summary>
         /// Target type for conversion.
         /// </summary>
-        public Type TargetType
-        {
+        public Type TargetType {
             get { return this.targetType; }
         }
     }

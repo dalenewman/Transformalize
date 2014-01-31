@@ -22,6 +22,11 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public FieldBuilder QuotedWith(string quoteChar) {
+            _field.QuotedWith = quoteChar;
+            return this;
+        }
+
         public FieldBuilder Default(string value) {
             _field.Default = value;
             return this;

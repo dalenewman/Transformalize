@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Rhino.Etl.Core.Files;
+using Transformalize.Libs.FileHelpers.Enums;
 using Transformalize.Libs.FileHelpers.RunTime;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
@@ -21,22 +22,29 @@ namespace Transformalize.Operations.Extract {
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             var ignoreFirstLines = _entity.InputConnection.Start - 1;
-            var cb = new DelimitedClassBuilder("Tfl" + _entity.OutputName()) { IgnoreEmptyLines = true, Delimiter = _entity.InputConnection.Delimiter, IgnoreFirstLines = ignoreFirstLines };
+            var cb = new DelimitedClassBuilder("Tfl" + _entity.OutputName()) {
+                IgnoreEmptyLines = true,
+                Delimiter = _entity.InputConnection.Delimiter,
+                IgnoreFirstLines = ignoreFirstLines
+            };
 
             foreach (var field in _fields) {
-                cb.AddField(field.Alias, typeof(string));
+                if (!field.QuotedWith.Equals(string.Empty)) {
+                    cb.AddField(new DelimitedFieldBuilder(field.Alias, typeof(string)) {
+                        FieldQuoted = true,
+                        QuoteChar = field.QuotedWith[0],
+                        QuoteMode = QuoteMode.OptionalForRead
+                    });
+                } else {
+                    cb.AddField(field.Alias, typeof(string));
+                }
             }
 
             if (_top > 0) {
                 var count = 1;
                 using (var file = new FluentFile(cb.CreateRecordClass()).From(_entity.InputConnection.File)) {
                     foreach (var row in from object obj in file select Row.FromObject(obj)) {
-                        foreach (var field in _fields) {
-                            if (field.SimpleType != "string")
-                                row[field.Alias] = _defaultFactory.Convert(row[field.Alias].ToString(), field.SimpleType, field.Default);
-                        }
                         yield return row;
-
                         count++;
                         if (count == _top) {
                             yield break;
@@ -47,10 +55,6 @@ namespace Transformalize.Operations.Extract {
             } else {
                 using (var file = new FluentFile(cb.CreateRecordClass()).From(_entity.InputConnection.File)) {
                     foreach (var row in from object obj in file select Row.FromObject(obj)) {
-                        foreach (var field in _fields) {
-                            if (field.SimpleType != "string")
-                                row[field.Alias] = _defaultFactory.Convert(row[field.Alias].ToString(), field.SimpleType, field.Default);
-                        }
                         yield return row;
                     }
                 }

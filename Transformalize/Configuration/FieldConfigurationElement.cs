@@ -28,6 +28,7 @@ namespace Transformalize.Configuration {
         private const string NAME = "name";
         private const string ALIAS = "alias";
         private const string TYPE = "type";
+        private const string QUOTED_WITH = "quoted-with";
         private const string LENGTH = "length";
         private const string PRECISION = "precision";
         private const string SCALE = "scale";
@@ -73,6 +74,12 @@ namespace Transformalize.Configuration {
         public string Type {
             get { return this[TYPE] as string; }
             set { this[TYPE] = value; }
+        }
+
+        [ConfigurationProperty(QUOTED_WITH, IsRequired = false)]
+        public string QuotedWith {
+            get { return this[QUOTED_WITH] as string; }
+            set { this[QUOTED_WITH] = value; }
         }
 
         [ConfigurationProperty(DEFAULT_NULL, IsRequired = false, DefaultValue = true)]

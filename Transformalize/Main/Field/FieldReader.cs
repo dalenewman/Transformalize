@@ -59,7 +59,8 @@ namespace Transformalize.Main {
                 Aggregate = element.Aggregate.ToLower(),
                 DefaultNull = element.DefaultNull,
                 DefaultBlank = element.DefaultBlank,
-                DefaultWhiteSpace = element.DefaultWhiteSpace
+                DefaultWhiteSpace = element.DefaultWhiteSpace,
+                QuotedWith = element.QuotedWith
             };
 
             FieldSearchTypesLoader(field, element);

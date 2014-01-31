@@ -28,6 +28,7 @@ namespace Transformalize.Main.Providers
         MySql,
         AnalysisServices,
         File,
-        Internal
+        Internal,
+        Folder
     }
 }
