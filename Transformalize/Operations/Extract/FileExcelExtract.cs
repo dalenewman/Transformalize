@@ -13,9 +13,11 @@ namespace Transformalize.Operations.Extract {
         private readonly int _start;
         private readonly int _end;
 
-        public FileExcelExtract(Entity entity, int top) {
+        public FileExcelExtract(Entity entity, int top) : this(entity, entity.InputConnection.File, top) { }
+
+        public FileExcelExtract(Entity entity, string file, int top) {
             _fields = new FieldSqlWriter(entity.Fields).Input().Context().ToEnumerable().OrderBy(f => f.Index).ToArray();
-            _fileInfo = new FileInfo(entity.InputConnection.File);
+            _fileInfo = new FileInfo(file);
             _start = entity.InputConnection.Start;
             _end = entity.InputConnection.End;
 

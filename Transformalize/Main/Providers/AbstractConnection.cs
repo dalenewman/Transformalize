@@ -23,8 +23,10 @@
 using System;
 using System.Data;
 using System.Data.Common;
+using System.IO;
 using Transformalize.Configuration;
 using Transformalize.Libs.Dapper;
+using Transformalize.Libs.FileHelpers.Enums;
 using Transformalize.Libs.Rhino.Etl.Operations;
 
 namespace Transformalize.Main.Providers {
@@ -56,9 +58,13 @@ namespace Transformalize.Main.Providers {
         public int Port { get; set; }
 
         public string File { get; set; }
+        public string Folder { get; set; }
+        public ErrorMode ErrorMode { get; set; }
         public string Delimiter { get; set; }
         public string LineDelimiter { get; set; }
         public IOperation InputOperation { get; set; }
+        public string SearchPattern { get; set; }
+        public SearchOption SearchOption { get; set; }
 
         public int Start { get; set; }
         public int End { get; set; }
@@ -97,8 +103,12 @@ namespace Transformalize.Main.Providers {
             Start = element.Start;
             End = element.End;
             File = element.File;
+            Folder = element.Folder;
             Delimiter = element.Delimiter;
             LineDelimiter = element.LineDelimiter;
+            ErrorMode = (ErrorMode)Enum.Parse(typeof(ErrorMode), element.ErrorMode, true);
+            SearchOption = (SearchOption)Enum.Parse(typeof(SearchOption), element.SearchOption, true);
+            SearchPattern = element.SearchPattern;
 
             ProcessConnectionString(element);
             InputOperation = element.InputOperation;
@@ -292,8 +302,17 @@ namespace Transformalize.Main.Providers {
             }
         }
 
-        public bool IsExcel() {
-            return Provider.Type == ProviderType.File && (File.EndsWith(".xlsx", IC) || File.Equals(".xls", IC));
+        public bool IsExcel(string file) {
+            return Provider.Type == ProviderType.File && (file.EndsWith(".xlsx", IC) || file.Equals(".xls", IC));
         }
+
+        public bool IsFile() {
+            return Provider.Type == ProviderType.File;
+        }
+
+        public bool IsFolder() {
+            return Provider.Type == ProviderType.Folder;
+        }
+
     }
 }

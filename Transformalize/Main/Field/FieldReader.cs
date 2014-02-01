@@ -60,7 +60,8 @@ namespace Transformalize.Main {
                 DefaultNull = element.DefaultNull,
                 DefaultBlank = element.DefaultBlank,
                 DefaultWhiteSpace = element.DefaultWhiteSpace,
-                QuotedWith = element.QuotedWith
+                QuotedWith = element.QuotedWith,
+                Optional = element.Optional
             };
 
             FieldSearchTypesLoader(field, element);

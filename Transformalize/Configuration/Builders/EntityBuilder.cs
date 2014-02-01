@@ -21,6 +21,11 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public EntityBuilder Connection(string name) {
+            _entity.Connection = name;
+            return this;
+        }
+
         public EntityBuilder Alias(string alias) {
             _entity.Alias = alias;
             return this;

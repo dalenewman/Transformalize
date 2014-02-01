@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using System.IO;
 using System.Linq;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
@@ -48,18 +49,18 @@ namespace Transformalize.Processes {
             _entity.IsFirstRun = !_process.OutputConnection.RecordsExist(_entity.Schema, _entity.OutputName());
 
             if (!_entity.InputConnection.Provider.IsDatabase) {
-                if (_entity.InputConnection.Provider.Type == ProviderType.File) {
-                    if (_entity.InputConnection.IsExcel()) {
-                        Register(new FileExcelExtract(_entity, _process.Options.Top));
-                    } else {
-                        if (_entity.InputConnection.IsDelimited()) {
-                            Register(new FileDelimitedExtract(_entity, _process.Options.Top));
-                        } else {
-                            Register(new FileFixedExtract(_entity, _process.Options.Top));
-                        }
-                    }
+                if (_entity.InputConnection.IsFile()) {
+                    Register(PrepareFileOperation(_entity.InputConnection.File));
                 } else {
-                    Register(_entity.InputConnection.InputOperation);
+                    if (_entity.InputConnection.IsFolder()) {
+                        var union = new SerialUnionAllOperation();
+                        foreach (var file in new DirectoryInfo(_entity.InputConnection.Folder).GetFiles(_entity.InputConnection.SearchPattern, _entity.InputConnection.SearchOption)) {
+                            union.Add(PrepareFileOperation(file.FullName));
+                        }
+                        Register(union);
+                    } else {
+                        Register(_entity.InputConnection.InputOperation);
+                    }
                 }
             } else {
                 if (_entity.IsFirstRun && _entity.UseBcp && _entity.InputConnection.Provider.Type == ProviderType.SqlServer) {
@@ -106,6 +107,16 @@ namespace Transformalize.Processes {
                     }
                 }
             }
+        }
+
+        private IOperation PrepareFileOperation(string file) {
+            if (_entity.InputConnection.IsExcel(file)) {
+                return new FileExcelExtract(_entity, file, _process.Options.Top);
+            }
+            if (_entity.InputConnection.IsDelimited()) {
+                return new FileDelimitedExtract(_entity, file, _process.Options.Top);
+            }
+            return new FileFixedExtract(_entity, file, _process.Options.Top);
         }
 
         protected override void PostProcessing() {

@@ -30,6 +30,10 @@ namespace Transformalize.Main.Providers {
                 providers.Add("file", string.Empty);
             }
 
+            if (!providers.ContainsKey("folder")) {
+                providers.Add("folder", string.Empty);
+            }
+
             if (!providers.ContainsKey("internal")) {
                 providers.Add("internal", string.Empty);
             }

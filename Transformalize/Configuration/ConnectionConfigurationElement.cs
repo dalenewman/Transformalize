@@ -25,6 +25,7 @@ using System.Configuration;
 using System.IO;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
+using Transformalize.Libs.FileHelpers.Enums;
 using Transformalize.Libs.NLog.Internal;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Providers;
@@ -42,12 +43,16 @@ namespace Transformalize.Configuration {
         private const string SERVER = "server";
         private const string PORT = "port";
         private const string FILE = "file";
+        private const string FOLDER = "folder";
+        private const string SEARCH_PATTERN = "search-pattern";
+        private const string SEARCH_OPTION = "search-option";
         private const string USER = "user";
         private const string PASSWORD = "password";
         private const string CONNECTION_STRING = "connection-string";
         private const string LINE_DELIMITER = "line-delimiter";
         private const string START = "start";
         private const string END = "end";
+        private const string ERROR_MODE = "error-mode";
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
         public IOperation InputOperation { get; set; }
@@ -62,6 +67,13 @@ namespace Transformalize.Configuration {
         public string User {
             get { return this[USER] as string; }
             set { this[USER] = value; }
+        }
+
+        [EnumConversionValidator(typeof(ErrorMode), MessageTemplate = "{1} must be a valid ErrorMode. (e.g. ThrowException, SaveAndContinue, IgnoreAndContinue)")]
+        [ConfigurationProperty(ERROR_MODE, IsRequired = false, DefaultValue = "SaveAndContinue")]
+        public string ErrorMode {
+            get { return this[ERROR_MODE] as string; }
+            set { this[ERROR_MODE] = value;  }
         }
 
         [ConfigurationProperty(PORT, IsRequired = false, DefaultValue = 0)]
@@ -100,6 +112,25 @@ namespace Transformalize.Configuration {
             set { this[FILE] = value; }
         }
 
+        [ConfigurationProperty(FOLDER, IsRequired = false, DefaultValue = "")]
+        public string Folder {
+            get { return this[FOLDER] as string; }
+            set { this[FOLDER] = value; }
+        }
+
+        [ConfigurationProperty(SEARCH_PATTERN, IsRequired = false, DefaultValue = "*.*")]
+        public string SearchPattern {
+            get { return this[SEARCH_PATTERN] as string; }
+            set { this[SEARCH_PATTERN] = value; }
+        }
+
+        [EnumConversionValidator(typeof(SearchOption), MessageTemplate = "{1} must be a valid SearchOption. (e.g. AllDirectories, TopDirectoryOnly)")]
+        [ConfigurationProperty(SEARCH_OPTION, IsRequired = false, DefaultValue = "TopDirectoryOnly")]
+        public string SearchOption {
+            get { return this[SEARCH_OPTION] as string; }
+            set { this[SEARCH_OPTION] = value; }
+        }
+
         [ConfigurationProperty(DELIMITER, IsRequired = false, DefaultValue = "")]
         public string Delimiter {
             get { return this[DELIMITER] as string; }
@@ -130,7 +161,7 @@ namespace Transformalize.Configuration {
             set { this[COMPATABILITY_LEVEL] = value; }
         }
 
-        [RegexStringValidator(@"(?i)SqlServer|AnalysisServices|MySql|File|Excel|Internal")]
+        [RegexStringValidator(@"(?i)SqlServer|AnalysisServices|MySql|File|Folder|Internal")]
         [ConfigurationProperty(PROVIDER, IsRequired = false, DefaultValue = "SqlServer")]
         public string Provider {
             get { return this[PROVIDER] as string; }

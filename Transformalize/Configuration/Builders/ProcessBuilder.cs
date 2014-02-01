@@ -21,6 +21,10 @@ namespace Transformalize.Configuration.Builders {
                     Type = string.Empty
                 },
                 new ProviderConfigurationElement {
+                    Name = "folder",
+                    Type = string.Empty
+                },
+                new ProviderConfigurationElement {
                     Name = "internal",
                     Type = string.Empty
                 }
@@ -118,8 +122,7 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
-        public ProcessBuilder TimeZone(string timeZone)
-        {
+        public ProcessBuilder TimeZone(string timeZone) {
             _process.TimeZone = timeZone;
             return this;
         }

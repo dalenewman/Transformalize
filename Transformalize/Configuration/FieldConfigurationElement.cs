@@ -29,6 +29,7 @@ namespace Transformalize.Configuration {
         private const string ALIAS = "alias";
         private const string TYPE = "type";
         private const string QUOTED_WITH = "quoted-with";
+        private const string OPTIONAL = "optional";
         private const string LENGTH = "length";
         private const string PRECISION = "precision";
         private const string SCALE = "scale";
@@ -86,6 +87,12 @@ namespace Transformalize.Configuration {
         public bool DefaultNull {
             get { return (bool)this[DEFAULT_NULL]; }
             set { this[DEFAULT_NULL] = value; }
+        }
+
+        [ConfigurationProperty(OPTIONAL, IsRequired = false, DefaultValue = false)]
+        public bool Optional {
+            get { return (bool)this[OPTIONAL]; }
+            set { this[OPTIONAL] = value; }
         }
 
         [ConfigurationProperty(DEFAULT_BLANK, IsRequired = false, DefaultValue = false)]

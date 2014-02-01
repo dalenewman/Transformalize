@@ -1,3 +1,5 @@
+using System;
+
 namespace Transformalize.Configuration.Builders {
 
     public class TransformBuilder {
@@ -124,18 +126,6 @@ namespace Transformalize.Configuration.Builders {
         public TransformBuilder Format(string format) {
             _transform.Format = format;
             return this;
-        }
-
-        public ParameterBuilder Parameters() {
-            var parameter = new ParameterConfigurationElement();
-            _transform.Parameters.Add(parameter);
-            return new ParameterBuilder(this, parameter);
-        }
-
-        public ParameterBuilder Parameters(string field) {
-            var parameter = new ParameterConfigurationElement() { Field = field };
-            _transform.Parameters.Add(parameter);
-            return new ParameterBuilder(this, parameter);
         }
 
         public TransformBuilder Separator(string separator) {
@@ -305,8 +295,25 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
-        public TransformBuilder Parameter(string alias) {
-            _transform.Parameter = alias;
+        public TransformBuilder Parameter(object value, string type) {
+            _transform.Parameters.Add(new ParameterConfigurationElement { Value = value.ToString(), Type = type });
+            return this;
+        }
+
+        public TransformBuilder Parameter(string entity, string field) {
+            return InternalParameter(entity, field);
+        }
+
+        public TransformBuilder Parameter(string field) {
+            return InternalParameter(string.Empty, field);
+        }
+
+        private TransformBuilder InternalParameter(string entity, string field) {
+            if (field.Equals("*")) {
+                _transform.Parameter = field;
+            } else {
+                _transform.Parameters.Add(new ParameterConfigurationElement { Field = field, Entity = entity });
+            }
             return this;
         }
 

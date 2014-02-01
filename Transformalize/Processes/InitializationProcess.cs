@@ -56,7 +56,9 @@ namespace Transformalize.Processes {
                 Environment.Exit(1);
             }
 
-            _process.OutputConnection.ViewWriter.Create(_process);
+            if (_process.Entities.Count > 0) {
+                _process.OutputConnection.ViewWriter.Create(_process);
+            }
             base.PostProcessing();
         }
     }

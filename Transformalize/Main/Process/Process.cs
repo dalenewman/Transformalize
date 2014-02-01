@@ -33,6 +33,7 @@ using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.AnalysisServices;
 using Transformalize.Main.Providers.File;
+using Transformalize.Main.Providers.Folder;
 using Transformalize.Main.Providers.Internal;
 using Transformalize.Main.Providers.MySql;
 using Transformalize.Main.Providers.SqlServer;
@@ -131,7 +132,7 @@ namespace Transformalize.Main {
             // File (including Excel)
             Kernal.Bind<AbstractProvider>().To<FileProvider>().WhenInjectedInto<FileConnection>();
             Kernal.Bind<IConnectionChecker>().To<FileConnectionChecker>().WhenInjectedInto<FileConnection>();
-            Kernal.Bind<IScriptRunner>().To<EmptyScriptRunner>().WhenInjectedInto<FileConnection>();
+            Kernal.Bind<IScriptRunner>().To<FalseScriptRunner>().WhenInjectedInto<FileConnection>();
             Kernal.Bind<IProviderSupportsModifier>().To<FalseProviderSupportsModifier>().WhenInjectedInto<FileConnection>();
             Kernal.Bind<IEntityRecordsExist>().To<FileEntityRecordsExist>().WhenInjectedInto<FileConnection>();
             Kernal.Bind<IEntityDropper>().To<FileEntityDropper>().WhenInjectedInto<FileConnection>();
@@ -139,10 +140,21 @@ namespace Transformalize.Main {
             Kernal.Bind<ITflWriter>().To<FalseTflWriter>().WhenInjectedInto<FileConnection>();
             Kernal.Bind<IViewWriter>().To<FalseViewWriter>().WhenInjectedInto<FileConnection>();
 
+            // Folder
+            Kernal.Bind<AbstractProvider>().To<FolderProvider>().WhenInjectedInto<FolderConnection>();
+            Kernal.Bind<IConnectionChecker>().To<FolderConnectionChecker>().WhenInjectedInto<FolderConnection>();
+            Kernal.Bind<IScriptRunner>().To<FalseScriptRunner>().WhenInjectedInto<FolderConnection>();
+            Kernal.Bind<IProviderSupportsModifier>().To<FalseProviderSupportsModifier>().WhenInjectedInto<FolderConnection>();
+            Kernal.Bind<IEntityRecordsExist>().To<FolderEntityRecordsExist>().WhenInjectedInto<FolderConnection>();
+            Kernal.Bind<IEntityDropper>().To<FolderEntityDropper>().WhenInjectedInto<FolderConnection>();
+            Kernal.Bind<IEntityExists>().To<FolderEntityExists>().WhenInjectedInto<FolderEntityDropper>();
+            Kernal.Bind<ITflWriter>().To<FalseTflWriter>().WhenInjectedInto<FolderConnection>();
+            Kernal.Bind<IViewWriter>().To<FalseViewWriter>().WhenInjectedInto<FolderConnection>();
+
             // Internal Operation
             Kernal.Bind<AbstractProvider>().To<InternalProvider>().WhenInjectedInto<InternalConnection>();
             Kernal.Bind<IConnectionChecker>().To<InternalConnectionChecker>().WhenInjectedInto<InternalConnection>();
-            Kernal.Bind<IScriptRunner>().To<EmptyScriptRunner>().WhenInjectedInto<InternalConnection>();
+            Kernal.Bind<IScriptRunner>().To<FalseScriptRunner>().WhenInjectedInto<InternalConnection>();
             Kernal.Bind<IProviderSupportsModifier>().To<FalseProviderSupportsModifier>().WhenInjectedInto<InternalConnection>();
             Kernal.Bind<IEntityRecordsExist>().To<FalseEntityRecordsExist>().WhenInjectedInto<InternalConnection>();
             Kernal.Bind<IEntityDropper>().To<FalseEntityDropper>().WhenInjectedInto<InternalConnection>();

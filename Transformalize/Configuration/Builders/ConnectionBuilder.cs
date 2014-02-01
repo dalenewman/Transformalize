@@ -1,3 +1,5 @@
+using System.IO;
+using Transformalize.Libs.FileHelpers.Enums;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Providers;
 
@@ -89,6 +91,21 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public ConnectionBuilder Folder(string folder) {
+            _connection.Folder = folder;
+            return this;
+        }
+
+        public ConnectionBuilder ErrorMode(ErrorMode errorMode) {
+            _connection.ErrorMode = errorMode.ToString();
+            return this;
+        }
+
+        public ConnectionBuilder SearchPattern(string searchPattern) {
+            _connection.SearchPattern = searchPattern;
+            return this;
+        }
+
         public ConnectionBuilder Delimiter(string delimiter) {
             _connection.Delimiter = delimiter;
             return this;
@@ -99,8 +116,14 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public ConnectionBuilder SearchOption(SearchOption searchOption) {
+            _connection.SearchOption = searchOption.ToString();
+            return this;
+        }
+
         public EntityBuilder Entity(string name) {
             return _processBuilder.Entity(name);
         }
+
     }
 }

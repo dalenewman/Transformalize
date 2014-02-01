@@ -34,8 +34,7 @@ namespace Transformalize.Test.Unit {
             Assert.IsNotNull(process);
             Assert.AreEqual("p1", process.Name);
             Assert.AreEqual("p1Star", process.Star);
-            Assert.AreEqual(4, process.Providers.Count);
-
+            Assert.AreEqual(5, process.Providers.Count);
         }
 
         [Test]
@@ -283,14 +282,14 @@ namespace Transformalize.Test.Unit {
                     .Field("ShipVia").Int32()
                     .CalculatedField("TimeOrderMonth").Length(6).Default("12-DEC")
                         .Transform("toString").Format("MM-MMM")
-                            .Parameters().Field("OrderDate")
+                            .Parameter("OrderDate")
                         .Transform("toUpper")
                     .CalculatedField("TimeOrderDate").Length(10).Default("9999-12-31")
                         .Transform().ToString("yyyy-MM-dd")
-                            .Parameters().Field("OrderDate")
+                            .Parameter("OrderDate")
                     .CalculatedField("TimeOrderYear").Length(4).Default("9999")
                         .Transform().ToString("yyyy")
-                            .Parameters().Field("OrderDate")
+                            .Parameter("OrderDate")
                 .Entity("Customers").Version("RowVersion").Prefix("Customers")
                     .Field("Address")
                     .Field("City").Length(15)
@@ -327,7 +326,7 @@ namespace Transformalize.Test.Unit {
                         .Transform("map").Map("Managers")
                     .CalculatedField("Employee")
                         .Transform("join").Separator(" ")
-                            .Parameters("FirstName")
+                            .Parameter("FirstName")
                             .Parameter("LastName")
                 .Entity("Products").Version("RowVersion").Prefix("Products")
                     .Field("CategoryID").Int32()
@@ -375,7 +374,7 @@ namespace Transformalize.Test.Unit {
                 .Relationship().LeftEntity("Orders").LeftField("ShipVia").RightEntity("Shippers").RightField("ShipperID")
                 .CalculatedField("CountryExchange").Length(128)
                     .Transform("format").Format("{0} to {1}")
-                        .Parameters("SuppliersCountry")
+                        .Parameter("SuppliersCountry")
                         .Parameter("OrdersShipCountry")
                 .Process();
 

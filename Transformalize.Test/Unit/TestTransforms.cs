@@ -676,7 +676,7 @@ namespace Transformalize.Test.Unit {
                 .Entity("entity")
                     .Field("MeterNumber")
                     .CalculatedField("MeterCategory").Default("None")
-                        .Transform("left").Length(1).Parameters("MeterNumber")
+                        .Transform("left").Length(1).Parameter("MeterNumber")
                         .Transform("if").Left("MeterCategory").Right("R").Then("Reclaim").Else("Domestic")
                 .Process();
 

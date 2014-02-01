@@ -67,6 +67,7 @@ namespace Transformalize.Main {
         public bool DefaultBlank { get; set; }
         public bool DefaultWhiteSpace { get; set; }
         public string QuotedWith { get; set; }
+        public bool Optional { get; set; }
 
         public bool DefaultNull {
             get { return _defaultNull; }

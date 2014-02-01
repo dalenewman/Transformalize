@@ -27,6 +27,11 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public FieldBuilder Optional(bool optional = true) {
+            _field.Optional = optional;
+            return this;
+        }
+
         public FieldBuilder Default(string value) {
             _field.Default = value;
             return this;
