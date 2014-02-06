@@ -81,11 +81,6 @@ namespace Transformalize.Configuration.Builders {
             return _processBuilder.SearchType(name);
         }
 
-        public ConnectionBuilder Input(IOperation operation) {
-            _connection.InputOperation = operation;
-            return this;
-        }
-
         public ConnectionBuilder File(string file) {
             _connection.File = file;
             return this;

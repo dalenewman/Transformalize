@@ -40,7 +40,7 @@ namespace Transformalize.Processes {
         private readonly CollectorOperation _collector = new CollectorOperation();
 
         public EntityProcess(Process process, Entity entity) {
-            GlobalDiagnosticsContext.Set("entity", Common.LogLength(entity.Alias, 20));
+            GlobalDiagnosticsContext.Set("entity", Common.LogLength(entity.Alias));
             _process = process;
             _entity = entity;
         }
@@ -59,7 +59,8 @@ namespace Transformalize.Processes {
                         }
                         Register(union);
                     } else {
-                        Register(_entity.InputConnection.InputOperation);
+                        Register(_entity.InputOperation);
+                        Register(new AliasOperation(_entity));
                     }
                 }
             } else {

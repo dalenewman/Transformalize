@@ -55,7 +55,8 @@ namespace Transformalize.Main {
                 Delete = element.Delete,
                 PrependProcessNameToOutputName = element.PrependProcessNameToOutputName,
                 Alias = string.IsNullOrEmpty(element.Alias) ? element.Name : element.Alias,
-                UseBcp = element.UseBcp
+                UseBcp = element.UseBcp,
+                InputOperation = element.InputOperation
             };
 
             GuardAgainstInvalidGrouping(element, entity);

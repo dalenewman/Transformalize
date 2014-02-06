@@ -6,30 +6,6 @@ namespace Transformalize.Configuration.Builders {
 
         public ProcessBuilder(string name) {
             _process = new ProcessConfigurationElement() { Name = name, Star = name + "Star" };
-
-            _process.Providers.Add(
-                new ProviderConfigurationElement {
-                    Name = "sqlserver",
-                    Type = "System.Data.SqlClient.SqlConnection, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
-                },
-                new ProviderConfigurationElement {
-                    Name = "mysql",
-                    Type = "MySql.Data.MySqlClient.MySqlConnection, MySql.Data"
-                },
-                new ProviderConfigurationElement {
-                    Name = "file",
-                    Type = string.Empty
-                },
-                new ProviderConfigurationElement {
-                    Name = "folder",
-                    Type = string.Empty
-                },
-                new ProviderConfigurationElement {
-                    Name = "internal",
-                    Type = string.Empty
-                }
-            );
-
             _process.SearchTypes.Add(
                 new SearchTypeConfigurationElement {
                     Name = "none",

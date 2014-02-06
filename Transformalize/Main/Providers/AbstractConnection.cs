@@ -27,27 +27,28 @@ using System.IO;
 using Transformalize.Configuration;
 using Transformalize.Libs.Dapper;
 using Transformalize.Libs.FileHelpers.Enums;
-using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Main.Providers.Internal;
 
 namespace Transformalize.Main.Providers {
     public abstract class AbstractConnection {
 
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
-        private readonly IConnectionChecker _connectionChecker;
-        private readonly IEntityRecordsExist _entityRecordsExist;
-        private readonly IEntityDropper _dropper;
 
         public string Name { get; set; }
         protected string TypeAndAssemblyName { get; set; }
-        public AbstractProvider Provider { get; set; }
         public int BatchSize { get; set; }
         public string Process { get; set; }
-        public IScriptRunner ScriptRunner { get; private set; }
+
+        public AbstractProvider Provider { get; set; }
+        public IConnectionChecker ConnectionChecker { get; set; }
+        public IEntityRecordsExist EntityRecordsExist { get; set; }
+        public IEntityDropper EntityDropper { get; set; }
+        public IScriptRunner ScriptRunner { get; set; }
+        public IProviderSupportsModifier ProviderSupportsModifier { get; set; }
         public IEntityQueryWriter EntityKeysQueryWriter { get; set; }
         public IEntityQueryWriter EntityKeysRangeQueryWriter { get; set; }
         public IEntityQueryWriter EntityKeysAllQueryWriter { get; set; }
         public ITableQueryWriter TableQueryWriter { get; set; }
-        public IProviderSupportsModifier ProviderSupportsModifier { get; set; }
         public ITflWriter TflWriter { get; set; }
         public IViewWriter ViewWriter { get; set; }
 
@@ -62,7 +63,6 @@ namespace Transformalize.Main.Providers {
         public ErrorMode ErrorMode { get; set; }
         public string Delimiter { get; set; }
         public string LineDelimiter { get; set; }
-        public IOperation InputOperation { get; set; }
         public string SearchPattern { get; set; }
         public SearchOption SearchOption { get; set; }
 
@@ -78,26 +78,9 @@ namespace Transformalize.Main.Providers {
 
         protected AbstractConnection(
             ConnectionConfigurationElement element,
-            AbstractProvider provider,
-            IConnectionChecker connectionChecker,
-            IScriptRunner scriptRunner,
-            IProviderSupportsModifier providerSupportsModifier,
-            IEntityRecordsExist recordsExist,
-            IEntityDropper dropper,
-            ITflWriter tflWriter,
-            IViewWriter viewWriter
-        ) {
-
-            _connectionChecker = connectionChecker;
-            _entityRecordsExist = recordsExist;
-            _dropper = dropper;
-
-            Provider = provider;
-            ViewWriter = viewWriter;
-            TflWriter = tflWriter;
-            ScriptRunner = scriptRunner;
-            ProviderSupportsModifier = providerSupportsModifier;
-
+            AbstractConnectionDependencies dependencies
+        )
+        {
             BatchSize = element.BatchSize;
             Name = element.Name;
             Start = element.Start;
@@ -110,9 +93,17 @@ namespace Transformalize.Main.Providers {
             SearchOption = (SearchOption)Enum.Parse(typeof(SearchOption), element.SearchOption, true);
             SearchPattern = element.SearchPattern;
 
+            TableQueryWriter = dependencies.TableQueryWriter;
+            Provider = dependencies.Provider;
+            ConnectionChecker = dependencies.ConnectionChecker;
+            EntityRecordsExist = dependencies.EntityRecordsExist;
+            EntityDropper = dependencies.EntityDropper;
+            ViewWriter = dependencies.ViewWriter;
+            TflWriter = dependencies.TflWriter;
+            ScriptRunner = dependencies.ScriptRunner;
+            ProviderSupportsModifier = dependencies.ProviderSupportsModifier;
+            
             ProcessConnectionString(element);
-            InputOperation = element.InputOperation;
-
         }
 
         private void ProcessConnectionString(ConnectionConfigurationElement element) {
@@ -172,7 +163,7 @@ namespace Transformalize.Main.Providers {
         }
 
         public bool IsReady() {
-            var isReady = _connectionChecker.Check(this);
+            var isReady = ConnectionChecker.Check(this);
             if (isReady) {
                 ProviderSupportsModifier.Modify(this, Provider.Supports);
             }
@@ -225,9 +216,6 @@ namespace Transformalize.Main.Providers {
                 AddParameter(cmd, "@EntityName", entity.Alias);
 
                 using (var reader = cmd.ExecuteReader(CommandBehavior.CloseConnection & CommandBehavior.SingleResult)) {
-                    if (reader == null)
-                        return;
-
                     entity.HasRange = reader.Read();
                     entity.Begin = entity.HasRange ? reader.GetValue(0) : null;
                 }
@@ -243,9 +231,6 @@ namespace Transformalize.Main.Providers {
                 command.CommandTimeout = 0;
                 cn.Open();
                 using (var reader = command.ExecuteReader(CommandBehavior.CloseConnection & CommandBehavior.SingleResult)) {
-                    if (reader == null)
-                        return;
-
                     entity.HasRows = reader.Read();
                     entity.End = entity.HasRows ? reader.GetValue(0) : null;
                 }
@@ -253,15 +238,15 @@ namespace Transformalize.Main.Providers {
         }
 
         public bool RecordsExist(string schema, string name) {
-            return _entityRecordsExist.RecordsExist(this, schema, name);
+            return EntityRecordsExist.RecordsExist(this, schema, name);
         }
 
         public void Drop(Entity entity) {
-            _dropper.Drop(this, entity.Schema, entity.OutputName());
+            EntityDropper.Drop(this, entity.Schema, entity.OutputName());
         }
 
         public bool Exists(Entity entity) {
-            return _dropper.EntityExists.Exists(this, entity.Schema, entity.OutputName());
+            return EntityDropper.EntityExists.Exists(this, entity.Schema, entity.OutputName());
         }
 
         public bool IsDelimited() {

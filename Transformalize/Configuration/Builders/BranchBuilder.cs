@@ -57,5 +57,9 @@ namespace Transformalize.Configuration.Builders {
         public FieldBuilder CalculatedField(string name) {
             return _transformBuilder.CalculatedField(name);
         }
+
+        public RelationshipBuilder Relationship() {
+            return _transformBuilder.Relationship();
+        }
     }
 }

@@ -25,32 +25,21 @@ using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.Linq;
-using Antlr.Runtime;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Providers;
 
 namespace Transformalize.Main {
+
     public class Entity {
+
         private readonly int _tflBatchId;
         private List<AbstractOperation> _operations = new List<AbstractOperation>();
         private List<AbstractOperation> _validatorOperations = new List<AbstractOperation>();
         private IEnumerable<Row> _rows = new List<Row>();
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
-
-        public Entity(int batchId) {
-            _tflBatchId = batchId;
-            Name = string.Empty;
-            Alias = string.Empty;
-            Schema = string.Empty;
-            PrimaryKey = new Fields();
-            Fields = new Fields();
-            Joins = new Dictionary<string, Relationship>();
-            InputKeys = new List<Row>();
-            Prefix = string.Empty;
-            CalculatedFields = new Fields();
-        }
-
+        
+        public IOperation InputOperation { get; set; }
         public string Schema { get; set; }
         public PipelineThreading PipelineThreading { get; set; }
         public string ProcessName { get; set; }
@@ -83,6 +72,19 @@ namespace Transformalize.Main {
         public bool Delete { get; set; }
         public bool PrependProcessNameToOutputName { get; set; }
 
+        public Entity(int batchId) {
+            _tflBatchId = batchId;
+            Name = string.Empty;
+            Alias = string.Empty;
+            Schema = string.Empty;
+            PrimaryKey = new Fields();
+            Fields = new Fields();
+            Joins = new Dictionary<string, Relationship>();
+            InputKeys = new List<Row>();
+            Prefix = string.Empty;
+            CalculatedFields = new Fields();
+        }
+
         public IEnumerable<Row> Rows {
             get { return _rows; }
             set { _rows = value; }
@@ -92,7 +94,6 @@ namespace Transformalize.Main {
             get { return _operations; }
             set { _operations = value; }
         }
-
 
         public string FirstKey() {
             return PrimaryKey.First().Key;

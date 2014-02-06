@@ -21,11 +21,12 @@
 #endregion
 
 using Transformalize.Configuration;
+using Transformalize.Main.Providers.Internal;
 
-namespace Transformalize.Main.Providers.MySql
-{
-    public class MySqlConnection : AbstractConnection
-    {
+namespace Transformalize.Main.Providers.MySql {
+
+    public class MySqlConnection : AbstractConnection {
+
         public override string UserProperty { get { return "Uid"; } }
         public override string PasswordProperty { get { return "Pwd"; } }
         public override string PortProperty { get { return "Port"; } }
@@ -33,15 +34,14 @@ namespace Transformalize.Main.Providers.MySql
         public override string ServerProperty { get { return "Server"; } }
         public override string TrustedProperty { get { return string.Empty; } }
 
-        public MySqlConnection(Process process, ConnectionConfigurationElement element, AbstractProvider provider, IConnectionChecker connectionChecker, IScriptRunner scriptRunner, IProviderSupportsModifier providerScriptModifer, IEntityRecordsExist recordsExist, IEntityDropper dropper, ITflWriter tflWriter, IViewWriter viewWriter)
-            : base(element, provider, connectionChecker, scriptRunner, providerScriptModifer, recordsExist, dropper, tflWriter, viewWriter)
-        {
-            TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
+        public MySqlConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
+            : base(element, dependencies) {
 
-            EntityKeysQueryWriter = process.Options.Top > 0 ? (IEntityQueryWriter) new MySqlEntityKeysTopQueryWriter(process.Options.Top) : new MySqlEntityKeysQueryWriter();
+            TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
+            EntityKeysQueryWriter = process.Options.Top > 0 ? (IEntityQueryWriter)new MySqlEntityKeysTopQueryWriter(process.Options.Top) : new MySqlEntityKeysQueryWriter();
             EntityKeysRangeQueryWriter = new MySqlEntityKeysRangeQueryWriter();
             EntityKeysAllQueryWriter = new MySqlEntityKeysAllQueryWriter();
-            TableQueryWriter = new MySqlTableQueryWriter();
+
         }
     }
 }

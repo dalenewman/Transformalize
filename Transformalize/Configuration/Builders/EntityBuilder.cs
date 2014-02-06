@@ -1,3 +1,4 @@
+using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
 namespace Transformalize.Configuration.Builders {
@@ -23,6 +24,11 @@ namespace Transformalize.Configuration.Builders {
 
         public EntityBuilder Connection(string name) {
             _entity.Connection = name;
+            return this;
+        }
+
+        public EntityBuilder Input(IOperation operation) {
+            _entity.InputOperation = operation;
             return this;
         }
 

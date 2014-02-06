@@ -30,6 +30,7 @@ namespace Transformalize.Operations {
         private readonly Entity _entity;
         private readonly string _firstKey;
         private readonly string[] _keys;
+        private readonly string[] _bytes = new[] { "byte[]", "rowversion" };
 
         public EntityJoinAction(Entity entity) {
             _entity = entity;
@@ -59,8 +60,7 @@ namespace Transformalize.Operations {
         }
 
         private bool UpdateIsNecessary(ref Row leftRow, ref Row rightRow) {
-            var bytes = new[] { "byte[]", "rowversion" };
-            if (bytes.Any(t => t == _entity.Version.SimpleType)) {
+            if (_bytes.Any(t => t == _entity.Version.SimpleType)) {
                 var beginBytes = (byte[])leftRow[_entity.Version.Alias];
                 var endBytes = (byte[])rightRow[_entity.Version.Alias];
                 return !beginBytes.SequenceEqual(endBytes);

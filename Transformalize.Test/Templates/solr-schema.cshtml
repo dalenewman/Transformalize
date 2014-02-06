@@ -61,6 +61,13 @@
             </analyzer>
         </fieldType>
 
+        <fieldType name="whitespace_lowercase" class="solr.TextField" positionIncrementGap="100">
+            <analyzer>
+                <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+                <filter class="solr.LowerCaseFilterFactory"/>
+            </analyzer>
+        </fieldType>
+
         <fieldType name="standard_lowercase" class="solr.TextField" positionIncrementGap="100">
             <analyzer>
                 <tokenizer class="solr.StandardTokenizerFactory"/>

@@ -125,9 +125,10 @@ namespace Transformalize.Test.Unit {
                 .Row("in", "4").ToOperation();
 
             var cfg = new ProcessBuilder("process")
-                .Connection("input").Provider(ProviderType.Internal).Input(input)
+                .Connection("input").Provider(ProviderType.Internal)
                 .Connection("output").Provider(ProviderType.Internal)
                 .Entity("entity")
+                    .Input(input)
                     .Field("in").Int32()
                     .CalculatedField("out")
                         .Transform("domain")
@@ -152,9 +153,10 @@ namespace Transformalize.Test.Unit {
                 .Row("in", 4).ToOperation();
 
             var cfg = new ProcessBuilder("process")
-                .Connection("input").Provider(ProviderType.Internal).Input(input)
+                .Connection("input").Provider(ProviderType.Internal)
                 .Connection("output").Provider(ProviderType.Internal)
                 .Entity("entity")
+                    .Input(input)
                     .Field("in").Int32()
                         .Transform("domain")
                             .Domain("1,2,3")
@@ -178,9 +180,10 @@ namespace Transformalize.Test.Unit {
                 .Row("name","Tara").ToOperation();
 
             var cfg = new ProcessBuilder("process")
-                .Connection("input").Provider(ProviderType.Internal).Input(input)
+                .Connection("input").Provider(ProviderType.Internal)
                 .Connection("output").Provider(ProviderType.Internal)
                 .Entity("entity")
+                    .Input(input)
                     .Field("name")
                     .Field("gender").Input(false).Default("male")
                     .CalculatedField("new-name")

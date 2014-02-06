@@ -41,9 +41,9 @@ namespace Transformalize.Test.Integration {
             var input = new TestInput();
 
             var process = new ProcessBuilder("process")
-                .Connection("input").Provider(ProviderType.Internal).Input(input)
+                .Connection("input").Provider(ProviderType.Internal)
                 .Connection("output").Database("TestOutput")
-                .Entity("e1")
+                .Entity("e1").Input(input)
                     .Field("index").Int32()
                     .Field("indexString")
                 .Process();
@@ -59,9 +59,9 @@ namespace Transformalize.Test.Integration {
             var testDbInput = new TestDbInput();
             
             var process = new ProcessBuilder("process2")
-                .Connection("input").Provider(ProviderType.Internal).Input(testDbInput)
+                .Connection("input").Provider(ProviderType.Internal)
                 .Connection("output").Database("TestOutput")
-                .Entity("e1")
+                .Entity("e1").Input(testDbInput)
                     .Field("name").Length(128)
                     .Field("database_id").Int32().PrimaryKey()
                 .Process();
@@ -76,9 +76,10 @@ namespace Transformalize.Test.Integration {
             var input = new TestInput();
 
             var process = new ProcessBuilder("process")
-                .Connection("input").Provider(ProviderType.Internal).Input(input)
+                .Connection("input").Provider(ProviderType.Internal)
                 .Connection("output").Provider(ProviderType.Internal)
                 .Entity("e")
+                    .Input(input)
                     .Field("index").Int32()
                     .Field("indexString")
                 .Process();

@@ -671,9 +671,10 @@ namespace Transformalize.Test.Unit {
                 .Row("MeterNumber", "000002").ToOperation();
 
             var cfg = new ProcessBuilder("process")
-                .Connection("input").Provider(ProviderType.Internal).Input(input)
+                .Connection("input").Provider(ProviderType.Internal)
                 .Connection("output").Provider(ProviderType.Internal)
                 .Entity("entity")
+                    .Input(input)
                     .Field("MeterNumber")
                     .CalculatedField("MeterCategory").Default("None")
                         .Transform("left").Length(1).Parameter("MeterNumber")

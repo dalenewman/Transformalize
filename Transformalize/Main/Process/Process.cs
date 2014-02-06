@@ -24,7 +24,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
+using Transformalize.Libs.Ninject.Syntax;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Ninject;
 using Transformalize.Libs.RazorEngine;
@@ -92,75 +94,9 @@ namespace Transformalize.Main {
         }
 
         public Process(string name = "") {
-
             Name = name;
             GlobalDiagnosticsContext.Set("process", name);
-
-            // MySql
-            Kernal.Bind<AbstractProvider>().To<MySqlProvider>().WhenInjectedInto<MySqlConnection>();
-            Kernal.Bind<IConnectionChecker>().To<DefaultConnectionChecker>().WhenInjectedInto<MySqlConnection>();
-            Kernal.Bind<IScriptRunner>().To<DefaultScriptRunner>().WhenInjectedInto<MySqlConnection>();
-            Kernal.Bind<IProviderSupportsModifier>().To<FalseProviderSupportsModifier>().WhenInjectedInto<MySqlConnection>();
-            Kernal.Bind<IEntityRecordsExist>().To<MySqlEntityRecordsExist>().WhenInjectedInto<MySqlConnection>();
-            Kernal.Bind<IEntityDropper>().To<MySqlEntityDropper>().WhenInjectedInto<MySqlConnection>();
-            Kernal.Bind<IEntityExists>().To<MySqlEntityExists>().WhenInjectedInto<MySqlEntityDropper>();
-            Kernal.Bind<ITflWriter>().To<MySqlTflWriter>().WhenInjectedInto<MySqlConnection>();
-            Kernal.Bind<IViewWriter>().To<MySqlViewWriter>().WhenInjectedInto<MySqlConnection>();
-
-            // SqlServer
-            Kernal.Bind<AbstractProvider>().To<SqlServerProvider>().WhenInjectedInto<SqlServerConnection>();
-            Kernal.Bind<IConnectionChecker>().To<DefaultConnectionChecker>().WhenInjectedInto<SqlServerConnection>();
-            Kernal.Bind<IScriptRunner>().To<DefaultScriptRunner>().WhenInjectedInto<SqlServerConnection>();
-            Kernal.Bind<IProviderSupportsModifier>().To<SqlServerProviderSupportsModifier>().WhenInjectedInto<SqlServerConnection>();
-            Kernal.Bind<IEntityRecordsExist>().To<SqlServerEntityRecordsExist>().WhenInjectedInto<SqlServerConnection>();
-            Kernal.Bind<IEntityDropper>().To<SqlServerEntityDropper>().WhenInjectedInto<SqlServerConnection>();
-            Kernal.Bind<IEntityExists>().To<SqlServerEntityExists>().WhenInjectedInto<SqlServerEntityDropper>();
-            Kernal.Bind<ITflWriter>().To<SqlServerTflWriter>().WhenInjectedInto<SqlServerConnection>();
-            Kernal.Bind<IViewWriter>().To<SqlServerViewWriter>().WhenInjectedInto<SqlServerConnection>();
-
-            // Analysis Services
-            Kernal.Bind<AbstractProvider>().To<AnalysisServicesProvider>().WhenInjectedInto<AnalysisServicesConnection>();
-            Kernal.Bind<IConnectionChecker>().To<AnalysisServicesConnectionChecker>().WhenInjectedInto<AnalysisServicesConnection>();
-            Kernal.Bind<IScriptRunner>().To<AnalysisServicesScriptRunner>().WhenInjectedInto<AnalysisServicesConnection>();
-            Kernal.Bind<IProviderSupportsModifier>().To<FalseProviderSupportsModifier>().WhenInjectedInto<AnalysisServicesConnection>();
-            Kernal.Bind<IEntityRecordsExist>().To<FalseEntityRecordsExist>().WhenInjectedInto<AnalysisServicesConnection>();
-            Kernal.Bind<IEntityDropper>().To<FalseEntityDropper>().WhenInjectedInto<AnalysisServicesConnection>();
-            Kernal.Bind<IEntityExists>().To<FalseEntityExists>().WhenInjectedInto<AnalysisServicesEntityDropper>();
-            Kernal.Bind<ITflWriter>().To<FalseTflWriter>().WhenInjectedInto<AnalysisServicesConnection>();
-            Kernal.Bind<IViewWriter>().To<FalseViewWriter>().WhenInjectedInto<AnalysisServicesConnection>();
-
-            // File (including Excel)
-            Kernal.Bind<AbstractProvider>().To<FileProvider>().WhenInjectedInto<FileConnection>();
-            Kernal.Bind<IConnectionChecker>().To<FileConnectionChecker>().WhenInjectedInto<FileConnection>();
-            Kernal.Bind<IScriptRunner>().To<FalseScriptRunner>().WhenInjectedInto<FileConnection>();
-            Kernal.Bind<IProviderSupportsModifier>().To<FalseProviderSupportsModifier>().WhenInjectedInto<FileConnection>();
-            Kernal.Bind<IEntityRecordsExist>().To<FileEntityRecordsExist>().WhenInjectedInto<FileConnection>();
-            Kernal.Bind<IEntityDropper>().To<FileEntityDropper>().WhenInjectedInto<FileConnection>();
-            Kernal.Bind<IEntityExists>().To<FileEntityExists>().WhenInjectedInto<FileEntityDropper>();
-            Kernal.Bind<ITflWriter>().To<FalseTflWriter>().WhenInjectedInto<FileConnection>();
-            Kernal.Bind<IViewWriter>().To<FalseViewWriter>().WhenInjectedInto<FileConnection>();
-
-            // Folder
-            Kernal.Bind<AbstractProvider>().To<FolderProvider>().WhenInjectedInto<FolderConnection>();
-            Kernal.Bind<IConnectionChecker>().To<FolderConnectionChecker>().WhenInjectedInto<FolderConnection>();
-            Kernal.Bind<IScriptRunner>().To<FalseScriptRunner>().WhenInjectedInto<FolderConnection>();
-            Kernal.Bind<IProviderSupportsModifier>().To<FalseProviderSupportsModifier>().WhenInjectedInto<FolderConnection>();
-            Kernal.Bind<IEntityRecordsExist>().To<FolderEntityRecordsExist>().WhenInjectedInto<FolderConnection>();
-            Kernal.Bind<IEntityDropper>().To<FolderEntityDropper>().WhenInjectedInto<FolderConnection>();
-            Kernal.Bind<IEntityExists>().To<FolderEntityExists>().WhenInjectedInto<FolderEntityDropper>();
-            Kernal.Bind<ITflWriter>().To<FalseTflWriter>().WhenInjectedInto<FolderConnection>();
-            Kernal.Bind<IViewWriter>().To<FalseViewWriter>().WhenInjectedInto<FolderConnection>();
-
-            // Internal Operation
-            Kernal.Bind<AbstractProvider>().To<InternalProvider>().WhenInjectedInto<InternalConnection>();
-            Kernal.Bind<IConnectionChecker>().To<InternalConnectionChecker>().WhenInjectedInto<InternalConnection>();
-            Kernal.Bind<IScriptRunner>().To<FalseScriptRunner>().WhenInjectedInto<InternalConnection>();
-            Kernal.Bind<IProviderSupportsModifier>().To<FalseProviderSupportsModifier>().WhenInjectedInto<InternalConnection>();
-            Kernal.Bind<IEntityRecordsExist>().To<FalseEntityRecordsExist>().WhenInjectedInto<InternalConnection>();
-            Kernal.Bind<IEntityDropper>().To<FalseEntityDropper>().WhenInjectedInto<InternalConnection>();
-            Kernal.Bind<IEntityExists>().To<FalseEntityExists>().WhenInjectedInto<InternalEntityDropper>();
-            Kernal.Bind<ITflWriter>().To<FalseTflWriter>().WhenInjectedInto<InternalConnection>();
-            Kernal.Bind<IViewWriter>().To<FalseViewWriter>().WhenInjectedInto<InternalConnection>();
+            Kernal.Load<NinjectBindings>();
 
         }
 

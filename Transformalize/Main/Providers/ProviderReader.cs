@@ -26,6 +26,14 @@ namespace Transformalize.Main.Providers {
                 providers.Add("mysql", "MySql.Data.MySqlClient.MySqlConnection, MySql.Data");
             }
 
+            if (!providers.ContainsKey("postgresql")) {
+                providers.Add("postgresql", "Transformalize.Libs.Npgsql.NpgsqlConnection, Transformalize");
+            }
+
+            if (!providers.ContainsKey("analysisservices")) {
+                providers.Add("analysisservices", string.Empty);
+            }
+            
             if (!providers.ContainsKey("file")) {
                 providers.Add("file", string.Empty);
             }

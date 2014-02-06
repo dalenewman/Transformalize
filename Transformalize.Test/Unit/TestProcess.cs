@@ -22,19 +22,123 @@
 
 using NUnit.Framework;
 using Transformalize.Configuration.Builders;
+using Transformalize.Libs.NLog;
+using Transformalize.Main;
+using Transformalize.Test.Unit.Builders;
 
 namespace Transformalize.Test.Unit {
     [TestFixture]
     public class TestProcess {
 
         [Test]
+        public void TestBug() {
+
+            var inventory = new RowsBuilder()
+                .Row("InventoryKey",1)
+                    .Field("Name","Inventory 1")
+                    .Field("StorageLocationKey",1)
+                .Row("InventoryKey",2)
+                    .Field("Name", "Inventory 2")
+                    .Field("StorageLocationKey",1)
+                .Row("InventoryKey", 3)
+                    .Field("Name", "Inventory 3")
+                    .Field("StorageLocationKey",2)
+                .ToOperation();
+
+            var storageLocations = new RowsBuilder()
+                .Row("StorageLocationKey", 1)
+                    .Field("Name", "Storage Location 1")
+                    .Field("WarehouseKey", 1)
+                .Row("StorageLocationKey", 2)
+                    .Field("Name", "Storage Location 2")
+                    .Field("WarehouseKey", 2)
+                .ToOperation();
+
+            var warehouses = new RowsBuilder()
+                .Row("WarehouseKey", 1)
+                    .Field("Name", "Warehouse 1")
+                .Row("WarehouseKey", 2)
+                    .Field("Name", "Warehouse 2")
+                .ToOperation();
+
+            var process = new ProcessBuilder("Bug")
+                .Connection("input").Provider("internal")
+                .Connection("output").Database("Junk")
+                .Entity("Inventory")
+                    .Input(inventory)
+                    .Version("InventoryHashCode")
+                    .Field("InventoryKey").Int32().PrimaryKey()
+                    .Field("Name").Alias("Inventory").Default("Default")
+                    .Field("StorageLocationKey").Int32()
+                    .CalculatedField("InventoryHashCode")
+                        .Int32()
+                        .Transform("concat").Parameter("*")
+                        .Transform("gethashcode").Parameter("*")
+                .Entity("StorageLocation")
+                    .Input(storageLocations)
+                    .Version("StorageLocationHashCode")
+                    .Field("StorageLocationKey").Int32().PrimaryKey()
+                    .Field("Name").Alias("StorageLocation").Default("Default")
+                    .Field("WarehouseKey").Int32()
+                    .CalculatedField("StorageLocationHashCode")
+                        .Int32()
+                        .Transform("concat").Parameter("*")
+                        .Transform("gethashcode").Parameter("*")
+                .Entity("Warehouse")
+                    .Input(warehouses)
+                    .Version("WarehouseHashCode")
+                    .Field("WarehouseKey").Int32().PrimaryKey()
+                    .Field("Name").Alias("Warehouse").Default("Default")
+                    .CalculatedField("WarehouseHashCode")
+                        .Int32()
+                        .Transform("concat").Parameter("*")
+                        .Transform("gethashcode").Parameter("*")
+                .Relationship()
+                    .LeftEntity("Inventory").LeftField("StorageLocationKey")
+                    .RightEntity("StorageLocation").RightField("StorageLocationKey")
+                .Relationship()
+                    .LeftEntity("StorageLocation").LeftField("WarehouseKey")
+                    .RightEntity("Warehouse").RightField("WarehouseKey")
+            .Process();
+
+            //init and run
+            ProcessFactory.Create(process, new Options() { Mode="init", LogLevel = LogLevel.Info}).Run();
+            var first = ProcessFactory.Create(process, new Options() { LogLevel = LogLevel.Info });
+
+            first.Run();
+
+            Assert.AreEqual(3, first["Inventory"].Inserts);
+            Assert.AreEqual(2, first["StorageLocation"].Inserts);
+            Assert.AreEqual(2, first["Warehouse"].Inserts);
+
+            //run again, no changes
+            var second = ProcessFactory.Create(process, new Options() { LogLevel = LogLevel.Info });
+
+            second.Run();
+
+            Assert.AreEqual(0, second["Inventory"].Inserts);
+            Assert.AreEqual(0, second["StorageLocation"].Inserts);
+            Assert.AreEqual(0, second["Warehouse"].Inserts);
+
+            Assert.AreEqual(0, second["Inventory"].Updates);
+            Assert.AreEqual(0, second["StorageLocation"].Updates);
+            Assert.AreEqual(0, second["Warehouse"].Updates);
+
+        }
+
+        [Test]
         public void TestDefaultProviders() {
-            var process = new ProcessBuilder("p1").Process();
+            var process = new ProcessBuilder("p1")
+                .Connection("output").Provider("internal")
+                .Process();
 
             Assert.IsNotNull(process);
             Assert.AreEqual("p1", process.Name);
             Assert.AreEqual("p1Star", process.Star);
-            Assert.AreEqual(5, process.Providers.Count);
+
+            var ready = ProcessFactory.Create(process);
+
+            Assert.AreEqual(7, ready.Providers.Count);
         }
 
         [Test]

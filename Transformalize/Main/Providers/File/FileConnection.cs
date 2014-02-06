@@ -1,4 +1,6 @@
 using Transformalize.Configuration;
+using Transformalize.Libs.Ninject.Syntax;
+using Transformalize.Main.Providers.Internal;
 
 namespace Transformalize.Main.Providers.File {
     public class FileConnection : AbstractConnection {
@@ -10,15 +12,12 @@ namespace Transformalize.Main.Providers.File {
         public override string ServerProperty { get { return string.Empty; } }
         public override string TrustedProperty { get { return string.Empty; } }
 
-        public FileConnection(Process process, ConnectionConfigurationElement element, AbstractProvider provider, IConnectionChecker connectionChecker, IScriptRunner scriptRunner, IProviderSupportsModifier providerSupportsModifier, IEntityRecordsExist recordsExist, IEntityDropper dropper, ITflWriter tflWriter, IViewWriter viewWriter)
-            : base(element, provider, connectionChecker, scriptRunner, providerSupportsModifier, recordsExist, dropper, tflWriter, viewWriter) {
+        public FileConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies) : base(element, dependencies) {
 
             TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
-
             EntityKeysQueryWriter = new EmptyQueryWriter();
             EntityKeysRangeQueryWriter = new EmptyQueryWriter();
             EntityKeysAllQueryWriter = new EmptyQueryWriter();
-            TableQueryWriter = new EmptyTableQueryWriter();
         }
     }
 }

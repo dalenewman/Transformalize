@@ -76,6 +76,7 @@
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
     <Reference Include="System.Device" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
     </Reference>
@@ -498,6 +499,101 @@
     <Compile Include="Libs\ExcelDataReader\Exceptions\HeaderException.cs" />
     <Compile Include="Libs\ExcelDataReader\IExcelDataReader.cs" />
     <Compile Include="Libs\fastJSON\JsonTryParse.cs" />
+    <Compile Include="Libs\Npgsql\ASCIIBytes.cs" />
+    <Compile Include="Libs\Npgsql\BackendEncoding.cs" />
+    <Compile Include="Libs\Npgsql\Cache.cs" />
+    <Compile Include="Libs\Npgsql\HashAlgorithm.cs" />
+    <Compile Include="Libs\Npgsql\LinqBridge-1.3.cs" />
+    <Compile Include="Libs\Npgsql\MD5.cs" />
+    <Compile Include="Libs\Npgsql\MD5CryptoServiceProvider.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlAsciiRow.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlBackEndKeyData.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlBind.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlCancelRequest.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlClosedState.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlCommand.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libs\Npgsql\NpgsqlCommand.PrepareExecute.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libs\Npgsql\NpgsqlCommand.Rewrite.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libs\Npgsql\NpgsqlCommandBuilder.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libs\Npgsql\NpgsqlConnectedState.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlConnection.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libs\Npgsql\NpgsqlConnectionStringBuilder.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlConnector.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlConnectorPool.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlCopyFormat.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlCopyIn.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlCopyInState.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlCopyInStream.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlCopyOut.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlCopyOutState.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlCopyOutStream.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlCopySerializer.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlDataAdapter.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Libs\Npgsql\NpgsqlDataReader.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlDescribe.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlError.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlEventLog.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlException.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlExecute.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlFactory.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlFlush.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlMediator.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlMessageTypes.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlNotificationEventArgs.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlParameter.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlParameterCollection.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlParameterStatus.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlParse.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlPasswordPacket.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlPromotableSinglePhaseNotification.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlQuery.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlQueryV2.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlQueryV3.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlReadyState.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlResourceManager.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlRow.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlRowDescription.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlSchema.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlStartupPacket.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlStartupState.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlState.BackendResponseV2.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlState.BackendResponseV3.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlState.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlSync.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlTransaction.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlTransactionCallbacks.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlTypes\ArrayHandling.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlTypes\BitString.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlTypes\DateDatatypes.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlTypes\ExpectedTypeConverter.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlTypes\FastConverter.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlTypes\FastPath.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlTypes\FastPathArg.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlTypes\LargeObject.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlTypes\LargeObjectManager.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlTypes\NpgsqlDbType.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlTypes\NpgsqlNativeToBackendOptions.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlTypes\NpgsqlTypeConvBackendToNative.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlTypes\NpgsqlTypeConvNativeToBackend.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlTypes\NpgsqlTypeInfoBackend.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlTypes\NpgsqlTypeInfoNative.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlTypes\NpgsqlTypeMappings.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlTypes\NpgsqlTypes.cs" />
+    <Compile Include="Libs\Npgsql\NpgsqlTypes\NpgsqlTypesHelper.cs" />
+    <Compile Include="Libs\Npgsql\PGUtil.cs" />
+    <Compile Include="Libs\Npgsql\SSPIHandler.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\AbstractSortedAggregationOperation.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\SortMergeJoinOperation.cs" />
     <Compile Include="Libs\SharpZLib\BZip2\BZip2.cs" />
@@ -567,6 +663,7 @@
     <Compile Include="Main\Entity\EntitiesLoader.cs" />
     <Compile Include="Main\Entity\EntityParametersReader.cs" />
     <Compile Include="Main\Entity\EntityRelationshipLoader.cs" />
+    <Compile Include="Main\NinjectBindings.cs" />
     <Compile Include="Main\PipelineThreading.cs" />
     <Compile Include="Main\Process\ProcessFactory.cs" />
     <Compile Include="Main\Process\ProcessOperationsLoader.cs" />
@@ -584,18 +681,24 @@
     <Compile Include="Main\Providers\Folder\FolderEntityRecordsExist.cs" />
     <Compile Include="Main\Providers\Folder\FolderEntityDropper.cs" />
     <Compile Include="Main\Providers\Folder\FolderProvider.cs" />
-    <Compile Include="Main\Providers\InternalEntityDropper.cs" />
+    <Compile Include="Main\Providers\Internal\AnalysisServicesDependencies.cs" />
+    <Compile Include="Main\Providers\Internal\FileDependencies.cs" />
+    <Compile Include="Main\Providers\Internal\FolderDependencies.cs" />
     <Compile Include="Main\Providers\Internal\InternalConnection.cs" />
     <Compile Include="Main\Providers\Internal\InternalConnectionChecker.cs" />
+    <Compile Include="Main\Providers\Internal\InternalDependencies.cs" />
     <Compile Include="Main\Providers\Internal\InternalProvider.cs" />
     <Compile Include="Main\Providers\Internal\FalseTflWriter.cs" />
     <Compile Include="Main\Providers\Internal\FalseViewWriter.cs" />
+    <Compile Include="Main\Providers\Internal\AbstractConnectionDependencies.cs" />
+    <Compile Include="Main\Providers\Internal\MySqlDependencies.cs" />
+    <Compile Include="Main\Providers\Internal\SqlServerDependencies.cs" />
     <Compile Include="Main\Providers\MySql\MySqlEntityDropper.cs" />
     <Compile Include="Main\Providers\MySql\MySqlEntityExists.cs" />
     <Compile Include="Main\Providers\MySql\MySqlEntityRecordsExist.cs" />
     <Compile Include="Main\Providers\EmptyQueryWriter.cs" />
     <Compile Include="Main\Providers\FalseScriptRunner.cs" />
-    <Compile Include="Main\Providers\EmptyTableQueryWriter.cs" />
+    <Compile Include="Main\Providers\FalseTableQueryWriter.cs" />
     <Compile Include="Main\Providers\File\FileConnectionChecker.cs" />
     <Compile Include="Main\Providers\File\FileConnection.cs" />
     <Compile Include="Main\Providers\File\FileProvider.cs" />
@@ -1060,6 +1163,7 @@
     <Compile Include="Libs\Rhino.Etl\Pipelines\ThreadPoolPipelineExecuter.cs" />
     <Compile Include="Libs\Rhino.Etl\Row.cs" />
     <Compile Include="Libs\Rhino.Etl\WithLoggingMixin.cs" />
+    <Compile Include="Operations\AliasOperation.cs" />
     <Compile Include="Operations\BcpExtract.cs" />
     <Compile Include="Operations\EntityInputKeysExtractAllForDelete.cs" />
     <Compile Include="Operations\Extract\FileDelimitedExtract.cs" />
@@ -1565,6 +1669,7 @@
     <Content Include="Libs\FileHelpers\MasterDetail\MasterDetailEngine.docs.xml" />
     <Content Include="Libs\Ninject\LICENSE.txt" />
     <Content Include="Libs\NLog\LICENSE.txt" />
+    <Content Include="Libs\Npgsql\NpgsqlMetaData.xml" />
     <Content Include="Libs\Rhino.Etl\license.txt" />
     <Content Include="Libs\SharpZLib\COPYING.txt" />
     <Content Include="Libs\SharpZLib\obj\Debug\ICSharpCode.SharpZipLib.dll" />
@@ -1589,6 +1694,261 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Libs\EnterpriseLibrary\Validation\Configuration\DesignResources.resx" />
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlClosedState.de.resx">
+      <DependentUpon>NpgsqlClosedState.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlClosedState.fr.resx">
+      <DependentUpon>NpgsqlClosedState.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlClosedState.ja.resx">
+      <DependentUpon>NpgsqlClosedState.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlClosedState.resx">
+      <DependentUpon>NpgsqlClosedState.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlClosedState.zh-CN.resx">
+      <DependentUpon>NpgsqlClosedState.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlCommand.de.resx">
+      <DependentUpon>NpgsqlCommand.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlCommand.es.resx">
+      <DependentUpon>NpgsqlCommand.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlCommand.fi.resx">
+      <DependentUpon>NpgsqlCommand.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlCommand.fr.resx">
+      <DependentUpon>NpgsqlCommand.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlCommand.ja.resx">
+      <DependentUpon>NpgsqlCommand.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlCommand.resx">
+      <DependentUpon>NpgsqlCommand.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlCommand.zh-CN.resx">
+      <DependentUpon>NpgsqlCommand.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlCommandBuilder.de.resx">
+      <DependentUpon>NpgsqlCommandBuilder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlCommandBuilder.fr.resx">
+      <DependentUpon>NpgsqlCommandBuilder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlCommandBuilder.ja.resx">
+      <DependentUpon>NpgsqlCommandBuilder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlCommandBuilder.resx">
+      <DependentUpon>NpgsqlCommandBuilder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlCommandBuilder.zh-CN.resx">
+      <DependentUpon>NpgsqlCommandBuilder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlConnectedState.de.resx">
+      <DependentUpon>NpgsqlConnectedState.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlConnectedState.fr.resx">
+      <DependentUpon>NpgsqlConnectedState.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlConnectedState.ja.resx">
+      <DependentUpon>NpgsqlConnectedState.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlConnectedState.resx">
+      <DependentUpon>NpgsqlConnectedState.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlConnectedState.zh-CN.resx">
+      <DependentUpon>NpgsqlConnectedState.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlConnection.de.resx">
+      <DependentUpon>NpgsqlConnection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlConnection.es.resx">
+      <DependentUpon>NpgsqlConnection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlConnection.fi.resx">
+      <DependentUpon>NpgsqlConnection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlConnection.fr.resx">
+      <DependentUpon>NpgsqlConnection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlConnection.ja.resx">
+      <DependentUpon>NpgsqlConnection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlConnection.resx">
+      <DependentUpon>NpgsqlConnection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlConnection.zh-CN.resx">
+      <DependentUpon>NpgsqlConnection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlConnectionStringBuilder.de.resx">
+      <DependentUpon>NpgsqlConnectionStringBuilder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlConnectionStringBuilder.fr.resx">
+      <DependentUpon>NpgsqlConnectionStringBuilder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlConnectionStringBuilder.ja.resx">
+      <DependentUpon>NpgsqlConnectionStringBuilder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlConnectionStringBuilder.resx">
+      <DependentUpon>NpgsqlConnectionStringBuilder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlConnectionStringBuilder.zh-CN.resx">
+      <DependentUpon>NpgsqlConnectionStringBuilder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlEventLog.de.resx">
+      <DependentUpon>NpgsqlEventLog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlEventLog.es.resx">
+      <DependentUpon>NpgsqlEventLog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlEventLog.fi.resx">
+      <DependentUpon>NpgsqlEventLog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlEventLog.fr.resx">
+      <DependentUpon>NpgsqlEventLog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlEventLog.ja.resx">
+      <DependentUpon>NpgsqlEventLog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlEventLog.resx">
+      <DependentUpon>NpgsqlEventLog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlEventLog.zh-CN.resx">
+      <DependentUpon>NpgsqlEventLog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlException.de.resx">
+      <DependentUpon>NpgsqlException.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlException.fr.resx">
+      <DependentUpon>NpgsqlException.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlException.ja.resx">
+      <DependentUpon>NpgsqlException.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlException.resx">
+      <DependentUpon>NpgsqlException.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlException.zh-CN.resx">
+      <DependentUpon>NpgsqlException.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlParameter.de.resx">
+      <DependentUpon>NpgsqlParameter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlParameter.es.resx">
+      <DependentUpon>NpgsqlParameter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlParameter.fi.resx">
+      <DependentUpon>NpgsqlParameter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlParameter.fr.resx">
+      <DependentUpon>NpgsqlParameter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlParameter.ja.resx">
+      <DependentUpon>NpgsqlParameter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlParameter.resx">
+      <DependentUpon>NpgsqlParameter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlParameter.zh-CN.resx">
+      <DependentUpon>NpgsqlParameter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlParameterCollection.de.resx">
+      <DependentUpon>NpgsqlParameterCollection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlParameterCollection.es.resx">
+      <DependentUpon>NpgsqlParameterCollection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlParameterCollection.fi.resx">
+      <DependentUpon>NpgsqlParameterCollection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlParameterCollection.fr.resx">
+      <DependentUpon>NpgsqlParameterCollection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlParameterCollection.ja.resx">
+      <DependentUpon>NpgsqlParameterCollection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlParameterCollection.resx">
+      <DependentUpon>NpgsqlParameterCollection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlParameterCollection.zh-CN.resx">
+      <DependentUpon>NpgsqlParameterCollection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlReadyState.de.resx">
+      <DependentUpon>NpgsqlReadyState.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlReadyState.fr.resx">
+      <DependentUpon>NpgsqlReadyState.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlReadyState.ja.resx">
+      <DependentUpon>NpgsqlReadyState.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlReadyState.resx">
+      <DependentUpon>NpgsqlReadyState.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlReadyState.zh-CN.resx">
+      <DependentUpon>NpgsqlReadyState.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlRow.de.resx">
+      <DependentUpon>NpgsqlRow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlRow.fr.resx">
+      <DependentUpon>NpgsqlRow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlRow.resx">
+      <DependentUpon>NpgsqlRow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlState.de.resx">
+      <DependentUpon>NpgsqlState.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlState.fr.resx">
+      <DependentUpon>NpgsqlState.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlState.ja.resx">
+      <DependentUpon>NpgsqlState.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlState.resx">
+      <DependentUpon>NpgsqlState.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlState.zh-CN.resx">
+      <DependentUpon>NpgsqlState.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlTransaction.de.resx">
+      <DependentUpon>NpgsqlTransaction.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlTransaction.es.resx">
+      <DependentUpon>NpgsqlTransaction.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlTransaction.fi.resx">
+      <DependentUpon>NpgsqlTransaction.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlTransaction.fr.resx">
+      <DependentUpon>NpgsqlTransaction.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlTransaction.ja.resx">
+      <DependentUpon>NpgsqlTransaction.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlTransaction.resx">
+      <DependentUpon>NpgsqlTransaction.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\NpgsqlTransaction.zh-CN.resx">
+      <DependentUpon>NpgsqlTransaction.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\PGUtil.de.resx">
+      <DependentUpon>PGUtil.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\PGUtil.fr.resx">
+      <DependentUpon>PGUtil.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\PGUtil.ja.resx">
+      <DependentUpon>PGUtil.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\PGUtil.resx">
+      <DependentUpon>PGUtil.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Npgsql\PGUtil.zh-CN.resx">
+      <DependentUpon>PGUtil.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

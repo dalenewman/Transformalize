@@ -23,6 +23,7 @@
 using System;
 using System.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
+using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
 namespace Transformalize.Configuration {
@@ -42,6 +43,8 @@ namespace Transformalize.Configuration {
         private const string DELETE = "delete";
         private const string PREPEND_PROCESS_NAME_TO_OUTPUT_NAME = "prepend-process-name-to-output-name";
         private const string PIPELINE = "pipeline";
+
+        public IOperation InputOperation { get; set; }
 
         [ConfigurationProperty(SCHEMA, IsRequired = false, DefaultValue = "dbo")]
         public string Schema {

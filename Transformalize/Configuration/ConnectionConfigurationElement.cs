@@ -27,16 +27,15 @@ using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.FileHelpers.Enums;
 using Transformalize.Libs.NLog.Internal;
-using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Providers;
 
 namespace Transformalize.Configuration {
     [HasSelfValidation]
     public class ConnectionConfigurationElement : ConfigurationElement {
         private const string NAME = "name";
-        private const string COMPATABILITY_LEVEL = "compatability-level";
+        private const string COMPATABILITY_LEVEL = "compatibility-level";
         private const string PROVIDER = "provider";
-        private const string BATCH_SIZE = "batchSize";
+        private const string BATCH_SIZE = "batch-size";
         private const string ENABLED = "enabled";
         private const string DELIMITER = "delimiter";
         private const string DATABASE = "database";
@@ -54,8 +53,6 @@ namespace Transformalize.Configuration {
         private const string END = "end";
         private const string ERROR_MODE = "error-mode";
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
-
-        public IOperation InputOperation { get; set; }
 
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name {

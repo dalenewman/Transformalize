@@ -326,5 +326,8 @@ namespace Transformalize.Configuration.Builders {
             return new BranchBuilder(this, branch);
         }
 
+        public RelationshipBuilder Relationship() {
+            return _fieldBuilder == null ? _branchBuilder.Relationship() : _fieldBuilder.Relationship();
+        }
     }
 }

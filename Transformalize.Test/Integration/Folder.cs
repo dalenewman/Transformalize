@@ -20,14 +20,8 @@
 
 #endregion
 
-using System.IO;
 using NUnit.Framework;
-using Transformalize.Configuration;
-using Transformalize.Configuration.Builders;
-using Transformalize.Libs.FileHelpers.Enums;
 using Transformalize.Libs.NLog;
-using Transformalize.Main;
-using Transformalize.Operations.Transform;
 
 namespace Transformalize.Test.Integration {
 
@@ -42,8 +36,7 @@ namespace Transformalize.Test.Integration {
 
         [Test]
         public void Init() {
-
-
+            //place-holder
         }
 
     }

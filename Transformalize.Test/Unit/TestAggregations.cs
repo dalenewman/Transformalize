@@ -46,9 +46,11 @@ namespace Transformalize.Test.Unit {
                 .ToOperation();
 
             var cfg = new ProcessBuilder("process")
-                .Connection("input").Provider(ProviderType.Internal).Input(input)
+                .Connection("input").Provider(ProviderType.Internal)
                 .Connection("output").Provider(ProviderType.Internal)
-                .Entity("entity").Group() //group means you need to aggregate all output fields
+                .Entity("entity")
+                    .Input(input)
+                    .Group() //group means you need to aggregate all output fields
                     .Field("order")             .Aggregate("group")         .Int32().PrimaryKey()
                     .Field("year")              .Aggregate("countdistinct") .Int32().Alias("years")
                     .Field("year")              .Aggregate("max")

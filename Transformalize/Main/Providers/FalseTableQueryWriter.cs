@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Transformalize.Main.Providers
 {
-    public class EmptyTableQueryWriter : ITableQueryWriter {
+    public class FalseTableQueryWriter : ITableQueryWriter {
         public string CreateTable(string name, IEnumerable<string> defs, string schema)
         {
             return string.Empty;

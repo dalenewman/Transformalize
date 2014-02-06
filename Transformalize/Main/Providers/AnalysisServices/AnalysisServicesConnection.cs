@@ -21,22 +21,25 @@
 #endregion
 
 using Transformalize.Configuration;
+using Transformalize.Main.Providers.Internal;
 
-namespace Transformalize.Main.Providers.AnalysisServices
-{
-    public class AnalysisServicesConnection : AbstractConnection
-    {
+namespace Transformalize.Main.Providers.AnalysisServices {
+
+    public class AnalysisServicesConnection : AbstractConnection {
+
         public override string UserProperty { get { return string.Empty; } }
         public override string PasswordProperty { get { return string.Empty; } }
         public override string PortProperty { get { return string.Empty; } }
         public override string DatabaseProperty { get { return "Catalog"; } }
         public override string ServerProperty { get { return "Data Source"; } }
         public override string TrustedProperty { get { return string.Empty; } }
-        
-        public AnalysisServicesConnection(ConnectionConfigurationElement element, AbstractProvider provider, IConnectionChecker connectionChecker, IScriptRunner scriptRunner, IProviderSupportsModifier providerScriptModifer, IEntityRecordsExist recordsExist, IEntityDropper dropper, ITflWriter tflWriter, IViewWriter viewWriter)
-            : base(element, provider, connectionChecker, scriptRunner, providerScriptModifer, recordsExist, dropper, tflWriter, viewWriter)
-        {
-        }
 
+        public AnalysisServicesConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
+            : base(element, dependencies) {
+            TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
+            EntityKeysQueryWriter = new EmptyQueryWriter();
+            EntityKeysRangeQueryWriter = new EmptyQueryWriter();
+            EntityKeysAllQueryWriter = new EmptyQueryWriter();
+        }
     }
 }

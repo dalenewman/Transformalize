@@ -26,14 +26,15 @@ namespace Transformalize.Main.Providers {
 
         public Dictionary<string, AbstractConnection> Create() {
             var connections = new Dictionary<string, AbstractConnection>();
-            var processArgument = new ConstructorArgument("process", _process);
 
             foreach (ConnectionConfigurationElement element in _elements) {
 
                 Validate(element);
 
-                var elementArgument = new ConstructorArgument("element", element);
-                var parameters = new Libs.Ninject.Parameters.IParameter[] { processArgument, elementArgument };
+                var parameters = new Libs.Ninject.Parameters.IParameter[] {
+                    new ConstructorArgument("process", _process),
+                    new ConstructorArgument("element", element)
+                };
 
                 switch (element.Provider.ToLower()) {
                     case "mysql":
