@@ -9,17 +9,19 @@ namespace Transformalize.Operations.Validate {
     public class ValidationOperation : AbstractOperation {
 
         private readonly string _keyToValidate;
-        private readonly string _resultKey;
-        private readonly string _messageKey;
         private readonly bool _messageAppend;
         private readonly bool _messageOutput;
+
         public Validator Validator { get; set; }
         public bool ValidateRow { get; set; }
+        public string ResultKey { get; set; }
+        public string MessageKey { get; set; }
 
         public ValidationOperation(string keyToValidate, string resultKey, string messageKey, bool messageAppend) {
+            ResultKey = resultKey;
+            MessageKey = messageKey;
+
             _keyToValidate = keyToValidate;
-            _resultKey = resultKey;
-            _messageKey = messageKey;
             _messageAppend = messageAppend;
             _messageOutput = !messageKey.Equals(string.Empty);
         }
@@ -32,11 +34,11 @@ namespace Transformalize.Operations.Validate {
                 Validator.DoValidate(value, row, _keyToValidate, results);
 
                 var valid = results.IsValid;
-                row[_resultKey] = valid;
+                row[ResultKey] = valid;
                 if (_messageOutput && !valid) {
                     var message = results.First().Message;
-                    row[_messageKey] = _messageAppend ?
-                        string.Concat(row[_messageKey] ?? string.Empty, " ", message).Trim(' ') :
+                    row[MessageKey] = _messageAppend ?
+                        string.Concat(row[MessageKey] ?? string.Empty, " ", message).Trim(' ') :
                         message;
                 }
                 yield return row;

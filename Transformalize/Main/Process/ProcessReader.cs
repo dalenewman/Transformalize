@@ -31,54 +31,56 @@ using Transformalize.Main.Providers;
 namespace Transformalize.Main {
 
     public class ProcessReader : IReader<Process> {
-        private readonly ProcessConfigurationElement _config;
+
+        private readonly ProcessConfigurationElement _element;
         private readonly Logger _log = LogManager.GetLogger(string.Empty);
         private readonly Options _options;
         private readonly string _processName = string.Empty;
         private Process _process;
         private readonly string[] _transformToFields = new[] { "fromxml", "fromregex", "fromjson" };
-
-
+        
         public ProcessReader(ProcessConfigurationElement process, Options options) {
-            _config = Adapt(process, _transformToFields);
+            _element = Adapt(process, _transformToFields);
             _options = options;
         }
 
         public Process Read() {
-            if (_config == null) {
+
+            if (_element == null) {
                 _log.Error("Sorry.  I can't find a process named {0}.", _processName);
                 Environment.Exit(1);
             }
 
-            _process = new Process(_config.Name) {
+            _process = new Process(_element.Name) {
                 Options = _options,
-                TemplateContentType = _config.TemplateContentType.Equals("raw") ? Encoding.Raw : Encoding.Html,
-                Providers = new ProviderReader(_config.Providers).Read(),
-                Bcp = _config.Bcp,
-                Enabled = _config.Enabled,
-                Star = string.IsNullOrEmpty(_config.Star) ? _config.Name + "Star" : _config.Star,
-                TimeZone = string.IsNullOrEmpty(_config.TimeZone) ? TimeZoneInfo.Local.Id : _config.TimeZone
+                TemplateContentType = _element.TemplateContentType.Equals("raw") ? Encoding.Raw : Encoding.Html,
+                Providers = new ProviderReader(_element.Providers).Read(),
+                Bcp = _element.Bcp,
+                Enabled = _element.Enabled,
+                Star = string.IsNullOrEmpty(_element.Star) ? _element.Name + "Star" : _element.Star,
+                TimeZone = string.IsNullOrEmpty(_element.TimeZone) ? TimeZoneInfo.Local.Id : _element.TimeZone,
+                PipelineThreading = (PipelineThreading)Enum.Parse(typeof(PipelineThreading), _element.PipelineThreading, true)
             };
 
             //shared across the process
-            _process.Connections = new ConnectionFactory(_process, _config.Connections).Create();
+            _process.Connections = new ConnectionFactory(_process, _element.Connections).Create();
             if (!_process.Connections.ContainsKey("output")) {
                 _log.Error("Missing required 'output' connection.  If you don't want an ouput, set output to internal");
                 Environment.Exit(1);
             }
             _process.OutputConnection = _process.Connections["output"];
 
-            _process.Scripts = new ScriptReader(_config.Scripts).Read();
-            _process.Templates = new TemplateReader(_process, _config.Templates).Read();
-            _process.SearchTypes = new SearchTypeReader(_config.SearchTypes).Read();
-            new MapLoader(ref _process, _config.Maps).Load();
+            _process.Scripts = new ScriptReader(_element.Scripts).Read();
+            _process.Templates = new TemplateReader(_process, _element.Templates).Read();
+            _process.SearchTypes = new SearchTypeReader(_element.SearchTypes).Read();
+            new MapLoader(ref _process, _element.Maps).Load();
 
             //these depend on the shared process properties
-            new EntitiesLoader(ref _process, _config.Entities).Load();
-            new OperationsLoader(ref _process, _config.Entities).Load();
+            new EntitiesLoader(ref _process, _element.Entities).Load();
+            new OperationsLoader(ref _process, _element.Entities).Load();
 
-            _process.Relationships = new RelationshipsReader(_process, _config.Relationships).Read();
-            new ProcessOperationsLoader(ref _process, _config.CalculatedFields).Load();
+            _process.Relationships = new RelationshipsReader(_process, _element.Relationships).Read();
+            new ProcessOperationsLoader(ref _process, _element.CalculatedFields).Load();
 
             new EntityRelationshipLoader(ref _process).Load();
 

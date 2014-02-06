@@ -43,10 +43,19 @@ namespace Transformalize.Main {
 
             GlobalDiagnosticsContext.Set("entity", Common.LogLength(element.Alias));
 
+            var threading = _process.PipelineThreading;
+
+            if (!string.IsNullOrEmpty(element.PipelineThreading)) {
+                PipelineThreading elementThreading;
+                if (Enum.TryParse(element.PipelineThreading, true, out elementThreading)) {
+                    threading = elementThreading;
+                }
+            }
+
             var entity = new Entity(batchId) {
                 ProcessName = _process.Name,
                 Schema = element.Schema,
-                PipelineThreading = (PipelineThreading)Enum.Parse(typeof(PipelineThreading), element.PipelineThreading, true),
+                PipelineThreading = threading,
                 Name = element.Name,
                 InputConnection = _process.Connections[element.Connection],
                 Prefix = element.Prefix,
@@ -103,14 +112,11 @@ namespace Transformalize.Main {
             return entity;
         }
 
-        private void Validate(EntityConfigurationElement element)
-        {
+        private void Validate(EntityConfigurationElement element) {
             var validator = ValidationFactory.CreateValidator<EntityConfigurationElement>();
             var results = validator.Validate(element);
-            if (!results.IsValid)
-            {
-                foreach (var result in results)
-                {
+            if (!results.IsValid) {
+                foreach (var result in results) {
                     _process.ValidationResults.AddResult(result);
                     _log.Error(result.Message);
                 }

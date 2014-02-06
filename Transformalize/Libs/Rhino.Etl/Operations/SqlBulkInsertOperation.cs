@@ -7,6 +7,8 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Reflection;
+using System.Text.RegularExpressions;
 using Transformalize.Libs.Rhino.Etl.DataReaders;
 using Transformalize.Libs.Rhino.Etl.Infrastructure;
 using Transformalize.Main.Providers;
@@ -187,10 +189,58 @@ namespace Transformalize.Libs.Rhino.Etl.Operations {
             PrepareSchema();
             PrepareMapping();
             CreateInputSchema();
+
             using (var cn = (SqlConnection)Use.Connection(Connection)) {
+
                 _sqlBulkCopy = CreateSqlBulkCopy(cn, null);
                 var adapter = new DictionaryEnumeratorDataReader(_inputSchema, rows);
+#if DEBUG
+                try {
+                    _sqlBulkCopy.WriteToServer(adapter);
+                } catch (SqlException ex) {
+                    if (!ex.Message.Contains("Received an invalid column length from the bcp client for colid"))
+                        throw;
+
+                    const string pattern = @"\d+";
+                    var match = Regex.Match(ex.Message, pattern);
+                    var index = Convert.ToInt32(match.Value) - 1;
+
+                    var fi = typeof(SqlBulkCopy).GetField("_sortedColumnMappings", BindingFlags.NonPublic | BindingFlags.Instance);
+                    if (fi == null)
+                        throw;
+
+                    var sortedColumns = fi.GetValue(_sqlBulkCopy);
+                    if (sortedColumns == null)
+                        throw;
+
+                    var field = sortedColumns.GetType().GetField("_items", BindingFlags.NonPublic | BindingFlags.Instance);
+                    if (field == null)
+                        throw;
+
+                    var items = (object[])field.GetValue(sortedColumns);
+                    var itemdata = items[index].GetType().GetField("_metadata", BindingFlags.NonPublic | BindingFlags.Instance);
+                    if (itemdata == null)
+                        throw;
+
+                    var metadata = itemdata.GetValue(items[index]);
+                    if (metadata == null)
+                        throw;
+
+                    var f = metadata.GetType().GetField("column", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                    if (f == null)
+                        throw;
+
+                    var column = f.GetValue(metadata);
+                    var l = metadata.GetType().GetField("length", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                    if (l == null)
+                        throw;
+
+                    var length = l.GetValue(metadata);
+                    throw new Exception(String.Format("Column: {0} contains data with a length greater than: {1}", column, length));
+                }
+#else
                 _sqlBulkCopy.WriteToServer(adapter);
+#endif
             }
             yield break;
         }

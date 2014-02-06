@@ -69,7 +69,9 @@ namespace Transformalize.Main {
             {"boolean", (x => Convert.ToBoolean(x))},
             {"single", (x => Convert.ToSingle(x))},
             {"guid", (x => Guid.Parse(x))},
-            {"byte", (x => Convert.ToByte(x))}
+            {"byte", (x => Convert.ToByte(x))},
+            {"byte[]", (HexStringToByteArray)},
+            {"rowversion", (HexStringToByteArray)}
         };
 
         public static Dictionary<ComparisonOperator, Func<object, object, bool>> CompareMap = new Dictionary<ComparisonOperator, Func<object, object, bool>>() {
@@ -98,7 +100,9 @@ namespace Transformalize.Main {
                 {"boolean", (x => Convert.ToBoolean(x))},
                 {"bool", (x => Convert.ToBoolean(x))},
                 {"single", (x => Convert.ToSingle(x))},
-                {"byte", (x => Convert.ToByte(x))}
+                {"byte", (x => Convert.ToByte(x))},
+                {"byte[]", (x => HexStringToByteArray(x.ToString()))},
+                {"rowversion", (x => HexStringToByteArray(x.ToString()))}
             };
         }
 
@@ -131,15 +135,6 @@ namespace Transformalize.Main {
                 Directory.CreateDirectory(f);
             }
             return f;
-        }
-
-        public static IEnumerable<byte> ObjectToByteArray(object obj) {
-            if (obj == null)
-                return null;
-            var formatter = new BinaryFormatter();
-            var memory = new MemoryStream();
-            formatter.Serialize(memory, obj);
-            return memory.ToArray();
         }
 
         public static byte[] HexStringToByteArray(string hex) {

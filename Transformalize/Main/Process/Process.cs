@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.Ninject.Syntax;
 using Transformalize.Libs.NLog;
@@ -39,16 +40,21 @@ using Transformalize.Main.Providers.Folder;
 using Transformalize.Main.Providers.Internal;
 using Transformalize.Main.Providers.MySql;
 using Transformalize.Main.Providers.SqlServer;
+using Transformalize.Operations.Validate;
 
 namespace Transformalize.Main {
 
     public class Process {
 
         private ValidationResults _validationResults = new ValidationResults();
-
         private static readonly Stopwatch Timer = new Stopwatch();
         private readonly Logger _log = LogManager.GetLogger(string.Empty);
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
+        private List<IOperation> _transformOperations = new List<IOperation>();
+        private IParameters _parameters = new Parameters.Parameters();
+        private bool _enabled = true;
+
+        // fields (for now)
         public Fields CalculatedFields = new Fields();
         public Dictionary<string, AbstractConnection> Connections = new Dictionary<string, AbstractConnection>();
         public Entities Entities = new Entities();
@@ -66,12 +72,17 @@ namespace Transformalize.Main {
         public Encoding TemplateContentType = Encoding.Raw;
         public Dictionary<string, Template> Templates = new Dictionary<string, Template>();
         public AbstractConnection OutputConnection;
-        private List<IOperation> _transformOperations = new List<IOperation>();
-        private IParameters _parameters = new Parameters.Parameters();
-        private bool _enabled = true;
+        private PipelineThreading _pipelineThreading = PipelineThreading.MultiThreaded;
+
+        // properties
         public string Star { get; set; }
         public string Bcp { get; set; }
         public string TimeZone { get; set; }
+
+        public PipelineThreading PipelineThreading {
+            get { return _pipelineThreading; }
+            set { _pipelineThreading = value; }
+        }
 
         public bool Enabled {
             get { return _enabled; }
@@ -93,13 +104,14 @@ namespace Transformalize.Main {
             set { _parameters = value; }
         }
 
+        //constructor
         public Process(string name = "") {
             Name = name;
             GlobalDiagnosticsContext.Set("process", name);
             Kernal.Load<NinjectBindings>();
-
         }
 
+        //methods
         public bool IsReady() {
             if (Enabled || Options.Force)
                 return Connections.Select(connection => connection.Value.IsReady()).All(b => b.Equals(true));
@@ -138,28 +150,6 @@ namespace Transformalize.Main {
             return OutputConnection.NextBatchId(Name);
         }
 
-        public bool TryGetField(string alias, string entity, out Field field) {
-            foreach (var fields in Entities.Where(e => e.Alias == entity || entity == string.Empty).Select(e => e.Fields.ToEnumerable()).Where(fields => fields.Any(Common.FieldFinder(alias)))) {
-                field = fields.First(Common.FieldFinder(alias));
-                return true;
-            }
-
-            foreach (var fields in Entities.Where(e => e.Alias == entity || entity == string.Empty).Select(e => e.CalculatedFields.ToEnumerable()).Where(fields => fields.Any(Common.FieldFinder(alias)))) {
-                field = fields.First(Common.FieldFinder(alias));
-                return true;
-            }
-
-            var calculatedfields = CalculatedFields.ToEnumerable().ToArray();
-            if (calculatedfields.Any(Common.FieldFinder(alias))) {
-                field = calculatedfields.First(Common.FieldFinder(alias));
-                return true;
-            }
-
-            field = new Field(FieldType.Field) { Alias = alias };
-            return false;
-
-        }
-
         public Field GetField(string alias, string entity) {
 
             foreach (var fields in Entities.Where(e => e.Alias == entity || entity == string.Empty).Select(e => e.Fields.ToEnumerable()).Where(fields => fields.Any(Common.FieldFinder(alias)))) {
@@ -175,8 +165,23 @@ namespace Transformalize.Main {
                 return calculatedfields.First(Common.FieldFinder(alias));
             }
 
-            _log.Warn("Can't find field with alias: {0}.", alias);
-            return new Field(FieldType.Field) { Alias = alias };
+            if (!IsValidationResultField(alias, entity)) {
+                _log.Warn("Can't find field with alias: {0}.", alias);
+            }
+
+            return null;
         }
+
+        private bool IsValidationResultField(string alias, string entity) {
+            return Entities
+                    .Where(e => e.Alias == entity || entity == string.Empty)
+                    .Any(e => e.Operations.OfType<ValidationOperation>().Any(operation => operation.ResultKey.Equals(alias)));
+        }
+
+        public bool TryGetField(string alias, string entity, out Field field) {
+            field = GetField(alias, entity);
+            return field != null;
+        }
+
     }
 }

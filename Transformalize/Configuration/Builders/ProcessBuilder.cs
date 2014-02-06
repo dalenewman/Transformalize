@@ -1,3 +1,6 @@
+using System.IO.Pipes;
+using Transformalize.Main;
+
 namespace Transformalize.Configuration.Builders {
 
     public class ProcessBuilder : IFieldHolder {
@@ -84,6 +87,11 @@ namespace Transformalize.Configuration.Builders {
 
         public ProcessBuilder ScriptPath(string path) {
             _process.Scripts.Path = path;
+            return this;
+        }
+
+        public ProcessBuilder PipelineThreading(PipelineThreading pipelineThreading) {
+            _process.PipelineThreading = pipelineThreading.ToString();
             return this;
         }
 

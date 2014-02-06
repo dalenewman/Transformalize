@@ -54,11 +54,16 @@ namespace Transformalize.Operations.Extract {
 
             Info("Reading {0}", _name);
 
+            var conversionMap = Common.GetObjectConversionMap();
+
             if (_top > 0) {
                 var count = 1;
                 using (var file = new FluentFile(cb.CreateRecordClass()).From(_fullName).OnError(_entity.InputConnection.ErrorMode)) {
                     foreach (var row in from object obj in file select Row.FromObject(obj)) {
                         row["TflFileName"] = _fullName;
+                        foreach (var field in _fields.Where(f => !f.SimpleType.Equals("string"))) {
+                            row[field.Alias] = conversionMap[field.SimpleType](row[field.Alias]);
+                        }
                         yield return row;
                         count++;
                         if (count == _top) {
@@ -72,6 +77,9 @@ namespace Transformalize.Operations.Extract {
                 using (var file = new FluentFile(cb.CreateRecordClass()).From(_fullName).OnError(_entity.InputConnection.ErrorMode)) {
                     foreach (var row in from object obj in file select Row.FromObject(obj)) {
                         row["TflFileName"] = _fullName;
+                        foreach (var field in _fields.Where(f => !f.SimpleType.Equals("string"))) {
+                            row[field.Alias] = conversionMap[field.SimpleType](row[field.Alias]);
+                        }
                         yield return row;
                     }
                     HandleErrors(file);

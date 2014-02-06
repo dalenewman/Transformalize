@@ -8,6 +8,7 @@ using Transformalize.Libs.NLog;
 namespace Transformalize.Main {
 
     public class EntitiesLoader {
+
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private readonly Logger _log = LogManager.GetLogger(string.Empty);
         private readonly Process _process;

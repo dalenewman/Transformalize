@@ -27,7 +27,9 @@ using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
 namespace Transformalize.Configuration {
+
     public class EntityConfigurationElement : ConfigurationElement {
+
         private const string SCHEMA = "schema";
         private const string NAME = "name";
         private const string ALIAS = "alias";
@@ -42,7 +44,7 @@ namespace Transformalize.Configuration {
         private const string INDEX_OPTIMIZATIONS = "index-optimizations";
         private const string DELETE = "delete";
         private const string PREPEND_PROCESS_NAME_TO_OUTPUT_NAME = "prepend-process-name-to-output-name";
-        private const string PIPELINE = "pipeline";
+        private const string PIPELINE_THREADING = "pipeline-threading";
 
         public IOperation InputOperation { get; set; }
 
@@ -52,11 +54,10 @@ namespace Transformalize.Configuration {
             set { this[SCHEMA] = value; }
         }
 
-        [EnumConversionValidator(typeof(PipelineThreading), MessageTemplate = "{1} must be SingleThreaded, or MultiThreaded.")]
-        [ConfigurationProperty(PIPELINE, IsRequired = false, DefaultValue = "MultiThreaded")]
+        [ConfigurationProperty(PIPELINE_THREADING, IsRequired = false, DefaultValue = null)]
         public string PipelineThreading {
-            get { return this[PIPELINE] as string; }
-            set { this[PIPELINE] = value; }
+            get { return this[PIPELINE_THREADING] as string; }
+            set { this[PIPELINE_THREADING] = value; }
         }
 
         [ConfigurationProperty(NAME, IsRequired = true)]

@@ -50,6 +50,7 @@ namespace Transformalize.Test.Integration {
             _log.Info("***** RUN 01 * FIRST RUN ******");
             options = new Options { RenderTemplates = false };
             process = ProcessFactory.Create(FILE, options);
+            process.PipelineThreading = PipelineThreading.SingleThreaded;
             process.Run();
 
             Assert.AreEqual(2155, process["Order Details"].Inserts);
@@ -64,6 +65,7 @@ namespace Transformalize.Test.Integration {
             _log.Info("***** RUN 02 * NO CHANGES ******");
             options = new Options { RenderTemplates = false };
             process = ProcessFactory.Create(FILE, options);
+            process.PipelineThreading = PipelineThreading.SingleThreaded;
             process.Run();
 
             Assert.AreEqual(0, process["Order Details"].Inserts);
@@ -84,6 +86,7 @@ namespace Transformalize.Test.Integration {
 
             options = new Options { RenderTemplates = false };
             process = ProcessFactory.Create(FILE, options);
+            process.PipelineThreading = PipelineThreading.SingleThreaded;
             process.Run();
 
             Assert.AreEqual(1, process["Order Details"].Inserts);
@@ -98,11 +101,10 @@ namespace Transformalize.Test.Integration {
 
             options = new Options { RenderTemplates = false };
             process = ProcessFactory.Create(FILE, options);
+            process.PipelineThreading = PipelineThreading.SingleThreaded;
             process.Run();
 
             Assert.AreEqual(1, process["Orders"].Inserts);
-
-            
             
             _log.Info("***** RUN 05 * ADD 2 CUSTOMERS ******");
             using (var cn = process["Customers"].InputConnection.GetConnection()) {
@@ -112,13 +114,10 @@ namespace Transformalize.Test.Integration {
 
             options = new Options { RenderTemplates = false };
             process = ProcessFactory.Create(FILE, options);
+            process.PipelineThreading = PipelineThreading.SingleThreaded;
             process.Run();
 
             Assert.AreEqual(2, process["Customers"].Inserts);
-
-
-            
-            
 
 
             _log.Info("***** RUN 06 * INCREASE PRICE OF PRODUCT(23) ******");
@@ -135,6 +134,7 @@ namespace Transformalize.Test.Integration {
 
             options = new Options { RenderTemplates = false };
             process = ProcessFactory.Create(FILE, options);
+            process.PipelineThreading = PipelineThreading.SingleThreaded;
             process.Run();
 
             decimal outputSum;
@@ -161,6 +161,7 @@ namespace Transformalize.Test.Integration {
 
             options = new Options { RenderTemplates = false };
             process = ProcessFactory.Create(FILE, options);
+            process.PipelineThreading = PipelineThreading.SingleThreaded;
             process.Run();
 
             string postUpdate;
@@ -179,6 +180,7 @@ namespace Transformalize.Test.Integration {
 
             options = new Options { RenderTemplates = false };
             process = ProcessFactory.Create(FILE, options);
+            process.PipelineThreading = PipelineThreading.SingleThreaded;
             process.Run();
 
             Assert.AreEqual(1, process["Order Details"].Inserts);

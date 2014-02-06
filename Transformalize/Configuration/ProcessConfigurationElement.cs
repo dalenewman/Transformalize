@@ -21,6 +21,8 @@
 #endregion
 
 using System.Configuration;
+using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
+using Transformalize.Main;
 
 namespace Transformalize.Configuration {
     public class ProcessConfigurationElement : ConfigurationElement {
@@ -32,6 +34,8 @@ namespace Transformalize.Configuration {
         private const string ENABLED = "enabled";
         private const string INHERIT = "inherit";
         private const string TIMEZONE = "time-zone";
+        private const string PIPELINE_THREADING = "pipeline-threading";
+
 
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name {
@@ -119,6 +123,13 @@ namespace Transformalize.Configuration {
         public string Bcp {
             get { return this[BCP] as string; }
             set { this[BCP] = value; }
+        }
+
+        [EnumConversionValidator(typeof(PipelineThreading), MessageTemplate = "{1} must be SingleThreaded, or MultiThreaded.")]
+        [ConfigurationProperty(PIPELINE_THREADING, IsRequired = false, DefaultValue = "MultiThreaded")]
+        public string PipelineThreading {
+            get { return this[PIPELINE_THREADING] as string; }
+            set { this[PIPELINE_THREADING] = value; }
         }
 
         public override bool IsReadOnly() {

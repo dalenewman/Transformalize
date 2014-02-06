@@ -28,6 +28,7 @@ using System.Linq;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Providers;
+using Transformalize.Operations.Transform;
 
 namespace Transformalize.Main {
 
@@ -35,7 +36,6 @@ namespace Transformalize.Main {
 
         private readonly int _tflBatchId;
         private List<AbstractOperation> _operations = new List<AbstractOperation>();
-        private List<AbstractOperation> _validatorOperations = new List<AbstractOperation>();
         private IEnumerable<Row> _rows = new List<Row>();
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         
