@@ -25,54 +25,50 @@ using System.Collections.Generic;
 using System.Data;
 using Transformalize.Libs.NLog;
 
-namespace Transformalize.Main.Providers
-{
-    public class DefaultConnectionChecker : IConnectionChecker
-    {
-        private static readonly Dictionary<string, bool> CachedResults = new Dictionary<string, bool>();
-        private readonly Logger _log = LogManager.GetLogger(string.Empty);
+namespace Transformalize.Main.Providers {
+    public class DefaultConnectionChecker : IConnectionChecker {
+
+        protected static readonly Dictionary<string, bool> CachedResults = new Dictionary<string, bool>();
+        protected readonly Logger Log = LogManager.GetLogger(string.Empty);
         private readonly int _timeOut;
 
-        public DefaultConnectionChecker(int timeOut = 3)
-        {
+        public DefaultConnectionChecker(int timeOut = 3) {
             _timeOut = timeOut;
         }
 
-        public bool Check(AbstractConnection connection)
-        {
-            if (CachedResults.ContainsKey(connection.Name))
-            {
+        public bool Check(AbstractConnection connection) {
+            if (CachedResults.ContainsKey(connection.Name)) {
                 return CachedResults[connection.Name];
             }
 
+            return CheckConnection(connection);
+        }
+
+        protected bool CheckConnection(AbstractConnection connection) {
             var result = false;
-            try
-            {
-                using (var cs = connection.GetConnection())
-                {
-                    cs.ConnectionString = connection.GetConnectionString().TrimEnd(";".ToCharArray()) + string.Format(";Connection Timeout={0};", _timeOut);
-                    try
-                    {
-                        cs.Open();
-                        result = cs.State == ConnectionState.Open;
-                        if (result)
-                        {
-                            _log.Debug("{0} connection is ready.", connection.Name);
-                        }
-                        else
-                        {
-                            _log.Warn("{0} connection is not responding.", connection.Name);
-                        }
+            try {
+                using (var cn = connection.GetConnection()) {
+
+                    if (connection.Provider.Supports.ConnectionTimeout) {
+                        cn.ConnectionString = connection.GetConnectionString().TrimEnd(";".ToCharArray()) + string.Format(";Connection Timeout={0};", _timeOut);
+                    } else {
+                        cn.ConnectionString = connection.GetConnectionString();
                     }
-                    catch (Exception e)
-                    {
-                        _log.Error("{0} connection caused error message: {1}", connection.Name, e.Message);
+
+                    try {
+                        cn.Open();
+                        result = cn.State == ConnectionState.Open;
+                        if (result) {
+                            Log.Debug("{0} connection is ready.", connection.Name);
+                        } else {
+                            Log.Warn("{0} connection is not responding.", connection.Name);
+                        }
+                    } catch (Exception e) {
+                        Log.Error("{0} connection caused error message: {1}", connection.Name, e.Message);
                     }
                 }
-            }
-            catch (Exception)
-            {
-                _log.Error("{0} connection type '{1}' is unavailable.  Make sure the assembly (*.dll) is in the same folder as your executable.", connection.Name, connection.Provider);
+            } catch (Exception ex) {
+                Log.Error("{0} connection type '{1}' is unavailable.  Make sure the assembly (*.dll) is in the same folder as your executable. Error Message: {2}", connection.Name, connection.Provider, ex.Message);
                 Environment.Exit(1);
             }
 

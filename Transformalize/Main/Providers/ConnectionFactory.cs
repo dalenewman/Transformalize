@@ -9,6 +9,7 @@ using Transformalize.Main.Providers.File;
 using Transformalize.Main.Providers.Folder;
 using Transformalize.Main.Providers.Internal;
 using Transformalize.Main.Providers.MySql;
+using Transformalize.Main.Providers.SqlCe4;
 using Transformalize.Main.Providers.SqlServer;
 
 namespace Transformalize.Main.Providers {
@@ -51,6 +52,9 @@ namespace Transformalize.Main.Providers {
                         break;
                     case "internal":
                         connections.Add(element.Name, _process.Kernal.Get<InternalConnection>(parameters));
+                        break;
+                    case "sqlce4":
+                        connections.Add(element.Name, _process.Kernal.Get<SqlCe4Connection>(parameters));
                         break;
                     default:
                         connections.Add(element.Name, _process.Kernal.Get<SqlServerConnection>(parameters));

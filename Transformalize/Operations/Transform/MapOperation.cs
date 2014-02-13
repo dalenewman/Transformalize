@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
 
-    public class MapOperation : TflOperation {
+    public class MapOperation : ShouldRunOperation {
 
         private readonly string _outType;
         private readonly Map _endsWith;
@@ -77,7 +78,8 @@ namespace Transformalize.Operations.Transform {
                     if (!found) {
                         row[OutKey] = row[InKey];
                     }
-
+                } else {
+                    Interlocked.Increment(ref SkipCount);
                 }
 
                 yield return row;

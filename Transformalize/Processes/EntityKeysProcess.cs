@@ -41,10 +41,9 @@ namespace Transformalize.Processes {
 
         protected override void Initialize() {
 
-            _entity.IsFirstRun = !_process.OutputConnection.RecordsExist(_entity.Schema, _entity.OutputName());
-            var skipKeysExtract = _entity.IsFirstRun && _entity.UseBcp && _entity.InputConnection.Provider.Type == ProviderType.SqlServer;
+            var skipKeysExtract = _process.IsFirstRun && _entity.UseBcp && _entity.InputConnection.Provider.Type == ProviderType.SqlServer;
 
-            if (_entity.IsFirstRun || !_entity.CanDetectChanges()) {
+            if (_process.IsFirstRun || !_entity.CanDetectChanges()) {
                 if (!skipKeysExtract) {
                     Register(new EntityInputKeysExtractAll(_entity));
                 }

@@ -3,27 +3,28 @@ using System.Collections.Generic;
 namespace Transformalize.Main.Providers
 {
     public class FalseTableQueryWriter : ITableQueryWriter {
-        public string CreateTable(string name, IEnumerable<string> defs, string schema)
+
+        public string CreateTable(string name, IEnumerable<string> defs, string schema = "dbo")
         {
             return string.Empty;
         }
 
-        public string AddPrimaryKey(string name, string schema, IEnumerable<string> primaryKey)
+        public string AddPrimaryKey(string name, IEnumerable<string> primaryKey, string schema = "dbo")
         {
             return string.Empty;
         }
 
-        public string DropPrimaryKey(string name, string schema, IEnumerable<string> primaryKey)
+        public string DropPrimaryKey(string name, IEnumerable<string> primaryKey, string schema = "dbo")
         {
             return string.Empty;
         }
 
-        public string AddUniqueClusteredIndex(string name, string schema)
+        public string AddUniqueClusteredIndex(string name, string schema = "dbo")
         {
             return string.Empty;
         }
 
-        public string DropUniqueClusteredIndex(string name, string schema)
+        public string DropUniqueClusteredIndex(string name, string schema = "dbo")
         {
             return string.Empty;
         }

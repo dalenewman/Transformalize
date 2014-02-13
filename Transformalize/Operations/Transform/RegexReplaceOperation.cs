@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Threading;
 using Transformalize.Libs.Rhino.Etl;
 
 namespace Transformalize.Operations.Transform {
-    public class RegexReplaceOperation : TflOperation {
+    public class RegexReplaceOperation : ShouldRunOperation {
 
         private readonly Regex _regex;
         private readonly string _replacement;
@@ -24,7 +25,10 @@ namespace Transformalize.Operations.Transform {
                     } else {
                         row[OutKey] = _regex.Replace(row[InKey].ToString(), _replacement);
                     }
+                } else {
+                    Interlocked.Increment(ref SkipCount);
                 }
+
                 yield return row;
             }
         }

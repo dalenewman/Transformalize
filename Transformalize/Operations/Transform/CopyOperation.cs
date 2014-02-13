@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using System.Threading;
 using Transformalize.Libs.Rhino.Etl;
 
 namespace Transformalize.Operations.Transform {
-    public class CopyOperation : TflOperation {
+    public class CopyOperation : ShouldRunOperation {
 
         public CopyOperation(string inKey, string outKey) : base(inKey, outKey) { }
 
@@ -10,6 +11,8 @@ namespace Transformalize.Operations.Transform {
             foreach (var row in rows) {
                 if (ShouldRun(row)) {
                     row[OutKey] = row[InKey];
+                } else {
+                    Interlocked.Increment(ref SkipCount);
                 }
                 yield return row;
             }

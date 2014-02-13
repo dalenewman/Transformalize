@@ -21,8 +21,6 @@
 #endregion
 
 using Transformalize.Configuration;
-using Transformalize.Libs.Ninject.Syntax;
-using Transformalize.Main.Providers.Internal;
 
 namespace Transformalize.Main.Providers.SqlServer {
 
@@ -34,6 +32,9 @@ namespace Transformalize.Main.Providers.SqlServer {
         public override string DatabaseProperty { get { return "Database"; } }
         public override string ServerProperty { get { return "Server"; } }
         public override string TrustedProperty { get { return "Trusted_Connection"; } }
+        public override string PersistSecurityInfoProperty {
+            get { return "Persist Security Info"; }
+        }
 
         public SqlServerConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies) : base(element, dependencies) {
 

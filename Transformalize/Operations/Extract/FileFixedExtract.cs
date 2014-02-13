@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Rhino.Etl.Core.Files;
 using Transformalize.Libs.FileHelpers.Enums;
 using Transformalize.Libs.FileHelpers.RunTime;
@@ -17,6 +18,7 @@ namespace Transformalize.Operations.Extract {
         private readonly Field[] _fields;
         private readonly string _fullName;
         private readonly string _name;
+        private int _counter;
 
         public FileFixedExtract(Entity entity, int top) : this(entity, entity.InputConnection.File, top) { }
 
@@ -41,12 +43,14 @@ namespace Transformalize.Operations.Extract {
             Info("Reading {0}", _name);
 
             if (_top > 0) {
-                var count = 1;
                 using (var file = new FluentFile(cb.CreateRecordClass()).From(_fullName).OnError(_entity.InputConnection.ErrorMode)) {
                     foreach (var obj in file) {
-                        yield return Row.FromObject(obj);
-                        count++;
-                        if (count == _top) {
+                        var row = Row.FromObject(obj);
+                        row["TflFileName"] = _fullName;
+                        if (_counter < _top) {
+                            Interlocked.Increment(ref _counter);
+                            yield return row;
+                        } else {
                             yield break;
                         }
                     }

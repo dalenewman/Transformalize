@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
-    public class JoinTransformOperation : TflOperation {
+    public class JoinTransformOperation : ShouldRunOperation {
         private readonly string _separator;
         private readonly IEnumerable<KeyValuePair<string, IParameter>> _parameters;
 
@@ -19,7 +20,10 @@ namespace Transformalize.Operations.Transform {
                 if (ShouldRun(row)) {
                     var linqRow = row;
                     row[OutKey] = string.Join(_separator, _parameters.Select(p => linqRow[p.Key] ?? p.Value).Where(p => !p.Equals(string.Empty)));
+                } else {
+                    Interlocked.Increment(ref SkipCount);
                 }
+
                 yield return row;
             }
         }

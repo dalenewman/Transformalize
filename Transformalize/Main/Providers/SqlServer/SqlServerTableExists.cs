@@ -22,36 +22,31 @@
 
 using System.Data;
 
-namespace Transformalize.Main.Providers.SqlServer
-{
-    public class SqlServerTableExists : ITableExists
-    {
-        private readonly AbstractConnection _connection;
-        private const string FORMAT = @"
-IF EXISTS(
-	SELECT *
-	FROM INFORMATION_SCHEMA.TABLES 
-	WHERE TABLE_SCHEMA = '{0}' 
-	AND  TABLE_NAME = '{1}'
-)	SELECT 1
-ELSE
-	SELECT 0;";
+namespace Transformalize.Main.Providers.SqlServer {
+    public class SqlServerTableExists : ITableExists {
 
-        public SqlServerTableExists(AbstractConnection connection)
-        {
+        private readonly AbstractConnection _connection;
+
+        public SqlServerTableExists(AbstractConnection connection) {
             _connection = connection;
         }
 
-        public bool Exists(string schema, string name)
-        {
-            var sql = string.Format(FORMAT, schema, name);
-            using (var cn = _connection.GetConnection())
-            {
+        public bool Exists(string schema, string name) {
+            var sql = string.Format(@"
+	            SELECT TOP(1) TABLE_NAME
+	            FROM INFORMATION_SCHEMA.TABLES 
+	            WHERE TABLE_SCHEMA = '{0}' 
+	            AND  TABLE_NAME = '{1}';
+            ", schema, name);
+
+            using (var cn = _connection.GetConnection()) {
                 cn.Open();
                 var cmd = cn.CreateCommand();
                 cmd.CommandText = sql;
                 cmd.CommandType = CommandType.Text;
-                return (int) cmd.ExecuteScalar() == 1;
+                using (var reader = cmd.ExecuteReader()) {
+                    return reader.Read();
+                }
             }
         }
     }

@@ -20,10 +20,11 @@
 
 #endregion
 
-using System.Linq;
 using NUnit.Framework;
+using Transformalize.Configuration.Builders;
 using Transformalize.Libs.NLog;
 using Transformalize.Main;
+using Transformalize.Test.Unit.Builders;
 
 namespace Transformalize.Test.Integration
 {
@@ -54,13 +55,105 @@ namespace Transformalize.Test.Integration
         }
 
         [Test]
-        public void AdHoc()
-        {
-            var process = ProcessFactory.Create(@"C:\Users\dnewman\AppData\Local\Tfl\South_ReClassification_InstallerLevel1_112713\Configuration.xml");
-            process.Entities[0].PipelineThreading = PipelineThreading.SingleThreaded;
-            process.Run();
-            Assert.AreEqual(true, true);
-        }
+        public void TestBug() {
 
+            var inventory = new RowsBuilder()
+                .Row("InventoryKey", 1)
+                    .Field("Name", "Inventory 1")
+                    .Field("StorageLocationKey", 1)
+                .Row("InventoryKey", 2)
+                    .Field("Name", "Inventory 2")
+                    .Field("StorageLocationKey", 1)
+                .Row("InventoryKey", 3)
+                    .Field("Name", "Inventory 3")
+                    .Field("StorageLocationKey", 2)
+                .ToOperation();
+
+            var storageLocations = new RowsBuilder()
+                .Row("StorageLocationKey", 1)
+                    .Field("Name", "Storage Location 1")
+                    .Field("WarehouseKey", 1)
+                .Row("StorageLocationKey", 2)
+                    .Field("Name", "Storage Location 2")
+                    .Field("WarehouseKey", 2)
+                .ToOperation();
+
+            var warehouses = new RowsBuilder()
+                .Row("WarehouseKey", 1)
+                    .Field("Name", "Warehouse 1")
+                .Row("WarehouseKey", 2)
+                    .Field("Name", "Warehouse 2")
+                .ToOperation();
+
+            var process = new ProcessBuilder("Bug")
+                .Connection("input").Provider("internal")
+                .Connection("output").Database("Junk")
+                .Entity("Inventory")
+                    .Input(inventory)
+                    .Version("InventoryHashCode")
+                    .Field("InventoryKey").Int32().PrimaryKey()
+                    .Field("Name").Alias("Inventory").Default("Default")
+                    .Field("StorageLocationKey").Int32()
+                    .CalculatedField("InventoryHashCode")
+                        .Int32()
+                        .Transform("concat").Parameter("*")
+                        .Transform("gethashcode").Parameter("*")
+                .Entity("StorageLocation")
+                    .Input(storageLocations)
+                    .Version("StorageLocationHashCode")
+                    .Field("StorageLocationKey").Int32().PrimaryKey()
+                    .Field("Name").Alias("StorageLocation").Default("Default")
+                    .Field("WarehouseKey").Int32()
+                    .CalculatedField("StorageLocationHashCode")
+                        .Int32()
+                        .Transform("concat").Parameter("*")
+                        .Transform("gethashcode").Parameter("*")
+                .Entity("Warehouse")
+                    .Input(warehouses)
+                    .Version("WarehouseHashCode")
+                    .Field("WarehouseKey").Int32().PrimaryKey()
+                    .Field("Name").Alias("Warehouse").Default("Default")
+                    .CalculatedField("WarehouseHashCode")
+                        .Int32()
+                        .Transform("concat").Parameter("*")
+                        .Transform("gethashcode").Parameter("*")
+                .Relationship()
+                    .LeftEntity("Inventory").LeftField("StorageLocationKey")
+                    .RightEntity("StorageLocation").RightField("StorageLocationKey")
+                .Relationship()
+                    .LeftEntity("StorageLocation").LeftField("WarehouseKey")
+                    .RightEntity("Warehouse").RightField("WarehouseKey")
+            .Process();
+
+            var logLevel = LogLevel.Info;
+
+            //init and run
+            var init = ProcessFactory.Create(process, new Options() { Mode = "init", LogLevel = logLevel });
+            init.PipelineThreading = PipelineThreading.SingleThreaded;
+            init.Run();
+
+            var first = ProcessFactory.Create(process, new Options() { LogLevel = logLevel });
+            first.PipelineThreading = PipelineThreading.SingleThreaded;
+            first.Run();
+            LogManager.Flush();
+
+            Assert.AreEqual(3, first["Inventory"].Inserts);
+            Assert.AreEqual(2, first["StorageLocation"].Inserts);
+            Assert.AreEqual(2, first["Warehouse"].Inserts);
+
+            //run again, no changes
+            var second = ProcessFactory.Create(process, new Options() { LogLevel = logLevel });
+            second.PipelineThreading = PipelineThreading.SingleThreaded;
+            second.Run();
+            LogManager.Flush();
+
+            Assert.AreEqual(0, second["Inventory"].Inserts);
+            Assert.AreEqual(0, second["StorageLocation"].Inserts);
+            Assert.AreEqual(0, second["Warehouse"].Inserts);
+
+            Assert.AreEqual(0, second["Inventory"].Updates);
+            Assert.AreEqual(0, second["StorageLocation"].Updates);
+            Assert.AreEqual(0, second["Warehouse"].Updates);
+        }
     }
 }

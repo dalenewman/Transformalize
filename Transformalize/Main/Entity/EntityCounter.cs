@@ -24,26 +24,22 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.SqlServer;
 
-namespace Transformalize.Main
-{
-    public class EntityCounter : WithLoggingMixin
-    {
+namespace Transformalize.Main {
+    public class EntityCounter : WithLoggingMixin {
         private readonly IEntityCounter _entityCounter;
         private readonly Process _process;
 
-        public EntityCounter(Process process, IEntityCounter entityCounter = null)
-        {
+        public EntityCounter(Process process, IEntityCounter entityCounter = null) {
             _process = process;
             _entityCounter = entityCounter ?? new SqlServerEntityCounter(new DefaultConnectionChecker());
         }
 
-        public void Count()
-        {
-            foreach (var entity in _process.Entities)
-            {
-                entity.InputCount = _entityCounter.Count(entity.InputConnection, entity.Schema, entity.Alias);
+        public void Count() {
+            foreach (var entity in _process.Entities) {
+                entity.InputCount = _entityCounter.Count(entity.InputConnection, entity, true);
                 Info("Entity {0} input has {1} records.", entity.Alias, entity.InputCount);
-                entity.OutputCount = _entityCounter.Count(_process.OutputConnection, entity.Schema, entity.OutputName());
+
+                entity.OutputCount = _entityCounter.Count(_process.OutputConnection, entity, false);
                 Info("Entity {0} output has {1} records.", entity.Alias, entity.OutputCount);
             }
         }

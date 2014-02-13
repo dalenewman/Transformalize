@@ -22,14 +22,20 @@
 
 using System.Linq;
 using NUnit.Framework;
+using Transformalize.Libs.NLog;
 using Transformalize.Main;
 
 namespace Transformalize.Test.Integration {
+
     [TestFixture]
     public class CopySearchPage {
+
         [Test]
         public void Run() {
-            var entities = ProcessFactory.Create(@"c:\etl\tfl\CopySearchPage.xml", new Options()).Run();
+            var options = new Options() { Mode="default", LogLevel = LogLevel.Info };
+            var process = ProcessFactory.Create(@"http://config.mwf.local/CopySearchPage.xml", options);
+            process.PipelineThreading = PipelineThreading.SingleThreaded;
+            var entities = process.Run();
             Assert.AreEqual(1, entities.Count());
         }
 

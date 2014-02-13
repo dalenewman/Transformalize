@@ -33,6 +33,9 @@ namespace Transformalize.Main.Providers.MySql {
         public override string DatabaseProperty { get { return "Database"; } }
         public override string ServerProperty { get { return "Server"; } }
         public override string TrustedProperty { get { return string.Empty; } }
+        public override string PersistSecurityInfoProperty {
+            get { return string.Empty; }
+        }
 
         public MySqlConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {

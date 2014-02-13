@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using Transformalize.Libs.NLog.Internal;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
 
-    public class TimeOfDayOperation : TflOperation {
+    public class TimeOfDayOperation : ShouldRunOperation {
 
         private readonly string _outType;
         private readonly Dictionary<string, Func<object, object>> _conversionMap = Common.GetObjectConversionMap(); 
@@ -59,7 +60,10 @@ namespace Transformalize.Operations.Transform {
                 if (ShouldRun(row)) {
                     var date = (DateTime)row[InKey];
                     row[OutKey] = Converter(_transformer(date));
+                } else {
+                    Interlocked.Increment(ref SkipCount);
                 }
+
                 yield return row;
             }
         }

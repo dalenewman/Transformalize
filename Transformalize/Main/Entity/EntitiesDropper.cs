@@ -20,24 +20,19 @@
 
 #endregion
 
-namespace Transformalize.Main
-{
-    public class EntitiesDropper
-    {
+namespace Transformalize.Main {
+    public class EntitiesDropper {
         private readonly IEntityDropper _dropper;
         private readonly Process _process;
 
-        public EntitiesDropper(Process process, IEntityDropper dropper)
-        {
+        public EntitiesDropper(Process process, IEntityDropper dropper) {
             _process = process;
             _dropper = dropper;
         }
 
-        public void Drop()
-        {
-            foreach (var entity in _process.Entities)
-            {
-                _dropper.Drop(_process.OutputConnection, entity.Schema, entity.OutputName());
+        public void Drop() {
+            foreach (var entity in _process.Entities) {
+                _dropper.Drop(_process.OutputConnection, entity);
             }
         }
     }

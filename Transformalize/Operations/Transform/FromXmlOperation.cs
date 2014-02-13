@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Xml;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
 
-    public class FromXmlOperation : TflOperation {
+    public class FromXmlOperation : ShouldRunOperation {
 
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private readonly bool _searchAttributes;
@@ -74,6 +75,7 @@ namespace Transformalize.Operations.Transform {
                         yield return r;
                     }
                 } else {
+                    Interlocked.Increment(ref SkipCount);
                     yield return row;
                 }
             }

@@ -1,7 +1,5 @@
-namespace Transformalize.Main
-{
-    public enum PipelineThreading
-    {
+namespace Transformalize.Main {
+    public enum PipelineThreading {
         MultiThreaded,
         SingleThreaded
     }

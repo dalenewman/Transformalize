@@ -75,6 +75,10 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.SqlServerCe, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\System.Data.SqlServerCe.dll</HintPath>
+    </Reference>
     <Reference Include="System.Device" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -668,7 +672,10 @@
     <Compile Include="Main\Process\ProcessFactory.cs" />
     <Compile Include="Main\Process\ProcessOperationsLoader.cs" />
     <Compile Include="Main\Process\OperationsLoader.cs" />
+    <Compile Include="Main\Providers\AbstractConnectionDependencies.cs" />
     <Compile Include="Main\Providers\AnalysisServicesEntityDropper.cs" />
+    <Compile Include="Main\Providers\AnalysisServices\AnalysisServicesDependencies.cs" />
+    <Compile Include="Main\Providers\ConnectionChecker.cs" />
     <Compile Include="Main\Providers\FalseEntityExists.cs" />
     <Compile Include="Main\Providers\File\FileEntityDropper.cs" />
     <Compile Include="Main\Providers\File\FileEntityExists.cs" />
@@ -681,18 +688,15 @@
     <Compile Include="Main\Providers\Folder\FolderEntityRecordsExist.cs" />
     <Compile Include="Main\Providers\Folder\FolderEntityDropper.cs" />
     <Compile Include="Main\Providers\Folder\FolderProvider.cs" />
-    <Compile Include="Main\Providers\Internal\AnalysisServicesDependencies.cs" />
-    <Compile Include="Main\Providers\Internal\FileDependencies.cs" />
-    <Compile Include="Main\Providers\Internal\FolderDependencies.cs" />
+    <Compile Include="Main\Providers\File\FileDependencies.cs" />
+    <Compile Include="Main\Providers\Folder\FolderDependencies.cs" />
     <Compile Include="Main\Providers\Internal\InternalConnection.cs" />
     <Compile Include="Main\Providers\Internal\InternalConnectionChecker.cs" />
     <Compile Include="Main\Providers\Internal\InternalDependencies.cs" />
     <Compile Include="Main\Providers\Internal\InternalProvider.cs" />
     <Compile Include="Main\Providers\Internal\FalseTflWriter.cs" />
     <Compile Include="Main\Providers\Internal\FalseViewWriter.cs" />
-    <Compile Include="Main\Providers\Internal\AbstractConnectionDependencies.cs" />
-    <Compile Include="Main\Providers\Internal\MySqlDependencies.cs" />
-    <Compile Include="Main\Providers\Internal\SqlServerDependencies.cs" />
+    <Compile Include="Main\Providers\MySql\MySqlDependencies.cs" />
     <Compile Include="Main\Providers\MySql\MySqlEntityDropper.cs" />
     <Compile Include="Main\Providers\MySql\MySqlEntityExists.cs" />
     <Compile Include="Main\Providers\MySql\MySqlEntityRecordsExist.cs" />
@@ -706,7 +710,19 @@
     <Compile Include="Main\Providers\MySql\MySqlTflWriter.cs" />
     <Compile Include="Main\Providers\MySql\MySqlViewWriter.cs" />
     <Compile Include="Main\Providers\ProviderReader.cs" />
-    <Compile Include="Main\Providers\SqlServerEntityDropper.cs" />
+    <Compile Include="Main\Providers\QueryWriter.cs" />
+    <Compile Include="Main\Providers\SqlCe4\SqlCe4Connection.cs" />
+    <Compile Include="Main\Providers\SqlCe4\SqlCe4ConnectionChecker.cs" />
+    <Compile Include="Main\Providers\SqlCe4\SqlCe4Dependencies.cs" />
+    <Compile Include="Main\Providers\SqlCe4\SqlCe4EntityDropper.cs" />
+    <Compile Include="Main\Providers\SqlCe4\SqlCe4EntityExists.cs" />
+    <Compile Include="Main\Providers\SqlCe4\SqlCe4EntityRecordsExist.cs" />
+    <Compile Include="Main\Providers\SqlCe4\SqlCe4Provider.cs" />
+    <Compile Include="Main\Providers\SqlCe4\SqlCe4TableExists.cs" />
+    <Compile Include="Main\Providers\SqlCe4\SqlCe4TableQueryWriter.cs" />
+    <Compile Include="Main\Providers\SqlCe4\SqlCe4TflWriter.cs" />
+    <Compile Include="Main\Providers\SqlServer\SqlServerDependencies.cs" />
+    <Compile Include="Main\Providers\SqlServer\SqlServerEntityDropper.cs" />
     <Compile Include="Main\RelationshipsReader.cs" />
     <Compile Include="Main\SearchType.cs" />
     <Compile Include="Main\MapConfigurationReader.cs" />
@@ -1175,7 +1191,6 @@
     <Compile Include="Operations\Load\FileLoadOperation.cs" />
     <Compile Include="Operations\Transform\ConcatOperation.cs" />
     <Compile Include="Operations\Transform\ConvertOperation.cs" />
-    <Compile Include="Operations\Transform\DefaultIfEqualOperation.cs" />
     <Compile Include="Operations\Transform\DistanceOperation.cs" />
     <Compile Include="Operations\Transform\EmptyOperation.cs" />
     <Compile Include="Operations\Transform\ExpressionOperation.cs" />
@@ -1190,7 +1205,7 @@
     <Compile Include="Operations\Transform\JavascriptOperation.cs" />
     <Compile Include="Operations\Transform\JoinTransformOperation.cs" />
     <Compile Include="Operations\Transform\CopyOperation.cs" />
-    <Compile Include="Operations\Transform\TflOperation.cs" />
+    <Compile Include="Operations\Transform\ShouldRunOperation.cs" />
     <Compile Include="Operations\Transform\TimeZoneOperation.cs" />
     <Compile Include="Operations\Transform\ValueOperation.cs" />
     <Compile Include="Operations\Transform\XmlEncodeOperation.cs" />
@@ -1679,6 +1694,9 @@
     <Content Include="Microsoft.AnalysisServices.DLL">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="System.Data.SqlServerCe.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Libs\SharpZLib\obj\Debug\TempPE\" />
@@ -1759,27 +1777,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Libs\Npgsql\NpgsqlConnectedState.zh-CN.resx">
       <DependentUpon>NpgsqlConnectedState.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Libs\Npgsql\NpgsqlConnection.de.resx">
-      <DependentUpon>NpgsqlConnection.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Libs\Npgsql\NpgsqlConnection.es.resx">
-      <DependentUpon>NpgsqlConnection.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Libs\Npgsql\NpgsqlConnection.fi.resx">
-      <DependentUpon>NpgsqlConnection.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Libs\Npgsql\NpgsqlConnection.fr.resx">
-      <DependentUpon>NpgsqlConnection.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Libs\Npgsql\NpgsqlConnection.ja.resx">
-      <DependentUpon>NpgsqlConnection.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Libs\Npgsql\NpgsqlConnection.resx">
-      <DependentUpon>NpgsqlConnection.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Libs\Npgsql\NpgsqlConnection.zh-CN.resx">
-      <DependentUpon>NpgsqlConnection.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Libs\Npgsql\NpgsqlConnectionStringBuilder.de.resx">
       <DependentUpon>NpgsqlConnectionStringBuilder.cs</DependentUpon>

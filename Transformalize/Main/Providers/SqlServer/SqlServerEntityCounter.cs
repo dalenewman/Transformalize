@@ -20,8 +20,6 @@
 
 #endregion
 
-using System.Data.SqlClient;
-
 namespace Transformalize.Main.Providers.SqlServer
 {
     public class SqlServerEntityCounter : IEntityCounter
@@ -35,13 +33,13 @@ namespace Transformalize.Main.Providers.SqlServer
             _entityExists = new SqlServerEntityExists();
         }
 
-        public int Count(AbstractConnection connection, string schema, string name)
+        public int Count(AbstractConnection connection, Entity entity, bool useAlias)
         {
             if (_connectionChecker == null || _connectionChecker.Check(connection)) {
-                if (_entityExists.Exists(connection, schema, name)) {
+                if (_entityExists.Exists(connection, entity)) {
                     using (var cn = connection.GetConnection()) {
                         cn.Open();
-                        var sql = string.Format("SELECT COUNT(*) FROM [{0}].[{1}] WITH (NOLOCK);", schema, name);
+                        var sql = string.Format("SELECT COUNT(*) FROM [{0}].[{1}] WITH (NOLOCK);", entity.Schema, entity.OutputName());
                         var cmd = cn.CreateCommand();
                         cmd.CommandText = sql;
                         return (int)cmd.ExecuteScalar();

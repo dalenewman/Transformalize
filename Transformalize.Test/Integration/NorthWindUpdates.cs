@@ -28,8 +28,7 @@ using Transformalize.Libs.Dapper;
 
 namespace Transformalize.Test.Integration {
     [TestFixture]
-    public class NorthWindUpdates
-    {
+    public class NorthWindUpdates {
         private const string FILE = "NorthWind.xml";
         private readonly Logger _log = LogManager.GetLogger(string.Empty);
 
@@ -38,17 +37,17 @@ namespace Transformalize.Test.Integration {
             LogManager.Configuration.LoggingRules[0].EnableLoggingForLevel(LogLevel.Info);
             LogManager.ReconfigExistingLoggers();
         }
-        
+
         [Test]
         public void Go() {
 
             _log.Info("***** RUN 00 * INITIALIZE ******");
-            var options = new Options { Mode = "init"};
+            var options = new Options { Mode = "init" };
             var process = ProcessFactory.Create(FILE, options);
             process.Run();
 
             _log.Info("***** RUN 01 * FIRST RUN ******");
-            options = new Options { RenderTemplates = false };
+            options = new Options { RenderTemplates = false, LogLevel = LogLevel.Info };
             process = ProcessFactory.Create(FILE, options);
             process.PipelineThreading = PipelineThreading.SingleThreaded;
             process.Run();
@@ -63,7 +62,7 @@ namespace Transformalize.Test.Integration {
             Assert.AreEqual(3, process["Shippers"].Inserts);
 
             _log.Info("***** RUN 02 * NO CHANGES ******");
-            options = new Options { RenderTemplates = false };
+            options = new Options { RenderTemplates = false, LogLevel = LogLevel.Info };
             process = ProcessFactory.Create(FILE, options);
             process.PipelineThreading = PipelineThreading.SingleThreaded;
             process.Run();
@@ -76,15 +75,14 @@ namespace Transformalize.Test.Integration {
             Assert.AreEqual(0, process["Suppliers"].Inserts);
             Assert.AreEqual(0, process["Categories"].Inserts);
             Assert.AreEqual(0, process["Shippers"].Inserts);
-            
+
             _log.Info("***** RUN 03 * ADD 1 ORDER DETAIL ******");
-            using (var cn = process["Order Details"].InputConnection.GetConnection())
-            {
+            using (var cn = process["Order Details"].InputConnection.GetConnection()) {
                 cn.Open();
                 cn.Execute("insert into [Order Details](OrderID, ProductID, UnitPrice, Quantity, Discount) values(10261,41,7.70,2,0);");
             }
 
-            options = new Options { RenderTemplates = false };
+            options = new Options { RenderTemplates = false, LogLevel = LogLevel.Info};
             process = ProcessFactory.Create(FILE, options);
             process.PipelineThreading = PipelineThreading.SingleThreaded;
             process.Run();
@@ -92,7 +90,7 @@ namespace Transformalize.Test.Integration {
             Assert.AreEqual(1, process["Order Details"].Inserts);
 
 
-            
+
             _log.Info("***** RUN 04 * ADD 1 ORDER ******");
             using (var cn = process["Orders"].InputConnection.GetConnection()) {
                 cn.Open();
@@ -105,7 +103,7 @@ namespace Transformalize.Test.Integration {
             process.Run();
 
             Assert.AreEqual(1, process["Orders"].Inserts);
-            
+
             _log.Info("***** RUN 05 * ADD 2 CUSTOMERS ******");
             using (var cn = process["Customers"].InputConnection.GetConnection()) {
                 cn.Open();
@@ -124,7 +122,7 @@ namespace Transformalize.Test.Integration {
             decimal inputSum;
             using (var cn = process["Order Details"].InputConnection.GetConnection()) {
                 cn.Open();
-                inputSum =  cn.Query<decimal>("SELECT SUM(UnitPrice) FROM [Order Details] WHERE ProductID = 57;").First();
+                inputSum = cn.Query<decimal>("SELECT SUM(UnitPrice) FROM [Order Details] WHERE ProductID = 57;").First();
             }
 
             using (var cn = process["Order Details"].InputConnection.GetConnection()) {
@@ -171,7 +169,7 @@ namespace Transformalize.Test.Integration {
             }
 
             Assert.AreNotEqual(preUpdate, postUpdate);
-            
+
             _log.Info("***** RUN 08 * UPDATE PART OF ORDER DETAIL KEY, INTERPRETED AS AN INSERT, AND SUBSEQUENT DELETE ******");
             using (var cn = process["Order Details"].InputConnection.GetConnection()) {
                 cn.Open();
@@ -184,7 +182,7 @@ namespace Transformalize.Test.Integration {
             process.Run();
 
             Assert.AreEqual(1, process["Order Details"].Inserts);
-            
+
             _log.Info("***** RUN 09 * HANDLE DELETE ******");
             options = new Options { Mode = "delete" };
             process = ProcessFactory.Create(FILE, options);
@@ -195,13 +193,11 @@ namespace Transformalize.Test.Integration {
             Reset();
         }
 
-        public void Reset()
-        {
+        public void Reset() {
             _log.Info("***** RESET ******");
             var options = new Options { RenderTemplates = false };
             var process = ProcessFactory.Create(FILE, options);
-            using (var cn = process["Order Details"].InputConnection.GetConnection())
-            {
+            using (var cn = process["Order Details"].InputConnection.GetConnection()) {
                 cn.Open();
                 cn.Execute("delete from [Order Details] where OrderID = 10261 and ProductID = 41;");
                 cn.Execute("delete from [Orders] where OrderID = (select top 1 OrderId from Orders order by OrderID desc)");

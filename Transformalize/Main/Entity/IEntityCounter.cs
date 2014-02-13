@@ -26,6 +26,6 @@ namespace Transformalize.Main
 {
     public interface IEntityCounter
     {
-        int Count(AbstractConnection connection, string schema, string name);
+        int Count(AbstractConnection connection, Entity entity, bool useAlias);
     }
 }

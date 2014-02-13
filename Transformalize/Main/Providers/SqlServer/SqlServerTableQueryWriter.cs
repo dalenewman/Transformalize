@@ -24,72 +24,63 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Transformalize.Main.Providers.SqlServer {
-    public class SqlServerTableQueryWriter : ITableQueryWriter {
 
-        private const string CREATE_TABLE_TEMPLATE = "CREATE TABLE [{0}].[{1}]({2});";
-        public string CreateTable(string name, IEnumerable<string> defs, string schema) {
+    public class SqlServerTableQueryWriter : QueryWriter, ITableQueryWriter {
+
+        public string CreateTable(string name, IEnumerable<string> defs, string schema = "dbo") {
             var defList = string.Join(",", defs);
             return string.Format(
-                CREATE_TABLE_TEMPLATE,
+                "CREATE TABLE [{0}].[{1}]({2});",
                 schema,
-                Name128(name),
+                SqlIdentifier(name),
                 defList
             );
         }
 
-        private const string ADD_PRIMARY_KEY = "ALTER TABLE [{0}].[{1}] ADD CONSTRAINT [PK_{1}_{2}] PRIMARY KEY NONCLUSTERED ({3}) WITH (IGNORE_DUP_KEY = ON);";
-        public string AddPrimaryKey(string name, string schema, IEnumerable<string> primaryKey) {
+        public string AddPrimaryKey(string name, IEnumerable<string> primaryKey, string schema = "dbo") {
             var pk = primaryKey.ToArray();
             var keyList = string.Join(", ", pk);
             return string.Format(
-                ADD_PRIMARY_KEY,
+                "ALTER TABLE [{0}].[{1}] ADD CONSTRAINT [PK_{1}_{2}] PRIMARY KEY NONCLUSTERED ({3}) WITH (IGNORE_DUP_KEY = ON);",
                 schema,
-                Name128(name),
+                SqlIdentifier(name),
                 KeyName(pk),
                 keyList
             );
         }
 
-        private const string DRP_PRIMARY_KEY = "ALTER TABLE [{0}].[{1}] DROP CONSTRAINT [PK_{1}_{2}];";
-        public string DropPrimaryKey(string name, string schema, IEnumerable<string> primaryKey) {
+        public string DropPrimaryKey(string name, IEnumerable<string> primaryKey, string schema = "dbo") {
             var pk = primaryKey.ToArray();
             return string.Format(
-                DRP_PRIMARY_KEY,
+                "ALTER TABLE [{0}].[{1}] DROP CONSTRAINT [PK_{1}_{2}];",
                 schema,
-                Name128(name),
+                SqlIdentifier(name),
                 KeyName(pk)
             );
         }
 
-        private const string ADD_UNIQUE_CLUSTERED_INDEX = "CREATE UNIQUE CLUSTERED INDEX [UX_{0}_TflKey] ON [{1}].[{0}] (TflKey ASC);";
-        public string AddUniqueClusteredIndex(string name, string schema) {
+        public string AddUniqueClusteredIndex(string name, string schema = "dbo") {
             return string.Format(
-                ADD_UNIQUE_CLUSTERED_INDEX,
-                Name128(name),
+                "CREATE UNIQUE CLUSTERED INDEX [UX_{0}_TflKey] ON [{1}].[{0}] (TflKey ASC);",
+                SqlIdentifier(name),
                 schema
             );
         }
 
-        //        IF EXISTS(
-        //    SELECT *
-        //    FROM sys.indexes WITH (NOLOCK)
-        //    WHERE [name] = 'UX_UfoUfo_TflKey'
-        //)	DROP INDEX [UX_UfoUfo_TflKey] ON [dbo].[UfoUfo];
-        private const string DROP_UNIQUE_CLUSTERED_INDEX = @"
-            IF EXISTS(
-	            SELECT i.*
-	            FROM sys.indexes i WITH (NOLOCK)
-	            INNER JOIN sys.tables t WITH (NOLOCK) ON (i.object_id = t.object_id)
-	            INNER JOIN sys.schemas s WITH (NOLOCK) ON (t.schema_id = s.schema_id)
-	            WHERE i.[name] = 'UX_{0}_TflKey'
-	            AND t.[name] = '{0}'
-	            AND s.[name] = '{1}'
-            )	DROP INDEX [UX_{0}_TflKey] ON [{1}].[{0}];
-        ";
         public string DropUniqueClusteredIndex(string name, string schema) {
             return string.Format(
-                DROP_UNIQUE_CLUSTERED_INDEX,
-                Name128(name),
+                @"
+                    IF EXISTS(
+	                    SELECT i.*
+	                    FROM sys.indexes i WITH (NOLOCK)
+	                    INNER JOIN sys.tables t WITH (NOLOCK) ON (i.object_id = t.object_id)
+	                    INNER JOIN sys.schemas s WITH (NOLOCK) ON (t.schema_id = s.schema_id)
+	                    WHERE i.[name] = 'UX_{0}_TflKey'
+	                    AND t.[name] = '{0}'
+	                    AND s.[name] = '{1}'
+                    )	DROP INDEX [UX_{0}_TflKey] ON [{1}].[{0}];
+                ",
+                SqlIdentifier(name),
                 schema
             );
         }
@@ -97,14 +88,6 @@ namespace Transformalize.Main.Providers.SqlServer {
         public string WriteTemporary(string name, Field[] fields, AbstractProvider provider, bool useAlias = true) {
             var defs = useAlias ? new FieldSqlWriter(fields).Alias(provider).DataType().Write() : new FieldSqlWriter(fields).Name(provider).DataType().Write();
             return string.Format(@"DECLARE @{0} AS TABLE({1});", name.TrimStart("@".ToCharArray()), defs);
-        }
-
-        private static string Name128(string name) {
-            return name.Length > 128 ? name.Substring(0, 128) : name;
-        }
-
-        private static string KeyName(string[] pk) {
-            return Name128(string.Join("_", pk).Replace("[", string.Empty).Replace("]", string.Empty).Replace(" ", "_"));
         }
 
     }

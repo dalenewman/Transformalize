@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Transformalize.Libs.Rhino.Etl;
 
 namespace Transformalize.Operations.Transform {
-    public class DistinctWordsOperation : TflOperation {
+    public class DistinctWordsOperation : ShouldRunOperation {
 
         private readonly string _separator;
         private readonly char[] _separatorArray;
@@ -27,6 +28,8 @@ namespace Transformalize.Operations.Transform {
 
                         row[OutKey] = row[InKey];
                     }
+                } else {
+                    Interlocked.Increment(ref SkipCount);
                 }
 
                 yield return row;

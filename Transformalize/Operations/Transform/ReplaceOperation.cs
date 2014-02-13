@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using System.Threading;
 using Transformalize.Libs.Rhino.Etl;
 
 namespace Transformalize.Operations.Transform {
-    public class ReplaceOperation : TflOperation {
+    public class ReplaceOperation : ShouldRunOperation {
         private readonly string _oldValue;
         private readonly string _newValue;
 
@@ -16,7 +17,10 @@ namespace Transformalize.Operations.Transform {
             foreach (var row in rows) {
                 if (ShouldRun(row)) {
                     row[OutKey] = row[InKey].ToString().Replace(_oldValue, _newValue);
+                } else {
+                    Interlocked.Increment(ref SkipCount);
                 }
+
                 yield return row;
             }
         }

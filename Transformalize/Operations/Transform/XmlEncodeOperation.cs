@@ -1,19 +1,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Xml.Linq;
 using Transformalize.Libs.Rhino.Etl;
 
 namespace Transformalize.Operations.Transform
 {
-    public class XmlEncodeOperation : TflOperation {
+    public class XmlEncodeOperation : ShouldRunOperation {
         public XmlEncodeOperation(string inKey, string outKey) : base(inKey, outKey) { }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
                 if (ShouldRun(row)) {
                     row[OutKey] = new XText(SanitizeXmlString(row[InKey].ToString())).ToString();
+                } else {
+                    Interlocked.Increment(ref SkipCount);
                 }
+
                 yield return row;
             }
         }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using Noesis.Javascript;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
@@ -6,7 +7,7 @@ using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
 
-    public class JavascriptOperation : TflOperation {
+    public class JavascriptOperation : ShouldRunOperation {
 
         private readonly JavascriptContext _context = new JavascriptContext();
         private readonly Logger _log = LogManager.GetLogger(string.Empty);
@@ -32,7 +33,10 @@ namespace Transformalize.Operations.Transform {
                         _context.SetParameter(pair.Value.Name, pair.Value.Value ?? row[pair.Key]);
                     }
                     row[OutKey] = _context.Run(_script);
+                } else {
+                    Interlocked.Increment(ref SkipCount);
                 }
+
                 yield return row;
             }
         }

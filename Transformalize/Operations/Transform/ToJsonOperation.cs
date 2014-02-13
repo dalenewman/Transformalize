@@ -1,10 +1,11 @@
 using System.Collections.Generic;
+using System.Threading;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.fastJSON;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
-    public class ToJsonOperation : TflOperation {
+    public class ToJsonOperation : ShouldRunOperation {
         private readonly IParameters _parameters;
 
         public ToJsonOperation(string outKey, IParameters parameters)
@@ -20,7 +21,10 @@ namespace Transformalize.Operations.Transform {
                         data[pair.Value.Name] = pair.Value.Value ?? row[pair.Key];
                     }
                     row[OutKey] = JSON.Instance.ToJSON(data);
+                } else {
+                    Interlocked.Increment(ref SkipCount);
                 }
+
                 yield return row;
             }
         }

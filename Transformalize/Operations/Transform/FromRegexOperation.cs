@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Threading;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
 
-    public class FromRegexOperation : TflOperation {
+    public class FromRegexOperation : ShouldRunOperation {
 
         private readonly IParameters _parameters;
         private readonly Regex _regex;
@@ -41,7 +42,10 @@ namespace Transformalize.Operations.Transform {
                             row[pair.Key] = Common.ConversionMap[pair.Value.SimpleType](@group.Value);
                         }
                     }
+                } else {
+                    Interlocked.Increment(ref SkipCount);
                 }
+
                 yield return row;
             }
         }

@@ -20,10 +20,8 @@
 
 #endregion
 
-namespace Transformalize.Main.Providers
-{
-    public interface IConnectionChecker
-    {
+namespace Transformalize.Main.Providers {
+    public interface IConnectionChecker {
         bool Check(AbstractConnection connection);
     }
 }

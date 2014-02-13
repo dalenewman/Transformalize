@@ -1,11 +1,12 @@
 using System.Collections.Generic;
+using System.Threading;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.fastJSON;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
 
-    public class FromJsonOperation : TflOperation {
+    public class FromJsonOperation : ShouldRunOperation {
 
         private readonly IEnumerable<KeyValuePair<string, IParameter>> _parameters;
 
@@ -35,7 +36,8 @@ namespace Transformalize.Operations.Transform {
                             }
                         }
                     }
-
+                } else {
+                    Interlocked.Increment(ref SkipCount);
                 }
 
                 yield return row;

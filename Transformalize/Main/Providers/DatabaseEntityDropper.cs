@@ -24,38 +24,32 @@ using System;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Dapper;
 
-namespace Transformalize.Main.Providers
-{
-    public class DatabaseEntityDropper : IEntityDropper
-    {
+namespace Transformalize.Main.Providers {
+    public class DatabaseEntityDropper : IEntityDropper {
         public IEntityExists EntityExists { get; set; }
         private const string FORMAT = "DROP TABLE {0}{1};";
         private readonly Logger _log = LogManager.GetLogger(string.Empty);
 
-        public DatabaseEntityDropper(IEntityExists entityExists)
-        {
+        public DatabaseEntityDropper(IEntityExists entityExists) {
             EntityExists = entityExists;
         }
 
-        public void Drop(AbstractConnection connection, string schema, string name)
-        {
-            if (!EntityExists.Exists(connection, schema, name))
+        public void Drop(AbstractConnection connection, Entity entity) {
+            if (!EntityExists.Exists(connection, entity))
                 return;
 
             var provider = connection.Provider;
-            var needSchema = NeedsSchema(schema);
-            var sql = string.Format(FORMAT, needSchema ? provider.Enclose(schema) + "." : string.Empty , provider.Enclose(name));
+            var needSchema = NeedsSchema(entity.Schema);
+            var sql = string.Format(FORMAT, needSchema ? provider.Enclose(entity.Schema) + "." : string.Empty, provider.Enclose(entity.OutputName()));
 
-            using (var cn = connection.GetConnection())
-            {
+            using (var cn = connection.GetConnection()) {
                 cn.Open();
                 cn.Execute(sql);
-                _log.Debug("Dropped Output {0}.{1}", schema, name);
+                _log.Debug("Dropped Output {0}.{1}", entity.Schema, entity.OutputName());
             }
         }
 
-        private static bool NeedsSchema(string schema)
-        {
+        private static bool NeedsSchema(string schema) {
             return !(schema == string.Empty || schema.Equals("dbo", StringComparison.OrdinalIgnoreCase));
         }
     }

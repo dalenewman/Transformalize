@@ -1,6 +1,4 @@
 using Transformalize.Configuration;
-using Transformalize.Libs.Ninject.Syntax;
-using Transformalize.Main.Providers.Internal;
 
 namespace Transformalize.Main.Providers.Folder {
     public class FolderConnection : AbstractConnection {
@@ -10,8 +8,12 @@ namespace Transformalize.Main.Providers.Folder {
         public override string DatabaseProperty { get { return string.Empty; } }
         public override string ServerProperty { get { return string.Empty; } }
         public override string TrustedProperty { get { return string.Empty; } }
+        public override string PersistSecurityInfoProperty {
+            get { return string.Empty; }
+        }
 
-        public FolderConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies) : base(element, dependencies) {
+        public FolderConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
+            : base(element, dependencies) {
 
             TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
 

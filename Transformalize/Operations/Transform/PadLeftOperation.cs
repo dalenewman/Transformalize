@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using System.Threading;
 using Transformalize.Libs.Rhino.Etl;
 
 namespace Transformalize.Operations.Transform {
-    public class PadLeftOperation : TflOperation {
+    public class PadLeftOperation : ShouldRunOperation {
 
         private readonly int _totalWidth;
         private readonly char _paddingChar;
@@ -17,7 +18,10 @@ namespace Transformalize.Operations.Transform {
             foreach (var row in rows) {
                 if (ShouldRun(row)) {
                     row[OutKey] = row[InKey].ToString().PadLeft(_totalWidth, _paddingChar);
+                } else {
+                    Interlocked.Increment(ref SkipCount);
                 }
+
                 yield return row;
             }
         }

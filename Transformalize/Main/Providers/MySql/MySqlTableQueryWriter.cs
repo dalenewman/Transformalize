@@ -21,45 +21,38 @@
 #endregion
 
 using System.Collections.Generic;
+using Transformalize.Main.Providers.SqlServer;
 
-namespace Transformalize.Main.Providers.MySql
-{
-    public class MySqlTableQueryWriter : ITableQueryWriter
-    {
-        private const string CREATE_TABLE_TEMPLATE = "CREATE TABLE `{0}`({1});";
+namespace Transformalize.Main.Providers.MySql {
 
-        public string CreateTable(string name, IEnumerable<string> defs, string schema)
-        {
+    public class MySqlTableQueryWriter : QueryWriter, ITableQueryWriter {
+
+        public string CreateTable(string name, IEnumerable<string> defs, string schema) {
             var defList = string.Join(",\r\n    ", defs);
             return string.Format(
-                CREATE_TABLE_TEMPLATE,
-                name.Length > 128 ? name.Substring(0, 128) : name,
+                "CREATE TABLE `{0}`({1});",
+                SqlIdentifier(name),
                 defList
             );
         }
 
-        public string AddPrimaryKey(string name, string schema, IEnumerable<string> primaryKey)
-        {
+        public string AddPrimaryKey(string name, IEnumerable<string> primaryKey, string schema) {
             throw new System.NotImplementedException();
         }
 
-        public string DropPrimaryKey(string name, string schema, IEnumerable<string> primaryKey)
-        {
+        public string DropPrimaryKey(string name, IEnumerable<string> primaryKey, string schema) {
             throw new System.NotImplementedException();
         }
 
-        public string AddUniqueClusteredIndex(string name, string schema)
-        {
+        public string AddUniqueClusteredIndex(string name, string schema) {
             throw new System.NotImplementedException();
         }
 
-        public string DropUniqueClusteredIndex(string name, string schema)
-        {
+        public string DropUniqueClusteredIndex(string name, string schema) {
             throw new System.NotImplementedException();
         }
 
-        public string WriteTemporary(string name, Field[] fields, AbstractProvider provider, bool useAlias = true)
-        {
+        public string WriteTemporary(string name, Field[] fields, AbstractProvider provider, bool useAlias = true) {
             var safeName = provider.Enclose(name.TrimStart("@".ToCharArray()));
             var defs = useAlias ? new FieldSqlWriter(fields).Alias(provider).DataType().Write() : new FieldSqlWriter(fields).Name(provider).DataType().Write();
             return string.Format(@"CREATE TEMPORARY TABLE {0}({1}) ENGINE = MEMORY;", safeName, defs);

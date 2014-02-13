@@ -33,7 +33,10 @@ namespace Transformalize.Main.Providers.SqlServer {
                 NoCount = true,
                 NoLock = true,
                 Top = true,
-                TableVariable = true
+                TableVariable = true,
+                IndexInclude = true,
+                Views = true,
+                Schemas = true
             };
         }
     }

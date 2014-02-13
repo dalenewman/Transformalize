@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using Transformalize.Libs.NCalc;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
@@ -7,7 +8,7 @@ using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
 
-    public class ExpressionOperation : TflOperation {
+    public class ExpressionOperation : ShouldRunOperation {
         private readonly Logger _log = LogManager.GetLogger(string.Empty);
         private readonly Expression _expression;
         private readonly IParameters _parameters;
@@ -33,6 +34,8 @@ namespace Transformalize.Operations.Transform {
                     }
 
                     row[OutKey] = _expression.Evaluate();
+                } else {
+                    Interlocked.Increment(ref SkipCount);
                 }
 
                 yield return row;

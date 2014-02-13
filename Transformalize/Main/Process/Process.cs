@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -78,6 +79,7 @@ namespace Transformalize.Main {
         public string Star { get; set; }
         public string Bcp { get; set; }
         public string TimeZone { get; set; }
+        public bool IsFirstRun { get; set; }
 
         public PipelineThreading PipelineThreading {
             get { return _pipelineThreading; }
@@ -113,8 +115,13 @@ namespace Transformalize.Main {
 
         //methods
         public bool IsReady() {
-            if (Enabled || Options.Force)
-                return Connections.Select(connection => connection.Value.IsReady()).All(b => b.Equals(true));
+            if (Enabled || Options.Force) {
+                if (Connections.All(cn => cn.Value.IsReady())) {
+                    return true;
+                }
+                _log.Warn("Process is not ready.");
+                return false;
+            }
             _log.Error("Process is disabled. Data is not being updated.");
             return false;
         }

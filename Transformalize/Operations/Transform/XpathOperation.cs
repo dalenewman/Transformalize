@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Xml;
 using System.Xml.XPath;
 using Transformalize.Libs.Rhino.Etl;
@@ -7,7 +8,7 @@ using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
 
-    public class XPathOperation : TflOperation {
+    public class XPathOperation : ShouldRunOperation {
         private readonly string _outType;
         private readonly string _xPath;
         private readonly XmlReaderSettings _settings = new XmlReaderSettings();
@@ -32,7 +33,10 @@ namespace Transformalize.Operations.Transform {
                         }
                     }
                     row[OutKey] = Common.ConversionMap[_outType](target);
+                } else {
+                    Interlocked.Increment(ref SkipCount);
                 }
+
                 yield return row;
             }
         }

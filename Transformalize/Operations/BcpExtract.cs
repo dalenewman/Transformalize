@@ -73,7 +73,7 @@ namespace Transformalize.Operations
                 Directory.CreateDirectory(_folder);
             } else {
                 if (_fileInfo.Exists) {
-                    _log.Debug("Deleting temporary file {0}", _fileInfo.Name);
+                    _log.Debug("Deleting temporary BCP file {0}", _fileInfo.Name);
                     _fileInfo.Delete();
                 }
             }

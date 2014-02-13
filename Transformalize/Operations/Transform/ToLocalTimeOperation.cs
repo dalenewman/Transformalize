@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using Transformalize.Libs.NLog.Internal;
 using Transformalize.Libs.Rhino.Etl;
 
 namespace Transformalize.Operations.Transform {
 
-    public class ToLocalTimeOperation : TflOperation {
+    public class ToLocalTimeOperation : ShouldRunOperation {
 
         private readonly TimeSpan _adjustment;
 
@@ -45,7 +46,10 @@ namespace Transformalize.Operations.Transform {
                 if (ShouldRun(row)) {
                     var date = (DateTime)row[InKey];
                     row[OutKey] = date.Add(_adjustment);
+                } else {
+                    Interlocked.Increment(ref SkipCount);
                 }
+
                 yield return row;
             }
         }

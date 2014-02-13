@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using Transformalize.Libs.NLog.Internal;
 using Transformalize.Libs.Rhino.Etl;
 
 namespace Transformalize.Operations.Transform {
 
-    public class TimeZoneOperation : TflOperation {
+    public class TimeZoneOperation : ShouldRunOperation {
 
         private readonly TimeZoneInfo _toTimeZoneInfo;
         private readonly TimeSpan _adjustment;
@@ -48,7 +49,10 @@ namespace Transformalize.Operations.Transform {
                     } else {
                         row[OutKey] = date.Add(_adjustment);
                     }
+                } else {
+                    Interlocked.Increment(ref SkipCount);
                 }
+
                 yield return row;
             }
         }

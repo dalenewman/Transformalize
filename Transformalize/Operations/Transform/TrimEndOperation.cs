@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using System.Threading;
 using Transformalize.Libs.Rhino.Etl;
 
 namespace Transformalize.Operations.Transform {
-    public class TrimEndOperation : TflOperation {
+    public class TrimEndOperation : ShouldRunOperation {
 
         private readonly char[] _trimCharArray;
 
@@ -15,7 +16,10 @@ namespace Transformalize.Operations.Transform {
             foreach (var row in rows) {
                 if (ShouldRun(row)) {
                     row[OutKey] = row[InKey].ToString().TrimEnd(_trimCharArray);
+                } else {
+                    Interlocked.Increment(ref SkipCount);
                 }
+
                 yield return row;
             }
         }

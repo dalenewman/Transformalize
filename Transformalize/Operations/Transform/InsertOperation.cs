@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using System.Threading;
 using Transformalize.Libs.Rhino.Etl;
 
 namespace Transformalize.Operations.Transform {
-    public class InsertOperation : TflOperation {
+    public class InsertOperation : ShouldRunOperation {
         private readonly int _startIndex;
         private readonly string _value;
 
@@ -18,7 +19,10 @@ namespace Transformalize.Operations.Transform {
                     var value = row[InKey].ToString();
                     if (value.Length > _startIndex)
                         row[OutKey] = value.Insert(_startIndex, _value);
+                } else {
+                    Interlocked.Increment(ref SkipCount);
                 }
+
                 yield return row;
             }
         }

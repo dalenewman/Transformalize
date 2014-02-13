@@ -7,7 +7,7 @@ namespace Transformalize.Main
     public class FolderEntityRecordsExist : IEntityRecordsExist {
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
-        public bool RecordsExist(AbstractConnection connection, string schema, string name) {
+        public bool RecordsExist(AbstractConnection connection, Entity entity) {
             return connection.Name.Equals("output", IC) || new DirectoryInfo(connection.Folder).GetFiles("*.*",SearchOption.TopDirectoryOnly).Length > 0;
         }
     }

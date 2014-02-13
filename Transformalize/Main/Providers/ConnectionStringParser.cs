@@ -23,34 +23,29 @@
 using System;
 using System.Linq;
 
-namespace Transformalize.Main.Providers
-{
-    public static class ConnectionStringParser
-    {
-        private static readonly string[] ServerAliases = {"server", "host", "data source", "datasource", "address", "addr", "network address"};
-        private static readonly string[] DatabaseAliases = {"database", "initial catalog"};
-        private static readonly string[] UsernameAliases = {"user id", "uid", "username", "user name", "user"};
-        private static readonly string[] PasswordAliases = {"password", "pwd"};
-        private static readonly string[] TrustedAliases = {"trusted_connection", "integrated security"};
-        private static readonly string[] FileAliases = {"data source", "datasource", "file", "filename"};
+namespace Transformalize.Main.Providers {
+    public static class ConnectionStringParser {
+        private static readonly string[] ServerAliases = { "server", "host", "data source", "datasource", "address", "addr", "network address" };
+        private static readonly string[] DatabaseAliases = { "database", "initial catalog" };
+        private static readonly string[] UsernameAliases = { "user id", "uid", "username", "user name", "user" };
+        private static readonly string[] PasswordAliases = { "password", "pwd" };
+        private static readonly string[] TrustedAliases = { "trusted_connection", "integrated security" };
+        private static readonly string[] FileAliases = { "data source", "datasource", "file", "filename" };
+        private static readonly string[] PersistSecurityInfoAliases = { "persist security info" };
 
-        public static string GetPassword(string connectionString)
-        {
+        public static string GetPassword(string connectionString) {
             return GetValue(connectionString, PasswordAliases);
         }
 
-        public static string GetUsername(string connectionString)
-        {
+        public static string GetUsername(string connectionString) {
             return GetValue(connectionString, UsernameAliases);
         }
 
-        public static string GetDatabaseName(string connectionString)
-        {
+        public static string GetDatabaseName(string connectionString) {
             return GetValue(connectionString, DatabaseAliases);
         }
 
-        public static string GetServerName(string connectionString)
-        {
+        public static string GetServerName(string connectionString) {
             return GetValue(connectionString, ServerAliases);
         }
 
@@ -58,21 +53,22 @@ namespace Transformalize.Main.Providers
             return GetValue(connectionString, FileAliases);
         }
 
-        public static bool GetTrustedConnection(string connectionString)
-        {
-            return (new[] {"true", "sspi"}).Contains(GetValue(connectionString, TrustedAliases).ToLower());
+        public static string GetPersistSecurityInfo(string connectionString) {
+            return GetValue(connectionString, PersistSecurityInfoAliases);
         }
 
-        private static string GetValue(string connectionString, params string[] keyAliases)
-        {
+        public static bool GetTrustedConnection(string connectionString) {
+            return (new[] { "true", "sspi" }).Contains(GetValue(connectionString, TrustedAliases).ToLower());
+        }
+
+        private static string GetValue(string connectionString, params string[] keyAliases) {
             var keyValuePairs = connectionString.Split(';')
                                                 .Where(kvp => kvp.Contains('='))
-                                                .Select(kvp => kvp.Split(new[] {'='}, 2))
+                                                .Select(kvp => kvp.Split(new[] { '=' }, 2))
                                                 .ToDictionary(kvp => kvp[0].Trim(),
                                                               kvp => kvp[1].Trim(),
                                                               StringComparer.InvariantCultureIgnoreCase);
-            foreach (var alias in keyAliases)
-            {
+            foreach (var alias in keyAliases) {
                 string value;
                 if (keyValuePairs.TryGetValue(alias, out value))
                     return value;

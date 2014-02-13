@@ -54,30 +54,6 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void TestInvalidDatabaseProvider() {
-            var c = new ConnectionConfigurationElement();
-
-            var validator = ValidationFactory.CreateValidator<ConnectionConfigurationElement>();
-            var results = validator.Validate(c);
-
-            Assert.IsFalse(results.IsValid);
-            Assert.AreEqual("The SqlServer provider requires either the ConnectionString or Database property setting.", results.First().Message);
-        }
-
-        [Test]
-        public void TestInvalidDatabaseCredentials() {
-            var c = new ConnectionConfigurationElement();
-            c.ConnectionString = "server=localhost;database=NorthWind;";
-
-            var validator = ValidationFactory.CreateValidator<ConnectionConfigurationElement>();
-
-            var results = validator.Validate(c);
-
-            Assert.IsFalse(results.IsValid);
-            Assert.AreEqual("An untrusted connection string like 'server=localhost;database=NorthWind;' must include credentials (i.e. username, password) or be set to trusted (i.e. trusted_connection=true).", results.First().Message);
-        }
-
-        [Test]
         public void TestValidFile() {
             var c = new ConnectionConfigurationElement { Provider = "File", File = @"c:\temp\log.txt" };
 

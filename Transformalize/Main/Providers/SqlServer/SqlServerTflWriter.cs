@@ -27,12 +27,16 @@ namespace Transformalize.Main.Providers.SqlServer {
     public class SqlServerTflWriter : WithLoggingMixin, ITflWriter {
 
         public void Initialize(Process process) {
+
             if (!new SqlServerTableExists(process.OutputConnection).Exists("dbo", "TflBatch")) {
-                Execute(process.OutputConnection, CreateSql());
+                Execute(process.OutputConnection, CreateTable());
+                Execute(process.OutputConnection, CreateIndex());
                 Debug("Created TflBatch.");
             }
 
-            Execute(process.OutputConnection, "DELETE FROM TflBatch WHERE ProcessName = '{0}';", process.Name);
+            var sql = string.Format("DELETE FROM TflBatch WHERE ProcessName = '{0}';", process.Name);
+            Debug(sql);
+            Execute(process.OutputConnection, sql);
 
             Info("Initialized TrAnSfOrMaLiZeR {0} connection.", process.OutputConnection.Name);
         }
@@ -49,7 +53,17 @@ namespace Transformalize.Main.Providers.SqlServer {
             }
         }
 
-        public string CreateSql() {
+        public string CreateIndex()
+        {
+            return @"
+                CREATE INDEX Ix_TflBatch_ProcessName_EntityName__TflBatchId ON TflBatch (
+                    ProcessName ASC,
+                    EntityName ASC
+                ) INCLUDE (TflBatchId);
+            ";
+        }
+
+        public string CreateTable() {
             return @"
                 CREATE TABLE [TflBatch](
                     [TflBatchId] INT NOT NULL,
@@ -71,11 +85,6 @@ namespace Transformalize.Main.Providers.SqlServer {
                         ProcessName
 					)
                 );
-
-                CREATE INDEX Ix_TflBatch_ProcessName_EntityName__TflBatchId ON TflBatch (
-                    ProcessName ASC,
-                    EntityName ASC
-                ) INCLUDE (TflBatchId);
             ";
         }
     }

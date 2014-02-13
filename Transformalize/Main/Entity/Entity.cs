@@ -66,7 +66,6 @@ namespace Transformalize.Main {
         public long Inserts { get; set; }
         public long Deletes { get; set; }
         public int TflBatchId { get { return _tflBatchId; } }
-        public bool IsFirstRun { get; set; }
         public bool UseBcp { get; set; }
         public bool IndexOptimizations { get; set; }
         public bool Delete { get; set; }

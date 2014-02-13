@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 
 namespace Transformalize.Operations.Transform {
 
-    public class ToStringOperation : TflOperation {
+    public class ToStringOperation : ShouldRunOperation {
         private readonly string _inType;
         private readonly string _format;
         private readonly Logger _log = LogManager.GetLogger(string.Empty);
@@ -37,7 +38,10 @@ namespace Transformalize.Operations.Transform {
             foreach (var row in rows) {
                 if (ShouldRun(row)) {
                     row[OutKey] = _toString[_inType](row[InKey], _format);
+                } else {
+                    Interlocked.Increment(ref SkipCount);
                 }
+
                 yield return row;
             }
 

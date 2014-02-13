@@ -20,34 +20,26 @@
 
 #endregion
 
-namespace Transformalize.Main.Providers.SqlServer
-{
-
-    public class SqlServerEntityRecordsExist : IEntityRecordsExist
-    {
-        private const string FORMAT = @"
-IF EXISTS(
-	SELECT *
-	FROM [{0}].[{1}]
-)	SELECT 1
-ELSE
-	SELECT 0;";
+namespace Transformalize.Main.Providers.SqlServer {
+    public class SqlServerEntityRecordsExist : IEntityRecordsExist {
         private readonly IEntityExists _entityExists;
 
-        public SqlServerEntityRecordsExist( )
-        {
-            _entityExists = new SqlServerEntityExists();
+        public SqlServerEntityRecordsExist(IEntityExists entityExists) {
+            _entityExists = entityExists;
         }
 
-        public bool RecordsExist(AbstractConnection connection, string schema, string name)
-        {
-            if (_entityExists.Exists(connection, schema, name)) {
+        public bool RecordsExist(AbstractConnection connection, Entity entity) {
+
+            if (_entityExists.Exists(connection, entity)) {
+
                 using (var cn = connection.GetConnection()) {
                     cn.Open();
-                    var sql = string.Format(FORMAT, schema, name);
+                    var sql = string.Format(@"SELECT TOP(1) [{0}] FROM [{1}].[{2}];", entity.PrimaryKey.First().Key, entity.Schema, entity.OutputName());
                     var cmd = cn.CreateCommand();
                     cmd.CommandText = sql;
-                    return (int)cmd.ExecuteScalar() == 1;
+                    using (var reader = cmd.ExecuteReader()) {
+                        return reader.Read();
+                    }
                 }
             }
             return false;

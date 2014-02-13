@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using System.Threading;
 using Transformalize.Libs.Rhino.Etl;
 
 namespace Transformalize.Operations.Transform {
-    public class GetHashCodeOperation : TflOperation {
+    public class GetHashCodeOperation : ShouldRunOperation {
 
         public GetHashCodeOperation(string inKey, string outKey) : base(inKey, outKey) { }
 
@@ -10,7 +11,10 @@ namespace Transformalize.Operations.Transform {
             foreach (var row in rows) {
                 if (ShouldRun(row)) {
                     row[OutKey] = row[InKey].GetHashCode();
+                } else {
+                    Interlocked.Increment(ref SkipCount);
                 }
+
                 yield return row;
             }
         }

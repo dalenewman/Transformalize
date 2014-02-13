@@ -57,6 +57,7 @@ namespace Transformalize.Main.Providers {
         public string User { get; set; }
         public string Password { get; set; }
         public int Port { get; set; }
+        public string PersistSecurityInfo { get; set; }
 
         public string File { get; set; }
         public string Folder { get; set; }
@@ -75,12 +76,12 @@ namespace Transformalize.Main.Providers {
         public abstract string DatabaseProperty { get; }
         public abstract string ServerProperty { get; }
         public abstract string TrustedProperty { get; }
+        public abstract string PersistSecurityInfoProperty { get; }
 
         protected AbstractConnection(
             ConnectionConfigurationElement element,
             AbstractConnectionDependencies dependencies
-        )
-        {
+        ) {
             BatchSize = element.BatchSize;
             Name = element.Name;
             Start = element.Start;
@@ -102,7 +103,7 @@ namespace Transformalize.Main.Providers {
             TflWriter = dependencies.TflWriter;
             ScriptRunner = dependencies.ScriptRunner;
             ProviderSupportsModifier = dependencies.ProviderSupportsModifier;
-            
+
             ProcessConnectionString(element);
         }
 
@@ -123,12 +124,18 @@ namespace Transformalize.Main.Providers {
             Server = ConnectionStringParser.GetServerName(connectionString);
             User = ConnectionStringParser.GetUsername(connectionString);
             Password = ConnectionStringParser.GetPassword(connectionString);
+            PersistSecurityInfo = ConnectionStringParser.GetPersistSecurityInfo(connectionString);
         }
 
 
         public string GetConnectionString() {
 
-            var builder = new DbConnectionStringBuilder { { ServerProperty, Server }, { DatabaseProperty, Database } };
+            var builder = new DbConnectionStringBuilder { { ServerProperty, Server } };
+
+            if (!string.IsNullOrEmpty(Database)) {
+                builder.Add(DatabaseProperty, Database);
+            }
+
             if (!String.IsNullOrEmpty(User)) {
                 builder.Add(UserProperty, User);
                 builder.Add(PasswordProperty, Password);
@@ -137,12 +144,18 @@ namespace Transformalize.Main.Providers {
                     builder.Add(TrustedProperty, true);
                 }
             }
-            if (Port > 0) {
-                if (PortProperty == string.Empty) {
-                    builder[ServerProperty] += "," + Port;
-                } else {
-                    builder.Add("Port", Port);
-                }
+
+            if (PersistSecurityInfoProperty != string.Empty && PersistSecurityInfo != string.Empty) {
+                builder.Add(PersistSecurityInfoProperty, PersistSecurityInfo);
+            }
+
+            if (Port <= 0)
+                return builder.ConnectionString;
+
+            if (PortProperty == string.Empty) {
+                builder[ServerProperty] += "," + Port;
+            } else {
+                builder.Add("Port", Port);
             }
             return builder.ConnectionString;
         }
@@ -171,7 +184,8 @@ namespace Transformalize.Main.Providers {
         }
 
         public int NextBatchId(string processName) {
-            if (!RecordsExist("dbo", "TflBatch")) {
+            var tflEntity = new Entity(1){ Name = "TflBatch", Alias = "TflBatch", Schema = "dbo", PrimaryKey = new Fields() {new Field(FieldType.PrimaryKey) { Name = "TflBatchId"}}};
+            if (!RecordsExist(tflEntity)) {
                 return 1;
             }
 
@@ -237,16 +251,16 @@ namespace Transformalize.Main.Providers {
             }
         }
 
-        public bool RecordsExist(string schema, string name) {
-            return EntityRecordsExist.RecordsExist(this, schema, name);
+        public bool RecordsExist(Entity entity) {
+            return EntityRecordsExist.RecordsExist(this, entity);
         }
 
         public void Drop(Entity entity) {
-            EntityDropper.Drop(this, entity.Schema, entity.OutputName());
+            EntityDropper.Drop(this, entity);
         }
 
         public bool Exists(Entity entity) {
-            return EntityDropper.EntityExists.Exists(this, entity.Schema, entity.OutputName());
+            return EntityDropper.EntityExists.Exists(this, entity);
         }
 
         public bool IsDelimited() {
@@ -261,7 +275,7 @@ namespace Transformalize.Main.Providers {
             var primaryKey = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).FieldType(entity.IsMaster() ? FieldType.MasterKey : FieldType.PrimaryKey).Alias(this.Provider).Asc().Values();
             using (var cn = GetConnection()) {
                 cn.Open();
-                cn.Execute(TableQueryWriter.DropPrimaryKey(entity.OutputName(), entity.Schema, primaryKey));
+                cn.Execute(TableQueryWriter.DropPrimaryKey(entity.OutputName(), primaryKey, entity.Schema));
             }
         }
 
@@ -269,7 +283,7 @@ namespace Transformalize.Main.Providers {
             var primaryKey = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).FieldType(entity.IsMaster() ? FieldType.MasterKey : FieldType.PrimaryKey).Alias(this.Provider).Asc().Values();
             using (var cn = GetConnection()) {
                 cn.Open();
-                cn.Execute(TableQueryWriter.AddPrimaryKey(entity.OutputName(), entity.Schema, primaryKey));
+                cn.Execute(TableQueryWriter.AddPrimaryKey(entity.OutputName(), primaryKey, entity.Schema));
             }
         }
 

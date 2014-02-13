@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
-    public class FormatOperation : TflOperation {
+    public class FormatOperation : ShouldRunOperation {
 
         private readonly string _format;
         private readonly IEnumerable<KeyValuePair<string, IParameter>> _parameters;
@@ -20,7 +21,10 @@ namespace Transformalize.Operations.Transform {
                 if (ShouldRun(row)) {
                     var linqRow = row;
                     row[OutKey] = string.Format(_format, _parameters.Select(p => linqRow[p.Key] ?? p.Value).ToArray());
+                } else {
+                    Interlocked.Increment(ref SkipCount);
                 }
+
                 yield return row;
             }
         }

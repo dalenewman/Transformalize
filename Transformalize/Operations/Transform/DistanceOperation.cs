@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Device.Location;
+using System.Threading;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
 
-    public class DistanceOperation : TflOperation {
+    public class DistanceOperation : ShouldRunOperation {
 
         private readonly string _units;
         private readonly SortedDictionary<string, Tuple<string, object>> _params = new SortedDictionary<string, Tuple<string, object>>();
@@ -44,6 +45,8 @@ namespace Transformalize.Operations.Transform {
 
                     var meters = new GeoCoordinate(fromLat, fromLong).GetDistanceTo(new GeoCoordinate(toLat, toLong));
                     row[OutKey] = _conversion[_units](meters);
+                } else {
+                    Interlocked.Increment(ref SkipCount);
                 }
                 yield return row;
             }

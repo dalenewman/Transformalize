@@ -43,7 +43,7 @@ namespace Transformalize.Operations {
 
             var fields = string.Join(", ", _keys);
 
-            if (!_process.MasterEntity.IsFirstRun) {
+            if (!_process.IsFirstRun) {
                 _batchIds = _process.Entities.Select(kv => kv.TflBatchId).Distinct().ToArray();
                 @where = _batchIds.Length == 1 ? " WHERE [TflBatchId] = @TflBatchId" : string.Format(" WHERE TflBatchId BETWEEN {0} AND {1}", _batchIds.Min(), _batchIds.Max());
             }
@@ -68,7 +68,7 @@ namespace Transformalize.Operations {
             cmd.CommandText = PrepareSql();
             cmd.CommandTimeout = 0;
 
-            if (!_process.MasterEntity.IsFirstRun) {
+            if (!_process.IsFirstRun) {
                 if (_batchIds.Length == 1) {
                     AddParameter(cmd, "@TflBatchId", _batchIds[0]);
                 }

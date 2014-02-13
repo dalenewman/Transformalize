@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
-    public class IfOperation : TflOperation {
+    public class IfOperation : ShouldRunOperation {
 
         private readonly ComparisonOperator _op;
 
@@ -86,7 +87,10 @@ namespace Transformalize.Operations.Transform {
                     } else {
                         row[OutKey] = _elseHasValue ? _elseValue : row[_else.Key];
                     }
+                } else {
+                    Interlocked.Increment(ref SkipCount);
                 }
+
 
                 yield return row;
             }

@@ -70,7 +70,7 @@ namespace Transformalize.Configuration {
         [ConfigurationProperty(ERROR_MODE, IsRequired = false, DefaultValue = "SaveAndContinue")]
         public string ErrorMode {
             get { return this[ERROR_MODE] as string; }
-            set { this[ERROR_MODE] = value;  }
+            set { this[ERROR_MODE] = value; }
         }
 
         [ConfigurationProperty(PORT, IsRequired = false, DefaultValue = 0)]
@@ -158,7 +158,7 @@ namespace Transformalize.Configuration {
             set { this[COMPATABILITY_LEVEL] = value; }
         }
 
-        [RegexStringValidator(@"(?i)SqlServer|AnalysisServices|MySql|File|Folder|Internal")]
+        [RegexStringValidator(@"(?i)SqlServer|AnalysisServices|MySql|File|Folder|Internal|SqlServerCe")]
         [ConfigurationProperty(PROVIDER, IsRequired = false, DefaultValue = "SqlServer")]
         public string Provider {
             get { return this[PROVIDER] as string; }
@@ -184,25 +184,14 @@ namespace Transformalize.Configuration {
 
         [SelfValidation]
         public void Validate(ValidationResults results) {
-
-            if ((new[] { "sqlserver", "mysql" }).Any(p => p.Equals(Provider, IC))) {
-                if (string.IsNullOrEmpty(ConnectionString) && string.IsNullOrEmpty(Database)) {
-                    var message = string.Format("The {0} provider requires either the ConnectionString or Database property setting.", Provider);
-                    results.AddResult(new ValidationResult(message, this, null, null, null));
-                } else {
-                    if (String.IsNullOrEmpty(Database)) {
-                        var user = ConnectionStringParser.GetUsername(ConnectionString);
-                        var pw = ConnectionStringParser.GetPassword(ConnectionString);
-                        var trusted = ConnectionStringParser.GetTrustedConnection(ConnectionString);
-                        if (!trusted && (String.IsNullOrEmpty(user) || String.IsNullOrEmpty(pw))) {
-                            var message = string.Format("An untrusted connection string like '{0}' must include credentials (i.e. username, password) or be set to trusted (i.e. trusted_connection=true).", ConnectionString);
-                            results.AddResult(new ValidationResult(message, this, null, null, null));
-                        }
-                    }
-                }
-            } else if (Provider.Equals("file", IC)) {
+            if (Provider.Equals("file", IC)) {
                 if (string.IsNullOrEmpty(File)) {
                     var message = string.Format("The {0} provider requires the File property setting.", Provider);
+                    results.AddResult(new ValidationResult(message, this, null, null, null));
+                }
+            } else if (Provider.Equals("folder", IC)) {
+                if (string.IsNullOrEmpty(Folder)) {
+                    var message = string.Format("The {0} provider requires the Folder property setting.", Provider);
                     results.AddResult(new ValidationResult(message, this, null, null, null));
                 }
             }

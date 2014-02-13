@@ -25,7 +25,9 @@ namespace Transformalize.Main.Providers
     public enum ProviderType
     {
         SqlServer,
+        SqlServerCe,
         MySql,
+        PostgreSql,
         AnalysisServices,
         File,
         Internal,

@@ -25,11 +25,12 @@ using System.Linq;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
-using Transformalize.Main.Providers.SqlServer;
 using Transformalize.Libs.Dapper;
 
 namespace Transformalize.Operations {
+
     public class EntityCreate : AbstractOperation {
+
         private readonly Entity _entity;
         private readonly Process _process;
         private readonly FieldSqlWriter _writer;
@@ -65,7 +66,7 @@ namespace Transformalize.Operations {
             var indexSql = _process.OutputConnection.TableQueryWriter.AddUniqueClusteredIndex(_entity.OutputName(), _entity.Schema);
             Debug(indexSql);
 
-            var keySql = _process.OutputConnection.TableQueryWriter.AddPrimaryKey(_entity.OutputName(), _entity.Schema, primaryKey);
+            var keySql = _process.OutputConnection.TableQueryWriter.AddPrimaryKey(_entity.OutputName(), primaryKey, _entity.Schema);
             Debug(keySql);
 
             using (var cn = _process.OutputConnection.GetConnection()) {

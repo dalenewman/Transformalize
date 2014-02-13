@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.RazorEngine;
 using Transformalize.Libs.RazorEngine.Templating;
@@ -7,7 +8,7 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
-    public class TemplateOperation : TflOperation {
+    public class TemplateOperation : ShouldRunOperation {
 
         private readonly StringBuilder _builder = new StringBuilder();
         private readonly Logger _log = LogManager.GetLogger(string.Empty);
@@ -41,7 +42,10 @@ namespace Transformalize.Operations.Transform {
                         RunWithDynamic(row);
                     else
                         RunWithDictionary(row);
+                } else {
+                    Interlocked.Increment(ref SkipCount);
                 }
+
 
                 yield return row;
             }

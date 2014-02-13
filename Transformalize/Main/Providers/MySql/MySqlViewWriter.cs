@@ -12,4 +12,5 @@ namespace Transformalize.Main.Providers.MySql
             Warn("MySql View Dropper is not implemented yet.");
         }
     }
+
 }

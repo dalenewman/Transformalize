@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using System.Threading;
 using Transformalize.Libs.Rhino.Etl;
 
 namespace Transformalize.Operations.Transform {
-    public class TrimStartAppendOperation : TflOperation {
+    public class TrimStartAppendOperation : ShouldRunOperation {
 
         private readonly string _separator;
         private readonly char[] _trimChars;
@@ -18,7 +19,10 @@ namespace Transformalize.Operations.Transform {
                 if (ShouldRun(row)) {
                     var orginal = row[InKey].ToString();
                     row[OutKey] = string.Join(_separator, new[] { orginal, orginal.TrimStart(_trimChars) });
+                } else {
+                    Interlocked.Increment(ref SkipCount);
                 }
+
                 yield return row;
             }
         }

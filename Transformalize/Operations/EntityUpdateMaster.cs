@@ -52,7 +52,7 @@ namespace Transformalize.Operations {
 
             //escape 2
             var entityChanged = _entity.Inserts + _entity.Updates > 0;
-            var masterChanged = _process.MasterEntity.Inserts > 0;
+            var masterChanged = _process.MasterEntity.Inserts + _process.MasterEntity.Updates > 0;
             if (!entityChanged && !masterChanged)
                 return rows;
 
@@ -68,12 +68,12 @@ namespace Transformalize.Operations {
                 if (entityChanged && masterChanged) {
                     where = string.Format("WHERE {0}.TflBatchId = @TflBatchId OR {1}.TflBatchId = @MasterTflBatchId;", entity, master);
                     var sql = PrepareSql(master, entity, provider) + where;
-                    Debug("SQL:\r\n" + sql);
+                    Debug(sql);
                     records = cn.Execute(sql, new { _entity.TflBatchId, MasterTflBatchId = _process.MasterEntity.TflBatchId }, commandTimeout: 0);
                 } else {
                     where = string.Format("WHERE {0}.TflBatchId = @TflBatchId;", entityChanged ? entity : master);
                     var sql = PrepareSql(master, entity, provider) + where;
-                    Debug("SQL:\r\n" + sql);
+                    Debug(sql);
                     records = cn.Execute(sql, new { TflBatchId = entityChanged ? _entity.TflBatchId : _process.MasterEntity.TflBatchId }, commandTimeout: 0);
                 }
 

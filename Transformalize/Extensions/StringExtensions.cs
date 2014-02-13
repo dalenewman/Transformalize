@@ -20,18 +20,14 @@
 
 #endregion
 
-namespace Transformalize.Extensions
-{
-    public static class StringExtensions
-    {
-        public static string Left(this string s, int length)
-        {
-            return s.Substring(0, length);
+namespace Transformalize.Extensions {
+    public static class StringExtensions {
+        public static string Left(this string s, int length) {
+            return s.Length > length ? s.Substring(0, length) : s;
         }
 
-        public static string Right(this string s, int length)
-        {
-            return s.Substring(s.Length - length, length);
+        public static string Right(this string s, int length) {
+            return s.Length > length ? s.Substring(s.Length - length, length) : s;
         }
     }
 }

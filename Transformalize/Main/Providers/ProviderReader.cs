@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Transformalize.Configuration;
-using Transformalize.Libs.Ninject.Activation;
 
 namespace Transformalize.Main.Providers {
     public class ProviderReader {
@@ -20,6 +19,10 @@ namespace Transformalize.Main.Providers {
 
             if (!providers.ContainsKey("sqlserver")) {
                 providers.Add("sqlserver", "System.Data.SqlClient.SqlConnection, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
+            }
+
+            if (!providers.ContainsKey("sqlce4")) {
+                providers.Add("sqlce4", "System.Data.SqlServerCe.SqlCeConnection, System.Data.SqlServerCe");
             }
 
             if (!providers.ContainsKey("mysql")) {

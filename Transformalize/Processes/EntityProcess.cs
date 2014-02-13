@@ -46,7 +46,6 @@ namespace Transformalize.Processes {
         }
 
         protected override void Initialize() {
-            _entity.IsFirstRun = !_process.OutputConnection.RecordsExist(_entity.Schema, _entity.OutputName());
 
             if (!_entity.InputConnection.Provider.IsDatabase) {
                 if (_entity.InputConnection.IsFile()) {
@@ -64,7 +63,7 @@ namespace Transformalize.Processes {
                     }
                 }
             } else {
-                if (_entity.IsFirstRun && _entity.UseBcp && _entity.InputConnection.Provider.Type == ProviderType.SqlServer) {
+                if (_process.IsFirstRun && _entity.UseBcp && _entity.InputConnection.Provider.Type == ProviderType.SqlServer) {
                     Register(new BcpExtract(_process, _entity));
                 } else {
                     Register(new EntityKeysToOperations(_entity));
@@ -88,7 +87,7 @@ namespace Transformalize.Processes {
                 if (_process.OutputConnection.Provider.Type == ProviderType.File) {
                     RegisterLast(new FileLoadOperation(_process, _entity));
                 } else {
-                    if (_entity.IsFirstRun) {
+                    if (_process.IsFirstRun) {
                         if (_process.OutputConnection.Provider.IsDatabase && _entity.IndexOptimizations) {
                             _process.OutputConnection.DropUniqueClusteredIndex(_entity);
                             _process.OutputConnection.DropPrimaryKey(_entity);
@@ -123,7 +122,7 @@ namespace Transformalize.Processes {
         protected override void PostProcessing() {
 
             _entity.InputKeys.Clear();
-            if (_entity.IsFirstRun && _process.OutputConnection.Provider.IsDatabase && _entity.IndexOptimizations) {
+            if (_process.IsFirstRun && _process.OutputConnection.Provider.IsDatabase && _entity.IndexOptimizations) {
                 _process.OutputConnection.AddUniqueClusteredIndex(_entity);
                 _process.OutputConnection.AddPrimaryKey(_entity);
             }

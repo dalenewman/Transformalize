@@ -20,13 +20,10 @@
 
 #endregion
 
-namespace Transformalize.Main.Providers.SqlServer
-{
-    public class SqlServerEntityExists : IEntityExists
-    {
-        public bool Exists(AbstractConnection connection, string schema, string name)
-        {
-            return new SqlServerTableExists(connection).Exists(schema, name);
+namespace Transformalize.Main.Providers.SqlServer {
+    public class SqlServerEntityExists : IEntityExists {
+        public bool Exists(AbstractConnection connection, Entity entity) {
+            return new SqlServerTableExists(connection).Exists(entity.Schema, entity.OutputName());
         }
     }
 }

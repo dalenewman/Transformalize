@@ -1,4 +1,4 @@
-namespace Transformalize.Main.Providers.Internal
+namespace Transformalize.Main.Providers
 {
     public abstract class AbstractConnectionDependencies {
 

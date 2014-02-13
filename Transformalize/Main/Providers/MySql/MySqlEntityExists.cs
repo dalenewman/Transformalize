@@ -14,10 +14,10 @@ namespace Transformalize.Main.Providers.MySql
             COMMIT;
         ";
 
-        public bool Exists(AbstractConnection connection, string schema, string name) {
+        public bool Exists(AbstractConnection connection, Entity entity) {
             using (var cn = connection.GetConnection()) {
                 cn.Open();
-                var table = cn.Query<string>(SQL, new { name }).DefaultIfEmpty(string.Empty).FirstOrDefault();
+                var table = cn.Query<string>(SQL, new { name = entity.OutputName() }).DefaultIfEmpty(string.Empty).FirstOrDefault();
                 return !string.IsNullOrEmpty(table);
             }
         }

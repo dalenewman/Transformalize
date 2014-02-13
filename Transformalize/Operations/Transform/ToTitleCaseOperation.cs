@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading;
 using Transformalize.Libs.Rhino.Etl;
 
 namespace Transformalize.Operations.Transform {
-    public class ToTitleCaseOperation : TflOperation {
+    public class ToTitleCaseOperation : ShouldRunOperation {
         private readonly TextInfo _textInfo;
 
         public ToTitleCaseOperation(string inKey, string outKey)
@@ -15,7 +16,10 @@ namespace Transformalize.Operations.Transform {
             foreach (var row in rows) {
                 if (ShouldRun(row)) {
                     row[OutKey] = _textInfo.ToTitleCase(row[InKey].ToString().ToLower());
+                } else {
+                    Interlocked.Increment(ref SkipCount);
                 }
+
                 yield return row;
             }
         }
