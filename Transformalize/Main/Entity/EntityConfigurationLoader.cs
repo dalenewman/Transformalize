@@ -63,6 +63,7 @@ namespace Transformalize.Main {
                 IndexOptimizations = element.IndexOptimizations,
                 Delete = element.Delete,
                 PrependProcessNameToOutputName = element.PrependProcessNameToOutputName,
+                Sample = element.Sample,
                 Alias = string.IsNullOrEmpty(element.Alias) ? element.Name : element.Alias,
                 UseBcp = element.UseBcp,
                 InputOperation = element.InputOperation

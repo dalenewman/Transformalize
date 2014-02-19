@@ -63,9 +63,9 @@ namespace Transformalize.Operations {
             var connection = _process.OutputConnection;
             var provider = connection.Provider;
             const string sqlPattern = @"
-SELECT e.{0}, e.TflKey{1}
-FROM {2} e WITH (NOLOCK);
-";
+                SELECT e.{0}, e.TflKey{1}
+                FROM {2} e WITH (NOLOCK);
+            ";
 
             var rowVersion = string.Empty;
             if (_entity.Version != null && !VersionIsPrimaryKey()) {
@@ -86,12 +86,12 @@ FROM {2} e WITH (NOLOCK);
             var connection = _process.OutputConnection;
             var provider = connection.Provider;
             const string sqlPattern = @"
-{0}
+                {0}
 
-SELECT e.{1}, e.TflKey{2}
-FROM {3} e WITH (NOLOCK)
-INNER JOIN @KEYS k ON ({4});
-";
+                SELECT e.{1}, e.TflKey{2}
+                FROM {3} e WITH (NOLOCK)
+                INNER JOIN @KEYS k ON ({4});
+            ";
 
             var builder = new StringBuilder();
             builder.AppendLine(_process.OutputConnection.WriteTemporaryTable("@KEYS", _key));

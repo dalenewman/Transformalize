@@ -1189,6 +1189,7 @@
     <Compile Include="Operations\EntityDelete.cs" />
     <Compile Include="Operations\EntityOutputKeysExtractAll.cs" />
     <Compile Include="Operations\Load\FileLoadOperation.cs" />
+    <Compile Include="Operations\SampleOperation.cs" />
     <Compile Include="Operations\Transform\ConcatOperation.cs" />
     <Compile Include="Operations\Transform\ConvertOperation.cs" />
     <Compile Include="Operations\Transform\DistanceOperation.cs" />
@@ -1632,7 +1633,7 @@
     <Compile Include="Operations\EntityInputKeysStoreExtract.cs" />
     <Compile Include="Processes\InitializationProcess.cs" />
     <Compile Include="Processes\EntityProcess.cs" />
-    <Compile Include="Processes\StringLengthOperation.cs" />
+    <Compile Include="Processes\TruncateOperation.cs" />
     <Compile Include="Processes\TransformProcess.cs" />
     <Compile Include="Processes\UpdateMasterProcess.cs" />
     <Compile Include="Operations\EntityUpdateMaster.cs" />

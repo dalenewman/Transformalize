@@ -63,7 +63,8 @@ namespace Transformalize.Operations.Extract {
                     foreach (var row in from object obj in file select Row.FromObject(obj)) {
                         row["TflFileName"] = _fullName;
                         foreach (var field in _fields.Where(f => !f.SimpleType.Equals("string"))) {
-                            row[field.Alias] = conversionMap[field.SimpleType](row[field.Alias]);
+                            var value = row[field.Alias] == null || !field.SimpleType.Equals("string") && row[field.Alias].ToString().Equals(string.Empty) ? field.Default : row[field.Alias];
+                            row[field.Alias] = conversionMap[field.SimpleType](value);
                         }
                         if (_counter < _top) {
                             Interlocked.Increment(ref _counter);
@@ -71,7 +72,6 @@ namespace Transformalize.Operations.Extract {
                         } else {
                             yield break;
                         }
-
                     }
                     HandleErrors(file);
                 }
@@ -81,7 +81,8 @@ namespace Transformalize.Operations.Extract {
                     foreach (var row in from object obj in file select Row.FromObject(obj)) {
                         row["TflFileName"] = _fullName;
                         foreach (var field in _fields.Where(f => !f.SimpleType.Equals("string"))) {
-                            row[field.Alias] = conversionMap[field.SimpleType](row[field.Alias]);
+                            var value = row[field.Alias] == null || !field.SimpleType.Equals("string") && row[field.Alias].ToString().Equals(string.Empty) ? field.Default : row[field.Alias];
+                            row[field.Alias] = conversionMap[field.SimpleType](value);
                         }
                         yield return row;
                     }

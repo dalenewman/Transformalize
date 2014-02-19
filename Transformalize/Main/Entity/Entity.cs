@@ -28,7 +28,6 @@ using System.Linq;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Providers;
-using Transformalize.Operations.Transform;
 
 namespace Transformalize.Main {
 
@@ -70,6 +69,7 @@ namespace Transformalize.Main {
         public bool IndexOptimizations { get; set; }
         public bool Delete { get; set; }
         public bool PrependProcessNameToOutputName { get; set; }
+        public decimal Sample { get; set; }
 
         public Entity(int batchId) {
             _tflBatchId = batchId;

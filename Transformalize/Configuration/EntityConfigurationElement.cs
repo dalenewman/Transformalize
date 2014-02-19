@@ -45,6 +45,7 @@ namespace Transformalize.Configuration {
         private const string DELETE = "delete";
         private const string PREPEND_PROCESS_NAME_TO_OUTPUT_NAME = "prepend-process-name-to-output-name";
         private const string PIPELINE_THREADING = "pipeline-threading";
+        private const string SAMPLE = "sample";
 
         public IOperation InputOperation { get; set; }
 
@@ -136,6 +137,12 @@ namespace Transformalize.Configuration {
         public bool Group {
             get { return (bool)this[GROUP]; }
             set { this[GROUP] = value; }
+        }
+
+        [ConfigurationProperty(SAMPLE, IsRequired = false, DefaultValue = "100")]
+        public decimal Sample {
+            get { return Convert.ToDecimal(this[SAMPLE]); }
+            set { this[SAMPLE] = value; }
         }
 
         public override bool IsReadOnly() {

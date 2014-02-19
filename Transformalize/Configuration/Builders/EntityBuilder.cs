@@ -47,6 +47,11 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public EntityBuilder Sample(decimal sample) {
+            _entity.Sample = sample;
+            return this;
+        }
+
         public EntityBuilder Entity(string name) {
             return _processBuilder.Entity(name);
         }

@@ -75,6 +75,10 @@ namespace Transformalize.Libs.Rhino.Etl {
             return new Row(_storage);
         }
 
+        public void Remove(string key) {
+            _storage.Remove(key);
+        }
+
         public bool ContainsKey(string key) {
             return _storage.ContainsKey(key);
         }

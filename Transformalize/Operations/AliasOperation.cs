@@ -4,13 +4,13 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
-namespace Transformalize.Operations
-{
+namespace Transformalize.Operations {
     public class AliasOperation : AbstractOperation {
         private readonly IEnumerable<Field> _fields;
 
         public AliasOperation(Entity entity) {
-            _fields = entity.Fields.OrderBy(f => f.Value.Index).Select(f => f.Value);
+
+            _fields = entity.Fields.Where(f => !f.Value.Alias.Equals(f.Value.Name)).OrderBy(f => f.Value.Index).Select(f => f.Value);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

@@ -31,6 +31,7 @@ using Transformalize.Main.Providers;
 using Transformalize.Operations;
 using Transformalize.Operations.Extract;
 using Transformalize.Operations.Load;
+using Transformalize.Operations.Transform;
 
 namespace Transformalize.Processes {
 
@@ -71,6 +72,10 @@ namespace Transformalize.Processes {
                 }
             }
 
+            if (_entity.Sample > 0m && _entity.Sample < 100m) {
+                Register(new SampleOperation(_entity.Sample));
+            }
+
             Register(new ApplyDefaults(_entity.Fields, _entity.CalculatedFields));
             foreach (var transform in _entity.Operations) {
                 Register(transform);
@@ -79,7 +84,7 @@ namespace Transformalize.Processes {
             if (_entity.Group)
                 Register(new EntityAggregation(_entity));
 
-            Register(new StringLengthOperation(_entity.Fields, _entity.CalculatedFields));
+            Register(new TruncateOperation(_entity.Fields, _entity.CalculatedFields));
 
             if (_process.OutputConnection.Provider.Type == ProviderType.Internal) {
                 RegisterLast(_collector);

@@ -44,7 +44,7 @@ namespace Transformalize.Processes {
                 Register(transform);
             }
 
-            Register(new StringLengthOperation(_process.CalculatedFields));
+            Register(new TruncateOperation(_process.CalculatedFields));
             RegisterLast(new ResultsLoad(_process));
         }
 
