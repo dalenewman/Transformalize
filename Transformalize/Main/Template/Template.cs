@@ -20,6 +20,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
@@ -30,9 +31,8 @@ using Transformalize.Libs.RazorEngine.Configuration.Fluent;
 using Transformalize.Libs.RazorEngine.Templating;
 
 namespace Transformalize.Main {
-    
-    public class Template
-    {
+
+    public class Template {
         private const string TEMPLATE_CACHE_FOLDER = "TemplateCache";
         private const string RENDERED_TEMPLATE_CACHE_FOLDER = "RenderedTemplateCache";
 
@@ -86,8 +86,7 @@ namespace Transformalize.Main {
 
         public string Render() {
 
-            if (CacheIsUsable())
-            {
+            if (CacheIsUsable()) {
                 _log.Debug("Returning {0} template output from cache.", Name);
                 return _renderedTemplateContent;
             }
@@ -95,13 +94,16 @@ namespace Transformalize.Main {
             return CacheContent(RenderContent());
         }
 
-        private bool CacheIsUsable()
-        {
-            return Cache && !_process.Options.ConfigurationUpdated && _process.Options.Mode != "init" && _renderedTemplateContentExists && _templateContentExists && _templateContent.Equals(Content);
+        private bool CacheIsUsable() {
+            return Cache &&
+                !_process.Options.ConfigurationUpdated &&
+                !_process.Options.Mode.StartsWith("init", StringComparison.OrdinalIgnoreCase) &&
+                _renderedTemplateContentExists &&
+                _templateContentExists &&
+                _templateContent.Equals(Content);
         }
 
-        private string RenderContent()
-        {
+        private string RenderContent() {
             var config = new FluentTemplateServiceConfiguration(c => c.WithEncoding(ContentType));
             var templateService = new TemplateService(config);
             Razor.SetTemplateService(templateService);
@@ -121,8 +123,7 @@ namespace Transformalize.Main {
             return renderedContent;
         }
 
-        private string CacheContent(string renderedContent)
-        {
+        private string CacheContent(string renderedContent) {
             if (Cache && !string.IsNullOrEmpty(renderedContent)) {
                 System.IO.File.WriteAllText(_renderedTemplateFile, renderedContent);
                 System.IO.File.WriteAllText(_templateFile, this.Content);

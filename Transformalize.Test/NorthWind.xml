@@ -14,11 +14,13 @@
   </connections>
 
   <templates path="Templates">
+    
     <add name="solr-data-handler" file="solr-data-handler.cshtml" cache="true">
       <actions>
         <add action="copy" file="C:\Solr\NorthWind\conf\data-config.xml" />
       </actions>
     </add>
+    
     <add name="solr-schema" file="solr-schema.cshtml" cache="true">
       <actions>
         <add action="copy" file="C:\Solr\NorthWind\conf\schema.xml"/>
@@ -31,6 +33,7 @@
 
   <search-types>
     <add name="default" />
+    <add name="none" store="false" index="false" />
     <add name="facet" type="lowercase" store="true" index="true" />
     <add name="standard" type="standard_lowercase" store="false" index="true"/>
   </search-types>
@@ -39,15 +42,15 @@
     
     <add name="Order Details" version="RowVersion" prefix="OrderDetails" use-bcp="true">
       <fields>
-        <add name="Discount" type="System.Single" ></add>
-        <add name="OrderID" type="System.Int32" primary-key="true"></add>
-        <add name="ProductID" type="System.Int32" primary-key="true"></add>
-        <add name="Quantity" type="System.Int16" ></add>
-        <add name="RowVersion" type="System.Byte[]" length="8" ></add>
-        <add name="UnitPrice" type="System.Decimal" precision="19" scale="4"></add>
+        <add name="Discount" type="single" ></add>
+        <add name="OrderID" type="int" primary-key="true"></add>
+        <add name="ProductID" type="int" primary-key="true"></add>
+        <add name="Quantity" type="int16" ></add>
+        <add name="RowVersion" type="rowversion" length="8" search-type="none"/>
+        <add name="UnitPrice" type="decimal" precision="19" scale="4"/>
       </fields>
       <calculated-fields>
-        <add name="OrderDetailsExtendedPrice" type="Decimal" precision="19" scale="4">
+        <add name="OrderDetailsExtendedPrice" type="decimal" precision="19" scale="4">
           <transforms>
             <add method="javascript" script="OrderDetailsQuantity * (OrderDetailsUnitPrice * (1-OrderDetailsDiscount))" parameter="*" />
           </transforms>
@@ -57,13 +60,13 @@
 
     <add name="Orders" version="RowVersion" prefix="Orders">
       <fields>
-        <add name="CustomerID" type="System.Char" length="5" ></add>
-        <add name="EmployeeID" type="System.Int32" ></add>
-        <add name="Freight" type="System.Decimal" precision="19" scale="4"></add>
-        <add name="OrderDate" type="System.DateTime" ></add>
-        <add name="OrderID" type="System.Int32" primary-key="true"></add>
-        <add name="RequiredDate" type="System.DateTime" ></add>
-        <add name="RowVersion" type="System.Byte[]" length="8" ></add>
+        <add name="CustomerID" type="char" length="5"/>
+        <add name="EmployeeID" type="int"/>
+        <add name="Freight" type="decimal" precision="19" scale="4"/>
+        <add name="OrderDate" type="datetime"/>
+        <add name="OrderID" type="int" primary-key="true"></add>
+        <add name="RequiredDate" type="datetime" ></add>
+        <add name="RowVersion" type="rowversion" length="8" search-type="none"/>
         <add name="ShipAddress" length="60" ></add>
         <add name="ShipCity" length="15" ></add>
         <add name="ShipCountry" length="15" ></add>
@@ -170,19 +173,18 @@
 
     <add name="Products" version="RowVersion" prefix="Products">
       <fields>
-        <add name="CategoryID" type="System.Int32" ></add>
-        <add name="Discontinued" type="System.Boolean" ></add>
-        <add name="ProductID" type="System.Int32" primary-key="true"></add>
-        <add name="ProductName" length="40" ></add>
-        <add name="QuantityPerUnit" length="20" ></add>
-        <add name="ReorderLevel" type="System.Int16" ></add>
-        <add name="RowVersion" type="System.Byte[]" length="8" ></add>
-        <add name="SupplierID" type="System.Int32" ></add>
-        <add name="UnitPrice" type="System.Decimal" precision="19" scale="4"></add>
-        <add name="UnitsInStock" type="System.Int16" ></add>
-        <add name="UnitsOnOrder" type="System.Int16" ></add>
+        <add name="CategoryID" type="int32"/>
+        <add name="Discontinued" type="boolean"/>
+        <add name="ProductID" type="int" primary-key="true"/>
+        <add name="ProductName" length="40"/>
+        <add name="QuantityPerUnit" length="20"/>
+        <add name="ReorderLevel" type="int16"/>
+        <add name="RowVersion" type="rowversion" length="8" search-type="none"/>
+        <add name="SupplierID" type="int"/>
+        <add name="UnitPrice" type="decimal" precision="19" scale="4"/>
+        <add name="UnitsInStock" type="int16"/>
+        <add name="UnitsOnOrder" type="int16"/>
       </fields>
-
     </add>
 
     <add name="Suppliers" version="RowVersion" prefix="Suppliers">
@@ -198,27 +200,27 @@
         <add name="Phone" length="24" ></add>
         <add name="PostalCode" length="10" ></add>
         <add name="Region" length="15" ></add>
-        <add name="RowVersion" type="System.Byte[]" length="8" ></add>
-        <add name="SupplierID" type="System.Int32" primary-key="true"></add>
+        <add name="RowVersion" type="rowversion" length="8" search-type="none"/>
+        <add name="SupplierID" type="int" primary-key="true"/>
       </fields>
     </add>
     
     <add name="Categories" version="RowVersion" prefix="Categories">
       <fields>
-        <add name="CategoryID" type="System.Int32" primary-key="true"></add>
-        <add name="CategoryName" length="15" ></add>
-        <add name="Description" length="MAX" ></add>
-        <add name="Picture" type="System.Byte[]" length="MAX" input="false" output="false" ></add>
-        <add name="RowVersion" type="System.Byte[]" length="8" ></add>
+        <add name="CategoryID" type="int" primary-key="true"/>
+        <add name="CategoryName" length="15"/>
+        <add name="Description" length="MAX"/>
+        <add name="Picture" type="byte[]" length="MAX" search-type="none"/>
+        <add name="RowVersion" type="rowversion" length="8" search-type="none"/>
       </fields>
     </add>
 
     <add name="Shippers" version="RowVersion" prefix="Shippers">
       <fields>
-        <add name="CompanyName" length="40" ></add>
-        <add name="Phone" length="24" ></add>
-        <add name="RowVersion" type="System.Byte[]" length="8" ></add>
-        <add name="ShipperID" type="System.Int32" primary-key="true"></add>
+        <add name="CompanyName" length="40"/>
+        <add name="Phone" length="24"/>
+        <add name="RowVersion" type="rowversion" length="8"/>
+        <add name="ShipperID" type="int" primary-key="true"/>
       </fields>      
     </add>
     

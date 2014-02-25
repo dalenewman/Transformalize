@@ -23,11 +23,14 @@
 using System.IO;
 
 namespace Transformalize.Main {
+
     public class TemplateActionCopy : TemplateActionHandler {
+
         public override void Handle(TemplateAction action) {
+
             var actionFile = string.IsNullOrEmpty(action.File)
-                                 ? string.Empty
-                                 : new FileInfo(action.File).FullName;
+                ? string.Empty
+                : new FileInfo(action.File).FullName;
 
             if (actionFile != string.Empty) {
                 var fileInfo = new FileInfo(actionFile);

@@ -36,36 +36,20 @@ namespace Transformalize.Test.Integration {
         }
 
         [Test]
-        public void AInit() {
+        public void Init() {
             var options = new Options { Mode = "init"};
             var process = ProcessFactory.Create(FILE, options);
             process.Run();
+            LogManager.Flush();
         }
 
         [Test]
-        public void FMetadata() {
-            var options = new Options { Mode = "metadata" };
-            var process = ProcessFactory.Create(FILE, options);
-            process.Run();
-        }
-
-        [Test]
-        public void BFirstTime() {
+        public void First() {
             var options = new Options() { Mode = "first" };
             var process = ProcessFactory.Create(FILE, options);
             process.Run();
+            LogManager.Flush();
         }
 
-        [Test]
-        public void CDefault() {
-            ProcessFactory.Create(FILE).Run();
-        }
-
-        [Test]
-        public void DTest() {
-            var options = new Options { Mode = "test", LogLevel = LogLevel.Debug };
-            var process = ProcessFactory.Create(FILE, options);
-            process.Run();
-        }
     }
 }

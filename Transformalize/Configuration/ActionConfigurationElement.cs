@@ -45,7 +45,7 @@ namespace Transformalize.Configuration {
             set { this[FILE] = value; }
         }
 
-        [ConfigurationProperty(MODE, IsRequired = false, DefaultValue = "default")]
+        [ConfigurationProperty(MODE, IsRequired = false, DefaultValue = "*")]
         public string Mode {
             get { return this[MODE] as string; }
             set { this[MODE] = value; }

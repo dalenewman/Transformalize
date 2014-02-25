@@ -24,6 +24,7 @@ using System.Configuration;
 
 namespace Transformalize.Configuration {
     public class ActionElementCollection : ConfigurationElementCollection {
+
         public ActionConfigurationElement this[int index] {
             get { return BaseGet(index) as ActionConfigurationElement; }
             set {
