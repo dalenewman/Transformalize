@@ -1,7 +1,5 @@
-namespace Transformalize.Main.Providers.MySql
-{
-    public class MySqlEntityDropper : DatabaseEntityDropper
-    {
-        public MySqlEntityDropper(IEntityExists entityExists) : base(entityExists) {}
+namespace Transformalize.Main.Providers.MySql {
+    public class MySqlEntityDropper : DatabaseEntityDropper {
+        public MySqlEntityDropper() : base(new MySqlEntityExists()) { }
     }
 }

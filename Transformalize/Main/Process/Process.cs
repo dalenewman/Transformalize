@@ -190,5 +190,8 @@ namespace Transformalize.Main {
             return field != null;
         }
 
+        public void CreateOutput(Entity entity) {
+            OutputConnection.Create(this, entity);
+        }
     }
 }

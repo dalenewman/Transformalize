@@ -43,6 +43,7 @@ namespace Transformalize.Main.Providers {
         public IConnectionChecker ConnectionChecker { get; set; }
         public IEntityRecordsExist EntityRecordsExist { get; set; }
         public IEntityDropper EntityDropper { get; set; }
+        public IEntityCreator EntityCreator { get; set; }
         public IScriptRunner ScriptRunner { get; set; }
         public IProviderSupportsModifier ProviderSupportsModifier { get; set; }
         public IEntityQueryWriter EntityKeysQueryWriter { get; set; }
@@ -99,6 +100,7 @@ namespace Transformalize.Main.Providers {
             ConnectionChecker = dependencies.ConnectionChecker;
             EntityRecordsExist = dependencies.EntityRecordsExist;
             EntityDropper = dependencies.EntityDropper;
+            EntityCreator = dependencies.EntityCreator;
             ViewWriter = dependencies.ViewWriter;
             TflWriter = dependencies.TflWriter;
             ScriptRunner = dependencies.ScriptRunner;
@@ -184,7 +186,7 @@ namespace Transformalize.Main.Providers {
         }
 
         public int NextBatchId(string processName) {
-            var tflEntity = new Entity(1){ Name = "TflBatch", Alias = "TflBatch", Schema = "dbo", PrimaryKey = new Fields() {new Field(FieldType.PrimaryKey) { Name = "TflBatchId"}}};
+            var tflEntity = new Entity(1) { Name = "TflBatch", Alias = "TflBatch", Schema = "dbo", PrimaryKey = new Fields() { new Field(FieldType.PrimaryKey) { Name = "TflBatchId" } } };
             if (!RecordsExist(tflEntity)) {
                 return 1;
             }
@@ -313,5 +315,8 @@ namespace Transformalize.Main.Providers {
             return Provider.Type == ProviderType.Folder;
         }
 
+        public void Create(Process process, Entity entity) {
+            EntityCreator.Create(this, process, entity);
+        }
     }
 }

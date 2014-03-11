@@ -198,7 +198,7 @@ namespace Transformalize.Main {
         }
 
         public static string EntityOutputName(Entity entity, string processName) {
-            return entity.PrependProcessNameToOutputName ? string.Concat(processName, entity.Alias).Replace(" ", string.Empty) : entity.Alias;
+            return entity.PrependProcessNameToOutputName ? string.Concat(processName.Replace("-",string.Empty) , entity.Alias).Replace(" ", string.Empty) : entity.Alias;
         }
 
         public static bool AreEqual(byte[] b1, byte[] b2) {

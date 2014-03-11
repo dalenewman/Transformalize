@@ -20,15 +20,16 @@
 
 #endregion
 
-using System;
 using System.IO;
-using System.Linq;
 using Transformalize.Extensions;
 
 namespace Transformalize.Main {
     public class TemplateActionRun : TemplateActionHandler {
+
         public override void Handle(TemplateAction action) {
+
             var fileInfo = new FileInfo(action.RenderedFile);
+
             if (fileInfo.Exists) {
                 var script = File.ReadAllText(fileInfo.FullName);
                 if (!string.IsNullOrEmpty(script)) {

@@ -9,6 +9,7 @@ namespace Transformalize.Main.Providers.AnalysisServices {
                 new AnalysisServicesConnectionChecker(),
                 new FalseEntityRecordsExist(),
                 new FalseEntityDropper(),
+                new FalseEntityCreator(), 
                 new FalseViewWriter(),
                 new FalseTflWriter(),
                 new AnalysisServicesScriptRunner(),

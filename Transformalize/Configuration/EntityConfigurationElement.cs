@@ -22,9 +22,7 @@
 
 using System;
 using System.Configuration;
-using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.Rhino.Etl.Operations;
-using Transformalize.Main;
 
 namespace Transformalize.Configuration {
 
@@ -37,7 +35,7 @@ namespace Transformalize.Configuration {
         private const string FIELDS = "fields";
         private const string CALCULATED_FIELDS = "calculated-fields";
         private const string VERSION = "version";
-        private const string OUTPUT = "output";
+        private const string AGGREGATE = "aggregate";
         private const string PREFIX = "prefix";
         private const string GROUP = "group";
         private const string USE_BCP = "use-bcp";
@@ -98,9 +96,9 @@ namespace Transformalize.Configuration {
             set { this[VERSION] = value; }
         }
 
-        [ConfigurationProperty(OUTPUT)]
-        public OutputElementCollection Output {
-            get { return this[OUTPUT] as OutputElementCollection; }
+        [ConfigurationProperty(AGGREGATE)]
+        public AggregateElementCollection Aggregate {
+            get { return this[AGGREGATE] as AggregateElementCollection; }
         }
 
         [ConfigurationProperty(DELETE, IsRequired = false, DefaultValue = false)]

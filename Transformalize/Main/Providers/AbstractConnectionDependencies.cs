@@ -11,6 +11,7 @@ namespace Transformalize.Main.Providers
         public ITflWriter TflWriter { get; private set; }
         public IScriptRunner ScriptRunner { get; private set; }
         public IProviderSupportsModifier ProviderSupportsModifier { get; private set; }
+        public IEntityCreator EntityCreator { get; private set; }
 
         protected AbstractConnectionDependencies(
             AbstractProvider provider,
@@ -18,6 +19,7 @@ namespace Transformalize.Main.Providers
             IConnectionChecker connectionChecker,
             IEntityRecordsExist entityRecordsExist,
             IEntityDropper entityDropper,
+            IEntityCreator entityCreator,
             IViewWriter viewWriter,
             ITflWriter tflWriter,
             IScriptRunner scriptRunner,
@@ -28,11 +30,11 @@ namespace Transformalize.Main.Providers
             ConnectionChecker = connectionChecker;
             EntityRecordsExist = entityRecordsExist;
             EntityDropper = entityDropper;
+            EntityCreator = entityCreator;
             ViewWriter = viewWriter;
             TflWriter = tflWriter;
             ScriptRunner = scriptRunner;
             ProviderSupportsModifier = providerSupportsModifier;
             }
-
     }
 }

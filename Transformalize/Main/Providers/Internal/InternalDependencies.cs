@@ -7,6 +7,7 @@ namespace Transformalize.Main.Providers.Internal {
                 new InternalConnectionChecker(),
                 new FalseEntityRecordsExist(),
                 new FalseEntityDropper(),
+                new FalseEntityCreator(),
                 new FalseViewWriter(),
                 new FalseTflWriter(),
                 new FalseScriptRunner(),

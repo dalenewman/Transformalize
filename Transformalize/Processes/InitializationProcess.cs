@@ -22,6 +22,7 @@
 
 using System;
 using System.Linq;
+using Transformalize.Extensions;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
@@ -51,7 +52,9 @@ namespace Transformalize.Processes {
             var errors = GetAllErrors().ToArray();
             if (errors.Any()) {
                 foreach (var error in errors) {
-                    Error(error.InnerException, "Message: {0}\r\nStackTrace:{1}\r\n", error.Message, error.StackTrace);
+                    foreach (var inner in error.FlattenHierarchy()) {
+                        Error("Failed execution. {0} {1}", inner.Message, inner.StackTrace);
+                    }
                 }
                 Environment.Exit(1);
             }

@@ -68,6 +68,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\Microsoft.AnalysisServices.DLL</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Noesis.Javascript, Version=0.0.0.0, Culture=neutral, processorArchitecture=amd64" Condition="'$(Platform)'=='x64'">
       <HintPath>..\packages\Noesis.Javascript.0.7.1.0\lib\net40\amd64\Noesis.Javascript.dll</HintPath>
     </Reference>
@@ -115,6 +119,7 @@
     <Compile Include="Configuration\ActionConfigurationElement.cs" />
     <Compile Include="Configuration\ActionElementCollection.cs" />
     <Compile Include="Configuration\BranchConfigurationElement.cs" />
+    <Compile Include="Configuration\AggregateConfigurationElement.cs" />
     <Compile Include="Configuration\MyConfigurationElementCollection.cs" />
     <Compile Include="Configuration\BranchElementCollection.cs" />
     <Compile Include="Configuration\ValidatorElementCollection.cs" />
@@ -139,7 +144,7 @@
     <Compile Include="Configuration\JoinConfigurationElement.cs" />
     <Compile Include="Configuration\JoinElementCollection.cs" />
     <Compile Include="Configuration\EmptyConfigurationElement.cs" />
-    <Compile Include="Configuration\OutputElementCollection.cs" />
+    <Compile Include="Configuration\AggregateElementCollection.cs" />
     <Compile Include="Configuration\ParameterConfigurationElement.cs" />
     <Compile Include="Configuration\ParameterElementCollection.cs" />
     <Compile Include="Configuration\ItemConfigurationElement.cs" />
@@ -162,6 +167,71 @@
     <Compile Include="Extensions\IntExtensions.cs" />
     <Compile Include="Extensions\ObjectPool.cs" />
     <Compile Include="Extensions\ProducerConsumerCollectionBase.cs" />
+    <Compile Include="Libs\Avro\CodeGen\AvroRuntimeException.cs" />
+    <Compile Include="Libs\Avro\CodeGen\CodeGen.cs" />
+    <Compile Include="Libs\Avro\CodeGen\CodeGenException.cs" />
+    <Compile Include="Libs\Avro\CodeGen\CodeGenUtil.cs" />
+    <Compile Include="Libs\Avro\File\Codec.cs" />
+    <Compile Include="Libs\Avro\File\DataBlock.cs" />
+    <Compile Include="Libs\Avro\File\DataFileConstants.cs" />
+    <Compile Include="Libs\Avro\File\DataFileReader.cs" />
+    <Compile Include="Libs\Avro\File\DataFileWriter.cs" />
+    <Compile Include="Libs\Avro\File\DeflateCodec.cs" />
+    <Compile Include="Libs\Avro\File\Header.cs" />
+    <Compile Include="Libs\Avro\File\IFileReader.cs" />
+    <Compile Include="Libs\Avro\File\IFileWriter.cs" />
+    <Compile Include="Libs\Avro\File\NullCodec.cs" />
+    <Compile Include="Libs\Avro\Generic\DatumReader.cs" />
+    <Compile Include="Libs\Avro\Generic\DatumWriter.cs" />
+    <Compile Include="Libs\Avro\Generic\GenericDatumReader.cs" />
+    <Compile Include="Libs\Avro\Generic\GenericDatumWriter.cs" />
+    <Compile Include="Libs\Avro\Generic\GenericEnum.cs" />
+    <Compile Include="Libs\Avro\Generic\GenericFixed.cs" />
+    <Compile Include="Libs\Avro\Generic\GenericReader.cs" />
+    <Compile Include="Libs\Avro\Generic\GenericRecord.cs" />
+    <Compile Include="Libs\Avro\Generic\GenericWriter.cs" />
+    <Compile Include="Libs\Avro\Generic\PreresolvingDatumReader.cs" />
+    <Compile Include="Libs\Avro\Generic\PreresolvingDatumWriter.cs" />
+    <Compile Include="Libs\Avro\IO\BinaryDecoder.cs" />
+    <Compile Include="Libs\Avro\IO\BinaryEncoder.cs" />
+    <Compile Include="Libs\Avro\IO\ByteBufferInputStream.cs" />
+    <Compile Include="Libs\Avro\IO\ByteBufferOutputStream.cs" />
+    <Compile Include="Libs\Avro\IO\Decoder.cs" />
+    <Compile Include="Libs\Avro\IO\Encoder.cs" />
+    <Compile Include="Libs\Avro\IO\ICallback.cs" />
+    <Compile Include="Libs\Avro\IO\InputStream.cs" />
+    <Compile Include="Libs\Avro\IO\OutputStream.cs" />
+    <Compile Include="Libs\Avro\IO\Resolver.cs" />
+    <Compile Include="Libs\Avro\Protocol\Message.cs" />
+    <Compile Include="Libs\Avro\Protocol\Protocol.cs" />
+    <Compile Include="Libs\Avro\Protocol\ProtocolParseException.cs" />
+    <Compile Include="Libs\Avro\Schema\ArraySchema.cs" />
+    <Compile Include="Libs\Avro\Schema\AvroException.cs" />
+    <Compile Include="Libs\Avro\Schema\AvroTypeException.cs" />
+    <Compile Include="Libs\Avro\Schema\EnumSchema.cs" />
+    <Compile Include="Libs\Avro\Schema\Field.cs" />
+    <Compile Include="Libs\Avro\Schema\FixedSchema.cs" />
+    <Compile Include="Libs\Avro\Schema\JsonHelper.cs" />
+    <Compile Include="Libs\Avro\Schema\MapSchema.cs" />
+    <Compile Include="Libs\Avro\Schema\NamedSchema.cs" />
+    <Compile Include="Libs\Avro\Schema\PrimitiveSchema.cs" />
+    <Compile Include="Libs\Avro\Schema\Property.cs" />
+    <Compile Include="Libs\Avro\Schema\RecordSchema.cs" />
+    <Compile Include="Libs\Avro\Schema\Schema.cs" />
+    <Compile Include="Libs\Avro\Schema\SchemaName.cs" />
+    <Compile Include="Libs\Avro\Schema\SchemaNormalization.cs" />
+    <Compile Include="Libs\Avro\Schema\SchemaParseException.cs" />
+    <Compile Include="Libs\Avro\Schema\UnionSchema.cs" />
+    <Compile Include="Libs\Avro\Schema\UnnamedSchema.cs" />
+    <Compile Include="Libs\Avro\Specific\ObjectCreator.cs" />
+    <Compile Include="Libs\Avro\Specific\SpecificDatumReader.cs" />
+    <Compile Include="Libs\Avro\Specific\SpecificDatumWriter.cs" />
+    <Compile Include="Libs\Avro\Specific\SpecificException.cs" />
+    <Compile Include="Libs\Avro\Specific\SpecificFixed.cs" />
+    <Compile Include="Libs\Avro\Specific\SpecificProtocol.cs" />
+    <Compile Include="Libs\Avro\Specific\SpecificReader.cs" />
+    <Compile Include="Libs\Avro\Specific\SpecificRecord.cs" />
+    <Compile Include="Libs\Avro\Specific\SpecificWriter.cs" />
     <Compile Include="Libs\Dapper\SqlBuilder.cs" />
     <Compile Include="Libs\Dapper\SqlMapper.cs" />
     <Compile Include="Libs\EnterpriseLibrary\Common\Configuration\AssemblyQualifiedTypeNameConverter.cs" />
@@ -671,6 +741,7 @@
     <Compile Include="Main\Entity\EntitiesLoader.cs" />
     <Compile Include="Main\Entity\EntityParametersReader.cs" />
     <Compile Include="Main\Entity\EntityRelationshipLoader.cs" />
+    <Compile Include="Main\Entity\IEntityCreator.cs" />
     <Compile Include="Main\NinjectBindings.cs" />
     <Compile Include="Main\PipelineThreading.cs" />
     <Compile Include="Main\Process\ProcessFactory.cs" />
@@ -680,7 +751,9 @@
     <Compile Include="Main\Providers\AnalysisServicesEntityDropper.cs" />
     <Compile Include="Main\Providers\AnalysisServices\AnalysisServicesDependencies.cs" />
     <Compile Include="Main\Providers\ConnectionChecker.cs" />
+    <Compile Include="Main\Providers\FalseEntityCreator.cs" />
     <Compile Include="Main\Providers\FalseEntityExists.cs" />
+    <Compile Include="Main\Providers\File\FileEntityCreator.cs" />
     <Compile Include="Main\Providers\File\FileEntityDropper.cs" />
     <Compile Include="Main\Providers\File\FileEntityExists.cs" />
     <Compile Include="Main\Providers\File\FileEntityRecordsExist.cs" />
@@ -688,6 +761,7 @@
     <Compile Include="Main\MapLoader.cs" />
     <Compile Include="Main\Providers\Folder\FolderConnection.cs" />
     <Compile Include="Main\Providers\Folder\FolderConnectionChecker.cs" />
+    <Compile Include="Main\Providers\Folder\FolderEntityCreator.cs" />
     <Compile Include="Main\Providers\Folder\FolderEntityExists.cs" />
     <Compile Include="Main\Providers\Folder\FolderEntityRecordsExist.cs" />
     <Compile Include="Main\Providers\Folder\FolderEntityDropper.cs" />
@@ -718,6 +792,7 @@
     <Compile Include="Main\Providers\SqlCe4\SqlCe4Connection.cs" />
     <Compile Include="Main\Providers\SqlCe4\SqlCe4ConnectionChecker.cs" />
     <Compile Include="Main\Providers\SqlCe4\SqlCe4Dependencies.cs" />
+    <Compile Include="Main\Providers\SqlCe4\SqlCe4EntityCreator.cs" />
     <Compile Include="Main\Providers\SqlCe4\SqlCe4EntityDropper.cs" />
     <Compile Include="Main\Providers\SqlCe4\SqlCe4EntityExists.cs" />
     <Compile Include="Main\Providers\SqlCe4\SqlCe4EntityRecordsExist.cs" />
@@ -725,7 +800,9 @@
     <Compile Include="Main\Providers\SqlCe4\SqlCe4TableExists.cs" />
     <Compile Include="Main\Providers\SqlCe4\SqlCe4TableQueryWriter.cs" />
     <Compile Include="Main\Providers\SqlCe4\SqlCe4TflWriter.cs" />
+    <Compile Include="Main\Providers\SqlServer\DatabaseEntityCreator.cs" />
     <Compile Include="Main\Providers\SqlServer\SqlServerDependencies.cs" />
+    <Compile Include="Main\Providers\SqlServer\SqlServerEntityCreator.cs" />
     <Compile Include="Main\Providers\SqlServer\SqlServerEntityDropper.cs" />
     <Compile Include="Main\RelationshipsReader.cs" />
     <Compile Include="Main\SearchType.cs" />

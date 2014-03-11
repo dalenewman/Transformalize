@@ -25,22 +25,18 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
-namespace Transformalize.Operations
-{
-    public class EntityDrop : AbstractOperation
-    {
+namespace Transformalize.Operations {
+    public class EntityDrop : AbstractOperation {
         private readonly Process _process;
         private readonly Entity _entity;
 
-        public EntityDrop(Process process, Entity entity)
-        {
+        public EntityDrop(Process process, Entity entity) {
             Name = "Entity Drop";
             _process = process;
             _entity = entity;
         }
 
-        public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
-        {
+        public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             _process.OutputConnection.Drop(_entity);
             return rows;
         }

@@ -9,6 +9,7 @@ namespace Transformalize.Main.Providers.Folder {
                 new FolderConnectionChecker(),
                 new FolderEntityRecordsExist(),
                 new FolderEntityDropper(),
+                new FolderEntityCreator(),
                 new FalseViewWriter(),
                 new FalseTflWriter(),
                 new FalseScriptRunner(),

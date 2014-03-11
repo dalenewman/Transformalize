@@ -38,20 +38,25 @@ namespace Transformalize.Main {
         public void Manage() {
             var folder = Common.GetTemporaryFolder(_process.Name);
 
-            foreach (var pair in _process.Templates) {
-                if (pair.Value.IsUsedInPipeline)
+            foreach (var pair in _process.Templates)
+            {
+
+                var template = pair.Value;
+
+                if (template.IsUsedInPipeline)
                     continue;
 
-                var result = pair.Value.Render();
+                var result = template.Render();
 
-                var renderedInfo = new FileInfo(folder.TrimEnd(_trim) + @"\" + pair.Value.Name + ".temp.txt");
+                var renderedInfo = new FileInfo(folder.TrimEnd(_trim) + @"\" + template.Name + new FileInfo(template.File).Extension.ToLower().Replace("cshtml","txt"));
                 File.WriteAllText(renderedInfo.FullName, result);
 
                 if (!_process.Options.PerformTemplateActions)
                     continue;
 
-                foreach (var action in pair.Value.Actions) {
+                foreach (var action in template.Actions) {
                     action.RenderedFile = renderedInfo.FullName;
+                    
                     switch (action.Action.ToLower()) {
                         case "copy":
                             new TemplateActionCopy().Handle(action);

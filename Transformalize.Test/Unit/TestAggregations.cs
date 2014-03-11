@@ -74,5 +74,45 @@ namespace Transformalize.Test.Unit {
             Assert.AreEqual(1, r2["years"]);
         }
 
+        [Test]
+        public void TestCountsNew() {
+
+            var input = new RowsBuilder()
+                .Row("order", 1).Field("year", "2000")
+                .Row("order", 1).Field("year", "2000")
+                .Row("order", 1).Field("year", "2000")
+                .Row("order", 1).Field("year", "2001")
+                .Row("order", 1).Field("year", "2002")
+                .Row("order", 2).Field("year", "2000")
+                .Row("order", 2).Field("year", "2000")
+                .ToOperation();
+
+            var cfg = new ProcessBuilder("process")
+                .Connection("input").Provider(ProviderType.Internal)
+                .Connection("output").Provider(ProviderType.Internal)
+                .Entity("entity")
+                    .Input(input)
+                    .Field("order").Int32().PrimaryKey()
+                    .Field("year")
+                .Process();
+
+            var output = ProcessFactory.Create(cfg).Run().First().ToList();
+
+            //Assert.AreEqual(2, output.Count);
+
+            //var r1 = output[0];
+            //Assert.AreEqual("2002", r1["year"]);
+            //Assert.AreEqual(1, r1["order"]);
+            //Assert.AreEqual(5, r1["count"]);
+            //Assert.AreEqual(3, r1["years"]);
+
+            //var r2 = output[1];
+            //Assert.AreEqual("2000", r2["year"]);
+            //Assert.AreEqual(2, r2["order"]);
+            //Assert.AreEqual(2, r2["count"]);
+            //Assert.AreEqual(1, r2["years"]);
+        }
+
+
     }
 }

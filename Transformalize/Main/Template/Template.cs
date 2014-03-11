@@ -104,6 +104,12 @@ namespace Transformalize.Main {
         }
 
         private string RenderContent() {
+
+            if (Content.Equals(string.Empty)) {
+                _log.Warn("Template {0} is empty.", Name);
+                return System.IO.File.ReadAllText(File);
+            }
+
             var config = new FluentTemplateServiceConfiguration(c => c.WithEncoding(ContentType));
             var templateService = new TemplateService(config);
             Razor.SetTemplateService(templateService);

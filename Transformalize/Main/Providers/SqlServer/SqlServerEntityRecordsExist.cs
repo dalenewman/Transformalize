@@ -24,8 +24,8 @@ namespace Transformalize.Main.Providers.SqlServer {
     public class SqlServerEntityRecordsExist : IEntityRecordsExist {
         private readonly IEntityExists _entityExists;
 
-        public SqlServerEntityRecordsExist(IEntityExists entityExists) {
-            _entityExists = entityExists;
+        public SqlServerEntityRecordsExist() {
+            _entityExists = new SqlServerEntityExists();
         }
 
         public bool RecordsExist(AbstractConnection connection, Entity entity) {

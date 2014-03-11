@@ -22,15 +22,15 @@
 
 using System.IO;
 
-namespace Transformalize.Main
-{
-    public class TemplateActionOpen : TemplateActionHandler
-    {
-        public override void Handle(TemplateAction action)
-        {
+namespace Transformalize.Main {
+
+    public class TemplateActionOpen : TemplateActionHandler {
+
+        public override void Handle(TemplateAction action) {
+
             var actionFile = string.IsNullOrEmpty(action.File)
-                                 ? string.Empty
-                                 : new FileInfo(action.File).FullName;
+                ? string.Empty
+                : new FileInfo(action.File).FullName;
 
             var openFile = actionFile == string.Empty ? action.RenderedFile : actionFile;
             System.Diagnostics.Process.Start(openFile);

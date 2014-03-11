@@ -9,6 +9,7 @@ namespace Transformalize.Main.Providers.File {
                 new FileConnectionChecker(),
                 new FileEntityRecordsExist(),
                 new FileEntityDropper(),
+                new FileEntityCreator(),
                 new FalseViewWriter(),
                 new FalseTflWriter(),
                 new FalseScriptRunner(),

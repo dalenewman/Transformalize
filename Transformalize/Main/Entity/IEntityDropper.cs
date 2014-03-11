@@ -22,10 +22,8 @@
 
 using Transformalize.Main.Providers;
 
-namespace Transformalize.Main
-{
-    public interface IEntityDropper
-    {
+namespace Transformalize.Main {
+    public interface IEntityDropper {
         IEntityExists EntityExists { get; set; }
         void Drop(AbstractConnection connection, Entity entity);
     }
