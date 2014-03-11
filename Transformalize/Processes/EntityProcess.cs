@@ -25,13 +25,13 @@ using System.IO;
 using System.Linq;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Libs.Rhino.Etl.ConventionOperations;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
 using Transformalize.Operations;
 using Transformalize.Operations.Extract;
 using Transformalize.Operations.Load;
-using Transformalize.Operations.Transform;
 
 namespace Transformalize.Processes {
 
@@ -64,12 +64,17 @@ namespace Transformalize.Processes {
                     }
                 }
             } else {
-                if (_process.IsFirstRun && _entity.UseBcp && _entity.InputConnection.Provider.Type == ProviderType.SqlServer) {
-                    Register(new BcpExtract(_process, _entity));
+                if (!string.IsNullOrEmpty(_entity.SqlOverride)) {
+                    Register(new ConventionInputCommandOperation(_entity.InputConnection) { Command = _entity.SqlOverride });
                 } else {
-                    Register(new EntityKeysToOperations(_entity));
-                    Register(new SerialUnionAllOperation());
+                    if (_process.IsFirstRun && _entity.UseBcp && _entity.InputConnection.Provider.Type == ProviderType.SqlServer) {
+                        Register(new BcpExtract(_process, _entity));
+                    } else {
+                        Register(new EntityKeysToOperations(_entity));
+                        Register(new SerialUnionAllOperation());
+                    }
                 }
+
             }
 
             if (_entity.Sample > 0m && _entity.Sample < 100m) {

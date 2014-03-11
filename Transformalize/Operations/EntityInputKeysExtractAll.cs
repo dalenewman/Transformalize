@@ -27,6 +27,7 @@ using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
 namespace Transformalize.Operations {
+
     public class EntityInputKeysExtractAll : InputCommandOperation {
         private readonly Entity _entity;
         private readonly string[] _fields;

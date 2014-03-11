@@ -26,8 +26,6 @@ using System.IO;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.FileHelpers.Enums;
-using Transformalize.Libs.NLog.Internal;
-using Transformalize.Main.Providers;
 
 namespace Transformalize.Configuration {
     [HasSelfValidation]
@@ -128,7 +126,7 @@ namespace Transformalize.Configuration {
             set { this[SEARCH_OPTION] = value; }
         }
 
-        [ConfigurationProperty(DELIMITER, IsRequired = false, DefaultValue = "")]
+        [ConfigurationProperty(DELIMITER, IsRequired = false, DefaultValue = ",")]
         public string Delimiter {
             get { return this[DELIMITER] as string; }
             set { this[DELIMITER] = value; }

@@ -70,6 +70,7 @@ namespace Transformalize.Main {
         public bool Delete { get; set; }
         public bool PrependProcessNameToOutputName { get; set; }
         public decimal Sample { get; set; }
+        public string SqlOverride { get; set; }
 
         public Entity(int batchId) {
             _tflBatchId = batchId;

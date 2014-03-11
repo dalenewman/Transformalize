@@ -91,5 +91,10 @@ namespace Transformalize.Configuration.Builders {
             _entity.Group = group;
             return this;
         }
+
+        public EntityBuilder SqlOverride(string sql) {
+            _entity.SqlOverride = sql;
+            return this;
+        }
     }
 }

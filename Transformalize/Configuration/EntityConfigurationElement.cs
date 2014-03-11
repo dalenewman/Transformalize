@@ -44,6 +44,7 @@ namespace Transformalize.Configuration {
         private const string PREPEND_PROCESS_NAME_TO_OUTPUT_NAME = "prepend-process-name-to-output-name";
         private const string PIPELINE_THREADING = "pipeline-threading";
         private const string SAMPLE = "sample";
+        private const string SQL_OVERRIDE = "sql-override";
 
         public IOperation InputOperation { get; set; }
 
@@ -141,6 +142,12 @@ namespace Transformalize.Configuration {
         public decimal Sample {
             get { return Convert.ToDecimal(this[SAMPLE]); }
             set { this[SAMPLE] = value; }
+        }
+
+        [ConfigurationProperty(SQL_OVERRIDE, IsRequired = false, DefaultValue = "")]
+        public string SqlOverride {
+            get { return this[SQL_OVERRIDE] as string; }
+            set { this[SQL_OVERRIDE] = value; }
         }
 
         public override bool IsReadOnly() {

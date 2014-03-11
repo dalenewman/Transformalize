@@ -64,6 +64,7 @@ namespace Transformalize.Main {
                 Delete = element.Delete,
                 PrependProcessNameToOutputName = element.PrependProcessNameToOutputName,
                 Sample = element.Sample,
+                SqlOverride = element.SqlOverride,
                 Alias = string.IsNullOrEmpty(element.Alias) ? element.Name : element.Alias,
                 UseBcp = element.UseBcp,
                 InputOperation = element.InputOperation

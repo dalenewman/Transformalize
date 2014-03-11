@@ -23,10 +23,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using Transformalize.Configuration.Builders;
 using Transformalize.Libs.Avro.File;
 using Transformalize.Libs.Avro.Generic;
 using Transformalize.Libs.Avro.Schema;
+using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
+using Transformalize.Main.Providers;
 
 namespace Transformalize.Test.Integration {
 
@@ -75,7 +78,7 @@ namespace Transformalize.Test.Integration {
         [Test]
         public void TestInit() {
             var options = new Options { Mode = "init" };
-            var process = ProcessFactory.Create(@"c:\temp\clevest-filter-updates.xml", options);
+            var process = ProcessFactory.Create("http://config.mwf.local/clevest-filter-updates.xml", options);
             process.PipelineThreading = PipelineThreading.SingleThreaded;
             var results = process.Run();
         }
@@ -83,7 +86,7 @@ namespace Transformalize.Test.Integration {
         [Test]
         public void TestFirst() {
             var options = new Options { Mode = "first" };
-            var process = ProcessFactory.Create(@"c:\temp\clevest-filter-updates.xml", options);
+            var process = ProcessFactory.Create("http://config.mwf.local/clevest-filter-updates.xml", options);
             process.PipelineThreading = PipelineThreading.SingleThreaded;
             var results = process.Run();
         }
@@ -94,6 +97,35 @@ namespace Transformalize.Test.Integration {
             var process = ProcessFactory.Create("http://config.mwf.local/clevest-filter-updates.xml", options);
             process.PipelineThreading = PipelineThreading.SingleThreaded;
             var results = process.Run();
+        }
+
+        [Test]
+        public void TestSqlOverride() {
+
+            var config = new ProcessBuilder("TestSqlOverride")
+                .Connection("input").Database("master")
+                .Connection("output")
+                    .Provider(ProviderType.File)
+                    .File(@"c:\temp\sql-override.txt")
+                .Entity("databases").SqlOverride(@"
+                    SELECT
+	                    database_id AS Id,
+	                    Name,
+	                    recovery_model_desc as RecoveryModel,
+	                    log_reuse_wait_desc AS LogReuseWait
+                    FROM sys.databases WITH (NOLOCK);
+                ")
+                .Field("Id").Int32().PrimaryKey()
+                .Field("Name").Length(128)
+                .Field("RecoveryModel")
+                .Field("LogReuseWait")
+                .Process();
+
+            ProcessFactory.Create(config, new Options("init")).Run();
+            ProcessFactory.Create(config, new Options("first")).Run();
+
+            System.Diagnostics.Process.Start(@"c:\temp\sql-override.txt");
+
         }
 
     }
