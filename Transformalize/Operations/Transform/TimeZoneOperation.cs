@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Transformalize.Libs.NLog;
 using Transformalize.Libs.NLog.Internal;
 using Transformalize.Libs.Rhino.Etl;
 
@@ -34,6 +35,7 @@ namespace Transformalize.Operations.Transform {
             } else {
                 if (!TimeZoneInfo.GetSystemTimeZones().Any(tz => tz.Id.Equals(timeZone))) {
                     Error("From Timezone Id {0} is invalid.", timeZone);
+                    LogManager.Flush();
                     Environment.Exit(1);
                 }
             }

@@ -1,8 +1,7 @@
 using System.Data;
 using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Main.Providers.SqlCe4;
 
-namespace Transformalize.Main.Providers.SqlServer
+namespace Transformalize.Main.Providers.SqlCe4
 {
     public class SqlCe4TflWriter : WithLoggingMixin, ITflWriter {
 

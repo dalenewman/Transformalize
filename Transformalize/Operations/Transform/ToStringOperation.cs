@@ -30,6 +30,7 @@ namespace Transformalize.Operations.Transform {
 
             if (_inType == "string") {
                 _log.Error("You have ToString transform on {0}.  It is already a string.", inKey);
+                LogManager.Flush();
                 Environment.Exit(1);
             }
         }

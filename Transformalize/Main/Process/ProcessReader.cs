@@ -48,6 +48,7 @@ namespace Transformalize.Main {
 
             if (_element == null) {
                 _log.Error("Sorry.  I can't find a process named {0}.", _processName);
+                LogManager.Flush();
                 Environment.Exit(1);
             }
 
@@ -66,6 +67,7 @@ namespace Transformalize.Main {
             _process.Connections = new ConnectionFactory(_process, _element.Connections).Create();
             if (!_process.Connections.ContainsKey("output")) {
                 _log.Error("Missing required 'output' connection.  If you don't want an ouput, set output to internal");
+                LogManager.Flush();
                 Environment.Exit(1);
             }
             _process.OutputConnection = _process.Connections["output"];

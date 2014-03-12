@@ -51,7 +51,6 @@ namespace Transformalize.Configuration {
         private const string NAME = "name";
         private const string TEMPLATES = "templates";
         private const string PARAMETER = "parameter";
-        private const string EXPRESSION = "expression";
         private const string TYPE = "type";
         private const string ROOT = "root";
         private const string FIELDS = "fields";
@@ -260,12 +259,6 @@ namespace Transformalize.Configuration {
         public string Model {
             get { return this[MODEL] as string; }
             set { this[MODEL] = value; }
-        }
-
-        [ConfigurationProperty(EXPRESSION, IsRequired = false, DefaultValue = "")]
-        public string Expression {
-            get { return this[EXPRESSION] as string; }
-            set { this[EXPRESSION] = value; }
         }
 
         [ConfigurationProperty(PARAMETERS)]

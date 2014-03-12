@@ -57,6 +57,7 @@ namespace Transformalize.Main {
                 foreach (var result in results) {
                     _log.Error(result.Message);
                 }
+                LogManager.Flush();
                 Environment.Exit(1);
             }
 
@@ -213,6 +214,7 @@ namespace Transformalize.Main {
 
                     if (equals.Count == 0 && startsWith.Count == 0 && endsWith.Count == 0) {
                         _log.Error("Map '{0}' is not defined.", element.Map);
+                        LogManager.Flush();
                         Environment.Exit(1);
                     }
 
@@ -269,13 +271,6 @@ namespace Transformalize.Main {
                         outKey,
                         element.Script,
                         scripts,
-                        parameters
-                    ) { ShouldRun = shouldRun };
-
-                case "expression":
-                    return new ExpressionOperation(
-                        outKey,
-                        element.Expression,
                         parameters
                     ) { ShouldRun = shouldRun };
 

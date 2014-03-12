@@ -112,7 +112,8 @@ namespace Transformalize.Main {
                         _log.Error(
                             "The map parameter {0} does not exist.  Please make sure it matches a field's name or alias.",
                             item.Value.Parameter);
-                        Environment.Exit(0);
+                        LogManager.Flush();
+                        Environment.Exit(1);
                     }
                 }
             }

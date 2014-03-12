@@ -4,81 +4,33 @@
 // */
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using Transformalize.Libs.fastJSON;
+using Transformalize.Libs.NLog;
+using Transformalize.Main;
 
-namespace Transformalize.Libs.Rhino.Etl.Operations
-{
-    public class LogOperation : AbstractOperation
-    {
-        private readonly string _delimiter;
-        private readonly List<string> _ignores = new List<string>();
-        private readonly int _maxLengh;
-        private readonly List<string> _only = new List<string>();
-        private bool _firstRow = true;
+namespace Transformalize.Libs.Rhino.Etl.Operations {
+    public class LogOperation : AbstractOperation {
 
-        public LogOperation(string delimiter = " | ", int maxLength = 32)
+        private readonly Logger _log = LogManager.GetLogger("output");
+        private readonly List<string> _columns = new List<string>();
+        private readonly string _name;
+
+        public LogOperation(Entity entity)
         {
-            _delimiter = delimiter;
-            _maxLengh = maxLength;
+            _name = Common.EntityOutputName(entity, entity.ProcessName);
+            _columns.AddRange(new FieldSqlWriter(entity.Fields, entity.CalculatedFields).Output().ToArray().Select(f => f.Alias));
         }
 
-        public LogOperation Ignore(params string[] columns)
-        {
-            _ignores.AddRange(columns);
-            return this;
-        }
+        public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
+            GlobalDiagnosticsContext.Set("output", _name);
 
-        public LogOperation Only(params string[] columns)
-        {
-            _only.AddRange(columns);
-            return this;
-        }
-
-        public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
-        {
-            foreach (var row in rows)
-            {
-                if (IsDebugEnabled())
-                {
-                    if (_firstRow)
-                    {
-                        var columns = _only.Any()
-                                          ? row.Columns.Where(column => _only.Contains(column))
-                                               .Select(column => column.PadLeft(_maxLengh))
-                                               .ToArray()
-                                          : row.Columns.Where(column => !_ignores.Contains(column))
-                                               .Select(column => column.PadLeft(_maxLengh))
-                                               .ToArray();
-
-                        Debug(new String('-', (columns.Count()*_maxLengh) + columns.Count() - 1));
-                        Debug(string.Join(_delimiter, columns));
-                    }
-
-                    var values = _only.Any() ?
-                                     row.Columns.Where(column => _only.Contains(column)).Select(column => EnforceMaxLength(row[column]).PadLeft(_maxLengh, ' ')).ToList() :
-                                     row.Columns.Where(column => !_ignores.Contains(column)).Select(column => EnforceMaxLength(row[column]).PadLeft(_maxLengh, ' ')).ToList();
-
-                    Debug(string.Join(_delimiter, values));
-
-                    _firstRow = false;
-                }
-                yield return row;
+            foreach (var row in rows) {
+                _log.Info(JSON.Instance.ToJSON(_columns.ToDictionary(alias => alias, alias => row[alias])));
             }
-        }
-
-        public string EnforceMaxLength(object value)
-        {
-            if (value == null)
-                return string.Empty;
-
-            var stringValue = value.ToString().Replace(Environment.NewLine, " ");
-
-            if (stringValue.Length > _maxLengh)
-                return stringValue.Substring(0, _maxLengh - 3) + "...";
-
-            return stringValue;
+            LogManager.Flush();
+            yield break;
         }
     }
 }

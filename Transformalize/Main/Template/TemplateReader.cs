@@ -64,6 +64,7 @@ namespace Transformalize.Main {
                                 templateAction.Connection = _process.Connections[action.Connection];
                             } else {
                                 _log.Error("The template '{0}' refers to an invalid connection named '{1}'.", action.Action, action.Connection);
+                                LogManager.Flush();
                                 Environment.Exit(1);
                             }
                         }

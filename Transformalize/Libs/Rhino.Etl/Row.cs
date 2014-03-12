@@ -11,6 +11,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace Transformalize.Libs.Rhino.Etl {
     /// <summary>
@@ -19,6 +20,7 @@ namespace Transformalize.Libs.Rhino.Etl {
     [DebuggerDisplay("Count = {items.Count}")]
     [Serializable]
     public class Row : IEnumerable {
+
         private static readonly Dictionary<Type, List<PropertyInfo>> PropertiesCache = new Dictionary<Type, List<PropertyInfo>>();
         private static readonly Dictionary<Type, List<FieldInfo>> FieldsCache = new Dictionary<Type, List<FieldInfo>>();
 
@@ -181,6 +183,25 @@ namespace Transformalize.Libs.Rhino.Etl {
                     info.SetValue(instance, _storage[info.Name]);
             }
             return instance;
+        }
+
+        public override string ToString() {
+            var sb = new StringBuilder();
+            sb.Append("{");
+            foreach (var pair in _storage) {
+                sb.Append(pair.Key)
+                    .Append(" : ");
+                if (pair.Value is string) {
+                    sb.Append("\"")
+                        .Append(pair.Value)
+                        .Append("\"");
+                } else {
+                    sb.Append(pair.Value);
+                }
+                sb.Append(", ");
+            }
+            sb.Append("}");
+            return sb.ToString();
         }
 
     }

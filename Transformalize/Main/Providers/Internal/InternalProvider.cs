@@ -1,5 +1,4 @@
-namespace Transformalize.Main.Providers.Internal
-{
+namespace Transformalize.Main.Providers.Internal {
     public class InternalProvider : AbstractProvider {
         public InternalProvider() {
             Type = ProviderType.Internal;

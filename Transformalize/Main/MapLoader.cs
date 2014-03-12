@@ -25,6 +25,7 @@ namespace Transformalize.Main {
                         _process.MapEquals[m.Name] = new SqlMapReader(m.Items.Sql, _process.Connections[m.Connection]).Read();
                     } else {
                         _log.Error("Map {0} references connection {1}, which does not exist.", m.Name, m.Connection);
+                        LogManager.Flush();
                         Environment.Exit(1);
                     }
                 }

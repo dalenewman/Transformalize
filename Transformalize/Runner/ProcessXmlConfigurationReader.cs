@@ -52,6 +52,7 @@ namespace Transformalize.Runner {
                     var transformalize = doc.Element("transformalize");
                     if (transformalize == null) {
                         _log.Error("Sorry.  I can't find the <process/> or <transformalize/> element in {0}.", _file);
+                        LogManager.Flush();
                         Environment.Exit(1);
                     } else {
                         section.Deserialize(transformalize.ToString());
@@ -75,6 +76,7 @@ namespace Transformalize.Runner {
                 return section.Processes[0];
             } catch (Exception e) {
                 _log.Error("Sorry.  I couldn't parse the file {0}.  Make sure it is valid XML and try again. {1}", contents.Name, e.Message);
+                LogManager.Flush();
                 Environment.Exit(1);
             }
 

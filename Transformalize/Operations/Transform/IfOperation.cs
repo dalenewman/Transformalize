@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
+using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 
@@ -64,6 +65,7 @@ namespace Transformalize.Operations.Transform {
                 return;
 
             Error("Operator {0} is invalid.  Try equal, notequal, greaterthan, greaterthanequal, greaterthan, or greaterthanequal.");
+            LogManager.Flush();
             Environment.Exit(1);
         }
 

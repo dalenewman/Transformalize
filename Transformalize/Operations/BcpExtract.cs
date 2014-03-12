@@ -102,6 +102,7 @@ namespace Transformalize.Operations
             }
 
             _log.Error("Can't find BCP Utility.\r\nIf you want to use BCP, set bcp attribute in <process/> element to the full path and file name of bcp.exe.\r\nAlso, make sure you've installed the feature pack or client tools for SQL Server that include bcp.exe.");
+            LogManager.Flush();
             Environment.Exit(1);
             return null;
         }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Device.Location;
 using System.Threading;
+using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 
@@ -23,6 +24,7 @@ namespace Transformalize.Operations.Transform {
 
             if (!_conversion.ContainsKey(units)) {
                 Error("Error in Distance transform. I do not recognize {0} units.  Try meters, kilometers, or miles.", units);
+                LogManager.Flush();
                 Environment.Exit(1);
             }
 

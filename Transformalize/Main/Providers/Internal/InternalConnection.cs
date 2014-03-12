@@ -1,6 +1,7 @@
 using Transformalize.Configuration;
 
 namespace Transformalize.Main.Providers.Internal {
+
     public class InternalConnection : AbstractConnection {
 
         public override string UserProperty { get { return string.Empty; } }
@@ -15,9 +16,7 @@ namespace Transformalize.Main.Providers.Internal {
 
         public InternalConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
-
             TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
-
         }
     }
 }

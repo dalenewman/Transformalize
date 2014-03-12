@@ -60,13 +60,13 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Antlr3.Runtime, Version=3.3.0.7239, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.AnalysisServices, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\Antlr3.Runtime.dll</HintPath>
+      <HintPath>..\packages\Microsoft.AnalysisServices.11.0.2100.60\lib\net40\Microsoft.AnalysisServices.DLL</HintPath>
     </Reference>
-    <Reference Include="Microsoft.AnalysisServices, Version=10.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+    <Reference Include="MySql.Data, Version=6.8.3.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\Microsoft.AnalysisServices.DLL</HintPath>
+      <HintPath>..\packages\MySql.Data.6.8.3\lib\net45\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -84,8 +84,8 @@
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.SqlServerCe, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\System.Data.SqlServerCe.dll</HintPath>
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.SqlServer.Compact.4.0.8876.1\lib\net40\System.Data.SqlServerCe.dll</HintPath>
     </Reference>
     <Reference Include="System.Device" />
     <Reference Include="System.Transactions" />
@@ -768,12 +768,19 @@
     <Compile Include="Main\Providers\Folder\FolderProvider.cs" />
     <Compile Include="Main\Providers\File\FileDependencies.cs" />
     <Compile Include="Main\Providers\Folder\FolderDependencies.cs" />
+    <Compile Include="Main\Providers\Console\ConsoleConnection.cs" />
+    <Compile Include="Main\Providers\Console\ConsoleDependencies.cs" />
+    <Compile Include="Main\Providers\Console\ConsoleProvider.cs" />
+    <Compile Include="Main\Providers\FalseConnectionChecker.cs" />
     <Compile Include="Main\Providers\Internal\InternalConnection.cs" />
     <Compile Include="Main\Providers\Internal\InternalConnectionChecker.cs" />
     <Compile Include="Main\Providers\Internal\InternalDependencies.cs" />
     <Compile Include="Main\Providers\Internal\InternalProvider.cs" />
-    <Compile Include="Main\Providers\Internal\FalseTflWriter.cs" />
-    <Compile Include="Main\Providers\Internal\FalseViewWriter.cs" />
+    <Compile Include="Main\Providers\FalseTflWriter.cs" />
+    <Compile Include="Main\Providers\FalseViewWriter.cs" />
+    <Compile Include="Main\Providers\Log\LogDependencies.cs" />
+    <Compile Include="Main\Providers\Log\LogConnection.cs" />
+    <Compile Include="Main\Providers\Log\LogProvider.cs" />
     <Compile Include="Main\Providers\MySql\MySqlDependencies.cs" />
     <Compile Include="Main\Providers\MySql\MySqlEntityDropper.cs" />
     <Compile Include="Main\Providers\MySql\MySqlEntityExists.cs" />
@@ -1029,26 +1036,6 @@
     <Compile Include="Libs\FileHelpers\RunTime\FixedFieldBuilder.cs" />
     <Compile Include="Libs\FileHelpers\RunTime\FixedLengthClassBuilder.cs" />
     <Compile Include="Libs\FileHelpers\RunTime\XmlHelper.cs" />
-    <Compile Include="Libs\NCalc\Domain\BinaryExpression.cs" />
-    <Compile Include="Libs\NCalc\Domain\EvaluationVisitor.cs" />
-    <Compile Include="Libs\NCalc\Domain\Function.cs" />
-    <Compile Include="Libs\NCalc\Domain\LogicalExpression.cs" />
-    <Compile Include="Libs\NCalc\Domain\LogicalExpressionVisitor.cs" />
-    <Compile Include="Libs\NCalc\Domain\Parameter.cs" />
-    <Compile Include="Libs\NCalc\Domain\SerializationVisitor.cs" />
-    <Compile Include="Libs\NCalc\Domain\TernaryExpression.cs" />
-    <Compile Include="Libs\NCalc\Domain\UnaryExpression.cs" />
-    <Compile Include="Libs\NCalc\Domain\Value.cs" />
-    <Compile Include="Libs\NCalc\EvaluateFunctionHandler.cs" />
-    <Compile Include="Libs\NCalc\EvaluateParameterHandler.cs" />
-    <Compile Include="Libs\NCalc\EvaluationException.cs" />
-    <Compile Include="Libs\NCalc\EvaluationOption.cs" />
-    <Compile Include="Libs\NCalc\Expression.cs" />
-    <Compile Include="Libs\NCalc\FunctionArgs.cs" />
-    <Compile Include="Libs\NCalc\NCalcLexer.cs" />
-    <Compile Include="Libs\NCalc\NCalcParser.cs" />
-    <Compile Include="Libs\NCalc\Numbers.cs" />
-    <Compile Include="Libs\NCalc\ParameterArgs.cs" />
     <Compile Include="Libs\Ninject\ActivationException.cs" />
     <Compile Include="Libs\Ninject\Activation\Blocks\ActivationBlock.cs" />
     <Compile Include="Libs\Ninject\Activation\Blocks\IActivationBlock.cs" />
@@ -1275,7 +1262,6 @@
     <Compile Include="Operations\Transform\ConvertOperation.cs" />
     <Compile Include="Operations\Transform\DistanceOperation.cs" />
     <Compile Include="Operations\Transform\EmptyOperation.cs" />
-    <Compile Include="Operations\Transform\ExpressionOperation.cs" />
     <Compile Include="Operations\Transform\FilterOperation.cs" />
     <Compile Include="Operations\Transform\FormatOperation.cs" />
     <Compile Include="Operations\Transform\FromJsonOperation.cs" />
@@ -1331,7 +1317,8 @@
     <Compile Include="Operations\Validate\StringLengthValidatorOperation.cs" />
     <Compile Include="Operations\Validate\TypeConversionValidatorOperation.cs" />
     <Compile Include="Operations\Validate\ValidationOperation.cs" />
-    <Compile Include="Processes\CollectorOperation.cs" />
+    <Compile Include="Operations\CollectorOperation.cs" />
+    <Compile Include="Operations\ConsoleOperation.cs" />
     <Compile Include="Processes\EntityDeleteProcess.cs" />
     <Compile Include="Operations\EntityDetectDeletes.cs" />
     <Compile Include="Processes\EntityKeysProcess.cs" />
@@ -1714,7 +1701,7 @@
     <Compile Include="Operations\EntityInputKeysStoreExtract.cs" />
     <Compile Include="Processes\InitializationProcess.cs" />
     <Compile Include="Processes\EntityProcess.cs" />
-    <Compile Include="Processes\TruncateOperation.cs" />
+    <Compile Include="Operations\TruncateOperation.cs" />
     <Compile Include="Processes\TransformProcess.cs" />
     <Compile Include="Processes\UpdateMasterProcess.cs" />
     <Compile Include="Operations\EntityUpdateMaster.cs" />
@@ -1746,16 +1733,12 @@
     <None Include="Libs\FileHelpers\Diagrams\RunTimeRecords.cd" />
     <None Include="Libs\FileHelpers\Diagrams\StorageDiagrams.cd" />
     <None Include="Libs\FileHelpers\FileHelpers.snk" />
-    <None Include="Libs\NCalc\NCalc.tokens" />
     <None Include="Libs\RazorEngine\ClassDiagram.cd" />
     <None Include="Libs\RazorEngine\packages.config" />
     <None Include="Libs\SharpZLib\obj\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Antlr3.Runtime.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Libs\Dapper\License.txt" />
     <Content Include="Libs\FileHelpers\Engines\Examples.xml" />
     <Content Include="Libs\FileHelpers\Engines\FileHelperAsyncEngine.docs.xml" />
@@ -1773,12 +1756,6 @@
     <Content Include="Libs\SharpZLib\obj\Debug\ICSharpCode.SharpZipLib.pdb" />
     <Content Include="Libs\SharpZLib\obj\Debug\ICSharpCode.SharpZLib.csproj.FileListAbsolute.txt" />
     <Content Include="LICENSE.txt" />
-    <Content Include="Microsoft.AnalysisServices.DLL">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="System.Data.SqlServerCe.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Libs\SharpZLib\obj\Debug\TempPE\" />
@@ -2038,7 +2015,11 @@
 )
 
 IF EXIST c:\code\JunkDrawer XCOPY /s /y $(TargetDir)Transformalize.dll c:\code\JunkDrawer\Assemblies\$(PlatformName)
-</PostBuildEvent>
+
+    if not exist "$(TargetDir)x86" md "$(TargetDir)x86"
+    xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\x86\*.*" "$(TargetDir)x86"
+    if not exist "$(TargetDir)amd64" md "$(TargetDir)amd64"
+    xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\amd64\*.*" "$(TargetDir)amd64"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -104,28 +104,6 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void ExpressionFunction() {
-            var input = new RowsBuilder().Row().Field("f1", 4).ToOperation();
-            var parameters = new ParametersBuilder().Parameter("f1").ToParameters();
-            var expression = new ExpressionOperation("o1", "Sqrt(f1)", parameters);
-
-            var rows = TestOperation(input, expression);
-
-            Assert.AreEqual(2d, rows[0]["o1"]);
-        }
-
-        [Test]
-        public void ExpressionIf() {
-            var input = new RowsBuilder().Row().Field("f1", 4).ToOperation();
-            var parameters = new ParametersBuilder().Parameter("f1").ToParameters();
-            var expression = new ExpressionOperation("o1", "if(f1 = 4, true, false)", parameters);
-
-            var rows = TestOperation(input, expression);
-
-            Assert.AreEqual(true, rows[0]["o1"]);
-        }
-
-        [Test]
         public void Format() {
             var input = new RowsBuilder().Row().Field("f1", true).Field("f2", 8).ToOperation();
             var parameters = new ParametersBuilder().Parameters("f1", "f2").ToParameters();

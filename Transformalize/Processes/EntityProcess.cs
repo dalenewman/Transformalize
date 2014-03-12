@@ -93,6 +93,10 @@ namespace Transformalize.Processes {
 
             if (_process.OutputConnection.Provider.Type == ProviderType.Internal) {
                 RegisterLast(_collector);
+            } else if (_process.OutputConnection.Provider.Type == ProviderType.Console) {
+                RegisterLast(new ConsoleOperation(_entity));
+            } else if (_process.OutputConnection.Provider.Type == ProviderType.Log) {
+                RegisterLast(new LogOperation(_entity));
             } else {
                 if (_process.OutputConnection.Provider.Type == ProviderType.File) {
                     RegisterLast(new FileLoadOperation(_process, _entity));
@@ -142,6 +146,7 @@ namespace Transformalize.Processes {
                 foreach (var error in errors) {
                     Error(error.InnerException, "Message: {0}\r\nStackTrace:{1}\r\n", error.Message, error.StackTrace);
                 }
+                LogManager.Flush();
                 Environment.Exit(1);
             }
 

@@ -45,6 +45,7 @@ namespace Transformalize.Main {
             foreach (ParameterConfigurationElement p in transform.Parameters) {
                 if (string.IsNullOrEmpty(p.Field) && (string.IsNullOrEmpty(p.Name) || string.IsNullOrEmpty(p.Value))) {
                     _log.Error("The entity {0} has a {1} transform parameter without a field attribute, or name and value attributes.  Entity parameters require one or the other.", _entity.Alias, transform.Method);
+                    LogManager.Flush();
                     System.Environment.Exit(1);
                 }
 

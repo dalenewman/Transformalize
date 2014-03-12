@@ -44,6 +44,7 @@ namespace Transformalize.Runner
             if (config == null)
             {
                 _log.Warn("Sorry.  I can't find a process named {0}.", _name);
+                LogManager.Flush();
                 Environment.Exit(1);
             }
             return config;

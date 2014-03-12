@@ -17,13 +17,11 @@ using System.Web.Razor;
 using System.Web.Razor.Parser;
 using Transformalize.Libs.NLog;
 
-namespace Transformalize.Libs.RazorEngine.Compilation
-{
+namespace Transformalize.Libs.RazorEngine.Compilation {
     /// <summary>
     ///     Provides a base implementation of a direct compiler service.
     /// </summary>
-    public abstract class DirectCompilerServiceBase : CompilerServiceBase, IDisposable
-    {
+    public abstract class DirectCompilerServiceBase : CompilerServiceBase, IDisposable {
         private readonly Logger _log = LogManager.GetLogger(string.Empty);
 
         #region Fields
@@ -42,8 +40,7 @@ namespace Transformalize.Libs.RazorEngine.Compilation
         /// <param name="codeDomProvider">The code dom provider used to generate code.</param>
         /// <param name="markupParserFactory">The markup parser factory.</param>
         protected DirectCompilerServiceBase(RazorCodeLanguage codeLanguage, CodeDomProvider codeDomProvider, Func<ParserBase> markupParserFactory)
-            : base(codeLanguage, markupParserFactory)
-        {
+            : base(codeLanguage, markupParserFactory) {
             _codeDomProvider = codeDomProvider;
         }
 
@@ -54,8 +51,7 @@ namespace Transformalize.Libs.RazorEngine.Compilation
         /// <summary>
         ///     Releases managed resourced used by this instance.
         /// </summary>
-        public void Dispose()
-        {
+        public void Dispose() {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
@@ -66,21 +62,19 @@ namespace Transformalize.Libs.RazorEngine.Compilation
         /// <param name="context">The type context.</param>
         /// <returns>The compiler results.</returns>
         [Pure]
-        private Tuple<CompilerResults, string> Compile(TypeContext context)
-        {
+        private Tuple<CompilerResults, string> Compile(TypeContext context) {
             if (_disposed)
                 throw new ObjectDisposedException(GetType().Name);
 
             var compileUnit = GetCodeCompileUnit(context.ClassName, context.TemplateContent, context.Namespaces,
                                                  context.TemplateType, context.ModelType);
 
-            var @params = new CompilerParameters
-                          {
-                              GenerateInMemory = true,
-                              GenerateExecutable = false,
-                              IncludeDebugInformation = false,
-                              CompilerOptions = "/target:library /optimize"
-                          };
+            var @params = new CompilerParameters {
+                GenerateInMemory = true,
+                GenerateExecutable = false,
+                IncludeDebugInformation = false,
+                CompilerOptions = "/target:library /optimize"
+            };
 
             var assemblies = CompilerServicesUtility
                 .GetLoadedAssemblies()
@@ -96,11 +90,9 @@ namespace Transformalize.Libs.RazorEngine.Compilation
             @params.ReferencedAssemblies.AddRange(assemblies.ToArray());
 
             string sourceCode = null;
-            if (Debug)
-            {
+            if (Debug) {
                 var builder = new StringBuilder();
-                using (var writer = new StringWriter(builder, CultureInfo.InvariantCulture))
-                {
+                using (var writer = new StringWriter(builder, CultureInfo.InvariantCulture)) {
                     _codeDomProvider.GenerateCodeFromCompileUnit(compileUnit, writer, new CodeGeneratorOptions());
                     sourceCode = builder.ToString();
                 }
@@ -115,22 +107,20 @@ namespace Transformalize.Libs.RazorEngine.Compilation
         /// <param name="context">The type context which defines the type to compile.</param>
         /// <returns>The compiled type.</returns>
         [Pure, SecurityCritical]
-        public override Tuple<Type, Assembly> CompileType(TypeContext context)
-        {
+        public override Tuple<Type, Assembly> CompileType(TypeContext context) {
             if (context == null)
                 throw new ArgumentNullException("context");
 
             var result = Compile(context);
             var compileResult = result.Item1;
 
-            if (compileResult.Errors != null && compileResult.Errors.Count > 0)
-            {
+            if (compileResult.Errors != null && compileResult.Errors.Count > 0) {
                 _log.Warn("The following template content will not compile:");
                 _log.Info(Environment.NewLine + context.TemplateContent);
-                foreach (var error in compileResult.Errors)
-                {
+                foreach (var error in compileResult.Errors) {
                     _log.Error(error.ToString().Split(':').Last().Trim(' '));
                 }
+                LogManager.Flush();
                 Environment.Exit(1);
                 //throw new TemplateCompilationException(compileResult.Errors, result.Item2, context.TemplateContent);
             }
@@ -144,10 +134,8 @@ namespace Transformalize.Libs.RazorEngine.Compilation
         ///     Releases managed resources used by this instance.
         /// </summary>
         /// <param name="disposing">Are we explicily disposing of this instance?</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing && !_disposed)
-            {
+        protected virtual void Dispose(bool disposing) {
+            if (disposing && !_disposed) {
                 _codeDomProvider.Dispose();
                 _disposed = true;
             }

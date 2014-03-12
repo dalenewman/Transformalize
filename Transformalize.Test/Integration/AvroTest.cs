@@ -21,22 +21,22 @@
 #endregion
 
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration.Builders;
 using Transformalize.Libs.Avro.File;
 using Transformalize.Libs.Avro.Generic;
 using Transformalize.Libs.Avro.Schema;
-using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Libs.NLog;
 using Transformalize.Main;
-using Transformalize.Main.Providers;
 
 namespace Transformalize.Test.Integration {
 
     [TestFixture]
     public class AvroTest {
 
-        private readonly Schema _schema = Schema.Parse(System.IO.File.ReadAllText(@"C:\Code\Agile_Data_Code\ch03\gmail\email.avro.schema"));
+        private readonly Schema _schema = Schema.Parse(File.ReadAllText(@"C:\Code\Agile_Data_Code\ch03\gmail\email.avro.schema"));
 
 
         [Test]
@@ -104,10 +104,8 @@ namespace Transformalize.Test.Integration {
 
             var config = new ProcessBuilder("TestSqlOverride")
                 .Connection("input").Database("master")
-                .Connection("output")
-                    .Provider(ProviderType.File)
-                    .File(@"c:\temp\sql-override.txt")
-                .Entity("databases").SqlOverride(@"
+                .Connection("output").Provider("console")
+                .Entity("Databases").SqlOverride(@"
                     SELECT
 	                    database_id AS Id,
 	                    Name,
@@ -121,10 +119,15 @@ namespace Transformalize.Test.Integration {
                 .Field("LogReuseWait")
                 .Process();
 
-            ProcessFactory.Create(config, new Options("init")).Run();
-            ProcessFactory.Create(config, new Options("first")).Run();
+            ProcessFactory.Create(config, new Options("init") { LogLevel = LogLevel.Off }).Run();
 
-            System.Diagnostics.Process.Start(@"c:\temp\sql-override.txt");
+            config.Connections["output"].Provider = "log";
+
+            ProcessFactory.Create(config, new Options("init") { LogLevel = LogLevel.Off }).Run();
+
+            //File.WriteAllText(@"c:\temp\sql-override.xml", config.Serialize());
+            //System.Diagnostics.Process.Start(@"c:\temp\sql-override.xml");
+            //System.Diagnostics.Process.Start(@"c:\temp\sql-override.txt");
 
         }
 

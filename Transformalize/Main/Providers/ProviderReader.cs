@@ -36,7 +36,7 @@ namespace Transformalize.Main.Providers {
             if (!providers.ContainsKey("analysisservices")) {
                 providers.Add("analysisservices", string.Empty);
             }
-            
+
             if (!providers.ContainsKey("file")) {
                 providers.Add("file", string.Empty);
             }
@@ -49,6 +49,13 @@ namespace Transformalize.Main.Providers {
                 providers.Add("internal", string.Empty);
             }
 
+            if (!providers.ContainsKey("console")) {
+                providers.Add("console", string.Empty);
+            }
+
+            if (!providers.ContainsKey("log")) {
+                providers.Add("log", string.Empty);
+            }
             return providers;
         }
     }

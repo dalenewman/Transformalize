@@ -22,11 +22,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.Ninject.Syntax;
 using Transformalize.Libs.NLog;
@@ -35,12 +32,6 @@ using Transformalize.Libs.RazorEngine;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Providers;
-using Transformalize.Main.Providers.AnalysisServices;
-using Transformalize.Main.Providers.File;
-using Transformalize.Main.Providers.Folder;
-using Transformalize.Main.Providers.Internal;
-using Transformalize.Main.Providers.MySql;
-using Transformalize.Main.Providers.SqlServer;
 using Transformalize.Operations.Validate;
 
 namespace Transformalize.Main {

@@ -148,11 +148,6 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
-        public TransformBuilder Expression(string expression) {
-            _transform.Expression = expression;
-            return this;
-        }
-
         public TransformBuilder Type(string type) {
             _transform.Type = type;
             return this;

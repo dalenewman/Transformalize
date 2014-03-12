@@ -31,6 +31,8 @@ namespace Transformalize.Main.Providers
         AnalysisServices,
         File,
         Internal,
-        Folder
+        Folder,
+        Console,
+        Log
     }
 }

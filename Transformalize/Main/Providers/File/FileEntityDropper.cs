@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace Transformalize.Main.Providers {
+namespace Transformalize.Main.Providers.File {
 
     public class FileEntityDropper : IEntityDropper {
         public IEntityExists EntityExists { get; set; }

@@ -55,6 +55,7 @@ namespace Transformalize.Main {
                 !leftEntity.Fields.ToEnumerable().Any(Common.FieldFinder(leftField))) {
                 _log.Error("The left entity {0} does not have a field named {1} for joining to the right entity {2} with field {3}.",
                     leftEntity.Alias, leftField, rightEntity.Alias, rightField);
+                LogManager.Flush();
                 Environment.Exit(1);
             }
 
@@ -63,6 +64,7 @@ namespace Transformalize.Main {
                 _log.Error(
                     "The right entity {0} does not have a field named {1} for joining to the left entity {2} with field {3}.",
                     rightEntity.Alias, rightField, leftEntity.Alias, leftField);
+                LogManager.Flush();
                 Environment.Exit(1);
             }
 

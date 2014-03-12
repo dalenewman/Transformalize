@@ -13,6 +13,7 @@ namespace Transformalize.Runner
 
             if (!xmlFileInfo.Exists) {
                 _log.Error("Sorry. I can't find file {0}.", xmlFileInfo.FullName);
+                LogManager.Flush();
                 Environment.Exit(1);
             }
 

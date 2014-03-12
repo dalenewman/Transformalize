@@ -33,8 +33,15 @@ namespace Transformalize.Test.Integration {
 
         [SetUp]
         public void SetUp() {
-            LogManager.Configuration.LoggingRules[0].EnableLoggingForLevel(LogLevel.Debug);
+            LogManager.Configuration.LoggingRules[0].EnableLoggingForLevel(LogLevel.Info);
             LogManager.ReconfigExistingLoggers();
+        }
+
+        [Test]
+        public void Run()
+        {
+            ProcessFactory.Create(FILE, new Options() {Mode = "init"}).Run();
+            ProcessFactory.Create(FILE, new Options() { Mode = "first" }).Run();
         }
 
         [Test]

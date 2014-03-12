@@ -256,6 +256,7 @@ namespace Transformalize.Libs.FileHelpers.Fields
             {
                 var e = ConvertException.ReThrowException(ex, mFieldInfo.Name, line.mReader.LineNumber, fieldString.ExtractedFrom + 1);
                 _log.Error("{0} {1}", e.Message, e.MessageExtra);
+                LogManager.Flush();
                 Environment.Exit(1);
             }
             return null;

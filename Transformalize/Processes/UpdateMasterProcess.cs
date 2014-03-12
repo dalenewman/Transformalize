@@ -56,6 +56,7 @@ namespace Transformalize.Processes
                 {
                     Error(error.InnerException, "Message: {0}\r\nStackTrace:{1}\r\n", error.Message, error.StackTrace);
                 }
+                LogManager.Flush();
                 Environment.Exit(1);
             }
 

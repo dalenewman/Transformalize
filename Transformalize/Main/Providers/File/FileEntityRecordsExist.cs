@@ -1,8 +1,7 @@
 using System;
 using System.IO;
-using Transformalize.Main.Providers;
 
-namespace Transformalize.Main {
+namespace Transformalize.Main.Providers.File {
 
     public class FileEntityRecordsExist : IEntityRecordsExist {
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;

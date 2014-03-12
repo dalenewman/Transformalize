@@ -1,7 +1,6 @@
 using System.IO;
-using Transformalize.Main.Providers;
 
-namespace Transformalize.Main
+namespace Transformalize.Main.Providers.Folder
 {
     public class FolderEntityExists : IEntityExists {
         public bool Exists(AbstractConnection connection, Entity entity) {

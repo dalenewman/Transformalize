@@ -122,6 +122,7 @@ namespace Transformalize.Main {
                     _process.ValidationResults.AddResult(result);
                     _log.Error(result.Message);
                 }
+                LogManager.Flush();
                 Environment.Exit(1);
             }
         }
@@ -163,7 +164,8 @@ namespace Transformalize.Main {
                         entity.Version = entity.CalculatedFields[element.Version];
                     } else {
                         _log.Error("version field reference '{0}' is undefined in {1}.", element.Version, element.Name);
-                        Environment.Exit(0);
+                        LogManager.Flush();
+                        Environment.Exit(1);
                     }
                 }
             }
@@ -178,6 +180,7 @@ namespace Transformalize.Main {
                 return;
 
             _log.Error("Entity {0} is set to group, but not all your output fields have aggregate defined.", entity.Alias);
+            LogManager.Flush();
             Environment.Exit(1);
         }
 

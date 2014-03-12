@@ -1,13 +1,16 @@
 ﻿using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
+using Transformalize.Libs.EnterpriseLibrary.Validation.Configuration;
 using Transformalize.Libs.Ninject.Parameters;
 using Transformalize.Libs.Ninject.Syntax;
 using Transformalize.Libs.NLog;
 using Transformalize.Main.Providers.AnalysisServices;
+using Transformalize.Main.Providers.Console;
 using Transformalize.Main.Providers.File;
 using Transformalize.Main.Providers.Folder;
 using Transformalize.Main.Providers.Internal;
+using Transformalize.Main.Providers.Log;
 using Transformalize.Main.Providers.MySql;
 using Transformalize.Main.Providers.SqlCe4;
 using Transformalize.Main.Providers.SqlServer;
@@ -56,6 +59,12 @@ namespace Transformalize.Main.Providers {
                     case "sqlce4":
                         connections.Add(element.Name, _process.Kernal.Get<SqlCe4Connection>(parameters));
                         break;
+                    case "console":
+                        connections.Add(element.Name, _process.Kernal.Get<ConsoleConnection>(parameters));
+                        break;
+                    case "log":
+                        connections.Add(element.Name, _process.Kernal.Get<LogConnection>(parameters));
+                        break;
                     default:
                         connections.Add(element.Name, _process.Kernal.Get<SqlServerConnection>(parameters));
                         break;
@@ -72,6 +81,7 @@ namespace Transformalize.Main.Providers {
                     _process.ValidationResults.AddResult(result);
                     _log.Error(result.Message);
                 }
+                LogManager.Flush();
                 System.Environment.Exit(1);
             }
         }
