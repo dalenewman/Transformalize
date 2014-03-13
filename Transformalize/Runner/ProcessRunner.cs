@@ -30,10 +30,12 @@ using Transformalize.Main.Providers;
 using Transformalize.Processes;
 
 namespace Transformalize.Runner {
+
     public class ProcessRunner : IProcessRunner {
 
-        public IEnumerable<IEnumerable<Row>> Run(Process process) {
-            var results = new List<IEnumerable<Row>>();
+        public IDictionary<string,IEnumerable<Row>> Run(Process process) {
+
+            var results = new Dictionary<string, IEnumerable<Row>>();
 
             if (!process.IsReady())
                 return results;
@@ -46,7 +48,7 @@ namespace Transformalize.Runner {
             if (process.Options.RenderTemplates)
                 new TemplateManager(process).Manage();
 
-            return process.Entities.Select(e => e.Rows);
+            return process.Entities.ToDictionary(e => e.Alias, e => e.Rows);
         }
 
         private static void ProcessDeletes(Process process) {

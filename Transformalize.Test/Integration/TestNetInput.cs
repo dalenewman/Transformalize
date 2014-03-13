@@ -84,7 +84,7 @@ namespace Transformalize.Test.Integration {
                     .Field("indexString")
                 .Process();
 
-            var rows = ProcessFactory.Create(process).Run().First();
+            var rows = ProcessFactory.Create(process).Run()["e"];
             Assert.AreEqual(10, rows.Count());
         }
 

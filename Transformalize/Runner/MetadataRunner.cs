@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -9,8 +8,8 @@ using Transformalize.Main.Providers.SqlServer;
 
 namespace Transformalize.Runner {
     public class MetadataRunner : IProcessRunner {
-        public IEnumerable<IEnumerable<Row>> Run(Process process) {
-            var result = new List<IEnumerable<Row>>();
+        public IDictionary<string, IEnumerable<Row>> Run(Process process) {
+            var result = new Dictionary<string, IEnumerable<Row>>();
 
             if (!process.IsReady())
                 return result;

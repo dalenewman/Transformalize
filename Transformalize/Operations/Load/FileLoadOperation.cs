@@ -7,6 +7,7 @@ using Transformalize.Libs.FileHelpers.RunTime;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
+using Transformalize.Main.Providers;
 
 namespace Transformalize.Operations.Load
 {
@@ -14,8 +15,8 @@ namespace Transformalize.Operations.Load
         private readonly FileInfo _fileInfo;
         private readonly Type _type;
 
-        public FileLoadOperation(Process process, Entity entity) {
-            _fileInfo = new FileInfo(process.OutputConnection.File);
+        public FileLoadOperation(AbstractConnection connection, Entity entity) {
+            _fileInfo = new FileInfo(connection.File);
 
             if (_fileInfo.DirectoryName != null && !Directory.Exists(_fileInfo.DirectoryName)) {
                 Info("Creating Output Folder(s).");
@@ -27,7 +28,7 @@ namespace Transformalize.Operations.Load
                 _fileInfo.Delete();
             }
 
-            var builder = new DelimitedClassBuilder("Tfl" + entity.OutputName()) { IgnoreEmptyLines = true, Delimiter = process.OutputConnection.Delimiter, IgnoreFirstLines = 0 };
+            var builder = new DelimitedClassBuilder("Tfl" + entity.OutputName()) { IgnoreEmptyLines = true, Delimiter = connection.Delimiter, IgnoreFirstLines = 0 };
             foreach (var pair in entity.Fields.Where(f => f.Value.FileOutput)) {
                 builder.AddField(pair.Value.Alias, pair.Value.SystemType);
             }

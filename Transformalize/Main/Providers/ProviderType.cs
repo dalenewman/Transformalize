@@ -20,10 +20,8 @@
 
 #endregion
 
-namespace Transformalize.Main.Providers
-{
-    public enum ProviderType
-    {
+namespace Transformalize.Main.Providers {
+    public enum ProviderType {
         SqlServer,
         SqlServerCe,
         MySql,
@@ -33,6 +31,7 @@ namespace Transformalize.Main.Providers
         Internal,
         Folder,
         Console,
-        Log
+        Log,
+        Mail
     }
 }

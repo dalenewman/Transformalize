@@ -31,10 +31,10 @@ namespace Transformalize.Operations {
         private readonly Entity _entity;
         private readonly AbstractProvider _provider;
 
-        public EntityBatchUpdate(Process process, Entity entity)
-            : base(process.OutputConnection) {
+        public EntityBatchUpdate(AbstractConnection connection, Entity entity)
+            : base(connection) {
             _entity = entity;
-            _provider = process.OutputConnection.Provider;
+            _provider = connection.Provider;
             BatchSize = 50;
             UseTransaction = false;
         }

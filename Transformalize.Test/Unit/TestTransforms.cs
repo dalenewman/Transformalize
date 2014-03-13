@@ -660,7 +660,7 @@ namespace Transformalize.Test.Unit {
                 .Process();
 
             var process = ProcessFactory.Create(cfg);
-            var output = process.Run().First().ToList();
+            var output = process.Run()["entity"].ToList();
 
             Assert.AreEqual("Reclaim", output[0]["MeterCategory"]);
             Assert.AreEqual("Domestic", output[1]["MeterCategory"]);

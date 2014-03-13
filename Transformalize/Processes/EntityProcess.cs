@@ -21,8 +21,10 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.ConventionOperations;
@@ -36,14 +38,16 @@ using Transformalize.Operations.Load;
 namespace Transformalize.Processes {
 
     public class EntityProcess : EtlProcess {
+        private const string STANDARD_OUTPUT = "output";
         private readonly Process _process;
         private Entity _entity;
-        private readonly CollectorOperation _collector = new CollectorOperation();
+        private readonly Dictionary<string, CollectorOperation> _collectors = new Dictionary<string, CollectorOperation>();
 
         public EntityProcess(Process process, Entity entity) {
             GlobalDiagnosticsContext.Set("entity", Common.LogLength(entity.Alias));
             _process = process;
             _entity = entity;
+            _collectors.Add(STANDARD_OUTPUT, new CollectorOperation());
         }
 
         protected override void Initialize() {
@@ -91,36 +95,18 @@ namespace Transformalize.Processes {
 
             Register(new TruncateOperation(_entity.Fields, _entity.CalculatedFields));
 
-            if (_process.OutputConnection.Provider.Type == ProviderType.Internal) {
-                RegisterLast(_collector);
-            } else if (_process.OutputConnection.Provider.Type == ProviderType.Console) {
-                RegisterLast(new ConsoleOperation(_entity));
-            } else if (_process.OutputConnection.Provider.Type == ProviderType.Log) {
-                RegisterLast(new LogOperation(_entity));
-            } else {
-                if (_process.OutputConnection.Provider.Type == ProviderType.File) {
-                    RegisterLast(new FileLoadOperation(_process, _entity));
-                } else {
-                    if (_process.IsFirstRun) {
-                        if (_process.OutputConnection.Provider.IsDatabase && _entity.IndexOptimizations) {
-                            _process.OutputConnection.DropUniqueClusteredIndex(_entity);
-                            _process.OutputConnection.DropPrimaryKey(_entity);
-                        }
-                        Register(new EntityAddTflFields(_entity));
-                        RegisterLast(new EntityBulkInsert(_process, _entity));
-                    } else {
-                        Register(new EntityJoinAction(_entity).Right(new EntityOutputKeysExtract(_process, _entity)));
-                        var branch = new BranchingOperation()
-                            .Add(new PartialProcessOperation()
-                                .Register(new EntityActionFilter(ref _entity, EntityAction.Insert))
-                                .RegisterLast(new EntityBulkInsert(_process, _entity)))
-                            .Add(new PartialProcessOperation()
-                                .Register(new EntityActionFilter(ref _entity, EntityAction.Update))
-                                .RegisterLast(new EntityBatchUpdate(_process, _entity)));
-                        RegisterLast(branch);
-                    }
+            if (_entity.Output.Count > 0) {
+                var branch = new BranchingOperation()
+                    .Add(PrepareOutputOperation(_process.OutputConnection, STANDARD_OUTPUT));
+                foreach (var output in _entity.Output) {
+                    _collectors.Add(output.Name, new CollectorOperation());
+                    branch.Add(PrepareOutputOperation(output.Connection, output.Name));
                 }
+                Register(branch);
+            } else {
+                Register(PrepareOutputOperation(_process.OutputConnection, STANDARD_OUTPUT));
             }
+
         }
 
         private IOperation PrepareFileOperation(string file) {
@@ -131,6 +117,50 @@ namespace Transformalize.Processes {
                 return new FileDelimitedExtract(_entity, file, _process.Options.Top);
             }
             return new FileFixedExtract(_entity, file, _process.Options.Top);
+        }
+
+        private PartialProcessOperation PrepareOutputOperation(AbstractConnection connection, string output) {
+
+            var process = new PartialProcessOperation();
+
+            switch (connection.Provider.Type) {
+                case ProviderType.Internal:
+                    process.RegisterLast(_collectors[output]);
+                    break;
+                case ProviderType.Console:
+                    process.RegisterLast(new ConsoleOperation(_entity));
+                    break;
+                case ProviderType.Log:
+                    process.RegisterLast(new LogOperation(_entity));
+                    break;
+                case ProviderType.Mail:
+                    process.RegisterLast(new MailOperation(_entity));
+                    break;
+                case ProviderType.File:
+                    process.RegisterLast(new FileLoadOperation(connection, _entity));
+                    break;
+                default:
+                    if (_process.IsFirstRun) {
+                        if (connection.Provider.IsDatabase && _entity.IndexOptimizations) {
+                            connection.DropUniqueClusteredIndex(_entity);
+                            connection.DropPrimaryKey(_entity);
+                        }
+                        process.Register(new EntityAddTflFields(_entity));
+                        process.RegisterLast(new EntityBulkInsert(connection, _entity));
+                    } else {
+                        process.Register(new EntityJoinAction(_entity).Right(new EntityOutputKeysExtract(connection, _entity)));
+                        var branch = new BranchingOperation()
+                            .Add(new PartialProcessOperation()
+                                .Register(new EntityActionFilter(ref _entity, EntityAction.Insert))
+                                .RegisterLast(new EntityBulkInsert(connection, _entity)))
+                            .Add(new PartialProcessOperation()
+                                .Register(new EntityActionFilter(ref _entity, EntityAction.Update))
+                                .RegisterLast(new EntityBatchUpdate(connection, _entity)));
+                        process.RegisterLast(branch);
+                    }
+                    break;
+            }
+            return process;
         }
 
         protected override void PostProcessing() {
@@ -151,7 +181,12 @@ namespace Transformalize.Processes {
             }
 
             if (_process.OutputConnection.Provider.Type == ProviderType.Internal) {
-                _entity.Rows = _collector.Rows;
+                _entity.Rows = _collectors[STANDARD_OUTPUT].Rows;
+                foreach (var output in _entity.Output) {
+                    if (output.Connection.Provider.Type == ProviderType.Internal) {
+                        _entity.InternalOutput[output.Name] = _collectors[output.Name].Rows;
+                    }
+                }
             } else {
                 new DatabaseEntityVersionWriter(_process, _entity).WriteEndVersion();
             }

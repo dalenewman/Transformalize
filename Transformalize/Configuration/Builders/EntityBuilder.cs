@@ -96,5 +96,12 @@ namespace Transformalize.Configuration.Builders {
             _entity.SqlOverride = sql;
             return this;
         }
+
+        public OutputBuilder Output(string name)
+        {
+            var output = new OutputConfigurationElement() { Name = name };
+            _entity.Output.Add(output);
+            return new OutputBuilder(this, output);
+        }
     }
 }

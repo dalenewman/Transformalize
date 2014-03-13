@@ -71,6 +71,8 @@ namespace Transformalize.Main {
         public bool PrependProcessNameToOutputName { get; set; }
         public decimal Sample { get; set; }
         public string SqlOverride { get; set; }
+        public Dictionary<string, IEnumerable<Row>> InternalOutput { get; set; }
+        public List<Output> Output { get; set; }
 
         public Entity(int batchId) {
             _tflBatchId = batchId;
@@ -83,6 +85,8 @@ namespace Transformalize.Main {
             InputKeys = new List<Row>();
             Prefix = string.Empty;
             CalculatedFields = new Fields();
+            InternalOutput = new Dictionary<string, IEnumerable<Row>>();
+            Output = new List<Output>();
         }
 
         public IEnumerable<Row> Rows {

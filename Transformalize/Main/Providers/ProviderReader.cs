@@ -56,6 +56,11 @@ namespace Transformalize.Main.Providers {
             if (!providers.ContainsKey("log")) {
                 providers.Add("log", string.Empty);
             }
+
+            if (!providers.ContainsKey("mail")) {
+                providers.Add("mail", string.Empty);
+            }
+
             return providers;
         }
     }

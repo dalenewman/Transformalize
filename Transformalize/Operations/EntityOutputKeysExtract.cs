@@ -31,16 +31,16 @@ using Transformalize.Main.Providers;
 namespace Transformalize.Operations {
 
     public class EntityOutputKeysExtract : InputCommandOperation {
-        private readonly Process _process;
+        private readonly AbstractConnection _connection;
         private readonly Entity _entity;
         private readonly List<string> _fields;
         private readonly Field[] _key;
 
-        public EntityOutputKeysExtract(Process process, Entity entity)
-            : base(process.OutputConnection) {
-            _process = process;
+        public EntityOutputKeysExtract(AbstractConnection connection, Entity entity)
+            : base(connection) {
+            _connection = connection;
             _entity = entity;
-            _fields = new List<string>(new FieldSqlWriter(entity.PrimaryKey).Alias(process.OutputConnection.Provider).Keys()) { "TflKey" };
+            _fields = new List<string>(new FieldSqlWriter(entity.PrimaryKey).Alias(connection.Provider).Keys()) { "TflKey" };
             _key = new FieldSqlWriter(entity.PrimaryKey).ToArray();
         }
 
@@ -60,8 +60,7 @@ namespace Transformalize.Operations {
         }
 
         private string PrepareSql() {
-            var connection = _process.OutputConnection;
-            var provider = connection.Provider;
+            var provider = _connection.Provider;
             const string sqlPattern = @"
                 SELECT e.{0}, e.TflKey{1}
                 FROM {2} e WITH (NOLOCK);
@@ -83,8 +82,7 @@ namespace Transformalize.Operations {
         }
 
         private string PrepareSqlWithInputKeys() {
-            var connection = _process.OutputConnection;
-            var provider = connection.Provider;
+            var provider = _connection.Provider;
             const string sqlPattern = @"
                 {0}
 
@@ -94,8 +92,8 @@ namespace Transformalize.Operations {
             ";
 
             var builder = new StringBuilder();
-            builder.AppendLine(_process.OutputConnection.WriteTemporaryTable("@KEYS", _key));
-            builder.AppendLine(SqlTemplates.BatchInsertValues(50, "@KEYS", _key, _entity.InputKeys, _process.OutputConnection));
+            builder.AppendLine(_connection.WriteTemporaryTable("@KEYS", _key));
+            builder.AppendLine(SqlTemplates.BatchInsertValues(50, "@KEYS", _key, _entity.InputKeys, _connection));
 
             var rowVersion = string.Empty;
             if (_entity.Version != null && !VersionIsPrimaryKey()) {

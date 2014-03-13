@@ -138,7 +138,7 @@ namespace Transformalize.Test.Unit {
                 .Process();
 
             var process = ProcessFactory.Create(cfg);
-            var output = process.Run().First().ToList();
+            var output = process.Run()["entity"].ToList();
 
             Assert.AreEqual(true, output[0]["outResult"]);
             Assert.AreEqual("4 is wrong! in can't be 4.", output[1]["outMessage"]);
@@ -165,7 +165,7 @@ namespace Transformalize.Test.Unit {
                 .Process();
 
             var process = ProcessFactory.Create(cfg);
-            var output = process.Run().First().ToList();
+            var output = process.Run()["entity"].ToList();
 
             Assert.AreEqual(true, output[0]["result"]);
             Assert.AreEqual(false, output[1]["result"]);
@@ -204,7 +204,7 @@ namespace Transformalize.Test.Unit {
 
             var crap = cfg.Serialize();
             var process = ProcessFactory.Create(cfg, new Options() { Mode = "test" });
-            var output = process.Run().First().ToList();
+            var output = process.Run()["entity"].ToList();
 
             Assert.AreNotEqual(string.Empty, crap);
             Assert.AreEqual("DALE", output[0]["new-name"]);

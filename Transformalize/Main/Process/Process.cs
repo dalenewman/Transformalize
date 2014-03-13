@@ -117,7 +117,7 @@ namespace Transformalize.Main {
             return false;
         }
 
-        public IEnumerable<IEnumerable<Row>> Run() {
+        public IDictionary<string,IEnumerable<Row>> Run() {
             Timer.Start();
             var results = Options.ProcessRunner.Run(this);
             Options.ProcessRunner.Dispose();

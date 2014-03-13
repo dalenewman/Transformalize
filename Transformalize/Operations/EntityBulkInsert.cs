@@ -23,16 +23,17 @@
 using System.Data.SqlClient;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
+using Transformalize.Main.Providers;
 
 namespace Transformalize.Operations {
     public class EntityBulkInsert : SqlBulkInsertOperation {
-        private readonly Process _process;
         private readonly Entity _entity;
+        private readonly int _batchSize;
 
-        public EntityBulkInsert(Process process, Entity entity)
-            : base(process.OutputConnection, process.OutputConnection.Provider.Enclose(entity.OutputName())) {
-            _process = process;
+        public EntityBulkInsert(AbstractConnection connection, Entity entity)
+            : base(connection, connection.Provider.Enclose(entity.OutputName())) {
             _entity = entity;
+            _batchSize = connection.BatchSize;
             UseTransaction = false;
 
             TurnOptionOn(SqlBulkCopyOptions.TableLock);
@@ -43,7 +44,7 @@ namespace Transformalize.Operations {
 
         protected override void PrepareSchema() {
             NotifyBatchSize = 10000;
-            BatchSize = _process.OutputConnection.BatchSize;
+            BatchSize = _batchSize;
 
             var fields = new FieldSqlWriter(_entity.Fields, _entity.CalculatedFields).Output().AddBatchId(false).ToArray();
             foreach (var field in fields) {

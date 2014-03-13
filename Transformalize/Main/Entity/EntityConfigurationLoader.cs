@@ -21,12 +21,21 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using Transformalize.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.NLog;
+using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Main.Providers;
 
 namespace Transformalize.Main {
+
+    public class Output {
+        public string Name { get; set; }
+        public AbstractConnection Connection { get; set; }
+    }
 
     public class EntityConfigurationLoader {
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
@@ -66,8 +75,9 @@ namespace Transformalize.Main {
                 Sample = element.Sample,
                 SqlOverride = element.SqlOverride,
                 Alias = string.IsNullOrEmpty(element.Alias) ? element.Name : element.Alias,
+                InternalOutput = element.Output.Cast<OutputConfigurationElement>().ToDictionary(o => o.Name, o => Enumerable.Repeat(new Row(), 0)),
                 UseBcp = element.UseBcp,
-                InputOperation = element.InputOperation
+                InputOperation = element.InputOperation,
             };
 
             GuardAgainstInvalidGrouping(element, entity);
@@ -110,6 +120,17 @@ namespace Transformalize.Main {
             }
 
             LoadVersion(element, entity);
+
+            foreach (OutputConfigurationElement output in element.Output) {
+                if (_process.Connections.ContainsKey(output.Connection)) {
+                    entity.Output.Add(new Output {
+                        Name = output.Name,
+                        Connection = _process.Connections[output.Connection]
+                    });
+                } else {
+                    _log.Warn("Can't add output {0} because connection {1} doesn't exist.", output.Name, output.Connection);
+                }
+            }
 
             return entity;
         }

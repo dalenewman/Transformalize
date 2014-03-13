@@ -8,8 +8,8 @@ namespace Transformalize.Runner
 {
     public class InitializeRunner : IProcessRunner {
 
-        public IEnumerable<IEnumerable<Row>> Run(Process process) {
-            var result = new List<IEnumerable<Row>>();
+        public IDictionary<string, IEnumerable<Row>> Run(Process process) {
+            var result = new Dictionary<string, IEnumerable<Row>>();
 
             if (!process.IsReady())
                 return result;

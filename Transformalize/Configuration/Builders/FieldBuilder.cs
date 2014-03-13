@@ -1,7 +1,6 @@
 using System.Globalization;
 
 namespace Transformalize.Configuration.Builders {
-
     public class FieldBuilder {
 
         private readonly IFieldHolder _fieldHolder;

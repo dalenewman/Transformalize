@@ -92,6 +92,7 @@
     <Compile Include="Unit\Builders\MapBuilder.cs" />
     <Compile Include="Unit\Builders\MapsBuilder.cs" />
     <Compile Include="Integration\TestNetInput.cs" />
+    <Compile Include="Unit\TestOutput.cs" />
     <Compile Include="Unit\TestConnectionValidation.cs" />
     <Compile Include="Unit\TestConfiguration.cs" />
     <Compile Include="Unit\TestProcess.cs" />

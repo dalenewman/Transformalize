@@ -156,7 +156,7 @@ namespace Transformalize.Configuration {
             set { this[COMPATABILITY_LEVEL] = value; }
         }
 
-        [RegexStringValidator(@"(?i)SqlServer|AnalysisServices|MySql|File|Folder|Internal|SqlCe4|Console|Log")]
+        [RegexStringValidator(@"(?i)SqlServer|AnalysisServices|MySql|File|Folder|Internal|SqlCe4|Console|Log|Mail")]
         [ConfigurationProperty(PROVIDER, IsRequired = false, DefaultValue = "SqlServer")]
         public string Provider {
             get { return this[PROVIDER] as string; }

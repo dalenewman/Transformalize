@@ -4,7 +4,7 @@ using Transformalize.Libs.Rhino.Etl.Operations;
 
 namespace Transformalize.Operations {
     public class CollectorOperation : AbstractOperation {
-        private IEnumerable<Row> _rows = new List<Row>();
+        private IEnumerable<Row> _rows;
 
         public IEnumerable<Row> Rows {
             get { return _rows; }

@@ -57,7 +57,7 @@ namespace Transformalize.Test.Unit {
                     .CalculatedField("count")   .Aggregate("count")         .Int32()
                 .Process();
 
-            var output = ProcessFactory.Create(cfg).Run().First().ToList();
+            var output = ProcessFactory.Create(cfg).Run()["entity"].ToList();
 
             Assert.AreEqual(2, output.Count);
 
@@ -96,7 +96,7 @@ namespace Transformalize.Test.Unit {
                     .Field("year")
                 .Process();
 
-            var output = ProcessFactory.Create(cfg).Run().First().ToList();
+            var output = ProcessFactory.Create(cfg).Run()["entity"].ToList();
 
             //Assert.AreEqual(2, output.Count);
 

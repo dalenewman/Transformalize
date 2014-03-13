@@ -190,7 +190,7 @@ namespace Transformalize.Test.Unit {
 
             var ready = ProcessFactory.Create(process);
 
-            Assert.AreEqual(10, ready.Providers.Count);
+            Assert.AreEqual(11, ready.Providers.Count);
         }
 
         [Test]

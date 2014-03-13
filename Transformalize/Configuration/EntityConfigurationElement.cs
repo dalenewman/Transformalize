@@ -45,6 +45,7 @@ namespace Transformalize.Configuration {
         private const string PIPELINE_THREADING = "pipeline-threading";
         private const string SAMPLE = "sample";
         private const string SQL_OVERRIDE = "sql-override";
+        private const string OUTPUT = "output";
 
         public IOperation InputOperation { get; set; }
 
@@ -148,6 +149,11 @@ namespace Transformalize.Configuration {
         public string SqlOverride {
             get { return this[SQL_OVERRIDE] as string; }
             set { this[SQL_OVERRIDE] = value; }
+        }
+
+        [ConfigurationProperty(OUTPUT)]
+        public OutputElementCollection Output {
+            get { return this[OUTPUT] as OutputElementCollection; }
         }
 
         public override bool IsReadOnly() {
