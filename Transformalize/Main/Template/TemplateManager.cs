@@ -20,6 +20,7 @@
 
 #endregion
 
+using System;
 using System.IO;
 using Transformalize.Libs.NLog;
 
@@ -38,17 +39,23 @@ namespace Transformalize.Main {
         public void Manage() {
             var folder = Common.GetTemporaryFolder(_process.Name);
 
-            foreach (var pair in _process.Templates)
-            {
+            foreach (var pair in _process.Templates) {
 
+                string result;
                 var template = pair.Value;
 
                 if (template.IsUsedInPipeline)
                     continue;
 
-                var result = template.Render();
+                try {
+                    result = template.Render();
+                } catch (Exception e) {
+                    result = e.Message;
+                    _log.Warn("Template {0} failed to render. {1}. If the template is depending on pipe-line variables, make sure it is referenced in a template transform.", template.Name, e.Message);
+                    _log.Debug(e.StackTrace);
+                }
 
-                var renderedInfo = new FileInfo(folder.TrimEnd(_trim) + @"\" + template.Name + new FileInfo(template.File).Extension.ToLower().Replace("cshtml","txt"));
+                var renderedInfo = new FileInfo(folder.TrimEnd(_trim) + @"\" + template.Name + new FileInfo(template.File).Extension.ToLower().Replace("cshtml", "txt"));
                 File.WriteAllText(renderedInfo.FullName, result);
 
                 if (!_process.Options.PerformTemplateActions)
@@ -56,7 +63,7 @@ namespace Transformalize.Main {
 
                 foreach (var action in template.Actions) {
                     action.RenderedFile = renderedInfo.FullName;
-                    
+
                     switch (action.Action.ToLower()) {
                         case "copy":
                             new TemplateActionCopy().Handle(action);

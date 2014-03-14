@@ -1,9 +1,7 @@
 using Transformalize.Configuration;
 
 namespace Transformalize.Main.Providers.File {
-
-    public class FileConnection : AbstractConnection {
-
+    public class HtmlConnection : AbstractConnection {
         public override string UserProperty { get { return string.Empty; } }
         public override string PasswordProperty { get { return string.Empty; } }
         public override string PortProperty { get { return string.Empty; } }
@@ -14,7 +12,7 @@ namespace Transformalize.Main.Providers.File {
             get { return string.Empty; }
         }
 
-        public FileConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
+        public HtmlConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
 
             TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
@@ -22,5 +20,6 @@ namespace Transformalize.Main.Providers.File {
             EntityKeysRangeQueryWriter = new EmptyQueryWriter();
             EntityKeysAllQueryWriter = new EmptyQueryWriter();
         }
+
     }
 }

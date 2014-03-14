@@ -4,6 +4,7 @@
 // */
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Libs.fastJSON;
@@ -12,7 +13,6 @@ using Transformalize.Main;
 
 namespace Transformalize.Libs.Rhino.Etl.Operations {
     public class LogOperation : AbstractOperation {
-
         private readonly Logger _log = LogManager.GetLogger("file-output");
         private readonly List<string> _columns = new List<string>();
         private readonly string _name;

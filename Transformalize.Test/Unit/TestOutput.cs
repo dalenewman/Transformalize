@@ -34,7 +34,7 @@ namespace Transformalize.Test.Unit {
     public class TestOutput {
 
         [Test]
-        public void TestProcessOutput() {
+        public void TestPrimaryOutput() {
 
             var input = new RowsBuilder()
                 .Row("id", 1).Field("name", "one")
@@ -43,12 +43,12 @@ namespace Transformalize.Test.Unit {
                 .ToOperation();
 
             var cfg = new ProcessBuilder("process")
+
                 .Connection("input").Provider("internal")
                 .Connection("output").Provider("internal")
-                .Connection("other").Provider("internal")
+
                 .Entity("entity")
                     .Input(input)
-                    .Output("other").Connection("other")
                     .Field("id").Int32().PrimaryKey()
                     .Field("name")
                 .Process();
@@ -62,7 +62,7 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void TestEntityOutput() {
+        public void TestSecondaryOutputs() {
 
             var input = new RowsBuilder()
                 .Row("id", 1).Field("name", "one")
@@ -74,13 +74,22 @@ namespace Transformalize.Test.Unit {
                 
                 .Connection("input").Provider("internal")
                 .Connection("output").Provider("internal")
-                .Connection("other1").Provider("internal")
-                .Connection("other2").Provider("internal")
+
+                .Connection("c1").Provider("internal")
+                .Connection("c2").Provider("internal")
 
                 .Entity("entity")
                     .Input(input)
-                    .Output("other1").Connection("other1")
-                    .Output("other2").Connection("other2")
+                    .Output("o1")
+                        .Connection("c1")
+                        .RunField("name")
+                        .RunValue("two")
+                    .Output("o2")
+                        .Connection("c2")
+                        .RunField("id")
+                        .RunOperator("GreaterThan")
+                        .RunType("int")
+                        .RunValue(1)
                     .Field("id").Int32().PrimaryKey()
                     .Field("name")
                 
@@ -90,9 +99,11 @@ namespace Transformalize.Test.Unit {
 
             var output = process.Run();
 
+            Assert.IsNotNull(output);
+
             Assert.AreEqual(3, output["entity"].Count());
-            Assert.AreEqual(3, process["entity"].InternalOutput["other1"].Count());
-            Assert.AreEqual(3, process["entity"].InternalOutput["other2"].Count());
+            Assert.AreEqual(1, process["entity"].InternalOutput["o1"].Count());
+            Assert.AreEqual(2, process["entity"].InternalOutput["o2"].Count());
         }
 
     }

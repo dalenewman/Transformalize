@@ -8,7 +8,6 @@ using Transformalize.Main;
 
 namespace Transformalize.Operations {
     public class ConsoleOperation : AbstractOperation {
-
         private readonly List<string> _columns = new List<string>();
 
         public ConsoleOperation(Entity entity) {

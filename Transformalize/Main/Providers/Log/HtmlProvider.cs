@@ -1,8 +1,7 @@
 namespace Transformalize.Main.Providers.Log {
-
-    public class MailProvider : AbstractProvider {
-        public MailProvider() {
-            Type = ProviderType.Mail;
+    public class HtmlProvider : AbstractProvider {
+        public HtmlProvider() {
+            Type = ProviderType.Html;
             L = string.Empty;
             R = string.Empty;
             Supports = new ProviderSupports {

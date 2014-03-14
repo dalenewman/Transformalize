@@ -21,7 +21,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -34,6 +34,7 @@ using Transformalize.Main.Providers;
 using Transformalize.Operations;
 using Transformalize.Operations.Extract;
 using Transformalize.Operations.Load;
+using Transformalize.Operations.Transform;
 
 namespace Transformalize.Processes {
 
@@ -41,13 +42,13 @@ namespace Transformalize.Processes {
         private const string STANDARD_OUTPUT = "output";
         private readonly Process _process;
         private Entity _entity;
-        private readonly Dictionary<string, CollectorOperation> _collectors = new Dictionary<string, CollectorOperation>();
+        private readonly ConcurrentDictionary<string, CollectorOperation> _collectors = new ConcurrentDictionary<string, CollectorOperation>();
 
         public EntityProcess(Process process, Entity entity) {
             GlobalDiagnosticsContext.Set("entity", Common.LogLength(entity.Alias));
             _process = process;
             _entity = entity;
-            _collectors.Add(STANDARD_OUTPUT, new CollectorOperation());
+            _collectors[STANDARD_OUTPUT] = new CollectorOperation();
         }
 
         protected override void Initialize() {
@@ -95,16 +96,18 @@ namespace Transformalize.Processes {
 
             Register(new TruncateOperation(_entity.Fields, _entity.CalculatedFields));
 
+            var standardOutput = new Output { Connection = _process.OutputConnection, Name = STANDARD_OUTPUT };
+
             if (_entity.Output.Count > 0) {
                 var branch = new BranchingOperation()
-                    .Add(PrepareOutputOperation(_process.OutputConnection, STANDARD_OUTPUT));
+                    .Add(PrepareOutputOperation(standardOutput));
                 foreach (var output in _entity.Output) {
-                    _collectors.Add(output.Name, new CollectorOperation());
-                    branch.Add(PrepareOutputOperation(output.Connection, output.Name));
+                    _collectors[output.Name] = new CollectorOperation();
+                    branch.Add(PrepareOutputOperation(output));
                 }
                 Register(branch);
             } else {
-                Register(PrepareOutputOperation(_process.OutputConnection, STANDARD_OUTPUT));
+                Register(PrepareOutputOperation(standardOutput));
             }
 
         }
@@ -119,13 +122,14 @@ namespace Transformalize.Processes {
             return new FileFixedExtract(_entity, file, _process.Options.Top);
         }
 
-        private PartialProcessOperation PrepareOutputOperation(AbstractConnection connection, string output) {
+        private PartialProcessOperation PrepareOutputOperation(Output output) {
 
             var process = new PartialProcessOperation();
+            process.Register(new FilterOutputOperation(output.ShouldRun));
 
-            switch (connection.Provider.Type) {
+            switch (output.Connection.Provider.Type) {
                 case ProviderType.Internal:
-                    process.RegisterLast(_collectors[output]);
+                    process.RegisterLast(_collectors[output.Name]);
                     break;
                 case ProviderType.Console:
                     process.RegisterLast(new ConsoleOperation(_entity));
@@ -137,25 +141,29 @@ namespace Transformalize.Processes {
                     process.RegisterLast(new MailOperation(_entity));
                     break;
                 case ProviderType.File:
-                    process.RegisterLast(new FileLoadOperation(connection, _entity));
+                    process.RegisterLast(new FileLoadOperation(output.Connection, _entity));
+                    break;
+                case ProviderType.Html:
+                    process.Register(new HtmlRowOperation(_entity, "HtmlRow"));
+                    process.RegisterLast(new HtmlLoadOperation(output.Connection, _entity, "HtmlRow"));
                     break;
                 default:
                     if (_process.IsFirstRun) {
-                        if (connection.Provider.IsDatabase && _entity.IndexOptimizations) {
-                            connection.DropUniqueClusteredIndex(_entity);
-                            connection.DropPrimaryKey(_entity);
+                        if (output.Connection.Provider.IsDatabase && _entity.IndexOptimizations) {
+                            output.Connection.DropUniqueClusteredIndex(_entity);
+                            output.Connection.DropPrimaryKey(_entity);
                         }
                         process.Register(new EntityAddTflFields(_entity));
-                        process.RegisterLast(new EntityBulkInsert(connection, _entity));
+                        process.RegisterLast(new EntityBulkInsert(output.Connection, _entity));
                     } else {
-                        process.Register(new EntityJoinAction(_entity).Right(new EntityOutputKeysExtract(connection, _entity)));
+                        process.Register(new EntityJoinAction(_entity).Right(new EntityOutputKeysExtract(output.Connection, _entity)));
                         var branch = new BranchingOperation()
                             .Add(new PartialProcessOperation()
                                 .Register(new EntityActionFilter(ref _entity, EntityAction.Insert))
-                                .RegisterLast(new EntityBulkInsert(connection, _entity)))
+                                .RegisterLast(new EntityBulkInsert(output.Connection, _entity)))
                             .Add(new PartialProcessOperation()
                                 .Register(new EntityActionFilter(ref _entity, EntityAction.Update))
-                                .RegisterLast(new EntityBatchUpdate(connection, _entity)));
+                                .RegisterLast(new EntityBatchUpdate(output.Connection, _entity)));
                         process.RegisterLast(branch);
                     }
                     break;

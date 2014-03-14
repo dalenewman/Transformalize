@@ -65,9 +65,16 @@ namespace Transformalize.Main.Providers {
                     case "log":
                         connections.Add(element.Name, _process.Kernal.Get<LogConnection>(parameters));
                         break;
+                    case "mail":
+                        connections.Add(element.Name, _process.Kernal.Get<MailConnection>(parameters));
+                        break;
+                    case "html":
+                        connections.Add(element.Name, _process.Kernal.Get<HtmlConnection>(parameters));
+                        break;
                     default:
                         connections.Add(element.Name, _process.Kernal.Get<SqlServerConnection>(parameters));
                         break;
+                    //remember to update ProviderReader too.
                 }
             }
             return connections;

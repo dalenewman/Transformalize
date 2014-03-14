@@ -746,6 +746,7 @@
     <Compile Include="Main\Entity\EntityParametersReader.cs" />
     <Compile Include="Main\Entity\EntityRelationshipLoader.cs" />
     <Compile Include="Main\Entity\IEntityCreator.cs" />
+    <Compile Include="Main\Entity\Output.cs" />
     <Compile Include="Main\NinjectBindings.cs" />
     <Compile Include="Main\PipelineThreading.cs" />
     <Compile Include="Main\Process\ProcessFactory.cs" />
@@ -763,6 +764,7 @@
     <Compile Include="Main\Providers\File\FileEntityRecordsExist.cs" />
     <Compile Include="Main\Providers\FalseEntityRecordsExist.cs" />
     <Compile Include="Main\MapLoader.cs" />
+    <Compile Include="Main\Providers\File\HtmlConnection.cs" />
     <Compile Include="Main\Providers\Folder\FolderConnection.cs" />
     <Compile Include="Main\Providers\Folder\FolderConnectionChecker.cs" />
     <Compile Include="Main\Providers\Folder\FolderEntityCreator.cs" />
@@ -782,9 +784,12 @@
     <Compile Include="Main\Providers\Internal\InternalProvider.cs" />
     <Compile Include="Main\Providers\FalseTflWriter.cs" />
     <Compile Include="Main\Providers\FalseViewWriter.cs" />
+    <Compile Include="Main\Providers\Log\HtmlDependencies.cs" />
+    <Compile Include="Main\Providers\Log\HtmlProvider.cs" />
     <Compile Include="Main\Providers\Log\LogDependencies.cs" />
     <Compile Include="Main\Providers\Log\LogConnection.cs" />
     <Compile Include="Main\Providers\Log\LogProvider.cs" />
+    <Compile Include="Main\Providers\Log\MailConnection.cs" />
     <Compile Include="Main\Providers\Log\MailDependencies.cs" />
     <Compile Include="Main\Providers\Log\MailProvider.cs" />
     <Compile Include="Main\Providers\MySql\MySqlDependencies.cs" />
@@ -1263,12 +1268,14 @@
     <Compile Include="Operations\EntityDelete.cs" />
     <Compile Include="Operations\EntityOutputKeysExtractAll.cs" />
     <Compile Include="Operations\Load\FileLoadOperation.cs" />
+    <Compile Include="Operations\Load\HtmlLoadOperation.cs" />
     <Compile Include="Operations\SampleOperation.cs" />
     <Compile Include="Operations\Transform\ConcatOperation.cs" />
     <Compile Include="Operations\Transform\ConvertOperation.cs" />
     <Compile Include="Operations\Transform\DistanceOperation.cs" />
     <Compile Include="Operations\Transform\EmptyOperation.cs" />
     <Compile Include="Operations\Transform\FilterOperation.cs" />
+    <Compile Include="Operations\Transform\FilterOutputOperation.cs" />
     <Compile Include="Operations\Transform\FormatOperation.cs" />
     <Compile Include="Operations\Transform\FromJsonOperation.cs" />
     <Compile Include="Operations\Transform\FromRegexOperation.cs" />
@@ -1705,6 +1712,8 @@
     <Compile Include="Operations\EntityJoinAction.cs" />
     <Compile Include="Operations\EntityInputKeysStore.cs" />
     <Compile Include="Operations\EntityInputKeysStoreExtract.cs" />
+    <Compile Include="Processes\EntityOutputOperation.cs" />
+    <Compile Include="Processes\HtmlRowOperation.cs" />
     <Compile Include="Processes\InitializationProcess.cs" />
     <Compile Include="Processes\EntityProcess.cs" />
     <Compile Include="Operations\TruncateOperation.cs" />

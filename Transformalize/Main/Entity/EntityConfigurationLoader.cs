@@ -21,23 +21,16 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using Transformalize.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
+using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Main.Providers;
 
 namespace Transformalize.Main {
-
-    public class Output {
-        public string Name { get; set; }
-        public AbstractConnection Connection { get; set; }
-    }
-
     public class EntityConfigurationLoader {
+        private const string DEFAULT = "[default]";
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private readonly Logger _log = LogManager.GetLogger(string.Empty);
         private readonly Process _process;
@@ -121,14 +114,47 @@ namespace Transformalize.Main {
 
             LoadVersion(element, entity);
 
+            // output
+            var outputValidator = ValidationFactory.CreateValidator<OutputConfigurationElement>();
             foreach (OutputConfigurationElement output in element.Output) {
-                if (_process.Connections.ContainsKey(output.Connection)) {
-                    entity.Output.Add(new Output {
-                        Name = output.Name,
-                        Connection = _process.Connections[output.Connection]
-                    });
+
+                var results = outputValidator.Validate(output);
+
+                if (results.IsValid) {
+                    if (_process.Connections.ContainsKey(output.Connection)) {
+
+                        Func<Row, bool> shouldRun = row => true;
+
+                        if (!output.RunField.Equals(string.Empty)) {
+                            var f = output.RunField;
+                            var match = entity.Fields.Where(p => p.Value.Alias.Equals(f) || p.Value.Name.Equals(f)).Select(p => p.Value).ToArray();
+                            if (match.Length > 0) {
+                                var field = match[0];
+                                if (output.RunType.Equals(DEFAULT)) {
+                                    output.RunType = field.SimpleType;
+                                }
+                                var op = (ComparisonOperator)Enum.Parse(typeof(ComparisonOperator), output.RunOperator, true);
+                                var simpleType = Common.ToSimpleType(output.RunType);
+                                var value = Common.ConversionMap[simpleType](output.RunValue);
+                                shouldRun = row => Common.CompareMap[op](row[field.Alias], value);
+                            } else {
+                                _log.Warn("Field {0} specified in {1} output doesn't exist.  It will not affect the output.", output.RunField, output.Name);
+                            }
+                        }
+
+                        entity.Output.Add(new Output {
+                            Name = output.Name,
+                            Connection = _process.Connections[output.Connection],
+                            ShouldRun = shouldRun
+                        });
+                    } else {
+                        _log.Warn("Can't add output {0} because connection {1} doesn't exist.", output.Name, output.Connection);
+                    }
                 } else {
-                    _log.Warn("Can't add output {0} because connection {1} doesn't exist.", output.Name, output.Connection);
+                    _log.Warn("Output {0} is invalid.", output.Name);
+                    foreach (var reason in results) {
+                        _log.Warn(reason.Message);
+                    }
                 }
             }
 

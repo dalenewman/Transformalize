@@ -19,4 +19,6 @@ namespace Transformalize.Main.Providers.Log
             TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
             }
     }
+
+
 }

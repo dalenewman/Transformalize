@@ -77,8 +77,8 @@ namespace Transformalize.Test.Integration {
 
         [Test]
         public void TestInit() {
-            var options = new Options { Mode = "init" };
-            var process = ProcessFactory.Create("http://config.mwf.local/clevest-filter-updates.xml", options);
+            var options = new Options { Mode = "default" };
+            var process = ProcessFactory.Create("http://config.mwf.local/junk-summary.xml", options);
             process.PipelineThreading = PipelineThreading.SingleThreaded;
             var results = process.Run();
         }

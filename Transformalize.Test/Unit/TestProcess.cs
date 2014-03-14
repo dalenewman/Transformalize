@@ -179,21 +179,6 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void TestDefaultProviders() {
-            var process = new ProcessBuilder("p1")
-                .Connection("output").Provider("internal")
-                .Process();
-
-            Assert.IsNotNull(process);
-            Assert.AreEqual("p1", process.Name);
-            Assert.AreEqual("p1Star", process.Star);
-
-            var ready = ProcessFactory.Create(process);
-
-            Assert.AreEqual(11, ready.Providers.Count);
-        }
-
-        [Test]
         public void TestConnection() {
             var process = new ProcessBuilder("p1")
                 .Connection("input").Server("localhost").Database("Test")

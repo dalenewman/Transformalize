@@ -32,6 +32,7 @@ namespace Transformalize.Main.Providers {
         Folder,
         Console,
         Log,
-        Mail
+        Mail,
+        Html
     }
 }

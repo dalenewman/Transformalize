@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Transformalize.Configuration;
 
 namespace Transformalize.Main.Providers {
@@ -33,33 +34,12 @@ namespace Transformalize.Main.Providers {
                 providers.Add("postgresql", "Transformalize.Libs.Npgsql.NpgsqlConnection, Transformalize");
             }
 
-            if (!providers.ContainsKey("analysisservices")) {
-                providers.Add("analysisservices", string.Empty);
+            var empties = new[] {"analysisservices", "file", "folder", "internal", "console", "log", "mail", "html"};
+            foreach (var empty in empties.Where(empty => !providers.ContainsKey(empty))) {
+                providers.Add(empty, empty);
             }
 
-            if (!providers.ContainsKey("file")) {
-                providers.Add("file", string.Empty);
-            }
-
-            if (!providers.ContainsKey("folder")) {
-                providers.Add("folder", string.Empty);
-            }
-
-            if (!providers.ContainsKey("internal")) {
-                providers.Add("internal", string.Empty);
-            }
-
-            if (!providers.ContainsKey("console")) {
-                providers.Add("console", string.Empty);
-            }
-
-            if (!providers.ContainsKey("log")) {
-                providers.Add("log", string.Empty);
-            }
-
-            if (!providers.ContainsKey("mail")) {
-                providers.Add("mail", string.Empty);
-            }
+            //remember to update ConnectionFactory too.
 
             return providers;
         }
