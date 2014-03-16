@@ -20,15 +20,8 @@
 
 #endregion
 
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Globalization;
-using System.Linq;
-using System.Runtime.Remoting;
 using NUnit.Framework;
 using Transformalize.Configuration.Builders;
-using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.AnalysisServices;

@@ -20,28 +20,49 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Main;
 using Transformalize.Main.Providers;
 
 namespace Transformalize.Operations {
-    public class EntityDataExtract : InputCommandOperation {
-        private readonly string[] _fields;
-        private readonly string _sql;
 
-        public EntityDataExtract(string[] fields, string sql, AbstractConnection connection)
+    public class EntityDataExtract : InputCommandOperation {
+
+        private readonly Dictionary<string, Func<IDataReader, int, object>> _map = Common.GetReaderMap();
+        private readonly FieldType[] _fields;
+        private readonly string _sql;
+        private readonly int _length;
+
+        internal class FieldType {
+            public string Alias;
+            public string Type;
+
+            public FieldType(string alias, string type) {
+                Alias = alias;
+                Type = type;
+            }
+        }
+
+        public EntityDataExtract(IEnumerable<Field> fields, string sql, AbstractConnection connection)
             : base(connection) {
-            _fields = fields;
+            
+            _fields = fields.Select(f => new FieldType(f.Alias, _map.ContainsKey(f.SimpleType) && !f.Transforms.Contains("map") ? f.SimpleType : string.Empty)).ToArray();
+            _length = _fields.Length;
             _sql = sql;
+
             UseTransaction = false;
             Name = "EntityDataExtract";
         }
 
         protected override Row CreateRowFromReader(IDataReader reader) {
             var row = new Row();
-            foreach (var field in _fields) {
-                row[field] = reader[field];
+            for (var i = 0; i < _length; i++) {
+                row[_fields[i].Alias] = _map[_fields[i].Type](reader, i);
             }
             return row;
         }
@@ -51,5 +72,6 @@ namespace Transformalize.Operations {
             cmd.CommandTimeout = 0;
             cmd.CommandType = CommandType.Text;
         }
+
     }
 }

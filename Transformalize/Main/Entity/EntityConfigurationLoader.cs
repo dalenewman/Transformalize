@@ -69,7 +69,6 @@ namespace Transformalize.Main {
                 SqlOverride = element.SqlOverride,
                 Alias = string.IsNullOrEmpty(element.Alias) ? element.Name : element.Alias,
                 InternalOutput = element.Output.Cast<OutputConfigurationElement>().ToDictionary(o => o.Name, o => Enumerable.Repeat(new Row(), 0)),
-                UseBcp = element.UseBcp,
                 InputOperation = element.InputOperation,
             };
 

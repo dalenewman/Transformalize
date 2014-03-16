@@ -20,7 +20,9 @@
 
 #endregion
 
+using System;
 using NUnit.Framework;
+using Transformalize.Libs.Dapper;
 using Transformalize.Libs.NLog;
 using Transformalize.Main;
 
@@ -51,5 +53,32 @@ namespace Transformalize.Test.Integration {
             LogManager.Flush();
         }
 
+        [Test]
+        public void Normal() {
+            var process = ProcessFactory.Create(FILE);
+            process.Run();
+            LogManager.Flush();
+        }
+
+        [Test]
+        public void ManipulateData()
+        {
+            var process = ProcessFactory.Create(FILE);
+            using (var cn = process["Order Details"].InputConnection.GetConnection()) {
+                cn.Open();
+                var count = cn.Execute("insert into [Order Details](OrderID, ProductID, UnitPrice, Quantity, Discount) values(10261,41,7.70,2,0);");
+                Console.WriteLine("row count: {0}", count);
+            }
+        }
+
+        [Test]
+        public void UnManipulateData() {
+            var process = ProcessFactory.Create(FILE);
+            using (var cn = process["Order Details"].InputConnection.GetConnection()) {
+                cn.Open();
+                var count = cn.Execute("delete from [Order Details] where OrderID = 10261 and ProductID = 41;");
+                Console.WriteLine("row count: {0}", count);
+            }
+        }
     }
 }

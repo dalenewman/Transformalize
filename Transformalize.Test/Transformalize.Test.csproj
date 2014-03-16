@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Transformalize.Test</RootNamespace>
     <AssemblyName>Transformalize.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -72,20 +72,16 @@
   <ItemGroup>
     <Compile Include="EtlProcessHelper.cs" />
     <Compile Include="Integration\Call.cs" />
-    <Compile Include="Integration\Bcp.cs" />
     <Compile Include="Integration\BookMarks.cs" />
     <Compile Include="Integration\AvroTest.cs" />
-    <Compile Include="Integration\Folder.cs" />
     <Compile Include="Integration\Dsl.cs" />
     <Compile Include="Integration\OrderType.cs" />
     <Compile Include="Integration\Excel.cs" />
     <Compile Include="Integration\ScriptRunners.cs" />
     <Compile Include="Integration\CopySearchPage.cs" />
     <Compile Include="Integration\Ufo.cs" />
-    <Compile Include="Integration\Files.cs" />
     <Compile Include="Integration\NorthWindUpdates.cs" />
     <Compile Include="Integration\NorthWind.cs" />
-    <Compile Include="Integration\Test.cs" />
     <Compile Include="Integration\TestConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Unit\Builders\FieldsBuilder.cs" />
@@ -107,6 +103,7 @@
     <Compile Include="Unit\TestFieldType.cs" />
     <Compile Include="Unit\TestStringBuilderExtensions.cs" />
     <Compile Include="Unit\TestTransforms.cs" />
+    <Compile Include="Unit\TestWarehouse.cs" />
     <Compile Include="Unit\TestWithProcess.cs" />
     <Compile Include="Unit\TestFields.cs" />
     <Compile Include="Unit\TestSqlTemplates.cs" />

@@ -81,6 +81,10 @@ namespace Transformalize.Main {
                             new TemplateActionWeb().Handle(action);
                             break;
 
+                        case "execute":
+                            new TemplateActionExecute().Handle(action);
+                            break;
+
                         default:
                             _log.Warn("The {0} action is not implemented.", action.Action);
                             break;

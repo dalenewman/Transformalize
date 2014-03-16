@@ -28,7 +28,7 @@ namespace Transformalize.Test.Integration {
     [TestFixture]
     public class BookMarks
     {
-        private const string FILE = @"c:\code\TflConfiguration\bookmarks.xml";
+        private const string FILE = @"c:\code\TflConfiguration\BookMarks.xml";
 
         [SetUp]
         public void SetUp() {

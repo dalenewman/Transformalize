@@ -40,7 +40,7 @@
 
   <entities>
     
-    <add name="Order Details" version="RowVersion" prefix="OrderDetails" use-bcp="true">
+    <add name="Order Details" version="RowVersion" prefix="OrderDetails">
       <fields>
         <add name="Discount" type="single" ></add>
         <add name="OrderID" type="int" primary-key="true"></add>

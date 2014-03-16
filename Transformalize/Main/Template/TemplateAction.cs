@@ -23,19 +23,31 @@
 using System.Collections.Generic;
 using Transformalize.Main.Providers;
 
-namespace Transformalize.Main
-{
-    public class TemplateAction
-    {
-        public string Action;
-        public AbstractConnection Connection;
-        public string File;
-        public string From;
-        public string Method;
-        public string RenderedFile;
-        public string TemplateName;
-        public string To;
-        public string Url;
-        public IEnumerable<string> Modes = new List<string>();
+namespace Transformalize.Main {
+    public class TemplateAction {
+        public string Action { get; set; }
+        public AbstractConnection Connection { get; set; }
+        public string File { get; set; }
+        public string From { get; set; }
+        public string Method { get; set; }
+        public string RenderedFile { get; set; }
+        public string TemplateName { get; set; }
+        public string To { get; set; }
+        public string Url { get; set; }
+        public IEnumerable<string> Modes { get; set; }
+        public string Arguments { get; set; }
+
+        public TemplateAction() {
+            Action = string.Empty;
+            Modes = new List<string>();
+            File = string.Empty;
+            From = string.Empty;
+            Method = string.Empty;
+            RenderedFile = string.Empty;
+            TemplateName = string.Empty;
+            To = string.Empty;
+            Url = string.Empty;
+            Arguments = string.Empty;
+        }
     }
 }

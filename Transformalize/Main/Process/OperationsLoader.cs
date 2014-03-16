@@ -27,6 +27,7 @@ namespace Transformalize.Main {
                     var field = _process.GetField(alias, entity.Alias);
 
                     foreach (TransformConfigurationElement t in f.Transforms) {
+                        field.Transforms.Add(t.Method.ToLower());
                         var reader = new FieldParametersReader();
                         entity.Operations.Add(factory.Create(field, t, reader.Read(t)));
                         AddBranches(t.Branches, entity, field, reader);

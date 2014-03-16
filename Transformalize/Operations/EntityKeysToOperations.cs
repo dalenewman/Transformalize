@@ -46,7 +46,7 @@ namespace Transformalize.Operations {
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
-            var fields = new FieldSqlWriter(_entity.Fields).Input().Keys().ToArray();
+            var fields = new FieldSqlWriter(_entity.Fields).Input().ToArray();
 
             if (_keys.Count > 0 && _keys.Count < _entity.InputConnection.BatchSize) {
                 yield return GetOperationRow(_keys, fields);
@@ -57,7 +57,7 @@ namespace Transformalize.Operations {
             }
         }
 
-        private Row GetOperationRow(IEnumerable<Row> batch, string[] fields) {
+        private Row GetOperationRow(IEnumerable<Row> batch, Field[] fields) {
             var sql = SelectByKeys(batch);
             var row = new Row();
             row[_operationColumn] = new EntityDataExtract(fields, sql, _entity.InputConnection);

@@ -28,28 +28,13 @@ using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 using Transformalize.Test.Unit.Builders;
 
-namespace Transformalize.Test.Integration {
+namespace Transformalize.Test.Unit {
     [TestFixture]
-    public class Test {
+    public class TestWarehouse {
         [SetUp]
         public void SetUp() {
             LogManager.Configuration.LoggingRules[0].EnableLoggingForLevel(LogLevel.Info);
             LogManager.ReconfigExistingLoggers();
-        }
-
-        [Test]
-        public void Init() {
-            ProcessFactory.Create("Test", new Options { Mode = "init" }).Run();
-        }
-
-        [Test]
-        public void Normal() {
-            ProcessFactory.Create("Test").Run();
-        }
-
-        [Test]
-        public void TestMode() {
-            ProcessFactory.Create("Test", new Options { Mode = "test", Top = 1, LogLevel = LogLevel.Debug }).Run();
         }
 
         [Test]

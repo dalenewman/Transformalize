@@ -22,9 +22,9 @@ namespace Transformalize.Operations.Transform {
             _templateModelType = templateModelType;
             _parameters = parameters;
 
-            if (_parameters.ContainsKey(outKey)) {
-                _parameters.Remove(outKey);
-            }
+            //if (_parameters.ContainsKey(outKey)) {
+            //    _parameters.Remove(outKey);
+            //}
 
             CombineTemplates(templates, ref _builder);
             _builder.Append(template);

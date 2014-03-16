@@ -44,12 +44,8 @@ namespace Transformalize.Processes {
             if (_entity.InputConnection.Provider.IsDatabase && !string.IsNullOrEmpty(_entity.SqlOverride))
                 return;
 
-            var skipKeysExtract = _process.IsFirstRun && _entity.UseBcp && _entity.InputConnection.Provider.Type == ProviderType.SqlServer;
-
             if (_process.IsFirstRun || !_entity.CanDetectChanges()) {
-                if (!skipKeysExtract) {
-                    Register(new EntityInputKeysExtractAll(_entity));
-                }
+                Register(new EntityInputKeysExtractAll(_entity));
             } else {
                 var operation = new EntityInputKeysExtractDelta(_process, _entity);
                 if (operation.NeedsToRun()) {

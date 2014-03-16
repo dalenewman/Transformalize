@@ -68,6 +68,7 @@ namespace Transformalize.Main {
         public bool DefaultWhiteSpace { get; set; }
         public string QuotedWith { get; set; }
         public bool Optional { get; set; }
+        public List<string> Transforms { get; set; }
 
         public bool DefaultNull {
             get { return _defaultNull; }
@@ -180,6 +181,7 @@ namespace Transformalize.Main {
             Output = output || MustBeOutput();
             FileOutput = output;
             Default = @default;
+            Transforms = new List<string>();
         }
 
         public string Quote() {

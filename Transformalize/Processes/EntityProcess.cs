@@ -24,7 +24,6 @@ using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.ConventionOperations;
@@ -72,12 +71,8 @@ namespace Transformalize.Processes {
                 if (!string.IsNullOrEmpty(_entity.SqlOverride)) {
                     Register(new ConventionInputCommandOperation(_entity.InputConnection) { Command = _entity.SqlOverride });
                 } else {
-                    if (_process.IsFirstRun && _entity.UseBcp && _entity.InputConnection.Provider.Type == ProviderType.SqlServer) {
-                        Register(new BcpExtract(_process, _entity));
-                    } else {
-                        Register(new EntityKeysToOperations(_entity));
-                        Register(new SerialUnionAllOperation());
-                    }
+                    Register(new EntityKeysToOperations(_entity));
+                    Register(new SerialUnionAllOperation());
                 }
 
             }

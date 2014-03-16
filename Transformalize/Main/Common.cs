@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -73,6 +74,29 @@ namespace Transformalize.Main {
             {"byte[]", (HexStringToByteArray)},
             {"rowversion", (HexStringToByteArray)}
         };
+
+        public static Dictionary<string, Func<IDataReader, int, object>> GetReaderMap() {
+            var dateMin = new DateTime(9999, 12, 31, 23,59,59, 998);
+            return new Dictionary<string, Func<IDataReader, int, object>> {
+                {"string", ((x, y) => x.IsDBNull(y) ? null : x.GetString(y))},
+                {"xml", ((x, y) => x.GetValue(y))},
+                {"int16", ((x, y) => x.IsDBNull(y) ? default(Int16) : x.GetInt16(y))},
+                {"int32", ((x, y) => x.IsDBNull(y) ? default(Int32) : x.GetInt32(y))},
+                {"int", ((x, y) => x.IsDBNull(y) ? default(Int32) : x.GetInt32(y))},
+                {"int64", ((x, y) => x.IsDBNull(y) ? default(Int64) : x.GetInt64(y))},
+                {"long", ((x, y) => x.IsDBNull(y) ? default(Int64) : x.GetInt64(y))},
+                {"double", ((x, y) => x.IsDBNull(y) ? default(Double) : x.GetDouble(y))},
+                {"decimal", ((x, y) => x.IsDBNull(y) ? default(Decimal) : x.GetDecimal(y))},
+                {"datetime", ((x, y) => x.IsDBNull(y) ? dateMin : x.GetDateTime(y))},
+                {"boolean", ((x, y) => !x.IsDBNull(y) && x.GetBoolean(y))},
+                {"single", ((x, y) => x.GetValue(y))},
+                {"guid", ((x, y) => x.IsDBNull(y) ? default(Guid) : x.GetGuid(y))},
+                {"byte", ((x, y) => x.IsDBNull(y) ? default(Byte) : x.GetByte(y))},
+                {"byte[]", ((x, y) => x.GetValue(y))},
+                {"rowversion", ((x, y) => x.GetValue(y))},
+                {string.Empty, ((x, y) => x.GetValue(y))}
+            };
+        }
 
         public static Dictionary<ComparisonOperator, Func<object, object, bool>> CompareMap = new Dictionary<ComparisonOperator, Func<object, object, bool>>() {
             {ComparisonOperator.Equal, ((x, y) => x.Equals(y))},
@@ -198,7 +222,7 @@ namespace Transformalize.Main {
         }
 
         public static string EntityOutputName(Entity entity, string processName) {
-            return entity.PrependProcessNameToOutputName ? string.Concat(processName.Replace("-",string.Empty) , entity.Alias).Replace(" ", string.Empty) : entity.Alias;
+            return entity.PrependProcessNameToOutputName ? string.Concat(processName.Replace("-", string.Empty), entity.Alias).Replace(" ", string.Empty) : entity.Alias;
         }
 
         public static bool AreEqual(byte[] b1, byte[] b2) {

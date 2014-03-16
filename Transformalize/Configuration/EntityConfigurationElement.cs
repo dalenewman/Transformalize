@@ -38,7 +38,6 @@ namespace Transformalize.Configuration {
         private const string AGGREGATE = "aggregate";
         private const string PREFIX = "prefix";
         private const string GROUP = "group";
-        private const string USE_BCP = "use-bcp";
         private const string INDEX_OPTIMIZATIONS = "index-optimizations";
         private const string DELETE = "delete";
         private const string PREPEND_PROCESS_NAME_TO_OUTPUT_NAME = "prepend-process-name-to-output-name";
@@ -119,12 +118,6 @@ namespace Transformalize.Configuration {
         public bool IndexOptimizations {
             get { return (bool)this[INDEX_OPTIMIZATIONS]; }
             set { this[INDEX_OPTIMIZATIONS] = value; }
-        }
-
-        [ConfigurationProperty(USE_BCP, IsRequired = false, DefaultValue = false)]
-        public bool UseBcp {
-            get { return (bool)this[USE_BCP]; }
-            set { this[USE_BCP] = value; }
         }
 
         [ConfigurationProperty(PREFIX, IsRequired = false, DefaultValue = "")]
