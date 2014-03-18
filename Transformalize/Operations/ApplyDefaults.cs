@@ -29,10 +29,12 @@ using Transformalize.Main;
 namespace Transformalize.Operations {
     public class ApplyDefaults : AbstractOperation {
         private readonly Field[] _fields;
+        private readonly bool _defaultNulls;
 
-        public ApplyDefaults(params Fields[] fields) {
+        public ApplyDefaults(bool defaultNulls, params Fields[] fields) {
             _fields = PrepareFields(fields);
             UseTransaction = false;
+            _defaultNulls = defaultNulls;
         }
 
         private static Field[] PrepareFields(IEnumerable<Fields> fields) {
@@ -47,8 +49,7 @@ namespace Transformalize.Operations {
             foreach (var row in rows) {
                 foreach (var field in _fields) {
                     var obj = row[field.Alias];
-
-                    if (field.DefaultNull && obj == null) {
+                    if ((_defaultNulls || !field.Input) && obj == null) {
                         row[field.Alias] = field.Default;
                     } else if ((field.DefaultBlank || field.DefaultWhiteSpace) && obj != null) {
                         if (field.DefaultBlank && obj.Equals(string.Empty))

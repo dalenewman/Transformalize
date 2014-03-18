@@ -26,6 +26,7 @@ using System.IO;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.FileHelpers.Enums;
+using Transformalize.Main.Providers;
 
 namespace Transformalize.Configuration {
     [HasSelfValidation]
@@ -156,7 +157,7 @@ namespace Transformalize.Configuration {
             set { this[COMPATABILITY_LEVEL] = value; }
         }
 
-        [RegexStringValidator(@"(?i)SqlServer|AnalysisServices|MySql|File|Folder|Internal|SqlCe4|Console|Log|Mail|Html")]
+        [RegexStringValidator(@"(?i)SqlServer|AnalysisServices|MySql|PostgreSql|File|Folder|Internal|SqlCe4|Console|Log|Mail|Html")]
         [ConfigurationProperty(PROVIDER, IsRequired = false, DefaultValue = "SqlServer")]
         public string Provider {
             get { return this[PROVIDER] as string; }

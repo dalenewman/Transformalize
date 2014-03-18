@@ -41,7 +41,6 @@ namespace Transformalize.Main.Providers.MySql
         }
     }
 
-
     public class MySqlEntityKeysQueryWriter : IEntityQueryWriter
     {
         private const string SQL_PATTERN = @"

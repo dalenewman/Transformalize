@@ -33,7 +33,7 @@ namespace Transformalize.Operations {
 
     public class EntityDataExtract : InputCommandOperation {
 
-        private readonly Dictionary<string, Func<IDataReader, int, object>> _map = Common.GetReaderMap();
+        private readonly Dictionary<string, Func<IDataReader, int, object, object>> _map = Common.GetReaderMap();
         private readonly FieldType[] _fields;
         private readonly string _sql;
         private readonly int _length;
@@ -41,17 +41,19 @@ namespace Transformalize.Operations {
         internal class FieldType {
             public string Alias;
             public string Type;
+            public object Default;
 
-            public FieldType(string alias, string type) {
+            public FieldType(string alias, string type, object @default) {
                 Alias = alias;
                 Type = type;
+                Default = @default;
             }
         }
 
         public EntityDataExtract(IEnumerable<Field> fields, string sql, AbstractConnection connection)
             : base(connection) {
             
-            _fields = fields.Select(f => new FieldType(f.Alias, _map.ContainsKey(f.SimpleType) && !f.Transforms.Contains("map") ? f.SimpleType : string.Empty)).ToArray();
+            _fields = fields.Select(f => new FieldType(f.Alias, _map.ContainsKey(f.SimpleType) && !f.Transforms.Contains("map") ? f.SimpleType : string.Empty, f.Default)).ToArray();
             _length = _fields.Length;
             _sql = sql;
 
@@ -62,7 +64,7 @@ namespace Transformalize.Operations {
         protected override Row CreateRowFromReader(IDataReader reader) {
             var row = new Row();
             for (var i = 0; i < _length; i++) {
-                row[_fields[i].Alias] = _map[_fields[i].Type](reader, i);
+                row[_fields[i].Alias] = _map[_fields[i].Type](reader, i, _fields[i].Default);
             }
             return row;
         }

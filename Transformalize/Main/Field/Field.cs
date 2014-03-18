@@ -70,11 +70,6 @@ namespace Transformalize.Main {
         public bool Optional { get; set; }
         public List<string> Transforms { get; set; }
 
-        public bool DefaultNull {
-            get { return _defaultNull; }
-            set { _defaultNull = value; }
-        }
-
         public object Default {
             get { return _default; }
             set { _default = new DefaultFactory().Convert(value, SimpleType); }

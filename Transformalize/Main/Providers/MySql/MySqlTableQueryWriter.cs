@@ -21,10 +21,8 @@
 #endregion
 
 using System.Collections.Generic;
-using Transformalize.Main.Providers.SqlServer;
 
 namespace Transformalize.Main.Providers.MySql {
-
     public class MySqlTableQueryWriter : QueryWriter, ITableQueryWriter {
 
         public string CreateTable(string name, IEnumerable<string> defs, string schema) {

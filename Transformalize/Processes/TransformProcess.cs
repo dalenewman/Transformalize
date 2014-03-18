@@ -38,7 +38,7 @@ namespace Transformalize.Processes {
 
         protected override void Initialize() {
             Register(new ParametersExtract(_process));
-            Register(new ApplyDefaults(_process.CalculatedFields));
+            Register(new ApplyDefaults(true, _process.CalculatedFields));
 
             foreach (var transform in _process.TransformOperations) {
                 Register(transform);

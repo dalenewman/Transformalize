@@ -21,10 +21,8 @@
 #endregion
 
 using Transformalize.Configuration;
-using Transformalize.Main.Providers.Internal;
 
 namespace Transformalize.Main.Providers.MySql {
-
     public class MySqlConnection : AbstractConnection {
 
         public override string UserProperty { get { return "Uid"; } }

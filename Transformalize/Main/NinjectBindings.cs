@@ -8,6 +8,7 @@ using Transformalize.Main.Providers.Folder;
 using Transformalize.Main.Providers.Internal;
 using Transformalize.Main.Providers.Log;
 using Transformalize.Main.Providers.MySql;
+using Transformalize.Main.Providers.PostgreSql;
 using Transformalize.Main.Providers.SqlCe4;
 using Transformalize.Main.Providers.SqlServer;
 
@@ -16,9 +17,13 @@ namespace Transformalize.Main {
     public class NinjectBindings : Libs.Ninject.Modules.NinjectModule {
 
         public override void Load() {
-            Bind<AbstractConnectionDependencies>().To<MySqlDependencies>().WhenInjectedInto<MySqlConnection>();
+            // databases
             Bind<AbstractConnectionDependencies>().To<SqlServerDependencies>().WhenInjectedInto<SqlServerConnection>();
+            Bind<AbstractConnectionDependencies>().To<MySqlDependencies>().WhenInjectedInto<MySqlConnection>();
+            Bind<AbstractConnectionDependencies>().To<PostgreSqlDependencies>().WhenInjectedInto<PostgreSqlConnection>();
             Bind<AbstractConnectionDependencies>().To<SqlCe4Dependencies>().WhenInjectedInto<SqlCe4Connection>();
+
+            // others
             Bind<AbstractConnectionDependencies>().To<AnalysisServicesDependencies>().WhenInjectedInto<AnalysisServicesConnection>();
             Bind<AbstractConnectionDependencies>().To<FileDependencies>().WhenInjectedInto<FileConnection>();
             Bind<AbstractConnectionDependencies>().To<FolderDependencies>().WhenInjectedInto<FolderConnection>();

@@ -57,7 +57,6 @@ namespace Transformalize.Main {
                 ReadInnerXml = element.ReadInnerXml,
                 VariableLength = element.VariableLength,
                 Aggregate = element.Aggregate.ToLower(),
-                DefaultNull = element.DefaultNull,
                 DefaultBlank = element.DefaultBlank,
                 DefaultWhiteSpace = element.DefaultWhiteSpace,
                 QuotedWith = element.QuotedWith,

@@ -52,7 +52,9 @@ namespace Transformalize.Processes {
 
         protected override void Initialize() {
 
-            if (!_entity.InputConnection.Provider.IsDatabase) {
+            var isDatabase = _entity.InputConnection.Provider.IsDatabase;
+
+            if (!isDatabase) {
                 if (_entity.InputConnection.IsFile()) {
                     Register(PrepareFileOperation(_entity.InputConnection.File));
                 } else {
@@ -81,7 +83,7 @@ namespace Transformalize.Processes {
                 Register(new SampleOperation(_entity.Sample));
             }
 
-            Register(new ApplyDefaults(_entity.Fields, _entity.CalculatedFields));
+            Register(new ApplyDefaults(!isDatabase, _entity.Fields, _entity.CalculatedFields));
             foreach (var transform in _entity.Operations) {
                 Register(transform);
             }

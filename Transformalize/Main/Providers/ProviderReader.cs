@@ -31,7 +31,7 @@ namespace Transformalize.Main.Providers {
             }
 
             if (!providers.ContainsKey("postgresql")) {
-                providers.Add("postgresql", "Transformalize.Libs.Npgsql.NpgsqlConnection, Transformalize");
+                providers.Add("postgresql", "Npgsql.NpgsqlConnection, Npgsql");
             }
 
             var empties = new[] {"analysisservices", "file", "folder", "internal", "console", "log", "mail", "html"};

@@ -33,8 +33,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations {
                 }
             } else {
                 foreach (var row in rows) {
-                    var operation = (EntityDataExtract)row[OperationColumn];
-                    foreach (var innerRow in operation.Execute(null)) {
+                    foreach (var innerRow in ((EntityDataExtract)row[OperationColumn]).Execute(null)) {
                         yield return innerRow;
                     }
                 }

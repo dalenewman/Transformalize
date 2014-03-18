@@ -38,7 +38,6 @@ namespace Transformalize.Configuration {
         private const string UNICODE = "unicode";
         private const string VARIABLE_LENGTH = "variable-length";
         private const string DEFAULT = "default";
-        private const string DEFAULT_NULL = "default-null";
         private const string DEFAULT_BLANK = "default-blank";
         private const string DEFAULT_EMPTY = "default-empty";
         private const string DEFAULT_WHITE_SPACE = "default-white-space";
@@ -81,12 +80,6 @@ namespace Transformalize.Configuration {
         public string QuotedWith {
             get { return this[QUOTED_WITH] as string; }
             set { this[QUOTED_WITH] = value; }
-        }
-
-        [ConfigurationProperty(DEFAULT_NULL, IsRequired = false, DefaultValue = true)]
-        public bool DefaultNull {
-            get { return (bool)this[DEFAULT_NULL]; }
-            set { this[DEFAULT_NULL] = value; }
         }
 
         [ConfigurationProperty(OPTIONAL, IsRequired = false, DefaultValue = false)]

@@ -2,7 +2,6 @@ using Transformalize.Libs.Dapper;
 using System.Linq;
 
 namespace Transformalize.Main.Providers.MySql {
-
     public class MySqlEntityRecordsExist : IEntityRecordsExist {
         private readonly IEntityExists _entityExists;
 

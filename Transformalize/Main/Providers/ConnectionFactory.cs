@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
-using Transformalize.Libs.EnterpriseLibrary.Validation.Configuration;
 using Transformalize.Libs.Ninject.Parameters;
 using Transformalize.Libs.Ninject.Syntax;
 using Transformalize.Libs.NLog;
@@ -12,6 +11,7 @@ using Transformalize.Main.Providers.Folder;
 using Transformalize.Main.Providers.Internal;
 using Transformalize.Main.Providers.Log;
 using Transformalize.Main.Providers.MySql;
+using Transformalize.Main.Providers.PostgreSql;
 using Transformalize.Main.Providers.SqlCe4;
 using Transformalize.Main.Providers.SqlServer;
 
@@ -43,6 +43,9 @@ namespace Transformalize.Main.Providers {
                 switch (element.Provider.ToLower()) {
                     case "mysql":
                         connections.Add(element.Name, _process.Kernal.Get<MySqlConnection>(parameters));
+                        break;
+                    case "postgresql":
+                        connections.Add(element.Name, _process.Kernal.Get<PostgreSqlConnection>(parameters));
                         break;
                     case "analysisservices":
                         connections.Add(element.Name, _process.Kernal.Get<AnalysisServicesConnection>(parameters));
