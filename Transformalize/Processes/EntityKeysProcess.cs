@@ -25,10 +25,10 @@ using System.Linq;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
-using Transformalize.Main.Providers;
 using Transformalize.Operations;
 
 namespace Transformalize.Processes {
+
     public class EntityKeysProcess : EtlProcess {
         private readonly Entity _entity;
         private readonly Process _process;

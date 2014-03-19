@@ -21,6 +21,7 @@
 #endregion
 
 using System.Collections.Generic;
+using Transformalize.Main.Providers.SqlServer;
 
 namespace Transformalize.Main.Providers.MySql {
     public class MySqlTableQueryWriter : QueryWriter, ITableQueryWriter {
@@ -52,7 +53,7 @@ namespace Transformalize.Main.Providers.MySql {
 
         public string WriteTemporary(string name, Field[] fields, AbstractProvider provider, bool useAlias = true) {
             var safeName = provider.Enclose(name.TrimStart("@".ToCharArray()));
-            var defs = useAlias ? new FieldSqlWriter(fields).Alias(provider).DataType().Write() : new FieldSqlWriter(fields).Name(provider).DataType().Write();
+            var defs = useAlias ? new FieldSqlWriter(fields).Alias(provider).DataType(new MySqlDataTypeService()).Write() : new FieldSqlWriter(fields).Name(provider).DataType(new MySqlDataTypeService()).Write();
             return string.Format(@"CREATE TEMPORARY TABLE {0}({1}) ENGINE = MEMORY;", safeName, defs);
         }
     }

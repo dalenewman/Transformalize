@@ -20,6 +20,8 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Transformalize.Libs.Rhino.Etl;
@@ -29,13 +31,19 @@ using Transformalize.Main;
 namespace Transformalize.Operations {
 
     public class EntityInputKeysExtractAll : InputCommandOperation {
+
+        private readonly Dictionary<string, Func<IDataReader, int, object, object>> _map = Common.GetReaderMap();
         private readonly Entity _entity;
-        private readonly string[] _fields;
+        private readonly FieldTypeDefault[] _fields;
+        private readonly int _length;
 
         public EntityInputKeysExtractAll(Entity entity)
             : base(entity.InputConnection) {
 
             _entity = entity;
+            _fields = _entity.PrimaryKey.Select(f => new FieldTypeDefault(f.Value.Alias, _map.ContainsKey(f.Value.SimpleType) ? f.Value.SimpleType : string.Empty, f.Value.Default)).ToArray();
+            _length = _fields.Length;
+
             var connection = _entity.InputConnection;
 
             if (entity.CanDetectChanges()) {
@@ -45,13 +53,12 @@ namespace Transformalize.Operations {
                 }
             }
 
-            _fields = new FieldSqlWriter(entity.PrimaryKey).Input().Alias(connection.Provider).Keys().ToArray();
         }
 
         protected override Row CreateRowFromReader(IDataReader reader) {
             var row = new Row();
-            foreach (var field in _fields) {
-                row[field] = reader[field];
+            for (var i = 0; i < _length; i++) {
+                row[_fields[i].Alias] = _map[_fields[i].Type](reader, i, _fields[i].Default);
             }
             return row;
         }

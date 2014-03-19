@@ -30,30 +30,17 @@ using Transformalize.Main;
 using Transformalize.Main.Providers;
 
 namespace Transformalize.Operations {
-
     public class EntityDataExtract : InputCommandOperation {
 
         private readonly Dictionary<string, Func<IDataReader, int, object, object>> _map = Common.GetReaderMap();
-        private readonly FieldType[] _fields;
+        private readonly FieldTypeDefault[] _fields;
         private readonly string _sql;
         private readonly int _length;
-
-        internal class FieldType {
-            public string Alias;
-            public string Type;
-            public object Default;
-
-            public FieldType(string alias, string type, object @default) {
-                Alias = alias;
-                Type = type;
-                Default = @default;
-            }
-        }
 
         public EntityDataExtract(IEnumerable<Field> fields, string sql, AbstractConnection connection)
             : base(connection) {
             
-            _fields = fields.Select(f => new FieldType(f.Alias, _map.ContainsKey(f.SimpleType) && !f.Transforms.Contains("map") ? f.SimpleType : string.Empty, f.Default)).ToArray();
+            _fields = fields.Select(f => new FieldTypeDefault(f.Alias, _map.ContainsKey(f.SimpleType) && !f.Transforms.Contains("map") ? f.SimpleType : string.Empty, f.Default)).ToArray();
             _length = _fields.Length;
             _sql = sql;
 

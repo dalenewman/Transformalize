@@ -785,6 +785,8 @@
     <Compile Include="Main\Providers\SqlCe4\SqlCe4TableQueryWriter.cs" />
     <Compile Include="Main\Providers\SqlCe4\SqlCe4TflWriter.cs" />
     <Compile Include="Main\Providers\SqlServer\DatabaseEntityCreator.cs" />
+    <Compile Include="Main\Providers\SqlServer\MySqlDataTypeService.cs" />
+    <Compile Include="Main\Providers\SqlServer\PostgreSqlDataTypeService.cs" />
     <Compile Include="Main\Providers\SqlServer\SqlServerDependencies.cs" />
     <Compile Include="Main\Providers\SqlServer\SqlServerEntityCreator.cs" />
     <Compile Include="Main\Providers\SqlServer\SqlServerEntityDropper.cs" />
@@ -1233,6 +1235,7 @@
     <Compile Include="Operations\EntityDataExtract.cs" />
     <Compile Include="Operations\EntityDelete.cs" />
     <Compile Include="Operations\EntityOutputKeysExtractAll.cs" />
+    <Compile Include="Operations\FieldTypeDefault.cs" />
     <Compile Include="Operations\Load\FileLoadOperation.cs" />
     <Compile Include="Operations\Load\HtmlLoadOperation.cs" />
     <Compile Include="Operations\SampleOperation.cs" />

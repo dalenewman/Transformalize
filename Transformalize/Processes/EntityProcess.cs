@@ -54,7 +54,14 @@ namespace Transformalize.Processes {
 
             var isDatabase = _entity.InputConnection.Provider.IsDatabase;
 
-            if (!isDatabase) {
+            if (isDatabase) {
+                if (!string.IsNullOrEmpty(_entity.SqlOverride)) {
+                    Register(new ConventionInputCommandOperation(_entity.InputConnection) { Command = _entity.SqlOverride });
+                } else {
+                    Register(new EntityKeysToOperations(_entity));
+                    Register(new SerialUnionAllOperation());
+                }
+            } else {
                 if (_entity.InputConnection.IsFile()) {
                     Register(PrepareFileOperation(_entity.InputConnection.File));
                 } else {
@@ -69,14 +76,6 @@ namespace Transformalize.Processes {
                         Register(new AliasOperation(_entity));
                     }
                 }
-            } else {
-                if (!string.IsNullOrEmpty(_entity.SqlOverride)) {
-                    Register(new ConventionInputCommandOperation(_entity.InputConnection) { Command = _entity.SqlOverride });
-                } else {
-                    Register(new EntityKeysToOperations(_entity));
-                    Register(new SerialUnionAllOperation());
-                }
-
             }
 
             if (_entity.Sample > 0m && _entity.Sample < 100m) {

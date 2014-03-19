@@ -25,6 +25,7 @@ using System.Linq;
 using Transformalize.Main.Providers;
 
 namespace Transformalize.Main {
+
     public class FieldSqlWriter {
         private const string BATCH_ID = "TflBatchId";
         private const string SURROGATE_KEY = "TflKey";
@@ -221,9 +222,9 @@ namespace Transformalize.Main {
             return this;
         }
 
-        public FieldSqlWriter DataType() {
+        public FieldSqlWriter DataType(IDataTypeService dataTypeService) {
             foreach (var key in CopyOutputKeys()) {
-                _output[key] = string.Concat(_output[key], " ", _original[key].SqlDataType);
+                _output[key] = string.Concat(_output[key], " ", dataTypeService.GetDataType(_original[key]));
             }
             return this;
         }

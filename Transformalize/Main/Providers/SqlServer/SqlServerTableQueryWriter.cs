@@ -86,7 +86,7 @@ namespace Transformalize.Main.Providers.SqlServer {
         }
 
         public string WriteTemporary(string name, Field[] fields, AbstractProvider provider, bool useAlias = true) {
-            var defs = useAlias ? new FieldSqlWriter(fields).Alias(provider).DataType().Write() : new FieldSqlWriter(fields).Name(provider).DataType().Write();
+            var defs = useAlias ? new FieldSqlWriter(fields).Alias(provider).DataType(new SqlServerDataTypeService()).Write() : new FieldSqlWriter(fields).Name(provider).DataType(new SqlServerDataTypeService()).Write();
             return string.Format(@"DECLARE @{0} AS TABLE({1});", name.TrimStart("@".ToCharArray()), defs);
         }
 

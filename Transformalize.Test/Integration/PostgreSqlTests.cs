@@ -23,7 +23,6 @@
 using NUnit.Framework;
 using Transformalize.Configuration.Builders;
 using Transformalize.Main;
-using Transformalize.Main.Providers;
 
 namespace Transformalize.Test.Integration {
 
@@ -31,19 +30,18 @@ namespace Transformalize.Test.Integration {
     public class PostgreSqlTests {
 
         [Test]
-        public void TestInit()
-        {
+        public void TestInit() {
 
             var config = new ProcessBuilder("PostgreSqlTest")
                 .Connection("input")
                     .Provider("postgresql")
                     .Database("Recipe3")
                     .Port(5432)
-                    .User("postgres")
-                    .Password("devdev1!")
+                    .User("test")
+                    .Password("password")
                 .Connection("output").Database("test")
-                .Entity("main_recipe")
-                    .Field("id").PrimaryKey()
+                .Entity("main_recipe").Version("TflHashCode")
+                    .Field("id").Int32().PrimaryKey()
                     .Field("name").Length(512)
                     .Field("description").Length(2048)
                     .Field("servings").Int32()
@@ -52,9 +50,13 @@ namespace Transformalize.Test.Integration {
                     .Field("cooking_method_id").Int32()
                     .Field("difficulty_id").Int32()
                     .Field("tips").Length(2048)
+                    .CalculatedField("TflHashCode").Int32()
+                        .Transform("concat").Parameter("*")
+                        .Transform("gethashcode")
                 .Process();
 
             ProcessFactory.Create(config, new Options { Mode = "init" }).Run();
+            ProcessFactory.Create(config, new Options { Mode = "first" }).Run();
             ProcessFactory.Create(config).Run();
         }
 

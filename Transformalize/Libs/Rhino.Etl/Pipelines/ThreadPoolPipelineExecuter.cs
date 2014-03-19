@@ -25,25 +25,25 @@ namespace Transformalize.Libs.Rhino.Etl.Pipelines {
         protected override IEnumerable<Row> DecorateEnumerableForExecution(IOperation operation, IEnumerable<Row> enumerator) {
             var threadedEnumerator = new ThreadSafeEnumerator<Row>();
             ThreadPool.QueueUserWorkItem(delegate {
-                                                 try {
-                                                     foreach (Row t in new EventRaisingEnumerator(operation, enumerator)) {
-                                                         threadedEnumerator.AddItem(t);
-                                                     }
-                                                 } catch (Exception e) {
-                                                     foreach (var inner in e.FlattenHierarchy()) {
-                                                         Error("Failed to execute {0}. {1} {2}", operation.Name, inner.Message, inner.StackTrace);
-                                                     }
-                                                     threadedEnumerator.MarkAsFinished();
-#if DEBUG
-                                                     throw e;
-#else
-                                                     LogManager.Flush();
-                                                     Environment.Exit(0);
-#endif
-                                                 } finally {
-                                                     threadedEnumerator.MarkAsFinished();
-                                                 }
-                                             });
+                try {
+                    foreach (Row t in new EventRaisingEnumerator(operation, enumerator)) {
+                        threadedEnumerator.AddItem(t);
+                    }
+                } catch (Exception e) {
+                    foreach (var inner in e.FlattenHierarchy()) {
+                        Error("Failed to execute {0}. {1} {2}", operation.Name, inner.Message, inner.StackTrace);
+                    }
+                    threadedEnumerator.MarkAsFinished();
+    #if DEBUG
+                    throw e;
+    #else
+                    LogManager.Flush();
+                    Environment.Exit(0);
+    #endif
+                } finally {
+                    threadedEnumerator.MarkAsFinished();
+                }
+            });
             return threadedEnumerator;
         }
     }

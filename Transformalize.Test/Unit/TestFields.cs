@@ -74,21 +74,21 @@ namespace Transformalize.Test.Unit {
         [Test]
         public void TestWriteNameDataType() {
             const string expected = "[f1] NVARCHAR(10), [f2] INT";
-            var actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).DataType().Write();
+            var actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).DataType(new SqlServerDataTypeService()).Write();
             Assert.AreEqual(expected, actual);
         }
 
         [Test]
         public void TestWriteNameDataTypeNotNull() {
             const string expected = "[f1] NVARCHAR(10) NOT NULL, [f2] INT NOT NULL";
-            var actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).DataType().Append(" NOT NULL").Write();
+            var actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).DataType(new SqlServerDataTypeService()).Append(" NOT NULL").Write();
             Assert.AreEqual(expected, actual);
         }
 
         [Test]
         public void TestWriteNameDataTypeNull() {
             const string expected = "[f1] NVARCHAR(10) NULL, [f2] INT NULL";
-            var actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).DataType().Append(" NULL").Write();
+            var actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).DataType(new SqlServerDataTypeService()).Append(" NULL").Write();
             Assert.AreEqual(expected, actual);
         }
 
