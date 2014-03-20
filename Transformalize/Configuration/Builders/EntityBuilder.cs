@@ -27,7 +27,7 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
-        public EntityBuilder Input(IOperation operation) {
+        public EntityBuilder InputOperation(IOperation operation) {
             _entity.InputOperation = operation;
             return this;
         }
@@ -97,11 +97,16 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
-        public OutputBuilder Output(string name)
-        {
-            var output = new OutputConfigurationElement() { Name = name };
+        public IoBuilder Output(string name) {
+            var output = new IoConfigurationElement() { Name = name };
             _entity.Output.Add(output);
-            return new OutputBuilder(this, output);
+            return new IoBuilder(this, output);
+        }
+
+        public IoBuilder Input(string name) {
+            var input = new IoConfigurationElement() { Name = name };
+            _entity.Input.Add(input);
+            return new IoBuilder(this, input);
         }
     }
 }

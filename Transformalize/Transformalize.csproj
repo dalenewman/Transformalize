@@ -114,7 +114,7 @@
     <Compile Include="Configuration\Builders\ItemBuilder.cs" />
     <Compile Include="Configuration\Builders\JoinBuilder.cs" />
     <Compile Include="Configuration\Builders\MapBuilder.cs" />
-    <Compile Include="Configuration\Builders\OutputBuilder.cs" />
+    <Compile Include="Configuration\Builders\IoBuilder.cs" />
     <Compile Include="Configuration\Builders\ProcessBuilder.cs" />
     <Compile Include="Configuration\Builders\RelationshipBuilder.cs" />
     <Compile Include="Configuration\Builders\ScriptBuilder.cs" />
@@ -130,8 +130,8 @@
     <Compile Include="Configuration\AggregateConfigurationElement.cs" />
     <Compile Include="Configuration\MyConfigurationElementCollection.cs" />
     <Compile Include="Configuration\BranchElementCollection.cs" />
-    <Compile Include="Configuration\OutputConfigurationElement.cs" />
-    <Compile Include="Configuration\OutputElementCollection.cs" />
+    <Compile Include="Configuration\IoConfigurationElement.cs" />
+    <Compile Include="Configuration\IoElementCollection.cs" />
     <Compile Include="Configuration\ValidatorElementCollection.cs" />
     <Compile Include="Configuration\ModeConfigurationElement.cs" />
     <Compile Include="Configuration\ModeElementCollection.cs" />
@@ -630,6 +630,7 @@
     <Compile Include="Libs\fastJSON\JsonTryParse.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\AbstractSortedAggregationOperation.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\MailOperation.cs" />
+    <Compile Include="Libs\Rhino.Etl\Operations\ParallelUnionAllOperation.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\SortMergeJoinOperation.cs" />
     <Compile Include="Libs\SharpZLib\BZip2\BZip2.cs" />
     <Compile Include="Libs\SharpZLib\BZip2\BZip2Constants.cs" />
@@ -699,7 +700,7 @@
     <Compile Include="Main\Entity\EntityParametersReader.cs" />
     <Compile Include="Main\Entity\EntityRelationshipLoader.cs" />
     <Compile Include="Main\Entity\IEntityCreator.cs" />
-    <Compile Include="Main\Entity\Output.cs" />
+    <Compile Include="Main\Entity\NamedConnection.cs" />
     <Compile Include="Main\NinjectBindings.cs" />
     <Compile Include="Main\PipelineThreading.cs" />
     <Compile Include="Main\Process\ProcessFactory.cs" />
@@ -762,10 +763,6 @@
     <Compile Include="Main\Providers\PostgreSql\PostgreSqlDependencies.cs" />
     <Compile Include="Main\Providers\PostgreSql\PostgreSqlEntityDropper.cs" />
     <Compile Include="Main\Providers\PostgreSql\PostgreSqlEntityExists.cs" />
-    <Compile Include="Main\Providers\PostgreSql\PostgreSqlEntityKeysAllQueryWriter.cs" />
-    <Compile Include="Main\Providers\PostgreSql\PostgreSqlEntityKeysQueryWriter.cs" />
-    <Compile Include="Main\Providers\PostgreSql\PostgreSqlEntityKeysRangeQueryWriter.cs" />
-    <Compile Include="Main\Providers\PostgreSql\PostgreSqlEntityKeysTopQueryWriter.cs" />
     <Compile Include="Main\Providers\PostgreSql\PostgreSqlEntityRecordsExist.cs" />
     <Compile Include="Main\Providers\PostgreSql\PostgreSqlProvider.cs" />
     <Compile Include="Main\Providers\PostgreSql\PostgreSqlTableQueryWriter.cs" />
@@ -798,7 +795,6 @@
     <Compile Include="Main\Item.cs" />
     <Compile Include="Main\Map.cs" />
     <Compile Include="Main\Entity\Entity.cs" />
-    <Compile Include="Main\Entity\EntityCounter.cs" />
     <Compile Include="Main\Entity\EntitiesDropper.cs" />
     <Compile Include="Main\Entity\EntityTransformParametersReader.cs" />
     <Compile Include="Main\Entity\IEntityAutoFieldReader.cs" />
@@ -853,9 +849,6 @@
     <Compile Include="Main\Providers\ITflWriter.cs" />
     <Compile Include="Main\Providers\IViewWriter.cs" />
     <Compile Include="Main\Providers\MySql\MySqlConnection.cs" />
-    <Compile Include="Main\Providers\MySql\MySqlEntityKeysQueryWriter.cs" />
-    <Compile Include="Main\Providers\MySql\MySqlEntityKeysRangeQueryWriter.cs" />
-    <Compile Include="Main\Providers\MySql\MySqlEntityKeysTopQueryWriter.cs" />
     <Compile Include="Main\Providers\MySql\MySqlProvider.cs" />
     <Compile Include="Main\Providers\MySql\MySqlTableQueryWriter.cs" />
     <Compile Include="Main\Providers\Provider.cs" />
@@ -869,10 +862,6 @@
     <Compile Include="Main\Providers\SqlServer\SqlServerEntityCounter.cs" />
     <Compile Include="Main\Providers\DatabaseEntityDropper.cs" />
     <Compile Include="Main\Providers\SqlServer\SqlServerEntityExists.cs" />
-    <Compile Include="Main\Providers\SqlServer\SqlServerEntityKeysAllQueryWriter.cs" />
-    <Compile Include="Main\Providers\SqlServer\SqlServerEntityKeysQueryWriter.cs" />
-    <Compile Include="Main\Providers\SqlServer\SqlServerEntityKeysRangeQueryWriter.cs" />
-    <Compile Include="Main\Providers\SqlServer\SqlServerEntityKeysTopQueryWriter.cs" />
     <Compile Include="Main\Providers\SqlServer\SqlServerEntityRecordsExist.cs" />
     <Compile Include="Main\Providers\DatabaseEntityVersionWriter.cs" />
     <Compile Include="Main\Providers\SqlMapReader.cs" />
@@ -1215,7 +1204,6 @@
     <Compile Include="Libs\Rhino.Etl\Operations\NestedLoopsJoinOperation.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\OperationStatistics.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\OutputCommandOperation.cs" />
-    <Compile Include="Libs\Rhino.Etl\Operations\ParallelUnionAllOperation.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\PartialProcessOperation.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\SerialUnionAllOperation.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\SqlBatchOperation.cs" />
@@ -1686,6 +1674,7 @@
     <Compile Include="Processes\InitializationProcess.cs" />
     <Compile Include="Processes\EntityProcess.cs" />
     <Compile Include="Operations\TruncateOperation.cs" />
+    <Compile Include="Processes\SqlOverrideOperation.cs" />
     <Compile Include="Processes\TransformProcess.cs" />
     <Compile Include="Processes\UpdateMasterProcess.cs" />
     <Compile Include="Operations\EntityUpdateMaster.cs" />

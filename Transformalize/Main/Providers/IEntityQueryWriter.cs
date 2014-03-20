@@ -22,6 +22,6 @@
 
 namespace Transformalize.Main.Providers {
     public interface IEntityQueryWriter {
-        string Write(Entity entity);
+        string Write(Entity entity, AbstractConnection connection);
     }
 }

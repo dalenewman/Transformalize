@@ -8,35 +8,43 @@ using Transformalize.Libs.FileHelpers.RunTime;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
+using Transformalize.Main.Providers;
 
 namespace Transformalize.Operations.Extract {
 
     public class FileDelimitedExtract : AbstractOperation {
+
         private readonly Entity _entity;
         private readonly int _top;
         private readonly Field[] _fields;
         private readonly string _fullName;
         private readonly string _name;
+        private readonly int _ignoreFirstLines;
+        private readonly string _delimiter;
+        private readonly ErrorMode _errorMode;
+
         private int _counter;
 
-        public FileDelimitedExtract(Entity entity, int top) : this(entity, entity.InputConnection.File, top) { }
+        public FileDelimitedExtract(Entity entity, AbstractConnection connection, int top) {
 
-        public FileDelimitedExtract(Entity entity, string file, int top) {
+            var fileInfo = new FileInfo(connection.File);
+
             _entity = entity;
             _top = top;
             _fields = new FieldSqlWriter(_entity.Fields).Input().Context().ToEnumerable().OrderBy(f => f.Index).ToArray();
-
-            var fileInfo = new FileInfo(file);
+            _delimiter = connection.Delimiter;
             _fullName = fileInfo.FullName;
             _name = fileInfo.Name;
+            _ignoreFirstLines = connection.Start - 1;
+            _errorMode = connection.ErrorMode;
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
-            var ignoreFirstLines = _entity.InputConnection.Start - 1;
+
             var cb = new DelimitedClassBuilder("Tfl" + _entity.OutputName()) {
                 IgnoreEmptyLines = true,
-                Delimiter = _entity.InputConnection.Delimiter,
-                IgnoreFirstLines = ignoreFirstLines
+                Delimiter = _delimiter,
+                IgnoreFirstLines = _ignoreFirstLines
             };
 
             foreach (var field in _fields) {
@@ -59,7 +67,7 @@ namespace Transformalize.Operations.Extract {
             var conversionMap = Common.GetObjectConversionMap();
 
             if (_top > 0) {
-                using (var file = new FluentFile(cb.CreateRecordClass()).From(_fullName).OnError(_entity.InputConnection.ErrorMode)) {
+                using (var file = new FluentFile(cb.CreateRecordClass()).From(_fullName).OnError(_errorMode)) {
                     foreach (var row in from object obj in file select Row.FromObject(obj)) {
                         row["TflFileName"] = _fullName;
                         foreach (var field in _fields.Where(f => !f.SimpleType.Equals("string"))) {
@@ -77,7 +85,7 @@ namespace Transformalize.Operations.Extract {
                 }
 
             } else {
-                using (var file = new FluentFile(cb.CreateRecordClass()).From(_fullName).OnError(_entity.InputConnection.ErrorMode)) {
+                using (var file = new FluentFile(cb.CreateRecordClass()).From(_fullName).OnError(_errorMode)) {
                     foreach (var row in from object obj in file select Row.FromObject(obj)) {
                         row["TflFileName"] = _fullName;
                         foreach (var field in _fields.Where(f => !f.SimpleType.Equals("string"))) {

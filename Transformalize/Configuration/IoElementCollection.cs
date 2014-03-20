@@ -2,10 +2,10 @@ using System.Configuration;
 
 namespace Transformalize.Configuration {
 
-    public class OutputElementCollection : ConfigurationElementCollection {
+    public class IoElementCollection : ConfigurationElementCollection {
 
-        public OutputConfigurationElement this[int index] {
-            get { return BaseGet(index) as OutputConfigurationElement; }
+        public IoConfigurationElement this[int index] {
+            get { return BaseGet(index) as IoConfigurationElement; }
             set {
                 if (BaseGet(index) != null) {
                     BaseRemoveAt(index);
@@ -19,14 +19,14 @@ namespace Transformalize.Configuration {
         }
 
         protected override ConfigurationElement CreateNewElement() {
-            return new OutputConfigurationElement();
+            return new IoConfigurationElement();
         }
 
         protected override object GetElementKey(ConfigurationElement element) {
-            return ((OutputConfigurationElement)element).Name;
+            return ((IoConfigurationElement)element).Name;
         }
 
-        public void Add(OutputConfigurationElement output) {
+        public void Add(IoConfigurationElement output) {
             BaseAdd(output);
         }
     }

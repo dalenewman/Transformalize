@@ -27,6 +27,7 @@ using System.Linq;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
+using Transformalize.Main.Providers;
 
 namespace Transformalize.Operations {
 
@@ -36,36 +37,41 @@ namespace Transformalize.Operations {
         private readonly Entity _entity;
         private readonly FieldTypeDefault[] _fields;
         private readonly int _length;
+        private string _sql;
 
-        public EntityInputKeysExtractAll(Entity entity)
-            : base(entity.InputConnection) {
+        public EntityInputKeysExtractAll(Entity entity, AbstractConnection connection)
+            : base(connection) {
 
             _entity = entity;
             _fields = _entity.PrimaryKey.Select(f => new FieldTypeDefault(f.Value.Alias, _map.ContainsKey(f.Value.SimpleType) ? f.Value.SimpleType : string.Empty, f.Value.Default)).ToArray();
             _length = _fields.Length;
 
-            var connection = _entity.InputConnection;
-
-            if (entity.CanDetectChanges()) {
+            if (connection.CanDetectChanges(_entity)) {
                 connection.LoadEndVersion(_entity);
                 if (!_entity.HasRows) {
                     Debug("No data detected in {0}.", _entity.Alias);
                 }
             }
 
+            _sql = connection.CanDetectChanges(_entity)
+                ? connection.KeyQuery(_entity)
+                : connection.KeyAllQuery(_entity);
+
+
         }
 
         protected override Row CreateRowFromReader(IDataReader reader) {
             var row = new Row();
             for (var i = 0; i < _length; i++) {
-                row[_fields[i].Alias] = _map[_fields[i].Type](reader, i, _fields[i].Default);
+                //row[_fields[i].Alias] = _map[_fields[i].Type](reader, i, _fields[i].Default);
+                row[_fields[i].Alias] = reader.GetValue(i);
             }
             return row;
         }
 
         protected override void PrepareCommand(IDbCommand cmd) {
             cmd.CommandTimeout = 0;
-            cmd.CommandText = _entity.KeysQuery();
+            cmd.CommandText = _sql;
             AddParameter(cmd, "@End", _entity.End);
         }
     }

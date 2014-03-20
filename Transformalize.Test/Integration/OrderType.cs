@@ -20,6 +20,7 @@
 
 #endregion
 
+using System.Linq;
 using NUnit.Framework;
 using Transformalize.Libs.NLog;
 using Transformalize.Main;
@@ -48,8 +49,8 @@ namespace Transformalize.Test.Integration {
             var process = ProcessFactory.Create(FILE, new Options() { Mode = "test" });
             process.GetField("Project","OrderType").Default = "Dale";
             process.GetField("Project", "HostMessageConfig").Default = "Dale";
-            process.Entities[0].InputConnection.Database = "ClevestDale";
-            process.Entities[0].InputConnection.Server = "localhost";
+            process.Entities[0].Input.First().Connection.Database = "ClevestDale";
+            process.Entities[0].Input.First().Connection.Server = "localhost";
             process.Run();
         }
 

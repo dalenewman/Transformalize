@@ -5,21 +5,21 @@ using Transformalize.Libs.ExcelDataReader;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
+using Transformalize.Main.Providers;
 
 namespace Transformalize.Operations.Extract {
+
     public class FileExcelExtract : AbstractOperation {
         private readonly Field[] _fields;
         private readonly FileInfo _fileInfo;
         private readonly int _start;
         private readonly int _end;
 
-        public FileExcelExtract(Entity entity, int top) : this(entity, entity.InputConnection.File, top) { }
-
-        public FileExcelExtract(Entity entity, string file, int top) {
+        public FileExcelExtract(Entity entity, AbstractConnection connection, int top) {
             _fields = new FieldSqlWriter(entity.Fields).Input().Context().ToEnumerable().OrderBy(f => f.Index).ToArray();
-            _fileInfo = new FileInfo(file);
-            _start = entity.InputConnection.Start;
-            _end = entity.InputConnection.End;
+            _fileInfo = new FileInfo(connection.File);
+            _start = connection.Start;
+            _end = connection.End;
 
             if (top > 0) {
                 _end = _start + top;

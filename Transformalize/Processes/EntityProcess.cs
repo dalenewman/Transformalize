@@ -21,12 +21,13 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Libs.Rhino.Etl.ConventionOperations;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
@@ -52,37 +53,21 @@ namespace Transformalize.Processes {
 
         protected override void Initialize() {
 
-            var isDatabase = _entity.InputConnection.Provider.IsDatabase;
-
-            if (isDatabase) {
-                if (!string.IsNullOrEmpty(_entity.SqlOverride)) {
-                    Register(new ConventionInputCommandOperation(_entity.InputConnection) { Command = _entity.SqlOverride });
-                } else {
-                    Register(new EntityKeysToOperations(_entity));
-                    Register(new SerialUnionAllOperation());
-                }
+            if (_entity.Input.Count == 1) {
+                Register(ComposeInputOperation(_entity.Input.First()));
             } else {
-                if (_entity.InputConnection.IsFile()) {
-                    Register(PrepareFileOperation(_entity.InputConnection.File));
-                } else {
-                    if (_entity.InputConnection.IsFolder()) {
-                        var union = new SerialUnionAllOperation();
-                        foreach (var file in new DirectoryInfo(_entity.InputConnection.Folder).GetFiles(_entity.InputConnection.SearchPattern, _entity.InputConnection.SearchOption)) {
-                            union.Add(PrepareFileOperation(file.FullName));
-                        }
-                        Register(union);
-                    } else {
-                        Register(_entity.InputOperation);
-                        Register(new AliasOperation(_entity));
-                    }
+                var union = new ParallelUnionAllOperation();
+                foreach (var input in _entity.Input) {
+                    union.Add(ComposeInputOperation(input));
                 }
+                Register(union);
             }
 
             if (_entity.Sample > 0m && _entity.Sample < 100m) {
                 Register(new SampleOperation(_entity.Sample));
             }
 
-            Register(new ApplyDefaults(!isDatabase, _entity.Fields, _entity.CalculatedFields));
+            Register(new ApplyDefaults(true, _entity.Fields, _entity.CalculatedFields));
             foreach (var transform in _entity.Operations) {
                 Register(transform);
             }
@@ -92,7 +77,7 @@ namespace Transformalize.Processes {
 
             Register(new TruncateOperation(_entity.Fields, _entity.CalculatedFields));
 
-            var standardOutput = new Output { Connection = _process.OutputConnection, Name = STANDARD_OUTPUT };
+            var standardOutput = new NamedConnection { Connection = _process.OutputConnection, Name = STANDARD_OUTPUT };
 
             if (_entity.Output.Count > 0) {
                 var branch = new BranchingOperation()
@@ -108,24 +93,58 @@ namespace Transformalize.Processes {
 
         }
 
-        private IOperation PrepareFileOperation(string file) {
-            if (_entity.InputConnection.IsExcel(file)) {
-                return new FileExcelExtract(_entity, file, _process.Options.Top);
+        private IOperation ComposeInputOperation(NamedConnection input) {
+
+            var p = new PartialProcessOperation();
+
+            var isDatabase = input.Connection.Provider.IsDatabase;
+
+            if (isDatabase) {
+                if (!string.IsNullOrEmpty(_entity.SqlOverride)) {
+                    p.Register(new SqlOverrideOperation(_entity, input.Connection));
+                } else {
+                    p.Register(new EntityKeysToOperations(_entity, input.Connection));
+                    p.Register(new SerialUnionAllOperation());
+                }
+            } else {
+                if (input.Connection.IsFile()) {
+                    p.Register(PrepareFileOperation(input.Connection));
+                } else {
+                    if (input.Connection.IsFolder()) {
+                        var union = new SerialUnionAllOperation();
+                        foreach (var file in new DirectoryInfo(input.Connection.Folder).GetFiles(input.Connection.SearchPattern, input.Connection.SearchOption)) {
+                            input.Connection.File = file.FullName;
+                            union.Add(PrepareFileOperation(input.Connection));
+                        }
+                        p.Register(union);
+                    } else {
+                        p.Register(_entity.InputOperation);
+                        p.Register(new AliasOperation(_entity));
+                    }
+                }
             }
-            if (_entity.InputConnection.IsDelimited()) {
-                return new FileDelimitedExtract(_entity, file, _process.Options.Top);
-            }
-            return new FileFixedExtract(_entity, file, _process.Options.Top);
+
+            return p;
         }
 
-        private PartialProcessOperation PrepareOutputOperation(Output output) {
+        private IOperation PrepareFileOperation(AbstractConnection connection) {
+            if (connection.IsExcel()) {
+                return new FileExcelExtract(_entity, connection, _process.Options.Top);
+            }
+            if (connection.IsDelimited()) {
+                return new FileDelimitedExtract(_entity, connection, _process.Options.Top);
+            }
+            return new FileFixedExtract(_entity, connection, _process.Options.Top);
+        }
+
+        private PartialProcessOperation PrepareOutputOperation(NamedConnection namedConnection) {
 
             var process = new PartialProcessOperation();
-            process.Register(new FilterOutputOperation(output.ShouldRun));
+            process.Register(new FilterOutputOperation(namedConnection.ShouldRun));
 
-            switch (output.Connection.Provider.Type) {
+            switch (namedConnection.Connection.Provider.Type) {
                 case ProviderType.Internal:
-                    process.RegisterLast(_collectors[output.Name]);
+                    process.RegisterLast(_collectors[namedConnection.Name]);
                     break;
                 case ProviderType.Console:
                     process.RegisterLast(new ConsoleOperation(_entity));
@@ -137,29 +156,29 @@ namespace Transformalize.Processes {
                     process.RegisterLast(new MailOperation(_entity));
                     break;
                 case ProviderType.File:
-                    process.RegisterLast(new FileLoadOperation(output.Connection, _entity));
+                    process.RegisterLast(new FileLoadOperation(namedConnection.Connection, _entity));
                     break;
                 case ProviderType.Html:
                     process.Register(new HtmlRowOperation(_entity, "HtmlRow"));
-                    process.RegisterLast(new HtmlLoadOperation(output.Connection, _entity, "HtmlRow"));
+                    process.RegisterLast(new HtmlLoadOperation(namedConnection.Connection, _entity, "HtmlRow"));
                     break;
                 default:
                     if (_process.IsFirstRun) {
-                        if (output.Connection.Provider.IsDatabase && _entity.IndexOptimizations) {
-                            output.Connection.DropUniqueClusteredIndex(_entity);
-                            output.Connection.DropPrimaryKey(_entity);
+                        if (namedConnection.Connection.Provider.IsDatabase && _entity.IndexOptimizations) {
+                            namedConnection.Connection.DropUniqueClusteredIndex(_entity);
+                            namedConnection.Connection.DropPrimaryKey(_entity);
                         }
                         process.Register(new EntityAddTflFields(_entity));
-                        process.RegisterLast(new EntityBulkInsert(output.Connection, _entity));
+                        process.RegisterLast(new EntityBulkInsert(namedConnection.Connection, _entity));
                     } else {
-                        process.Register(new EntityJoinAction(_entity).Right(new EntityOutputKeysExtract(output.Connection, _entity)));
+                        process.Register(new EntityJoinAction(_entity).Right(new EntityOutputKeysExtract(namedConnection.Connection, _entity)));
                         var branch = new BranchingOperation()
                             .Add(new PartialProcessOperation()
                                 .Register(new EntityActionFilter(ref _entity, EntityAction.Insert))
-                                .RegisterLast(new EntityBulkInsert(output.Connection, _entity)))
+                                .RegisterLast(new EntityBulkInsert(namedConnection.Connection, _entity)))
                             .Add(new PartialProcessOperation()
                                 .Register(new EntityActionFilter(ref _entity, EntityAction.Update))
-                                .RegisterLast(new EntityBatchUpdate(output.Connection, _entity)));
+                                .RegisterLast(new EntityBatchUpdate(namedConnection.Connection, _entity)));
                         process.RegisterLast(branch);
                     }
                     break;
@@ -192,7 +211,8 @@ namespace Transformalize.Processes {
                     }
                 }
             } else {
-                new DatabaseEntityVersionWriter(_process, _entity).WriteEndVersion();
+                // not handling things by input yet, so just use first
+                new DatabaseEntityVersionWriter(_process, _entity).WriteEndVersion(_entity.Input.First().Connection);
             }
 
             base.PostProcessing();

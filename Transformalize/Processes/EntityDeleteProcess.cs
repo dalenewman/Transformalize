@@ -22,8 +22,10 @@
 
 using System;
 using System.Linq;
+using System.Runtime.Serialization;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 using Transformalize.Operations;
 
@@ -40,7 +42,17 @@ namespace Transformalize.Processes {
         }
 
         protected override void Initialize() {
-            Register(new EntityInputKeysExtractAll(_entity));
+
+            if (_entity.Input.Count == 1) {
+                Register(new EntityInputKeysExtractAll(_entity, _entity.Input.First().Connection));
+            } else {
+                var multiInput = new ParallelUnionAllOperation();
+                foreach (var namedConnection in _entity.Input) {
+                    multiInput.Add(new EntityInputKeysExtractAll(_entity, namedConnection.Connection));
+                }
+                Register(multiInput);
+            }
+
             Register(new EntityDetectDeletes(_entity).Right(new EntityOutputKeysExtractAll(_process, _entity)));
             Register(new EntityActionFilter(ref _entity, EntityAction.Delete));
             Register(new EntityDelete(_process, _entity));

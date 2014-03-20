@@ -20,10 +20,12 @@
 
 #endregion
 
+using Transformalize.Main.Providers;
+
 namespace Transformalize.Main
 {
     public interface IEntityVersionWriter
     {
-        void WriteEndVersion();
+        void WriteEndVersion(AbstractConnection input);
     }
 }

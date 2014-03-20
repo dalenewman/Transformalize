@@ -32,14 +32,14 @@ using Transformalize.Main.Providers;
 namespace Transformalize.Operations {
     public class EntityKeysToOperations : AbstractOperation {
         private readonly Entity _entity;
+        private readonly AbstractConnection _connection;
         private readonly Field[] _key;
         private readonly string _operationColumn;
-        private readonly AbstractProvider _provider;
         private readonly IList<Row> _keys = new List<Row>();
 
-        public EntityKeysToOperations(Entity entity, string operationColumn = "operation") {
+        public EntityKeysToOperations(Entity entity, AbstractConnection connection, string operationColumn = "operation") {
             _entity = entity;
-            _provider = _entity.InputConnection.Provider;
+            _connection = connection;
             _operationColumn = operationColumn;
             _key = new FieldSqlWriter(_entity.PrimaryKey).Input().ToArray();
             _keys = new List<Row>(_entity.InputKeys.Select(r => r.Clone()));
@@ -48,10 +48,10 @@ namespace Transformalize.Operations {
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             var fields = new FieldSqlWriter(_entity.Fields).Input().ToArray();
 
-            if (_keys.Count > 0 && _keys.Count < _entity.InputConnection.BatchSize) {
+            if (_keys.Count > 0 && _keys.Count < _connection.BatchSize) {
                 yield return GetOperationRow(_keys, fields);
             } else {
-                foreach (var batch in _keys.Partition(_entity.InputConnection.BatchSize)) {
+                foreach (var batch in _keys.Partition(_connection.BatchSize)) {
                     yield return GetOperationRow(batch, fields);
                 }
             }
@@ -60,18 +60,18 @@ namespace Transformalize.Operations {
         private Row GetOperationRow(IEnumerable<Row> batch, Field[] fields) {
             var sql = SelectByKeys(batch);
             var row = new Row();
-            row[_operationColumn] = new EntityDataExtract(fields, sql, _entity.InputConnection);
+            row[_operationColumn] = new EntityDataExtract(fields, sql, _connection);
             return row;
         }
 
         public string SelectByKeys(IEnumerable<Row> rows) {
-            var tableName = _provider.Supports.TableVariable ? "@KEYS" : "keys_" + _entity.Name;
-            var noCount = _provider.Supports.NoCount ? "SET NOCOUNT ON;\r\n" : string.Empty;
+            var tableName = _connection.Provider.Supports.TableVariable ? "@KEYS" : "keys_" + _entity.Name;
+            var noCount = _connection.Provider.Supports.NoCount ? "SET NOCOUNT ON;\r\n" : string.Empty;
             var sql = noCount +
-                _entity.InputConnection.TableQueryWriter.WriteTemporary(tableName, _key, _provider, false) +
-                SqlTemplates.BatchInsertValues(50, tableName, _key, rows, _entity.InputConnection) + Environment.NewLine +
-                SqlTemplates.Select(_entity.Fields, _entity.Name, tableName, _provider) +
-                (_provider.Supports.TableVariable ? string.Empty : string.Format("DROP TABLE {0};", tableName));
+                _connection.TableQueryWriter.WriteTemporary(tableName, _key, _connection.Provider, false) +
+                SqlTemplates.BatchInsertValues(50, tableName, _key, rows, _connection) + Environment.NewLine +
+                SqlTemplates.Select(_entity.Fields, _entity.Name, tableName, _connection.Provider) +
+                (_connection.Provider.Supports.TableVariable ? string.Empty : string.Format("DROP TABLE {0};", tableName));
 
             Trace(sql);
 

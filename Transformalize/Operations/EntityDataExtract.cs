@@ -51,7 +51,8 @@ namespace Transformalize.Operations {
         protected override Row CreateRowFromReader(IDataReader reader) {
             var row = new Row();
             for (var i = 0; i < _length; i++) {
-                row[_fields[i].Alias] = _map[_fields[i].Type](reader, i, _fields[i].Default);
+                //row[_fields[i].Alias] = _map[_fields[i].Type](reader, i, _fields[i].Default);
+                row[_fields[i].Alias] = reader.GetValue(i);
             }
             return row;
         }

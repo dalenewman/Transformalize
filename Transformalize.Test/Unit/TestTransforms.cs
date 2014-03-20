@@ -652,7 +652,7 @@ namespace Transformalize.Test.Unit {
                 .Connection("input").Provider(ProviderType.Internal)
                 .Connection("output").Provider(ProviderType.Internal)
                 .Entity("entity")
-                    .Input(input)
+                    .InputOperation(input)
                     .Field("MeterNumber")
                     .CalculatedField("MeterCategory").Default("None")
                         .Transform("left").Length(1).Parameter("MeterNumber")

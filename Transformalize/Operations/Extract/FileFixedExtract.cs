@@ -9,27 +9,33 @@ using Transformalize.Libs.FileHelpers.RunTime;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
+using Transformalize.Main.Providers;
 
 namespace Transformalize.Operations.Extract {
+
     public class FileFixedExtract : AbstractOperation {
+
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
+
         private readonly Entity _entity;
         private readonly int _top;
         private readonly Field[] _fields;
         private readonly string _fullName;
         private readonly string _name;
+        private readonly ErrorMode _errorMode;
+
         private int _counter;
 
-        public FileFixedExtract(Entity entity, int top) : this(entity, entity.InputConnection.File, top) { }
+        public FileFixedExtract(Entity entity, AbstractConnection connection, int top) {
 
-        public FileFixedExtract(Entity entity, string file, int top) {
+            var fileInfo = new FileInfo(connection.File);
+
             _entity = entity;
             _top = top;
             _fields = new FieldSqlWriter(_entity.Fields).Input().Context().ToEnumerable().OrderBy(f => f.Index).ToArray();
-
-            var fileInfo = new FileInfo(file);
             _fullName = fileInfo.FullName;
             _name = fileInfo.Name;
+            _errorMode = connection.ErrorMode;
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
@@ -43,7 +49,7 @@ namespace Transformalize.Operations.Extract {
             Info("Reading {0}", _name);
 
             if (_top > 0) {
-                using (var file = new FluentFile(cb.CreateRecordClass()).From(_fullName).OnError(_entity.InputConnection.ErrorMode)) {
+                using (var file = new FluentFile(cb.CreateRecordClass()).From(_fullName).OnError(_errorMode)) {
                     foreach (var obj in file) {
                         var row = Row.FromObject(obj);
                         row["TflFileName"] = _fullName;
@@ -57,7 +63,7 @@ namespace Transformalize.Operations.Extract {
                     HandleErrors(file);
                 }
             } else {
-                using (var file = new FluentFile(cb.CreateRecordClass()).From(_fullName).OnError(_entity.InputConnection.ErrorMode)) {
+                using (var file = new FluentFile(cb.CreateRecordClass()).From(_fullName).OnError(_errorMode)) {
                     foreach (var obj in file) {
                         yield return Row.FromObject(obj);
                     }

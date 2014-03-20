@@ -1,6 +1,7 @@
 using Transformalize.Configuration;
 
 namespace Transformalize.Main.Providers.File {
+
     public class HtmlConnection : AbstractConnection {
         public override string UserProperty { get { return string.Empty; } }
         public override string PasswordProperty { get { return string.Empty; } }
@@ -16,9 +17,6 @@ namespace Transformalize.Main.Providers.File {
             : base(element, dependencies) {
 
             TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
-            EntityKeysQueryWriter = new EmptyQueryWriter();
-            EntityKeysRangeQueryWriter = new EmptyQueryWriter();
-            EntityKeysAllQueryWriter = new EmptyQueryWriter();
         }
 
     }

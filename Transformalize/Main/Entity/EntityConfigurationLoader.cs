@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
@@ -59,7 +60,6 @@ namespace Transformalize.Main {
                 Schema = element.Schema,
                 PipelineThreading = threading,
                 Name = element.Name,
-                InputConnection = _process.Connections[element.Connection],
                 Prefix = element.Prefix,
                 Group = element.Group,
                 IndexOptimizations = element.IndexOptimizations,
@@ -68,7 +68,7 @@ namespace Transformalize.Main {
                 Sample = element.Sample,
                 SqlOverride = element.SqlOverride,
                 Alias = string.IsNullOrEmpty(element.Alias) ? element.Name : element.Alias,
-                InternalOutput = element.Output.Cast<OutputConfigurationElement>().ToDictionary(o => o.Name, o => Enumerable.Repeat(new Row(), 0)),
+                InternalOutput = element.Output.Cast<IoConfigurationElement>().ToDictionary(o => o.Name, o => Enumerable.Repeat(new Row(), 0)),
                 InputOperation = element.InputOperation,
             };
 
@@ -113,51 +113,61 @@ namespace Transformalize.Main {
 
             LoadVersion(element, entity);
 
-            // output
-            var outputValidator = ValidationFactory.CreateValidator<OutputConfigurationElement>();
-            foreach (OutputConfigurationElement output in element.Output) {
+            // wire up connections
+            if (!string.IsNullOrEmpty(element.Connection) && _process.Connections.ContainsKey(element.Connection)) {
+                var connection = _process.Connections[element.Connection];
+                entity.Input.Add(new NamedConnection() { Connection = connection, Name = connection.Name });
+            }
+            entity.Input.AddRange(PrepareIo(element.Input, entity.Fields));
+            entity.Output = PrepareIo(element.Output, entity.Fields);
 
-                var results = outputValidator.Validate(output);
+            return entity;
+        }
+
+        private List<NamedConnection> PrepareIo(IoElementCollection collection, Fields fields) {
+            var namedConnections = new List<NamedConnection>();
+
+            var validator = ValidationFactory.CreateValidator<IoConfigurationElement>();
+            foreach (IoConfigurationElement io in collection) {
+                var results = validator.Validate(io);
 
                 if (results.IsValid) {
-                    if (_process.Connections.ContainsKey(output.Connection)) {
-
+                    if (_process.Connections.ContainsKey(io.Connection)) {
                         Func<Row, bool> shouldRun = row => true;
 
-                        if (!output.RunField.Equals(string.Empty)) {
-                            var f = output.RunField;
-                            var match = entity.Fields.Where(p => p.Value.Alias.Equals(f) || p.Value.Name.Equals(f)).Select(p => p.Value).ToArray();
+                        if (!io.RunField.Equals(string.Empty)) {
+                            var f = io.RunField;
+                            var match = fields.Where(p => p.Value.Alias.Equals(f) || p.Value.Name.Equals(f)).Select(p => p.Value).ToArray();
                             if (match.Length > 0) {
                                 var field = match[0];
-                                if (output.RunType.Equals(DEFAULT)) {
-                                    output.RunType = field.SimpleType;
+                                if (io.RunType.Equals(DEFAULT)) {
+                                    io.RunType = field.SimpleType;
                                 }
-                                var op = (ComparisonOperator)Enum.Parse(typeof(ComparisonOperator), output.RunOperator, true);
-                                var simpleType = Common.ToSimpleType(output.RunType);
-                                var value = Common.ConversionMap[simpleType](output.RunValue);
+                                var op = (ComparisonOperator)Enum.Parse(typeof(ComparisonOperator), io.RunOperator, true);
+                                var simpleType = Common.ToSimpleType(io.RunType);
+                                var value = Common.ConversionMap[simpleType](io.RunValue);
                                 shouldRun = row => Common.CompareMap[op](row[field.Alias], value);
                             } else {
-                                _log.Warn("Field {0} specified in {1} output doesn't exist.  It will not affect the output.", output.RunField, output.Name);
+                                _log.Warn("Field {0} specified in {1} output doesn't exist.  It will not affect the output.", io.RunField, io.Name);
                             }
                         }
 
-                        entity.Output.Add(new Output {
-                            Name = output.Name,
-                            Connection = _process.Connections[output.Connection],
+                        namedConnections.Add(new NamedConnection {
+                            Name = io.Name,
+                            Connection = _process.Connections[io.Connection],
                             ShouldRun = shouldRun
                         });
                     } else {
-                        _log.Warn("Can't add output {0} because connection {1} doesn't exist.", output.Name, output.Connection);
+                        _log.Warn("Can't add output {0} because connection {1} doesn't exist.", io.Name, io.Connection);
                     }
                 } else {
-                    _log.Warn("Output {0} is invalid.", output.Name);
+                    _log.Warn("Output {0} is invalid.", io.Name);
                     foreach (var reason in results) {
                         _log.Warn(reason.Message);
                     }
                 }
             }
-
-            return entity;
+            return namedConnections;
         }
 
         private void Validate(EntityConfigurationElement element) {

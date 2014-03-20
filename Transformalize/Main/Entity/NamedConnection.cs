@@ -4,7 +4,7 @@ using Transformalize.Main.Providers;
 
 namespace Transformalize.Main
 {
-    public class Output {
+    public class NamedConnection {
         public Func<Row, bool> ShouldRun = row => true;
         public string Name { get; set; }
         public AbstractConnection Connection { get; set; }

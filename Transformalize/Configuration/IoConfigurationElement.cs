@@ -3,7 +3,7 @@ using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 
 namespace Transformalize.Configuration
 {
-    public class OutputConfigurationElement : ConfigurationElement {
+    public class IoConfigurationElement : ConfigurationElement {
 
         private const string NAME = "name";
         private const string CONNECTION = "connection";

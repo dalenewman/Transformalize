@@ -43,7 +43,6 @@ namespace Transformalize.Main {
         public PipelineThreading PipelineThreading { get; set; }
         public string ProcessName { get; set; }
         public string Alias { get; set; }
-        public AbstractConnection InputConnection { get; set; }
         public Field Version { get; set; }
         public Fields PrimaryKey { get; set; }
         public Fields Fields { get; set; }
@@ -71,7 +70,11 @@ namespace Transformalize.Main {
         public decimal Sample { get; set; }
         public string SqlOverride { get; set; }
         public Dictionary<string, IEnumerable<Row>> InternalOutput { get; set; }
-        public List<Output> Output { get; set; }
+        public List<NamedConnection> Output { get; set; }
+        public List<NamedConnection> Input { get; set; }
+        public IEntityQueryWriter EntityKeysQueryWriter { get; set; }
+        public IEntityQueryWriter EntityKeysRangeQueryWriter { get; set; }
+        public IEntityQueryWriter EntityKeysAllQueryWriter { get; set; }
 
         public Entity(int batchId) {
             _tflBatchId = batchId;
@@ -85,7 +88,8 @@ namespace Transformalize.Main {
             Prefix = string.Empty;
             CalculatedFields = new Fields();
             InternalOutput = new Dictionary<string, IEnumerable<Row>>();
-            Output = new List<Output>();
+            Output = new List<NamedConnection>();
+            Input = new List<NamedConnection>();
         }
 
         public IEnumerable<Row> Rows {
@@ -131,20 +135,6 @@ namespace Transformalize.Main {
             return selectKeys;
         }
 
-        public string KeysAllQuery() {
-            return InputConnection.EntityKeysAllQueryWriter.Write(this);
-        }
-
-        public string KeysQuery() {
-            return CanDetectChanges()
-                ? InputConnection.EntityKeysQueryWriter.Write(this)
-                : InputConnection.EntityKeysAllQueryWriter.Write(this);
-        }
-
-        public string KeysRangeQuery() {
-            return InputConnection.EntityKeysRangeQueryWriter.Write(this);
-        }
-
         public Fields InputFields() {
             return new FieldSqlWriter(Fields, CalculatedFields).Input().Context();
         }
@@ -166,11 +156,11 @@ namespace Transformalize.Main {
             return false;
         }
 
-        public void CheckForChanges(Process process) {
-            if (!CanDetectChanges())
+        public void CheckForChanges(Process process, AbstractConnection connection) {
+            if (!connection.CanDetectChanges(this))
                 return;
             process.OutputConnection.LoadBeginVersion(this);
-            InputConnection.LoadEndVersion(this);
+            connection.LoadEndVersion(this);
         }
 
         public string GetVersionField() {
@@ -183,10 +173,6 @@ namespace Transformalize.Main {
                     return Version.SimpleType[0].ToString(CultureInfo.InvariantCulture).ToUpper() +
                            Version.SimpleType.Substring(1) + "Version";
             }
-        }
-
-        public bool CanDetectChanges() {
-            return Version != null && Version.Input && InputConnection.Provider.IsDatabase;
         }
 
         public bool NeedsSchema() {

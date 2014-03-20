@@ -21,64 +21,59 @@
 #endregion
 
 using System.Data;
+using System.Linq;
+using Transformalize.Libs.Dapper;
 using Transformalize.Libs.NLog;
 
-namespace Transformalize.Main.Providers.SqlServer
-{
-    public class SqlServerEntityAutoFieldReader : IEntityAutoFieldReader
-    {
+namespace Transformalize.Main.Providers.SqlServer {
+    public class SqlServerEntityAutoFieldReader : IEntityAutoFieldReader {
         private readonly IDataTypeService _dataTypeService = new SqlServerDataTypeService();
         private readonly Logger _log = LogManager.GetLogger(string.Empty);
 
-        public Fields Read(Entity entity, bool isMaster)
-        {
+        public Fields Read(Entity entity, bool isMaster) {
             var fields = new Fields();
-            using (var cn = entity.InputConnection.GetConnection())
-            {
+            using (var cn = entity.Input.First().Connection.GetConnection()) {
                 cn.Open();
                 var cmd = cn.CreateCommand();
                 cmd.CommandText = PrepareSql();
                 cmd.CommandType = CommandType.Text;
-                entity.InputConnection.AddParameter(cmd, "@Name", entity.Name);
-                entity.InputConnection.AddParameter(cmd, "@Schema", entity.Schema);
-                var reader = cmd.ExecuteReader();
 
-                while (reader.Read())
-                {
-                    var name = reader.GetString(0);
-                    var type = GetSystemType(reader.GetString(2));
-                    var length = reader.GetString(3);
-                    var fieldType = reader.GetBoolean(7) ? (isMaster ? FieldType.MasterKey : FieldType.PrimaryKey) : FieldType.Field;
+                var results = cn.Query(PrepareSql(), new { entity.Name, entity.Schema });
+
+                foreach (var result in results) {
+                    var name = result.COLUMN_NAME;
+                    var type = GetSystemType(result.DATA_TYPE);
+                    var length = result.CHARACTER_MAXIMUM_LENGTH;
+                    var fieldType = (bool)result.IS_PRIMARY_KEY ? (isMaster ? FieldType.MasterKey : FieldType.PrimaryKey) : FieldType.Field;
                     var field = new Field(type, length, fieldType, true, string.Empty) {
                         Name = name,
                         Entity = entity.Name,
                         Process = entity.ProcessName,
-                        Index = reader.GetInt32(6),
+                        Index = result.ORDINAL_POSITION,
                         Schema = entity.Schema,
                         Input = true,
-                        Precision = reader.GetByte(4),
-                        Scale = reader.GetInt32(5),
+                        Precision = result.NUMERIC_PRECISION,
+                        Scale = result.NUMERIC_SCALE,
                         Alias = entity.Prefix + name
                     };
                     fields.Add(field);
+
                 }
+
             }
 
             return fields;
         }
 
-        private string GetSystemType(string dataType)
-        {
+        private string GetSystemType(string dataType) {
             var typeDefined = _dataTypeService.TypesReverse.ContainsKey(dataType);
-            if (!typeDefined)
-            {
+            if (!typeDefined) {
                 _log.Warn("Transformalize hasn't mapped the SQL data type: {0} to a .NET data type.  It will default to string.", dataType);
             }
             return typeDefined ? _dataTypeService.TypesReverse[dataType] : "System.String";
         }
 
-        private static string PrepareSql()
-        {
+        private static string PrepareSql() {
             return @"
                 SELECT
                     c.COLUMN_NAME,  --0

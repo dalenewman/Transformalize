@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using System.Linq;
 using NUnit.Framework;
 using Transformalize.Libs.Dapper;
 using Transformalize.Libs.NLog;
@@ -64,7 +65,7 @@ namespace Transformalize.Test.Integration {
         public void ManipulateData()
         {
             var process = ProcessFactory.Create(FILE);
-            using (var cn = process["Order Details"].InputConnection.GetConnection()) {
+            using (var cn = process["Order Details"].Input.First().Connection.GetConnection()) {
                 cn.Open();
                 var count = cn.Execute("insert into [Order Details](OrderID, ProductID, UnitPrice, Quantity, Discount) values(10261,41,7.70,2,0);");
                 Console.WriteLine("row count: {0}", count);
@@ -74,7 +75,7 @@ namespace Transformalize.Test.Integration {
         [Test]
         public void UnManipulateData() {
             var process = ProcessFactory.Create(FILE);
-            using (var cn = process["Order Details"].InputConnection.GetConnection()) {
+            using (var cn = process["Order Details"].Input.First().Connection.GetConnection()) {
                 cn.Open();
                 var count = cn.Execute("delete from [Order Details] where OrderID = 10261 and ProductID = 41;");
                 Console.WriteLine("row count: {0}", count);

@@ -16,11 +16,7 @@ namespace Transformalize.Main.Providers.File {
 
         public FileConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
-
             TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
-            EntityKeysQueryWriter = new EmptyQueryWriter();
-            EntityKeysRangeQueryWriter = new EmptyQueryWriter();
-            EntityKeysAllQueryWriter = new EmptyQueryWriter();
         }
     }
 }

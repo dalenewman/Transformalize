@@ -49,7 +49,7 @@ namespace Transformalize.Test.Unit {
                 .Connection("input").Provider(ProviderType.Internal)
                 .Connection("output").Provider(ProviderType.Internal)
                 .Entity("entity")
-                    .Input(input)
+                    .InputOperation(input)
                     .Group() //group means you need to aggregate all output fields
                     .Field("order")             .Aggregate("group")         .Int32().PrimaryKey()
                     .Field("year")              .Aggregate("countdistinct") .Int32().Alias("years")
@@ -91,7 +91,7 @@ namespace Transformalize.Test.Unit {
                 .Connection("input").Provider(ProviderType.Internal)
                 .Connection("output").Provider(ProviderType.Internal)
                 .Entity("entity")
-                    .Input(input)
+                    .InputOperation(input)
                     .Field("order").Int32().PrimaryKey()
                     .Field("year")
                 .Process();

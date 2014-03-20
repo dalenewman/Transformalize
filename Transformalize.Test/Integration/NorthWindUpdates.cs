@@ -77,7 +77,7 @@ namespace Transformalize.Test.Integration {
             Assert.AreEqual(0, process["Shippers"].Inserts);
 
             _log.Info("***** RUN 03 * ADD 1 ORDER DETAIL ******");
-            using (var cn = process["Order Details"].InputConnection.GetConnection()) {
+            using (var cn = process["Order Details"].Input.First().Connection.GetConnection()) {
                 cn.Open();
                 cn.Execute("insert into [Order Details](OrderID, ProductID, UnitPrice, Quantity, Discount) values(10261,41,7.70,2,0);");
             }
@@ -92,7 +92,7 @@ namespace Transformalize.Test.Integration {
 
 
             _log.Info("***** RUN 04 * ADD 1 ORDER ******");
-            using (var cn = process["Orders"].InputConnection.GetConnection()) {
+            using (var cn = process["Orders"].Input.First().Connection.GetConnection()) {
                 cn.Open();
                 cn.Execute("insert into [Orders](CustomerID,EmployeeID,OrderDate,RequiredDate,ShippedDate,ShipVia,Freight,ShipName,ShipAddress,ShipCity,ShipRegion,ShipPostalCode,ShipCountry)values('HILAA',6,GETDATE(),GETDATE(),GETDATE(),3,1.00,'Test Name 1','Test Address 1','Test City 1',NULL,'11111','USA')");
             }
@@ -105,7 +105,7 @@ namespace Transformalize.Test.Integration {
             Assert.AreEqual(1, process["Orders"].Inserts);
 
             _log.Info("***** RUN 05 * ADD 2 CUSTOMERS ******");
-            using (var cn = process["Customers"].InputConnection.GetConnection()) {
+            using (var cn = process["Customers"].Input.First().Connection.GetConnection()) {
                 cn.Open();
                 cn.Execute("insert into [Customers](CustomerId,CompanyName,ContactName,ContactTitle,[Address],City,PostalCode,Country,Phone) values ('AAAAA','Company A','A','A','A','A','AAAAA','USA','111-222-3333'), ('BBBBB','Company B','B','B','B','B','BBBBB','USB','111-222-3333');");
             }
@@ -120,12 +120,12 @@ namespace Transformalize.Test.Integration {
 
             _log.Info("***** RUN 06 * INCREASE PRICE OF PRODUCT(23) ******");
             decimal inputSum;
-            using (var cn = process["Order Details"].InputConnection.GetConnection()) {
+            using (var cn = process["Order Details"].Input.First().Connection.GetConnection()) {
                 cn.Open();
                 inputSum = cn.Query<decimal>("SELECT SUM(UnitPrice) FROM [Order Details] WHERE ProductID = 57;").First();
             }
 
-            using (var cn = process["Order Details"].InputConnection.GetConnection()) {
+            using (var cn = process["Order Details"].Input.First().Connection.GetConnection()) {
                 cn.Open();
                 cn.Execute("update [Order Details] set UnitPrice = UnitPrice + .99 where ProductID = 57");
             }
@@ -147,7 +147,7 @@ namespace Transformalize.Test.Integration {
 
             _log.Info("***** RUN 07 * UPDATE SHIP COUNTRY WHICH SHOULD AFFECT COUNTRY EXCHANGE CALCULATED FIELD ******");
 
-            using (var cn = process["Orders"].InputConnection.GetConnection()) {
+            using (var cn = process["Orders"].Input.First().Connection.GetConnection()) {
                 cn.Open();
                 cn.Execute("update Orders set ShipCountry = 'USA' where OrderID = 10250;");
             }
@@ -171,7 +171,7 @@ namespace Transformalize.Test.Integration {
             Assert.AreNotEqual(preUpdate, postUpdate);
 
             _log.Info("***** RUN 08 * UPDATE PART OF ORDER DETAIL KEY, INTERPRETED AS AN INSERT, AND SUBSEQUENT DELETE ******");
-            using (var cn = process["Order Details"].InputConnection.GetConnection()) {
+            using (var cn = process["Order Details"].Input.First().Connection.GetConnection()) {
                 cn.Open();
                 cn.Execute("UPDATE [Order Details] SET ProductID = 10 WHERE OrderId = 10248 AND ProductID = 11;");
             }
@@ -197,7 +197,7 @@ namespace Transformalize.Test.Integration {
             _log.Info("***** RESET ******");
             var options = new Options { RenderTemplates = false };
             var process = ProcessFactory.Create(FILE, options);
-            using (var cn = process["Order Details"].InputConnection.GetConnection()) {
+            using (var cn = process["Order Details"].Input.First().Connection.GetConnection()) {
                 cn.Open();
                 cn.Execute("delete from [Order Details] where OrderID = 10261 and ProductID = 41;");
                 cn.Execute("delete from [Orders] where OrderID = (select top 1 OrderId from Orders order by OrderID desc)");

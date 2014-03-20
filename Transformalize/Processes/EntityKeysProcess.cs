@@ -24,8 +24,11 @@ using System;
 using System.Linq;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
+using Transformalize.Main.Providers;
 using Transformalize.Operations;
+using Transformalize.Operations.Transform;
 
 namespace Transformalize.Processes {
 
@@ -41,19 +44,35 @@ namespace Transformalize.Processes {
 
         protected override void Initialize() {
 
-            if (_entity.InputConnection.Provider.IsDatabase && !string.IsNullOrEmpty(_entity.SqlOverride))
-                return;
-
-            if (_process.IsFirstRun || !_entity.CanDetectChanges()) {
-                Register(new EntityInputKeysExtractAll(_entity));
-            } else {
-                var operation = new EntityInputKeysExtractDelta(_process, _entity);
-                if (operation.NeedsToRun()) {
-                    Register(operation);
+            if (_entity.Input.Count == 1) {
+                var connection = _entity.Input.First().Connection;
+                if (connection.Provider.IsDatabase && string.IsNullOrEmpty(_entity.SqlOverride)) {
+                    Register(ComposeInputOperation(connection));
                 }
+            } else {
+                var union = new ParallelUnionAllOperation();
+                foreach (var input in _entity.Input) {
+                    if (input.Connection.Provider.IsDatabase && string.IsNullOrEmpty(_entity.SqlOverride)) {
+                        union.Add(ComposeInputOperation(input.Connection));
+                    }
+                }
+                Register(union);
+            }
+            RegisterLast(new EntityInputKeysStore(_entity));
+        }
+
+        private IOperation ComposeInputOperation(AbstractConnection connection) {
+
+            if (_process.IsFirstRun || !connection.CanDetectChanges(_entity)) {
+                return new EntityInputKeysExtractAll(_entity, connection);
             }
 
-            RegisterLast(new EntityInputKeysStore(_entity));
+            var operation = new EntityInputKeysExtractDelta(_process, _entity, connection);
+            if (operation.NeedsToRun()) {
+                return operation;
+            }
+
+            return new EmptyOperation();
         }
 
         protected override void PostProcessing() {

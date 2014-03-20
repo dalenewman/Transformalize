@@ -30,6 +30,7 @@ using Transformalize.Libs.FileHelpers.Enums;
 using Transformalize.Main.Providers.Internal;
 
 namespace Transformalize.Main.Providers {
+
     public abstract class AbstractConnection {
 
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
@@ -46,9 +47,6 @@ namespace Transformalize.Main.Providers {
         public IEntityCreator EntityCreator { get; set; }
         public IScriptRunner ScriptRunner { get; set; }
         public IProviderSupportsModifier ProviderSupportsModifier { get; set; }
-        public IEntityQueryWriter EntityKeysQueryWriter { get; set; }
-        public IEntityQueryWriter EntityKeysRangeQueryWriter { get; set; }
-        public IEntityQueryWriter EntityKeysAllQueryWriter { get; set; }
         public ITableQueryWriter TableQueryWriter { get; set; }
         public ITflWriter TflWriter { get; set; }
         public IViewWriter ViewWriter { get; set; }
@@ -303,8 +301,8 @@ namespace Transformalize.Main.Providers {
             }
         }
 
-        public bool IsExcel(string file) {
-            return Provider.Type == ProviderType.File && (file.EndsWith(".xlsx", IC) || file.Equals(".xls", IC));
+        public bool IsExcel() {
+            return Provider.Type == ProviderType.File && (File.EndsWith(".xlsx", IC) || File.Equals(".xls", IC));
         }
 
         public bool IsFile() {
@@ -317,6 +315,20 @@ namespace Transformalize.Main.Providers {
 
         public void Create(Process process, Entity entity) {
             EntityCreator.Create(this, process, entity);
+        }
+
+        public bool CanDetectChanges(Entity entity) {
+            return entity.Version != null && entity.Version.Input && Provider.IsDatabase;
+        }
+
+        //concrete class should override these
+        public virtual string KeyRangeQuery(Entity entity) { throw new NotImplementedException(); }
+        public virtual string KeyTopQuery(Entity entity, int top) { throw new NotImplementedException(); }
+        public virtual string KeyQuery(Entity entity) { throw new NotImplementedException(); }
+
+        public virtual string KeyAllQuery(Entity entity)
+        {
+            throw new NotImplementedException();
         }
     }
 }

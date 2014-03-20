@@ -2,11 +2,6 @@
 
 <process enabled="true">
 
-  <providers>
-    <add name="sqlserver" type="System.Data.SqlClient.SqlConnection, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-    <add name="mysql" type="MySql.Data.MySqlClient.MySqlConnection, MySql.Data"></add>
-  </providers>
-
   <connections>
     <add name="input" connection-string="Server=localhost;Database=NorthWind;Trusted_Connection=True;" />
     <add name="output" database="NorthWindStar" port="1433" />

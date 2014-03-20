@@ -76,7 +76,7 @@ namespace Transformalize.Test.Integration {
         }
 
         [Test]
-        public void TestInit() {
+        public void TestJunkSummary() {
             var options = new Options { Mode = "default" };
             var process = ProcessFactory.Create("http://config.mwf.local/junk-summary.xml", options);
             process.PipelineThreading = PipelineThreading.SingleThreaded;
@@ -84,9 +84,8 @@ namespace Transformalize.Test.Integration {
         }
 
         [Test]
-        public void TestFirst() {
-            var options = new Options { Mode = "first" };
-            var process = ProcessFactory.Create("http://config.mwf.local/clevest-filter-updates.xml", options);
+        public void TestDatabaseSizes() {
+            var process = ProcessFactory.Create("http://config.mwf.local/database-sizes.xml");
             process.PipelineThreading = PipelineThreading.SingleThreaded;
             var results = process.Run();
         }

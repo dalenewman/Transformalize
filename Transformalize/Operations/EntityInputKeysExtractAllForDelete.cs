@@ -3,17 +3,20 @@ using System.Linq;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
+using Transformalize.Main.Providers;
 
 namespace Transformalize.Operations
 {
     public class EntityInputKeysExtractAllForDelete : InputCommandOperation {
         private readonly Entity _entity;
+        private readonly AbstractConnection _connection;
         private readonly string[] _fields;
 
-        public EntityInputKeysExtractAllForDelete(Entity entity)
-            : base(entity.InputConnection) {
+        public EntityInputKeysExtractAllForDelete(Entity entity, AbstractConnection connection)
+            : base(connection) {
             _entity = entity;
-            _fields = new FieldSqlWriter(entity.PrimaryKey).Input().Alias(_entity.InputConnection.Provider).Keys().ToArray();
+            _connection = connection;
+            _fields = new FieldSqlWriter(entity.PrimaryKey).Input().Alias(connection.Provider).Keys().ToArray();
             }
 
         protected override Row CreateRowFromReader(IDataReader reader) {
@@ -26,7 +29,7 @@ namespace Transformalize.Operations
 
         protected override void PrepareCommand(IDbCommand cmd) {
             cmd.CommandTimeout = 0;
-            cmd.CommandText = _entity.KeysAllQuery();
+            cmd.CommandText = _connection.KeyAllQuery(_entity);
         }
 
     }

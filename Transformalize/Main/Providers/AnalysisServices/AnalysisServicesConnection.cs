@@ -40,9 +40,6 @@ namespace Transformalize.Main.Providers.AnalysisServices {
         public AnalysisServicesConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
             TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
-            EntityKeysQueryWriter = new EmptyQueryWriter();
-            EntityKeysRangeQueryWriter = new EmptyQueryWriter();
-            EntityKeysAllQueryWriter = new EmptyQueryWriter();
         }
     }
 }

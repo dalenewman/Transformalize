@@ -45,6 +45,7 @@ namespace Transformalize.Configuration {
         private const string SAMPLE = "sample";
         private const string SQL_OVERRIDE = "sql-override";
         private const string OUTPUT = "output";
+        private const string INPUT = "input";
 
         public IOperation InputOperation { get; set; }
 
@@ -145,8 +146,13 @@ namespace Transformalize.Configuration {
         }
 
         [ConfigurationProperty(OUTPUT)]
-        public OutputElementCollection Output {
-            get { return this[OUTPUT] as OutputElementCollection; }
+        public IoElementCollection Output {
+            get { return this[OUTPUT] as IoElementCollection; }
+        }
+
+        [ConfigurationProperty(INPUT)]
+        public IoElementCollection Input {
+            get { return this[INPUT] as IoElementCollection; }
         }
 
         public override bool IsReadOnly() {

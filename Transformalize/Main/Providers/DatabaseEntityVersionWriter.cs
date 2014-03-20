@@ -36,14 +36,14 @@ namespace Transformalize.Main.Providers {
             _entity = entity;
         }
 
-        public void WriteEndVersion() {
+        public void WriteEndVersion(AbstractConnection input) {
 
             if (_entity.Inserts + _entity.Updates > 0) {
                 using (var cn = _process.OutputConnection.GetConnection()) {
                     cn.Open();
 
                     var cmd = cn.CreateCommand();
-                    cmd.CommandText = PrepareSql();
+                    cmd.CommandText = PrepareSql(input);
                     cmd.CommandType = CommandType.Text;
 
                     _process.OutputConnection.AddParameter(cmd, "@TflBatchId", _entity.TflBatchId);
@@ -54,7 +54,7 @@ namespace Transformalize.Main.Providers {
                     _process.OutputConnection.AddParameter(cmd, "@Updates", _entity.Updates);
                     _process.OutputConnection.AddParameter(cmd, "@Deletes", _entity.Deletes);
 
-                    if (_entity.CanDetectChanges()) {
+                    if (input.CanDetectChanges(_entity)) {
                         var end = new DefaultFactory().Convert(_entity.End, _entity.Version.SimpleType);
                         _process.OutputConnection.AddParameter(cmd, "@End", end);
                     }
@@ -71,8 +71,8 @@ namespace Transformalize.Main.Providers {
 
         }
 
-        private string PrepareSql() {
-            if (!_entity.CanDetectChanges()) {
+        private string PrepareSql(AbstractConnection input) {
+            if (!input.CanDetectChanges(_entity)) {
                 return @"
                     INSERT INTO TflBatch(TflBatchId, ProcessName, EntityName, TflUpdate, Inserts, Updates, Deletes)
                     VALUES(@TflBatchId, @ProcessName, @EntityName, @TflUpdate, @Inserts, @Updates, @Deletes);

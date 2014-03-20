@@ -54,8 +54,7 @@ namespace Transformalize.Operations {
 
         protected override void PrepareCommand(IDbCommand cmd) {
             cmd.CommandTimeout = 0;
-            
-            cmd.CommandText = _entity.CanDetectChanges() ? PrepareSqlWithInputKeys() : PrepareSql();
+            cmd.CommandText = Connection.CanDetectChanges(_entity) ? PrepareSqlWithInputKeys() : PrepareSql();
             Debug("SQL:\r\n{0}", cmd.CommandText);
         }
 

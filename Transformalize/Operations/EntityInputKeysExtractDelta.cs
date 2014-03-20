@@ -25,49 +25,52 @@ using System.Linq;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
+using Transformalize.Main.Providers;
 
-namespace Transformalize.Operations
-{
-    public class EntityInputKeysExtractDelta : InputCommandOperation
-    {
+namespace Transformalize.Operations {
+    public class EntityInputKeysExtractDelta : InputCommandOperation {
         private readonly Entity _entity;
         private readonly string[] _fields;
+        private string _sql;
 
-        public EntityInputKeysExtractDelta(Process process, Entity entity)
-            : base(entity.InputConnection)
-        {
+        public EntityInputKeysExtractDelta(Process process, Entity entity, AbstractConnection connection)
+            : base(connection) {
             _entity = entity;
             _fields = _entity.PrimaryKey.ToEnumerable().Select(f => f.Alias).ToArray();
 
-            _entity.CheckForChanges(process);
+            _entity.CheckForChanges(process, connection);
 
-            if (!_entity.HasRows)
-            {
+            if (!_entity.HasRows) {
                 Debug("No data detected in {0}.", _entity.Alias);
             }
 
             if (!_entity.HasRange) return;
 
-            if (_entity.BeginAndEndAreEqual())
-            {
+            if (_entity.BeginAndEndAreEqual()) {
                 Debug("No changes detected in {0}.", _entity.Alias);
             }
+
+            var keyQuery = connection.CanDetectChanges(_entity)
+                ? connection.KeyQuery(_entity)
+                : connection.KeyAllQuery(_entity);
+
+            _sql = _entity.HasRange ?
+                connection.KeyRangeQuery(_entity) :
+                keyQuery;
+
         }
 
-        protected override Row CreateRowFromReader(IDataReader reader)
-        {
+        protected override Row CreateRowFromReader(IDataReader reader) {
             var row = new Row();
-            foreach (var field in _fields)
-            {
+            foreach (var field in _fields) {
                 row[field] = reader[field];
             }
             return row;
         }
 
-        protected override void PrepareCommand(IDbCommand cmd)
-        {
+        protected override void PrepareCommand(IDbCommand cmd) {
             cmd.CommandTimeout = 0;
-            cmd.CommandText = _entity.HasRange ? _entity.KeysRangeQuery() : _entity.KeysQuery();
+            cmd.CommandText = _sql;
             cmd.CommandType = CommandType.Text;
 
             if (_entity.HasRange)
@@ -75,8 +78,7 @@ namespace Transformalize.Operations
             AddParameter(cmd, "@End", _entity.End);
         }
 
-        public bool NeedsToRun()
-        {
+        public bool NeedsToRun() {
             return _entity.NeedsUpdate();
         }
     }

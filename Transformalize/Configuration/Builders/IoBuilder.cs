@@ -1,14 +1,14 @@
 namespace Transformalize.Configuration.Builders {
-    public class OutputBuilder {
+    public class IoBuilder {
         private readonly EntityBuilder _entityBuilder;
-        private readonly OutputConfigurationElement _output;
+        private readonly IoConfigurationElement _output;
 
-        public OutputBuilder(EntityBuilder entityBuilder, OutputConfigurationElement output) {
+        public IoBuilder(EntityBuilder entityBuilder, IoConfigurationElement output) {
             _entityBuilder = entityBuilder;
             _output = output;
         }
 
-        public OutputBuilder Connection(string name) {
+        public IoBuilder Connection(string name) {
             _output.Connection = name;
             return this;
         }
@@ -17,28 +17,32 @@ namespace Transformalize.Configuration.Builders {
             return _entityBuilder.Field(name);
         }
 
-        public OutputBuilder Output(string name) {
+        public IoBuilder Output(string name) {
             return _entityBuilder.Output(name);
         }
 
-        public OutputBuilder RunField(string alias) {
+        public IoBuilder RunField(string alias) {
             _output.RunField = alias;
             return this;
         }
 
-        public OutputBuilder RunOperator(string op) {
+        public IoBuilder RunOperator(string op) {
             _output.RunOperator = op;
             return this;
         }
 
-        public OutputBuilder RunType(string type) {
+        public IoBuilder RunType(string type) {
             _output.RunType = type;
             return this;
         }
 
-        public OutputBuilder RunValue(object value) {
+        public IoBuilder RunValue(object value) {
             _output.RunValue = value.ToString();
             return this;
+        }
+
+        public IoBuilder Input(string name) {
+            return _entityBuilder.Input(name);
         }
     }
 }

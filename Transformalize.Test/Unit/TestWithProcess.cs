@@ -62,7 +62,7 @@ namespace Transformalize.Test.Unit {
                 );
 
             var operations = TestOperation(
-                new EntityKeysToOperations(entity)
+                new EntityKeysToOperations(entity, entity.Input.First().Connection)
                 );
 
             Assert.AreEqual(1, operations.Count);

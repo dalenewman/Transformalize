@@ -37,12 +37,66 @@ namespace Transformalize.Main.Providers.MySql {
 
         public MySqlConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
-
             TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
-            EntityKeysQueryWriter = process.Options.Top > 0 ? (IEntityQueryWriter)new MySqlEntityKeysTopQueryWriter(process.Options.Top) : new MySqlEntityKeysQueryWriter();
-            EntityKeysRangeQueryWriter = new MySqlEntityKeysRangeQueryWriter();
-            EntityKeysAllQueryWriter = new MySqlEntityKeysAllQueryWriter();
+        }
 
+        public override string KeyAllQuery(Entity entity) {
+            const string sql = @"
+                SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+                SELECT {0} FROM `{1}`;
+                COMMIT;
+            ";
+
+            return string.Format(
+                sql,
+                string.Join(", ", entity.SelectKeys(Provider)),
+                entity.Name
+            );
+        }
+
+        public override string KeyQuery(Entity entity) {
+            const string sql = @"
+                SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+                SELECT {0}
+                FROM `{1}`
+                WHERE `{2}` <= @End;
+                COMMIT;
+            ";
+
+            return string.Format(
+                sql,
+                string.Join(", ", entity.SelectKeys(Provider)),
+                entity.Name,
+                entity.Version.Name
+                );
+
+        }
+
+        public override string KeyRangeQuery(Entity entity) {
+
+            const string sql = @"
+                SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+                SELECT {0}
+                FROM `{1}`
+                WHERE `{2}` BETWEEN @Begin AND @End;
+                COMMIT;
+            ";
+
+            return string.Format(
+                sql,
+                string.Join(", ", entity.SelectKeys(Provider)),
+                entity.Name,
+                entity.Version.Name
+            );
+        }
+
+        public override string KeyTopQuery(Entity entity, int top) {
+            const string sql = @"
+                SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+                SELECT {0} FROM `{1}` LIMIT 0, {2};
+                COMMIT;
+            ";
+            return string.Format(sql, string.Join(", ", entity.SelectKeys(Provider)), entity.Name, top);
         }
     }
 }

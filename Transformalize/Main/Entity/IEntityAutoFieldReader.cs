@@ -20,10 +20,8 @@
 
 #endregion
 
-namespace Transformalize.Main
-{
-    public interface IEntityAutoFieldReader
-    {
+namespace Transformalize.Main {
+    public interface IEntityAutoFieldReader {
         Fields Read(Entity entity, bool isMaster);
     }
 }
