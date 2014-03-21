@@ -48,29 +48,29 @@ namespace Transformalize.Main {
 
                 foreach (ActionConfigurationElement action in element.Actions) {
                     var modes = GetModes(action).ToList();
-                    if (modes.Contains("*") || modes.Any(m => m.Equals(_process.Options.Mode, IC))) {
+                    if (modes.Count != 0 && !modes.Contains("*") && !modes.Any(m => m.Equals(_process.Options.Mode, IC)))
+                        continue;
 
-                        var templateAction = new TemplateAction {
-                            Action = action.Action,
-                            File = action.File,
-                            Method = action.Method,
-                            Url = action.Url,
-                            TemplateName = template.Name,
-                            Modes = modes
-                        };
+                    var templateAction = new TemplateAction {
+                        Action = action.Action,
+                        File = action.File,
+                        Method = action.Method,
+                        Url = action.Url,
+                        TemplateName = template.Name,
+                        Modes = modes
+                    };
 
-                        if (!String.IsNullOrEmpty(action.Connection)) {
-                            if (_process.Connections.ContainsKey(action.Connection)) {
-                                templateAction.Connection = _process.Connections[action.Connection];
-                            } else {
-                                _log.Error("The template '{0}' refers to an invalid connection named '{1}'.", action.Action, action.Connection);
-                                LogManager.Flush();
-                                Environment.Exit(1);
-                            }
+                    if (!String.IsNullOrEmpty(action.Connection)) {
+                        if (_process.Connections.ContainsKey(action.Connection)) {
+                            templateAction.Connection = _process.Connections[action.Connection];
+                        } else {
+                            _log.Error("The template '{0}' refers to an invalid connection named '{1}'.", action.Action, action.Connection);
+                            LogManager.Flush();
+                            Environment.Exit(1);
                         }
-
-                        template.Actions.Add(templateAction);
                     }
+
+                    template.Actions.Add(templateAction);
                 }
 
                 templates[element.Name] = template;

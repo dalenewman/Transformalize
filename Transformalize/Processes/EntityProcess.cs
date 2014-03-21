@@ -133,12 +133,12 @@ namespace Transformalize.Processes {
 
         private IOperation PrepareFileOperation(AbstractConnection connection) {
             if (connection.IsExcel()) {
-                return new FileExcelExtract(_entity, connection, _process.Options.Top);
+                return new FileExcelExtract(_entity, connection, _entity.Top + _process.Options.Top);
             }
             if (connection.IsDelimited()) {
-                return new FileDelimitedExtract(_entity, connection, _process.Options.Top);
+                return new FileDelimitedExtract(_entity, connection, _entity.Top + _process.Options.Top);
             }
-            return new FileFixedExtract(_entity, connection, _process.Options.Top);
+            return new FileFixedExtract(_entity, connection, _entity.Top + _process.Options.Top);
         }
 
         private PartialProcessOperation PrepareOutputOperation(NamedConnection namedConnection) {

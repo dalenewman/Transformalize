@@ -148,6 +148,12 @@ namespace Transformalize.Configuration {
             get { return this[INPUT] as IoElementCollection; }
         }
 
+        [ConfigurationProperty("top", IsRequired = false, DefaultValue = 0)]
+        public int Top {
+            get { return (int)this["top"]; }
+            set { this["top"] = value; }
+        }
+
         public override bool IsReadOnly() {
             return false;
         }

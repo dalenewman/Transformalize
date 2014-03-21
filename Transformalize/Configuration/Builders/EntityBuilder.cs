@@ -108,5 +108,10 @@ namespace Transformalize.Configuration.Builders {
             _entity.Input.Add(input);
             return new IoBuilder(this, input);
         }
+
+        public EntityBuilder Top(int top) {
+            _entity.Top = top;
+            return this;
+        }
     }
 }

@@ -181,6 +181,10 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public FieldBuilder Byte() {
+            _field.Type = "System.Byte";
+            return this;
+        }
     }
 
 }

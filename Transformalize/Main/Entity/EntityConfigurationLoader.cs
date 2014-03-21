@@ -66,6 +66,7 @@ namespace Transformalize.Main {
                 Delete = element.Delete,
                 PrependProcessNameToOutputName = element.PrependProcessNameToOutputName,
                 Sample = element.Sample,
+                Top = element.Top,
                 SqlOverride = element.SqlOverride.Sql,
                 Alias = string.IsNullOrEmpty(element.Alias) ? element.Name : element.Alias,
                 InternalOutput = element.Output.Cast<IoConfigurationElement>().ToDictionary(o => o.Name, o => Enumerable.Repeat(new Row(), 0)),
