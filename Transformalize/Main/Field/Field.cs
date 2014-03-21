@@ -62,6 +62,7 @@ namespace Transformalize.Main {
         public bool FileOutput { get; set; }
         public int Index { get; set; }
         public string Aggregate { get; set; }
+        public string Sort { get; set; }
         public IParameters Parameters { get; set; }
         public bool HasParameters { get; set; }
         public bool DefaultBlank { get; set; }

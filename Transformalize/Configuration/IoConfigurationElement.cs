@@ -1,8 +1,8 @@
+using System;
 using System.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 
-namespace Transformalize.Configuration
-{
+namespace Transformalize.Configuration {
     public class IoConfigurationElement : ConfigurationElement {
 
         private const string NAME = "name";
@@ -14,13 +14,13 @@ namespace Transformalize.Configuration
         private const string RUN_OPERATOR = "run-operator";
         private const string RUN_VALUE = "run-value";
 
-        [ConfigurationProperty(NAME, IsRequired = true)]
+        [ConfigurationProperty(NAME, IsRequired = false, DefaultValue = "")]
         public string Name {
             get { return this[NAME] as string; }
             set { this[NAME] = value; }
         }
 
-        [ConfigurationProperty(CONNECTION, IsRequired = false)]
+        [ConfigurationProperty(CONNECTION, IsRequired = true)]
         public string Connection {
             get { return this[CONNECTION] as string; }
             set { this[CONNECTION] = value; }

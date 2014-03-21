@@ -127,11 +127,11 @@
     <Compile Include="Configuration\ActionConfigurationElement.cs" />
     <Compile Include="Configuration\ActionElementCollection.cs" />
     <Compile Include="Configuration\BranchConfigurationElement.cs" />
-    <Compile Include="Configuration\AggregateConfigurationElement.cs" />
     <Compile Include="Configuration\MyConfigurationElementCollection.cs" />
     <Compile Include="Configuration\BranchElementCollection.cs" />
     <Compile Include="Configuration\IoConfigurationElement.cs" />
     <Compile Include="Configuration\IoElementCollection.cs" />
+    <Compile Include="Configuration\SqlOverride.cs" />
     <Compile Include="Configuration\ValidatorElementCollection.cs" />
     <Compile Include="Configuration\ModeConfigurationElement.cs" />
     <Compile Include="Configuration\ModeElementCollection.cs" />
@@ -154,7 +154,6 @@
     <Compile Include="Configuration\JoinConfigurationElement.cs" />
     <Compile Include="Configuration\JoinElementCollection.cs" />
     <Compile Include="Configuration\EmptyConfigurationElement.cs" />
-    <Compile Include="Configuration\AggregateElementCollection.cs" />
     <Compile Include="Configuration\ParameterConfigurationElement.cs" />
     <Compile Include="Configuration\ParameterElementCollection.cs" />
     <Compile Include="Configuration\ItemConfigurationElement.cs" />
@@ -1674,7 +1673,8 @@
     <Compile Include="Processes\InitializationProcess.cs" />
     <Compile Include="Processes\EntityProcess.cs" />
     <Compile Include="Operations\TruncateOperation.cs" />
-    <Compile Include="Processes\SqlOverrideOperation.cs" />
+    <Compile Include="Operations\SortOperation.cs" />
+    <Compile Include="Operations\SqlOverrideOperation.cs" />
     <Compile Include="Processes\TransformProcess.cs" />
     <Compile Include="Processes\UpdateMasterProcess.cs" />
     <Compile Include="Operations\EntityUpdateMaster.cs" />

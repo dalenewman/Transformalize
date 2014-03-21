@@ -37,7 +37,7 @@ namespace Transformalize.Main {
         private List<AbstractOperation> _operations = new List<AbstractOperation>();
         private IEnumerable<Row> _rows = new List<Row>();
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
-        
+
         public IOperation InputOperation { get; set; }
         public string Schema { get; set; }
         public PipelineThreading PipelineThreading { get; set; }
@@ -72,9 +72,6 @@ namespace Transformalize.Main {
         public Dictionary<string, IEnumerable<Row>> InternalOutput { get; set; }
         public List<NamedConnection> Output { get; set; }
         public List<NamedConnection> Input { get; set; }
-        public IEntityQueryWriter EntityKeysQueryWriter { get; set; }
-        public IEntityQueryWriter EntityKeysRangeQueryWriter { get; set; }
-        public IEntityQueryWriter EntityKeysAllQueryWriter { get; set; }
 
         public Entity(int batchId) {
             _tflBatchId = batchId;
@@ -178,5 +175,11 @@ namespace Transformalize.Main {
         public bool NeedsSchema() {
             return !(string.IsNullOrEmpty(Schema) || Schema.Equals("dbo", IC));
         }
+
+        public bool SortingEnabled() {
+            return Fields.Any(f => !f.Value.Sort.Equals(string.Empty))
+                   || CalculatedFields.Any(f => !f.Value.Sort.Equals(string.Empty));
+        }
+
     }
 }

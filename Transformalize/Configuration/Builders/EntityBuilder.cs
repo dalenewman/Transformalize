@@ -93,7 +93,7 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public EntityBuilder SqlOverride(string sql) {
-            _entity.SqlOverride = sql;
+            _entity.SqlOverride.Sql = sql;
             return this;
         }
 

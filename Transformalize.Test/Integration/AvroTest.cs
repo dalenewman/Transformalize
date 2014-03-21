@@ -40,7 +40,7 @@ namespace Transformalize.Test.Integration {
 
 
         [Test]
-        public void ReaObject() {
+        public void ReadObject() {
 
             IList<object> emails = new List<object>();
 
@@ -88,6 +88,8 @@ namespace Transformalize.Test.Integration {
             var process = ProcessFactory.Create("http://config.mwf.local/database-sizes.xml");
             process.PipelineThreading = PipelineThreading.SingleThreaded;
             var results = process.Run();
+
+            System.Diagnostics.Process.Start(process.OutputConnection.File);
         }
 
         [Test]

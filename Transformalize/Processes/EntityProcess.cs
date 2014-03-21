@@ -23,9 +23,9 @@
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
@@ -74,6 +74,10 @@ namespace Transformalize.Processes {
 
             if (_entity.Group)
                 Register(new EntityAggregation(_entity));
+
+            if (_entity.SortingEnabled()) {
+                Register(new SortOperation(_entity));
+            }
 
             Register(new TruncateOperation(_entity.Fields, _entity.CalculatedFields));
 

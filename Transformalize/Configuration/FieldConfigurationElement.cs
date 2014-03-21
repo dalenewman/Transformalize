@@ -23,7 +23,9 @@
 using System.Configuration;
 
 namespace Transformalize.Configuration {
+
     public class FieldConfigurationElement : ConfigurationElement {
+
         private const string AGGREGATE = "aggregate";
         private const string NAME = "name";
         private const string ALIAS = "alias";
@@ -48,6 +50,7 @@ namespace Transformalize.Configuration {
         private const string INDEX = "index";
         private const string NODE_TYPE = "node-type";
         private const string READ_INNER_XML = "read-inner-xml";
+        private const string SORT = "sort";
 
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name {
@@ -193,6 +196,12 @@ namespace Transformalize.Configuration {
         public string Aggregate {
             get { return (string)this[AGGREGATE]; }
             set { this[AGGREGATE] = value; }
+        }
+
+        [ConfigurationProperty(SORT, IsRequired = false, DefaultValue = "")]
+        public string Sort {
+            get { return (string)this[SORT]; }
+            set { this[SORT] = value; }
         }
 
         public override bool IsReadOnly() {

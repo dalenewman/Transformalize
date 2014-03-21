@@ -35,7 +35,6 @@ namespace Transformalize.Configuration {
         private const string FIELDS = "fields";
         private const string CALCULATED_FIELDS = "calculated-fields";
         private const string VERSION = "version";
-        private const string AGGREGATE = "aggregate";
         private const string PREFIX = "prefix";
         private const string GROUP = "group";
         private const string INDEX_OPTIMIZATIONS = "index-optimizations";
@@ -98,11 +97,6 @@ namespace Transformalize.Configuration {
             set { this[VERSION] = value; }
         }
 
-        [ConfigurationProperty(AGGREGATE)]
-        public AggregateElementCollection Aggregate {
-            get { return this[AGGREGATE] as AggregateElementCollection; }
-        }
-
         [ConfigurationProperty(DELETE, IsRequired = false, DefaultValue = false)]
         public bool Delete {
             get { return (bool)this[DELETE]; }
@@ -139,10 +133,9 @@ namespace Transformalize.Configuration {
             set { this[SAMPLE] = value; }
         }
 
-        [ConfigurationProperty(SQL_OVERRIDE, IsRequired = false, DefaultValue = "")]
-        public string SqlOverride {
-            get { return this[SQL_OVERRIDE] as string; }
-            set { this[SQL_OVERRIDE] = value; }
+        [ConfigurationProperty(SQL_OVERRIDE)]
+        public SqlOverride SqlOverride {
+            get { return this[SQL_OVERRIDE] as SqlOverride; }
         }
 
         [ConfigurationProperty(OUTPUT)]

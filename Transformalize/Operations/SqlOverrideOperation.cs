@@ -6,9 +6,8 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
-using Transformalize.Operations;
 
-namespace Transformalize.Processes
+namespace Transformalize.Operations
 {
     public class SqlOverrideOperation : InputCommandOperation {
         private readonly Entity _entity;
