@@ -540,7 +540,7 @@ namespace Transformalize.Main {
 
         private IParameter GetParameter(string entity, string parameter, IParameters parameters) {
             Field f;
-            if (_process.TryGetField(parameter, entity, out f)) {
+            if (_process.TryGetField(parameter, entity, out f, false)) {
                 return f.ToParameter();
             }
             if (parameters.ContainsKey(parameter)) {

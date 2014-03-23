@@ -21,10 +21,14 @@
 #endregion
 
 using System.Collections.Generic;
+using Transformalize.Libs.NLog;
 using Transformalize.Main.Providers;
 
 namespace Transformalize.Main {
+
     public class TemplateAction {
+
+        private readonly Logger _log = LogManager.GetLogger(string.Empty);
         public string Action { get; set; }
         public AbstractConnection Connection { get; set; }
         public string File { get; set; }
@@ -36,6 +40,15 @@ namespace Transformalize.Main {
         public string Url { get; set; }
         public IEnumerable<string> Modes { get; set; }
         public string Arguments { get; set; }
+        public string Cc { get; set; }
+        public string Bcc { get; set; }
+        public bool Html { get; set; }
+        public int Port { get; set; }
+        public bool EnableSsl { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public string Subject { get; set; }
+        public string Host { get; set; }
 
         public TemplateAction() {
             Action = string.Empty;
@@ -48,6 +61,33 @@ namespace Transformalize.Main {
             To = string.Empty;
             Url = string.Empty;
             Arguments = string.Empty;
+            Cc = string.Empty;
+            Bcc = string.Empty;
+            Html = true;
+            Port = 25;
+            Username = string.Empty;
+            Password = string.Empty;
+            Subject = string.Empty;
+            Host = string.Empty;
+        }
+
+        public void Handle(string file) {
+
+            var handlers = new Dictionary<string, TemplateActionHandler>() {
+                {"copy", new TemplateActionCopy()},
+                {"open", new TemplateActionOpen()},
+                {"run", new TemplateActionRun()},
+                {"web", new TemplateActionWeb()},
+                {"exec", new TemplateActionExecute()},
+                {"mail", new TemplateActionMail()}
+            };
+
+            if (handlers.ContainsKey(Action.ToLower())) {
+                RenderedFile = file;
+                handlers[Action.ToLower()].Handle(this);
+            } else {
+                _log.Warn("The {0} action is not implemented.", Action);
+            }
         }
     }
 }

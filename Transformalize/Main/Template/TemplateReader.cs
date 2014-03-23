@@ -57,6 +57,18 @@ namespace Transformalize.Main {
                         Method = action.Method,
                         Url = action.Url,
                         TemplateName = template.Name,
+                        From = action.From,
+                        Arguments = action.Arguments,
+                        Bcc = action.Bcc,
+                        Cc = action.Cc,
+                        EnableSsl = action.EnableSsl,
+                        Html = action.Html,
+                        Password = action.Password,
+                        Port = action.Port,
+                        Subject = action.Subject,
+                        To = action.To,
+                        Username = action.Username,
+                        Host = action.Host,
                         Modes = modes
                     };
 

@@ -63,6 +63,7 @@ namespace Transformalize.Main {
         public int Index { get; set; }
         public string Aggregate { get; set; }
         public string Sort { get; set; }
+        public string Label { get; set; }
         public IParameters Parameters { get; set; }
         public bool HasParameters { get; set; }
         public bool DefaultBlank { get; set; }

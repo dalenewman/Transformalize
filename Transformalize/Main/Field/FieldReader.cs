@@ -58,6 +58,7 @@ namespace Transformalize.Main {
                 VariableLength = element.VariableLength,
                 Aggregate = element.Aggregate.ToLower(),
                 Sort = element.Sort.ToLower(),
+                Label = element.Label,
                 DefaultBlank = element.DefaultBlank,
                 DefaultWhiteSpace = element.DefaultWhiteSpace,
                 QuotedWith = element.QuotedWith,

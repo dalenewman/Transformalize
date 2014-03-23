@@ -30,7 +30,7 @@ namespace Transformalize.Main {
 
         private readonly Logger _log = LogManager.GetLogger(string.Empty);
         private readonly Process _process;
-        private readonly char[] _trim = new[] { '\\' };
+        private readonly char[] _trim = { '\\' };
 
         public TemplateManager(Process process) {
             _process = process;
@@ -55,40 +55,14 @@ namespace Transformalize.Main {
                     _log.Debug(e.StackTrace);
                 }
 
-                var renderedInfo = new FileInfo(folder.TrimEnd(_trim) + @"\" + template.Name + new FileInfo(template.File).Extension.ToLower().Replace("cshtml", "txt"));
+                var renderedInfo = new FileInfo(folder.TrimEnd(_trim) + @"\" + template.Name + new FileInfo(template.File).Extension.ToLower().Replace("cshtml", "html"));
                 File.WriteAllText(renderedInfo.FullName, result);
 
                 if (!_process.Options.PerformTemplateActions)
                     continue;
 
                 foreach (var action in template.Actions) {
-                    action.RenderedFile = renderedInfo.FullName;
-
-                    switch (action.Action.ToLower()) {
-                        case "copy":
-                            new TemplateActionCopy().Handle(action);
-                            break;
-
-                        case "open":
-                            new TemplateActionOpen().Handle(action);
-                            break;
-
-                        case "run":
-                            new TemplateActionRun().Handle(action);
-                            break;
-
-                        case "web":
-                            new TemplateActionWeb().Handle(action);
-                            break;
-
-                        case "execute":
-                            new TemplateActionExecute().Handle(action);
-                            break;
-
-                        default:
-                            _log.Warn("The {0} action is not implemented.", action.Action);
-                            break;
-                    }
+                    action.Handle(renderedInfo.FullName);
                 }
             }
         }

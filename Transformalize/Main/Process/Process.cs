@@ -148,7 +148,7 @@ namespace Transformalize.Main {
             return OutputConnection.NextBatchId(Name);
         }
 
-        public Field GetField(string alias, string entity) {
+        public Field GetField(string alias, string entity, bool issueWarning = true) {
 
             foreach (var fields in Entities.Where(e => e.Alias == entity || entity == string.Empty).Select(e => e.Fields.ToEnumerable()).Where(fields => fields.Any(Common.FieldFinder(alias)))) {
                 return fields.First(Common.FieldFinder(alias));
@@ -163,7 +163,7 @@ namespace Transformalize.Main {
                 return calculatedfields.First(Common.FieldFinder(alias));
             }
 
-            if (!IsValidationResultField(alias, entity)) {
+            if (!IsValidationResultField(alias, entity) && issueWarning) {
                 _log.Warn("Can't find field with alias: {0}.", alias);
             }
 
@@ -176,8 +176,8 @@ namespace Transformalize.Main {
                     .Any(e => e.Operations.OfType<ValidationOperation>().Any(operation => operation.ResultKey.Equals(alias)));
         }
 
-        public bool TryGetField(string alias, string entity, out Field field) {
-            field = GetField(alias, entity);
+        public bool TryGetField(string alias, string entity, out Field field, bool issueWarning = true) {
+            field = GetField(alias, entity, issueWarning);
             return field != null;
         }
 

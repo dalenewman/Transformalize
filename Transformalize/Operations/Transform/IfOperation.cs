@@ -25,8 +25,6 @@ namespace Transformalize.Operations.Transform {
         private readonly object _rightValue;
         private readonly object _thenValue;
         private readonly object _elseValue;
-        private readonly string _leftType = "string";
-        private readonly string _rightType = "string";
         private readonly Dictionary<string, Func<object, object>> _conversionMap = Common.GetObjectConversionMap();
 
         private readonly Dictionary<string, KeyValuePair<string, IParameter>> _builtIns = new Dictionary<string, KeyValuePair<string, IParameter>> {
@@ -45,7 +43,6 @@ namespace Transformalize.Operations.Transform {
             string outType
         )
             : base(string.Empty, outKey) {
-
             _op = op;
 
             _left = _builtIns.ContainsKey(leftParameter.Name.ToLower()) ? _builtIns[leftParameter.Name.ToLower()] : new KeyValuePair<string, IParameter>(leftParameter.Name, leftParameter);
@@ -63,11 +60,11 @@ namespace Transformalize.Operations.Transform {
             _thenValue = _thenHasValue ? ComparableValue(outType, _then.Value.Value) : null;
             _elseValue = _elseHasValue ? ComparableValue(outType, _else.Value.Value) : null;
 
-            _leftType = _leftHasValue ? Common.ToSimpleType(_leftValue.GetType().Name) : _left.Value.SimpleType;
-            _rightType = _rightHasValue ? Common.ToSimpleType(_rightValue.GetType().Name) : _right.Value.SimpleType;
+            var leftType = _leftHasValue && _leftValue != null ? Common.ToSimpleType(_leftValue.GetType().Name) : _left.Value.SimpleType;
+            var rightType = _rightHasValue && _rightValue != null  ? Common.ToSimpleType(_rightValue.GetType().Name) : _right.Value.SimpleType;
 
-            if (!_leftType.Equals(_rightType)) {
-                Warn("If Operation for {0} has type mismatch: left type is {1}, right type is {2};", OutKey, _leftType, _rightType);
+            if (!leftType.Equals(rightType)) {
+                Warn("If Operation for {0} has type mismatch: left type is {1}, right type is {2};", OutKey, leftType, rightType);
             }
 
             if (Common.CompareMap.ContainsKey(_op))

@@ -51,6 +51,7 @@ namespace Transformalize.Configuration {
         private const string NODE_TYPE = "node-type";
         private const string READ_INNER_XML = "read-inner-xml";
         private const string SORT = "sort";
+        private const string LABEL = "label";
 
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name {
@@ -202,6 +203,12 @@ namespace Transformalize.Configuration {
         public string Sort {
             get { return (string)this[SORT]; }
             set { this[SORT] = value; }
+        }
+
+        [ConfigurationProperty(LABEL, IsRequired = false, DefaultValue = "")]
+        public string Label {
+            get { return (string)this[LABEL]; }
+            set { this[LABEL] = value; }
         }
 
         public override bool IsReadOnly() {

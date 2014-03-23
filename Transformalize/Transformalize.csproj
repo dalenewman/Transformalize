@@ -96,11 +96,12 @@
     <Reference Include="System.Device" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Transactions" />
-    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.1.1\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
@@ -881,6 +882,7 @@
     <Compile Include="Main\Template\TemplateActionCopy.cs" />
     <Compile Include="Main\Template\TemplateActionExecute.cs" />
     <Compile Include="Main\Template\TemplateActionHandler.cs" />
+    <Compile Include="Main\Template\TemplateActionMail.cs" />
     <Compile Include="Main\Template\TemplateActionOpen.cs" />
     <Compile Include="Main\Template\TemplateActionRun.cs" />
     <Compile Include="Main\Template\TemplateActionWeb.cs" />

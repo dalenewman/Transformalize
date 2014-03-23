@@ -20,22 +20,18 @@
 
 #endregion
 
-namespace Transformalize.Main
-{
-    public class ProcessParametersReader : IParametersReader
-    {
+namespace Transformalize.Main {
+
+    public class ProcessParametersReader : IParametersReader {
         private readonly IParameters _parameters = new Parameters.Parameters();
         private readonly Process _process;
 
-        public ProcessParametersReader(Process process)
-        {
+        public ProcessParametersReader(Process process) {
             _process = process;
         }
 
-        public IParameters Read()
-        {
-            foreach (var field in _process.OutputFields().ToEnumerable())
-            {
+        public IParameters Read() {
+            foreach (var field in _process.OutputFields().ToEnumerable()) {
                 _parameters.Add(field.Alias, field.Alias, null, field.Type);
             }
             return _parameters;

@@ -49,8 +49,6 @@ namespace Transformalize.Main {
         public Dictionary<string, Relationship> Joins { get; set; }
         public object Begin { get; set; }
         public object End { get; set; }
-        public int InputCount { get; set; }
-        public int OutputCount { get; set; }
         public IEnumerable<Relationship> RelationshipToMaster { get; set; }
         public List<Row> InputKeys { get; set; }
         public IDbCommand InputKeysCommand { get; set; }
@@ -135,6 +133,13 @@ namespace Transformalize.Main {
 
         public Fields InputFields() {
             return new FieldSqlWriter(Fields, CalculatedFields).Input().Context();
+        }
+
+        public IEnumerable<Field> OutputFields() {
+            var fields = new List<Field>();
+            fields.AddRange(Fields.Select(kv => kv.Value));
+            fields.AddRange(CalculatedFields.Select(kv => kv.Value));
+            return fields.Where(f => f.Output).OrderBy(f => f.Index);
         }
 
         public override string ToString() {
