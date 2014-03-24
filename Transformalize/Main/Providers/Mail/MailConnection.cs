@@ -1,9 +1,7 @@
 using Transformalize.Configuration;
 
-namespace Transformalize.Main.Providers.Folder {
-
-    public class FolderConnection : AbstractConnection {
-
+namespace Transformalize.Main.Providers.Mail {
+    public class MailConnection : AbstractConnection {
         public override string UserProperty { get { return string.Empty; } }
         public override string PasswordProperty { get { return string.Empty; } }
         public override string PortProperty { get { return string.Empty; } }
@@ -12,12 +10,12 @@ namespace Transformalize.Main.Providers.Folder {
         public override string TrustedProperty { get { return string.Empty; } }
         public override string PersistSecurityInfoProperty { get { return string.Empty; }}
 
-        public FolderConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
+        public MailConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
 
             TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
-            Type = ProviderType.Folder;
-        }
+            Type = ProviderType.Mail;
+            }
 
     }
 }

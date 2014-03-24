@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.Ninject.Parameters;
@@ -6,10 +7,13 @@ using Transformalize.Libs.Ninject.Syntax;
 using Transformalize.Libs.NLog;
 using Transformalize.Main.Providers.AnalysisServices;
 using Transformalize.Main.Providers.Console;
+using Transformalize.Main.Providers.ElasticSearch;
 using Transformalize.Main.Providers.File;
 using Transformalize.Main.Providers.Folder;
+using Transformalize.Main.Providers.Html;
 using Transformalize.Main.Providers.Internal;
 using Transformalize.Main.Providers.Log;
+using Transformalize.Main.Providers.Mail;
 using Transformalize.Main.Providers.MySql;
 using Transformalize.Main.Providers.PostgreSql;
 using Transformalize.Main.Providers.SqlCe4;
@@ -41,6 +45,9 @@ namespace Transformalize.Main.Providers {
                 };
 
                 switch (element.Provider.ToLower()) {
+                    case "sqlserver":
+                        connections.Add(element.Name, _process.Kernal.Get<SqlServerConnection>(parameters));
+                        break;
                     case "mysql":
                         connections.Add(element.Name, _process.Kernal.Get<MySqlConnection>(parameters));
                         break;
@@ -71,13 +78,15 @@ namespace Transformalize.Main.Providers {
                     case "mail":
                         connections.Add(element.Name, _process.Kernal.Get<MailConnection>(parameters));
                         break;
+                    case "elasticsearch":
+                        connections.Add(element.Name, _process.Kernal.Get<ElasticSearchConnection>(parameters));
+                        break;
                     case "html":
                         connections.Add(element.Name, _process.Kernal.Get<HtmlConnection>(parameters));
                         break;
                     default:
-                        connections.Add(element.Name, _process.Kernal.Get<SqlServerConnection>(parameters));
+                        _log.Warn("The provider '{0}' is not yet implemented.", element.Provider);
                         break;
-                    //remember to update ProviderReader too.
                 }
             }
             return connections;

@@ -5,9 +5,8 @@
 @{
     var process = (Process) Model.Process;
     var connection = process.Connections["output"];
-    var provider = connection.Provider;
-    var l = provider.L;
-    var r = provider.R;
+    var l = connection.L;
+    var r = connection.R;
 
     // build query (all fields) 
     var builder = new StringBuilder();

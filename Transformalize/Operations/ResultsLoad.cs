@@ -24,30 +24,22 @@ using System.Data.SqlClient;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
-using Transformalize.Main.Providers;
 
-namespace Transformalize.Operations
-{
-    public class ResultsLoad : SqlBatchOperation
-    {
+namespace Transformalize.Operations {
+    public class ResultsLoad : SqlBatchOperation {
         private readonly Process _process;
-        private readonly AbstractProvider _provider;
 
         public ResultsLoad(Process process)
-            : base(process.OutputConnection)
-        {
+            : base(process.OutputConnection) {
             _process = process;
             BatchSize = 50;
-            _provider = _process.OutputConnection.Provider;
             UseTransaction = false;
         }
 
-        protected override void PrepareCommand(Row row, SqlCommand command)
-        {
-            var sets = new FieldSqlWriter(_process.CalculatedFields).Alias(_provider).SetParam().Write();
+        protected override void PrepareCommand(Row row, SqlCommand command) {
+            var sets = new FieldSqlWriter(_process.CalculatedFields).Alias(_process.OutputConnection.L, _process.OutputConnection.R).SetParam().Write();
             command.CommandText = string.Format("UPDATE {0} SET {1} WHERE TflKey = @TflKey;", _process.MasterEntity.OutputName(), sets);
-            foreach (var r in _process.CalculatedFields)
-            {
+            foreach (var r in _process.CalculatedFields) {
                 AddParameter(command, r.Key, row[r.Key]);
             }
             AddParameter(command, "TflKey", row["TflKey"]);

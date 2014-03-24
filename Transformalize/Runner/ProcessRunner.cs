@@ -77,7 +77,7 @@ namespace Transformalize.Runner {
         }
 
         private static void ProcessMaster(Process process) {
-            if (process.OutputConnection.Provider.Type == ProviderType.Internal)
+            if (process.OutputConnection.Type == ProviderType.Internal)
                 return;
             var updateMasterProcess = new UpdateMasterProcess(ref process) {
                 PipelineExecuter = process.Options.Mode.Equals("test") ? (AbstractPipelineExecuter)new SingleThreadedNonCachedPipelineExecuter() : new ThreadPoolPipelineExecuter()
@@ -88,7 +88,7 @@ namespace Transformalize.Runner {
         private static void ProcessTransforms(Process process) {
             if (process.CalculatedFields.Count <= 0)
                 return;
-            if (process.OutputConnection.Provider.Type == ProviderType.Internal)
+            if (process.OutputConnection.Type == ProviderType.Internal)
                 return;
             var transformProcess = new TransformProcess(process) {
                 PipelineExecuter = process.Options.Mode.Equals("test") ? (AbstractPipelineExecuter)new SingleThreadedNonCachedPipelineExecuter() : new ThreadPoolPipelineExecuter()

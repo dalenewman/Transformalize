@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Libs.NLog;
 
-namespace Transformalize.Main.Providers.SqlServer {
+namespace Transformalize.Main.Providers {
     public class DatabaseEntityCreator : IEntityCreator {
 
         protected Logger Log { get; set; }

@@ -32,13 +32,25 @@ namespace Transformalize.Main.Providers.SqlServer {
         public override string DatabaseProperty { get { return "Database"; } }
         public override string ServerProperty { get { return "Server"; } }
         public override string TrustedProperty { get { return "Trusted_Connection"; } }
-        public override string PersistSecurityInfoProperty {
-            get { return "Persist Security Info"; }
-        }
+        public override string PersistSecurityInfoProperty { get { return "Persist Security Info"; } }
 
         public SqlServerConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
+
             TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
+            Type = ProviderType.SqlServer;
+            L = "[";
+            R = "]";
+            IsDatabase = true;
+            InsertMultipleRows = true;
+            Top = true;
+            NoLock = true;
+            TableVariable = true;
+            NoCount = true;
+            IndexInclude = true;
+            Views = true;
+            Schemas = true;
+            MaxDop = true;
         }
 
         public override string KeyRangeQuery(Entity entity) {
@@ -51,7 +63,7 @@ namespace Transformalize.Main.Providers.SqlServer {
 
             return string.Format(
                 sql,
-                string.Join(", ", entity.SelectKeys(Provider)),
+                string.Join(", ", entity.SelectKeys(this)),
                 entity.Schema,
                 entity.Name,
                 entity.Version.Name
@@ -62,7 +74,7 @@ namespace Transformalize.Main.Providers.SqlServer {
             const string sql = @"
                 SELECT TOP {0} {1} FROM [{2}] WITH (NOLOCK);
             ";
-            return string.Format(sql, top, string.Join(", ", entity.SelectKeys(Provider)), entity.Name);
+            return string.Format(sql, top, string.Join(", ", entity.SelectKeys(this)), entity.Name);
         }
 
         public override string KeyQuery(Entity entity) {
@@ -75,7 +87,7 @@ namespace Transformalize.Main.Providers.SqlServer {
 
             return string.Format(
                 sql,
-                string.Join(", ", entity.SelectKeys(Provider)),
+                string.Join(", ", entity.SelectKeys(this)),
                 entity.Schema,
                 entity.Name,
                 entity.Version.Name
@@ -89,7 +101,7 @@ namespace Transformalize.Main.Providers.SqlServer {
 
             return string.Format(
                 sql,
-                string.Join(", ", entity.SelectKeys(Provider)),
+                string.Join(", ", entity.SelectKeys(this)),
                 entity.Schema,
                 entity.Name
                 );

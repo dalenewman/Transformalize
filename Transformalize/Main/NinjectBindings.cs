@@ -1,12 +1,13 @@
-﻿using System;
-using System.Data;
-using Transformalize.Main.Providers;
+﻿using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.AnalysisServices;
 using Transformalize.Main.Providers.Console;
+using Transformalize.Main.Providers.ElasticSearch;
 using Transformalize.Main.Providers.File;
 using Transformalize.Main.Providers.Folder;
+using Transformalize.Main.Providers.Html;
 using Transformalize.Main.Providers.Internal;
 using Transformalize.Main.Providers.Log;
+using Transformalize.Main.Providers.Mail;
 using Transformalize.Main.Providers.MySql;
 using Transformalize.Main.Providers.PostgreSql;
 using Transformalize.Main.Providers.SqlCe4;
@@ -32,6 +33,7 @@ namespace Transformalize.Main {
             Bind<AbstractConnectionDependencies>().To<LogDependencies>().WhenInjectedInto<LogConnection>();
             Bind<AbstractConnectionDependencies>().To<MailDependencies>().WhenInjectedInto<MailConnection>();
             Bind<AbstractConnectionDependencies>().To<HtmlDependencies>().WhenInjectedInto<HtmlConnection>();
+            Bind<AbstractConnectionDependencies>().To<ElasticSearchDependencies>().WhenInjectedInto<ElasticSearchConnection>();
         }
     }
 }

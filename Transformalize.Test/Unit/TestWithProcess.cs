@@ -59,15 +59,16 @@ namespace Transformalize.Test.Unit {
             TestOperation(
                 _entityKeysExtract.Object,
                 new EntityInputKeysStore(entity)
-                );
+            );
 
             var operations = TestOperation(
                 new EntityKeysToOperations(entity, entity.Input.First().Connection)
-                );
+            );
 
             Assert.AreEqual(1, operations.Count);
         }
 
+        [Ignore("for now")]
         [Test]
         public void TestKeyInserts() {
             var entity = _process.Entities.First();
@@ -103,7 +104,7 @@ UNION ALL SELECT 4;";
         public void TestSelectByKeysSql() {
             var entity = _process.Entities.First();
 
-            var actual = SqlTemplates.Select(entity.Fields, entity.OutputName(), "@KEYS", _process.OutputConnection.Provider);
+            var actual = SqlTemplates.Select(entity.Fields, entity.OutputName(), "@KEYS", _process.OutputConnection);
 
             const string expected = @"
 SELECT

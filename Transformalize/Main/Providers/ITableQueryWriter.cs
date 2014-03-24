@@ -31,6 +31,6 @@ namespace Transformalize.Main.Providers
         string DropPrimaryKey(string name, IEnumerable<string> primaryKey, string schema = "dbo");
         string AddUniqueClusteredIndex(string name, string schema = "dbo");
         string DropUniqueClusteredIndex(string name, string schema = "dbo");
-        string WriteTemporary(string name, Field[] fields, AbstractProvider provider, bool useAlias = true);
+        string WriteTemporary(string name, Field[] fields, AbstractConnection connection, bool useAlias = true);
     }
 }

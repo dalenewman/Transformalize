@@ -65,13 +65,13 @@ namespace Transformalize.Operations {
         }
 
         public string SelectByKeys(IEnumerable<Row> rows) {
-            var tableName = _connection.Provider.Supports.TableVariable ? "@KEYS" : "keys_" + _entity.Name;
-            var noCount = _connection.Provider.Supports.NoCount ? "SET NOCOUNT ON;\r\n" : string.Empty;
+            var tableName = _connection.TableVariable ? "@KEYS" : "keys_" + _entity.Name;
+            var noCount = _connection.NoCount ? "SET NOCOUNT ON;\r\n" : string.Empty;
             var sql = noCount +
-                _connection.TableQueryWriter.WriteTemporary(tableName, _key, _connection.Provider, false) +
+                _connection.TableQueryWriter.WriteTemporary(tableName, _key, _connection, false) +
                 SqlTemplates.BatchInsertValues(50, tableName, _key, rows, _connection) + Environment.NewLine +
-                SqlTemplates.Select(_entity.Fields, _entity.Name, tableName, _connection.Provider) +
-                (_connection.Provider.Supports.TableVariable ? string.Empty : string.Format("DROP TABLE {0};", tableName));
+                SqlTemplates.Select(_entity.Fields, _entity.Name, tableName, _connection) +
+                (_connection.TableVariable ? string.Empty : string.Format("DROP TABLE {0};", tableName));
 
             Trace(sql);
 

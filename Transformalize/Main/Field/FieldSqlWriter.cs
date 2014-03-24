@@ -163,20 +163,20 @@ namespace Transformalize.Main {
             return keys;
         }
 
-        private static string SafeColumn(string name, AbstractProvider provider) {
-            return string.Concat(provider.L, name, provider.R);
+        private static string SafeColumn(string name, string l, string r) {
+            return string.Concat(l, name, r);
         }
 
-        public FieldSqlWriter Name(AbstractProvider provider) {
+        public FieldSqlWriter Name(string l, string r) {
             foreach (var key in CopyOutputKeys()) {
-                _output[key] = SafeColumn(_original[key].Name, provider);
+                _output[key] = SafeColumn(_original[key].Name, l, r);
             }
             return this;
         }
 
-        public FieldSqlWriter Alias(AbstractProvider provider) {
+        public FieldSqlWriter Alias(string l, string r) {
             foreach (var key in CopyOutputKeys()) {
-                _output[key] = SafeColumn(_original[key].Alias, provider);
+                _output[key] = SafeColumn(_original[key].Alias, l, r);
             }
             return this;
         }
@@ -198,25 +198,25 @@ namespace Transformalize.Main {
             return this;
         }
 
-        public FieldSqlWriter ToAlias(AbstractProvider provider, bool ifNecessary = false) {
+        public FieldSqlWriter ToAlias(string l, string r, bool ifNecessary = false) {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];
                 if (ifNecessary) {
                     if (field.Alias != field.Name) {
-                        _output[key] = string.Concat(_output[key], " AS ", provider.L, field.Alias, provider.R);
+                        _output[key] = string.Concat(_output[key], " AS ", l, field.Alias, r);
                     }
                 } else {
-                    _output[key] = string.Concat(_output[key], " AS ", provider.L, field.Alias, provider.R);
+                    _output[key] = string.Concat(_output[key], " AS ", l, field.Alias, r);
                 }
             }
             return this;
         }
 
-        public FieldSqlWriter AsAlias(AbstractProvider provider) {
+        public FieldSqlWriter AsAlias(string l, string r) {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];
                 if (field.Alias != field.Name) {
-                    _output[key] = string.Concat(_output[key], " AS ", provider.L, _original[key].Alias, provider.R);
+                    _output[key] = string.Concat(_output[key], " AS ", l, _original[key].Alias, r);
                 }
             }
             return this;
@@ -236,10 +236,10 @@ namespace Transformalize.Main {
             return this;
         }
 
-        public FieldSqlWriter PrependEntityOutput(AbstractProvider provider, string entityName = null) {
+        public FieldSqlWriter PrependEntityOutput(AbstractConnection connection, string entityName = null) {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];
-                var table = SafeColumn(entityName ?? field.EntityOutputName, provider);
+                var table = SafeColumn(entityName ?? field.EntityOutputName, connection.L, connection.R);
                 _output[key] = string.Concat(table, ".", _output[key]);
             }
             return this;
@@ -285,10 +285,10 @@ namespace Transformalize.Main {
         ///     Presents the field for a select.
         /// </summary>
         /// <returns>field's name</returns>
-        public FieldSqlWriter Select(AbstractProvider provider) {
+        public FieldSqlWriter Select(AbstractConnection connection) {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];
-                _output[key] = SafeColumn(field.Name, provider);
+                _output[key] = SafeColumn(field.Name, connection.L, connection.R);
             }
             return this;
         }

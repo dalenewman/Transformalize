@@ -51,6 +51,7 @@ namespace Transformalize.Configuration {
         private const string START = "start";
         private const string END = "end";
         private const string ERROR_MODE = "error-mode";
+        private const string HOST = "host";
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
         [ConfigurationProperty(NAME, IsRequired = true)]
@@ -133,6 +134,12 @@ namespace Transformalize.Configuration {
             set { this[DELIMITER] = value; }
         }
 
+        [ConfigurationProperty(HOST, IsRequired = false, DefaultValue = ",")]
+        public string Host {
+            get { return this[HOST] as string; }
+            set { this[HOST] = value; }
+        }
+
         [ConfigurationProperty(LINE_DELIMITER, IsRequired = false, DefaultValue = "")]
         public string LineDelimiter {
             get { return this[LINE_DELIMITER] as string; }
@@ -157,7 +164,6 @@ namespace Transformalize.Configuration {
             set { this[COMPATABILITY_LEVEL] = value; }
         }
 
-        [RegexStringValidator(@"(?i)SqlServer|AnalysisServices|MySql|PostgreSql|File|Folder|Internal|SqlCe4|Console|Log|Mail|Html")]
         [ConfigurationProperty(PROVIDER, IsRequired = false, DefaultValue = "SqlServer")]
         public string Provider {
             get { return this[PROVIDER] as string; }

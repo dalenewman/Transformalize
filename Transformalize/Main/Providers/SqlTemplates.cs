@@ -26,12 +26,9 @@ using System.Text;
 using Transformalize.Extensions;
 using Transformalize.Libs.Rhino.Etl;
 
-namespace Transformalize.Main.Providers
-{
-    public static class SqlTemplates
-    {
-        public static string TruncateTable(string name, string schema = "dbo")
-        {
+namespace Transformalize.Main.Providers {
+    public static class SqlTemplates {
+        public static string TruncateTable(string name, string schema = "dbo") {
             return string.Format(@"
                 IF EXISTS(
         	        SELECT *
@@ -42,8 +39,7 @@ namespace Transformalize.Main.Providers
             ", schema, name);
         }
 
-        public static string DropTable(string name, string schema = "dbo")
-        {
+        public static string DropTable(string name, string schema = "dbo") {
             return string.Format(@"
                 IF EXISTS(
         	        SELECT *
@@ -54,47 +50,39 @@ namespace Transformalize.Main.Providers
             ", schema, name);
         }
 
-        public static string Select(Fields fields, string leftTable, string rightTable, AbstractProvider provider, string leftSchema = "dbo", string rightSchema = "dbo")
-        {
-            var maxDop = provider.Supports.MaxDop ? "OPTION (MAXDOP 2);" : ";";
+        public static string Select(Fields fields, string leftTable, string rightTable, AbstractConnection connection, string leftSchema = "dbo", string rightSchema = "dbo") {
+            var maxDop = connection.MaxDop ? "OPTION (MAXDOP 2);" : ";";
             var sqlPattern = "\r\nSELECT\r\n    {0}\r\nFROM {1} l\r\nINNER JOIN {2} r ON ({3})\r\n" + maxDop;
 
-            var columns = new FieldSqlWriter(fields).Input().Select(provider).Prepend("l.").ToAlias(provider, true).Write(",\r\n    ");
-            var join = new FieldSqlWriter(fields).FieldType(FieldType.MasterKey, FieldType.PrimaryKey).Name(provider).Input().Set("l", "r").Write(" AND ");
+            var columns = new FieldSqlWriter(fields).Input().Select(connection).Prepend("l.").ToAlias(connection.L, connection.R, true).Write(",\r\n    ");
+            var join = new FieldSqlWriter(fields).FieldType(FieldType.MasterKey, FieldType.PrimaryKey).Name(connection.L, connection.R).Input().Set("l", "r").Write(" AND ");
 
-            return string.Format(sqlPattern, columns, SafeTable(leftTable, provider, leftSchema), SafeTable(rightTable, provider, rightSchema), @join);
+            return string.Format(sqlPattern, columns, SafeTable(leftTable, connection, leftSchema), SafeTable(rightTable, connection, rightSchema), @join);
         }
 
-        private static string InsertUnionedValues(int size, string name, Field[] fields, IEnumerable<Row> rows, AbstractConnection connection)
-        {
+        private static string InsertUnionedValues(int size, string name, Field[] fields, IEnumerable<Row> rows, AbstractConnection connection) {
             var sqlBuilder = new StringBuilder();
-            var safeName = connection.Provider.Supports.TableVariable ? name : connection.Provider.Enclose(name);
-            foreach (var group in rows.Partition(size))
-            {
+            var safeName = connection.TableVariable ? name : connection.Enclose(name);
+            foreach (var group in rows.Partition(size)) {
                 sqlBuilder.Append(string.Format("\r\nINSERT INTO {0}\r\nSELECT {1};", safeName, string.Join("\r\nUNION ALL SELECT ", RowsToValues(fields, group))));
             }
             return sqlBuilder.ToString();
         }
 
-        private static string InsertMultipleValues(int size, string name, Field[] fields, IEnumerable<Row> rows, AbstractConnection connection)
-        {
+        private static string InsertMultipleValues(int size, string name, Field[] fields, IEnumerable<Row> rows, AbstractConnection connection) {
             var sqlBuilder = new StringBuilder();
-            var safeName = connection.Provider.Supports.TableVariable ? name : connection.Provider.Enclose(name);
-            foreach (var group in rows.Partition(size))
-            {
+            var safeName = connection.TableVariable ? name : connection.Enclose(name);
+            foreach (var group in rows.Partition(size)) {
                 sqlBuilder.Append(string.Format("\r\nINSERT INTO {0}\r\nVALUES({1});", safeName, string.Join("),\r\n(", RowsToValues(fields, @group))));
             }
             return sqlBuilder.ToString();
         }
 
-        private static IEnumerable<string> RowsToValues(Field[] fields, IEnumerable<Row> rows)
-        {
+        private static IEnumerable<string> RowsToValues(Field[] fields, IEnumerable<Row> rows) {
             var orderedFields = new FieldSqlWriter(fields).ToArray();
-            foreach (var row in rows)
-            {
+            foreach (var row in rows) {
                 var values = new List<string>();
-                foreach (var field in orderedFields)
-                {
+                foreach (var field in orderedFields) {
                     var value = row[field.Alias].ToString();
                     var quote = field.Quote();
                     values.Add(
@@ -107,20 +95,18 @@ namespace Transformalize.Main.Providers
             }
         }
 
-        public static string BatchInsertValues(int size, string name, Field[] fields, IEnumerable<Row> rows, AbstractConnection connection)
-        {
-            return connection.Provider.Supports.InsertMultipleRows ?
-                       InsertMultipleValues(size, name, fields, rows, connection) :
-                       InsertUnionedValues(size, name, fields, rows, connection);
+        public static string BatchInsertValues(int size, string name, Field[] fields, IEnumerable<Row> rows, AbstractConnection connection) {
+            return connection.InsertMultipleRows ?
+                InsertMultipleValues(size, name, fields, rows, connection) :
+                InsertUnionedValues(size, name, fields, rows, connection);
         }
 
-        private static string SafeTable(string name, AbstractProvider provider, string schema = "dbo")
-        {
+        private static string SafeTable(string name, AbstractConnection connection, string schema = "dbo") {
             if (name.StartsWith("@"))
                 return name;
             return schema.Equals("dbo", StringComparison.OrdinalIgnoreCase) ?
-                       string.Concat(provider.L, name, provider.R) :
-                       string.Concat(provider.L, schema, string.Format("{0}.{1}", provider.R, provider.L), name, provider.R);
+                       string.Concat(connection.L, name, connection.R) :
+                       string.Concat(connection.L, schema, string.Format("{0}.{1}", connection.R, connection.L), name, connection.R);
         }
     }
 }

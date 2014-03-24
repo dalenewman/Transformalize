@@ -16,7 +16,7 @@ namespace Transformalize.Operations
             : base(connection) {
             _entity = entity;
             _connection = connection;
-            _fields = new FieldSqlWriter(entity.PrimaryKey).Input().Alias(connection.Provider).Keys().ToArray();
+            _fields = new FieldSqlWriter(entity.PrimaryKey).Input().Alias(connection.L, connection.R).Keys().ToArray();
             }
 
         protected override Row CreateRowFromReader(IDataReader reader) {

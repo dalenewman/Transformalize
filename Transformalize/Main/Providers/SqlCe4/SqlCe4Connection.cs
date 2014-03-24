@@ -9,13 +9,16 @@ namespace Transformalize.Main.Providers.SqlCe4 {
         public override string DatabaseProperty { get { return string.Empty; } }
         public override string ServerProperty { get { return "Data Source"; } }
         public override string TrustedProperty { get { return string.Empty; } }
-        public override string PersistSecurityInfoProperty {
-            get { return "Persist Security Info"; }
-        }
+        public override string PersistSecurityInfoProperty { get { return "Persist Security Info"; } }
 
         public SqlCe4Connection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
+
             TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
+            Type = ProviderType.SqlCe4;
+            L = "[";
+            R = "]";
+            IsDatabase = true;
         }
 
         public override string KeyRangeQuery(Entity entity) {
@@ -28,7 +31,7 @@ namespace Transformalize.Main.Providers.SqlCe4 {
 
             return string.Format(
                 sql,
-                string.Join(", ", entity.SelectKeys(Provider)),
+                string.Join(", ", entity.SelectKeys(this)),
                 entity.Schema,
                 entity.Name,
                 entity.Version.Name
@@ -39,7 +42,7 @@ namespace Transformalize.Main.Providers.SqlCe4 {
             const string sql = @"
                 SELECT TOP {0} {1} FROM [{2}] WITH (NOLOCK);
             ";
-            return string.Format(sql, top, string.Join(", ", entity.SelectKeys(Provider)), entity.Name);
+            return string.Format(sql, top, string.Join(", ", entity.SelectKeys(this)), entity.Name);
         }
 
         public override string KeyQuery(Entity entity) {
@@ -52,7 +55,7 @@ namespace Transformalize.Main.Providers.SqlCe4 {
 
             return string.Format(
                 sql,
-                string.Join(", ", entity.SelectKeys(Provider)),
+                string.Join(", ", entity.SelectKeys(this)),
                 entity.Schema,
                 entity.Name,
                 entity.Version.Name
@@ -66,7 +69,7 @@ namespace Transformalize.Main.Providers.SqlCe4 {
 
             return string.Format(
                 sql,
-                string.Join(", ", entity.SelectKeys(Provider)),
+                string.Join(", ", entity.SelectKeys(this)),
                 entity.Schema,
                 entity.Name
                 );

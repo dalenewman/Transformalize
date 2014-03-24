@@ -23,15 +23,7 @@
 namespace Transformalize.Main.Providers {
     public class ProviderSupports {
         private bool _connectionTimeout = true;
-        public bool InsertMultipleRows { get; set; }
-        public bool Top { get; set; }
-        public bool NoLock { get; set; }
-        public bool TableVariable { get; set; }
-        public bool NoCount { get; set; }
-        public bool MaxDop { get; set; }
-        public bool IndexInclude { get; set; }
-        public bool Views { get; set; }
-        public bool Schemas { get; set; }
+
 
         public bool ConnectionTimeout {
             get { return _connectionTimeout; }

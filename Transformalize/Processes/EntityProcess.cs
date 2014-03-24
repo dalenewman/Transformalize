@@ -101,7 +101,7 @@ namespace Transformalize.Processes {
 
             var p = new PartialProcessOperation();
 
-            var isDatabase = input.Connection.Provider.IsDatabase;
+            var isDatabase = input.Connection.IsDatabase;
 
             if (isDatabase) {
                 if (!string.IsNullOrEmpty(_entity.SqlOverride)) {
@@ -146,7 +146,7 @@ namespace Transformalize.Processes {
             var process = new PartialProcessOperation();
             process.Register(new FilterOutputOperation(namedConnection.ShouldRun));
 
-            switch (namedConnection.Connection.Provider.Type) {
+            switch (namedConnection.Connection.Type) {
                 case ProviderType.Internal:
                     process.RegisterLast(_collectors[namedConnection.Name]);
                     break;
@@ -168,7 +168,7 @@ namespace Transformalize.Processes {
                     break;
                 default:
                     if (_process.IsFirstRun) {
-                        if (namedConnection.Connection.Provider.IsDatabase && _entity.IndexOptimizations) {
+                        if (namedConnection.Connection.IsDatabase && _entity.IndexOptimizations) {
                             namedConnection.Connection.DropUniqueClusteredIndex(_entity);
                             namedConnection.Connection.DropPrimaryKey(_entity);
                         }
@@ -193,7 +193,7 @@ namespace Transformalize.Processes {
         protected override void PostProcessing() {
 
             _entity.InputKeys.Clear();
-            if (_process.IsFirstRun && _process.OutputConnection.Provider.IsDatabase && _entity.IndexOptimizations) {
+            if (_process.IsFirstRun && _process.OutputConnection.IsDatabase && _entity.IndexOptimizations) {
                 _process.OutputConnection.AddUniqueClusteredIndex(_entity);
                 _process.OutputConnection.AddPrimaryKey(_entity);
             }
@@ -207,10 +207,10 @@ namespace Transformalize.Processes {
                 Environment.Exit(1);
             }
 
-            if (_process.OutputConnection.Provider.Type == ProviderType.Internal) {
+            if (_process.OutputConnection.Type == ProviderType.Internal) {
                 _entity.Rows = _collectors[STANDARD_OUTPUT].Rows;
                 foreach (var output in _entity.Output) {
-                    if (output.Connection.Provider.Type == ProviderType.Internal) {
+                    if (output.Connection.Type == ProviderType.Internal) {
                         _entity.InternalOutput[output.Name] = _collectors[output.Name].Rows;
                     }
                 }

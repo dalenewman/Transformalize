@@ -38,9 +38,8 @@ namespace Transformalize.Main.Providers {
             if (!EntityExists.Exists(connection, entity))
                 return;
 
-            var provider = connection.Provider;
             var needSchema = NeedsSchema(entity.Schema);
-            var sql = string.Format(FORMAT, needSchema ? provider.Enclose(entity.Schema) + "." : string.Empty, provider.Enclose(entity.OutputName()));
+            var sql = string.Format(FORMAT, needSchema ? connection.Enclose(entity.Schema) + "." : string.Empty, connection.Enclose(entity.OutputName()));
 
             using (var cn = connection.GetConnection()) {
                 cn.Open();

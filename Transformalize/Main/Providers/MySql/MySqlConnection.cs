@@ -31,13 +31,17 @@ namespace Transformalize.Main.Providers.MySql {
         public override string DatabaseProperty { get { return "Database"; } }
         public override string ServerProperty { get { return "Server"; } }
         public override string TrustedProperty { get { return string.Empty; } }
-        public override string PersistSecurityInfoProperty {
-            get { return string.Empty; }
-        }
+        public override string PersistSecurityInfoProperty { get { return string.Empty; } }
 
         public MySqlConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
+
             TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
+            Type = ProviderType.MySql;
+            L = "`";
+            R = "`";
+            IsDatabase = true;
+            Views = true;
         }
 
         public override string KeyAllQuery(Entity entity) {
@@ -49,7 +53,7 @@ namespace Transformalize.Main.Providers.MySql {
 
             return string.Format(
                 sql,
-                string.Join(", ", entity.SelectKeys(Provider)),
+                string.Join(", ", entity.SelectKeys(this)),
                 entity.Name
             );
         }
@@ -65,7 +69,7 @@ namespace Transformalize.Main.Providers.MySql {
 
             return string.Format(
                 sql,
-                string.Join(", ", entity.SelectKeys(Provider)),
+                string.Join(", ", entity.SelectKeys(this)),
                 entity.Name,
                 entity.Version.Name
                 );
@@ -84,7 +88,7 @@ namespace Transformalize.Main.Providers.MySql {
 
             return string.Format(
                 sql,
-                string.Join(", ", entity.SelectKeys(Provider)),
+                string.Join(", ", entity.SelectKeys(this)),
                 entity.Name,
                 entity.Version.Name
             );
@@ -96,7 +100,7 @@ namespace Transformalize.Main.Providers.MySql {
                 SELECT {0} FROM `{1}` LIMIT 0, {2};
                 COMMIT;
             ";
-            return string.Format(sql, string.Join(", ", entity.SelectKeys(Provider)), entity.Name, top);
+            return string.Format(sql, string.Join(", ", entity.SelectKeys(this)), entity.Name, top);
         }
     }
 }

@@ -3,7 +3,6 @@ namespace Transformalize.Main.Providers.Log
     public class LogDependencies : AbstractConnectionDependencies {
         public LogDependencies()
             : base(
-                new LogProvider(),
                 new FalseTableQueryWriter(),
                 new FalseConnectionChecker(),
                 new FalseEntityRecordsExist(),
@@ -11,7 +10,6 @@ namespace Transformalize.Main.Providers.Log
                 new FalseEntityCreator(),
                 new FalseViewWriter(),
                 new FalseTflWriter(),
-                new FalseScriptRunner(),
-                new FalseProviderSupportsModifier()) { }
+                new FalseScriptRunner()) { }
     }
 }

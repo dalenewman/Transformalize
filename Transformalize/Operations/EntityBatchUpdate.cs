@@ -28,13 +28,13 @@ using Transformalize.Main.Providers;
 
 namespace Transformalize.Operations {
     public class EntityBatchUpdate : SqlBatchOperation {
+        private readonly AbstractConnection _connection;
         private readonly Entity _entity;
-        private readonly AbstractProvider _provider;
 
         public EntityBatchUpdate(AbstractConnection connection, Entity entity)
             : base(connection) {
+            _connection = connection;
             _entity = entity;
-            _provider = connection.Provider;
             BatchSize = 50;
             UseTransaction = false;
         }
@@ -42,7 +42,7 @@ namespace Transformalize.Operations {
         protected override void PrepareCommand(Row row, SqlCommand command) {
             
             var writer = new FieldSqlWriter(_entity.Fields, _entity.CalculatedFields).Output();
-            var sets = writer.Alias(_provider).SetParam().Write(", ", false);
+            var sets = writer.Alias(_connection.L, _connection.R).SetParam().Write(", ", false);
 
             command.CommandText = string.Format(@"
                 UPDATE [{0}].[{1}]

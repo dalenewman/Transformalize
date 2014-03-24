@@ -21,18 +21,15 @@
 #endregion
 
 using System.Collections.Generic;
+using Moq;
 using NUnit.Framework;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
-using Transformalize.Main.Providers.MySql;
 using Transformalize.Main.Providers.SqlServer;
 
 namespace Transformalize.Test.Unit {
     [TestFixture]
     public class TestFields {
-
-        private readonly AbstractProvider _sqlServerProvider = new SqlServerProvider();
-        private readonly AbstractProvider _mySqlProvider = new MySqlProvider();
 
         private readonly List<Field> _fields = new List<Field> {
             new Field("system.string", "10", FieldType.PrimaryKey, true, "") {
@@ -52,71 +49,72 @@ namespace Transformalize.Test.Unit {
 
         [Test]
         public void TestWriteAlias() {
+
             const string expected = "[Field1], [Field2]";
-            var actual = new FieldSqlWriter(_fields).Alias(_sqlServerProvider).Write();
+            var actual = new FieldSqlWriter(_fields).Alias("[","]").Write();
             Assert.AreEqual(expected, actual);
         }
 
         [Test]
         public void TestWriteAliasIsNull() {
             const string expected = "ISNULL([Field1], 'x'), ISNULL([Field2], 0)";
-            var actual = new FieldSqlWriter(_fields).Alias(_sqlServerProvider).IsNull().Write();
+            var actual = new FieldSqlWriter(_fields).Alias("[", "]").IsNull().Write();
             Assert.AreEqual(expected, actual);
         }
 
         [Test]
         public void TestWriteName() {
             const string expected = "[f1], [f2]";
-            var actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).Write();
+            var actual = new FieldSqlWriter(_fields).Name("[", "]").Write();
             Assert.AreEqual(expected, actual);
         }
 
         [Test]
         public void TestWriteNameDataType() {
             const string expected = "[f1] NVARCHAR(10), [f2] INT";
-            var actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).DataType(new SqlServerDataTypeService()).Write();
+            var actual = new FieldSqlWriter(_fields).Name("[", "]").DataType(new SqlServerDataTypeService()).Write();
             Assert.AreEqual(expected, actual);
         }
 
         [Test]
         public void TestWriteNameDataTypeNotNull() {
             const string expected = "[f1] NVARCHAR(10) NOT NULL, [f2] INT NOT NULL";
-            var actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).DataType(new SqlServerDataTypeService()).Append(" NOT NULL").Write();
+            var actual = new FieldSqlWriter(_fields).Name("[", "]").DataType(new SqlServerDataTypeService()).Append(" NOT NULL").Write();
             Assert.AreEqual(expected, actual);
         }
 
         [Test]
         public void TestWriteNameDataTypeNull() {
             const string expected = "[f1] NVARCHAR(10) NULL, [f2] INT NULL";
-            var actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).DataType(new SqlServerDataTypeService()).Append(" NULL").Write();
+            var actual = new FieldSqlWriter(_fields).Name("[", "]").DataType(new SqlServerDataTypeService()).Append(" NULL").Write();
             Assert.AreEqual(expected, actual);
         }
 
         [Test]
         public void TestWriteNameIsNull() {
             const string expected = "ISNULL([f1], 'x'), ISNULL([f2], 0)";
-            var actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).IsNull().Write();
+            var actual = new FieldSqlWriter(_fields).Name("[", "]").IsNull().Write();
             Assert.AreEqual(expected, actual);
         }
 
         [Test]
         public void TestWriteNameIsNullAsAlias() {
             const string expected = "ISNULL([f1], 'x') AS [Field1], ISNULL([f2], 0) AS [Field2]";
-            var actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).IsNull().AsAlias(_sqlServerProvider).Write();
+            var actual = new FieldSqlWriter(_fields).Name("[", "]").IsNull().AsAlias("[", "]").Write();
             Assert.AreEqual(expected, actual);
         }
 
         [Test]
         public void TestWriteNameIsNullToAlias() {
             const string expected = "ISNULL([f1], 'x') AS [Field1], ISNULL([f2], 0) AS [Field2]";
-            var actual = new FieldSqlWriter(_fields).Name(_sqlServerProvider).IsNull().ToAlias(_sqlServerProvider).Write();
+            var actual = new FieldSqlWriter(_fields).Name("[", "]").IsNull().ToAlias("[", "]").Write();
             Assert.AreEqual(expected, actual);
         }
 
         [Test]
         public void TestWriteNameOutput() {
             const string expected = "[f1]";
-            var actual = new FieldSqlWriter(_fields).Output().Name(_sqlServerProvider).Write();
+            var actual = new FieldSqlWriter(_fields).Output().Name("[","]").Write();
             Assert.AreEqual(expected, actual);
         }
 

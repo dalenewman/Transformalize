@@ -1,10 +1,7 @@
-using Transformalize.Main.Providers.Internal;
-
 namespace Transformalize.Main.Providers.File {
     public class FileDependencies : AbstractConnectionDependencies {
         public FileDependencies()
             : base(
-                new FileProvider(),
                 new FalseTableQueryWriter(),
                 new FileConnectionChecker(),
                 new FileEntityRecordsExist(),
@@ -12,7 +9,6 @@ namespace Transformalize.Main.Providers.File {
                 new FileEntityCreator(),
                 new FalseViewWriter(),
                 new FalseTflWriter(),
-                new FalseScriptRunner(),
-                new FalseProviderSupportsModifier()) { }
+                new FalseScriptRunner()) { }
     }
 }

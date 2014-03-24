@@ -121,12 +121,12 @@ namespace Transformalize.Main {
             return (!HasRange || !BeginAndEndAreEqual());
         }
 
-        public List<string> SelectKeys(AbstractProvider p) {
+        public List<string> SelectKeys(AbstractConnection connection) {
             var selectKeys = new List<string>();
             foreach (var field in PrimaryKey.ToEnumerable().Where(f => f.Input)) {
                 selectKeys.Add(field.Alias.Equals(field.Name)
-                    ? string.Concat(p.L, field.Name, p.R)
-                    : string.Format("{0} = {1}", field.Alias, p.Enclose(field.Name)));
+                    ? string.Concat(connection.L, field.Name, connection.R)
+                    : string.Format("{0} = {1}", field.Alias, connection.Enclose(field.Name)));
             }
             return selectKeys;
         }

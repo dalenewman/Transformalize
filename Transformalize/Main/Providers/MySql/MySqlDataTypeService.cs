@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Transformalize.Main.Providers.SqlServer
+namespace Transformalize.Main.Providers.MySql
 {
     public class MySqlDataTypeService : IDataTypeService {
         // note: just a copy of the PostgreSql one for now

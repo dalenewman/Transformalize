@@ -21,7 +21,7 @@ namespace Transformalize.Main {
 
         public void Load() {
             var count = 0;
-            var batchId = _process.Options.Mode.Equals("init", IC) || !_process.OutputConnection.Provider.IsDatabase ? 1 : _process.GetNextBatchId();
+            var batchId = _process.Options.Mode.Equals("init", IC) || !_process.OutputConnection.IsDatabase ? 1 : _process.GetNextBatchId();
 
             foreach (EntityConfigurationElement element in _elements) {
                 var entity = new EntityConfigurationLoader(_process).Read(batchId, element, count == 0);

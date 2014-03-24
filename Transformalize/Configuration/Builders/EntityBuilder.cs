@@ -97,14 +97,17 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
-        public IoBuilder Output(string name) {
-            var output = new IoConfigurationElement() { Name = name };
+        public IoBuilder Output(string name, string connectionName) {
+            var output = new IoConfigurationElement() { 
+                Name = name,
+                Connection = connectionName
+            };
             _entity.Output.Add(output);
             return new IoBuilder(this, output);
         }
 
-        public IoBuilder Input(string name) {
-            var input = new IoConfigurationElement() { Name = name };
+        public IoBuilder Input(string name, string connectionName) {
+            var input = new IoConfigurationElement() { Name = name, Connection = connectionName};
             _entity.Input.Add(input);
             return new IoBuilder(this, input);
         }

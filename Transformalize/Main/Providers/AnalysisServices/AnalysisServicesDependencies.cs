@@ -1,10 +1,7 @@
-using Transformalize.Main.Providers.Internal;
-
 namespace Transformalize.Main.Providers.AnalysisServices {
     public class AnalysisServicesDependencies : AbstractConnectionDependencies {
         public AnalysisServicesDependencies()
             : base(
-                new AnalysisServicesProvider(),
                 new FalseTableQueryWriter(),
                 new AnalysisServicesConnectionChecker(),
                 new FalseEntityRecordsExist(),
@@ -12,7 +9,6 @@ namespace Transformalize.Main.Providers.AnalysisServices {
                 new FalseEntityCreator(), 
                 new FalseViewWriter(),
                 new FalseTflWriter(),
-                new AnalysisServicesScriptRunner(),
-                new FalseProviderSupportsModifier()) { }
+                new AnalysisServicesScriptRunner()) { }
     }
 }

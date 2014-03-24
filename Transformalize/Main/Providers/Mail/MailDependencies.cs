@@ -1,8 +1,7 @@
-namespace Transformalize.Main.Providers.Log {
+namespace Transformalize.Main.Providers.Mail {
     public class MailDependencies : AbstractConnectionDependencies {
         public MailDependencies()
             : base(
-                new MailProvider(),
                 new FalseTableQueryWriter(),
                 new FalseConnectionChecker(),
                 new FalseEntityRecordsExist(),
@@ -10,7 +9,7 @@ namespace Transformalize.Main.Providers.Log {
                 new FalseEntityCreator(),
                 new FalseViewWriter(),
                 new FalseTflWriter(),
-                new FalseScriptRunner(),
-                new FalseProviderSupportsModifier()) { }
+                new FalseScriptRunner()
+            ) { }
     }
 }

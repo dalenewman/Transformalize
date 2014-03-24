@@ -82,8 +82,8 @@ namespace Transformalize.Test.Unit {
                 .Connection("input2").Provider("file").File(file2).Delimiter(",").Start(2)
                 .Connection("output").Provider("internal")
                 .Entity("entity")
-                    .Input("i1").Connection("input1")
-                    .Input("i2").Connection("input2")
+                    .Input("i1","input1")
+                    .Input("i2","input2")
                     .Field("id").Int32().PrimaryKey()
                     .Field("name")
                 

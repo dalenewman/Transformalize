@@ -27,11 +27,12 @@ using System.IO;
 using Transformalize.Configuration;
 using Transformalize.Libs.Dapper;
 using Transformalize.Libs.FileHelpers.Enums;
-using Transformalize.Main.Providers.Internal;
 
 namespace Transformalize.Main.Providers {
 
     public abstract class AbstractConnection {
+        private string _l = string.Empty;
+        private string _r = string.Empty;
 
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
@@ -40,13 +41,11 @@ namespace Transformalize.Main.Providers {
         public int BatchSize { get; set; }
         public string Process { get; set; }
 
-        public AbstractProvider Provider { get; set; }
         public IConnectionChecker ConnectionChecker { get; set; }
         public IEntityRecordsExist EntityRecordsExist { get; set; }
         public IEntityDropper EntityDropper { get; set; }
         public IEntityCreator EntityCreator { get; set; }
         public IScriptRunner ScriptRunner { get; set; }
-        public IProviderSupportsModifier ProviderSupportsModifier { get; set; }
         public ITableQueryWriter TableQueryWriter { get; set; }
         public ITflWriter TflWriter { get; set; }
         public IViewWriter ViewWriter { get; set; }
@@ -62,6 +61,7 @@ namespace Transformalize.Main.Providers {
         public string Folder { get; set; }
         public ErrorMode ErrorMode { get; set; }
         public string Delimiter { get; set; }
+        public string Host { get; set; }
         public string LineDelimiter { get; set; }
         public string SearchPattern { get; set; }
         public SearchOption SearchOption { get; set; }
@@ -77,6 +77,31 @@ namespace Transformalize.Main.Providers {
         public abstract string TrustedProperty { get; }
         public abstract string PersistSecurityInfoProperty { get; }
 
+        public ProviderType Type { get; set; }
+
+        public string L
+        {
+            get { return _l; }
+            set { _l = value; }
+        }
+
+        public string R
+        {
+            get { return _r; }
+            set { _r = value; }
+        }
+
+        public bool IsDatabase { get; set; }
+        public bool InsertMultipleRows { get; set; }
+        public bool Top { get; set; }
+        public bool NoLock { get; set; }
+        public bool TableVariable { get; set; }
+        public bool NoCount { get; set; }
+        public bool MaxDop { get; set; }
+        public bool IndexInclude { get; set; }
+        public bool Views { get; set; }
+        public bool Schemas { get; set; }
+
         protected AbstractConnection(
             ConnectionConfigurationElement element,
             AbstractConnectionDependencies dependencies
@@ -88,13 +113,13 @@ namespace Transformalize.Main.Providers {
             File = element.File;
             Folder = element.Folder;
             Delimiter = element.Delimiter;
+            Host = element.Host;
             LineDelimiter = element.LineDelimiter;
             ErrorMode = (ErrorMode)Enum.Parse(typeof(ErrorMode), element.ErrorMode, true);
             SearchOption = (SearchOption)Enum.Parse(typeof(SearchOption), element.SearchOption, true);
             SearchPattern = element.SearchPattern;
 
             TableQueryWriter = dependencies.TableQueryWriter;
-            Provider = dependencies.Provider;
             ConnectionChecker = dependencies.ConnectionChecker;
             EntityRecordsExist = dependencies.EntityRecordsExist;
             EntityDropper = dependencies.EntityDropper;
@@ -102,7 +127,6 @@ namespace Transformalize.Main.Providers {
             ViewWriter = dependencies.ViewWriter;
             TflWriter = dependencies.TflWriter;
             ScriptRunner = dependencies.ScriptRunner;
-            ProviderSupportsModifier = dependencies.ProviderSupportsModifier;
 
             ProcessConnectionString(element);
         }
@@ -161,7 +185,7 @@ namespace Transformalize.Main.Providers {
         }
 
         public IDbConnection GetConnection() {
-            var type = Type.GetType(TypeAndAssemblyName, false, true);
+            var type = System.Type.GetType(TypeAndAssemblyName, false, true);
             var connection = (IDbConnection)Activator.CreateInstance(type);
             connection.ConnectionString = GetConnectionString();
             return connection;
@@ -172,14 +196,11 @@ namespace Transformalize.Main.Providers {
         }
 
         public string WriteTemporaryTable(string name, Field[] fields, bool useAlias = true) {
-            return TableQueryWriter.WriteTemporary(name, fields, Provider, useAlias);
+            return TableQueryWriter.WriteTemporary(name, fields, this, useAlias);
         }
 
         public bool IsReady() {
             var isReady = ConnectionChecker.Check(this);
-            if (isReady) {
-                ProviderSupportsModifier.Modify(this, Provider.Supports);
-            }
             return isReady;
         }
 
@@ -237,7 +258,7 @@ namespace Transformalize.Main.Providers {
         }
 
         public void LoadEndVersion(Entity entity) {
-            var sql = string.Format("SELECT MAX({0}) AS {0} FROM {1};", Provider.Enclose(entity.Version.Name), Provider.Enclose(entity.Name));
+            var sql = string.Format("SELECT MAX({0}) AS {0} FROM {1};", Enclose(entity.Version.Name), Enclose(entity.Name));
 
             using (var cn = GetConnection()) {
                 var command = cn.CreateCommand();
@@ -272,7 +293,7 @@ namespace Transformalize.Main.Providers {
         }
 
         public void DropPrimaryKey(Entity entity) {
-            var primaryKey = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).FieldType(entity.IsMaster() ? FieldType.MasterKey : FieldType.PrimaryKey).Alias(this.Provider).Asc().Values();
+            var primaryKey = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).FieldType(entity.IsMaster() ? FieldType.MasterKey : FieldType.PrimaryKey).Alias(L,R).Asc().Values();
             using (var cn = GetConnection()) {
                 cn.Open();
                 cn.Execute(TableQueryWriter.DropPrimaryKey(entity.OutputName(), primaryKey, entity.Schema));
@@ -280,7 +301,7 @@ namespace Transformalize.Main.Providers {
         }
 
         public void AddPrimaryKey(Entity entity) {
-            var primaryKey = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).FieldType(entity.IsMaster() ? FieldType.MasterKey : FieldType.PrimaryKey).Alias(this.Provider).Asc().Values();
+            var primaryKey = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).FieldType(entity.IsMaster() ? FieldType.MasterKey : FieldType.PrimaryKey).Alias(L,R).Asc().Values();
             using (var cn = GetConnection()) {
                 cn.Open();
                 cn.Execute(TableQueryWriter.AddPrimaryKey(entity.OutputName(), primaryKey, entity.Schema));
@@ -302,15 +323,15 @@ namespace Transformalize.Main.Providers {
         }
 
         public bool IsExcel() {
-            return Provider.Type == ProviderType.File && (File.EndsWith(".xlsx", IC) || File.Equals(".xls", IC));
+            return Type == ProviderType.File && (File.EndsWith(".xlsx", IC) || File.Equals(".xls", IC));
         }
 
         public bool IsFile() {
-            return Provider.Type == ProviderType.File;
+            return Type == ProviderType.File;
         }
 
         public bool IsFolder() {
-            return Provider.Type == ProviderType.Folder;
+            return Type == ProviderType.Folder;
         }
 
         public void Create(Process process, Entity entity) {
@@ -318,7 +339,7 @@ namespace Transformalize.Main.Providers {
         }
 
         public bool CanDetectChanges(Entity entity) {
-            return entity.Version != null && entity.Version.Input && Provider.IsDatabase;
+            return entity.Version != null && entity.Version.Input && IsDatabase;
         }
 
         //concrete class should override these
@@ -326,9 +347,12 @@ namespace Transformalize.Main.Providers {
         public virtual string KeyTopQuery(Entity entity, int top) { throw new NotImplementedException(); }
         public virtual string KeyQuery(Entity entity) { throw new NotImplementedException(); }
 
-        public virtual string KeyAllQuery(Entity entity)
-        {
+        public virtual string KeyAllQuery(Entity entity) {
             throw new NotImplementedException();
+        }
+
+        public string Enclose(string field) {
+            return L + field + R;
         }
     }
 }

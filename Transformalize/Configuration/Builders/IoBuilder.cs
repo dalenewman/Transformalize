@@ -8,17 +8,12 @@ namespace Transformalize.Configuration.Builders {
             _output = output;
         }
 
-        public IoBuilder Connection(string name) {
-            _output.Connection = name;
-            return this;
-        }
-
         public FieldBuilder Field(string name) {
             return _entityBuilder.Field(name);
         }
 
-        public IoBuilder Output(string name) {
-            return _entityBuilder.Output(name);
+        public IoBuilder Output(string name, string connectionName) {
+            return _entityBuilder.Output(name, connectionName);
         }
 
         public IoBuilder RunField(string alias) {
@@ -41,8 +36,8 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
-        public IoBuilder Input(string name) {
-            return _entityBuilder.Input(name);
+        public IoBuilder Input(string name, string connectionName) {
+            return _entityBuilder.Input(name, connectionName);
         }
     }
 }

@@ -10,20 +10,26 @@ namespace Transformalize.Main.Providers.PostgreSql {
         public override string DatabaseProperty { get { return "Database"; } }
         public override string ServerProperty { get { return "Host"; } }
         public override string TrustedProperty { get { return string.Empty; } }
-        public override string PersistSecurityInfoProperty {
-            get { return string.Empty; }
-        }
+        public override string PersistSecurityInfoProperty { get { return string.Empty; } }
 
         public PostgreSqlConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
+
             TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
+            Type = ProviderType.PostgreSql;
+            L = "\"";
+            R = "\"";
+            IsDatabase = true;
+            InsertMultipleRows = true;
+            Views = true;
+            Schemas = true;
         }
 
         public override string KeyAllQuery(Entity entity) {
             const string sql = @"SELECT {0} FROM ""{1}"";";
             return string.Format(
                 sql,
-                string.Join(", ", entity.SelectKeys(Provider)),
+                string.Join(", ", entity.SelectKeys(this)),
                 entity.Name
             );
         }
@@ -38,7 +44,7 @@ namespace Transformalize.Main.Providers.PostgreSql {
 
             return string.Format(
                 sql,
-                string.Join(", ", entity.SelectKeys(Provider)),
+                string.Join(", ", entity.SelectKeys(this)),
                 entity.Name,
                 entity.Version.Name
             );
@@ -55,7 +61,7 @@ namespace Transformalize.Main.Providers.PostgreSql {
 
             return string.Format(
                 sql,
-                string.Join(", ", entity.SelectKeys(Provider)),
+                string.Join(", ", entity.SelectKeys(this)),
                 entity.Name,
                 entity.Version.Name
             );
@@ -69,7 +75,7 @@ namespace Transformalize.Main.Providers.PostgreSql {
 
             return string.Format(
                 sql,
-                string.Join(", ", entity.SelectKeys(Provider)),
+                string.Join(", ", entity.SelectKeys(this)),
                 entity.Name,
                 top
             );

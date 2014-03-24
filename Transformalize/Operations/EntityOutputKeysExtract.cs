@@ -40,7 +40,7 @@ namespace Transformalize.Operations {
             : base(connection) {
             _connection = connection;
             _entity = entity;
-            _fields = new List<string>(new FieldSqlWriter(entity.PrimaryKey).Alias(connection.Provider).Keys()) { "TflKey" };
+            _fields = new List<string>(new FieldSqlWriter(entity.PrimaryKey).Alias(connection.L, connection.R).Keys()) { "TflKey" };
             _key = new FieldSqlWriter(entity.PrimaryKey).ToArray();
         }
 
@@ -59,7 +59,6 @@ namespace Transformalize.Operations {
         }
 
         private string PrepareSql() {
-            var provider = _connection.Provider;
             const string sqlPattern = @"
                 SELECT e.{0}, e.TflKey{1}
                 FROM {2} e WITH (NOLOCK);
@@ -68,11 +67,11 @@ namespace Transformalize.Operations {
             var rowVersion = string.Empty;
             if (_entity.Version != null && !VersionIsPrimaryKey()) {
                 _fields.Add(_entity.Version.Alias);
-                rowVersion = ", e." + provider.Enclose(_entity.Version.Alias);
+                rowVersion = ", e." + _connection.Enclose(_entity.Version.Alias);
             }
 
-            var selectKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias(provider).Write(", e.", false);
-            return string.Format(sqlPattern, selectKeys, rowVersion, provider.Enclose(_entity.OutputName()));
+            var selectKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias(_connection.L, _connection.R).Write(", e.", false);
+            return string.Format(sqlPattern, selectKeys, rowVersion, _connection.Enclose(_entity.OutputName()));
         }
 
         private bool VersionIsPrimaryKey() {
@@ -81,7 +80,7 @@ namespace Transformalize.Operations {
         }
 
         private string PrepareSqlWithInputKeys() {
-            var provider = _connection.Provider;
+
             const string sqlPattern = @"
                 {0}
 
@@ -97,12 +96,12 @@ namespace Transformalize.Operations {
             var rowVersion = string.Empty;
             if (_entity.Version != null && !VersionIsPrimaryKey()) {
                 _fields.Add(_entity.Version.Alias);
-                rowVersion = ", e." + provider.Enclose(_entity.Version.Alias);
+                rowVersion = ", e." + _connection.Enclose(_entity.Version.Alias);
             }
 
-            var selectKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias(provider).Write(", e.", false);
-            var joinKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias(provider).Set("e", "k").Write(" AND ");
-            return string.Format(sqlPattern, builder, selectKeys, rowVersion, provider.Enclose(_entity.OutputName()), joinKeys);
+            var selectKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias(_connection.L, _connection.R).Write(", e.", false);
+            var joinKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias(_connection.L, _connection.R).Set("e", "k").Write(" AND ");
+            return string.Format(sqlPattern, builder, selectKeys, rowVersion, _connection.Enclose(_entity.OutputName()), joinKeys);
         }
     }
 }

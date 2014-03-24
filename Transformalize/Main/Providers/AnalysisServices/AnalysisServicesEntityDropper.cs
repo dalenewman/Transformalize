@@ -1,4 +1,4 @@
-namespace Transformalize.Main.Providers
+namespace Transformalize.Main.Providers.AnalysisServices
 {
     public class AnalysisServicesEntityDropper : DatabaseEntityDropper
     {

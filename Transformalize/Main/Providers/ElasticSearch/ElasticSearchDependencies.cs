@@ -1,9 +1,10 @@
-namespace Transformalize.Main.Providers.Internal {
-    public class InternalDependencies : AbstractConnectionDependencies {
-        public InternalDependencies()
+namespace Transformalize.Main.Providers.ElasticSearch
+{
+    public class ElasticSearchDependencies : AbstractConnectionDependencies {
+        public ElasticSearchDependencies()
             : base(
                 new FalseTableQueryWriter(),
-                new InternalConnectionChecker(),
+                new FalseConnectionChecker(),
                 new FalseEntityRecordsExist(),
                 new FalseEntityDropper(),
                 new FalseEntityCreator(),

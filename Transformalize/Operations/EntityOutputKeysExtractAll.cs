@@ -15,7 +15,7 @@ namespace Transformalize.Operations
             : base(process.OutputConnection) {
             _process = process;
             _entity = entity;
-            _fields = new List<string>(new FieldSqlWriter(entity.PrimaryKey).Alias(process.OutputConnection.Provider).Keys()) { "TflKey" };
+            _fields = new List<string>(new FieldSqlWriter(entity.PrimaryKey).Alias(process.OutputConnection.L, process.OutputConnection.R).Keys()) { "TflKey" };
             }
 
         protected override Row CreateRowFromReader(IDataReader reader) {
@@ -35,17 +35,16 @@ namespace Transformalize.Operations
 
         private string PrepareSql() {
             var connection = _process.OutputConnection;
-            var provider = connection.Provider;
             
             var sqlPattern = "SELECT {0}, TflKey FROM {1}";
-            if (provider.Supports.NoLock) {
+            if (connection.NoLock) {
                 sqlPattern += " WITH (NOLOCK);";
             } else {
                 sqlPattern = "SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED; " + sqlPattern + "; COMMIT;";
             }
 
-            var selectKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias(provider).Write(", ", false);
-            return string.Format(sqlPattern, selectKeys, provider.Enclose(_entity.OutputName()));
+            var selectKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias(connection.L, connection.R).Write(", ", false);
+            return string.Format(sqlPattern, selectKeys, connection.Enclose(_entity.OutputName()));
         }
 
     }

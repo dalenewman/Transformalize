@@ -56,9 +56,8 @@ namespace Transformalize.Operations {
             if (!entityChanged && !masterChanged)
                 return rows;
 
-            var provider = _process.OutputConnection.Provider;
-            var master = provider.L + _process.MasterEntity.OutputName() + provider.R;
-            var entity = provider.L + _entity.OutputName() + provider.R;
+            var master = _process.OutputConnection.Enclose(_process.MasterEntity.OutputName());
+            var entity = _process.OutputConnection.Enclose(_entity.OutputName());
 
             using (var cn = _process.OutputConnection.GetConnection()) {
                 cn.Open();
@@ -67,12 +66,12 @@ namespace Transformalize.Operations {
                 string where;
                 if (entityChanged && masterChanged) {
                     where = string.Format("WHERE {0}.TflBatchId = @TflBatchId OR {1}.TflBatchId = @MasterTflBatchId;", entity, master);
-                    var sql = PrepareSql(master, entity, provider) + where;
+                    var sql = PrepareSql(master, entity, _process.OutputConnection) + where;
                     Debug(sql);
                     records = cn.Execute(sql, new { _entity.TflBatchId, MasterTflBatchId = _process.MasterEntity.TflBatchId }, commandTimeout: 0);
                 } else {
                     where = string.Format("WHERE {0}.TflBatchId = @TflBatchId;", entityChanged ? entity : master);
-                    var sql = PrepareSql(master, entity, provider) + where;
+                    var sql = PrepareSql(master, entity, _process.OutputConnection) + where;
                     Debug(sql);
                     records = cn.Execute(sql, new { TflBatchId = entityChanged ? _entity.TflBatchId : _process.MasterEntity.TflBatchId }, commandTimeout: 0);
                 }
@@ -83,21 +82,21 @@ namespace Transformalize.Operations {
             return rows;
         }
 
-        private string PrepareSql(string master, string entity, AbstractProvider provider) {
+        private string PrepareSql(string master, string entity, AbstractConnection connection) {
             //note: TflBatchId is updated and next process depends it.
 
             var builder = new StringBuilder();
 
-            var sets = new FieldSqlWriter(_entity.Fields).FieldType(FieldType.ForeignKey).Alias(provider).Set(master, entity).Write(",\r\n    ");
+            var sets = new FieldSqlWriter(_entity.Fields).FieldType(FieldType.ForeignKey).Alias(connection.L, connection.R).Set(master, entity).Write(",\r\n    ");
 
             builder.AppendFormat("UPDATE {0}\r\n", master);
             builder.AppendFormat("SET {0}, {1}.TflBatchId = @TflBatchId\r\n", sets, master);
             builder.AppendFormat("FROM {0}\r\n", entity);
 
             foreach (var relationship in _entity.RelationshipToMaster) {
-                var left = provider.L + relationship.LeftEntity.OutputName() + provider.R;
-                var right = provider.L + relationship.RightEntity.OutputName() + provider.R;
-                var join = string.Join(" AND ", relationship.Join.Select(j => string.Format("{0}.{1} = {2}.{3}", left, provider.Enclose(j.LeftField.Alias), right, provider.Enclose(j.RightField.Alias))));
+                var left = connection.Enclose(relationship.LeftEntity.OutputName());
+                var right = connection.Enclose(relationship.RightEntity.OutputName());
+                var join = string.Join(" AND ", relationship.Join.Select(j => string.Format("{0}.{1} = {2}.{3}", left, connection.Enclose(j.LeftField.Alias), right, connection.Enclose(j.RightField.Alias))));
                 builder.AppendFormat("INNER JOIN {0} ON ({1})\r\n", left, join);
             }
 

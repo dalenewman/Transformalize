@@ -23,7 +23,7 @@
 namespace Transformalize.Main.Providers {
     public enum ProviderType {
         SqlServer,
-        SqlServerCe,
+        SqlCe4,
         MySql,
         PostgreSql,
         AnalysisServices,
@@ -33,6 +33,7 @@ namespace Transformalize.Main.Providers {
         Console,
         Log,
         Mail,
-        Html
+        Html,
+        ElasticSearch
     }
 }

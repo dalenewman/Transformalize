@@ -2,7 +2,6 @@ namespace Transformalize.Main.Providers.SqlServer {
     public class SqlServerDependencies : AbstractConnectionDependencies {
         public SqlServerDependencies()
             : base(
-                new SqlServerProvider(), 
                 new SqlServerTableQueryWriter(), 
                 new DefaultConnectionChecker(), 
                 new SqlServerEntityRecordsExist(), 
@@ -10,8 +9,7 @@ namespace Transformalize.Main.Providers.SqlServer {
                 new SqlServerEntityCreator(),
                 new SqlServerViewWriter(), 
                 new SqlServerTflWriter(), 
-                new DefaultScriptRunner(),
-                new SqlServerProviderSupportsModifier()
+                new DefaultScriptRunner()
             ) { }
     }
 }

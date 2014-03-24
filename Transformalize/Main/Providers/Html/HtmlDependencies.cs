@@ -1,11 +1,10 @@
 using Transformalize.Main.Providers.File;
 
-namespace Transformalize.Main.Providers.Log
+namespace Transformalize.Main.Providers.Html
 {
     public class HtmlDependencies : AbstractConnectionDependencies {
         public HtmlDependencies()
             : base(
-                new HtmlProvider(),
                 new FalseTableQueryWriter(),
                 new FileConnectionChecker(),
                 new FileEntityRecordsExist(),
@@ -13,7 +12,6 @@ namespace Transformalize.Main.Providers.Log
                 new FileEntityCreator(),
                 new FalseViewWriter(),
                 new FalseTflWriter(),
-                new FalseScriptRunner(),
-                new FalseProviderSupportsModifier()) { }
+                new FalseScriptRunner()) { }
     }
 }

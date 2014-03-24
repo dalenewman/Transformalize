@@ -31,7 +31,7 @@ namespace Transformalize.Operations {
         private readonly int _batchSize;
 
         public EntityBulkInsert(AbstractConnection connection, Entity entity)
-            : base(connection, connection.Provider.Enclose(entity.OutputName())) {
+            : base(connection, connection.Enclose(entity.OutputName())) {
             _entity = entity;
             _batchSize = connection.BatchSize;
             UseTransaction = false;

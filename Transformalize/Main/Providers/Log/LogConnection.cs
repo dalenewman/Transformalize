@@ -1,7 +1,6 @@
 using Transformalize.Configuration;
 
-namespace Transformalize.Main.Providers.Log
-{
+namespace Transformalize.Main.Providers.Log {
     public class LogConnection : AbstractConnection {
 
         public override string UserProperty { get { return string.Empty; } }
@@ -10,14 +9,14 @@ namespace Transformalize.Main.Providers.Log
         public override string DatabaseProperty { get { return string.Empty; } }
         public override string ServerProperty { get { return string.Empty; } }
         public override string TrustedProperty { get { return string.Empty; } }
-        public override string PersistSecurityInfoProperty {
-            get { return string.Empty; }
-        }
+        public override string PersistSecurityInfoProperty { get { return string.Empty; } }
 
         public LogConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
+
             TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
-            }
+            Type = ProviderType.Log;
+        }
     }
 
 

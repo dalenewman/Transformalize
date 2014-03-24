@@ -46,13 +46,13 @@ namespace Transformalize.Processes {
 
             if (_entity.Input.Count == 1) {
                 var connection = _entity.Input.First().Connection;
-                if (connection.Provider.IsDatabase && string.IsNullOrEmpty(_entity.SqlOverride)) {
+                if (connection.IsDatabase && string.IsNullOrEmpty(_entity.SqlOverride)) {
                     Register(ComposeInputOperation(connection));
                 }
             } else {
                 var union = new ParallelUnionAllOperation();
                 foreach (var input in _entity.Input) {
-                    if (input.Connection.Provider.IsDatabase && string.IsNullOrEmpty(_entity.SqlOverride)) {
+                    if (input.Connection.IsDatabase && string.IsNullOrEmpty(_entity.SqlOverride)) {
                         union.Add(ComposeInputOperation(input.Connection));
                     }
                 }
