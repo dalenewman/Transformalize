@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
-using Noesis.Javascript;
+using Transformalize.Libs.Jint;
+using Transformalize.Libs.Jint.Parser.Ast;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
@@ -9,7 +10,7 @@ namespace Transformalize.Operations.Transform {
 
     public class JavascriptOperation : ShouldRunOperation {
 
-        private readonly JavascriptContext _context = new JavascriptContext();
+        private readonly Engine _engine = new Engine();
         private readonly Logger _log = LogManager.GetLogger(string.Empty);
         private readonly string _script;
         private readonly IParameters _parameters;
@@ -21,29 +22,23 @@ namespace Transformalize.Operations.Transform {
 
             foreach (var pair in scripts) {
                 _log.Debug("Running script {0}.", pair.Value.File);
-                _context.Run(pair.Value.Content);
+                _engine.Execute(pair.Value.Content);
             }
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
                 if (ShouldRun(row)) {
-                    _context.SetParameter(OutKey, row[OutKey]);
                     foreach (var pair in _parameters) {
-                        _context.SetParameter(pair.Value.Name, pair.Value.Value ?? row[pair.Key]);
+                        _engine.SetValue(pair.Value.Name, pair.Value.Value ?? row[pair.Key]);
                     }
-                    row[OutKey] = _context.Run(_script);
+                    row[OutKey] = _engine.Execute(_script).GetCompletionValue().ToObject();
                 } else {
                     Interlocked.Increment(ref SkipCount);
                 }
 
                 yield return row;
             }
-        }
-
-        public override void Dispose() {
-            _context.Dispose();
-            base.Dispose();
         }
     }
 }

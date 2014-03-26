@@ -1,5 +1,4 @@
-﻿using System.Data.SqlServerCe;
-using System.IO;
+﻿using System.IO;
 
 namespace Transformalize.Main.Providers.SqlCe4
 {
@@ -12,7 +11,11 @@ namespace Transformalize.Main.Providers.SqlCe4
 
             if (!new FileInfo(connection.Server).Exists) {
                 Log.Warn("{0} not found.", connection.Server);
-                new SqlCeEngine(connection.GetConnectionString()).CreateDatabase();
+
+                var type = System.Type.GetType("System.Data.SqlServerCe.SqlCeEngine, System.Data.SqlServerCe", false, true);
+                dynamic engine = System.Activator.CreateInstance(type, connection.GetConnectionString());
+                engine.CreateDatabase();
+                
                 Log.Warn("Created {0} database file.", connection.Server);
             };
 

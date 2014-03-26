@@ -151,13 +151,13 @@ namespace Transformalize.Processes {
                     process.RegisterLast(_collectors[namedConnection.Name]);
                     break;
                 case ProviderType.Console:
-                    process.RegisterLast(new ConsoleOperation(_entity));
+                    process.RegisterLast(new ConsoleLoadOperation(_entity));
                     break;
                 case ProviderType.Log:
-                    process.RegisterLast(new LogOperation(_entity));
+                    process.RegisterLast(new LogLoadOperation(_entity));
                     break;
                 case ProviderType.Mail:
-                    process.RegisterLast(new MailOperation(_entity));
+                    process.RegisterLast(new MailLoadOperation(_entity));
                     break;
                 case ProviderType.File:
                     process.RegisterLast(new FileLoadOperation(namedConnection.Connection, _entity));
@@ -165,6 +165,9 @@ namespace Transformalize.Processes {
                 case ProviderType.Html:
                     process.Register(new HtmlRowOperation(_entity, "HtmlRow"));
                     process.RegisterLast(new HtmlLoadOperation(namedConnection.Connection, _entity, "HtmlRow"));
+                    break;
+                case ProviderType.ElasticSearch:
+                    process.Register(new ElasticSearchLoadOperation(_entity, namedConnection.Connection));
                     break;
                 default:
                     if (_process.IsFirstRun) {
@@ -175,15 +178,20 @@ namespace Transformalize.Processes {
                         process.Register(new EntityAddTflFields(_entity));
                         process.RegisterLast(new EntityBulkInsert(namedConnection.Connection, _entity));
                     } else {
-                        process.Register(new EntityJoinAction(_entity).Right(new EntityOutputKeysExtract(namedConnection.Connection, _entity)));
-                        var branch = new BranchingOperation()
-                            .Add(new PartialProcessOperation()
-                                .Register(new EntityActionFilter(ref _entity, EntityAction.Insert))
-                                .RegisterLast(new EntityBulkInsert(namedConnection.Connection, _entity)))
-                            .Add(new PartialProcessOperation()
-                                .Register(new EntityActionFilter(ref _entity, EntityAction.Update))
-                                .RegisterLast(new EntityBatchUpdate(namedConnection.Connection, _entity)));
-                        process.RegisterLast(branch);
+                        if (_entity.DetectChanges) {
+                            process.Register(new EntityJoinAction(_entity).Right(new EntityOutputKeysExtract(namedConnection.Connection, _entity)));
+                            var branch = new BranchingOperation()
+                                .Add(new PartialProcessOperation()
+                                    .Register(new EntityActionFilter(ref _entity, EntityAction.Insert))
+                                    .RegisterLast(new EntityBulkInsert(namedConnection.Connection, _entity)))
+                                .Add(new PartialProcessOperation()
+                                    .Register(new EntityActionFilter(ref _entity, EntityAction.Update))
+                                    .RegisterLast(new EntityBatchUpdate(namedConnection.Connection, _entity)));
+                            process.RegisterLast(branch);
+                        } else {
+                            process.Register(new EntityAddTflFields(_entity));
+                            process.RegisterLast(new EntityBulkInsert(namedConnection.Connection, _entity));
+                        }
                     }
                     break;
             }

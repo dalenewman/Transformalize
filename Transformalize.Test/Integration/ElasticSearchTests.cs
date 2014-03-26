@@ -39,10 +39,9 @@ namespace Transformalize.Test.Integration {
             var cfg = new ProcessBuilder("est")
 
                 .Connection("input").Provider("file").File(file).Delimiter(",").Start(2)
-                .Connection("output").Provider("log")
-                .Connection("es").Provider("elasticsearch").Host("http://localhost:9200")
+                .Connection("output").Provider("elasticsearch").Server("localhost").Port(9200)
 
-                .Entity("entity").Output("es","es")
+                .Entity("entity")
                     .Field("id").Int32().PrimaryKey()
                     .Field("name")
                 .Process();

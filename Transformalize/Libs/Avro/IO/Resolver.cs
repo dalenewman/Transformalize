@@ -18,8 +18,8 @@
 
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
 using Transformalize.Libs.Avro.Schema;
+using Transformalize.Libs.Newtonsoft.Json.Linq;
 
 namespace Transformalize.Libs.Avro.IO
 {

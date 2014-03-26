@@ -44,7 +44,6 @@ namespace Transformalize.Main {
         private List<SearchType> _searchTypes = new List<SearchType>();
         private Type _systemType = typeof(string);
         private object _default;
-        private bool _defaultNull = true;
 
         public string Alias { get; set; }
         public string Schema { get; set; }

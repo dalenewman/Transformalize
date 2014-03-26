@@ -3,59 +3,37 @@
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{154566AF-2842-44C8-985B-F8D809E8FD79}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Transformalize</RootNamespace>
     <AssemblyName>Transformalize</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
     <Optimize>true</Optimize>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>
     </DefineConstants>
     <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
+    <DebugType>none</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
-    <Optimize>true</Optimize>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>none</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
     <Optimize>true</Optimize>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
@@ -64,38 +42,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.AnalysisServices.11.0.2100.60\lib\net40\Microsoft.AnalysisServices.DLL</HintPath>
     </Reference>
-    <Reference Include="Mono.Security">
-      <HintPath>..\packages\Npgsql.2.0.14.3\lib\net45\Mono.Security.dll</HintPath>
-    </Reference>
-    <Reference Include="MySql.Data, Version=6.8.3.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\MySql.Data.6.8.3\lib\net45\MySql.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Noesis.Javascript, Version=0.0.0.0, Culture=neutral, processorArchitecture=amd64" Condition="'$(Platform)'=='x64'">
-      <HintPath>..\packages\Noesis.Javascript.0.7.1.0\lib\net40\amd64\Noesis.Javascript.dll</HintPath>
-    </Reference>
-    <Reference Include="Noesis.Javascript, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86" Condition="'$(Platform)'=='x86'">
-      <HintPath>..\packages\Noesis.Javascript.0.7.1.0\lib\net40\x86\Noesis.Javascript.dll</HintPath>
-    </Reference>
-    <Reference Include="Npgsql">
-      <HintPath>..\packages\Npgsql.2.0.14.3\lib\net45\Npgsql.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data.SqlServerCe, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.SqlServer.Compact.4.0.8876.1\lib\net40\System.Data.SqlServerCe.dll</HintPath>
-    </Reference>
     <Reference Include="System.Device" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Transactions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -628,8 +582,341 @@
     <Compile Include="Libs\ExcelDataReader\Exceptions\HeaderException.cs" />
     <Compile Include="Libs\ExcelDataReader\IExcelDataReader.cs" />
     <Compile Include="Libs\fastJSON\JsonTryParse.cs" />
+    <Compile Include="Libs\Jint\DeclarationBindingType.cs" />
+    <Compile Include="Libs\Jint\Engine.cs" />
+    <Compile Include="Libs\Jint\EvalCodeScope.cs" />
+    <Compile Include="Libs\Jint\Native\Argument\ArgumentsObject.cs" />
+    <Compile Include="Libs\Jint\Native\Array\ArrayConstructor.cs" />
+    <Compile Include="Libs\Jint\Native\Array\ArrayInstance.cs" />
+    <Compile Include="Libs\Jint\Native\Array\ArrayPrototype.cs" />
+    <Compile Include="Libs\Jint\Native\Boolean\BooleanConstructor.cs" />
+    <Compile Include="Libs\Jint\Native\Boolean\BooleanInstance.cs" />
+    <Compile Include="Libs\Jint\Native\Boolean\BooleanPrototype.cs" />
+    <Compile Include="Libs\Jint\Native\Date\DateConstructor.cs" />
+    <Compile Include="Libs\Jint\Native\Date\DateInstance.cs" />
+    <Compile Include="Libs\Jint\Native\Date\DatePrototype.cs" />
+    <Compile Include="Libs\Jint\Native\Error\ErrorConstructor.cs" />
+    <Compile Include="Libs\Jint\Native\Error\ErrorInstance.cs" />
+    <Compile Include="Libs\Jint\Native\Error\ErrorPrototype.cs" />
+    <Compile Include="Libs\Jint\Native\Function\BindFunctionInstance.cs" />
+    <Compile Include="Libs\Jint\Native\Function\EvalFunctionInstance.cs" />
+    <Compile Include="Libs\Jint\Native\Function\FunctionConstructor.cs" />
+    <Compile Include="Libs\Jint\Native\Function\FunctionInstance.cs" />
+    <Compile Include="Libs\Jint\Native\Function\FunctionPrototype.cs" />
+    <Compile Include="Libs\Jint\Native\Function\FunctionShim.cs" />
+    <Compile Include="Libs\Jint\Native\Function\ScriptFunctionInstance.cs" />
+    <Compile Include="Libs\Jint\Native\Function\ThrowTypeError.cs" />
+    <Compile Include="Libs\Jint\Native\Global\GlobalObject.cs" />
+    <Compile Include="Libs\Jint\Native\ICallable.cs" />
+    <Compile Include="Libs\Jint\Native\IConstructor.cs" />
+    <Compile Include="Libs\Jint\Native\IPrimitiveInstance.cs" />
+    <Compile Include="Libs\Jint\Native\Json\JsonInstance.cs" />
+    <Compile Include="Libs\Jint\Native\Json\JsonParser.cs" />
+    <Compile Include="Libs\Jint\Native\Json\JsonSerializer.cs" />
+    <Compile Include="Libs\Jint\Native\JsValue.cs" />
+    <Compile Include="Libs\Jint\Native\Math\MathInstance.cs" />
+    <Compile Include="Libs\Jint\Native\Null.cs" />
+    <Compile Include="Libs\Jint\Native\Number\Dtoa\CachePowers.cs" />
+    <Compile Include="Libs\Jint\Native\Number\Dtoa\DiyFp.cs" />
+    <Compile Include="Libs\Jint\Native\Number\Dtoa\DoubleHelper.cs" />
+    <Compile Include="Libs\Jint\Native\Number\Dtoa\FastDtoa.cs" />
+    <Compile Include="Libs\Jint\Native\Number\Dtoa\FastDtoaBuilder.cs" />
+    <Compile Include="Libs\Jint\Native\Number\Dtoa\NumberExtensions.cs" />
+    <Compile Include="Libs\Jint\Native\Number\NumberConstructor.cs" />
+    <Compile Include="Libs\Jint\Native\Number\NumberInstance.cs" />
+    <Compile Include="Libs\Jint\Native\Number\NumberPrototype.cs" />
+    <Compile Include="Libs\Jint\Native\Object\ObjectConstructor.cs" />
+    <Compile Include="Libs\Jint\Native\Object\ObjectInstance.cs" />
+    <Compile Include="Libs\Jint\Native\Object\ObjectPrototype.cs" />
+    <Compile Include="Libs\Jint\Native\RegExp\RegExpConstructor.cs" />
+    <Compile Include="Libs\Jint\Native\RegExp\RegExpInstance.cs" />
+    <Compile Include="Libs\Jint\Native\RegExp\RegExpPrototype.cs" />
+    <Compile Include="Libs\Jint\Native\String\StringConstructor.cs" />
+    <Compile Include="Libs\Jint\Native\String\StringInstance.cs" />
+    <Compile Include="Libs\Jint\Native\String\StringPrototype.cs" />
+    <Compile Include="Libs\Jint\Native\Undefined.cs" />
+    <Compile Include="Libs\Jint\Options.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\ArrayExpression.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\AssignmentExpression.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\BinaryExpression.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\BlockStatement.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\BreakStatement.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\CallExpression.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\CatchClause.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\ConditionalExpression.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\ContinueStatement.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\DebuggerStatement.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\DoWhileStatement.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\EmptyStatement.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\Expression.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\ExpressionStatement.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\ForInStatement.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\ForStatement.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\FunctionDeclaration.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\FunctionExpression.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\Identifier.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\IfStatement.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\IPropertyKeyExpression.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\LabeledStatement.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\Literal.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\LogicalExpression.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\MemberExpression.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\NewExpression.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\ObjectExpression.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\Program.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\Property.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\RegExpLiteral.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\ReturnStatement.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\SequenceExpression.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\Statement.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\SwitchCase.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\SwitchStatement.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\SyntaxNode.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\SyntaxNodes.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\ThisExpression.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\ThrowStatement.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\TryStatement.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\UnaryExpression.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\UpdateExpression.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\VariableDeclaration.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\VariableDeclarator.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\WhileStatement.cs" />
+    <Compile Include="Libs\Jint\Parser\Ast\WithStatement.cs" />
+    <Compile Include="Libs\Jint\Parser\Comment.cs" />
+    <Compile Include="Libs\Jint\Parser\IFunctionDeclaration.cs" />
+    <Compile Include="Libs\Jint\Parser\IFunctionScope.cs" />
+    <Compile Include="Libs\Jint\Parser\IVariableScope.cs" />
+    <Compile Include="Libs\Jint\Parser\JavascriptParser.cs" />
+    <Compile Include="Libs\Jint\Parser\Loc.cs" />
+    <Compile Include="Libs\Jint\Parser\Messages.cs" />
+    <Compile Include="Libs\Jint\Parser\ParserException.cs" />
+    <Compile Include="Libs\Jint\Parser\ParserExtensions.cs" />
+    <Compile Include="Libs\Jint\Parser\ParserOptions.cs" />
+    <Compile Include="Libs\Jint\Parser\Position.cs" />
+    <Compile Include="Libs\Jint\Parser\State.cs" />
+    <Compile Include="Libs\Jint\Parser\Token.cs" />
+    <Compile Include="Libs\Jint\Runtime\Arguments.cs" />
+    <Compile Include="Libs\Jint\Runtime\Completion.cs" />
+    <Compile Include="Libs\Jint\Runtime\Descriptors\PropertyDescriptor.cs" />
+    <Compile Include="Libs\Jint\Runtime\Descriptors\Specialized\ClrAccessDescriptor.cs" />
+    <Compile Include="Libs\Jint\Runtime\Descriptors\Specialized\FieldInfoDescriptor.cs" />
+    <Compile Include="Libs\Jint\Runtime\Descriptors\Specialized\PropertyInfoDescriptor.cs" />
+    <Compile Include="Libs\Jint\Runtime\Environments\Binding.cs" />
+    <Compile Include="Libs\Jint\Runtime\Environments\DeclarativeEnvironmentRecord.cs" />
+    <Compile Include="Libs\Jint\Runtime\Environments\EnvironmentRecord.cs" />
+    <Compile Include="Libs\Jint\Runtime\Environments\ExecutionContext.cs" />
+    <Compile Include="Libs\Jint\Runtime\Environments\LexicalEnvironment.cs" />
+    <Compile Include="Libs\Jint\Runtime\Environments\ObjectEnvironmentRecord.cs" />
+    <Compile Include="Libs\Jint\Runtime\ExpressionIntepreter.cs" />
+    <Compile Include="Libs\Jint\Runtime\Interop\ClrFunctionInstance.cs" />
+    <Compile Include="Libs\Jint\Runtime\Interop\DefaultTypeConverter.cs" />
+    <Compile Include="Libs\Jint\Runtime\Interop\DelegateWrapper.cs" />
+    <Compile Include="Libs\Jint\Runtime\Interop\GetterFunctionInstance.cs" />
+    <Compile Include="Libs\Jint\Runtime\Interop\IObjectConverter.cs" />
+    <Compile Include="Libs\Jint\Runtime\Interop\IObjectWrapper.cs" />
+    <Compile Include="Libs\Jint\Runtime\Interop\ITypeConverter.cs" />
+    <Compile Include="Libs\Jint\Runtime\Interop\MethodInfoFunctionInstance.cs" />
+    <Compile Include="Libs\Jint\Runtime\Interop\NamespaceReference.cs" />
+    <Compile Include="Libs\Jint\Runtime\Interop\ObjectWrapper .cs" />
+    <Compile Include="Libs\Jint\Runtime\Interop\SetterFunctionInstance.cs" />
+    <Compile Include="Libs\Jint\Runtime\Interop\TypeReference.cs" />
+    <Compile Include="Libs\Jint\Runtime\Interop\TypeReferencePrototype.cs" />
+    <Compile Include="Libs\Jint\Runtime\JavaScriptException.cs" />
+    <Compile Include="Libs\Jint\Runtime\References\Reference.cs" />
+    <Compile Include="Libs\Jint\Runtime\StatementInterpreter.cs" />
+    <Compile Include="Libs\Jint\Runtime\StatementsCountOverflowException.cs" />
+    <Compile Include="Libs\Jint\Runtime\TypeConverter.cs" />
+    <Compile Include="Libs\Jint\StrictModeScope.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Bson\BsonBinaryType.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Bson\BsonBinaryWriter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Bson\BsonObjectId.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Bson\BsonReader.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Bson\BsonToken.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Bson\BsonType.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Bson\BsonWriter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\ConstructorHandling.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Converters\BinaryConverter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Converters\BsonObjectIdConverter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Converters\CustomCreationConverter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Converters\DataSetConverter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Converters\DataTableConverter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Converters\DateTimeConverterBase.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Converters\DiscriminatedUnionConverter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Converters\EntityKeyMemberConverter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Converters\ExpandoObjectConverter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Converters\IsoDateTimeConverter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Converters\JavaScriptDateTimeConverter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Converters\JsonValueConverter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Converters\KeyValuePairConverter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Converters\RegexConverter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Converters\StringEnumConverter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Converters\VersionConverter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Converters\XmlNodeConverter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\DateFormatHandling.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\DateParseHandling.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\DateTimeZoneHandling.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\DefaultValueHandling.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\FloatFormatHandling.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\FloatParseHandling.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\FormatterAssemblyStyle.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Formatting.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\IJsonLineInfo.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\JsonArrayAttribute.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\JsonConstructorAttribute.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\JsonContainerAttribute.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\JsonConvert.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\JsonConverter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\JsonConverterAttribute.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\JsonConverterCollection.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\JsonDictionaryAttribute.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\JsonException.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\JsonExtensionDataAttribute.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\JsonIgnoreAttribute.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\JsonObjectAttribute.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\JsonPosition.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\JsonPropertyAttribute.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\JsonReader.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\JsonReaderException.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\JsonSerializationException.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\JsonSerializer.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\JsonSerializerSettings.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\JsonTextReader.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\JsonTextWriter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\JsonToken.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\JsonValidatingReader.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\JsonWriter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\JsonWriterException.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Linq\Extensions.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Linq\IJEnumerable.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Linq\JArray.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Linq\JConstructor.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Linq\JContainer.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Linq\JEnumerable.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Linq\JObject.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Linq\JProperty.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Linq\JPropertyDescriptor.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Linq\JPropertyKeyedCollection.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Linq\JRaw.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Linq\JsonPath\ArrayIndexFilter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Linq\JsonPath\ArrayMultipleIndexFilter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Linq\JsonPath\ArraySliceFilter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Linq\JsonPath\FieldFilter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Linq\JsonPath\FieldMultipleFilter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Linq\JsonPath\JPath.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Linq\JsonPath\PathFilter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Linq\JsonPath\QueryExpression.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Linq\JsonPath\QueryFilter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Linq\JsonPath\ScanFilter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Linq\JToken.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Linq\JTokenEqualityComparer.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Linq\JTokenReader.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Linq\JTokenType.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Linq\JTokenWriter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Linq\JValue.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\MemberSerialization.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\MissingMemberHandling.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\NullValueHandling.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\ObjectCreationHandling.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\PreserveReferencesHandling.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\ReferenceLoopHandling.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Required.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Schema\Extensions.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Schema\JsonSchema.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Schema\JsonSchemaBuilder.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Schema\JsonSchemaConstants.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Schema\JsonSchemaException.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Schema\JsonSchemaGenerator.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Schema\JsonSchemaModel.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Schema\JsonSchemaModelBuilder.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Schema\JsonSchemaNode.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Schema\JsonSchemaNodeCollection.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Schema\JsonSchemaResolver.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Schema\JsonSchemaType.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Schema\JsonSchemaWriter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Schema\UndefinedSchemaIdHandling.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Schema\ValidationEventArgs.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Schema\ValidationEventHandler.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\SerializationBinder.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\CachedAttributeGetter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\CamelCasePropertyNamesContractResolver.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\DefaultContractResolver.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\DefaultReferenceResolver.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\DefaultSerializationBinder.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\DiagnosticsTraceWriter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\DynamicValueProvider.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\ErrorContext.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\ErrorEventArgs.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\ExpressionValueProvider.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\IContractResolver.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\IReferenceResolver.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\ITraceWriter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\IValueProvider.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\JsonArrayContract.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\JsonContainerContract.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\JsonContract.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\JsonDictionaryContract.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\JsonDynamicContract.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\JsonFormatterConverter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\JsonISerializableContract.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\JsonLinqContract.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\JsonObjectContract.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\JsonPrimitiveContract.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\JsonProperty.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\JsonPropertyCollection.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\JsonSerializerInternalBase.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\JsonSerializerInternalReader.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\JsonSerializerInternalWriter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\JsonSerializerProxy.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\JsonStringContract.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\JsonTypeReflector.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\LateBoundMetadataTypeAttribute.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\MemoryTraceWriter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\ObjectConstructor.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\OnErrorAttribute.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\ReflectionValueProvider.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\TraceJsonReader.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Serialization\TraceJsonWriter.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\SpecialPropertyHandling.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\StringEscapeHandling.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\TraceLevel.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\TypeNameHandling.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\Base64Encoder.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\BidirectionalDictionary.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\CollectionUtils.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\CollectionWrapper.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\ConvertUtils.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\DateTimeParser.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\DateTimeUtils.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\DictionaryWrapper.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\DynamicProxy.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\DynamicProxyMetaObject.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\DynamicReflectionDelegateFactory.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\DynamicUtils.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\DynamicWrapper.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\EnumUtils.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\EnumValue.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\EnumValues.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\ExpressionReflectionDelegateFactory.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\FSharpUtils.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\ILGeneratorExtensions.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\ImmutableCollectionsUtils.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\JavaScriptUtils.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\LateBoundReflectionDelegateFactory.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\LinqBridge.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\MathUtils.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\MethodCall.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\MiscellaneousUtils.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\ReflectionDelegateFactory.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\ReflectionUtils.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\StringBuffer.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\StringReference.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\StringUtils.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\ThreadSafeStore.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\TypeExtensions.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\Utilities\ValidationUtils.cs" />
+    <Compile Include="Libs\Newtonsoft.Json\WriteState.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\AbstractSortedAggregationOperation.cs" />
-    <Compile Include="Libs\Rhino.Etl\Operations\MailOperation.cs" />
+    <Compile Include="Libs\Rhino.Etl\Operations\MailLoadOperation.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\ParallelUnionAllOperation.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\SortMergeJoinOperation.cs" />
     <Compile Include="Libs\SharpZLib\BZip2\BZip2.cs" />
@@ -1186,7 +1473,7 @@
     <Compile Include="Libs\Rhino.Etl\Operations\IOperation.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\JoinOperation.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\JoinType.cs" />
-    <Compile Include="Libs\Rhino.Etl\Operations\LogOperation.cs" />
+    <Compile Include="Libs\Rhino.Etl\Operations\LogLoadOperation.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\MultiThreadedBranchingOperation.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\NestedLoopsJoinOperation.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\OperationStatistics.cs" />
@@ -1275,7 +1562,8 @@
     <Compile Include="Operations\Validate\TypeConversionValidatorOperation.cs" />
     <Compile Include="Operations\Validate\ValidationOperation.cs" />
     <Compile Include="Operations\CollectorOperation.cs" />
-    <Compile Include="Operations\ConsoleOperation.cs" />
+    <Compile Include="Operations\ConsoleLoadOperation.cs" />
+    <Compile Include="Processes\ElasticSearchLoadOperation.cs" />
     <Compile Include="Processes\EntityDeleteProcess.cs" />
     <Compile Include="Operations\EntityDetectDeletes.cs" />
     <Compile Include="Processes\EntityKeysProcess.cs" />
@@ -1694,6 +1982,7 @@
     <None Include="Libs\FileHelpers\Diagrams\RunTimeRecords.cd" />
     <None Include="Libs\FileHelpers\Diagrams\StorageDiagrams.cd" />
     <None Include="Libs\FileHelpers\FileHelpers.snk" />
+    <None Include="Libs\Newtonsoft.Json\LICENSE.md" />
     <None Include="Libs\RazorEngine\ClassDiagram.cd" />
     <None Include="Libs\RazorEngine\packages.config" />
     <None Include="Libs\SharpZLib\obj\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
@@ -1735,18 +2024,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>IF $(PlatformName) == x86 (
-    XCOPY /s /y "$(SolutionDir)packages\Noesis.Javascript.0.7.1.0\NativeBinaries\net40\x86\Microsoft.VC100.CRT\*.*" "$(TargetDir)"
-) ELSE (
-    XCOPY /s /y "$(SolutionDir)packages\Noesis.Javascript.0.7.1.0\NativeBinaries\net40\amd64\Microsoft.VC100.CRT\*.*" "$(TargetDir)" 
-)
-
-IF EXIST c:\code\JunkDrawer XCOPY /s /y $(TargetDir)Transformalize.dll c:\code\JunkDrawer\Assemblies\$(PlatformName)
-
-    if not exist "$(TargetDir)x86" md "$(TargetDir)x86"
-    xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\x86\*.*" "$(TargetDir)x86"
-    if not exist "$(TargetDir)amd64" md "$(TargetDir)amd64"
-    xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\amd64\*.*" "$(TargetDir)amd64"</PostBuildEvent>
+    <PostBuildEvent>IF EXIST c:\code\JunkDrawer XCOPY /s /y $(TargetDir)Transformalize.dll c:\code\JunkDrawer\Assemblies\
+</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

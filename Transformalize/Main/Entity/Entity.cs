@@ -34,7 +34,7 @@ namespace Transformalize.Main {
     public class Entity {
 
         private readonly int _tflBatchId;
-        private List<AbstractOperation> _operations = new List<AbstractOperation>();
+        private List<IOperation> _operations = new List<IOperation>();
         private IEnumerable<Row> _rows = new List<Row>();
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
@@ -71,6 +71,7 @@ namespace Transformalize.Main {
         public Dictionary<string, IEnumerable<Row>> InternalOutput { get; set; }
         public List<NamedConnection> Output { get; set; }
         public List<NamedConnection> Input { get; set; }
+        public bool DetectChanges { get; set; }
 
         public Entity(int batchId) {
             _tflBatchId = batchId;
@@ -86,6 +87,7 @@ namespace Transformalize.Main {
             InternalOutput = new Dictionary<string, IEnumerable<Row>>();
             Output = new List<NamedConnection>();
             Input = new List<NamedConnection>();
+            DetectChanges = true;
         }
 
         public IEnumerable<Row> Rows {
@@ -93,7 +95,7 @@ namespace Transformalize.Main {
             set { _rows = value; }
         }
 
-        public List<AbstractOperation> Operations {
+        public List<IOperation> Operations {
             get { return _operations; }
             set { _operations = value; }
         }

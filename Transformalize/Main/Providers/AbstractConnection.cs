@@ -61,7 +61,6 @@ namespace Transformalize.Main.Providers {
         public string Folder { get; set; }
         public ErrorMode ErrorMode { get; set; }
         public string Delimiter { get; set; }
-        public string Host { get; set; }
         public string LineDelimiter { get; set; }
         public string SearchPattern { get; set; }
         public SearchOption SearchOption { get; set; }
@@ -113,7 +112,6 @@ namespace Transformalize.Main.Providers {
             File = element.File;
             Folder = element.Folder;
             Delimiter = element.Delimiter;
-            Host = element.Host;
             LineDelimiter = element.LineDelimiter;
             ErrorMode = (ErrorMode)Enum.Parse(typeof(ErrorMode), element.ErrorMode, true);
             SearchOption = (SearchOption)Enum.Parse(typeof(SearchOption), element.SearchOption, true);
@@ -339,7 +337,7 @@ namespace Transformalize.Main.Providers {
         }
 
         public bool CanDetectChanges(Entity entity) {
-            return entity.Version != null && entity.Version.Input && IsDatabase;
+            return entity.DetectChanges && entity.Version != null && entity.Version.Input && IsDatabase;
         }
 
         //concrete class should override these

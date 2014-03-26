@@ -76,20 +76,10 @@ namespace Transformalize.Test.Integration {
         }
 
         [Test]
-        public void TestJunkSummary() {
-            var options = new Options { Mode = "default" };
-            var process = ProcessFactory.Create("http://config.mwf.local/junk-summary.xml", options);
-            process.PipelineThreading = PipelineThreading.SingleThreaded;
-            var results = process.Run();
-        }
-
-        [Test]
         public void TestDatabaseSizes() {
-            var process = ProcessFactory.Create("http://config.mwf.local/database-sizes.xml");
-            process.PipelineThreading = PipelineThreading.SingleThreaded;
+            const string instructions = @"C:\Code\TransformalizeConfiguration\TransformalizeConfiguration\App_Data\DBA\DatabaseSize\DatabaseSize1.xml";
+            var process = ProcessFactory.Create(instructions, new Options() { Mode="default", LogLevel = LogLevel.Debug});
             var results = process.Run();
-
-            System.Diagnostics.Process.Start(process.OutputConnection.File);
         }
 
         [Test]

@@ -17,8 +17,8 @@
  */
 
 using System;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using Transformalize.Libs.Newtonsoft.Json;
+using Transformalize.Libs.Newtonsoft.Json.Linq;
 
 namespace Transformalize.Libs.Avro.Schema
 {
@@ -162,7 +162,7 @@ namespace Transformalize.Libs.Avro.Schema
 
                 return ParseJson(j, names, encspace);
             }
-            catch (Newtonsoft.Json.JsonSerializationException ex)
+            catch (JsonSerializationException ex)
             {
                 throw new SchemaParseException("Could not parse. " + ex.Message + Environment.NewLine + json);
             }
@@ -190,7 +190,7 @@ namespace Transformalize.Libs.Avro.Schema
         public override string ToString()
         {
             System.IO.StringWriter sw = new System.IO.StringWriter();
-            Newtonsoft.Json.JsonTextWriter writer = new Newtonsoft.Json.JsonTextWriter(sw);
+            JsonTextWriter writer = new JsonTextWriter(sw);
 
             if (this is PrimitiveSchema || this is UnionSchema)
             {

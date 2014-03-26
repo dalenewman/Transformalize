@@ -17,8 +17,8 @@
  */
 
 using System;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using Transformalize.Libs.Newtonsoft.Json;
+using Transformalize.Libs.Newtonsoft.Json.Linq;
 
 namespace Transformalize.Libs.Avro.Schema
 {

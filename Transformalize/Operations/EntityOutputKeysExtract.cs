@@ -23,6 +23,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
+using Transformalize.Libs.NLog.Internal;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
@@ -31,6 +32,7 @@ using Transformalize.Main.Providers;
 namespace Transformalize.Operations {
 
     public class EntityOutputKeysExtract : InputCommandOperation {
+
         private readonly AbstractConnection _connection;
         private readonly Entity _entity;
         private readonly List<string> _fields;
@@ -64,14 +66,16 @@ namespace Transformalize.Operations {
                 FROM {2} e WITH (NOLOCK);
             ";
 
-            var rowVersion = string.Empty;
-            if (_entity.Version != null && !VersionIsPrimaryKey()) {
-                _fields.Add(_entity.Version.Alias);
-                rowVersion = ", e." + _connection.Enclose(_entity.Version.Alias);
-            }
-
             var selectKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias(_connection.L, _connection.R).Write(", e.", false);
-            return string.Format(sqlPattern, selectKeys, rowVersion, _connection.Enclose(_entity.OutputName()));
+            return string.Format(sqlPattern, selectKeys, PrepareVersion(), _connection.Enclose(_entity.OutputName()));
+        }
+
+        private string PrepareVersion() {
+            if (_entity.Version == null || VersionIsPrimaryKey() || _fields.Contains(_entity.Version.Alias))
+                return string.Empty;
+
+            _fields.Add(_entity.Version.Alias);
+            return ", e." + _connection.Enclose(_entity.Version.Alias);
         }
 
         private bool VersionIsPrimaryKey() {
@@ -93,15 +97,9 @@ namespace Transformalize.Operations {
             builder.AppendLine(_connection.WriteTemporaryTable("@KEYS", _key));
             builder.AppendLine(SqlTemplates.BatchInsertValues(50, "@KEYS", _key, _entity.InputKeys, _connection));
 
-            var rowVersion = string.Empty;
-            if (_entity.Version != null && !VersionIsPrimaryKey()) {
-                _fields.Add(_entity.Version.Alias);
-                rowVersion = ", e." + _connection.Enclose(_entity.Version.Alias);
-            }
-
             var selectKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias(_connection.L, _connection.R).Write(", e.", false);
             var joinKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias(_connection.L, _connection.R).Set("e", "k").Write(" AND ");
-            return string.Format(sqlPattern, builder, selectKeys, rowVersion, _connection.Enclose(_entity.OutputName()), joinKeys);
+            return string.Format(sqlPattern, builder, selectKeys, PrepareVersion(), _connection.Enclose(_entity.OutputName()), joinKeys);
         }
     }
 }

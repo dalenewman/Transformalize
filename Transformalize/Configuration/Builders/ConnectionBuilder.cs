@@ -120,9 +120,5 @@ namespace Transformalize.Configuration.Builders {
             return _processBuilder.Entity(name);
         }
 
-        public ConnectionBuilder Host(string host) {
-            _connection.Host = host;
-            return this;
-        }
     }
 }

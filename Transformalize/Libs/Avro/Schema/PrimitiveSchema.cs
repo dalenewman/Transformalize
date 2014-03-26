@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-using Newtonsoft.Json;
+using Transformalize.Libs.Newtonsoft.Json;
 
 namespace Transformalize.Libs.Avro.Schema
 {

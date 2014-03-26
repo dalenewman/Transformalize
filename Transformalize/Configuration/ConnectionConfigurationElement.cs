@@ -26,7 +26,6 @@ using System.IO;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.FileHelpers.Enums;
-using Transformalize.Main.Providers;
 
 namespace Transformalize.Configuration {
     [HasSelfValidation]
@@ -51,7 +50,6 @@ namespace Transformalize.Configuration {
         private const string START = "start";
         private const string END = "end";
         private const string ERROR_MODE = "error-mode";
-        private const string HOST = "host";
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
         [ConfigurationProperty(NAME, IsRequired = true)]
@@ -132,12 +130,6 @@ namespace Transformalize.Configuration {
         public string Delimiter {
             get { return this[DELIMITER] as string; }
             set { this[DELIMITER] = value; }
-        }
-
-        [ConfigurationProperty(HOST, IsRequired = false, DefaultValue = ",")]
-        public string Host {
-            get { return this[HOST] as string; }
-            set { this[HOST] = value; }
         }
 
         [ConfigurationProperty(LINE_DELIMITER, IsRequired = false, DefaultValue = "")]

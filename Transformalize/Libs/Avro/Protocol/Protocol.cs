@@ -19,9 +19,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Newtonsoft.Json.Linq;
 using Transformalize.Libs.Avro.CodeGen;
 using Transformalize.Libs.Avro.Schema;
+using Transformalize.Libs.Newtonsoft.Json;
+using Transformalize.Libs.Newtonsoft.Json.Linq;
 
 namespace Transformalize.Libs.Avro.Protocol
 {
@@ -160,7 +161,7 @@ namespace Transformalize.Libs.Avro.Protocol
         {
             using (System.IO.StringWriter sw = new System.IO.StringWriter())
             {
-                using (Newtonsoft.Json.JsonTextWriter writer = new Newtonsoft.Json.JsonTextWriter(sw))
+                using (JsonTextWriter writer = new JsonTextWriter(sw))
                 {
                     #if(DEBUG)
                     writer.Formatting = Newtonsoft.Json.Formatting.Indented;
@@ -178,7 +179,7 @@ namespace Transformalize.Libs.Avro.Protocol
         /// </summary>
         /// <param name="writer">JSON writer</param>
         /// <param name="names">list of named schemas already written</param>
-        internal void WriteJson(Newtonsoft.Json.JsonTextWriter writer, SchemaNames names)
+        internal void WriteJson(JsonTextWriter writer, SchemaNames names)
         {
             writer.WriteStartObject();
 

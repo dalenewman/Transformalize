@@ -48,9 +48,10 @@ namespace Transformalize.Main {
             _process = process;
         }
 
-        public AbstractOperation Create(Field field, TransformConfigurationElement element, IParameters parameters) {
+        public IOperation Create(Field field, TransformConfigurationElement element, IParameters parameters) {
 
             Func<Row, bool> shouldRun = row => true;
+            var toTimeZone = string.IsNullOrEmpty(element.ToTimeZone) ? _process.TimeZone : element.ToTimeZone;
             var results = _validator.Validate(element);
             if (!results.IsValid) {
                 _log.Error("There is a problem with the transform element for field {0}.", field.Alias);
@@ -139,6 +140,20 @@ namespace Transformalize.Main {
                         element.Separator
                     ) { ShouldRun = shouldRun };
 
+                case "now":
+                    return new PartialProcessOperation()
+                        .Register(
+                            new NowOperation(
+                                inKey,
+                                outKey
+                                ) {ShouldRun = shouldRun})
+                        .Register(
+                            new TimeZoneOperation(
+                                outKey,
+                                outKey,
+                                "UTC",
+                                toTimeZone)
+                            );
                 case "remove":
                     return new RemoveOperation(
                         inKey,
@@ -328,7 +343,6 @@ namespace Transformalize.Main {
                     ) { ShouldRun = shouldRun };
 
                 case "timezone":
-                    var toTimeZone = string.IsNullOrEmpty(element.ToTimeZone) ? _process.TimeZone : element.ToTimeZone;
                     return new TimeZoneOperation(
                         inKey,
                         outKey,
@@ -546,8 +560,22 @@ namespace Transformalize.Main {
             if (parameters.ContainsKey(parameter)) {
                 return parameters[parameter];
             }
+
             return new Parameter(parameter, parameter);
         }
 
+    }
+
+    public class NowOperation : ShouldRunOperation {
+        public NowOperation(string inKey, string outKey)
+            : base(inKey, outKey) {
+        }
+
+        public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
+            foreach (var row in rows) {
+                row[OutKey] = DateTime.UtcNow;
+                yield return row;
+            }
+        }
     }
 }

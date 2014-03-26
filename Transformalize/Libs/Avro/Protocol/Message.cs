@@ -17,8 +17,9 @@
  */
 
 using System;
-using Newtonsoft.Json.Linq;
 using Transformalize.Libs.Avro.Schema;
+using Transformalize.Libs.Newtonsoft.Json;
+using Transformalize.Libs.Newtonsoft.Json.Linq;
 
 namespace Transformalize.Libs.Avro.Protocol
 {
@@ -134,7 +135,7 @@ namespace Transformalize.Libs.Avro.Protocol
         /// <param name="writer">writer</param>
         /// <param name="names">list of names written</param>
         /// <param name="encspace">enclosing namespace</param>
-        internal void writeJson(Newtonsoft.Json.JsonTextWriter writer, SchemaNames names, string encspace)
+        internal void writeJson(JsonTextWriter writer, SchemaNames names, string encspace)
         {
             writer.WriteStartObject();
             JsonHelper.writeIfNotNullOrEmpty(writer, "doc", this.Doc);

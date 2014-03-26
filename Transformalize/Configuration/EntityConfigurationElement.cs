@@ -45,8 +45,16 @@ namespace Transformalize.Configuration {
         private const string SQL_OVERRIDE = "sql-override";
         private const string OUTPUT = "output";
         private const string INPUT = "input";
+        private const string DETECT_CHANGES = "detect-changes";
 
         public IOperation InputOperation { get; set; }
+
+        [ConfigurationProperty(DETECT_CHANGES, IsRequired = false, DefaultValue = true)]
+        public bool DetectChanges {
+            get { return (bool)this[DETECT_CHANGES]; }
+            set { this[DETECT_CHANGES] = value; }
+        }
+
 
         [ConfigurationProperty(SCHEMA, IsRequired = false, DefaultValue = "dbo")]
         public string Schema {

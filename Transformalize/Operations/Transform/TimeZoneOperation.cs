@@ -4,6 +4,7 @@ using System.Threading;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.NLog.Internal;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
 
@@ -16,8 +17,8 @@ namespace Transformalize.Operations.Transform {
         public TimeZoneOperation(string inKey, string outKey, string fromTimeZone, string toTimeZone)
             : base(inKey, outKey) {
 
-            fromTimeZone = GuardTimeZone(fromTimeZone, "UTC");
-            toTimeZone = GuardTimeZone(toTimeZone, TimeZoneInfo.Local.Id);
+            fromTimeZone = Common.GuardTimeZone(fromTimeZone, "UTC");
+            toTimeZone = Common.GuardTimeZone(toTimeZone, TimeZoneInfo.Local.Id);
 
             var fromTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(fromTimeZone);
             _toTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(toTimeZone);
@@ -25,21 +26,6 @@ namespace Transformalize.Operations.Transform {
             _adjustment = _toTimeZoneInfo.BaseUtcOffset - fromTimeZoneInfo.BaseUtcOffset;
             _daylightAdjustment = _adjustment.Add(new TimeSpan(0, 1, 0, 0));
 
-        }
-
-        private string GuardTimeZone(string timeZone, string defaultTimeZone) {
-            var result = timeZone;
-            if (timeZone == string.Empty) {
-                result = defaultTimeZone;
-                Debug("Defaulting From TimeZone to {0}.", defaultTimeZone);
-            } else {
-                if (!TimeZoneInfo.GetSystemTimeZones().Any(tz => tz.Id.Equals(timeZone))) {
-                    Error("From Timezone Id {0} is invalid.", timeZone);
-                    LogManager.Flush();
-                    Environment.Exit(1);
-                }
-            }
-            return result;
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

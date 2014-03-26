@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using Transformalize.Libs.Newtonsoft.Json;
 
 namespace Transformalize.Libs.Avro.Schema
 {
@@ -94,7 +95,7 @@ namespace Transformalize.Libs.Avro.Schema
         /// <param name="writer">JSON writer</param>
         /// <param name="names">list of named schemas already written</param>
         /// <param name="encspace">enclosing namespace of the schema</param>
-        internal void WriteJson(Newtonsoft.Json.JsonTextWriter writer, SchemaNames names, string encspace)
+        internal void WriteJson(JsonTextWriter writer, SchemaNames names, string encspace)
         {
             if (null != this.Name)  // write only if not anonymous
             {

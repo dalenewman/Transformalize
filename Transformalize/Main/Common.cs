@@ -26,16 +26,35 @@ using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
+using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main {
-    public static class Common {
+
+    public static class Common
+    {
+
+        private static readonly Logger Log = LogManager.GetLogger(string.Empty);
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private const string APPLICATION_FOLDER = @"\Tfl\";
         private static readonly char[] Slash = new[] { '\\' };
+
+        public static string GuardTimeZone(string timeZone, string defaultTimeZone) {
+            var result = timeZone;
+            if (timeZone == string.Empty) {
+                result = defaultTimeZone;
+                Log.Debug("Defaulting From TimeZone to {0}.", defaultTimeZone);
+            } else {
+                if (!TimeZoneInfo.GetSystemTimeZones().Any(tz => tz.Id.Equals(timeZone))) {
+                    Log.Error("From Timezone Id {0} is invalid.", timeZone);
+                    LogManager.Flush();
+                    Environment.Exit(1);
+                }
+            }
+            return result;
+        }
 
         public static Dictionary<string, byte> Validators = new Dictionary<string, byte> {
             {"containscharacters", 1},

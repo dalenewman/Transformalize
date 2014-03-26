@@ -18,7 +18,8 @@
 
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
+using Transformalize.Libs.Newtonsoft.Json;
+using Transformalize.Libs.Newtonsoft.Json.Linq;
 
 namespace Transformalize.Libs.Avro.Schema
 {
@@ -200,7 +201,7 @@ namespace Transformalize.Libs.Avro.Schema
         /// <param name="writer">JSON writer</param>
         /// <param name="names">list of named schemas already written</param>
         /// <param name="encspace">enclosing namespace of the record schema</param>
-        protected internal override void WriteJsonFields(Newtonsoft.Json.JsonTextWriter writer, SchemaNames names, string encspace)
+        protected internal override void WriteJsonFields(JsonTextWriter writer, SchemaNames names, string encspace)
         {
             base.WriteJsonFields(writer, names, encspace);
 
