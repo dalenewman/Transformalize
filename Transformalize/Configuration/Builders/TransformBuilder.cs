@@ -324,5 +324,11 @@ namespace Transformalize.Configuration.Builders {
         public RelationshipBuilder Relationship() {
             return _fieldBuilder == null ? _branchBuilder.Relationship() : _fieldBuilder.Relationship();
         }
+
+        public TransformBuilder ExternalScript(string name) {
+            var script = new TransformScriptConfigurationElement() { Name = name };
+            _transform.Scripts.Add(script);
+            return this;
+        }
     }
 }

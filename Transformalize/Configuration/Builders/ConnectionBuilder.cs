@@ -120,5 +120,8 @@ namespace Transformalize.Configuration.Builders {
             return _processBuilder.Entity(name);
         }
 
+        public ProcessBuilder Script(string name, string fileName) {
+            return _processBuilder.Script(name, fileName);
+        }
     }
 }

@@ -1,3 +1,4 @@
+using System.IO;
 using System.IO.Pipes;
 using Transformalize.Main;
 
@@ -99,6 +100,12 @@ namespace Transformalize.Configuration.Builders {
             var script = new ScriptConfigurationElement() { Name = name };
             _process.Scripts.Add(script);
             return new ScriptBuilder(this, script);
+        }
+
+        public ProcessBuilder Script(string name, string fileName) {
+            var script = new ScriptConfigurationElement() { Name = name, File = fileName };
+            _process.Scripts.Add(script);
+            return this;
         }
 
         public ProcessBuilder Star(string star) {

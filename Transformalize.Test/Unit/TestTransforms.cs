@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration.Builders;
@@ -299,6 +300,118 @@ namespace Transformalize.Test.Unit {
 
             Assert.AreEqual(expected, output[0]["o1"]);
         }
+
+        [Test]
+        public void JavascriptWithDates()
+        {
+            const string minuteDiff = @"
+                function minuteDiff(orderStatus, start, end) {
+                    if (orderStatus == 'Completed' || orderStatus == 'Problematic') {
+
+                        var answer = 0;
+
+                        if (start.getFullYear() != 9999 && end.getFullYear() != 9999) {
+                            var ms = Math.abs(start - end);
+                            answer = Math.round((ms / 1000) / 60);
+                        }
+
+                        return answer > 60 ? 60 : answer;
+
+                    } else {
+                        return 0;
+                    }
+                }";
+
+            var input = new RowsBuilder()
+                .Row("OrderStatus", "Completed")
+                    .Field("StartDate", DateTime.Now.AddMinutes(-30.0))
+                    .Field("EndDate", DateTime.Now)
+                .Row("OrderStatus","Problematic")
+                    .Field("StartDate", DateTime.Now.AddMinutes(-29.0))
+                    .Field("EndDate", DateTime.Now)
+                .Row("OrderStatus", "Problematic")
+                    .Field("StartDate", DateTime.Now.AddMinutes(-78.0))
+                    .Field("EndDate", DateTime.Now)
+                .Row("OrderStatus", "x")
+                    .Field("StartDate", DateTime.Now.AddMinutes(-20.0))
+                    .Field("EndDate", DateTime.Now)
+                .ToOperation();
+
+            var scripts = new Dictionary<string, Script>() { { "script", new Script("script", minuteDiff, "") } };
+            var parameters = new ParametersBuilder().Parameters("OrderStatus","StartDate","EndDate").ToParameters();
+            var javascript = new JavascriptOperation("o1", "minuteDiff(OrderStatus,StartDate,EndDate);", scripts, parameters);
+            var output = TestOperation(input, javascript);
+
+            Assert.AreEqual(30, output[0]["o1"]);
+            Assert.AreEqual(29, output[1]["o1"]);
+            Assert.AreEqual(60, output[2]["o1"]);
+            Assert.AreEqual(0, output[3]["o1"]);
+        }
+
+        [Test]
+        public void JavascriptInProcess()
+        {
+            var script = Path.GetTempFileName();
+            File.WriteAllText(script,@"
+                function minuteDiff(orderStatus, start, end) {
+                    if (orderStatus == 'Completed' || orderStatus == 'Problematic') {
+
+                        var answer = 0;
+
+                        if (start.getFullYear() != 9999 && end.getFullYear() != 9999) {
+                            var ms = Math.abs(start - end);
+                            answer = Math.round((ms / 1000) / 60);
+                        }
+
+                        return answer > 60 ? 60 : answer;
+
+                    } else {
+                        return 0;
+                    }
+                }");
+
+            var input = new RowsBuilder()
+                .Row("OrderStatus", "Completed")
+                    .Field("StartDate", DateTime.Now.AddMinutes(-30.0))
+                    .Field("EndDate", DateTime.Now)
+                .Row("OrderStatus", "Problematic")
+                    .Field("StartDate", DateTime.Now.AddMinutes(-29.0))
+                    .Field("EndDate", DateTime.Now)
+                .Row("OrderStatus", "Problematic")
+                    .Field("StartDate", DateTime.Now.AddMinutes(-78.0))
+                    .Field("EndDate", DateTime.Now)
+                .Row("OrderStatus", "x")
+                    .Field("StartDate", DateTime.Now.AddMinutes(-20.0))
+                    .Field("EndDate", DateTime.Now)
+                .ToOperation();
+
+            var config = new ProcessBuilder("test")
+                .Connection("input").Provider("internal")
+                .Connection("output").Provider("internal")
+                .Script("script", script)
+                .Entity("test").InputOperation(input)
+                    .Field("OrderStatus")
+                    .Field("StartDate").DateTime()
+                    .Field("EndDate").DateTime()
+                    .CalculatedField("MinuteDiff").Int()
+                        .Transform("javascript")
+                            .ExternalScript("script")
+                            .Script("minuteDiff(OrderStatus,StartDate,EndDate)")
+                                .Parameter("OrderStatus")
+                                .Parameter("StartDate")
+                                .Parameter("EndDate")
+            .Process();
+
+            var process = ProcessFactory.Create(config);
+
+            var output = process.Run()["test"].ToList();
+    
+            Assert.AreEqual(30, output[0]["MinuteDiff"]);
+            Assert.AreEqual(29, output[1]["MinuteDiff"]);
+            Assert.AreEqual(60, output[2]["MinuteDiff"]);
+            Assert.AreEqual(0, output[3]["MinuteDiff"]);
+        }
+
 
         [Test]
         public void Join() {

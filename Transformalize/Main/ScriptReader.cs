@@ -25,7 +25,7 @@ namespace Transformalize.Main {
             var scripts = new Dictionary<string, Script>();
 
             foreach (var script in scriptElements) {
-                var fileInfo = new FileInfo(path.TrimEnd(_s) + @"\" + script.File);
+                var fileInfo = path.Equals(string.Empty) ? new FileInfo(script.File) : new FileInfo(path.TrimEnd(_s) + @"\" + script.File);
                 if (!fileInfo.Exists) {
                     _log.Warn("Missing Script: {0}.", fileInfo.FullName);
                 } else {
