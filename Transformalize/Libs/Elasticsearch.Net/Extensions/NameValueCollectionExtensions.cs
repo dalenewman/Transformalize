@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
 
-namespace Elasticsearch.Net
+namespace Transformalize.Libs.Elasticsearch.Net.Extensions
 {
 	internal static class NameValueCollectionExtensions
 	{

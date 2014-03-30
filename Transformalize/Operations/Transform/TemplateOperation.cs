@@ -12,19 +12,17 @@ namespace Transformalize.Operations.Transform {
 
         private readonly StringBuilder _builder = new StringBuilder();
         private readonly Logger _log = LogManager.GetLogger(string.Empty);
+        private readonly string _outType;
         private readonly string _templateModelType;
         private readonly IParameters _parameters;
         private readonly Dictionary<string, object> _dictionaryContext = new Dictionary<string, object>();
         private readonly DynamicViewBag _dynamicViewBagContext = new DynamicViewBag();
 
-        public TemplateOperation(string outKey, string template, string templateModelType, IEnumerable<KeyValuePair<string, Template>> templates, IParameters parameters)
+        public TemplateOperation(string outKey, string outType, string template, string templateModelType, IEnumerable<KeyValuePair<string, Template>> templates, IParameters parameters)
             : base(string.Empty, outKey) {
+            _outType = Common.ToSimpleType(outType);
             _templateModelType = templateModelType;
             _parameters = parameters;
-
-            //if (_parameters.ContainsKey(outKey)) {
-            //    _parameters.Remove(outKey);
-            //}
 
             CombineTemplates(templates, ref _builder);
             _builder.Append(template);
@@ -61,14 +59,14 @@ namespace Transformalize.Operations.Transform {
             foreach (var pair in _parameters) {
                 _dictionaryContext[pair.Value.Name] = pair.Value.Value ?? row[pair.Key];
             }
-            row[OutKey] = Razor.Run(OutKey, _dictionaryContext);
+            row[OutKey] = Common.ConversionMap[_outType](Razor.Run(OutKey, _dictionaryContext).Trim());
         }
 
         private void RunWithDynamic(Row row) {
             foreach (var pair in _parameters) {
                 _dynamicViewBagContext.SetValue(pair.Value.Name, pair.Value.Value ?? row[pair.Key]);
             }
-            row[OutKey] = Razor.Run(OutKey, _dynamicViewBagContext);
+            row[OutKey] = Common.ConversionMap[_outType](Razor.Run(OutKey, _dynamicViewBagContext).Trim());
         }
 
     }

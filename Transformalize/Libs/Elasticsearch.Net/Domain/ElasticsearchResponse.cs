@@ -1,18 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.IO;
-using System.Net;
-using Elasticsearch.Net;
-using Elasticsearch.Net.Connection;
-using Elasticsearch.Net.Serialization;
+using Transformalize.Libs.Elasticsearch.Net.Connection;
+using Transformalize.Libs.Elasticsearch.Net.Exceptions;
+using Transformalize.Libs.Elasticsearch.Net.Extensions;
+using Transformalize.Libs.Elasticsearch.Net.Serialization;
 
-
-namespace Elasticsearch.Net
+namespace Transformalize.Libs.Elasticsearch.Net.Domain
 {
 	public class ElasticsearchResponse
 	{

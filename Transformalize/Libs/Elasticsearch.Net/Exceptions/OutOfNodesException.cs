@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace Elasticsearch.Net.Exceptions
+namespace Transformalize.Libs.Elasticsearch.Net.Exceptions
 {
 	public class OutOfNodesException : Exception
 	{

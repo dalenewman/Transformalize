@@ -1,7 +1,4 @@
-using System;
-using System.Linq;
-
-namespace Elasticsearch.Net.Serialization
+namespace Transformalize.Libs.Elasticsearch.Net.Serialization
 {
 	public interface IElasticsearchSerializer
 	{

@@ -1,7 +1,7 @@
 using System;
 using System.Net;
 
-namespace Elasticsearch.Net.Connection
+namespace Transformalize.Libs.Elasticsearch.Net.Exceptions
 {
 	public class ConnectionException : System.Exception
 	{

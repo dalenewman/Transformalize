@@ -1,13 +1,11 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-
 ///Generated File Please Do Not Edit Manually
-	
-namespace Elasticsearch.Net
+using Transformalize.Libs.Elasticsearch.Net.Domain;
+using Transformalize.Libs.Elasticsearch.Net.Extensions;
+
+namespace Transformalize.Libs.Elasticsearch.Net
 {
 	///<summary>
 	///Raw operations with elasticsearch

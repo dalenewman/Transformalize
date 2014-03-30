@@ -1,7 +1,7 @@
 using System;
-using Elasticsearch.Net.Connection;
+using Transformalize.Libs.Elasticsearch.Net.Connection;
 
-namespace Elasticsearch.Net.ConnectionPool
+namespace Transformalize.Libs.Elasticsearch.Net.ConnectionPool
 {
 	public interface IConnectionPool
 	{

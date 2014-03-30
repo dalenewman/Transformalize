@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using Transformalize.Libs.Elasticsearch.Net.Domain;
 
-namespace Elasticsearch.Net.Connection
+namespace Transformalize.Libs.Elasticsearch.Net.Connection
 {
 	public interface IConnection
 	{

@@ -21,17 +21,51 @@
 #endregion
 
 using System.IO;
+using System.Media;
 using NUnit.Framework;
 using Transformalize.Configuration.Builders;
 using Transformalize.Main;
+using Transformalize.Main.Providers.ElasticSearch;
 
 namespace Transformalize.Test.Integration {
 
     [TestFixture]
     public class ElasticSearchTests {
 
+        //[Ignore("Because you need to have Elastic Search for this to pass.")]
         [Test]
-        public void TestInit() {
+        public void TestConnectionChecker() {
+
+            var cfg = new ProcessBuilder("est")
+                .Connection("output").Provider("elasticsearch").Server("localhost").Port(9200)
+                .Process();
+            var process = ProcessFactory.Create(cfg);
+
+            var checker = new ElasticSearchConnectionChecker();
+            
+            Assert.IsTrue(checker.Check(process.OutputConnection));
+        }
+
+        //[Ignore("Because you need to have Elastic Search for this to pass.")]
+        [Test]
+        public void TestEntityRecordsExists() {
+
+            var cfg = new ProcessBuilder("est")
+                .Connection("output").Provider("elasticsearch").Server("localhost").Port(9200)
+                .Entity("entity")
+                    .Field("id").Int32().PrimaryKey()
+                    .Field("name")
+                .Process();
+
+            var process = ProcessFactory.Create(cfg);
+
+            var result = new ElasticSearchEntityRecordsExist().RecordsExist(process.OutputConnection, process.Entities[0]);
+
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void TestAddRecords() {
 
             var file = Path.GetTempFileName();
             File.WriteAllText(file, "id,name\n1,One\n2,Two\n3,Three\n4,Four\n5,Five\n6,six");
@@ -48,6 +82,21 @@ namespace Transformalize.Test.Integration {
 
             var process = ProcessFactory.Create(cfg);
             var output = process.Run();
+        }
+
+        [Test]
+        public void TestDeleteRecords() {
+
+            var cfg = new ProcessBuilder("est")
+                .Connection("output").Provider("elasticsearch").Server("localhost").Port(9200)
+                .Entity("entity")
+                    .Field("id").Int32().PrimaryKey()
+                    .Field("name")
+                .Process();
+
+            var process = ProcessFactory.Create(cfg);
+
+            new ElasticSearchEntityDropper().Drop(process.OutputConnection, process.Entities[0]);
         }
 
     }

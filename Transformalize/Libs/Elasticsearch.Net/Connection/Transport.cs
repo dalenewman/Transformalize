@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
-using Elasticsearch.Net.ConnectionPool;
-using Elasticsearch.Net.Exceptions;
-using Elasticsearch.Net.Providers;
-using Elasticsearch.Net.Serialization;
+using Transformalize.Libs.Elasticsearch.Net.ConnectionPool;
+using Transformalize.Libs.Elasticsearch.Net.Domain;
+using Transformalize.Libs.Elasticsearch.Net.Exceptions;
+using Transformalize.Libs.Elasticsearch.Net.Extensions;
+using Transformalize.Libs.Elasticsearch.Net.Providers;
+using Transformalize.Libs.Elasticsearch.Net.Serialization;
 
-namespace Elasticsearch.Net.Connection
+namespace Transformalize.Libs.Elasticsearch.Net.Connection
 {
 	public class Transport : ITransport
 	{

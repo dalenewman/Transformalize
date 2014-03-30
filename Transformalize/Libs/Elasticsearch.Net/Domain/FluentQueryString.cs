@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
-namespace Elasticsearch.Net
+namespace Transformalize.Libs.Elasticsearch.Net.Domain
 {
 	/// <summary>
 	/// Used by the raw client to compose querystring parameters in a matter that still exposes some xmldocs

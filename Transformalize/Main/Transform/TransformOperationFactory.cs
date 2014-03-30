@@ -299,6 +299,7 @@ namespace Transformalize.Main {
 
                     return new TemplateOperation(
                         outKey,
+                        outType,
                         element.Template,
                         element.Model,
                         templates,

@@ -1,6 +1,7 @@
 using System.Linq;
+using Transformalize.Libs.Elasticsearch.Net.Extensions;
 
-namespace Elasticsearch.Net.Serialization
+namespace Transformalize.Libs.Elasticsearch.Net.Serialization
 {
 	public class ElasticsearchDefaultSerializer : IElasticsearchSerializer
 	{

@@ -36,6 +36,7 @@
     <Prefer32Bit>false</Prefer32Bit>
     <Optimize>true</Optimize>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.AnalysisServices, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
@@ -997,6 +998,12 @@
     <Compile Include="Main\Providers\AnalysisServices\AnalysisServicesEntityDropper.cs" />
     <Compile Include="Main\Providers\AnalysisServices\AnalysisServicesDependencies.cs" />
     <Compile Include="Main\Providers\ConnectionChecker.cs" />
+    <Compile Include="Main\Providers\ElasticSearch\ElasticSearchClient.cs" />
+    <Compile Include="Main\Providers\ElasticSearch\ElasticSearchClientFactory.cs" />
+    <Compile Include="Main\Providers\ElasticSearch\ElasticSearchConnectionChecker.cs" />
+    <Compile Include="Main\Providers\ElasticSearch\ElasticSearchEntityDropper.cs" />
+    <Compile Include="Main\Providers\ElasticSearch\ElasticSearchEntityExists.cs" />
+    <Compile Include="Main\Providers\ElasticSearch\ElasticSearchEntityRecordsExist.cs" />
     <Compile Include="Main\Providers\FalseEntityCreator.cs" />
     <Compile Include="Main\Providers\FalseEntityExists.cs" />
     <Compile Include="Main\Providers\File\FileEntityCreator.cs" />
@@ -1075,7 +1082,6 @@
     <Compile Include="Main\Item.cs" />
     <Compile Include="Main\Map.cs" />
     <Compile Include="Main\Entity\Entity.cs" />
-    <Compile Include="Main\Entity\EntitiesDropper.cs" />
     <Compile Include="Main\Entity\EntityTransformParametersReader.cs" />
     <Compile Include="Main\Entity\IEntityAutoFieldReader.cs" />
     <Compile Include="Main\Entity\IEntityBatchReader.cs" />

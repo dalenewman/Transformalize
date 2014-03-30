@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Specialized;
+using Transformalize.Libs.Elasticsearch.Net.Domain;
 
-namespace Elasticsearch.Net.Connection
+namespace Transformalize.Libs.Elasticsearch.Net.Connection
 {
 	public interface IConnectionConfiguration : 
 		IConnectionConfiguration<IConnectionConfiguration>

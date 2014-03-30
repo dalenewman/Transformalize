@@ -20,10 +20,8 @@
 
 #endregion
 
-namespace Transformalize.Main.Providers
-{
-    public interface ITableExists
-    {
+namespace Transformalize.Main.Providers {
+    public interface ITableExists {
         bool Exists(string schema, string name);
     }
 }

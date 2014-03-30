@@ -1,14 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Elasticsearch.Net.Connection;
 ///Generated File Please Do Not Edit Manually
-using Elasticsearch.Net.Serialization;
+using System;
+using System.Threading.Tasks;
+using Transformalize.Libs.Elasticsearch.Net.Connection;
+using Transformalize.Libs.Elasticsearch.Net.Domain;
+using Transformalize.Libs.Elasticsearch.Net.Serialization;
 
-namespace Elasticsearch.Net
+namespace Transformalize.Libs.Elasticsearch.Net
 {
 	///<summary>
 	///Raw operations with elasticsearch

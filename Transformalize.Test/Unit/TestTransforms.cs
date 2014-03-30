@@ -27,6 +27,7 @@ using System.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration.Builders;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
+using Transformalize.Libs.NLog;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
 using Transformalize.Operations.Transform;
@@ -309,7 +310,6 @@ namespace Transformalize.Test.Unit {
                     if (orderStatus == 'Completed' || orderStatus == 'Problematic') {
 
                         var answer = 0;
-
                         if (start.getFullYear() != 9999 && end.getFullYear() != 9999) {
                             var ms = Math.abs(start - end);
                             answer = Math.round((ms / 1000) / 60);
@@ -402,7 +402,7 @@ namespace Transformalize.Test.Unit {
                                 .Parameter("EndDate")
             .Process();
 
-            var process = ProcessFactory.Create(config);
+            var process = ProcessFactory.Create(config, new Options() { LogLevel = LogLevel.Debug});
 
             var output = process.Run()["test"].ToList();
     
@@ -627,9 +627,19 @@ namespace Transformalize.Test.Unit {
             var input = new RowsBuilder().Row("input", 2).Field("out", "").ToOperation();
             var templates = new List<KeyValuePair<string, Template>>();
             var parameters = new ParametersBuilder().Parameter("x", 3).Parameter("input").ToParameters();
-            var templateOperation = new TemplateOperation("out", "@{var result = Model.input * Model.x;}@result", "dynamic", templates, parameters);
+            var templateOperation = new TemplateOperation("out", "string", "@{var result = Model.input * Model.x;}@result", "dynamic", templates, parameters);
             var output = TestOperation(input, templateOperation);
             Assert.AreEqual("6", output[0]["out"]);
+        }
+
+        [Test]
+        public void TemplateInt() {
+            var input = new RowsBuilder().Row("input", 2).Field("out", "").ToOperation();
+            var templates = new List<KeyValuePair<string, Template>>();
+            var parameters = new ParametersBuilder().Parameter("x", 3).Parameter("input").ToParameters();
+            var templateOperation = new TemplateOperation("out","int", "@{var result = Model.input * Model.x;}@result", "dynamic", templates, parameters);
+            var output = TestOperation(input, templateOperation);
+            Assert.AreEqual(6, output[0]["out"]);
         }
 
         [Test]

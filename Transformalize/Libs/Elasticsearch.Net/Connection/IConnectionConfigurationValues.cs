@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Specialized;
-using Elasticsearch.Net.ConnectionPool;
-using Elasticsearch.Net.Serialization;
+using Transformalize.Libs.Elasticsearch.Net.ConnectionPool;
+using Transformalize.Libs.Elasticsearch.Net.Domain;
+using Transformalize.Libs.Elasticsearch.Net.Serialization;
 
-namespace Elasticsearch.Net.Connection
+namespace Transformalize.Libs.Elasticsearch.Net.Connection
 {
 	public interface IConnectionConfigurationValues
 	{

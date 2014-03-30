@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
+using Transformalize.Libs.Elasticsearch.Net.Domain;
 
-namespace Elasticsearch.Net.Connection
+namespace Transformalize.Libs.Elasticsearch.Net.Connection
 {
 	public class ElasticsearchResponseTracer : IDisposable
 	{

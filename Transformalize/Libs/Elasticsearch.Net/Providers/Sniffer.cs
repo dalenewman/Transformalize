@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
-using Elasticsearch.Net.Serialization;
+using Transformalize.Libs.Elasticsearch.Net.Extensions;
+using Transformalize.Libs.Elasticsearch.Net.Serialization;
 
-namespace Elasticsearch.Net.Providers
+namespace Transformalize.Libs.Elasticsearch.Net.Providers
 {
 	public static class Sniffer
 	{

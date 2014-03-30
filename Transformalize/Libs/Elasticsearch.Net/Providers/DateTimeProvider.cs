@@ -1,7 +1,6 @@
 ﻿using System;
-using Elasticsearch.Net.Connection;
 
-namespace Elasticsearch.Net.Providers
+namespace Transformalize.Libs.Elasticsearch.Net.Providers
 {
 	public class DateTimeProvider : IDateTimeProvider
 	{

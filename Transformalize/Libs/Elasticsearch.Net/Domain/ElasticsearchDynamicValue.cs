@@ -5,12 +5,11 @@ using System.ComponentModel;
 using System.Dynamic;
 using System.Globalization;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using Microsoft.CSharp.RuntimeBinder;
 using Binder = Microsoft.CSharp.RuntimeBinder.Binder;
 
-namespace Elasticsearch.Net
+namespace Transformalize.Libs.Elasticsearch.Net.Domain
 {
 	public class ElasticsearchDynamicValue : DynamicObject, IEquatable<ElasticsearchDynamicValue>, IConvertible
 	{

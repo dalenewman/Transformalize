@@ -1,12 +1,13 @@
-namespace Transformalize.Main.Providers.ElasticSearch
-{
+using System;
+
+namespace Transformalize.Main.Providers.ElasticSearch {
     public class ElasticSearchDependencies : AbstractConnectionDependencies {
         public ElasticSearchDependencies()
             : base(
                 new FalseTableQueryWriter(),
-                new FalseConnectionChecker(),
-                new FalseEntityRecordsExist(),
-                new FalseEntityDropper(),
+                new ElasticSearchConnectionChecker(),
+                new ElasticSearchEntityRecordsExist(),
+                new ElasticSearchEntityDropper(),
                 new FalseEntityCreator(),
                 new FalseViewWriter(),
                 new FalseTflWriter(),

@@ -6,7 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
 
-namespace Elasticsearch.Net
+namespace Transformalize.Libs.Elasticsearch.Net.Domain
 {
 	/// <summary>
 	/// A dictionary that supports dynamic access.

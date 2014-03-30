@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Transformalize.Libs.Elasticsearch.Net.Domain;
 
-namespace Elasticsearch.Net.Serialization
+namespace Transformalize.Libs.Elasticsearch.Net.Serialization
 {
 	public class Stringifier : IStringifier
 	{

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
-using System.Globalization;
 
-namespace Elasticsearch.Net
+namespace Transformalize.Libs.Elasticsearch.Net.Extensions
 {
 	internal static class Extensions
 	{

@@ -69,7 +69,7 @@ namespace Transformalize.Main.Providers.SqlServer {
                         {"DECIMAL", "System.Decimal"},
                         {"NUMERIC", "System.Decimal"},
                         {"MONEY", "System.Decimal"},
-                        {"FLOAT", "System.Decimal"},
+                        {"FLOAT", "System.Double"},
                         {"INT", "System.Int32"},
                         {"CHAR", "System.String"},
                         {"NCHAR", "System.String"},
@@ -92,7 +92,7 @@ namespace Transformalize.Main.Providers.SqlServer {
 
         public string GetDataType(Field field) {
             var length = (new[] { "string", "char", "binary", "byte[]", "rowversion", "varbinary" }).Any(t => t == field.SimpleType) ? string.Concat("(", field.Length, ")") : string.Empty;
-            var dimensions = (new[] { "decimal", "double" }).Any(s => s.Equals(field.SimpleType)) ? string.Format("({0},{1})", field.Precision, field.Scale) : string.Empty;
+            var dimensions = (new[] { "decimal" }).Any(s => s.Equals(field.SimpleType)) ? string.Format("({0},{1})", field.Precision, field.Scale) : string.Empty;
             var notNull = field.NotNull ? " NOT NULL" : string.Empty;
             var surrogate = field.Identity ? " IDENTITY(1,1) " : string.Empty;
             var sqlDataType = Types[field.SimpleType];

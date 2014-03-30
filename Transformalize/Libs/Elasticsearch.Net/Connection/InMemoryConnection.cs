@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
+﻿using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Transformalize.Libs.Elasticsearch.Net.Domain;
 
-namespace Elasticsearch.Net.Connection
+namespace Transformalize.Libs.Elasticsearch.Net.Connection
 {
 	/// <summary>
 	/// 

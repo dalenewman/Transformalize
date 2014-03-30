@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Elasticsearch.Net.Connection;
-using Elasticsearch.Net.Exceptions;
-using Elasticsearch.Net.Serialization;
+using Transformalize.Libs.Elasticsearch.Net.Connection;
+using Transformalize.Libs.Elasticsearch.Net.Domain;
+using Transformalize.Libs.Elasticsearch.Net.Extensions;
+using Transformalize.Libs.Elasticsearch.Net.Serialization;
 
-namespace Elasticsearch.Net
+namespace Transformalize.Libs.Elasticsearch.Net
 {
 	public partial class ElasticsearchClient : IElasticsearchClient
 	{

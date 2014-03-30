@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Elasticsearch.Net.Connection;
-using Elasticsearch.Net.Providers;
+using Transformalize.Libs.Elasticsearch.Net.Connection;
+using Transformalize.Libs.Elasticsearch.Net.Extensions;
+using Transformalize.Libs.Elasticsearch.Net.Providers;
 
-namespace Elasticsearch.Net.ConnectionPool
+namespace Transformalize.Libs.Elasticsearch.Net.ConnectionPool
 {
 	public class SniffingConnectionPool : StaticConnectionPool
 	{
