@@ -25,12 +25,16 @@ using System.Data;
 using System.Data.Common;
 using System.IO;
 using Transformalize.Configuration;
+using Transformalize.Extensions;
 using Transformalize.Libs.Dapper;
 using Transformalize.Libs.FileHelpers.Enums;
+using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main.Providers {
 
     public abstract class AbstractConnection {
+
+        private readonly Logger _log = LogManager.GetLogger(string.Empty);
         private string _l = string.Empty;
         private string _r = string.Empty;
 
@@ -78,14 +82,12 @@ namespace Transformalize.Main.Providers {
 
         public ProviderType Type { get; set; }
 
-        public string L
-        {
+        public string L {
             get { return _l; }
             set { _l = value; }
         }
 
-        public string R
-        {
+        public string R {
             get { return _r; }
             set { _r = value; }
         }
@@ -202,25 +204,7 @@ namespace Transformalize.Main.Providers {
             return isReady;
         }
 
-        public int NextBatchId(string processName) {
-            var tflEntity = new Entity(1) { Name = "TflBatch", Alias = "TflBatch", Schema = "dbo", PrimaryKey = new Fields() { new Field(FieldType.PrimaryKey) { Name = "TflBatchId" } } };
-            if (!RecordsExist(tflEntity)) {
-                return 1;
-            }
-
-            using (var cn = GetConnection()) {
-                cn.Open();
-                var cmd = cn.CreateCommand();
-                cmd.CommandText = "SELECT ISNULL(MAX(TflBatchId),0)+1 FROM TflBatch WHERE ProcessName = @ProcessName;";
-
-                var process = cmd.CreateParameter();
-                process.ParameterName = "@ProcessName";
-                process.Value = processName;
-
-                cmd.Parameters.Add(process);
-                return (int)cmd.ExecuteScalar();
-            }
-        }
+        public abstract int NextBatchId(string processName);
 
         public void AddParameter(IDbCommand command, string name, object val) {
             var parameter = command.CreateParameter();
@@ -291,7 +275,7 @@ namespace Transformalize.Main.Providers {
         }
 
         public void DropPrimaryKey(Entity entity) {
-            var primaryKey = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).FieldType(entity.IsMaster() ? FieldType.MasterKey : FieldType.PrimaryKey).Alias(L,R).Asc().Values();
+            var primaryKey = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).FieldType(entity.IsMaster() ? FieldType.MasterKey : FieldType.PrimaryKey).Alias(L, R).Asc().Values();
             using (var cn = GetConnection()) {
                 cn.Open();
                 cn.Execute(TableQueryWriter.DropPrimaryKey(entity.OutputName(), primaryKey, entity.Schema));
@@ -299,7 +283,7 @@ namespace Transformalize.Main.Providers {
         }
 
         public void AddPrimaryKey(Entity entity) {
-            var primaryKey = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).FieldType(entity.IsMaster() ? FieldType.MasterKey : FieldType.PrimaryKey).Alias(L,R).Asc().Values();
+            var primaryKey = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).FieldType(entity.IsMaster() ? FieldType.MasterKey : FieldType.PrimaryKey).Alias(L, R).Asc().Values();
             using (var cn = GetConnection()) {
                 cn.Open();
                 cn.Execute(TableQueryWriter.AddPrimaryKey(entity.OutputName(), primaryKey, entity.Schema));
@@ -340,13 +324,65 @@ namespace Transformalize.Main.Providers {
             return entity.DetectChanges && entity.Version != null && entity.Version.Input && IsDatabase;
         }
 
+        public Entity TflBatchEntity(string processName) {
+            return new Entity(1) { Name = "TflBatch", ProcessName = processName, Alias = "TflBatch", Schema = "dbo", PrimaryKey = new Fields() { new Field(FieldType.PrimaryKey) { Name = "TflBatchId" } } };
+        }
+
+        public bool TflBatchExists(string processName) {
+            return RecordsExist(TflBatchEntity(processName));
+        }
+
         //concrete class should override these
         public virtual string KeyRangeQuery(Entity entity) { throw new NotImplementedException(); }
         public virtual string KeyTopQuery(Entity entity, int top) { throw new NotImplementedException(); }
         public virtual string KeyQuery(Entity entity) { throw new NotImplementedException(); }
+        public virtual string KeyAllQuery(Entity entity) { throw new NotImplementedException(); }
 
-        public virtual string KeyAllQuery(Entity entity) {
-            throw new NotImplementedException();
+        public virtual void WriteEndVersion(AbstractConnection input, Entity entity) {
+            //default implementation for relational database
+            if (entity.Inserts + entity.Updates > 0) {
+                using (var cn = GetConnection()) {
+                    cn.Open();
+
+                    var cmd = cn.CreateCommand();
+
+                    if (!input.CanDetectChanges(entity)) {
+                        cmd.CommandText = @"
+                            INSERT INTO TflBatch(TflBatchId, ProcessName, EntityName, TflUpdate, Inserts, Updates, Deletes)
+                            VALUES(@TflBatchId, @ProcessName, @EntityName, @TflUpdate, @Inserts, @Updates, @Deletes);
+                        ";
+                    } else {
+                        var field = entity.Version.SimpleType.Replace("rowversion", "Binary").Replace("byte[]", "Binary") + "Version";
+                        cmd.CommandText = string.Format(@"
+                            INSERT INTO TflBatch(TflBatchId, ProcessName, EntityName, {0}, TflUpdate, Inserts, Updates, Deletes)
+                            VALUES(@TflBatchId, @ProcessName, @EntityName, @End, @TflUpdate, @Inserts, @Updates, @Deletes);
+                        ", field);
+                    }
+
+                    cmd.CommandType = CommandType.Text;
+
+                    AddParameter(cmd, "@TflBatchId", entity.TflBatchId);
+                    AddParameter(cmd, "@ProcessName", entity.ProcessName);
+                    AddParameter(cmd, "@EntityName", entity.Alias);
+                    AddParameter(cmd, "@TflUpdate", DateTime.Now);
+                    AddParameter(cmd, "@Inserts", entity.Inserts);
+                    AddParameter(cmd, "@Updates", entity.Updates);
+                    AddParameter(cmd, "@Deletes", entity.Deletes);
+
+                    if (input.CanDetectChanges(entity)) {
+                        var end = new DefaultFactory().Convert(entity.End, entity.Version.SimpleType);
+                        AddParameter(cmd, "@End", end);
+                    }
+
+                    _log.Debug(cmd.CommandText);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            if (entity.Delete) {
+                _log.Info("Processed {0} insert{1}, {2} update{3}, and {4} delete{5} in {6}.", entity.Inserts, entity.Inserts.Plural(), entity.Updates, entity.Updates.Plural(), entity.Deletes, entity.Deletes.Plural(), entity.Alias);
+            } else {
+                _log.Info("Processed {0} insert{1}, and {2} update{3} in {4}.", entity.Inserts, entity.Inserts.Plural(), entity.Updates, entity.Updates.Plural(), entity.Alias);
+            }
         }
 
         public string Enclose(string field) {

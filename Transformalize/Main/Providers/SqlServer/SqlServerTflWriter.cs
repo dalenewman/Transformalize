@@ -28,7 +28,7 @@ namespace Transformalize.Main.Providers.SqlServer {
 
         public void Initialize(Process process) {
 
-            if (!new SqlServerTableExists(process.OutputConnection).Exists("dbo", "TflBatch")) {
+            if (!process.OutputConnection.TflBatchExists(process.Name)) {
                 Execute(process.OutputConnection, CreateTable());
                 Execute(process.OutputConnection, CreateIndex());
                 Debug("Created TflBatch.");

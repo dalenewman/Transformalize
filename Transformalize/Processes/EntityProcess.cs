@@ -224,7 +224,7 @@ namespace Transformalize.Processes {
                 }
             } else {
                 // not handling things by input yet, so just use first
-                new DatabaseEntityVersionWriter(_process, _entity).WriteEndVersion(_entity.Input.First().Connection);
+                _process.OutputConnection.WriteEndVersion(_entity.Input.First().Connection, _entity);
             }
 
             base.PostProcessing();

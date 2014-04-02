@@ -33,6 +33,9 @@ namespace Transformalize.Main.Providers.AnalysisServices {
         public override string ServerProperty { get { return "Data Source"; } }
         public override string TrustedProperty { get { return string.Empty; } }
         public override string PersistSecurityInfoProperty { get { return string.Empty; } }
+        public override int NextBatchId(string processName) {
+            return 1;
+        }
 
         public AnalysisServicesConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {

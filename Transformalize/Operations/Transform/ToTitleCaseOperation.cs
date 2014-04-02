@@ -9,7 +9,7 @@ namespace Transformalize.Operations.Transform {
 
         public ToTitleCaseOperation(string inKey, string outKey)
             : base(inKey, outKey) {
-            _textInfo = System.Threading.Thread.CurrentThread.CurrentCulture.TextInfo;
+            _textInfo = Thread.CurrentThread.CurrentCulture.TextInfo;
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

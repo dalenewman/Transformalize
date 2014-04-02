@@ -76,6 +76,28 @@ namespace Transformalize.Main.Providers.MySql {
 
         }
 
+        public override int NextBatchId(string processName)
+        {
+            var tflEntity = new Entity(1) { Name = "TflBatch", Alias = "TflBatch", Schema = "dbo", PrimaryKey = new Fields() { new Field(FieldType.PrimaryKey) { Name = "TflBatchId" } } };
+            if (!RecordsExist(tflEntity)) {
+                return 1;
+            }
+
+            using (var cn = GetConnection()) {
+                cn.Open();
+                var cmd = cn.CreateCommand();
+                cmd.CommandText = "SELECT ISNULL(MAX(TflBatchId),0)+1 FROM TflBatch WHERE ProcessName = @ProcessName;";
+
+                var process = cmd.CreateParameter();
+                process.ParameterName = "@ProcessName";
+                process.Value = processName;
+
+                cmd.Parameters.Add(process);
+                return (int)cmd.ExecuteScalar();
+            }
+
+        }
+
         public override string KeyRangeQuery(Entity entity) {
 
             const string sql = @"

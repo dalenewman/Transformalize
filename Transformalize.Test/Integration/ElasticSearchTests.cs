@@ -21,9 +21,9 @@
 #endregion
 
 using System.IO;
-using System.Media;
 using NUnit.Framework;
 using Transformalize.Configuration.Builders;
+using Transformalize.Libs.NLog;
 using Transformalize.Main;
 using Transformalize.Main.Providers.ElasticSearch;
 
@@ -39,7 +39,7 @@ namespace Transformalize.Test.Integration {
             var cfg = new ProcessBuilder("est")
                 .Connection("output").Provider("elasticsearch").Server("localhost").Port(9200)
                 .Process();
-            var process = ProcessFactory.Create(cfg);
+            var process = ProcessFactory.Create(cfg, new Options() { LogLevel = LogLevel.Debug });
 
             var checker = new ElasticSearchConnectionChecker();
             
@@ -64,6 +64,7 @@ namespace Transformalize.Test.Integration {
             Assert.IsTrue(result);
         }
 
+        //[Ignore("Because you need to have Elastic Search for this to pass.")]
         [Test]
         public void TestAddRecords() {
 
@@ -84,6 +85,7 @@ namespace Transformalize.Test.Integration {
             var output = process.Run();
         }
 
+        //[Ignore("Because you need to have Elastic Search for this to pass.")]
         [Test]
         public void TestDeleteRecords() {
 
@@ -98,6 +100,47 @@ namespace Transformalize.Test.Integration {
 
             new ElasticSearchEntityDropper().Drop(process.OutputConnection, process.Entities[0]);
         }
+
+        //[Ignore("Because you need to have Elastic Search for this to pass.")]
+        [Test]
+        public void TestGetNextBatchId() {
+
+            var cfg = new ProcessBuilder("est")
+                .Connection("output").Provider("elasticsearch").Server("localhost").Port(9200)
+                .Entity("entity")
+                    .Field("id").Int32().PrimaryKey()
+                    .Field("name")
+                .Process();
+
+            var process = ProcessFactory.Create(cfg);
+
+            Assert.AreEqual(3, process.Entities[0].TflBatchId);
+        }
+
+        //[Ignore("Because you need to have Elastic Search for this to pass.")]
+        [Test]
+        public void TestWriteEndVersion() {
+
+            var file = Path.GetTempFileName();
+            File.WriteAllText(file, "id,name\n1,One\n2,Two\n3,Three\n4,Four\n5,Five\n6,six");
+
+            var cfg = new ProcessBuilder("est")
+                .Connection("input").Provider("file").File(file).Delimiter(",").Start(2)
+                .Connection("output").Provider("elasticsearch").Server("localhost").Port(9200)
+                .Entity("entity")
+                    .Field("id").Int32().PrimaryKey()
+                    .Field("name")
+                .Process();
+
+            var process = ProcessFactory.Create(cfg, new Options() { Mode = "default"});
+            process.Run();
+
+            process.OutputConnection.WriteEndVersion(process.Connections["input"], process.Entities[0]);
+
+            Assert.AreEqual(2, process.Entities[0].TflBatchId);
+        }
+
+
 
     }
 }

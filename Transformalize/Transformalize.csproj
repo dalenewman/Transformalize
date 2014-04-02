@@ -1089,7 +1089,6 @@
     <Compile Include="Main\Entity\IEntityDropper.cs" />
     <Compile Include="Main\Entity\IEntityExists.cs" />
     <Compile Include="Main\Entity\IEntityRecordsExist.cs" />
-    <Compile Include="Main\Entity\IEntityVersionWriter.cs" />
     <Compile Include="Main\Field\Fields.cs" />
     <Compile Include="Main\Field\Field.cs" />
     <Compile Include="Main\Field\FieldReader.cs" />
@@ -1144,7 +1143,6 @@
     <Compile Include="Main\Providers\DatabaseEntityDropper.cs" />
     <Compile Include="Main\Providers\SqlServer\SqlServerEntityExists.cs" />
     <Compile Include="Main\Providers\SqlServer\SqlServerEntityRecordsExist.cs" />
-    <Compile Include="Main\Providers\DatabaseEntityVersionWriter.cs" />
     <Compile Include="Main\Providers\SqlMapReader.cs" />
     <Compile Include="Main\Providers\SqlServer\SqlServerTableExists.cs" />
     <Compile Include="Main\Providers\SqlServer\SqlServerTableQueryWriter.cs" />

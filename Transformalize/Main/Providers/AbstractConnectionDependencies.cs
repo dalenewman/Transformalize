@@ -1,5 +1,5 @@
-namespace Transformalize.Main.Providers
-{
+namespace Transformalize.Main.Providers {
+
     public abstract class AbstractConnectionDependencies {
 
         public ITableQueryWriter TableQueryWriter { get; private set; }
@@ -29,6 +29,6 @@ namespace Transformalize.Main.Providers
             ViewWriter = viewWriter;
             TflWriter = tflWriter;
             ScriptRunner = scriptRunner;
-            }
+        }
     }
 }

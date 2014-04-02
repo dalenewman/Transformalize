@@ -10,6 +10,9 @@ namespace Transformalize.Main.Providers.Log {
         public override string ServerProperty { get { return string.Empty; } }
         public override string TrustedProperty { get { return string.Empty; } }
         public override string PersistSecurityInfoProperty { get { return string.Empty; } }
+        public override int NextBatchId(string processName) {
+            return 1;
+        }
 
         public LogConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {

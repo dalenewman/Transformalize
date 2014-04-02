@@ -8,14 +8,18 @@ namespace Transformalize.Main.Providers.Mail {
         public override string DatabaseProperty { get { return string.Empty; } }
         public override string ServerProperty { get { return string.Empty; } }
         public override string TrustedProperty { get { return string.Empty; } }
-        public override string PersistSecurityInfoProperty { get { return string.Empty; }}
+        public override string PersistSecurityInfoProperty { get { return string.Empty; } }
+
+        public override int NextBatchId(string processName) {
+            return 1;
+        }
 
         public MailConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
 
             TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
             Type = ProviderType.Mail;
-            }
+        }
 
     }
 }

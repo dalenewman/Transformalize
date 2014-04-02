@@ -97,8 +97,13 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public EntityBuilder DetectChanges(bool detect) {
+            _entity.DetectChanges = detect;
+            return this;
+        }
+
         public IoBuilder Output(string name, string connectionName) {
-            var output = new IoConfigurationElement() { 
+            var output = new IoConfigurationElement() {
                 Name = name,
                 Connection = connectionName
             };
@@ -107,7 +112,7 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public IoBuilder Input(string name, string connectionName) {
-            var input = new IoConfigurationElement() { Name = name, Connection = connectionName};
+            var input = new IoConfigurationElement() { Name = name, Connection = connectionName };
             _entity.Input.Add(input);
             return new IoBuilder(this, input);
         }

@@ -20,12 +20,17 @@
 
 #endregion
 
+using System;
+using System.Data;
 using Transformalize.Configuration;
+using Transformalize.Extensions;
+using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main.Providers.SqlServer {
 
     public class SqlServerConnection : AbstractConnection {
 
+        private readonly Logger _log = LogManager.GetLogger(string.Empty);
         public override string UserProperty { get { return "User Id"; } }
         public override string PasswordProperty { get { return "Password"; } }
         public override string PortProperty { get { return string.Empty; } }
@@ -51,6 +56,27 @@ namespace Transformalize.Main.Providers.SqlServer {
             Views = true;
             Schemas = true;
             MaxDop = true;
+        }
+
+        public override int NextBatchId(string processName) {
+            var tflEntity = new Entity(1) { Name = "TflBatch", Alias = "TflBatch", Schema = "dbo", PrimaryKey = new Fields() { new Field(FieldType.PrimaryKey) { Name = "TflBatchId" } } };
+            if (!RecordsExist(tflEntity)) {
+                return 1;
+            }
+
+            using (var cn = GetConnection()) {
+                cn.Open();
+                var cmd = cn.CreateCommand();
+                cmd.CommandText = "SELECT ISNULL(MAX(TflBatchId),0)+1 FROM TflBatch WHERE ProcessName = @ProcessName;";
+
+                var process = cmd.CreateParameter();
+                process.ParameterName = "@ProcessName";
+                process.Value = processName;
+
+                cmd.Parameters.Add(process);
+                return (int)cmd.ExecuteScalar();
+            }
+
         }
 
         public override string KeyRangeQuery(Entity entity) {

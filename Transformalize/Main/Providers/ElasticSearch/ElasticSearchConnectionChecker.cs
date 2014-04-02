@@ -11,6 +11,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             try {
                 var response = client.Client.Ping();
                 if (response.HttpStatusCode != null && response.HttpStatusCode == 200) {
+                    _log.Debug("Successful ping of {0}.", connection.Name);
                     return true;
                 }
                 _log.Warn("Failed to connect to {0}, {1}. {2}", connection.Name, connection.Server, response.Error.ExceptionMessage);
