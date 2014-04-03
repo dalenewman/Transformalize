@@ -25,7 +25,7 @@
 using System;
 using System.IO;
 
-namespace Mono.Security.Protocol.Tls
+namespace Transformalize.Libs.Mono.Security.Protocol.Tls
 {
 	internal class TlsStream : Stream
 	{

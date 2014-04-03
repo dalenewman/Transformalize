@@ -22,14 +22,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Security.Cryptography;
+using Transformalize.Libs.Mono.Security.Cryptography;
+using Transformalize.Libs.Mono.Security.Protocol.Tls.Handshake;
+using Transformalize.Libs.Mono.Security.X509;
 
-using Mono.Security.Cryptography;
-using Mono.Security.X509;
-using Mono.Security.Protocol.Tls.Handshake;
-
-namespace Mono.Security.Protocol.Tls
+namespace Transformalize.Libs.Mono.Security.Protocol.Tls
 {
 	internal class TlsServerSettings
 	{

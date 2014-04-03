@@ -29,16 +29,12 @@
 using System;
 using System.Globalization;
 using System.IO;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Cryptography;
-using System.Security.Permissions;
 using System.Text;
+using Transformalize.Libs.Mono.Xml;
 
-using Mono.Xml;
-
-namespace Mono.Security.Cryptography {
+namespace Transformalize.Libs.Mono.Security.Cryptography {
 
 	/* File name
 	 * [type][unique name][key number].xml

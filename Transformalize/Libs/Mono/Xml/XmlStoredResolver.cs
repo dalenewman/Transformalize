@@ -14,12 +14,13 @@
 //		"svg10.dtd");
 //	doc.XmlResolver = r;
 //
+
 using System;
 using System.Collections;
 using System.Net;
 using System.Xml;
 
-namespace Mono.Xml
+namespace Transformalize.Libs.Mono.Xml
 {
 	public class XmlStoredResolver : XmlResolver
 	{

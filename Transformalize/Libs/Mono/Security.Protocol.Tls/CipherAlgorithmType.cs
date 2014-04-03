@@ -24,7 +24,7 @@
 
 using System;
 
-namespace Mono.Security.Protocol.Tls
+namespace Transformalize.Libs.Mono.Security.Protocol.Tls
 {
 #if INSIDE_SYSTEM
 	internal

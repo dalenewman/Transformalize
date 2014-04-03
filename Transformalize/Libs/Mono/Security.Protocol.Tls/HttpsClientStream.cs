@@ -27,15 +27,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.IO;
 using System.Net;
-using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using SNS = System.Net.Security;
-using SNCX = System.Security.Cryptography.X509Certificates;
 
-namespace Mono.Security.Protocol.Tls {
+namespace Transformalize.Libs.Mono.Security.Protocol.Tls {
 
 	// Note: DO NOT REUSE this class - instead use SslClientStream
 
@@ -98,21 +94,21 @@ namespace Mono.Security.Protocol.Tls {
  			if (HaveRemoteValidation2Callback)
  				return failed; // The validation already tried the 2.0 callback 
  
-			SNS.RemoteCertificateValidationCallback cb = ServicePointManager.ServerCertificateValidationCallback;
+			System.Net.Security.RemoteCertificateValidationCallback cb = ServicePointManager.ServerCertificateValidationCallback;
 			if (cb != null) {
-				SNS.SslPolicyErrors ssl_errors = 0;
+				System.Net.Security.SslPolicyErrors ssl_errors = 0;
 				foreach (int i in certificateErrors) {
 					if (i == (int)-2146762490) // TODO: is this what happens when the purpose is wrong?
-						ssl_errors |= SNS.SslPolicyErrors.RemoteCertificateNotAvailable;
+						ssl_errors |= System.Net.Security.SslPolicyErrors.RemoteCertificateNotAvailable;
 					else if (i == (int) -2146762481)
-						ssl_errors |= SNS.SslPolicyErrors.RemoteCertificateNameMismatch;
+						ssl_errors |= System.Net.Security.SslPolicyErrors.RemoteCertificateNameMismatch;
 					else
-						ssl_errors |= SNS.SslPolicyErrors.RemoteCertificateChainErrors;
+						ssl_errors |= System.Net.Security.SslPolicyErrors.RemoteCertificateChainErrors;
 				}
-				SNCX.X509Certificate2 cert2 = new SNCX.X509Certificate2 (certificate.GetRawCertData ());
-				SNCX.X509Chain chain = new SNCX.X509Chain ();
+				System.Security.Cryptography.X509Certificates.X509Certificate2 cert2 = new System.Security.Cryptography.X509Certificates.X509Certificate2 (certificate.GetRawCertData ());
+				System.Security.Cryptography.X509Certificates.X509Chain chain = new System.Security.Cryptography.X509Certificates.X509Chain ();
 				if (!chain.Build (cert2))
-					ssl_errors |= SNS.SslPolicyErrors.RemoteCertificateChainErrors;
+					ssl_errors |= System.Net.Security.SslPolicyErrors.RemoteCertificateChainErrors;
 				return cb (_request, cert2, chain, ssl_errors);
 			}
 			return failed;

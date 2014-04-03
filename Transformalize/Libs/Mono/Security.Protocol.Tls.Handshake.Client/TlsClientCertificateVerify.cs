@@ -23,12 +23,10 @@
 //
 
 using System;
-using System.Security.Cryptography.X509Certificates;
-
 using System.Security.Cryptography;
-using Mono.Security.Cryptography;
+using Transformalize.Libs.Mono.Security.Cryptography;
 
-namespace Mono.Security.Protocol.Tls.Handshake.Client
+namespace Transformalize.Libs.Mono.Security.Protocol.Tls.Handshake.Client
 {
 	internal class TlsClientCertificateVerify : HandshakeMessage
 	{

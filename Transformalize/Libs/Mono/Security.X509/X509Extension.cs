@@ -31,9 +31,7 @@ using System;
 using System.Globalization;
 using System.Text;
 
-using Mono.Security;
-
-namespace Mono.Security.X509 {
+namespace Transformalize.Libs.Mono.Security.X509 {
 	/*
 	 * Extension  ::=  SEQUENCE  {
 	 *	extnID      OBJECT IDENTIFIER,

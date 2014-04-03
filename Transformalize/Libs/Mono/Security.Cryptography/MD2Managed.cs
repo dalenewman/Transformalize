@@ -29,7 +29,7 @@
 
 using System;
 
-namespace Mono.Security.Cryptography { 
+namespace Transformalize.Libs.Mono.Security.Cryptography { 
 
 	// References:
 	// a.	RFC1319: The MD2 Message-Digest Algorithm

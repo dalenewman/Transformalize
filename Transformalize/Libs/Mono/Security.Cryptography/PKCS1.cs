@@ -31,7 +31,7 @@
 using System;
 using System.Security.Cryptography;
 
-namespace Mono.Security.Cryptography { 
+namespace Transformalize.Libs.Mono.Security.Cryptography { 
 
 	// References:
 	// a.	PKCS#1: RSA Cryptography Standard 

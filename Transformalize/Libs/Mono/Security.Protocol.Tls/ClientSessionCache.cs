@@ -29,7 +29,7 @@
 using System;
 using System.Collections;
 
-namespace Mono.Security.Protocol.Tls {
+namespace Transformalize.Libs.Mono.Security.Protocol.Tls {
 
 	internal class ClientSessionInfo : IDisposable {
 

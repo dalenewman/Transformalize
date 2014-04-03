@@ -23,17 +23,17 @@
 //
 
 using System;
-using System.Net;
 using System.Collections;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using System.Security.Cryptography;
-using X509Cert = System.Security.Cryptography.X509Certificates;
+using Transformalize.Libs.Mono.Security.X509.Extensions;
+using X509Certificate = Transformalize.Libs.Mono.Security.X509.X509Certificate;
+using X509CertificateCollection = Transformalize.Libs.Mono.Security.X509.X509CertificateCollection;
+using X509Chain = Transformalize.Libs.Mono.Security.X509.X509Chain;
+using X509ChainStatusFlags = Transformalize.Libs.Mono.Security.X509.X509ChainStatusFlags;
+using X509Extension = Transformalize.Libs.Mono.Security.X509.X509Extension;
 
-using Mono.Security.X509;
-using Mono.Security.X509.Extensions;
-
-namespace Mono.Security.Protocol.Tls.Handshake.Client
+namespace Transformalize.Libs.Mono.Security.Protocol.Tls.Handshake.Client
 {
 	internal class TlsServerCertificate : HandshakeMessage
 	{
@@ -228,7 +228,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		{
 			// the leaf is the web server certificate
 			X509Certificate leaf = certificates [0];
-			X509Cert.X509Certificate cert = new X509Cert.X509Certificate (leaf.RawData);
+			System.Security.Cryptography.X509Certificates.X509Certificate cert = new System.Security.Cryptography.X509Certificates.X509Certificate (leaf.RawData);
 
 			ArrayList errors = new ArrayList();
 

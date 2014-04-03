@@ -24,11 +24,14 @@
 
 using System;
 using System.Collections;
-using SSCX = System.Security.Cryptography.X509Certificates;
-using Mono.Security.X509;
-using Mono.Security.X509.Extensions;
+using Transformalize.Libs.Mono.Security.X509.Extensions;
+using X509Certificate = Transformalize.Libs.Mono.Security.X509.X509Certificate;
+using X509CertificateCollection = Transformalize.Libs.Mono.Security.X509.X509CertificateCollection;
+using X509Chain = Transformalize.Libs.Mono.Security.X509.X509Chain;
+using X509ChainStatusFlags = Transformalize.Libs.Mono.Security.X509.X509ChainStatusFlags;
+using X509Extension = Transformalize.Libs.Mono.Security.X509.X509Extension;
 
-namespace Mono.Security.Protocol.Tls.Handshake.Server
+namespace Transformalize.Libs.Mono.Security.Protocol.Tls.Handshake.Server
 {
 	internal class TlsClientCertificate : HandshakeMessage
 	{
@@ -52,7 +55,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 		public override void Update()
 		{
 			foreach (X509Certificate certificate in clientCertificates) {
-				this.Context.ClientSettings.Certificates.Add (new SSCX.X509Certificate (certificate.RawData));
+				this.Context.ClientSettings.Certificates.Add (new System.Security.Cryptography.X509Certificates.X509Certificate (certificate.RawData));
 			}
 		}
 
@@ -159,7 +162,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 		{
 			ServerContext context = (ServerContext)this.Context;
 			AlertDescription description = AlertDescription.BadCertificate;
-			SSCX.X509Certificate client = null;
+			System.Security.Cryptography.X509Certificates.X509Certificate client = null;
 			int[] certificateErrors = null;
 
 			// note: certificate may be null is no certificate is sent
@@ -245,7 +248,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 							break;
 					}
 				}
-				client = new SSCX.X509Certificate (leaf.RawData);
+				client = new System.Security.Cryptography.X509Certificates.X509Certificate (leaf.RawData);
 				certificateErrors = (int[])errors.ToArray (typeof (int));
 			}
 			else
@@ -253,9 +256,9 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 				certificateErrors = new int[0];
 			}
 
-			SSCX.X509CertificateCollection certCollection = new SSCX.X509CertificateCollection ();
+			System.Security.Cryptography.X509Certificates.X509CertificateCollection certCollection = new System.Security.Cryptography.X509Certificates.X509CertificateCollection ();
 			foreach (X509Certificate certificate in certificates) {
-				certCollection.Add (new SSCX.X509Certificate (certificate.RawData));
+				certCollection.Add (new System.Security.Cryptography.X509Certificates.X509Certificate (certificate.RawData));
 			}
 			if (!context.SslStream.RaiseClientCertificateValidation(client, certificateErrors))
 			{

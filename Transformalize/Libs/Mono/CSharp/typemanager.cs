@@ -13,12 +13,11 @@
 //
 
 using System;
-using System.Globalization;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
+using System.Text;
 
-namespace Mono.CSharp
+namespace Transformalize.Libs.Mono.CSharp
 {
 	//
 	// All compiler built-in types (they have to exist otherwise the compiler will not work)

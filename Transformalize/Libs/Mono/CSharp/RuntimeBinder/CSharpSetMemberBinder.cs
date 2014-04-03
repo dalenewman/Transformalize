@@ -27,20 +27,18 @@
 //
 
 using System;
-using System.Dynamic;
 using System.Collections.Generic;
-using System.Linq;
-using Compiler = Mono.CSharp;
+using System.Dynamic;
 
-namespace Microsoft.CSharp.RuntimeBinder
+namespace Transformalize.Libs.Mono.CSharp.RuntimeBinder
 {
 	class CSharpSetMemberBinder : SetMemberBinder
 	{
-		readonly CSharpBinderFlags flags;
+		readonly Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags flags;
 		IList<CSharpArgumentInfo> argumentInfo;
 		Type callingContext;
 
-		public CSharpSetMemberBinder (CSharpBinderFlags flags, string name, Type callingContext, IEnumerable<CSharpArgumentInfo> argumentInfo)
+		public CSharpSetMemberBinder (Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags flags, string name, Type callingContext, IEnumerable<CSharpArgumentInfo> argumentInfo)
 			: base (name, false)
 		{
 			this.flags = flags;
@@ -55,22 +53,22 @@ namespace Microsoft.CSharp.RuntimeBinder
 			var expr = ctx.CreateCompilerExpression (argumentInfo [0], target);
 
 			// Field assignment
-			expr = new Compiler.MemberAccess (expr, Name);
+			expr = new MemberAccess (expr, Name);
 
 			// Compound assignment under dynamic context does not convert result
 			// expression but when setting member type we need to do explicit
 			// conversion to ensure type match between member type and dynamic
 			// expression type
-			if ((flags & CSharpBinderFlags.ValueFromCompoundAssignment) != 0) {
-				expr = new Compiler.RuntimeExplicitAssign (expr, source);
+			if ((flags & Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags.ValueFromCompoundAssignment) != 0) {
+				expr = new RuntimeExplicitAssign (expr, source);
 			} else {
-				expr = new Compiler.SimpleAssign (expr, source);
+				expr = new SimpleAssign (expr, source);
 			}
 
-			expr = new Compiler.Cast (new Compiler.TypeExpression (ctx.ImportType (ReturnType), Compiler.Location.Null), expr, Compiler.Location.Null);
+			expr = new Cast (new TypeExpression (ctx.ImportType (ReturnType), Location.Null), expr, Location.Null);
 
-			if ((flags & CSharpBinderFlags.CheckedContext) != 0)
-				expr = new Compiler.CheckedExpr (expr, Compiler.Location.Null);
+			if ((flags & Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags.CheckedContext) != 0)
+				expr = new CheckedExpr (expr, Location.Null);
 
 			var binder = new CSharpBinder (this, expr, errorSuggestion);
 			binder.AddRestrictions (target);

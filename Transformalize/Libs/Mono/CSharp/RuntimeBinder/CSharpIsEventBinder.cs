@@ -1,5 +1,5 @@
 //
-// CSharpInvokeMemberBinder.cs
+// CSharpIsEventBinder.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -28,18 +28,41 @@
 
 using System;
 using System.Dynamic;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
 
-namespace Microsoft.CSharp.RuntimeBinder
+namespace Transformalize.Libs.Mono.CSharp.RuntimeBinder
 {
-	static class Extensions
+	class CSharpIsEventBinder : DynamicMetaObjectBinder
 	{
-		public static IList<T> ToReadOnly<T> (this IEnumerable<T> col)
+		Type callingContext;
+		string name;
+		
+		public CSharpIsEventBinder (string name, Type callingContext)
 		{
-			return col == null ? 
-				null : new ReadOnlyCollectionBuilder<T> (col);
+			this.name = name;
+			this.callingContext = callingContext;
+		}
+		
+		public override DynamicMetaObject Bind (DynamicMetaObject target, DynamicMetaObject[] args)
+		{
+			var ctx = DynamicContext.Create ();
+			var context_type = ctx.ImportType (callingContext);
+			var queried_type = ctx.ImportType (target.LimitType);
+			var rc = new ResolveContext (new RuntimeBinderContext (ctx, context_type), 0);
+
+			var expr = Expression.MemberLookup (rc, false, queried_type,
+				name, 0, Expression.MemberLookupRestrictions.ExactArity, Location.Null);
+
+			var binder = new CSharpBinder (
+				this, new BoolConstant (ctx.CompilerContext.BuiltinTypes, expr is EventExpr, Location.Null), null);
+
+			binder.AddRestrictions (target);
+			return binder.Bind (ctx, callingContext);
+		}
+
+		public override Type ReturnType {
+			get {
+				return typeof (bool);
+			}
 		}
 	}
 }

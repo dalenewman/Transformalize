@@ -9,12 +9,13 @@
 // Copyright 2003-2008 Novell, Inc.
 // Copyright 2011 Xamarin Inc
 //
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Mono.CompilerServices.SymbolWriter;
+using Transformalize.Libs.Mono.CompilerServices.SymbolWriter;
 
-namespace Mono.CSharp {
+namespace Transformalize.Libs.Mono.CSharp {
 
 	public class RootNamespace : Namespace {
 

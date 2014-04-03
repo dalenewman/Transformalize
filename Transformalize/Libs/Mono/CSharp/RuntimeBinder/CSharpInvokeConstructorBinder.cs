@@ -1,5 +1,5 @@
 //
-// CSharpGetIndexBinder.cs
+// CSharpInvokeConstructorBinder.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -27,45 +27,46 @@
 //
 
 using System;
-using System.Dynamic;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
-using Compiler = Mono.CSharp;
 
-namespace Microsoft.CSharp.RuntimeBinder
+namespace Transformalize.Libs.Mono.CSharp.RuntimeBinder
 {
-	class CSharpGetIndexBinder : GetIndexBinder
+	class CSharpInvokeConstructorBinder : DynamicMetaObjectBinder
 	{
 		IList<CSharpArgumentInfo> argumentInfo;
 		Type callingContext;
-		
-		public CSharpGetIndexBinder (Type callingContext, IEnumerable<CSharpArgumentInfo> argumentInfo)
-			: base (CSharpArgumentInfo.CreateCallInfo (argumentInfo, 1))
+		Type target_return_type;
+
+		public CSharpInvokeConstructorBinder (Type callingContext, IEnumerable<CSharpArgumentInfo> argumentInfo)
 		{
 			this.callingContext = callingContext;
 			this.argumentInfo = argumentInfo.ToReadOnly ();
 		}
-			
-		public override DynamicMetaObject FallbackGetIndex (DynamicMetaObject target, DynamicMetaObject[] indexes, DynamicMetaObject errorSuggestion)
+
+		public override DynamicMetaObject Bind (DynamicMetaObject target, DynamicMetaObject[] args)
 		{
-			if (argumentInfo.Count != indexes.Length + 1) {
-				if (errorSuggestion == null)
-					throw new NotImplementedException ();
-
-				return errorSuggestion;
-			}
-
 			var ctx = DynamicContext.Create ();
-			var expr = ctx.CreateCompilerExpression (argumentInfo [0], target);
-			var args = ctx.CreateCompilerArguments (argumentInfo.Skip (1), indexes);
-			expr = new Compiler.ElementAccess (expr, args, Compiler.Location.Null);
-			expr = new Compiler.Cast (new Compiler.TypeExpression (ctx.ImportType (ReturnType), Compiler.Location.Null), expr, Compiler.Location.Null);
 
-			var binder = new CSharpBinder (this, expr, errorSuggestion);
+			var type = ctx.CreateCompilerExpression (argumentInfo [0], target);
+			target_return_type = type.Type.GetMetaInfo ();
+
+			var c_args = ctx.CreateCompilerArguments (argumentInfo.Skip (1), args);
+
+			var binder = new CSharpBinder (
+				this, new New (type, c_args, Location.Null), null);
+
 			binder.AddRestrictions (target);
-			binder.AddRestrictions (indexes);
+			binder.AddRestrictions (args);
 
 			return binder.Bind (ctx, callingContext);
+		}
+
+		public override Type ReturnType {
+			get {
+				return target_return_type;
+			}
 		}
 	}
 }

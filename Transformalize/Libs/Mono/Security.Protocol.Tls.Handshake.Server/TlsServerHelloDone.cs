@@ -22,9 +22,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-
-namespace Mono.Security.Protocol.Tls.Handshake.Server
+namespace Transformalize.Libs.Mono.Security.Protocol.Tls.Handshake.Server
 {
 	internal class TlsServerHelloDone : HandshakeMessage
 	{

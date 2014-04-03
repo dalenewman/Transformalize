@@ -32,7 +32,7 @@ using System;
 using System.Collections;
 using System.Security;
 
-namespace Mono.Xml {
+namespace Transformalize.Libs.Mono.Xml {
 
 	// convert an XML document into SecurityElement objects
 	[CLSCompliant(false)]

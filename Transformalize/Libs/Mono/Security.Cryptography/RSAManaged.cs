@@ -36,8 +36,6 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 
-using Mono.Math;
-
 // Big chunks of code are coming from the original RSACryptoServiceProvider class.
 // The class was refactored to :
 // a.	ease integration of new hash algorithm (like MD2, RIPEMD160, ...);
@@ -45,8 +43,9 @@ using Mono.Math;
 //	EncryptValue/DecryptValue) with, or without, Mono runtime/corlib;
 // c.	provide an alternative RSA implementation for all Windows (like using 
 //	OAEP without Windows XP).
+using Transformalize.Libs.Mono.Math;
 
-namespace Mono.Security.Cryptography {
+namespace Transformalize.Libs.Mono.Security.Cryptography {
 
 #if INSIDE_CORLIB
 	internal

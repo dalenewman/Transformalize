@@ -29,7 +29,7 @@
 
 using System;
 
-namespace Mono.Security.Cryptography { 
+namespace Transformalize.Libs.Mono.Security.Cryptography { 
 
 	// References:
 	// a.     RFC1320: The MD4 Message-Digest Algorithm

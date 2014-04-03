@@ -30,7 +30,7 @@
 
 using System;
 
-namespace Mono.Security.X509 {
+namespace Transformalize.Libs.Mono.Security.X509 {
 
 	// definitions from Fx 1.2
 	// commented flags aren't implemented in X509Chain

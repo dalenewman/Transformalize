@@ -33,9 +33,7 @@ using System;
 using System.Collections;
 using System.Security.Cryptography;
 
-using Mono.Security.X509;
-
-namespace Mono.Security.Cryptography {
+namespace Transformalize.Libs.Mono.Security.Cryptography {
 
 #if !INSIDE_CORLIB
 	public 

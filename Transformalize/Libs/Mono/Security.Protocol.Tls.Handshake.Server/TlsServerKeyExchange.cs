@@ -24,13 +24,9 @@
 
 using System;
 using System.Security.Cryptography;
+using Transformalize.Libs.Mono.Security.Cryptography;
 
-using SX509 = System.Security.Cryptography.X509Certificates;
-
-using Mono.Security.Cryptography;
-using Mono.Security.X509;
-
-namespace Mono.Security.Protocol.Tls.Handshake.Server
+namespace Transformalize.Libs.Mono.Security.Protocol.Tls.Handshake.Server
 {
 	internal class TlsServerKeyExchange : HandshakeMessage
 	{
@@ -65,7 +61,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 
 			// Select the private key information
 			RSA rsa = (RSA)context.SslStream.PrivateKeyCertSelectionDelegate(
-				new SX509.X509Certificate(context.ServerSettings.Certificates[0].RawData),
+				new System.Security.Cryptography.X509Certificates.X509Certificate(context.ServerSettings.Certificates[0].RawData),
 				null);
 
 			RSAParameters rsaParams = rsa.ExportParameters(false);

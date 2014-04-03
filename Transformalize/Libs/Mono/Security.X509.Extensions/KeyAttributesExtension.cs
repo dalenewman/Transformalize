@@ -33,10 +33,7 @@ using System;
 using System.Globalization;
 using System.Text;
 
-using Mono.Security;
-using Mono.Security.X509;
-
-namespace Mono.Security.X509.Extensions {	
+namespace Transformalize.Libs.Mono.Security.X509.Extensions {	
 	public class KeyAttributesExtension : X509Extension {
 
 		private byte[] keyId;

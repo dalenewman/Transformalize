@@ -13,19 +13,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using SLE = System.Linq.Expressions;
 using System.Linq;
-
+using System.Reflection;
+using System.Reflection.Emit;
+using System.Text;
 #if STATIC
 using IKVM.Reflection;
 using IKVM.Reflection.Emit;
 #else
-using System.Reflection;
-using System.Reflection.Emit;
+
 #endif
 
-namespace Mono.CSharp {
+namespace Transformalize.Libs.Mono.CSharp {
 
 	/// <remarks>
 	///   The ExprClass class contains the is used to pass the 
@@ -1169,7 +1168,7 @@ namespace Mono.CSharp {
 		// compiler expression to invokable runtime expression. Used by
 		// dynamic C# binder.
 		//
-		public virtual SLE.Expression MakeExpression (BuilderContext ctx)
+		public virtual System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
 		{
 			throw new NotImplementedException ("MakeExpression for " + GetType ());
 		}
@@ -1333,14 +1332,14 @@ namespace Mono.CSharp {
 			child.FlowAnalysis (fc);
 		}
 
-		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
 		{
 #if STATIC
 			return base.MakeExpression (ctx);
 #else
 			return ctx.HasSet (BuilderContext.Options.CheckedScope) ?
-				SLE.Expression.ConvertChecked (child.MakeExpression (ctx), type.GetMetaInfo ()) :
-				SLE.Expression.Convert (child.MakeExpression (ctx), type.GetMetaInfo ());
+				System.Linq.Expressions.Expression.ConvertChecked (child.MakeExpression (ctx), type.GetMetaInfo ()) :
+				System.Linq.Expressions.Expression.Convert (child.MakeExpression (ctx), type.GetMetaInfo ());
 #endif
 		}
 
@@ -2277,7 +2276,7 @@ namespace Mono.CSharp {
 			expr.FlowAnalysis (fc);
 		}
 
-		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
 		{
 			return orig_expr.MakeExpression (ctx);
 		}
@@ -6244,17 +6243,17 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public SLE.Expression MakeAssignExpression (BuilderContext ctx, Expression source)
+		public System.Linq.Expressions.Expression MakeAssignExpression (BuilderContext ctx, Expression source)
 		{
 			return MakeExpression (ctx);
 		}
 
-		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
 		{
 #if STATIC
 			return base.MakeExpression (ctx);
 #else
-			return SLE.Expression.Field (
+			return System.Linq.Expressions.Expression.Field (
 				IsStatic ? null : InstanceExpression.MakeExpression (ctx),
 				spec.GetMetaInfo ());
 #endif
@@ -6383,21 +6382,21 @@ namespace Mono.CSharp {
 			return best_candidate.GetSignatureForError ();
 		}
 
-		public override SLE.Expression MakeAssignExpression (BuilderContext ctx, Expression source)
+		public override System.Linq.Expressions.Expression MakeAssignExpression (BuilderContext ctx, Expression source)
 		{
 #if STATIC
 			return base.MakeExpression (ctx);
 #else
-			return SLE.Expression.Property (InstanceExpression.MakeExpression (ctx), (MethodInfo) Setter.GetMetaInfo ());
+			return System.Linq.Expressions.Expression.Property (InstanceExpression.MakeExpression (ctx), (MethodInfo) Setter.GetMetaInfo ());
 #endif
 		}
 
-		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
 		{
 #if STATIC
 			return base.MakeExpression (ctx);
 #else
-			return SLE.Expression.Property (InstanceExpression.MakeExpression (ctx), (MethodInfo) Getter.GetMetaInfo ());
+			return System.Linq.Expressions.Expression.Property (InstanceExpression.MakeExpression (ctx), (MethodInfo) Getter.GetMetaInfo ());
 #endif
 		}
 
@@ -6599,7 +6598,7 @@ namespace Mono.CSharp {
 			if (right_side == EmptyExpression.OutAccess) {
 				// TODO: best_candidate can be null at this point
 				INamedBlockVariable variable = null;
-				if (best_candidate != null && ec.CurrentBlock.ParametersBlock.TopBlock.GetLocalName (best_candidate.Name, ec.CurrentBlock, ref variable) && variable is Linq.RangeVariable) {
+				if (best_candidate != null && ec.CurrentBlock.ParametersBlock.TopBlock.GetLocalName (best_candidate.Name, ec.CurrentBlock, ref variable) && variable is RangeVariable) {
 					ec.Report.Error (1939, loc, "A range variable `{0}' may not be passes as `ref' or `out' parameter",
 						best_candidate.Name);
 				} else {
@@ -6666,7 +6665,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public abstract SLE.Expression MakeAssignExpression (BuilderContext ctx, Expression source);
+		public abstract System.Linq.Expressions.Expression MakeAssignExpression (BuilderContext ctx, Expression source);
 
 		protected abstract Expression OverloadResolve (ResolveContext rc, Expression right_side);
 

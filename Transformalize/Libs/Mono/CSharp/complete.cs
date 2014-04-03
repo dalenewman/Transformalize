@@ -14,10 +14,11 @@
 // statements even when the expression is incomplete (for example
 // completing inside a lambda
 //
+
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Mono.CSharp {
+namespace Transformalize.Libs.Mono.CSharp {
 
 	//
 	// A common base class for Completing expressions, it
@@ -122,7 +123,7 @@ namespace Mono.CSharp {
 				// with disable flow analysis as we don't know whether left side expression
 				// is used as variable or type
 				//
-				if (expr is VariableReference || expr is ConstantExpr || expr is Linq.TransparentMemberAccess) {
+				if (expr is VariableReference || expr is ConstantExpr || expr is TransparentMemberAccess) {
 					expr = expr.Resolve (rc);
 				} else if (expr is TypeParameterExpr) {
 					expr.Error_UnexpectedKind (rc, flags, sn.Location);

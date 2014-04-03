@@ -1,5 +1,5 @@
 //
-// CSharpIsEventBinder.cs
+// CSharpInvokeBinder.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -27,45 +27,43 @@
 //
 
 using System;
-using System.Dynamic;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
-using Compiler = Mono.CSharp;
 
-namespace Microsoft.CSharp.RuntimeBinder
+namespace Transformalize.Libs.Mono.CSharp.RuntimeBinder
 {
-	class CSharpIsEventBinder : DynamicMetaObjectBinder
+	class CSharpInvokeBinder : InvokeBinder
 	{
+		readonly Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags flags;
+		IList<CSharpArgumentInfo> argumentInfo;
 		Type callingContext;
-		string name;
 		
-		public CSharpIsEventBinder (string name, Type callingContext)
+		public CSharpInvokeBinder (Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags flags, Type callingContext, IEnumerable<CSharpArgumentInfo> argumentInfo)
+			: base (CSharpArgumentInfo.CreateCallInfo (argumentInfo, 1))
 		{
-			this.name = name;
+			this.flags = flags;
 			this.callingContext = callingContext;
+			this.argumentInfo = argumentInfo.ToReadOnly ();
 		}
 		
-		public override DynamicMetaObject Bind (DynamicMetaObject target, DynamicMetaObject[] args)
+		public override DynamicMetaObject FallbackInvoke (DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject errorSuggestion)
 		{
 			var ctx = DynamicContext.Create ();
-			var context_type = ctx.ImportType (callingContext);
-			var queried_type = ctx.ImportType (target.LimitType);
-			var rc = new Compiler.ResolveContext (new RuntimeBinderContext (ctx, context_type), 0);
+			var expr = ctx.CreateCompilerExpression (argumentInfo [0], target);
+			var c_args = ctx.CreateCompilerArguments (argumentInfo.Skip (1), args);
+			expr = new Invocation (expr, c_args);
 
-			var expr = Compiler.Expression.MemberLookup (rc, false, queried_type,
-				name, 0, Compiler.Expression.MemberLookupRestrictions.ExactArity, Compiler.Location.Null);
+			if ((flags & Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags.ResultDiscarded) == 0)
+				expr = new Cast (new TypeExpression (ctx.ImportType (ReturnType), Location.Null), expr, Location.Null);
+			else
+				expr = new DynamicResultCast (ctx.ImportType (ReturnType), expr);
 
-			var binder = new CSharpBinder (
-				this, new Compiler.BoolConstant (ctx.CompilerContext.BuiltinTypes, expr is Compiler.EventExpr, Compiler.Location.Null), null);
-
+			var binder = new CSharpBinder (this, expr, errorSuggestion);
 			binder.AddRestrictions (target);
-			return binder.Bind (ctx, callingContext);
-		}
+			binder.AddRestrictions (args);
 
-		public override Type ReturnType {
-			get {
-				return typeof (bool);
-			}
+			return binder.Bind (ctx, callingContext);
 		}
 	}
 }

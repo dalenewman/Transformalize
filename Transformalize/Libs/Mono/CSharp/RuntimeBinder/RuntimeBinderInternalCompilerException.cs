@@ -1,5 +1,5 @@
-﻿//
-// ErrorPrinter.cs
+//
+// RuntimeBinderInternalCompilerException.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -27,34 +27,30 @@
 //
 
 using System;
-using Compiler = Mono.CSharp;
+using System.Runtime.Serialization;
 
-namespace Microsoft.CSharp.RuntimeBinder
+namespace Transformalize.Libs.Mono.CSharp.RuntimeBinder
 {
-	class ErrorPrinter : Compiler.ReportPrinter
+	[Serializable]
+	public class RuntimeBinderInternalCompilerException : Exception
 	{
-		public static readonly ErrorPrinter Instance = new ErrorPrinter ();
-
-		private ErrorPrinter ()
+		public RuntimeBinderInternalCompilerException ()
 		{
 		}
 
-		public override bool HasRelatedSymbolSupport {
-			get {
-				return false;
-			}
+		public RuntimeBinderInternalCompilerException (string message)
+			: base (message)
+		{
 		}
 
-		public override void Print (Compiler.AbstractMessage msg, bool showFullPath)
+		public RuntimeBinderInternalCompilerException (string message, Exception innerException)
+			: base (message, innerException)
 		{
-			string text;
-			if (msg.Code == 214) {
-				text = "Pointers and fixed size buffers cannot be used in a dynamic context";
-			} else {
-				text = msg.Text;
-			}
+		}
 
-			throw new RuntimeBinderException (text);
+		protected RuntimeBinderInternalCompilerException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
+		{
 		}
 	}
 }

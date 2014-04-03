@@ -12,16 +12,14 @@
 // Copyright 2011 Xamarin Inc
 //
 
-using System;
-using SLE = System.Linq.Expressions;
-
+using System.Reflection.Emit;
 #if STATIC
 using IKVM.Reflection.Emit;
 #else
-using System.Reflection.Emit;
+
 #endif
 	
-namespace Mono.CSharp.Nullable
+namespace Transformalize.Libs.Mono.CSharp
 {
 	public class NullableType : TypeExpr
 	{
@@ -245,7 +243,7 @@ namespace Mono.CSharp.Nullable
 				LocalVariable.Emit (ec);
 		}
 
-		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
 		{
 			return expr.MakeExpression (ctx);
 		}
@@ -1041,7 +1039,7 @@ namespace Mono.CSharp.Nullable
 			Binary.FlowAnalysis (fc);
 		}
 
-		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
 		{
 			return Binary.MakeExpression (ctx, Left, Right);
 		}

@@ -10,16 +10,15 @@
 // Copyright 2011 Xamarin Inc
 //
 
-using System;
 using System.Collections.Generic;
-
+using System.Reflection.Emit;
 #if STATIC
 using IKVM.Reflection.Emit;
 #else
-using System.Reflection.Emit;
+
 #endif
 
-namespace Mono.CSharp
+namespace Transformalize.Libs.Mono.CSharp
 {
 	//
 	// Argument expression used for invocation

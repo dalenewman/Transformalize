@@ -12,14 +12,14 @@
 
 using System;
 using System.Globalization;
-
+using System.Reflection.Emit;
 #if STATIC
 using IKVM.Reflection.Emit;
 #else
-using System.Reflection.Emit;
+
 #endif
 
-namespace Mono.CSharp {
+namespace Transformalize.Libs.Mono.CSharp {
 
 	/// <summary>
 	///   Base class for constants and literals.
@@ -149,7 +149,7 @@ namespace Mono.CSharp {
 
 			if (v == null) {
 				if (t.IsNullableType)
-					return Nullable.LiftedNull.Create (t, loc);
+					return LiftedNull.Create (t, loc);
 
 				if (TypeSpec.IsReferenceType (t))
 					return new NullConstant (t, loc);
@@ -234,7 +234,7 @@ namespace Mono.CSharp {
 
 			if (v == null) {
 				if (t.IsNullableType)
-					return Nullable.LiftedNull.Create (t, loc);
+					return LiftedNull.Create (t, loc);
 
 				if (TypeSpec.IsReferenceType (t))
 					return new NullConstant (t, loc);
@@ -2212,7 +2212,7 @@ namespace Mono.CSharp {
 				return new NullConstant (targetType, loc);
 
 			if (targetType.IsNullableType)
-				return Nullable.LiftedNull.Create (targetType, loc);
+				return LiftedNull.Create (targetType, loc);
 
 			return null;
 		}

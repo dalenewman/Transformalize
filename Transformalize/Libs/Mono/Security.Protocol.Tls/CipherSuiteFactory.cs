@@ -25,10 +25,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Net;
+using System.Reflection;
 
-namespace Mono.Security.Protocol.Tls
+namespace Transformalize.Libs.Mono.Security.Protocol.Tls
 {
 	internal static class CipherSuiteFactory
 	{

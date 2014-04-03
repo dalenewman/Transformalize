@@ -10,10 +10,9 @@
 // Copyright 2011 Xamarin Inc
 //
 
-using System;
 using System.Diagnostics;
 
-namespace Mono.CSharp
+namespace Transformalize.Libs.Mono.CSharp
 {
 	public abstract class StructuralVisitor
 	{
@@ -411,7 +410,7 @@ namespace Mono.CSharp
 			return null;
 		}
 
-		public virtual object Visit (Nullable.NullCoalescingOperator nullCoalescingOperator)
+		public virtual object Visit (NullCoalescingOperator nullCoalescingOperator)
 		{
 			return null;
 		}
@@ -531,67 +530,67 @@ namespace Mono.CSharp
 			return null;
 		}
 		
-		public virtual object Visit (Linq.QueryExpression queryExpression)
+		public virtual object Visit (QueryExpression queryExpression)
 		{
 			return null;
 		}
 
-		public virtual object Visit (Linq.QueryStartClause queryExpression)
+		public virtual object Visit (QueryStartClause queryExpression)
 		{
 			return null;
 		}
 		
-		public virtual object Visit (Linq.SelectMany selectMany)
+		public virtual object Visit (SelectMany selectMany)
 		{
 			return null;
 		}
 
-		public virtual object Visit (Linq.Select select)
+		public virtual object Visit (Select select)
 		{
 			return null;
 		}
 
-		public virtual object Visit (Linq.GroupBy groupBy)
+		public virtual object Visit (GroupBy groupBy)
 		{
 			return null;
 		}
 
-		public virtual object Visit (Linq.Let let)
+		public virtual object Visit (Let let)
 		{
 			return null;
 		}
 
-		public virtual object Visit (Linq.Where where)
+		public virtual object Visit (Where where)
 		{
 			return null;
 		}
 
-		public virtual object Visit (Linq.Join join)
+		public virtual object Visit (Join join)
 		{
 			return null;
 		}
 
-		public virtual object Visit (Linq.GroupJoin groupJoin)
+		public virtual object Visit (GroupJoin groupJoin)
 		{
 			return null;
 		}
 
-		public virtual object Visit (Linq.OrderByAscending orderByAscending)
+		public virtual object Visit (OrderByAscending orderByAscending)
 		{
 			return null;
 		}
 
-		public virtual object Visit (Linq.OrderByDescending orderByDescending)
+		public virtual object Visit (OrderByDescending orderByDescending)
 		{
 			return null;
 		}
 
-		public virtual object Visit (Linq.ThenByAscending thenByAscending)
+		public virtual object Visit (ThenByAscending thenByAscending)
 		{
 			return null;
 		}
 
-		public virtual object Visit (Linq.ThenByDescending thenByDescending)
+		public virtual object Visit (ThenByDescending thenByDescending)
 		{
 			return null;
 		}

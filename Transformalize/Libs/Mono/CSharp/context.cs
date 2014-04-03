@@ -15,7 +15,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 
-namespace Mono.CSharp
+namespace Transformalize.Libs.Mono.CSharp
 {
 	public enum LookupMode
 	{

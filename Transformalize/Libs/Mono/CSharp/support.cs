@@ -12,11 +12,11 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Collections.Generic;
 
-namespace Mono.CSharp {
+namespace Transformalize.Libs.Mono.CSharp {
 
 	sealed class ReferenceEquality<T> : IEqualityComparer<T> where T : class
 	{

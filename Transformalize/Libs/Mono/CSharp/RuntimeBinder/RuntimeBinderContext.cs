@@ -27,19 +27,17 @@
 //
 
 using System;
-using System.Collections.Generic;
-using Compiler = Mono.CSharp;
 
-namespace Microsoft.CSharp.RuntimeBinder
+namespace Transformalize.Libs.Mono.CSharp.RuntimeBinder
 {
-	sealed class RuntimeBinderContext : Compiler.IMemberContext
+	sealed class RuntimeBinderContext : IMemberContext
 	{
-		readonly Compiler.ModuleContainer module;
+		readonly ModuleContainer module;
 		readonly Type callingType;
 		readonly DynamicContext ctx;
-		Compiler.TypeSpec callingTypeImported;
+		TypeSpec callingTypeImported;
 
-		public RuntimeBinderContext (DynamicContext ctx, Compiler.TypeSpec callingType)
+		public RuntimeBinderContext (DynamicContext ctx, TypeSpec callingType)
 		{
 			this.ctx = ctx;
 			this.module = ctx.Module;
@@ -55,7 +53,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 		#region IMemberContext Members
 
-		public Compiler.TypeSpec CurrentType {
+		public TypeSpec CurrentType {
 			get {
 				//
 				// Delay importing of calling type to be compatible with .net
@@ -70,11 +68,11 @@ namespace Microsoft.CSharp.RuntimeBinder
 			}
 		}
 
-		public Compiler.TypeParameters CurrentTypeParameters {
+		public TypeParameters CurrentTypeParameters {
 			get { throw new NotImplementedException (); }
 		}
 
-		public Compiler.MemberCore CurrentMemberDefinition {
+		public MemberCore CurrentMemberDefinition {
 			get {
 				return null;
 			}
@@ -100,7 +98,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			}
 		}
 
-		public Compiler.ModuleContainer Module {
+		public ModuleContainer Module {
 			get {
 				return module;
 			}
@@ -111,18 +109,18 @@ namespace Microsoft.CSharp.RuntimeBinder
 			throw new NotImplementedException ();
 		}
 
-		public Compiler.ExtensionMethodCandidates LookupExtensionMethod (Compiler.TypeSpec extensionType, string name, int arity)
+		public ExtensionMethodCandidates LookupExtensionMethod (TypeSpec extensionType, string name, int arity)
 		{
 			// No extension method lookup in this context
 			return null;
 		}
 
-		public Compiler.FullNamedExpression LookupNamespaceOrType (string name, int arity, Mono.CSharp.LookupMode mode, Mono.CSharp.Location loc)
+		public FullNamedExpression LookupNamespaceOrType (string name, int arity, Mono.CSharp.LookupMode mode, Mono.CSharp.Location loc)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public Compiler.FullNamedExpression LookupNamespaceAlias (string name)
+		public FullNamedExpression LookupNamespaceAlias (string name)
 		{
 			// No namespace aliases in this context
 			return null;

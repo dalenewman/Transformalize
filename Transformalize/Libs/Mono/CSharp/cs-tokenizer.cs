@@ -13,13 +13,12 @@
 //
 
 using System;
-using System.Text;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Diagnostics;
-using System.Collections;
+using System.Globalization;
+using System.Text;
 
-namespace Mono.CSharp
+namespace Transformalize.Libs.Mono.CSharp
 {
 	//
 	// This class has to be used by parser only, it reuses token

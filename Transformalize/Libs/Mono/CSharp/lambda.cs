@@ -14,9 +14,10 @@
 using IKVM.Reflection.Emit;
 #else
 using System.Reflection.Emit;
+
 #endif
 
-namespace Mono.CSharp {
+namespace Transformalize.Libs.Mono.CSharp {
 	public class LambdaExpression : AnonymousMethodExpression
 	{
 		//

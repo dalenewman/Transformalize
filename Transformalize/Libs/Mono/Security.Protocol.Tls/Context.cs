@@ -23,15 +23,10 @@
 //
 
 using System;
-using System.Text;
-using System.Collections;
 using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
+using Transformalize.Libs.Mono.Security.Protocol.Tls.Handshake;
 
-using Mono.Security.Cryptography;
-using Mono.Security.Protocol.Tls.Handshake;
-
-namespace Mono.Security.Protocol.Tls
+namespace Transformalize.Libs.Mono.Security.Protocol.Tls
 {
 	internal abstract class Context
 	{

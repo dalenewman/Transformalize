@@ -26,7 +26,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Mono.Security.Protocol.Tls {
+namespace Transformalize.Libs.Mono.Security.Protocol.Tls {
 
 	internal sealed class CipherSuiteCollection : List<CipherSuite> {
 

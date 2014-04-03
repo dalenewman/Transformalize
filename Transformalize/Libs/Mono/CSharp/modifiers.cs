@@ -11,14 +11,14 @@
 //
 
 using System;
-
+using System.Reflection;
 #if STATIC
 using IKVM.Reflection;
 #else
-using System.Reflection;
+
 #endif
 
-namespace Mono.CSharp
+namespace Transformalize.Libs.Mono.CSharp
 {
 	[Flags]
 	public enum Modifiers

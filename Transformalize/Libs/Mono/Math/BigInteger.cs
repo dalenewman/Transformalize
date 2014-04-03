@@ -37,10 +37,10 @@
 
 using System;
 using System.Security.Cryptography;
-using Mono.Math.Prime.Generator;
-using Mono.Math.Prime;
+using Transformalize.Libs.Mono.Math.Prime;
+using Transformalize.Libs.Mono.Math.Prime.Generator;
 
-namespace Mono.Math {
+namespace Transformalize.Libs.Mono.Math {
 
 #if INSIDE_CORLIB
 	internal

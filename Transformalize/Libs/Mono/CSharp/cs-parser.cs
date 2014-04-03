@@ -15,12 +15,11 @@
 // Copyright 2011-2012 Xamarin Inc.
 //
 
-using System.Text;
-using System.IO;
 using System;
 using System.Collections.Generic;
+using System.Text;
 
-namespace Mono.CSharp {
+namespace Transformalize.Libs.Mono.CSharp {
     /// <summary>
     ///    The C# Parser
     /// </summary>
@@ -118,7 +117,7 @@ namespace Mono.CSharp {
 
         bool? interactive_async;
 
-        Stack<Linq.QueryBlock> linq_clause_blocks;
+        Stack<QueryBlock> linq_clause_blocks;
 
         ModuleContainer module;
 
@@ -4016,7 +4015,7 @@ namespace Mono.CSharp {
                         case 945:
 #line 6231 "C:\Code\mono-mono-3.4.0\mcs\class\Mono.CSharp\..\..\mcs\cs-parser.jay"
  {
-     current_block = new Linq.QueryBlock(current_block, lexer.Location);
+     current_block = new QueryBlock(current_block, lexer.Location);
  }
  break;
                         case 946:
@@ -4025,7 +4024,7 @@ namespace Mono.CSharp {
                         case 947:
 #line 6247 "C:\Code\mono-mono-3.4.0\mcs\class\Mono.CSharp\..\..\mcs\cs-parser.jay"
  {
-     current_block = new Linq.QueryBlock(current_block, lexer.Location);
+     current_block = new QueryBlock(current_block, lexer.Location);
  }
  break;
                         case 948:
@@ -4046,7 +4045,7 @@ namespace Mono.CSharp {
                         case 954:
 #line 6311 "C:\Code\mono-mono-3.4.0\mcs\class\Mono.CSharp\..\..\mcs\cs-parser.jay"
  {
-     current_block = new Linq.QueryBlock(current_block, lexer.Location);
+     current_block = new QueryBlock(current_block, lexer.Location);
  }
  break;
                         case 955:
@@ -4076,7 +4075,7 @@ namespace Mono.CSharp {
                         case 968:
 #line 6379 "C:\Code\mono-mono-3.4.0\mcs\class\Mono.CSharp\..\..\mcs\cs-parser.jay"
  {
-     current_block = new Linq.QueryBlock(current_block, lexer.Location);
+     current_block = new QueryBlock(current_block, lexer.Location);
  }
  break;
                         case 969:
@@ -4085,7 +4084,7 @@ namespace Mono.CSharp {
                         case 970:
 #line 6398 "C:\Code\mono-mono-3.4.0\mcs\class\Mono.CSharp\..\..\mcs\cs-parser.jay"
  {
-     current_block = new Linq.QueryBlock(current_block, lexer.Location);
+     current_block = new QueryBlock(current_block, lexer.Location);
  }
  break;
                         case 971:
@@ -4124,7 +4123,7 @@ namespace Mono.CSharp {
                         case 982:
 #line 6550 "C:\Code\mono-mono-3.4.0\mcs\class\Mono.CSharp\..\..\mcs\cs-parser.jay"
  {
-     current_block = new Linq.QueryBlock(current_block, lexer.Location);
+     current_block = new QueryBlock(current_block, lexer.Location);
  }
  break;
                         case 983:
@@ -4145,7 +4144,7 @@ namespace Mono.CSharp {
                         case 990:
 #line 6596 "C:\Code\mono-mono-3.4.0\mcs\class\Mono.CSharp\..\..\mcs\cs-parser.jay"
  {
-     yyVal = new Linq.OrderByAscending((Linq.QueryBlock)current_block, (Expression)yyVals[0 + yyTop]);
+     yyVal = new OrderByAscending((QueryBlock)current_block, (Expression)yyVals[0 + yyTop]);
  }
  break;
                         case 991:
@@ -4157,7 +4156,7 @@ namespace Mono.CSharp {
                         case 993:
 #line 6613 "C:\Code\mono-mono-3.4.0\mcs\class\Mono.CSharp\..\..\mcs\cs-parser.jay"
  {
-     yyVal = new Linq.ThenByAscending((Linq.QueryBlock)current_block, (Expression)yyVals[0 + yyTop]);
+     yyVal = new ThenByAscending((QueryBlock)current_block, (Expression)yyVals[0 + yyTop]);
  }
  break;
                         case 994:
@@ -7568,7 +7567,7 @@ namespace Mono.CSharp {
             if (lang_version < LanguageVersion.ISO_2)
                 FeatureIsNotAvailable(GetLocation(yyVals[-1 + yyTop]), "null coalescing operator");
 
-            yyVal = new Nullable.NullCoalescingOperator((Expression)yyVals[-2 + yyTop], (Expression)yyVals[0 + yyTop]);
+            yyVal = new NullCoalescingOperator((Expression)yyVals[-2 + yyTop], (Expression)yyVals[0 + yyTop]);
             lbag.AddLocation(yyVal, GetLocation(yyVals[-1 + yyTop]));
         }
 
@@ -9105,9 +9104,9 @@ namespace Mono.CSharp {
  {
             lexer.query_parsing = false;
 
-            Linq.AQueryClause from = yyVals[-1 + yyTop] as Linq.AQueryClause;
+            AQueryClause from = yyVals[-1 + yyTop] as AQueryClause;
 
-            from.Tail.Next = (Linq.AQueryClause)yyVals[0 + yyTop];
+            from.Tail.Next = (AQueryClause)yyVals[0 + yyTop];
             yyVal = from;
 
             current_block.SetEndLocation(lexer.Location);
@@ -9117,9 +9116,9 @@ namespace Mono.CSharp {
         void case_938()
 #line 6152 "C:\Code\mono-mono-3.4.0\mcs\class\Mono.CSharp\..\..\mcs\cs-parser.jay"
  {
-            Linq.AQueryClause from = yyVals[-1 + yyTop] as Linq.AQueryClause;
+            AQueryClause from = yyVals[-1 + yyTop] as AQueryClause;
 
-            from.Tail.Next = (Linq.AQueryClause)yyVals[0 + yyTop];
+            from.Tail.Next = (AQueryClause)yyVals[0 + yyTop];
             yyVal = from;
 
             current_block.SetEndLocation(lexer.Location);
@@ -9147,66 +9146,66 @@ namespace Mono.CSharp {
         void case_941()
 #line 6179 "C:\Code\mono-mono-3.4.0\mcs\class\Mono.CSharp\..\..\mcs\cs-parser.jay"
  {
-            current_block = new Linq.QueryBlock(current_block, lexer.Location);
+            current_block = new QueryBlock(current_block, lexer.Location);
 
             var lt = (LocatedToken)yyVals[-2 + yyTop];
-            var rv = new Linq.RangeVariable(lt.Value, lt.Location);
-            var clause = new Linq.QueryStartClause((Linq.QueryBlock)current_block, (Expression)yyVals[0 + yyTop], rv, GetLocation(yyVals[-3 + yyTop]));
+            var rv = new RangeVariable(lt.Value, lt.Location);
+            var clause = new QueryStartClause((QueryBlock)current_block, (Expression)yyVals[0 + yyTop], rv, GetLocation(yyVals[-3 + yyTop]));
             lbag.AddLocation(clause, GetLocation(yyVals[-1 + yyTop]));
-            yyVal = new Linq.QueryExpression(clause);
+            yyVal = new QueryExpression(clause);
         }
 
         void case_942()
 #line 6189 "C:\Code\mono-mono-3.4.0\mcs\class\Mono.CSharp\..\..\mcs\cs-parser.jay"
  {
-            current_block = new Linq.QueryBlock(current_block, lexer.Location);
+            current_block = new QueryBlock(current_block, lexer.Location);
 
             var lt = (LocatedToken)yyVals[-2 + yyTop];
-            var rv = new Linq.RangeVariable(lt.Value, lt.Location);
-            var clause = new Linq.QueryStartClause((Linq.QueryBlock)current_block, (Expression)yyVals[0 + yyTop], rv, GetLocation(yyVals[-4 + yyTop])) {
+            var rv = new RangeVariable(lt.Value, lt.Location);
+            var clause = new QueryStartClause((QueryBlock)current_block, (Expression)yyVals[0 + yyTop], rv, GetLocation(yyVals[-4 + yyTop])) {
                 IdentifierType = (FullNamedExpression)yyVals[-3 + yyTop]
             };
             lbag.AddLocation(clause, GetLocation(yyVals[-1 + yyTop]));
-            yyVal = new Linq.QueryExpression(clause);
+            yyVal = new QueryExpression(clause);
         }
 
         void case_943()
 #line 6204 "C:\Code\mono-mono-3.4.0\mcs\class\Mono.CSharp\..\..\mcs\cs-parser.jay"
  {
-            current_block = new Linq.QueryBlock(current_block, lexer.Location);
+            current_block = new QueryBlock(current_block, lexer.Location);
 
             var lt = (LocatedToken)yyVals[-2 + yyTop];
-            var rv = new Linq.RangeVariable(lt.Value, lt.Location);
-            var clause = new Linq.QueryStartClause((Linq.QueryBlock)current_block, (Expression)yyVals[0 + yyTop], rv, GetLocation(yyVals[-3 + yyTop]));
+            var rv = new RangeVariable(lt.Value, lt.Location);
+            var clause = new QueryStartClause((QueryBlock)current_block, (Expression)yyVals[0 + yyTop], rv, GetLocation(yyVals[-3 + yyTop]));
             lbag.AddLocation(clause, GetLocation(yyVals[-1 + yyTop]));
-            yyVal = new Linq.QueryExpression(clause);
+            yyVal = new QueryExpression(clause);
         }
 
         void case_944()
 #line 6214 "C:\Code\mono-mono-3.4.0\mcs\class\Mono.CSharp\..\..\mcs\cs-parser.jay"
  {
-            current_block = new Linq.QueryBlock(current_block, lexer.Location);
+            current_block = new QueryBlock(current_block, lexer.Location);
 
             var lt = (LocatedToken)yyVals[-2 + yyTop];
-            var rv = new Linq.RangeVariable(lt.Value, lt.Location);
-            var clause = new Linq.QueryStartClause((Linq.QueryBlock)current_block, (Expression)yyVals[0 + yyTop], rv, GetLocation(yyVals[-4 + yyTop])) {
+            var rv = new RangeVariable(lt.Value, lt.Location);
+            var clause = new QueryStartClause((QueryBlock)current_block, (Expression)yyVals[0 + yyTop], rv, GetLocation(yyVals[-4 + yyTop])) {
                 IdentifierType = (FullNamedExpression)yyVals[-3 + yyTop]
             };
             lbag.AddLocation(clause, GetLocation(yyVals[-1 + yyTop]));
-            yyVal = new Linq.QueryExpression(clause);
+            yyVal = new QueryExpression(clause);
         }
 
         void case_946()
 #line 6233 "C:\Code\mono-mono-3.4.0\mcs\class\Mono.CSharp\..\..\mcs\cs-parser.jay"
  {
             var lt = (LocatedToken)yyVals[-3 + yyTop];
-            var sn = new Linq.RangeVariable(lt.Value, lt.Location);
-            yyVal = new Linq.SelectMany((Linq.QueryBlock)current_block, sn, (Expression)yyVals[0 + yyTop], GetLocation(yyVals[-4 + yyTop]));
+            var sn = new RangeVariable(lt.Value, lt.Location);
+            yyVal = new SelectMany((QueryBlock)current_block, sn, (Expression)yyVals[0 + yyTop], GetLocation(yyVals[-4 + yyTop]));
 
             current_block.SetEndLocation(lexer.Location);
             current_block = current_block.Parent;
 
-            ((Linq.QueryBlock)current_block).AddRangeVariable(sn);
+            ((QueryBlock)current_block).AddRangeVariable(sn);
             lbag.AddLocation(yyVal, GetLocation(yyVals[-2 + yyTop]));
         }
 
@@ -9214,16 +9213,16 @@ namespace Mono.CSharp {
 #line 6249 "C:\Code\mono-mono-3.4.0\mcs\class\Mono.CSharp\..\..\mcs\cs-parser.jay"
  {
             var lt = (LocatedToken)yyVals[-3 + yyTop];
-            var sn = new Linq.RangeVariable(lt.Value, lt.Location);
+            var sn = new RangeVariable(lt.Value, lt.Location);
 
-            yyVal = new Linq.SelectMany((Linq.QueryBlock)current_block, sn, (Expression)yyVals[0 + yyTop], GetLocation(yyVals[-5 + yyTop])) {
+            yyVal = new SelectMany((QueryBlock)current_block, sn, (Expression)yyVals[0 + yyTop], GetLocation(yyVals[-5 + yyTop])) {
                 IdentifierType = (FullNamedExpression)yyVals[-4 + yyTop]
             };
 
             current_block.SetEndLocation(lexer.Location);
             current_block = current_block.Parent;
 
-            ((Linq.QueryBlock)current_block).AddRangeVariable(sn);
+            ((QueryBlock)current_block).AddRangeVariable(sn);
 
             lbag.AddLocation(yyVal, GetLocation(yyVals[-2 + yyTop]));
         }
@@ -9231,13 +9230,13 @@ namespace Mono.CSharp {
         void case_949()
 #line 6268 "C:\Code\mono-mono-3.4.0\mcs\class\Mono.CSharp\..\..\mcs\cs-parser.jay"
  {
-            Linq.AQueryClause head = (Linq.AQueryClause)yyVals[-1 + yyTop];
+            AQueryClause head = (AQueryClause)yyVals[-1 + yyTop];
 
             if (yyVals[0 + yyTop] != null)
-                head.Next = (Linq.AQueryClause)yyVals[0 + yyTop];
+                head.Next = (AQueryClause)yyVals[0 + yyTop];
 
             if (yyVals[-2 + yyTop] != null) {
-                Linq.AQueryClause clause = (Linq.AQueryClause)yyVals[-2 + yyTop];
+                AQueryClause clause = (AQueryClause)yyVals[-2 + yyTop];
                 clause.Tail.Next = head;
                 head = clause;
             }
@@ -9248,10 +9247,10 @@ namespace Mono.CSharp {
         void case_950()
 #line 6283 "C:\Code\mono-mono-3.4.0\mcs\class\Mono.CSharp\..\..\mcs\cs-parser.jay"
  {
-            Linq.AQueryClause head = (Linq.AQueryClause)yyVals[0 + yyTop];
+            AQueryClause head = (AQueryClause)yyVals[0 + yyTop];
 
             if (yyVals[-1 + yyTop] != null) {
-                Linq.AQueryClause clause = (Linq.AQueryClause)yyVals[-1 + yyTop];
+                AQueryClause clause = (AQueryClause)yyVals[-1 + yyTop];
                 clause.Tail.Next = head;
                 head = clause;
             }
@@ -9276,7 +9275,7 @@ namespace Mono.CSharp {
         void case_955()
 #line 6313 "C:\Code\mono-mono-3.4.0\mcs\class\Mono.CSharp\..\..\mcs\cs-parser.jay"
  {
-            yyVal = new Linq.Select((Linq.QueryBlock)current_block, (Expression)yyVals[0 + yyTop], GetLocation(yyVals[-2 + yyTop]));
+            yyVal = new Select((QueryBlock)current_block, (Expression)yyVals[0 + yyTop], GetLocation(yyVals[-2 + yyTop]));
 
             current_block.SetEndLocation(lexer.Location);
             current_block = current_block.Parent;
@@ -9286,10 +9285,10 @@ namespace Mono.CSharp {
 #line 6320 "C:\Code\mono-mono-3.4.0\mcs\class\Mono.CSharp\..\..\mcs\cs-parser.jay"
  {
             if (linq_clause_blocks == null)
-                linq_clause_blocks = new Stack<Linq.QueryBlock>();
+                linq_clause_blocks = new Stack<QueryBlock>();
 
-            current_block = new Linq.QueryBlock(current_block, lexer.Location);
-            linq_clause_blocks.Push((Linq.QueryBlock)current_block);
+            current_block = new QueryBlock(current_block, lexer.Location);
+            linq_clause_blocks.Push((QueryBlock)current_block);
         }
 
         void case_957()
@@ -9298,7 +9297,7 @@ namespace Mono.CSharp {
             current_block.SetEndLocation(lexer.Location);
             current_block = current_block.Parent;
 
-            current_block = new Linq.QueryBlock(current_block, lexer.Location);
+            current_block = new QueryBlock(current_block, lexer.Location);
         }
 
         void case_958()
@@ -9306,7 +9305,7 @@ namespace Mono.CSharp {
  {
             var obj = (object[])yyVals[0 + yyTop];
 
-            yyVal = new Linq.GroupBy((Linq.QueryBlock)current_block, (Expression)yyVals[-2 + yyTop], linq_clause_blocks.Pop(), (Expression)obj[0], GetLocation(yyVals[-4 + yyTop]));
+            yyVal = new GroupBy((QueryBlock)current_block, (Expression)yyVals[-2 + yyTop], linq_clause_blocks.Pop(), (Expression)obj[0], GetLocation(yyVals[-4 + yyTop]));
             lbag.AddLocation(yyVal, (Location)obj[1]);
 
             current_block.SetEndLocation(lexer.Location);
@@ -9323,7 +9322,7 @@ namespace Mono.CSharp {
         void case_962()
 #line 6361 "C:\Code\mono-mono-3.4.0\mcs\class\Mono.CSharp\..\..\mcs\cs-parser.jay"
  {
-            ((Linq.AQueryClause)yyVals[-1 + yyTop]).Tail.Next = (Linq.AQueryClause)yyVals[0 + yyTop];
+            ((AQueryClause)yyVals[-1 + yyTop]).Tail.Next = (AQueryClause)yyVals[0 + yyTop];
             yyVal = yyVals[-1 + yyTop];
         }
 
@@ -9331,20 +9330,20 @@ namespace Mono.CSharp {
 #line 6381 "C:\Code\mono-mono-3.4.0\mcs\class\Mono.CSharp\..\..\mcs\cs-parser.jay"
  {
             var lt = (LocatedToken)yyVals[-3 + yyTop];
-            var sn = new Linq.RangeVariable(lt.Value, lt.Location);
-            yyVal = new Linq.Let((Linq.QueryBlock)current_block, sn, (Expression)yyVals[0 + yyTop], GetLocation(yyVals[-4 + yyTop]));
+            var sn = new RangeVariable(lt.Value, lt.Location);
+            yyVal = new Let((QueryBlock)current_block, sn, (Expression)yyVals[0 + yyTop], GetLocation(yyVals[-4 + yyTop]));
             lbag.AddLocation(yyVal, GetLocation(yyVals[-2 + yyTop]));
 
             current_block.SetEndLocation(lexer.Location);
             current_block = current_block.Parent;
 
-            ((Linq.QueryBlock)current_block).AddRangeVariable(sn);
+            ((QueryBlock)current_block).AddRangeVariable(sn);
         }
 
         void case_971()
 #line 6400 "C:\Code\mono-mono-3.4.0\mcs\class\Mono.CSharp\..\..\mcs\cs-parser.jay"
  {
-            yyVal = new Linq.Where((Linq.QueryBlock)current_block, (Expression)yyVals[0 + yyTop], GetLocation(yyVals[-2 + yyTop]));
+            yyVal = new Where((QueryBlock)current_block, (Expression)yyVals[0 + yyTop], GetLocation(yyVals[-2 + yyTop]));
 
             current_block.SetEndLocation(lexer.Location);
             current_block = current_block.Parent;
@@ -9354,10 +9353,10 @@ namespace Mono.CSharp {
 #line 6410 "C:\Code\mono-mono-3.4.0\mcs\class\Mono.CSharp\..\..\mcs\cs-parser.jay"
  {
             if (linq_clause_blocks == null)
-                linq_clause_blocks = new Stack<Linq.QueryBlock>();
+                linq_clause_blocks = new Stack<QueryBlock>();
 
-            current_block = new Linq.QueryBlock(current_block, lexer.Location);
-            linq_clause_blocks.Push((Linq.QueryBlock)current_block);
+            current_block = new QueryBlock(current_block, lexer.Location);
+            linq_clause_blocks.Push((QueryBlock)current_block);
         }
 
         void case_973()
@@ -9366,8 +9365,8 @@ namespace Mono.CSharp {
             current_block.SetEndLocation(lexer.Location);
             current_block = current_block.Parent;
 
-            current_block = new Linq.QueryBlock(current_block, lexer.Location);
-            linq_clause_blocks.Push((Linq.QueryBlock)current_block);
+            current_block = new QueryBlock(current_block, lexer.Location);
+            linq_clause_blocks.Push((QueryBlock)current_block);
         }
 
         void case_974()
@@ -9377,7 +9376,7 @@ namespace Mono.CSharp {
             current_block.SetEndLocation(lexer.Location);
             current_block = current_block.Parent;
 
-            current_block = new Linq.QueryBlock(current_block, lexer.Location);
+            current_block = new QueryBlock(current_block, lexer.Location);
         }
 
         void case_975()
@@ -9390,44 +9389,44 @@ namespace Mono.CSharp {
             var block = linq_clause_blocks.Pop();
 
             var lt = (LocatedToken)yyVals[-10 + yyTop];
-            var sn = new Linq.RangeVariable(lt.Value, lt.Location);
-            Linq.RangeVariable into;
+            var sn = new RangeVariable(lt.Value, lt.Location);
+            RangeVariable into;
 
             if (yyVals[0 + yyTop] == null) {
                 into = sn;
-                yyVal = new Linq.Join(block, sn, (Expression)yyVals[-7 + yyTop], outer_selector, (Linq.QueryBlock)current_block, GetLocation(yyVals[-11 + yyTop]));
+                yyVal = new Join(block, sn, (Expression)yyVals[-7 + yyTop], outer_selector, (QueryBlock)current_block, GetLocation(yyVals[-11 + yyTop]));
                 lbag.AddLocation(yyVal, GetLocation(yyVals[-9 + yyTop]), GetLocation(yyVals[-6 + yyTop]), GetLocation(yyVals[-3 + yyTop]));
             } else {
                 /**/
                 /* Set equals right side parent to beginning of linq query, it is not accessible therefore cannot cause name collisions*/
                 /**/
                 var parent = block.Parent;
-                while (parent is Linq.QueryBlock) {
+                while (parent is QueryBlock) {
                     parent = parent.Parent;
                 }
                 current_block.Parent = parent;
 
-                ((Linq.QueryBlock)current_block).AddRangeVariable(sn);
+                ((QueryBlock)current_block).AddRangeVariable(sn);
 
                 lt = (LocatedToken)yyVals[0 + yyTop];
-                into = new Linq.RangeVariable(lt.Value, lt.Location);
+                into = new RangeVariable(lt.Value, lt.Location);
 
-                yyVal = new Linq.GroupJoin(block, sn, (Expression)yyVals[-7 + yyTop], outer_selector, (Linq.QueryBlock)current_block, into, GetLocation(yyVals[-11 + yyTop]));
+                yyVal = new GroupJoin(block, sn, (Expression)yyVals[-7 + yyTop], outer_selector, (QueryBlock)current_block, into, GetLocation(yyVals[-11 + yyTop]));
                 lbag.AddLocation(yyVal, GetLocation(yyVals[-9 + yyTop]), GetLocation(yyVals[-6 + yyTop]), GetLocation(yyVals[-3 + yyTop]), GetLocation(yyVals[0 + yyTop]));
             }
 
             current_block = block.Parent;
-            ((Linq.QueryBlock)current_block).AddRangeVariable(into);
+            ((QueryBlock)current_block).AddRangeVariable(into);
         }
 
         void case_976()
 #line 6472 "C:\Code\mono-mono-3.4.0\mcs\class\Mono.CSharp\..\..\mcs\cs-parser.jay"
  {
             if (linq_clause_blocks == null)
-                linq_clause_blocks = new Stack<Linq.QueryBlock>();
+                linq_clause_blocks = new Stack<QueryBlock>();
 
-            current_block = new Linq.QueryBlock(current_block, lexer.Location);
-            linq_clause_blocks.Push((Linq.QueryBlock)current_block);
+            current_block = new QueryBlock(current_block, lexer.Location);
+            linq_clause_blocks.Push((QueryBlock)current_block);
         }
 
         void case_977()
@@ -9436,8 +9435,8 @@ namespace Mono.CSharp {
             current_block.SetEndLocation(lexer.Location);
             current_block = current_block.Parent;
 
-            current_block = new Linq.QueryBlock(current_block, lexer.Location);
-            linq_clause_blocks.Push((Linq.QueryBlock)current_block);
+            current_block = new QueryBlock(current_block, lexer.Location);
+            linq_clause_blocks.Push((QueryBlock)current_block);
         }
 
         void case_978()
@@ -9447,7 +9446,7 @@ namespace Mono.CSharp {
             current_block.SetEndLocation(lexer.Location);
             current_block = current_block.Parent;
 
-            current_block = new Linq.QueryBlock(current_block, lexer.Location);
+            current_block = new QueryBlock(current_block, lexer.Location);
         }
 
         void case_979()
@@ -9460,12 +9459,12 @@ namespace Mono.CSharp {
             var block = linq_clause_blocks.Pop();
 
             var lt = (LocatedToken)yyVals[-10 + yyTop];
-            var sn = new Linq.RangeVariable(lt.Value, lt.Location);
-            Linq.RangeVariable into;
+            var sn = new RangeVariable(lt.Value, lt.Location);
+            RangeVariable into;
 
             if (yyVals[0 + yyTop] == null) {
                 into = sn;
-                yyVal = new Linq.Join(block, sn, (Expression)yyVals[-7 + yyTop], outer_selector, (Linq.QueryBlock)current_block, GetLocation(yyVals[-12 + yyTop])) {
+                yyVal = new Join(block, sn, (Expression)yyVals[-7 + yyTop], outer_selector, (QueryBlock)current_block, GetLocation(yyVals[-12 + yyTop])) {
                     IdentifierType = (FullNamedExpression)yyVals[-11 + yyTop]
                 };
                 lbag.AddLocation(yyVal, GetLocation(yyVals[-10 + yyTop]), GetLocation(yyVals[-7 + yyTop]), GetLocation(yyVals[-4 + yyTop]));
@@ -9474,23 +9473,23 @@ namespace Mono.CSharp {
                 /* Set equals right side parent to beginning of linq query, it is not accessible therefore cannot cause name collisions*/
                 /**/
                 var parent = block.Parent;
-                while (parent is Linq.QueryBlock) {
+                while (parent is QueryBlock) {
                     parent = parent.Parent;
                 }
                 current_block.Parent = parent;
 
-                ((Linq.QueryBlock)current_block).AddRangeVariable(sn);
+                ((QueryBlock)current_block).AddRangeVariable(sn);
 
                 lt = (LocatedToken)yyVals[0 + yyTop];
-                into = new Linq.RangeVariable(lt.Value, lt.Location); /* TODO:*/
+                into = new RangeVariable(lt.Value, lt.Location); /* TODO:*/
 
-                yyVal = new Linq.GroupJoin(block, sn, (Expression)yyVals[-7 + yyTop], outer_selector, (Linq.QueryBlock)current_block, into, GetLocation(yyVals[-12 + yyTop])) {
+                yyVal = new GroupJoin(block, sn, (Expression)yyVals[-7 + yyTop], outer_selector, (QueryBlock)current_block, into, GetLocation(yyVals[-12 + yyTop])) {
                     IdentifierType = (FullNamedExpression)yyVals[-11 + yyTop]
                 };
             }
 
             current_block = block.Parent;
-            ((Linq.QueryBlock)current_block).AddRangeVariable(into);
+            ((QueryBlock)current_block).AddRangeVariable(into);
         }
 
         void case_983()
@@ -9508,13 +9507,13 @@ namespace Mono.CSharp {
             current_block.SetEndLocation(lexer.Location);
             current_block = current_block.Parent;
 
-            current_block = new Linq.QueryBlock(current_block, lexer.Location);
+            current_block = new QueryBlock(current_block, lexer.Location);
         }
 
         void case_986()
 #line 6570 "C:\Code\mono-mono-3.4.0\mcs\class\Mono.CSharp\..\..\mcs\cs-parser.jay"
  {
-            ((Linq.AQueryClause)yyVals[-3 + yyTop]).Next = (Linq.AQueryClause)yyVals[0 + yyTop];
+            ((AQueryClause)yyVals[-3 + yyTop]).Next = (AQueryClause)yyVals[0 + yyTop];
             yyVal = yyVals[-3 + yyTop];
         }
 
@@ -9524,41 +9523,41 @@ namespace Mono.CSharp {
             current_block.SetEndLocation(lexer.Location);
             current_block = current_block.Parent;
 
-            current_block = new Linq.QueryBlock((Linq.QueryBlock)current_block, lexer.Location);
+            current_block = new QueryBlock((QueryBlock)current_block, lexer.Location);
         }
 
         void case_989()
 #line 6586 "C:\Code\mono-mono-3.4.0\mcs\class\Mono.CSharp\..\..\mcs\cs-parser.jay"
  {
-            ((Linq.AQueryClause)yyVals[-3 + yyTop]).Tail.Next = (Linq.AQueryClause)yyVals[0 + yyTop];
+            ((AQueryClause)yyVals[-3 + yyTop]).Tail.Next = (AQueryClause)yyVals[0 + yyTop];
             yyVal = yyVals[-3 + yyTop];
         }
 
         void case_991()
 #line 6598 "C:\Code\mono-mono-3.4.0\mcs\class\Mono.CSharp\..\..\mcs\cs-parser.jay"
  {
-            yyVal = new Linq.OrderByAscending((Linq.QueryBlock)current_block, (Expression)yyVals[-1 + yyTop]);
+            yyVal = new OrderByAscending((QueryBlock)current_block, (Expression)yyVals[-1 + yyTop]);
             lbag.AddLocation(yyVal, GetLocation(yyVals[0 + yyTop]));
         }
 
         void case_992()
 #line 6603 "C:\Code\mono-mono-3.4.0\mcs\class\Mono.CSharp\..\..\mcs\cs-parser.jay"
  {
-            yyVal = new Linq.OrderByDescending((Linq.QueryBlock)current_block, (Expression)yyVals[-1 + yyTop]);
+            yyVal = new OrderByDescending((QueryBlock)current_block, (Expression)yyVals[-1 + yyTop]);
             lbag.AddLocation(yyVal, GetLocation(yyVals[0 + yyTop]));
         }
 
         void case_994()
 #line 6615 "C:\Code\mono-mono-3.4.0\mcs\class\Mono.CSharp\..\..\mcs\cs-parser.jay"
  {
-            yyVal = new Linq.ThenByAscending((Linq.QueryBlock)current_block, (Expression)yyVals[-1 + yyTop]);
+            yyVal = new ThenByAscending((QueryBlock)current_block, (Expression)yyVals[-1 + yyTop]);
             lbag.AddLocation(yyVal, GetLocation(yyVals[0 + yyTop]));
         }
 
         void case_995()
 #line 6620 "C:\Code\mono-mono-3.4.0\mcs\class\Mono.CSharp\..\..\mcs\cs-parser.jay"
  {
-            yyVal = new Linq.ThenByDescending((Linq.QueryBlock)current_block, (Expression)yyVals[-1 + yyTop]);
+            yyVal = new ThenByDescending((QueryBlock)current_block, (Expression)yyVals[-1 + yyTop]);
             lbag.AddLocation(yyVal, GetLocation(yyVals[0 + yyTop]));
         }
 
@@ -9572,12 +9571,12 @@ namespace Mono.CSharp {
             current_block.SetEndLocation(GetLocation(yyVals[-1 + yyTop]));
             current_block = current_block.Parent;
 
-            current_block = new Linq.QueryBlock(current_block, lexer.Location);
+            current_block = new QueryBlock(current_block, lexer.Location);
 
             if (linq_clause_blocks == null)
-                linq_clause_blocks = new Stack<Linq.QueryBlock>();
+                linq_clause_blocks = new Stack<QueryBlock>();
 
-            linq_clause_blocks.Push((Linq.QueryBlock)current_block);
+            linq_clause_blocks.Push((QueryBlock)current_block);
         }
 
         void case_998()
@@ -9585,9 +9584,9 @@ namespace Mono.CSharp {
  {
             var current_block = linq_clause_blocks.Pop();
             var lt = (LocatedToken)yyVals[-2 + yyTop];
-            var rv = new Linq.RangeVariable(lt.Value, lt.Location);
-            yyVal = new Linq.QueryStartClause((Linq.QueryBlock)current_block, null, rv, GetLocation(yyVals[-3 + yyTop])) {
-                next = (Linq.AQueryClause)yyVals[0 + yyTop]
+            var rv = new RangeVariable(lt.Value, lt.Location);
+            yyVal = new QueryStartClause((QueryBlock)current_block, null, rv, GetLocation(yyVals[-3 + yyTop])) {
+                next = (AQueryClause)yyVals[0 + yyTop]
             };
         }
 
@@ -14907,7 +14906,6 @@ namespace Mono.CSharp {
     }
 #line default
     namespace yydebug {
-        using System;
         internal interface yyDebug {
             void push(int state, Object value);
             void lex(int state, int token, string name, Object value);
@@ -15161,7 +15159,6 @@ namespace Mono.CSharp {
         public const int yyErrorCode = 256;
     }
     namespace yyParser {
-        using System;
         /** thrown for irrecoverable syntax errors and stack overflow.
           */
         internal class yyException : System.Exception {

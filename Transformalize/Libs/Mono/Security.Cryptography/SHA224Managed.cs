@@ -29,9 +29,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Security.Cryptography;
-
-namespace Mono.Security.Cryptography {
+namespace Transformalize.Libs.Mono.Security.Cryptography {
 	
 	public class SHA224Managed : SHA224 {
 

@@ -27,12 +27,10 @@
 //
 
 using System;
-using System.Dynamic;
-using Compiler = Mono.CSharp;
-using System.Reflection;
 using System.Collections.Generic;
+using System.Dynamic;
 
-namespace Microsoft.CSharp.RuntimeBinder
+namespace Transformalize.Libs.Mono.CSharp.RuntimeBinder
 {
 	class DynamicContext
 	{
@@ -40,22 +38,22 @@ namespace Microsoft.CSharp.RuntimeBinder
 		static object compiler_initializer = new object ();
 		static object lock_object = new object ();
 
-		readonly Compiler.ModuleContainer module;
-		readonly Compiler.ReflectionImporter importer;
+		readonly ModuleContainer module;
+		readonly ReflectionImporter importer;
 
-		private DynamicContext (Compiler.ModuleContainer module, Compiler.ReflectionImporter importer)
+		private DynamicContext (ModuleContainer module, ReflectionImporter importer)
 		{
 			this.module = module;
 			this.importer = importer;
 		}
 
-		public Compiler.CompilerContext CompilerContext {
+		public CompilerContext CompilerContext {
 			get {
 				return module.Compiler;
 			}
 		}
 
-		public Compiler.ModuleContainer Module {
+		public ModuleContainer Module {
 			get {
 				return module;
 			}
@@ -70,11 +68,11 @@ namespace Microsoft.CSharp.RuntimeBinder
 				if (dc != null)
 					return dc;
 
-				var settings = new Compiler.CompilerSettings () {
+				var settings = new CompilerSettings () {
 					WarningLevel = 0
 				};
 
-				var cc = new Compiler.CompilerContext (settings, ErrorPrinter.Instance) {
+				var cc = new CompilerContext (settings, ErrorPrinter.Instance) {
 					IsRuntimeBinder = true
 				};
 
@@ -85,14 +83,14 @@ namespace Microsoft.CSharp.RuntimeBinder
 				//
 				// TODO: Remove this code and rely on GetAssemblyDefinition only
 				//
-				var module = new Compiler.ModuleContainer (cc);
+				var module = new ModuleContainer (cc);
 				module.HasTypesFullyDefined = true;
 				
 				// Setup fake assembly, it's used mostly to simplify checks like friend-access
-				var temp = new Compiler.AssemblyDefinitionDynamic (module, "dynamic");
+				var temp = new AssemblyDefinitionDynamic (module, "dynamic");
 				module.SetDeclaringAssembly (temp);
 
-				var importer = new Compiler.ReflectionImporter (module, cc.BuiltinTypes) {
+				var importer = new ReflectionImporter (module, cc.BuiltinTypes) {
 					IgnorePrivateMembers = false
 				};
 
@@ -116,28 +114,28 @@ namespace Microsoft.CSharp.RuntimeBinder
 		//
 		// Creates mcs expression from dynamic object
 		//
-		public Compiler.Expression CreateCompilerExpression (CSharpArgumentInfo info, DynamicMetaObject value)
+		public Expression CreateCompilerExpression (CSharpArgumentInfo info, DynamicMetaObject value)
 		{
 			//
 			// No type details provider, go with runtime type
 			//
 			if (info == null) {
 				if (value.LimitType == typeof (object))
-					return new Compiler.NullLiteral (Compiler.Location.Null);
+					return new NullLiteral (Location.Null);
 
-				return new Compiler.RuntimeValueExpression(value, ImportType (value.RuntimeType));
+				return new RuntimeValueExpression(value, ImportType (value.RuntimeType));
 			}
 
 			//
 			// Value is known to be a type
 			//
 			if ((info.Flags & CSharpArgumentInfoFlags.IsStaticType) != 0)
-				return new Compiler.TypeExpression (ImportType ((Type) value.Value), Compiler.Location.Null);
+				return new TypeExpression (ImportType ((Type) value.Value), Location.Null);
 
 			if (value.Value == null &&
 				(info.Flags & (CSharpArgumentInfoFlags.IsOut | CSharpArgumentInfoFlags.IsRef | CSharpArgumentInfoFlags.UseCompileTimeType)) == 0 &&
 				value.LimitType == typeof (object)) {
-				return new Compiler.NullLiteral (Compiler.Location.Null);
+				return new NullLiteral (Location.Null);
 			}
 
 			//
@@ -147,7 +145,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			var type = ImportType (value_type);
 
 			if ((info.Flags & CSharpArgumentInfoFlags.Constant) != 0) {
-				var c = Compiler.Constant.CreateConstantFromValue (type, value.Value, Compiler.Location.Null);
+				var c = Constant.CreateConstantFromValue (type, value.Value, Location.Null);
 				//
 				// It can be null for misused Constant flag
 				//
@@ -155,24 +153,24 @@ namespace Microsoft.CSharp.RuntimeBinder
 					return c;
 			}
 
-			return new Compiler.RuntimeValueExpression (value, type);
+			return new RuntimeValueExpression (value, type);
 		}
 
 		//
 		// Creates mcs arguments from dynamic argument info
 		//
-		public Compiler.Arguments CreateCompilerArguments (IEnumerable<CSharpArgumentInfo> info, DynamicMetaObject[] args)
+		public Arguments CreateCompilerArguments (IEnumerable<CSharpArgumentInfo> info, DynamicMetaObject[] args)
 		{
-			var res = new Compiler.Arguments (args.Length);
+			var res = new Arguments (args.Length);
 			int pos = 0;
 
 			// enumerates over args
 			foreach (var item in info) {
 				var expr = CreateCompilerExpression (item, args[pos++]);
 				if (item.IsNamed) {
-					res.Add (new Compiler.NamedArgument (item.Name, Compiler.Location.Null, expr, item.ArgumentModifier));
+					res.Add (new NamedArgument (item.Name, Location.Null, expr, item.ArgumentModifier));
 				} else {
-					res.Add (new Compiler.Argument (expr, item.ArgumentModifier));
+					res.Add (new Argument (expr, item.ArgumentModifier));
 				}
 
 				if (pos == args.Length)
@@ -182,7 +180,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			return res;
 		}
 
-		public Compiler.TypeSpec ImportType (Type type)
+		public TypeSpec ImportType (Type type)
 		{
 			lock (lock_object) {
 				return importer.ImportType (type);

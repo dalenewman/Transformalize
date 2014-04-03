@@ -24,7 +24,7 @@
 
 using System;
 
-namespace Mono.Security.Protocol.Tls.Handshake
+namespace Transformalize.Libs.Mono.Security.Protocol.Tls.Handshake
 {
 	[Serializable]
 	internal enum ClientCertificateType

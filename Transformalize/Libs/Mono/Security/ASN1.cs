@@ -34,7 +34,7 @@ using System.Collections;
 using System.IO;
 using System.Text;
 
-namespace Mono.Security {
+namespace Transformalize.Libs.Mono.Security {
 
 	// References:
 	// a.	ITU ASN.1 standards (free download)

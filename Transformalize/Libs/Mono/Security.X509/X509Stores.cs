@@ -29,12 +29,9 @@
 //
 
 using System;
-using System.Collections;
 using System.IO;
 
-using Mono.Security.X509.Extensions;
-
-namespace Mono.Security.X509 {
+namespace Transformalize.Libs.Mono.Security.X509 {
 
 #if INSIDE_CORLIB
 	internal

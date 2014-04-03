@@ -37,7 +37,7 @@
 using System;
 using System.Security.Cryptography;
 
-namespace Mono.Security.Cryptography {
+namespace Transformalize.Libs.Mono.Security.Cryptography {
 
 	public abstract class Null : SymmetricAlgorithm {
 

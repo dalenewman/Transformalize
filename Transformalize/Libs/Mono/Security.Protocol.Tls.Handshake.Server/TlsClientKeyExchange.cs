@@ -22,12 +22,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.IO;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
-namespace Mono.Security.Protocol.Tls.Handshake.Server
+namespace Transformalize.Libs.Mono.Security.Protocol.Tls.Handshake.Server
 {
     internal class TlsClientKeyExchange : HandshakeMessage
     {

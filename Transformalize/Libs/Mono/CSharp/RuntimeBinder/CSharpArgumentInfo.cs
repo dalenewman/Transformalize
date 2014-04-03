@@ -1,5 +1,5 @@
 //
-// CSharpInvokeConstructorBinder.cs
+// CSharpArgumentInfo.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -26,48 +26,56 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Dynamic;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
-using Compiler = Mono.CSharp;
 
-namespace Microsoft.CSharp.RuntimeBinder
+namespace Transformalize.Libs.Mono.CSharp.RuntimeBinder
 {
-	class CSharpInvokeConstructorBinder : DynamicMetaObjectBinder
+	public sealed class CSharpArgumentInfo
 	{
-		IList<CSharpArgumentInfo> argumentInfo;
-		Type callingContext;
-		Type target_return_type;
-
-		public CSharpInvokeConstructorBinder (Type callingContext, IEnumerable<CSharpArgumentInfo> argumentInfo)
+		readonly CSharpArgumentInfoFlags flags;
+		readonly string name;
+		
+		CSharpArgumentInfo (CSharpArgumentInfoFlags flags, string name)
 		{
-			this.callingContext = callingContext;
-			this.argumentInfo = argumentInfo.ToReadOnly ();
+			this.flags = flags;
+			this.name = name;
+		}
+		
+		public static CSharpArgumentInfo Create (CSharpArgumentInfoFlags flags, string name)
+		{
+			return new CSharpArgumentInfo (flags, name);
 		}
 
-		public override DynamicMetaObject Bind (DynamicMetaObject target, DynamicMetaObject[] args)
-		{
-			var ctx = DynamicContext.Create ();
-
-			var type = ctx.CreateCompilerExpression (argumentInfo [0], target);
-			target_return_type = type.Type.GetMetaInfo ();
-
-			var c_args = ctx.CreateCompilerArguments (argumentInfo.Skip (1), args);
-
-			var binder = new CSharpBinder (
-				this, new Compiler.New (type, c_args, Compiler.Location.Null), null);
-
-			binder.AddRestrictions (target);
-			binder.AddRestrictions (args);
-
-			return binder.Bind (ctx, callingContext);
-		}
-
-		public override Type ReturnType {
+		internal Argument.AType ArgumentModifier {
 			get {
-				return target_return_type;
+				if ((flags & CSharpArgumentInfoFlags.IsRef) != 0)
+					return Argument.AType.Ref;
+
+				if ((flags & CSharpArgumentInfoFlags.IsOut) != 0)
+					return Argument.AType.Out;
+
+				return Argument.AType.None;
 			}
+		}
+
+		internal static CallInfo CreateCallInfo (IEnumerable<CSharpArgumentInfo> argumentInfo, int skipCount)
+		{
+			var named = from arg in argumentInfo.Skip (skipCount) where arg.IsNamed select arg.name;
+			return new CallInfo (System.Math.Max (0, argumentInfo.Count () - skipCount), named);
+		}
+		
+		internal CSharpArgumentInfoFlags Flags {
+			get { return flags; }
+		}
+
+		internal bool IsNamed {
+			get { return (flags & CSharpArgumentInfoFlags.NamedArgument) != 0; }
+		}
+
+		internal string Name {
+			get { return name; }
 		}
 	}
 }

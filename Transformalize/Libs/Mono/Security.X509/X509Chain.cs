@@ -31,17 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Security;
-using System.Security.Permissions;
-
 #if !INSIDE_CORLIB
-using System.Net;
 #endif
+using System.Net;
+using System.Security.Permissions;
+using Transformalize.Libs.Mono.Security.X509.Extensions;
 
-using Mono.Security.X509.Extensions;
-
-namespace Mono.Security.X509 {
+namespace Transformalize.Libs.Mono.Security.X509 {
 
 #if INSIDE_CORLIB
 	internal

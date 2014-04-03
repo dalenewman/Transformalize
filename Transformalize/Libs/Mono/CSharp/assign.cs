@@ -12,15 +12,16 @@
 // Copyright 2004-2008 Novell, Inc
 // Copyright 2011 Xamarin Inc
 //
-using System;
 
+using System;
+using System.Reflection.Emit;
 #if STATIC
 using IKVM.Reflection.Emit;
 #else
-using System.Reflection.Emit;
+
 #endif
 
-namespace Mono.CSharp {
+namespace Transformalize.Libs.Mono.CSharp {
 
 	/// <summary>
 	///   This interface is implemented by expressions that can be assigned to.
@@ -865,8 +866,8 @@ namespace Mono.CSharp {
 					b = ((ReducedExpression) source).OriginalExpression as Binary;
 				else if (source is ReducedExpression.ReducedConstantExpression) {
 					b = ((ReducedExpression.ReducedConstantExpression) source).OriginalExpression as Binary;
-				} else if (source is Nullable.LiftedBinaryOperator) {
-					var po = ((Nullable.LiftedBinaryOperator) source);
+				} else if (source is LiftedBinaryOperator) {
+					var po = ((LiftedBinaryOperator) source);
 					if (po.UserOperator == null)
 						b = po.Binary;
 				} else if (source is TypeCast) {

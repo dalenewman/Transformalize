@@ -23,15 +23,12 @@
 //
 
 using System;
-using System.IO;
-using System.Text;
 using System.Security.Cryptography;
+using System.Text;
+using Transformalize.Libs.Mono.Security.Cryptography;
+using HMAC = Transformalize.Libs.Mono.Security.Cryptography.HMAC;
 
-using Mono.Security;
-using Mono.Security.Cryptography;
-using M = Mono.Security.Cryptography;
-
-namespace Mono.Security.Protocol.Tls
+namespace Transformalize.Libs.Mono.Security.Protocol.Tls
 {
 	internal abstract class CipherSuite
 	{
@@ -425,7 +422,7 @@ namespace Mono.Security.Protocol.Tls
 				iterations++;
 			}
 			
-			M.HMAC		hmac	= new M.HMAC (hash, secret);
+			HMAC		hmac	= new HMAC (hash, secret);
 			TlsStream	resMacs	= new TlsStream();
 			
 			byte[][] hmacs = new byte[iterations + 1][];
@@ -514,13 +511,13 @@ namespace Mono.Security.Protocol.Tls
 			// Create the HMAC algorithm
 			if (this.context is ClientContext)
 			{
-				this.clientHMAC = new M.HMAC(
+				this.clientHMAC = new HMAC(
 					CreateHashAlgorithm (),
 					this.context.Negotiating.ClientWriteMAC);
 			}
 			else
 			{
-				this.serverHMAC = new M.HMAC(
+				this.serverHMAC = new HMAC(
 					CreateHashAlgorithm (),
 					this.context.Negotiating.ServerWriteMAC);
 			}
@@ -585,13 +582,13 @@ namespace Mono.Security.Protocol.Tls
 			// Create the HMAC
 			if (this.context is ClientContext)
 			{
-				this.serverHMAC = new M.HMAC(
+				this.serverHMAC = new HMAC(
 					CreateHashAlgorithm (),
 					this.context.Negotiating.ServerWriteMAC);
 			}
 			else
 			{
-				this.clientHMAC = new M.HMAC(
+				this.clientHMAC = new HMAC(
 					CreateHashAlgorithm (),
 					this.context.Negotiating.ClientWriteMAC);
 			}

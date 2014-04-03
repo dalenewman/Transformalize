@@ -27,20 +27,19 @@
 //
 
 using System;
-using System.Dynamic;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
-using Compiler = Mono.CSharp;
 
-namespace Microsoft.CSharp.RuntimeBinder
+namespace Transformalize.Libs.Mono.CSharp.RuntimeBinder
 {
 	class CSharpSetIndexBinder : SetIndexBinder
 	{
-		readonly CSharpBinderFlags flags;
+		readonly Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags flags;
 		IList<CSharpArgumentInfo> argumentInfo;
 		Type callingContext;
 
-		public CSharpSetIndexBinder (CSharpBinderFlags flags, Type callingContext, IEnumerable<CSharpArgumentInfo> argumentInfo)
+		public CSharpSetIndexBinder (Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags flags, Type callingContext, IEnumerable<CSharpArgumentInfo> argumentInfo)
 			: base (CSharpArgumentInfo.CreateCallInfo (argumentInfo, 2))
 		{
 			this.flags = flags;
@@ -60,20 +59,20 @@ namespace Microsoft.CSharp.RuntimeBinder
 			var ctx = DynamicContext.Create ();
 			var expr = ctx.CreateCompilerExpression (argumentInfo [0], target);
 			var args = ctx.CreateCompilerArguments (argumentInfo.Skip (1), indexes);
-			expr = new Compiler.ElementAccess (expr, args, Compiler.Location.Null);
+			expr = new ElementAccess (expr, args, Location.Null);
 
 			var source = ctx.CreateCompilerExpression (argumentInfo [indexes.Length + 1], value);
 
 			// Same conversion as in SetMemberBinder
-			if ((flags & CSharpBinderFlags.ValueFromCompoundAssignment) != 0) {
-				expr = new Compiler.RuntimeExplicitAssign (expr, source);
+			if ((flags & Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags.ValueFromCompoundAssignment) != 0) {
+				expr = new RuntimeExplicitAssign (expr, source);
 			} else {
-				expr = new Compiler.SimpleAssign (expr, source);
+				expr = new SimpleAssign (expr, source);
 			}
-			expr = new Compiler.Cast (new Compiler.TypeExpression (ctx.ImportType (ReturnType), Compiler.Location.Null), expr, Compiler.Location.Null);
+			expr = new Cast (new TypeExpression (ctx.ImportType (ReturnType), Location.Null), expr, Location.Null);
 
-			if ((flags & CSharpBinderFlags.CheckedContext) != 0)
-				expr = new Compiler.CheckedExpr (expr, Compiler.Location.Null);
+			if ((flags & Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags.CheckedContext) != 0)
+				expr = new CheckedExpr (expr, Location.Null);
 
 			var binder = new CSharpBinder (this, expr, errorSuggestion);
 			binder.AddRestrictions (target);

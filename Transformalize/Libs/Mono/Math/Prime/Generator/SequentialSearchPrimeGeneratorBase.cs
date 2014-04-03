@@ -27,7 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Mono.Math.Prime.Generator {
+namespace Transformalize.Libs.Mono.Math.Prime.Generator {
 
 #if INSIDE_CORLIB
 	internal

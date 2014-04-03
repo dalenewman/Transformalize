@@ -14,19 +14,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Emit;
 using System.Runtime.InteropServices;
-
 #if STATIC
 using MetaType = IKVM.Reflection.Type;
 using IKVM.Reflection;
 using IKVM.Reflection.Emit;
 #else
-using MetaType = System.Type;
-using System.Reflection;
-using System.Reflection.Emit;
+
 #endif
 
-namespace Mono.CSharp
+namespace Transformalize.Libs.Mono.CSharp
 {
 	public class FieldDeclarator
 	{
@@ -619,11 +618,11 @@ namespace Mono.CSharp
 			if (!base.Define ())
 				return false;
 
-			MetaType[] required_modifier = null;
+			Type[] required_modifier = null;
 			if ((ModFlags & Modifiers.VOLATILE) != 0) {
 				var mod = Module.PredefinedTypes.IsVolatile.Resolve ();
 				if (mod != null)
-					required_modifier = new MetaType[] { mod.GetMetaInfo () };
+					required_modifier = new Type[] { mod.GetMetaInfo () };
 			}
 
 			FieldBuilder = Parent.TypeBuilder.DefineField (

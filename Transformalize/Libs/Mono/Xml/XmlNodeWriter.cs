@@ -27,10 +27,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 using System;
 using System.Xml;
 
-namespace Mono.Xml
+namespace Transformalize.Libs.Mono.Xml
 {
 	public class XmlNodeWriter : XmlWriter
 	{

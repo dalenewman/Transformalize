@@ -28,12 +28,9 @@
 //
 
 using System;
-using System.Globalization;
 using System.Text;
 
-using Mono.Security;
-
-namespace Mono.Security.X509 {
+namespace Transformalize.Libs.Mono.Security.X509 {
 
 	// References:
 	// 1.	Information technology - Open Systems Interconnection - The Directory: Selected attribute types 

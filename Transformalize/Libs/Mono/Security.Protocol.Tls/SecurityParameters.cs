@@ -21,9 +21,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-
-namespace Mono.Security.Protocol.Tls {
+namespace Transformalize.Libs.Mono.Security.Protocol.Tls {
 
 	// note: other things should be moved here
 	internal class SecurityParameters {

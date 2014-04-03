@@ -23,14 +23,9 @@
 //
 
 using System;
-using System.Collections;
-using System.Text.RegularExpressions;
-using System.Security.Cryptography;
-using X509Cert = System.Security.Cryptography.X509Certificates;
+using X509Certificate = Transformalize.Libs.Mono.Security.X509.X509Certificate;
 
-using Mono.Security.X509;
-
-namespace Mono.Security.Protocol.Tls.Handshake.Server
+namespace Transformalize.Libs.Mono.Security.Protocol.Tls.Handshake.Server
 {
 	internal class TlsServerCertificate : HandshakeMessage
 	{

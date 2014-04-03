@@ -27,13 +27,11 @@
 //
 
 using System;
-using System.Dynamic;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
-using Compiler = Mono.CSharp;
-using SLE = System.Linq.Expressions;
 
-namespace Microsoft.CSharp.RuntimeBinder
+namespace Transformalize.Libs.Mono.CSharp.RuntimeBinder
 {
 	class CSharpInvokeMemberBinder : InvokeMemberBinder
 	{
@@ -55,35 +53,35 @@ namespace Microsoft.CSharp.RuntimeBinder
 		// more runtime dependencies which require Microsoft.CSharp assembly reference or
 		// a lot of reflection calls
 		//
-		class Invocation : Compiler.Invocation
+		class Invocation : CSharp.Invocation
 		{
-			sealed class RuntimeDynamicInvocation : Compiler.ShimExpression
+			sealed class RuntimeDynamicInvocation : ShimExpression
 			{
 				Invocation invoke;
 
-				public RuntimeDynamicInvocation (Invocation invoke, Compiler.Expression memberExpr)
+				public RuntimeDynamicInvocation (Invocation invoke, Expression memberExpr)
 					: base (memberExpr)
 				{
 					this.invoke = invoke;
 				}
 
-				protected override Compiler.Expression DoResolve (Compiler.ResolveContext rc)
+				protected override Expression DoResolve (ResolveContext rc)
 				{
 					type = expr.Type;
-					eclass = Compiler.ExprClass.Value;
+					eclass = ExprClass.Value;
 					return this;
 				}
 
 				//
 				// Creates an invoke call on invocable expression
 				//
-				public override System.Linq.Expressions.Expression MakeExpression (Compiler.BuilderContext ctx)
+				public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
 				{
 					var invokeBinder = invoke.invokeBinder;
 					var binder = Binder.Invoke (invokeBinder.flags, invokeBinder.callingContext, invokeBinder.argumentInfo);
 
 					var args = invoke.Arguments;
-					var args_expr = new SLE.Expression[invokeBinder.argumentInfo.Count];
+					var args_expr = new System.Linq.Expressions.Expression[invokeBinder.argumentInfo.Count];
 
 					var types = new Type [args_expr.Length + 2];
 
@@ -103,38 +101,38 @@ namespace Microsoft.CSharp.RuntimeBinder
 					}
 
 					// Return type goes last
-					bool void_result = (invokeBinder.flags & CSharpBinderFlags.ResultDiscarded) != 0;
+					bool void_result = (invokeBinder.flags & Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags.ResultDiscarded) != 0;
 					types[types.Length - 1] = void_result ? typeof (void) : invokeBinder.ReturnType;
 
 					//
 					// Much easier to use Expression.Dynamic cannot be used because it ignores ByRef arguments
 					// and it always generates either Func or Action and any value type argument is lost
 					//
-					Type delegateType = SLE.Expression.GetDelegateType (types);
-					return SLE.Expression.MakeDynamic (delegateType, binder, args_expr);
+					Type delegateType = System.Linq.Expressions.Expression.GetDelegateType (types);
+					return System.Linq.Expressions.Expression.MakeDynamic (delegateType, binder, args_expr);
 				}
 			}
 
 			readonly CSharpInvokeMemberBinder invokeBinder;
 
-			public Invocation (Compiler.Expression expr, Compiler.Arguments arguments, CSharpInvokeMemberBinder invokeBinder)
+			public Invocation (Expression expr, Arguments arguments, CSharpInvokeMemberBinder invokeBinder)
 				: base (expr, arguments)
 			{
 				this.invokeBinder = invokeBinder;
 			}
 
-			protected override Compiler.Expression DoResolveDynamic (Compiler.ResolveContext ec, Compiler.Expression memberExpr)
+			protected override Expression DoResolveDynamic (ResolveContext ec, Expression memberExpr)
 			{
 				return new RuntimeDynamicInvocation (this, memberExpr).Resolve (ec);
 			}
 		}
 
-		readonly CSharpBinderFlags flags;
+		readonly Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags flags;
 		IList<CSharpArgumentInfo> argumentInfo;
 		IList<Type> typeArguments;
 		Type callingContext;
 		
-		public CSharpInvokeMemberBinder (CSharpBinderFlags flags, string name, Type callingContext, IEnumerable<Type> typeArguments, IEnumerable<CSharpArgumentInfo> argumentInfo)
+		public CSharpInvokeMemberBinder (Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags flags, string name, Type callingContext, IEnumerable<Type> typeArguments, IEnumerable<CSharpArgumentInfo> argumentInfo)
 			: base (name, false, CSharpArgumentInfo.CreateCallInfo (argumentInfo, 1))
 		{
 			this.flags = flags;
@@ -157,7 +155,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			var c_args = ctx.CreateCompilerArguments (argumentInfo.Skip (1), args);
 			var t_args = typeArguments == null ?
 				null :
-				new Compiler.TypeArguments (typeArguments.Select (l => new Compiler.TypeExpression (ctx.ImportType (l), Compiler.Location.Null)).ToArray ());
+				new TypeArguments (typeArguments.Select (l => new TypeExpression (ctx.ImportType (l), Location.Null)).ToArray ());
 
 			var expr = ctx.CreateCompilerExpression (argumentInfo[0], target);
 
@@ -167,26 +165,26 @@ namespace Microsoft.CSharp.RuntimeBinder
 			// simple name is resolved as a static invocation and member access
 			// has to be reduced back to simple name without reporting an error
 			//
-			if ((flags & CSharpBinderFlags.InvokeSimpleName) != 0) {
-				var value = expr as Compiler.RuntimeValueExpression;
+			if ((flags & Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags.InvokeSimpleName) != 0) {
+				var value = expr as RuntimeValueExpression;
 				if (value != null)
 					value.IsSuggestionOnly = true;
 			}
 
-			expr = new Compiler.MemberAccess (expr, Name, t_args, Compiler.Location.Null);
+			expr = new MemberAccess (expr, Name, t_args, Location.Null);
 			expr = new Invocation (expr, c_args, this);
 
-			if ((flags & CSharpBinderFlags.ResultDiscarded) == 0)
-				expr = new Compiler.Cast (new Compiler.TypeExpression (ctx.ImportType (ReturnType), Compiler.Location.Null), expr, Compiler.Location.Null);
+			if ((flags & Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags.ResultDiscarded) == 0)
+				expr = new Cast (new TypeExpression (ctx.ImportType (ReturnType), Location.Null), expr, Location.Null);
 			else
-				expr = new Compiler.DynamicResultCast (ctx.ImportType (ReturnType), expr);
+				expr = new DynamicResultCast (ctx.ImportType (ReturnType), expr);
 
 			var binder = new CSharpBinder (this, expr, errorSuggestion);
 			binder.AddRestrictions (target);
 			binder.AddRestrictions (args);
 
-			if ((flags & CSharpBinderFlags.InvokeSpecialName) != 0)
-				binder.ResolveOptions |= Compiler.ResolveContext.Options.InvokeSpecialName;
+			if ((flags & Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags.InvokeSpecialName) != 0)
+				binder.ResolveOptions |= ResolveContext.Options.InvokeSpecialName;
 
 			return binder.Bind (ctx, callingContext);
 		}

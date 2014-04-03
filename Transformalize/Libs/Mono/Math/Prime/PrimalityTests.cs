@@ -30,7 +30,7 @@
 
 using System;
 
-namespace Mono.Math.Prime {
+namespace Transformalize.Libs.Mono.Math.Prime {
 
 #if INSIDE_CORLIB
 	internal

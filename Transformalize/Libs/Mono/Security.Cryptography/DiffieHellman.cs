@@ -29,13 +29,12 @@
 //
 
 using System;
-using System.Text;
 using System.Security;
 using System.Security.Cryptography;
-using Mono.Xml;
-using Mono.Math;
+using System.Text;
+using Transformalize.Libs.Mono.Xml;
 
-namespace Mono.Security.Cryptography {
+namespace Transformalize.Libs.Mono.Security.Cryptography {
 	/// <summary>
 	/// Defines a base class from which all Diffie-Hellman implementations inherit.
 	/// </summary>

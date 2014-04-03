@@ -1,5 +1,5 @@
 //
-// CSharpBinderFlags.cs
+// CSharpArgumentInfoFlags.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -28,20 +28,17 @@
 
 using System;
 
-namespace Microsoft.CSharp.RuntimeBinder
+namespace Transformalize.Libs.Mono.CSharp.RuntimeBinder
 {
 	[Flags]
-	public enum CSharpBinderFlags
+	public enum CSharpArgumentInfoFlags
 	{
-		None					= 0,
-		CheckedContext			= 1,
-		InvokeSimpleName		= 1 << 1,
-		InvokeSpecialName		= 1 << 2,
-		BinaryOperationLogical	= 1 << 3,
-		ConvertExplicit			= 1 << 4,
-		ConvertArrayIndex		= 1 << 5,
-		ResultIndexed			= 1 << 6,		
-		ValueFromCompoundAssignment = 1 << 7,
-		ResultDiscarded			= 1 << 8
+		None				= 0,
+		UseCompileTimeType	= 1,
+		Constant			= 2,
+		NamedArgument		= 4,
+		IsRef				= 8,
+		IsOut				= 16,
+		IsStaticType		= 32
 	}
 }

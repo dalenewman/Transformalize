@@ -10,6 +10,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Web.Razor.Parser;
 using Microsoft.CSharp;
 using Microsoft.CSharp.RuntimeBinder;
+using Binder = Transformalize.Libs.Mono.CSharp.RuntimeBinder.Binder;
 
 namespace Transformalize.Libs.RazorEngine.Compilation.CSharp
 {

@@ -11,20 +11,20 @@
 // Copyright 2011 Xamarin Inc
 //
 //
-using System;
-using System.Text;
 
+using System;
+using System.Reflection;
+using System.Reflection.Emit;
+using System.Text;
 #if STATIC
 using MetaType = IKVM.Reflection.Type;
 using IKVM.Reflection;
 using IKVM.Reflection.Emit;
 #else
-using MetaType = System.Type;
-using System.Reflection;
-using System.Reflection.Emit;
+
 #endif
 
-namespace Mono.CSharp {
+namespace Transformalize.Libs.Mono.CSharp {
 
 	/// <summary>
 	///   Abstract Base class for parameters of a method.
@@ -822,19 +822,19 @@ namespace Mono.CSharp {
 		}
 
 		// Very expensive operation
-		public MetaType[] GetMetaInfo ()
+		public Type[] GetMetaInfo ()
 		{
-			MetaType[] types;
+			Type[] types;
 			if (has_arglist) {
 				if (Count == 1)
-					return MetaType.EmptyTypes;
+					return Type.EmptyTypes;
 
-				types = new MetaType[Count - 1];
+				types = new Type[Count - 1];
 			} else {
 				if (Count == 0)
-					return MetaType.EmptyTypes;
+					return Type.EmptyTypes;
 
-				types = new MetaType[Count];
+				types = new Type[Count];
 			}
 
 			for (int i = 0; i < types.Length; ++i) {
@@ -1357,8 +1357,8 @@ namespace Mono.CSharp {
 
 			var res = Convert.ImplicitConversionStandard (rc, expr, parameter_type, Location);
 			if (res != null) {
-				if (parameter_type.IsNullableType && res is Nullable.Wrap) {
-					Nullable.Wrap wrap = (Nullable.Wrap) res;
+				if (parameter_type.IsNullableType && res is Wrap) {
+					Wrap wrap = (Wrap) res;
 					res = wrap.Child;
 					if (!(res is Constant)) {
 						rc.Report.Error (1770, Location,

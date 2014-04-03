@@ -12,18 +12,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Collections;
-
+using System.Reflection;
+using System.Reflection.Emit;
 #if STATIC
 using IKVM.Reflection;
 using IKVM.Reflection.Emit;
 #else
-using System.Reflection;
-using System.Reflection.Emit;
+
 #endif
 
-namespace Mono.CSharp
+namespace Transformalize.Libs.Mono.CSharp
 {
 	public class Await : ExpressionStatement
 	{
@@ -318,7 +316,7 @@ namespace Mono.CSharp
 
 		public override bool Resolve (BlockContext bc)
 		{
-			if (bc.CurrentBlock is Linq.QueryBlock) {
+			if (bc.CurrentBlock is QueryBlock) {
 				bc.Report.Error (1995, loc,
 					"The `await' operator may only be used in a query expression within the first collection expression of the initial `from' clause or within the collection expression of a `join' clause");
 				return false;

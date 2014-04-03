@@ -13,9 +13,10 @@
 using IKVM.Reflection;
 #else
 using System.Reflection;
+
 #endif
 
-namespace Mono.CSharp {
+namespace Transformalize.Libs.Mono.CSharp {
 
 	public class Const : FieldBase
 	{

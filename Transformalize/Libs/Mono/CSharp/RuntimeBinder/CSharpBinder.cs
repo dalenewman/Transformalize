@@ -28,12 +28,9 @@
 
 using System;
 using System.Dynamic;
-using System.Linq.Expressions;
-using Compiler = Mono.CSharp;
 using System.Reflection;
-using System.Collections.Generic;
 
-namespace Microsoft.CSharp.RuntimeBinder
+namespace Transformalize.Libs.Mono.CSharp.RuntimeBinder
 {
 	class CSharpBinder
 	{
@@ -41,11 +38,11 @@ namespace Microsoft.CSharp.RuntimeBinder
 		static object resolver = new object ();
 
 		DynamicMetaObjectBinder binder;
-		Compiler.Expression expr;
+		Expression expr;
 		BindingRestrictions restrictions;
 		DynamicMetaObject errorSuggestion;
 
-		public CSharpBinder (DynamicMetaObjectBinder binder, Compiler.Expression expr, DynamicMetaObject errorSuggestion)
+		public CSharpBinder (DynamicMetaObjectBinder binder, Expression expr, DynamicMetaObject errorSuggestion)
 		{
 			this.binder = binder;
 			this.expr = expr;
@@ -53,7 +50,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			this.errorSuggestion = errorSuggestion;
 		}
 
-		public Compiler.ResolveContext.Options ResolveOptions { get; set; }
+		public ResolveContext.Options ResolveOptions { get; set; }
 
 		public void AddRestrictions (DynamicMetaObject arg)
 		{
@@ -67,19 +64,19 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 		public DynamicMetaObject Bind (DynamicContext ctx, Type callingType)
 		{
-			Expression res;
+			System.Linq.Expressions.Expression res;
 			try {
-				var rc = new Compiler.ResolveContext (new RuntimeBinderContext (ctx, callingType), ResolveOptions);
+				var rc = new ResolveContext (new RuntimeBinderContext (ctx, callingType), ResolveOptions);
 
 				// Static typemanager and internal caches are not thread-safe
 				lock (resolver) {
-					expr = expr.Resolve (rc, Compiler.ResolveFlags.VariableOrValue);
+					expr = expr.Resolve (rc, ResolveFlags.VariableOrValue);
 				}
 
 				if (expr == null)
 					throw new RuntimeBinderInternalCompilerException ("Expression resolved to null");
 
-				res = expr.MakeExpression (new Compiler.BuilderContext ());
+				res = expr.MakeExpression (new BuilderContext ());
 			} catch (RuntimeBinderException e) {
 				if (errorSuggestion != null)
 					return errorSuggestion;
@@ -95,7 +92,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			return new DynamicMetaObject (res, restrictions);
 		}
 
-		Expression CreateBinderException (string message)
+		System.Linq.Expressions.Expression CreateBinderException (string message)
 		{
 			if (binder_exception_ctor == null)
 				binder_exception_ctor = typeof (RuntimeBinderException).GetConstructor (new[] { typeof (string) });
@@ -103,7 +100,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			//
 			// Uses target type to keep expressions composition working
 			//
-			return Expression.Throw (Expression.New (binder_exception_ctor, Expression.Constant (message)), binder.ReturnType);
+			return System.Linq.Expressions.Expression.Throw (System.Linq.Expressions.Expression.New (binder_exception_ctor, System.Linq.Expressions.Expression.Constant (message)), binder.ReturnType);
 		}
 
 		static BindingRestrictions CreateRestrictionsOnTarget (DynamicMetaObject arg)

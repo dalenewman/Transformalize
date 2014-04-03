@@ -23,10 +23,9 @@
 //
 
 using System;
-using System.IO;
 using System.Security.Cryptography;
 
-namespace Mono.Security.Protocol.Tls
+namespace Transformalize.Libs.Mono.Security.Protocol.Tls
 {
 	internal class TlsCipherSuite : CipherSuite
 	{

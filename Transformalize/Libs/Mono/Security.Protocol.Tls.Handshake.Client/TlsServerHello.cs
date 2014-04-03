@@ -24,7 +24,7 @@
 
 using System;
 
-namespace Mono.Security.Protocol.Tls.Handshake.Client
+namespace Transformalize.Libs.Mono.Security.Protocol.Tls.Handshake.Client
 {
 	internal class TlsServerHello : HandshakeMessage
 	{

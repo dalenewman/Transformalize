@@ -12,11 +12,10 @@
 
 using System;
 using System.Collections.Generic;
-using Mono.CompilerServices.SymbolWriter;
 using System.Diagnostics;
-using System.Linq;
+using Transformalize.Libs.Mono.CompilerServices.SymbolWriter;
 
-namespace Mono.CSharp
+namespace Transformalize.Libs.Mono.CSharp
 {
 	//
 	//  This is one single source file.

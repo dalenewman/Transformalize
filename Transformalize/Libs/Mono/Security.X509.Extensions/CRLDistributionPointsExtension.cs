@@ -32,10 +32,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using Mono.Security;
-using Mono.Security.X509;
-
-namespace Mono.Security.X509.Extensions {
+namespace Transformalize.Libs.Mono.Security.X509.Extensions {
 
 	// References:
 	// a.	Internet X.509 Public Key Infrastructure Certificate and Certificate Revocation List (CRL) Profile

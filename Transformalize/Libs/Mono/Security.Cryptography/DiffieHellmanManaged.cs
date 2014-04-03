@@ -33,9 +33,9 @@
 
 using System;
 using System.Security.Cryptography;
-using Mono.Math;
+using Transformalize.Libs.Mono.Math;
 
-namespace Mono.Security.Cryptography {
+namespace Transformalize.Libs.Mono.Security.Cryptography {
 	/// <summary>
 	/// Implements the Diffie-Hellman algorithm.
 	/// </summary>

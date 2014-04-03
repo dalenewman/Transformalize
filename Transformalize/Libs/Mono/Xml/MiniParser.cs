@@ -29,11 +29,11 @@
 //
 
 using System;
-using System.Text;
 using System.Collections;
 using System.Globalization;
+using System.Text;
 
-namespace Mono.Xml {
+namespace Transformalize.Libs.Mono.Xml {
 
 #if INSIDE_CORLIB
 	internal

@@ -25,7 +25,7 @@
 using System;
 using System.Security.Cryptography;
 
-namespace Mono.Security.Protocol.Tls
+namespace Transformalize.Libs.Mono.Security.Protocol.Tls
 {
 	internal class RSASslSignatureFormatter : AsymmetricSignatureFormatter
 	{

@@ -23,11 +23,8 @@
 //
 
 using System;
-using System.Text;
-using Mono.Security;
-using Mono.Security.X509;
 
-namespace Mono.Security.Protocol.Tls.Handshake.Server
+namespace Transformalize.Libs.Mono.Security.Protocol.Tls.Handshake.Server
 {
 	internal class TlsServerCertificateRequest : HandshakeMessage
 	{

@@ -13,14 +13,14 @@
 
 using System;
 using System.Collections.Generic;
-
+using System.Reflection.Emit;
 #if STATIC
 using IKVM.Reflection.Emit;
 #else
-using System.Reflection.Emit;
+
 #endif
 
-namespace Mono.CSharp {
+namespace Transformalize.Libs.Mono.CSharp {
 
 	//
 	// A container class for all the conversion operations
@@ -407,7 +407,7 @@ namespace Mono.CSharp {
 				if (!TypeSpec.IsReferenceType (target_type))
 					return null;
 
-				var res = ImplicitBoxingConversion (expr, Nullable.NullableInfo.GetUnderlyingType (expr_type), target_type);
+				var res = ImplicitBoxingConversion (expr, NullableInfo.GetUnderlyingType (expr_type), target_type);
 
 				// "cast" underlying type to target type to emit correct InvalidCastException when
 				// underlying hierarchy changes without recompilation
@@ -436,14 +436,14 @@ namespace Mono.CSharp {
 			// From null to any nullable type
 			//
 			if (expr_type == InternalType.NullLiteral)
-				return ec == null ? EmptyExpression.Null : Nullable.LiftedNull.Create (target_type, expr.Location);
+				return ec == null ? EmptyExpression.Null : LiftedNull.Create (target_type, expr.Location);
 
 			// S -> T?
-			TypeSpec t_el = Nullable.NullableInfo.GetUnderlyingType (target_type);
+			TypeSpec t_el = NullableInfo.GetUnderlyingType (target_type);
 
 			// S? -> T?
 			if (expr_type.IsNullableType)
-				expr_type = Nullable.NullableInfo.GetUnderlyingType (expr_type);
+				expr_type = NullableInfo.GetUnderlyingType (expr_type);
 
 			//
 			// Predefined implicit identity or implicit numeric conversion
@@ -463,7 +463,7 @@ namespace Mono.CSharp {
 
 			Expression unwrap;
 			if (expr_type != expr.Type)
-				unwrap = Nullable.Unwrap.Create (expr);
+				unwrap = Unwrap.Create (expr);
 			else
 				unwrap = expr;
 
@@ -479,9 +479,9 @@ namespace Mono.CSharp {
 			}
 			
 			if (expr_type != expr.Type)
-				return new Nullable.LiftedConversion (conv, unwrap, target_type).Resolve (ec);
+				return new LiftedConversion (conv, unwrap, target_type).Resolve (ec);
 
-			return Nullable.Wrap.Create (conv, target_type);
+			return Wrap.Create (conv, target_type);
 		}
 
 		/// <summary>
@@ -1062,7 +1062,7 @@ namespace Mono.CSharp {
 
 				if (target != t) {
 					if (t.IsNullableType)
-						t = Nullable.NullableInfo.GetUnderlyingType (t);
+						t = NullableInfo.GetUnderlyingType (t);
 
 					if (!ImplicitStandardConversionExists (new EmptyExpression (t), target)) {
 						if (implicitOnly)
@@ -1104,7 +1104,7 @@ namespace Mono.CSharp {
 				if (implicitOnly && !TypeSpec.IsReferenceType (target_type) && !target_type.IsNullableType) {
 					source_type_expr = source;
 				} else {
-					source_type_expr = Nullable.Unwrap.CreateUnwrapped (source);
+					source_type_expr = Unwrap.CreateUnwrapped (source);
 					source_type = source_type_expr.Type;
 					nullable_source = true;
 				}
@@ -1113,7 +1113,7 @@ namespace Mono.CSharp {
 			}
 
 			if (target_type.IsNullableType)
-				target_type = Nullable.NullableInfo.GetUnderlyingType (target_type);
+				target_type = NullableInfo.GetUnderlyingType (target_type);
 
 			// Only these containers can contain a user defined implicit or explicit operators
 			const MemberKind user_conversion_kinds = MemberKind.Class | MemberKind.Struct | MemberKind.TypeParameter;
@@ -1242,7 +1242,7 @@ namespace Mono.CSharp {
 					// types only
 					//
 					if (t_x != target) {
-						var unwrap = Nullable.Unwrap.CreateUnwrapped (source);
+						var unwrap = Unwrap.CreateUnwrapped (source);
 
 						source = implicitOnly ?
 							ImplicitConversionStandard (ec, unwrap, target_type, loc) :
@@ -1252,7 +1252,7 @@ namespace Mono.CSharp {
 							return null;
 
 						if (target.IsNullableType)
-							source = new Nullable.LiftedConversion (source, unwrap, target).Resolve (ec);
+							source = new LiftedConversion (source, unwrap, target).Resolve (ec);
 					}
 				} else {
 					source = implicitOnly ?
@@ -1270,13 +1270,13 @@ namespace Mono.CSharp {
 			// only non-nullable type we need to lift it manually
 			//
 			if (nullable_source && !s_x.IsNullableType)
-				return new Nullable.LiftedConversion (source, source_type_expr, target).Resolve (ec);
+				return new LiftedConversion (source, source_type_expr, target).Resolve (ec);
 
 			//
 			// Target is of nullable type but source type is not, wrap the result expression
 			//
 			if (target.IsNullableType && !t_x.IsNullableType)
-				source = Nullable.Wrap.Create (source, target);
+				source = Wrap.Create (source, target);
 
 			return source;
 		}
@@ -2186,13 +2186,13 @@ namespace Mono.CSharp {
 				TypeSpec target;
 
 				if (expr_type.IsNullableType) {
-					target = Nullable.NullableInfo.GetUnderlyingType (target_type);
-					Expression unwrap = Nullable.Unwrap.Create (expr);
+					target = NullableInfo.GetUnderlyingType (target_type);
+					Expression unwrap = Unwrap.Create (expr);
 					e = ExplicitConversion (ec, unwrap, target, expr.Location);
 					if (e == null)
 						return null;
 
-					return new Nullable.LiftedConversion (e, unwrap, target_type).Resolve (ec);
+					return new LiftedConversion (e, unwrap, target_type).Resolve (ec);
 				}
 				if (expr_type.BuiltinType == BuiltinTypeSpec.Type.Object) {
 					return new UnboxCast (expr, target_type);
@@ -2201,13 +2201,13 @@ namespace Mono.CSharp {
 				target = TypeManager.GetTypeArguments (target_type) [0];
 				e = ExplicitConversionCore (ec, expr, target, loc);
 				if (e != null)
-					return TypeSpec.IsReferenceType (expr.Type) ? new UnboxCast (expr, target_type) : Nullable.Wrap.Create (e, target_type);
+					return TypeSpec.IsReferenceType (expr.Type) ? new UnboxCast (expr, target_type) : Wrap.Create (e, target_type);
 			} else if (expr_type.IsNullableType) {
-				e = ImplicitBoxingConversion (expr, Nullable.NullableInfo.GetUnderlyingType (expr_type), target_type);
+				e = ImplicitBoxingConversion (expr, NullableInfo.GetUnderlyingType (expr_type), target_type);
 				if (e != null)
 					return e;
 
-				e = Nullable.Unwrap.Create (expr, false);			
+				e = Unwrap.Create (expr, false);			
 				e = ExplicitConversionCore (ec, e, target_type, loc);
 				if (e != null)
 					return EmptyCast.Create (e, target_type);

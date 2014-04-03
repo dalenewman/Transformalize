@@ -30,11 +30,9 @@
 using System;
 using System.Globalization;
 using System.Text;
+using Transformalize.Libs.Mono.Security.Cryptography;
 
-using Mono.Security;
-using Mono.Security.Cryptography;
-
-namespace Mono.Security.X509 {
+namespace Transformalize.Libs.Mono.Security.X509 {
 
 	// References:
 	// 1.	Information technology - Open Systems Interconnection - The Directory: Models

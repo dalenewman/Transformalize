@@ -32,9 +32,7 @@
 using System;
 using System.Collections;
 
-using Mono.Security;
-
-namespace Mono.Security.X509 {
+namespace Transformalize.Libs.Mono.Security.X509 {
 	/*
 	 * Extensions  ::=  SEQUENCE SIZE (1..MAX) OF Extension
 	 * 

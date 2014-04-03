@@ -30,11 +30,11 @@
 //
 
 using System;
-using System.Reflection;
 using System.Collections.Generic;
 using System.IO;
-	
-namespace Mono.CompilerServices.SymbolWriter
+using System.Reflection;
+
+namespace Transformalize.Libs.Mono.CompilerServices.SymbolWriter
 {
 	public class MonoSymbolFileException : Exception
 	{

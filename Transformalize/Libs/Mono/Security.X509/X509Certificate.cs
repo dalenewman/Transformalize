@@ -31,12 +31,11 @@
 using System;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
-using SSCX = System.Security.Cryptography.X509Certificates;
 using System.Security.Permissions;
 using System.Text;
-using Mono.Security.Cryptography;
+using Transformalize.Libs.Mono.Security.Cryptography;
 
-namespace Mono.Security.X509 {
+namespace Transformalize.Libs.Mono.Security.X509 {
 
 	// References:
 	// a.	Internet X.509 Public Key Infrastructure Certificate and CRL Profile

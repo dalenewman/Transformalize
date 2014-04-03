@@ -29,7 +29,7 @@
 
 using System;
 
-namespace Mono.Security
+namespace Transformalize.Libs.Mono.Security
 {
 	internal sealed class BitConverterLE
 	{

@@ -32,7 +32,7 @@
 using System;
 using System.Security.Cryptography;
 
-namespace Mono.Security.X509 {
+namespace Transformalize.Libs.Mono.Security.X509 {
 	// From RFC3280
 	/*
 	 * Certificate  ::=  SEQUENCE  {

@@ -30,7 +30,7 @@
 
 using System;
 
-namespace Mono.Math.Prime.Generator {
+namespace Transformalize.Libs.Mono.Math.Prime.Generator {
 
 	/// <summary>
 	/// Finds the next prime after a given number.

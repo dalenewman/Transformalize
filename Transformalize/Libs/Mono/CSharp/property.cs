@@ -12,24 +12,22 @@
 // Copyright 2011 Xamarin Inc
 //
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Mono.CompilerServices.SymbolWriter;
-
 #if NET_2_1
 using XmlElement = System.Object;
 #endif
-
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Emit;
+using System.Text;
 #if STATIC
 using IKVM.Reflection;
 using IKVM.Reflection.Emit;
 #else
-using System.Reflection;
-using System.Reflection.Emit;
 #endif
+using Transformalize.Libs.Mono.CompilerServices.SymbolWriter;
 
-namespace Mono.CSharp
+namespace Transformalize.Libs.Mono.CSharp
 {
 	// It is used as a base class for all property based members
 	// This includes properties, indexers, and events

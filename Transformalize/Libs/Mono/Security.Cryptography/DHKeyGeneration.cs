@@ -28,9 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-
-namespace Mono.Security.Cryptography {
+namespace Transformalize.Libs.Mono.Security.Cryptography {
 	/// <summary>
 	/// Defines the different Diffie-Hellman key generation methods.
 	/// </summary>

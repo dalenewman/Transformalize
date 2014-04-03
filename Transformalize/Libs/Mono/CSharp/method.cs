@@ -12,34 +12,29 @@
 // Copyright 2011 Xamarin Inc.
 //
 
-using System;
-using System.Collections.Generic;
-using System.Security;
-using System.Security.Permissions;
-using System.Text;
-using System.Linq;
-using Mono.CompilerServices.SymbolWriter;
-using System.Runtime.CompilerServices;
-
 #if NET_2_1
 using XmlElement = System.Object;
 #else
-using System.Xml;
 #endif
-
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
+using System.Security;
+using System.Security.Permissions;
+using System.Text;
 #if STATIC
 using MetaType = IKVM.Reflection.Type;
 using SecurityType = System.Collections.Generic.List<IKVM.Reflection.Emit.CustomAttributeBuilder>;
 using IKVM.Reflection;
 using IKVM.Reflection.Emit;
 #else
-using MetaType = System.Type;
-using SecurityType = System.Collections.Generic.Dictionary<System.Security.Permissions.SecurityAction, System.Security.PermissionSet>;
-using System.Reflection;
-using System.Reflection.Emit;
 #endif
+using Transformalize.Libs.Mono.CompilerServices.SymbolWriter;
 
-namespace Mono.CSharp {
+namespace Transformalize.Libs.Mono.CSharp {
 
 	public abstract class MethodCore : InterfaceMemberBase, IParametersMember
 	{
@@ -348,7 +343,7 @@ namespace Mono.CSharp {
 			}
 
 			if ((state & StateFlags.PendingMakeMethod) != 0) {
-				var sre_targs = new MetaType[targs.Length];
+				var sre_targs = new Type[targs.Length];
 				for (int i = 0; i < sre_targs.Length; ++i)
 					sre_targs[i] = targs[i].GetMetaInfo ();
 
@@ -530,7 +525,7 @@ namespace Mono.CSharp {
 	public abstract class MethodOrOperator : MethodCore, IMethodData, IMethodDefinition
 	{
 		ReturnParameter return_attributes;
-		SecurityType declarative_security;
+		Dictionary<SecurityAction, PermissionSet> declarative_security;
 		protected MethodData MethodData;
 
 		static readonly string[] attribute_targets = new string [] { "method", "return" };
@@ -1541,7 +1536,7 @@ namespace Mono.CSharp {
 	{
 		public ConstructorBuilder ConstructorBuilder;
 		public ConstructorInitializer Initializer;
-		SecurityType declarative_security;
+		Dictionary<SecurityAction, PermissionSet> declarative_security;
 		bool has_compliant_args;
 		SourceMethodBuilder debug_builder;
 
@@ -2277,7 +2272,7 @@ namespace Mono.CSharp {
 	public abstract class AbstractPropertyEventMethod : MemberCore, IMethodData, IMethodDefinition {
 		protected MethodData method_data;
 		protected ToplevelBlock block;
-		protected SecurityType declarative_security;
+		protected Dictionary<SecurityAction, PermissionSet> declarative_security;
 
 		protected readonly string prefix;
 
@@ -2615,11 +2610,11 @@ namespace Mono.CSharp {
 			
 			TypeSpec first_arg_type_unwrap = first_arg_type;
 			if (first_arg_type.IsNullableType)
-				first_arg_type_unwrap = Nullable.NullableInfo.GetUnderlyingType (first_arg_type);
+				first_arg_type_unwrap = NullableInfo.GetUnderlyingType (first_arg_type);
 			
 			TypeSpec return_type_unwrap = return_type;
 			if (return_type.IsNullableType)
-				return_type_unwrap = Nullable.NullableInfo.GetUnderlyingType (return_type);
+				return_type_unwrap = NullableInfo.GetUnderlyingType (return_type);
 
 			//
 			// Rules for conversion operators
@@ -2711,7 +2706,7 @@ namespace Mono.CSharp {
 
 				var second_arg_type = ParameterTypes[1];
 				if (second_arg_type.IsNullableType)
-					second_arg_type = Nullable.NullableInfo.GetUnderlyingType (second_arg_type);
+					second_arg_type = NullableInfo.GetUnderlyingType (second_arg_type);
 
 				if (second_arg_type != declaring_type) {
 					Report.Error (563, Location,

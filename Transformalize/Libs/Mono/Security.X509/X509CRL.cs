@@ -29,14 +29,12 @@
 
 using System;
 using System.Collections;
-using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
+using Transformalize.Libs.Mono.Security.Cryptography;
+using Transformalize.Libs.Mono.Security.X509.Extensions;
 
-using Mono.Security.Cryptography;
-using Mono.Security.X509.Extensions;
-
-namespace Mono.Security.X509 {
+namespace Transformalize.Libs.Mono.Security.X509 {
 	/*
 	 * CertificateList  ::=  SEQUENCE  {
 	 *	tbsCertList          TBSCertList,

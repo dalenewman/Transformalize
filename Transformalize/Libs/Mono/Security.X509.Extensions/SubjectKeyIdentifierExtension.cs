@@ -32,10 +32,7 @@ using System;
 using System.Globalization;
 using System.Text;
 
-using Mono.Security;
-using Mono.Security.X509;
-
-namespace Mono.Security.X509.Extensions {
+namespace Transformalize.Libs.Mono.Security.X509.Extensions {
 
 	/*
 	 * id-ce-subjectKeyIdentifier OBJECT IDENTIFIER ::=  { id-ce 14 }

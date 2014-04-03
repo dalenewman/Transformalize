@@ -31,10 +31,7 @@ using System;
 using System.Collections;
 using System.Text;
 
-using Mono.Security;
-using Mono.Security.X509;
-
-namespace Mono.Security.X509.Extensions {
+namespace Transformalize.Libs.Mono.Security.X509.Extensions {
 
 	/*
 	 * id-ce-extKeyUsage OBJECT IDENTIFIER ::= { id-ce 37 }

@@ -1,5 +1,5 @@
 //
-// CSharpConvertBinder.cs
+// CSharpInvokeMemberBinder.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -26,43 +26,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Dynamic;
 using System.Collections.Generic;
-using System.Linq;
-using Compiler = Mono.CSharp;
+using System.Runtime.CompilerServices;
 
-namespace Microsoft.CSharp.RuntimeBinder
+namespace Transformalize.Libs.Mono.CSharp.RuntimeBinder
 {
-	class CSharpConvertBinder : ConvertBinder
+	static class Extensions
 	{
-		readonly CSharpBinderFlags flags;
-		readonly Type context;
-
-		public CSharpConvertBinder (Type type, Type context, CSharpBinderFlags flags)
-			: base (type, (flags & CSharpBinderFlags.ConvertExplicit) != 0)
+		public static IList<T> ToReadOnly<T> (this IEnumerable<T> col)
 		{
-			this.flags = flags;
-			this.context = context;
-		}
-
-        public override DynamicMetaObject FallbackConvert(DynamicMetaObject target, DynamicMetaObject errorSuggestion)
-		{
-			var ctx = DynamicContext.Create ();
-			var expr = ctx.CreateCompilerExpression (null, target);
-
-			if (Explicit)
-				expr = new Compiler.Cast (new Compiler.TypeExpression (ctx.ImportType (Type), Compiler.Location.Null), expr, Compiler.Location.Null);
-			else
-				expr = new Compiler.ImplicitCast (expr, ctx.ImportType (Type), (flags & CSharpBinderFlags.ConvertArrayIndex) != 0);
-
-			if ((flags & CSharpBinderFlags.CheckedContext) != 0)
-				expr = new Compiler.CheckedExpr (expr, Compiler.Location.Null);
-
-			var binder = new CSharpBinder (this, expr, errorSuggestion);
-			binder.AddRestrictions (target);
-
-			return binder.Bind (ctx, context);
+			return col == null ? 
+				null : new ReadOnlyCollectionBuilder<T> (col);
 		}
 	}
 }

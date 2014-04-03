@@ -28,7 +28,7 @@
 
 using System.Security.Cryptography;
 
-namespace Mono.Security.Cryptography {
+namespace Transformalize.Libs.Mono.Security.Cryptography {
 
 // FIXME: Remove when (or if) SHA224 moves into corlib
 // (as corlib already have the required constants).

@@ -30,7 +30,7 @@
 
 using System;
 
-namespace Mono.Security.Cryptography {
+namespace Transformalize.Libs.Mono.Security.Cryptography {
 	/// <summary>
 	/// Represents the parameters of the Diffie-Hellman algorithm.
 	/// </summary>

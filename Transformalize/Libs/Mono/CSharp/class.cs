@@ -12,31 +12,28 @@
 // Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
 //
 
+#if NET_2_1
+using XmlElement = System.Object;
+#endif
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Permissions;
 using System.Text;
-using System.Diagnostics;
-using Mono.CompilerServices.SymbolWriter;
-
-#if NET_2_1
-using XmlElement = System.Object;
-#endif
-
 #if STATIC
 using SecurityType = System.Collections.Generic.List<IKVM.Reflection.Emit.CustomAttributeBuilder>;
 using IKVM.Reflection;
 using IKVM.Reflection.Emit;
 #else
-using SecurityType = System.Collections.Generic.Dictionary<System.Security.Permissions.SecurityAction, System.Security.PermissionSet>;
-using System.Reflection;
-using System.Reflection.Emit;
 #endif
+using Transformalize.Libs.Mono.CompilerServices.SymbolWriter;
 
-namespace Mono.CSharp
+namespace Transformalize.Libs.Mono.CSharp
 {
 	//
 	// General types container, used as a base class for all constructs which can hold types
@@ -2510,7 +2507,7 @@ namespace Mono.CSharp
 	{
 		public const TypeAttributes StaticClassAttribute = TypeAttributes.Abstract | TypeAttributes.Sealed;
 
-		SecurityType declarative_security;
+		Dictionary<SecurityAction, PermissionSet> declarative_security;
 
 		protected ClassOrStruct (TypeContainer parent, MemberName name, Attributes attrs, MemberKind kind)
 			: base (parent, name, attrs, kind)

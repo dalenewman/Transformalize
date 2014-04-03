@@ -8,9 +8,10 @@
 // Copyright 2002, 2003 Ximian, Inc.
 // Copyright 2003-2011, Novell, Inc.
 // 
+
 using System;
 
-namespace Mono.CSharp {
+namespace Transformalize.Libs.Mono.CSharp {
 
 	public static class ConstantFold
 	{
@@ -192,7 +193,7 @@ namespace Mono.CSharp {
 					// false | null => null
 					// null | false => null
 					if ((right is NullLiteral && left.IsDefaultValue) || (left is NullLiteral && right.IsDefaultValue))
-						return Nullable.LiftedNull.CreateFromExpression (ec, b);
+						return LiftedNull.CreateFromExpression (ec, b);
 
 					// true | null => true
 					// null | true => true
@@ -240,7 +241,7 @@ namespace Mono.CSharp {
 
 					// true & null => null
 					// null & true => null
-					return Nullable.LiftedNull.CreateFromExpression (ec, b);
+					return LiftedNull.CreateFromExpression (ec, b);
 				}
 
 				if (!DoBinaryNumericPromotions (ec, ref left, ref right))
@@ -493,7 +494,7 @@ namespace Mono.CSharp {
 				}
 
 				if (left is NullLiteral && right is NullLiteral) {
-					var lifted_int = new Nullable.NullableType (ec.BuiltinTypes.Int, loc);
+					var lifted_int = new NullableType (ec.BuiltinTypes.Int, loc);
 					lifted_int.ResolveAsType (ec);
 					return (Constant) new Binary (oper, lifted_int, right).ResolveOperator (ec);
 				}
@@ -590,7 +591,7 @@ namespace Mono.CSharp {
 				
 			case Binary.Operator.Multiply:
 				if (left is NullLiteral && right is NullLiteral) {
-					var lifted_int = new Nullable.NullableType (ec.BuiltinTypes.Int, loc);
+					var lifted_int = new NullableType (ec.BuiltinTypes.Int, loc);
 					lifted_int.ResolveAsType (ec);
 					return (Constant) new Binary (oper, lifted_int, right).ResolveOperator (ec);
 				}
@@ -686,7 +687,7 @@ namespace Mono.CSharp {
 
 			case Binary.Operator.Division:
 				if (left is NullLiteral && right is NullLiteral) {
-					var lifted_int = new Nullable.NullableType (ec.BuiltinTypes.Int, loc);
+					var lifted_int = new NullableType (ec.BuiltinTypes.Int, loc);
 					lifted_int.ResolveAsType (ec);
 					return (Constant) new Binary (oper, lifted_int, right).ResolveOperator (ec);
 				}
@@ -786,7 +787,7 @@ namespace Mono.CSharp {
 				
 			case Binary.Operator.Modulus:
 				if (left is NullLiteral && right is NullLiteral) {
-					var lifted_int = new Nullable.NullableType (ec.BuiltinTypes.Int, loc);
+					var lifted_int = new NullableType (ec.BuiltinTypes.Int, loc);
 					lifted_int.ResolveAsType (ec);
 					return (Constant) new Binary (oper, lifted_int, right).ResolveOperator (ec);
 				}
@@ -876,7 +877,7 @@ namespace Mono.CSharp {
 				//
 			case Binary.Operator.LeftShift:
 				if (left is NullLiteral && right is NullLiteral) {
-					var lifted_int = new Nullable.NullableType (ec.BuiltinTypes.Int, loc);
+					var lifted_int = new NullableType (ec.BuiltinTypes.Int, loc);
 					lifted_int.ResolveAsType (ec);
 					return (Constant) new Binary (oper, lifted_int, right).ResolveOperator (ec);
 				}
@@ -911,7 +912,7 @@ namespace Mono.CSharp {
 				//
 			case Binary.Operator.RightShift:
 				if (left is NullLiteral && right is NullLiteral) {
-					var lifted_int = new Nullable.NullableType (ec.BuiltinTypes.Int, loc);
+					var lifted_int = new NullableType (ec.BuiltinTypes.Int, loc);
 					lifted_int.ResolveAsType (ec);
 					return (Constant) new Binary (oper, lifted_int, right).ResolveOperator (ec);
 				}
@@ -942,8 +943,8 @@ namespace Mono.CSharp {
 
 			case Binary.Operator.Equality:
 				if (TypeSpec.IsReferenceType (lt) && TypeSpec.IsReferenceType (rt) ||
-					(left is Nullable.LiftedNull && right.IsNull) ||
-					(right is Nullable.LiftedNull && left.IsNull)) {
+					(left is LiftedNull && right.IsNull) ||
+					(right is LiftedNull && left.IsNull)) {
 					if (left.IsNull || right.IsNull) {
 						return ReducedExpression.Create (
 							new BoolConstant (ec.BuiltinTypes, left.IsNull == right.IsNull, left.Location),
@@ -986,8 +987,8 @@ namespace Mono.CSharp {
 
 			case Binary.Operator.Inequality:
 				if (TypeSpec.IsReferenceType (lt) && TypeSpec.IsReferenceType (rt) ||
-					(left is Nullable.LiftedNull && right.IsNull) ||
-					(right is Nullable.LiftedNull && left.IsNull)) {
+					(left is LiftedNull && right.IsNull) ||
+					(right is LiftedNull && left.IsNull)) {
 					if (left.IsNull || right.IsNull) {
 						return ReducedExpression.Create (
 							new BoolConstant (ec.BuiltinTypes, left.IsNull != right.IsNull, left.Location),
@@ -1031,7 +1032,7 @@ namespace Mono.CSharp {
 			case Binary.Operator.LessThan:
 				if (right is NullLiteral) {
 					if (left is NullLiteral) {
-						var lifted_int = new Nullable.NullableType (ec.BuiltinTypes.Int, loc);
+						var lifted_int = new NullableType (ec.BuiltinTypes.Int, loc);
 						lifted_int.ResolveAsType (ec);
 						return (Constant) new Binary (oper, lifted_int, right).ResolveOperator (ec);
 					}
@@ -1067,7 +1068,7 @@ namespace Mono.CSharp {
 			case Binary.Operator.GreaterThan:
 				if (right is NullLiteral) {
 					if (left is NullLiteral) {
-						var lifted_int = new Nullable.NullableType (ec.BuiltinTypes.Int, loc);
+						var lifted_int = new NullableType (ec.BuiltinTypes.Int, loc);
 						lifted_int.ResolveAsType (ec);
 						return (Constant) new Binary (oper, lifted_int, right).ResolveOperator (ec);
 					}
@@ -1103,7 +1104,7 @@ namespace Mono.CSharp {
 			case Binary.Operator.GreaterThanOrEqual:
 				if (right is NullLiteral) {
 					if (left is NullLiteral) {
-						var lifted_int = new Nullable.NullableType (ec.BuiltinTypes.Int, loc);
+						var lifted_int = new NullableType (ec.BuiltinTypes.Int, loc);
 						lifted_int.ResolveAsType (ec);
 						return (Constant) new Binary (oper, lifted_int, right).ResolveOperator (ec);
 					}
@@ -1139,7 +1140,7 @@ namespace Mono.CSharp {
 			case Binary.Operator.LessThanOrEqual:
 				if (right is NullLiteral) {
 					if (left is NullLiteral) {
-						var lifted_int = new Nullable.NullableType (ec.BuiltinTypes.Int, loc);
+						var lifted_int = new NullableType (ec.BuiltinTypes.Int, loc);
 						lifted_int.ResolveAsType (ec);
 						return (Constant) new Binary (oper, lifted_int, right).ResolveOperator (ec);
 					}

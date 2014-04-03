@@ -25,10 +25,9 @@
 //
 
 using System;
-using System.Globalization;
 using System.Security.Cryptography;
 
-namespace Mono.Security.Cryptography {
+namespace Transformalize.Libs.Mono.Security.Cryptography {
 
 	// References:
 	// a.	Usenet 1994 - RC4 Algorithm revealed

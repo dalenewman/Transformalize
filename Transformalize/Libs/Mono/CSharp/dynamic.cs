@@ -10,11 +10,9 @@
 //
 
 using System;
-using System.Linq;
-using SLE = System.Linq.Expressions;
 using System.Dynamic;
 
-namespace Mono.CSharp
+namespace Transformalize.Libs.Mono.CSharp
 {
 	//
 	// A copy of Microsoft.CSharp/Microsoft.CSharp.RuntimeBinder/CSharpBinderFlags.cs
@@ -123,12 +121,12 @@ namespace Mono.CSharp
 
 		#endregion
 
-		public SLE.Expression MakeAssignExpression (BuilderContext ctx, Expression source)
+		public System.Linq.Expressions.Expression MakeAssignExpression (BuilderContext ctx, Expression source)
 		{
 			return obj.Expression;
 		}
 
-		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
 		{
 #if STATIC
 			return base.MakeExpression (ctx);
@@ -144,7 +142,7 @@ namespace Mono.CSharp
 				}
 	#endif
 
-				return SLE.Expression.Convert (obj.Expression, type.GetMetaInfo ());
+				return System.Linq.Expressions.Expression.Convert (obj.Expression, type.GetMetaInfo ());
 #endif
 		}
 	}
@@ -197,7 +195,7 @@ namespace Mono.CSharp
 	//
 	interface IDynamicAssign : IAssignMethod
 	{
-		SLE.Expression MakeAssignExpression (BuilderContext ctx, Expression source);
+		System.Linq.Expressions.Expression MakeAssignExpression (BuilderContext ctx, Expression source);
 	}
 
 	//

@@ -13,26 +13,23 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
+using System.Reflection;
+using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
-using System.Security; 
+using System.Runtime.InteropServices;
+using System.Security;
 using System.Security.Permissions;
 using System.Text;
-using System.IO;
-
 #if STATIC
 using SecurityType = System.Collections.Generic.List<IKVM.Reflection.Emit.CustomAttributeBuilder>;
 using BadImageFormat = IKVM.Reflection.BadImageFormatException;
 using IKVM.Reflection;
 using IKVM.Reflection.Emit;
 #else
-using SecurityType = System.Collections.Generic.Dictionary<System.Security.Permissions.SecurityAction, System.Security.PermissionSet>;
-using BadImageFormat = System.BadImageFormatException;
-using System.Reflection;
-using System.Reflection.Emit;
+
 #endif
 
-namespace Mono.CSharp {
+namespace Transformalize.Libs.Mono.CSharp {
 
 	/// <summary>
 	///   Base class for objects that can have Attributes applied to them.
@@ -870,7 +867,7 @@ namespace Mono.CSharp {
 		/// Creates instance of SecurityAttribute class and add result of CreatePermission method to permission table.
 		/// </summary>
 		/// <returns></returns>
-		public void ExtractSecurityPermissionSet (MethodSpec ctor, ref SecurityType permissions)
+		public void ExtractSecurityPermissionSet (MethodSpec ctor, ref Dictionary<SecurityAction, PermissionSet> permissions)
 		{
 #if STATIC
 			object[] values = new object[pos_args.Count];
@@ -1091,7 +1088,7 @@ namespace Mono.CSharp {
 					foreach (Attributable target in targets)
 						target.ApplyAttributeBuilder (this, ctor, cdata, predefined);
 				} catch (Exception e) {
-					if (e is BadImageFormat && Report.Errors > 0)
+					if (e is BadImageFormatException && Report.Errors > 0)
 						return;
 
 					Error_AttributeEmitError (e.Message);

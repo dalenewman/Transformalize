@@ -12,19 +12,17 @@
 
 using System;
 using System.Collections.Generic;
-using Mono.CompilerServices.SymbolWriter;
-
+using System.Reflection;
+using System.Reflection.Emit;
 #if STATIC
 using MetaType = IKVM.Reflection.Type;
 using IKVM.Reflection;
 using IKVM.Reflection.Emit;
 #else
-using MetaType = System.Type;
-using System.Reflection;
-using System.Reflection.Emit;
 #endif
+using Transformalize.Libs.Mono.CompilerServices.SymbolWriter;
 
-namespace Mono.CSharp
+namespace Transformalize.Libs.Mono.CSharp
 {
 	/// <summary>
 	///   An Emit Context is created for each body of code (from methods,
@@ -451,7 +449,7 @@ namespace Mono.CSharp
 			ig.Emit (opcode, method);
 		}
 
-		public void Emit (OpCode opcode, MethodSpec method, MetaType[] vargs)
+		public void Emit (OpCode opcode, MethodSpec method, Type[] vargs)
 		{
 			// TODO MemberCache: This should mutate too
 			ig.EmitCall (opcode, (MethodInfo) method.GetMetaInfo (), vargs);
@@ -1098,7 +1096,7 @@ namespace Mono.CSharp
 			return instance_type;
 		}
 
-		static MetaType[] GetVarargsTypes (MethodSpec method, Arguments arguments)
+		static Type[] GetVarargsTypes (MethodSpec method, Arguments arguments)
 		{
 			AParametersCollection pd = method.Parameters;
 

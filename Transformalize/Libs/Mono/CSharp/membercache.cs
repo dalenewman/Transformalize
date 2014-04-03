@@ -15,7 +15,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Mono.CSharp {
+namespace Transformalize.Libs.Mono.CSharp {
 
 	[Flags]
 	public enum MemberKind

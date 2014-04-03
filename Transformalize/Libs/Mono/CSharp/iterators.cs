@@ -13,15 +13,14 @@
 
 using System;
 using System.Collections.Generic;
-using Mono.CompilerServices.SymbolWriter;
-
+using System.Reflection.Emit;
 #if STATIC
 using IKVM.Reflection.Emit;
 #else
-using System.Reflection.Emit;
 #endif
+using Transformalize.Libs.Mono.CompilerServices.SymbolWriter;
 
-namespace Mono.CSharp
+namespace Transformalize.Libs.Mono.CSharp
 {
 	public abstract class YieldStatement<T> : ResumableStatement where T : StateMachineInitializer
 	{

@@ -27,22 +27,20 @@
 //
 
 using System;
-using System.Dynamic;
 using System.Collections.Generic;
-using System.Linq;
+using System.Dynamic;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
-using Compiler = Mono.CSharp;
 
-namespace Microsoft.CSharp.RuntimeBinder
+namespace Transformalize.Libs.Mono.CSharp.RuntimeBinder
 {
 	class CSharpBinaryOperationBinder : BinaryOperationBinder
 	{
 		IList<CSharpArgumentInfo> argumentInfo;
-		readonly CSharpBinderFlags flags;
+		readonly Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags flags;
 		readonly Type context;
 		
-		public CSharpBinaryOperationBinder (ExpressionType operation, CSharpBinderFlags flags, Type context, IEnumerable<CSharpArgumentInfo> argumentInfo)
+		public CSharpBinaryOperationBinder (ExpressionType operation, Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags flags, Type context, IEnumerable<CSharpArgumentInfo> argumentInfo)
 			: base (operation)
 		{
 			this.argumentInfo = new ReadOnlyCollectionBuilder<CSharpArgumentInfo> (argumentInfo);
@@ -53,76 +51,76 @@ namespace Microsoft.CSharp.RuntimeBinder
 			this.context = context;
 		}
 
-		Compiler.Binary.Operator GetOperator (out bool isCompound)
+		Binary.Operator GetOperator (out bool isCompound)
 		{
 			isCompound = false;
 			switch (Operation) {
 			case ExpressionType.Add:
-				return Compiler.Binary.Operator.Addition;
+				return Binary.Operator.Addition;
 			case ExpressionType.AddAssign:
 				isCompound = true;
-				return Compiler.Binary.Operator.Addition;
+				return Binary.Operator.Addition;
 			case ExpressionType.And:
-				return (flags & CSharpBinderFlags.BinaryOperationLogical) != 0 ?
-					Compiler.Binary.Operator.LogicalAnd : Compiler.Binary.Operator.BitwiseAnd;
+				return (flags & Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags.BinaryOperationLogical) != 0 ?
+					Binary.Operator.LogicalAnd : Binary.Operator.BitwiseAnd;
 			case ExpressionType.AndAssign:
 				isCompound = true;
-				return Compiler.Binary.Operator.BitwiseAnd;
+				return Binary.Operator.BitwiseAnd;
 			case ExpressionType.Divide:
-				return Compiler.Binary.Operator.Division;
+				return Binary.Operator.Division;
 			case ExpressionType.DivideAssign:
 				isCompound = true;
-				return Compiler.Binary.Operator.Division;
+				return Binary.Operator.Division;
 			case ExpressionType.Equal:
-				return Compiler.Binary.Operator.Equality;
+				return Binary.Operator.Equality;
 			case ExpressionType.ExclusiveOr:
-				return Compiler.Binary.Operator.ExclusiveOr;
+				return Binary.Operator.ExclusiveOr;
 			case ExpressionType.ExclusiveOrAssign:
 				isCompound = true;
-				return Compiler.Binary.Operator.ExclusiveOr;
+				return Binary.Operator.ExclusiveOr;
 			case ExpressionType.GreaterThan:
-				return Compiler.Binary.Operator.GreaterThan;
+				return Binary.Operator.GreaterThan;
 			case ExpressionType.GreaterThanOrEqual:
-				return Compiler.Binary.Operator.GreaterThanOrEqual;
+				return Binary.Operator.GreaterThanOrEqual;
 			case ExpressionType.LeftShift:
-				return Compiler.Binary.Operator.LeftShift;
+				return Binary.Operator.LeftShift;
 			case ExpressionType.LeftShiftAssign:
 				isCompound = true;
-				return Compiler.Binary.Operator.LeftShift;
+				return Binary.Operator.LeftShift;
 			case ExpressionType.LessThan:
-				return Compiler.Binary.Operator.LessThan;
+				return Binary.Operator.LessThan;
 			case ExpressionType.LessThanOrEqual:
-				return Compiler.Binary.Operator.LessThanOrEqual;
+				return Binary.Operator.LessThanOrEqual;
 			case ExpressionType.Modulo:
-				return Compiler.Binary.Operator.Modulus;
+				return Binary.Operator.Modulus;
 			case ExpressionType.ModuloAssign:
 				isCompound = true;
-				return Compiler.Binary.Operator.Modulus;
+				return Binary.Operator.Modulus;
 			case ExpressionType.Multiply:
-				return Compiler.Binary.Operator.Multiply;
+				return Binary.Operator.Multiply;
 			case ExpressionType.MultiplyAssign:
 				isCompound = true;
-				return Compiler.Binary.Operator.Multiply;
+				return Binary.Operator.Multiply;
 			case ExpressionType.NotEqual:
-				return Compiler.Binary.Operator.Inequality;
+				return Binary.Operator.Inequality;
 			case ExpressionType.Or:
-				return (flags & CSharpBinderFlags.BinaryOperationLogical) != 0 ?
-					Compiler.Binary.Operator.LogicalOr : Compiler.Binary.Operator.BitwiseOr;
+				return (flags & Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags.BinaryOperationLogical) != 0 ?
+					Binary.Operator.LogicalOr : Binary.Operator.BitwiseOr;
 			case ExpressionType.OrAssign:
 				isCompound = true;
-				return Compiler.Binary.Operator.BitwiseOr;
+				return Binary.Operator.BitwiseOr;
 			case ExpressionType.OrElse:
-				return Compiler.Binary.Operator.LogicalOr;
+				return Binary.Operator.LogicalOr;
 			case ExpressionType.RightShift:
-				return Compiler.Binary.Operator.RightShift;
+				return Binary.Operator.RightShift;
 			case ExpressionType.RightShiftAssign:
 				isCompound = true;
-				return Compiler.Binary.Operator.RightShift;
+				return Binary.Operator.RightShift;
 			case ExpressionType.Subtract:
-				return Compiler.Binary.Operator.Subtraction;
+				return Binary.Operator.Subtraction;
 			case ExpressionType.SubtractAssign:
 				isCompound = true;
-				return Compiler.Binary.Operator.Subtraction;
+				return Binary.Operator.Subtraction;
 			default:
 				throw new NotImplementedException (Operation.ToString ());
 			}
@@ -136,19 +134,19 @@ namespace Microsoft.CSharp.RuntimeBinder
 			
 			bool is_compound;
 			var oper = GetOperator (out is_compound);
-			Compiler.Expression expr;
+			Expression expr;
 
 			if (is_compound) {
-				var target_expr = new Compiler.RuntimeValueExpression (target, ctx.ImportType (target.LimitType));
-				expr = new Compiler.CompoundAssign (oper, target_expr, right, left);
+				var target_expr = new RuntimeValueExpression (target, ctx.ImportType (target.LimitType));
+				expr = new CompoundAssign (oper, target_expr, right, left);
 			} else {
-				expr = new Compiler.Binary (oper, left, right);
+				expr = new Binary (oper, left, right);
 			}
 
-			expr = new Compiler.Cast (new Compiler.TypeExpression (ctx.ImportType (ReturnType), Compiler.Location.Null), expr, Compiler.Location.Null);
+			expr = new Cast (new TypeExpression (ctx.ImportType (ReturnType), Location.Null), expr, Location.Null);
 			
-			if ((flags & CSharpBinderFlags.CheckedContext) != 0)
-				expr = new Compiler.CheckedExpr (expr, Compiler.Location.Null);
+			if ((flags & Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags.CheckedContext) != 0)
+				expr = new CheckedExpr (expr, Location.Null);
 
 			var binder = new CSharpBinder (this, expr, errorSuggestion);
 			binder.AddRestrictions (target);

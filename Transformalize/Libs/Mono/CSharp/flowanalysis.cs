@@ -12,10 +12,10 @@
 //
 
 using System;
-using System.Text;
 using System.Collections.Generic;
+using System.Text;
 
-namespace Mono.CSharp
+namespace Transformalize.Libs.Mono.CSharp
 {
 	// <summary>
 	//   This is used by the flow analysis code to keep track of the type of local variables.

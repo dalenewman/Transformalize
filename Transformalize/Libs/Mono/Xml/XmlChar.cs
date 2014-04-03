@@ -19,9 +19,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
 
-namespace System.Xml
+using System;
+using System.Xml;
+
+namespace Transformalize.Libs.Mono.Xml
 {
 	/// <summary>
 	/// http://www.w3.org/TR/REC-xml

@@ -1,5 +1,5 @@
 //
-// RuntimeBinderInternalCompilerException.cs
+// RuntimeBinderException.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -29,26 +29,26 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Microsoft.CSharp.RuntimeBinder
+namespace Transformalize.Libs.Mono.CSharp.RuntimeBinder
 {
 	[Serializable]
-	public class RuntimeBinderInternalCompilerException : Exception
+	public class RuntimeBinderException : Exception
 	{
-		public RuntimeBinderInternalCompilerException ()
+		public RuntimeBinderException ()
 		{
 		}
 
-		public RuntimeBinderInternalCompilerException (string message)
+		public RuntimeBinderException (string message)
 			: base (message)
 		{
 		}
 
-		public RuntimeBinderInternalCompilerException (string message, Exception innerException)
+		public RuntimeBinderException (string message, Exception innerException)
 			: base (message, innerException)
 		{
 		}
 
-		protected RuntimeBinderInternalCompilerException (SerializationInfo info, StreamingContext context)
+		protected RuntimeBinderException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}

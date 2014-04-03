@@ -1,5 +1,5 @@
-//
-// CSharpGetMemberBinder.cs
+﻿//
+// ErrorPrinter.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -26,38 +26,32 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Dynamic;
-using System.Collections.Generic;
-using System.Linq;
-using Compiler = Mono.CSharp;
-
-namespace Microsoft.CSharp.RuntimeBinder
+namespace Transformalize.Libs.Mono.CSharp.RuntimeBinder
 {
-	class CSharpGetMemberBinder : GetMemberBinder
+	class ErrorPrinter : ReportPrinter
 	{
-		IList<CSharpArgumentInfo> argumentInfo;
-		Type callingContext;
-		
-		public CSharpGetMemberBinder (string name, Type callingContext, IEnumerable<CSharpArgumentInfo> argumentInfo)
-			: base (name, false)
+		public static readonly ErrorPrinter Instance = new ErrorPrinter ();
+
+		private ErrorPrinter ()
 		{
-			this.callingContext = callingContext;
-			this.argumentInfo = argumentInfo.ToReadOnly ();
 		}
-		
-		public override DynamicMetaObject FallbackGetMember (DynamicMetaObject target, DynamicMetaObject errorSuggestion)
+
+		public override bool HasRelatedSymbolSupport {
+			get {
+				return false;
+			}
+		}
+
+		public override void Print (AbstractMessage msg, bool showFullPath)
 		{
-			var ctx = DynamicContext.Create ();
+			string text;
+			if (msg.Code == 214) {
+				text = "Pointers and fixed size buffers cannot be used in a dynamic context";
+			} else {
+				text = msg.Text;
+			}
 
-			var expr = ctx.CreateCompilerExpression (argumentInfo [0], target);
-			expr = new Compiler.MemberAccess (expr, Name);
-			expr = new Compiler.Cast (new Compiler.TypeExpression (ctx.ImportType (ReturnType), Compiler.Location.Null), expr, Compiler.Location.Null);
-
-			var binder = new CSharpBinder (this, expr, errorSuggestion);
-			binder.AddRestrictions (target);
-
-			return binder.Bind (ctx, callingContext);
+			throw new RuntimeBinderException (text);
 		}
 	}
 }

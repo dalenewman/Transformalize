@@ -29,14 +29,12 @@
 
 
 using System;
+using System.Collections;
+using System.Diagnostics.SymbolStore;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Runtime.CompilerServices;
-using System.Collections;
-using System.IO;
-using System.Diagnostics.SymbolStore;
-	
-namespace Mono.CompilerServices.SymbolWriter
+
+namespace Transformalize.Libs.Mono.CompilerServices.SymbolWriter
 {
 	public class SymbolWriterImpl: ISymbolWriter
 	{

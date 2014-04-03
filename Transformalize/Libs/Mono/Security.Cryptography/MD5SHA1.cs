@@ -45,10 +45,9 @@
 
 using System;
 using System.Security.Cryptography;
+using Transformalize.Libs.Mono.Security.Protocol.Tls;
 
-using Mono.Security.Protocol.Tls;
-
-namespace Mono.Security.Cryptography
+namespace Transformalize.Libs.Mono.Security.Cryptography
 {
 	internal class MD5SHA1 : HashAlgorithm
 	{

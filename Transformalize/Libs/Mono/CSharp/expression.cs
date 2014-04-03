@@ -13,19 +13,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SLE = System.Linq.Expressions;
-
+using System.Reflection;
+using System.Reflection.Emit;
 #if STATIC
 using MetaType = IKVM.Reflection.Type;
 using IKVM.Reflection;
 using IKVM.Reflection.Emit;
 #else
-using MetaType = System.Type;
-using System.Reflection;
-using System.Reflection.Emit;
+
 #endif
 
-namespace Mono.CSharp
+namespace Transformalize.Libs.Mono.CSharp
 {
 	//
 	// This is an user operator expression, automatically created during
@@ -88,12 +86,12 @@ namespace Mono.CSharp
 			arguments.FlowAnalysis (fc);
 		}
 
-		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
 		{
 #if STATIC
 			return base.MakeExpression (ctx);
 #else
-			return SLE.Expression.Call ((MethodInfo) oper.GetMetaInfo (), Arguments.MakeExpression (arguments, ctx));
+			return System.Linq.Expressions.Expression.Call ((MethodInfo) oper.GetMetaInfo (), Arguments.MakeExpression (arguments, ctx));
 #endif
 		}
 	}
@@ -478,7 +476,7 @@ namespace Mono.CSharp
 			}
 
 			if (Expr.Type.IsNullableType)
-				return new Nullable.LiftedUnaryOperator (Oper, Expr, loc).Resolve (ec);
+				return new LiftedUnaryOperator (Oper, Expr, loc).Resolve (ec);
 
 			//
 			// Attempt to use a constant folding operation.
@@ -647,16 +645,16 @@ namespace Mono.CSharp
 			throw new NotImplementedException (oper.ToString ());
 		}
 
-		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
 		{
 			var expr = Expr.MakeExpression (ctx);
 			bool is_checked = ctx.HasSet (BuilderContext.Options.CheckedScope);
 
 			switch (Oper) {
 			case Operator.UnaryNegation:
-				return is_checked ? SLE.Expression.NegateChecked (expr) : SLE.Expression.Negate (expr);
+				return is_checked ? System.Linq.Expressions.Expression.NegateChecked (expr) : System.Linq.Expressions.Expression.Negate (expr);
 			case Operator.LogicalNot:
-				return SLE.Expression.Not (expr);
+				return System.Linq.Expressions.Expression.Not (expr);
 #if NET_4_0 || MOBILE_DYNAMIC
 			case Operator.OnesComplement:
 				return SLE.Expression.OnesComplement (expr);
@@ -1137,7 +1135,7 @@ namespace Mono.CSharp
 			}
 
 			if (expr.Type.IsNullableType)
-				return new Nullable.LiftedUnaryMutator (mode, expr, loc).Resolve (ec);
+				return new LiftedUnaryMutator (mode, expr, loc).Resolve (ec);
 
 			return DoResolveOperation (ec);
 		}
@@ -1447,7 +1445,7 @@ namespace Mono.CSharp
 	/// </summary>
 	public class Is : Probe
 	{
-		Nullable.Unwrap expr_unwrap;
+		Unwrap expr_unwrap;
 
 		public Is (Expression expr, Expression probe_type, Location l)
 			: base (expr, probe_type, l)
@@ -1524,7 +1522,7 @@ namespace Mono.CSharp
 				return CreateConstantResult (ec, false);
 
 			if (d.IsNullableType) {
-				var ut = Nullable.NullableInfo.GetUnderlyingType (d);
+				var ut = NullableInfo.GetUnderlyingType (d);
 				if (!ut.IsGenericParameter) {
 					d = ut;
 					d_is_nullable = true;
@@ -1536,7 +1534,7 @@ namespace Mono.CSharp
 			TypeSpec t = probe_type_expr;
 			bool t_is_nullable = false;
 			if (t.IsNullableType) {
-				var ut = Nullable.NullableInfo.GetUnderlyingType (t);
+				var ut = NullableInfo.GetUnderlyingType (t);
 				if (!ut.IsGenericParameter) {
 					t = ut;
 					t_is_nullable = true;
@@ -1549,7 +1547,7 @@ namespace Mono.CSharp
 					// D and T are the same value types but D can be null
 					//
 					if (d_is_nullable && !t_is_nullable) {
-						expr_unwrap = Nullable.Unwrap.Create (expr, false);
+						expr_unwrap = Unwrap.Create (expr, false);
 						return this;
 					}
 					
@@ -1591,7 +1589,7 @@ namespace Mono.CSharp
 				if (TypeSpec.IsValueType (d)) {
 					if (Convert.ImplicitBoxingConversion (null, d, t) != null) {
 						if (d_is_nullable && !t_is_nullable) {
-							expr_unwrap = Nullable.Unwrap.Create (expr, false);
+							expr_unwrap = Unwrap.Create (expr, false);
 							return this;
 						}
 
@@ -1717,7 +1715,7 @@ namespace Mono.CSharp
 			}
 
 			if (expr.IsNull && type.IsNullableType) {
-				return Nullable.LiftedNull.CreateFromExpression (ec, this);
+				return LiftedNull.CreateFromExpression (ec, this);
 			}
 
 			// If the compile-time type of E is dynamic, unlike the cast operator the as operator is not dynamically bound
@@ -1977,8 +1975,8 @@ namespace Mono.CSharp
 					throw new InternalErrorException ("Only masked values can be used");
 
 				if ((op_mask & Operator.NullableMask) != 0) {
-					left_unwrap = Nullable.NullableInfo.GetUnderlyingType (ltype);
-					right_unwrap = Nullable.NullableInfo.GetUnderlyingType (rtype);
+					left_unwrap = NullableInfo.GetUnderlyingType (ltype);
+					right_unwrap = NullableInfo.GetUnderlyingType (rtype);
 				} else {
 					left_unwrap = ltype;
 					right_unwrap = rtype;
@@ -2017,13 +2015,13 @@ namespace Mono.CSharp
 								return b.CreateLiftedValueTypeResult (rc, left_expr.Type);
 						} else if ((b.oper & Operator.BitwiseMask) != 0) {
 							if (left_unwrap.BuiltinType != BuiltinTypeSpec.Type.Bool)
-								return Nullable.LiftedNull.CreateFromExpression (rc, b);
+								return LiftedNull.CreateFromExpression (rc, b);
 						} else {
 							b.left = Convert.ImplicitConversion (rc, b.left, left, b.left.Location);
 							b.right = Convert.ImplicitConversion (rc, b.right, right, b.right.Location);
 
 							if ((b.Oper & (Operator.ArithmeticMask | Operator.ShiftMask)) != 0)
-								return Nullable.LiftedNull.CreateFromExpression (rc, b);
+								return LiftedNull.CreateFromExpression (rc, b);
 
 							return b.CreateLiftedValueTypeResult (rc, left);
 						}
@@ -2033,13 +2031,13 @@ namespace Mono.CSharp
 								return b.CreateLiftedValueTypeResult (rc, right_expr.Type);
 						} else if ((b.oper & Operator.BitwiseMask) != 0) {
 							if (right_unwrap.BuiltinType != BuiltinTypeSpec.Type.Bool)
-								return Nullable.LiftedNull.CreateFromExpression (rc, b);
+								return LiftedNull.CreateFromExpression (rc, b);
 						} else {
 							b.left = Convert.ImplicitConversion (rc, b.left, left, b.left.Location);
 							b.right = Convert.ImplicitConversion (rc, b.right, right, b.right.Location);
 
 							if ((b.Oper & (Operator.ArithmeticMask | Operator.ShiftMask)) != 0)
-								return Nullable.LiftedNull.CreateFromExpression (rc, b);
+								return LiftedNull.CreateFromExpression (rc, b);
 
 							return b.CreateLiftedValueTypeResult (rc, right);
 						}
@@ -2152,18 +2150,18 @@ namespace Mono.CSharp
 				}
 
 				if (IsLifted) {
-					var lifted = new Nullable.LiftedBinaryOperator (b);
+					var lifted = new LiftedBinaryOperator (b);
 
 					TypeSpec ltype, rtype;
 					if (b.left.Type.IsNullableType) {
-						lifted.UnwrapLeft = new Nullable.Unwrap (b.left);
+						lifted.UnwrapLeft = new Unwrap (b.left);
 						ltype = left_unwrap;
 					} else {
 						ltype = left;
 					}
 
 					if (b.right.Type.IsNullableType) {
-						lifted.UnwrapRight = new Nullable.Unwrap (b.right);
+						lifted.UnwrapRight = new Unwrap (b.right);
 						rtype = right_unwrap;
 					} else {
 						rtype = right;
@@ -2248,11 +2246,11 @@ namespace Mono.CSharp
 				//
 				// Use original expression for nullable arguments
 				//
-				Nullable.Unwrap unwrap = b.left as Nullable.Unwrap;
+				Unwrap unwrap = b.left as Unwrap;
 				if (unwrap != null)
 					b.left = unwrap.Original;
 
-				unwrap = b.right as Nullable.Unwrap;
+				unwrap = b.right as Unwrap;
 				if (unwrap != null)
 					b.right = unwrap.Original;
 
@@ -2896,8 +2894,8 @@ namespace Mono.CSharp
 			//
 			// Handles predefined primitive types
 			//
-			if ((BuiltinTypeSpec.IsPrimitiveType (l) || (l.IsNullableType && BuiltinTypeSpec.IsPrimitiveType (Nullable.NullableInfo.GetUnderlyingType (l)))) &&
-				(BuiltinTypeSpec.IsPrimitiveType (r) || (r.IsNullableType && BuiltinTypeSpec.IsPrimitiveType (Nullable.NullableInfo.GetUnderlyingType (r))))) {
+			if ((BuiltinTypeSpec.IsPrimitiveType (l) || (l.IsNullableType && BuiltinTypeSpec.IsPrimitiveType (NullableInfo.GetUnderlyingType (l)))) &&
+				(BuiltinTypeSpec.IsPrimitiveType (r) || (r.IsNullableType && BuiltinTypeSpec.IsPrimitiveType (NullableInfo.GetUnderlyingType (r))))) {
 				if ((oper & Operator.ShiftMask) == 0) {
 					if (!DoBinaryOperatorPromotion (rc))
 						return null;
@@ -2992,7 +2990,7 @@ namespace Mono.CSharp
 
 		static bool IsEnumOrNullableEnum (TypeSpec type)
 		{
-			return type.IsEnum || (type.IsNullableType && Nullable.NullableInfo.GetUnderlyingType (type).IsEnum);
+			return type.IsEnum || (type.IsNullableType && NullableInfo.GetUnderlyingType (type).IsEnum);
 		}
 
 
@@ -3235,7 +3233,7 @@ namespace Mono.CSharp
 		{
 			TypeSpec ltype = left.Type;
 			if (ltype.IsNullableType) {
-				ltype = Nullable.NullableInfo.GetUnderlyingType (ltype);
+				ltype = NullableInfo.GetUnderlyingType (ltype);
 			}
 
 			//
@@ -3246,7 +3244,7 @@ namespace Mono.CSharp
 
 			TypeSpec rtype = right.Type;
 			if (rtype.IsNullableType) {
-				rtype = Nullable.NullableInfo.GetUnderlyingType (rtype);
+				rtype = NullableInfo.GetUnderlyingType (rtype);
 			}
 
 			var lb = ltype.BuiltinType;
@@ -3494,12 +3492,12 @@ namespace Mono.CSharp
 			return expr;
 		}
 
-		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
 		{
 			return MakeExpression (ctx, left, right);
 		}
 
-		public SLE.Expression MakeExpression (BuilderContext ctx, Expression left, Expression right)
+		public System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx, Expression left, Expression right)
 		{
 			var le = left.MakeExpression (ctx);
 			var re = right.MakeExpression (ctx);
@@ -3507,41 +3505,41 @@ namespace Mono.CSharp
 
 			switch (oper) {
 			case Operator.Addition:
-				return is_checked ? SLE.Expression.AddChecked (le, re) : SLE.Expression.Add (le, re);
+				return is_checked ? System.Linq.Expressions.Expression.AddChecked (le, re) : System.Linq.Expressions.Expression.Add (le, re);
 			case Operator.BitwiseAnd:
-				return SLE.Expression.And (le, re);
+				return System.Linq.Expressions.Expression.And (le, re);
 			case Operator.BitwiseOr:
-				return SLE.Expression.Or (le, re);
+				return System.Linq.Expressions.Expression.Or (le, re);
 			case Operator.Division:
-				return SLE.Expression.Divide (le, re);
+				return System.Linq.Expressions.Expression.Divide (le, re);
 			case Operator.Equality:
-				return SLE.Expression.Equal (le, re);
+				return System.Linq.Expressions.Expression.Equal (le, re);
 			case Operator.ExclusiveOr:
-				return SLE.Expression.ExclusiveOr (le, re);
+				return System.Linq.Expressions.Expression.ExclusiveOr (le, re);
 			case Operator.GreaterThan:
-				return SLE.Expression.GreaterThan (le, re);
+				return System.Linq.Expressions.Expression.GreaterThan (le, re);
 			case Operator.GreaterThanOrEqual:
-				return SLE.Expression.GreaterThanOrEqual (le, re);
+				return System.Linq.Expressions.Expression.GreaterThanOrEqual (le, re);
 			case Operator.Inequality:
-				return SLE.Expression.NotEqual (le, re);
+				return System.Linq.Expressions.Expression.NotEqual (le, re);
 			case Operator.LeftShift:
-				return SLE.Expression.LeftShift (le, re);
+				return System.Linq.Expressions.Expression.LeftShift (le, re);
 			case Operator.LessThan:
-				return SLE.Expression.LessThan (le, re);
+				return System.Linq.Expressions.Expression.LessThan (le, re);
 			case Operator.LessThanOrEqual:
-				return SLE.Expression.LessThanOrEqual (le, re);
+				return System.Linq.Expressions.Expression.LessThanOrEqual (le, re);
 			case Operator.LogicalAnd:
-				return SLE.Expression.AndAlso (le, re);
+				return System.Linq.Expressions.Expression.AndAlso (le, re);
 			case Operator.LogicalOr:
-				return SLE.Expression.OrElse (le, re);
+				return System.Linq.Expressions.Expression.OrElse (le, re);
 			case Operator.Modulus:
-				return SLE.Expression.Modulo (le, re);
+				return System.Linq.Expressions.Expression.Modulo (le, re);
 			case Operator.Multiply:
-				return is_checked ? SLE.Expression.MultiplyChecked (le, re) : SLE.Expression.Multiply (le, re);
+				return is_checked ? System.Linq.Expressions.Expression.MultiplyChecked (le, re) : System.Linq.Expressions.Expression.Multiply (le, re);
 			case Operator.RightShift:
-				return SLE.Expression.RightShift (le, re);
+				return System.Linq.Expressions.Expression.RightShift (le, re);
 			case Operator.Subtraction:
-				return is_checked ? SLE.Expression.SubtractChecked (le, re) : SLE.Expression.Subtract (le, re);
+				return is_checked ? System.Linq.Expressions.Expression.SubtractChecked (le, re) : System.Linq.Expressions.Expression.Subtract (le, re);
 			default:
 				throw new NotImplementedException (oper.ToString ());
 			}
@@ -3615,7 +3613,7 @@ namespace Mono.CSharp
 					type = ltype;
 				else if (renum)
 					type = rtype;
-				else if (ltype.IsNullableType && Nullable.NullableInfo.GetUnderlyingType (ltype).IsEnum)
+				else if (ltype.IsNullableType && NullableInfo.GetUnderlyingType (ltype).IsEnum)
 					type = ltype;
 				else
 					type = rtype;
@@ -3625,7 +3623,7 @@ namespace Mono.CSharp
 				if (lenum || renum)
 					return this;
 
-				var lifted = new Nullable.LiftedBinaryOperator (this);
+				var lifted = new LiftedBinaryOperator (this);
 				lifted.Left = left;
 				lifted.Right = right;
 				return lifted.Resolve (rc);
@@ -3664,13 +3662,13 @@ namespace Mono.CSharp
 
 					if (left.IsNull) {
 						if ((oper & Operator.BitwiseMask) != 0)
-							return Nullable.LiftedNull.CreateFromExpression (rc, this);
+							return LiftedNull.CreateFromExpression (rc, this);
 
 						return CreateLiftedValueTypeResult (rc, rtype);
 					}
 
 					if (expr != null) {
-						var lifted = new Nullable.LiftedBinaryOperator (this);
+						var lifted = new LiftedBinaryOperator (this);
 						lifted.Left = expr;
 						lifted.Right = right;
 						return lifted.Resolve (rc);
@@ -3689,18 +3687,18 @@ namespace Mono.CSharp
 
 					if (right.IsNull) {
 						if ((oper & Operator.BitwiseMask) != 0)
-							return Nullable.LiftedNull.CreateFromExpression (rc, this);
+							return LiftedNull.CreateFromExpression (rc, this);
 
 						return CreateLiftedValueTypeResult (rc, ltype);
 					}
 
 					if (expr != null) {
-						var lifted = new Nullable.LiftedBinaryOperator (this);
+						var lifted = new LiftedBinaryOperator (this);
 						lifted.Left = left;
 						lifted.Right = expr;
 						return lifted.Resolve (rc);
 					}
-				} else if (rtype.IsNullableType && Nullable.NullableInfo.GetUnderlyingType (rtype).IsEnum) {
+				} else if (rtype.IsNullableType && NullableInfo.GetUnderlyingType (rtype).IsEnum) {
 					if (left.IsNull) {
 						if (rc.HasSet (ResolveContext.Options.ExpressionTreeConversion))
 							left = Convert.ImplicitConversion (rc, left, rtype, left.Location);
@@ -3709,23 +3707,23 @@ namespace Mono.CSharp
 							return CreateLiftedValueTypeResult (rc, rtype);
 
 						if ((oper & Operator.BitwiseMask) != 0)
-							return Nullable.LiftedNull.CreateFromExpression (rc, this);
+							return LiftedNull.CreateFromExpression (rc, this);
 
 						// Equality operators are valid between E? and null
 						expr = left;
 					} else {
-						expr = Convert.ImplicitConversion (rc, left, Nullable.NullableInfo.GetUnderlyingType (rtype), loc);
+						expr = Convert.ImplicitConversion (rc, left, NullableInfo.GetUnderlyingType (rtype), loc);
 						if (expr == null)
 							return null;
 					}
 
 					if (expr != null) {
-						var lifted = new Nullable.LiftedBinaryOperator (this);
+						var lifted = new LiftedBinaryOperator (this);
 						lifted.Left = expr;
 						lifted.Right = right;
 						return lifted.Resolve (rc);
 					}
-				} else if (ltype.IsNullableType && Nullable.NullableInfo.GetUnderlyingType (ltype).IsEnum) {
+				} else if (ltype.IsNullableType && NullableInfo.GetUnderlyingType (ltype).IsEnum) {
 					if (right.IsNull) {
 						if (rc.HasSet (ResolveContext.Options.ExpressionTreeConversion))
 							right = Convert.ImplicitConversion (rc, right, ltype, right.Location);
@@ -3734,18 +3732,18 @@ namespace Mono.CSharp
 							return CreateLiftedValueTypeResult (rc, ltype);
 
 						if ((oper & Operator.BitwiseMask) != 0)
-							return Nullable.LiftedNull.CreateFromExpression (rc, this);
+							return LiftedNull.CreateFromExpression (rc, this);
 
 						// Equality operators are valid between E? and null
 						expr = right;
 					} else {
-						expr = Convert.ImplicitConversion (rc, right, Nullable.NullableInfo.GetUnderlyingType (ltype), loc);
+						expr = Convert.ImplicitConversion (rc, right, NullableInfo.GetUnderlyingType (ltype), loc);
 						if (expr == null)
 							return null;
 					}
 
 					if (expr != null) {
-						var lifted = new Nullable.LiftedBinaryOperator (this);
+						var lifted = new LiftedBinaryOperator (this);
 						lifted.Left = left;
 						lifted.Right = expr;
 						return lifted.Resolve (rc);
@@ -3760,7 +3758,7 @@ namespace Mono.CSharp
 		{
 			TypeSpec underlying_type;
 			if (expr.Type.IsNullableType) {
-				var nt = Nullable.NullableInfo.GetUnderlyingType (expr.Type);
+				var nt = NullableInfo.GetUnderlyingType (expr.Type);
 				if (nt.IsEnum)
 					underlying_type = EnumSpec.GetUnderlyingType (nt);
 				else
@@ -3806,7 +3804,7 @@ namespace Mono.CSharp
 				enum_type = ltype;
 			else if (renum)
 				enum_type = rtype;
-			else if (ltype.IsNullableType && Nullable.NullableInfo.GetUnderlyingType (ltype).IsEnum)
+			else if (ltype.IsNullableType && NullableInfo.GetUnderlyingType (ltype).IsEnum)
 				enum_type = ltype;
 			else
 				enum_type = rtype;
@@ -3863,7 +3861,7 @@ namespace Mono.CSharp
 					result_type = left.Type;
 				} else {
 					result_type = left.Type.IsNullableType ?
-						Nullable.NullableInfo.GetEnumUnderlyingType (rc.Module, left.Type) :
+						NullableInfo.GetEnumUnderlyingType (rc.Module, left.Type) :
 						EnumSpec.GetUnderlyingType (left.Type);
 				}
 			} else {
@@ -3873,7 +3871,7 @@ namespace Mono.CSharp
 					result_type = right.Type;
 				}
 
-				if (expr is Nullable.LiftedBinaryOperator && !result_type.IsNullableType)
+				if (expr is LiftedBinaryOperator && !result_type.IsNullableType)
 					result_type = rc.Module.PredefinedTypes.Nullable.TypeSpec.MakeGenericType (rc.Module, new[] { result_type });
 			}
 
@@ -3883,7 +3881,7 @@ namespace Mono.CSharp
 		void AddEnumResultCast (TypeSpec type)
 		{
 			if (type.IsNullableType)
-				type = Nullable.NullableInfo.GetUnderlyingType (type);
+				type = NullableInfo.GetUnderlyingType (type);
 
 			if (type.IsEnum)
 				type = EnumSpec.GetUnderlyingType (type);
@@ -4034,7 +4032,7 @@ namespace Mono.CSharp
 				// operator (in unlifted or lifted form) exists for the operation.
 				//
 				if ((l.IsNullableType && right.IsNull) || (r.IsNullableType && left.IsNull)) {
-					var lifted = new Nullable.LiftedBinaryOperator (this);
+					var lifted = new LiftedBinaryOperator (this);
 					lifted.Left = left;
 					lifted.Right = right;
 					return lifted.Resolve (ec);
@@ -4212,10 +4210,10 @@ namespace Mono.CSharp
 			var op = ConvertBinaryToUserOperator (oper);
 			var l = left.Type;
 			if (l.IsNullableType)
-				l = Nullable.NullableInfo.GetUnderlyingType (l);
+				l = NullableInfo.GetUnderlyingType (l);
 			var r = right.Type;
 			if (r.IsNullableType)
-				r = Nullable.NullableInfo.GetUnderlyingType (r);
+				r = NullableInfo.GetUnderlyingType (r);
 
 			IList<MemberSpec> left_operators = MemberCache.GetUserOperator (l, op, false);
 			IList<MemberSpec> right_operators = null;
@@ -4312,20 +4310,20 @@ namespace Mono.CSharp
 					//
 					if ((oper & (Operator.ArithmeticMask | Operator.ShiftMask | Operator.BitwiseMask)) != 0) {
 						type = oper_method.ReturnType;
-						return Nullable.LiftedNull.CreateFromExpression (rc, this);
+						return LiftedNull.CreateFromExpression (rc, this);
 					}
 				}
 
 				type = oper_method.ReturnType;
-				var lifted = new Nullable.LiftedBinaryOperator (this);
+				var lifted = new LiftedBinaryOperator (this);
 				lifted.UserOperator = best_original;
 
 				if (left.Type.IsNullableType && !ptypes[0].IsNullableType) {
-					lifted.UnwrapLeft = new Nullable.Unwrap (left);
+					lifted.UnwrapLeft = new Unwrap (left);
 				}
 
 				if (right.Type.IsNullableType && !ptypes[1].IsNullableType) {
-					lifted.UnwrapRight = new Nullable.Unwrap (right);
+					lifted.UnwrapRight = new Unwrap (right);
 				}
 
 				lifted.Left = Convert.ImplicitConversion (rc, lifted.UnwrapLeft ?? left, ptypes[0], left.Location);
@@ -5001,13 +4999,13 @@ namespace Mono.CSharp
 			arguments.FlowAnalysis (fc);
 		}
 
-		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
 		{
 			if (arguments.Count != 2)
 				throw new NotImplementedException ("arguments.Count != 2");
 
 			var concat = typeof (string).GetMethod ("Concat", new[] { typeof (object), typeof (object) });
-			return SLE.Expression.Add (arguments[0].Expr.MakeExpression (ctx), arguments[1].Expr.MakeExpression (ctx), concat);
+			return System.Linq.Expressions.Expression.Add (arguments[0].Expr.MakeExpression (ctx), arguments[1].Expr.MakeExpression (ctx), concat);
 		}
 	}
 
@@ -6368,18 +6366,18 @@ namespace Mono.CSharp
 				ec.Emit (OpCodes.Pop);
 		}
 
-		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
 		{
 			return MakeExpression (ctx, mg.InstanceExpression, mg.BestCandidate, arguments);
 		}
 
-		public static SLE.Expression MakeExpression (BuilderContext ctx, Expression instance, MethodSpec mi, Arguments args)
+		public static System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx, Expression instance, MethodSpec mi, Arguments args)
 		{
 #if STATIC
 			throw new NotSupportedException ();
 #else
 			var instance_expr = instance == null ? null : instance.MakeExpression (ctx);
-			return SLE.Expression.Call (instance_expr, (MethodInfo) mi.GetMetaInfo (), Arguments.MakeExpression (args, ctx));
+			return System.Linq.Expressions.Expression.Call (instance_expr, (MethodInfo) mi.GetMetaInfo (), Arguments.MakeExpression (args, ctx));
 #endif
 		}
 
@@ -6474,7 +6472,7 @@ namespace Mono.CSharp
 				return new EnumConstant (Constantify (EnumSpec.GetUnderlyingType (t), loc), t);
 
 			if (t.IsNullableType)
-				return Nullable.LiftedNull.Create (t, loc);
+				return LiftedNull.Create (t, loc);
 
 			return null;
 		}
@@ -6786,12 +6784,12 @@ namespace Mono.CSharp
 			}
 		}
 
-		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
 		{
 #if STATIC
 			return base.MakeExpression (ctx);
 #else
-			return SLE.Expression.New ((ConstructorInfo) method.GetMetaInfo (), Arguments.MakeExpression (arguments, ctx));
+			return System.Linq.Expressions.Expression.New ((ConstructorInfo) method.GetMetaInfo (), Arguments.MakeExpression (arguments, ctx));
 #endif
 		}
 		
@@ -8024,12 +8022,12 @@ namespace Mono.CSharp
 			}
 		}
 
-		public MetaType[] ArgumentTypes {
+		public Type[] ArgumentTypes {
 		    get {
 				if (arguments == null)
-					return MetaType.EmptyTypes;
+					return System.Type.EmptyTypes;
 
-				var retval = new MetaType[arguments.Count];
+				var retval = new Type[arguments.Count];
 				for (int i = 0; i < retval.Length; i++)
 					retval[i] = arguments[i].Expr.Type.GetMetaInfo ();
 
@@ -8777,7 +8775,7 @@ namespace Mono.CSharp
 				// with disable flow analysis as we don't know whether left side expression
 				// is used as variable or type
 				//
-				if (expr is VariableReference || expr is ConstantExpr || expr is Linq.TransparentMemberAccess) {
+				if (expr is VariableReference || expr is ConstantExpr || expr is TransparentMemberAccess) {
 					expr = expr.Resolve (rc);
 				} else if (expr is TypeParameterExpr) {
 					expr.Error_UnexpectedKind (rc, flags, sn.Location);
@@ -9131,7 +9129,7 @@ namespace Mono.CSharp
 			Expr.FlowAnalysis (fc);
 		}
 
-		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
 		{
 			using (ctx.With (BuilderContext.Options.CheckedScope, true)) {
 				return Expr.MakeExpression (ctx);
@@ -9601,7 +9599,7 @@ namespace Mono.CSharp
 			return this;
 		}
 
-		public SLE.Expression MakeAssignExpression (BuilderContext ctx, Expression source)
+		public System.Linq.Expressions.Expression MakeAssignExpression (BuilderContext ctx, Expression source)
 		{
 #if NET_4_0 || MOBILE_DYNAMIC
 			return SLE.Expression.ArrayAccess (ea.Expr.MakeExpression (ctx), MakeExpressionArguments (ctx));
@@ -9610,12 +9608,12 @@ namespace Mono.CSharp
 #endif
 		}
 
-		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
 		{
-			return SLE.Expression.ArrayIndex (ea.Expr.MakeExpression (ctx), MakeExpressionArguments (ctx));
+			return System.Linq.Expressions.Expression.ArrayIndex (ea.Expr.MakeExpression (ctx), MakeExpressionArguments (ctx));
 		}
 
-		SLE.Expression[] MakeExpressionArguments (BuilderContext ctx)
+		System.Linq.Expressions.Expression[] MakeExpressionArguments (BuilderContext ctx)
 		{
 			using (ctx.With (BuilderContext.Options.CheckedScope, true)) {
 				return Arguments.MakeExpression (ea.Arguments, ctx);
@@ -9775,7 +9773,7 @@ namespace Mono.CSharp
 			return best_candidate.GetSignatureForError ();
 		}
 		
-		public override SLE.Expression MakeAssignExpression (BuilderContext ctx, Expression source)
+		public override System.Linq.Expressions.Expression MakeAssignExpression (BuilderContext ctx, Expression source)
 		{
 #if STATIC
 			throw new NotSupportedException ();
@@ -9792,13 +9790,13 @@ namespace Mono.CSharp
 #endif
 		}
 
-		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
 		{
 #if STATIC
 			return base.MakeExpression (ctx);
 #else
 			var args = Arguments.MakeExpression (arguments, ctx);
-			return SLE.Expression.Call (InstanceExpression.MakeExpression (ctx), (MethodInfo) Getter.GetMetaInfo (), args);
+			return System.Linq.Expressions.Expression.Call (InstanceExpression.MakeExpression (ctx), (MethodInfo) Getter.GetMetaInfo (), args);
 #endif
 		}
 
@@ -10194,12 +10192,12 @@ namespace Mono.CSharp
 			return TypeManager.CSharpSignature (method);
 		}
 
-		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
 		{
 #if STATIC
 			return base.MakeExpression (ctx);
 #else
-			return SLE.Expression.Convert (source.MakeExpression (ctx), type.GetMetaInfo (), (MethodInfo) method.GetMetaInfo ());
+			return System.Linq.Expressions.Expression.Convert (source.MakeExpression (ctx), type.GetMetaInfo (), (MethodInfo) method.GetMetaInfo ());
 #endif
 		}
 	}
@@ -10294,7 +10292,7 @@ namespace Mono.CSharp
 			var single_spec = spec;
 
 			if (single_spec.IsNullable) {
-				type = new Nullable.NullableType (type, loc).ResolveAsType (ec);
+				type = new NullableType (type, loc).ResolveAsType (ec);
 				if (type == null)
 					return null;
 

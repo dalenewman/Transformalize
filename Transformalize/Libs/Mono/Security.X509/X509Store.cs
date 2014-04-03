@@ -28,17 +28,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
 using System.Globalization;
 using System.IO;
-using System.Text;
 using System.Security.Cryptography;
+using System.Text;
+using Transformalize.Libs.Mono.Security.Cryptography;
+using Transformalize.Libs.Mono.Security.X509.Extensions;
 
-using Mono.Security.Cryptography;
-using Mono.Security.X509.Extensions;
-
-namespace Mono.Security.X509 {
+namespace Transformalize.Libs.Mono.Security.X509 {
 
 #if INSIDE_CORLIB
 	internal

@@ -13,14 +13,14 @@
 
 using System;
 using System.Collections.Generic;
-
+using System.Reflection.Emit;
 #if STATIC
 using IKVM.Reflection.Emit;
 #else
-using System.Reflection.Emit;
+
 #endif
 
-namespace Mono.CSharp {
+namespace Transformalize.Libs.Mono.CSharp {
 	
 	public abstract class Statement {
 		public Location loc;
@@ -4576,7 +4576,7 @@ namespace Mono.CSharp {
 		//
 		// Nullable Types support
 		//
-		Nullable.Unwrap unwrap;
+		Unwrap unwrap;
 
 		public Switch (Expression e, ExplicitBlock block, Location l)
 			: base (block)
@@ -4906,7 +4906,7 @@ namespace Mono.CSharp {
 			new_expr = SwitchGoverningType (ec, Expr);
 
 			if (new_expr == null && Expr.Type.IsNullableType) {
-				unwrap = Nullable.Unwrap.Create (Expr, false);
+				unwrap = Unwrap.Create (Expr, false);
 				if (unwrap == null)
 					return false;
 
@@ -7276,7 +7276,7 @@ namespace Mono.CSharp {
 				if (is_dynamic) {
 					expr = Convert.ImplicitConversionRequired (ec, expr, ec.BuiltinTypes.IEnumerable, loc);
 				} else if (expr.Type.IsNullableType) {
-					expr = new Nullable.UnwrapCall (expr).Resolve (ec);
+					expr = new UnwrapCall (expr).Resolve (ec);
 				}
 
 				var get_enumerator_mg = ResolveGetEnumerator (ec);

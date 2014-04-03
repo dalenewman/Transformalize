@@ -30,13 +30,13 @@
 //
 
 using System;
-using System.Reflection;
-using System.Collections;
 using System.CodeDom.Compiler;
+using System.Collections;
 using System.IO;
+using System.Reflection;
 using System.Text;
 
-namespace Mono.CSharp {
+namespace Transformalize.Libs.Mono.CSharp {
 public class Outline {
 
 	bool declared_only;

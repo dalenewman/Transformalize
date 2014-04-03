@@ -33,9 +33,7 @@ using System;
 using System.Globalization;
 using System.Security.Cryptography;
 
-using Mono.Security;
-
-namespace Mono.Security.X509 {
+namespace Transformalize.Libs.Mono.Security.X509 {
 
 	public abstract class X509Builder {
 

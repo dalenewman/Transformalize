@@ -31,7 +31,7 @@
 using System;
 using System.Collections;
 
-namespace Mono.Security.X509 {
+namespace Transformalize.Libs.Mono.Security.X509 {
 
 	[Serializable]
 #if INSIDE_CORLIB

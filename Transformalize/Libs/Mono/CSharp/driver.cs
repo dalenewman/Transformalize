@@ -13,16 +13,11 @@
 //
 
 using System;
-using System.Reflection;
-using System.Reflection.Emit;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Globalization;
 using System.Diagnostics;
-using System.Threading;
+using System.IO;
+using System.Reflection.Emit;
 
-namespace Mono.CSharp
+namespace Transformalize.Libs.Mono.CSharp
 {
 	/// <summary>
 	///    The compiler driver.
@@ -454,7 +449,7 @@ namespace Mono.CSharp
 			if (!full_flag)
 				return;
 
-			Linq.QueryBlock.TransparentParameter.Reset ();
+			QueryBlock.TransparentParameter.Reset ();
 			TypeInfo.Reset ();
 		}
 	}

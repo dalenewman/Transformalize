@@ -7,7 +7,9 @@ using System.Globalization;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using Microsoft.CSharp.RuntimeBinder;
-using Binder = Microsoft.CSharp.RuntimeBinder.Binder;
+using Binder = Transformalize.Libs.Mono.CSharp.RuntimeBinder.Binder;
+using CSharpArgumentInfo = Transformalize.Libs.Mono.CSharp.RuntimeBinder.CSharpArgumentInfo;
+using CSharpArgumentInfoFlags = Transformalize.Libs.Mono.CSharp.RuntimeBinder.CSharpArgumentInfoFlags;
 
 namespace Transformalize.Libs.Elasticsearch.Net.Domain
 {

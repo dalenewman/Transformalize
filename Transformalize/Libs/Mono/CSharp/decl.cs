@@ -12,27 +12,23 @@
 //
 //
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
-using Mono.CompilerServices.SymbolWriter;
-
 #if NET_2_1
 using XmlElement = System.Object;
 #else
-using System.Xml;
 #endif
-
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Reflection;
+using System.Text;
 #if STATIC
 using IKVM.Reflection;
 using IKVM.Reflection.Emit;
 #else
-using System.Reflection;
-using System.Reflection.Emit;
 #endif
+using Transformalize.Libs.Mono.CompilerServices.SymbolWriter;
 
-namespace Mono.CSharp {
+namespace Transformalize.Libs.Mono.CSharp {
 
 	//
 	// Better name would be DottenName

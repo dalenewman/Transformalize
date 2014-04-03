@@ -14,20 +14,19 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
-
+using System.Reflection;
+using System.Reflection.Emit;
+using System.Text;
 #if STATIC
 using MetaType = IKVM.Reflection.Type;
 using IKVM.Reflection;
 using IKVM.Reflection.Emit;
 #else
-using MetaType = System.Type;
-using System.Reflection;
-using System.Reflection.Emit;
+
 #endif
 
-namespace Mono.CSharp {
+namespace Transformalize.Libs.Mono.CSharp {
 	public class VarianceDecl
 	{
 		public VarianceDecl (Variance variance, Location loc)
@@ -638,7 +637,7 @@ namespace Mono.CSharp {
 				builder.SetInterfaceConstraints (spec.InterfacesDefined.Select (l => l.GetMetaInfo ()).ToArray ());
 
 			if (spec.TypeArguments != null) {
-				var meta_constraints = new List<MetaType> (spec.TypeArguments.Length);
+				var meta_constraints = new List<Type> (spec.TypeArguments.Length);
 				foreach (var c in spec.TypeArguments) {
 					//
 					// Inflated type parameters can collide with special constraint types, don't
@@ -768,7 +767,7 @@ namespace Mono.CSharp {
 		//
 		// Creates type owned type parameter
 		//
-		public TypeParameterSpec (TypeSpec declaringType, int index, ITypeDefinition definition, SpecialConstraint spec, Variance variance, MetaType info)
+		public TypeParameterSpec (TypeSpec declaringType, int index, ITypeDefinition definition, SpecialConstraint spec, Variance variance, Type info)
 			: base (MemberKind.TypeParameter, declaringType, definition, info, Modifiers.PUBLIC)
 		{
 			this.variance = variance;
@@ -780,7 +779,7 @@ namespace Mono.CSharp {
 		//
 		// Creates method owned type parameter
 		//
-		public TypeParameterSpec (int index, ITypeDefinition definition, SpecialConstraint spec, Variance variance, MetaType info)
+		public TypeParameterSpec (int index, ITypeDefinition definition, SpecialConstraint spec, Variance variance, Type info)
 			: this (null, index, definition, spec, variance, info)
 		{
 		}
@@ -1845,13 +1844,13 @@ namespace Mono.CSharp {
 			return new TypeParameterInflator (context, this, tparams_full, targs_full);
 		}
 
-		MetaType CreateMetaInfo ()
+		Type CreateMetaInfo ()
 		{
 			//
 			// Converts nested type arguments into right order
 			// Foo<string, bool>.Bar<int> => string, bool, int
 			//
-			var all = new List<MetaType> ();
+			var all = new List<Type> ();
 			TypeSpec type = this;
 			TypeSpec definition = type;
 			do {
@@ -1892,7 +1891,7 @@ namespace Mono.CSharp {
 			return open_type;
 		}
 
-		public override MetaType GetMetaInfo ()
+		public override Type GetMetaInfo ()
 		{
 			if (info == null)
 				info = CreateMetaInfo ();

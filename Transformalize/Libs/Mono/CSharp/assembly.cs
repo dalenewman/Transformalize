@@ -12,26 +12,23 @@
 
 
 using System;
-using System.IO;
 using System.Collections.Generic;
-using System.Globalization;
+using System.IO;
+using System.Reflection;
+using System.Reflection.Emit;
 using System.Security;
 using System.Security.Cryptography;
 using System.Security.Permissions;
-using Mono.Security.Cryptography;
-using Mono.CompilerServices.SymbolWriter;
-
 #if STATIC
 using IKVM.Reflection;
 using IKVM.Reflection.Emit;
 using SecurityType = System.Collections.Generic.List<IKVM.Reflection.Emit.CustomAttributeBuilder>;
 #else
-using SecurityType = System.Collections.Generic.Dictionary<System.Security.Permissions.SecurityAction, System.Security.PermissionSet>;
-using System.Reflection;
-using System.Reflection.Emit;
 #endif
+using Transformalize.Libs.Mono.CompilerServices.SymbolWriter;
+using Transformalize.Libs.Mono.Security.Cryptography;
 
-namespace Mono.CSharp
+namespace Transformalize.Libs.Mono.CSharp
 {
 	public interface IAssemblyDefinition
 	{
@@ -71,7 +68,7 @@ namespace Mono.CSharp
 		Method entry_point;
 
 		protected List<ImportedModuleDefinition> added_modules;
-		SecurityType declarative_security;
+		Dictionary<SecurityAction, PermissionSet> declarative_security;
 		Dictionary<ITypeDefinition, Attribute> emitted_forwarders;
 		AssemblyAttributesPlaceholder module_target_attrs;
 

@@ -31,7 +31,7 @@
 using System;
 using System.Security.Cryptography;
 
-namespace Mono.Security.Cryptography {
+namespace Transformalize.Libs.Mono.Security.Cryptography {
 
 	// This class implement most of the common code required for symmetric
 	// algorithm transforms, like:

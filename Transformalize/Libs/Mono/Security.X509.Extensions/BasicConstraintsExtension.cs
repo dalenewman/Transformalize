@@ -31,10 +31,7 @@ using System;
 using System.Globalization;
 using System.Text;
 
-using Mono.Security;
-using Mono.Security.X509;
-
-namespace Mono.Security.X509.Extensions {
+namespace Transformalize.Libs.Mono.Security.X509.Extensions {
 
 	// References:
 	// 1.	RFC 3280: Internet X.509 Public Key Infrastructure, Section 4.2.1.10

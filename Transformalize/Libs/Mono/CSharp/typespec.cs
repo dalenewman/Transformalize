@@ -11,25 +11,24 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
-
+using System.Reflection;
+using System.Text;
 #if STATIC
 using MetaType = IKVM.Reflection.Type;
 using IKVM.Reflection;
 #else
-using MetaType = System.Type;
-using System.Reflection;
+
 #endif
 
-namespace Mono.CSharp
+namespace Transformalize.Libs.Mono.CSharp
 {
 	//
 	// Inflated or non-inflated representation of any type. 
 	//
 	public class TypeSpec : MemberSpec
 	{
-		protected MetaType info;
+		protected Type info;
 		protected MemberCache cache;
 		protected IList<TypeSpec> ifaces;
 		TypeSpec base_type;
@@ -53,7 +52,7 @@ namespace Mono.CSharp
 		}
 #endif
 
-		public TypeSpec (MemberKind kind, TypeSpec declaringType, ITypeDefinition definition, MetaType info, Modifiers modifiers)
+		public TypeSpec (MemberKind kind, TypeSpec declaringType, ITypeDefinition definition, Type info, Modifiers modifiers)
 			: base (kind, declaringType, definition, modifiers)
 		{
 			this.declaringType = declaringType;
@@ -471,7 +470,7 @@ namespace Mono.CSharp
 		//
 		// Return metadata information used during emit to describe the type
 		//
-		public virtual MetaType GetMetaInfo ()
+		public virtual Type GetMetaInfo ()
 		{
 			return info;
 		}
@@ -789,7 +788,7 @@ namespace Mono.CSharp
 			return BaseType.ResolveMissingDependencies (this);
 		}
 
-		public void SetMetaInfo (MetaType info)
+		public void SetMetaInfo (Type info)
 		{
 			if (this.info != null)
 				throw new InternalErrorException ("MetaInfo reset");
@@ -996,7 +995,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		public void SetDefinition (ITypeDefinition td, MetaType type, Modifiers mod)
+		public void SetDefinition (ITypeDefinition td, System.Type type, Modifiers mod)
 		{
 			this.definition = td;
 			this.info = type;
@@ -1587,7 +1586,7 @@ namespace Mono.CSharp
 	//
 	public abstract class ElementTypeSpec : TypeSpec, ITypeDefinition
 	{
-		protected ElementTypeSpec (MemberKind kind, TypeSpec element, MetaType info)
+		protected ElementTypeSpec (MemberKind kind, TypeSpec element, Type info)
 			: base (kind, element.DeclaringType, null, info, element.Modifiers)
 		{
 			this.Element = element;
@@ -1795,7 +1794,7 @@ namespace Mono.CSharp
 		{
 			var mb = module.Builder;
 
-			var arg_types = new MetaType[rank];
+			var arg_types = new Type[rank];
 			for (int i = 0; i < rank; i++)
 				arg_types[i] = module.Compiler.BuiltinTypes.Int.GetMetaInfo ();
 
@@ -1811,7 +1810,7 @@ namespace Mono.CSharp
 		{
 			var mb = module.Builder;
 
-			var arg_types = new MetaType[rank];
+			var arg_types = new Type[rank];
 			for (int i = 0; i < rank; i++)
 				arg_types[i] = module.Compiler.BuiltinTypes.Int.GetMetaInfo ();
 
@@ -1827,7 +1826,7 @@ namespace Mono.CSharp
 		{
 			var mb = module.Builder;
 
-			var arg_types = new MetaType[rank];
+			var arg_types = new Type[rank];
 			for (int i = 0; i < rank; i++)
 				arg_types[i] = module.Compiler.BuiltinTypes.Int.GetMetaInfo ();
 
@@ -1843,7 +1842,7 @@ namespace Mono.CSharp
 		{
 			var mb = module.Builder;
 
-			var arg_types = new MetaType[rank + 1];
+			var arg_types = new Type[rank + 1];
 			for (int i = 0; i < rank; i++)
 				arg_types[i] = module.Compiler.BuiltinTypes.Int.GetMetaInfo ();
 
@@ -1857,7 +1856,7 @@ namespace Mono.CSharp
 			return set;
 		}
 
-		public override MetaType GetMetaInfo ()
+		public override Type GetMetaInfo ()
 		{
 			if (info == null) {
 				if (rank == 1)
@@ -1939,7 +1938,7 @@ namespace Mono.CSharp
 		{
 		}
 
-		public override MetaType GetMetaInfo ()
+		public override Type GetMetaInfo ()
 		{
 			if (info == null) {
 				info = Element.GetMetaInfo ().MakeByRefType ();
@@ -1969,7 +1968,7 @@ namespace Mono.CSharp
 			state &= ~StateFlags.CLSCompliant_Undetected;
 		}
 
-		public override MetaType GetMetaInfo ()
+		public override Type GetMetaInfo ()
 		{
 			if (info == null) {
 				info = Element.GetMetaInfo ().MakePointerType ();

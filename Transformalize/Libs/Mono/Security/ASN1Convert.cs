@@ -30,12 +30,11 @@
 //
 
 using System;
-using System.Collections;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Mono.Security {
+namespace Transformalize.Libs.Mono.Security {
 
 	// References:
 	// a.	ITU ASN.1 standards (free download)

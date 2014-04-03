@@ -13,19 +13,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using Mono.CompilerServices.SymbolWriter;
 using System.Linq;
-
+using System.Reflection;
+using System.Reflection.Emit;
+using System.Runtime.InteropServices;
 #if STATIC
 using IKVM.Reflection;
 using IKVM.Reflection.Emit;
 #else
-using System.Reflection;
-using System.Reflection.Emit;
+
 #endif
 
-namespace Mono.CSharp
+namespace Transformalize.Libs.Mono.CSharp
 {
 	//
 	// Module (top-level type) container
@@ -535,7 +534,7 @@ namespace Mono.CSharp
 			Binary.Operator mask = 0;
 
 			if (nullable) {
-				underlying = Nullable.NullableInfo.GetEnumUnderlyingType (this, enumType);
+				underlying = NullableInfo.GetEnumUnderlyingType (this, enumType);
 				mask = Binary.Operator.NullableMask;
 			} else {
 				underlying = EnumSpec.GetUnderlyingType (enumType);

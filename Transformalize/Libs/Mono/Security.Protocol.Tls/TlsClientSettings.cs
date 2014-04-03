@@ -23,12 +23,10 @@
 //
 
 using System;
-using System.Text;
 using System.Security.Cryptography.X509Certificates;
-using Mono.Security.Cryptography;
-using X509 = Mono.Security.X509;
+using Transformalize.Libs.Mono.Security.Cryptography;
 
-namespace Mono.Security.Protocol.Tls
+namespace Transformalize.Libs.Mono.Security.Protocol.Tls
 {
 	internal sealed class TlsClientSettings
 	{

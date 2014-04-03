@@ -23,17 +23,13 @@
 //
 
 using System;
-using System.Collections;
 using System.IO;
-using System.Net;
-using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
+using Transformalize.Libs.Mono.Security.Protocol.Tls.Handshake;
 
-using Mono.Security.Protocol.Tls.Handshake;
-
-namespace Mono.Security.Protocol.Tls
+namespace Transformalize.Libs.Mono.Security.Protocol.Tls
 {
 	#region Delegates
 

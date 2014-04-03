@@ -22,15 +22,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Collections;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
+using Transformalize.Libs.Mono.Security.Protocol.Tls.Handshake;
+using Transformalize.Libs.Mono.Security.X509;
+using X509Certificate = System.Security.Cryptography.X509Certificates.X509Certificate;
+using X509CertificateCollection = Transformalize.Libs.Mono.Security.X509.X509CertificateCollection;
 
-using Mono.Security.Protocol.Tls.Handshake;
-using MonoX509 = Mono.Security.X509;
-
-namespace Mono.Security.Protocol.Tls
+namespace Transformalize.Libs.Mono.Security.Protocol.Tls
 {
 	internal class ServerContext : Context
 	{
@@ -75,10 +72,10 @@ namespace Mono.Security.Protocol.Tls
 			this.request_client_certificate	= requestClientCertificate;
 
 			// Convert the System.Security cert to a Mono Cert
-			MonoX509.X509Certificate cert = new MonoX509.X509Certificate(serverCertificate.GetRawCertData());
+			X509.X509Certificate cert = new X509.X509Certificate(serverCertificate.GetRawCertData());
 
 			// Add server certificate to the certificate collection
-			this.ServerSettings.Certificates = new MonoX509.X509CertificateCollection();
+			this.ServerSettings.Certificates = new X509CertificateCollection();
 			this.ServerSettings.Certificates.Add(cert);
 
 			this.ServerSettings.UpdateCertificateRSA();
@@ -88,10 +85,10 @@ namespace Mono.Security.Protocol.Tls
 			this.ServerSettings.CertificateTypes[0] = ClientCertificateType.RSA;
 
 			// Add certificate authorities
-			MonoX509.X509CertificateCollection trusted = MonoX509.X509StoreManager.TrustedRootCertificates;
+			X509CertificateCollection trusted = X509StoreManager.TrustedRootCertificates;
 			string[] list = new string [trusted.Count];
 			int i = 0;
-			foreach (MonoX509.X509Certificate root in trusted)
+			foreach (X509.X509Certificate root in trusted)
 			{
 				list [i++] = root.IssuerName;
 			}

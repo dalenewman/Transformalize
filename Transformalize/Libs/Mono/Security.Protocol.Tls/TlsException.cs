@@ -23,10 +23,9 @@
 //
 
 using System;
-using System.Text;
 using System.Runtime.Serialization;
 
-namespace Mono.Security.Protocol.Tls
+namespace Transformalize.Libs.Mono.Security.Protocol.Tls
 {
 	[Serializable]
 	internal sealed class TlsException : Exception

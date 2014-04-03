@@ -1,5 +1,5 @@
 //
-// CSharpArgumentInfo.cs
+// CSharpGetIndexBinder.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -27,57 +27,44 @@
 //
 
 using System;
-using System.Dynamic;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
-using Compiler = Mono.CSharp;
 
-namespace Microsoft.CSharp.RuntimeBinder
+namespace Transformalize.Libs.Mono.CSharp.RuntimeBinder
 {
-	public sealed class CSharpArgumentInfo
+	class CSharpGetIndexBinder : GetIndexBinder
 	{
-		readonly CSharpArgumentInfoFlags flags;
-		readonly string name;
+		IList<CSharpArgumentInfo> argumentInfo;
+		Type callingContext;
 		
-		CSharpArgumentInfo (CSharpArgumentInfoFlags flags, string name)
+		public CSharpGetIndexBinder (Type callingContext, IEnumerable<CSharpArgumentInfo> argumentInfo)
+			: base (CSharpArgumentInfo.CreateCallInfo (argumentInfo, 1))
 		{
-			this.flags = flags;
-			this.name = name;
+			this.callingContext = callingContext;
+			this.argumentInfo = argumentInfo.ToReadOnly ();
 		}
-		
-		public static CSharpArgumentInfo Create (CSharpArgumentInfoFlags flags, string name)
+			
+		public override DynamicMetaObject FallbackGetIndex (DynamicMetaObject target, DynamicMetaObject[] indexes, DynamicMetaObject errorSuggestion)
 		{
-			return new CSharpArgumentInfo (flags, name);
-		}
+			if (argumentInfo.Count != indexes.Length + 1) {
+				if (errorSuggestion == null)
+					throw new NotImplementedException ();
 
-		internal Compiler.Argument.AType ArgumentModifier {
-			get {
-				if ((flags & CSharpArgumentInfoFlags.IsRef) != 0)
-					return Compiler.Argument.AType.Ref;
-
-				if ((flags & CSharpArgumentInfoFlags.IsOut) != 0)
-					return Compiler.Argument.AType.Out;
-
-				return Compiler.Argument.AType.None;
+				return errorSuggestion;
 			}
-		}
 
-		internal static CallInfo CreateCallInfo (IEnumerable<CSharpArgumentInfo> argumentInfo, int skipCount)
-		{
-			var named = from arg in argumentInfo.Skip (skipCount) where arg.IsNamed select arg.name;
-			return new CallInfo (Math.Max (0, argumentInfo.Count () - skipCount), named);
-		}
-		
-		internal CSharpArgumentInfoFlags Flags {
-			get { return flags; }
-		}
+			var ctx = DynamicContext.Create ();
+			var expr = ctx.CreateCompilerExpression (argumentInfo [0], target);
+			var args = ctx.CreateCompilerArguments (argumentInfo.Skip (1), indexes);
+			expr = new ElementAccess (expr, args, Location.Null);
+			expr = new Cast (new TypeExpression (ctx.ImportType (ReturnType), Location.Null), expr, Location.Null);
 
-		internal bool IsNamed {
-			get { return (flags & CSharpArgumentInfoFlags.NamedArgument) != 0; }
-		}
+			var binder = new CSharpBinder (this, expr, errorSuggestion);
+			binder.AddRestrictions (target);
+			binder.AddRestrictions (indexes);
 
-		internal string Name {
-			get { return name; }
+			return binder.Bind (ctx, callingContext);
 		}
 	}
 }
