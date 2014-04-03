@@ -320,10 +320,6 @@ namespace Transformalize.Main.Providers {
             EntityCreator.Create(this, process, entity);
         }
 
-        public bool CanDetectChanges(Entity entity) {
-            return entity.DetectChanges && entity.Version != null && entity.Version.Input && IsDatabase;
-        }
-
         public Entity TflBatchEntity(string processName) {
             return new Entity(1) { Name = "TflBatch", ProcessName = processName, Alias = "TflBatch", Schema = "dbo", PrimaryKey = new Fields() { new Field(FieldType.PrimaryKey) { Name = "TflBatchId" } } };
         }
@@ -346,7 +342,7 @@ namespace Transformalize.Main.Providers {
 
                     var cmd = cn.CreateCommand();
 
-                    if (!input.CanDetectChanges(entity)) {
+                    if (!entity.CanDetectChanges(input.IsDatabase)) {
                         cmd.CommandText = @"
                             INSERT INTO TflBatch(TflBatchId, ProcessName, EntityName, TflUpdate, Inserts, Updates, Deletes)
                             VALUES(@TflBatchId, @ProcessName, @EntityName, @TflUpdate, @Inserts, @Updates, @Deletes);
@@ -369,7 +365,7 @@ namespace Transformalize.Main.Providers {
                     AddParameter(cmd, "@Updates", entity.Updates);
                     AddParameter(cmd, "@Deletes", entity.Deletes);
 
-                    if (input.CanDetectChanges(entity)) {
+                    if (entity.CanDetectChanges(input.IsDatabase)) {
                         var end = new DefaultFactory().Convert(entity.End, entity.Version.SimpleType);
                         AddParameter(cmd, "@End", end);
                     }

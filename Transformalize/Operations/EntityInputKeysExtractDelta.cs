@@ -50,7 +50,7 @@ namespace Transformalize.Operations {
                 Debug("No changes detected in {0}.", _entity.Alias);
             }
 
-            var keyQuery = connection.CanDetectChanges(_entity)
+            var keyQuery = _entity.CanDetectChanges(connection.IsDatabase)
                 ? connection.KeyQuery(_entity)
                 : connection.KeyAllQuery(_entity);
 

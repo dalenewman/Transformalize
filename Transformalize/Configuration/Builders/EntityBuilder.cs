@@ -92,6 +92,11 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public EntityBuilder SqlKeysOverride(string sql) {
+            _entity.SqlKeysOverride.Sql = sql;
+            return this;
+        }
+
         public EntityBuilder SqlOverride(string sql) {
             _entity.SqlOverride.Sql = sql;
             return this;

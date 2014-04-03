@@ -69,6 +69,7 @@ namespace Transformalize.Main {
                 Top = element.Top,
                 DetectChanges = element.DetectChanges,
                 SqlOverride = element.SqlOverride.Sql,
+                SqlKeysOverride = element.SqlKeysOverride.Sql,
                 Alias = string.IsNullOrEmpty(element.Alias) ? element.Name : element.Alias,
                 InternalOutput = element.Output.Cast<IoConfigurationElement>().ToDictionary(o => o.Name, o => Enumerable.Repeat(new Row(), 0)),
                 InputOperation = element.InputOperation,

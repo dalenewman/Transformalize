@@ -68,6 +68,7 @@ namespace Transformalize.Main {
         public decimal Sample { get; set; }
         public int Top { get; set; }
         public string SqlOverride { get; set; }
+        public string SqlKeysOverride { get; set; }
         public Dictionary<string, IEnumerable<Row>> InternalOutput { get; set; }
         public List<NamedConnection> Output { get; set; }
         public List<NamedConnection> Input { get; set; }
@@ -162,7 +163,7 @@ namespace Transformalize.Main {
         }
 
         public void CheckForChanges(Process process, AbstractConnection connection) {
-            if (!connection.CanDetectChanges(this))
+            if (!CanDetectChanges(connection.IsDatabase))
                 return;
             process.OutputConnection.LoadBeginVersion(this);
             connection.LoadEndVersion(this);
@@ -187,6 +188,19 @@ namespace Transformalize.Main {
         public bool SortingEnabled() {
             return Fields.Any(f => !f.Value.Sort.Equals(string.Empty))
                    || CalculatedFields.Any(f => !f.Value.Sort.Equals(string.Empty));
+        }
+
+        public bool HasSqlOverride() {
+            return !string.IsNullOrEmpty(SqlOverride);
+        }
+
+        public bool HasSqlKeysOverride()
+        {
+            return !string.IsNullOrEmpty(SqlKeysOverride);
+        }
+
+        public bool CanDetectChanges(bool isDatabase) {
+            return DetectChanges && Version != null && Version.Input && isDatabase;
         }
 
     }

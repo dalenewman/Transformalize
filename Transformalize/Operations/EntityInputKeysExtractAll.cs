@@ -46,14 +46,14 @@ namespace Transformalize.Operations {
             _fields = _entity.PrimaryKey.Select(f => new FieldTypeDefault(f.Value.Alias, _map.ContainsKey(f.Value.SimpleType) ? f.Value.SimpleType : string.Empty, f.Value.Default)).ToArray();
             _length = _fields.Length;
 
-            if (connection.CanDetectChanges(_entity)) {
+            if (_entity.CanDetectChanges(connection.IsDatabase)) {
                 connection.LoadEndVersion(_entity);
                 if (!_entity.HasRows) {
                     Debug("No data detected in {0}.", _entity.Alias);
                 }
             }
 
-            _sql = connection.CanDetectChanges(_entity)
+            _sql = _entity.CanDetectChanges(connection.IsDatabase)
                 ? connection.KeyQuery(_entity)
                 : connection.KeyAllQuery(_entity);
 

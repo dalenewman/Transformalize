@@ -7,8 +7,7 @@ using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
 
-namespace Transformalize.Operations
-{
+namespace Transformalize.Operations {
     public class SqlOverrideOperation : InputCommandOperation {
         private readonly Entity _entity;
         private readonly Dictionary<string, Func<IDataReader, int, object, object>> _map = Common.GetReaderMap();

@@ -43,6 +43,7 @@ namespace Transformalize.Configuration {
         private const string PIPELINE_THREADING = "pipeline-threading";
         private const string SAMPLE = "sample";
         private const string SQL_OVERRIDE = "sql-override";
+        private const string SQL_KEYS_OVERRIDE = "sql-keys-override";
         private const string OUTPUT = "output";
         private const string INPUT = "input";
         private const string DETECT_CHANGES = "detect-changes";
@@ -144,6 +145,11 @@ namespace Transformalize.Configuration {
         [ConfigurationProperty(SQL_OVERRIDE)]
         public SqlOverride SqlOverride {
             get { return this[SQL_OVERRIDE] as SqlOverride; }
+        }
+
+        [ConfigurationProperty(SQL_KEYS_OVERRIDE)]
+        public SqlOverride SqlKeysOverride {
+            get { return this[SQL_KEYS_OVERRIDE] as SqlOverride; }
         }
 
         [ConfigurationProperty(OUTPUT)]

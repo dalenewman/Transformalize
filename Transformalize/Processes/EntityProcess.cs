@@ -104,7 +104,7 @@ namespace Transformalize.Processes {
             var isDatabase = input.Connection.IsDatabase;
 
             if (isDatabase) {
-                if (!string.IsNullOrEmpty(_entity.SqlOverride)) {
+                if (_entity.HasSqlOverride()) {
                     p.Register(new SqlOverrideOperation(_entity, input.Connection));
                 } else {
                     p.Register(new EntityKeysToOperations(_entity, input.Connection));

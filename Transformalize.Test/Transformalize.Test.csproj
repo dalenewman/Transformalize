@@ -102,6 +102,7 @@
   <ItemGroup>
     <Compile Include="EtlProcessHelper.cs" />
     <Compile Include="Integration\ElasticSearchTests.cs" />
+    <Compile Include="Integration\SqlServerTests.cs" />
     <Compile Include="Integration\PostgreSqlTests.cs" />
     <Compile Include="Integration\Call.cs" />
     <Compile Include="Integration\BookMarks.cs" />

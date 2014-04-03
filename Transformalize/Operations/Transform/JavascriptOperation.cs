@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using Transformalize.Libs.Jint;
@@ -10,7 +11,6 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
-
     public class JavascriptOperation : ShouldRunOperation {
 
         private readonly Engine _jint = new Engine();

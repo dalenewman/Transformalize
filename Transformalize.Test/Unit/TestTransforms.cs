@@ -413,6 +413,28 @@ namespace Transformalize.Test.Unit {
         }
 
 
+//        [Test]
+//        public void TestCSharpScript()
+//        {
+//            var input = new RowsBuilder()
+//                .Row("first", "dale").Field("last", "newman").Field("full","")
+//                .Row("first", "adam").Field("last", "newman").Field("full","")
+//                .ToOperation();
+            
+//            var parameters = new ParametersBuilder().Parameters("first", "last").ToParameters();
+//            var scripts = new Dictionary<string, Script>();
+
+//            const string code = @"
+//                first + "" "" + last;
+//            ";
+
+//            var cSharp = new CSharpOperation("full", code, scripts, parameters);
+//            var output = TestOperation(input, cSharp);
+//            Assert.AreEqual("dale newman", output[0]["full"]);
+//            Assert.AreEqual("adam newman", output[1]["full"]);
+            
+//        }
+
         [Test]
         public void Join() {
             var input = new RowsBuilder().Row("x", "X").Field("y", "Y").ToOperation();
