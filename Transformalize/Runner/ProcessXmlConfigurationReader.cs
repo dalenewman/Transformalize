@@ -29,7 +29,7 @@ using Transformalize.Libs.NLog;
 using Transformalize.Main;
 
 namespace Transformalize.Runner {
-    public class ProcessXmlConfigurationReader : IReader<ProcessConfigurationElement> {
+    public class ProcessXmlConfigurationReader : IReader<ProcessElementCollection> {
 
         private readonly string _file;
         private readonly IContentsReader _contentsReader;
@@ -40,7 +40,7 @@ namespace Transformalize.Runner {
             _contentsReader = contentsReader;
         }
 
-        public ProcessConfigurationElement Read() {
+        public ProcessElementCollection Read() {
             var contents = _contentsReader.Read(_file);
             var section = new TransformalizeConfiguration();
 
@@ -50,13 +50,10 @@ namespace Transformalize.Runner {
                 var process = doc.Element("process");
                 if (process == null) {
                     var transformalize = doc.Element("transformalize");
-                    if (transformalize == null) {
-                        _log.Error("Sorry.  I can't find the <process/> or <transformalize/> element in {0}.", _file);
-                        LogManager.Flush();
-                        Environment.Exit(1);
-                    } else {
-                        section.Deserialize(transformalize.ToString());
-                    }
+                    if (transformalize == null)
+                        throw new TransformalizeException("Sorry.  I can't find the <process/> or <transformalize/> element in {0}.", _file);
+
+                    section.Deserialize(transformalize.ToString());
                 } else {
                     var xml = string.Format(@"
                     <transformalize>
@@ -73,17 +70,13 @@ namespace Transformalize.Runner {
                     section.Deserialize(xml);
                 }
 
-                return section.Processes[0];
+                return section.Processes;
             } catch (Exception e) {
-                _log.Error("Sorry.  I couldn't parse the file {0}.  Make sure it is valid XML and try again. {1}", contents.Name, e.Message);
-                LogManager.Flush();
-                Environment.Exit(1);
+                throw new TransformalizeException("Sorry.  I couldn't parse the file {0}.  Make sure it is valid XML and try again. {1}", contents.Name, e.Message);
             }
-
-            return null;
         }
 
-        private object SafeAttribute(XElement element, string attribute, object defaultValue) {
+        private static object SafeAttribute(XElement element, string attribute, object defaultValue) {
             if (element.HasAttributes && element.Attributes().Any(a => a.Name.ToString().Equals(attribute))) {
                 return Convert.ChangeType(element.Attribute(attribute).Value, defaultValue.GetType());
             }

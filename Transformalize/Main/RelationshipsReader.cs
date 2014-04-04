@@ -53,19 +53,15 @@ namespace Transformalize.Main {
         private Join GetJoin(Entity leftEntity, string leftField, Entity rightEntity, string rightField) {
             if (!leftEntity.Fields.ContainsKey(leftField) &&
                 !leftEntity.Fields.ToEnumerable().Any(Common.FieldFinder(leftField))) {
-                _log.Error("The left entity {0} does not have a field named {1} for joining to the right entity {2} with field {3}.",
-                    leftEntity.Alias, leftField, rightEntity.Alias, rightField);
-                LogManager.Flush();
-                Environment.Exit(1);
+                throw new TransformalizeException("The left entity {0} does not have a field named {1} for joining to the right entity {2} with field {3}.", leftEntity.Alias, leftField, rightEntity.Alias, rightField);
             }
 
             if (!rightEntity.Fields.ContainsKey(rightField) &&
-                !rightEntity.Fields.ToEnumerable().Any(Common.FieldFinder(rightField))) {
-                _log.Error(
-                    "The right entity {0} does not have a field named {1} for joining to the left entity {2} with field {3}.",
-                    rightEntity.Alias, rightField, leftEntity.Alias, leftField);
-                LogManager.Flush();
-                Environment.Exit(1);
+                !rightEntity.Fields.ToEnumerable().Any(Common.FieldFinder(rightField)))
+            {
+                var message = string.Format("The right entity {0} does not have a field named {1} for joining to the left entity {2} with field {3}.", rightEntity.Alias, rightField, leftEntity.Alias, leftField);
+                _log.Error(message);
+                throw new TransformalizeException(message);
             }
 
             var join = new Join {

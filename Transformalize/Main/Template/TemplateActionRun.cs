@@ -33,6 +33,10 @@ namespace Transformalize.Main {
             if (fileInfo.Exists) {
                 var script = File.ReadAllText(fileInfo.FullName);
                 if (!string.IsNullOrEmpty(script)) {
+                    if (action.Connection == null) {
+                        Log.Warn("Could not run {0} action for {1} template.  No connection provided.", action.Action, action.TemplateName);
+                        return;
+                    }
                     var response = action.Connection.ExecuteScript(script);
                     if (response.Success) {
                         Log.Info("{0} ran successfully.", action.TemplateName);

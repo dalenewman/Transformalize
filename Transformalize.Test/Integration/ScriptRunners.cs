@@ -54,7 +54,7 @@ namespace Transformalize.Test.Integration {
                     .Provider(ProviderType.Internal)
                 .Process();
 
-            var process = ProcessFactory.Create(cfg);
+            var process = ProcessFactory.Create(cfg)[0];
 
             var connection = process.Connections["test"];
 
@@ -90,7 +90,7 @@ namespace Transformalize.Test.Integration {
                     .Provider(ProviderType.Internal)
                 .Process();
 
-            var process = ProcessFactory.Create(cfg);
+            var process = ProcessFactory.Create(cfg)[0];
 
             var connection = process.Connections["test"];
 

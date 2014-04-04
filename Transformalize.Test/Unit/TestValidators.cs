@@ -137,7 +137,7 @@ namespace Transformalize.Test.Unit {
                             .Parameter("in")
                 .Process();
 
-            var process = ProcessFactory.Create(cfg);
+            var process = ProcessFactory.Create(cfg)[0];
             var output = process.Run()["entity"].ToList();
 
             Assert.AreEqual(true, output[0]["outResult"]);
@@ -164,7 +164,7 @@ namespace Transformalize.Test.Unit {
                             .MessageField("message")
                 .Process();
 
-            var process = ProcessFactory.Create(cfg);
+            var process = ProcessFactory.Create(cfg)[0];
             var output = process.Run()["entity"].ToList();
 
             Assert.AreEqual(true, output[0]["result"]);
@@ -203,7 +203,7 @@ namespace Transformalize.Test.Unit {
                 .Process();
 
             var crap = cfg.Serialize();
-            var process = ProcessFactory.Create(cfg, new Options() { Mode = "test" });
+            var process = ProcessFactory.Create(cfg, new Options() { Mode = "test" })[0];
             var output = process.Run()["entity"].ToList();
 
             Assert.AreNotEqual(string.Empty, crap);

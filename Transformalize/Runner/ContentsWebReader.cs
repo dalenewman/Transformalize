@@ -14,13 +14,12 @@ namespace Transformalize.Runner {
 
             var response = Web.Get(uri.OriginalString);
             if (response.Code != HttpStatusCode.OK) {
-                _log.Error("{0} returned from {1}", response.Code, file);
-                LogManager.Flush();
-                Environment.Exit(1);
+                throw new TransformalizeException("{0} returned from {1}", response.Code, file);
             }
 
             return new Contents {
                 Content = response.Content,
+                FileName = file,
                 Name = Path.GetFileNameWithoutExtension(uri.LocalPath)
             };
 

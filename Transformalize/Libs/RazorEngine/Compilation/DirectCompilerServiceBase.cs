@@ -16,6 +16,7 @@ using System.Text;
 using System.Web.Razor;
 using System.Web.Razor.Parser;
 using Transformalize.Libs.NLog;
+using Transformalize.Libs.RazorEngine.Templating;
 
 namespace Transformalize.Libs.RazorEngine.Compilation {
     /// <summary>
@@ -120,9 +121,7 @@ namespace Transformalize.Libs.RazorEngine.Compilation {
                 foreach (var error in compileResult.Errors) {
                     _log.Error(error.ToString().Split(':').Last().Trim(' '));
                 }
-                LogManager.Flush();
-                Environment.Exit(1);
-                //throw new TemplateCompilationException(compileResult.Errors, result.Item2, context.TemplateContent);
+                throw new TemplateCompilationException(compileResult.Errors, result.Item2, context.TemplateContent);
             }
 
             return Tuple.Create(

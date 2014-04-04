@@ -56,8 +56,7 @@ namespace Transformalize.Processes {
                         Error("Failed execution. {0} {1}", inner.Message, inner.StackTrace);
                     }
                 }
-                LogManager.Flush();
-                Environment.Exit(1);
+                throw new TransformalizeException("Initialization Process failed for {0}. See error log.", _process.Name);
             }
 
             if (_process.Entities.Count > 0) {

@@ -23,9 +23,7 @@ namespace Transformalize.Operations.Transform {
             : base(string.Empty, outKey) {
 
             if (!_conversion.ContainsKey(units)) {
-                Error("Error in Distance transform. I do not recognize {0} units.  Try meters, kilometers, or miles.", units);
-                LogManager.Flush();
-                Environment.Exit(1);
+                throw new TransformalizeException("Error in Distance transform. I do not recognize {0} units.  Try meters, kilometers, or miles.", units);
             }
 
             _units = units;

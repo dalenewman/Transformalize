@@ -7,6 +7,7 @@ using Transformalize.Libs.NLog;
 using Transformalize.Libs.RazorEngine;
 using Transformalize.Libs.RazorEngine.Configuration.Fluent;
 using Transformalize.Libs.RazorEngine.Templating;
+using Transformalize.Runner;
 
 namespace Transformalize.Main {
 
@@ -33,14 +34,9 @@ namespace Transformalize.Main {
 
             foreach (var element in templateElements) {
 
-                var fileInfo = Path.IsPathRooted(element.File) ? new FileInfo(element.File) : new FileInfo(path.TrimEnd(_s) + @"\" + element.File);
-                var fileExists = fileInfo.Exists;              
-
-                if (!fileExists && !_process.Options.Mode.Equals("init")) {
-                    _log.Warn("Missing Template {0}.", fileInfo.FullName);
-                }
-
-                var template = new Template(_process, element, fileExists ? File.ReadAllText(fileInfo.FullName) : string.Empty, fileInfo.FullName);
+                var reader = element.File.StartsWith("http", IC) ? (IContentsReader) new ContentsWebReader() : new ContentsFileReader(path);
+                var contents = reader.Read(element.File);
+                var template = new Template(_process, element, contents);
 
                 foreach (SettingConfigurationElement setting in element.Settings) {
                     template.Settings[setting.Name] = _defaultFactory.Convert(setting.Value, setting.Type);
@@ -76,9 +72,9 @@ namespace Transformalize.Main {
                         if (_process.Connections.ContainsKey(action.Connection)) {
                             templateAction.Connection = _process.Connections[action.Connection];
                         } else {
-                            _log.Error("The template '{0}' refers to an invalid connection named '{1}'.", action.Action, action.Connection);
-                            LogManager.Flush();
-                            Environment.Exit(1);
+                            var message = string.Format("The template '{0}' refers to an invalid connection named '{1}'.", action.Action, action.Connection);
+                            _log.Error(message);
+                            throw new TransformalizeException(message);
                         }
                     }
 
@@ -86,7 +82,7 @@ namespace Transformalize.Main {
                 }
 
                 templates[element.Name] = template;
-                _log.Debug("Loaded template {0} with {1} setting{2}.", fileInfo.FullName, template.Settings.Count, template.Settings.Count == 1 ? string.Empty : "s");
+                _log.Debug("Loaded template {0} with {1} setting{2}.", contents.FileName, template.Settings.Count, template.Settings.Count == 1 ? string.Empty : "s");
 
             }
 

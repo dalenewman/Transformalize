@@ -9,7 +9,7 @@ namespace Transformalize.Main.Providers.SqlServer {
                 new SqlServerEntityCreator(),
                 new SqlServerViewWriter(), 
                 new SqlServerTflWriter(), 
-                new DefaultScriptRunner()
+                new DatabaseScriptRunner()
             ) { }
     }
 }

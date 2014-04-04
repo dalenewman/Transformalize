@@ -39,38 +39,38 @@ namespace Transformalize.Test.Integration {
 
         [Test]
         public void Metadata() {
-            ProcessFactory.Create(PJ, new Options() { Mode = "metadata" }).Run();
+            ProcessFactory.Create(PJ, new Options() { Mode = "metadata" })[0].Run();
         }
         [Test]
         public void Init() {
-            ProcessFactory.Create(PJ, new Options() { Mode = "init"}).Run();
+            ProcessFactory.Create(PJ, new Options() { Mode = "init"})[0].Run();
         }
 
         [Test]
         public void Default() {
-            ProcessFactory.Create(PJ).Run();
+            ProcessFactory.Create(PJ)[0].Run();
         }
 
         [Test]
         public void RunTest() {
-            ProcessFactory.Create(PJ, new Options() { Top = 15, Mode = "test", LogLevel  = LogLevel.Info }).Run();
+            ProcessFactory.Create(PJ, new Options() { Top = 15, Mode = "test", LogLevel  = LogLevel.Info })[0].Run();
         }
 
 
         [Test]
         public void MetadataB() {
-            ProcessFactory.Create(PJB, new Options() { Mode = "metadata" }).Run();
+            ProcessFactory.Create(PJB, new Options() { Mode = "metadata" })[0].Run();
         }
 
         [Test]
         public void InitB() {
-            ProcessFactory.Create(PJB, new Options() { Mode = "init" }).Run();
+            ProcessFactory.Create(PJB, new Options() { Mode = "init" })[0].Run();
         }
 
         [Test]
         public void DefaultB()
         {
-            ProcessFactory.Create(PJB).Run();
+            ProcessFactory.Create(PJB)[0].Run();
         }
 
 

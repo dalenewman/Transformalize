@@ -24,9 +24,7 @@ namespace Transformalize.Main {
                     if (_process.Options.Mode == "metadata") {
                         _log.Warn("The entity {0} must have a relationship to the master entity {1}.", entity.Name, _process.MasterEntity == null ? "undefined" : _process.MasterEntity.Name);
                     } else {
-                        _log.Error("The entity {0} must have a relationship to the master entity {1}.", entity.Name, _process.MasterEntity == null ? "undefined" : _process.MasterEntity.Name);
-                        LogManager.Flush();
-                        Environment.Exit(1);
+                        throw new TransformalizeException("The entity {0} must have a relationship to the master entity {1}.", entity.Name, _process.MasterEntity == null ? "undefined" : _process.MasterEntity.Name);
                     }
                 }
             }

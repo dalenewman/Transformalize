@@ -40,13 +40,13 @@ namespace Transformalize.Test.Integration {
         [Test]
         public void Init() {
             var options = new Options() { Mode = "init"};
-            var process = ProcessFactory.Create(FILE, options);
+            var process = ProcessFactory.Create(FILE, options)[0];
             process.Run();
         }
 
         [Test]
         public void Default() {
-            var process = ProcessFactory.Create(FILE, new Options() { Mode = "test" });
+            var process = ProcessFactory.Create(FILE, new Options() { Mode = "test" })[0];
             process.GetField("Project","OrderType").Default = "Dale";
             process.GetField("Project", "HostMessageConfig").Default = "Dale";
             process.Entities[0].Input.First().Connection.Database = "ClevestDale";

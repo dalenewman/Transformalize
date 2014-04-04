@@ -38,7 +38,7 @@ namespace Transformalize.Main {
         private readonly string _processName = string.Empty;
         private Process _process;
         private readonly string[] _transformToFields = new[] { "fromxml", "fromregex", "fromjson" };
-        
+
         public ProcessReader(ProcessConfigurationElement process, Options options) {
             _element = Adapt(process, _transformToFields);
             _options = options;
@@ -47,9 +47,7 @@ namespace Transformalize.Main {
         public Process Read() {
 
             if (_element == null) {
-                _log.Error("Sorry.  I can't find a process named {0}.", _processName);
-                LogManager.Flush();
-                Environment.Exit(1);
+                throw new TransformalizeException("Sorry.  I can't find a process named {0}.", _processName);
             }
 
             _process = new Process(_element.Name) {
@@ -66,9 +64,7 @@ namespace Transformalize.Main {
             //shared across the process
             _process.Connections = new ConnectionFactory(_process, _element.Connections).Create();
             if (!_process.Connections.ContainsKey("output")) {
-                _log.Error("Missing required 'output' connection.  If you don't want an ouput, set output to internal");
-                LogManager.Flush();
-                Environment.Exit(1);
+                throw new TransformalizeException("Missing required 'output' connection.  If you don't want an ouput, set output to internal");
             }
             _process.OutputConnection = _process.Connections["output"];
 

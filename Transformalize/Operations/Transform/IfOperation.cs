@@ -70,9 +70,7 @@ namespace Transformalize.Operations.Transform {
             if (Common.CompareMap.ContainsKey(_op))
                 return;
 
-            Error("Operator {0} is invalid.  Try equal, notequal, greaterthan, greaterthanequal, greaterthan, or greaterthanequal.");
-            LogManager.Flush();
-            Environment.Exit(1);
+            throw new TransformalizeException("Operator {0} is invalid.  Try equal, notequal, greaterthan, greaterthanequal, greaterthan, or greaterthanequal.");
         }
 
         private object ComparableValue(string otherType, object value) {

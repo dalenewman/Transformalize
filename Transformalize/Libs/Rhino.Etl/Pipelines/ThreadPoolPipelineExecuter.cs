@@ -11,6 +11,7 @@ using Transformalize.Extensions;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Enumerables;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Main;
 
 namespace Transformalize.Libs.Rhino.Etl.Pipelines {
     /// <summary>
@@ -34,12 +35,9 @@ namespace Transformalize.Libs.Rhino.Etl.Pipelines {
                         Error("Failed to execute {0}. {1} {2}", operation.Name, inner.Message, inner.StackTrace);
                     }
                     threadedEnumerator.MarkAsFinished();
-    #if DEBUG
-                    throw e;
-    #else
-                    LogManager.Flush();
-                    Environment.Exit(0);
-    #endif
+#if DEBUG
+                    throw new TransformalizeException(e.Message);
+#endif
                 } finally {
                     threadedEnumerator.MarkAsFinished();
                 }

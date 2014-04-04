@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Transformalize.Libs.NLog;
 using Transformalize.Libs.NLog.Internal;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
@@ -38,21 +37,15 @@ namespace Transformalize.Operations.Transform {
             _outType = outType;
 
             if (inType != "datetime") {
-                Error("TimeOfDay operation can only accept DateTime input. Your input is for {0} is {1}.", outKey, inType);
-                LogManager.Flush();
-                Environment.Exit(1);
+                throw new TransformalizeException("TimeOfDay operation can only accept DateTime input. Your input is for {0} is {1}.", outKey, inType);
             }
 
             if (!(new[] { "double", "decimal", "float" }).Any(s => s.Equals(outType, StringComparison.OrdinalIgnoreCase))) {
-                Error("TimeOfDay operation output must be double, decimal, or float.  Your output for {0} is {1}.", outKey, outType);
-                LogManager.Flush();
-                Environment.Exit(1);
+                throw new TransformalizeException("TimeOfDay operation output must be double, decimal, or float.  Your output for {0} is {1}.", outKey, outType);
             }
 
             if (!_timeMap.ContainsKey(timeComponent.ToLower())) {
-                Error("TimeOfDay operation expects time component to be days, hours, minutes, seconds, or milliseconds.  You have {0}.", timeComponent);
-                LogManager.Flush();
-                Environment.Exit(1);
+                throw new TransformalizeException("TimeOfDay operation expects time component to be days, hours, minutes, seconds, or milliseconds.  You have {0}.", timeComponent);
             }
 
             _transformer = _timeMap[timeComponent.ToLower()];

@@ -402,7 +402,7 @@ namespace Transformalize.Test.Unit {
                                 .Parameter("EndDate")
             .Process();
 
-            var process = ProcessFactory.Create(config, new Options() { LogLevel = LogLevel.Debug});
+            var process = ProcessFactory.Create(config, new Options() { LogLevel = LogLevel.Debug})[0];
 
             var output = process.Run()["test"].ToList();
     
@@ -803,7 +803,7 @@ namespace Transformalize.Test.Unit {
                         .Transform("if").Left("MeterCategory").Right("R").Then("Reclaim").Else("Domestic")
                 .Process();
 
-            var process = ProcessFactory.Create(cfg);
+            var process = ProcessFactory.Create(cfg)[0];
             var output = process.Run()["entity"].ToList();
 
             Assert.AreEqual("Reclaim", output[0]["MeterCategory"]);

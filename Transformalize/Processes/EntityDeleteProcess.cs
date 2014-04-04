@@ -22,7 +22,9 @@
 
 using System;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using Transformalize.Extensions;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
@@ -64,11 +66,11 @@ namespace Transformalize.Processes {
 
             var errors = GetAllErrors().ToArray();
             if (errors.Any()) {
-                foreach (var error in errors) {
-                    Error(error.InnerException, "Message: {0}\r\nStackTrace:{1}\r\n", error.Message, error.StackTrace);
+                foreach (var e in errors.SelectMany(error => error.FlattenHierarchy())) {
+                    Error(e.Message);
+                    Debug(e.StackTrace);
                 }
-                LogManager.Flush();
-                Environment.Exit(1);
+                throw new TransformalizeException("Entity Delete Process for {0} failed. See error log", _entity.Alias);
             }
 
             base.PostProcessing();

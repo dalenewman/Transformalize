@@ -51,7 +51,7 @@ namespace Transformalize.Operations.Transform {
 
         private static void CombineTemplates(IEnumerable<KeyValuePair<string, Template>> templates, ref StringBuilder builder) {
             foreach (var pair in templates) {
-                builder.AppendLine(pair.Value.Content);
+                builder.AppendLine(pair.Value.Contents.Content);
             }
         }
 

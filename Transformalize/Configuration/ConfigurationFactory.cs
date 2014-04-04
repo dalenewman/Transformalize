@@ -13,11 +13,11 @@ namespace Transformalize.Configuration
             _name = name;
         }
 
-        public ProcessConfigurationElement Create() {
+        public ProcessElementCollection Create() {
             return Reader().Read();
         }
 
-        private IReader<ProcessConfigurationElement> Reader() {
+        private IReader<ProcessElementCollection> Reader() {
             if (Path.HasExtension(_name)) {
                 return _name.StartsWith("http", IC) ?
                     new ProcessXmlConfigurationReader(_name, new ContentsWebReader()) :

@@ -21,20 +21,24 @@
 #endregion
 
 using System;
+using Transformalize.Libs.NLog;
 
-namespace Transformalize.Main
-{
-    public class TransformalizeException : Exception
-    {
+namespace Transformalize.Main {
+
+    public class TransformalizeException : Exception {
+
+        private readonly Logger _log = LogManager.GetLogger(string.Empty);
         private readonly string _message;
 
-        public TransformalizeException(string message)
-        {
+        public TransformalizeException(string message) {
             _message = message;
+            _log.Error(message);
+            LogManager.Flush();
         }
 
-        public override string Message
-        {
+        public TransformalizeException(string message, params object[] args) : this(string.Format(message, args)) { }
+
+        public override string Message {
             get { return _message; }
         }
     }

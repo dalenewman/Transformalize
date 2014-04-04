@@ -25,6 +25,7 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
+using Transformalize.Extensions;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
@@ -209,10 +210,12 @@ namespace Transformalize.Processes {
             var errors = GetAllErrors().ToArray();
             if (errors.Any()) {
                 foreach (var error in errors) {
-                    Error(error.InnerException, "Message: {0}\r\nStackTrace:{1}\r\n", error.Message, error.StackTrace);
+                    foreach (var e in error.FlattenHierarchy()) {
+                        Error(e.Message);
+                        Debug(e.StackTrace);
+                    }
                 }
-                LogManager.Flush();
-                Environment.Exit(1);
+                throw new TransformalizeException("Entity Process failed for {0}. See error log.", _entity.Alias);
             }
 
             if (_process.OutputConnection.Type == ProviderType.Internal) {

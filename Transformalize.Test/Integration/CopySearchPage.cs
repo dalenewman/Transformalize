@@ -33,7 +33,7 @@ namespace Transformalize.Test.Integration {
         [Test]
         public void Run() {
             var options = new Options() { Mode="default", LogLevel = LogLevel.Info };
-            var process = ProcessFactory.Create(@"http://config.mwf.local/CopySearchPage.xml", options);
+            var process = ProcessFactory.Create(@"http://config.mwf.local/CopySearchPage.xml", options)[0];
             process.PipelineThreading = PipelineThreading.SingleThreaded;
             var entities = process.Run();
             Assert.AreEqual(1, entities.Count());

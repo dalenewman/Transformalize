@@ -1338,7 +1338,7 @@
     <Compile Include="Main\Providers\ConnectionFactory.cs" />
     <Compile Include="Main\Providers\ConnectionStringParser.cs" />
     <Compile Include="Main\Providers\DefaultConnectionChecker.cs" />
-    <Compile Include="Main\Providers\DefaultScriptRunner.cs" />
+    <Compile Include="Main\Providers\DatabaseScriptRunner.cs" />
     <Compile Include="Main\Providers\IConnectionChecker.cs" />
     <Compile Include="Main\Providers\IDataTypeService.cs" />
     <Compile Include="Main\Providers\IEntityQueryWriter.cs" />

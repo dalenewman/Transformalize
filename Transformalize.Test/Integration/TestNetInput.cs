@@ -48,8 +48,8 @@ namespace Transformalize.Test.Integration {
                     .Field("indexString")
                 .Process();
 
-            ProcessFactory.Create(process, new Options() { Mode = "init" }).Run();
-            ProcessFactory.Create(process, new Options() { Mode = "test" }).Run();
+            ProcessFactory.Create(process, new Options() { Mode = "init" })[0].Run();
+            ProcessFactory.Create(process, new Options() { Mode = "test" })[0].Run();
         }
 
         [Test]
@@ -66,8 +66,8 @@ namespace Transformalize.Test.Integration {
                     .Field("database_id").Int32().PrimaryKey()
                 .Process();
 
-            ProcessFactory.Create(process, new Options() { Mode = "init" }).Run();
-            ProcessFactory.Create(process, new Options() { Mode = "test" }).Run();
+            ProcessFactory.Create(process, new Options() { Mode = "init" })[0].Run();
+            ProcessFactory.Create(process, new Options() { Mode = "test" })[0].Run();
         }
 
         [Test]
@@ -84,7 +84,7 @@ namespace Transformalize.Test.Integration {
                     .Field("indexString")
                 .Process();
 
-            var rows = ProcessFactory.Create(process).Run()["e"];
+            var rows = ProcessFactory.Create(process)[0].Run()["e"];
             Assert.AreEqual(10, rows.Count());
         }
 

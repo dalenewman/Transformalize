@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using Transformalize.Configuration;
+using Transformalize.Libs.Mono.CSharp;
 using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main {
@@ -8,21 +10,30 @@ namespace Transformalize.Main {
 
         private static readonly Logger Log = LogManager.GetLogger(string.Empty);
 
-        public static Process Create(string resource, Options options = null) {
+        public static Process[] Create(string resource, Options options = null) {
             var element = new ConfigurationFactory(resource).Create();
             return Create(element, options);
         }
 
-        public static Process Create(ProcessConfigurationElement element, Options options = null) {
+        public static Process[] Create(ProcessConfigurationElement element, Options options = null) {
+            return Create(new ProcessElementCollection() { element }, options);
+        }
 
-            options = options ?? new Options();
-            var collected = Collect(element);
+        public static Process[] Create(ProcessElementCollection elements, Options options = null) {
 
-            GlobalDiagnosticsContext.Set("process", collected.Name);
-            GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
-            DetectConfigurationUpdate(options, collected);
+            var processes = new List<Process>();
 
-            return new ProcessReader(collected, options).Read();
+            foreach (ProcessConfigurationElement element in elements) {
+                options = options ?? new Options();
+                var collected = Collect(element);
+                GlobalDiagnosticsContext.Set("process", collected.Name);
+                GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
+                DetectConfigurationUpdate(options, collected);
+
+                processes.Add(new ProcessReader(collected, options).Read());
+            }
+
+            return processes.ToArray();
         }
 
         private static void DetectConfigurationUpdate(Options options, ProcessConfigurationElement collected) {
@@ -41,7 +52,7 @@ namespace Transformalize.Main {
 
         private static ProcessConfigurationElement Collect(ProcessConfigurationElement child) {
             while (!string.IsNullOrEmpty(child.Inherit)) {
-                var parent = new ConfigurationFactory(child.Inherit).Create();
+                var parent = new ConfigurationFactory(child.Inherit).Create()[0];
                 parent.Merge(child);
                 child = parent;
             }

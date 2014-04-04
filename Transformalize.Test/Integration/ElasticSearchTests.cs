@@ -39,7 +39,7 @@ namespace Transformalize.Test.Integration {
             var cfg = new ProcessBuilder("est")
                 .Connection("output").Provider("elasticsearch").Server("localhost").Port(9200)
                 .Process();
-            var process = ProcessFactory.Create(cfg, new Options() { LogLevel = LogLevel.Debug });
+            var process = ProcessFactory.Create(cfg, new Options() { LogLevel = LogLevel.Debug })[0];
 
             var checker = new ElasticSearchConnectionChecker();
             
@@ -57,7 +57,7 @@ namespace Transformalize.Test.Integration {
                     .Field("name")
                 .Process();
 
-            var process = ProcessFactory.Create(cfg);
+            var process = ProcessFactory.Create(cfg)[0];
 
             var result = new ElasticSearchEntityRecordsExist().RecordsExist(process.OutputConnection, process.Entities[0]);
 
@@ -81,7 +81,7 @@ namespace Transformalize.Test.Integration {
                     .Field("name")
                 .Process();
 
-            var process = ProcessFactory.Create(cfg);
+            var process = ProcessFactory.Create(cfg)[0];
             var output = process.Run();
         }
 
@@ -96,7 +96,7 @@ namespace Transformalize.Test.Integration {
                     .Field("name")
                 .Process();
 
-            var process = ProcessFactory.Create(cfg);
+            var process = ProcessFactory.Create(cfg)[0];
 
             new ElasticSearchEntityDropper().Drop(process.OutputConnection, process.Entities[0]);
         }
@@ -112,7 +112,7 @@ namespace Transformalize.Test.Integration {
                     .Field("name")
                 .Process();
 
-            var process = ProcessFactory.Create(cfg);
+            var process = ProcessFactory.Create(cfg)[0];
 
             Assert.AreEqual(3, process.Entities[0].TflBatchId);
         }
@@ -132,7 +132,7 @@ namespace Transformalize.Test.Integration {
                     .Field("name")
                 .Process();
 
-            var process = ProcessFactory.Create(cfg, new Options() { Mode = "default"});
+            var process = ProcessFactory.Create(cfg, new Options() { Mode = "default"})[0];
             process.Run();
 
             process.OutputConnection.WriteEndVersion(process.Connections["input"], process.Entities[0]);

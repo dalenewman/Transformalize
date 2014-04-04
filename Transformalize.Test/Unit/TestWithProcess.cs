@@ -39,7 +39,7 @@ namespace Transformalize.Test.Unit {
     public class TestWithProcess : EtlProcessHelper {
 
         private readonly Mock<IOperation> _entityKeysExtract;
-        private static readonly ProcessConfigurationElement Element = new ProcessConfigurationReader("Test").Read();
+        private static readonly ProcessConfigurationElement Element = new ProcessConfigurationReader("Test").Read()[0];
         private readonly Process _process = new ProcessReader(Element, new Options()).Read();
 
         public TestWithProcess() {

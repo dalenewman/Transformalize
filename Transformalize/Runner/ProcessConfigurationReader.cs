@@ -20,34 +20,24 @@
 
 #endregion
 
-using System;
 using System.Configuration;
 using Transformalize.Configuration;
-using Transformalize.Libs.NLog;
 using Transformalize.Main;
 
-namespace Transformalize.Runner
-{
-    public class ProcessConfigurationReader : IReader<ProcessConfigurationElement>
-    {
-        private readonly Logger _log = LogManager.GetLogger(string.Empty);
+namespace Transformalize.Runner {
+    public class ProcessConfigurationReader : IReader<ProcessElementCollection> {
         private readonly string _name;
 
-        public ProcessConfigurationReader(string name)
-        {
+        public ProcessConfigurationReader(string name) {
             _name = name;
         }
 
-        public ProcessConfigurationElement Read()
-        {
-            var config = ((TransformalizeConfiguration) ConfigurationManager.GetSection("transformalize")).Processes.Get(_name);
-            if (config == null)
-            {
-                _log.Warn("Sorry.  I can't find a process named {0}.", _name);
-                LogManager.Flush();
-                Environment.Exit(1);
+        public ProcessElementCollection Read() {
+            var element = ((TransformalizeConfiguration)ConfigurationManager.GetSection("transformalize")).Processes.Get(_name);
+            if (element == null) {
+                throw new TransformalizeException("Sorry.  I can't find a process named {0}.", _name);
             }
-            return config;
+            return new ProcessElementCollection() {element};
         }
     }
 }

@@ -181,8 +181,7 @@ namespace Transformalize.Main {
                     _process.ValidationResults.AddResult(result);
                     _log.Error(result.Message);
                 }
-                LogManager.Flush();
-                Environment.Exit(1);
+                throw new TransformalizeException("Entity validation failed. See error log.");
             }
         }
 
@@ -222,9 +221,7 @@ namespace Transformalize.Main {
                     if (entity.CalculatedFields.ContainsKey(element.Version)) {
                         entity.Version = entity.CalculatedFields[element.Version];
                     } else {
-                        _log.Error("version field reference '{0}' is undefined in {1}.", element.Version, element.Name);
-                        LogManager.Flush();
-                        Environment.Exit(1);
+                        throw new TransformalizeException("version field reference '{0}' is undefined in {1}.", element.Version, element.Name);
                     }
                 }
             }
@@ -238,9 +235,7 @@ namespace Transformalize.Main {
             if (!element.Fields.Cast<FieldConfigurationElement>().Any(f => f.Output && string.IsNullOrEmpty(f.Aggregate)))
                 return;
 
-            _log.Error("Entity {0} is set to group, but not all your output fields have aggregate defined.", entity.Alias);
-            LogManager.Flush();
-            Environment.Exit(1);
+            throw new TransformalizeException("Entity {0} is set to group, but not all your output fields have aggregate defined.", entity.Alias);
         }
 
         private static FieldType GetFieldType(FieldConfigurationElement element, bool isMaster) {

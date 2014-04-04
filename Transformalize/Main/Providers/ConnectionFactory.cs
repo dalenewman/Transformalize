@@ -100,8 +100,7 @@ namespace Transformalize.Main.Providers {
                     _process.ValidationResults.AddResult(result);
                     _log.Error(result.Message);
                 }
-                LogManager.Flush();
-                System.Environment.Exit(1);
+                throw new TransformalizeException("Connection validation failed. See error log.");
             }
         }
     }

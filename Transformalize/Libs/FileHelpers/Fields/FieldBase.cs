@@ -13,7 +13,10 @@ using Transformalize.Libs.FileHelpers.Core;
 using Transformalize.Libs.FileHelpers.Enums;
 using Transformalize.Libs.FileHelpers.ErrorHandling;
 using Transformalize.Libs.FileHelpers.Helpers;
+using Transformalize.Libs.Mono.CSharp;
 using Transformalize.Libs.NLog;
+using Transformalize.Main;
+using Convert = System.Convert;
 
 namespace Transformalize.Libs.FileHelpers.Fields
 {
@@ -255,11 +258,8 @@ namespace Transformalize.Libs.FileHelpers.Fields
             catch (ConvertException ex)
             {
                 var e = ConvertException.ReThrowException(ex, mFieldInfo.Name, line.mReader.LineNumber, fieldString.ExtractedFrom + 1);
-                _log.Error("{0} {1}", e.Message, e.MessageExtra);
-                LogManager.Flush();
-                Environment.Exit(1);
+                throw new TransformalizeException("{0} {1}", e.Message, e.MessageExtra);
             }
-            return null;
         }
 
         private object GetNullValue()

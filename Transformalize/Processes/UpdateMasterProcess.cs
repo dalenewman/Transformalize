@@ -22,42 +22,37 @@
 
 using System;
 using System.Linq;
+using Transformalize.Extensions;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 using Transformalize.Operations;
 
-namespace Transformalize.Processes
-{
-    public class UpdateMasterProcess : EtlProcess
-    {
+namespace Transformalize.Processes {
+    public class UpdateMasterProcess : EtlProcess {
         private readonly Process _process;
 
-        public UpdateMasterProcess(ref Process process)
-        {
+        public UpdateMasterProcess(ref Process process) {
             GlobalDiagnosticsContext.Set("entity", Common.LogLength("All", 20));
             _process = process;
         }
 
-        protected override void Initialize()
-        {
-            foreach (var entity in _process.Entities)
-            {
+        protected override void Initialize() {
+            foreach (var entity in _process.Entities) {
                 Register(new EntityUpdateMaster(_process, entity));
             }
         }
 
-        protected override void PostProcessing()
-        {
+        protected override void PostProcessing() {
             var errors = GetAllErrors().ToArray();
-            if (errors.Any())
-            {
-                foreach (var error in errors)
-                {
-                    Error(error.InnerException, "Message: {0}\r\nStackTrace:{1}\r\n", error.Message, error.StackTrace);
+            if (errors.Any()) {
+                foreach (var error in errors) {
+                    foreach (var e in error.FlattenHierarchy()) {
+                        Error(e.Message);
+                        Debug(e.StackTrace);
+                    }
                 }
-                LogManager.Flush();
-                Environment.Exit(1);
+                throw new TransformalizeException("Update Master Process failed for {0}", _process.Name);
             }
 
             base.PostProcessing();

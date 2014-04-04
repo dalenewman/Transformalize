@@ -33,14 +33,14 @@ namespace Transformalize.Run {
         private static Options _options = new Options();
 
         private static void Main(string[] args) {
-            var process = new Process();
+            var processes = new List<Process>();
 
             if (args.Length == 0) {
-                Console.WriteLine("Please provide the process name, file, or address.");
+                Console.WriteLine("Please provide the process(es) name, file, or address.");
                 Console.WriteLine(@"Usage:");
                 Console.WriteLine(@"   tfl fancy                      - looks in tfl.exe.config for fancy process.");
-                Console.WriteLine(@"   tfl c:\fancy.xml               - looks for fancy.xml file.");
-                Console.WriteLine(@"   tfl http://localhost/fancy.xml - makes web request for fancy.xml.");
+                Console.WriteLine(@"   tfl c:\fancy.xml               - looks for processes in c:\fancy.xml file.");
+                Console.WriteLine(@"   tfl http://localhost/fancy.xml - makes web request for processes in http://localhost/fancy.xml.");
                 return;
             }
 
@@ -49,7 +49,7 @@ namespace Transformalize.Run {
             if (OptionsMayExist(args)) {
                 _options = new Options(CombineArguments(args));
                 if (_options.Valid()) {
-                    process = ProcessFactory.Create(resource, _options);
+                    processes.AddRange(ProcessFactory.Create(resource, _options));
                 } else {
                     foreach (var problem in _options.Problems) {
                         Log.Error(resource + " | " + problem);
@@ -58,10 +58,18 @@ namespace Transformalize.Run {
                     Environment.Exit(1);
                 }
             } else {
-                process = ProcessFactory.Create(resource);
+                processes.AddRange(ProcessFactory.Create(resource));
             }
 
-            process.Run();
+            foreach (var process in processes) {
+                try {
+                    process.Run();
+                } catch (TransformalizeException e) {
+                    Log.Error(e.Message);
+                    break;
+                }
+            }
+
 
         }
 

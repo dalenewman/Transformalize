@@ -4,6 +4,7 @@ using System.Threading;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.NLog.Internal;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
 
@@ -35,9 +36,7 @@ namespace Transformalize.Operations.Transform {
                 Debug("Defaulting From TimeZone to {0}.", defaultTimeZone);
             } else {
                 if (!TimeZoneInfo.GetSystemTimeZones().Any(tz => tz.Id.Equals(timeZone))) {
-                    Error("From Timezone Id {0} is invalid.", timeZone);
-                    LogManager.Flush();
-                    Environment.Exit(1);
+                    throw new TransformalizeException("From Timezone Id {0} is invalid.", timeZone);
                 }
             }
             return result;

@@ -55,7 +55,7 @@ namespace Transformalize.Main {
                     _log.Debug(e.StackTrace);
                 }
 
-                var renderedInfo = new FileInfo(folder.TrimEnd(_trim) + @"\" + template.Name + new FileInfo(template.File).Extension.ToLower().Replace("cshtml", "html"));
+                var renderedInfo = new FileInfo(folder.TrimEnd(_trim) + @"\" + template.Name + new FileInfo(template.Contents.FileName).Extension.ToLower().Replace("cshtml", "html"));
                 File.WriteAllText(renderedInfo.FullName, result);
 
                 if (!_process.Options.PerformTemplateActions)

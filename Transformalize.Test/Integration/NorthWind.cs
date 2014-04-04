@@ -41,7 +41,7 @@ namespace Transformalize.Test.Integration {
         [Test]
         public void Init() {
             var options = new Options { Mode = "init"};
-            var process = ProcessFactory.Create(FILE, options);
+            var process = ProcessFactory.Create(FILE, options)[0];
             process.Run();
             LogManager.Flush();
         }
@@ -49,14 +49,14 @@ namespace Transformalize.Test.Integration {
         [Test]
         public void First() {
             var options = new Options() { Mode = "first" };
-            var process = ProcessFactory.Create(FILE, options);
+            var process = ProcessFactory.Create(FILE, options)[0];
             process.Run();
             LogManager.Flush();
         }
 
         [Test]
         public void Normal() {
-            var process = ProcessFactory.Create(FILE);
+            var process = ProcessFactory.Create(FILE)[0];
             process.Run();
             LogManager.Flush();
         }
@@ -64,7 +64,7 @@ namespace Transformalize.Test.Integration {
         [Test]
         public void ManipulateData()
         {
-            var process = ProcessFactory.Create(FILE);
+            var process = ProcessFactory.Create(FILE)[0];
             using (var cn = process["Order Details"].Input.First().Connection.GetConnection()) {
                 cn.Open();
                 var count = cn.Execute("insert into [Order Details](OrderID, ProductID, UnitPrice, Quantity, Discount) values(10261,41,7.70,2,0);");
@@ -74,7 +74,7 @@ namespace Transformalize.Test.Integration {
 
         [Test]
         public void UnManipulateData() {
-            var process = ProcessFactory.Create(FILE);
+            var process = ProcessFactory.Create(FILE)[0];
             using (var cn = process["Order Details"].Input.First().Connection.GetConnection()) {
                 cn.Open();
                 var count = cn.Execute("delete from [Order Details] where OrderID = 10261 and ProductID = 41;");

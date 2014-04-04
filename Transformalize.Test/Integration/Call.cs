@@ -39,20 +39,20 @@ namespace Transformalize.Test.Integration {
 
         [Test]
         public void Init() {
-            ProcessFactory.Create(CALLS, new Options { Mode = "init" }).Run();
-            ProcessFactory.Create(CAMPAIGNS, new Options { Mode = "init" }).Run();
+            ProcessFactory.Create(CALLS, new Options { Mode = "init" })[0].Run();
+            ProcessFactory.Create(CAMPAIGNS, new Options { Mode = "init" })[0].Run();
         }
 
         [Test]
         public void Normal() {
-            ProcessFactory.Create(CALLS).Run();
-            ProcessFactory.Create(CAMPAIGNS).Run();
+            ProcessFactory.Create(CALLS)[0].Run();
+            ProcessFactory.Create(CAMPAIGNS)[0].Run();
         }
 
         [Test]
         public void Test() {
-            ProcessFactory.Create(CALLS, new Options("{'mode':'test','top':2,'loglevel':'trace'}")).Run();
-            ProcessFactory.Create(CAMPAIGNS, new Options("{'mode':'test','top':2,'loglevel':'trace'}")).Run();
+            ProcessFactory.Create(CALLS, new Options("{'mode':'test','top':2,'loglevel':'trace'}"))[0].Run();
+            ProcessFactory.Create(CAMPAIGNS, new Options("{'mode':'test','top':2,'loglevel':'trace'}"))[0].Run();
         }
     }
 }

@@ -39,7 +39,7 @@ namespace Transformalize.Test.Integration
             LogManager.ReconfigExistingLoggers();
         }
 
-        private static readonly ProcessConfigurationElement Element = new ProcessConfigurationReader("Test").Read();
+        private static readonly ProcessConfigurationElement Element = new ProcessConfigurationReader("Test").Read()[0];
         private readonly Process _process = new ProcessReader(Element, new Options()).Read();
 
         [Test]

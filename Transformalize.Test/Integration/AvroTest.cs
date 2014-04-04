@@ -78,14 +78,14 @@ namespace Transformalize.Test.Integration {
         [Test]
         public void TestDatabaseSizes() {
             const string instructions = @"C:\Code\TransformalizeConfiguration\TransformalizeConfiguration\App_Data\DBA\DatabaseSize\DatabaseSize1.xml";
-            var process = ProcessFactory.Create(instructions, new Options() { Mode="default", LogLevel = LogLevel.Debug});
+            var process = ProcessFactory.Create(instructions, new Options() { Mode="default", LogLevel = LogLevel.Debug})[0];
             var results = process.Run();
         }
 
         [Test]
         public void TestDefault() {
             var options = new Options { Mode = "default" };
-            var process = ProcessFactory.Create("http://config.mwf.local/clevest-filter-updates.xml", options);
+            var process = ProcessFactory.Create("http://config.mwf.local/clevest-filter-updates.xml", options)[0];
             process.PipelineThreading = PipelineThreading.SingleThreaded;
             var results = process.Run();
         }
@@ -110,11 +110,11 @@ namespace Transformalize.Test.Integration {
                 .Field("LogReuseWait")
                 .Process();
 
-            ProcessFactory.Create(config, new Options("init") { LogLevel = LogLevel.Off }).Run();
+            ProcessFactory.Create(config, new Options("init") { LogLevel = LogLevel.Off })[0].Run();
 
             config.Connections["output"].Provider = "log";
 
-            ProcessFactory.Create(config, new Options("init") { LogLevel = LogLevel.Off }).Run();
+            ProcessFactory.Create(config, new Options("init") { LogLevel = LogLevel.Off })[0].Run();
 
             //File.WriteAllText(@"c:\temp\sql-override.xml", config.Serialize());
             //System.Diagnostics.Process.Start(@"c:\temp\sql-override.xml");

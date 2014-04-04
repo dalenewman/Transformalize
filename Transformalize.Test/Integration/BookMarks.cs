@@ -39,13 +39,13 @@ namespace Transformalize.Test.Integration {
         [Test]
         public void Init() {
             var options = new Options() { Mode = "init"};
-            var process = ProcessFactory.Create(FILE, options);
+            var process = ProcessFactory.Create(FILE, options)[0];
             process.Run();
         }
 
         [Test]
         public void Default() {
-            ProcessFactory.Create(FILE, new Options() { Top = 100}).Run();
+            ProcessFactory.Create(FILE, new Options() { Top = 100})[0].Run();
         }
 
     }

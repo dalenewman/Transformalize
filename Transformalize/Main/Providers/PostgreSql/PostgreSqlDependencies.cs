@@ -12,6 +12,6 @@ namespace Transformalize.Main.Providers.PostgreSql
                 new DatabaseEntityCreator(),
                 new PostgreSqlViewWriter(),
                 new PostgreSqlTflWriter(),
-                new DefaultScriptRunner()) { }
+                new DatabaseScriptRunner()) { }
     }
 }

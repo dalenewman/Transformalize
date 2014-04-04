@@ -48,7 +48,6 @@ namespace Transformalize.Main {
 
             var count = entityKeys.Count;
             _log.Warn("field overlap error in {3}.  The field{1}: {0} {2} already defined in previous entities.  You must alias (rename) these.", string.Join(", ", entityKeys), count.Plural(), count == 1 ? "is" : "are", entity.Alias);
-            //Environment.Exit(1);
         }
     }
 }

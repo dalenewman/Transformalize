@@ -48,11 +48,11 @@ namespace Transformalize.Test.Unit {
             var logLevel = LogLevel.Info;
 
             //init and run
-            var init = ProcessFactory.Create(process, new Options() { Mode = "init", LogLevel = logLevel });
+            var init = ProcessFactory.Create(process, new Options() { Mode = "init", LogLevel = logLevel })[0];
             init.PipelineThreading = PipelineThreading.SingleThreaded;
             init.Run();
 
-            var first = ProcessFactory.Create(process, new Options() { LogLevel = logLevel });
+            var first = ProcessFactory.Create(process, new Options() { LogLevel = logLevel })[0];
             first.PipelineThreading = PipelineThreading.SingleThreaded;
             first.Run();
             LogManager.Flush();
@@ -71,7 +71,7 @@ namespace Transformalize.Test.Unit {
             process = GetInitialProcess(inventory, storageLocations, warehouses);
 
             //run again, no changes
-            var second = ProcessFactory.Create(process, new Options() { LogLevel = logLevel });
+            var second = ProcessFactory.Create(process, new Options() { LogLevel = logLevel })[0];
             second.PipelineThreading = PipelineThreading.SingleThreaded;
             second.Run();
             LogManager.Flush();
@@ -100,7 +100,7 @@ namespace Transformalize.Test.Unit {
             process.Entities[2].InputOperation = GetInitialWarehouses();
 
             //run again
-            var third = ProcessFactory.Create(process, new Options() { LogLevel = logLevel });
+            var third = ProcessFactory.Create(process, new Options() { LogLevel = logLevel })[0];
             third.PipelineThreading = PipelineThreading.SingleThreaded;
             third.Run();
             LogManager.Flush();

@@ -11,6 +11,6 @@ namespace Transformalize.Main.Providers.MySql {
                 new DatabaseEntityCreator(),
                 new MySqlViewWriter(),
                 new MySqlTflWriter(),
-                new DefaultScriptRunner()) { }
+                new DatabaseScriptRunner()) { }
     }
 }

@@ -22,6 +22,7 @@
 
 using System;
 using System.Linq;
+using Transformalize.Extensions;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
@@ -52,10 +53,12 @@ namespace Transformalize.Processes {
             var errors = GetAllErrors().ToArray();
             if (errors.Any()) {
                 foreach (var error in errors) {
-                    Error(error.InnerException, "Message: {0}\r\nStackTrace:{1}\r\n", error.Message, error.StackTrace);
+                    foreach (var e in error.FlattenHierarchy()) {
+                        Error(e.Message);
+                        Debug(e.StackTrace);
+                    }
                 }
-                LogManager.Flush();
-                Environment.Exit(1);
+                throw new TransformalizeException("Transform process failed for {0}.", _process.Name);
             }
 
             base.PostProcessing();

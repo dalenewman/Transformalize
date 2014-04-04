@@ -9,7 +9,7 @@ namespace Transformalize.Main.Providers.SqlCe4 {
                 new SqlCe4EntityCreator(),
                 new FalseViewWriter(),
                 new SqlCe4TflWriter(),
-                new DefaultScriptRunner()
+                new DatabaseScriptRunner()
             ) { }
     }
 }

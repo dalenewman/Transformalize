@@ -53,7 +53,7 @@ namespace Transformalize.Test.Unit {
                     .Field("name")
                 .Process();
 
-            var process = ProcessFactory.Create(cfg);
+            var process = ProcessFactory.Create(cfg)[0];
 
             var output = process.Run();
 
@@ -93,7 +93,7 @@ namespace Transformalize.Test.Unit {
                 
                 .Process();
 
-            var process = ProcessFactory.Create(cfg);
+            var process = ProcessFactory.Create(cfg)[0];
 
             var output = process.Run();
 

@@ -43,12 +43,12 @@ namespace Transformalize.Test.Integration {
 
             _log.Info("***** RUN 00 * INITIALIZE ******");
             var options = new Options { Mode = "init" };
-            var process = ProcessFactory.Create(FILE, options);
+            var process = ProcessFactory.Create(FILE, options)[0];
             process.Run();
 
             _log.Info("***** RUN 01 * FIRST RUN ******");
             options = new Options { RenderTemplates = false, LogLevel = LogLevel.Info };
-            process = ProcessFactory.Create(FILE, options);
+            process = ProcessFactory.Create(FILE, options)[0];
             process.PipelineThreading = PipelineThreading.SingleThreaded;
             process.Run();
 
@@ -63,7 +63,7 @@ namespace Transformalize.Test.Integration {
 
             _log.Info("***** RUN 02 * NO CHANGES ******");
             options = new Options { RenderTemplates = false, LogLevel = LogLevel.Info };
-            process = ProcessFactory.Create(FILE, options);
+            process = ProcessFactory.Create(FILE, options)[0];
             process.PipelineThreading = PipelineThreading.SingleThreaded;
             process.Run();
 
@@ -83,7 +83,7 @@ namespace Transformalize.Test.Integration {
             }
 
             options = new Options { RenderTemplates = false, LogLevel = LogLevel.Info};
-            process = ProcessFactory.Create(FILE, options);
+            process = ProcessFactory.Create(FILE, options)[0];
             process.PipelineThreading = PipelineThreading.SingleThreaded;
             process.Run();
 
@@ -98,7 +98,7 @@ namespace Transformalize.Test.Integration {
             }
 
             options = new Options { RenderTemplates = false };
-            process = ProcessFactory.Create(FILE, options);
+            process = ProcessFactory.Create(FILE, options)[0];
             process.PipelineThreading = PipelineThreading.SingleThreaded;
             process.Run();
 
@@ -111,7 +111,7 @@ namespace Transformalize.Test.Integration {
             }
 
             options = new Options { RenderTemplates = false };
-            process = ProcessFactory.Create(FILE, options);
+            process = ProcessFactory.Create(FILE, options)[0];
             process.PipelineThreading = PipelineThreading.SingleThreaded;
             process.Run();
 
@@ -131,7 +131,7 @@ namespace Transformalize.Test.Integration {
             }
 
             options = new Options { RenderTemplates = false };
-            process = ProcessFactory.Create(FILE, options);
+            process = ProcessFactory.Create(FILE, options)[0];
             process.PipelineThreading = PipelineThreading.SingleThreaded;
             process.Run();
 
@@ -158,7 +158,7 @@ namespace Transformalize.Test.Integration {
             }
 
             options = new Options { RenderTemplates = false };
-            process = ProcessFactory.Create(FILE, options);
+            process = ProcessFactory.Create(FILE, options)[0];
             process.PipelineThreading = PipelineThreading.SingleThreaded;
             process.Run();
 
@@ -177,7 +177,7 @@ namespace Transformalize.Test.Integration {
             }
 
             options = new Options { RenderTemplates = false };
-            process = ProcessFactory.Create(FILE, options);
+            process = ProcessFactory.Create(FILE, options)[0];
             process.PipelineThreading = PipelineThreading.SingleThreaded;
             process.Run();
 
@@ -185,7 +185,7 @@ namespace Transformalize.Test.Integration {
 
             _log.Info("***** RUN 09 * HANDLE DELETE ******");
             options = new Options { Mode = "delete" };
-            process = ProcessFactory.Create(FILE, options);
+            process = ProcessFactory.Create(FILE, options)[0];
             process.Run();
 
             Assert.AreEqual(1, process["Order Details"].Deletes);
@@ -196,7 +196,7 @@ namespace Transformalize.Test.Integration {
         public void Reset() {
             _log.Info("***** RESET ******");
             var options = new Options { RenderTemplates = false };
-            var process = ProcessFactory.Create(FILE, options);
+            var process = ProcessFactory.Create(FILE, options)[0];
             using (var cn = process["Order Details"].Input.First().Connection.GetConnection()) {
                 cn.Open();
                 cn.Execute("delete from [Order Details] where OrderID = 10261 and ProductID = 41;");

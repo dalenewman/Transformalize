@@ -31,7 +31,7 @@ namespace Transformalize.Test.Unit
         [Test]
         public void TestBase()
         {
-            var northWind = ProcessFactory.Create("NorthWind.xml");
+            var northWind = ProcessFactory.Create("NorthWind.xml")[0];
             Assert.AreEqual("int16", northWind.Entities[0].Fields["OrderDetailsQuantity"].Type);
             Assert.AreEqual(8, northWind.Entities.Count);
             Assert.AreEqual(3, northWind.Entities[1].CalculatedFields.Count);
@@ -39,7 +39,7 @@ namespace Transformalize.Test.Unit
 
         [Test]
         public void TestSimpleExpansion() {
-            var northWind = ProcessFactory.Create("NorthWindExpanded.xml");
+            var northWind = ProcessFactory.Create("NorthWindExpanded.xml")[0];
             Assert.AreEqual("System.Int32", northWind.Entities[0].Fields["OrderDetailsQuantity"].Type);
             Assert.AreEqual(8, northWind.Entities.Count);
             Assert.AreEqual(4, northWind.Entities[1].CalculatedFields.Count);

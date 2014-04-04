@@ -29,6 +29,7 @@ using Transformalize.Libs.NLog;
 using Transformalize.Libs.RazorEngine;
 using Transformalize.Libs.RazorEngine.Configuration.Fluent;
 using Transformalize.Libs.RazorEngine.Templating;
+using Transformalize.Runner;
 
 namespace Transformalize.Main {
 
@@ -49,18 +50,18 @@ namespace Transformalize.Main {
 
         public List<TemplateAction> Actions = new List<TemplateAction>();
         public Dictionary<string, object> Settings = new Dictionary<string, object>();
-        public string Content { get; private set; }
+        public Contents Contents { get; private set; }
         public string Name { get; private set; }
-        public string File { get; private set; }
+
         public bool Cache { get; private set; }
         public Encoding ContentType { get; private set; }
         public bool IsUsedInPipeline { get; set; }
 
-        public Template(Process process, TemplateConfigurationElement element, string content, string file) {
-            File = file;
+        public Template(Process process, TemplateConfigurationElement element, Contents contents) {
+
+            Contents = contents;
             Cache = element.Cache;
             Name = element.Name;
-            Content = content;
             ContentType = element.ContentType.Equals("raw") ? Encoding.Raw : Encoding.Html;
 
             _process = process;
@@ -79,8 +80,8 @@ namespace Transformalize.Main {
         }
 
         private static bool TryRead(string fileName, out string contents) {
-            var exists = System.IO.File.Exists(fileName);
-            contents = exists ? System.IO.File.ReadAllText(fileName) : string.Empty;
+            var exists = File.Exists(fileName);
+            contents = exists ? File.ReadAllText(fileName) : string.Empty;
             return exists;
         }
 
@@ -100,14 +101,14 @@ namespace Transformalize.Main {
                 !_process.Options.Mode.StartsWith("init", StringComparison.OrdinalIgnoreCase) &&
                 _renderedTemplateContentExists &&
                 _templateContentExists &&
-                _templateContent.Equals(Content);
+                _templateContent.Equals(Contents.Content);
         }
 
         private string RenderContent() {
 
-            if (Content.Equals(string.Empty)) {
+            if (Contents.Content.Equals(string.Empty)) {
                 _log.Warn("Template {0} is empty.", Name);
-                return System.IO.File.ReadAllText(File);
+                return string.Empty;
             }
 
             var config = new FluentTemplateServiceConfiguration(c => c.WithEncoding(ContentType));
@@ -120,7 +121,7 @@ namespace Transformalize.Main {
             }
             ((IDictionary<string, object>)settings).Add("Process", _process);
 
-            var renderedContent = Razor.Parse(Content, new {
+            var renderedContent = Razor.Parse(Contents.Content, new {
                 Process = _process,
                 Settings = settings
             });
@@ -131,8 +132,8 @@ namespace Transformalize.Main {
 
         private string CacheContent(string renderedContent) {
             if (Cache && !string.IsNullOrEmpty(renderedContent)) {
-                System.IO.File.WriteAllText(_renderedTemplateFile, renderedContent);
-                System.IO.File.WriteAllText(_templateFile, this.Content);
+                File.WriteAllText(_renderedTemplateFile, renderedContent);
+                File.WriteAllText(_templateFile, Contents.Content);
                 _log.Debug("Cached {0} template output.", Name);
             }
             return renderedContent;

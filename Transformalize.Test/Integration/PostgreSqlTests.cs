@@ -55,9 +55,9 @@ namespace Transformalize.Test.Integration {
                         .Transform("gethashcode")
                 .Process();
 
-            ProcessFactory.Create(config, new Options { Mode = "init" }).Run();
-            ProcessFactory.Create(config, new Options { Mode = "first" }).Run();
-            ProcessFactory.Create(config).Run();
+            ProcessFactory.Create(config, new Options { Mode = "init" })[0].Run();
+            ProcessFactory.Create(config, new Options { Mode = "first" })[0].Run();
+            ProcessFactory.Create(config)[0].Run();
         }
 
     }

@@ -20,8 +20,10 @@
 
 #endregion
 
+using System;
 using NUnit.Framework;
 using Transformalize.Configuration.Builders;
+using Transformalize.Libs.NLog;
 using Transformalize.Main;
 
 namespace Transformalize.Test.Integration {
@@ -34,13 +36,27 @@ namespace Transformalize.Test.Integration {
 
             var config = new ProcessBuilder("SqlServerTest")
                 .Connection("input").Database("Orchard171")
-                .Connection("output").Provider("console")
-                .Entity("SS_BatchRecord")
-                    .SqlKeysOverride("SELECT ActionValue AS TflKey FROM SS_BatchRecord WHERE BatchId = 7;")
-                    .Field("TflKey").Int32().PrimaryKey()
+                .Connection("output").Provider("internal")
+                .Template("dml").Cache(true)
+                    .File("http://config.mwf.local/Templates/DukeInvoice.sql")
+                        .Action("open").Connection("input")
+                .Entity("WorkOrder")
+                    .DetectChanges(false)
+                    .Connection("input")
+                    .SqlOverride(@"
+                        SELECT ActionValue, BatchId
+                        FROM SS_BatchRecord
+                        WHERE BatchId = 2;"
+                    )
+                    .Field("WorkOrderKey").Alias("WorkOrderKey").PrimaryKey()
+                    .Field("BatchId").Int32()
                 .Process();
 
-            ProcessFactory.Create(config).Run();
+            var xml = config.Serialize();
+            Console.WriteLine(xml);
+            Console.WriteLine();
+
+            ProcessFactory.Create(config, new Options() {LogLevel = LogLevel.Info})[0].Run();
         }
 
     }

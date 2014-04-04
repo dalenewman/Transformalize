@@ -39,13 +39,13 @@ namespace Transformalize.Test.Integration {
         [Test]
         public void UfoInit() {
             var options = new Options() { Mode = "init"};
-            var process = ProcessFactory.Create(FILE, options);
+            var process = ProcessFactory.Create(FILE, options)[0];
             process.Run();
         }
 
         [Test]
         public void UfoDefault() {
-            ProcessFactory.Create(FILE).Run();
+            ProcessFactory.Create(FILE)[0].Run();
         }
 
     }
