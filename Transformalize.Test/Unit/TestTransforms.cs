@@ -80,8 +80,7 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void Copy()
-        {
+        public void Copy() {
             var input = new RowsBuilder().Row().Field("f1", 7).ToOperation();
             var copy = new CopyOperation("f1", "f2");
             var output = TestOperation(input, copy);
@@ -303,8 +302,7 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void JavascriptWithDates()
-        {
+        public void JavascriptWithDates() {
             const string minuteDiff = @"
                 function minuteDiff(orderStatus, start, end) {
                     if (orderStatus == 'Completed' || orderStatus == 'Problematic') {
@@ -326,7 +324,7 @@ namespace Transformalize.Test.Unit {
                 .Row("OrderStatus", "Completed")
                     .Field("StartDate", DateTime.Now.AddMinutes(-30.0))
                     .Field("EndDate", DateTime.Now)
-                .Row("OrderStatus","Problematic")
+                .Row("OrderStatus", "Problematic")
                     .Field("StartDate", DateTime.Now.AddMinutes(-29.0))
                     .Field("EndDate", DateTime.Now)
                 .Row("OrderStatus", "Problematic")
@@ -338,7 +336,7 @@ namespace Transformalize.Test.Unit {
                 .ToOperation();
 
             var scripts = new Dictionary<string, Script>() { { "script", new Script("script", minuteDiff, "") } };
-            var parameters = new ParametersBuilder().Parameters("OrderStatus","StartDate","EndDate").ToParameters();
+            var parameters = new ParametersBuilder().Parameters("OrderStatus", "StartDate", "EndDate").ToParameters();
             var javascript = new JavascriptOperation("o1", "minuteDiff(OrderStatus,StartDate,EndDate);", scripts, parameters);
             var output = TestOperation(input, javascript);
 
@@ -349,10 +347,9 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void JavascriptInProcess()
-        {
+        public void JavascriptInProcess() {
             var script = Path.GetTempFileName();
-            File.WriteAllText(script,@"
+            File.WriteAllText(script, @"
                 function minuteDiff(orderStatus, start, end) {
                     if (orderStatus == 'Completed' || orderStatus == 'Problematic') {
 
@@ -402,10 +399,10 @@ namespace Transformalize.Test.Unit {
                                 .Parameter("EndDate")
             .Process();
 
-            var process = ProcessFactory.Create(config, new Options() { LogLevel = LogLevel.Debug})[0];
+            var process = ProcessFactory.Create(config, new Options() { LogLevel = LogLevel.Debug })[0];
 
             var output = process.Run()["test"].ToList();
-    
+
             Assert.AreEqual(30, output[0]["MinuteDiff"]);
             Assert.AreEqual(29, output[1]["MinuteDiff"]);
             Assert.AreEqual(60, output[2]["MinuteDiff"]);
@@ -427,12 +424,124 @@ namespace Transformalize.Test.Unit {
                 first + "" "" + last;
             ";
 
-            var cSharp = new CSharpOperation("full", code, scripts, parameters);
+            var cSharp = new CSharpOperation("full", "string", code, scripts, parameters);
             var output = TestOperation(input, cSharp);
-            Assert.AreEqual("dale newman", output[0]["full"]);
-            Assert.AreEqual("adam newman", output[1]["full"]);
+            Assert.AreEqual("dale newman", output[0]["full"].ToString());
+            Assert.AreEqual("adam newman", output[1]["full"].ToString());
 
         }
+
+        public static class F {
+            public static int MinuteDiff(string orderStatus, DateTime start, DateTime end) {
+                if (orderStatus != "Completed" && orderStatus != "Problematic")
+                    return 0;
+                var answer = Convert.ToInt32(Math.Round(end.Subtract(start).TotalMinutes, 0));
+                return answer > 60 ? 60 : answer;
+            }
+        }
+
+        public void CSharpInProcess() {
+            var script = Path.GetTempFileName();
+            File.WriteAllText(script, @"
+                public static class F {
+                    public static int MinuteDiff(string orderStatus, DateTime start, DateTime end) {
+                        if (orderStatus != ""Completed"" && orderStatus != ""Problematic"")
+                            return 0;
+                        var answer = Convert.ToInt32(Math.Round(end.Subtract(start).TotalMinutes, 0));
+                        return answer > 60 ? 60 : answer;
+                    }
+                }
+            ");
+
+            var input = new RowsBuilder()
+                .Row("OrderStatus", "Completed")
+                    .Field("StartDate", DateTime.Now.AddMinutes(-30.0))
+                    .Field("EndDate", DateTime.Now)
+                .Row("OrderStatus", "Problematic")
+                    .Field("StartDate", DateTime.Now.AddMinutes(-29.0))
+                    .Field("EndDate", DateTime.Now)
+                .Row("OrderStatus", "Problematic")
+                    .Field("StartDate", DateTime.Now.AddMinutes(-78.0))
+                    .Field("EndDate", DateTime.Now)
+                .Row("OrderStatus", "x")
+                    .Field("StartDate", DateTime.Now.AddMinutes(-20.0))
+                    .Field("EndDate", DateTime.Now)
+                .ToOperation();
+
+            var config = new ProcessBuilder("test")
+                .Connection("input").Provider("internal")
+                .Connection("output").Provider("internal")
+                .Script("script", script)
+                .Entity("test").InputOperation(input)
+                    .Field("OrderStatus")
+                    .Field("StartDate").DateTime()
+                    .Field("EndDate").DateTime()
+                    .CalculatedField("MinuteDiff").Int()
+                        .Transform("csharp")
+                            .ExternalScript("script")
+                            .Script("F.MinuteDiff(OrderStatus,StartDate,EndDate);")
+                                .Parameter("OrderStatus")
+                                .Parameter("StartDate")
+                                .Parameter("EndDate")
+            .Process();
+
+            var process = ProcessFactory.Create(config, new Options() { LogLevel = LogLevel.Debug })[0];
+            process.PipelineThreading = PipelineThreading.SingleThreaded;
+            var output = process.Run()["test"].ToList();
+
+            Assert.AreEqual(30, output[0]["MinuteDiff"]);
+            Assert.AreEqual(29, output[1]["MinuteDiff"]);
+            Assert.AreEqual(60, output[2]["MinuteDiff"]);
+            Assert.AreEqual(0, output[3]["MinuteDiff"]);
+        }
+
+        public void CSharpInProcessInLine() {
+
+            var input = new RowsBuilder()
+                .Row("OrderStatus", "Completed")
+                    .Field("StartDate", DateTime.Now.AddMinutes(-30.0))
+                    .Field("EndDate", DateTime.Now)
+                .Row("OrderStatus", "Problematic")
+                    .Field("StartDate", DateTime.Now.AddMinutes(-29.0))
+                    .Field("EndDate", DateTime.Now)
+                .Row("OrderStatus", "Problematic")
+                    .Field("StartDate", DateTime.Now.AddMinutes(-78.0))
+                    .Field("EndDate", DateTime.Now)
+                .Row("OrderStatus", "x")
+                    .Field("StartDate", DateTime.Now.AddMinutes(-20.0))
+                    .Field("EndDate", DateTime.Now)
+                .ToOperation();
+
+            var config = new ProcessBuilder("test")
+                .Connection("input").Provider("internal")
+                .Connection("output").Provider("internal")
+                .Entity("test").InputOperation(input)
+                    .Field("OrderStatus")
+                    .Field("StartDate").DateTime()
+                    .Field("EndDate").DateTime()
+                    .CalculatedField("MinuteDiff").Int()
+                        .Transform("csharp")
+                            .Script(@"
+                                if (OrderStatus != ""Completed"" && OrderStatus != ""Problematic"")
+                                    return 0;
+                                var answer = Convert.ToInt32(Math.Round(EndDate.Subtract(StartDate).TotalMinutes, 0));
+                                answer > 60 ? 60 : answer;
+                            ")
+                            .Parameter("OrderStatus")
+                            .Parameter("StartDate")
+                            .Parameter("EndDate")
+            .Process();
+
+            var process = ProcessFactory.Create(config, new Options() { LogLevel = LogLevel.Debug })[0];
+            process.PipelineThreading = PipelineThreading.SingleThreaded;
+            var output = process.Run()["test"].ToList();
+
+            Assert.AreEqual(30, output[0]["MinuteDiff"]);
+            Assert.AreEqual(29, output[1]["MinuteDiff"]);
+            Assert.AreEqual(60, output[2]["MinuteDiff"]);
+            Assert.AreEqual(0, output[3]["MinuteDiff"]);
+        }
+
 
         [Test]
         public void Join() {
@@ -452,12 +561,11 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void XPathByAttributeValue()
-        {
+        public void XPathByAttributeValue() {
             var input = new RowsBuilder().Row("xml", "<items><item id=\"1\">one</item><item id=\"2\">two</item><item id=\"3\">three</item></items>").ToOperation();
             var transform = new XPathOperation("xml", "value", "string", "items/item[@id = \"2\"]");
             var output = TestOperation(input, transform);
-            Assert.AreEqual("two",output[0]["value"]);
+            Assert.AreEqual("two", output[0]["value"]);
         }
 
         [Test]
@@ -658,7 +766,7 @@ namespace Transformalize.Test.Unit {
             var input = new RowsBuilder().Row("input", 2).Field("out", "").ToOperation();
             var templates = new List<KeyValuePair<string, Template>>();
             var parameters = new ParametersBuilder().Parameter("x", 3).Parameter("input").ToParameters();
-            var templateOperation = new TemplateOperation("out","int", "@{var result = Model.input * Model.x;}@result", "dynamic", templates, parameters);
+            var templateOperation = new TemplateOperation("out", "int", "@{var result = Model.input * Model.x;}@result", "dynamic", templates, parameters);
             var output = TestOperation(input, templateOperation);
             Assert.AreEqual(6, output[0]["out"]);
         }
@@ -763,14 +871,13 @@ namespace Transformalize.Test.Unit {
         [Test]
         public void TrimStartAppend() {
             var input = new RowsBuilder().Row("OrderNumber", "C000012").ToOperation();
-            var transform = new TrimStartAppendOperation("OrderNumber", "OrderNumber", "C0"," ");
+            var transform = new TrimStartAppendOperation("OrderNumber", "OrderNumber", "C0", " ");
             var output = TestOperation(input, transform);
             Assert.AreEqual("C000012 12", output[0]["OrderNumber"]);
         }
 
         [Test]
-        public void TimeOfDaySeconds()
-        {
+        public void TimeOfDaySeconds() {
             var input = new RowsBuilder().Row("d", DateTime.Parse("1/1/2013 00:01:07.000")).ToOperation();
             var transform = new TimeOfDayOperation("d", "datetime", "d", "double", "seconds");
             var output = TestOperation(input, transform);
@@ -786,8 +893,7 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void TestCombo()
-        {
+        public void TestCombo() {
             var input = new RowsBuilder()
                 .Row("MeterNumber", "R00001")
                 .Row("MeterNumber", "000002").ToOperation();

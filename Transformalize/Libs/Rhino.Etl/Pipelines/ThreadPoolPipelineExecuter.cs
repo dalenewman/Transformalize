@@ -32,7 +32,8 @@ namespace Transformalize.Libs.Rhino.Etl.Pipelines {
                     }
                 } catch (Exception e) {
                     foreach (var inner in e.FlattenHierarchy()) {
-                        Error("Failed to execute {0}. {1} {2}", operation.Name, inner.Message, inner.StackTrace);
+                        Error("Failed to execute {0}. {1}", operation.Name, inner.Message);
+                        Debug(inner.StackTrace);
                     }
                     threadedEnumerator.MarkAsFinished();
 #if DEBUG

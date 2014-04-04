@@ -89,6 +89,7 @@ namespace Transformalize.Configuration {
         private const string UPPER_BOUND_TYPE = "upper-bound-type";
         private const string UPPER_UNIT = "upper-unit";
         private const string TIME_COMPONENT = "time-component";
+        private const string REPLACE_SINGLE_QUOTES = "replace-single-quotes";
 
         //CONDITIONAL
         private const string RUN_FIELD = "run-field";
@@ -474,6 +475,12 @@ namespace Transformalize.Configuration {
         public string RunValue {
             get { return this[RUN_VALUE] as string; }
             set { this[RUN_VALUE] = value; }
+        }
+
+        [ConfigurationProperty(REPLACE_SINGLE_QUOTES, IsRequired = false, DefaultValue = true)]
+        public bool ReplaceSingleQuotes { 
+            get { return (bool) this[REPLACE_SINGLE_QUOTES]; }
+            set { this[REPLACE_SINGLE_QUOTES] = value; }
         }
 
         public override bool IsReadOnly() {

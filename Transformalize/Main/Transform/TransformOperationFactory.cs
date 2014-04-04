@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using Transformalize.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
@@ -68,6 +69,7 @@ namespace Transformalize.Main {
             var outType = field.SimpleType;
             var resultKey = element.ResultField.Equals(DEFAULT) ? field.Alias + "Result" : element.ResultField;
             var messageKey = element.MessageField.Equals(DEFAULT) ? field.Alias + "Message" : element.MessageField;
+            var scripts = new Dictionary<string, Script>();
 
             if (!hasParameters) {
                 parameters.Add(field.Alias, field.Alias, null, field.SimpleType);
@@ -274,7 +276,6 @@ namespace Transformalize.Main {
                     ) { ShouldRun = shouldRun };
 
                 case "javascript":
-                    var scripts = new Dictionary<string, Script>();
                     foreach (TransformScriptConfigurationElement script in element.Scripts) {
                         scripts[script.Name] = _process.Scripts[script.Name];
                     }
@@ -285,6 +286,20 @@ namespace Transformalize.Main {
                         scripts,
                         parameters
                     ) { ShouldRun = shouldRun };
+
+                case "csharp":
+                    foreach (TransformScriptConfigurationElement script in element.Scripts) {
+                        scripts[script.Name] = _process.Scripts[script.Name];
+                    }
+
+                    return new CSharpOperation(
+                        outKey,
+                        outType,
+                        (element.ReplaceSingleQuotes ? Regex.Replace(element.Script, @"(?<=[^'])'{1}(?=[^'])", "\"") : element.Script),
+                        scripts,
+                        parameters
+                    ) { ShouldRun = shouldRun };
+
 
                 case "template":
 
