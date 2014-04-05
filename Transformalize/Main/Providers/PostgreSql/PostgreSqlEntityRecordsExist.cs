@@ -4,15 +4,15 @@ using Transformalize.Libs.Dapper;
 namespace Transformalize.Main.Providers.PostgreSql
 {
     public class PostgreSqlEntityRecordsExist : IEntityRecordsExist {
-        private readonly IEntityExists _entityExists;
+        public IEntityExists EntityExists { get; set; }
 
         public PostgreSqlEntityRecordsExist() {
-            _entityExists = new PostgreSqlEntityExists();
+            EntityExists = new PostgreSqlEntityExists();
         }
 
         public bool RecordsExist(AbstractConnection connection, Entity entity) {
 
-            if (!_entityExists.Exists(connection, entity))
+            if (!EntityExists.Exists(connection, entity))
                 return false;
 
             using (var cn = connection.GetConnection()) {

@@ -1,15 +1,16 @@
 namespace Transformalize.Main.Providers.SqlCe4
 {
     public class SqlCe4EntityRecordsExist : IEntityRecordsExist {
-        private readonly IEntityExists _entityExists;
+        public IEntityExists EntityExists { get; set; }
+
 
         public SqlCe4EntityRecordsExist() {
-            _entityExists = new SqlCe4EntityExists();
+            EntityExists = new SqlCe4EntityExists();
         }
 
         public bool RecordsExist(AbstractConnection connection, Entity entity) {
 
-            if (_entityExists.Exists(connection, entity)) {
+            if (EntityExists.Exists(connection, entity)) {
 
                 using (var cn = connection.GetConnection()) {
                     cn.Open();

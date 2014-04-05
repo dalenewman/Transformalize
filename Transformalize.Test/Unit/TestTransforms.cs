@@ -411,7 +411,7 @@ namespace Transformalize.Test.Unit {
 
 
         [Test]
-        public void TestCSharpScript() {
+        public void CSharpScript() {
             var input = new RowsBuilder()
                 .Row("first", "dale").Field("last", "newman").Field("full", "")
                 .Row("first", "adam").Field("last", "newman").Field("full", "")
@@ -421,7 +421,7 @@ namespace Transformalize.Test.Unit {
             var scripts = new Dictionary<string, Script>();
 
             const string code = @"
-                first + "" "" + last;
+                return first + "" "" + last;
             ";
 
             var cSharp = new CSharpOperation("full", "string", code, scripts, parameters);
@@ -431,15 +431,7 @@ namespace Transformalize.Test.Unit {
 
         }
 
-        public static class F {
-            public static int MinuteDiff(string orderStatus, DateTime start, DateTime end) {
-                if (orderStatus != "Completed" && orderStatus != "Problematic")
-                    return 0;
-                var answer = Convert.ToInt32(Math.Round(end.Subtract(start).TotalMinutes, 0));
-                return answer > 60 ? 60 : answer;
-            }
-        }
-
+        [Test]
         public void CSharpInProcess() {
             var script = Path.GetTempFileName();
             File.WriteAllText(script, @"
@@ -479,7 +471,7 @@ namespace Transformalize.Test.Unit {
                     .CalculatedField("MinuteDiff").Int()
                         .Transform("csharp")
                             .ExternalScript("script")
-                            .Script("F.MinuteDiff(OrderStatus,StartDate,EndDate);")
+                            .Script("return F.MinuteDiff(OrderStatus,StartDate,EndDate);")
                                 .Parameter("OrderStatus")
                                 .Parameter("StartDate")
                                 .Parameter("EndDate")
@@ -495,6 +487,7 @@ namespace Transformalize.Test.Unit {
             Assert.AreEqual(0, output[3]["MinuteDiff"]);
         }
 
+        [Test]
         public void CSharpInProcessInLine() {
 
             var input = new RowsBuilder()
@@ -522,10 +515,11 @@ namespace Transformalize.Test.Unit {
                     .CalculatedField("MinuteDiff").Int()
                         .Transform("csharp")
                             .Script(@"
-                                if (OrderStatus != ""Completed"" && OrderStatus != ""Problematic"")
-                                    return 0;
-                                var answer = Convert.ToInt32(Math.Round(EndDate.Subtract(StartDate).TotalMinutes, 0));
-                                answer > 60 ? 60 : answer;
+                                var answer = 0;
+                                if (OrderStatus == 'Completed' || OrderStatus == 'Problematic'){
+                                    answer = Convert.ToInt32(Math.Round(EndDate.Subtract(StartDate).TotalMinutes, 0));
+                                }
+                                return answer > 60 ? 60 : answer;
                             ")
                             .Parameter("OrderStatus")
                             .Parameter("StartDate")

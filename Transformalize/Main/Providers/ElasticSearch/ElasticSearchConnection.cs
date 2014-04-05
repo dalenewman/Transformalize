@@ -23,7 +23,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
         }
 
         public override int NextBatchId(string processName) {
-            if (!TflBatchExists(processName)) {
+            if (!TflBatchRecordsExist(processName)) {
                 return 1;
             }
 

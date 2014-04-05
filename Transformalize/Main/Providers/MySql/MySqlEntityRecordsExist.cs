@@ -3,16 +3,16 @@ using System.Linq;
 
 namespace Transformalize.Main.Providers.MySql {
     public class MySqlEntityRecordsExist : IEntityRecordsExist {
-        private readonly IEntityExists _entityExists;
+        public IEntityExists EntityExists { get; set; }
 
         public MySqlEntityRecordsExist()
         {
-            _entityExists = new MySqlEntityExists();
+            EntityExists = new MySqlEntityExists();
         }
 
         public bool RecordsExist(AbstractConnection connection, Entity entity) {
             
-            if (!_entityExists.Exists(connection, entity))
+            if (!EntityExists.Exists(connection, entity))
                 return false;
 
             using (var cn = connection.GetConnection()) {

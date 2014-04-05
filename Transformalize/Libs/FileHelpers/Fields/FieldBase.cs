@@ -13,7 +13,6 @@ using Transformalize.Libs.FileHelpers.Core;
 using Transformalize.Libs.FileHelpers.Enums;
 using Transformalize.Libs.FileHelpers.ErrorHandling;
 using Transformalize.Libs.FileHelpers.Helpers;
-using Transformalize.Libs.Mono.CSharp;
 using Transformalize.Libs.NLog;
 using Transformalize.Main;
 using Convert = System.Convert;

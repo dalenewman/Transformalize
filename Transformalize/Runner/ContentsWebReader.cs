@@ -19,7 +19,7 @@ namespace Transformalize.Runner {
 
             return new Contents {
                 Content = response.Content,
-                FileName = file,
+                FileName = Path.GetFileName(uri.LocalPath),
                 Name = Path.GetFileNameWithoutExtension(uri.LocalPath)
             };
 

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using Transformalize.Configuration;
-using Transformalize.Libs.Mono.CSharp;
 using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main {

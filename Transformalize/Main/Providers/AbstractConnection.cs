@@ -324,8 +324,12 @@ namespace Transformalize.Main.Providers {
             return new Entity(1) { Name = "TflBatch", ProcessName = processName, Alias = "TflBatch", Schema = "dbo", PrimaryKey = new Fields() { new Field(FieldType.PrimaryKey) { Name = "TflBatchId" } } };
         }
 
-        public bool TflBatchExists(string processName) {
+        public bool TflBatchRecordsExist(string processName) {
             return RecordsExist(TflBatchEntity(processName));
+        }
+
+        public bool TflBatchExists(string processName) {
+            return EntityRecordsExist.EntityExists.Exists(this, TflBatchEntity(processName));
         }
 
         //concrete class should override these

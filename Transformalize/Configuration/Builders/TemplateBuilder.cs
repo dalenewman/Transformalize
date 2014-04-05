@@ -54,5 +54,18 @@ namespace Transformalize.Configuration.Builders {
         public ProcessBuilder ScriptPath(string path) {
             return _processBuilder.ScriptPath(path);
         }
+
+        public TemplateBuilder Setting(string name, object value) {
+            var setting = new SettingConfigurationElement() { Name = name, Value = value.ToString() };
+            _template.Settings.Add(setting);
+            return this;
+        }
+
+        public TemplateBuilder Setting(string name, object value, string type) {
+            var setting = new SettingConfigurationElement() { Name = name, Value = value.ToString(), Type = type};
+            _template.Settings.Add(setting);
+            return this;
+        }
+
     }
 }

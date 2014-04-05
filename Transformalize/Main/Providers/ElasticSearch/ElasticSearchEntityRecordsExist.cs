@@ -1,5 +1,6 @@
 namespace Transformalize.Main.Providers.ElasticSearch {
     public class ElasticSearchEntityRecordsExist : IEntityRecordsExist {
+        public IEntityExists EntityExists { get; set; }
 
         public bool RecordsExist(AbstractConnection connection, Entity entity) {
 

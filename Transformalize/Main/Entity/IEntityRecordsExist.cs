@@ -26,6 +26,7 @@ namespace Transformalize.Main
 {
     public interface IEntityRecordsExist
     {
+        IEntityExists EntityExists { get; set; }
         bool RecordsExist(AbstractConnection connection, Entity entity);
     }
 }

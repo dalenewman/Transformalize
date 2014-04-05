@@ -37,27 +37,36 @@ namespace Transformalize.Test.Integration {
             var config = new ProcessBuilder("SqlServerTest")
                 .Connection("input").Database("Orchard171")
                 .Connection("output").Provider("internal")
-                .Template("dml").Cache(true)
+                .Template("dml")
                     .File("http://config.mwf.local/Templates/DukeInvoice.sql")
+                        .Setting("BatchId", 2, "int")
                         .Action("open").Connection("input")
                 .Entity("WorkOrder")
                     .DetectChanges(false)
                     .Connection("input")
                     .SqlOverride(@"
-                        SELECT ActionValue, BatchId
+                        SELECT ActionValue
                         FROM SS_BatchRecord
                         WHERE BatchId = 2;"
                     )
                     .Field("WorkOrderKey").Alias("WorkOrderKey").PrimaryKey()
-                    .Field("BatchId").Int32()
                 .Process();
 
-            var xml = config.Serialize();
-            Console.WriteLine(xml);
-            Console.WriteLine();
+            //var xml = config.Serialize();
+            //Console.WriteLine(xml);
+            //Console.WriteLine();
 
             ProcessFactory.Create(config, new Options() {LogLevel = LogLevel.Info})[0].Run();
         }
+
+        [Test]
+        public void TestDuke()
+        {
+            var process = ProcessFactory.Create(@"C:\Code\TransformalizeConfiguration\TransformalizeConfiguration\App_Data\Clevest35\Duke.xml", new Options() { Mode = "init"})[0];
+            process.Run();
+
+        }
+
 
     }
 }

@@ -22,15 +22,15 @@
 
 namespace Transformalize.Main.Providers.SqlServer {
     public class SqlServerEntityRecordsExist : IEntityRecordsExist {
-        private readonly IEntityExists _entityExists;
+        public IEntityExists EntityExists { get; set; }
 
         public SqlServerEntityRecordsExist() {
-            _entityExists = new SqlServerEntityExists();
+            EntityExists = new SqlServerEntityExists();
         }
 
         public bool RecordsExist(AbstractConnection connection, Entity entity) {
 
-            if (_entityExists.Exists(connection, entity)) {
+            if (EntityExists.Exists(connection, entity)) {
 
                 using (var cn = connection.GetConnection()) {
                     cn.Open();
