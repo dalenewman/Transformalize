@@ -7,9 +7,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Web.Razor.Parser;
 using Microsoft.CSharp;
 using Microsoft.CSharp.RuntimeBinder;
+using Transformalize.Libs.Microsoft.System.Web.Razor.Parser;
 
 namespace Transformalize.Libs.RazorEngine.Compilation.CSharp
 {

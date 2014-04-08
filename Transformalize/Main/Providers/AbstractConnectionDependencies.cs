@@ -1,3 +1,5 @@
+using Transformalize.Libs.Rhino.Etl.Operations;
+
 namespace Transformalize.Main.Providers {
 
     public abstract class AbstractConnectionDependencies {
@@ -29,6 +31,6 @@ namespace Transformalize.Main.Providers {
             ViewWriter = viewWriter;
             TflWriter = tflWriter;
             ScriptRunner = scriptRunner;
-        }
+            }
     }
 }

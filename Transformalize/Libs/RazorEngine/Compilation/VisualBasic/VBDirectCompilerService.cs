@@ -6,8 +6,8 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Web.Razor.Parser;
 using Microsoft.VisualBasic;
+using Transformalize.Libs.Microsoft.System.Web.Razor.Parser;
 
 namespace Transformalize.Libs.RazorEngine.Compilation.VisualBasic
 {

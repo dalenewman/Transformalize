@@ -6,7 +6,7 @@
 
 using System;
 using System.Globalization;
-using System.Web.Razor.Generator;
+using Transformalize.Libs.Microsoft.System.Web.Razor.Generator;
 using Transformalize.Libs.RazorEngine.Common;
 
 namespace Transformalize.Libs.RazorEngine.CodeGenerators

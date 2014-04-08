@@ -30,7 +30,6 @@ namespace Transformalize.Configuration {
         private const string TEMPLATE_CONTENT_TYPE = "template-content-type";
         private const string NAME = "name";
         private const string STAR = "star";
-        private const string BCP = "bcp";
         private const string ENABLED = "enabled";
         private const string INHERIT = "inherit";
         private const string TIMEZONE = "time-zone";
@@ -117,12 +116,6 @@ namespace Transformalize.Configuration {
         [ConfigurationProperty("templates")]
         public TemplateElementCollection Templates {
             get { return this["templates"] as TemplateElementCollection; }
-        }
-
-        [ConfigurationProperty(BCP, IsRequired = false, DefaultValue = "")]
-        public string Bcp {
-            get { return this[BCP] as string; }
-            set { this[BCP] = value; }
         }
 
         [EnumConversionValidator(typeof(PipelineThreading), MessageTemplate = "{1} must be SingleThreaded, or MultiThreaded.")]

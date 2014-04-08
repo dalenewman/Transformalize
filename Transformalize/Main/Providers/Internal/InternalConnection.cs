@@ -1,4 +1,5 @@
 using Transformalize.Configuration;
+using Transformalize.Libs.Rhino.Etl.Operations;
 
 namespace Transformalize.Main.Providers.Internal {
 
@@ -13,6 +14,18 @@ namespace Transformalize.Main.Providers.Internal {
         public override string PersistSecurityInfoProperty { get { return string.Empty; } }
         public override int NextBatchId(string processName) {
             return 1;
+        }
+
+        public override IOperation EntityOutputKeysExtract(Entity entity) {
+            throw new System.NotImplementedException();
+        }
+
+        public override IOperation EntityBulkLoad(Entity entity) {
+            throw new System.NotImplementedException();
+        }
+
+        public override IOperation EntityBatchUpdate(Entity entity) {
+            throw new System.NotImplementedException();
         }
 
         public InternalConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)

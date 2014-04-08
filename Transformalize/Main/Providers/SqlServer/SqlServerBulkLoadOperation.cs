@@ -22,15 +22,13 @@
 
 using System.Data.SqlClient;
 using Transformalize.Libs.Rhino.Etl.Operations;
-using Transformalize.Main;
-using Transformalize.Main.Providers;
 
-namespace Transformalize.Operations {
-    public class EntityBulkInsert : SqlBulkInsertOperation {
+namespace Transformalize.Main.Providers.SqlServer {
+    public class SqlServerBulkLoadOperation : SqlBulkInsertOperation {
         private readonly Entity _entity;
         private readonly int _batchSize;
 
-        public EntityBulkInsert(AbstractConnection connection, Entity entity)
+        public SqlServerBulkLoadOperation(AbstractConnection connection, Entity entity)
             : base(connection, connection.Enclose(entity.OutputName())) {
             _entity = entity;
             _batchSize = connection.BatchSize;

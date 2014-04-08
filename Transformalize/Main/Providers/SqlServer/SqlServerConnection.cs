@@ -25,6 +25,7 @@ using System.Data;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
 using Transformalize.Libs.NLog;
+using Transformalize.Libs.Rhino.Etl.Operations;
 
 namespace Transformalize.Main.Providers.SqlServer {
 
@@ -133,5 +134,16 @@ namespace Transformalize.Main.Providers.SqlServer {
                 );
         }
 
+        public override IOperation EntityOutputKeysExtract(Entity entity) {
+            return new SqlServerEntityOutputKeysExtract(this, entity);
+        }
+
+        public override IOperation EntityBulkLoad(Entity entity) {
+            return new SqlServerBulkLoadOperation(this, entity);
+        }
+
+        public override IOperation EntityBatchUpdate(Entity entity) {
+            return new SqlServerEntityBatchUpdate(this, entity);
+        }
     }
 }

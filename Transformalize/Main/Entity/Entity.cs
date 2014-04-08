@@ -62,7 +62,6 @@ namespace Transformalize.Main {
         public long Inserts { get; set; }
         public long Deletes { get; set; }
         public int TflBatchId { get { return _tflBatchId; } }
-        public bool IndexOptimizations { get; set; }
         public bool Delete { get; set; }
         public bool PrependProcessNameToOutputName { get; set; }
         public decimal Sample { get; set; }
@@ -194,8 +193,7 @@ namespace Transformalize.Main {
             return !string.IsNullOrEmpty(SqlOverride);
         }
 
-        public bool HasSqlKeysOverride()
-        {
+        public bool HasSqlKeysOverride() {
             return !string.IsNullOrEmpty(SqlKeysOverride);
         }
 

@@ -13,8 +13,8 @@ using System.Linq;
 using System.Reflection;
 using System.Security;
 using System.Text;
-using System.Web.Razor;
-using System.Web.Razor.Parser;
+using Transformalize.Libs.Microsoft.System.Web.Razor;
+using Transformalize.Libs.Microsoft.System.Web.Razor.Parser;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.RazorEngine.Templating;
 

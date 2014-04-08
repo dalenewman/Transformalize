@@ -32,6 +32,7 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
+using Transformalize.Main.Providers.SqlServer;
 using Transformalize.Operations;
 using Transformalize.Operations.Extract;
 using Transformalize.Operations.Load;
@@ -142,59 +143,29 @@ namespace Transformalize.Processes {
             return new FileFixedExtract(_entity, connection, _entity.Top + _process.Options.Top);
         }
 
-        private PartialProcessOperation PrepareOutputOperation(NamedConnection namedConnection) {
+        private PartialProcessOperation PrepareOutputOperation(NamedConnection nc) {
 
             var process = new PartialProcessOperation();
-            process.Register(new FilterOutputOperation(namedConnection.ShouldRun));
+            process.Register(new FilterOutputOperation(nc.ShouldRun));
 
-            switch (namedConnection.Connection.Type) {
-                case ProviderType.Internal:
-                    process.RegisterLast(_collectors[namedConnection.Name]);
-                    break;
-                case ProviderType.Console:
-                    process.RegisterLast(new ConsoleLoadOperation(_entity));
-                    break;
-                case ProviderType.Log:
-                    process.RegisterLast(new LogLoadOperation(_entity));
-                    break;
-                case ProviderType.Mail:
-                    process.RegisterLast(new MailLoadOperation(_entity));
-                    break;
-                case ProviderType.File:
-                    process.RegisterLast(new FileLoadOperation(namedConnection.Connection, _entity));
-                    break;
-                case ProviderType.Html:
-                    process.Register(new HtmlRowOperation(_entity, "HtmlRow"));
-                    process.RegisterLast(new HtmlLoadOperation(namedConnection.Connection, _entity, "HtmlRow"));
-                    break;
-                case ProviderType.ElasticSearch:
-                    process.Register(new ElasticSearchLoadOperation(_entity, namedConnection.Connection));
-                    break;
-                default:
-                    if (_process.IsFirstRun) {
-                        if (namedConnection.Connection.IsDatabase && _entity.IndexOptimizations) {
-                            namedConnection.Connection.DropUniqueClusteredIndex(_entity);
-                            namedConnection.Connection.DropPrimaryKey(_entity);
-                        }
-                        process.Register(new EntityAddTflFields(_entity));
-                        process.RegisterLast(new EntityBulkInsert(namedConnection.Connection, _entity));
-                    } else {
-                        if (_entity.DetectChanges) {
-                            process.Register(new EntityJoinAction(_entity).Right(new EntityOutputKeysExtract(namedConnection.Connection, _entity)));
-                            var branch = new BranchingOperation()
-                                .Add(new PartialProcessOperation()
-                                    .Register(new EntityActionFilter(ref _entity, EntityAction.Insert))
-                                    .RegisterLast(new EntityBulkInsert(namedConnection.Connection, _entity)))
-                                .Add(new PartialProcessOperation()
-                                    .Register(new EntityActionFilter(ref _entity, EntityAction.Update))
-                                    .RegisterLast(new EntityBatchUpdate(namedConnection.Connection, _entity)));
-                            process.RegisterLast(branch);
-                        } else {
-                            process.Register(new EntityAddTflFields(_entity));
-                            process.RegisterLast(new EntityBulkInsert(namedConnection.Connection, _entity));
-                        }
-                    }
-                    break;
+            if (nc.Connection.Type == ProviderType.Internal) {
+                process.RegisterLast(_collectors[nc.Name]);
+            } else {
+                if (_process.IsFirstRun || !_entity.DetectChanges) {
+                    process.Register(new EntityAddTflFields(_entity));
+                    process.RegisterLast(nc.Connection.EntityBulkLoad(_entity));
+                } else {
+                    process.Register(new EntityJoinAction(_entity).Right(nc.Connection.EntityOutputKeysExtract(_entity)));
+                    var branch = new BranchingOperation()
+                        .Add(new PartialProcessOperation()
+                            .Register(new EntityActionFilter(ref _entity, EntityAction.Insert))
+                            .RegisterLast(nc.Connection.EntityBulkLoad(_entity)))
+                        .Add(new PartialProcessOperation()
+                            .Register(new EntityActionFilter(ref _entity, EntityAction.Update))
+                            .RegisterLast(nc.Connection.EntityBatchUpdate(_entity)));
+
+                    process.RegisterLast(branch);
+                }
             }
             return process;
         }
@@ -202,10 +173,6 @@ namespace Transformalize.Processes {
         protected override void PostProcessing() {
 
             _entity.InputKeys.Clear();
-            if (_process.IsFirstRun && _process.OutputConnection.IsDatabase && _entity.IndexOptimizations) {
-                _process.OutputConnection.AddUniqueClusteredIndex(_entity);
-                _process.OutputConnection.AddPrimaryKey(_entity);
-            }
 
             var errors = GetAllErrors().ToArray();
             if (errors.Any()) {

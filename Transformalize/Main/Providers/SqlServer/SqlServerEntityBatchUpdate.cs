@@ -23,15 +23,13 @@
 using System.Data.SqlClient;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
-using Transformalize.Main;
-using Transformalize.Main.Providers;
 
-namespace Transformalize.Operations {
-    public class EntityBatchUpdate : SqlBatchOperation {
+namespace Transformalize.Main.Providers.SqlServer {
+    public class SqlServerEntityBatchUpdate : SqlBatchOperation {
         private readonly AbstractConnection _connection;
         private readonly Entity _entity;
 
-        public EntityBatchUpdate(AbstractConnection connection, Entity entity)
+        public SqlServerEntityBatchUpdate(AbstractConnection connection, Entity entity)
             : base(connection) {
             _connection = connection;
             _entity = entity;

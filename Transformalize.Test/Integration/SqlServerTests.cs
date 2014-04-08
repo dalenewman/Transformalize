@@ -52,11 +52,20 @@ namespace Transformalize.Test.Integration {
                     .Field("WorkOrderKey").Alias("WorkOrderKey").PrimaryKey()
                 .Process();
 
-            //var xml = config.Serialize();
-            //Console.WriteLine(xml);
-            //Console.WriteLine();
+            var xml = config.Serialize();
+            Console.WriteLine(xml);
+            Console.WriteLine();
 
             ProcessFactory.Create(config, new Options() {LogLevel = LogLevel.Info})[0].Run();
+        }
+
+        [Test]
+        public void TestDukeInvoice()
+        {
+            var process = ProcessFactory.Create("http://config.mwf.local/DukeBilling.xml")[0];
+            process.Run();
+
+
         }
 
         [Test]

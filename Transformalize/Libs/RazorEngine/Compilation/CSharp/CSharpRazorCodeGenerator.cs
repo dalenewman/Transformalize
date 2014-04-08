@@ -5,7 +5,7 @@
 #endregion
 
 using System.CodeDom;
-using System.Web.Razor.Parser.SyntaxTree;
+using Transformalize.Libs.Microsoft.System.Web.Razor.Parser.SyntaxTree;
 using Transformalize.Libs.RazorEngine.Templating;
 
 namespace Transformalize.Libs.RazorEngine.Compilation.CSharp
@@ -13,7 +13,7 @@ namespace Transformalize.Libs.RazorEngine.Compilation.CSharp
     /// <summary>
     ///     Defines a code generator that supports C# syntax.
     /// </summary>
-    public class CSharpRazorCodeGenerator : System.Web.Razor.Generator.CSharpRazorCodeGenerator
+    public class CSharpRazorCodeGenerator : Microsoft.System.Web.Razor.Generator.CSharpRazorCodeGenerator
     {
         #region Constructor
 
@@ -25,7 +25,7 @@ namespace Transformalize.Libs.RazorEngine.Compilation.CSharp
         /// <param name="sourceFileName">Name of the source file.</param>
         /// <param name="host">The host.</param>
         /// <param name="strictMode">Flag to specify that this generator is running in struct mode.</param>
-        public CSharpRazorCodeGenerator(string className, string rootNamespaceName, string sourceFileName, System.Web.Razor.RazorEngineHost host, bool strictMode)
+        public CSharpRazorCodeGenerator(string className, string rootNamespaceName, string sourceFileName, Microsoft.System.Web.Razor.RazorEngineHost host, bool strictMode)
             : base(className, rootNamespaceName, sourceFileName, host)
         {
             StrictMode = strictMode;

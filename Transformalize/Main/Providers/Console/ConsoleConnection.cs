@@ -1,4 +1,6 @@
 using Transformalize.Configuration;
+using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Operations;
 
 namespace Transformalize.Main.Providers.Console {
     public class ConsoleConnection : AbstractConnection {
@@ -12,6 +14,18 @@ namespace Transformalize.Main.Providers.Console {
         public override string PersistSecurityInfoProperty { get { return string.Empty; } }
         public override int NextBatchId(string processName) {
             return 1;
+        }
+
+        public override IOperation EntityOutputKeysExtract(Entity entity) {
+            throw new System.NotImplementedException();
+        }
+
+        public override IOperation EntityBulkLoad(Entity entity) {
+            return new ConsoleLoadOperation(entity);
+        }
+
+        public override IOperation EntityBatchUpdate(Entity entity) {
+            throw new System.NotImplementedException();
         }
 
         public ConsoleConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)

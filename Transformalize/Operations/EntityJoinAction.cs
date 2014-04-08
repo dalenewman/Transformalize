@@ -46,7 +46,6 @@ namespace Transformalize.Operations {
                 } else {
                     leftRow["a"] = EntityAction.None;
                 }
-
             } else {
                 leftRow["a"] = EntityAction.Insert;
                 leftRow["TflBatchId"] = _entity.TflBatchId;

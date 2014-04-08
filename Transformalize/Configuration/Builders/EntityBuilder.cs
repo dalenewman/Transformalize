@@ -37,11 +37,6 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
-        public EntityBuilder IndexOptimizations(bool optimize = true) {
-            _entity.IndexOptimizations = optimize;
-            return this;
-        }
-
         public EntityBuilder Delete(bool delete = true) {
             _entity.Delete = delete;
             return this;

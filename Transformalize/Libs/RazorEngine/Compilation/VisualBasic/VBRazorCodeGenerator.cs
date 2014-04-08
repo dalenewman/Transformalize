@@ -4,7 +4,7 @@
 // */
 #endregion
 
-using System.Web.Razor.Parser.SyntaxTree;
+using Transformalize.Libs.Microsoft.System.Web.Razor.Parser.SyntaxTree;
 using Transformalize.Libs.RazorEngine.Templating;
 
 namespace Transformalize.Libs.RazorEngine.Compilation.VisualBasic
@@ -12,7 +12,7 @@ namespace Transformalize.Libs.RazorEngine.Compilation.VisualBasic
     /// <summary>
     ///     Defines a code generator that supports VB syntax.
     /// </summary>
-    public class VBRazorCodeGenerator : System.Web.Razor.Generator.VBRazorCodeGenerator
+    public class VBRazorCodeGenerator : Microsoft.System.Web.Razor.Generator.VBRazorCodeGenerator
     {
         #region Constructor
 
@@ -24,7 +24,7 @@ namespace Transformalize.Libs.RazorEngine.Compilation.VisualBasic
         /// <param name="sourceFileName">Name of the source file.</param>
         /// <param name="host">The host.</param>
         /// <param name="strictMode">Flag to specify that this generator is running in struct mode.</param>
-        public VBRazorCodeGenerator(string className, string rootNamespaceName, string sourceFileName, System.Web.Razor.RazorEngineHost host, bool strictMode)
+        public VBRazorCodeGenerator(string className, string rootNamespaceName, string sourceFileName, Microsoft.System.Web.Razor.RazorEngineHost host, bool strictMode)
             : base(className, rootNamespaceName, sourceFileName, host)
         {
             StrictMode = strictMode;

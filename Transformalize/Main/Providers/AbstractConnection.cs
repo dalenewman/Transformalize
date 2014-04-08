@@ -29,6 +29,8 @@ using Transformalize.Extensions;
 using Transformalize.Libs.Dapper;
 using Transformalize.Libs.FileHelpers.Enums;
 using Transformalize.Libs.NLog;
+using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Main.Providers.SqlServer;
 
 namespace Transformalize.Main.Providers {
 
@@ -388,5 +390,11 @@ namespace Transformalize.Main.Providers {
         public string Enclose(string field) {
             return L + field + R;
         }
+
+        public abstract IOperation EntityOutputKeysExtract(Entity entity);
+
+        public abstract IOperation EntityBulkLoad(Entity entity);
+
+        public abstract IOperation EntityBatchUpdate(Entity entity);
     }
 }

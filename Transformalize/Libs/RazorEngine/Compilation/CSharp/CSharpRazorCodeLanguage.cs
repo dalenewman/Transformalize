@@ -4,14 +4,14 @@
 // */
 #endregion
 
-using System.Web.Razor.Generator;
+using Transformalize.Libs.Microsoft.System.Web.Razor.Generator;
 
 namespace Transformalize.Libs.RazorEngine.Compilation.CSharp
 {
     /// <summary>
     ///     Provides a razor code language that supports the C# language.
     /// </summary>
-    public class CSharpRazorCodeLanguage : System.Web.Razor.CSharpRazorCodeLanguage
+    public class CSharpRazorCodeLanguage : Microsoft.System.Web.Razor.CSharpRazorCodeLanguage
     {
         #region Constructor
 
@@ -47,7 +47,7 @@ namespace Transformalize.Libs.RazorEngine.Compilation.CSharp
         /// <returns>
         ///     An instance of <see cref="RazorCodeGenerator" />.
         /// </returns>
-        public override RazorCodeGenerator CreateCodeGenerator(string className, string rootNamespaceName, string sourceFileName, System.Web.Razor.RazorEngineHost host)
+        public override RazorCodeGenerator CreateCodeGenerator(string className, string rootNamespaceName, string sourceFileName, Microsoft.System.Web.Razor.RazorEngineHost host)
         {
             return new CSharpRazorCodeGenerator(className, rootNamespaceName, sourceFileName, host, StrictMode);
         }

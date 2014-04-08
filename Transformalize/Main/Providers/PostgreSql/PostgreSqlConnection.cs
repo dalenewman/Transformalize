@@ -1,4 +1,5 @@
 using Transformalize.Configuration;
+using Transformalize.Libs.Rhino.Etl.Operations;
 
 namespace Transformalize.Main.Providers.PostgreSql {
     public class PostgreSqlConnection : AbstractConnection {
@@ -34,8 +35,19 @@ namespace Transformalize.Main.Providers.PostgreSql {
             );
         }
 
-        public override int NextBatchId(string processName)
-        {
+        public override IOperation EntityOutputKeysExtract(Entity entity) {
+            throw new System.NotImplementedException();
+        }
+
+        public override IOperation EntityBulkLoad(Entity entity) {
+            throw new System.NotImplementedException();
+        }
+
+        public override IOperation EntityBatchUpdate(Entity entity) {
+            throw new System.NotImplementedException();
+        }
+
+        public override int NextBatchId(string processName) {
             var tflEntity = new Entity(1) { Name = "TflBatch", Alias = "TflBatch", Schema = "dbo", PrimaryKey = new Fields() { new Field(FieldType.PrimaryKey) { Name = "TflBatchId" } } };
             if (!RecordsExist(tflEntity)) {
                 return 1;

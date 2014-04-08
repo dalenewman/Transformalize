@@ -5,15 +5,15 @@
 #endregion
 
 using System;
-using System.Web.Razor;
-using System.Web.Razor.Parser;
+using Transformalize.Libs.Microsoft.System.Web.Razor;
+using Transformalize.Libs.Microsoft.System.Web.Razor.Parser;
 
 namespace Transformalize.Libs.RazorEngine.Compilation
 {
     /// <summary>
     ///     Defines the custom razor engine host.
     /// </summary>
-    public class RazorEngineHost : System.Web.Razor.RazorEngineHost
+    public class RazorEngineHost : Microsoft.System.Web.Razor.RazorEngineHost
     {
         #region Constructor
 

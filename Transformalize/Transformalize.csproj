@@ -54,10 +54,6 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.AspNet.Razor.3.1.1\lib\net45\System.Web.Razor.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
@@ -729,6 +725,159 @@
     <Compile Include="Libs\Jint\Runtime\StatementsCountOverflowException.cs" />
     <Compile Include="Libs\Jint\Runtime\TypeConverter.cs" />
     <Compile Include="Libs\Jint\StrictModeScope.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Common\CommonResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CommonResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Common\GlobalSuppressions.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Common\HashCodeCombiner.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\CSharpRazorCodeLanguage.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\DocumentParseCompleteEventArgs.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Editor\AutoCompleteEditHandler.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Editor\BackgroundParser.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Editor\EditorHints.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Editor\EditResult.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Editor\ImplicitExpressionEditHandler.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Editor\RazorEditorTrace.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Editor\SingleLineMarkupEditHandler.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Editor\SpanEditHandler.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\GeneratorResults.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\AddImportCodeGenerator.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\AttributeBlockCodeGenerator.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\BaseCodeWriter.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\BlockCodeGenerator.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\CodeGenerationCompleteEventArgs.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\CodeGeneratorContext.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\CodeGeneratorPaddingHelper.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\CodeWriter.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\CodeWriterExtensions.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\CSharpCodeWriter.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\CSharpRazorCodeGenerator.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\DynamicAttributeBlockCodeGenerator.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\ExpressionCodeGenerator.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\ExpressionRenderingMode.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\GeneratedClassContext.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\GeneratedCodeMapping.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\HelperCodeGenerator.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\HybridCodeGenerator.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\IBlockCodeGenerator.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\ISpanCodeGenerator.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\LiteralAttributeCodeGenerator.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\MarkupCodeGenerator.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\RazorCodeGenerator.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\RazorCommentCodeGenerator.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\RazorDirectiveAttributeCodeGenerator.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\ResolveUrlCodeGenerator.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\SectionCodeGenerator.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\SetBaseTypeCodeGenerator.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\SetLayoutCodeGenerator.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\SetVBOptionCodeGenerator.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\SpanCodeGenerator.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\StatementCodeGenerator.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\TemplateBlockCodeGenerator.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\TypeMemberCodeGenerator.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\VBCodeWriter.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Generator\VBRazorCodeGenerator.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\GlobalSuppressions.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\ParserResults.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\BalancingModes.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\CallbackVisitor.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\ConditionalAttributeCollapser.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\CSharpCodeParser.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\CSharpCodeParser.Directives.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\CSharpCodeParser.Statements.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\CSharpLanguageCharacteristics.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\HtmlLanguageCharacteristics.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\HtmlMarkupParser.Block.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\HtmlMarkupParser.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\HtmlMarkupParser.Document.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\HtmlMarkupParser.Section.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\ISyntaxTreeRewriter.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\LanguageCharacteristics.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\MarkupCollapser.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\MarkupRewriter.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\ParserBase.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\ParserContext.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\ParserHelpers.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\ParserVisitor.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\ParserVisitorExtensions.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\RazorParser.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\SyntaxConstants.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\SyntaxTree\AcceptedCharacters.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\SyntaxTree\Block.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\SyntaxTree\BlockBuilder.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\SyntaxTree\BlockType.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\SyntaxTree\EquivalenceComparer.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\SyntaxTree\RazorError.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\SyntaxTree\Span.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\SyntaxTree\SpanBuilder.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\SyntaxTree\SpanKind.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\SyntaxTree\SyntaxTreeNode.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\TextReaderExtensions.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\TokenizerBackedParser.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\TokenizerBackedParser.Helpers.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\VBCodeParser.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\VBCodeParser.Directives.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\VBCodeParser.Statements.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\VBLanguageCharacteristics.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Parser\WhitespaceRewriter.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\PartialParseResult.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\RazorCodeLanguage.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\RazorDebugHelpers.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\RazorDirectiveAttribute.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\RazorEditorParser.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\RazorEngineHost.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\RazorTemplateEngine.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Resources\RazorResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RazorResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Libs\Microsoft\System.Web.Razor\StateMachine.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Text\BufferingTextReader.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Text\ITextBuffer.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Text\LineTrackingStringBuffer.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Text\LocationTagged.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Text\LookaheadTextReader.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Text\LookaheadToken.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Text\SeekableTextReader.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Text\SourceLocation.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Text\SourceLocationTracker.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Text\TextBufferReader.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Text\TextChange.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Text\TextChangeType.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Text\TextDocumentReader.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Text\TextExtensions.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Tokenizer\CSharpHelpers.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Tokenizer\CSharpKeywordDetector.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Tokenizer\CSharpTokenizer.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Tokenizer\HtmlTokenizer.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Tokenizer\ITokenizer.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Tokenizer\Symbols\CSharpKeyword.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Tokenizer\Symbols\CSharpSymbol.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Tokenizer\Symbols\CSharpSymbolType.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Tokenizer\Symbols\HtmlSymbol.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Tokenizer\Symbols\HtmlSymbolType.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Tokenizer\Symbols\ISymbol.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Tokenizer\Symbols\KnownSymbolType.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Tokenizer\Symbols\SymbolBase.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Tokenizer\Symbols\SymbolExtensions.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Tokenizer\Symbols\SymbolTypeSuppressions.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Tokenizer\Symbols\VBKeyword.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Tokenizer\Symbols\VBSymbol.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Tokenizer\Symbols\VBSymbolType.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Tokenizer\Tokenizer.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Tokenizer\TokenizerView.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Tokenizer\VBHelpers.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Tokenizer\VBKeywordDetector.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Tokenizer\VBTokenizer.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Tokenizer\XmlHelpers.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Utils\CharUtils.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Utils\DisposableAction.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Utils\EnumeratorExtensions.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\Utils\EnumUtil.cs" />
+    <Compile Include="Libs\Microsoft\System.Web.Razor\VBRazorCodeLanguage.cs" />
     <Compile Include="Libs\Newtonsoft.Json\Bson\BsonBinaryType.cs" />
     <Compile Include="Libs\Newtonsoft.Json\Bson\BsonBinaryWriter.cs" />
     <Compile Include="Libs\Newtonsoft.Json\Bson\BsonObjectId.cs" />
@@ -1072,9 +1221,12 @@
     <Compile Include="Main\Providers\DatabaseEntityCreator.cs" />
     <Compile Include="Main\Providers\MySql\MySqlDataTypeService.cs" />
     <Compile Include="Main\Providers\SqlServer\PostgreSqlDataTypeService.cs" />
+    <Compile Include="Main\Providers\SqlServer\SqlServerBulkLoadOperation.cs" />
     <Compile Include="Main\Providers\SqlServer\SqlServerDependencies.cs" />
+    <Compile Include="Main\Providers\SqlServer\SqlServerEntityBatchUpdate.cs" />
     <Compile Include="Main\Providers\SqlServer\SqlServerEntityCreator.cs" />
     <Compile Include="Main\Providers\SqlServer\SqlServerEntityDropper.cs" />
+    <Compile Include="Main\Providers\SqlServer\SqlServerEntityOutputKeysExtract.cs" />
     <Compile Include="Main\RelationshipsReader.cs" />
     <Compile Include="Main\SearchType.cs" />
     <Compile Include="Main\MapConfigurationReader.cs" />
@@ -1946,8 +2098,6 @@
     <Compile Include="Operations\EntityDrop.cs" />
     <Compile Include="Operations\EntityAction.cs" />
     <Compile Include="Operations\EntityActionFilter.cs" />
-    <Compile Include="Operations\EntityBatchUpdate.cs" />
-    <Compile Include="Operations\EntityOutputKeysExtract.cs" />
     <Compile Include="Operations\EntityJoinAction.cs" />
     <Compile Include="Operations\EntityInputKeysStore.cs" />
     <Compile Include="Operations\EntityInputKeysStoreExtract.cs" />
@@ -1963,7 +2113,6 @@
     <Compile Include="Operations\EntityUpdateMaster.cs" />
     <Compile Include="Operations\EntityCreate.cs" />
     <Compile Include="Operations\EntityAddTflFields.cs" />
-    <Compile Include="Operations\EntityBulkInsert.cs" />
     <Compile Include="Operations\ParametersExtract.cs" />
     <Compile Include="Operations\ResultsLoad.cs" />
     <Compile Include="Operations\ApplyDefaults.cs" />
@@ -2005,6 +2154,7 @@
     <Content Include="Libs\FileHelpers\LGPL - License.txt" />
     <Content Include="Libs\FileHelpers\MasterDetail\Examples.xml" />
     <Content Include="Libs\FileHelpers\MasterDetail\MasterDetailEngine.docs.xml" />
+    <Content Include="Libs\Microsoft\License.txt" />
     <Content Include="Libs\Ninject\LICENSE.txt" />
     <Content Include="Libs\NLog\LICENSE.txt" />
     <Content Include="Libs\Rhino.Etl\license.txt" />
@@ -2028,10 +2178,19 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Libs\EnterpriseLibrary\Validation\Configuration\DesignResources.resx" />
+    <EmbeddedResource Include="Libs\Microsoft\System.Web.Razor\Common\CommonResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>CommonResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\Microsoft\System.Web.Razor\Resources\RazorResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>RazorResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>IF EXIST c:\code\JunkDrawer XCOPY /s /y $(TargetDir)Transformalize.dll c:\code\JunkDrawer\Assemblies\
+IF EXIST c:\Code\Orchard171\src\Orchard.Web\Modules\Assemblies XCOPY /s /y $(TargetDir)Transformalize.dll c:\Code\Orchard171\src\Orchard.Web\Modules\Assemblies
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -4,14 +4,14 @@
 // */
 #endregion
 
-using System.Web.Razor.Generator;
+using Transformalize.Libs.Microsoft.System.Web.Razor.Generator;
 
 namespace Transformalize.Libs.RazorEngine.Compilation.VisualBasic
 {
     /// <summary>
     ///     Provides a razor code language that supports the VB language.
     /// </summary>
-    public class VBRazorCodeLanguage : System.Web.Razor.VBRazorCodeLanguage
+    public class VBRazorCodeLanguage : Microsoft.System.Web.Razor.VBRazorCodeLanguage
     {
         #region Constructor
 
@@ -47,7 +47,7 @@ namespace Transformalize.Libs.RazorEngine.Compilation.VisualBasic
         /// <returns>
         ///     An instance of <see cref="RazorCodeGenerator" />.
         /// </returns>
-        public override RazorCodeGenerator CreateCodeGenerator(string className, string rootNamespaceName, string sourceFileName, System.Web.Razor.RazorEngineHost host)
+        public override RazorCodeGenerator CreateCodeGenerator(string className, string rootNamespaceName, string sourceFileName, Microsoft.System.Web.Razor.RazorEngineHost host)
         {
             return new VBRazorCodeGenerator(className, rootNamespaceName, sourceFileName, host, StrictMode);
         }

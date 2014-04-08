@@ -140,6 +140,27 @@ namespace Transformalize.Test.Integration {
             Assert.AreEqual(2, process.Entities[0].TflBatchId);
         }
 
+        [Test]
+        public void TestInit() {
+
+            var file = Path.GetTempFileName();
+            File.WriteAllText(file, "id,name\n1,One\n2,Two\n3,Three\n4,Four\n5,Five\n6,six");
+
+            var cfg = new ProcessBuilder("est")
+                .Connection("input").Provider("file").File(file).Delimiter(",").Start(2)
+                .Connection("output").Provider("elasticsearch").Server("localhost").Port(9200)
+                .Entity("entity")
+                    .Field("id").Int32().PrimaryKey()
+                    .Field("name")
+                .Process();
+
+            var process = ProcessFactory.Create(cfg, new Options() { Mode = "default" })[0];
+            process.Run();
+
+        }
+
+
+
 
 
     }

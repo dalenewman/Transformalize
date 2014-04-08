@@ -4,9 +4,9 @@
 // */
 #endregion
 
-using System.Web.Razor.Generator;
-using System.Web.Razor.Parser;
-using System.Web.Razor.Text;
+using Transformalize.Libs.Microsoft.System.Web.Razor.Generator;
+using Transformalize.Libs.Microsoft.System.Web.Razor.Parser;
+using Transformalize.Libs.Microsoft.System.Web.Razor.Text;
 using Transformalize.Libs.RazorEngine.CodeGenerators;
 
 namespace Transformalize.Libs.RazorEngine.Compilation.CSharp
@@ -14,7 +14,7 @@ namespace Transformalize.Libs.RazorEngine.Compilation.CSharp
     /// <summary>
     ///     Defines a code parser that supports the C# syntax.
     /// </summary>
-    public class CSharpCodeParser : System.Web.Razor.Parser.CSharpCodeParser
+    public class CSharpCodeParser : Microsoft.System.Web.Razor.Parser.CSharpCodeParser
     {
         #region Fields
 

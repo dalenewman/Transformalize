@@ -6,10 +6,10 @@
 
 using System;
 using System.Linq;
-using System.Web.Razor.Generator;
-using System.Web.Razor.Parser.SyntaxTree;
-using System.Web.Razor.Text;
-using System.Web.Razor.Tokenizer.Symbols;
+using Transformalize.Libs.Microsoft.System.Web.Razor.Generator;
+using Transformalize.Libs.Microsoft.System.Web.Razor.Parser.SyntaxTree;
+using Transformalize.Libs.Microsoft.System.Web.Razor.Text;
+using Transformalize.Libs.Microsoft.System.Web.Razor.Tokenizer.Symbols;
 using Transformalize.Libs.RazorEngine.CodeGenerators;
 
 namespace Transformalize.Libs.RazorEngine.Compilation.VisualBasic
@@ -17,7 +17,7 @@ namespace Transformalize.Libs.RazorEngine.Compilation.VisualBasic
     /// <summary>
     ///     Defines a code parser that supports the VB syntax.
     /// </summary>
-    public class VBCodeParser : System.Web.Razor.Parser.VBCodeParser
+    public class VBCodeParser : Microsoft.System.Web.Razor.Parser.VBCodeParser
     {
         #region Fields
 

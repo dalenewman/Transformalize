@@ -1,4 +1,7 @@
 using Transformalize.Configuration;
+using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Operations.Load;
+using Transformalize.Processes;
 
 namespace Transformalize.Main.Providers.Html {
 
@@ -12,6 +15,21 @@ namespace Transformalize.Main.Providers.Html {
         public override string PersistSecurityInfoProperty { get { return string.Empty; } }
         public override int NextBatchId(string processName) {
             return 1;
+        }
+
+        public override IOperation EntityOutputKeysExtract(Entity entity) {
+            throw new System.NotImplementedException();
+        }
+
+        public override IOperation EntityBulkLoad(Entity entity) {
+            var process = new PartialProcessOperation();
+            process.Register(new HtmlRowOperation(entity, "HtmlRow"));
+            process.RegisterLast(new HtmlLoadOperation(this, entity, "HtmlRow"));
+            return process;
+        }
+
+        public override IOperation EntityBatchUpdate(Entity entity) {
+            throw new System.NotImplementedException();
         }
 
         public HtmlConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)

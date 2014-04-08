@@ -118,12 +118,6 @@ namespace Transformalize.Configuration {
             set { this[PREPEND_PROCESS_NAME_TO_OUTPUT_NAME] = value; }
         }
 
-        [ConfigurationProperty(INDEX_OPTIMIZATIONS, IsRequired = false, DefaultValue = false)]
-        public bool IndexOptimizations {
-            get { return (bool)this[INDEX_OPTIMIZATIONS]; }
-            set { this[INDEX_OPTIMIZATIONS] = value; }
-        }
-
         [ConfigurationProperty(PREFIX, IsRequired = false, DefaultValue = "")]
         public string Prefix {
             get { return this[PREFIX] as string; }

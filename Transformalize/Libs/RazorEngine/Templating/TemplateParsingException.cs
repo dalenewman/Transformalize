@@ -7,7 +7,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
-using System.Web.Razor.Parser.SyntaxTree;
+using Transformalize.Libs.Microsoft.System.Web.Razor.Parser.SyntaxTree;
 
 namespace Transformalize.Libs.RazorEngine.Templating
 {

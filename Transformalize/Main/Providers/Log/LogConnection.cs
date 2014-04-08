@@ -1,4 +1,5 @@
 using Transformalize.Configuration;
+using Transformalize.Libs.Rhino.Etl.Operations;
 
 namespace Transformalize.Main.Providers.Log {
     public class LogConnection : AbstractConnection {
@@ -12,6 +13,18 @@ namespace Transformalize.Main.Providers.Log {
         public override string PersistSecurityInfoProperty { get { return string.Empty; } }
         public override int NextBatchId(string processName) {
             return 1;
+        }
+
+        public override IOperation EntityOutputKeysExtract(Entity entity) {
+            throw new System.NotImplementedException();
+        }
+
+        public override IOperation EntityBulkLoad(Entity entity) {
+            return new LogLoadOperation(entity);
+        }
+
+        public override IOperation EntityBatchUpdate(Entity entity) {
+            throw new System.NotImplementedException();
         }
 
         public LogConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)

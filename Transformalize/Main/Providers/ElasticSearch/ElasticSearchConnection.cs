@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Libs.Elasticsearch.Net.Domain;
+using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Processes;
 
 namespace Transformalize.Main.Providers.ElasticSearch {
 
@@ -38,11 +40,11 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             var max = 1;
             var hits = result.Response["hits"].hits;
             for (var i = 0; i < result.Response["hits"].total; i++) {
-                var value = (int) hits[i]["fields"]["tflbatchid"].Value[0];
+                var value = (int)hits[i]["fields"]["tflbatchid"].Value[0];
                 if (value > max)
                     max = value;
             }
-            return max+1;
+            return max + 1;
         }
 
         public override void WriteEndVersion(AbstractConnection input, Entity entity) {
@@ -62,6 +64,18 @@ namespace Transformalize.Main.Providers.ElasticSearch {
                 tflupdate = DateTime.UtcNow
             };
             client.Client.Index(client.Index, client.Type, body);
+        }
+
+        public override IOperation EntityOutputKeysExtract(Entity entity) {
+            throw new NotImplementedException();
+        }
+
+        public override IOperation EntityBulkLoad(Entity entity) {
+            return new ElasticSearchLoadOperation(entity, this);
+        }
+
+        public override IOperation EntityBatchUpdate(Entity entity) {
+            throw new NotImplementedException();
         }
     }
 }

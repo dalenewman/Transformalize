@@ -62,7 +62,6 @@ namespace Transformalize.Main {
                 Name = element.Name,
                 Prefix = element.Prefix,
                 Group = element.Group,
-                IndexOptimizations = element.IndexOptimizations,
                 Delete = element.Delete,
                 PrependProcessNameToOutputName = element.PrependProcessNameToOutputName,
                 Sample = element.Sample,

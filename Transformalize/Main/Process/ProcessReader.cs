@@ -54,7 +54,6 @@ namespace Transformalize.Main {
                 Options = _options,
                 TemplateContentType = _element.TemplateContentType.Equals("raw") ? Encoding.Raw : Encoding.Html,
                 Providers = new ProviderReader(_element.Providers).Read(),
-                Bcp = _element.Bcp,
                 Enabled = _element.Enabled,
                 Star = string.IsNullOrEmpty(_element.Star) ? _element.Name + "Star" : _element.Star,
                 TimeZone = string.IsNullOrEmpty(_element.TimeZone) ? TimeZoneInfo.Local.Id : _element.TimeZone,

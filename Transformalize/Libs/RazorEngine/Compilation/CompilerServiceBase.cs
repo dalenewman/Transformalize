@@ -11,9 +11,9 @@ using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Web.Razor;
-using System.Web.Razor.Generator;
-using System.Web.Razor.Parser;
+using Transformalize.Libs.Microsoft.System.Web.Razor;
+using Transformalize.Libs.Microsoft.System.Web.Razor.Generator;
+using Transformalize.Libs.Microsoft.System.Web.Razor.Parser;
 using Transformalize.Libs.RazorEngine.Compilation.Inspectors;
 using Transformalize.Libs.RazorEngine.Templating;
 

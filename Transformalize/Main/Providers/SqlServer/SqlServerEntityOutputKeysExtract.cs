@@ -23,22 +23,19 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
-using Transformalize.Libs.NLog.Internal;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
-using Transformalize.Main;
-using Transformalize.Main.Providers;
 
-namespace Transformalize.Operations {
+namespace Transformalize.Main.Providers.SqlServer {
 
-    public class EntityOutputKeysExtract : InputCommandOperation {
+    public class SqlServerEntityOutputKeysExtract : InputCommandOperation {
 
         private readonly AbstractConnection _connection;
         private readonly Entity _entity;
         private readonly List<string> _fields;
         private readonly Field[] _key;
 
-        public EntityOutputKeysExtract(AbstractConnection connection, Entity entity)
+        public SqlServerEntityOutputKeysExtract(AbstractConnection connection, Entity entity)
             : base(connection) {
             _connection = connection;
             _entity = entity;
