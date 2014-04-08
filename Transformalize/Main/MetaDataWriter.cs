@@ -60,9 +60,8 @@ namespace Transformalize.Main
             return content.ToString();
         }
 
-        private void AppendFields(Fields all, StringBuilder content)
+        private void AppendFields(Fields fields, StringBuilder content)
         {
-            var fields = new FieldSqlWriter(all).Context();
             _log.Debug("Entity auto found {0} field{1}.", fields.Count, fields.Count == 1 ? string.Empty : "s");
 
             content.AppendLine("      <fields>");

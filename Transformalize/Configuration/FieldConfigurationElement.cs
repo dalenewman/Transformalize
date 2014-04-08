@@ -21,6 +21,7 @@
 #endregion
 
 using System.Configuration;
+using Transformalize.Main;
 
 namespace Transformalize.Configuration {
 
@@ -71,7 +72,7 @@ namespace Transformalize.Configuration {
                 var alias = this[ALIAS] as string;
                 return alias == null || alias.Equals(string.Empty) ? Name : alias;
             }
-            set { this[ALIAS] = value; }
+            set { this[ALIAS] = Common.CleanIdentifier(value); }
         }
 
         [ConfigurationProperty(TYPE, IsRequired = false, DefaultValue = "System.String")]

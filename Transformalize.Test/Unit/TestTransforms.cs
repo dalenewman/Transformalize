@@ -214,11 +214,11 @@ namespace Transformalize.Test.Unit {
 
             var output = TestOperation(input, fromXmlTransform);
 
-            Assert.AreEqual(1, output[0]["product-id"]);
+            Assert.AreEqual(1, output[0]["productid"]);
             Assert.AreEqual(2, output[0]["quantity"]);
             Assert.AreEqual("red", output[0]["color"]);
 
-            Assert.AreEqual(3, output[1]["product-id"]);
+            Assert.AreEqual(3, output[1]["productid"]);
             Assert.AreEqual(1, output[1]["quantity"]);
             Assert.AreEqual("pink", output[1]["color"]);
 

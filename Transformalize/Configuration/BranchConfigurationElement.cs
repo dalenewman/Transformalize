@@ -22,6 +22,7 @@
 
 using System.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
+using Transformalize.Main;
 
 namespace Transformalize.Configuration {
     public class BranchConfigurationElement : ConfigurationElement {
@@ -44,7 +45,7 @@ namespace Transformalize.Configuration {
         [ConfigurationProperty(RUN_FIELD, IsRequired = false, DefaultValue = "[default]")]
         public string RunField {
             get { return this[RUN_FIELD] as string; }
-            set { this[RUN_FIELD] = value; }
+            set { this[RUN_FIELD] = Common.CleanIdentifier(value); }
         }
 
         [ConfigurationProperty(RUN_TYPE, IsRequired = false, DefaultValue = "[default]")]

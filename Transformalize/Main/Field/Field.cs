@@ -44,8 +44,13 @@ namespace Transformalize.Main {
         private List<SearchType> _searchTypes = new List<SearchType>();
         private Type _systemType = typeof(string);
         private object _default;
+        private string _alias;
 
-        public string Alias { get; set; }
+        public string Alias {
+            get { return _alias; }
+            set { _alias = Common.CleanIdentifier(value); }
+        }
+
         public string Schema { get; set; }
         public string Entity { get; set; }
         public string EntityOutputName { get; set; }

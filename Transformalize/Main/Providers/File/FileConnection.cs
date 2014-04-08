@@ -17,6 +17,10 @@ namespace Transformalize.Main.Providers.File {
             return 1;
         }
 
+        public override void WriteEndVersion(AbstractConnection input, Entity entity) {
+            //not implemented, but don't throw an error
+        }
+
         public override IOperation EntityOutputKeysExtract(Entity entity) {
             throw new System.NotImplementedException();
         }

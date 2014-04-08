@@ -37,7 +37,7 @@ namespace Transformalize.Configuration {
         }
 
         public new ConnectionConfigurationElement this[string name] {
-            get { return this.Cast<ConnectionConfigurationElement>().FirstOrDefault(element => element.Name.Equals(name, StringComparison.OrdinalIgnoreCase)); }
+            get { return this.Cast<ConnectionConfigurationElement>().DefaultIfEmpty(null).FirstOrDefault(element => element.Name.Equals(name, StringComparison.OrdinalIgnoreCase)); }
         }
 
         public override bool IsReadOnly() {

@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Transformalize.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
@@ -30,6 +31,7 @@ using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 
 namespace Transformalize.Main {
+
     public class EntityConfigurationLoader {
         private const string DEFAULT = "[default]";
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
@@ -246,5 +248,6 @@ namespace Transformalize.Main {
             }
             return fieldType;
         }
+
     }
 }

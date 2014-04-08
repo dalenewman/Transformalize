@@ -103,7 +103,7 @@ namespace Transformalize.Main.Providers.SqlServer {
                 ) pk ON (c.TABLE_SCHEMA = pk.TABLE_SCHEMA AND c.TABLE_NAME = pk.TABLE_NAME AND c.COLUMN_NAME = pk.COLUMN_NAME)
                 WHERE c.TABLE_SCHEMA = @Schema
                 AND c.TABLE_NAME = @Name
-                ORDER BY IS_PRIMARY_KEY DESC, c.ORDINAL_POSITION
+                ORDER BY c.ORDINAL_POSITION
             ";
         }
     }

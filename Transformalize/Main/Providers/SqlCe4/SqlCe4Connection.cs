@@ -1,9 +1,14 @@
+using System;
+using System.Data;
 using Transformalize.Configuration;
+using Transformalize.Extensions;
+using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Operations;
 
 namespace Transformalize.Main.Providers.SqlCe4 {
     public class SqlCe4Connection : AbstractConnection {
 
+        private readonly Logger _log = LogManager.GetLogger(string.Empty);
         public override string UserProperty { get { return string.Empty; } }
         public override string PasswordProperty { get { return string.Empty; } }
         public override string PortProperty { get { return string.Empty; } }
@@ -95,6 +100,54 @@ namespace Transformalize.Main.Providers.SqlCe4 {
                 entity.Schema,
                 entity.Name
                 );
+        }
+
+        public override void WriteEndVersion(AbstractConnection input, Entity entity) {
+            //default implementation for relational database
+            if (entity.Inserts + entity.Updates > 0) {
+                using (var cn = GetConnection()) {
+                    cn.Open();
+
+                    var cmd = cn.CreateCommand();
+
+                    if (!entity.CanDetectChanges(input.IsDatabase)) {
+                        cmd.CommandText = @"
+                            INSERT INTO TflBatch(TflBatchId, ProcessName, EntityName, TflUpdate, Inserts, Updates, Deletes)
+                            VALUES(@TflBatchId, @ProcessName, @EntityName, @TflUpdate, @Inserts, @Updates, @Deletes);
+                        ";
+                    } else {
+                        var field = entity.Version.SimpleType.Replace("rowversion", "Binary").Replace("byte[]", "Binary") + "Version";
+                        cmd.CommandText = string.Format(@"
+                            INSERT INTO TflBatch(TflBatchId, ProcessName, EntityName, {0}, TflUpdate, Inserts, Updates, Deletes)
+                            VALUES(@TflBatchId, @ProcessName, @EntityName, @End, @TflUpdate, @Inserts, @Updates, @Deletes);
+                        ", field);
+                    }
+
+                    cmd.CommandType = CommandType.Text;
+
+                    AddParameter(cmd, "@TflBatchId", entity.TflBatchId);
+                    AddParameter(cmd, "@ProcessName", entity.ProcessName);
+                    AddParameter(cmd, "@EntityName", entity.Alias);
+                    AddParameter(cmd, "@TflUpdate", DateTime.Now);
+                    AddParameter(cmd, "@Inserts", entity.Inserts);
+                    AddParameter(cmd, "@Updates", entity.Updates);
+                    AddParameter(cmd, "@Deletes", entity.Deletes);
+
+                    if (entity.CanDetectChanges(input.IsDatabase)) {
+                        var end = new DefaultFactory().Convert(entity.End, entity.Version.SimpleType);
+                        AddParameter(cmd, "@End", end);
+                    }
+
+                    _log.Debug(cmd.CommandText);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            if (entity.Delete) {
+                _log.Info("Processed {0} insert{1}, {2} update{3}, and {4} delete{5} in {6}.", entity.Inserts, entity.Inserts.Plural(), entity.Updates, entity.Updates.Plural(), entity.Deletes, entity.Deletes.Plural(), entity.Alias);
+            } else {
+                _log.Info("Processed {0} insert{1}, and {2} update{3} in {4}.", entity.Inserts, entity.Inserts.Plural(), entity.Updates, entity.Updates.Plural(), entity.Alias);
+            }
+
         }
 
         public override IOperation EntityOutputKeysExtract(Entity entity) {

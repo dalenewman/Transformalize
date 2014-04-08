@@ -22,6 +22,7 @@
 
 using System.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
+using Transformalize.Main;
 
 namespace Transformalize.Configuration {
     public class TransformConfigurationElement : ConfigurationElement {
@@ -298,13 +299,13 @@ namespace Transformalize.Configuration {
         [ConfigurationProperty(MESSAGE_FIELD, IsRequired = false, DefaultValue = "[default]")]
         public string MessageField {
             get { return this[MESSAGE_FIELD] as string; }
-            set { this[MESSAGE_FIELD] = value; }
+            set { this[MESSAGE_FIELD] = Common.CleanIdentifier(value); }
         }
 
         [ConfigurationProperty(RESULT_FIELD, IsRequired = false, DefaultValue = "[default]")]
         public string ResultField {
             get { return this[RESULT_FIELD] as string; }
-            set { this[RESULT_FIELD] = value; }
+            set { this[RESULT_FIELD] = Common.CleanIdentifier(value); }
         }
 
         [ConfigurationProperty(CHARACTERS, IsRequired = false, DefaultValue = "")]
@@ -394,7 +395,7 @@ namespace Transformalize.Configuration {
         [ConfigurationProperty(TARGET_FIELD, IsRequired = false, DefaultValue = "")]
         public string TargetField {
             get { return this[TARGET_FIELD] as string; }
-            set { this[TARGET_FIELD] = value; }
+            set { this[TARGET_FIELD] = Common.CleanIdentifier(value); }
         }
 
         [ConfigurationProperty(RIGHT, IsRequired = false, DefaultValue = "")]
@@ -455,7 +456,7 @@ namespace Transformalize.Configuration {
         [ConfigurationProperty(RUN_FIELD, IsRequired = false, DefaultValue = "")]
         public string RunField {
             get { return this[RUN_FIELD] as string; }
-            set { this[RUN_FIELD] = value; }
+            set { this[RUN_FIELD] = Common.CleanIdentifier(value); }
         }
 
         [ConfigurationProperty(RUN_TYPE, IsRequired = false, DefaultValue = "[default]")]

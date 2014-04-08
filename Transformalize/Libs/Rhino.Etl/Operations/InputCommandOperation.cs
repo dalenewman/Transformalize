@@ -9,16 +9,17 @@ using System.Data;
 using Transformalize.Libs.Rhino.Etl.Infrastructure;
 using Transformalize.Main.Providers;
 
-namespace Transformalize.Libs.Rhino.Etl.Operations
-{
+namespace Transformalize.Libs.Rhino.Etl.Operations {
     /// <summary>
     ///     Generic input command operation
     /// </summary>
-    public abstract class InputCommandOperation : AbstractCommandOperation
-    {
-        protected InputCommandOperation(AbstractConnection connection) : base(connection)
-        {
+    public abstract class InputCommandOperation : AbstractCommandOperation {
+        protected CommandBehavior CommandBehavior { get; set; }
+
+        protected InputCommandOperation(AbstractConnection connection)
+            : base(connection) {
             UseTransaction = false;
+            CommandBehavior = CommandBehavior.SequentialAccess;
         }
 
         /// <summary>
@@ -26,19 +27,14 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// </summary>
         /// <param name="rows">The rows.</param>
         /// <returns></returns>
-        public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
-        {
+        public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             using (var cn = Use.Connection(Connection))
-            using (var transaction = BeginTransaction(cn))
-            {
-                using (currentCommand = cn.CreateCommand())
-                {
+            using (var transaction = BeginTransaction(cn)) {
+                using (currentCommand = cn.CreateCommand()) {
                     currentCommand.Transaction = transaction;
                     PrepareCommand(currentCommand);
-                    using (var reader = currentCommand.ExecuteReader(CommandBehavior.SequentialAccess))
-                    {
-                        while (reader.Read())
-                        {
+                    using (var reader = currentCommand.ExecuteReader(CommandBehavior)) {
+                        while (reader.Read()) {
                             yield return CreateRowFromReader(reader);
                         }
                     }

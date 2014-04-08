@@ -49,29 +49,27 @@ namespace Transformalize.Test.Integration {
                         FROM SS_BatchRecord
                         WHERE BatchId = 2;"
                     )
-                    .Field("WorkOrderKey").Alias("WorkOrderKey").PrimaryKey()
+                    .Field("ActionValue").PrimaryKey()
                 .Process();
 
             var xml = config.Serialize();
             Console.WriteLine(xml);
             Console.WriteLine();
 
-            ProcessFactory.Create(config, new Options() {LogLevel = LogLevel.Info})[0].Run();
+            ProcessFactory.Create(config, new Options() { LogLevel = LogLevel.Info })[0].Run();
         }
 
         [Test]
-        public void TestDukeInvoice()
-        {
-            var process = ProcessFactory.Create("http://config.mwf.local/DukeBilling.xml")[0];
-            process.Run();
-
-
+        public void TestDukeInvoice() {
+            var processes = ProcessFactory.Create("http://config.mwf.local/DukeBilling.xml", new Options() { Mode = "default" });
+            foreach (var process in processes) {
+                process.Run();
+            }
         }
 
         [Test]
-        public void TestDuke()
-        {
-            var process = ProcessFactory.Create(@"C:\Code\TransformalizeConfiguration\TransformalizeConfiguration\App_Data\Clevest35\Duke.xml", new Options() { Mode = "init"})[0];
+        public void TestDuke() {
+            var process = ProcessFactory.Create(@"C:\Code\TransformalizeConfiguration\TransformalizeConfiguration\App_Data\Clevest35\Duke.xml", new Options() { Mode = "init" })[0];
             process.Run();
 
         }

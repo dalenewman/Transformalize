@@ -16,6 +16,10 @@ namespace Transformalize.Main.Providers.Folder {
             return 1;
         }
 
+        public override void WriteEndVersion(AbstractConnection input, Entity entity) {
+            throw new System.NotImplementedException();
+        }
+
         public override IOperation EntityOutputKeysExtract(Entity entity) {
             throw new System.NotImplementedException();
         }

@@ -26,6 +26,7 @@ using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
@@ -39,6 +40,7 @@ namespace Transformalize.Main {
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private const string APPLICATION_FOLDER = @"\Tfl\";
         private static readonly char[] Slash = new[] { '\\' };
+        private const string CLEAN_PATTERN = @"[\s\-]|^[\d]";
 
         public static string GuardTimeZone(string timeZone, string defaultTimeZone) {
             var result = timeZone;
@@ -259,6 +261,10 @@ namespace Transformalize.Main {
 
             return b1.Length > b2.Length ? b1 : b2; // return longest, when comparable are equal
 
+        }
+
+        public static string CleanIdentifier(string input) {
+            return Regex.Replace(input, CLEAN_PATTERN, String.Empty).Trim(' ');
         }
 
     }
