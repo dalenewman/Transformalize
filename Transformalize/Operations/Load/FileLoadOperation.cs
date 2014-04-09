@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Rhino.Etl.Core.Files;
+using Transformalize.Libs.FileHelpers.Enums;
 using Transformalize.Libs.FileHelpers.RunTime;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
@@ -67,10 +68,20 @@ namespace Transformalize.Operations.Load {
             var builder = new DelimitedClassBuilder("Tfl" + entity.OutputName()) { IgnoreEmptyLines = true, Delimiter = _connection.Delimiter, IgnoreFirstLines = 0 };
 
             foreach (var pair in entity.Fields.Where(f => f.Value.FileOutput)) {
-                builder.AddField(pair.Value.Alias, pair.Value.SystemType);
+                var field = new DelimitedFieldBuilder(pair.Value.Alias, pair.Value.SystemType);
+                if (pair.Value.SimpleType.Equals("datetime")) {
+                    field.Converter.Kind = ConverterKind.Date;
+                    field.Converter.Arg1 = _connection.DateFormat;
+                }
+                builder.AddField(field);
             }
             foreach (var pair in entity.CalculatedFields.Where(f => f.Value.FileOutput)) {
-                builder.AddField(pair.Value.Alias, pair.Value.SystemType);
+                var field = new DelimitedFieldBuilder(pair.Value.Alias, pair.Value.SystemType);
+                if (pair.Value.SimpleType.Equals("datetime")) {
+                    field.Converter.Kind = ConverterKind.Date;
+                    field.Converter.Arg1 = _connection.DateFormat;
+                }
+                builder.AddField(field);
             }
 
             Type = builder.CreateRecordClass();

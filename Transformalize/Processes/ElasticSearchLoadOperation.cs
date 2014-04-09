@@ -28,7 +28,7 @@ namespace Transformalize.Processes {
             _prefix = "{\"index\": {\"_index\": \"" + _client.Index + "\", \"_type\": \"" + _client.Type + "\", \"_id\": \"";
 
             _singleKey = entity.PrimaryKey.Count == 1;
-            _columns = entity.OutputFields().Where(f => entity.PrimaryKey.Any(kv => !kv.Key.Equals(f.Alias))).Select(f => f.Alias).ToArray();
+            _columns = entity.OutputFields().Select(f => f.Alias).ToArray();
 
             _keys = entity.PrimaryKey.Select(kv => kv.Key).ToArray();
             _key = entity.FirstKey();

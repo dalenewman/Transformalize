@@ -25,6 +25,7 @@ using System.Configuration;
 using System.Linq;
 
 namespace Transformalize.Configuration {
+
     public class ConnectionElementCollection : MyConfigurationElementCollection {
         public ConnectionConfigurationElement this[int index] {
             get { return BaseGet(index) as ConnectionConfigurationElement; }

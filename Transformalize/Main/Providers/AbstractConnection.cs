@@ -104,6 +104,7 @@ namespace Transformalize.Main.Providers {
         public bool IndexInclude { get; set; }
         public bool Views { get; set; }
         public bool Schemas { get; set; }
+        public string DateFormat { get; set; }
 
         protected AbstractConnection(
             ConnectionConfigurationElement element,
@@ -117,6 +118,7 @@ namespace Transformalize.Main.Providers {
             Folder = element.Folder;
             Delimiter = element.Delimiter;
             LineDelimiter = element.LineDelimiter;
+            DateFormat = element.DateFormat;
             ErrorMode = (ErrorMode)Enum.Parse(typeof(ErrorMode), element.ErrorMode, true);
             SearchOption = (SearchOption)Enum.Parse(typeof(SearchOption), element.SearchOption, true);
             SearchPattern = element.SearchPattern;

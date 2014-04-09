@@ -86,6 +86,11 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public ConnectionBuilder DateFormat(string format) {
+            _connection.DateFormat = format;
+            return this;
+        }
+
         public ConnectionBuilder Folder(string folder) {
             _connection.Folder = folder;
             return this;

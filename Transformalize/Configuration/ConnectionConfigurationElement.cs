@@ -50,6 +50,7 @@ namespace Transformalize.Configuration {
         private const string START = "start";
         private const string END = "end";
         private const string ERROR_MODE = "error-mode";
+        private const string DATE_FORMAT = "date-format";
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
         [ConfigurationProperty(NAME, IsRequired = true)]
@@ -173,6 +174,12 @@ namespace Transformalize.Configuration {
         public bool Enabled {
             get { return (bool)this[ENABLED]; }
             set { this[ENABLED] = value; }
+        }
+
+        [ConfigurationProperty(DATE_FORMAT, IsRequired = false, DefaultValue = "MM/dd/yyyy h:mm:ss tt")]
+        public string DateFormat {
+            get { return this[DATE_FORMAT] as string; }
+            set { this[DATE_FORMAT] = value; }
         }
 
         public override bool IsReadOnly() {
