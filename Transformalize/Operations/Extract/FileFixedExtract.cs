@@ -42,7 +42,7 @@ namespace Transformalize.Operations.Extract {
 
             var cb = new FixedLengthClassBuilder("Tfl" + _entity.Alias) { IgnoreEmptyLines = true, FixedMode = FixedMode.AllowVariableLength };
             foreach (var field in _fields) {
-                var length = field.Length.Equals("max", IC) ? Int32.MaxValue : Convert.ToInt32(field.Length);
+                var length = field.Length.Equals("max", IC) ? 4000 : Convert.ToInt32(field.Length.Equals(string.Empty) ? "64" : field.Length);
                 cb.AddField(field.Alias, length, typeof(string));
             }
 

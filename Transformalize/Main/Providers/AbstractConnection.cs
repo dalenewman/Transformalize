@@ -25,12 +25,10 @@ using System.Data;
 using System.Data.Common;
 using System.IO;
 using Transformalize.Configuration;
-using Transformalize.Extensions;
 using Transformalize.Libs.Dapper;
 using Transformalize.Libs.FileHelpers.Enums;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Operations;
-using Transformalize.Main.Providers.SqlServer;
 
 namespace Transformalize.Main.Providers {
 

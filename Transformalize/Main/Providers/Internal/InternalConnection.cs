@@ -1,5 +1,6 @@
 using Transformalize.Configuration;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Operations.Transform;
 
 namespace Transformalize.Main.Providers.Internal {
 
@@ -17,23 +18,23 @@ namespace Transformalize.Main.Providers.Internal {
         }
 
         public override void WriteEndVersion(AbstractConnection input, Entity entity) {
-            throw new System.NotImplementedException();
+            //nope
         }
 
         public override IOperation EntityOutputKeysExtract(Entity entity) {
-            throw new System.NotImplementedException();
+            return new EmptyOperation();
         }
 
         public override IOperation EntityOutputKeysExtractAll(Entity entity) {
-            throw new System.NotImplementedException();
+            return new EmptyOperation();
         }
 
         public override IOperation EntityBulkLoad(Entity entity) {
-            throw new System.NotImplementedException();
+            return new EmptyOperation();
         }
 
         public override IOperation EntityBatchUpdate(Entity entity) {
-            throw new System.NotImplementedException();
+            return new EmptyOperation();
         }
 
         public InternalConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)

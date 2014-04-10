@@ -1,5 +1,6 @@
 using Transformalize.Configuration;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Operations.Transform;
 
 namespace Transformalize.Main.Providers.Mail {
     public class MailConnection : AbstractConnection {
@@ -16,15 +17,15 @@ namespace Transformalize.Main.Providers.Mail {
         }
 
         public override void WriteEndVersion(AbstractConnection input, Entity entity) {
-            throw new System.NotImplementedException();
+            // do nothing
         }
 
         public override IOperation EntityOutputKeysExtract(Entity entity) {
-            throw new System.NotImplementedException();
+            return new EmptyOperation();
         }
 
         public override IOperation EntityOutputKeysExtractAll(Entity entity) {
-            throw new System.NotImplementedException();
+            return new EmptyOperation();
         }
 
         public override IOperation EntityBulkLoad(Entity entity) {
@@ -32,7 +33,7 @@ namespace Transformalize.Main.Providers.Mail {
         }
 
         public override IOperation EntityBatchUpdate(Entity entity) {
-            throw new System.NotImplementedException();
+            return new EmptyOperation();
         }
 
         public MailConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)

@@ -22,6 +22,7 @@
 
 using Transformalize.Configuration;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Operations.Transform;
 
 namespace Transformalize.Main.Providers.MySql {
     public class MySqlConnection : AbstractConnection {
@@ -60,23 +61,23 @@ namespace Transformalize.Main.Providers.MySql {
         }
 
         public override void WriteEndVersion(AbstractConnection input, Entity entity) {
-            throw new System.NotImplementedException();
+            //not yet
         }
 
         public override IOperation EntityOutputKeysExtract(Entity entity) {
-            throw new System.NotImplementedException();
+            return new EmptyOperation();
         }
 
         public override IOperation EntityOutputKeysExtractAll(Entity entity) {
-            throw new System.NotImplementedException();
+            return new EmptyOperation();
         }
 
         public override IOperation EntityBulkLoad(Entity entity) {
-            throw new System.NotImplementedException();
+            return new EmptyOperation();
         }
 
         public override IOperation EntityBatchUpdate(Entity entity) {
-            throw new System.NotImplementedException();
+            return new EmptyOperation();
         }
 
         public override string KeyQuery(Entity entity) {

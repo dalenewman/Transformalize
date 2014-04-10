@@ -5,6 +5,7 @@ using Transformalize.Extensions;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Providers.SqlServer;
+using Transformalize.Operations.Transform;
 
 namespace Transformalize.Main.Providers.SqlCe4 {
     public class SqlCe4Connection : AbstractConnection {
@@ -152,19 +153,19 @@ namespace Transformalize.Main.Providers.SqlCe4 {
         }
 
         public override IOperation EntityOutputKeysExtract(Entity entity) {
-            throw new System.NotImplementedException();
+            return new EmptyOperation();
         }
 
         public override IOperation EntityOutputKeysExtractAll(Entity entity) {
-            throw new System.NotImplementedException();
+            return new EmptyOperation();
         }
 
         public override IOperation EntityBulkLoad(Entity entity) {
-            throw new System.NotImplementedException();
+            return new EmptyOperation();
         }
 
         public override IOperation EntityBatchUpdate(Entity entity) {
-            throw new System.NotImplementedException();
+            return new EmptyOperation();
         }
     }
 }

@@ -1,6 +1,7 @@
 using Transformalize.Configuration;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Operations.Load;
+using Transformalize.Operations.Transform;
 using Transformalize.Processes;
 
 namespace Transformalize.Main.Providers.Html {
@@ -18,15 +19,15 @@ namespace Transformalize.Main.Providers.Html {
         }
 
         public override void WriteEndVersion(AbstractConnection input, Entity entity) {
-            throw new System.NotImplementedException();
+            //do nothing
         }
 
         public override IOperation EntityOutputKeysExtract(Entity entity) {
-            throw new System.NotImplementedException();
+            return new EmptyOperation();
         }
 
         public override IOperation EntityOutputKeysExtractAll(Entity entity) {
-            throw new System.NotImplementedException();
+            return new EmptyOperation();
         }
 
         public override IOperation EntityBulkLoad(Entity entity) {
@@ -37,7 +38,7 @@ namespace Transformalize.Main.Providers.Html {
         }
 
         public override IOperation EntityBatchUpdate(Entity entity) {
-            throw new System.NotImplementedException();
+            return new EmptyOperation();
         }
 
         public HtmlConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
