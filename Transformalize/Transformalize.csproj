@@ -1153,6 +1153,7 @@
     <Compile Include="Main\Providers\ElasticSearch\ElasticSearchConnectionChecker.cs" />
     <Compile Include="Main\Providers\ElasticSearch\ElasticSearchEntityDropper.cs" />
     <Compile Include="Main\Providers\ElasticSearch\ElasticSearchEntityExists.cs" />
+    <Compile Include="Main\Providers\ElasticSearch\ElasticSearchEntityOutputKeysExtract.cs" />
     <Compile Include="Main\Providers\ElasticSearch\ElasticSearchEntityRecordsExist.cs" />
     <Compile Include="Main\Providers\FalseEntityCreator.cs" />
     <Compile Include="Main\Providers\FalseEntityExists.cs" />
@@ -1227,6 +1228,7 @@
     <Compile Include="Main\Providers\SqlServer\SqlServerEntityCreator.cs" />
     <Compile Include="Main\Providers\SqlServer\SqlServerEntityDropper.cs" />
     <Compile Include="Main\Providers\SqlServer\SqlServerEntityOutputKeysExtract.cs" />
+    <Compile Include="Main\Providers\SqlServer\SqlServerEntityOutputKeysExtractAll.cs" />
     <Compile Include="Main\RelationshipsReader.cs" />
     <Compile Include="Main\SearchType.cs" />
     <Compile Include="Main\MapConfigurationReader.cs" />
@@ -1653,7 +1655,6 @@
     <Compile Include="Operations\Extract\FileFixedExtract.cs" />
     <Compile Include="Operations\EntityDataExtract.cs" />
     <Compile Include="Operations\EntityDelete.cs" />
-    <Compile Include="Operations\EntityOutputKeysExtractAll.cs" />
     <Compile Include="Operations\FieldTypeDefault.cs" />
     <Compile Include="Operations\Load\FileLoadOperation.cs" />
     <Compile Include="Operations\Load\HtmlLoadOperation.cs" />

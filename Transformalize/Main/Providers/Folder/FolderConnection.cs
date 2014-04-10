@@ -24,6 +24,10 @@ namespace Transformalize.Main.Providers.Folder {
             throw new System.NotImplementedException();
         }
 
+        public override IOperation EntityOutputKeysExtractAll(Entity entity) {
+            throw new System.NotImplementedException();
+        }
+
         public override IOperation EntityBulkLoad(Entity entity) {
             throw new System.NotImplementedException();
         }

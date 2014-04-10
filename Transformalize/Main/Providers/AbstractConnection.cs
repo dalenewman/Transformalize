@@ -350,6 +350,8 @@ namespace Transformalize.Main.Providers {
 
         public abstract IOperation EntityOutputKeysExtract(Entity entity);
 
+        public abstract IOperation EntityOutputKeysExtractAll(Entity entity);
+
         public abstract IOperation EntityBulkLoad(Entity entity);
 
         public abstract IOperation EntityBatchUpdate(Entity entity);

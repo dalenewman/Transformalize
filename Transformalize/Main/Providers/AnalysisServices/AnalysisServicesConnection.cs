@@ -46,6 +46,10 @@ namespace Transformalize.Main.Providers.AnalysisServices {
             throw new System.NotImplementedException();
         }
 
+        public override IOperation EntityOutputKeysExtractAll(Entity entity) {
+            throw new System.NotImplementedException();
+        }
+
         public override IOperation EntityBulkLoad(Entity entity) {
             throw new System.NotImplementedException();
         }

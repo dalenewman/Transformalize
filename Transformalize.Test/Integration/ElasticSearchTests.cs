@@ -144,14 +144,20 @@ namespace Transformalize.Test.Integration {
         public void TestInit() {
 
             var file = Path.GetTempFileName();
-            File.WriteAllText(file, "id,name\n1,One\n2,Two\n3,Three\n4,Four\n5,Five\n6,six");
+            File.WriteAllText(file, "id,name,number\n1,One,1.1\n2,Two,2.2\n3,Three,3.3\n4,Four,4.4\n5,Five,5.5\n6,six,6.6");
 
             var cfg = new ProcessBuilder("est")
                 .Connection("input").Provider("file").File(file).Delimiter(",").Start(2)
                 .Connection("output").Provider("elasticsearch").Server("localhost").Port(9200)
-                .Entity("entity")
+                .Entity("entity").Version("TflHashCode")
                     .Field("id").Int32().PrimaryKey()
                     .Field("name")
+                    .Field("number").Double()
+                    .CalculatedField("TflHashCode").Int32()
+                        .Transform("concat")
+                            .Parameter("name")
+                            .Parameter("number")
+                        .Transform("gethashcode")
                 .Process();
 
             var process = ProcessFactory.Create(cfg, new Options() { Mode = "default" })[0];

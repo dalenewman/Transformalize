@@ -28,10 +28,11 @@ using Transformalize.Main;
 using Transformalize.Main.Providers;
 
 namespace Transformalize.Operations {
+
     public class EntityInputKeysExtractDelta : InputCommandOperation {
         private readonly Entity _entity;
         private readonly string[] _fields;
-        private string _sql;
+        private readonly string _sql;
 
         public EntityInputKeysExtractDelta(Process process, Entity entity, AbstractConnection connection)
             : base(connection) {

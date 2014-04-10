@@ -10,7 +10,7 @@ namespace Transformalize.Operations.Transform {
 
         public ConcatOperation(string outKey, IParameters parameters)
             : base(string.Empty, outKey) {
-            _parameters = parameters.ToEnumerable();
+            _parameters = parameters.ToEnumerable().ToArray();
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

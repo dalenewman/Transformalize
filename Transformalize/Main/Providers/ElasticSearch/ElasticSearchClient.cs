@@ -1,8 +1,11 @@
 ﻿using Transformalize.Libs.Elasticsearch.Net;
 
-namespace Transformalize.Main.Providers.ElasticSearch
-{
+namespace Transformalize.Main.Providers.ElasticSearch {
+    /// <summary>
+    /// Get these from ElasticSearchClientFactory
+    /// </summary>
     public class ElasticSearchClient {
+
         public ElasticsearchClient Client { get; set; }
         public string Index { get; set; }
         public string Type { get; set; }

@@ -24,6 +24,10 @@ namespace Transformalize.Main.Providers.Console {
             throw new System.NotImplementedException();
         }
 
+        public override IOperation EntityOutputKeysExtractAll(Entity entity) {
+            throw new System.NotImplementedException();
+        }
+
         public override IOperation EntityBulkLoad(Entity entity) {
             return new ConsoleLoadOperation(entity);
         }

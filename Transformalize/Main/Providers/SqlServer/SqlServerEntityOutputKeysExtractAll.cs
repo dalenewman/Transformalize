@@ -2,20 +2,18 @@ using System.Collections.Generic;
 using System.Data;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
-using Transformalize.Main;
 
-namespace Transformalize.Operations
+namespace Transformalize.Main.Providers.SqlServer
 {
-    public class EntityOutputKeysExtractAll : InputCommandOperation {
-        private readonly Process _process;
+    public class SqlServerEntityOutputKeysExtractAll : InputCommandOperation {
+
         private readonly Entity _entity;
         private readonly List<string> _fields;
 
-        public EntityOutputKeysExtractAll(Process process, Entity entity)
-            : base(process.OutputConnection) {
-            _process = process;
+        public SqlServerEntityOutputKeysExtractAll(AbstractConnection connection, Entity entity)
+            : base(connection) {
             _entity = entity;
-            _fields = new List<string>(new FieldSqlWriter(entity.PrimaryKey).Alias(process.OutputConnection.L, process.OutputConnection.R).Keys()) { "TflKey" };
+            _fields = new List<string>(new FieldSqlWriter(entity.PrimaryKey).Alias(connection.L, connection.R).Keys()) { "TflKey" };
             }
 
         protected override Row CreateRowFromReader(IDataReader reader) {
@@ -34,17 +32,16 @@ namespace Transformalize.Operations
         }
 
         private string PrepareSql() {
-            var connection = _process.OutputConnection;
             
             var sqlPattern = "SELECT {0}, TflKey FROM {1}";
-            if (connection.NoLock) {
+            if (Connection.NoLock) {
                 sqlPattern += " WITH (NOLOCK);";
             } else {
                 sqlPattern = "SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED; " + sqlPattern + "; COMMIT;";
             }
 
-            var selectKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias(connection.L, connection.R).Write(", ", false);
-            return string.Format(sqlPattern, selectKeys, connection.Enclose(_entity.OutputName()));
+            var selectKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias(Connection.L, Connection.R).Write(", ", false);
+            return string.Format(sqlPattern, selectKeys, Connection.Enclose(_entity.OutputName()));
         }
 
     }

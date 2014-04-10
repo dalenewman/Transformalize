@@ -37,7 +37,7 @@ namespace Transformalize.Operations {
         private readonly Entity _entity;
         private readonly FieldTypeDefault[] _fields;
         private readonly int _length;
-        private string _sql;
+        private readonly string _sql;
 
         public EntityInputKeysExtractAll(Entity entity, AbstractConnection connection)
             : base(connection) {
@@ -63,7 +63,6 @@ namespace Transformalize.Operations {
         protected override Row CreateRowFromReader(IDataReader reader) {
             var row = new Row();
             for (var i = 0; i < _length; i++) {
-                //row[_fields[i].Alias] = _map[_fields[i].Type](reader, i, _fields[i].Default);
                 row[_fields[i].Alias] = reader.GetValue(i);
             }
             return row;

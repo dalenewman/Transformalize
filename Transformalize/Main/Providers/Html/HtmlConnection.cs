@@ -25,6 +25,10 @@ namespace Transformalize.Main.Providers.Html {
             throw new System.NotImplementedException();
         }
 
+        public override IOperation EntityOutputKeysExtractAll(Entity entity) {
+            throw new System.NotImplementedException();
+        }
+
         public override IOperation EntityBulkLoad(Entity entity) {
             var process = new PartialProcessOperation();
             process.Register(new HtmlRowOperation(entity, "HtmlRow"));

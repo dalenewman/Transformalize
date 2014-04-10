@@ -16,7 +16,7 @@ namespace Transformalize.Processes {
         private readonly ElasticSearchClient _client;
         private readonly string _prefix;
         private readonly bool _singleKey;
-        private readonly string[] _columns;
+        private readonly List<string> _columns;
         private readonly string[] _keys;
         private readonly string _key;
         private int _count;
@@ -28,7 +28,8 @@ namespace Transformalize.Processes {
             _prefix = "{\"index\": {\"_index\": \"" + _client.Index + "\", \"_type\": \"" + _client.Type + "\", \"_id\": \"";
 
             _singleKey = entity.PrimaryKey.Count == 1;
-            _columns = entity.OutputFields().Select(f => f.Alias).ToArray();
+            _columns = entity.OutputFields().Select(f => f.Alias).ToList();
+            _columns.Add("tflbatchid");
 
             _keys = entity.PrimaryKey.Select(kv => kv.Key).ToArray();
             _key = entity.FirstKey();

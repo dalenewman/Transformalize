@@ -23,6 +23,10 @@ namespace Transformalize.Main.Providers.Mail {
             throw new System.NotImplementedException();
         }
 
+        public override IOperation EntityOutputKeysExtractAll(Entity entity) {
+            throw new System.NotImplementedException();
+        }
+
         public override IOperation EntityBulkLoad(Entity entity) {
             return new MailLoadOperation(entity);
         }

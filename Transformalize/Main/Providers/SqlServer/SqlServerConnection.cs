@@ -134,8 +134,7 @@ namespace Transformalize.Main.Providers.SqlServer {
                 );
         }
 
-        public override void WriteEndVersion(AbstractConnection input, Entity entity)
-        {
+        public override void WriteEndVersion(AbstractConnection input, Entity entity) {
             //default implementation for relational database
             if (entity.Inserts + entity.Updates > 0) {
                 using (var cn = GetConnection()) {
@@ -184,6 +183,10 @@ namespace Transformalize.Main.Providers.SqlServer {
 
         public override IOperation EntityOutputKeysExtract(Entity entity) {
             return new SqlServerEntityOutputKeysExtract(this, entity);
+        }
+
+        public override IOperation EntityOutputKeysExtractAll(Entity entity) {
+            return new SqlServerEntityOutputKeysExtractAll(this, entity);
         }
 
         public override IOperation EntityBulkLoad(Entity entity) {

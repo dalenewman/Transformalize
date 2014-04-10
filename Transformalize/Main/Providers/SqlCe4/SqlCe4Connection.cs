@@ -4,6 +4,7 @@ using Transformalize.Configuration;
 using Transformalize.Extensions;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Main.Providers.SqlServer;
 
 namespace Transformalize.Main.Providers.SqlCe4 {
     public class SqlCe4Connection : AbstractConnection {
@@ -151,6 +152,10 @@ namespace Transformalize.Main.Providers.SqlCe4 {
         }
 
         public override IOperation EntityOutputKeysExtract(Entity entity) {
+            throw new System.NotImplementedException();
+        }
+
+        public override IOperation EntityOutputKeysExtractAll(Entity entity) {
             throw new System.NotImplementedException();
         }
 

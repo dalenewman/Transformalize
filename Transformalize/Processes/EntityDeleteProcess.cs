@@ -20,10 +20,7 @@
 
 #endregion
 
-using System;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
 using Transformalize.Extensions;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
@@ -46,7 +43,8 @@ namespace Transformalize.Processes {
         protected override void Initialize() {
 
             if (_entity.Input.Count == 1) {
-                Register(new EntityInputKeysExtractAll(_entity, _entity.Input.First().Connection));
+                var connection = _entity.Input.First().Connection;
+                Register(new EntityInputKeysExtractAll(_entity, connection));
             } else {
                 var multiInput = new ParallelUnionAllOperation();
                 foreach (var namedConnection in _entity.Input) {
@@ -55,7 +53,7 @@ namespace Transformalize.Processes {
                 Register(multiInput);
             }
 
-            Register(new EntityDetectDeletes(_entity).Right(new EntityOutputKeysExtractAll(_process, _entity)));
+            Register(new EntityDetectDeletes(_entity).Right(_process.OutputConnection.EntityOutputKeysExtractAll(_entity)));
             Register(new EntityActionFilter(ref _entity, EntityAction.Delete));
             Register(new EntityDelete(_process, _entity));
         }
