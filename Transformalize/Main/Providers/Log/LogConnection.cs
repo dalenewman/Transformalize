@@ -1,5 +1,6 @@
 using Transformalize.Configuration;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Operations.Load;
 using Transformalize.Operations.Transform;
 
 namespace Transformalize.Main.Providers.Log {
@@ -34,6 +35,16 @@ namespace Transformalize.Main.Providers.Log {
 
         public override IOperation EntityBatchUpdate(Entity entity) {
             return new EmptyOperation();
+        }
+
+        public override void LoadBeginVersion(Entity entity)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void LoadEndVersion(Entity entity)
+        {
+            throw new System.NotImplementedException();
         }
 
         public LogConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)

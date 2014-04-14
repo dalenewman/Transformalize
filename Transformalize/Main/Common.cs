@@ -162,7 +162,16 @@ namespace Transformalize.Main {
         }
 
         public static string GetTemporaryFolder(string processName) {
-            var folder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData).TrimEnd(Slash) + APPLICATION_FOLDER + processName;
+            var local = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData).TrimEnd(Slash);
+
+            //i.e. c: no user profile exists
+            if (local.Length <= 2 ) {
+                if (AppDomain.CurrentDomain.GetData("DataDirectory") != null) {
+                    local = AppDomain.CurrentDomain.GetData("DataDirectory").ToString().TrimEnd(Slash);
+                }
+            }
+
+            var folder = local + APPLICATION_FOLDER + processName;
 
             if (!Directory.Exists(folder))
                 Directory.CreateDirectory(folder);

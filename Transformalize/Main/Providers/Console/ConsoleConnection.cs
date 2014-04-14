@@ -37,6 +37,16 @@ namespace Transformalize.Main.Providers.Console {
             return new EmptyOperation();
         }
 
+        public override void LoadBeginVersion(Entity entity)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void LoadEndVersion(Entity entity)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public ConsoleConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
 

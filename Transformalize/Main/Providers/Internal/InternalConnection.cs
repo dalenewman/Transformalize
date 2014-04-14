@@ -37,6 +37,16 @@ namespace Transformalize.Main.Providers.Internal {
             return new EmptyOperation();
         }
 
+        public override void LoadBeginVersion(Entity entity)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void LoadEndVersion(Entity entity)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public InternalConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
 

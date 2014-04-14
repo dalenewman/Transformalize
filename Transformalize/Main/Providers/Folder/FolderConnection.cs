@@ -37,6 +37,14 @@ namespace Transformalize.Main.Providers.Folder {
             return new EmptyOperation();
         }
 
+        public override void LoadBeginVersion(Entity entity) {
+            throw new System.NotImplementedException();
+        }
+
+        public override void LoadEndVersion(Entity entity) {
+            throw new System.NotImplementedException();
+        }
+
         public FolderConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
 

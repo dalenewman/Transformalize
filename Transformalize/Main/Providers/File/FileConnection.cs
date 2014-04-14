@@ -38,6 +38,14 @@ namespace Transformalize.Main.Providers.File {
             return new EmptyOperation();
         }
 
+        public override void LoadBeginVersion(Entity entity) {
+            throw new System.NotImplementedException();
+        }
+
+        public override void LoadEndVersion(Entity entity) {
+            throw new System.NotImplementedException();
+        }
+
         public FileConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
             TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];

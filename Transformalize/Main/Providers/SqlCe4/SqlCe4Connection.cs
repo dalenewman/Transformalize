@@ -167,5 +167,47 @@ namespace Transformalize.Main.Providers.SqlCe4 {
         public override IOperation EntityBatchUpdate(Entity entity) {
             return new EmptyOperation();
         }
+
+        public override void LoadBeginVersion(Entity entity) {
+            var sql = string.Format(@"
+                SELECT {0}
+                FROM TflBatch b
+                INNER JOIN (
+                    SELECT @ProcessName AS ProcessName, TflBatchId = MAX(TflBatchId)
+                    FROM TflBatch
+                    WHERE ProcessName = @ProcessName
+                    AND EntityName = @EntityName
+                ) m ON (b.ProcessName = m.ProcessName AND b.TflBatchId = m.TflBatchId);
+            ", entity.GetVersionField());
+
+            using (var cn = GetConnection()) {
+                cn.Open();
+                var cmd = cn.CreateCommand();
+                cmd.CommandText = sql;
+                AddParameter(cmd, "@ProcessName", entity.ProcessName);
+                AddParameter(cmd, "@EntityName", entity.Alias);
+
+                using (var reader = cmd.ExecuteReader(CommandBehavior.CloseConnection & CommandBehavior.SingleResult)) {
+                    entity.HasRange = reader.Read();
+                    entity.Begin = entity.HasRange ? reader.GetValue(0) : null;
+                }
+            }
+        }
+
+        public override void LoadEndVersion(Entity entity) {
+            var sql = string.Format("SELECT MAX({0}) AS {0} FROM {1};", Enclose(entity.Version.Name), Enclose(entity.Name));
+
+            using (var cn = GetConnection()) {
+                var command = cn.CreateCommand();
+                command.CommandText = sql;
+                command.CommandTimeout = 0;
+                cn.Open();
+                using (var reader = command.ExecuteReader(CommandBehavior.CloseConnection & CommandBehavior.SingleResult)) {
+                    entity.HasRows = reader.Read();
+                    entity.End = entity.HasRows ? reader.GetValue(0) : null;
+                }
+            }
+        }
+
     }
 }

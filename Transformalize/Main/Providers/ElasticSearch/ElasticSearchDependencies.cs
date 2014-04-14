@@ -1,5 +1,5 @@
 using System;
-using Transformalize.Libs.Rhino.Etl;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Transformalize.Main.Providers.ElasticSearch {
     public class ElasticSearchDependencies : AbstractConnectionDependencies {
@@ -9,19 +9,9 @@ namespace Transformalize.Main.Providers.ElasticSearch {
                 new ElasticSearchConnectionChecker(),
                 new ElasticSearchEntityRecordsExist(),
                 new ElasticSearchEntityDropper(),
-                new FalseEntityCreator(),
+                new ElasticSearchEntityCreator(),
                 new FalseViewWriter(),
                 new ElasticSearchTflWriter(),
                 new FalseScriptRunner()) { }
-    }
-
-    public class ElasticSearchTflWriter : WithLoggingMixin, ITflWriter {
-        public void Initialize(Process process) {
-            var connection = process.OutputConnection;
-            var entity = process.OutputConnection.TflBatchEntity(process.Name);
-            new ElasticSearchEntityDropper().Drop(connection, entity);
-
-            Info("Initialized TrAnSfOrMaLiZeR {0} connection.", process.OutputConnection.Name);
-        }
     }
 }

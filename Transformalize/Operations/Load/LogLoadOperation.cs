@@ -9,9 +9,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Libs.fastJSON;
 using Transformalize.Libs.NLog;
+using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
-namespace Transformalize.Libs.Rhino.Etl.Operations {
+namespace Transformalize.Operations.Load {
     public class LogLoadOperation : AbstractOperation {
         private readonly Logger _log = LogManager.GetLogger("file-output");
         private readonly List<string> _columns = new List<string>();

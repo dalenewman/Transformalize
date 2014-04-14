@@ -54,6 +54,7 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
@@ -1067,7 +1068,6 @@
     <Compile Include="Libs\Newtonsoft.Json\Utilities\ValidationUtils.cs" />
     <Compile Include="Libs\Newtonsoft.Json\WriteState.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\AbstractSortedAggregationOperation.cs" />
-    <Compile Include="Libs\Rhino.Etl\Operations\MailLoadOperation.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\ParallelUnionAllOperation.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\SortMergeJoinOperation.cs" />
     <Compile Include="Libs\SharpZLib\BZip2\BZip2.cs" />
@@ -1151,10 +1151,12 @@
     <Compile Include="Main\Providers\ElasticSearch\ElasticSearchClient.cs" />
     <Compile Include="Main\Providers\ElasticSearch\ElasticSearchClientFactory.cs" />
     <Compile Include="Main\Providers\ElasticSearch\ElasticSearchConnectionChecker.cs" />
+    <Compile Include="Main\Providers\ElasticSearch\ElasticSearchEntityCreator.cs" />
     <Compile Include="Main\Providers\ElasticSearch\ElasticSearchEntityDropper.cs" />
     <Compile Include="Main\Providers\ElasticSearch\ElasticSearchEntityExists.cs" />
     <Compile Include="Main\Providers\ElasticSearch\ElasticSearchEntityOutputKeysExtract.cs" />
     <Compile Include="Main\Providers\ElasticSearch\ElasticSearchEntityRecordsExist.cs" />
+    <Compile Include="Main\Providers\ElasticSearch\ElasticSearchTflWriter.cs" />
     <Compile Include="Main\Providers\FalseEntityCreator.cs" />
     <Compile Include="Main\Providers\FalseEntityExists.cs" />
     <Compile Include="Main\Providers\File\FileEntityCreator.cs" />
@@ -1632,7 +1634,6 @@
     <Compile Include="Libs\Rhino.Etl\Operations\IOperation.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\JoinOperation.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\JoinType.cs" />
-    <Compile Include="Libs\Rhino.Etl\Operations\LogLoadOperation.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\MultiThreadedBranchingOperation.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\NestedLoopsJoinOperation.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\OperationStatistics.cs" />
@@ -1658,11 +1659,15 @@
     <Compile Include="Operations\FieldTypeDefault.cs" />
     <Compile Include="Operations\Load\FileLoadOperation.cs" />
     <Compile Include="Operations\Load\HtmlLoadOperation.cs" />
+    <Compile Include="Operations\Load\LogLoadOperation.cs" />
+    <Compile Include="Operations\Load\MailLoadOperation.cs" />
     <Compile Include="Operations\SampleOperation.cs" />
     <Compile Include="Operations\SqlKeysOverrideOperation.cs" />
+    <Compile Include="Operations\Transform\CompressOperation.cs" />
     <Compile Include="Operations\Transform\ConcatOperation.cs" />
     <Compile Include="Operations\Transform\ConvertOperation.cs" />
     <Compile Include="Operations\Transform\CSharpOperation.cs" />
+    <Compile Include="Operations\Transform\DecompressOperation.cs" />
     <Compile Include="Operations\Transform\DistanceOperation.cs" />
     <Compile Include="Operations\Transform\EmptyOperation.cs" />
     <Compile Include="Operations\Transform\FilterOperation.cs" />

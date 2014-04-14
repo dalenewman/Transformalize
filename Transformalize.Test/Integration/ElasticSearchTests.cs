@@ -42,7 +42,7 @@ namespace Transformalize.Test.Integration {
             var process = ProcessFactory.Create(cfg, new Options() { LogLevel = LogLevel.Debug })[0];
 
             var checker = new ElasticSearchConnectionChecker();
-            
+
             Assert.IsTrue(checker.Check(process.OutputConnection));
         }
 
@@ -132,7 +132,7 @@ namespace Transformalize.Test.Integration {
                     .Field("name")
                 .Process();
 
-            var process = ProcessFactory.Create(cfg, new Options() { Mode = "default"})[0];
+            var process = ProcessFactory.Create(cfg, new Options() { Mode = "default" })[0];
             process.Run();
 
             process.OutputConnection.WriteEndVersion(process.Connections["input"], process.Entities[0]);
@@ -165,7 +165,13 @@ namespace Transformalize.Test.Integration {
 
         }
 
-
+        [Test]
+        public void TempDebug() {
+            var process = ProcessFactory.Create(@"C:\Code\TransformalizeConfiguration\TransformalizeConfiguration\App_Data\Clevest35\EventLog.xml", new Options() { Mode = "init" });
+            process[0].Run();
+            process[1].Run();
+            //process[1].CreateOutput(process[1].Entities[0]);
+        }
 
 
 

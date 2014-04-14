@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,7 @@ using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.ElasticSearch;
 
 namespace Transformalize.Processes {
+
     public sealed class ElasticSearchLoadOperation : AbstractOperation {
 
         private readonly ElasticSearchClient _client;
@@ -21,8 +23,13 @@ namespace Transformalize.Processes {
         private readonly string _key;
         private int _count;
         private readonly int _batchSize;
+        private readonly List<string> _guids = new List<string>();
+        private readonly List<string> _dates = new List<string>();
 
         public ElasticSearchLoadOperation(Entity entity, AbstractConnection connection) {
+
+            _guids.AddRange(new FieldSqlWriter(entity.Fields, entity.CalculatedFields).Output().ToArray().Where(f => f.SimpleType.Equals("guid")).Select(f => f.Alias));
+            _dates.AddRange(new FieldSqlWriter(entity.Fields, entity.CalculatedFields).Output().ToArray().Where(f => f.SimpleType.StartsWith("date")).Select(f => f.Alias));
 
             _client = ElasticSearchClientFactory.Create(connection, entity);
             _prefix = "{\"index\": {\"_index\": \"" + _client.Index + "\", \"_type\": \"" + _client.Type + "\", \"_id\": \"";
@@ -53,6 +60,12 @@ namespace Transformalize.Processes {
             foreach (var batch in rows.Partition(_batchSize)) {
                 var body = new StringBuilder();
                 foreach (var row in batch) {
+                    foreach (var guid in _guids) {
+                        row[guid] = ((Guid)row[guid]).ToString();
+                    }
+                    foreach (var date in _dates) {
+                        row[date] = ((DateTime)row[date]).ToString("yyyy-MM-ddTHH:mm:ss.fff");
+                    }
                     var r = row;
                     var key = _singleKey ? row[_key].ToString() : string.Concat(_keys.Select(k => r[k].ToString()));
                     body.Append(_prefix);

@@ -79,5 +79,13 @@ namespace Transformalize.Main.Providers.ElasticSearch {
         public override IOperation EntityBatchUpdate(Entity entity) {
             return new ElasticSearchLoadOperation(entity, this);
         }
+
+        public override void LoadBeginVersion(Entity entity) {
+            throw new NotImplementedException();
+        }
+
+        public override void LoadEndVersion(Entity entity) {
+            throw new NotImplementedException();
+        }
     }
 }

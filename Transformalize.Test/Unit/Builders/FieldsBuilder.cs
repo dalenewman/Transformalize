@@ -35,6 +35,11 @@
             return this;
         }
 
+        public FieldBuilder Length(string length) {
+            _field.Length = length;
+            return this;
+        }
+
         public FieldBuilder NodeType(string nodeType) {
             _field.NodeType = nodeType;
             return this;

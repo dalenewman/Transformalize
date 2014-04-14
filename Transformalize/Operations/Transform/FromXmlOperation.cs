@@ -8,7 +8,6 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
-
     public class FromXmlOperation : ShouldRunOperation {
 
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;

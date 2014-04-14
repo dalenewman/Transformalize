@@ -1,11 +1,12 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Libs.fastJSON;
 using Transformalize.Libs.NLog;
+using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
-namespace Transformalize.Libs.Rhino.Etl.Operations
+namespace Transformalize.Operations.Load
 {
     public class MailLoadOperation : AbstractOperation {
         private readonly Logger _log = LogManager.GetLogger("buffered-mail-output");
