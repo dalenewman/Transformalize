@@ -37,7 +37,6 @@ namespace Transformalize.Configuration {
         private const string VERSION = "version";
         private const string PREFIX = "prefix";
         private const string GROUP = "group";
-        private const string INDEX_OPTIMIZATIONS = "index-optimizations";
         private const string DELETE = "delete";
         private const string PREPEND_PROCESS_NAME_TO_OUTPUT_NAME = "prepend-process-name-to-output-name";
         private const string PIPELINE_THREADING = "pipeline-threading";

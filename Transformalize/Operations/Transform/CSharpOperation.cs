@@ -42,13 +42,19 @@ namespace Transformalize.Operations.Transform {
                 castBuilder.AppendLine(String.Format("{1} {0} = ({1}) row[\"{0}\"];", OutKey, Common.ToSystemType(outType)));
                 testRow[OutKey] = new DefaultFactory().Convert(null, outType);
             } else {
+                var map = Common.GetLiteral();
                 foreach (var pair in parameters) {
-                    castBuilder.AppendLine(String.Format("{1} {0} = ({1}) row[\"{0}\"];", pair.Value.Name, Common.ToSystemType(pair.Value.SimpleType)));
+                    if (pair.Value.HasValue()) {
+                        castBuilder.AppendLine(String.Format("{0} {1} = {2};", Common.ToSystemType(pair.Value.SimpleType), pair.Value.Name, map[pair.Value.SimpleType](pair.Value.Value)));
+                    } else {
+                        castBuilder.AppendLine(String.Format("{1} {0} = ({1}) row[\"{0}\"];", pair.Value.Name, Common.ToSystemType(pair.Value.SimpleType)));
+                    }
                     testRow[pair.Value.Name] = new DefaultFactory().Convert(null, pair.Value.SimpleType);
                 }
             }
 
             var code = string.Format(@"using System;
+using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Operations.Transform;
@@ -90,6 +96,8 @@ public class Transformer : ITransformer
                 }
                 throw new TransformalizeException("Failed to compile code. {0}", code);
             }
+
+            Name = "CSharpOperation (" + outKey + ")";
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

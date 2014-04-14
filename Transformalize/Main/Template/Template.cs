@@ -54,6 +54,7 @@ namespace Transformalize.Main {
         public string Name { get; private set; }
 
         public bool Cache { get; private set; }
+        public bool Enabled { get; private set; }
         public Encoding ContentType { get; private set; }
         public bool IsUsedInPipeline { get; set; }
 
@@ -61,6 +62,7 @@ namespace Transformalize.Main {
 
             Contents = contents;
             Cache = element.Cache;
+            Enabled = element.Enabled;
             Name = element.Name;
             ContentType = element.ContentType.Equals("raw") ? Encoding.Raw : Encoding.Html;
 

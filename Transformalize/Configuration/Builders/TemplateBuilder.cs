@@ -20,6 +20,11 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public TemplateBuilder Enabled(bool enabled) {
+            _template.Enabled = enabled;
+            return this;
+        }
+
         public TemplateBuilder ContentType(string contentType) {
             _template.ContentType = contentType;
             return this;
@@ -62,7 +67,7 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public TemplateBuilder Setting(string name, object value, string type) {
-            var setting = new SettingConfigurationElement() { Name = name, Value = value.ToString(), Type = type};
+            var setting = new SettingConfigurationElement() { Name = name, Value = value.ToString(), Type = type };
             _template.Settings.Add(setting);
             return this;
         }

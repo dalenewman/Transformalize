@@ -7,6 +7,7 @@ using Transformalize.Main;
 using Transformalize.Main.Providers.SqlServer;
 
 namespace Transformalize.Runner {
+
     public class MetadataRunner : IProcessRunner {
         public IDictionary<string, IEnumerable<Row>> Run(Process process) {
             var result = new Dictionary<string, IEnumerable<Row>>();

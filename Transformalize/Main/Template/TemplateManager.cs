@@ -47,6 +47,11 @@ namespace Transformalize.Main {
                 if (template.IsUsedInPipeline)
                     continue;
 
+                if (!template.Enabled) {
+                    _log.Warn("Template {0} is disabled.", template.Name);
+                    continue;
+                }
+
                 try {
                     result = template.Render();
                 } catch (Exception e) {

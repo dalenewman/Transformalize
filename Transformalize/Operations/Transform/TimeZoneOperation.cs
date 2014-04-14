@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Transformalize.Libs.NLog;
-using Transformalize.Libs.NLog.Internal;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 
@@ -13,6 +11,7 @@ namespace Transformalize.Operations.Transform {
         private readonly TimeZoneInfo _toTimeZoneInfo;
         private readonly TimeSpan _adjustment;
         private readonly TimeSpan _daylightAdjustment;
+        private readonly bool _utcToLocal;
 
         public TimeZoneOperation(string inKey, string outKey, string fromTimeZone, string toTimeZone)
             : base(inKey, outKey) {
@@ -26,6 +25,7 @@ namespace Transformalize.Operations.Transform {
             _adjustment = _toTimeZoneInfo.BaseUtcOffset - fromTimeZoneInfo.BaseUtcOffset;
             _daylightAdjustment = _adjustment.Add(new TimeSpan(0, 1, 0, 0));
 
+            _utcToLocal = fromTimeZone.Equals("UTC") && !toTimeZone.Equals("UTC");
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
@@ -37,6 +37,9 @@ namespace Transformalize.Operations.Transform {
                     } else {
                         row[OutKey] = date.Add(_adjustment);
                     }
+                    //if (_utcToLocal) {
+                    //    row[OutKey] = new DateTime(date.Ticks, DateTimeKind.Local);
+                    //}
                 } else {
                     Interlocked.Increment(ref SkipCount);
                 }

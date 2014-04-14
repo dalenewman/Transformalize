@@ -147,7 +147,7 @@ namespace Transformalize.Main {
                             new NowOperation(
                                 inKey,
                                 outKey
-                                ) {ShouldRun = shouldRun})
+                                ) { ShouldRun = shouldRun })
                         .Register(
                             new TimeZoneOperation(
                                 outKey,
@@ -277,6 +277,9 @@ namespace Transformalize.Main {
 
                 case "javascript":
                     foreach (TransformScriptConfigurationElement script in element.Scripts) {
+                        if (!_process.Scripts.ContainsKey(script.Name)) {
+                            throw new TransformalizeException("Invalid script reference: {0}.", script.Name);
+                        }
                         scripts[script.Name] = _process.Scripts[script.Name];
                     }
 
@@ -289,6 +292,9 @@ namespace Transformalize.Main {
 
                 case "csharp":
                     foreach (TransformScriptConfigurationElement script in element.Scripts) {
+                        if (!_process.Scripts.ContainsKey(script.Name)) {
+                            throw new TransformalizeException("Invalid script reference: {0}.", script.Name);
+                        }
                         scripts[script.Name] = _process.Scripts[script.Name];
                     }
 
@@ -305,6 +311,9 @@ namespace Transformalize.Main {
 
                     var templates = new Dictionary<string, Template>();
                     foreach (TransformTemplateConfigurationElement template in element.Templates) {
+                        if (!_process.Templates.ContainsKey(template.Name)) {
+                            throw new TransformalizeException("Invalid template reference: {0}", template.Name);
+                        }
                         templates[template.Name] = _process.Templates[template.Name];
                         _process.Templates[template.Name].IsUsedInPipeline = true;
                     }

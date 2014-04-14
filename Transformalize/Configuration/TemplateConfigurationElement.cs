@@ -32,6 +32,7 @@ namespace Transformalize.Configuration
         private const string ACTIONS = "actions";
         private const string NAME = "name";
         private const string CACHE = "cache";
+        private const string ENABLED = "enabled";
 
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name
@@ -51,6 +52,12 @@ namespace Transformalize.Configuration
         public bool Cache {
             get { return (bool) this[CACHE]; }
             set { this[CACHE] = value; }
+        }
+
+        [ConfigurationProperty(ENABLED, IsRequired = false, DefaultValue = true)]
+        public bool Enabled {
+            get { return (bool)this[ENABLED]; }
+            set { this[ENABLED] = value; }
         }
 
         [ConfigurationProperty(CONTENT_TYPE, IsRequired = false, DefaultValue = "raw")]

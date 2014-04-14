@@ -68,16 +68,11 @@ namespace Transformalize.Test.Integration {
         }
 
         [Test]
-        public void TestDuke() {
-            var process = ProcessFactory.Create(@"C:\Code\TransformalizeConfiguration\TransformalizeConfiguration\App_Data\Clevest35\Duke.xml", new Options() { Mode = "init" })[0];
-            process.Run();
-        }
-
-        [Test]
         public void TestFail()
         {
-            ProcessFactory.Create(@"C:\Users\dnewman\AppData\Local\Tfl\JDI7005266010000\Configuration.xml", new Options() {Mode = "init"})[0].Run();
-            ProcessFactory.Create(@"C:\Users\dnewman\AppData\Local\Tfl\JDI7005266010000\Configuration.xml")[0].Run();
+            const string file = @"C:\Code\TransformalizeConfiguration\TransformalizeConfiguration\App_Data\Clevest35\Duke.xml";
+            var process = ProcessFactory.Create(file, new Options() {Mode = "init", LogLevel = LogLevel.Debug})[0];
+            process.Run();
         }
 
 

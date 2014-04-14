@@ -115,6 +115,8 @@ namespace Transformalize.Main {
             };
         }
 
+
+
         public static Dictionary<ComparisonOperator, Func<object, object, bool>> CompareMap = new Dictionary<ComparisonOperator, Func<object, object, bool>>() {
             {ComparisonOperator.Equal, ((x, y) => x.Equals(y))},
             {ComparisonOperator.NotEqual, ((x, y) => !x.Equals(y))},
@@ -123,6 +125,29 @@ namespace Transformalize.Main {
             {ComparisonOperator.LessThan, ((x, y) => ((IComparable) x).CompareTo(y) < 0)},
             {ComparisonOperator.LessThanEqual, ((x, y) => x.Equals(y) || ((IComparable) x).CompareTo(y) < 0)}
         };
+
+        public static Dictionary<string, Func<object, string>> GetLiteral() {
+            return new Dictionary<string, Func<object, string>> {
+                {"string", (x => string.Format("\"{0}\"",x))},
+                {"xml", (x => string.Format("\"{0}\"",x))},
+                {"guid", (x => string.Format("Guid.Parse(\"{0}\")",x))},
+                {"int16", (x => x.ToString())},
+                {"int", (x => x.ToString())},
+                {"int32", (x => x.ToString())},
+                {"int64", (x => x.ToString())},
+                {"long", (x => x.ToString())},
+                {"double", (x => x.ToString())},
+                {"decimal", (x => x.ToString())},
+                {"char", (x => string.Format("'{0}'",x))},
+                {"datetime", (x => string.Format("Convert.ToDateTime(\"{0}\")",x))},
+                {"boolean", (x => x.ToString().ToLower())},
+                {"bool", (x => x.ToString().ToLower())},
+                {"single", (x => x.ToString())},
+                {"byte", (x => x.ToString())},
+                {"byte[]", (x => string.Format("Common.HexStringToByteArray(\"{0}\")",x))},
+                {"rowversion", (x => string.Format("Common.HexStringToByteArray(\"{0}\")",x))}
+            };
+        }
 
         public static Dictionary<string, Func<object, object>> GetObjectConversionMap() {
             return new Dictionary<string, Func<object, object>> {
