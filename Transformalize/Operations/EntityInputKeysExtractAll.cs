@@ -35,7 +35,7 @@ namespace Transformalize.Operations {
 
         private readonly Dictionary<string, Func<IDataReader, int, object, object>> _map = Common.GetReaderMap();
         private readonly Entity _entity;
-        private readonly FieldTypeDefault[] _fields;
+        private readonly string[] _fields;
         private readonly int _length;
         private readonly string _sql;
 
@@ -43,7 +43,7 @@ namespace Transformalize.Operations {
             : base(connection) {
 
             _entity = entity;
-            _fields = _entity.PrimaryKey.Select(f => new FieldTypeDefault(f.Value.Alias, _map.ContainsKey(f.Value.SimpleType) ? f.Value.SimpleType : string.Empty, f.Value.Default)).ToArray();
+            _fields = _entity.PrimaryKey.ToEnumerable().Where(f=>f.Input).Select(f=>f.Alias).ToArray();
             _length = _fields.Length;
 
             if (_entity.CanDetectChanges(connection.IsDatabase)) {
@@ -56,14 +56,12 @@ namespace Transformalize.Operations {
             _sql = _entity.CanDetectChanges(connection.IsDatabase)
                 ? connection.KeyQuery(_entity)
                 : connection.KeyAllQuery(_entity);
-
-
         }
 
         protected override Row CreateRowFromReader(IDataReader reader) {
             var row = new Row();
             for (var i = 0; i < _length; i++) {
-                row[_fields[i].Alias] = reader.GetValue(i);
+                row[_fields[i]] = reader.GetValue(i);
             }
             return row;
         }

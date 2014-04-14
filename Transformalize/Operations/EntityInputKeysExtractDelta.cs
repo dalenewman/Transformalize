@@ -31,13 +31,15 @@ namespace Transformalize.Operations {
 
     public class EntityInputKeysExtractDelta : InputCommandOperation {
         private readonly Entity _entity;
-        private readonly string[] _fields;
         private readonly string _sql;
+        private readonly string[] _fields;
+        private readonly int _length;
 
         public EntityInputKeysExtractDelta(Process process, Entity entity, AbstractConnection connection)
             : base(connection) {
             _entity = entity;
-            _fields = _entity.PrimaryKey.ToEnumerable().Select(f => f.Alias).ToArray();
+            _fields = _entity.PrimaryKey.ToEnumerable().Where(f => f.Input).Select(f => f.Alias).ToArray();
+            _length = _fields.Length;
 
             _entity.CheckForChanges(process, connection);
 
@@ -63,8 +65,8 @@ namespace Transformalize.Operations {
 
         protected override Row CreateRowFromReader(IDataReader reader) {
             var row = new Row();
-            foreach (var field in _fields) {
-                row[field] = reader[field];
+            for (var i = 0; i < _length; i++) {
+                row[_fields[i]] = reader.GetValue(i);
             }
             return row;
         }

@@ -13,6 +13,8 @@ namespace Transformalize.Operations
         private readonly Dictionary<string, int> _lengthMap = new Dictionary<string, int>();
         private readonly List<string> _aliases = new List<string>();
         private int _count;
+        private readonly Dictionary<string,byte> _truncatedFields = new Dictionary<string, byte>();
+        private const Byte HIT = default(byte);
 
         public TruncateOperation(Fields fields, Fields calculatedFields = null) {
 
@@ -36,7 +38,7 @@ namespace Transformalize.Operations
 
         void StringLengthOperation_OnFinishedProcessing(IOperation obj) {
             if(_count > 0)
-                Warn("Truncated {0} fields.", _count);
+                Warn("Please address truncated {0} fields: {1}.", _count, string.Join(", ",_truncatedFields.Select(kv=>kv.Key)));
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
@@ -46,6 +48,7 @@ namespace Transformalize.Operations
                     if (value.Length > _lengthMap[field]) {
                         row[field] = value.Substring(0, _lengthMap[field]);
                         Interlocked.Increment(ref _count);
+                        _truncatedFields[field] = HIT;
                     }
                 }
                 yield return row;

@@ -11,18 +11,20 @@ namespace Transformalize.Operations
         private readonly Entity _entity;
         private readonly AbstractConnection _connection;
         private readonly string[] _fields;
+        private readonly int _length;
 
         public EntityInputKeysExtractAllForDelete(Entity entity, AbstractConnection connection)
             : base(connection) {
             _entity = entity;
             _connection = connection;
-            _fields = new FieldSqlWriter(entity.PrimaryKey).Input().Alias(connection.L, connection.R).Keys().ToArray();
-            }
+            _fields = _entity.PrimaryKey.ToEnumerable().Where(f => f.Input).Select(f => f.Alias).ToArray();
+            _length = _fields.Length;
+        }
 
         protected override Row CreateRowFromReader(IDataReader reader) {
             var row = new Row();
-            foreach (var field in _fields) {
-                row[field] = reader[field];
+            for (var i = 0; i < _length; i++) {
+                row[_fields[i]] = reader.GetValue(i);
             }
             return row;
         }
