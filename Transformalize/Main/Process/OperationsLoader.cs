@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Linq;
 using Transformalize.Configuration;
+using Transformalize.Operations.Transform;
 
 namespace Transformalize.Main {
 
@@ -26,8 +27,14 @@ namespace Transformalize.Main {
                     var alias = Common.GetAlias(f, true, entityElement.Prefix);
                     var field = _process.GetField(alias, entity.Alias);
 
+                    if (entity.TrimAll && field.Input && field.SimpleType.Equals("string")) {
+                        field.Transforms.Insert(0, "trim");
+                        entity.Operations.Add(new TrimOperation(field.Alias, field.Alias, " "));
+                    }
+
                     foreach (TransformConfigurationElement t in f.Transforms) {
                         field.Transforms.Add(t.Method.ToLower());
+
                         var reader = new FieldParametersReader();
                         entity.Operations.Add(factory.Create(field, t, reader.Read(t)));
                         AddBranches(t.Branches, entity, field, reader);

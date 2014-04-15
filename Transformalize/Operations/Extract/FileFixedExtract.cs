@@ -23,6 +23,7 @@ namespace Transformalize.Operations.Extract {
         private readonly string _fullName;
         private readonly string _name;
         private readonly ErrorMode _errorMode;
+        private readonly int _ignoreFirstLines;
 
         private int _counter;
 
@@ -36,11 +37,16 @@ namespace Transformalize.Operations.Extract {
             _fullName = fileInfo.FullName;
             _name = fileInfo.Name;
             _errorMode = connection.ErrorMode;
+            _ignoreFirstLines = connection.Start - 1;
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
 
-            var cb = new FixedLengthClassBuilder("Tfl" + _entity.Alias) { IgnoreEmptyLines = true, FixedMode = FixedMode.AllowVariableLength };
+            var cb = new FixedLengthClassBuilder("Tfl" + _entity.Alias) {
+                IgnoreEmptyLines = true,
+                FixedMode = FixedMode.AllowVariableLength,
+                IgnoreFirstLines = _ignoreFirstLines
+            };
             foreach (var field in _fields) {
                 var length = field.Length.Equals("max", IC) ? 4000 : Convert.ToInt32(field.Length.Equals(string.Empty) ? "64" : field.Length);
                 cb.AddField(field.Alias, length, typeof(string));

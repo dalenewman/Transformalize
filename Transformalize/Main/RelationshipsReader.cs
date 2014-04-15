@@ -50,29 +50,28 @@ namespace Transformalize.Main {
             };
         }
 
-        private Join GetJoin(Entity leftEntity, string leftField, Entity rightEntity, string rightField) {
-            if (!leftEntity.Fields.ContainsKey(leftField) &&
-                !leftEntity.Fields.ToEnumerable().Any(Common.FieldFinder(leftField))) {
+        private static Join GetJoin(Entity leftEntity, string leftField, Entity rightEntity, string rightField) {
+
+            var leftFields = leftEntity.OutputFields().ToArray();
+            var rightFields = rightEntity.OutputFields().ToArray();
+            var leftHit = leftFields.Any(f => f.Alias.Equals(leftField));
+            var rightHit = rightFields.Any(f => f.Alias.Equals(rightField));
+
+            if (!leftHit && !leftFields.Any(Common.FieldFinder(leftField))) {
                 throw new TransformalizeException("The left entity {0} does not have a field named {1} for joining to the right entity {2} with field {3}.", leftEntity.Alias, leftField, rightEntity.Alias, rightField);
             }
 
-            if (!rightEntity.Fields.ContainsKey(rightField) &&
-                !rightEntity.Fields.ToEnumerable().Any(Common.FieldFinder(rightField)))
-            {
-                var message = string.Format("The right entity {0} does not have a field named {1} for joining to the left entity {2} with field {3}.", rightEntity.Alias, rightField, leftEntity.Alias, leftField);
-                _log.Error(message);
-                throw new TransformalizeException(message);
+            if (!rightHit && !rightFields.Any(Common.FieldFinder(rightField))) {
+                throw new TransformalizeException("The right entity {0} does not have a field named {1} for joining to the left entity {2} with field {3}.", rightEntity.Alias, rightField, leftEntity.Alias, leftField);
             }
 
             var join = new Join {
-                LeftField =
-                    leftEntity.Fields.ContainsKey(leftField)
-                        ? leftEntity.Fields[leftField]
-                        : leftEntity.Fields.ToEnumerable().First(Common.FieldFinder(leftField)),
-                RightField =
-                    rightEntity.Fields.ContainsKey(rightField)
-                        ? rightEntity.Fields[rightField]
-                        : rightEntity.Fields.ToEnumerable().First(Common.FieldFinder(rightField))
+                LeftField = leftHit
+                        ? leftFields.First(f => f.Alias.Equals(leftField))
+                        : leftFields.First(Common.FieldFinder(leftField)),
+                RightField = rightHit
+                        ? rightFields.First(f => f.Alias.Equals(rightField))
+                        : rightFields.First(Common.FieldFinder(rightField))
             };
 
             if (join.LeftField.FieldType.HasFlag(FieldType.MasterKey) || join.LeftField.FieldType.HasFlag(FieldType.PrimaryKey)) {

@@ -66,6 +66,7 @@ namespace Transformalize.Main {
                 Sample = element.Sample,
                 Top = element.Top,
                 DetectChanges = element.DetectChanges,
+                TrimAll = element.TrimAll,
                 SqlOverride = element.SqlOverride.Sql,
                 SqlKeysOverride = element.SqlKeysOverride.Sql,
                 Alias = string.IsNullOrEmpty(element.Alias) ? element.Name : element.Alias,

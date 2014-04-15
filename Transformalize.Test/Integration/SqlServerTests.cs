@@ -70,7 +70,7 @@ namespace Transformalize.Test.Integration {
         [Test]
         public void TestFail()
         {
-            const string file = @"C:\Code\TransformalizeConfiguration\TransformalizeConfiguration\App_Data\Clevest35\Duke.xml";
+            const string file = @"C:\Code\TransformalizeConfiguration\TransformalizeConfiguration\App_Data\Temp.xml";
             var process = ProcessFactory.Create(file, new Options() {Mode = "init", LogLevel = LogLevel.Debug})[0];
             process.Run();
         }

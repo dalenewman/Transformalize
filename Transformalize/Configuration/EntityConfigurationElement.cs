@@ -46,6 +46,7 @@ namespace Transformalize.Configuration {
         private const string OUTPUT = "output";
         private const string INPUT = "input";
         private const string DETECT_CHANGES = "detect-changes";
+        private const string TRIM_ALL = "trim-all";
 
         public IOperation InputOperation { get; set; }
 
@@ -55,6 +56,11 @@ namespace Transformalize.Configuration {
             set { this[DETECT_CHANGES] = value; }
         }
 
+        [ConfigurationProperty(TRIM_ALL, IsRequired = false, DefaultValue = false)]
+        public bool TrimAll {
+            get { return (bool)this[TRIM_ALL]; }
+            set { this[TRIM_ALL] = value; }
+        }
 
         [ConfigurationProperty(SCHEMA, IsRequired = false, DefaultValue = "dbo")]
         public string Schema {

@@ -72,6 +72,7 @@ namespace Transformalize.Main {
         public List<NamedConnection> Output { get; set; }
         public List<NamedConnection> Input { get; set; }
         public bool DetectChanges { get; set; }
+        public bool TrimAll { get; set; }
 
         public Entity(int batchId) {
             _tflBatchId = batchId;
