@@ -81,7 +81,44 @@ namespace Transformalize.Main.Providers.ElasticSearch {
         }
 
         public override void LoadBeginVersion(Entity entity) {
-            throw new NotImplementedException();
+            //get the version and type for the maximum tflbatchid for a given process and entity
+            //set entity.HasRange
+            //set entity.Begin
+            var client = ElasticSearchClientFactory.Create(this, TflBatchEntity(entity.ProcessName));
+            var body = new {
+                query = new {
+                    query_string = new {
+                        query = entity.Alias,
+                        fields = new[] { "entity" }
+                    }
+                },
+                aggs = new {
+                    tflbatchid = new {
+                        max = new {
+                            field = "tflbatchid"
+                        }
+                    }
+                },
+                size = 0
+            };
+            var result = client.Client.Search(client.Index, client.Type, body);
+            var tflbatchid = result.Response["aggregations"]["tflbatchid"]["value"].Value;
+
+            if (tflbatchid != null)
+            {
+                var tflBatchId = Convert.ToInt32(tflbatchid);
+                if (tflBatchId > 0) {
+                    result = client.Client.SearchGet(client.Index, client.Type, s => s
+                        .Add("q", "tflbatchid=" + tflbatchid)
+                        .Add("_source_include", "version,version_type")
+                        .Add("size", 1)
+                    );
+                    var hits = result.Response["hits"].hits;
+                    var versionType = (string)hits[0]["_source"]["version_type"].Value;
+                    entity.Begin = Common.GetObjectConversionMap()[versionType](hits[0]["_source"]["version"].Value);
+                    entity.HasRange = true;
+                }
+            }
         }
 
         public override void LoadEndVersion(Entity entity) {

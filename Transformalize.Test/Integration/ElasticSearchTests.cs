@@ -173,6 +173,15 @@ namespace Transformalize.Test.Integration {
             //process[1].CreateOutput(process[1].Entities[0]);
         }
 
+        [Test]
+        public void TestLoadBeginVersion()
+        {
+            var process = ProcessFactory.Create(@"C:\Code\TransformalizeConfiguration\TransformalizeConfiguration\App_Data\Clevest35\EventLog.xml", new Options() { Mode = "init" });
+            process[1].Connections["output"].LoadBeginVersion(process[1].Entities[0]);
+            Assert.IsNotNull(process[1].Entities[0].Begin);
+            
+        }
+
 
 
     }
