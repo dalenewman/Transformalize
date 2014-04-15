@@ -11,7 +11,6 @@ namespace Transformalize.Operations.Transform {
         private readonly TimeZoneInfo _toTimeZoneInfo;
         private readonly TimeSpan _adjustment;
         private readonly TimeSpan _daylightAdjustment;
-        private readonly bool _utcToLocal;
 
         public TimeZoneOperation(string inKey, string outKey, string fromTimeZone, string toTimeZone)
             : base(inKey, outKey) {
@@ -25,7 +24,7 @@ namespace Transformalize.Operations.Transform {
             _adjustment = _toTimeZoneInfo.BaseUtcOffset - fromTimeZoneInfo.BaseUtcOffset;
             _daylightAdjustment = _adjustment.Add(new TimeSpan(0, 1, 0, 0));
 
-            _utcToLocal = fromTimeZone.Equals("UTC") && !toTimeZone.Equals("UTC");
+            Name = string.Format("TimeZoneOperation ({0})", outKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

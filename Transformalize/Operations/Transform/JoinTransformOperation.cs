@@ -13,6 +13,7 @@ namespace Transformalize.Operations.Transform {
             : base(string.Empty, outKey) {
             _separator = separator;
             _parameters = parameters.ToEnumerable();
+            Name = string.Format("JoinOperation ({0})", outKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

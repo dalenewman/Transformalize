@@ -10,6 +10,7 @@ namespace Transformalize.Operations.Transform {
         public TrimEndOperation(string inKey, string outKey, string trimChars)
             : base(inKey, outKey) {
             _trimCharArray = trimChars.ToCharArray();
+            Name = string.Format("TrimEndOperation ({0})", outKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

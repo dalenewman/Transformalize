@@ -33,11 +33,13 @@ namespace Transformalize.Processes {
         private readonly Process _process;
 
         public UpdateMasterProcess(ref Process process) {
-            GlobalDiagnosticsContext.Set("entity", Common.LogLength("All", 20));
             _process = process;
         }
 
         protected override void Initialize() {
+            GlobalDiagnosticsContext.Set("process", _process.Name);
+            GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
+
             foreach (var entity in _process.Entities) {
                 Register(new EntityUpdateMaster(_process, entity));
             }

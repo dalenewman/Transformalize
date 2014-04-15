@@ -8,6 +8,7 @@ namespace Transformalize.Operations.Transform {
 
         public ToUpperOperation(string inKey, string outKey)
             : base(inKey, outKey) {
+            Name = string.Format("ToUpperOperation ({0})", outKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
-using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 
@@ -66,6 +65,8 @@ namespace Transformalize.Operations.Transform {
             if (!leftType.Equals(rightType)) {
                 Warn("If Operation for {0} has type mismatch: left type is {1}, right type is {2};", OutKey, leftType, rightType);
             }
+
+            Name = string.Format("IfOperation ({0})", outKey);
 
             if (Common.CompareMap.ContainsKey(_op))
                 return;

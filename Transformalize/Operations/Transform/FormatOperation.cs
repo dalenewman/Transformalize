@@ -14,6 +14,7 @@ namespace Transformalize.Operations.Transform {
             : base(string.Empty, outKey) {
             _format = format;
             _parameters = parameters.ToEnumerable();
+            Name = string.Format("FormatOperation ({0})", outKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

@@ -16,6 +16,8 @@ namespace Transformalize.Operations.Transform {
             _separator = separator;
             _separatorArray = separator.ToCharArray();
             _inOutDifferent = !inKey.Equals(outKey);
+
+            Name = string.Format("DistinctWords ({0})", outKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

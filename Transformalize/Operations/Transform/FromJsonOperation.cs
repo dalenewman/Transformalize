@@ -13,6 +13,7 @@ namespace Transformalize.Operations.Transform {
         public FromJsonOperation(string inKey, IParameters parameters)
             : base(inKey, string.Empty) {
             _parameters = parameters.ToEnumerable();
+            Name = string.Format("FromJsonOperation (in:{0})", inKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

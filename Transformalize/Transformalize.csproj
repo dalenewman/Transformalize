@@ -1156,6 +1156,7 @@
     <Compile Include="Main\Providers\ElasticSearch\ElasticSearchEntityExists.cs" />
     <Compile Include="Main\Providers\ElasticSearch\ElasticSearchEntityOutputKeysExtract.cs" />
     <Compile Include="Main\Providers\ElasticSearch\ElasticSearchEntityRecordsExist.cs" />
+    <Compile Include="Main\Providers\ElasticSearch\ElasticSearchLoadOperation.cs" />
     <Compile Include="Main\Providers\ElasticSearch\ElasticSearchTflWriter.cs" />
     <Compile Include="Main\Providers\FalseEntityCreator.cs" />
     <Compile Include="Main\Providers\FalseEntityExists.cs" />
@@ -1728,7 +1729,6 @@
     <Compile Include="Operations\Validate\ValidationOperation.cs" />
     <Compile Include="Operations\CollectorOperation.cs" />
     <Compile Include="Operations\ConsoleLoadOperation.cs" />
-    <Compile Include="Processes\ElasticSearchLoadOperation.cs" />
     <Compile Include="Processes\EntityDeleteProcess.cs" />
     <Compile Include="Operations\EntityDetectDeletes.cs" />
     <Compile Include="Processes\EntityKeysProcess.cs" />

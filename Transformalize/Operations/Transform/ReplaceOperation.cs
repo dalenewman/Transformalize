@@ -11,6 +11,7 @@ namespace Transformalize.Operations.Transform {
             : base(inKey, outKey) {
             _oldValue = oldValue;
             _newValue = newValue;
+            Name = string.Format("ReplaceOperation ({0})", outKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

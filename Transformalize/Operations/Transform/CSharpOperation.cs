@@ -97,7 +97,7 @@ public class Transformer : ITransformer
                 throw new TransformalizeException("Failed to compile code. {0}", code);
             }
 
-            Name = "CSharpOperation (" + outKey + ")";
+            Name = string.Format("CSharpOperation ({0})", outKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

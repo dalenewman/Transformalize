@@ -100,7 +100,6 @@ namespace Transformalize.Main {
         //constructor
         public Process(string name = "") {
             Name = name;
-            GlobalDiagnosticsContext.Set("process", name);
             Kernal.Load<NinjectBindings>();
         }
 

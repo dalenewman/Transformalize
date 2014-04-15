@@ -11,6 +11,7 @@ namespace Transformalize.Operations.Transform {
         public ValueOperation(string outKey, string outType, string value)
             : base(string.Empty, outKey) {
             _value = Common.GetObjectConversionMap()[Common.ToSimpleType(outType)](value);
+            Name = string.Format("ValueOperation ({0})", outKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

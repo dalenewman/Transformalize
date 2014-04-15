@@ -10,7 +10,6 @@ namespace Transformalize.Operations.Transform {
     public class ToStringOperation : ShouldRunOperation {
         private readonly string _inType;
         private readonly string _format;
-        private readonly Logger _log = LogManager.GetLogger(string.Empty);
 
         private readonly Dictionary<string, Func<object, string, string>> _toString = new Dictionary<string, Func<object, string, string>>() {
             { "datetime", ((value,format) => (Convert.ToDateTime(value)).ToString(format))},
@@ -32,6 +31,8 @@ namespace Transformalize.Operations.Transform {
             if (_inType == "string") {
                 throw new TransformalizeException("You have ToString transform on {0}.  It is already a string.", inKey);
             }
+
+            Name = string.Format("ToStringOperation ({0})", outKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

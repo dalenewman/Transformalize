@@ -20,22 +20,17 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
 using Transformalize.Extensions;
-using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
-using Transformalize.Main.Providers.SqlServer;
 using Transformalize.Operations;
 using Transformalize.Operations.Extract;
-using Transformalize.Operations.Load;
 using Transformalize.Operations.Transform;
 
 namespace Transformalize.Processes {
@@ -47,13 +42,15 @@ namespace Transformalize.Processes {
         private readonly ConcurrentDictionary<string, CollectorOperation> _collectors = new ConcurrentDictionary<string, CollectorOperation>();
 
         public EntityProcess(Process process, Entity entity) {
-            GlobalDiagnosticsContext.Set("entity", Common.LogLength(entity.Alias));
             _process = process;
             _entity = entity;
             _collectors[STANDARD_OUTPUT] = new CollectorOperation();
         }
 
         protected override void Initialize() {
+
+            GlobalDiagnosticsContext.Set("process", _process.Name);
+            GlobalDiagnosticsContext.Set("entity", Common.LogLength(_entity.Alias, 20));
 
             if (_entity.Input.Count == 1) {
                 Register(ComposeInputOperation(_entity.Input.First()));

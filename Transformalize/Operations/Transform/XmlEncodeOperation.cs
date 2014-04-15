@@ -5,10 +5,12 @@ using System.Threading;
 using System.Xml.Linq;
 using Transformalize.Libs.Rhino.Etl;
 
-namespace Transformalize.Operations.Transform
-{
+namespace Transformalize.Operations.Transform {
     public class XmlEncodeOperation : ShouldRunOperation {
-        public XmlEncodeOperation(string inKey, string outKey) : base(inKey, outKey) { }
+        public XmlEncodeOperation(string inKey, string outKey)
+            : base(inKey, outKey) {
+            Name = string.Format("XmlEncodeOperation ({0})", outKey);
+        }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {

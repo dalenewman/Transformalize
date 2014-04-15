@@ -38,12 +38,14 @@ namespace Transformalize.Processes {
         private readonly Process _process;
 
         public EntityKeysProcess(Process process, Entity entity) {
-            GlobalDiagnosticsContext.Set("entity", Common.LogLength(entity.Alias, 20));
             _process = process;
             _entity = entity;
         }
 
         protected override void Initialize() {
+
+            GlobalDiagnosticsContext.Set("process", _process.Name);
+            GlobalDiagnosticsContext.Set("entity", Common.LogLength(_entity.Alias, 20));
 
             if (_entity.Input.Count == 1) {
                 var connection = _entity.Input.First().Connection;

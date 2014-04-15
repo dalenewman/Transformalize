@@ -9,7 +9,10 @@ using Transformalize.Libs.Rhino.Etl;
 namespace Transformalize.Operations.Transform {
 
     public class DecompressOperation : ShouldRunOperation {
-        public DecompressOperation(string inKey, string outKey) : base(inKey, outKey) { }
+        public DecompressOperation(string inKey, string outKey) : base(inKey, outKey)
+        {
+            Name = string.Format("DecompressOperation ({0})", outKey);
+        }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {

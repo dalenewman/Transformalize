@@ -18,6 +18,7 @@ namespace Transformalize.Operations.Transform {
             _outType = outType;
             _xPath = xPath;
             _settings.ConformanceLevel = ConformanceLevel.Fragment;
+            Name = string.Format("XPathOperation ({0})", outKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

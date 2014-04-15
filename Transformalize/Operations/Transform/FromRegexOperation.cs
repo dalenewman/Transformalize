@@ -25,7 +25,7 @@ namespace Transformalize.Operations.Transform {
             foreach (var field in parameters) {
                 _typeMap[field.Value.Name] = field.Value.SimpleType;
             }
-
+            Name = string.Format("FromRegexOperation (in:{0})", inKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

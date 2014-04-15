@@ -11,6 +11,7 @@ namespace Transformalize.Operations.Transform {
             : base(inKey, outKey) {
             _totalWidth = totalWidth;
             _paddingChar = paddingChar[0];
+            Name = string.Format("PadRightOperation ({0})", outKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

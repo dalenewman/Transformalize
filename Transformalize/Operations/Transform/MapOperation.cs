@@ -37,6 +37,8 @@ namespace Transformalize.Operations.Transform {
             ApplyDataTypes(_equals);
             ApplyDataTypes(_startsWith);
             ApplyDataTypes(_endsWith);
+
+            Name = string.Format("MapOperation ({0})", outKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

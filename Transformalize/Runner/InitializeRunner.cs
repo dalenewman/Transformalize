@@ -9,6 +9,10 @@ namespace Transformalize.Runner
     public class InitializeRunner : IProcessRunner {
 
         public IDictionary<string, IEnumerable<Row>> Run(Process process) {
+            
+            GlobalDiagnosticsContext.Set("process", process.Name);
+            GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
+            
             var result = new Dictionary<string, IEnumerable<Row>>();
 
             if (!process.IsReady())

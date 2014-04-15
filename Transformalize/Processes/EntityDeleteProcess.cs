@@ -35,12 +35,14 @@ namespace Transformalize.Processes {
         private Entity _entity;
 
         public EntityDeleteProcess(Process process, Entity entity) {
-            GlobalDiagnosticsContext.Set("entity", Common.LogLength(entity.Alias, 20));
             _process = process;
             _entity = entity;
         }
 
         protected override void Initialize() {
+
+            GlobalDiagnosticsContext.Set("process", _process.Name);
+            GlobalDiagnosticsContext.Set("entity", Common.LogLength(_entity.Alias));
 
             if (_entity.Input.Count == 1) {
                 var connection = _entity.Input.First().Connection;

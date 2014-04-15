@@ -25,8 +25,7 @@ namespace Transformalize.Main {
             foreach (ProcessConfigurationElement element in elements) {
                 options = options ?? new Options();
                 var collected = Collect(element);
-                GlobalDiagnosticsContext.Set("process", collected.Name);
-                GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
+
                 DetectConfigurationUpdate(options, collected);
 
                 processes.Add(new ProcessReader(collected, options).Read());

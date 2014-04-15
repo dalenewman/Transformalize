@@ -11,6 +11,7 @@ namespace Transformalize.Operations.Transform {
         public ConcatOperation(string outKey, IParameters parameters)
             : base(string.Empty, outKey) {
             _parameters = parameters.ToEnumerable().ToArray();
+            Name = string.Format("ConcatOperation ({0})", outKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

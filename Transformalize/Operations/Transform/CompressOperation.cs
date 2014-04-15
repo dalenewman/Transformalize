@@ -6,10 +6,12 @@ using System.Text;
 using System.Threading;
 using Transformalize.Libs.Rhino.Etl;
 
-namespace Transformalize.Operations.Transform
-{
+namespace Transformalize.Operations.Transform {
     public class CompressOperation : ShouldRunOperation {
-        public CompressOperation(string inKey, string outKey) : base(inKey, outKey) { }
+        public CompressOperation(string inKey, string outKey)
+            : base(inKey, outKey) {
+            Name = string.Format("CompressOperation ({0})", outKey);
+        }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {

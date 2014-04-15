@@ -11,6 +11,7 @@ namespace Transformalize.Operations.Transform {
             : base(inKey, outKey) {
             _startIndex = startIndex;
             _length = length;
+            Name = string.Format("SubstringOperation ({0})", outKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

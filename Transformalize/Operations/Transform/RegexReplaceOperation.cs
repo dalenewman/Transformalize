@@ -15,6 +15,7 @@ namespace Transformalize.Operations.Transform {
             _replacement = replacement;
             _count = count;
             _regex = new Regex(pattern, RegexOptions.Compiled);
+            Name = string.Format("RegexReplaceOperation ({0})", outKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

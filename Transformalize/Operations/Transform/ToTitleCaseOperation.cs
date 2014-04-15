@@ -10,6 +10,7 @@ namespace Transformalize.Operations.Transform {
         public ToTitleCaseOperation(string inKey, string outKey)
             : base(inKey, outKey) {
             _textInfo = Thread.CurrentThread.CurrentCulture.TextInfo;
+            Name = string.Format("ToTitleCaseOperation ({0})", outKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

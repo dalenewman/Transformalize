@@ -49,7 +49,7 @@ namespace Transformalize.Operations.Transform {
             }
 
             _transformer = _timeMap[timeComponent.ToLower()];
-
+            Name = string.Format("TimeOfDayOperation ({0})", outKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

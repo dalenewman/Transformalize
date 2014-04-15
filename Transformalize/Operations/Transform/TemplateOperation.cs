@@ -31,6 +31,7 @@ namespace Transformalize.Operations.Transform {
 
             Razor.Compile(_builder.ToString(), type, outKey);
             _log.Debug("Compiled {0} template with key {1}.", templateModelType, outKey);
+            Name = string.Format("RazorOperation ({0})", outKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

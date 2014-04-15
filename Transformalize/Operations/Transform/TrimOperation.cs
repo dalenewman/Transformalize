@@ -9,6 +9,7 @@ namespace Transformalize.Operations.Transform {
         public TrimOperation(string inKey, string outKey, string trimChars)
             : base(inKey, outKey) {
             _trimChars = trimChars.ToCharArray();
+            Name = string.Format("TrimOperation ({0})", outKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

@@ -30,6 +30,7 @@ using Transformalize.Libs.Rhino.Etl.Operations;
 namespace Transformalize.Main.Providers.SqlServer {
 
     public class SqlServerConnection : AbstractConnection {
+        private readonly Process _process;
 
         private readonly Logger _log = LogManager.GetLogger(string.Empty);
         public override string UserProperty { get { return "User Id"; } }
@@ -42,6 +43,7 @@ namespace Transformalize.Main.Providers.SqlServer {
 
         public SqlServerConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
+            _process = process;
 
             TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
             Type = ProviderType.SqlServer;
@@ -136,7 +138,7 @@ namespace Transformalize.Main.Providers.SqlServer {
 
         public override void WriteEndVersion(AbstractConnection input, Entity entity) {
             //default implementation for relational database
-            if (entity.Inserts + entity.Updates > 0) {
+            if (entity.Inserts + entity.Updates > 0 || _process.IsFirstRun) {
                 using (var cn = GetConnection()) {
                     cn.Open();
 

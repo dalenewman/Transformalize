@@ -33,6 +33,7 @@ namespace Transformalize.Operations.Transform {
             _params["toLat"] = new Tuple<string, object>(toLat.Name, toLat.Value);
             _params["toLong"] = new Tuple<string, object>(toLong.Name, toLong.Value);
 
+            Name = string.Format("DistanceOperation ({0})", outKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

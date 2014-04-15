@@ -44,7 +44,7 @@ namespace Transformalize.Operations {
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
 
-            GlobalDiagnosticsContext.Set("entity", Common.LogLength(_entity.Alias, 20));
+            GlobalDiagnosticsContext.Set("entity", Common.LogLength(_entity.Alias));
 
             //escape 1
             if (_entity.IsMaster() || !_entity.HasForeignKeys())

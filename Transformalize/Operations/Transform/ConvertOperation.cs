@@ -21,6 +21,7 @@ namespace Transformalize.Operations.Transform {
             if (_outType == "int32" && inType == "datetime") {
                 _conversionMap[_outType] = (x => Common.DateTimeToInt32((DateTime)x));
             }
+            Name = string.Format("ConvertOperation ({0})", outKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

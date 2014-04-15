@@ -7,6 +7,7 @@ namespace Transformalize.Operations.Transform {
 
         public LengthOperation(string inKey, string outKey)
             : base(inKey, outKey) {
+            Name = string.Format("LengthOperation ({0})", outKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

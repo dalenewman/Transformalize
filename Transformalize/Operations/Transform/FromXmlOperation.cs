@@ -27,7 +27,7 @@ namespace Transformalize.Operations.Transform {
                 }
                 _nameMap[field.Value.Name] = field.Value;
             }
-
+            Name = string.Format("FromXmlOperation (in:{0})", inKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

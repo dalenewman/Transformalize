@@ -11,6 +11,7 @@ namespace Transformalize.Operations.Transform {
         public ToJsonOperation(string outKey, IParameters parameters)
             : base(string.Empty, outKey) {
             _parameters = parameters;
+            Name = string.Format("ToJsonOperation ({0})", outKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

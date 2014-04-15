@@ -18,6 +18,7 @@ namespace Transformalize.Operations.Transform {
             _comparisonOperator = comparisonOperator;
 
             base.OnFinishedProcessing += FilterOperation_OnFinishedProcessing;
+            Name = string.Format("FilterOperation ({0})", outKey);
         }
 
         void FilterOperation_OnFinishedProcessing(Libs.Rhino.Etl.Operations.IOperation obj) {

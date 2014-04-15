@@ -45,8 +45,6 @@ namespace Transformalize.Main {
 
             Validate(element);
 
-            GlobalDiagnosticsContext.Set("entity", Common.LogLength(element.Alias));
-
             var threading = _process.PipelineThreading;
 
             if (!string.IsNullOrEmpty(element.PipelineThreading)) {

@@ -35,6 +35,9 @@ namespace Transformalize.Runner {
 
         public IDictionary<string,IEnumerable<Row>> Run(Process process) {
 
+            GlobalDiagnosticsContext.Set("process", process.Name);
+            GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
+
             var results = new Dictionary<string, IEnumerable<Row>>();
 
             if (!process.IsReady())

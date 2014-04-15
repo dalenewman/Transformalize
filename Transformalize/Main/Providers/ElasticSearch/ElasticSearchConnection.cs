@@ -6,6 +6,7 @@ using Transformalize.Processes;
 namespace Transformalize.Main.Providers.ElasticSearch {
 
     public class ElasticSearchConnection : AbstractConnection {
+        private readonly Process _process;
 
         public override string UserProperty { get { return string.Empty; } }
         public override string PasswordProperty { get { return string.Empty; } }
@@ -17,6 +18,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
 
         public ElasticSearchConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
+            _process = process;
             TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
             Type = ProviderType.ElasticSearch;
             IsDatabase = true;
@@ -46,22 +48,24 @@ namespace Transformalize.Main.Providers.ElasticSearch {
         }
 
         public override void WriteEndVersion(AbstractConnection input, Entity entity) {
-            var client = ElasticSearchClientFactory.Create(this, TflBatchEntity(entity.ProcessName));
-            var versionType = entity.Version == null ? "string" : entity.Version.SimpleType;
-            var body = new {
-                id = entity.TflBatchId,
-                tflbatchid = entity.TflBatchId,
-                process = entity.ProcessName,
-                connection = input.Name,
-                entity = entity.Alias,
-                updates = entity.Updates,
-                inserts = entity.Inserts,
-                deletes = entity.Deletes,
-                version = new DefaultFactory().Convert(entity.End, versionType),
-                version_type = versionType,
-                tflupdate = DateTime.UtcNow
-            };
-            client.Client.Index(client.Index, client.Type, body);
+            if (entity.Inserts + entity.Updates > 0 || _process.IsFirstRun) {
+                var client = ElasticSearchClientFactory.Create(this, TflBatchEntity(entity.ProcessName));
+                var versionType = entity.Version == null ? "string" : entity.Version.SimpleType;
+                var body = new {
+                    id = entity.TflBatchId,
+                    tflbatchid = entity.TflBatchId,
+                    process = entity.ProcessName,
+                    connection = input.Name,
+                    entity = entity.Alias,
+                    updates = entity.Updates,
+                    inserts = entity.Inserts,
+                    deletes = entity.Deletes,
+                    version = new DefaultFactory().Convert(entity.End, versionType),
+                    version_type = versionType,
+                    tflupdate = DateTime.UtcNow
+                };
+                client.Client.Index(client.Index, client.Type, body);
+            }
         }
 
         public override IOperation EntityOutputKeysExtract(Entity entity) {
@@ -104,8 +108,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             var result = client.Client.Search(client.Index, client.Type, body);
             var tflbatchid = result.Response["aggregations"]["tflbatchid"]["value"].Value;
 
-            if (tflbatchid != null)
-            {
+            if (tflbatchid != null) {
                 var tflBatchId = Convert.ToInt32(tflbatchid);
                 if (tflBatchId > 0) {
                     result = client.Client.SearchGet(client.Index, client.Type, s => s

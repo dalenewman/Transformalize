@@ -10,6 +10,7 @@ namespace Transformalize.Operations.Transform {
         public RightOperation(string inKey, string outKey, int length)
             : base(inKey, outKey) {
             _length = length;
+            Name = string.Format("RightOperation ({0})", outKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

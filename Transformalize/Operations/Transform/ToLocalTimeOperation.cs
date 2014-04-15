@@ -27,6 +27,7 @@ namespace Transformalize.Operations.Transform {
                 _adjustment = _adjustment.Add(new TimeSpan(0, 1, 0, 0));
             }
 
+            Name = string.Format("ToLocalTimeOperation ({0})", outKey);
         }
 
         private string GuardTimeZone(string timeZone, string defaultTimeZone) {

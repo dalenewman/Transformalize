@@ -7,11 +7,8 @@ using Transformalize.Extensions;
 using Transformalize.Libs.fastJSON;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
-using Transformalize.Main;
-using Transformalize.Main.Providers;
-using Transformalize.Main.Providers.ElasticSearch;
 
-namespace Transformalize.Processes {
+namespace Transformalize.Main.Providers.ElasticSearch {
 
     public sealed class ElasticSearchLoadOperation : AbstractOperation {
 

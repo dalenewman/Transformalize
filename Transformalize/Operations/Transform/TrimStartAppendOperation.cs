@@ -12,6 +12,7 @@ namespace Transformalize.Operations.Transform {
             : base(inKey, outKey) {
             _separator = separator;
             _trimChars = trimChars.ToCharArray();
+            Name = string.Format("TrimStartAppendOperation ({0})", outKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

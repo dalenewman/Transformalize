@@ -4,11 +4,11 @@ using Transformalize.Configuration;
 using Transformalize.Extensions;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Operations;
-using Transformalize.Main.Providers.SqlServer;
 using Transformalize.Operations.Transform;
 
 namespace Transformalize.Main.Providers.SqlCe4 {
     public class SqlCe4Connection : AbstractConnection {
+        private readonly Process _process;
 
         private readonly Logger _log = LogManager.GetLogger(string.Empty);
         public override string UserProperty { get { return string.Empty; } }
@@ -21,6 +21,7 @@ namespace Transformalize.Main.Providers.SqlCe4 {
 
         public SqlCe4Connection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
+            _process = process;
 
             TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
             Type = ProviderType.SqlCe4;
@@ -106,7 +107,7 @@ namespace Transformalize.Main.Providers.SqlCe4 {
 
         public override void WriteEndVersion(AbstractConnection input, Entity entity) {
             //default implementation for relational database
-            if (entity.Inserts + entity.Updates > 0) {
+            if (entity.Inserts + entity.Updates > 0 || _process.IsFirstRun) {
                 using (var cn = GetConnection()) {
                     cn.Open();
 

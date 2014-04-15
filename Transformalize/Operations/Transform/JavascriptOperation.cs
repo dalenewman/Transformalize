@@ -65,6 +65,8 @@ namespace Transformalize.Operations.Transform {
             _log.Debug("Loading scripts into Javascript engine...");
             _log.Debug(externalScripts);
             _jint.Execute(externalScripts);
+
+            Name = string.Format("JavascriptOperation ({0})", outKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
