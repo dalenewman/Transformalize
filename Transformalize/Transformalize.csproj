@@ -1324,6 +1324,8 @@
     <Compile Include="Main\Template\TemplateManager.cs" />
     <Compile Include="Main\Template\TemplateReader.cs" />
     <Compile Include="Main\TransformalizeException.cs" />
+    <Compile Include="Main\Transform\NowOperation.cs" />
+    <Compile Include="Main\Transform\SplitIndexOperation.cs" />
     <Compile Include="Main\Transform\TransformOperationFactory.cs" />
     <Compile Include="Main\Transform\ITransformParametersReader.cs" />
     <Compile Include="Main\Transform\ITransformLoader.cs" />

@@ -22,6 +22,7 @@
 
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Text;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
@@ -91,11 +92,11 @@ namespace Transformalize.Main.Providers.SqlServer {
             ";
 
             var builder = new StringBuilder();
-            builder.AppendLine(_connection.WriteTemporaryTable("@KEYS", _key));
-            builder.AppendLine(SqlTemplates.BatchInsertValues(50, "@KEYS", _key, _entity.InputKeys, _connection));
+            builder.AppendLine(_connection.WriteTemporaryTable("@KEYS", _key.Where(f=>f.Input).ToArray()));
+            builder.AppendLine(SqlTemplates.BatchInsertValues(50, "@KEYS", _key.Where(f=>f.Input).ToArray(), _entity.InputKeys, _connection));
 
             var selectKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias(_connection.L, _connection.R).Write(", e.", false);
-            var joinKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias(_connection.L, _connection.R).Set("e", "k").Write(" AND ");
+            var joinKeys = new FieldSqlWriter(_entity.PrimaryKey).Input().Alias(_connection.L, _connection.R).Set("e", "k").Write(" AND ");
             return string.Format(sqlPattern, builder, selectKeys, PrepareVersion(), _connection.Enclose(_entity.OutputName()), joinKeys);
         }
     }

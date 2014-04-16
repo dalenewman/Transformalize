@@ -71,7 +71,9 @@ namespace Transformalize.Operations.Extract {
             } else {
                 using (var file = new FluentFile(cb.CreateRecordClass()).From(_fullName).OnError(_errorMode)) {
                     foreach (var obj in file) {
-                        yield return Row.FromObject(obj);
+                        var row = Row.FromObject(obj);
+                        row["TflFileName"] = _fullName;
+                        yield return row;
                     }
                     HandleErrors(file);
                 }

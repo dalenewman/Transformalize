@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 
@@ -8,18 +9,18 @@ namespace Transformalize.Main.Providers.SqlServer
     public class SqlServerEntityOutputKeysExtractAll : InputCommandOperation {
 
         private readonly Entity _entity;
-        private readonly List<string> _fields;
+        private readonly List<string> _keys;
 
         public SqlServerEntityOutputKeysExtractAll(AbstractConnection connection, Entity entity)
             : base(connection) {
             _entity = entity;
-            _fields = new List<string>(new FieldSqlWriter(entity.PrimaryKey).Alias(connection.L, connection.R).Keys()) { "TflKey" };
+            _keys = new List<string>(entity.PrimaryKey.Select(kv=>kv.Key)) { "TflKey" };
             }
 
         protected override Row CreateRowFromReader(IDataReader reader) {
             var row = new Row();
-            foreach (var field in _fields) {
-                row[field] = reader[field];
+            foreach (var key in _keys) {
+                row[key] = reader[key];
             }
             return row;
 

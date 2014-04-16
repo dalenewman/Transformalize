@@ -44,6 +44,7 @@ namespace Transformalize.Operations.Extract {
                         if (line > _start) {
                             if (_end == 0 || line <= _end){
                                 var row = new Row();
+                                row["TflFileName"] = _fileInfo.FullName;
                                 foreach (var field in _fields) {
                                     row[field.Alias] = reader.GetValue(field.Index);
                                 }

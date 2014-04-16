@@ -432,6 +432,16 @@ namespace Transformalize.Main {
                         (ComparisonOperator)Enum.Parse(typeof(ComparisonOperator), element.Operator, true)
                         ) { ShouldRun = shouldRun };
 
+                case "splitindex":
+                    return new SplitIndexOperation(
+                        inKey,
+                        outKey,
+                        outType,
+                        element.Separator,
+                        element.Count,
+                        element.Index
+                        ) { ShouldRun = shouldRun };
+
                 // validators
                 case "containscharacters":
                     return new ContainsCharactersValidatorOperation(
@@ -586,18 +596,5 @@ namespace Transformalize.Main {
             return new Parameter(parameter, parameter);
         }
 
-    }
-
-    public class NowOperation : ShouldRunOperation {
-        public NowOperation(string inKey, string outKey)
-            : base(inKey, outKey) {
-        }
-
-        public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
-            foreach (var row in rows) {
-                row[OutKey] = DateTime.UtcNow;
-                yield return row;
-            }
-        }
     }
 }
