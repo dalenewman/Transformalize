@@ -166,8 +166,16 @@ namespace Transformalize.Test.Integration {
         }
 
         [Test]
-        public void TempDebug() {
+        public void TempInit() {
             var process = ProcessFactory.Create(@"C:\Code\TransformalizeConfiguration\TransformalizeConfiguration\App_Data\Clevest35\EventLog.xml", new Options() { Mode = "init" });
+            process[0].Run();
+            process[1].Run();
+            //process[1].CreateOutput(process[1].Entities[0]);
+        }
+
+        [Test]
+        public void TempDefault() {
+            var process = ProcessFactory.Create(@"C:\Code\TransformalizeConfiguration\TransformalizeConfiguration\App_Data\Clevest35\EventLog.xml");
             process[0].Run();
             process[1].Run();
             //process[1].CreateOutput(process[1].Entities[0]);

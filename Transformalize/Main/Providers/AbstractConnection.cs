@@ -309,7 +309,18 @@ namespace Transformalize.Main.Providers {
         public abstract IOperation EntityOutputKeysExtractAll(Entity entity);
         public abstract IOperation EntityBulkLoad(Entity entity);
         public abstract IOperation EntityBatchUpdate(Entity entity);
+
+        /// <summary>
+        /// Get a correctly typed version for the maximum tflbatchid given an entity
+        /// Sets entity.HasRange and entity.Begin.
+        /// </summary>
+        /// <param name="entity">an entity</param>
         public abstract void LoadBeginVersion(Entity entity);
+
+        /// <summary>
+        /// Get maximum version from entity. Sets entity.HasRows and entity.End
+        /// </summary>
+        /// <param name="entity">an entity</param>
         public abstract void LoadEndVersion(Entity entity);
     }
 }

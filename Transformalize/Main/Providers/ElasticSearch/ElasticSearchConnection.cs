@@ -1,7 +1,6 @@
 using System;
 using Transformalize.Configuration;
 using Transformalize.Libs.Rhino.Etl.Operations;
-using Transformalize.Processes;
 
 namespace Transformalize.Main.Providers.ElasticSearch {
 
@@ -28,29 +27,14 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             if (!TflBatchRecordsExist(processName)) {
                 return 1;
             }
-
-            var client = ElasticSearchClientFactory.Create(this, TflBatchEntity(processName));
-            var result = client.Client.SearchGet(client.Index, client.Type, s => (s
-                .Add("q", string.Format("process:{0}", processName))
-                .Add("_source_include", "tflbatchid")
-                .Add("size", 10000000)
-            ));
-
-            //this just can't be how you're suppose to do it...
-            var max = 1;
-            var hits = result.Response["hits"].hits;
-            for (var i = 0; i < result.Response["hits"].total; i++) {
-                var value = (int)hits[i]["_source"]["tflbatchid"];
-                if (value > max)
-                    max = value;
-            }
-            return max + 1;
+            return GetMaxTflBatchId(processName) + 1;
         }
 
         public override void WriteEndVersion(AbstractConnection input, Entity entity) {
             if (entity.Inserts + entity.Updates > 0 || _process.IsFirstRun) {
                 var client = ElasticSearchClientFactory.Create(this, TflBatchEntity(entity.ProcessName));
                 var versionType = entity.Version == null ? "string" : entity.Version.SimpleType;
+                var end = versionType.Equals("byte[]") || versionType.Equals("rowversion") ? Common.BytesToHexString((byte[]) entity.End) : new DefaultFactory().Convert(entity.End, versionType).ToString();
                 var body = new {
                     id = entity.TflBatchId,
                     tflbatchid = entity.TflBatchId,
@@ -60,7 +44,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
                     updates = entity.Updates,
                     inserts = entity.Inserts,
                     deletes = entity.Deletes,
-                    version = new DefaultFactory().Convert(entity.End, versionType),
+                    version = end,
                     version_type = versionType,
                     tflupdate = DateTime.UtcNow
                 };
@@ -85,9 +69,40 @@ namespace Transformalize.Main.Providers.ElasticSearch {
         }
 
         public override void LoadBeginVersion(Entity entity) {
-            //get the version and type for the maximum tflbatchid for a given process and entity
-            //set entity.HasRange
-            //set entity.Begin
+            var tflBatchId = GetMaxTflBatchId(entity);
+            if (tflBatchId > 0) {
+                var client = ElasticSearchClientFactory.Create(this, TflBatchEntity(entity.ProcessName));
+                var result = client.Client.SearchGet(client.Index, client.Type, s => s
+                    .Add("q", "tflbatchid:" + tflBatchId)
+                    .Add("_source_include", "version,version_type")
+                    .Add("size", 1)
+                );
+                var hits = result.Response["hits"].hits;
+                var versionType = (string)hits[0]["_source"]["version_type"].Value;
+                entity.Begin = Common.GetObjectConversionMap()[versionType](hits[0]["_source"]["version"].Value);
+                entity.HasRange = true;
+            }
+        }
+
+        public override void LoadEndVersion(Entity entity) {
+
+            var client = ElasticSearchClientFactory.Create(this, entity);
+            var body = new {
+                aggs = new {
+                    version = new {
+                        max = new {
+                            field = entity.Version.Alias.ToLower()
+                        }
+                    }
+                },
+                size = 0
+            };
+            var result = client.Client.Search(client.Index, client.Type, body);
+            entity.End = Common.GetObjectConversionMap()[entity.Version.SimpleType](result.Response["aggregations"]["version"]["value"].Value);
+            entity.HasRows = entity.End != null;
+        }
+
+        private int GetMaxTflBatchId(Entity entity) {
             var client = ElasticSearchClientFactory.Create(this, TflBatchEntity(entity.ProcessName));
             var body = new {
                 query = new {
@@ -106,26 +121,24 @@ namespace Transformalize.Main.Providers.ElasticSearch {
                 size = 0
             };
             var result = client.Client.Search(client.Index, client.Type, body);
-            var tflbatchid = result.Response["aggregations"]["tflbatchid"]["value"].Value;
-
-            if (tflbatchid != null) {
-                var tflBatchId = Convert.ToInt32(tflbatchid);
-                if (tflBatchId > 0) {
-                    result = client.Client.SearchGet(client.Index, client.Type, s => s
-                        .Add("q", "tflbatchid=" + tflbatchid)
-                        .Add("_source_include", "version,version_type")
-                        .Add("size", 1)
-                    );
-                    var hits = result.Response["hits"].hits;
-                    var versionType = (string)hits[0]["_source"]["version_type"].Value;
-                    entity.Begin = Common.GetObjectConversionMap()[versionType](hits[0]["_source"]["version"].Value);
-                    entity.HasRange = true;
-                }
-            }
+            return Convert.ToInt32((result.Response["aggregations"]["tflbatchid"]["value"].Value ?? 0));
         }
 
-        public override void LoadEndVersion(Entity entity) {
-            throw new NotImplementedException();
+        private int GetMaxTflBatchId(string processName) {
+            var client = ElasticSearchClientFactory.Create(this, TflBatchEntity(processName));
+            var body = new {
+                aggs = new {
+                    tflbatchid = new {
+                        max = new {
+                            field = "tflbatchid"
+                        }
+                    }
+                },
+                size = 0
+            };
+            var result = client.Client.Search(client.Index, client.Type, body);
+            return Convert.ToInt32((result.Response["aggregations"]["tflbatchid"]["value"].Value ?? 0));
         }
+
     }
 }

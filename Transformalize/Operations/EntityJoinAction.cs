@@ -43,6 +43,7 @@ namespace Transformalize.Operations {
                 if (_entity.Version == null || UpdateIsNecessary(ref leftRow, ref rightRow)) {
                     leftRow["a"] = EntityAction.Update;
                     leftRow["TflKey"] = rightRow["TflKey"];
+                    leftRow["TflBatchId"] = _entity.TflBatchId;
                 } else {
                     leftRow["a"] = EntityAction.None;
                 }

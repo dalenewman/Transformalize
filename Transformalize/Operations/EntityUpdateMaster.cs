@@ -47,7 +47,7 @@ namespace Transformalize.Operations {
             GlobalDiagnosticsContext.Set("entity", Common.LogLength(_entity.Alias));
 
             //escape 1
-            if (_entity.IsMaster() || !_entity.HasForeignKeys())
+            if (_entity.IsMaster() || (!_entity.HasForeignKeys() && _process.IsFirstRun))
                 return rows;
 
             //escape 2
@@ -87,10 +87,10 @@ namespace Transformalize.Operations {
 
             var builder = new StringBuilder();
 
-            var sets = new FieldSqlWriter(_entity.Fields).FieldType(FieldType.ForeignKey).Alias(connection.L, connection.R).Set(master, entity).Write(",\r\n    ");
+            var sets = _entity.HasForeignKeys() ? new FieldSqlWriter(_entity.Fields).FieldType(FieldType.ForeignKey).Alias(connection.L, connection.R).Set(master, entity).Write(",\r\n    ") + "," : string.Empty;
 
             builder.AppendFormat("UPDATE {0}\r\n", master);
-            builder.AppendFormat("SET {0}, {1}.TflBatchId = @TflBatchId\r\n", sets, master);
+            builder.AppendFormat("SET {0} {1}.TflBatchId = @TflBatchId\r\n", sets, master);
             builder.AppendFormat("FROM {0}\r\n", entity);
 
             foreach (var relationship in _entity.RelationshipToMaster) {
