@@ -78,6 +78,11 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public TransformBuilder Interval(int interval) {
+            _transform.Interval = interval;
+            return this;
+        }
+
         public TransformBuilder Count(int count) {
             _transform.Count = count;
             return this;

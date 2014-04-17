@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using Rhino.Etl.Core.Files;
+using Transformalize.Libs.FileHelpers.Attributes;
 using Transformalize.Libs.FileHelpers.Enums;
 using Transformalize.Libs.FileHelpers.RunTime;
 using Transformalize.Libs.Rhino.Etl;
@@ -24,6 +25,7 @@ namespace Transformalize.Operations.Extract {
         private readonly string _name;
         private readonly ErrorMode _errorMode;
         private readonly int _ignoreFirstLines;
+        private readonly FixedLengthClassBuilder _classBuilder;
 
         private int _counter;
 
@@ -38,24 +40,27 @@ namespace Transformalize.Operations.Extract {
             _name = fileInfo.Name;
             _errorMode = connection.ErrorMode;
             _ignoreFirstLines = connection.Start - 1;
+
+            _classBuilder = new FixedLengthClassBuilder("Tfl" + _entity.Alias) {
+                IgnoreEmptyLines = true,
+                IgnoreFirstLines = _ignoreFirstLines
+            };
+            foreach (var field in _fields) {
+                var length = field.Length.Equals("max", IC) ? int.MaxValue : Convert.ToInt32(field.Length.Equals(string.Empty) ? "64" : field.Length);
+                var builder = new FixedFieldBuilder(field.Alias, length, typeof(string)) {
+                    FieldNullValue = new String(' ', length)
+                };
+                _classBuilder.AddField(builder);
+            }
+
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
 
-            var cb = new FixedLengthClassBuilder("Tfl" + _entity.Alias) {
-                IgnoreEmptyLines = true,
-                FixedMode = FixedMode.AllowVariableLength,
-                IgnoreFirstLines = _ignoreFirstLines
-            };
-            foreach (var field in _fields) {
-                var length = field.Length.Equals("max", IC) ? 4000 : Convert.ToInt32(field.Length.Equals(string.Empty) ? "64" : field.Length);
-                cb.AddField(field.Alias, length, typeof(string));
-            }
-
             Info("Reading {0}", _name);
 
             if (_top > 0) {
-                using (var file = new FluentFile(cb.CreateRecordClass()).From(_fullName).OnError(_errorMode)) {
+                using (var file = new FluentFile(_classBuilder.CreateRecordClass()).From(_fullName).OnError(_errorMode)) {
                     foreach (var obj in file) {
                         var row = Row.FromObject(obj);
                         row["TflFileName"] = _fullName;
@@ -69,7 +74,7 @@ namespace Transformalize.Operations.Extract {
                     HandleErrors(file);
                 }
             } else {
-                using (var file = new FluentFile(cb.CreateRecordClass()).From(_fullName).OnError(_errorMode)) {
+                using (var file = new FluentFile(_classBuilder.CreateRecordClass()).From(_fullName).OnError(_errorMode)) {
                     foreach (var obj in file) {
                         var row = Row.FromObject(obj);
                         row["TflFileName"] = _fullName;

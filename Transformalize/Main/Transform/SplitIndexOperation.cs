@@ -17,6 +17,9 @@ namespace Transformalize.Main {
             _index = index;
             _sepArray = separator.ToCharArray();
             _convert = !outType.Equals("string");
+
+            Name = "SplitIndex (" + outKey + ")";
+
         }
 
 

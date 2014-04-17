@@ -70,10 +70,11 @@ namespace Transformalize.Test.Integration {
         [Test]
         public void TestFail()
         {
-            const string file = @"http://config.mwf.local/Attachment31.xml?ClevestDatabase=ClevestEs&TflDatabase=TflEs";
+            const string file = @"c:\code\transformalizeconfiguration\transformalizeconfiguration\app_data\phitohost.xml";
             //var process = ProcessFactory.Create(file, new Options() {Mode = "init", LogLevel = LogLevel.Debug})[0];
-            var process = ProcessFactory.Create(file)[0];
-            process.Run();
+            ProcessFactory.Create(file, new Options() {Mode="init"})[0].Run();
+            ProcessFactory.Create(file)[0].Run();
+
         }
 
 

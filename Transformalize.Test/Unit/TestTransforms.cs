@@ -117,6 +117,22 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
+        public void SplitIndex() {
+            var input = new RowsBuilder()
+                .Row()
+                    .Field("f1", "a couple words").Field("f2", "01:02:00")
+                .ToOperation();
+            var splindex1 = new SplitIndexOperation("f1", "f1", "string", " ", 0, 1);
+            var splindex2 = new SplitIndexOperation("f2", "f2", "int", ":", 0, 1);
+
+            var rows = TestOperation(input, splindex1, splindex2);
+
+            Assert.AreEqual("couple", rows[0]["f1"]);
+            Assert.AreEqual(2, rows[0]["f2"]);
+        }
+
+
+        [Test]
         public void FromJson() {
             var input = new RowsBuilder().Row().Field("f1", "{ \"j1\":\"v1\", \"j2\":7, \"array\":[{\"x\":1}] }").ToOperation();
             var outParameters = new ParametersBuilder().Parameter("j1").Parameter("j2").Type("int32").Parameter("array").ToParameters();
@@ -280,13 +296,22 @@ namespace Transformalize.Test.Unit {
 
         [Test]
         public void Insert() {
-            const string expected = "InsertHere";
-
             var input = new RowsBuilder().Row("f1", "Insertere").ToOperation();
-            var insert = new InsertOperation("f1", "o1", 6, "H");
+            var insert = new InsertOperation("f1", "o1", 6, " H");
             var output = TestOperation(input, insert);
 
-            Assert.AreEqual(expected, output[0]["o1"]);
+            Assert.AreEqual("Insert Here", output[0]["o1"]);
+        }
+
+        [Test]
+        public void InsertInterval()
+        {
+            var input = new RowsBuilder().Row("date", "140607").ToOperation();
+            var insertInterval = new InsertIntervalOperation("date", "date",2,"-");
+            var insert = new InsertOperation("date","date",0,"20");
+            var output = TestOperation(input, insertInterval, insert);
+
+            Assert.AreEqual("2014-06-07", output[0]["date"]);
         }
 
         [Test]
@@ -888,8 +913,7 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void TestCompress()
-        {
+        public void TestCompress() {
             var input = new RowsBuilder().Row("in", "Hello World Hello World Hello World Hello World Hello World Hello World Hello World").ToOperation();
             var compress = new CompressOperation("in", "out");
             var output = TestOperation(input, compress);

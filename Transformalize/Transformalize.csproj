@@ -1681,6 +1681,7 @@
     <Compile Include="Operations\Transform\FromXmlOperation.cs" />
     <Compile Include="Operations\Transform\GetHashCodeOperation.cs" />
     <Compile Include="Operations\Transform\IfOperation.cs" />
+    <Compile Include="Operations\Transform\InsertIntervalOperation.cs" />
     <Compile Include="Operations\Transform\InsertOperation.cs" />
     <Compile Include="Operations\Transform\JavascriptOperation.cs" />
     <Compile Include="Operations\Transform\JoinTransformOperation.cs" />

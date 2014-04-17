@@ -59,6 +59,7 @@ namespace Transformalize.Configuration {
         private const string UNITS = "units";
         private const string DOMAIN = "domain";
         private const string XPATH = "xpath";
+        private const string INTERVAL = "interval";
         
         private const string LEFT = "left";
         private const string OPERATOR = "operator";
@@ -169,6 +170,12 @@ namespace Transformalize.Configuration {
         public int Index {
             get { return (int)this[INDEX]; }
             set { this[INDEX] = value; }
+        }
+
+        [ConfigurationProperty(INTERVAL, IsRequired = false, DefaultValue = 0)]
+        public int Interval {
+            get { return (int)this[INTERVAL]; }
+            set { this[INTERVAL] = value; }
         }
 
         [ConfigurationProperty(COUNT, IsRequired = false, DefaultValue = 0)]

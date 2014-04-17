@@ -116,7 +116,15 @@ namespace Transformalize.Main {
                     return new InsertOperation(
                         inKey,
                         outKey,
-                        element.Index,
+                        element.StartIndex,
+                        element.Value
+                    ) { ShouldRun = shouldRun };
+
+                case "insertinterval":
+                    return new InsertIntervalOperation(
+                        inKey,
+                        outKey,
+                        element.Interval,
                         element.Value
                     ) { ShouldRun = shouldRun };
 

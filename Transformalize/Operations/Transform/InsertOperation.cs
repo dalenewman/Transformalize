@@ -11,7 +11,7 @@ namespace Transformalize.Operations.Transform {
             : base(inKey, outKey) {
             _startIndex = startIndex;
             _value = value;
-            Name = string.Format("InsertOperation ({0})", outKey);
+            Name = string.Format("Insert ({0})", outKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
