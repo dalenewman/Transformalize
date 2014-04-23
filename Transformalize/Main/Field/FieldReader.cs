@@ -62,7 +62,8 @@ namespace Transformalize.Main {
                 DefaultBlank = element.DefaultBlank,
                 DefaultWhiteSpace = element.DefaultWhiteSpace,
                 QuotedWith = element.QuotedWith,
-                Optional = element.Optional
+                Optional = element.Optional,
+                Delimiter = element.Delimiter
             };
 
             FieldSearchTypesLoader(field, element);
@@ -92,7 +93,8 @@ namespace Transformalize.Main {
                 Name = searchType.Name,
                 Index = searchType.Index,
                 Store = searchType.Store,
-                Type = searchType.Type.Equals("inherit", IC) ? field.SimpleType : searchType.Type
+                Type = searchType.Type.Equals("inherit", IC) ? field.SimpleType : searchType.Type,
+                MultiValued = searchType.MultiValued
             };
             return newSearchType;
         }

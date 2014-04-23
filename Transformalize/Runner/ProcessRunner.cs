@@ -48,8 +48,7 @@ namespace Transformalize.Runner {
             ProcessMaster(process);
             ProcessTransforms(process);
 
-            if (process.Options.RenderTemplates)
-                new TemplateManager(process).Manage();
+            new TemplateManager(process).Manage();
 
             return process.Entities.ToDictionary(e => e.Alias, e => e.Rows);
         }

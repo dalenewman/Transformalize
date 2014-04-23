@@ -48,10 +48,10 @@ namespace Transformalize.Operations {
             _separatorString = separator.ToString(CultureInfo.InvariantCulture);
             _separatorArray = new[] { separator };
 
-            _keysToGroupBy = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).Context().ToEnumerable().Where(f => f.Output && f.Aggregate.Equals("group", IC)).Select(f => f.Alias).ToArray();
+            _keysToGroupBy = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).Context().ToEnumerable().Where(f => f.Aggregate.Equals("group", IC)).Select(f => f.Alias).ToArray();
             _firstKey = _keysToGroupBy[0];
 
-            _fieldsToAccumulate = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).Context().ToEnumerable().Where(f => f.Output && !f.Aggregate.Equals("group", IC)).ToArray();
+            _fieldsToAccumulate = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).Context().ToEnumerable().Where(f => !f.Aggregate.Equals("group", IC)).ToArray();
 
             foreach (var field in _fieldsToAccumulate) {
                 _builders[field.Alias] = new StringBuilder();
@@ -131,7 +131,7 @@ namespace Transformalize.Operations {
                         var aggregateValue = aggregate[field.Alias].ToString();
                         var aggregateIsEmpty = aggregateValue == string.Empty;
 
-                        var rowValue = row[field.Alias].ToString().Replace(_separatorString, string.Empty);
+                        var rowValue = row[field.Alias].ToString().Replace(field.Delimiter, string.Empty);
                         var rowIsEmpty = rowValue == string.Empty;
 
                         if (aggregateIsEmpty && rowIsEmpty)
@@ -141,8 +141,7 @@ namespace Transformalize.Operations {
                             _builders[field.Alias].Clear();
                             _builders[field.Alias].Append(aggregateValue);
                             if (!rowIsEmpty && aggregateValue != rowValue) {
-                                _builders[field.Alias].Append(_separator);
-                                _builders[field.Alias].Append(" ");
+                                _builders[field.Alias].Append(field.Delimiter);
                                 _builders[field.Alias].Append(rowValue);
                             }
                             aggregate[field.Alias] = _builders[field.Alias].ToString();

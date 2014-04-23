@@ -22,10 +22,8 @@
 
 using System.Configuration;
 
-namespace Transformalize.Configuration
-{
-    public class TemplateConfigurationElement : ConfigurationElement
-    {
+namespace Transformalize.Configuration {
+    public class TemplateConfigurationElement : ConfigurationElement {
         private const string CONTENT_TYPE = "content-type";
         private const string FILE = "file";
         private const string SETTINGS = "settings";
@@ -33,24 +31,36 @@ namespace Transformalize.Configuration
         private const string NAME = "name";
         private const string CACHE = "cache";
         private const string ENABLED = "enabled";
+        private const string RENDER = "render";
+        private const string CONDITIONAL = "conditional";
+
+        [ConfigurationProperty(RENDER, IsRequired = false, DefaultValue = true)]
+        public bool Render {
+            get { return (bool)this[RENDER]; }
+            set { this[RENDER] = value; }
+        }
+
+        [ConfigurationProperty(CONDITIONAL, IsRequired = false, DefaultValue = false)]
+        public bool Conditional {
+            get { return (bool)this[CONDITIONAL]; }
+            set { this[CONDITIONAL] = value; }
+        }
 
         [ConfigurationProperty(NAME, IsRequired = true)]
-        public string Name
-        {
+        public string Name {
             get { return this[NAME] as string; }
             set { this[NAME] = value; }
         }
 
         [ConfigurationProperty(FILE, IsRequired = true)]
-        public string File
-        {
+        public string File {
             get { return this[FILE] as string; }
             set { this[FILE] = value; }
         }
 
         [ConfigurationProperty(CACHE, IsRequired = false, DefaultValue = false)]
         public bool Cache {
-            get { return (bool) this[CACHE]; }
+            get { return (bool)this[CACHE]; }
             set { this[CACHE] = value; }
         }
 
@@ -61,26 +71,22 @@ namespace Transformalize.Configuration
         }
 
         [ConfigurationProperty(CONTENT_TYPE, IsRequired = false, DefaultValue = "raw")]
-        public string ContentType
-        {
+        public string ContentType {
             get { return this[CONTENT_TYPE] as string; }
             set { this[CONTENT_TYPE] = value; }
         }
 
         [ConfigurationProperty(SETTINGS)]
-        public SettingElementCollection Settings
-        {
+        public SettingElementCollection Settings {
             get { return this[SETTINGS] as SettingElementCollection; }
         }
 
         [ConfigurationProperty(ACTIONS)]
-        public ActionElementCollection Actions
-        {
+        public ActionElementCollection Actions {
             get { return this[ACTIONS] as ActionElementCollection; }
         }
 
-        public override bool IsReadOnly()
-        {
+        public override bool IsReadOnly() {
             return false;
         }
     }

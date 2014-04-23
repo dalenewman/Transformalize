@@ -19,7 +19,8 @@ namespace Transformalize.Main {
                 Name = "none",
                 Index = false,
                 Store = false,
-                Type = "inherit"
+                Type = "inherit",
+                MultiValued = false
             };
 
             var configuredTypes = _elements.Cast<SearchTypeConfigurationElement>().ToArray();
@@ -30,7 +31,8 @@ namespace Transformalize.Main {
                         Index = st.Index,
                         Name = st.Name,
                         Store = st.Store,
-                        Type = st.Type
+                        Type = st.Type,
+                        MultiValued = st.MultiValued
                     };
                 }
             }

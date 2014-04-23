@@ -145,11 +145,6 @@ namespace Transformalize.Main.Providers.SqlCe4 {
                     cmd.ExecuteNonQuery();
                 }
             }
-            if (entity.Delete) {
-                _log.Info("Processed {0} insert{1}, {2} update{3}, and {4} delete{5} in {6}.", entity.Inserts, entity.Inserts.Plural(), entity.Updates, entity.Updates.Plural(), entity.Deletes, entity.Deletes.Plural(), entity.Alias);
-            } else {
-                _log.Info("Processed {0} insert{1}, and {2} update{3} in {4}.", entity.Inserts, entity.Inserts.Plural(), entity.Updates, entity.Updates.Plural(), entity.Alias);
-            }
 
         }
 

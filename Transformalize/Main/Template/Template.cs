@@ -39,6 +39,7 @@ namespace Transformalize.Main {
 
         private readonly Logger _log = LogManager.GetLogger(string.Empty);
         private readonly Process _process;
+        private readonly TemplateConfigurationElement _element;
 
         private readonly string _renderedTemplateFile;
         private readonly string _renderedTemplateContent;
@@ -57,16 +58,21 @@ namespace Transformalize.Main {
         public bool Enabled { get; private set; }
         public Encoding ContentType { get; private set; }
         public bool IsUsedInPipeline { get; set; }
+        public bool ShouldRender { get; set; }
+        public bool Conditional { get; set; }
 
         public Template(Process process, TemplateConfigurationElement element, Contents contents) {
 
-            Contents = contents;
             Cache = element.Cache;
             Enabled = element.Enabled;
+            ShouldRender = element.Render;
+            Conditional = element.Conditional;
             Name = element.Name;
             ContentType = element.ContentType.Equals("raw") ? Encoding.Raw : Encoding.Html;
+            Contents = contents;
 
             _process = process;
+            _element = element;
 
             _renderedTemplateFile = GetFileName(RENDERED_TEMPLATE_CACHE_FOLDER);
             _renderedTemplateContentExists = TryRead(_renderedTemplateFile, out _renderedTemplateContent);
@@ -140,5 +146,6 @@ namespace Transformalize.Main {
             }
             return renderedContent;
         }
+
     }
 }

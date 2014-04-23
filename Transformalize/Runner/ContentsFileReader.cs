@@ -1,5 +1,4 @@
 using System.IO;
-using Transformalize.Libs.FileHelpers.Events;
 using Transformalize.Main;
 
 namespace Transformalize.Runner
@@ -34,7 +33,7 @@ namespace Transformalize.Runner
                             );
 
             if (!fileInfo.Exists) {
-                throw new TransformalizeException("Sorry. I can't the find file {0}.", fileInfo.FullName);
+                throw new TransformalizeException("Sorry. I can't find the file {0}.", fileInfo.FullName);
             }
 
             return new Contents {

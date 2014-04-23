@@ -49,6 +49,7 @@ namespace Transformalize.Main {
         public string Password { get; set; }
         public string Subject { get; set; }
         public string Host { get; set; }
+        public string Body { get; set; }
 
         public TemplateAction() {
             Action = string.Empty;
@@ -69,6 +70,7 @@ namespace Transformalize.Main {
             Password = string.Empty;
             Subject = string.Empty;
             Host = string.Empty;
+            Body = string.Empty;
         }
 
         public void Handle(string file) {

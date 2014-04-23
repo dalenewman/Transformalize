@@ -75,6 +75,7 @@ namespace Transformalize.Main {
         public string QuotedWith { get; set; }
         public bool Optional { get; set; }
         public List<string> Transforms { get; set; }
+        public string Delimiter { get; set; }
 
         public object Default {
             get { return _default; }

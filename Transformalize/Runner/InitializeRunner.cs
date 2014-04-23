@@ -18,8 +18,7 @@ namespace Transformalize.Runner
             if (!process.IsReady())
                 return result;
             new InitializationProcess(process).Execute();
-            if (process.Options.RenderTemplates)
-                new TemplateManager(process).Manage();
+            new TemplateManager(process).Manage();
 
             return result;
         }

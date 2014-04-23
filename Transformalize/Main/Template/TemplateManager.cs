@@ -37,37 +37,47 @@ namespace Transformalize.Main {
         }
 
         public void Manage() {
+
+            if (!_process.Options.RenderTemplates)
+                return;
+
             var folder = Common.GetTemporaryFolder(_process.Name);
 
             foreach (var pair in _process.Templates) {
 
-                string result;
                 var template = pair.Value;
 
-                if (template.IsUsedInPipeline)
+                if (template.IsUsedInPipeline) {
                     continue;
+                }
 
                 if (!template.Enabled) {
                     _log.Warn("Template {0} is disabled.", template.Name);
                     continue;
                 }
 
-                try {
-                    result = template.Render();
-                } catch (Exception e) {
-                    result = e.Message;
-                    _log.Warn("Template {0} failed to render. {1}. If the template is depending on pipe-line variables, make sure it is referenced in a template transform.", template.Name, e.Message);
-                    _log.Debug(e.StackTrace);
+                if (!_process.UpdatedAnything() && template.Conditional)
+                {
+                    continue;
                 }
 
-                var renderedInfo = new FileInfo(folder.TrimEnd(_trim) + @"\" + template.Name + new FileInfo(template.Contents.FileName).Extension.ToLower().Replace("cshtml", "html"));
-                File.WriteAllText(renderedInfo.FullName, result);
+                var fullName = template.Contents.FileName;
+
+                if (template.ShouldRender) {
+                    try {
+                        fullName = new FileInfo(folder.TrimEnd(_trim) + @"\" + template.Name + new FileInfo(template.Contents.FileName).Extension.ToLower().Replace("cshtml", "html")).FullName;
+                        File.WriteAllText(fullName, template.Render());
+                    } catch (Exception e) {
+                        _log.Warn("Template {0} failed to render. {1}. If the template is depending on pipe-line variables, make sure it is referenced in a template transform.", template.Name, e.Message);
+                        _log.Debug(e.StackTrace);
+                    }
+                }
 
                 if (!_process.Options.PerformTemplateActions)
                     continue;
 
                 foreach (var action in template.Actions) {
-                    action.Handle(renderedInfo.FullName);
+                    action.Handle(fullName);
                 }
             }
         }

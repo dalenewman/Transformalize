@@ -21,8 +21,7 @@ namespace Transformalize.Runner
             foreach (var entityDeleteProcess in process.Entities.Select(entity => new EntityDeleteProcess(process, entity))) {
                 entityDeleteProcess.Execute();
             }
-            if (process.Options.RenderTemplates)
-                new TemplateManager(process).Manage();
+            new TemplateManager(process).Manage();
 
             return result;
         }

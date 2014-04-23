@@ -25,31 +25,28 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
-namespace Transformalize.Operations
-{
-    public class EntityAddTflFields : AbstractOperation
-    {
+namespace Transformalize.Operations {
+    public class EntityAddTflFields : AbstractOperation {
+        private readonly Process _process;
         private readonly Entity _entity;
 
-        public EntityAddTflFields(Entity entity)
-        {
+        public EntityAddTflFields(ref Process process, ref Entity entity) {
+            _process = process;
             _entity = entity;
             UseTransaction = false;
         }
 
-        public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
-        {
+        public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             OnFinishedProcessing += EntityAddTflFields_OnFinishedProcessing;
-            foreach (var row in rows)
-            {
+            foreach (var row in rows) {
                 row["TflBatchId"] = _entity.TflBatchId;
                 yield return row;
             }
         }
 
-        private void EntityAddTflFields_OnFinishedProcessing(IOperation obj)
-        {
+        private void EntityAddTflFields_OnFinishedProcessing(IOperation obj) {
             _entity.Inserts = obj.Statistics.OutputtedRows;
+            _process.Anything += _entity.Inserts;
         }
     }
 }

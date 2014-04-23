@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Libs.NLog;
@@ -18,7 +17,6 @@ namespace Transformalize.Main {
         private readonly Process _process;
         private readonly TemplateElementCollection _elements;
         private readonly DefaultFactory _defaultFactory = new DefaultFactory();
-        private readonly char[] _s = new[] { '\\' };
 
         public TemplateReader(Process process, TemplateElementCollection elements) {
             _process = process;
@@ -35,7 +33,7 @@ namespace Transformalize.Main {
             foreach (var element in templateElements) {
 
                 var reader = element.File.StartsWith("http", IC) ? (IContentsReader) new ContentsWebReader() : new ContentsFileReader(path);
-                var contents = reader.Read(element.File);
+                var contents = element.Render ? reader.Read(element.File) : new Contents() {FileName = element.File};
                 var template = new Template(_process, element, contents);
 
                 foreach (SettingConfigurationElement setting in element.Settings) {
@@ -65,6 +63,7 @@ namespace Transformalize.Main {
                         To = action.To,
                         Username = action.Username,
                         Host = action.Host,
+                        Body = action.Body,
                         Modes = modes
                     };
 
@@ -82,7 +81,7 @@ namespace Transformalize.Main {
                 }
 
                 templates[element.Name] = template;
-                _log.Debug("Loaded template {0} with {1} setting{2}.", contents.FileName, template.Settings.Count, template.Settings.Count == 1 ? string.Empty : "s");
+                _log.Debug("Loaded template {0} with {1} setting{2}.", element.File, template.Settings.Count, template.Settings.Count == 1 ? string.Empty : "s");
 
             }
 

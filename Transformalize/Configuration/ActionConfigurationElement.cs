@@ -41,6 +41,7 @@ namespace Transformalize.Configuration {
         private const string USERNAME = "username";
         private const string PORT = "port";
         private const string HOST = "host";
+        private const string BODY = "body";
         private const string ARGUMENTS = "arguments";
         private const string ENABLE_SSL = "enable-ssl";
         private const string HTML = "html";
@@ -139,6 +140,12 @@ namespace Transformalize.Configuration {
         public string Host {
             get { return this[HOST] as string; }
             set { this[Host] = value; }
+        }
+
+        [ConfigurationProperty(BODY, IsRequired = false, DefaultValue = "")]
+        public string Body {
+            get { return this[BODY] as string; }
+            set { this[BODY] = value; }
         }
 
         [ConfigurationProperty(PORT, IsRequired = false, DefaultValue = 25)]

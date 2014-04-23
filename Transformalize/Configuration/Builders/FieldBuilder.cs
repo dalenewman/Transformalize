@@ -21,6 +21,11 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public FieldBuilder Delimiter(string delimiter) {
+            _field.Delimiter = delimiter;
+            return this;
+        }
+
         public FieldBuilder QuotedWith(string quoteChar) {
             _field.QuotedWith = quoteChar;
             return this;

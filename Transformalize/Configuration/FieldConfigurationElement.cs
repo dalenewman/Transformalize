@@ -53,6 +53,7 @@ namespace Transformalize.Configuration {
         private const string READ_INNER_XML = "read-inner-xml";
         private const string SORT = "sort";
         private const string LABEL = "label";
+        private const string DELIMITER = "delimiter";
 
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name {
@@ -79,6 +80,12 @@ namespace Transformalize.Configuration {
         public string Type {
             get { return this[TYPE] as string; }
             set { this[TYPE] = value; }
+        }
+
+        [ConfigurationProperty(DELIMITER, IsRequired = false, DefaultValue = ", ")]
+        public string Delimiter {
+            get { return this[DELIMITER] as string; }
+            set { this[DELIMITER] = value; }
         }
 
         [ConfigurationProperty(QUOTED_WITH, IsRequired = false)]

@@ -1,18 +1,17 @@
-using System;
 using System.IO;
 using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main.Providers.File {
     public class FileConnectionChecker : IConnectionChecker {
-        private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private readonly Logger _log = LogManager.GetLogger(string.Empty);
 
         public bool Check(AbstractConnection connection) {
-            var result = connection.Name.Equals("output", IC) || new FileInfo(connection.File).Exists;
-            if (!result) {
-                _log.Warn("Connection isn't ready. File {0} doesn't exist!", connection.File);
+            var fileInfo = new FileInfo(connection.File);
+            if (!fileInfo.Exists) {
+                _log.Warn("Creating empty file {0}", fileInfo.Name);
+                System.IO.File.Create(fileInfo.FullName).Dispose();
             }
-            return result;
+            return true;
         }
     }
 }

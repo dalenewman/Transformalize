@@ -28,10 +28,12 @@ using Transformalize.Main;
 
 namespace Transformalize.Operations {
     public class EntityActionFilter : AbstractOperation {
+        private readonly Process _process;
         private readonly Entity _entity;
         private readonly EntityAction _entityAction;
 
-        public EntityActionFilter(ref Entity entity, EntityAction entityAction) {
+        public EntityActionFilter(ref Process process, ref Entity entity, EntityAction entityAction) {
+            _process = process;
             _entity = entity;
             _entityAction = entityAction;
         }
@@ -45,12 +47,15 @@ namespace Transformalize.Operations {
             switch (_entityAction) {
                 case EntityAction.Insert:
                     _entity.Inserts += obj.Statistics.OutputtedRows;
+                    _process.Anything += _entity.Inserts;
                     break;
                 case EntityAction.Update:
                     _entity.Updates += obj.Statistics.OutputtedRows;
+                    _process.Anything += _entity.Updates;
                     break;
                 case EntityAction.Delete:
                     _entity.Deletes += obj.Statistics.OutputtedRows;
+                    _process.Anything += _entity.Deletes;
                     break;
             }
         }

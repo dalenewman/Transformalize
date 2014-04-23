@@ -37,7 +37,7 @@ namespace Transformalize.Processes {
 
     public class EntityProcess : EtlProcess {
         private const string STANDARD_OUTPUT = "output";
-        private readonly Process _process;
+        private Process _process;
         private Entity _entity;
         private readonly ConcurrentDictionary<string, CollectorOperation> _collectors = new ConcurrentDictionary<string, CollectorOperation>();
 
@@ -67,12 +67,13 @@ namespace Transformalize.Processes {
             }
 
             Register(new ApplyDefaults(true, _entity.Fields, _entity.CalculatedFields));
-            foreach (var transform in _entity.Operations) {
-                Register(transform);
-            }
 
             if (_entity.Group)
                 Register(new EntityAggregation(_entity));
+
+            foreach (var transform in _entity.Operations) {
+                Register(transform);
+            }
 
             if (_entity.SortingEnabled()) {
                 Register(new SortOperation(_entity));
@@ -149,16 +150,16 @@ namespace Transformalize.Processes {
                 process.RegisterLast(_collectors[nc.Name]);
             } else {
                 if (_process.IsFirstRun || !_entity.DetectChanges) {
-                    process.Register(new EntityAddTflFields(_entity));
+                    process.Register(new EntityAddTflFields(ref _process, ref _entity));
                     process.RegisterLast(nc.Connection.EntityBulkLoad(_entity));
                 } else {
                     process.Register(new EntityJoinAction(_entity).Right(nc.Connection.EntityOutputKeysExtract(_entity)));
                     var branch = new BranchingOperation()
                         .Add(new PartialProcessOperation()
-                            .Register(new EntityActionFilter(ref _entity, EntityAction.Insert))
+                            .Register(new EntityActionFilter(ref _process, ref _entity, EntityAction.Insert))
                             .RegisterLast(nc.Connection.EntityBulkLoad(_entity)))
                         .Add(new PartialProcessOperation()
-                            .Register(new EntityActionFilter(ref _entity, EntityAction.Update))
+                            .Register(new EntityActionFilter(ref _process, ref _entity, EntityAction.Update))
                             .RegisterLast(nc.Connection.EntityBatchUpdate(_entity)));
 
                     process.RegisterLast(branch);
@@ -168,6 +169,12 @@ namespace Transformalize.Processes {
         }
 
         protected override void PostProcessing() {
+
+            if (_entity.Delete) {
+                Info("Processed {0} insert{1}, {2} update{3}, and {4} delete{5} in {6}.", _entity.Inserts, _entity.Inserts.Plural(), _entity.Updates, _entity.Updates.Plural(), _entity.Deletes, _entity.Deletes.Plural(), _entity.Alias);
+            } else {
+                Info("Processed {0} insert{1}, and {2} update{3} in {4}.", _entity.Inserts, _entity.Inserts.Plural(), _entity.Updates, _entity.Updates.Plural(), _entity.Alias);
+            }
 
             _entity.InputKeys.Clear();
 

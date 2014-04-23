@@ -37,20 +37,37 @@ namespace Transformalize.Main {
                 }
             }
 
-            //Formatted mail body
             mail.IsBodyHtml = action.Html;
-            mail.Body = File.ReadAllText(action.RenderedFile);
+            if (!string.IsNullOrEmpty(action.Body)) {
+                mail.Body = action.Body;
+                if (!string.IsNullOrEmpty(action.RenderedFile)) {
+                    mail.Attachments.Add(new Attachment(action.RenderedFile));
+                }
+            } else {
+                mail.Body = File.ReadAllText(action.RenderedFile);
+            }
+
             mail.Subject = action.Subject;
 
             try {
-                new SmtpClient {
-                    Port = action.Port,
-                    EnableSsl = action.EnableSsl,
-                    DeliveryMethod = SmtpDeliveryMethod.Network,
-                    UseDefaultCredentials = false,
-                    Credentials = new NetworkCredential(action.Username, action.Password),
-                    Host = action.Host
-                }.Send(mail);
+                if (string.IsNullOrEmpty(action.Username)) {
+                    new SmtpClient {
+                        Port = action.Port,
+                        EnableSsl = action.EnableSsl,
+                        DeliveryMethod = SmtpDeliveryMethod.Network,
+                        UseDefaultCredentials = true,
+                        Host = action.Host
+                    }.Send(mail);
+                } else {
+                    new SmtpClient {
+                        Port = action.Port,
+                        EnableSsl = action.EnableSsl,
+                        DeliveryMethod = SmtpDeliveryMethod.Network,
+                        UseDefaultCredentials = false,
+                        Credentials = new NetworkCredential(action.Username, action.Password),
+                        Host = action.Host
+                    }.Send(mail);
+                }
                 Log.Info("Emailed rendered content to: {0}.", action.To);
             } catch (Exception e) {
                 Log.Warn("Couldn't send mail. {0}", e.Message);

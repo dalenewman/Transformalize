@@ -65,6 +65,7 @@ namespace Transformalize.Main {
         public Dictionary<string, Template> Templates = new Dictionary<string, Template>();
         public AbstractConnection OutputConnection;
         private PipelineThreading _pipelineThreading = PipelineThreading.MultiThreaded;
+        public long Anything { get; set; }
 
         // properties
         public string Star { get; set; }
@@ -116,12 +117,12 @@ namespace Transformalize.Main {
             return false;
         }
 
-        public IDictionary<string,IEnumerable<Row>> Run() {
+        public IDictionary<string, IEnumerable<Row>> Run() {
             Timer.Start();
             var results = Options.ProcessRunner.Run(this);
             Options.ProcessRunner.Dispose();
             Timer.Stop();
-            _log.Info("Process completed in {0}.", Timer.Elapsed);
+            _log.Info("Process affected {0} records in {1}.", Anything, Timer.Elapsed);
             return results;
         }
 
@@ -182,6 +183,10 @@ namespace Transformalize.Main {
 
         public void CreateOutput(Entity entity) {
             OutputConnection.Create(this, entity);
+        }
+
+        public bool UpdatedAnything() {
+            return Anything > 0;
         }
     }
 }
