@@ -32,7 +32,7 @@ namespace Transformalize.Main.Providers.SqlServer {
     public class SqlServerConnection : AbstractConnection {
         private readonly Process _process;
 
-        private readonly Logger _log = LogManager.GetLogger(string.Empty);
+        private readonly Logger _log = LogManager.GetLogger("tfl");
         public override string UserProperty { get { return "User Id"; } }
         public override string PasswordProperty { get { return "Password"; } }
         public override string PortProperty { get { return string.Empty; } }

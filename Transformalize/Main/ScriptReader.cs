@@ -8,7 +8,7 @@ namespace Transformalize.Main {
     public class ScriptReader
     {
 
-        private readonly Logger _log = LogManager.GetLogger(string.Empty);
+        private readonly Logger _log = LogManager.GetLogger("tfl");
         private readonly ScriptElementCollection _elements;
         private readonly char[] _s = new[] {'\\'};
 

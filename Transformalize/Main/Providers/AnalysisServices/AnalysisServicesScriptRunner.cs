@@ -28,7 +28,7 @@ namespace Transformalize.Main.Providers.AnalysisServices
 {
     public class AnalysisServicesScriptRunner : IScriptRunner
     {
-        private readonly Logger _log = LogManager.GetLogger(string.Empty);
+        private readonly Logger _log = LogManager.GetLogger("tfl");
 
         public IScriptReponse Execute(AbstractConnection connection, string script)
         {

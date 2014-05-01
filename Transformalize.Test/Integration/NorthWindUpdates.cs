@@ -30,7 +30,7 @@ namespace Transformalize.Test.Integration {
     [TestFixture]
     public class NorthWindUpdates {
         private const string FILE = "NorthWind.xml";
-        private readonly Logger _log = LogManager.GetLogger(string.Empty);
+        private readonly Logger _log = LogManager.GetLogger("tfl");
 
         [SetUp]
         public void SetUp() {

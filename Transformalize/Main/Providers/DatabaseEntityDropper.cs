@@ -28,7 +28,7 @@ namespace Transformalize.Main.Providers {
     public class DatabaseEntityDropper : IEntityDropper {
         public IEntityExists EntityExists { get; set; }
         private const string FORMAT = "DROP TABLE {0}{1};";
-        private readonly Logger _log = LogManager.GetLogger(string.Empty);
+        private readonly Logger _log = LogManager.GetLogger("tfl");
 
         public DatabaseEntityDropper(IEntityExists entityExists) {
             EntityExists = entityExists;

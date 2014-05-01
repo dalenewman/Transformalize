@@ -10,7 +10,7 @@ namespace Transformalize.Main.Providers {
         public IEntityExists EntityExists { get; set; }
 
         public DatabaseEntityCreator() {
-            Log = LogManager.GetLogger(string.Empty);
+            Log = LogManager.GetLogger("tfl");
         }
 
         protected Fields GetRelationshipFields(IEnumerable<Relationship> rel, Entity entity) {

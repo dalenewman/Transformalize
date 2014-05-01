@@ -2,7 +2,7 @@ using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main.Providers.ElasticSearch {
     public class ElasticSearchEntityDropper : IEntityDropper {
-        private readonly Logger _log = LogManager.GetLogger(string.Empty);
+        private readonly Logger _log = LogManager.GetLogger("tfl");
         public IEntityExists EntityExists { get; set; }
 
         public ElasticSearchEntityDropper() {

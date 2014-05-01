@@ -13,6 +13,11 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public SearchTypeBuilder Analyzer(string analyzer) {
+            _searchType.Analyzer = analyzer;
+            return this;
+        }
+
         public SearchTypeBuilder MultiValued(bool multiValued) {
             _searchType.MultiValued = multiValued;
             return this;

@@ -25,7 +25,7 @@ using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main {
     public class FieldParametersReader : ITransformParametersReader {
-        private readonly Logger _log = LogManager.GetLogger(string.Empty);
+        private readonly Logger _log = LogManager.GetLogger("tfl");
 
         public IParameters Read(TransformConfigurationElement transform) {
             var parameters = new Parameters.Parameters();

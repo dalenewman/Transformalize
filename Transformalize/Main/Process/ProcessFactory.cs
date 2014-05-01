@@ -7,7 +7,7 @@ namespace Transformalize.Main {
 
     public static class ProcessFactory {
 
-        private static readonly Logger Log = LogManager.GetLogger(string.Empty);
+        private static readonly Logger Log = LogManager.GetLogger("tfl");
 
         public static Process[] Create(string resource, Options options = null) {
             var element = new ConfigurationFactory(resource).Create();

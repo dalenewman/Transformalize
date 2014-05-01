@@ -39,10 +39,11 @@ namespace Transformalize.Test.Integration {
             var cfg = new ProcessBuilder("est")
                 .Connection("output").Provider("elasticsearch").Server("localhost").Port(9200)
                 .Process();
-            var process = ProcessFactory.Create(cfg, new Options() { LogLevel = LogLevel.Debug })[0];
+            var process = ProcessFactory.Create(cfg, new Options())[0];
 
             var checker = new ElasticSearchConnectionChecker();
 
+            Assert.IsTrue(checker.Check(process.OutputConnection));
             Assert.IsTrue(checker.Check(process.OutputConnection));
         }
 
@@ -149,9 +150,12 @@ namespace Transformalize.Test.Integration {
             var cfg = new ProcessBuilder("est")
                 .Connection("input").Provider("file").File(file).Delimiter(",").Start(2)
                 .Connection("output").Provider("elasticsearch").Server("localhost").Port(9200)
+                .SearchType("default").Analyzer(string.Empty)
+                .SearchType("standard").Analyzer("simple")
                 .Entity("entity").Version("TflHashCode")
                     .Field("id").Int32().PrimaryKey()
                     .Field("name")
+                        .SearchType("standard")
                     .Field("number").Double()
                     .CalculatedField("TflHashCode").Int32()
                         .Transform("concat")
@@ -160,7 +164,7 @@ namespace Transformalize.Test.Integration {
                         .Transform("gethashcode")
                 .Process();
 
-            var process = ProcessFactory.Create(cfg, new Options() { Mode = "default" })[0];
+            var process = ProcessFactory.Create(cfg, new Options() { Mode = "init" })[0];
             process.Run();
 
         }

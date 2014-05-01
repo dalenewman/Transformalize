@@ -23,7 +23,7 @@ namespace Transformalize.Main.Providers {
 
     public class ConnectionFactory {
 
-        private readonly Logger _log = LogManager.GetLogger(string.Empty);
+        private readonly Logger _log = LogManager.GetLogger("tfl");
         private readonly Process _process;
         private readonly ConnectionElementCollection _elements;
 

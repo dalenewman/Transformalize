@@ -36,7 +36,7 @@ namespace Transformalize.Main {
 
     public static class Common {
 
-        private static readonly Logger Log = LogManager.GetLogger(string.Empty);
+        private static readonly Logger Log = LogManager.GetLogger("tfl");
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private const string APPLICATION_FOLDER = @"\Tfl\";
         private static readonly char[] Slash = new[] { '\\' };

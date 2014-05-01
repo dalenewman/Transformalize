@@ -63,7 +63,7 @@ namespace Transformalize.Runner {
 
         private static void ProcessEntities(Process process) {
 
-            process.IsFirstRun = !process.OutputConnection.RecordsExist(process.MasterEntity);
+            process.IsFirstRun = process.MasterEntity == null || !process.OutputConnection.RecordsExist(process.MasterEntity);
 
             foreach (var entityKeysProcess in process.Entities.Select(entity => new EntityKeysProcess(process, entity) {
                 PipelineExecuter = entity.PipelineThreading == PipelineThreading.SingleThreaded ? (AbstractPipelineExecuter)new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter()

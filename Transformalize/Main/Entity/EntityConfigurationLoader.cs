@@ -34,7 +34,7 @@ namespace Transformalize.Main {
     public class EntityConfigurationLoader {
         private const string DEFAULT = "[default]";
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
-        private readonly Logger _log = LogManager.GetLogger(string.Empty);
+        private readonly Logger _log = LogManager.GetLogger("tfl");
         private readonly Process _process;
 
         public EntityConfigurationLoader(Process process) {

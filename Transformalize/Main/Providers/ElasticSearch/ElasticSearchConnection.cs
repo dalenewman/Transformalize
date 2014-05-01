@@ -1,6 +1,7 @@
 using System;
 using Transformalize.Configuration;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Operations.Transform;
 
 namespace Transformalize.Main.Providers.ElasticSearch {
 
@@ -34,7 +35,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             if (entity.Inserts + entity.Updates > 0 || _process.IsFirstRun) {
                 var client = ElasticSearchClientFactory.Create(this, TflBatchEntity(entity.ProcessName));
                 var versionType = entity.Version == null ? "string" : entity.Version.SimpleType;
-                var end = versionType.Equals("byte[]") || versionType.Equals("rowversion") ? Common.BytesToHexString((byte[]) entity.End) : new DefaultFactory().Convert(entity.End, versionType).ToString();
+                var end = versionType.Equals("byte[]") || versionType.Equals("rowversion") ? Common.BytesToHexString((byte[])entity.End) : new DefaultFactory().Convert(entity.End, versionType).ToString();
                 var body = new {
                     id = entity.TflBatchId,
                     tflbatchid = entity.TflBatchId,
@@ -53,7 +54,9 @@ namespace Transformalize.Main.Providers.ElasticSearch {
         }
 
         public override IOperation EntityOutputKeysExtract(Entity entity) {
-            return new ElasticSearchEntityOutputKeysExtract(this, entity);
+            return new EmptyOperation();
+            //need to learn search type scan / scroll functionality for bigger result sets
+            //return new ElasticSearchEntityOutputKeysExtract(this, entity);
         }
 
         public override IOperation EntityOutputKeysExtractAll(Entity entity) {

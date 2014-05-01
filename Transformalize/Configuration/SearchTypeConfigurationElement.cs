@@ -22,53 +22,52 @@
 
 using System.Configuration;
 
-namespace Transformalize.Configuration
-{
-    public class SearchTypeConfigurationElement : ConfigurationElement
-    {
+namespace Transformalize.Configuration {
+    public class SearchTypeConfigurationElement : ConfigurationElement {
         private const string NAME = "name";
         private const string TYPE = "type";
         private const string STORE = "store";
         private const string INDEX = "index";
         private const string MULTI_VALUED = "multi-valued";
+        private const string ANALYZER = "analyzer";
 
         [ConfigurationProperty(NAME, IsRequired = true)]
-        public string Name
-        {
+        public string Name {
             get { return this[NAME] as string; }
             set { this[NAME] = value; }
         }
 
         [ConfigurationProperty(TYPE, IsRequired = false, DefaultValue = "inherit")]
-        public string Type
-        {
+        public string Type {
             get { return this[TYPE] as string; }
             set { this[TYPE] = value; }
         }
 
+        [ConfigurationProperty(ANALYZER, IsRequired = false, DefaultValue = "")]
+        public string Analyzer {
+            get { return this[ANALYZER] as string; }
+            set { this[ANALYZER] = value; }
+        }
+
         [ConfigurationProperty(STORE, IsRequired = false, DefaultValue = true)]
-        public bool Store
-        {
-            get { return (bool) this[STORE]; }
+        public bool Store {
+            get { return (bool)this[STORE]; }
             set { this[STORE] = value; }
         }
 
         [ConfigurationProperty(INDEX, IsRequired = false, DefaultValue = true)]
-        public bool Index
-        {
-            get { return (bool) this[INDEX]; }
+        public bool Index {
+            get { return (bool)this[INDEX]; }
             set { this[INDEX] = value; }
         }
 
         [ConfigurationProperty(MULTI_VALUED, IsRequired = false, DefaultValue = false)]
-        public bool MultiValued
-        {
-            get { return (bool) this[MULTI_VALUED]; }
+        public bool MultiValued {
+            get { return (bool)this[MULTI_VALUED]; }
             set { this[MULTI_VALUED] = value; }
         }
 
-        public override bool IsReadOnly()
-        {
+        public override bool IsReadOnly() {
             return false;
         }
     }

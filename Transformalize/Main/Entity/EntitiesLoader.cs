@@ -10,7 +10,7 @@ namespace Transformalize.Main {
     public class EntitiesLoader {
 
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
-        private readonly Logger _log = LogManager.GetLogger(string.Empty);
+        private readonly Logger _log = LogManager.GetLogger("tfl");
         private readonly Process _process;
         private readonly EntityElementCollection _elements;
 

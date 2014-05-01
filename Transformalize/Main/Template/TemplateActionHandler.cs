@@ -26,7 +26,7 @@ namespace Transformalize.Main
 {
     public abstract class TemplateActionHandler
     {
-        protected Logger Log = LogManager.GetLogger(string.Empty);
+        protected Logger Log = LogManager.GetLogger("tfl");
         public abstract void Handle(TemplateAction action);
     }
 }

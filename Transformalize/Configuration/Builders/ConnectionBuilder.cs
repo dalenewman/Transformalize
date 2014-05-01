@@ -1,4 +1,5 @@
 using System.IO;
+using System.Runtime.InteropServices;
 using Transformalize.Libs.FileHelpers.Enums;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Providers;
@@ -30,6 +31,16 @@ namespace Transformalize.Configuration.Builders {
 
         public ConnectionBuilder Password(string password) {
             _connection.Password = password;
+            return this;
+        }
+
+        public ConnectionBuilder IncludeHeader(bool includeHeader) {
+            _connection.IncludeHeader = includeHeader;
+            return this;
+        }
+
+        public ConnectionBuilder IncludeFooter(bool includeFooter) {
+            _connection.IncludeFooter = includeFooter;
             return this;
         }
 

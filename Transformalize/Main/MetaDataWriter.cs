@@ -29,7 +29,7 @@ namespace Transformalize.Main
     public class MetaDataWriter
     {
         private readonly IEntityAutoFieldReader _entityAutoFieldReader;
-        private readonly Logger _log = LogManager.GetLogger(string.Empty);
+        private readonly Logger _log = LogManager.GetLogger("tfl");
         private readonly Process _process;
 
         public MetaDataWriter(Process process, IEntityAutoFieldReader entityAutoFieldReader)

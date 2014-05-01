@@ -29,7 +29,7 @@ using Process = Transformalize.Main.Process;
 namespace Transformalize.Run {
     internal class Program {
 
-        private static readonly Logger Log = LogManager.GetLogger(string.Empty);
+        private static readonly Logger Log = LogManager.GetLogger("tfl");
         private static Options _options = new Options();
 
         private static void Main(string[] args) {

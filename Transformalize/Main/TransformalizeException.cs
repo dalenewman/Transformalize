@@ -27,7 +27,7 @@ namespace Transformalize.Main {
 
     public class TransformalizeException : Exception {
 
-        private readonly Logger _log = LogManager.GetLogger(string.Empty);
+        private readonly Logger _log = LogManager.GetLogger("tfl");
         private readonly string _message;
 
         public TransformalizeException(string message) {

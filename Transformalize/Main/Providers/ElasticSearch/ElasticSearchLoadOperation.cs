@@ -15,13 +15,13 @@ namespace Transformalize.Main.Providers.ElasticSearch {
         private readonly ElasticSearchClient _client;
         private readonly string _prefix;
         private readonly bool _singleKey;
-        private readonly List<string> _columns;
         private readonly string[] _keys;
         private readonly string _key;
         private int _count;
         private readonly int _batchSize;
         private readonly List<string> _guids = new List<string>();
         private readonly List<string> _dates = new List<string>();
+        private readonly Dictionary<string, string> _elasticMap; 
 
         public ElasticSearchLoadOperation(Entity entity, AbstractConnection connection) {
 
@@ -32,27 +32,26 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             _prefix = "{\"index\": {\"_index\": \"" + _client.Index + "\", \"_type\": \"" + _client.Type + "\", \"_id\": \"";
 
             _singleKey = entity.PrimaryKey.Count == 1;
-            _columns = entity.OutputFields().Select(f => f.Alias).ToList();
-            _columns.Add("tflbatchid");
+            _elasticMap = new ElasticSearchEntityCreator().GetFieldMap(entity);
 
             _keys = entity.PrimaryKey.Select(kv => kv.Key).ToArray();
             _key = entity.FirstKey();
             _batchSize = connection.BatchSize;
 
-            OnRowProcessed += ElasticSearchLoadOperation_OnRowProcessed;
-
         }
 
         void ElasticSearchLoadOperation_OnRowProcessed(IOperation arg1, Row arg2) {
             Interlocked.Increment(ref _count);
-            if (_count % 100 == 0) {
+            if (_count % 1000 == 0) {
                 Debug("Processed {0} records.", _count);
-            } else if (_count % 1000 == 0) {
+            } else if (_count % 10000 == 0) {
                 Info("Processed {0} records.", _count);
             }
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
+
+            OnRowProcessed += ElasticSearchLoadOperation_OnRowProcessed;
 
             foreach (var batch in rows.Partition(_batchSize)) {
                 var body = new StringBuilder();
@@ -68,7 +67,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
                     body.Append(_prefix);
                     body.Append(key);
                     body.AppendLine("\"}}");
-                    body.AppendLine(JSON.Instance.ToJSON(_columns.ToDictionary(alias => alias.ToLower(), alias => row[alias])));
+                    body.AppendLine(JSON.Instance.ToJSON(_elasticMap.ToDictionary(item => item.Key.ToLower(), item => row[item.Value])));
                 }
                 _client.Client.Bulk(body.ToString(), nv => nv
                     .Add("refresh", @"true")

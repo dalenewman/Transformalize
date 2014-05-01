@@ -23,10 +23,12 @@
 using System;
 using System.Linq;
 using Transformalize.Configuration;
+using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main {
 
     public class FieldReader : IFieldReader {
+        private readonly Logger _log = LogManager.GetLogger("tfl");
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private readonly Entity _entity;
         private readonly bool _usePrefix;
@@ -68,6 +70,12 @@ namespace Transformalize.Main {
 
             FieldSearchTypesLoader(field, element);
 
+            foreach (var keyField in new[] { "TflKey", "TflUpdate", "TflBatchId" }) {
+                if (field.Alias.Equals(keyField, IC)) {
+                    _log.Warn("{0}, defined in {1}, is a reserved field name.  Please alias this field.", field.Alias, field.Entity);
+                }
+            }
+
             return field;
         }
 
@@ -94,7 +102,8 @@ namespace Transformalize.Main {
                 Index = searchType.Index,
                 Store = searchType.Store,
                 Type = searchType.Type.Equals("inherit", IC) ? field.SimpleType : searchType.Type,
-                MultiValued = searchType.MultiValued
+                MultiValued = searchType.MultiValued,
+                Analyzer = searchType.Analyzer
             };
             return newSearchType;
         }

@@ -29,5 +29,6 @@ namespace Transformalize.Main
         public bool Store { get; set; }
         public bool Index { get; set; }
         public bool MultiValued { get; set; }
+        public string Analyzer { get; set; }
     }
 }

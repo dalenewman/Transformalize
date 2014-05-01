@@ -29,7 +29,7 @@ using Transformalize.Libs.Rhino.Etl.Infrastructure;
 
 namespace Transformalize.Main.Providers.SqlServer {
     public class SqlServerViewWriter : IViewWriter {
-        private readonly Logger _log = LogManager.GetLogger(string.Empty);
+        private readonly Logger _log = LogManager.GetLogger("tfl");
 
         public void Drop(Process process) {
             using (var cn = process.OutputConnection.GetConnection()) {

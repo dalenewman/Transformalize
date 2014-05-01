@@ -29,7 +29,7 @@ using Transformalize.Runner;
 
 namespace Transformalize.Main {
     public class Options {
-        private readonly Logger _log = LogManager.GetLogger(string.Empty);
+        private readonly Logger _log = LogManager.GetLogger("tfl");
         private LogLevel _logLevel = LogLevel.Info;
         private string _mode = "default";
         private bool _renderTemplates = true;

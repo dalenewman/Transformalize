@@ -23,6 +23,7 @@
 using System;
 using System.Configuration;
 using System.IO;
+using System.Reflection.Emit;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.FileHelpers.Enums;
@@ -51,6 +52,8 @@ namespace Transformalize.Configuration {
         private const string END = "end";
         private const string ERROR_MODE = "error-mode";
         private const string DATE_FORMAT = "date-format";
+        private const string INCLUDE_HEADER = "include-header";
+        private const string INCLUDE_FOOTER = "include-footer";
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
         [ConfigurationProperty(NAME, IsRequired = true)]
@@ -180,6 +183,18 @@ namespace Transformalize.Configuration {
         public string DateFormat {
             get { return this[DATE_FORMAT] as string; }
             set { this[DATE_FORMAT] = value; }
+        }
+
+        [ConfigurationProperty(INCLUDE_HEADER, IsRequired = false, DefaultValue = true)]
+        public bool IncludeHeader {
+            get { return (bool) this[INCLUDE_HEADER]; }
+            set { this[INCLUDE_HEADER] = value; }
+        }
+
+        [ConfigurationProperty(INCLUDE_FOOTER, IsRequired = false, DefaultValue = false)]
+        public bool IncludeFooter {
+            get { return (bool)this[INCLUDE_FOOTER]; }
+            set { this[INCLUDE_FOOTER] = value; }
         }
 
         public override bool IsReadOnly() {

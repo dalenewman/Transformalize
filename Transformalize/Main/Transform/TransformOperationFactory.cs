@@ -40,7 +40,7 @@ namespace Transformalize.Main {
         private const string SPACE = " ";
         private const string COMMA = ",";
 
-        private readonly Logger _log = LogManager.GetLogger(string.Empty);
+        private readonly Logger _log = LogManager.GetLogger("tfl");
         private readonly Process _process;
         private readonly Validator<TransformConfigurationElement> _validator = ValidationFactory.CreateValidator<TransformConfigurationElement>();
         private readonly Dictionary<string, Func<object, object>> _conversionMap = Common.GetObjectConversionMap();

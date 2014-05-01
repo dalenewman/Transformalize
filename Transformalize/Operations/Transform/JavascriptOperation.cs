@@ -14,7 +14,7 @@ namespace Transformalize.Operations.Transform {
     public class JavascriptOperation : ShouldRunOperation {
 
         private readonly Engine _jint = new Engine();
-        private readonly Logger _log = LogManager.GetLogger(string.Empty);
+        private readonly Logger _log = LogManager.GetLogger("tfl");
         private readonly string _script;
         private readonly IParameters _parameters;
         private readonly bool _addSelf;

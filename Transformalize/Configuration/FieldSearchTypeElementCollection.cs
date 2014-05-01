@@ -22,36 +22,32 @@
 
 using System.Configuration;
 
-namespace Transformalize.Configuration
-{
-    public class FieldSearchTypeElementCollection : ConfigurationElementCollection
-    {
-        public FieldSearchTypeConfigurationElement this[int index]
-        {
+namespace Transformalize.Configuration {
+    public class FieldSearchTypeElementCollection : ConfigurationElementCollection {
+        public FieldSearchTypeConfigurationElement this[int index] {
             get { return BaseGet(index) as FieldSearchTypeConfigurationElement; }
-            set
-            {
-                if (BaseGet(index) != null)
-                {
+            set {
+                if (BaseGet(index) != null) {
                     BaseRemoveAt(index);
                 }
                 BaseAdd(index, value);
             }
         }
 
-        public override bool IsReadOnly()
-        {
+        public override bool IsReadOnly() {
             return false;
         }
 
-        protected override ConfigurationElement CreateNewElement()
-        {
+        protected override ConfigurationElement CreateNewElement() {
             return new FieldSearchTypeConfigurationElement();
         }
 
-        protected override object GetElementKey(ConfigurationElement element)
-        {
-            return ((FieldSearchTypeConfigurationElement) element).Type.ToLower();
+        protected override object GetElementKey(ConfigurationElement element) {
+            return ((FieldSearchTypeConfigurationElement)element).Type.ToLower();
+        }
+
+        public void Add(FieldSearchTypeConfigurationElement element) {
+            BaseAdd(element);
         }
     }
 }

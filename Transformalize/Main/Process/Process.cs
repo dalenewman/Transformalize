@@ -40,7 +40,7 @@ namespace Transformalize.Main {
 
         private ValidationResults _validationResults = new ValidationResults();
         private static readonly Stopwatch Timer = new Stopwatch();
-        private readonly Logger _log = LogManager.GetLogger(string.Empty);
+        private readonly Logger _log = LogManager.GetLogger("tfl");
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private List<IOperation> _transformOperations = new List<IOperation>();
         private IParameters _parameters = new Parameters.Parameters();

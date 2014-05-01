@@ -34,9 +34,12 @@ namespace Transformalize.Main.Providers {
 
     public abstract class AbstractConnection {
 
-        private readonly Logger _log = LogManager.GetLogger(string.Empty);
+        private readonly Logger _log = LogManager.GetLogger("tfl");
+        private Uri _uri;
         private string _l = string.Empty;
         private string _r = string.Empty;
+        private string _server;
+        private int _port;
 
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
@@ -55,12 +58,9 @@ namespace Transformalize.Main.Providers {
         public IViewWriter ViewWriter { get; set; }
 
         public string Database { get; set; }
-        public string Server { get; set; }
         public string User { get; set; }
         public string Password { get; set; }
-        public int Port { get; set; }
         public string PersistSecurityInfo { get; set; }
-
         public string File { get; set; }
         public string Folder { get; set; }
         public ErrorMode ErrorMode { get; set; }
@@ -79,19 +79,7 @@ namespace Transformalize.Main.Providers {
         public abstract string ServerProperty { get; }
         public abstract string TrustedProperty { get; }
         public abstract string PersistSecurityInfoProperty { get; }
-
         public ProviderType Type { get; set; }
-
-        public string L {
-            get { return _l; }
-            set { _l = value; }
-        }
-
-        public string R {
-            get { return _r; }
-            set { _r = value; }
-        }
-
         public bool IsDatabase { get; set; }
         public bool InsertMultipleRows { get; set; }
         public bool Top { get; set; }
@@ -103,6 +91,34 @@ namespace Transformalize.Main.Providers {
         public bool Views { get; set; }
         public bool Schemas { get; set; }
         public string DateFormat { get; set; }
+        public bool IncludeHeader { get; set; }
+        public bool IncludeFooter { get; set; }
+
+        public string Server {
+            get { return _server; }
+            set {
+                _server = value;
+                _uri = null;
+            }
+        }
+
+        public int Port {
+            get { return _port; }
+            set {
+                _port = value;
+                _uri = null;
+            }
+        }
+
+        public string L {
+            get { return _l; }
+            set { _l = value; }
+        }
+
+        public string R {
+            get { return _r; }
+            set { _r = value; }
+        }
 
         protected AbstractConnection(
             ConnectionConfigurationElement element,
@@ -117,6 +133,8 @@ namespace Transformalize.Main.Providers {
             Delimiter = element.Delimiter;
             LineDelimiter = element.LineDelimiter;
             DateFormat = element.DateFormat;
+            IncludeHeader = element.IncludeHeader;
+            IncludeFooter = element.IncludeFooter;
             ErrorMode = (ErrorMode)Enum.Parse(typeof(ErrorMode), element.ErrorMode, true);
             SearchOption = (SearchOption)Enum.Parse(typeof(SearchOption), element.SearchOption, true);
             SearchPattern = element.SearchPattern;
@@ -275,6 +293,18 @@ namespace Transformalize.Main.Providers {
 
         public bool IsFolder() {
             return Type == ProviderType.Folder;
+        }
+
+        public Uri Uri() {
+            if (_uri != null)
+                return _uri;
+
+            var builder = new UriBuilder(Server.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? Server : "http://" + Server);
+            if (Port > 0) {
+                builder.Port = Port;
+            }
+            _uri = builder.Uri;
+            return _uri;
         }
 
         public void Create(Process process, Entity entity) {

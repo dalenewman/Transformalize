@@ -8,7 +8,7 @@ using Transformalize.Main;
 
 namespace Transformalize.Runner {
     public class ContentsWebReader : IContentsReader {
-        private readonly Logger _log = LogManager.GetLogger(string.Empty);
+        private readonly Logger _log = LogManager.GetLogger("tfl");
 
         public Contents Read(string file) {
 

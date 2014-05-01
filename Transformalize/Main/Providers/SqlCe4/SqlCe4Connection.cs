@@ -10,7 +10,7 @@ namespace Transformalize.Main.Providers.SqlCe4 {
     public class SqlCe4Connection : AbstractConnection {
         private readonly Process _process;
 
-        private readonly Logger _log = LogManager.GetLogger(string.Empty);
+        private readonly Logger _log = LogManager.GetLogger("tfl");
         public override string UserProperty { get { return string.Empty; } }
         public override string PasswordProperty { get { return string.Empty; } }
         public override string PortProperty { get { return string.Empty; } }

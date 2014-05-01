@@ -31,11 +31,18 @@ namespace Transformalize.Main.Providers.ElasticSearch
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             var client = ElasticSearchClientFactory.Create(_connection, _entity);
+
+            var count = client.Client.SearchGet(client.Index, client.Type, s => s
+                .Add("q", "*:*")
+                .Add("search_type", "count")
+            );
+
             var result = client.Client.SearchGet(client.Index, client.Type, s => s
                 .Add("q", "*:*")
                 .Add("_source_include", string.Join(",", _sourceInclude))
-                .Add("size", 10000000)
-                );
+                .Add("size", count.Response["hits"].total)
+            );
+
             var hits = result.Response["hits"].hits;
             for (var i = 0; i < result.Response["hits"].total; i++) {
                 var row = new Row();

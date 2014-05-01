@@ -28,7 +28,7 @@ namespace Transformalize.Main.Providers.AnalysisServices
 {
     public class AnalysisServicesConnectionChecker : IConnectionChecker
     {
-        private readonly Logger _log = LogManager.GetLogger(string.Empty);
+        private readonly Logger _log = LogManager.GetLogger("tfl");
 
         public bool Check(AbstractConnection connection)
         {

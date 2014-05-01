@@ -3,7 +3,7 @@ using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main.Providers.File {
     public class FileConnectionChecker : IConnectionChecker {
-        private readonly Logger _log = LogManager.GetLogger(string.Empty);
+        private readonly Logger _log = LogManager.GetLogger("tfl");
 
         public bool Check(AbstractConnection connection) {
             var fileInfo = new FileInfo(connection.File);

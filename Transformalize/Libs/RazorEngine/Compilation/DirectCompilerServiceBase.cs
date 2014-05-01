@@ -23,7 +23,7 @@ namespace Transformalize.Libs.RazorEngine.Compilation {
     ///     Provides a base implementation of a direct compiler service.
     /// </summary>
     public abstract class DirectCompilerServiceBase : CompilerServiceBase, IDisposable {
-        private readonly Logger _log = LogManager.GetLogger(string.Empty);
+        private readonly Logger _log = LogManager.GetLogger("tfl");
 
         #region Fields
 

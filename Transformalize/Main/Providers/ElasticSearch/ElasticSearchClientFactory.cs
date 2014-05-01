@@ -8,15 +8,11 @@ namespace Transformalize.Main.Providers.ElasticSearch {
 
     public static class ElasticSearchClientFactory
     {
-        private static readonly Logger Log = LogManager.GetLogger(string.Empty);
+        private static readonly Logger Log = LogManager.GetLogger("tfl");
 
         public static ElasticSearchClient Create(AbstractConnection connection, Entity entity) {
-            var builder = new UriBuilder(connection.Server.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? connection.Server : "http://" + connection.Server);
-            if (connection.Port > 0) {
-                builder.Port = connection.Port;
-            }
-            Log.Debug("Creating connection to {0}.", builder.Uri);
-            var pool = new SingleNodeConnectionPool(builder.Uri);
+            Log.Debug("Preparing Elasticsearch client for {0}", connection.Uri());
+            var pool = new SingleNodeConnectionPool(connection.Uri());
             var settings = new ConnectionConfiguration(pool);
 
             return new ElasticSearchClient(

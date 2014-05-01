@@ -11,7 +11,7 @@ namespace Transformalize.Operations.Transform {
     public class TemplateOperation : ShouldRunOperation {
 
         private readonly StringBuilder _builder = new StringBuilder();
-        private readonly Logger _log = LogManager.GetLogger(string.Empty);
+        private readonly Logger _log = LogManager.GetLogger("tfl");
         private readonly string _outType;
         private readonly string _templateModelType;
         private readonly IParameters _parameters;

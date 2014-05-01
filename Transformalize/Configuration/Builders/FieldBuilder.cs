@@ -195,5 +195,14 @@ namespace Transformalize.Configuration.Builders {
             _field.Type = "System.Double";
             return this;
         }
+
+        public FieldBuilder SearchType(string searchType) {
+            if (_field.SearchType.Equals("default")) {
+                _field.SearchType = searchType;
+            } else {
+                _field.SearchTypes.Add(new FieldSearchTypeConfigurationElement() { Type = searchType });
+            }
+            return this;
+        }
     }
 }

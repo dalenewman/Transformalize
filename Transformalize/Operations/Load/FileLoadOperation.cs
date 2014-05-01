@@ -88,11 +88,18 @@ namespace Transformalize.Operations.Load {
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
 
-            PrepareHeader(_entity);
             PrepareType(_entity);
-            PrepareFooter(_entity);
+            var engine = new FluentFile(Type);
 
-            var engine = new FluentFile(Type) { HeaderText = HeaderText, FooterText = FooterText };
+            if (_connection.IncludeHeader) {
+                PrepareHeader(_entity);
+                engine.HeaderText = HeaderText;
+            }
+
+            if (_connection.IncludeFooter) {
+                PrepareFooter(_entity);
+                engine.FooterText = FooterText;
+            }
 
             using (var file = engine.To(FileInfo.FullName)) {
                 foreach (var row in rows) {

@@ -28,7 +28,7 @@ namespace Transformalize.Main {
 
     public class TemplateAction {
 
-        private readonly Logger _log = LogManager.GetLogger(string.Empty);
+        private readonly Logger _log = LogManager.GetLogger("tfl");
         public string Action { get; set; }
         public AbstractConnection Connection { get; set; }
         public string File { get; set; }

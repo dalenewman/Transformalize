@@ -5,7 +5,7 @@ using Transformalize.Main.Providers;
 
 namespace Transformalize.Main {
     public class MapLoader {
-        private readonly Logger _log = LogManager.GetLogger(string.Empty);
+        private readonly Logger _log = LogManager.GetLogger("tfl");
         private readonly Process _process;
         private readonly MapElementCollection _elements;
 
