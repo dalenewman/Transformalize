@@ -21,7 +21,7 @@ namespace Transformalize.Operations.Transform {
             foreach (var row in rows) {
                 if (ShouldRun(row)) {
                     var linqRow = row;
-                    row[OutKey] = string.Format(_format, _parameters.Select(p => linqRow[p.Key] ?? p.Value).ToArray());
+                    row[OutKey] = string.Format(_format, _parameters.Select(p => linqRow[p.Key] ?? p.Value.Value).ToArray());
                 } else {
                     Interlocked.Increment(ref SkipCount);
                 }

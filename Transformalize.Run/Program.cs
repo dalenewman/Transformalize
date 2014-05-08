@@ -46,19 +46,24 @@ namespace Transformalize.Run {
 
             var resource = args[0];
 
-            if (OptionsMayExist(args)) {
-                _options = new Options(CombineArguments(args));
-                if (_options.Valid()) {
-                    processes.AddRange(ProcessFactory.Create(resource, _options));
-                } else {
-                    foreach (var problem in _options.Problems) {
-                        Log.Error(resource + " | " + problem);
+            try {
+                if (OptionsMayExist(args)) {
+                    _options = new Options(CombineArguments(args));
+                    if (_options.Valid()) {
+                        processes.AddRange(ProcessFactory.Create(resource, _options));
+                    } else {
+                        foreach (var problem in _options.Problems) {
+                            Log.Error(resource + " | " + problem);
+                        }
+                        Log.Warn(resource + " | Aborting process.");
+                        Environment.Exit(1);
                     }
-                    Log.Warn(resource + " | Aborting process.");
-                    Environment.Exit(1);
+                } else {
+                    processes.AddRange(ProcessFactory.Create(resource));
                 }
-            } else {
-                processes.AddRange(ProcessFactory.Create(resource));
+            } catch (Exception e) {
+                Log.Error(e.Message);
+                return;
             }
 
             foreach (var process in processes) {

@@ -11,6 +11,7 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
+
     public class JavascriptOperation : ShouldRunOperation {
 
         private readonly Engine _jint = new Engine();
