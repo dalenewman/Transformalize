@@ -21,6 +21,7 @@
 #endregion
 
 using System.Collections.Generic;
+using Transformalize.Configuration;
 using Transformalize.Libs.NLog;
 using Transformalize.Main.Providers;
 
@@ -50,6 +51,9 @@ namespace Transformalize.Main {
         public string Subject { get; set; }
         public string Host { get; set; }
         public string Body { get; set; }
+        public bool Before { get; set; }
+        public bool After { get; set; }
+        public bool Conditional { get; set; }
 
         public TemplateAction() {
             Action = string.Empty;
@@ -71,6 +75,34 @@ namespace Transformalize.Main {
             Subject = string.Empty;
             Host = string.Empty;
             Body = string.Empty;
+            Before = false;
+            After = true;
+            Conditional = false;
+        }
+
+        public TemplateAction(string template, ActionConfigurationElement action, IEnumerable<string> modes) {
+            Action = action.Action;
+            File = action.File;
+            Method = action.Method;
+            Url = action.Url;
+            TemplateName = template;
+            From = action.From;
+            Arguments = action.Arguments;
+            Bcc = action.Bcc;
+            Cc = action.Cc;
+            EnableSsl = action.EnableSsl;
+            Html = action.Html;
+            Password = action.Password;
+            Port = action.Port;
+            Subject = action.Subject;
+            To = action.To;
+            Username = action.Username;
+            Host = action.Host;
+            Body = action.Body;
+            Modes = modes;
+            Before = action.Before;
+            After = action.After;
+            Conditional = action.Conditional;
         }
 
         public void Handle(string file) {

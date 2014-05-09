@@ -34,7 +34,8 @@ namespace Transformalize.Configuration {
         private const string INHERIT = "inherit";
         private const string TIMEZONE = "time-zone";
         private const string PIPELINE_THREADING = "pipeline-threading";
-
+        private const string ACTIONS = "actions";
+        private const string TEMPLATES = "templates";
 
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name {
@@ -53,6 +54,7 @@ namespace Transformalize.Configuration {
             get { return this[TIMEZONE] as string; }
             set { this[TIMEZONE] = value; }
         }
+
 
         [ConfigurationProperty(ENABLED, IsRequired = false, DefaultValue = true)]
         public bool Enabled {
@@ -113,9 +115,9 @@ namespace Transformalize.Configuration {
             get { return this["calculated-fields"] as FieldElementCollection; }
         }
 
-        [ConfigurationProperty("templates")]
+        [ConfigurationProperty(TEMPLATES)]
         public TemplateElementCollection Templates {
-            get { return this["templates"] as TemplateElementCollection; }
+            get { return this[TEMPLATES] as TemplateElementCollection; }
         }
 
         [EnumConversionValidator(typeof(PipelineThreading), MessageTemplate = "{1} must be SingleThreaded, or MultiThreaded.")]
@@ -123,6 +125,11 @@ namespace Transformalize.Configuration {
         public string PipelineThreading {
             get { return this[PIPELINE_THREADING] as string; }
             set { this[PIPELINE_THREADING] = value; }
+        }
+
+        [ConfigurationProperty(ACTIONS)]
+        public ActionElementCollection Actions {
+            get { return this[ACTIONS] as ActionElementCollection; }
         }
 
         public override bool IsReadOnly() {
@@ -152,6 +159,7 @@ namespace Transformalize.Configuration {
             Scripts.Merge(child.Scripts);
             SearchTypes.Merge(child.SearchTypes);
             Templates.Merge(child.Templates);
+            Actions.Merge(child.Actions);
         }
     }
 }

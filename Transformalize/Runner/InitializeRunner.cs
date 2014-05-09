@@ -4,21 +4,25 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 using Transformalize.Processes;
 
-namespace Transformalize.Runner
-{
+namespace Transformalize.Runner {
     public class InitializeRunner : IProcessRunner {
 
         public IDictionary<string, IEnumerable<Row>> Run(Process process) {
-            
+
             GlobalDiagnosticsContext.Set("process", process.Name);
             GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
-            
+
             var result = new Dictionary<string, IEnumerable<Row>>();
 
             if (!process.IsReady())
                 return result;
+
+            process.PerformActions(a => a.Before);
+
             new InitializationProcess(process).Execute();
             new TemplateManager(process).Manage();
+
+            process.PerformActions(a => a.After);
 
             return result;
         }

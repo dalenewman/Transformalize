@@ -1,6 +1,6 @@
 namespace Transformalize.Configuration.Builders {
 
-    public class TemplateBuilder {
+    public class TemplateBuilder : IActionHolder {
 
         private readonly ProcessBuilder _processBuilder;
         private readonly TemplateConfigurationElement _template;

@@ -21,6 +21,7 @@
 #endregion
 
 using System.Configuration;
+using System.Linq;
 
 namespace Transformalize.Configuration {
     public class ActionElementCollection : ConfigurationElementCollection {
@@ -49,6 +50,19 @@ namespace Transformalize.Configuration {
 
         public void Add(ActionConfigurationElement element) {
             BaseAdd(element);
+        }
+
+        public void Merge(ActionElementCollection elements) {
+            foreach (ConfigurationElement element in elements) {
+                var key = GetElementKey(element);
+                if (BaseGetAllKeys().Any(k => k.Equals(key))) {
+                    var index = this.BaseIndexOf(this.BaseGet(key));
+                    BaseRemoveAt(index);
+                    BaseAdd(index, element);
+                } else {
+                    BaseAdd(element);
+                }
+            }
         }
     }
 }

@@ -32,8 +32,6 @@ namespace Transformalize.Main {
         private readonly Logger _log = LogManager.GetLogger("tfl");
         private LogLevel _logLevel = LogLevel.Info;
         private string _mode = "default";
-        private bool _renderTemplates = true;
-        private bool _performTemplateActions = true;
         private IProcessRunner _processRunner = new ProcessRunner();
         private List<string> _problems = new List<string>();
 
@@ -41,9 +39,6 @@ namespace Transformalize.Main {
 
         public IProcessRunner ProcessRunner { get { return _processRunner; } set { _processRunner = value; } }
         public List<string> Problems { get { return _problems; } set { _problems = value; } }
-        public bool RenderTemplates { get { return _renderTemplates; } set { _renderTemplates = value; } }
-        public bool PerformTemplateActions { get { return _performTemplateActions; } set { _performTemplateActions = value; } }
-
         public bool Force { get; set; }
         public bool ConfigurationUpdated { get; set; }
 
@@ -75,7 +70,6 @@ namespace Transformalize.Main {
                     foreach (var option in options) {
                         var key = option.Key.ToLower();
                         var value = option.Value.ToString().ToLower();
-                        bool input;
                         switch (key) {
 
                             case "mode":
@@ -86,29 +80,15 @@ namespace Transformalize.Main {
                                 LogLevel = LogLevel.FromString(value);
                                 break;
 
-                            case "rendertemplates":
-                                if (bool.TryParse(value, out input)) {
-                                    RenderTemplates = input;
-                                } else {
-                                    RecordBadValue(option, typeof(bool));
-                                }
-                                break;
-
-                            case "performtemplateactions":
-                                if (bool.TryParse(value, out input)) {
-                                    PerformTemplateActions = input;
-                                } else {
-                                    RecordBadValue(option, typeof(bool));
-                                }
-                                break;
-
                             case "force":
+                                bool input;
                                 if (bool.TryParse(value, out input)) {
                                     Force = input;
                                 } else {
                                     RecordBadValue(option, typeof(bool));
                                 }
                                 break;
+
                             case "top":
                                 int top;
                                 if (int.TryParse(value, out top)) {

@@ -33,22 +33,18 @@ namespace Transformalize.Test.Unit
         [Test]
         public void TestOptionsWithBoolean()
         {
-            const string args = "{ \"Mode\":\"Init\", \"RenderTemplates\":false }";
+            const string args = "{ \"Mode\":\"Init\" }";
 
             var options = new Options(args);
 
-            Assert.IsFalse(options.RenderTemplates);
             Assert.AreEqual("init", options.Mode);
         }
 
         [Test]
         public void TestOptionsWithStrings()
         {
-            const string args = "{ \"Mode\":\"Init\", \"RenderTemplates\":\"False\" }";
-
+            const string args = "{ \"Mode\":\"Init\" }";
             var options = new Options(args);
-
-            Assert.IsFalse(options.RenderTemplates);
             Assert.AreEqual("init", options.Mode);
         }
 

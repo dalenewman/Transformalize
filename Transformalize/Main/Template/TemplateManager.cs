@@ -38,9 +38,6 @@ namespace Transformalize.Main {
 
         public void Manage() {
 
-            if (!_process.Options.RenderTemplates)
-                return;
-
             var folder = Common.GetTemporaryFolder(_process.Name);
 
             foreach (var pair in _process.Templates) {
@@ -72,9 +69,6 @@ namespace Transformalize.Main {
                         _log.Debug(e.StackTrace);
                     }
                 }
-
-                if (!_process.Options.PerformTemplateActions)
-                    continue;
 
                 foreach (var action in template.Actions) {
                     action.Handle(fullName);

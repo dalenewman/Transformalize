@@ -68,6 +68,7 @@ namespace Transformalize.Main {
             _process.OutputConnection = _process.Connections["output"];
 
             _process.Scripts = new ScriptReader(_element.Scripts).Read();
+            _process.Actions = new ActionReader(_process).Read(_element.Actions);
             _process.Templates = new TemplateReader(_process, _element.Templates).Read();
             _process.SearchTypes = new SearchTypeReader(_element.SearchTypes).Read();
             new MapLoader(ref _process, _element.Maps).Load();

@@ -98,6 +98,8 @@ namespace Transformalize.Main {
             set { _parameters = value; }
         }
 
+        public IEnumerable<TemplateAction> Actions { get; set; }
+
         //constructor
         public Process(string name = "") {
             Name = name;
@@ -187,6 +189,20 @@ namespace Transformalize.Main {
 
         public bool UpdatedAnything() {
             return Anything > 0;
+        }
+
+        public void PerformActions(Func<TemplateAction, bool> filter) {
+            if (Actions.Any(filter)) {
+                foreach (var action in Actions.Where(filter)) {
+                    if (action.Conditional) {
+                        if (UpdatedAnything()) {
+                            action.Handle(string.Empty);
+                        }
+                    } else {
+                        action.Handle(string.Empty);
+                    }
+                }
+            }
         }
     }
 }

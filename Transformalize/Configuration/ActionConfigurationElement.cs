@@ -20,7 +20,9 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 
 namespace Transformalize.Configuration {
     public class ActionConfigurationElement : ConfigurationElement {
@@ -45,6 +47,9 @@ namespace Transformalize.Configuration {
         private const string ARGUMENTS = "arguments";
         private const string ENABLE_SSL = "enable-ssl";
         private const string HTML = "html";
+        private const string BEFORE = "before";
+        private const string AFTER = "after";
+        private const string CONDITIONAL = "conditional";
 
         [ConfigurationProperty(ACTION, IsRequired = true)]
         public string Action {
@@ -118,6 +123,18 @@ namespace Transformalize.Configuration {
             set { this[ENABLE_SSL] = value; }
         }
 
+        [ConfigurationProperty(BEFORE, IsRequired = false, DefaultValue = false)]
+        public bool Before {
+            get { return (bool)this[BEFORE]; }
+            set { this[BEFORE] = value; }
+        }
+
+        [ConfigurationProperty(AFTER, IsRequired = false, DefaultValue = true)]
+        public bool After {
+            get { return (bool)this[AFTER]; }
+            set { this[AFTER] = value; }
+        }
+
         [ConfigurationProperty(HTML, IsRequired = false, DefaultValue = true)]
         public bool Html {
             get { return (bool) this[HTML]; }
@@ -165,8 +182,26 @@ namespace Transformalize.Configuration {
             get { return this[MODES] as ModeElementCollection; }
         }
 
+        [ConfigurationProperty(CONDITIONAL, IsRequired = false, DefaultValue = false)]
+        public bool Conditional {
+            get { return (bool)this[CONDITIONAL]; }
+            set { this[CONDITIONAL] = value; }
+        }
+
         public override bool IsReadOnly() {
             return false;
         }
+
+        public string[] GetModes() {
+            var modes = new List<string>();
+
+            if (Mode != string.Empty) {
+                modes.Add(Mode);
+            }
+
+            modes.AddRange(from ModeConfigurationElement mode in Modes select mode.Mode);
+            return modes.ToArray();
+        }
+
     }
 }

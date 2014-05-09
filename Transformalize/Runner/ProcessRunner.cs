@@ -33,7 +33,7 @@ namespace Transformalize.Runner {
 
     public class ProcessRunner : IProcessRunner {
 
-        public IDictionary<string,IEnumerable<Row>> Run(Process process) {
+        public IDictionary<string, IEnumerable<Row>> Run(Process process) {
 
             GlobalDiagnosticsContext.Set("process", process.Name);
             GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
@@ -43,12 +43,16 @@ namespace Transformalize.Runner {
             if (!process.IsReady())
                 return results;
 
+            process.PerformActions(a=>a.Before);
+
             ProcessDeletes(process);
             ProcessEntities(process);
             ProcessMaster(process);
             ProcessTransforms(process);
 
             new TemplateManager(process).Manage();
+
+            process.PerformActions(a => a.After);
 
             return process.Entities.ToDictionary(e => e.Alias, e => e.Rows);
         }

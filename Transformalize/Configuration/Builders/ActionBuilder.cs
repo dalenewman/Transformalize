@@ -1,10 +1,10 @@
 namespace Transformalize.Configuration.Builders {
     public class ActionBuilder {
-        private readonly TemplateBuilder _templateBuilder;
+        private readonly IActionHolder _builder;
         private readonly ActionConfigurationElement _action;
 
-        public ActionBuilder(TemplateBuilder templateBuilder, ActionConfigurationElement action) {
-            _templateBuilder = templateBuilder;
+        public ActionBuilder(IActionHolder builder, ActionConfigurationElement action) {
+            _builder = builder;
             _action = action;
         }
 
@@ -24,11 +24,11 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public TemplateBuilder Template(string name) {
-            return _templateBuilder.Template(name);
+            return _builder.Template(name);
         }
 
         public ActionBuilder Action(string action) {
-            return _templateBuilder.Action(action);
+            return _builder.Action(action);
         }
 
         public ActionBuilder Mode(string mode) {
@@ -37,23 +37,23 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public EntityBuilder Entity(string name) {
-            return _templateBuilder.Entity(name);
+            return _builder.Entity(name);
         }
 
         public SearchTypeBuilder SearchType(string name) {
-            return _templateBuilder.SearchType(name);
+            return _builder.SearchType(name);
         }
 
         public MapBuilder Map(string name) {
-            return _templateBuilder.Map(name);
+            return _builder.Map(name);
         }
 
         public ProcessBuilder TemplatePath(string path) {
-            return _templateBuilder.TemplatePath(path);
+            return _builder.TemplatePath(path);
         }
 
         public ProcessBuilder ScriptPath(string path) {
-            return _templateBuilder.ScriptPath(path);
+            return _builder.ScriptPath(path);
         }
     }
 }

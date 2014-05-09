@@ -1,10 +1,8 @@
-using System.IO;
-using System.IO.Pipes;
 using Transformalize.Main;
 
 namespace Transformalize.Configuration.Builders {
 
-    public class ProcessBuilder : IFieldHolder {
+    public class ProcessBuilder : IFieldHolder, IActionHolder {
 
         private readonly ProcessConfigurationElement _process;
 
@@ -37,11 +35,16 @@ namespace Transformalize.Configuration.Builders {
             return new ConnectionBuilder(this, connection);
         }
 
-        public MapBuilder Map(string name, string sql = "") {
+        public MapBuilder Map(string name) {
+            var map = new MapConfigurationElement { Name = name };
+            _process.Maps.Add(map);
+            return new MapBuilder(this, map);
+        }
+
+        public MapBuilder Map(string name, string sql) {
             var map = new MapConfigurationElement { Name = name };
             map.Items.Sql = sql;
             _process.Maps.Add(map);
-
             return new MapBuilder(this, map);
         }
 
@@ -61,6 +64,13 @@ namespace Transformalize.Configuration.Builders {
             var template = new TemplateConfigurationElement { Name = name };
             _process.Templates.Add(template);
             return new TemplateBuilder(this, template);
+        }
+
+
+        public ActionBuilder Action(string action) {
+            var a = new ActionConfigurationElement() { Action = action };
+            _process.Actions.Add(a);
+            return new ActionBuilder(this, a);
         }
 
         public SearchTypeBuilder SearchType(string name) {

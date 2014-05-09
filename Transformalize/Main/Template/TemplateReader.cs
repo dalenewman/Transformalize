@@ -32,8 +32,8 @@ namespace Transformalize.Main {
 
             foreach (var element in templateElements) {
 
-                var reader = element.File.StartsWith("http", IC) ? (IContentsReader) new ContentsWebReader() : new ContentsFileReader(path);
-                var contents = element.Render ? reader.Read(element.File) : new Contents() {FileName = element.File};
+                var reader = element.File.StartsWith("http", IC) ? (IContentsReader)new ContentsWebReader() : new ContentsFileReader(path);
+                var contents = element.Render ? reader.Read(element.File) : new Contents() { FileName = element.File };
                 var template = new Template(_process, element, contents);
 
                 foreach (SettingConfigurationElement setting in element.Settings) {
@@ -41,31 +41,11 @@ namespace Transformalize.Main {
                 }
 
                 foreach (ActionConfigurationElement action in element.Actions) {
-                    var modes = GetModes(action).ToList();
-                    if (modes.Count != 0 && !modes.Contains("*") && !modes.Any(m => m.Equals(_process.Options.Mode, IC)))
+                    var modes = action.GetModes();
+                    if (modes.Length > 0 && !modes.Contains("*") && !modes.Any(m => m.Equals(_process.Options.Mode, IC)))
                         continue;
 
-                    var templateAction = new TemplateAction {
-                        Action = action.Action,
-                        File = action.File,
-                        Method = action.Method,
-                        Url = action.Url,
-                        TemplateName = template.Name,
-                        From = action.From,
-                        Arguments = action.Arguments,
-                        Bcc = action.Bcc,
-                        Cc = action.Cc,
-                        EnableSsl = action.EnableSsl,
-                        Html = action.Html,
-                        Password = action.Password,
-                        Port = action.Port,
-                        Subject = action.Subject,
-                        To = action.To,
-                        Username = action.Username,
-                        Host = action.Host,
-                        Body = action.Body,
-                        Modes = modes
-                    };
+                    var templateAction = new TemplateAction(template.Name, action, modes);
 
                     if (!String.IsNullOrEmpty(action.Connection)) {
                         if (_process.Connections.ContainsKey(action.Connection)) {
@@ -87,17 +67,6 @@ namespace Transformalize.Main {
 
             return templates;
 
-        }
-
-        private static IEnumerable<string> GetModes(ActionConfigurationElement action) {
-            var modes = new List<string>();
-
-            if (action.Mode != string.Empty) {
-                modes.Add(action.Mode);
-            }
-
-            modes.AddRange(from ModeConfigurationElement mode in action.Modes select mode.Mode);
-            return modes;
         }
 
         private void SetupRazorTemplateService() {
