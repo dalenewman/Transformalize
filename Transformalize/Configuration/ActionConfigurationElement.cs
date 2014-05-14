@@ -50,6 +50,8 @@ namespace Transformalize.Configuration {
         private const string BEFORE = "before";
         private const string AFTER = "after";
         private const string CONDITIONAL = "conditional";
+        private const string OLD_VALUE = "old-value";
+        private const string NEW_VALUE = "new-value";
 
         [ConfigurationProperty(ACTION, IsRequired = true)]
         public string Action {
@@ -163,6 +165,18 @@ namespace Transformalize.Configuration {
         public string Body {
             get { return this[BODY] as string; }
             set { this[BODY] = value; }
+        }
+
+        [ConfigurationProperty(OLD_VALUE, IsRequired = false, DefaultValue = "")]
+        public string OldValue {
+            get { return this[OLD_VALUE] as string; }
+            set { this[OLD_VALUE] = value; }
+        }
+
+        [ConfigurationProperty(NEW_VALUE, IsRequired = false, DefaultValue = "")]
+        public string NewValue {
+            get { return this[NEW_VALUE] as string; }
+            set { this[NEW_VALUE] = value; }
         }
 
         [ConfigurationProperty(PORT, IsRequired = false, DefaultValue = 25)]

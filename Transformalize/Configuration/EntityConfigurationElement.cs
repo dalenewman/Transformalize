@@ -47,6 +47,8 @@ namespace Transformalize.Configuration {
         private const string INPUT = "input";
         private const string DETECT_CHANGES = "detect-changes";
         private const string TRIM_ALL = "trim-all";
+        private const string UNICODE = "unicode";
+        private const string VARIABLE_LENGTH = "variable-length";
 
         public IOperation InputOperation { get; set; }
 
@@ -159,6 +161,18 @@ namespace Transformalize.Configuration {
         [ConfigurationProperty(INPUT)]
         public IoElementCollection Input {
             get { return this[INPUT] as IoElementCollection; }
+        }
+
+        [ConfigurationProperty(UNICODE, IsRequired = false, DefaultValue = true)]
+        public bool Unicode {
+            get { return (bool)this[UNICODE]; }
+            set { this[UNICODE] = value; }
+        }
+
+        [ConfigurationProperty(VARIABLE_LENGTH, IsRequired = false, DefaultValue = true)]
+        public bool VariableLength {
+            get { return (bool)this[VARIABLE_LENGTH]; }
+            set { this[VARIABLE_LENGTH] = value; }
         }
 
         [ConfigurationProperty("top", IsRequired = false, DefaultValue = 0)]

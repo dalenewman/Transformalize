@@ -36,6 +36,7 @@ using Transformalize.Operations.Transform;
 namespace Transformalize.Processes {
 
     public class EntityProcess : EtlProcess {
+
         private const string STANDARD_OUTPUT = "output";
         private Process _process;
         private Entity _entity;
@@ -68,10 +69,15 @@ namespace Transformalize.Processes {
 
             Register(new ApplyDefaults(true, _entity.Fields, _entity.CalculatedFields));
 
-            if (_entity.Group)
-                Register(new EntityAggregation(_entity));
+            foreach (var transform in _entity.OperationsBeforeAggregation) {
+                Register(transform);
+            }
 
-            foreach (var transform in _entity.Operations) {
+            if (_entity.Group) {
+                Register(new EntityAggregation(_entity));
+            }
+
+            foreach (var transform in _entity.OperationsAfterAggregation) {
                 Register(transform);
             }
 
@@ -107,8 +113,13 @@ namespace Transformalize.Processes {
                 if (_entity.HasSqlOverride()) {
                     p.Register(new SqlOverrideOperation(_entity, input.Connection));
                 } else {
-                    p.Register(new EntityKeysToOperations(_entity, input.Connection));
-                    p.Register(new SerialUnionAllOperation());
+                    if (_entity.PrimaryKey.Any(kv=>kv.Value.Input)) {
+                        p.Register(new EntityKeysToOperations(_entity, input.Connection));
+                        p.Register(new SerialUnionAllOperation());
+                    } else {
+                        _entity.SqlOverride = SqlTemplates.Select(_entity.Fields, _entity.Name, input.Connection, _entity.Schema);
+                        p.Register(new SqlOverrideOperation(_entity, input.Connection));
+                    }
                 }
             } else {
                 if (input.Connection.IsFile()) {

@@ -69,7 +69,7 @@ namespace Transformalize.Runner {
 
             process.IsFirstRun = process.MasterEntity == null || !process.OutputConnection.RecordsExist(process.MasterEntity);
 
-            foreach (var entityKeysProcess in process.Entities.Select(entity => new EntityKeysProcess(process, entity) {
+            foreach (var entityKeysProcess in process.Entities.Where(entity => entity.PrimaryKey.Any(kv=>kv.Value.Input)).Select(entity => new EntityKeysProcess(process, entity) {
                 PipelineExecuter = entity.PipelineThreading == PipelineThreading.SingleThreaded ? (AbstractPipelineExecuter)new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter()
             })) {
                 entityKeysProcess.Execute();

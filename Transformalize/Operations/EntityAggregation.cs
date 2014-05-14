@@ -21,10 +21,9 @@
 #endregion
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Text;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
@@ -34,19 +33,13 @@ namespace Transformalize.Operations {
     public class EntityAggregation : AbstractAggregationOperation {
 
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
-        private readonly IDictionary<string, StringBuilder> _builders = new Dictionary<string, StringBuilder>();
+        private readonly IDictionary<string, ConcurrentDictionary<ObjectArrayKeys, List<object>>> _lists = new Dictionary<string, ConcurrentDictionary<ObjectArrayKeys, List<object>>>();
         private readonly IDictionary<string, Dictionary<ObjectArrayKeys, Dictionary<object, byte>>> _distinct = new Dictionary<string, Dictionary<ObjectArrayKeys, Dictionary<object, byte>>>();
         private readonly Field[] _fieldsToAccumulate;
         private readonly string[] _keysToGroupBy;
         private readonly string _firstKey;
-        private readonly char _separator;
-        private readonly char[] _separatorArray;
-        private readonly string _separatorString;
 
-        public EntityAggregation(Entity entity, char separator = ',') {
-            _separator = separator;
-            _separatorString = separator.ToString(CultureInfo.InvariantCulture);
-            _separatorArray = new[] { separator };
+        public EntityAggregation(Entity entity) {
 
             _keysToGroupBy = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).Context().ToEnumerable().Where(f => f.Aggregate.Equals("group", IC)).Select(f => f.Alias).ToArray();
             _firstKey = _keysToGroupBy[0];
@@ -54,7 +47,7 @@ namespace Transformalize.Operations {
             _fieldsToAccumulate = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).Context().ToEnumerable().Where(f => !f.Aggregate.Equals("group", IC)).ToArray();
 
             foreach (var field in _fieldsToAccumulate) {
-                _builders[field.Alias] = new StringBuilder();
+                _lists[field.Alias] = new ConcurrentDictionary<ObjectArrayKeys, List<object>>();
                 if (field.Aggregate.Equals("countdistinct", IC)) {
                     _distinct[field.Alias] = new Dictionary<ObjectArrayKeys, Dictionary<object, byte>>();
                 }
@@ -66,7 +59,6 @@ namespace Transformalize.Operations {
             if (!aggregate.ContainsKey(_firstKey)) {
                 foreach (var column in _keysToGroupBy) {
                     aggregate[column] = row[column];
-
                 }
 
                 foreach (var field in _fieldsToAccumulate) {
@@ -80,18 +72,18 @@ namespace Transformalize.Operations {
 
             //accumulate
             foreach (var field in _fieldsToAccumulate) {
+                ObjectArrayKeys key;
                 switch (field.Aggregate) {
                     case "count":
                         aggregate[field.Alias] = (int)aggregate[field.Alias] + 1;
                         break;
                     case "countdistinct":
-                        var key = row.CreateKey(_keysToGroupBy);
+                        key = row.CreateKey(_keysToGroupBy);
                         var value = row[field.Name];
                         if (!_distinct[field.Alias].ContainsKey(key)) {
                             _distinct[field.Alias].Add(key, new Dictionary<object, byte>());
                         }
-                        if (!_distinct[field.Alias][key].ContainsKey(value))
-                        {
+                        if (!_distinct[field.Alias][key].ContainsKey(value)) {
                             _distinct[field.Alias][key].Add(value, 0);
                             aggregate[field.Alias] = (int)aggregate[field.Alias] + 1;
                         }
@@ -128,29 +120,11 @@ namespace Transformalize.Operations {
                         break;
 
                     case "join":
-                        var aggregateValue = aggregate[field.Alias].ToString();
-                        var aggregateIsEmpty = aggregateValue == string.Empty;
-
-                        var rowValue = row[field.Alias].ToString().Replace(field.Delimiter, string.Empty);
-                        var rowIsEmpty = rowValue == string.Empty;
-
-                        if (aggregateIsEmpty && rowIsEmpty)
-                            break;
-
-                        if (!aggregateIsEmpty) {
-                            _builders[field.Alias].Clear();
-                            _builders[field.Alias].Append(aggregateValue);
-                            if (!rowIsEmpty && aggregateValue != rowValue) {
-                                _builders[field.Alias].Append(field.Delimiter);
-                                _builders[field.Alias].Append(rowValue);
-                            }
-                            aggregate[field.Alias] = _builders[field.Alias].ToString();
-                        } else {
-                            aggregate[field.Alias] = rowValue;
-                        }
-
+                        Keep(field.Alias, row);
                         break;
-                    default:
+
+                    case "array":
+                        Keep(field.Alias, row);
                         break;
                 }
             }
@@ -160,20 +134,25 @@ namespace Transformalize.Operations {
             return _keysToGroupBy;
         }
 
+        private void Keep(string alias, Row row) {
+            var key = row.CreateKey(_keysToGroupBy);
+            if (_lists[alias].ContainsKey(key)) {
+                _lists[alias][key].Add(row[alias]);
+            } else {
+                _lists[alias][key] = new List<object>() { row[alias] };
+            }
+        }
+
         protected override void FinishAggregation(Row aggregate) {
             //final accumulate
+            var group = aggregate.CreateKey(_keysToGroupBy);
             foreach (var field in _fieldsToAccumulate) {
                 switch (field.Aggregate) {
                     case "join":
-                        var aggregateValue = aggregate[field.Alias].ToString();
-                        var aggregateIsEmpty = aggregateValue == string.Empty;
-
-                        if (aggregateIsEmpty)
-                            break;
-
-                        aggregate[field.Alias] = string.Join(_separatorString + " ", aggregateValue.Split(_separatorArray).Select(s => s.Trim()).Distinct());
+                        aggregate[field.Alias] = string.Join(field.Delimiter,_lists[field.Alias][group]);
                         break;
-                    default:
+                    case "array":
+                        aggregate[field.Alias] = _lists[field.Alias][group].ToArray();
                         break;
                 }
             }

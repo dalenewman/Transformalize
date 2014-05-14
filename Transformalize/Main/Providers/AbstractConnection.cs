@@ -47,6 +47,7 @@ namespace Transformalize.Main.Providers {
         protected string TypeAndAssemblyName { get; set; }
         public int BatchSize { get; set; }
         public string Process { get; set; }
+        public string Path { get; set; }
 
         public IConnectionChecker ConnectionChecker { get; set; }
         public IEntityRecordsExist EntityRecordsExist { get; set; }
@@ -135,6 +136,7 @@ namespace Transformalize.Main.Providers {
             DateFormat = element.DateFormat;
             IncludeHeader = element.IncludeHeader;
             IncludeFooter = element.IncludeFooter;
+            Path = element.Path;
             ErrorMode = (ErrorMode)Enum.Parse(typeof(ErrorMode), element.ErrorMode, true);
             SearchOption = (SearchOption)Enum.Parse(typeof(SearchOption), element.SearchOption, true);
             SearchPattern = element.SearchPattern;

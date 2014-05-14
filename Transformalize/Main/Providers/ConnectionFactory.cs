@@ -16,6 +16,7 @@ using Transformalize.Main.Providers.Log;
 using Transformalize.Main.Providers.Mail;
 using Transformalize.Main.Providers.MySql;
 using Transformalize.Main.Providers.PostgreSql;
+using Transformalize.Main.Providers.Solr;
 using Transformalize.Main.Providers.SqlCe4;
 using Transformalize.Main.Providers.SqlServer;
 
@@ -83,6 +84,9 @@ namespace Transformalize.Main.Providers {
                         break;
                     case "html":
                         connections.Add(element.Name, _process.Kernal.Get<HtmlConnection>(parameters));
+                        break;
+                    case "solr":
+                        connections.Add(element.Name, _process.Kernal.Get<SolrConnection>(parameters));
                         break;
                     default:
                         _log.Warn("The provider '{0}' is not yet implemented.", element.Provider);

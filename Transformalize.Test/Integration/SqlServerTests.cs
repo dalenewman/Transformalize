@@ -70,10 +70,9 @@ namespace Transformalize.Test.Integration {
         [Test]
         public void TestFail()
         {
-            const string file = @"C:\Code\TransformalizeConfiguration\TransformalizeConfiguration\App_Data\Clevest35\UpdateXmlField.xml";
-            //var process = ProcessFactory.Create(file, new Options() {Mode = "init", LogLevel = LogLevel.Debug})[0];
-            //ProcessFactory.Create(file, new Options() {Mode="init"})[0].Run();
-            ProcessFactory.Create(file)[0].Run();
+            const string file = @"C:\Code\TransformalizeConfiguration\TransformalizeConfiguration\App_Data\TestUnixIn.xml";
+            ProcessFactory.Create(file, new Options() {LogLevel = LogLevel.Debug})[0].Run();
+            //ProcessFactory.Create(file)[0].Run();
 
         }
 

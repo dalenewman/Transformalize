@@ -128,6 +128,13 @@ namespace Transformalize.Main {
                         element.Value
                     ) { ShouldRun = shouldRun };
 
+                case "append":
+                    return new AppendOperation(
+                        inKey,
+                        outKey,
+                        element.Value
+                    ) { ShouldRun = shouldRun };
+
                 case "if":
                     return new IfOperation(
                         GetParameter(field.Entity, element.Left, parameters),
@@ -587,7 +594,7 @@ namespace Transformalize.Main {
 
         private IParameter GetParameter(string entity, string parameter) {
             Field f;
-            return _process.TryGetField(parameter, entity, out f) ?
+            return _process.TryGetField(parameter, entity, out f, false) ?
                 f.ToParameter() :
                 new Parameter(parameter, parameter);
         }

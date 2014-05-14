@@ -75,7 +75,7 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void TestCountsNew() {
+        public void TestJoin() {
 
             var input = new RowsBuilder()
                 .Row("order", 1).Field("year", "2000")
@@ -92,25 +92,25 @@ namespace Transformalize.Test.Unit {
                 .Connection("output").Provider(ProviderType.Internal)
                 .Entity("entity")
                     .InputOperation(input)
-                    .Field("order").Int32().PrimaryKey()
-                    .Field("year")
+                    .Group() //group means you need to aggregate all output fields
+                    .Field("order")                     .Aggregate("group")     .Int32().PrimaryKey()
+                    .Field("year").Alias("years")       .Aggregate("join")
+                    .Field("year").Alias("years_array") .Aggregate("array")
                 .Process();
 
             var output = ProcessFactory.Create(cfg)[0].Run()["entity"].ToList();
 
-            //Assert.AreEqual(2, output.Count);
+            Assert.AreEqual(2, output.Count);
 
-            //var r1 = output[0];
-            //Assert.AreEqual("2002", r1["year"]);
-            //Assert.AreEqual(1, r1["order"]);
-            //Assert.AreEqual(5, r1["count"]);
-            //Assert.AreEqual(3, r1["years"]);
+            var r1 = output[0];
+            Assert.AreEqual(1, r1["order"]);
+            Assert.AreEqual("2000, 2000, 2000, 2001, 2002", r1["years"]);
+            Assert.AreEqual(5, ((object[]) r1["years_array"]).Length);
 
-            //var r2 = output[1];
-            //Assert.AreEqual("2000", r2["year"]);
-            //Assert.AreEqual(2, r2["order"]);
-            //Assert.AreEqual(2, r2["count"]);
-            //Assert.AreEqual(1, r2["years"]);
+            var r2 = output[1];
+            Assert.AreEqual(2, r2["order"]);
+            Assert.AreEqual("2000, 2000", r2["years"]);
+            Assert.AreEqual(2, ((object[])r2["years_array"]).Length);
         }
 
 

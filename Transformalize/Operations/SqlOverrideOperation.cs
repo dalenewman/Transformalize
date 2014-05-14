@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using Microsoft.AnalysisServices;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
@@ -37,6 +38,7 @@ namespace Transformalize.Operations {
         }
 
         protected override void PrepareCommand(IDbCommand cmd) {
+            Debug("SqlOverride: " + _entity.SqlOverride);
             cmd.CommandText = _entity.SqlOverride;
             cmd.CommandTimeout = 0;
             cmd.CommandType = CommandType.Text;

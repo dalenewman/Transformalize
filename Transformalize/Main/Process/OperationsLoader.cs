@@ -29,14 +29,18 @@ namespace Transformalize.Main {
 
                     if (entity.TrimAll && field.Input && field.SimpleType.Equals("string")) {
                         field.Transforms.Insert(0, "trim");
-                        entity.Operations.Add(new TrimOperation(field.Alias, field.Alias, " "));
+                        entity.OperationsAfterAggregation.Add(new TrimOperation(field.Alias, field.Alias, " "));
                     }
 
                     foreach (TransformConfigurationElement t in f.Transforms) {
                         field.Transforms.Add(t.Method.ToLower());
-
                         var reader = new FieldParametersReader();
-                        entity.Operations.Add(factory.Create(field, t, reader.Read(t)));
+                        if (t.BeforeAggregation) {
+                            entity.OperationsBeforeAggregation.Add(factory.Create(field, t, reader.Read(t)));
+                        }
+                        if (t.AfterAggregation) {
+                            entity.OperationsAfterAggregation.Add(factory.Create(field, t, reader.Read(t)));
+                        }
                         AddBranches(t.Branches, entity, field, reader);
                     }
                 }
@@ -50,7 +54,13 @@ namespace Transformalize.Main {
                         var reader = t.Parameter.Equals("*") ?
                             (ITransformParametersReader)new EntityParametersReader(entity) :
                             new EntityTransformParametersReader(entity);
-                        entity.Operations.Add(factory.Create(field, t, reader.Read(t)));
+
+                        if (t.BeforeAggregation) {
+                            entity.OperationsBeforeAggregation.Add(factory.Create(field, t, reader.Read(t)));
+                        }
+                        if (t.AfterAggregation) {
+                            entity.OperationsAfterAggregation.Add(factory.Create(field, t, reader.Read(t)));
+                        }
                         AddBranches(t.Branches, entity, field, reader);
                     }
                 }
@@ -68,7 +78,7 @@ namespace Transformalize.Main {
                     transform.RunValue = branch.RunValue;
 
                     var operation = new TransformOperationFactory(_process).Create(field, transform, reader.Read(transform));
-                    entity.Operations.Add(operation);
+                    entity.OperationsAfterAggregation.Add(operation);
                     if (transform.Branches.Count > 0) {
                         AddBranches(transform.Branches, entity, field, reader);
                     }

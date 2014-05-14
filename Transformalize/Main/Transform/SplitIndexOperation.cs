@@ -10,6 +10,15 @@ namespace Transformalize.Main {
         private readonly char[] _sepArray;
         private readonly bool _convert;
 
+        /// <summary>
+        /// Splits the content into an array (limited by count).  Returns the element at the specified zero-based index.
+        /// </summary>
+        /// <param name="inKey"></param>
+        /// <param name="outKey"></param>
+        /// <param name="outType"></param>
+        /// <param name="separator"></param>
+        /// <param name="count"></param>
+        /// <param name="index"></param>
         public SplitIndexOperation(string inKey, string outKey, string outType, string separator, int count, int index)
             : base(inKey, outKey) {
             _outType = outType;

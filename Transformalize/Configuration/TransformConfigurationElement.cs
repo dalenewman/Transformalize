@@ -99,6 +99,9 @@ namespace Transformalize.Configuration {
         private const string RUN_OPERATOR = "run-operator";
         private const string RUN_VALUE = "run-value";
 
+        private const string BEFORE_AGGREGATION = "before-aggregation";
+        private const string AFTER_AGGREGATION = "after-aggregation";
+
         [ConfigurationProperty(METHOD, IsRequired = true)]
         public string Method {
             get { return this[METHOD] as string; }
@@ -294,6 +297,18 @@ namespace Transformalize.Configuration {
         [ConfigurationProperty(FIELDS)]
         public FieldElementCollection Fields {
             get { return this[FIELDS] as FieldElementCollection; }
+        }
+
+        [ConfigurationProperty(BEFORE_AGGREGATION, IsRequired = false, DefaultValue = false)]
+        public bool BeforeAggregation {
+            get { return (bool)this[BEFORE_AGGREGATION]; }
+            set { this[BEFORE_AGGREGATION] = value; }
+        }
+
+        [ConfigurationProperty(AFTER_AGGREGATION, IsRequired = false, DefaultValue = true)]
+        public bool AfterAggregation {
+            get { return (bool)this[AFTER_AGGREGATION]; }
+            set { this[AFTER_AGGREGATION] = value; }
         }
 
         //validation

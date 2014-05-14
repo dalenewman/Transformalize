@@ -165,21 +165,21 @@ namespace Transformalize.Configuration {
             set { this[OUTPUT] = value; }
         }
 
-        [ConfigurationProperty(UNICODE, IsRequired = false, DefaultValue = true)]
-        public bool Unicode {
-            get { return (bool)this[UNICODE]; }
-            set { this[UNICODE] = value; }
-        }
-
         [ConfigurationProperty(READ_INNER_XML, IsRequired = false, DefaultValue = true)]
         public bool ReadInnerXml {
             get { return (bool)this[READ_INNER_XML]; }
             set { this[READ_INNER_XML] = value; }
         }
 
-        [ConfigurationProperty(VARIABLE_LENGTH, IsRequired = false, DefaultValue = true)]
-        public bool VariableLength {
-            get { return (bool)this[VARIABLE_LENGTH]; }
+        [ConfigurationProperty(UNICODE, IsRequired = false, DefaultValue = "[default]")]
+        public string Unicode {
+            get { return (string)this[UNICODE]; }
+            set { this[UNICODE] = value; }
+        }
+
+        [ConfigurationProperty(VARIABLE_LENGTH, IsRequired = false, DefaultValue = "[default]")]
+        public string VariableLength {
+            get { return (string)this[VARIABLE_LENGTH]; }
             set { this[VARIABLE_LENGTH] = value; }
         }
 

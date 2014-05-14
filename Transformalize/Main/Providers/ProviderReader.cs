@@ -34,7 +34,7 @@ namespace Transformalize.Main.Providers {
                 providers.Add("postgresql", "Npgsql.NpgsqlConnection, Npgsql");
             }
 
-            var empties = new[] {"analysisservices", "file", "folder", "internal", "console", "log", "mail", "html", "elasticsearch"};
+            var empties = new[] {"analysisservices", "file", "folder", "internal", "console", "log", "mail", "html", "elasticsearch","solr"};
             foreach (var empty in empties.Where(empty => !providers.ContainsKey(empty))) {
                 providers.Add(empty, empty);
             }

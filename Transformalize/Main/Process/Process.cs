@@ -175,7 +175,7 @@ namespace Transformalize.Main {
         private bool IsValidationResultField(string alias, string entity) {
             return Entities
                     .Where(e => e.Alias == entity || entity == string.Empty)
-                    .Any(e => e.Operations.OfType<ValidationOperation>().Any(operation => operation.ResultKey.Equals(alias)));
+                    .Any(e => e.OperationsAfterAggregation.OfType<ValidationOperation>().Any(operation => operation.ResultKey.Equals(alias)));
         }
 
         public bool TryGetField(string alias, string entity, out Field field, bool issueWarning = true) {

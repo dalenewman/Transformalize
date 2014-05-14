@@ -34,7 +34,8 @@ namespace Transformalize.Main {
     public class Entity {
 
         private readonly int _tflBatchId;
-        private List<IOperation> _operations = new List<IOperation>();
+        private List<IOperation> _operationsBeforeAggregation = new List<IOperation>(); 
+        private List<IOperation> _operationsAfterAggregation = new List<IOperation>();
         private IEnumerable<Row> _rows = new List<Row>();
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
@@ -96,10 +97,18 @@ namespace Transformalize.Main {
             set { _rows = value; }
         }
 
-        public List<IOperation> Operations {
-            get { return _operations; }
-            set { _operations = value; }
+        public List<IOperation> OperationsBeforeAggregation {
+            get { return _operationsBeforeAggregation; }
+            set { _operationsBeforeAggregation = value; }
         }
+
+        public List<IOperation> OperationsAfterAggregation {
+            get { return _operationsAfterAggregation; }
+            set { _operationsAfterAggregation = value; }
+        }
+
+        public bool Unicode { get; set; }
+        public bool VariableLength { get; set; }
 
         public string FirstKey() {
             return PrimaryKey.First().Key;

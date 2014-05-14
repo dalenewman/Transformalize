@@ -54,6 +54,7 @@ namespace Transformalize.Configuration {
         private const string DATE_FORMAT = "date-format";
         private const string INCLUDE_HEADER = "include-header";
         private const string INCLUDE_FOOTER = "include-footer";
+        private const string PATH = "path";
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
         [ConfigurationProperty(NAME, IsRequired = true)]
@@ -66,6 +67,12 @@ namespace Transformalize.Configuration {
         public string User {
             get { return this[USER] as string; }
             set { this[USER] = value; }
+        }
+
+        [ConfigurationProperty(PATH, IsRequired = false, DefaultValue = "")]
+        public string Path {
+            get { return this[PATH] as string; }
+            set { this[PATH] = value; }
         }
 
         [EnumConversionValidator(typeof(ErrorMode), MessageTemplate = "{1} must be a valid ErrorMode. (e.g. ThrowException, SaveAndContinue, IgnoreAndContinue)")]

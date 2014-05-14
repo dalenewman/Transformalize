@@ -54,6 +54,8 @@ namespace Transformalize.Main {
         public bool Before { get; set; }
         public bool After { get; set; }
         public bool Conditional { get; set; }
+        public string OldValue { get; set; }
+        public string NewValue { get; set; }
 
         public TemplateAction() {
             Action = string.Empty;
@@ -78,6 +80,8 @@ namespace Transformalize.Main {
             Before = false;
             After = true;
             Conditional = false;
+            OldValue = string.Empty;
+            NewValue = string.Empty;
         }
 
         public TemplateAction(string template, ActionConfigurationElement action, IEnumerable<string> modes) {
@@ -103,6 +107,8 @@ namespace Transformalize.Main {
             Before = action.Before;
             After = action.After;
             Conditional = action.Conditional;
+            OldValue = action.OldValue;
+            NewValue = action.NewValue;
         }
 
         public void Handle(string file) {
@@ -113,7 +119,11 @@ namespace Transformalize.Main {
                 {"run", new TemplateActionRun()},
                 {"web", new TemplateActionWeb()},
                 {"exec", new TemplateActionExecute()},
-                {"mail", new TemplateActionMail()}
+                {"execute", new TemplateActionExecute()},
+                {"mail", new TemplateActionMail()},
+                {"replace", new TemplateActionReplace()},
+                {"dostounix", new TemplateActionReplace("\r\n", "\n")},
+                {"unixtodos", new TemplateActionReplace("\n","\r\n")}
             };
 
             if (handlers.ContainsKey(Action.ToLower())) {

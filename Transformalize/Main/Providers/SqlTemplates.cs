@@ -60,6 +60,15 @@ namespace Transformalize.Main.Providers {
             return string.Format(sqlPattern, columns, SafeTable(leftTable, connection, leftSchema), SafeTable(rightTable, connection, rightSchema), @join);
         }
 
+        public static string Select(Fields fields, string table, AbstractConnection connection, string schema = "dbo") {
+            var maxDop = connection.MaxDop ? " OPTION (MAXDOP 2);" : ";";
+            var sqlPattern = "\r\nSELECT\r\n    {0}\r\nFROM {1}" + maxDop;
+
+            var columns = new FieldSqlWriter(fields).Input().Select(connection).Write(",\r\n    ");
+
+            return string.Format(sqlPattern, columns, SafeTable(table, connection, schema));
+        }
+
         private static string InsertUnionedValues(int size, string name, Field[] fields, IEnumerable<Row> rows, AbstractConnection connection) {
             var sqlBuilder = new StringBuilder();
             var safeName = connection.TableVariable ? name : connection.Enclose(name);
