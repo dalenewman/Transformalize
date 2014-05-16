@@ -60,6 +60,7 @@ namespace Transformalize.Main {
             if (fileInfo.Exists) {
                 var content = File.ReadAllText(fileInfo.FullName);
                 File.WriteAllText(fileInfo.FullName, content.Replace(action.OldValue, action.NewValue));
+                Log.Info("Performed {0} action on {1}.", action.Action, fileInfo.Name);
             } else {
                 if (action.TemplateName.Equals(string.Empty)) {
                     Log.Warn("Skipping {0} action. File '{1}' does not exist.", action.Action, fileName);

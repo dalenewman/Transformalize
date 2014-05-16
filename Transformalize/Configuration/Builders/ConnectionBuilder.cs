@@ -1,7 +1,5 @@
 using System.IO;
-using System.Runtime.InteropServices;
 using Transformalize.Libs.FileHelpers.Enums;
-using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Providers;
 
 namespace Transformalize.Configuration.Builders {
@@ -139,5 +137,10 @@ namespace Transformalize.Configuration.Builders {
         public ProcessBuilder Script(string name, string fileName) {
             return _processBuilder.Script(name, fileName);
         }
+
+        public ActionBuilder Action(string action) {
+            return _processBuilder.Action(action);
+        }
+
     }
 }

@@ -28,20 +28,32 @@ namespace Transformalize.Main {
 
         public override void Handle(TemplateAction action) {
 
-            var actionFile = string.IsNullOrEmpty(action.File)
-                ? string.Empty
-                : new FileInfo(action.File).FullName;
+            var from = string.Empty;
+            var to = string.Empty;
+            var rendered = false;
 
-            if (actionFile != string.Empty) {
-                var fileInfo = new FileInfo(actionFile);
-                if (fileInfo.Directory == null || fileInfo.Directory != null && fileInfo.Directory.Exists) {
-                    File.Copy(action.RenderedFile, actionFile, true);
-                    Log.Info("Copied {0} template output to {1}.", action.TemplateName, actionFile);
-                } else {
-                    Log.Warn("Unable to copy file to folder {0}.  The folder doesn't exist.", fileInfo.DirectoryName);
-                }
+            if (!action.From.Equals(string.Empty) && !action.To.Equals(string.Empty)) {
+                from = action.From;
+                to = action.To;
+            } else if (!action.TemplateName.Equals(string.Empty) && !action.RenderedFile.Equals(string.Empty)) {
+                from = action.RenderedFile;
+                to = action.File.Equals(string.Empty) ? action.To : action.File;
+                rendered = true;
+            }
+
+            var fromInfo = new FileInfo(from);
+            if (!fromInfo.Exists) {
+                Log.Warn("Can't copy {0} to {1}, because {0} doesn't exist.", rendered ? action.TemplateName + " rendered output" : from, to);
+                return;
+            }
+
+            var toInfo = new FileInfo(to);
+
+            if (toInfo.Directory != null && toInfo.Directory.Exists) {
+                File.Copy(fromInfo.FullName, toInfo.FullName, true);
+                Log.Info("Copied {0} to {1}.", rendered ? action.TemplateName + " rendered output" : from, to);
             } else {
-                Log.Warn("Can't copy {0} template output without file attribute set.", action.TemplateName);
+                Log.Warn("Unable to copy file to folder {0}.  The folder doesn't exist.", toInfo.DirectoryName);
             }
         }
     }

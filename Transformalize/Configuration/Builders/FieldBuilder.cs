@@ -204,5 +204,10 @@ namespace Transformalize.Configuration.Builders {
             }
             return this;
         }
+
+        public FieldBuilder Distinct(bool distinct = true) {
+            _field.Distinct = distinct;
+            return this;
+        }
     }
 }

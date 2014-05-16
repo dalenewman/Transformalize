@@ -280,23 +280,6 @@ namespace Transformalize.Main {
             return b1.Length == b2.Length && b1.SequenceEqual(b2);
         }
 
-        public static byte[] Max(byte[] b1, byte[] b2) {
-            var minLength = Math.Min(b1.Length, b2.Length);
-            if (minLength == 0)  // return longest, when comparable are equal
-            {
-                return b1.Length > b2.Length ? b1 : b2;
-            }
-
-            for (var i = 0; i < minLength; i++) {
-                if (b1[i] != b2[i]) {
-                    return b1[i] > b2[i] ? b1 : b2;  // return first one with a bigger byte
-                }
-            }
-
-            return b1.Length > b2.Length ? b1 : b2; // return longest, when comparable are equal
-
-        }
-
         public static string CleanIdentifier(string input) {
             return Regex.Replace(input, CLEAN_PATTERN, String.Empty).Trim(' ');
         }

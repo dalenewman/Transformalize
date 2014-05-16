@@ -24,6 +24,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using Transformalize.Libs.FileHelpers.DataLink;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
@@ -38,6 +39,11 @@ namespace Transformalize.Operations {
         private readonly Field[] _fieldsToAccumulate;
         private readonly string[] _keysToGroupBy;
         private readonly string _firstKey;
+        private readonly Dictionary<string, byte> _needZero = new Dictionary<string, byte>() {
+            {"count",0},
+            {"sum",0},
+            {"maxlength",0}
+        };
 
         public EntityAggregation(Entity entity) {
 
@@ -48,7 +54,7 @@ namespace Transformalize.Operations {
 
             foreach (var field in _fieldsToAccumulate) {
                 _lists[field.Alias] = new ConcurrentDictionary<ObjectArrayKeys, List<object>>();
-                if (field.Aggregate.Equals("countdistinct", IC)) {
+                if (field.Aggregate.Equals("count", IC) && field.Distinct) {
                     _distinct[field.Alias] = new Dictionary<ObjectArrayKeys, Dictionary<object, byte>>();
                 }
             }
@@ -57,64 +63,96 @@ namespace Transformalize.Operations {
         protected override void Accumulate(Row row, Row aggregate) {
             //init
             if (!aggregate.ContainsKey(_firstKey)) {
-                foreach (var column in _keysToGroupBy) {
-                    aggregate[column] = row[column];
+                foreach (var alias in _keysToGroupBy) {
+                    aggregate[alias] = row[alias];
                 }
 
                 foreach (var field in _fieldsToAccumulate) {
-                    if (field.Aggregate.StartsWith("count", IC)) {
+                    if (_needZero.ContainsKey(field.Aggregate)) {
                         aggregate[field.Alias] = 0;
                     } else {
-                        aggregate[field.Alias] = field.Default ?? new DefaultFactory().Convert(string.Empty, field.SimpleType);
+                        if (field.Aggregate.Equals("minlength")) {
+                            aggregate[field.Alias] = row[field.Alias].ToString().Length;
+                        } else {
+                            aggregate[field.Alias] = row[field.Alias];
+                        }
                     }
                 }
             }
 
             //accumulate
-            foreach (var field in _fieldsToAccumulate) {
-                ObjectArrayKeys key;
+            foreach (var field in _fieldsToAccumulate)
+            {
+                int len;
                 switch (field.Aggregate) {
                     case "count":
+                        if (field.Distinct) {
+                            var key = row.CreateKey(_keysToGroupBy);
+                            var value = row[field.Name];
+                            if (!_distinct[field.Alias].ContainsKey(key)) {
+                                _distinct[field.Alias].Add(key, new Dictionary<object, byte>());
+                            }
+                            if (!_distinct[field.Alias][key].ContainsKey(value)) {
+                                _distinct[field.Alias][key].Add(value, 0);
+                                aggregate[field.Alias] = (int)aggregate[field.Alias] + 1;
+                            }
+                            break;
+                        }
                         aggregate[field.Alias] = (int)aggregate[field.Alias] + 1;
                         break;
-                    case "countdistinct":
-                        key = row.CreateKey(_keysToGroupBy);
-                        var value = row[field.Name];
-                        if (!_distinct[field.Alias].ContainsKey(key)) {
-                            _distinct[field.Alias].Add(key, new Dictionary<object, byte>());
-                        }
-                        if (!_distinct[field.Alias][key].ContainsKey(value)) {
-                            _distinct[field.Alias][key].Add(value, 0);
-                            aggregate[field.Alias] = (int)aggregate[field.Alias] + 1;
-                        }
-                        break;
                     case "sum":
-                        switch (field.SimpleType) {
-                            case "int32":
-                                aggregate[field.Alias] = (int)aggregate[field.Alias] + (int)row[field.Alias];
-                                break;
-                        }
+                        //switch (field.SimpleType) {
+                        //    case "int32":
+                        //        aggregate[field.Alias] = (int)aggregate[field.Alias] + (int)row[field.Alias];
+                        //        break;
+                        //}
+                        aggregate[field.Alias] = (dynamic)aggregate[field.Alias] + (dynamic)row[field.Alias];
                         break;
                     case "max":
                         switch (field.SimpleType) {
-                            case "int32":
-                                aggregate[field.Alias] = Math.Max((int)aggregate[field.Alias], (int)row[field.Alias]);
-                                break;
-                            case "int64":
-                                aggregate[field.Alias] = Math.Max((long)aggregate[field.Alias], (long)row[field.Alias]);
-                                break;
                             case "byte[]":
-                                aggregate[field.Alias] = Common.Max((byte[])aggregate[field.Alias], (byte[])row[field.Alias]);
+                                aggregate[field.Alias] = Max((byte[])aggregate[field.Alias], (byte[])row[field.Alias]);
                                 break;
-                            case "string":
-                                aggregate[field.Alias] = (new[] { aggregate[field.Alias].ToString(), row[field.Alias].ToString() }).Max();
+                            default:
+                                var comparable = aggregate[field.Alias] as IComparable;
+                                if (comparable != null) {
+                                    if (comparable.CompareTo(row[field.Alias]) < 0) {
+                                        aggregate[field.Alias] = row[field.Alias];
+                                    }
+                                }
                                 break;
-                            case "guid":
-                                aggregate[field.Alias] = (new[] { (Guid)aggregate[field.Alias], (Guid)row[field.Alias] }).Max();
-                                break;
-
                         }
                         break;
+                    case "min":
+                        switch (field.SimpleType) {
+                            case "byte[]":
+                                aggregate[field.Alias] = Min((byte[])aggregate[field.Alias], (byte[])row[field.Alias]);
+                                break;
+                            default:
+                                var comparable = aggregate[field.Alias] as IComparable;
+                                if (comparable != null) {
+                                    if (comparable.CompareTo(row[field.Alias]) > 0) {
+                                        aggregate[field.Alias] = row[field.Alias];
+                                    }
+                                }
+                                break;
+                        }
+                        break;
+
+                    case "maxlength":
+                        len = row[field.Alias].ToString().Length;
+                        if (len > (dynamic)aggregate[field.Alias]) {
+                            aggregate[field.Alias] = len;
+                        }
+                        break;
+
+                    case "minlength":
+                        len = row[field.Alias].ToString().Length;
+                        if (len < (dynamic)aggregate[field.Alias]) {
+                            aggregate[field.Alias] = len;
+                        }
+                        break;
+
                     case "last":
                         aggregate[field.Alias] = row[field.Alias];
                         break;
@@ -143,16 +181,48 @@ namespace Transformalize.Operations {
             }
         }
 
+        public static byte[] Max(byte[] b1, byte[] b2) {
+            var minLength = Math.Min(b1.Length, b2.Length);
+            if (minLength == 0)  // return longest, when comparable are equal
+            {
+                return b1.Length > b2.Length ? b1 : b2;
+            }
+
+            for (var i = 0; i < minLength; i++) {
+                if (b1[i] != b2[i]) {
+                    return b1[i] > b2[i] ? b1 : b2;  // return first one with a bigger byte
+                }
+            }
+
+            return b1.Length > b2.Length ? b1 : b2; // return longest, when comparable are equal
+        }
+
+        public static byte[] Min(byte[] b1, byte[] b2) {
+            var minLength = Math.Min(b1.Length, b2.Length);
+            if (minLength == 0)  // return shortest, when comparable are equal
+            {
+                return b1.Length < b2.Length ? b1 : b2;
+            }
+
+            for (var i = 0; i < minLength; i++) {
+                if (b1[i] != b2[i]) {
+                    return b1[i] < b2[i] ? b1 : b2;  // return first one with a smaller byte
+                }
+            }
+
+            return b1.Length < b2.Length ? b1 : b2; // return smallest, when comparable are equal
+        }
+
         protected override void FinishAggregation(Row aggregate) {
             //final accumulate
             var group = aggregate.CreateKey(_keysToGroupBy);
             foreach (var field in _fieldsToAccumulate) {
                 switch (field.Aggregate) {
                     case "join":
-                        aggregate[field.Alias] = string.Join(field.Delimiter,_lists[field.Alias][group]);
+                        aggregate[field.Alias] = string.Join(field.Delimiter, field.Distinct ? _lists[field.Alias][@group].Distinct() : _lists[field.Alias][@group]);
                         break;
                     case "array":
-                        aggregate[field.Alias] = _lists[field.Alias][group].ToArray();
+                        aggregate[field.Alias] = (field.Distinct ? _lists[field.Alias][@group].Distinct() : _lists[field.Alias][@group]).ToArray();
                         break;
                 }
             }

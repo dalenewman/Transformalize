@@ -36,6 +36,26 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public ActionBuilder Before(bool runBefore) {
+            _action.Before = runBefore;
+            return this;
+        }
+
+        public ActionBuilder After(bool runAfter) {
+            _action.After = runAfter;
+            return this;
+        }
+
+        public ActionBuilder From(string from) {
+            _action.From = from;
+            return this;
+        }
+
+        public ActionBuilder To(string to) {
+            _action.To = to;
+            return this;
+        }
+
         public EntityBuilder Entity(string name) {
             return _builder.Entity(name);
         }

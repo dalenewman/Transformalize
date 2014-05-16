@@ -1634,6 +1634,7 @@
     <Compile Include="Main\Template\TemplateReader.cs" />
     <Compile Include="Main\TransformalizeException.cs" />
     <Compile Include="Main\Transform\AppendOperation.cs" />
+    <Compile Include="Main\Transform\DatePartOperation.cs" />
     <Compile Include="Main\Transform\NowOperation.cs" />
     <Compile Include="Main\Transform\SplitIndexOperation.cs" />
     <Compile Include="Main\Transform\TransformOperationFactory.cs" />

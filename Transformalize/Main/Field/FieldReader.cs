@@ -65,7 +65,8 @@ namespace Transformalize.Main {
                 DefaultWhiteSpace = element.DefaultWhiteSpace,
                 QuotedWith = element.QuotedWith,
                 Optional = element.Optional,
-                Delimiter = element.Delimiter
+                Delimiter = element.Delimiter,
+                Distinct = element.Distinct
             };
 
             FieldSearchTypesLoader(field, element);

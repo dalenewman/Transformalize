@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text.RegularExpressions;
 using Transformalize.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
@@ -445,7 +446,7 @@ namespace Transformalize.Main {
                         outType,
                         element.Value,
                         (ComparisonOperator)Enum.Parse(typeof(ComparisonOperator), element.Operator, true)
-                        ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun };
 
                 case "splitindex":
                     return new SplitIndexOperation(
@@ -456,6 +457,14 @@ namespace Transformalize.Main {
                         element.Count,
                         element.Index
                         ) { ShouldRun = shouldRun };
+
+                case "datepart":
+                    return new DatePartOperation(
+                        inKey,
+                        outKey,
+                        outType,
+                        element.TimeComponent
+                    ) { ShouldRun = shouldRun };
 
                 // validators
                 case "containscharacters":

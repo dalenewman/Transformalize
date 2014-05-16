@@ -54,6 +54,7 @@ namespace Transformalize.Configuration {
         private const string SORT = "sort";
         private const string LABEL = "label";
         private const string DELIMITER = "delimiter";
+        private const string DISTINCT = "distinct";
 
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name {
@@ -217,6 +218,12 @@ namespace Transformalize.Configuration {
         public string Label {
             get { return (string)this[LABEL]; }
             set { this[LABEL] = value; }
+        }
+
+        [ConfigurationProperty(DISTINCT, IsRequired = false, DefaultValue = false)]
+        public bool Distinct {
+            get { return (bool)this[DISTINCT]; }
+            set { this[DISTINCT] = value; }
         }
 
         public override bool IsReadOnly() {
