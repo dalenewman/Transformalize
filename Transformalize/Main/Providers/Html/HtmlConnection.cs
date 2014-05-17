@@ -54,7 +54,9 @@ namespace Transformalize.Main.Providers.Html {
 
             TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
             Type = ProviderType.Html;
-        }
+            IncludeHeader = true;
+            IncludeFooter = true;
+            }
 
     }
 }

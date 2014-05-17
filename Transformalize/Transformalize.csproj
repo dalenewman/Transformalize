@@ -2510,6 +2510,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>IF EXIST c:\code\JunkDrawer XCOPY /s /y $(TargetDir)Transformalize.dll c:\code\JunkDrawer\Assemblies\
+IF EXIST c:\code\DataProfiler XCOPY /s /y $(TargetDir)Transformalize.dll c:\code\DataProfiler\Assemblies\
 IF EXIST c:\Code\Orchard171\src\Orchard.Web\Modules\Assemblies XCOPY /s /y $(TargetDir)Transformalize.dll c:\Code\Orchard171\src\Orchard.Web\Modules\Assemblies
 </PostBuildEvent>
   </PropertyGroup>

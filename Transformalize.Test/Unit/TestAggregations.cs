@@ -385,5 +385,31 @@ namespace Transformalize.Test.Unit {
             Assert.AreEqual(2, ((object[])r2["years"]).Length);
         }
 
+        [Test]
+        public void TestArrayDistinct() {
+
+            var cfg = new ProcessBuilder("process")
+                .Connection("input").Provider(ProviderType.Internal)
+                .Connection("output").Provider(ProviderType.Internal)
+                .Entity("entity")
+                    .InputOperation(_testInput)
+                    .Group() //group means you need to aggregate all output fields
+                    .Field("order").Aggregate("group").Int32().PrimaryKey()
+                    .Field("year").Alias("years").Aggregate("array").Distinct()
+                .Process();
+
+            var output = ProcessFactory.Create(cfg)[0].Run()["entity"].ToList();
+
+            Assert.AreEqual(2, output.Count);
+
+            var r1 = output[0];
+            Assert.AreEqual(1, r1["order"]);
+            Assert.AreEqual(3, ((object[])r1["years"]).Length);
+
+            var r2 = output[1];
+            Assert.AreEqual(2, r2["order"]);
+            Assert.AreEqual(1, ((object[])r2["years"]).Length);
+        }
+
     }
 }

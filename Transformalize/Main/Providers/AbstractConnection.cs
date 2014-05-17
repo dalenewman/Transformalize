@@ -176,6 +176,9 @@ namespace Transformalize.Main.Providers {
 
         public string GetConnectionString() {
 
+            if (string.IsNullOrEmpty(ServerProperty))
+                return string.Empty;
+
             var builder = new DbConnectionStringBuilder { { ServerProperty, Server } };
 
             if (!string.IsNullOrEmpty(Database)) {
@@ -286,7 +289,7 @@ namespace Transformalize.Main.Providers {
         }
 
         public bool IsExcel() {
-            return Type == ProviderType.File && (File.EndsWith(".xlsx", IC) || File.Equals(".xls", IC));
+            return Type == ProviderType.File && (File.EndsWith(".xlsx", IC) || File.EndsWith(".xls", IC));
         }
 
         public bool IsFile() {

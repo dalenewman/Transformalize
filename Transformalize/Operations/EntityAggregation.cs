@@ -24,7 +24,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using Transformalize.Libs.FileHelpers.DataLink;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
@@ -34,7 +33,7 @@ namespace Transformalize.Operations {
     public class EntityAggregation : AbstractAggregationOperation {
 
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
-        private readonly IDictionary<string, ConcurrentDictionary<ObjectArrayKeys, List<object>>> _lists = new Dictionary<string, ConcurrentDictionary<ObjectArrayKeys, List<object>>>();
+        private readonly IDictionary<string, Dictionary<ObjectArrayKeys, IList<object>>> _lists = new Dictionary<string, Dictionary<ObjectArrayKeys, IList<object>>>();
         private readonly IDictionary<string, Dictionary<ObjectArrayKeys, Dictionary<object, byte>>> _distinct = new Dictionary<string, Dictionary<ObjectArrayKeys, Dictionary<object, byte>>>();
         private readonly Field[] _fieldsToAccumulate;
         private readonly string[] _keysToGroupBy;
@@ -53,7 +52,7 @@ namespace Transformalize.Operations {
             _fieldsToAccumulate = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).Context().ToEnumerable().Where(f => !f.Aggregate.Equals("group", IC)).ToArray();
 
             foreach (var field in _fieldsToAccumulate) {
-                _lists[field.Alias] = new ConcurrentDictionary<ObjectArrayKeys, List<object>>();
+                _lists[field.Alias] = new Dictionary<ObjectArrayKeys, IList<object>>();
                 if (field.Aggregate.Equals("count", IC) && field.Distinct) {
                     _distinct[field.Alias] = new Dictionary<ObjectArrayKeys, Dictionary<object, byte>>();
                 }
@@ -101,11 +100,6 @@ namespace Transformalize.Operations {
                         aggregate[field.Alias] = (int)aggregate[field.Alias] + 1;
                         break;
                     case "sum":
-                        //switch (field.SimpleType) {
-                        //    case "int32":
-                        //        aggregate[field.Alias] = (int)aggregate[field.Alias] + (int)row[field.Alias];
-                        //        break;
-                        //}
                         aggregate[field.Alias] = (dynamic)aggregate[field.Alias] + (dynamic)row[field.Alias];
                         break;
                     case "max":
@@ -177,7 +171,7 @@ namespace Transformalize.Operations {
             if (_lists[alias].ContainsKey(key)) {
                 _lists[alias][key].Add(row[alias]);
             } else {
-                _lists[alias][key] = new List<object>() { row[alias] };
+                _lists[alias][key] = new List<object> { row[alias] };
             }
         }
 

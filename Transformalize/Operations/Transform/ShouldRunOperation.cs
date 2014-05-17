@@ -2,9 +2,11 @@ using System;
 using Transformalize.Extensions;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
     public abstract class ShouldRunOperation : AbstractOperation {
+
         public Func<Row, bool> ShouldRun = row => true;
         protected string InKey;
         protected string OutKey;
@@ -23,5 +25,25 @@ namespace Transformalize.Operations.Transform {
             var seconds = Convert.ToInt64(obj.Statistics.Duration.TotalSeconds);
             Info("Completed {0} rows in {1}: {2} second{3}.", obj.Statistics.OutputtedRows, Name, seconds, seconds.Plural());
         }
+
+        protected static bool CanChangeType(object value, string simpleType) {
+            var conversionType = Common.ToSystemType(simpleType);
+            return CanChangeType(value, conversionType);
+        }
+
+        protected static bool CanChangeType(object value, Type conversionType) {
+            if (conversionType == null) {
+                return false;
+            }
+
+            if (value == null) {
+                return false;
+            }
+
+            var convertible = value as IConvertible;
+
+            return convertible != null;
+        }
+
     }
 }

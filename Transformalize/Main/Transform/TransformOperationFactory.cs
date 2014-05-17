@@ -431,7 +431,7 @@ namespace Transformalize.Main {
                     return new TimeOfDayOperation(inKey, inType, outKey, outType, element.TimeComponent) { ShouldRun = shouldRun };
 
                 case "value":
-                    return new ValueOperation(outKey, outType, element.Value) { ShouldRun = shouldRun };
+                    return new ValueOperation(outKey, outType, element.Value, parameters) { ShouldRun = shouldRun };
 
                 case "xpath":
                     return new XPathOperation(inKey, outKey, outType, element.XPath) { ShouldRun = shouldRun };

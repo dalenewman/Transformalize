@@ -4,6 +4,7 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Operations.Transform;
 
 namespace Transformalize.Main {
+
     public class DatePartOperation : ShouldRunOperation {
 
         private readonly string _timeComponent;
@@ -47,20 +48,6 @@ namespace Transformalize.Main {
                 }
                 yield return row;
             }
-        }
-
-        public static bool CanChangeType(object value, Type conversionType) {
-            if (conversionType == null) {
-                return false;
-            }
-
-            if (value == null) {
-                return false;
-            }
-
-            var convertible = value as IConvertible;
-
-            return convertible != null;
         }
     }
 }

@@ -20,7 +20,7 @@ namespace Transformalize.Operations.Load {
             foreach (var pair in entity.CalculatedFields.Where(f => f.Value.FileOutput)) {
                 Headers.Add(pair.Value.Alias);
             }
-            HeaderText = HeaderText = string.Format(@"<!DOCTYPE html PUBLIC ""-//W3C//DTD HTML 3.2//EN"">
+            HeaderText = string.Format(@"<!DOCTYPE html PUBLIC ""-//W3C//DTD HTML 3.2//EN"">
 <html>
   <head>
     <title>{0}</title>
