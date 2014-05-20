@@ -37,14 +37,16 @@ namespace Transformalize.Main.Providers.Log {
             return new EmptyOperation();
         }
 
-        public override void LoadBeginVersion(Entity entity)
-        {
+        public override void LoadBeginVersion(Entity entity) {
             throw new System.NotImplementedException();
         }
 
-        public override void LoadEndVersion(Entity entity)
-        {
+        public override void LoadEndVersion(Entity entity) {
             throw new System.NotImplementedException();
+        }
+
+        public override EntitySchema GetEntitySchema(string table, string schema = "") {
+            return new EntitySchema();
         }
 
         public LogConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)

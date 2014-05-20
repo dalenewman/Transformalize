@@ -46,6 +46,10 @@ namespace Transformalize.Main.Providers.File {
             throw new System.NotImplementedException();
         }
 
+        public override EntitySchema GetEntitySchema(string table, string schema = "") {
+            return new EntitySchema();
+        }
+
         public FileConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
             TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];

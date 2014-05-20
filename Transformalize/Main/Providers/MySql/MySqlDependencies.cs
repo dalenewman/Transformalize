@@ -1,5 +1,3 @@
-using Transformalize.Main.Providers.SqlServer;
-
 namespace Transformalize.Main.Providers.MySql {
     public class MySqlDependencies : AbstractConnectionDependencies {
         public MySqlDependencies()
@@ -11,6 +9,8 @@ namespace Transformalize.Main.Providers.MySql {
                 new DatabaseEntityCreator(),
                 new MySqlViewWriter(),
                 new MySqlTflWriter(),
-                new DatabaseScriptRunner()) { }
+                new DatabaseScriptRunner(),
+            new MySqlDataTypeService()
+            ) { }
     }
 }

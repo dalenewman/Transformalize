@@ -196,6 +196,11 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public FieldBuilder Label(string label) {
+            _field.Label = label;
+            return this;
+        }
+
         public FieldBuilder SearchType(string searchType) {
             if (_field.SearchType.Equals("default")) {
                 _field.SearchType = searchType;

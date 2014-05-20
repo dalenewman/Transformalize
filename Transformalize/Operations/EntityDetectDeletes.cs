@@ -18,9 +18,9 @@ namespace Transformalize.Operations
         protected override Row MergeRows(Row leftRow, Row rightRow) {
             var row = rightRow.Clone();
             if (leftRow.ContainsKey(_firstKey)) {
-                row["a"] = EntityAction.None;
+                row["TflAction"] = EntityAction.None;
             } else {
-                row["a"] = EntityAction.Delete;
+                row["TflAction"] = EntityAction.Delete;
             }
             return row;
         }

@@ -44,8 +44,6 @@ namespace Transformalize.Main {
         public string Cc { get; set; }
         public string Bcc { get; set; }
         public bool Html { get; set; }
-        public int Port { get; set; }
-        public bool EnableSsl { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
         public string Subject { get; set; }
@@ -71,7 +69,6 @@ namespace Transformalize.Main {
             Cc = string.Empty;
             Bcc = string.Empty;
             Html = true;
-            Port = 25;
             Username = string.Empty;
             Password = string.Empty;
             Subject = string.Empty;
@@ -94,14 +91,9 @@ namespace Transformalize.Main {
             Arguments = action.Arguments;
             Bcc = action.Bcc;
             Cc = action.Cc;
-            EnableSsl = action.EnableSsl;
             Html = action.Html;
-            Password = action.Password;
-            Port = action.Port;
             Subject = action.Subject;
             To = action.To;
-            Username = action.Username;
-            Host = action.Host;
             Body = action.Body;
             Modes = modes;
             Before = action.Before;

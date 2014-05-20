@@ -1,3 +1,5 @@
+using Transformalize.Main.Providers.AnalysisServices;
+
 namespace Transformalize.Main.Providers.Console {
     public class ConsoleDependencies : AbstractConnectionDependencies {
         public ConsoleDependencies()
@@ -9,6 +11,7 @@ namespace Transformalize.Main.Providers.Console {
                 new FalseEntityCreator(),
                 new FalseViewWriter(),
                 new FalseTflWriter(),
-                new FalseScriptRunner()) { }
+                new FalseScriptRunner(),
+            new FalseDataTypeService()) { }
     }
 }

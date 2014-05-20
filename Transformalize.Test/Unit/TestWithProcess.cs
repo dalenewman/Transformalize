@@ -115,7 +115,7 @@ SELECT
     l.[ProductKey],
     l.[Properties],
     l.[Qty] AS [Quantity]
-FROM [TestOrderDetail] l
+FROM [dbo].[TestOrderDetail] l
 INNER JOIN @KEYS r ON (l.[OrderDetailKey] = r.[OrderDetailKey])
 OPTION (MAXDOP 2);";
 

@@ -1,5 +1,3 @@
-using System;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Transformalize.Main.Providers.ElasticSearch {
     public class ElasticSearchDependencies : AbstractConnectionDependencies {
@@ -12,6 +10,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
                 new ElasticSearchEntityCreator(),
                 new FalseViewWriter(),
                 new ElasticSearchTflWriter(),
-                new FalseScriptRunner()) { }
+                new FalseScriptRunner(),
+            new FalseDataTypeService()) { }
     }
 }

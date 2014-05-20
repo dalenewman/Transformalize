@@ -96,6 +96,9 @@ namespace Transformalize.Main {
                 case "copy":
                     return new CopyOperation(inKey, outKey) { ShouldRun = shouldRun };
 
+                case "elipse":
+                    return new ElipseOperation(inKey, outKey, element.Length, element.Elipse) { ShouldRun = shouldRun };
+
                 case "replace":
                     return new ReplaceOperation(
                         inKey,

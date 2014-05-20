@@ -1,7 +1,6 @@
 using Transformalize.Main.Providers.SqlServer;
 
-namespace Transformalize.Main.Providers.PostgreSql
-{
+namespace Transformalize.Main.Providers.PostgreSql {
     public class PostgreSqlDependencies : AbstractConnectionDependencies {
         public PostgreSqlDependencies()
             : base(
@@ -12,6 +11,7 @@ namespace Transformalize.Main.Providers.PostgreSql
                 new DatabaseEntityCreator(),
                 new PostgreSqlViewWriter(),
                 new PostgreSqlTflWriter(),
-                new DatabaseScriptRunner()) { }
+                new DatabaseScriptRunner(),
+            new PostgreSqlDataTypeService()) { }
     }
 }

@@ -45,10 +45,10 @@ namespace Transformalize.Main {
         private List<IOperation> _transformOperations = new List<IOperation>();
         private IParameters _parameters = new Parameters.Parameters();
         private bool _enabled = true;
+        private Dictionary<string, AbstractConnection> _connections = new Dictionary<string, AbstractConnection>();
 
         // fields (for now)
         public Fields CalculatedFields = new Fields();
-        public Dictionary<string, AbstractConnection> Connections = new Dictionary<string, AbstractConnection>();
         public Entities Entities = new Entities();
         public IKernel Kernal = new StandardKernel();
         public Dictionary<string, Map> MapEndsWith = new Dictionary<string, Map>();
@@ -72,6 +72,11 @@ namespace Transformalize.Main {
         public string Bcp { get; set; }
         public string TimeZone { get; set; }
         public bool IsFirstRun { get; set; }
+
+        public Dictionary<string, AbstractConnection> Connections {
+            get { return _connections; }
+            set { _connections = value; }
+        }
 
         public PipelineThreading PipelineThreading {
             get { return _pipelineThreading; }
@@ -196,13 +201,24 @@ namespace Transformalize.Main {
                 foreach (var action in Actions.Where(filter)) {
                     if (action.Conditional) {
                         if (UpdatedAnything()) {
-                            action.Handle(string.Empty);
+                            action.Handle(FindFile(action));
                         }
                     } else {
-                        action.Handle(string.Empty);
+                        action.Handle(FindFile(action));
                     }
                 }
             }
+        }
+
+        private static string FindFile(TemplateAction action) {
+            var file = action.File;
+            if (!string.IsNullOrEmpty(file))
+                return file;
+
+            if (action.Connection != null && (action.Connection.Type == ProviderType.File || action.Connection.Type == ProviderType.Html)) {
+                file = action.Connection.File;
+            }
+            return file;
         }
     }
 }

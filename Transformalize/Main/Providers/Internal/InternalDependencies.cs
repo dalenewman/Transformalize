@@ -1,3 +1,5 @@
+using Transformalize.Main.Providers.AnalysisServices;
+
 namespace Transformalize.Main.Providers.Internal {
     public class InternalDependencies : AbstractConnectionDependencies {
         public InternalDependencies()
@@ -9,6 +11,7 @@ namespace Transformalize.Main.Providers.Internal {
                 new FalseEntityCreator(),
                 new FalseViewWriter(),
                 new FalseTflWriter(),
-                new FalseScriptRunner()) { }
+                new FalseScriptRunner(),
+            new FalseDataTypeService()) { }
     }
 }

@@ -12,6 +12,7 @@ namespace Transformalize.Main.Providers {
         public ITflWriter TflWriter { get; private set; }
         public IScriptRunner ScriptRunner { get; private set; }
         public IEntityCreator EntityCreator { get; private set; }
+        public IDataTypeService DataTypeService { get; private set; }
 
         protected AbstractConnectionDependencies(
             ITableQueryWriter tableQueryWriter,
@@ -21,7 +22,8 @@ namespace Transformalize.Main.Providers {
             IEntityCreator entityCreator,
             IViewWriter viewWriter,
             ITflWriter tflWriter,
-            IScriptRunner scriptRunner
+            IScriptRunner scriptRunner,
+            IDataTypeService dataTypeService
             ) {
             TableQueryWriter = tableQueryWriter;
             ConnectionChecker = connectionChecker;
@@ -31,6 +33,7 @@ namespace Transformalize.Main.Providers {
             ViewWriter = viewWriter;
             TflWriter = tflWriter;
             ScriptRunner = scriptRunner;
-            }
+            DataTypeService = dataTypeService;
+        }
     }
 }

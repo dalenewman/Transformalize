@@ -1,3 +1,4 @@
+using Transformalize.Main.Providers.AnalysisServices;
 using Transformalize.Main.Providers.File;
 
 namespace Transformalize.Main.Providers.Html
@@ -12,6 +13,7 @@ namespace Transformalize.Main.Providers.Html
                 new FileEntityCreator(),
                 new FalseViewWriter(),
                 new FalseTflWriter(),
-                new FalseScriptRunner()) { }
+                new FalseScriptRunner(),
+            new FalseDataTypeService()) { }
     }
 }

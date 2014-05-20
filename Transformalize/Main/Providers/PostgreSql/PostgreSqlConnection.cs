@@ -1,6 +1,7 @@
 using System.Data;
 using Transformalize.Configuration;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Main.Providers.SqlServer;
 using Transformalize.Operations.Transform;
 
 namespace Transformalize.Main.Providers.PostgreSql {
@@ -166,5 +167,8 @@ namespace Transformalize.Main.Providers.PostgreSql {
             }
         }
 
+        public override EntitySchema GetEntitySchema(string table, string schema = "") {
+            return new DatabaseEntitySchemaReader(this).Read(table, schema);
+        }
     }
 }

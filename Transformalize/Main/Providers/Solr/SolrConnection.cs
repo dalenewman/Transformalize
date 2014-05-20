@@ -93,7 +93,7 @@ namespace Transformalize.Main.Providers.Solr {
                 var versionType = entity.Version == null ? "string" : entity.Version.SimpleType;
                 var end = versionType.Equals("byte[]") || versionType.Equals("rowversion") ? Common.BytesToHexString((byte[])entity.End) : new DefaultFactory().Convert(entity.End, versionType).ToString();
 
-                var doc = new Dictionary<string,object> {
+                var doc = new Dictionary<string, object> {
                     { "id", entity.TflBatchId},
                     { "tflbatchid", entity.TflBatchId},
                     { "process", entity.ProcessName},
@@ -152,6 +152,10 @@ namespace Transformalize.Main.Providers.Solr {
             //var result = client.Client.Search(client.Index, client.Type, body);
             //entity.End = Common.GetObjectConversionMap()[entity.Version.SimpleType](result.Response["aggregations"]["version"]["value"].Value);
             entity.HasRows = entity.End != null;
+        }
+
+        public override EntitySchema GetEntitySchema(string table, string schema = "") {
+            return new EntitySchema();
         }
 
         private int GetMaxTflBatchId(Entity entity) {

@@ -60,6 +60,7 @@ namespace Transformalize.Configuration {
         private const string DOMAIN = "domain";
         private const string XPATH = "xpath";
         private const string INTERVAL = "interval";
+        private const string ELIPSE = "elipse";
         
         private const string LEFT = "left";
         private const string OPERATOR = "operator";
@@ -504,6 +505,12 @@ namespace Transformalize.Configuration {
         public bool ReplaceSingleQuotes { 
             get { return (bool) this[REPLACE_SINGLE_QUOTES]; }
             set { this[REPLACE_SINGLE_QUOTES] = value; }
+        }
+
+        [ConfigurationProperty(ELIPSE, IsRequired = false, DefaultValue = "...")]
+        public string Elipse {
+            get { return this[ELIPSE] as string; }
+            set { this[ELIPSE] = value; }
         }
 
         public override bool IsReadOnly() {

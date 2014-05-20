@@ -49,6 +49,10 @@ namespace Transformalize.Main.Providers.Html {
             throw new System.NotImplementedException();
         }
 
+        public override EntitySchema GetEntitySchema(string table, string schema = "") {
+            return new EntitySchema();
+        }
+
         public HtmlConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
 
@@ -56,7 +60,7 @@ namespace Transformalize.Main.Providers.Html {
             Type = ProviderType.Html;
             IncludeHeader = true;
             IncludeFooter = true;
-            }
+        }
 
     }
 }

@@ -105,6 +105,10 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             entity.HasRows = entity.End != null;
         }
 
+        public override EntitySchema GetEntitySchema(string table, string schema = "") {
+            return new EntitySchema();
+        }
+
         private int GetMaxTflBatchId(Entity entity) {
             var client = ElasticSearchClientFactory.Create(this, TflBatchEntity(entity.ProcessName));
             var body = new {

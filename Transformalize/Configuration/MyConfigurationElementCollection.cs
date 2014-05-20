@@ -1,13 +1,11 @@
 using System.Configuration;
 using Transformalize.Libs.NLog.Internal;
 
-namespace Transformalize.Configuration
-{
+namespace Transformalize.Configuration {
     public abstract class MyConfigurationElementCollection : ConfigurationElementCollection {
 
         public void Merge(ConfigurationElementCollection elements) {
-            foreach (ConfigurationElement element in elements)
-            {
+            foreach (ConfigurationElement element in elements) {
                 var key = GetElementKey(element);
                 if (BaseGetAllKeys().Any(k => k.Equals(key))) {
                     var index = this.BaseIndexOf(this.BaseGet(key));
@@ -29,6 +27,14 @@ namespace Transformalize.Configuration
 
         public void Add(ConfigurationElement element) {
             BaseAdd(element);
+        }
+
+        public void Remove(object key) {
+            BaseRemove(key);
+        }
+
+        public void RemoveAt(int index) {
+            BaseRemoveAt(index);
         }
 
         public void Clear() {

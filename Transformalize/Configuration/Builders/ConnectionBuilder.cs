@@ -3,7 +3,9 @@ using Transformalize.Libs.FileHelpers.Enums;
 using Transformalize.Main.Providers;
 
 namespace Transformalize.Configuration.Builders {
+
     public class ConnectionBuilder {
+
         private readonly ProcessBuilder _processBuilder;
         private readonly ConnectionConfigurationElement _connection;
 

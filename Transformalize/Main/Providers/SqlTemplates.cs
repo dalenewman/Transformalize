@@ -113,9 +113,9 @@ namespace Transformalize.Main.Providers {
         private static string SafeTable(string name, AbstractConnection connection, string schema = "dbo") {
             if (name.StartsWith("@"))
                 return name;
-            return schema.Equals("dbo", StringComparison.OrdinalIgnoreCase) ?
-                       string.Concat(connection.L, name, connection.R) :
-                       string.Concat(connection.L, schema, string.Format("{0}.{1}", connection.R, connection.L), name, connection.R);
+            return connection.Schemas && !schema.Equals(string.Empty) ?
+                string.Concat(connection.L, schema, string.Format("{0}.{1}", connection.R, connection.L), name, connection.R) :
+                string.Concat(connection.L, name, connection.R) ;
         }
     }
 }

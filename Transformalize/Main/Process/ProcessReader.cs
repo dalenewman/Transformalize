@@ -47,7 +47,7 @@ namespace Transformalize.Main {
         public Process Read() {
 
             if (_element == null) {
-                throw new TransformalizeException("Sorry.  I can't find a process named {0}.", _processName);
+                throw new TransformalizeException("Can't find a process named {0}.", _processName);
             }
 
             _process = new Process(_element.Name) {

@@ -55,6 +55,8 @@ namespace Transformalize.Configuration {
         private const string INCLUDE_HEADER = "include-header";
         private const string INCLUDE_FOOTER = "include-footer";
         private const string PATH = "path";
+        private const string ENABLE_SSL = "enable-ssl";
+
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
         [ConfigurationProperty(NAME, IsRequired = true)]
@@ -184,6 +186,12 @@ namespace Transformalize.Configuration {
         public bool Enabled {
             get { return (bool)this[ENABLED]; }
             set { this[ENABLED] = value; }
+        }
+
+        [ConfigurationProperty(ENABLE_SSL, IsRequired = false, DefaultValue = false)]
+        public bool EnableSsl {
+            get { return (bool)this[ENABLE_SSL]; }
+            set { this[ENABLE_SSL] = value; }
         }
 
         [ConfigurationProperty(DATE_FORMAT, IsRequired = false, DefaultValue = "MM/dd/yyyy h:mm:ss tt")]

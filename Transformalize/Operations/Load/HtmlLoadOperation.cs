@@ -15,10 +15,10 @@ namespace Transformalize.Operations.Load {
 
         protected override void PrepareHeader(Entity entity) {
             foreach (var pair in entity.Fields.Where(f => f.Value.FileOutput)) {
-                Headers.Add(pair.Value.Alias);
+                Headers.Add(pair.Value.Label.Equals(string.Empty) ? pair.Value.Alias : pair.Value.Label);
             }
             foreach (var pair in entity.CalculatedFields.Where(f => f.Value.FileOutput)) {
-                Headers.Add(pair.Value.Alias);
+                Headers.Add(pair.Value.Label.Equals(string.Empty) ? pair.Value.Alias : pair.Value.Label);
             }
             HeaderText = string.Format(@"<!DOCTYPE html PUBLIC ""-//W3C//DTD HTML 3.2//EN"">
 <html>

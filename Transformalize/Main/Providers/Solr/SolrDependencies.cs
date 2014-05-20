@@ -9,6 +9,7 @@ namespace Transformalize.Main.Providers.Solr {
                 new SolrEntityCreator(),
                 new FalseViewWriter(),
                 new SolrTflWriter(),
-                new FalseScriptRunner()) { }
+                new FalseScriptRunner(),
+            new FalseDataTypeService()) { }
     }
 }

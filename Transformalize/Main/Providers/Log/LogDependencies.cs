@@ -1,3 +1,5 @@
+using Transformalize.Main.Providers.AnalysisServices;
+
 namespace Transformalize.Main.Providers.Log
 {
     public class LogDependencies : AbstractConnectionDependencies {
@@ -10,6 +12,7 @@ namespace Transformalize.Main.Providers.Log
                 new FalseEntityCreator(),
                 new FalseViewWriter(),
                 new FalseTflWriter(),
-                new FalseScriptRunner()) { }
+                new FalseScriptRunner(),
+            new FalseDataTypeService()) { }
     }
 }

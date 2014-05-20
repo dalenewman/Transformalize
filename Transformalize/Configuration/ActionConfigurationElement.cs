@@ -39,19 +39,14 @@ namespace Transformalize.Configuration {
         private const string CC = "cc";
         private const string BCC = "bcc";
         private const string SUBJECT = "subject";
-        private const string PASSWORD = "password";
-        private const string USERNAME = "username";
-        private const string PORT = "port";
-        private const string HOST = "host";
-        private const string BODY = "body";
         private const string ARGUMENTS = "arguments";
-        private const string ENABLE_SSL = "enable-ssl";
         private const string HTML = "html";
         private const string BEFORE = "before";
         private const string AFTER = "after";
         private const string CONDITIONAL = "conditional";
         private const string OLD_VALUE = "old-value";
         private const string NEW_VALUE = "new-value";
+        private const string BODY = "body";
 
         [ConfigurationProperty(ACTION, IsRequired = true)]
         public string Action {
@@ -119,12 +114,6 @@ namespace Transformalize.Configuration {
             set { this[ARGUMENTS] = value; }
         }
 
-        [ConfigurationProperty(ENABLE_SSL, IsRequired = false, DefaultValue = false)]
-        public bool EnableSsl {
-            get { return (bool) this[ENABLE_SSL]; }
-            set { this[ENABLE_SSL] = value; }
-        }
-
         [ConfigurationProperty(BEFORE, IsRequired = false, DefaultValue = false)]
         public bool Before {
             get { return (bool)this[BEFORE]; }
@@ -143,24 +132,6 @@ namespace Transformalize.Configuration {
             set { this[HTML] = value; }
         }
 
-        [ConfigurationProperty(USERNAME, IsRequired = false, DefaultValue = "")]
-        public string Username {
-            get { return this[USERNAME] as string; }
-            set { this[USERNAME] = value; }
-        }
-
-        [ConfigurationProperty(PASSWORD, IsRequired = false, DefaultValue = "")]
-        public string Password {
-            get { return this[PASSWORD] as string; }
-            set { this[PASSWORD] = value; }
-        }
-
-        [ConfigurationProperty(HOST, IsRequired = false, DefaultValue = "")]
-        public string Host {
-            get { return this[HOST] as string; }
-            set { this[Host] = value; }
-        }
-
         [ConfigurationProperty(BODY, IsRequired = false, DefaultValue = "")]
         public string Body {
             get { return this[BODY] as string; }
@@ -177,12 +148,6 @@ namespace Transformalize.Configuration {
         public string NewValue {
             get { return this[NEW_VALUE] as string; }
             set { this[NEW_VALUE] = value; }
-        }
-
-        [ConfigurationProperty(PORT, IsRequired = false, DefaultValue = 25)]
-        public int Port {
-            get { return (int) this[PORT]; }
-            set { this[PORT] = value; }
         }
 
         [ConfigurationProperty(SUBJECT, IsRequired = false, DefaultValue = "")]

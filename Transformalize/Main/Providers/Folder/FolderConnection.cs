@@ -45,6 +45,10 @@ namespace Transformalize.Main.Providers.Folder {
             throw new System.NotImplementedException();
         }
 
+        public override EntitySchema GetEntitySchema(string table, string schema = "") {
+            return new EntitySchema();
+        }
+
         public FolderConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
 

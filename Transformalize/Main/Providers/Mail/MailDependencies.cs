@@ -1,3 +1,5 @@
+using Transformalize.Main.Providers.AnalysisServices;
+
 namespace Transformalize.Main.Providers.Mail {
     public class MailDependencies : AbstractConnectionDependencies {
         public MailDependencies()
@@ -9,7 +11,8 @@ namespace Transformalize.Main.Providers.Mail {
                 new FalseEntityCreator(),
                 new FalseViewWriter(),
                 new FalseTflWriter(),
-                new FalseScriptRunner()
+                new FalseScriptRunner(),
+            new FalseDataTypeService()
             ) { }
     }
 }

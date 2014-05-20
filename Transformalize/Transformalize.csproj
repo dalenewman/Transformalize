@@ -1444,6 +1444,7 @@
     <Compile Include="Main\Providers\AbstractConnectionDependencies.cs" />
     <Compile Include="Main\Providers\AnalysisServices\AnalysisServicesEntityDropper.cs" />
     <Compile Include="Main\Providers\AnalysisServices\AnalysisServicesDependencies.cs" />
+    <Compile Include="Main\Providers\FalseDataTypeService.cs" />
     <Compile Include="Main\Providers\ConnectionChecker.cs" />
     <Compile Include="Main\Providers\Solr\SolrConnection.cs" />
     <Compile Include="Main\Providers\Solr\SolrConnectionChecker.cs" />
@@ -1539,6 +1540,7 @@
     <Compile Include="Main\Providers\SqlServer\SqlServerEntityDropper.cs" />
     <Compile Include="Main\Providers\SqlServer\SqlServerEntityOutputKeysExtract.cs" />
     <Compile Include="Main\Providers\SqlServer\SqlServerEntityOutputKeysExtractAll.cs" />
+    <Compile Include="Main\Providers\EntitySchema.cs" />
     <Compile Include="Main\RelationshipsReader.cs" />
     <Compile Include="Main\SearchType.cs" />
     <Compile Include="Main\MapConfigurationReader.cs" />
@@ -1635,6 +1637,7 @@
     <Compile Include="Main\TransformalizeException.cs" />
     <Compile Include="Main\Transform\AppendOperation.cs" />
     <Compile Include="Main\Transform\DatePartOperation.cs" />
+    <Compile Include="Main\Transform\ElipseOperation.cs" />
     <Compile Include="Main\Transform\NowOperation.cs" />
     <Compile Include="Main\Transform\SplitIndexOperation.cs" />
     <Compile Include="Main\Transform\TransformOperationFactory.cs" />

@@ -40,7 +40,7 @@ namespace Transformalize.Operations {
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             OnFinishedProcessing += EntityActionFilter_OnFinishedProcessing;
-            return rows.Where(row => row["a"].Equals(_entityAction));
+            return rows.Where(row => row["TflAction"].Equals(_entityAction));
         }
 
         private void EntityActionFilter_OnFinishedProcessing(IOperation obj) {

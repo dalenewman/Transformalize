@@ -98,6 +98,11 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public TransformBuilder Elipse(string elipse) {
+            _transform.Elipse = elipse;
+            return this;
+        }
+
         public TransformBuilder TotalWidth(int totalWidth) {
             _transform.TotalWidth = totalWidth;
             return this;

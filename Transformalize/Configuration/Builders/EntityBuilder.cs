@@ -27,6 +27,11 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public EntityBuilder Schema(string schema) {
+            _entity.Schema = schema;
+            return this;
+        }
+
         public EntityBuilder InputOperation(IOperation operation) {
             _entity.InputOperation = operation;
             return this;

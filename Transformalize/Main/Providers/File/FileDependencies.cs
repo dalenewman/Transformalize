@@ -1,3 +1,5 @@
+using Transformalize.Main.Providers.AnalysisServices;
+
 namespace Transformalize.Main.Providers.File {
     public class FileDependencies : AbstractConnectionDependencies {
         public FileDependencies()
@@ -9,6 +11,7 @@ namespace Transformalize.Main.Providers.File {
                 new FileEntityCreator(),
                 new FalseViewWriter(),
                 new FalseTflWriter(),
-                new FalseScriptRunner()) { }
+                new FalseScriptRunner(),
+            new FalseDataTypeService()) { }
     }
 }

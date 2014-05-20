@@ -41,14 +41,14 @@ namespace Transformalize.Operations {
         protected override Row MergeRows(Row leftRow, Row rightRow) {
             if (rightRow.ContainsKey(_firstKey)) {
                 if (_entity.Version == null || UpdateIsNecessary(ref leftRow, ref rightRow)) {
-                    leftRow["a"] = EntityAction.Update;
+                    leftRow["TflAction"] = EntityAction.Update;
                     leftRow["TflKey"] = rightRow["TflKey"];
                     leftRow["TflBatchId"] = _entity.TflBatchId;
                 } else {
-                    leftRow["a"] = EntityAction.None;
+                    leftRow["TflAction"] = EntityAction.None;
                 }
             } else {
-                leftRow["a"] = EntityAction.Insert;
+                leftRow["TflAction"] = EntityAction.Insert;
                 leftRow["TflBatchId"] = _entity.TflBatchId;
             }
 

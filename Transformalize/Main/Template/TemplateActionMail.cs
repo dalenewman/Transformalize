@@ -52,16 +52,16 @@ namespace Transformalize.Main {
             try {
                 if (string.IsNullOrEmpty(action.Username)) {
                     new SmtpClient {
-                        Port = action.Port,
-                        EnableSsl = action.EnableSsl,
+                        Port = action.Connection.Port,
+                        EnableSsl = action.Connection.EnableSsl,
                         DeliveryMethod = SmtpDeliveryMethod.Network,
                         UseDefaultCredentials = true,
                         Host = action.Host
                     }.Send(mail);
                 } else {
                     new SmtpClient {
-                        Port = action.Port,
-                        EnableSsl = action.EnableSsl,
+                        Port = action.Connection.Port,
+                        EnableSsl = action.Connection.EnableSsl,
                         DeliveryMethod = SmtpDeliveryMethod.Network,
                         UseDefaultCredentials = false,
                         Credentials = new NetworkCredential(action.Username, action.Password),

@@ -4,6 +4,7 @@ using Transformalize.Configuration;
 using Transformalize.Extensions;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Main.Providers.SqlServer;
 using Transformalize.Operations.Transform;
 
 namespace Transformalize.Main.Providers.SqlCe4 {
@@ -205,5 +206,8 @@ namespace Transformalize.Main.Providers.SqlCe4 {
             }
         }
 
+        public override EntitySchema GetEntitySchema(string table, string schema = "") {
+            return new DatabaseEntitySchemaReader(this).Read(table, schema);
+        }
     }
 }

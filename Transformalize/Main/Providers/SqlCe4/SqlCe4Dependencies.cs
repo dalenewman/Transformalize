@@ -1,3 +1,5 @@
+using Transformalize.Main.Providers.SqlServer;
+
 namespace Transformalize.Main.Providers.SqlCe4 {
     public class SqlCe4Dependencies : AbstractConnectionDependencies {
         public SqlCe4Dependencies()
@@ -9,7 +11,8 @@ namespace Transformalize.Main.Providers.SqlCe4 {
                 new SqlCe4EntityCreator(),
                 new FalseViewWriter(),
                 new SqlCe4TflWriter(),
-                new DatabaseScriptRunner()
+                new DatabaseScriptRunner(),
+                new SqlServerDataTypeService()
             ) { }
     }
 }

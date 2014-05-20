@@ -9,6 +9,7 @@ namespace Transformalize.Main.Providers.AnalysisServices {
                 new FalseEntityCreator(), 
                 new FalseViewWriter(),
                 new FalseTflWriter(),
-                new AnalysisServicesScriptRunner()) { }
+                new AnalysisServicesScriptRunner(),
+                new FalseDataTypeService()) { }
     }
 }

@@ -1,3 +1,5 @@
+using Transformalize.Main.Providers.AnalysisServices;
+
 namespace Transformalize.Main.Providers.Folder {
     public class FolderDependencies : AbstractConnectionDependencies {
         public FolderDependencies()
@@ -9,6 +11,7 @@ namespace Transformalize.Main.Providers.Folder {
                 new FolderEntityCreator(),
                 new FalseViewWriter(),
                 new FalseTflWriter(),
-                new FalseScriptRunner()) { }
+                new FalseScriptRunner(), 
+                new FalseDataTypeService()) { }
     }
 }

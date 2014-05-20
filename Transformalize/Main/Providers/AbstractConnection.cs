@@ -57,6 +57,7 @@ namespace Transformalize.Main.Providers {
         public ITableQueryWriter TableQueryWriter { get; set; }
         public ITflWriter TflWriter { get; set; }
         public IViewWriter ViewWriter { get; set; }
+        public IDataTypeService DataTypeService { get; set; }
 
         public string Database { get; set; }
         public string User { get; set; }
@@ -94,6 +95,7 @@ namespace Transformalize.Main.Providers {
         public string DateFormat { get; set; }
         public bool IncludeHeader { get; set; }
         public bool IncludeFooter { get; set; }
+        public bool EnableSsl { get; set; }
 
         public string Server {
             get { return _server; }
@@ -136,6 +138,7 @@ namespace Transformalize.Main.Providers {
             DateFormat = element.DateFormat;
             IncludeHeader = element.IncludeHeader;
             IncludeFooter = element.IncludeFooter;
+            EnableSsl = element.EnableSsl;
             Path = element.Path;
             ErrorMode = (ErrorMode)Enum.Parse(typeof(ErrorMode), element.ErrorMode, true);
             SearchOption = (SearchOption)Enum.Parse(typeof(SearchOption), element.SearchOption, true);
@@ -149,6 +152,7 @@ namespace Transformalize.Main.Providers {
             ViewWriter = dependencies.ViewWriter;
             TflWriter = dependencies.TflWriter;
             ScriptRunner = dependencies.ScriptRunner;
+            DataTypeService = dependencies.DataTypeService;
 
             ProcessConnectionString(element);
         }
@@ -357,5 +361,8 @@ namespace Transformalize.Main.Providers {
         /// </summary>
         /// <param name="entity">an entity</param>
         public abstract void LoadEndVersion(Entity entity);
+
+        public abstract EntitySchema GetEntitySchema(string table, string schema = "");
+
     }
 }

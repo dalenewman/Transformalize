@@ -21,6 +21,7 @@
 #endregion
 
 using System.IO;
+using Transformalize.Main.Providers;
 
 namespace Transformalize.Main {
 
@@ -28,13 +29,15 @@ namespace Transformalize.Main {
 
         public override void Handle(TemplateAction action) {
 
-            var actionFile = string.IsNullOrEmpty(action.File)
-                ? string.Empty
-                : new FileInfo(action.File).FullName;
+            var actionFile = string.IsNullOrEmpty(action.File) ? string.Empty : new FileInfo(action.File).FullName;
+            var file = actionFile.Equals(string.Empty) ? new FileInfo(action.RenderedFile).FullName : actionFile;
 
-            var openFile = actionFile == string.Empty ? action.RenderedFile : actionFile;
-            System.Diagnostics.Process.Start(openFile);
-            Log.Info("Opened file {0}.", openFile);
+            if (!file.Equals(string.Empty) && File.Exists(file)) {
+                System.Diagnostics.Process.Start(file);
+                Log.Info("Opened file {0}.", file);
+            } else {
+                Log.Warn("Can't open '{0}'.", file);
+            }
         }
     }
 }

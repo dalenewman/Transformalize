@@ -36,6 +36,23 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public ActionBuilder Modes(params string[] modes) {
+            foreach (var mode in modes) {
+                _action.Modes.Add(new ModeConfigurationElement() { Mode = mode });
+            }
+            return this;
+        }
+
+        public ActionBuilder Cc(string cc) {
+            _action.Cc = cc;
+            return this;
+        }
+
+        public ActionBuilder Body(string body) {
+            _action.Body = body;
+            return this;
+        }
+
         public ActionBuilder Before(bool runBefore) {
             _action.Before = runBefore;
             return this;
