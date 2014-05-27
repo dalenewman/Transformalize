@@ -38,7 +38,7 @@ namespace Transformalize.Test.Unit
         	        WHERE TABLE_SCHEMA = 'dbo'
         	        AND TABLE_NAME = 'TEST'
                 )	DROP TABLE [dbo].[TEST];
-            ", SqlTemplates.DropTable("TEST"));
+            ", SqlTemplates.DropTable("TEST","dbo"));
         }
 
         [Test]
@@ -51,7 +51,7 @@ namespace Transformalize.Test.Unit
         	        WHERE TABLE_SCHEMA = 'dbo'
         	        AND TABLE_NAME = 'Test'
                 )	TRUNCATE TABLE [dbo].[Test];
-            ", SqlTemplates.TruncateTable("Test"));
+            ", SqlTemplates.TruncateTable("Test","dbo"));
         }
     }
 }

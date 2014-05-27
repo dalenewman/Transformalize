@@ -5,7 +5,7 @@ namespace Transformalize.Main.Providers.SqlCe4 {
 
     public class SqlCe4TableQueryWriter : QueryWriter, ITableQueryWriter {
 
-        public string CreateTable(string name, IEnumerable<string> defs, string schema = "dbo") {
+        public string CreateTable(string name, IEnumerable<string> defs) {
             var defList = string.Join(",", defs);
             return string.Format(
                 "CREATE TABLE [{0}]({1});",
@@ -14,7 +14,7 @@ namespace Transformalize.Main.Providers.SqlCe4 {
                 );
         }
 
-        public string AddPrimaryKey(string name, IEnumerable<string> primaryKey, string schema = "dbo") {
+        public string AddPrimaryKey(string name, IEnumerable<string> primaryKey) {
             var pk = primaryKey.ToArray();
             var keyList = string.Join(", ", pk).Replace(" ASC", string.Empty);
             return string.Format(
@@ -25,7 +25,7 @@ namespace Transformalize.Main.Providers.SqlCe4 {
             );
         }
 
-        public string DropPrimaryKey(string name, IEnumerable<string> primaryKey, string schema = "dbo") {
+        public string DropPrimaryKey(string name, IEnumerable<string> primaryKey) {
             var pk = primaryKey.ToArray();
             return string.Format(
                 "ALTER TABLE [{0}] DROP CONSTRAINT [PK_{0}_{1}];",
@@ -34,14 +34,14 @@ namespace Transformalize.Main.Providers.SqlCe4 {
                 );
         }
 
-        public string AddUniqueClusteredIndex(string name, string schema = "dbo") {
+        public string AddUniqueClusteredIndex(string name) {
             return string.Format(
                 "CREATE UNIQUE NONCLUSTERED INDEX [UX_{0}_TflKey] ON [{0}] (TflKey ASC);",
                 SqlIdentifier(name)
                 );
         }
 
-        public string DropUniqueClusteredIndex(string name, string schema = "dbo") {
+        public string DropUniqueClusteredIndex(string name) {
             return string.Format(
                 "DROP INDEX [UX_{0}_TflKey] ON [{0}];",
                 SqlIdentifier(name)

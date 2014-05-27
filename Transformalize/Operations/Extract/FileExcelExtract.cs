@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
+using Transformalize.Extensions;
 using Transformalize.Libs.ExcelDataReader;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
@@ -38,17 +40,25 @@ namespace Transformalize.Operations.Extract {
                         yield break;
                     }
 
+                    var emptyBuilder = new StringBuilder();
+
                     while (reader.Read()) {
                         line++;
 
                         if (line > _start) {
-                            if (_end == 0 || line <= _end){
+                            if (_end == 0 || line <= _end) {
                                 var row = new Row();
                                 row["TflFileName"] = _fileInfo.FullName;
+                                emptyBuilder.Clear();
                                 foreach (var field in _fields) {
-                                    row[field.Alias] = reader.GetValue(field.Index);
+                                    var value = reader.GetValue(field.Index);
+                                    row[field.Alias] = value;
+                                    emptyBuilder.Append(value);
                                 }
-                                yield return row;
+                                emptyBuilder.Trim(" ");
+                                if (!emptyBuilder.ToString().Equals(string.Empty)) {
+                                    yield return row;
+                                }
                             }
                         }
                     }

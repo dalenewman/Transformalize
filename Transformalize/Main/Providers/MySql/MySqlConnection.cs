@@ -139,15 +139,6 @@ namespace Transformalize.Main.Providers.MySql {
             );
         }
 
-        public override string KeyTopQuery(Entity entity, int top) {
-            const string sql = @"
-                SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
-                SELECT {0} FROM `{1}` LIMIT 0, {2};
-                COMMIT;
-            ";
-            return string.Format(sql, string.Join(", ", entity.SelectKeys(this)), entity.Name, top);
-        }
-
         public override void LoadBeginVersion(Entity entity) {
             var sql = string.Format(@"
                 SELECT {0}

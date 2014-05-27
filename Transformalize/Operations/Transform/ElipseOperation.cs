@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using System.Threading;
 using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Operations.Transform;
 
-namespace Transformalize.Main {
+namespace Transformalize.Operations.Transform {
     public class ElipseOperation : ShouldRunOperation {
         private readonly int _length;
         private readonly string _elipse;

@@ -20,8 +20,11 @@
 
 #endregion
 
+using Transformalize.Main.Providers;
+
 namespace Transformalize.Main {
     public interface IEntityAutoFieldReader {
         Fields Read(Entity entity, bool isMaster);
+        Fields Read(AbstractConnection connection, string process, string prefix, string name, string schema, bool isMaster);
     }
 }

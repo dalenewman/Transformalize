@@ -4,27 +4,27 @@ namespace Transformalize.Main.Providers
 {
     public class FalseTableQueryWriter : ITableQueryWriter {
 
-        public string CreateTable(string name, IEnumerable<string> defs, string schema = "dbo")
+        public string CreateTable(string name, IEnumerable<string> defs)
         {
             return string.Empty;
         }
 
-        public string AddPrimaryKey(string name, IEnumerable<string> primaryKey, string schema = "dbo")
+        public string AddPrimaryKey(string name, IEnumerable<string> primaryKey)
         {
             return string.Empty;
         }
 
-        public string DropPrimaryKey(string name, IEnumerable<string> primaryKey, string schema = "dbo")
+        public string DropPrimaryKey(string name, IEnumerable<string> primaryKey)
         {
             return string.Empty;
         }
 
-        public string AddUniqueClusteredIndex(string name, string schema = "dbo")
+        public string AddUniqueClusteredIndex(string name)
         {
             return string.Empty;
         }
 
-        public string DropUniqueClusteredIndex(string name, string schema = "dbo")
+        public string DropUniqueClusteredIndex(string name)
         {
             return string.Empty;
         }

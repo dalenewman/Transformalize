@@ -31,39 +31,47 @@ namespace Transformalize.Main.Providers.SqlServer {
         private readonly Logger _log = LogManager.GetLogger("tfl");
 
         public Fields Read(Entity entity, bool isMaster) {
+            return Read(entity.Input.First().Connection, entity.ProcessName, entity.Prefix, entity.Name, entity.Schema, entity.IsMaster());
+        }
+
+        public Fields Read(AbstractConnection connection, string process, string prefix, string name, string schema, bool isMaster = false) {
             var fields = new Fields();
-            using (var cn = entity.Input.First().Connection.GetConnection()) {
+
+            if (schema.Equals(string.Empty)) {
+                schema = "dbo";
+            }
+
+            using (var cn = connection.GetConnection()) {
                 cn.Open();
                 var cmd = cn.CreateCommand();
                 cmd.CommandText = PrepareSql();
                 cmd.CommandType = CommandType.Text;
 
-                var results = cn.Query(PrepareSql(), new { entity.Name, entity.Schema });
+                var results = cn.Query(PrepareSql(), new { name, schema });
 
                 foreach (var result in results) {
-                    var name = result.COLUMN_NAME;
+                    var columnName = result.COLUMN_NAME;
                     var type = GetSystemType(result.DATA_TYPE);
                     var length = result.CHARACTER_MAXIMUM_LENGTH;
                     var fieldType = (bool)result.IS_PRIMARY_KEY ? (isMaster ? FieldType.MasterKey : FieldType.PrimaryKey) : FieldType.Field;
                     var field = new Field(type, length, fieldType, true, string.Empty) {
-                        Name = name,
-                        Entity = entity.Name,
-                        Process = entity.ProcessName,
+                        Name = columnName,
+                        Entity = name,
+                        Process = process,
                         Index = result.ORDINAL_POSITION,
-                        Schema = entity.Schema,
+                        Schema = schema,
                         Input = true,
                         Precision = result.NUMERIC_PRECISION,
                         Scale = result.NUMERIC_SCALE,
-                        Alias = entity.Prefix + name
+                        Alias = prefix + columnName
                     };
                     fields.Add(field);
-
                 }
-
             }
 
             return fields;
         }
+
 
         private string GetSystemType(string dataType) {
             var typeDefined = _dataTypeService.TypesReverse.ContainsKey(dataType);

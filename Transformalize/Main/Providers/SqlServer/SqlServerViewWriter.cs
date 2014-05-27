@@ -70,14 +70,17 @@ namespace Transformalize.Main.Providers.SqlServer {
             builder.AppendFormat("CREATE VIEW {0} AS\r\n", process.OutputConnection.Enclose(process.Star));
             builder.AppendFormat("SELECT\r\n    d.TflKey,\r\n    d.TflBatchId,\r\n    b.TflUpdate,\r\n");
 
+            var l = process.OutputConnection.L;
+            var r = process.OutputConnection.R;
+
             var typedFields = new StarFields(process).TypedFields();
-            builder.AppendLine(string.Concat(new FieldSqlWriter(typedFields[StarFieldType.Master]).Alias(process.OutputConnection.L, process.OutputConnection.R).PrependEntityOutput(process.OutputConnection, "d").Prepend("    ").Write(",\r\n"), ","));
+            builder.AppendLine(string.Concat(new FieldSqlWriter(typedFields[StarFieldType.Master]).Alias(l, r).PrependEntityOutput(process.OutputConnection, "d").Prepend("    ").Write(",\r\n"), ","));
 
             if (typedFields[StarFieldType.Foreign].Any())
-                builder.AppendLine(string.Concat(new FieldSqlWriter(typedFields[StarFieldType.Foreign]).Alias(process.OutputConnection.L, process.OutputConnection.R).PrependEntityOutput(process.OutputConnection, "d").IsNull().ToAlias(process.OutputConnection.L, process.OutputConnection.R).Prepend("    ").Write(",\r\n"), ","));
+                builder.AppendLine(string.Concat(new FieldSqlWriter(typedFields[StarFieldType.Foreign]).Alias(l, r).PrependEntityOutput(process.OutputConnection, "d").IsNull().ToAlias(l, r).Prepend("    ").Write(",\r\n"), ","));
 
             if (typedFields[StarFieldType.Other].Any())
-                builder.AppendLine(string.Concat(new FieldSqlWriter(typedFields[StarFieldType.Other]).Alias(process.OutputConnection.L, process.OutputConnection.R).PrependEntityOutput(process.OutputConnection).IsNull().ToAlias(process.OutputConnection.L, process.OutputConnection.R).Prepend("    ").Write(",\r\n"), ","));
+                builder.AppendLine(string.Concat(new FieldSqlWriter(typedFields[StarFieldType.Other]).Alias(l, r).PrependEntityOutput(process.OutputConnection).IsNull().ToAlias(l, r).Prepend("    ").Write(",\r\n"), ","));
 
             builder.TrimEnd("\r\n,");
             builder.AppendLine();

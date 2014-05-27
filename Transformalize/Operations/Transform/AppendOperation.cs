@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Operations.Transform;
 
-namespace Transformalize.Main
+namespace Transformalize.Operations.Transform
 {
     public class AppendOperation : ShouldRunOperation {
         private readonly string _value;

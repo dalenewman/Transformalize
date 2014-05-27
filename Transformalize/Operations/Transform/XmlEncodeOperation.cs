@@ -32,9 +32,6 @@ namespace Transformalize.Operations.Transform {
             return buffer.ToString();
         }
 
-        /// <summary>
-        /// Whether a given character is allowed by XML 1.0.
-        /// </summary>
         public bool IsLegalXmlChar(int character) {
             return (
                 character == 0x9 /* == '\t' == 9   */          ||

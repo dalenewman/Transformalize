@@ -18,13 +18,13 @@ namespace Transformalize.Main.Providers.SqlServer {
             var primaryKey = writer.FieldType(entity.IsMaster() ? FieldType.MasterKey : FieldType.PrimaryKey).Alias(connection.L, connection.R).Asc().Values();
             var defs = writer.Reload().AddSurrogateKey().AddBatchId().Output().Alias(connection.L, connection.R).DataType(new SqlServerDataTypeService()).AppendIf(" NOT NULL", entity.IsMaster() ? FieldType.MasterKey : FieldType.PrimaryKey).Values();
 
-            var createSql = connection.TableQueryWriter.CreateTable(entity.OutputName(), defs, entity.Schema);
+            var createSql = connection.TableQueryWriter.CreateTable(entity.OutputName(), defs);
             Log.Debug(createSql);
 
-            var indexSql = connection.TableQueryWriter.AddUniqueClusteredIndex(entity.OutputName(), entity.Schema);
+            var indexSql = connection.TableQueryWriter.AddUniqueClusteredIndex(entity.OutputName());
             Log.Debug(indexSql);
 
-            var keySql = connection.TableQueryWriter.AddPrimaryKey(entity.OutputName(), primaryKey, entity.Schema);
+            var keySql = connection.TableQueryWriter.AddPrimaryKey(entity.OutputName(), primaryKey);
             Log.Debug(keySql);
 
             using (var cn = connection.GetConnection()) {

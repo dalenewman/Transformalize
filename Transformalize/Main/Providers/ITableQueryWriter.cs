@@ -26,11 +26,11 @@ namespace Transformalize.Main.Providers
 {
     public interface ITableQueryWriter
     {
-        string CreateTable(string name, IEnumerable<string> defs, string schema = "dbo");
-        string AddPrimaryKey(string name, IEnumerable<string> primaryKey, string schema = "dbo");
-        string DropPrimaryKey(string name, IEnumerable<string> primaryKey, string schema = "dbo");
-        string AddUniqueClusteredIndex(string name, string schema = "dbo");
-        string DropUniqueClusteredIndex(string name, string schema = "dbo");
+        string CreateTable(string name, IEnumerable<string> defs);
+        string AddPrimaryKey(string name, IEnumerable<string> primaryKey);
+        string DropPrimaryKey(string name, IEnumerable<string> primaryKey);
+        string AddUniqueClusteredIndex(string name);
+        string DropUniqueClusteredIndex(string name);
         string WriteTemporary(string name, Field[] fields, AbstractConnection connection, bool useAlias = true);
     }
 }

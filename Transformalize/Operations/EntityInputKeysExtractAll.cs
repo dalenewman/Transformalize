@@ -33,7 +33,6 @@ namespace Transformalize.Operations {
 
     public class EntityInputKeysExtractAll : InputCommandOperation {
 
-        private readonly Dictionary<string, Func<IDataReader, int, object, object>> _map = Common.GetReaderMap();
         private readonly Entity _entity;
         private readonly string[] _fields;
         private readonly int _length;
@@ -43,7 +42,7 @@ namespace Transformalize.Operations {
             : base(connection) {
 
             _entity = entity;
-            _fields = _entity.PrimaryKey.ToEnumerable().Where(f=>f.Input).Select(f=>f.Alias).ToArray();
+            _fields = _entity.PrimaryKey.ToEnumerable().Where(f => f.Input).Select(f => f.Alias).ToArray();
             _length = _fields.Length;
 
             if (_entity.CanDetectChanges(connection.IsDatabase)) {
@@ -51,6 +50,10 @@ namespace Transformalize.Operations {
                 if (!_entity.HasRows) {
                     Debug("No data detected in {0}.", _entity.Alias);
                 }
+            }
+
+            if (connection.Schemas && entity.Schema.Equals(string.Empty)) {
+                entity.Schema = connection.DefaultSchema;
             }
 
             _sql = _entity.CanDetectChanges(connection.IsDatabase)

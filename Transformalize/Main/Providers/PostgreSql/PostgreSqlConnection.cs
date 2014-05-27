@@ -27,7 +27,8 @@ namespace Transformalize.Main.Providers.PostgreSql {
             InsertMultipleRows = true;
             Views = true;
             Schemas = true;
-        }
+            DefaultSchema = "public";
+            }
 
         public override string KeyAllQuery(Entity entity) {
             const string sql = @"SELECT {0} FROM ""{1}"";";
@@ -111,19 +112,6 @@ namespace Transformalize.Main.Providers.PostgreSql {
                 entity.Version.Name
             );
 
-        }
-
-        public override string KeyTopQuery(Entity entity, int top) {
-            const string sql = @"
-                SELECT {0} FROM ""{1}"" LIMIT {2};
-            ";
-
-            return string.Format(
-                sql,
-                string.Join(", ", entity.SelectKeys(this)),
-                entity.Name,
-                top
-            );
         }
 
         public override void LoadBeginVersion(Entity entity) {

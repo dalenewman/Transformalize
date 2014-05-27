@@ -27,7 +27,7 @@ using Transformalize.Libs.Dapper;
 namespace Transformalize.Main.Providers {
     public class DatabaseEntityDropper : IEntityDropper {
         public IEntityExists EntityExists { get; set; }
-        private const string FORMAT = "DROP TABLE {0}{1};";
+        private const string FORMAT = "DROP TABLE {0};";
         private readonly Logger _log = LogManager.GetLogger("tfl");
 
         public DatabaseEntityDropper(IEntityExists entityExists) {
@@ -38,18 +38,14 @@ namespace Transformalize.Main.Providers {
             if (!EntityExists.Exists(connection, entity))
                 return;
 
-            var needSchema = NeedsSchema(entity.Schema);
-            var sql = string.Format(FORMAT, needSchema ? connection.Enclose(entity.Schema) + "." : string.Empty, connection.Enclose(entity.OutputName()));
+            var sql = string.Format(FORMAT, connection.Enclose(entity.OutputName()));
 
             using (var cn = connection.GetConnection()) {
                 cn.Open();
                 cn.Execute(sql);
-                _log.Debug("Dropped Output {0}.{1}", entity.Schema, entity.OutputName());
+                _log.Debug("Dropped Output {0}", entity.OutputName());
             }
         }
 
-        private static bool NeedsSchema(string schema) {
-            return !(schema == string.Empty || schema.Equals("dbo", StringComparison.OrdinalIgnoreCase));
-        }
     }
 }

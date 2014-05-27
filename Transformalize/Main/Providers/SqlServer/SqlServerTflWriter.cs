@@ -32,11 +32,11 @@ namespace Transformalize.Main.Providers.SqlServer {
                 Execute(process.OutputConnection, CreateTable());
                 Execute(process.OutputConnection, CreateIndex());
                 Debug("Created TflBatch.");
+            } else {
+                var sql = string.Format("DELETE FROM TflBatch WHERE ProcessName = '{0}';", process.Name);
+                Debug(sql);
+                Execute(process.OutputConnection, sql);
             }
-
-            var sql = string.Format("DELETE FROM TflBatch WHERE ProcessName = '{0}';", process.Name);
-            Debug(sql);
-            Execute(process.OutputConnection, sql);
 
             Info("Initialized TrAnSfOrMaLiZeR {0} connection.", process.OutputConnection.Name);
         }
@@ -53,8 +53,7 @@ namespace Transformalize.Main.Providers.SqlServer {
             }
         }
 
-        public string CreateIndex()
-        {
+        public string CreateIndex() {
             return @"
                 CREATE INDEX Ix_TflBatch_ProcessName_EntityName__TflBatchId ON TflBatch (
                     ProcessName ASC,

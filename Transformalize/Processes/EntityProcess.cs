@@ -63,8 +63,8 @@ namespace Transformalize.Processes {
                 Register(union);
             }
 
-            if (_entity.Sample > 0m && _entity.Sample < 100m) {
-                Register(new SampleOperation(_entity.Sample));
+            if (!_entity.Sampled && _entity.Sample > 0m && _entity.Sample < 100m) {
+                Register(new SampleOperation2(_entity.Sample));
             }
 
             Register(new ApplyDefaults(true, _entity.Fields, _entity.CalculatedFields));
@@ -110,14 +110,18 @@ namespace Transformalize.Processes {
             var isDatabase = input.Connection.IsDatabase;
 
             if (isDatabase) {
+                if (input.Connection.Schemas && _entity.Schema.Equals(string.Empty)) {
+                    _entity.Schema = input.Connection.DefaultSchema;
+                }
+
                 if (_entity.HasSqlOverride()) {
                     p.Register(new SqlOverrideOperation(_entity, input.Connection));
                 } else {
-                    if (_entity.PrimaryKey.Any(kv=>kv.Value.Input)) {
+                    if (_entity.PrimaryKey.Any(kv => kv.Value.Input)) {
                         p.Register(new EntityKeysToOperations(_entity, input.Connection));
                         p.Register(new SerialUnionAllOperation());
                     } else {
-                        _entity.SqlOverride = SqlTemplates.Select(_entity.Fields, _entity.Name, input.Connection, _entity.Schema);
+                        _entity.SqlOverride = SqlTemplates.Select(_entity, input.Connection);
                         p.Register(new SqlOverrideOperation(_entity, input.Connection));
                     }
                 }

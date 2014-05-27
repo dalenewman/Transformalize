@@ -40,6 +40,7 @@ namespace Transformalize.Main.Providers {
         private string _r = string.Empty;
         private string _server;
         private int _port;
+        private string _defaultSchema = string.Empty;
 
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
@@ -96,6 +97,13 @@ namespace Transformalize.Main.Providers {
         public bool IncludeHeader { get; set; }
         public bool IncludeFooter { get; set; }
         public bool EnableSsl { get; set; }
+        public bool TableSample { get; set; }
+
+        public string DefaultSchema
+        {
+            get { return _defaultSchema; }
+            set { _defaultSchema = value; }
+        }
 
         public string Server {
             get { return _server; }
@@ -266,7 +274,7 @@ namespace Transformalize.Main.Providers {
             var primaryKey = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).FieldType(entity.IsMaster() ? FieldType.MasterKey : FieldType.PrimaryKey).Alias(L, R).Asc().Values();
             using (var cn = GetConnection()) {
                 cn.Open();
-                cn.Execute(TableQueryWriter.DropPrimaryKey(entity.OutputName(), primaryKey, entity.Schema));
+                cn.Execute(TableQueryWriter.DropPrimaryKey(entity.OutputName(), primaryKey));
             }
         }
 
@@ -274,21 +282,21 @@ namespace Transformalize.Main.Providers {
             var primaryKey = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).FieldType(entity.IsMaster() ? FieldType.MasterKey : FieldType.PrimaryKey).Alias(L, R).Asc().Values();
             using (var cn = GetConnection()) {
                 cn.Open();
-                cn.Execute(TableQueryWriter.AddPrimaryKey(entity.OutputName(), primaryKey, entity.Schema));
+                cn.Execute(TableQueryWriter.AddPrimaryKey(entity.OutputName(), primaryKey));
             }
         }
 
         public void AddUniqueClusteredIndex(Entity entity) {
             using (var cn = GetConnection()) {
                 cn.Open();
-                cn.Execute(TableQueryWriter.AddUniqueClusteredIndex(entity.OutputName(), entity.Schema));
+                cn.Execute(TableQueryWriter.AddUniqueClusteredIndex(entity.OutputName()));
             }
         }
 
         public void DropUniqueClusteredIndex(Entity entity) {
             using (var cn = GetConnection()) {
                 cn.Open();
-                cn.Execute(TableQueryWriter.DropUniqueClusteredIndex(entity.OutputName(), entity.Schema));
+                cn.Execute(TableQueryWriter.DropUniqueClusteredIndex(entity.OutputName()));
             }
         }
 
@@ -334,7 +342,6 @@ namespace Transformalize.Main.Providers {
 
         //concrete class should override these
         public virtual string KeyRangeQuery(Entity entity) { throw new NotImplementedException(); }
-        public virtual string KeyTopQuery(Entity entity, int top) { throw new NotImplementedException(); }
         public virtual string KeyQuery(Entity entity) { throw new NotImplementedException(); }
         public virtual string KeyAllQuery(Entity entity) { throw new NotImplementedException(); }
 

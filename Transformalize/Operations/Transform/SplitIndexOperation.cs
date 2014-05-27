@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Operations.Transform;
+using Transformalize.Main;
 
-namespace Transformalize.Main {
+namespace Transformalize.Operations.Transform {
     public class SplitIndexOperation : ShouldRunOperation {
         private readonly string _outType;
         private readonly int _count;

@@ -104,7 +104,7 @@ UNION ALL SELECT 4;";
         public void TestSelectByKeysSql() {
             var entity = _process.Entities.First();
 
-            var actual = SqlTemplates.Select(entity.Fields, entity.OutputName(), "@KEYS", _process.OutputConnection);
+            var actual = SqlTemplates.Select(entity.Fields, entity.OutputName(), "@KEYS", _process.OutputConnection, "dbo", _process.OutputConnection.DefaultSchema);
 
             const string expected = @"
 SELECT

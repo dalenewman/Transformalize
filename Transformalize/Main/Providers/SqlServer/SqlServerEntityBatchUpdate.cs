@@ -43,10 +43,10 @@ namespace Transformalize.Main.Providers.SqlServer {
             var sets = writer.Alias(_connection.L, _connection.R).SetParam().Write(", ", false);
 
             command.CommandText = string.Format(@"
-                UPDATE [{0}].[{1}]
-                SET {2}, TflBatchId = @TflBatchId
+                UPDATE [{0}]
+                SET {1}, TflBatchId = @TflBatchId
                 WHERE TflKey = @TflKey;
-            ", _entity.Schema, _entity.OutputName(), sets);
+            ", _entity.OutputName(), sets);
 
             foreach (var r in writer.ToArray()) {
                 AddParameter(command, r.Alias, row[r.Alias]);

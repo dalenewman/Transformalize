@@ -27,61 +27,55 @@ namespace Transformalize.Main.Providers.SqlServer {
 
     public class SqlServerTableQueryWriter : QueryWriter, ITableQueryWriter {
 
-        public string CreateTable(string name, IEnumerable<string> defs, string schema = "dbo") {
+        public string CreateTable(string name, IEnumerable<string> defs) {
             var defList = string.Join(",", defs);
+            
             return string.Format(
-                "CREATE TABLE [{0}].[{1}]({2});",
-                schema,
+                "CREATE TABLE [{0}]({1});",
                 SqlIdentifier(name),
                 defList
             );
         }
 
-        public string AddPrimaryKey(string name, IEnumerable<string> primaryKey, string schema = "dbo") {
+        public string AddPrimaryKey(string name, IEnumerable<string> primaryKey) {
             var pk = primaryKey.ToArray();
             var keyList = string.Join(", ", pk);
             return string.Format(
-                "ALTER TABLE [{0}].[{1}] ADD CONSTRAINT [PK_{1}_{2}] PRIMARY KEY NONCLUSTERED ({3}) WITH (IGNORE_DUP_KEY = ON);",
-                schema,
+                "ALTER TABLE [{0}] ADD CONSTRAINT [PK_{0}_{1}] PRIMARY KEY NONCLUSTERED ({2}) WITH (IGNORE_DUP_KEY = ON);",
                 SqlIdentifier(name),
                 KeyName(pk),
                 keyList
             );
         }
 
-        public string DropPrimaryKey(string name, IEnumerable<string> primaryKey, string schema = "dbo") {
+        public string DropPrimaryKey(string name, IEnumerable<string> primaryKey) {
             var pk = primaryKey.ToArray();
             return string.Format(
-                "ALTER TABLE [{0}].[{1}] DROP CONSTRAINT [PK_{1}_{2}];",
-                schema,
+                "ALTER TABLE [{0}] DROP CONSTRAINT [PK_{0}_{1}];",
                 SqlIdentifier(name),
                 KeyName(pk)
             );
         }
 
-        public string AddUniqueClusteredIndex(string name, string schema = "dbo") {
+        public string AddUniqueClusteredIndex(string name) {
             return string.Format(
-                "CREATE UNIQUE CLUSTERED INDEX [UX_{0}_TflKey] ON [{1}].[{0}] (TflKey ASC);",
-                SqlIdentifier(name),
-                schema
+                "CREATE UNIQUE CLUSTERED INDEX [UX_{0}_TflKey] ON [{0}] (TflKey ASC);",
+                SqlIdentifier(name)
             );
         }
 
-        public string DropUniqueClusteredIndex(string name, string schema) {
+        public string DropUniqueClusteredIndex(string name) {
             return string.Format(
                 @"
                     IF EXISTS(
 	                    SELECT i.*
 	                    FROM sys.indexes i WITH (NOLOCK)
 	                    INNER JOIN sys.tables t WITH (NOLOCK) ON (i.object_id = t.object_id)
-	                    INNER JOIN sys.schemas s WITH (NOLOCK) ON (t.schema_id = s.schema_id)
 	                    WHERE i.[name] = 'UX_{0}_TflKey'
 	                    AND t.[name] = '{0}'
-	                    AND s.[name] = '{1}'
-                    )	DROP INDEX [UX_{0}_TflKey] ON [{1}].[{0}];
+                    )	DROP INDEX [UX_{0}_TflKey] ON [{0}];
                 ",
-                SqlIdentifier(name),
-                schema
+                SqlIdentifier(name)
             );
         }
 

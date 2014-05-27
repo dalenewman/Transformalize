@@ -66,6 +66,10 @@ namespace Transformalize.Processes {
 
         private IOperation ComposeInputOperation(AbstractConnection connection) {
 
+            if (connection.Schemas && _entity.Schema.Equals(string.Empty)) {
+                _entity.Schema = connection.DefaultSchema;
+            }
+
             if (_entity.HasSqlKeysOverride()) {
                 return new SqlKeysOverrideOperation(_entity, connection);
             }

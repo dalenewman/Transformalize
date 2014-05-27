@@ -70,8 +70,8 @@ namespace Transformalize.Test.Integration {
         [Test]
         public void TestFail()
         {
-            const string file = @"C:\Code\TransformalizeConfiguration\TransformalizeConfiguration\App_Data\TestProfileExcel.xml";
-            ProcessFactory.Create(file, new Options() {LogLevel = LogLevel.Debug})[0].Run();
+            const string file = @"C:\Code\recipe\Recipe.xml";
+            ProcessFactory.Create(file, new Options() {Mode="init", LogLevel = LogLevel.Info})[0].Run();
             //ProcessFactory.Create(file)[0].Run();
 
         }

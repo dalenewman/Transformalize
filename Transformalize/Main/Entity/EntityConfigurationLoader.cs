@@ -67,6 +67,7 @@ namespace Transformalize.Main {
                 Top = element.Top,
                 DetectChanges = element.DetectChanges,
                 TrimAll = element.TrimAll,
+                NoLock = element.NoLock,
                 Unicode = element.Unicode,
                 VariableLength = element.VariableLength,
                 SqlOverride = element.SqlOverride.Sql,
@@ -187,6 +188,7 @@ namespace Transformalize.Main {
         }
 
         private void GuardAgainstMissingPrimaryKey(EntityConfigurationElement element) {
+
             if (element.Fields.Cast<FieldConfigurationElement>().Any(f => f.PrimaryKey))
                 return;
 

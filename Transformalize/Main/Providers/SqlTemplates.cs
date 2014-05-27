@@ -24,11 +24,16 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Transformalize.Extensions;
+using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 
 namespace Transformalize.Main.Providers {
+
     public static class SqlTemplates {
-        public static string TruncateTable(string name, string schema = "dbo") {
+
+        public static Logger Log = LogManager.GetLogger("tfl");
+
+        public static string TruncateTable(string name, string schema) {
             return string.Format(@"
                 IF EXISTS(
         	        SELECT *
@@ -39,7 +44,7 @@ namespace Transformalize.Main.Providers {
             ", schema, name);
         }
 
-        public static string DropTable(string name, string schema = "dbo") {
+        public static string DropTable(string name, string schema) {
             return string.Format(@"
                 IF EXISTS(
         	        SELECT *
@@ -50,7 +55,7 @@ namespace Transformalize.Main.Providers {
             ", schema, name);
         }
 
-        public static string Select(Fields fields, string leftTable, string rightTable, AbstractConnection connection, string leftSchema = "dbo", string rightSchema = "dbo") {
+        public static string Select(Fields fields, string leftTable, string rightTable, AbstractConnection connection, string leftSchema, string rightSchema) {
             var maxDop = connection.MaxDop ? "OPTION (MAXDOP 2);" : ";";
             var sqlPattern = "\r\nSELECT\r\n    {0}\r\nFROM {1} l\r\nINNER JOIN {2} r ON ({3})\r\n" + maxDop;
 
@@ -60,10 +65,26 @@ namespace Transformalize.Main.Providers {
             return string.Format(sqlPattern, columns, SafeTable(leftTable, connection, leftSchema), SafeTable(rightTable, connection, rightSchema), @join);
         }
 
-        public static string Select(Fields fields, string table, AbstractConnection connection, string schema = "dbo") {
-            var maxDop = connection.MaxDop ? " OPTION (MAXDOP 2);" : ";";
-            var sqlPattern = "\r\nSELECT\r\n    {0}\r\nFROM {1}" + maxDop;
+        public static string Select(Entity entity, AbstractConnection connection) {
+            var sql = Select(entity.Fields, entity.Name, connection, entity.Schema, entity.NoLock, entity.Sampled ? 100m : entity.Sample);
+            if (entity.Sample > 0m && entity.Sample < 100m && connection.TableSample) {
+                entity.Sampled = true;
+            }
+            return sql;
+        }
 
+        public static string Select(Fields fields, string table, AbstractConnection connection, string schema, bool noLock = false, Decimal sample = 100m) {
+
+            var maxDop = connection.MaxDop ? " OPTION (MAXDOP 2)" : string.Empty;
+            var withNoLock = noLock && connection.NoLock ? " WITH(NOLOCK)" : string.Empty;
+
+            var tableSample = string.Empty;
+            if (sample > 0m && sample < 100m && connection.TableSample) {
+                Log.Info("Sample enforced at query level: {0:##} percent.", sample);
+                tableSample = string.Format(" TABLESAMPLE ({0:##} PERCENT)", sample);
+            }
+
+            var sqlPattern = "\r\nSELECT\r\n    {0}\r\nFROM {1}" + tableSample + withNoLock + maxDop + ";";
             var columns = new FieldSqlWriter(fields).Input().Select(connection).Write(",\r\n    ");
 
             return string.Format(sqlPattern, columns, SafeTable(table, connection, schema));
@@ -110,12 +131,12 @@ namespace Transformalize.Main.Providers {
                 InsertUnionedValues(size, name, fields, rows, connection);
         }
 
-        private static string SafeTable(string name, AbstractConnection connection, string schema = "dbo") {
+        private static string SafeTable(string name, AbstractConnection connection, string schema) {
             if (name.StartsWith("@"))
                 return name;
             return connection.Schemas && !schema.Equals(string.Empty) ?
                 string.Concat(connection.L, schema, string.Format("{0}.{1}", connection.R, connection.L), name, connection.R) :
-                string.Concat(connection.L, name, connection.R) ;
+                string.Concat(connection.L, name, connection.R);
         }
     }
 }

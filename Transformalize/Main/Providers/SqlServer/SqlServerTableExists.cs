@@ -37,7 +37,7 @@ namespace Transformalize.Main.Providers.SqlServer {
 	            FROM INFORMATION_SCHEMA.TABLES 
 	            WHERE TABLE_SCHEMA = '{0}' 
 	            AND  TABLE_NAME = '{1}';
-            ", schema, name);
+            ", schema.Equals(string.Empty) ? _connection.DefaultSchema : schema, name);
 
             using (var cn = _connection.GetConnection()) {
                 cn.Open();

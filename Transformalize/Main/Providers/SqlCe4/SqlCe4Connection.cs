@@ -69,13 +69,6 @@ namespace Transformalize.Main.Providers.SqlCe4 {
                 );
         }
 
-        public override string KeyTopQuery(Entity entity, int top) {
-            const string sql = @"
-                SELECT TOP {0} {1} FROM [{2}] WITH (NOLOCK);
-            ";
-            return string.Format(sql, top, string.Join(", ", entity.SelectKeys(this)), entity.Name);
-        }
-
         public override string KeyQuery(Entity entity) {
 
             const string sql = @"

@@ -39,6 +39,34 @@ namespace Transformalize.Test.Unit {
     public class TestTransforms : EtlProcessHelper {
 
         [Test]
+        public void Sample() {
+            var input = new RowsBuilder()
+                .Row().Field("f1", 1)
+                .Row().Field("f1", 2)
+                .Row().Field("f1", 3)
+                .Row().Field("f1", 4)
+                .Row().Field("f1", 5)
+                .Row().Field("f1", 6)
+                .Row().Field("f1", 7)
+                .Row().Field("f1", 8)
+                .Row().Field("f1", 9)
+                .Row().Field("f1", 10)
+                .Row().Field("f1", 11)
+                .Row().Field("f1", 12)
+                .ToOperation();
+
+            var sampler = new SampleOperation2(50);
+
+            var rows = TestOperation(input, sampler);
+
+            Console.WriteLine(rows.Count);
+            Assert.Greater(11, rows.Count);
+            Assert.Less(1, rows.Count);
+
+
+        }
+
+        [Test]
         public void ConcatStrings() {
             var input = new RowsBuilder().Row().Field("f1", "v1").Field("f2", "v2").ToOperation();
             var parameters = new ParametersBuilder().Parameters("f1", "f2").ToParameters();
@@ -304,11 +332,10 @@ namespace Transformalize.Test.Unit {
         }
 
         [Test]
-        public void InsertInterval()
-        {
+        public void InsertInterval() {
             var input = new RowsBuilder().Row("date", "140607").ToOperation();
-            var insertInterval = new InsertIntervalOperation("date", "date",2,"-");
-            var insert = new InsertOperation("date","date",0,"20");
+            var insertInterval = new InsertIntervalOperation("date", "date", 2, "-");
+            var insert = new InsertOperation("date", "date", 0, "20");
             var output = TestOperation(input, insertInterval, insert);
 
             Assert.AreEqual("2014-06-07", output[0]["date"]);

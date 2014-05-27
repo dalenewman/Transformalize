@@ -49,6 +49,7 @@ namespace Transformalize.Configuration {
         private const string TRIM_ALL = "trim-all";
         private const string UNICODE = "unicode";
         private const string VARIABLE_LENGTH = "variable-length";
+        private const string NO_LOCK = "no-lock";
 
         public IOperation InputOperation { get; set; }
 
@@ -64,7 +65,13 @@ namespace Transformalize.Configuration {
             set { this[TRIM_ALL] = value; }
         }
 
-        [ConfigurationProperty(SCHEMA, IsRequired = false, DefaultValue = "dbo")]
+        [ConfigurationProperty(NO_LOCK, IsRequired = false, DefaultValue = false)]
+        public bool NoLock {
+            get { return (bool)this[NO_LOCK]; }
+            set { this[NO_LOCK] = value; }
+        }
+
+        [ConfigurationProperty(SCHEMA, IsRequired = false, DefaultValue = "")]
         public string Schema {
             get { return this[SCHEMA] as string; }
             set { this[SCHEMA] = value; }

@@ -21,12 +21,11 @@
 #endregion
 
 using System.Collections.Generic;
-using Transformalize.Main.Providers.SqlServer;
 
 namespace Transformalize.Main.Providers.MySql {
     public class MySqlTableQueryWriter : QueryWriter, ITableQueryWriter {
 
-        public string CreateTable(string name, IEnumerable<string> defs, string schema) {
+        public string CreateTable(string name, IEnumerable<string> defs) {
             var defList = string.Join(",\r\n    ", defs);
             return string.Format(
                 "CREATE TABLE `{0}`({1});",
@@ -35,19 +34,19 @@ namespace Transformalize.Main.Providers.MySql {
             );
         }
 
-        public string AddPrimaryKey(string name, IEnumerable<string> primaryKey, string schema) {
+        public string AddPrimaryKey(string name, IEnumerable<string> primaryKey) {
             throw new System.NotImplementedException();
         }
 
-        public string DropPrimaryKey(string name, IEnumerable<string> primaryKey, string schema) {
+        public string DropPrimaryKey(string name, IEnumerable<string> primaryKey) {
             throw new System.NotImplementedException();
         }
 
-        public string AddUniqueClusteredIndex(string name, string schema) {
+        public string AddUniqueClusteredIndex(string name) {
             throw new System.NotImplementedException();
         }
 
-        public string DropUniqueClusteredIndex(string name, string schema) {
+        public string DropUniqueClusteredIndex(string name) {
             throw new System.NotImplementedException();
         }
 

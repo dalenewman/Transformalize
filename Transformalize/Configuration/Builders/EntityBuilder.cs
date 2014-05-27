@@ -112,6 +112,11 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public EntityBuilder NoLock(bool noLock = true) {
+            _entity.NoLock = noLock;
+            return this;
+        }
+
         public IoBuilder Output(string name, string connectionName) {
             var output = new IoConfigurationElement() {
                 Name = name,

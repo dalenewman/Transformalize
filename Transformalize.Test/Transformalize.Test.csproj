@@ -162,7 +162,6 @@
     <None Include="web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="LICENSE.txt" />
     <Content Include="NorthWindExpanded.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

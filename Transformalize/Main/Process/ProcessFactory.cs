@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 using Transformalize.Configuration;
 using Transformalize.Libs.NLog;
 
@@ -10,11 +11,13 @@ namespace Transformalize.Main {
         private static readonly Logger Log = LogManager.GetLogger("tfl");
 
         public static Process[] Create(string resource, Options options = null) {
+            InitializeLogger(Regex.Replace(resource,@"\..*$", string.Empty));
             var element = new ConfigurationFactory(resource).Create();
             return Create(element, options);
         }
 
         public static Process[] Create(ProcessConfigurationElement element, Options options = null) {
+            InitializeLogger(element.Name);
             return Create(new ProcessElementCollection() { element }, options);
         }
 
@@ -23,6 +26,8 @@ namespace Transformalize.Main {
             var processes = new List<Process>();
 
             foreach (ProcessConfigurationElement element in elements) {
+                InitializeLogger(element.Name);
+
                 options = options ?? new Options();
                 var collected = Collect(element);
 
@@ -55,6 +60,11 @@ namespace Transformalize.Main {
                 child = parent;
             }
             return child;
+        }
+
+        private static void InitializeLogger(string name) {
+            GlobalDiagnosticsContext.Set("process", name);
+            GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
         }
 
     }

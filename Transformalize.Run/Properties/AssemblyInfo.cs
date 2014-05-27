@@ -27,12 +27,12 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("Transformalize.Run")]
+[assembly: AssemblyTitle("Transformalize")]
 [assembly: AssemblyDescription("Combining De-normalization, Transformation, and Replication.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Transformalize")]
-[assembly: AssemblyCopyright("Copyright © Dale Newman 2013")]
+[assembly: AssemblyCopyright("Copyright © Dale Newman 2013 - GPL v3")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

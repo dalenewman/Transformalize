@@ -74,6 +74,7 @@ namespace Transformalize.Main {
         public List<NamedConnection> Input { get; set; }
         public bool DetectChanges { get; set; }
         public bool TrimAll { get; set; }
+        public bool NoLock { get; set; }
 
         public Entity(int batchId) {
             _tflBatchId = batchId;
@@ -109,6 +110,7 @@ namespace Transformalize.Main {
 
         public bool Unicode { get; set; }
         public bool VariableLength { get; set; }
+        public bool Sampled { get; set; }
 
         public string FirstKey() {
             return PrimaryKey.First().Key;

@@ -1532,6 +1532,7 @@
     <Compile Include="Main\Providers\SqlCe4\SqlCe4TflWriter.cs" />
     <Compile Include="Main\Providers\DatabaseEntityCreator.cs" />
     <Compile Include="Main\Providers\MySql\MySqlDataTypeService.cs" />
+    <Compile Include="Main\Providers\SqlServer\DatabaseEntitySchemaReader.cs" />
     <Compile Include="Main\Providers\SqlServer\PostgreSqlDataTypeService.cs" />
     <Compile Include="Main\Providers\SqlServer\SqlServerBulkLoadOperation.cs" />
     <Compile Include="Main\Providers\SqlServer\SqlServerDependencies.cs" />
@@ -1635,11 +1636,6 @@
     <Compile Include="Main\Template\TemplateManager.cs" />
     <Compile Include="Main\Template\TemplateReader.cs" />
     <Compile Include="Main\TransformalizeException.cs" />
-    <Compile Include="Main\Transform\AppendOperation.cs" />
-    <Compile Include="Main\Transform\DatePartOperation.cs" />
-    <Compile Include="Main\Transform\ElipseOperation.cs" />
-    <Compile Include="Main\Transform\NowOperation.cs" />
-    <Compile Include="Main\Transform\SplitIndexOperation.cs" />
     <Compile Include="Main\Transform\TransformOperationFactory.cs" />
     <Compile Include="Main\Transform\ITransformParametersReader.cs" />
     <Compile Include="Main\Transform\ITransformLoader.cs" />
@@ -1979,13 +1975,17 @@
     <Compile Include="Operations\Load\LogLoadOperation.cs" />
     <Compile Include="Operations\Load\MailLoadOperation.cs" />
     <Compile Include="Operations\SampleOperation.cs" />
+    <Compile Include="Operations\SampleOperation2.cs" />
     <Compile Include="Operations\SqlKeysOverrideOperation.cs" />
+    <Compile Include="Operations\Transform\AppendOperation.cs" />
     <Compile Include="Operations\Transform\CompressOperation.cs" />
     <Compile Include="Operations\Transform\ConcatOperation.cs" />
     <Compile Include="Operations\Transform\ConvertOperation.cs" />
     <Compile Include="Operations\Transform\CSharpOperation.cs" />
+    <Compile Include="Operations\Transform\DatePartOperation.cs" />
     <Compile Include="Operations\Transform\DecompressOperation.cs" />
     <Compile Include="Operations\Transform\DistanceOperation.cs" />
+    <Compile Include="Operations\Transform\ElipseOperation.cs" />
     <Compile Include="Operations\Transform\EmptyOperation.cs" />
     <Compile Include="Operations\Transform\FilterOperation.cs" />
     <Compile Include="Operations\Transform\FilterOutputOperation.cs" />
@@ -1994,13 +1994,17 @@
     <Compile Include="Operations\Transform\FromRegexOperation.cs" />
     <Compile Include="Operations\Transform\FromXmlOperation.cs" />
     <Compile Include="Operations\Transform\GetHashCodeOperation.cs" />
+    <Compile Include="Operations\Transform\HtmlDecodeOperation.cs" />
+    <Compile Include="Operations\Transform\HtmlEncodeOperation.cs" />
     <Compile Include="Operations\Transform\IfOperation.cs" />
     <Compile Include="Operations\Transform\InsertIntervalOperation.cs" />
     <Compile Include="Operations\Transform\InsertOperation.cs" />
     <Compile Include="Operations\Transform\JavascriptOperation.cs" />
     <Compile Include="Operations\Transform\JoinTransformOperation.cs" />
     <Compile Include="Operations\Transform\CopyOperation.cs" />
+    <Compile Include="Operations\Transform\NowOperation.cs" />
     <Compile Include="Operations\Transform\ShouldRunOperation.cs" />
+    <Compile Include="Operations\Transform\SplitIndexOperation.cs" />
     <Compile Include="Operations\Transform\TimeZoneOperation.cs" />
     <Compile Include="Operations\Transform\ValueOperation.cs" />
     <Compile Include="Operations\Transform\XmlEncodeOperation.cs" />
@@ -2485,7 +2489,9 @@
     <Content Include="Libs\SharpZLib\obj\Debug\ICSharpCode.SharpZipLib.dll" />
     <Content Include="Libs\SharpZLib\obj\Debug\ICSharpCode.SharpZipLib.pdb" />
     <Content Include="Libs\SharpZLib\obj\Debug\ICSharpCode.SharpZLib.csproj.FileListAbsolute.txt" />
-    <Content Include="LICENSE.txt" />
+    <Content Include="LICENSE.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Libs\SharpZLib\obj\Debug\TempPE\" />

@@ -8,6 +8,7 @@ namespace Transformalize.Operations.Transform {
     public abstract class ShouldRunOperation : AbstractOperation {
 
         public Func<Row, bool> ShouldRun = row => true;
+        public bool IsFilter = false;
         protected string InKey;
         protected string OutKey;
         protected int SkipCount = 0;
@@ -20,7 +21,11 @@ namespace Transformalize.Operations.Transform {
 
         void TflOperation_OnFinishedProcessing(IOperation obj) {
             if (SkipCount > 0) {
-                Info("Skipped {0} of {1} row{2}.", SkipCount, obj.Statistics.OutputtedRows, obj.Statistics.OutputtedRows.Plural());
+                if (IsFilter) {
+                    Info("Blocked {0} row{1}. Allowed {2} row{3}.", SkipCount, SkipCount.Plural(), obj.Statistics.OutputtedRows, obj.Statistics.OutputtedRows.Plural());
+                } else {
+                    Info("Skipped {0} of {1} row{2}.", SkipCount, obj.Statistics.OutputtedRows, obj.Statistics.OutputtedRows.Plural());
+                }
             }
             var seconds = Convert.ToInt64(obj.Statistics.Duration.TotalSeconds);
             Info("Completed {0} rows in {1}: {2} second{3}.", obj.Statistics.OutputtedRows, Name, seconds, seconds.Plural());

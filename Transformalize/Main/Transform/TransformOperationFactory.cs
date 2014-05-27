@@ -22,7 +22,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Text.RegularExpressions;
 using Transformalize.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
@@ -441,6 +440,12 @@ namespace Transformalize.Main {
 
                 case "xmlencode":
                     return new XmlEncodeOperation(inKey, outKey) { ShouldRun = shouldRun };
+
+                case "htmlencode":
+                    return new HtmlEncodeOperation(inKey, outKey) { ShouldRun = shouldRun };
+
+                case "htmldecode":
+                    return new HtmlDecodeOperation(inKey, outKey) { ShouldRun = shouldRun };
 
                 case "filter":
                     return new FilterOperation(

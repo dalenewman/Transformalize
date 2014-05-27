@@ -17,15 +17,9 @@ namespace Transformalize.Operations.Transform {
             _value = Common.GetObjectConversionMap()[outType](value);
             _comparisonOperator = comparisonOperator;
 
-            base.OnFinishedProcessing += FilterOperation_OnFinishedProcessing;
             Name = string.Format("FilterOperation ({0})", outKey);
-        }
-
-        void FilterOperation_OnFinishedProcessing(Libs.Rhino.Etl.Operations.IOperation obj) {
-            if (_filteredOutCount > 0) {
-                Info("Filtered out {0} row{1}.", _filteredOutCount, _filteredOutCount.Plural());
+            IsFilter = true;
             }
-        }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
@@ -33,10 +27,9 @@ namespace Transformalize.Operations.Transform {
                     if (Common.CompareMap[_comparisonOperator](row[InKey], _value)) {
                         yield return row;
                     } else {
-                        Interlocked.Increment(ref _filteredOutCount);
+                        Interlocked.Increment(ref SkipCount);
                     }
                 } else {
-                    Interlocked.Increment(ref SkipCount);
                     yield return row;
                 }
             }
