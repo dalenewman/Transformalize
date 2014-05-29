@@ -76,21 +76,6 @@ namespace Transformalize.Test.Integration {
         }
 
         [Test]
-        public void TestDatabaseSizes() {
-            const string instructions = @"C:\Code\TransformalizeConfiguration\TransformalizeConfiguration\App_Data\DBA\DatabaseSize\DatabaseSize1.xml";
-            var process = ProcessFactory.Create(instructions, new Options() { Mode="default", LogLevel = LogLevel.Debug})[0];
-            var results = process.Run();
-        }
-
-        [Test]
-        public void TestDefault() {
-            var options = new Options { Mode = "default" };
-            var process = ProcessFactory.Create("http://config.mwf.local/clevest-filter-updates.xml", options)[0];
-            process.PipelineThreading = PipelineThreading.SingleThreaded;
-            var results = process.Run();
-        }
-
-        [Test]
         public void TestSqlOverride() {
 
             var config = new ProcessBuilder("TestSqlOverride")

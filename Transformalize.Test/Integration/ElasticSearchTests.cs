@@ -23,7 +23,6 @@
 using System.IO;
 using NUnit.Framework;
 using Transformalize.Configuration.Builders;
-using Transformalize.Libs.NLog;
 using Transformalize.Main;
 using Transformalize.Main.Providers.ElasticSearch;
 

@@ -104,14 +104,9 @@
     <Compile Include="Integration\ElasticSearchTests.cs" />
     <Compile Include="Integration\SqlServerTests.cs" />
     <Compile Include="Integration\PostgreSqlTests.cs" />
-    <Compile Include="Integration\Call.cs" />
-    <Compile Include="Integration\BookMarks.cs" />
     <Compile Include="Integration\AvroTest.cs" />
-    <Compile Include="Integration\Dsl.cs" />
     <Compile Include="Integration\OrderType.cs" />
-    <Compile Include="Integration\Excel.cs" />
     <Compile Include="Integration\ScriptRunners.cs" />
-    <Compile Include="Integration\CopySearchPage.cs" />
     <Compile Include="Integration\Ufo.cs" />
     <Compile Include="Integration\NorthWindUpdates.cs" />
     <Compile Include="Integration\NorthWind.cs" />
