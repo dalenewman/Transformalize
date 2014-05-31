@@ -12,11 +12,11 @@ namespace Transformalize.Main.Providers.SqlServer {
             }
 
             var writer = entity.IsMaster() ?
-                new FieldSqlWriter(entity.Fields, process.CalculatedFields, entity.CalculatedFields, GetRelationshipFields(process.Relationships, entity)) :
+                new FieldSqlWriter(entity.Fields, entity.CalculatedFields, process.CalculatedFields, GetRelationshipFields(process.Relationships, entity)) :
                 new FieldSqlWriter(entity.Fields, entity.CalculatedFields);
 
             var primaryKey = writer.FieldType(entity.IsMaster() ? FieldType.MasterKey : FieldType.PrimaryKey).Alias(connection.L, connection.R).Asc().Values();
-            var defs = writer.Reload().AddSurrogateKey().AddBatchId().Output().Alias(connection.L, connection.R).DataType(new SqlServerDataTypeService()).AppendIf(" NOT NULL", entity.IsMaster() ? FieldType.MasterKey : FieldType.PrimaryKey).Values();
+            var defs = writer.Reload().AddBatchId(entity.Index).AddSurrogateKey(entity.Index).Output().Alias(connection.L, connection.R).DataType(new SqlServerDataTypeService()).AppendIf(" NOT NULL", entity.IsMaster() ? FieldType.MasterKey : FieldType.PrimaryKey).Values();
 
             var createSql = connection.TableQueryWriter.CreateTable(entity.OutputName(), defs);
             Log.Debug(createSql);

@@ -49,7 +49,7 @@ namespace Transformalize.Main.Providers.Html {
             throw new System.NotImplementedException();
         }
 
-        public override EntitySchema GetEntitySchema(string table, string schema = "") {
+        public override EntitySchema GetEntitySchema(string name, string schema = "", bool isMaster = false) {
             return new EntitySchema();
         }
 

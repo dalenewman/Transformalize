@@ -369,7 +369,7 @@ namespace Transformalize.Main.Providers {
         /// <param name="entity">an entity</param>
         public abstract void LoadEndVersion(Entity entity);
 
-        public abstract EntitySchema GetEntitySchema(string table, string schema = "");
+        public abstract EntitySchema GetEntitySchema(string name, string schema = "", bool isMaster = false);
 
     }
 }

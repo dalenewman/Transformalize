@@ -54,7 +54,9 @@ namespace Transformalize.Main {
                         var key = string.IsNullOrEmpty(p.Name) ? field.Key : p.Name;
                         parameters.Add(field.Key, key, null, field.Value.Type);
                     } else {
-                        _log.Warn("The entity {0} has a {1} transform parameter that references field {2}.  This field hasn't been defined yet in {0}.", _entity.Alias, transform.Method, p.Field);
+                        if (!p.Field.StartsWith("Tfl")) {
+                            _log.Warn("The entity {0} has a {1} transform parameter that references field {2}.  This field hasn't been defined yet in {0}.", _entity.Alias, transform.Method, p.Field);
+                        }
                         parameters.Add(p.Field, p.Field, null, "System.String");
                     }
                 } else {

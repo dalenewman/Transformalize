@@ -35,7 +35,7 @@ namespace Transformalize.Main.Providers.SqlServer {
             UseTransaction = false;
 
             TurnOptionOn(SqlBulkCopyOptions.TableLock);
-            TurnOptionOff(SqlBulkCopyOptions.UseInternalTransaction);
+            TurnOptionOn(SqlBulkCopyOptions.UseInternalTransaction);
             TurnOptionOff(SqlBulkCopyOptions.CheckConstraints);
             TurnOptionOff(SqlBulkCopyOptions.FireTriggers);
         }
@@ -44,7 +44,7 @@ namespace Transformalize.Main.Providers.SqlServer {
             NotifyBatchSize = 10000;
             BatchSize = _batchSize;
 
-            var fields = new FieldSqlWriter(_entity.Fields, _entity.CalculatedFields).Output().AddBatchId(false).ToArray();
+            var fields = new FieldSqlWriter(_entity.Fields, _entity.CalculatedFields).Output().AddBatchId(_entity.Index, false).ToArray();
             foreach (var field in fields) {
                 Schema[field.Alias] = field.SystemType;
             }

@@ -32,9 +32,11 @@ namespace Transformalize.Main {
 
             foreach (var element in templateElements) {
 
+                if (!element.Enabled)
+                    continue;
+
                 var reader = element.File.StartsWith("http", IC) ? (IContentsReader)new ContentsWebReader() : new ContentsFileReader(path);
-                var contents = element.Render ? reader.Read(element.File) : new Contents() { FileName = element.File };
-                var template = new Template(_process, element, contents);
+                var template = new Template(_process, element, reader.Read(element.File));
 
                 foreach (SettingConfigurationElement setting in element.Settings) {
                     template.Settings[setting.Name] = _defaultFactory.Convert(setting.Value, setting.Type);

@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using Transformalize.Extensions;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
@@ -12,6 +13,7 @@ namespace Transformalize.Operations.Transform {
         protected string InKey;
         protected string OutKey;
         protected int SkipCount = 0;
+        protected ObjectPool<StringBuilder> StringBuilders = new ObjectPool<StringBuilder>(() => new StringBuilder());
 
         protected ShouldRunOperation(string inKey, string outKey) {
             base.OnFinishedProcessing += TflOperation_OnFinishedProcessing;

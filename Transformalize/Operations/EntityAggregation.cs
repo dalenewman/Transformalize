@@ -46,10 +46,10 @@ namespace Transformalize.Operations {
 
         public EntityAggregation(Entity entity) {
 
-            _keysToGroupBy = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).Context().ToEnumerable().Where(f => f.Aggregate.Equals("group", IC)).Select(f => f.Alias).ToArray();
+            _keysToGroupBy = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).Context().OrderedFields().Where(f => f.Aggregate.Equals("group", IC)).Select(f => f.Alias).ToArray();
             _firstKey = _keysToGroupBy[0];
 
-            _fieldsToAccumulate = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).Context().ToEnumerable().Where(f => !f.Aggregate.Equals("group", IC)).ToArray();
+            _fieldsToAccumulate = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).Context().OrderedFields().Where(f => !f.Aggregate.Equals("group", IC)).ToArray();
 
             foreach (var field in _fieldsToAccumulate) {
                 _lists[field.Alias] = new Dictionary<ObjectArrayKeys, IList<object>>();

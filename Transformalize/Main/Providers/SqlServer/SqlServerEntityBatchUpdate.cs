@@ -33,8 +33,8 @@ namespace Transformalize.Main.Providers.SqlServer {
             : base(connection) {
             _connection = connection;
             _entity = entity;
-            BatchSize = 50;
-            UseTransaction = false;
+            BatchSize = connection.BatchSize;
+            UseTransaction = true;
         }
 
         protected override void PrepareCommand(Row row, SqlCommand command) {

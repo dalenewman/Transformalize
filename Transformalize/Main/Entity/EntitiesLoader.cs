@@ -39,8 +39,8 @@ namespace Transformalize.Main {
 
         private void GuardAgainstFieldOverlap(Entity entity) {
 
-            var entityKeys = new HashSet<string>(entity.Fields.ToEnumerable().Where(f => f.Output && !f.FieldType.HasFlag(FieldType.PrimaryKey)).Select(f => f.Alias));
-            var processKeys = new HashSet<string>(_process.Entities.SelectMany(e2 => e2.Fields.ToEnumerable().Where(f => f.Output).Select(f => f.Alias)));
+            var entityKeys = new HashSet<string>(entity.Fields.OrderedFields().Where(f => f.Output && !f.FieldType.HasFlag(FieldType.PrimaryKey)).Select(f => f.Alias));
+            var processKeys = new HashSet<string>(_process.Entities.SelectMany(e2 => e2.Fields.OrderedFields().Where(f => f.Output).Select(f => f.Alias)));
 
             entityKeys.IntersectWith(processKeys);
 

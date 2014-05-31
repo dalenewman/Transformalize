@@ -148,6 +148,8 @@ namespace Transformalize.Configuration {
             Star = child.Star;
             TimeZone = child.TimeZone;
             Enabled = child.Enabled;
+            Scripts.Path = child.Scripts.Path;
+            Templates.Path = child.Templates.Path;
 
             //collections
             CalculatedFields.Merge(child.CalculatedFields);

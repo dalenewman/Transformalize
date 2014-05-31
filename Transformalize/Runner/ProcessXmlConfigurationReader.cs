@@ -51,7 +51,7 @@ namespace Transformalize.Runner {
                 if (process == null) {
                     var transformalize = doc.Element("transformalize");
                     if (transformalize == null)
-                        throw new TransformalizeException("Sorry.  I can't find the <process/> or <transformalize/> element in {0}.", _file);
+                        throw new TransformalizeException("Can't find the <process/> or <transformalize/> element in {0}.", _file);
 
                     section.Deserialize(transformalize.ToString());
                 } else {

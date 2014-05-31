@@ -20,7 +20,7 @@ namespace Transformalize.Runner {
                 return result;
 
             var fileName = new FileInfo(Path.Combine(Common.GetTemporaryFolder(process.Name), "MetaData.xml")).FullName;
-            var writer = new MetaDataWriter(process, new SqlServerEntityAutoFieldReader());
+            var writer = new MetaDataWriter(process);
             File.WriteAllText(fileName, writer.Write(), Encoding.UTF8);
             System.Diagnostics.Process.Start(fileName);
 

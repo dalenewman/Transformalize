@@ -154,7 +154,7 @@ namespace Transformalize.Main.Providers.Solr {
             entity.HasRows = entity.End != null;
         }
 
-        public override EntitySchema GetEntitySchema(string table, string schema = "") {
+        public override EntitySchema GetEntitySchema(string name, string schema = "", bool isMaster = false) {
             return new EntitySchema();
         }
 

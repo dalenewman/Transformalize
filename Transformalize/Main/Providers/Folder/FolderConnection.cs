@@ -1,5 +1,6 @@
 using Transformalize.Configuration;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Main.Providers.File;
 using Transformalize.Operations.Transform;
 
 namespace Transformalize.Main.Providers.Folder {
@@ -45,8 +46,18 @@ namespace Transformalize.Main.Providers.Folder {
             throw new System.NotImplementedException();
         }
 
-        public override EntitySchema GetEntitySchema(string table, string schema = "") {
-            return new EntitySchema();
+        public override EntitySchema GetEntitySchema(string name, string schema = "", bool isMaster = false) {
+            var entitySchema = new EntitySchema();
+            var file = Folder.TrimEnd("\\".ToCharArray()) + "\\" + name.TrimStart("\\".ToCharArray());
+            var fileFields = new FieldInspector().Inspect(file);
+            foreach (var fileField in fileFields) {
+                var field = new Field(fileField.Type, fileField.Length, FieldType.Field, true, string.Empty) {
+                    Name = fileField.Name,
+                    QuotedWith = fileField.QuoteString()
+                };
+                entitySchema.Fields.Add(field);
+            }
+            return entitySchema;
         }
 
         public FolderConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)

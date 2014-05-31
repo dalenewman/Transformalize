@@ -32,8 +32,8 @@ namespace Transformalize.Operations {
         public ResultsLoad(Process process)
             : base(process.OutputConnection) {
             _process = process;
-            BatchSize = 50;
-            UseTransaction = false;
+            BatchSize = process.OutputConnection.BatchSize;
+            UseTransaction = true;
         }
 
         protected override void PrepareCommand(Row row, SqlCommand command) {

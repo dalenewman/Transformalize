@@ -15,7 +15,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations {
     ///     Perform a batch command against SQL server
     /// </summary>
     public abstract class SqlBatchOperation : AbstractDatabaseOperation {
-        private int _batchSize = 50;
+        private int _batchSize = 100;
         private int _timeout;
 
         protected SqlBatchOperation(AbstractConnection connection)

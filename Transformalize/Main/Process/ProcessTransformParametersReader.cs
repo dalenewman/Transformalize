@@ -35,7 +35,7 @@ namespace Transformalize.Main {
 
         public ProcessTransformParametersReader(Process process) {
             _process = process;
-            _fields = _process.OutputFields().ToEnumerable().ToArray();
+            _fields = _process.OutputFields().OrderedFields().ToArray();
         }
 
 

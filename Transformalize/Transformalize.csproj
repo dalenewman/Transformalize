@@ -127,6 +127,7 @@
     <Compile Include="Configuration\ProcessElementCollection.cs" />
     <Compile Include="Configuration\TransformalizeConfiguration.cs" />
     <Compile Include="Extensions\ExceptionExtensions.cs" />
+    <Compile Include="Extensions\ListExtension.cs" />
     <Compile Include="Extensions\LongExtensions.cs" />
     <Compile Include="Extensions\IntExtensions.cs" />
     <Compile Include="Extensions\ObjectPool.cs" />
@@ -1430,7 +1431,6 @@
     <Compile Include="Libs\SolrNet\Utils\UriValidator.cs" />
     <Compile Include="Libs\SolrNet\Utils\X.cs" />
     <Compile Include="Main\Common.cs" />
-    <Compile Include="Main\Entity\Entities.cs" />
     <Compile Include="Main\Entity\EntitiesLoader.cs" />
     <Compile Include="Main\Entity\EntityParametersReader.cs" />
     <Compile Include="Main\Entity\EntityRelationshipLoader.cs" />
@@ -1446,6 +1446,19 @@
     <Compile Include="Main\Providers\AnalysisServices\AnalysisServicesDependencies.cs" />
     <Compile Include="Main\Providers\FalseDataTypeService.cs" />
     <Compile Include="Main\Providers\ConnectionChecker.cs" />
+    <Compile Include="Main\Providers\File\ColumnNameGenerator.cs" />
+    <Compile Include="Main\Providers\File\ColumnNameValidator.cs" />
+    <Compile Include="Main\Providers\File\ExcelInformationReader.cs" />
+    <Compile Include="Main\Providers\File\FileField.cs" />
+    <Compile Include="Main\Providers\File\FieldInspector.cs" />
+    <Compile Include="Main\Providers\File\FileInformation.cs" />
+    <Compile Include="Main\Providers\File\FileInformationFactory.cs" />
+    <Compile Include="Main\Providers\File\FileInformationReader.cs" />
+    <Compile Include="Main\Providers\File\FileLineLoader.cs" />
+    <Compile Include="Main\Providers\File\FileInspectionRequest.cs" />
+    <Compile Include="Main\Providers\File\Line.cs" />
+    <Compile Include="Main\Providers\File\LineLoader.cs" />
+    <Compile Include="Main\Providers\File\Lines.cs" />
     <Compile Include="Main\Providers\Solr\SolrConnection.cs" />
     <Compile Include="Main\Providers\Solr\SolrConnectionChecker.cs" />
     <Compile Include="Main\Providers\Solr\SolrDependencies.cs" />
@@ -2003,6 +2016,7 @@
     <Compile Include="Operations\Transform\JoinTransformOperation.cs" />
     <Compile Include="Operations\Transform\CopyOperation.cs" />
     <Compile Include="Operations\Transform\NowOperation.cs" />
+    <Compile Include="Operations\Transform\ObjectPool.cs" />
     <Compile Include="Operations\Transform\ShouldRunOperation.cs" />
     <Compile Include="Operations\Transform\SplitIndexOperation.cs" />
     <Compile Include="Operations\Transform\TimeZoneOperation.cs" />

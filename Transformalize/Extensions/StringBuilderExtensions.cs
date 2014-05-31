@@ -20,84 +20,66 @@
 
 #endregion
 
+using System;
 using System.Linq;
 using System.Text;
 
-namespace Transformalize.Extensions
-{
-    public static class StringBuilderExtensions
-    {
-        public static void TrimStart(this StringBuilder sb, string trimChars)
-        {
+namespace Transformalize.Extensions {
+    public static class StringBuilderExtensions {
+
+        const char DEFAULT_CHAR = default(char);
+
+        public static void TrimStart(this StringBuilder sb, string trimChars) {
             var length = sb.Length;
-            if (length != 0)
-            {
+            if (length != 0) {
                 var i = 0;
 
-                if (trimChars.Length == 1)
-                {
-                    while (i < length && sb[i] == trimChars[0])
-                    {
+                if (trimChars.Length == 1) {
+                    while (i < length && sb[i] == trimChars[0]) {
                         i++;
                     }
-                }
-                else
-                {
-                    while (i < length && trimChars.Any(c => c.Equals(sb[i])))
-                    {
+                } else {
+                    while (i < length && trimChars.Any(c => c.Equals(sb[i]))) {
                         i++;
                     }
                 }
 
-                if (i > 0)
-                {
+                if (i > 0) {
                     sb.Remove(0, i);
                 }
             }
         }
 
-        public static void TrimEnd(this StringBuilder sb, string trimChars)
-        {
+        public static void TrimEnd(this StringBuilder sb, string trimChars) {
             var length = sb.Length;
-            if (length != 0)
-            {
+            if (length != 0) {
                 var i = length - 1;
 
-                if (trimChars.Length == 1)
-                {
-                    while (i > -1 && sb[i] == trimChars[0])
-                    {
+                if (trimChars.Length == 1) {
+                    while (i > -1 && sb[i] == trimChars[0]) {
                         i--;
                     }
-                }
-                else
-                {
-                    while (i > -1 && trimChars.Any(c => c.Equals(sb[i])))
-                    {
+                } else {
+                    while (i > -1 && trimChars.Any(c => c.Equals(sb[i]))) {
                         i--;
                     }
                 }
 
-                if (i < (length - 1))
-                {
+                if (i < (length - 1)) {
                     sb.Remove(i + 1, (length - i) - 1);
                 }
             }
         }
 
-        public static void Trim(this StringBuilder sb, string trimChars)
-        {
+        public static void Trim(this StringBuilder sb, string trimChars) {
             sb.TrimStart(trimChars);
             sb.TrimEnd(trimChars);
         }
 
-        public static void Substring(this StringBuilder sb, int startIndex, int length)
-        {
+        public static void Substring(this StringBuilder sb, int startIndex, int length) {
             var capacity = sb.Length;
-            if (capacity != 0 && startIndex < capacity)
-            {
-                if (startIndex + length > capacity)
-                {
+            if (capacity != 0 && startIndex < capacity) {
+                if (startIndex + length > capacity) {
                     length = capacity - startIndex;
                 }
 
@@ -106,53 +88,40 @@ namespace Transformalize.Extensions
             }
         }
 
-        public static void PadLeft(this StringBuilder sb, int totalWidth, char paddingChar)
-        {
+        public static void PadLeft(this StringBuilder sb, int totalWidth, char paddingChar) {
             var sbLen = sb.Length;
-            if (sbLen < totalWidth)
-            {
-                for (var i = 0; i < totalWidth - sbLen; i++)
-                {
+            if (sbLen < totalWidth) {
+                for (var i = 0; i < totalWidth - sbLen; i++) {
                     sb.Insert(0, paddingChar);
                 }
             }
         }
 
-        public static void PadRight(this StringBuilder sb, int totalWidth, char paddingChar)
-        {
+        public static void PadRight(this StringBuilder sb, int totalWidth, char paddingChar) {
             var sbLen = sb.Length;
-            if (sbLen < totalWidth)
-            {
-                for (var i = 0; i < totalWidth - sbLen; i++)
-                {
+            if (sbLen < totalWidth) {
+                for (var i = 0; i < totalWidth - sbLen; i++) {
                     sb.Append(paddingChar);
                 }
             }
         }
 
-        public static void Left(this StringBuilder sb, int length)
-        {
+        public static void Left(this StringBuilder sb, int length) {
             sb.Substring(0, length);
         }
 
-        public static void Right(this StringBuilder sb, int length)
-        {
+        public static void Right(this StringBuilder sb, int length) {
             sb.Substring(sb.Length - length, length);
         }
 
-        public static bool IsEqualTo(this StringBuilder sb, string value)
-        {
+        public static bool IsEqualTo(this StringBuilder sb, string value) {
             var valLen = value.Length;
-            if (sb.Length == valLen)
-            {
-                for (var i = 0; i < valLen; i++)
-                {
-                    if (!sb[i].Equals(value[i]))
-                    {
+            if (sb.Length == valLen) {
+                for (var i = 0; i < valLen; i++) {
+                    if (!sb[i].Equals(value[i])) {
                         break;
                     }
-                    if (i == valLen - 1)
-                    {
+                    if (i == valLen - 1) {
                         return true;
                     }
                 }
@@ -160,19 +129,14 @@ namespace Transformalize.Extensions
             return false;
         }
 
-        public static bool StartsWith(this StringBuilder sb, string value)
-        {
+        public static bool StartsWith(this StringBuilder sb, string value) {
             var valLen = value.Length;
-            if (valLen < sb.Length)
-            {
-                for (var i = 0; i < valLen; i++)
-                {
-                    if (!sb[i].Equals(value[i]))
-                    {
+            if (valLen < sb.Length) {
+                for (var i = 0; i < valLen; i++) {
+                    if (!sb[i].Equals(value[i])) {
                         break;
                     }
-                    if (i == valLen - 1)
-                    {
+                    if (i == valLen - 1) {
                         return true;
                     }
                 }
@@ -180,20 +144,15 @@ namespace Transformalize.Extensions
             return false;
         }
 
-        public static bool EndsWith(this StringBuilder sb, string value)
-        {
+        public static bool EndsWith(this StringBuilder sb, string value) {
             var sbLen = sb.Length;
             var valLen = value.Length;
-            if (valLen < sbLen)
-            {
-                for (var i = 0; i < valLen; i++)
-                {
-                    if (!value[i].Equals(sb[sbLen - valLen + i]))
-                    {
+            if (valLen < sbLen) {
+                for (var i = 0; i < valLen; i++) {
+                    if (!value[i].Equals(sb[sbLen - valLen + i])) {
                         break;
                     }
-                    if (i == valLen - 1)
-                    {
+                    if (i == valLen - 1) {
                         return true;
                     }
                 }
@@ -201,25 +160,43 @@ namespace Transformalize.Extensions
             return false;
         }
 
-        public static void ToLower(this StringBuilder sb)
-        {
-            for (var i = 0; i < sb.Length; i++)
-            {
-                if (char.IsUpper(sb[i]))
-                {
+        public static void ToLower(this StringBuilder sb) {
+            for (var i = 0; i < sb.Length; i++) {
+                if (char.IsUpper(sb[i])) {
                     sb[i] = char.ToLower(sb[i]);
                 }
             }
         }
 
-        public static void ToUpper(this StringBuilder sb)
-        {
-            for (var i = 0; i < sb.Length; i++)
-            {
-                if (char.IsLower(sb[i]))
-                {
+        public static void ToUpper(this StringBuilder sb) {
+            for (var i = 0; i < sb.Length; i++) {
+                if (char.IsLower(sb[i])) {
                     sb[i] = char.ToUpper(sb[i]);
                 }
+            }
+        }
+
+        public static void Push(this StringBuilder sb, Func<char,bool> selector) {
+            var count = 0;
+            var numbers = new char[sb.Length];
+            for (var i = 0; i < sb.Length; i++) {
+                if (selector(sb[i])) {
+                    count++;
+                    numbers[i] = sb[i];
+                } else {
+                    break;
+                }
+            }
+            if (count <= 0)
+                return;
+
+            sb.Remove(0, count);
+
+            for (var i = 0; i < numbers.Length; i++) {
+                if (numbers[i].Equals(DEFAULT_CHAR)) {
+                    break;
+                }
+                sb.Append(numbers[i]);
             }
         }
     }

@@ -26,6 +26,7 @@ using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
@@ -39,8 +40,8 @@ namespace Transformalize.Main {
         private static readonly Logger Log = LogManager.GetLogger("tfl");
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private const string APPLICATION_FOLDER = @"\Tfl\";
-        private static readonly char[] Slash = new[] { '\\' };
-        private const string CLEAN_PATTERN = @"[\s\-]|^[\d]";
+        private static readonly char[] Slash = { '\\' };
+        private const string CLEAN_PATTERN = @"[^\w]";
 
         public static string GuardTimeZone(string timeZone, string defaultTimeZone) {
             var result = timeZone;
@@ -190,7 +191,7 @@ namespace Transformalize.Main {
             var local = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData).TrimEnd(Slash);
 
             //i.e. c: no user profile exists
-            if (local.Length <= 2 ) {
+            if (local.Length <= 2) {
                 if (AppDomain.CurrentDomain.GetData("DataDirectory") != null) {
                     local = AppDomain.CurrentDomain.GetData("DataDirectory").ToString().TrimEnd(Slash);
                 }
@@ -240,6 +241,9 @@ namespace Transformalize.Main {
             if (result == "int") {
                 result = "int32";
             }
+            if (result == "long") {
+                result = "int64";
+            }
             if (result == "bool") {
                 result = "boolean";
             }
@@ -248,16 +252,17 @@ namespace Transformalize.Main {
 
         public static Type ToSystemType(string simpleType) {
             simpleType = ToSimpleType(simpleType);
-            if (simpleType == "byte[]")
-                return typeof(byte[]);
-            if (simpleType == "int")
-                return typeof(int);
-            if (simpleType == "datetime")
-                return typeof(DateTime);
-            if (simpleType == "rowversion")
-                return typeof(byte[]);
-            var fullName = "System." + simpleType[0].ToString(CultureInfo.InvariantCulture).ToUpper() + simpleType.Substring(1);
-            return Type.GetType(fullName);
+            switch (simpleType) {
+                case "byte[]":
+                    return typeof(byte[]);
+                case "rowversion":
+                    return typeof(byte[]);
+                case "datetime":
+                    return typeof(DateTime);
+                default:
+                    var fullName = "System." + simpleType[0].ToString(CultureInfo.InvariantCulture).ToUpper() + simpleType.Substring(1);
+                    return Type.GetType(fullName) ?? Type.GetType(simpleType);
+            }
         }
 
         public static int DateTimeToInt32(DateTime date) {
@@ -281,7 +286,18 @@ namespace Transformalize.Main {
         }
 
         public static string CleanIdentifier(string input) {
-            return Regex.Replace(input, CLEAN_PATTERN, String.Empty).Trim(' ');
+            var sb = new StringBuilder(Regex.Replace(input, CLEAN_PATTERN, "_"));
+            sb.Push(char.IsNumber);
+            sb.Push(c => c.Equals('_'));
+            sb.Trim(" ");
+            var result = sb.ToString();
+            if (result.Equals(string.Empty)) {
+                throw new TransformalizeException("The name '{0}' is invalid. Please use at least one alphanumeric character to identify a field.", input);
+            }
+            if (!input.Equals(result)) {
+                Log.Warn("Had to rename '{0}' to '{1}' to prevent from using an invalid field name.", input, result);
+            }
+            return sb.ToString();
         }
 
     }

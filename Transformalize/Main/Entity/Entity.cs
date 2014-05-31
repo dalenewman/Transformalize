@@ -111,6 +111,7 @@ namespace Transformalize.Main {
         public bool Unicode { get; set; }
         public bool VariableLength { get; set; }
         public bool Sampled { get; set; }
+        public int Index { get; set; }
 
         public string FirstKey() {
             return PrimaryKey.First().Key;
@@ -137,7 +138,7 @@ namespace Transformalize.Main {
 
         public List<string> SelectKeys(AbstractConnection connection) {
             var selectKeys = new List<string>();
-            foreach (var field in PrimaryKey.ToEnumerable().Where(f => f.Input)) {
+            foreach (var field in PrimaryKey.OrderedFields().Where(f => f.Input)) {
                 selectKeys.Add(field.Alias.Equals(field.Name)
                     ? string.Concat(connection.L, field.Name, connection.R)
                     : string.Format("{0} = {1}", field.Alias, connection.Enclose(field.Name)));

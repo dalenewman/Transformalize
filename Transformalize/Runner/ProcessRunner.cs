@@ -86,7 +86,7 @@ namespace Transformalize.Runner {
             if (process.OutputConnection.Type == ProviderType.Internal)
                 return;
             var updateMasterProcess = new UpdateMasterProcess(ref process) {
-                PipelineExecuter = process.Options.Mode.Equals("test") ? (AbstractPipelineExecuter)new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter()
+                PipelineExecuter = process.PipelineThreading == PipelineThreading.SingleThreaded ? (AbstractPipelineExecuter)new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter()
             };
             updateMasterProcess.Execute();
         }
@@ -97,7 +97,7 @@ namespace Transformalize.Runner {
             if (process.OutputConnection.Type == ProviderType.Internal)
                 return;
             var transformProcess = new TransformProcess(process) {
-                PipelineExecuter = process.Options.Mode.Equals("test") ? (AbstractPipelineExecuter)new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter()
+                PipelineExecuter = process.PipelineThreading == PipelineThreading.SingleThreaded ? (AbstractPipelineExecuter)new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter()
             };
             transformProcess.Execute();
         }

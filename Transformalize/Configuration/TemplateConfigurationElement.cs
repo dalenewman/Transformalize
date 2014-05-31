@@ -31,14 +31,7 @@ namespace Transformalize.Configuration {
         private const string NAME = "name";
         private const string CACHE = "cache";
         private const string ENABLED = "enabled";
-        private const string RENDER = "render";
         private const string CONDITIONAL = "conditional";
-
-        [ConfigurationProperty(RENDER, IsRequired = false, DefaultValue = true)]
-        public bool Render {
-            get { return (bool)this[RENDER]; }
-            set { this[RENDER] = value; }
-        }
 
         [ConfigurationProperty(CONDITIONAL, IsRequired = false, DefaultValue = false)]
         public bool Conditional {

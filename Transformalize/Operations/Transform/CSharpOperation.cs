@@ -87,7 +87,7 @@ public class Transformer : ITransformer
                     var test = _transformer.Transform(testRow);
                     Debug("CSharp transform compiled and passed test. {0}", test);
                 } catch (Exception e) {
-                    Warn("CSharp transform compiled but failed test. {0}", e.Message);
+                    Debug("CSharp transform compiled but failed test. {0}", e.Message);
                     Debug(e.StackTrace);
                 }
             } else {

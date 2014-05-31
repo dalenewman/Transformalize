@@ -73,8 +73,20 @@ namespace Transformalize.Main {
             return _items.GetEnumerator();
         }
 
-        public IEnumerable<Field> ToEnumerable() {
-            return _items.Select(kv => kv.Value).OrderBy(f => f.Alias);
+        public IEnumerable<Field> OrderedFields() {
+            return _items.Select(kv => kv.Value).OrderBy(f => f.EntityIndex).ThenBy(f=>f.Index);
+        }
+
+        public IEnumerable<Field> Output() {
+            return OrderedFields().Where(f => f.Output);
+        }
+
+        public IEnumerable<Field> ForeignKeyOutput() {
+            return Output().Where(f=>f.FieldType.HasFlag(FieldType.ForeignKey));
+        }
+
+        public IEnumerable<Field> OtherOutput() {
+            return Output().Where(f => f.Output && !f.SimpleType.Equals("rowversion") && f.FieldType.HasFlag(FieldType.Field));
         }
 
         public Field this[string key] {

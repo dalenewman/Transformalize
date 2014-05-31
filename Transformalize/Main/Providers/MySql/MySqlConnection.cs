@@ -180,8 +180,8 @@ namespace Transformalize.Main.Providers.MySql {
             }
         }
 
-        public override EntitySchema GetEntitySchema(string table, string schema = "") {
-            return new DatabaseEntitySchemaReader(this).Read(table, schema);
+        public override EntitySchema GetEntitySchema(string name, string schema = "", bool isMaster = false) {
+            return new DatabaseEntitySchemaReader(this).Read(name, schema);
         }
     }
 }

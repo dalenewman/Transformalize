@@ -30,7 +30,7 @@ namespace Transformalize.Main {
         private const string BATCH_ID = "TflBatchId";
         private const string SURROGATE_KEY = "TflKey";
         private Dictionary<string, Field> _original;
-        private SortedDictionary<string, string> _output;
+        private Dictionary<string, string> _output;
 
         public FieldSqlWriter() {
             StartEmpty();
@@ -87,25 +87,25 @@ namespace Transformalize.Main {
             _original = new Dictionary<string, Field> {
                 {field.Alias, field}
             };
-            _output = new SortedDictionary<string, string> {
+            _output = new Dictionary<string, string> {
                 {field.Alias, string.Empty}
             };
         }
 
         private void StartEmpty() {
             _original = new Dictionary<string, Field>();
-            _output = new SortedDictionary<string, string>();
+            _output = new Dictionary<string, string>();
         }
 
         private void StartWithFields(IEnumerable<Field> fields) {
             var expanded = fields.ToArray();
             _original = expanded.ToDictionary(f => f.Alias, f => f);
-            _output = new SortedDictionary<string, string>(expanded.ToDictionary(f => f.Alias, f => string.Empty));
+            _output = new Dictionary<string, string>(expanded.ToDictionary(f => f.Alias, f => string.Empty));
         }
 
         private void StartWithDictionary(IDictionary<string, Field> fields) {
             _original = fields.ToDictionary(f => f.Key, f => f.Value);
-            _output = new SortedDictionary<string, string>(fields.ToDictionary(f => f.Key, f => string.Empty));
+            _output = new Dictionary<string, string>(fields.ToDictionary(f => f.Key, f => string.Empty));
         }
 
         private void StartWithDictionaries(params IDictionary<string, Field>[] fields) {
@@ -115,7 +115,7 @@ namespace Transformalize.Main {
                     _original[pair.Key] = pair.Value;
                 }
             }
-            _output = new SortedDictionary<string, string>(_original.ToDictionary(f => f.Key, f => string.Empty));
+            _output = new Dictionary<string, string>(_original.ToDictionary(f => f.Key, f => string.Empty));
         }
 
         private void StartWithIFields(params Fields[] fields) {
@@ -125,7 +125,7 @@ namespace Transformalize.Main {
                     foreach (var pair in dict)
                         _original[pair.Key] = pair.Value;
             }
-            _output = new SortedDictionary<string, string>(_original.ToDictionary(f => f.Key, f => string.Empty));
+            _output = new Dictionary<string, string>(_original.ToDictionary(f => f.Key, f => string.Empty));
         }
 
         private void StartWithEnumerable(params IEnumerable<Field>[] fields) {
@@ -135,7 +135,7 @@ namespace Transformalize.Main {
                     _original[f.Alias] = f;
                 }
             }
-            _output = new SortedDictionary<string, string>(_original.ToDictionary(f => f.Key, f => string.Empty));
+            _output = new Dictionary<string, string>(_original.ToDictionary(f => f.Key, f => string.Empty));
         }
 
         public string Write(string separator = ", ", bool flush = true) {
@@ -154,7 +154,7 @@ namespace Transformalize.Main {
         }
 
         private void Flush() {
-            _output = new SortedDictionary<string, string>(_original.ToDictionary(f => f.Key, f => string.Empty));
+            _output = new Dictionary<string, string>(_original.ToDictionary(f => f.Key, f => string.Empty));
         }
 
         private IEnumerable<string> CopyOutputKeys() {
@@ -364,26 +364,32 @@ namespace Transformalize.Main {
             return this;
         }
 
-        public FieldSqlWriter AddBatchId(bool forCreate = true) {
+        public FieldSqlWriter AddBatchId(int entityIndex, bool forCreate = true) {
             _original[BATCH_ID] = new Field("System.Int32", "8", Main.FieldType.Field, true, "0") {
                 Alias = BATCH_ID,
-                NotNull = forCreate
+                NotNull = forCreate,
+                EntityIndex = entityIndex,
+                Index = 1000
             };
 
             _output[BATCH_ID] = string.Empty;
             return this;
         }
 
-        public FieldSqlWriter AddSurrogateKey(bool forCreate = true) {
+        public FieldSqlWriter AddSurrogateKey(int entityIndex, bool forCreate = true) {
             if (forCreate)
                 _original[SURROGATE_KEY] = new Field("System.Int32", "8", Main.FieldType.Field, true, "0") {
                     Alias = SURROGATE_KEY,
                     NotNull = true,
-                    Identity = true
+                    Identity = true,
+                    EntityIndex = entityIndex,
+                    Index = 1001
                 };
             else
                 _original[SURROGATE_KEY] = new Field("System.Int32", "8", Main.FieldType.Field, true, "0") {
-                    Alias = SURROGATE_KEY
+                    Alias = SURROGATE_KEY,
+                    EntityIndex = entityIndex,
+                    Index = 1001
                 };
 
             _output[SURROGATE_KEY] = string.Empty;
@@ -407,7 +413,7 @@ namespace Transformalize.Main {
             foreach (var pair in _output) {
                 results[pair.Key] = _original[pair.Key];
             }
-            return results.ToEnumerable().ToArray();
+            return results.OrderedFields().ToArray();
         }
 
         public FieldSqlWriter Remove(string @alias) {

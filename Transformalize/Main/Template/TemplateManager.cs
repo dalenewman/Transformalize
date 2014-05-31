@@ -53,21 +53,18 @@ namespace Transformalize.Main {
                     continue;
                 }
 
-                if (!_process.UpdatedAnything() && template.Conditional)
-                {
+                if (!_process.UpdatedAnything() && template.Conditional) {
                     continue;
                 }
 
                 var fullName = template.Contents.FileName;
 
-                if (template.ShouldRender) {
-                    try {
-                        fullName = new FileInfo(folder.TrimEnd(_trim) + @"\" + template.Name + new FileInfo(template.Contents.FileName).Extension.ToLower().Replace("cshtml", "html")).FullName;
-                        File.WriteAllText(fullName, template.Render());
-                    } catch (Exception e) {
-                        _log.Warn("Template {0} failed to render. {1}. If the template is depending on pipe-line variables, make sure it is referenced in a template transform.", template.Name, e.Message);
-                        _log.Debug(e.StackTrace);
-                    }
+                try {
+                    fullName = new FileInfo(folder.TrimEnd(_trim) + @"\" + template.Name + new FileInfo(template.Contents.FileName).Extension.ToLower().Replace("cshtml", "html")).FullName;
+                    File.WriteAllText(fullName, template.Render());
+                } catch (Exception e) {
+                    _log.Warn("Template {0} failed to render. {1}. If the template is depending on pipe-line variables, make sure it is referenced in a template transform.", template.Name, e.Message);
+                    _log.Debug(e.StackTrace);
                 }
 
                 foreach (var action in template.Actions) {

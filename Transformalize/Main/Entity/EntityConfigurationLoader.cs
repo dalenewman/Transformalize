@@ -36,6 +36,7 @@ namespace Transformalize.Main {
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private readonly Logger _log = LogManager.GetLogger("tfl");
         private readonly Process _process;
+        private int _entityIndex;
 
         public EntityConfigurationLoader(Process process) {
             _process = process;
@@ -75,7 +76,9 @@ namespace Transformalize.Main {
                 Alias = string.IsNullOrEmpty(element.Alias) ? element.Name : element.Alias,
                 InternalOutput = element.Output.Cast<IoConfigurationElement>().ToDictionary(o => o.Name, o => Enumerable.Repeat(new Row(), 0)),
                 InputOperation = element.InputOperation,
+                Index = _entityIndex++
             };
+
 
             GuardAgainstInvalidGrouping(element, entity);
             GuardAgainstMissingPrimaryKey(element);
@@ -219,7 +222,7 @@ namespace Transformalize.Main {
                 entity.Version = entity.Fields[element.Version];
             } else {
                 if (entity.Fields.Any(kv => kv.Value.Name.Equals(element.Version, IC))) {
-                    entity.Version = entity.Fields.ToEnumerable().First(v => v.Name.Equals(element.Version, IC));
+                    entity.Version = entity.Fields.OrderedFields().First(v => v.Name.Equals(element.Version, IC));
                 } else {
                     if (entity.CalculatedFields.ContainsKey(element.Version)) {
                         entity.Version = entity.CalculatedFields[element.Version];

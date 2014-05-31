@@ -20,24 +20,21 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Transformalize.Main.Providers
-{
-    public enum StarFieldType
-    {
+namespace Transformalize.Main.Providers {
+    public enum StarFieldType {
         Master,
         Foreign,
         Other
     }
 
-    public class StarFields
-    {
+    public class StarFields {
         private readonly Process _process;
 
-        public StarFields(Process process)
-        {
+        public StarFields(Process process) {
             _process = process;
         }
 
@@ -50,32 +47,20 @@ namespace Transformalize.Main.Providers
 
             foreach (var entity in _process.Entities) {
                 if (entity.IsMaster()) {
-                    fields[StarFieldType.Master].AddRange(new FieldSqlWriter(entity.Fields, _process.CalculatedFields, entity.CalculatedFields).Output().Context());
+                    fields[StarFieldType.Master].AddRange(entity.Fields.Output());
+                    fields[StarFieldType.Master].AddRange(entity.CalculatedFields.Output());
+                    fields[StarFieldType.Master].AddRange(_process.CalculatedFields.Output());
                 } else {
                     if (entity.Fields.Any(f => f.Value.FieldType.HasFlag(FieldType.ForeignKey))) {
-                        fields[StarFieldType.Foreign].AddRange(new FieldSqlWriter(entity.Fields).Output().FieldType(FieldType.ForeignKey).Context());
+                        fields[StarFieldType.Foreign].AddRange(entity.Fields.ForeignKeyOutput());
                     }
-                    fields[StarFieldType.Other].AddRange(new FieldSqlWriter(entity.Fields, entity.CalculatedFields).Output().IsNotRowVersion().FieldType(FieldType.Field).Context());
+                    fields[StarFieldType.Other].AddRange(entity.Fields.OtherOutput());
+                    fields[StarFieldType.Other].AddRange(entity.CalculatedFields.OtherOutput());
                 }
             }
 
             return fields;
         }
 
-        public IEnumerable<Field> Fields()
-        {
-            var fields = new List<Field>();
-            var typedFields = TypedFields();
-            foreach (var pair in typedFields)
-            {
-                var pairFields = typedFields[pair.Key];
-                if (pairFields.Any())
-                {
-                    fields.AddRange(pairFields.ToEnumerable());
-                }
-            }
-            return fields;
-        }
-        
     }
 }

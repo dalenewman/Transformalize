@@ -20,6 +20,7 @@
 
 #endregion
 
+using System;
 using System.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Main;
@@ -322,13 +323,13 @@ namespace Transformalize.Configuration {
         [ConfigurationProperty(MESSAGE_FIELD, IsRequired = false, DefaultValue = "[default]")]
         public string MessageField {
             get { return this[MESSAGE_FIELD] as string; }
-            set { this[MESSAGE_FIELD] = Common.CleanIdentifier(value); }
+            set { this[MESSAGE_FIELD] = String.IsNullOrEmpty(value) ? value : Common.CleanIdentifier(value); }
         }
 
         [ConfigurationProperty(RESULT_FIELD, IsRequired = false, DefaultValue = "[default]")]
         public string ResultField {
             get { return this[RESULT_FIELD] as string; }
-            set { this[RESULT_FIELD] = Common.CleanIdentifier(value); }
+            set { this[RESULT_FIELD] = String.IsNullOrEmpty(value) ? value : Common.CleanIdentifier(value); }
         }
 
         [ConfigurationProperty(CHARACTERS, IsRequired = false, DefaultValue = "")]
