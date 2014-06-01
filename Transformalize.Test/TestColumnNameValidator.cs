@@ -20,7 +20,7 @@ namespace Transformalize.Test {
         public void Test2()
         {
             var name = Common.CleanIdentifier("2Column;");
-            Assert.AreEqual("Column2", name);
+            Assert.AreEqual("Column_2", name);
         }
 
     }
