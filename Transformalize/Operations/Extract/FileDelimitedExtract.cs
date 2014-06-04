@@ -31,7 +31,7 @@ namespace Transformalize.Operations.Extract {
 
             _entity = entity;
             _top = top;
-            _fields = new FieldSqlWriter(_entity.Fields).Input().Context().OrderedFields().ToArray();
+            _fields = entity.Fields.WithInput().ToArray();
             _delimiter = connection.Delimiter;
             _fullName = fileInfo.FullName;
             _name = fileInfo.Name;

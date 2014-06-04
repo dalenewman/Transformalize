@@ -27,37 +27,15 @@ using Transformalize.Main.Providers;
 namespace Transformalize.Main {
 
     public class FieldSqlWriter {
-        private const string BATCH_ID = "TflBatchId";
-        private const string SURROGATE_KEY = "TflKey";
         private Dictionary<string, Field> _original;
         private Dictionary<string, string> _output;
-
-        public FieldSqlWriter() {
-            StartEmpty();
-        }
-
-        public FieldSqlWriter(Field field) {
-            StartWithField(field);
-        }
 
         public FieldSqlWriter(IEnumerable<Field> fields) {
             StartWithFields(fields);
         }
 
-        public FieldSqlWriter(IDictionary<string, Field> fields) {
-            StartWithDictionary(fields);
-        }
-
-        public FieldSqlWriter(params IDictionary<string, Field>[] fields) {
-            StartWithDictionaries(fields);
-        }
-
-        public FieldSqlWriter(params IEnumerable<Field>[] fields) {
-            StartWithEnumerable(fields);
-        }
-
         public FieldSqlWriter(params Fields[] fields) {
-            StartWithIFields(fields);
+            StartWithFields(fields);
         }
 
         public FieldSqlWriter Reload(Field field) {
@@ -92,11 +70,6 @@ namespace Transformalize.Main {
             };
         }
 
-        private void StartEmpty() {
-            _original = new Dictionary<string, Field>();
-            _output = new Dictionary<string, string>();
-        }
-
         private void StartWithFields(IEnumerable<Field> fields) {
             var expanded = fields.ToArray();
             _original = expanded.ToDictionary(f => f.Alias, f => f);
@@ -118,22 +91,11 @@ namespace Transformalize.Main {
             _output = new Dictionary<string, string>(_original.ToDictionary(f => f.Key, f => string.Empty));
         }
 
-        private void StartWithIFields(params Fields[] fields) {
+        private void StartWithFields(params Fields[] fieldSets) {
             _original = new Dictionary<string, Field>();
-            foreach (var dict in fields) {
-                if (dict != null)
-                    foreach (var pair in dict)
-                        _original[pair.Key] = pair.Value;
-            }
-            _output = new Dictionary<string, string>(_original.ToDictionary(f => f.Key, f => string.Empty));
-        }
-
-        private void StartWithEnumerable(params IEnumerable<Field>[] fields) {
-            _original = new Dictionary<string, Field>();
-            foreach (var field in fields) {
-                foreach (var f in field) {
-                    _original[f.Alias] = f;
-                }
+            foreach (var fields in fieldSets) {
+                foreach (Field field in fields)
+                    _original[field.Alias] = field;
             }
             _output = new Dictionary<string, string>(_original.ToDictionary(f => f.Key, f => string.Empty));
         }
@@ -265,7 +227,7 @@ namespace Transformalize.Main {
         public FieldSqlWriter AppendIf(string suffix, params FieldType[] fieldTypes) {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];
-                if(fieldTypes.Any(ft => field.FieldType.HasFlag(ft))) {
+                if (fieldTypes.Any(ft => field.FieldType.HasFlag(ft))) {
                     _output[key] = string.Concat(_output[key], suffix);
                 }
             }
@@ -365,55 +327,21 @@ namespace Transformalize.Main {
         }
 
         public FieldSqlWriter AddBatchId(int entityIndex, bool forCreate = true) {
-            _original[BATCH_ID] = new Field("System.Int32", "8", Main.FieldType.Field, true, "0") {
-                Alias = BATCH_ID,
-                NotNull = forCreate,
-                EntityIndex = entityIndex,
-                Index = 1000
-            };
-
-            _output[BATCH_ID] = string.Empty;
+            var field = Fields.GetBatchField(entityIndex, forCreate);
+            _original[field.Alias] = field;
+            _output[field.Alias] = string.Empty;
             return this;
         }
 
         public FieldSqlWriter AddSurrogateKey(int entityIndex, bool forCreate = true) {
-            if (forCreate)
-                _original[SURROGATE_KEY] = new Field("System.Int32", "8", Main.FieldType.Field, true, "0") {
-                    Alias = SURROGATE_KEY,
-                    NotNull = true,
-                    Identity = true,
-                    EntityIndex = entityIndex,
-                    Index = 1001
-                };
-            else
-                _original[SURROGATE_KEY] = new Field("System.Int32", "8", Main.FieldType.Field, true, "0") {
-                    Alias = SURROGATE_KEY,
-                    EntityIndex = entityIndex,
-                    Index = 1001
-                };
-
-            _output[SURROGATE_KEY] = string.Empty;
+            var field = Fields.GetSurrogateKeyField(entityIndex, forCreate);
+            _original[field.Alias] = field;
+            _output[field.Alias] = string.Empty;
             return this;
         }
 
         public override string ToString() {
             return Write();
-        }
-
-        public Fields Context() {
-            var results = new Fields();
-            foreach (var pair in _output) {
-                results[pair.Key] = _original[pair.Key];
-            }
-            return results;
-        }
-
-        public Field[] ToArray() {
-            var results = new Fields();
-            foreach (var pair in _output) {
-                results[pair.Key] = _original[pair.Key];
-            }
-            return results.OrderedFields().ToArray();
         }
 
         public FieldSqlWriter Remove(string @alias) {

@@ -44,7 +44,7 @@ namespace Transformalize.Main.Providers.SqlServer {
             NotifyBatchSize = 10000;
             BatchSize = _batchSize;
 
-            var fields = new FieldSqlWriter(_entity.Fields, _entity.CalculatedFields).Output().AddBatchId(_entity.Index, false).ToArray();
+            var fields = new Fields(_entity.Fields, _entity.CalculatedFields).WithOutput().AddBatchId(_entity.Index, false).ToArray();
             foreach (var field in fields) {
                 Schema[field.Alias] = field.SystemType;
             }

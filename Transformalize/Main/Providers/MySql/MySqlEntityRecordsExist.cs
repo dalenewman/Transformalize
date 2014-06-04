@@ -23,7 +23,7 @@ namespace Transformalize.Main.Providers.MySql {
                     FROM `{1}`
                     LIMIT 1;
                     COMMIT;
-                ", entity.PrimaryKey.First().Key, entity.OutputName()));
+                ", entity.PrimaryKey.First().Alias, entity.OutputName()));
                 return records != null && records.Any();
             }
         }

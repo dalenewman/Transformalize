@@ -29,7 +29,7 @@ namespace Transformalize.Main.Providers.SqlServer
 
                         var columnName = row["ColumnName"].ToString();
 
-                        var field = new Field(keys.Contains(columnName) ? FieldType.PrimaryKey : FieldType.Field) {
+                        var field = new Field(keys.Contains(columnName) ? FieldType.PrimaryKey : FieldType.NonKey) {
                                                                                                                       Name = columnName,
                                                                                                                       Type = Common.ToSimpleType(row["DataType"].ToString())
                                                                                                                   };

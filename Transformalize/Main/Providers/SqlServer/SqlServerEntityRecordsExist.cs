@@ -34,7 +34,7 @@ namespace Transformalize.Main.Providers.SqlServer {
 
                 using (var cn = connection.GetConnection()) {
                     cn.Open();
-                    var sql = string.Format(@"SELECT TOP(1) [{0}] FROM [{1}].[{2}];", entity.PrimaryKey.First().Key, entity.Schema.Equals(string.Empty) ? connection.DefaultSchema : entity.Schema, entity.OutputName());
+                    var sql = string.Format(@"SELECT TOP(1) [{0}] FROM [{1}].[{2}];", entity.PrimaryKey.First().Alias, entity.Schema.Equals(string.Empty) ? connection.DefaultSchema : entity.Schema, entity.OutputName());
                     var cmd = cn.CreateCommand();
                     cmd.CommandText = sql;
                     using (var reader = cmd.ExecuteReader()) {

@@ -51,7 +51,7 @@ namespace Transformalize.Main.Providers.Folder {
             var file = Folder.TrimEnd("\\".ToCharArray()) + "\\" + name.TrimStart("\\".ToCharArray());
             var fileFields = new FieldInspector().Inspect(file);
             foreach (var fileField in fileFields) {
-                var field = new Field(fileField.Type, fileField.Length, FieldType.Field, true, string.Empty) {
+                var field = new Field(fileField.Type, fileField.Length, FieldType.NonKey, true, string.Empty) {
                     Name = fileField.Name,
                     QuotedWith = fileField.QuoteString()
                 };

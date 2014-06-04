@@ -17,28 +17,28 @@ namespace Transformalize.Operations {
         private readonly Dictionary<string, byte> _truncatedFields = new Dictionary<string, byte>();
         private const Byte HIT = default(byte);
 
-        public TruncateOperation(Fields fields, IEnumerable<KeyValuePair<string, Field>> calculatedFields = null)
+        public TruncateOperation(Fields fields, Fields calculatedFields = null)
             : base(string.Empty, string.Empty) {
 
-            _aliases = fields.Where(kv => kv.Value.SimpleType.Equals("string")).Select(kv => kv.Key).ToList();
-            foreach (var alias in _aliases) {
-                var value = fields[alias].Length.Equals("max", IC) ? Int32.MaxValue.ToString(CultureInfo.InvariantCulture) : fields[alias].Length;
+            foreach (Field field in fields.WithString()) {
+                _aliases.Add(field.Alias);
+                var value = field.Length.Equals("max", IC) ? Int32.MaxValue.ToString(CultureInfo.InvariantCulture) : field.Length;
                 if (CanChangeType(value, typeof(int))) {
-                    _lengthMap[alias] = Convert.ToInt32(value);
+                    _lengthMap[field.Alias] = Convert.ToInt32(value);
                 } else {
-                    throw new TransformalizeException("Can not change field {0}'s length of '{0}' to an integer.  Please use an integer or the keyword: max.", alias, value);
+                    throw new TransformalizeException("Can not change field {0}'s length of '{0}' to an integer.  Please use an integer or the keyword: max.", field.Alias, value);
                 }
             }
 
             if (calculatedFields != null) {
-                foreach (var kv in calculatedFields.Where(cf => cf.Value.SimpleType.Equals("string"))) {
-                    if (!_aliases.Contains(kv.Key)) {
-                        _aliases.Add(kv.Key);
-                        var value = kv.Value.Length.Equals("max", IC) ? Int32.MaxValue.ToString(CultureInfo.InvariantCulture) : kv.Value.Length;
+                foreach (Field field in calculatedFields.WithString()) {
+                    if (!_aliases.Contains(field.Alias)) {
+                        _aliases.Add(field.Alias);
+                        var value = field.Length.Equals("max", IC) ? Int32.MaxValue.ToString(CultureInfo.InvariantCulture) : field.Length;
                         if (CanChangeType(value, typeof(int))) {
-                            _lengthMap[kv.Key] = Convert.ToInt32(value);
+                            _lengthMap[field.Alias] = Convert.ToInt32(value);
                         } else {
-                            throw new TransformalizeException("Can not change field {0}'s length of '{1}' to an integer.  Please use an integer or the keyword: max.", kv.Value.Alias, value);
+                            throw new TransformalizeException("Can not change field {0}'s length of '{1}' to an integer.  Please use an integer or the keyword: max.", field.Alias, value);
                         }
                     }
                 }

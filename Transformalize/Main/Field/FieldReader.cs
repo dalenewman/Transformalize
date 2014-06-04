@@ -40,7 +40,7 @@ namespace Transformalize.Main {
             _entity = entity;
         }
 
-        public Field Read(FieldConfigurationElement element, FieldType fieldType = FieldType.Field) {
+        public Field Read(FieldConfigurationElement element, FieldType fieldType = FieldType.NonKey) {
             var alias = Common.GetAlias(element, _usePrefix, _entity.Prefix);
 
             var field = new Field(element.Type, element.Length, fieldType, element.Output, element.Default) {
@@ -72,7 +72,7 @@ namespace Transformalize.Main {
 
             FieldSearchTypesLoader(field, element);
 
-            foreach (var keyField in new[] { "TflKey", "TflUpdate", "TflBatchId" }) {
+            foreach (var keyField in new[] { "TflKey", "TflUpdate", "TflBatchId", "TflFileName" }) {
                 if (field.Alias.Equals(keyField, IC)) {
                     _log.Warn("{0}, defined in {1}, is a reserved field name.  Please alias this field.", field.Alias, field.Entity);
                 }

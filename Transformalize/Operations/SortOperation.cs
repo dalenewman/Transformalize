@@ -10,19 +10,9 @@ namespace Transformalize.Operations
 
         private readonly List<Sort> _orderBy = new List<Sort>();
 
-        internal class Sort {
-            public string Field;
-            public string Order;
-
-            public Sort(string field, string order) {
-                Field = field;
-                Order = order;
-            }
-        }
-
         public SortOperation(Entity entity) {
-            _orderBy.AddRange(entity.Fields.Where(f=>!f.Value.Sort.Equals(string.Empty)).Select(f => new Sort(f.Value.Alias, f.Value.Sort)));
-            _orderBy.AddRange(entity.CalculatedFields.Where(f => !f.Value.Sort.Equals(string.Empty)).Select(f => new Sort(f.Value.Alias, f.Value.Sort)));
+            _orderBy.AddRange(entity.Fields.Sorts());
+            _orderBy.AddRange(entity.CalculatedFields.Sorts());
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

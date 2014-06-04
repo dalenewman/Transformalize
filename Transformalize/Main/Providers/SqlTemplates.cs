@@ -90,7 +90,7 @@ namespace Transformalize.Main.Providers {
             return string.Format(sqlPattern, columns, SafeTable(table, connection, schema));
         }
 
-        private static string InsertUnionedValues(int size, string name, Field[] fields, IEnumerable<Row> rows, AbstractConnection connection) {
+        private static string InsertUnionedValues(int size, string name, Fields fields, IEnumerable<Row> rows, AbstractConnection connection) {
             var sqlBuilder = new StringBuilder();
             var safeName = connection.TableVariable ? name : connection.Enclose(name);
             foreach (var group in rows.Partition(size)) {
@@ -99,7 +99,7 @@ namespace Transformalize.Main.Providers {
             return sqlBuilder.ToString();
         }
 
-        private static string InsertMultipleValues(int size, string name, Field[] fields, IEnumerable<Row> rows, AbstractConnection connection) {
+        private static string InsertMultipleValues(int size, string name, Fields fields, IEnumerable<Row> rows, AbstractConnection connection) {
             var sqlBuilder = new StringBuilder();
             var safeName = connection.TableVariable ? name : connection.Enclose(name);
             foreach (var group in rows.Partition(size)) {
@@ -108,11 +108,10 @@ namespace Transformalize.Main.Providers {
             return sqlBuilder.ToString();
         }
 
-        private static IEnumerable<string> RowsToValues(Field[] fields, IEnumerable<Row> rows) {
-            var orderedFields = new FieldSqlWriter(fields).ToArray();
+        private static IEnumerable<string> RowsToValues(Fields fields, IEnumerable<Row> rows) {
             foreach (var row in rows) {
                 var values = new List<string>();
-                foreach (var field in orderedFields) {
+                foreach (Field field in fields) {
                     var value = row[field.Alias].ToString();
                     var quote = field.Quote();
                     values.Add(
@@ -125,7 +124,7 @@ namespace Transformalize.Main.Providers {
             }
         }
 
-        public static string BatchInsertValues(int size, string name, Field[] fields, IEnumerable<Row> rows, AbstractConnection connection) {
+        public static string BatchInsertValues(int size, string name, Fields fields, IEnumerable<Row> rows, AbstractConnection connection) {
             return connection.InsertMultipleRows ?
                 InsertMultipleValues(size, name, fields, rows, connection) :
                 InsertUnionedValues(size, name, fields, rows, connection);

@@ -1,13 +1,15 @@
-using System.Collections.Generic;
+namespace Transformalize.Main.Providers {
+    public class EntitySchema {
+        private Fields _fields = new Fields();
 
-namespace Transformalize.Main.Providers
-{
-    public class EntitySchema
-    {
-        private List<Field> _fields = new List<Field>();
+        public EntitySchema() {
+        }
 
-        public List<Field> Fields
-        {
+        public EntitySchema(Fields fields) {
+            Fields.Add(fields);
+        }
+
+        public Fields Fields {
             get { return _fields; }
             set { _fields = value; }
         }

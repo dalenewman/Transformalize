@@ -48,7 +48,7 @@ namespace Transformalize.Main.Providers.SqlCe4 {
                 );
         }
 
-        public string WriteTemporary(string name, Field[] fields, AbstractConnection connection, bool useAlias = true) {
+        public string WriteTemporary(string name, Fields fields, AbstractConnection connection, bool useAlias = true) {
             return string.Empty;
         }
 

@@ -9,14 +9,7 @@ using Transformalize.Main;
 using Transformalize.Main.Providers;
 
 namespace Transformalize.Operations {
-
-
     public class SqlOverrideOperation : InputCommandOperation {
-
-        private struct NameAlias {
-            public string Name;
-            public string Alias;
-        }
 
         private readonly Entity _entity;
         private readonly Dictionary<string, Func<IDataReader, int, object, object>> _map = Common.GetReaderMap();
@@ -26,7 +19,7 @@ namespace Transformalize.Operations {
             : base(connection) {
             CommandBehavior = CommandBehavior.Default;
             _entity = entity;
-            _fields = entity.Fields.Where(f => f.Value.Input).Select(f => new NameAlias() { Name = f.Value.Name, Alias = f.Value.Alias }).ToArray();
+            _fields = entity.Fields.WithInput().NameAliases().ToArray();
         }
 
         protected override Row CreateRowFromReader(IDataReader reader) {

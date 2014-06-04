@@ -30,7 +30,7 @@ namespace Transformalize.Main.Providers.PostgreSql
             throw new System.NotImplementedException();
         }
 
-        public string WriteTemporary(string name, Field[] fields, AbstractConnection connection, bool useAlias = true) {
+        public string WriteTemporary(string name, Fields fields, AbstractConnection connection, bool useAlias = true) {
             var safeName = connection.Enclose(name.TrimStart("@".ToCharArray()));
             var defs = useAlias ? new FieldSqlWriter(fields).Alias(connection.L, connection.R).DataType(new PostgreSqlDataTypeService()).Write() : new FieldSqlWriter(fields).Name(connection.L, connection.R).DataType(new PostgreSqlDataTypeService()).Write();
             return string.Format(@"CREATE TEMP TABLE {0}({1});", safeName, defs);

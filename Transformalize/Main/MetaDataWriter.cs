@@ -45,7 +45,7 @@ namespace Transformalize.Main {
                 var firstConnection = entity.Input.First().Connection;
                 var fields = firstConnection.GetEntitySchema(entity.Name, entity.Schema, count == 0).Fields;
                 content.AppendFormat("    <add name=\"{0}\">\r\n", entity.Name);
-                AppendFields(new Fields(fields).Output().ToArray(), content);
+                AppendFields(fields.WithOutput(), content);
                 content.AppendLine("    </add>");
                 count++;
             }
@@ -55,11 +55,11 @@ namespace Transformalize.Main {
             return content.ToString();
         }
 
-        private void AppendFields(Field[] fields, StringBuilder content) {
-            _log.Debug("Entity auto found {0} field{1}.", fields.Length, fields.Length == 1 ? string.Empty : "s");
+        private void AppendFields(Fields fields, StringBuilder content) {
+            _log.Debug("Entity auto found {0} field{1}.", fields.Count, fields.Count == 1 ? string.Empty : "s");
 
             content.AppendLine("      <fields>");
-            foreach (var f in fields) {
+            foreach (Field f in fields) {
                 AppendField(content, f);
             }
             content.AppendLine("      </fields>");

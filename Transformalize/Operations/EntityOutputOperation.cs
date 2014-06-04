@@ -4,7 +4,7 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
-namespace Transformalize.Processes
+namespace Transformalize.Operations
 {
     public class EntityOutputOperation : AbstractOperation {
         protected List<string> OutputFields { get; set; }
@@ -12,11 +12,11 @@ namespace Transformalize.Processes
         public EntityOutputOperation(Entity entity) {
             OutputFields = new List<string>();
 
-            foreach (var pair in entity.Fields.Where(f => f.Value.FileOutput)) {
-                OutputFields.Add(pair.Value.Alias);
+            foreach (var alias in entity.Fields.WithFileOutput().Aliases()) {
+                OutputFields.Add(alias);
             }
-            foreach (var pair in entity.CalculatedFields.Where(f => f.Value.FileOutput)) {
-                OutputFields.Add(pair.Value.Alias);
+            foreach (var alias in entity.CalculatedFields.WithFileOutput().Aliases()) {
+                OutputFields.Add(alias);
             }
         }
 

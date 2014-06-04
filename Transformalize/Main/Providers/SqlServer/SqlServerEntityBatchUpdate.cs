@@ -38,8 +38,9 @@ namespace Transformalize.Main.Providers.SqlServer {
         }
 
         protected override void PrepareCommand(Row row, SqlCommand command) {
-            
-            var writer = new FieldSqlWriter(_entity.Fields, _entity.CalculatedFields).Output();
+
+            var fields = _entity.OutputFields();
+            var writer = new FieldSqlWriter(fields);
             var sets = writer.Alias(_connection.L, _connection.R).SetParam().Write(", ", false);
 
             command.CommandText = string.Format(@"
@@ -48,8 +49,8 @@ namespace Transformalize.Main.Providers.SqlServer {
                 WHERE TflKey = @TflKey;
             ", _entity.OutputName(), sets);
 
-            foreach (var r in writer.ToArray()) {
-                AddParameter(command, r.Alias, row[r.Alias]);
+            foreach (var alias in fields.Aliases()) {
+                AddParameter(command, alias, row[alias]);
             }
             AddParameter(command, "TflKey", row["TflKey"]);
             AddParameter(command, "TflBatchId", _entity.TflBatchId);

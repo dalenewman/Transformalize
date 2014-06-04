@@ -18,7 +18,7 @@ namespace Transformalize.Operations.Extract {
         private readonly int _end;
 
         public FileExcelExtract(Entity entity, AbstractConnection connection, int top) {
-            _fields = new FieldSqlWriter(entity.Fields).Input().Context().OrderedFields().ToArray();
+            _fields = entity.Fields.WithInput().ToArray();
             _fileInfo = new FileInfo(connection.File);
             _start = connection.Start;
             _end = connection.End;

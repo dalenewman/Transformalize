@@ -22,13 +22,13 @@ namespace Transformalize.Main.Providers.Solr {
 
         public SolrLoadOperation(Entity entity, AbstractConnection connection) {
 
-            _guids.AddRange(new FieldSqlWriter(entity.Fields, entity.CalculatedFields).Output().ToArray().Where(f => f.SimpleType.Equals("guid")).Select(f => f.Alias));
-            _dates.AddRange(new FieldSqlWriter(entity.Fields, entity.CalculatedFields).Output().ToArray().Where(f => f.SimpleType.StartsWith("date")).Select(f => f.Alias));
+            _guids.AddRange(new Fields(entity.Fields, entity.CalculatedFields).WithOutput().WithGuid().Aliases());
+            _dates.AddRange(new Fields(entity.Fields, entity.CalculatedFields).WithOutput().WithDate().Aliases());
 
             _singleKey = entity.PrimaryKey.Count == 1;
             _solrMap = new SolrEntityCreator().GetFieldMap(entity);
 
-            _keys = entity.PrimaryKey.Select(kv => kv.Key).ToArray();
+            _keys = entity.PrimaryKey.Aliases().ToArray();
             _key = entity.FirstKey();
             _batchSize = connection.BatchSize;
 

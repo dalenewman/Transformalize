@@ -16,7 +16,7 @@ namespace Transformalize.Operations
         public SqlKeysOverrideOperation(Entity entity, AbstractConnection connection)
             : base(connection) {
             _entity = entity;
-            _fields = entity.PrimaryKey.Select(f => f.Value.Alias).ToArray();
+            _fields = entity.PrimaryKey.Aliases().ToArray();
             _length = _fields.Length;
 
             }

@@ -36,7 +36,7 @@ namespace Transformalize.Test {
                     Default = "x",
                     Parent = "p1"
                 },
-            new Field("system.int32", "8", FieldType.Field, false, "0")
+            new Field("system.int32", "8", FieldType.NonKey, false, "0")
                 {
                     Alias = "Field2",
                     Name = "f2",

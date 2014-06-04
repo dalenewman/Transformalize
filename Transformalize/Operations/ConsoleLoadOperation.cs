@@ -14,9 +14,10 @@ namespace Transformalize.Operations {
         private readonly List<string> _byteArrays = new List<string>();
 
         public ConsoleLoadOperation(Entity entity) {
-            _columns.AddRange(new FieldSqlWriter(entity.Fields, entity.CalculatedFields).Output().ToArray().Select(f => f.Alias));
-            _guids.AddRange(new FieldSqlWriter(entity.Fields, entity.CalculatedFields).Output().ToArray().Where(f => f.SimpleType.Equals("guid")).Select(f => f.Alias));
-            _byteArrays.AddRange(new FieldSqlWriter(entity.Fields, entity.CalculatedFields).Output().ToArray().Where(f => f.SimpleType.Equals("byte[]") || f.SimpleType.Equals("rowversion")).Select(f => f.Alias));
+            var fields = new Fields(entity.Fields, entity.CalculatedFields).WithOutput();
+            _columns.AddRange(fields.Aliases());
+            _guids.AddRange(fields.WithGuid().Aliases());
+            _byteArrays.AddRange(fields.WithBytes().Aliases());
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

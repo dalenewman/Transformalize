@@ -24,26 +24,74 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
+using Transformalize.Configuration;
+using Transformalize.Libs.Newtonsoft.Json.Utilities;
+using Transformalize.Main.Providers.ElasticSearch;
+using Transformalize.Operations;
+using Transformalize.Processes;
 
 namespace Transformalize.Main {
-    public class Fields : IEnumerable<KeyValuePair<string, Field>> {
-        private readonly IDictionary<string, Field> _items = new Dictionary<string, Field>();
 
-        public Fields() {
+    public abstract class OrderedFields : IEnumerable {
+        protected const StringComparison Ic = StringComparison.OrdinalIgnoreCase;
+        protected const string BatchId = "TflBatchId";
+        protected const string SurrogateKey = "TflKey";
+
+        private List<Field> _fields = new List<Field>();
+
+        public IEnumerator GetEnumerator() {
+            return _fields.GetEnumerator();
         }
 
-        public Fields(IEnumerable<Field> fields) {
-            AddRange(fields);
+        protected void AddSorted(IEnumerable<Field> fields) {
+            _fields.AddRange(fields);
         }
 
-        public Fields(Dictionary<string, Field> fields) {
-            AddRange(fields);
+        public void Add(params Fields[] fieldSets) {
+            var temp = new List<Field>();
+            temp.AddRange(_fields);
+            foreach (var fields in fieldSets) {
+                temp.AddRange(fields.ToArray());
+            }
+            _fields = new List<Field>(temp.OrderBy(f => f.EntityIndex).ThenBy(f => f.Index));
+        }
+
+        public void Add(Field field) {
+            var temp = new List<Field>();
+            temp.AddRange(_fields);
+            temp.Add(field);
+            _fields = new List<Field>(temp.OrderBy(f => f.EntityIndex).ThenBy(f => f.Index));
+        }
+
+        protected IList<Field> Storage {
+            get {
+                return _fields;
+            }
+        }
+
+        public int Count { get { return _fields.Count; } }
+
+    }
+
+    public class Fields : OrderedFields {
+
+        public Fields(Field field) {
+            Add(field);
+        }
+
+        public Fields(params Fields[] fields) {
+            Add(fields);
+        }
+
+        private Fields(IEnumerable<Field> fields) {
+            AddSorted(fields);
         }
 
         public Fields(Process process, IParameters parameters, string entity) {
             foreach (var parameter in parameters) {
                 if (parameter.Value.HasValue()) {
-                    var field = new Field(parameter.Value.SimpleType, "64", FieldType.Field, false, parameter.Value.Value.ToString()) {
+                    var field = new Field(parameter.Value.SimpleType, "64", FieldType.NonKey, false, parameter.Value.Value.ToString()) {
                         Alias = parameter.Value.Name,
                     };
                     Add(field);
@@ -53,107 +101,183 @@ namespace Transformalize.Main {
             }
         }
 
-        IEnumerator<KeyValuePair<string, Field>> IEnumerable<KeyValuePair<string, Field>>.GetEnumerator() {
-            return _items.GetEnumerator();
+        public Fields WithAlias() {
+            return new Fields(Storage.Where(f => f.Alias != f.Name));
         }
 
-        IEnumerator IEnumerable.GetEnumerator() {
-            return GetEnumerator();
+        public Fields WithFileOutput() {
+            return new Fields(Storage.Where(f => f.FileOutput));
         }
 
-        public int Count {
-            get { return _items.Count; }
+        public IEnumerable<string> Aliases() {
+            return Storage.Select(f => f.Alias);
         }
 
-        public IEnumerable<string> Keys {
-            get { return _items.Keys; }
+        public Field[] ToArray() {
+            return Storage.ToArray();
         }
 
-        public IEnumerator<KeyValuePair<string, Field>> GetEnumerator() {
-            return _items.GetEnumerator();
+        public Fields WithInput() {
+            return new Fields(Storage.Where(f => f.Input));
         }
 
-        public IEnumerable<Field> OrderedFields() {
-            return _items.Select(kv => kv.Value).OrderBy(f => f.EntityIndex).ThenBy(f=>f.Index);
+        public Fields WithOutput() {
+            return new Fields(Storage.Where(f => f.Output));
         }
 
-        public IEnumerable<Field> Output() {
-            return OrderedFields().Where(f => f.Output);
+        public IEnumerable<Sort> Sorts() {
+            return Storage.Where(f => !string.IsNullOrEmpty(f.Sort)).Select(f => new Sort(f.Alias, f.Sort));
         }
 
-        public IEnumerable<Field> ForeignKeyOutput() {
-            return Output().Where(f=>f.FieldType.HasFlag(FieldType.ForeignKey));
+        public Fields WithString() {
+            return new Fields(Storage.Where(f => f.SimpleType.Equals("string")));
         }
 
-        public IEnumerable<Field> OtherOutput() {
-            return Output().Where(f => f.Output && !f.SimpleType.Equals("rowversion") && f.FieldType.HasFlag(FieldType.Field));
+        public Fields WithGuid() {
+            return new Fields(Storage.Where(f => f.SimpleType.Equals("guid")));
         }
 
-        public Field this[string key] {
-            get { return _items[key]; }
-            set { _items[key] = value; }
+        public Fields WithDate() {
+            return new Fields(Storage.Where(f => f.SimpleType.StartsWith("date")));
         }
 
-        public void Add(string key, Field field) {
-            _items[key] = field;
+        public IEnumerable<AliasType> AliasTypes() {
+            return Storage.Select(f => new AliasType() { Alias = f.Alias, AliasLower = f.Alias.ToLower(), SimpleType = f.SimpleType });
         }
 
-        public void AddRange(Fields fields) {
-            foreach (var field in fields) {
-                Add(field);
-            }
+        public IEnumerable<NameAlias> NameAliases() {
+            return Storage.Select(f => new NameAlias() { Name = f.Name, Alias = f.Alias });
+        }
+
+        public Fields WithoutPrimaryKey() {
+            return new Fields(Storage.Where(f => !f.FieldType.HasFlag(FieldType.PrimaryKey)));
+        }
+
+        public Fields WithGroup() {
+            return new Fields(Storage.Where(f => f.Aggregate.Equals("group", Ic)));
+        }
+
+        public Fields WithAccumulate() {
+            return new Fields(Storage.Where(f => !f.Aggregate.Equals("group", Ic)));
+        }
+
+        public Fields WithForeignKey() {
+            return new Fields(Storage.Where(f => f.FieldType.HasFlag(FieldType.ForeignKey)));
         }
 
         public bool Any() {
-            return _items.Any();
+            return Storage.Any();
         }
 
-        public bool Any(Func<KeyValuePair<string, Field>, bool> predicate) {
-            return _items.Any(predicate);
+        public bool Any(Func<Field, bool> predicate) {
+            return Storage.Any(predicate);
         }
 
-        public bool ContainsKey(string key) {
-            return _items.ContainsKey(key);
+        public Fields WithoutRowVersion() {
+            return new Fields(Storage.Where(f => !f.SimpleType.Equals("rowversion")));
         }
 
-        public void Remove(string key) {
-            _items.Remove(key);
+        public Fields WithBytes() {
+            return new Fields(Storage.Where(f => f.SimpleType.Equals("rowversion", Ic) || f.SimpleType.Equals("byte[]", Ic)));
         }
 
-        public KeyValuePair<string, Field> First() {
-            return _items.First();
+        public Fields WithoutBytes() {
+            return new Fields(Storage.Where(f => !f.SimpleType.Equals("rowversion", Ic) && !f.SimpleType.Equals("byte[]", Ic)));
         }
 
-        public KeyValuePair<string, Field> First(Func<KeyValuePair<string, Field>, bool> predicate) {
-            return _items.First(predicate);
+        public Fields WithoutKey() {
+            return new Fields(Storage.Where(f => f.FieldType.HasFlag(FieldType.NonKey)));
         }
 
-        public KeyValuePair<string, Field> Last() {
-            return _items.Last();
+        public Fields FindByParamater(ParameterConfigurationElement element) {
+            if (element.Entity != string.Empty)
+                return new Fields(Storage.Where(f => f.Alias.Equals(element.Field, Ic) && f.Entity.Equals(element.Entity, Ic) || f.Name.Equals(element.Field, Ic) && f.Entity.Equals(element.Entity, Ic)));
+            return new Fields(Storage.First(f => f.Alias.Equals(element.Field, Ic) || f.Name.Equals(element.Field, Ic)));
         }
 
-        public KeyValuePair<string, Field> Last(Func<KeyValuePair<string, Field>, bool> predicate) {
-            return _items.Last(predicate);
+        public bool HaveField(string nameOrAlias) {
+            return Storage.Any(f => f.Alias.Equals(nameOrAlias, Ic) || f.Name.Equals(nameOrAlias, Ic));
         }
 
-        public void Add(Field field) {
-            _items[field.Alias] = field;
+        public Fields Find(string nameOrAlias) {
+            return new Fields(Storage.Where(f => f.Alias.Equals(nameOrAlias, Ic) || f.Name.Equals(nameOrAlias, Ic)));
         }
 
-        public void Add(KeyValuePair<string, Field> field) {
-            _items[field.Key] = field.Value;
+        public Field First() {
+            return Storage.First();
         }
 
-        public void AddRange(IEnumerable<Field> fields) {
-            foreach (var field in fields) {
-                Add(field);
+        public Field First(Func<Field, bool> predicate) {
+            return Storage.First(predicate);
+        }
+
+        public Field Last() {
+            return Storage.Last();
+        }
+
+        public Field Last(Func<Field, bool> predicate) {
+            return Storage.Last(predicate);
+        }
+
+        public Fields WithMasterKey() {
+            return new Fields(Storage.Where(f => f.FieldType.HasFlag(FieldType.MasterKey)));
+        }
+
+        public Fields WithSearchType() {
+            return new Fields(Storage.Where(f => !f.SearchTypes.Any(st => st.Name.Equals("none", Ic))));
+        }
+
+        public bool HaveSort() {
+            return Storage.Any(f => !f.Sort.Equals(string.Empty));
+        }
+
+        public Fields AddBatchId(int entityIndex, bool forCreate = true) {
+            Add(GetBatchField(entityIndex, forCreate));
+            return this;
+        }
+
+        public Fields AddSurrogateKey(int entityIndex, bool forCreate = true) {
+            Add(GetSurrogateKeyField(entityIndex, forCreate));
+            return this;
+        }
+
+        public static Field GetBatchField(int entityIndex, bool forCreate = true) {
+            return new Field("System.Int32", "8", FieldType.NonKey, true, "0") {
+                Alias = BatchId,
+                NotNull = forCreate,
+                EntityIndex = entityIndex,
+                Index = 1000
+            };
+        }
+
+        public static Field GetSurrogateKeyField(int entityIndex, bool forCreate = true) {
+            if (forCreate)
+                return new Field("System.Int32", "8", FieldType.NonKey, true, "0") {
+                    Alias = SurrogateKey,
+                    NotNull = true,
+                    Identity = true,
+                    EntityIndex = entityIndex,
+                    Index = 1001
+                };
+            else
+                return new Field("System.Int32", "8", FieldType.NonKey, true, "0") {
+                    Alias = SurrogateKey,
+                    EntityIndex = entityIndex,
+                    Index = 1001
+                };
+        }
+
+
+        public Field this[string nameOrAlias] {
+            get {
+                return Find(nameOrAlias).First();
             }
         }
 
-        public void AddRange(Dictionary<string, Field> fields) {
-            foreach (var field in fields) {
-                Add(field);
-            }
+        public Field this[int index] {
+            get { return Storage[index]; }
         }
+
     }
+
 }

@@ -31,9 +31,8 @@ namespace Transformalize.Main {
             _entity = entity;
         }
 
-        public IParameters Read(TransformConfigurationElement transform)
-        {
-            var fields = new FieldSqlWriter(_entity.Fields, _entity.CalculatedFields).ToArray();
+        public IParameters Read(TransformConfigurationElement transform) {
+            var fields = new Fields(_entity.Fields, _entity.CalculatedFields).ToArray();
             foreach (var field in fields) {
                 _parameters.Add(field.Alias, field.Alias, null, field.Type);
             }

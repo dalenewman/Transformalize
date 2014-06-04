@@ -4,7 +4,7 @@ using System.Text;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 
-namespace Transformalize.Processes {
+namespace Transformalize.Operations {
     public class HtmlRowOperation : EntityOutputOperation {
         private readonly Entity _entity;
         private readonly string _htmlField;
@@ -22,12 +22,12 @@ namespace Transformalize.Processes {
                 _htmlRow.Clear();
                 _htmlRow.Append("\t\t\t<tr>");
 
-                foreach (var pair in _entity.Fields.Where(f => f.Value.FileOutput)) {
-                    _htmlRow.AppendFormat("<td>{0}</td>", System.Net.WebUtility.HtmlEncode(row[pair.Value.Alias].ToString()));
+                foreach (var alias in _entity.Fields.WithFileOutput().Aliases()) {
+                    _htmlRow.AppendFormat("<td>{0}</td>", System.Net.WebUtility.HtmlEncode(row[alias].ToString()));
 
                 }
-                foreach (var pair in _entity.CalculatedFields.Where(f => f.Value.FileOutput)) {
-                    _htmlRow.AppendFormat("<td>{0}</td>", System.Net.WebUtility.HtmlEncode(row[pair.Value.Alias].ToString()));
+                foreach (var alias in _entity.CalculatedFields.WithFileOutput().Aliases()) {
+                    _htmlRow.AppendFormat("<td>{0}</td>", System.Net.WebUtility.HtmlEncode(row[alias].ToString()));
                 }
 
                 _htmlRow.Append("</tr>");

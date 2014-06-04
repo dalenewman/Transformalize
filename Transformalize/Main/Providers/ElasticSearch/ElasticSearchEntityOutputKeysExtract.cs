@@ -13,16 +13,10 @@ namespace Transformalize.Main.Providers.ElasticSearch
         private readonly string[] _sourceInclude;
         private readonly Dictionary<string, Func<object, object>> _conversionMap = Common.GetObjectConversionMap();
 
-        private struct AliasType {
-            public string Alias;
-            public string AliasLower;
-            public string SimpleType;
-        }
-
         public ElasticSearchEntityOutputKeysExtract(AbstractConnection connection, Entity entity) {
             _connection = connection;
             _entity = entity;
-            _aliasTypes = _entity.PrimaryKey.Select(f => new AliasType() { Alias = f.Value.Alias, AliasLower = f.Value.Alias.ToLower(), SimpleType = f.Value.SimpleType }).ToList();
+            _aliasTypes = _entity.PrimaryKey.AliasTypes().ToList();
             if (_entity.Version != null) {
                 _aliasTypes.Add(new AliasType() { Alias = _entity.Version.Alias, AliasLower = _entity.Version.Alias.ToLower(), SimpleType = _entity.Version.SimpleType });
             }

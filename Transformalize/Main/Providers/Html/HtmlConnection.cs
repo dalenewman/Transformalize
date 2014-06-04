@@ -1,5 +1,6 @@
 using Transformalize.Configuration;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Operations;
 using Transformalize.Operations.Load;
 using Transformalize.Operations.Transform;
 using Transformalize.Processes;

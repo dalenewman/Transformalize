@@ -25,19 +25,18 @@ using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.fastJSON;
-using Transformalize.Runner;
 
 namespace Transformalize.Main {
+
     public class Options {
+
         private readonly Logger _log = LogManager.GetLogger("tfl");
         private LogLevel _logLevel = LogLevel.Info;
         private string _mode = "default";
-        private IProcessRunner _processRunner = new ProcessRunner();
         private List<string> _problems = new List<string>();
 
         public int Top { get; set; }
 
-        public IProcessRunner ProcessRunner { get { return _processRunner; } set { _processRunner = value; } }
         public List<string> Problems { get { return _problems; } set { _problems = value; } }
         public bool Force { get; set; }
         public bool ConfigurationUpdated { get; set; }
@@ -54,7 +53,6 @@ namespace Transformalize.Main {
             get { return _mode; }
             set {
                 _mode = value;
-                SetProcessRunner(value);
             }
         }
 
@@ -110,23 +108,6 @@ namespace Transformalize.Main {
                 }
             }
 
-        }
-
-        private void SetProcessRunner(string value) {
-            switch (value) {
-                case "init":
-                    ProcessRunner = new InitializeRunner();
-                    break;
-                case "metadata":
-                    ProcessRunner = new MetadataRunner();
-                    break;
-                case "delete":
-                    ProcessRunner = new DeleteRunner();
-                    break;
-                default:
-                    ProcessRunner = new ProcessRunner();
-                    break;
-            }
         }
 
         private static void SetLogLevel(LogLevel logLevel) {

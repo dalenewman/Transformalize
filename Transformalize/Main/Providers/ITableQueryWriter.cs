@@ -31,6 +31,6 @@ namespace Transformalize.Main.Providers
         string DropPrimaryKey(string name, IEnumerable<string> primaryKey);
         string AddUniqueClusteredIndex(string name);
         string DropUniqueClusteredIndex(string name);
-        string WriteTemporary(string name, Field[] fields, AbstractConnection connection, bool useAlias = true);
+        string WriteTemporary(string name, Fields fields, AbstractConnection connection, bool useAlias = true);
     }
 }

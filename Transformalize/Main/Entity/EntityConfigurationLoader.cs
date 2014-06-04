@@ -33,16 +33,14 @@ namespace Transformalize.Main {
 
     public class EntityConfigurationLoader {
         private const string DEFAULT = "[default]";
-        private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private readonly Logger _log = LogManager.GetLogger("tfl");
         private readonly Process _process;
-        private int _entityIndex;
 
         public EntityConfigurationLoader(Process process) {
             _process = process;
         }
 
-        public Entity Read(int batchId, EntityConfigurationElement element, bool isMaster) {
+        public Entity Read(EntityConfigurationElement element, short entityIndex) {
 
             Validate(element);
 
@@ -55,7 +53,7 @@ namespace Transformalize.Main {
                 }
             }
 
-            var entity = new Entity(batchId) {
+            var entity = new Entity() {
                 ProcessName = _process.Name,
                 Schema = element.Schema,
                 PipelineThreading = threading,
@@ -76,47 +74,45 @@ namespace Transformalize.Main {
                 Alias = string.IsNullOrEmpty(element.Alias) ? element.Name : element.Alias,
                 InternalOutput = element.Output.Cast<IoConfigurationElement>().ToDictionary(o => o.Name, o => Enumerable.Repeat(new Row(), 0)),
                 InputOperation = element.InputOperation,
-                Index = _entityIndex++
+                Index = entityIndex
             };
-
 
             GuardAgainstInvalidGrouping(element, entity);
             GuardAgainstMissingPrimaryKey(element);
 
-            var fieldIndex = 0;
+            short autoIndex = 0;
             foreach (FieldConfigurationElement f in element.Fields) {
-                var fieldType = GetFieldType(f, isMaster);
+                var fieldType = GetFieldType(f, entityIndex == 0);
 
                 var field = new FieldReader(_process, entity).Read(f, fieldType);
-
-                if (field.Index == 0) {
-                    field.Index = fieldIndex;
+                if (field.Index.Equals(short.MaxValue)) {
+                    field.Index = autoIndex;
                 }
 
-                entity.Fields[field.Alias] = field;
+                entity.Fields.Add(field);
 
                 if (f.PrimaryKey) {
-                    entity.PrimaryKey[field.Alias] = field;
+                    entity.PrimaryKey.Add(field);
                 }
 
-                fieldIndex++;
+                autoIndex++;
             }
 
             foreach (FieldConfigurationElement cf in element.CalculatedFields) {
                 var fieldReader = new FieldReader(_process, entity, usePrefix: false);
-                var fieldType = GetFieldType(cf, isMaster);
+                var fieldType = GetFieldType(cf, entityIndex == 0);
                 var field = fieldReader.Read(cf, fieldType);
 
-                if (field.Index == 0) {
-                    field.Index = fieldIndex;
+                if (field.Index.Equals(short.MaxValue)) {
+                    field.Index = autoIndex;
                 }
 
                 field.Input = false;
-                entity.CalculatedFields.Add(cf.Alias, field);
+                entity.CalculatedFields.Add(field);
                 if (cf.PrimaryKey) {
-                    entity.PrimaryKey[cf.Alias] = field;
+                    entity.PrimaryKey.Add(field);
                 }
-                fieldIndex++;
+                autoIndex++;
             }
 
             LoadVersion(element, entity);
@@ -145,7 +141,7 @@ namespace Transformalize.Main {
 
                         if (!io.RunField.Equals(string.Empty)) {
                             var f = io.RunField;
-                            var match = fields.Where(p => p.Value.Alias.Equals(f) || p.Value.Name.Equals(f)).Select(p => p.Value).ToArray();
+                            var match = fields.Find(f).ToArray();
                             if (match.Length > 0) {
                                 var field = match[0];
                                 if (io.RunType.Equals(DEFAULT)) {
@@ -218,30 +214,36 @@ namespace Transformalize.Main {
             if (String.IsNullOrEmpty(element.Version))
                 return;
 
-            if (entity.Fields.ContainsKey(element.Version)) {
-                entity.Version = entity.Fields[element.Version];
+            if (entity.Fields.HaveField(element.Version)) {
+                entity.Version = entity.Fields.Find(element.Version).First();
             } else {
-                if (entity.Fields.Any(kv => kv.Value.Name.Equals(element.Version, IC))) {
-                    entity.Version = entity.Fields.OrderedFields().First(v => v.Name.Equals(element.Version, IC));
+                if (entity.CalculatedFields.HaveField(element.Version)) {
+                    entity.Version = entity.CalculatedFields.Find(element.Version).First();
                 } else {
-                    if (entity.CalculatedFields.ContainsKey(element.Version)) {
-                        entity.Version = entity.CalculatedFields[element.Version];
-                    } else {
-                        throw new TransformalizeException("version field reference '{0}' is undefined in {1}.", element.Version, element.Name);
-                    }
+                    throw new TransformalizeException("version field reference '{0}' is undefined in {1}.", element.Version, element.Name);
                 }
             }
             entity.Version.Output = true;
         }
 
-        private void GuardAgainstInvalidGrouping(EntityConfigurationElement element, Entity entity) {
-            if (!entity.Group)
+        private static void GuardAgainstInvalidGrouping(EntityConfigurationElement element, Entity entity) {
+            if (entity.Group) {
+                if (!element.Fields.Cast<FieldConfigurationElement>().Any(f => f.Output && string.IsNullOrEmpty(f.Aggregate)))
+                    return;
+
+                if (!element.CalculatedFields.Cast<FieldConfigurationElement>().Any(f => f.Output && string.IsNullOrEmpty(f.Aggregate)))
+                    return;
+
+                throw new TransformalizeException("Entity {0} is set to group, but not all your output fields have aggregate defined.", entity.Alias);
+            }
+
+            if (!element.Fields.Cast<FieldConfigurationElement>().Any(f => f.Output && !string.IsNullOrEmpty(f.Aggregate)))
                 return;
 
-            if (!element.Fields.Cast<FieldConfigurationElement>().Any(f => f.Output && string.IsNullOrEmpty(f.Aggregate)))
+            if (!element.CalculatedFields.Cast<FieldConfigurationElement>().Any(f => f.Output && !string.IsNullOrEmpty(f.Aggregate)))
                 return;
 
-            throw new TransformalizeException("Entity {0} is set to group, but not all your output fields have aggregate defined.", entity.Alias);
+            throw new TransformalizeException("Entity {0} is not set to group, but one of your output fields has an aggregate defined.", entity.Alias);
         }
 
         private static FieldType GetFieldType(FieldConfigurationElement element, bool isMaster) {
@@ -249,7 +251,7 @@ namespace Transformalize.Main {
             if (element.PrimaryKey) {
                 fieldType = isMaster ? FieldType.MasterKey : FieldType.PrimaryKey;
             } else {
-                fieldType = FieldType.Field;
+                fieldType = FieldType.NonKey;
             }
             return fieldType;
         }

@@ -52,26 +52,26 @@ namespace Transformalize.Main {
 
         private static Join GetJoin(Entity leftEntity, string leftField, Entity rightEntity, string rightField) {
 
-            var leftFields = leftEntity.OutputFields().ToArray();
-            var rightFields = rightEntity.OutputFields().ToArray();
+            var leftFields = leftEntity.OutputFields();
+            var rightFields = rightEntity.OutputFields();
             var leftHit = leftFields.Any(f => f.Alias.Equals(leftField));
             var rightHit = rightFields.Any(f => f.Alias.Equals(rightField));
 
-            if (!leftHit && !leftFields.Any(Common.FieldFinder(leftField))) {
+            if (!leftHit && !leftFields.Find(leftField).Any()) {
                 throw new TransformalizeException("The left entity {0} does not have a field named {1} for joining to the right entity {2} with field {3}.", leftEntity.Alias, leftField, rightEntity.Alias, rightField);
             }
 
-            if (!rightHit && !rightFields.Any(Common.FieldFinder(rightField))) {
+            if (!rightHit && !rightFields.Find(rightField).Any()) {
                 throw new TransformalizeException("The right entity {0} does not have a field named {1} for joining to the left entity {2} with field {3}.", rightEntity.Alias, rightField, leftEntity.Alias, leftField);
             }
 
             var join = new Join {
                 LeftField = leftHit
                         ? leftFields.First(f => f.Alias.Equals(leftField))
-                        : leftFields.First(Common.FieldFinder(leftField)),
+                        : leftFields.Find(leftField).First(),
                 RightField = rightHit
                         ? rightFields.First(f => f.Alias.Equals(rightField))
-                        : rightFields.First(Common.FieldFinder(rightField))
+                        : rightFields.Find(rightField).First()
             };
 
             if (join.LeftField.FieldType.HasFlag(FieldType.MasterKey) || join.LeftField.FieldType.HasFlag(FieldType.PrimaryKey)) {

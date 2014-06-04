@@ -20,8 +20,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Transformalize.Libs.Rhino.Etl;
@@ -42,7 +40,7 @@ namespace Transformalize.Operations {
             : base(connection) {
 
             _entity = entity;
-            _fields = _entity.PrimaryKey.OrderedFields().Where(f => f.Input).Select(f => f.Alias).ToArray();
+            _fields = _entity.PrimaryKey.WithInput().Aliases().ToArray();
             _length = _fields.Length;
 
             if (_entity.CanDetectChanges(connection.IsDatabase)) {

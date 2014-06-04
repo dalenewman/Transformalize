@@ -46,15 +46,15 @@ namespace Transformalize.Operations.Load {
 
         protected virtual void PrepareHeader(Entity entity) {
             HeaderText = string.Empty;
-            foreach (var pair in entity.Fields.Where(f => f.Value.FileOutput)) {
-                if (pair.Value.SimpleType.Equals("string"))
-                    _strings.Add(pair.Value.Alias);
-                Headers.Add(pair.Value.Alias.Replace(_connection.Delimiter, string.Empty));
+            foreach (Field field in entity.Fields.WithFileOutput()) {
+                if (field.SimpleType.Equals("string"))
+                    _strings.Add(field.Alias);
+                Headers.Add(field.Alias.Replace(_connection.Delimiter, string.Empty));
             }
-            foreach (var pair in entity.CalculatedFields.Where(f => f.Value.FileOutput)) {
-                if (pair.Value.SimpleType.Equals("string"))
-                    _strings.Add(pair.Value.Alias);
-                Headers.Add(pair.Value.Alias.Replace(_connection.Delimiter, string.Empty));
+            foreach (Field field in entity.CalculatedFields.WithFileOutput()) {
+                if (field.SimpleType.Equals("string"))
+                    _strings.Add(field.Alias);
+                Headers.Add(field.Alias.Replace(_connection.Delimiter, string.Empty));
             }
             HeaderText = string.Join(_connection.Delimiter, Headers);
         }
@@ -66,17 +66,17 @@ namespace Transformalize.Operations.Load {
         protected virtual void PrepareType(Entity entity) {
             var builder = new DelimitedClassBuilder("Tfl" + entity.OutputName()) { IgnoreEmptyLines = true, Delimiter = _connection.Delimiter, IgnoreFirstLines = 0 };
 
-            foreach (var pair in entity.Fields.Where(f => f.Value.FileOutput)) {
-                var field = new DelimitedFieldBuilder(pair.Value.Alias, pair.Value.SystemType);
-                if (pair.Value.SimpleType.Equals("datetime")) {
+            foreach (Field f in entity.Fields.WithFileOutput()) {
+                var field = new DelimitedFieldBuilder(f.Alias, f.SystemType);
+                if (f.SimpleType.Equals("datetime")) {
                     field.Converter.Kind = ConverterKind.Date;
                     field.Converter.Arg1 = _connection.DateFormat;
                 }
                 builder.AddField(field);
             }
-            foreach (var pair in entity.CalculatedFields.Where(f => f.Value.FileOutput)) {
-                var field = new DelimitedFieldBuilder(pair.Value.Alias, pair.Value.SystemType);
-                if (pair.Value.SimpleType.Equals("datetime")) {
+            foreach (Field f in entity.CalculatedFields.WithFileOutput()) {
+                var field = new DelimitedFieldBuilder(f.Alias, f.SystemType);
+                if (f.SimpleType.Equals("datetime")) {
                     field.Converter.Kind = ConverterKind.Date;
                     field.Converter.Arg1 = _connection.DateFormat;
                 }

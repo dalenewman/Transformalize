@@ -14,7 +14,7 @@ namespace Transformalize.Main.Providers.SqlServer
         public SqlServerEntityOutputKeysExtractAll(AbstractConnection connection, Entity entity)
             : base(connection) {
             _entity = entity;
-            _keys = new List<string>(entity.PrimaryKey.Select(kv=>kv.Key)) { "TflKey" };
+            _keys = new List<string>(entity.PrimaryKey.Aliases()) { "TflKey" };
             }
 
         protected override Row CreateRowFromReader(IDataReader reader) {

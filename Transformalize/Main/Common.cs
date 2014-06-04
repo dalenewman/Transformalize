@@ -173,16 +173,6 @@ namespace Transformalize.Main {
             };
         }
 
-        public static Func<KeyValuePair<string, Field>, bool> FieldFinder(ParameterConfigurationElement p) {
-            if (p.Entity != string.Empty)
-                return f => f.Value.Alias.Equals(p.Field, IC) && f.Value.Entity.Equals(p.Entity, IC) || f.Value.Name.Equals(p.Field, IC) && f.Value.Entity.Equals(p.Entity, IC);
-            return f => f.Value.Alias.Equals(p.Field, IC) || f.Value.Name.Equals(p.Field, IC);
-        }
-
-        public static Func<Field, bool> FieldFinder(string nameOrAlias) {
-            return v => v.Name.Equals(nameOrAlias, IC) || v.Alias.Equals(nameOrAlias, IC);
-        }
-
         public static string GetAlias(FieldConfigurationElement element, bool usePrefix, string prefix) {
             return usePrefix && element.Alias.Equals(element.Name) && !string.IsNullOrEmpty(prefix) ? prefix + element.Name : element.Alias;
         }

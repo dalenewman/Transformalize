@@ -1444,6 +1444,7 @@
     <Compile Include="Main\Providers\AbstractConnectionDependencies.cs" />
     <Compile Include="Main\Providers\AnalysisServices\AnalysisServicesEntityDropper.cs" />
     <Compile Include="Main\Providers\AnalysisServices\AnalysisServicesDependencies.cs" />
+    <Compile Include="Main\Providers\ElasticSearch\AliasType.cs" />
     <Compile Include="Main\Providers\FalseDataTypeService.cs" />
     <Compile Include="Main\Providers\ConnectionChecker.cs" />
     <Compile Include="Main\Providers\File\ColumnNameGenerator.cs" />
@@ -1451,6 +1452,7 @@
     <Compile Include="Main\Providers\File\ExcelInformationReader.cs" />
     <Compile Include="Main\Providers\File\FileField.cs" />
     <Compile Include="Main\Providers\File\FieldInspector.cs" />
+    <Compile Include="Main\Providers\File\FileImporter.cs" />
     <Compile Include="Main\Providers\File\FileInformation.cs" />
     <Compile Include="Main\Providers\File\FileInformationFactory.cs" />
     <Compile Include="Main\Providers\File\FileInformationReader.cs" />
@@ -1459,6 +1461,7 @@
     <Compile Include="Main\Providers\File\Line.cs" />
     <Compile Include="Main\Providers\File\LineLoader.cs" />
     <Compile Include="Main\Providers\File\Lines.cs" />
+    <Compile Include="Main\Providers\File\FileImportResult.cs" />
     <Compile Include="Main\Providers\Solr\SolrConnection.cs" />
     <Compile Include="Main\Providers\Solr\SolrConnectionChecker.cs" />
     <Compile Include="Main\Providers\Solr\SolrDependencies.cs" />
@@ -1977,18 +1980,23 @@
     <Compile Include="Libs\Rhino.Etl\WithLoggingMixin.cs" />
     <Compile Include="Operations\AliasOperation.cs" />
     <Compile Include="Operations\EntityInputKeysExtractAllForDelete.cs" />
+    <Compile Include="Operations\EntityOutputOperation.cs" />
     <Compile Include="Operations\Extract\FileDelimitedExtract.cs" />
     <Compile Include="Operations\Extract\FileExcelExtract.cs" />
     <Compile Include="Operations\Extract\FileFixedExtract.cs" />
     <Compile Include="Operations\EntityDataExtract.cs" />
     <Compile Include="Operations\EntityDelete.cs" />
     <Compile Include="Operations\FieldTypeDefault.cs" />
+    <Compile Include="Operations\GatherOperation.cs" />
+    <Compile Include="Operations\HtmlRowOperation.cs" />
     <Compile Include="Operations\Load\FileLoadOperation.cs" />
     <Compile Include="Operations\Load\HtmlLoadOperation.cs" />
     <Compile Include="Operations\Load\LogLoadOperation.cs" />
     <Compile Include="Operations\Load\MailLoadOperation.cs" />
+    <Compile Include="Operations\NameAlias.cs" />
     <Compile Include="Operations\SampleOperation.cs" />
     <Compile Include="Operations\SampleOperation2.cs" />
+    <Compile Include="Operations\Sort.cs" />
     <Compile Include="Operations\SqlKeysOverrideOperation.cs" />
     <Compile Include="Operations\Transform\AppendOperation.cs" />
     <Compile Include="Operations\Transform\CompressOperation.cs" />
@@ -2442,8 +2450,6 @@
     <Compile Include="Operations\EntityJoinAction.cs" />
     <Compile Include="Operations\EntityInputKeysStore.cs" />
     <Compile Include="Operations\EntityInputKeysStoreExtract.cs" />
-    <Compile Include="Processes\EntityOutputOperation.cs" />
-    <Compile Include="Processes\HtmlRowOperation.cs" />
     <Compile Include="Processes\InitializationProcess.cs" />
     <Compile Include="Processes\EntityProcess.cs" />
     <Compile Include="Operations\TruncateOperation.cs" />

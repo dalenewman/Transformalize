@@ -7,7 +7,7 @@ namespace Transformalize.Configuration.Builders {
     public class ConnectionBuilder {
 
         private readonly ProcessBuilder _processBuilder;
-        private readonly ConnectionConfigurationElement _connection;
+        private ConnectionConfigurationElement _connection;
 
         public ConnectionBuilder(ProcessBuilder processBuilder, ConnectionConfigurationElement connection) {
             _processBuilder = processBuilder;
@@ -144,5 +144,9 @@ namespace Transformalize.Configuration.Builders {
             return _processBuilder.Action(action);
         }
 
+        public ConnectionBuilder Element(ConnectionConfigurationElement element) {
+            _connection = element;
+            return this;
+        }
     }
 }

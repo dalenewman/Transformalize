@@ -232,7 +232,7 @@ namespace Transformalize.Main.Providers {
             return ScriptRunner.Execute(this, script);
         }
 
-        public string WriteTemporaryTable(string name, Field[] fields, bool useAlias = true) {
+        public string WriteTemporaryTable(string name, Fields fields, bool useAlias = true) {
             return TableQueryWriter.WriteTemporary(name, fields, this, useAlias);
         }
 
@@ -329,7 +329,7 @@ namespace Transformalize.Main.Providers {
         }
 
         public Entity TflBatchEntity(string processName) {
-            return new Entity(1) { Name = "TflBatch", ProcessName = processName, Alias = "TflBatch", Schema = "dbo", PrimaryKey = new Fields() { new Field(FieldType.PrimaryKey) { Name = "TflBatchId" } } };
+            return new Entity { TflBatchId = 1, Name = "TflBatch", ProcessName = processName, Alias = "TflBatch", Schema = "dbo", PrimaryKey = new Fields() { new Field(FieldType.PrimaryKey) { Name = "TflBatchId" } } };
         }
 
         public bool TflBatchRecordsExist(string processName) {

@@ -67,7 +67,7 @@ namespace Transformalize.Processes {
                 Register(new SampleOperation2(_entity.Sample));
             }
 
-            Register(new ApplyDefaults(true, _entity.Fields, _entity.CalculatedFields));
+            Register(new ApplyDefaults(true, new Fields(_entity.Fields, _entity.CalculatedFields)));
 
             foreach (var transform in _entity.OperationsBeforeAggregation) {
                 Register(transform);
@@ -81,7 +81,7 @@ namespace Transformalize.Processes {
                 Register(transform);
             }
 
-            if (_entity.SortingEnabled()) {
+            if (_entity.HasSort()) {
                 Register(new SortOperation(_entity));
             }
 
@@ -117,8 +117,8 @@ namespace Transformalize.Processes {
                 if (_entity.HasSqlOverride()) {
                     p.Register(new SqlOverrideOperation(_entity, input.Connection));
                 } else {
-                    if (_entity.PrimaryKey.Any(kv => kv.Value.Input)) {
-                        p.Register(new EntityKeysToOperations(_entity, input.Connection));
+                    if (_entity.PrimaryKey.WithInput().Any()) {
+                        p.Register(new EntityKeysToOperations(_process, _entity, input.Connection));
                         p.Register(new SerialUnionAllOperation());
                     } else {
                         _entity.SqlOverride = SqlTemplates.Select(_entity, input.Connection);

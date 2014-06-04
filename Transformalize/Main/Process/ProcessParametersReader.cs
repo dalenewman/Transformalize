@@ -31,7 +31,7 @@ namespace Transformalize.Main {
         }
 
         public IParameters Read() {
-            foreach (var field in _process.OutputFields().OrderedFields()) {
+            foreach (Field field in _process.OutputFields()) {
                 _parameters.Add(field.Alias, field.Alias, null, field.Type);
             }
             return _parameters;

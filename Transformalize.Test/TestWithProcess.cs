@@ -62,7 +62,7 @@ namespace Transformalize.Test {
             );
 
             var operations = TestOperation(
-                new EntityKeysToOperations(entity, entity.Input.First().Connection)
+                new EntityKeysToOperations(_process, entity, entity.Input.First().Connection)
             );
 
             Assert.AreEqual(1, operations.Count);
@@ -78,7 +78,7 @@ namespace Transformalize.Test {
 
             Assert.AreEqual(4, rows.Count);
 
-            var actual = SqlTemplates.BatchInsertValues(2, "@KEYS", entity.PrimaryKey.OrderedFields().ToArray(), rows, _process.OutputConnection);
+            var actual = SqlTemplates.BatchInsertValues(2, "@KEYS", entity.PrimaryKey, rows, _process.OutputConnection);
             const string expected = @"
 INSERT INTO @KEYS
 SELECT 1
@@ -94,7 +94,7 @@ UNION ALL SELECT 4;";
         public void TestKeysTableVariable() {
             var entity = _process.Entities.First();
 
-            var actual = _process.OutputConnection.WriteTemporaryTable("@KEYS", entity.PrimaryKey.OrderedFields().ToArray());
+            var actual = _process.OutputConnection.WriteTemporaryTable("@KEYS", entity.PrimaryKey);
             const string expected = "DECLARE @KEYS AS TABLE([OrderDetailKey] INT);";
 
             Assert.AreEqual(expected, actual);
@@ -125,7 +125,7 @@ OPTION (MAXDOP 2);";
         [Test]
         public void TestWriteSql() {
             var actual = new SqlServerViewWriter().CreateSql(_process);
-
+            Console.Write(actual);
             Assert.AreEqual(@"CREATE VIEW [TestStar] AS
 SELECT
     d.TflKey,
@@ -160,7 +160,7 @@ LEFT OUTER JOIN TestCustomer ON (d.[CustomerKey] = TestCustomer.[CustomerKey])
 LEFT OUTER JOIN TestProduct ON (d.[ProductKey] = TestProduct.[ProductKey])
 ;", actual);
 
-            Console.Write(actual);
+            
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Transformalize.Main.Providers.SqlCe4
 
                 using (var cn = connection.GetConnection()) {
                     cn.Open();
-                    var sql = string.Format(@"SELECT [{0}] FROM [{1}];", entity.PrimaryKey.First().Key, entity.OutputName());
+                    var sql = string.Format(@"SELECT [{0}] FROM [{1}];", entity.PrimaryKey.First().Alias, entity.OutputName());
                     var cmd = cn.CreateCommand();
                     cmd.CommandText = sql;
                     using (var reader = cmd.ExecuteReader()) {

@@ -31,7 +31,7 @@ namespace Transformalize.Main {
 
         private readonly string[] _stringTypes = new[] { "string", "char", "datetime", "guid", "xml" };
 
-        private FieldType _fieldType = FieldType.Field;
+        private FieldType _fieldType = FieldType.NonKey;
         private string _name = "field";
         private string _sqlDataType;
         private string _type = "System.String";
@@ -64,7 +64,7 @@ namespace Transformalize.Main {
         public KeyValuePair<string, string> References { get; set; }
         public bool Output { get; set; }
         public bool FileOutput { get; set; }
-        public int Index { get; set; }
+        public short Index { get; set; }
         public string Aggregate { get; set; }
         public string Sort { get; set; }
         public string Label { get; set; }

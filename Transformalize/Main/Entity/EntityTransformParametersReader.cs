@@ -48,11 +48,11 @@ namespace Transformalize.Main {
                 }
 
                 if (!string.IsNullOrEmpty(p.Field)) {
-                    var fields = new FieldSqlWriter(_entity.Fields, _entity.CalculatedFields).Context();
-                    if (fields.Any(Common.FieldFinder(p))) {
-                        var field = fields.Last(Common.FieldFinder(p));
-                        var key = string.IsNullOrEmpty(p.Name) ? field.Key : p.Name;
-                        parameters.Add(field.Key, key, null, field.Value.Type);
+                    var fields = new Fields(_entity.Fields, _entity.CalculatedFields);
+                    if (fields.FindByParamater(p).Any()) {
+                        var field = fields.FindByParamater(p).Last();
+                        var key = string.IsNullOrEmpty(p.Name) ? field.Alias : p.Name;
+                        parameters.Add(field.Alias, key, null, field.Type);
                     } else {
                         if (!p.Field.StartsWith("Tfl")) {
                             _log.Warn("The entity {0} has a {1} transform parameter that references field {2}.  This field hasn't been defined yet in {0}.", _entity.Alias, transform.Method, p.Field);

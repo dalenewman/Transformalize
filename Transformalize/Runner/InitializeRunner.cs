@@ -1,11 +1,16 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 using Transformalize.Processes;
+using Process = Transformalize.Main.Process;
 
 namespace Transformalize.Runner {
-    public class InitializeRunner : IProcessRunner {
+    public class InitializeRunner : IProcessRunner
+    {
+
+        private readonly Logger _log = LogManager.GetLogger("tfl");
 
         public IDictionary<string, IEnumerable<Row>> Run(Process process) {
 
@@ -13,6 +18,9 @@ namespace Transformalize.Runner {
             GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
 
             var result = new Dictionary<string, IEnumerable<Row>>();
+
+            var timer = new Stopwatch();
+            timer.Start();
 
             if (!process.IsReady())
                 return result;
@@ -23,6 +31,9 @@ namespace Transformalize.Runner {
             new TemplateManager(process).Manage();
 
             process.PerformActions(a => a.After);
+
+            timer.Stop();
+            _log.Info("Initialized output in {0}.", timer.Elapsed);
 
             return result;
         }

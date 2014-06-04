@@ -11,7 +11,7 @@ namespace Transformalize.Operations
         private readonly string _firstKey;
 
         public EntityDetectDeletes(Entity entity) {
-            _keys = entity.PrimaryKey.Keys.ToArray();
+            _keys = entity.PrimaryKey.Aliases().ToArray();
             _firstKey = _keys[0];
         }
 

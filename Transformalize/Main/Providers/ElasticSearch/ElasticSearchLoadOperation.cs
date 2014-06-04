@@ -7,6 +7,7 @@ using Transformalize.Extensions;
 using Transformalize.Libs.fastJSON;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Operations;
 
 namespace Transformalize.Main.Providers.ElasticSearch {
 
@@ -25,8 +26,8 @@ namespace Transformalize.Main.Providers.ElasticSearch {
 
         public ElasticSearchLoadOperation(Entity entity, AbstractConnection connection) {
 
-            _guids.AddRange(new FieldSqlWriter(entity.Fields, entity.CalculatedFields).Output().ToArray().Where(f => f.SimpleType.Equals("guid")).Select(f => f.Alias));
-            _dates.AddRange(new FieldSqlWriter(entity.Fields, entity.CalculatedFields).Output().ToArray().Where(f => f.SimpleType.StartsWith("date")).Select(f => f.Alias));
+            _guids.AddRange(new Fields(entity.Fields, entity.CalculatedFields).WithOutput().WithGuid().Aliases());
+            _dates.AddRange(new Fields(entity.Fields, entity.CalculatedFields).WithOutput().WithDate().Aliases());
 
             _client = ElasticSearchClientFactory.Create(connection, entity);
             _prefix = "{\"index\": {\"_index\": \"" + _client.Index + "\", \"_type\": \"" + _client.Type + "\", \"_id\": \"";
@@ -34,7 +35,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             _singleKey = entity.PrimaryKey.Count == 1;
             _elasticMap = new ElasticSearchEntityCreator().GetFieldMap(entity);
 
-            _keys = entity.PrimaryKey.Select(kv => kv.Key).ToArray();
+            _keys = entity.PrimaryKey.Aliases().ToArray();
             _key = entity.FirstKey();
             _batchSize = connection.BatchSize;
 

@@ -1,4 +1,5 @@
-﻿using Transformalize.Configuration;
+﻿using System;
+using Transformalize.Configuration;
 
 namespace Transformalize.Main {
 
@@ -14,10 +15,18 @@ namespace Transformalize.Main {
 
         public void Load() {
 
+            var autoIndex = Convert.ToInt16(_process.MasterEntity == null ? 0 : new Fields(_process.MasterEntity.Fields, _process.MasterEntity.CalculatedFields).Count + 1);
+
             foreach (FieldConfigurationElement f in _elements) {
                 var field = new FieldReader(_process, _process.MasterEntity, false).Read(f);
                 field.Input = false;
-                _process.CalculatedFields.Add(f.Alias, field);
+
+                if (field.Index.Equals(short.MaxValue)) {
+                    field.Index = autoIndex;
+                }
+
+                field.Index = field.Index == 0 ? autoIndex : field.Index;
+                _process.CalculatedFields.Add(field);
 
                 foreach (TransformConfigurationElement t in f.Transforms) {
 
@@ -32,6 +41,8 @@ namespace Transformalize.Main {
                         _process.Parameters[parameter.Key] = parameter.Value;
                     }
                 }
+
+                autoIndex++;
             }
         }
 

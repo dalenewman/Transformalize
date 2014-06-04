@@ -50,11 +50,11 @@ namespace Transformalize.Test {
             //init and run
             var init = ProcessFactory.Create(process, new Options() { Mode = "init", LogLevel = logLevel })[0];
             init.PipelineThreading = PipelineThreading.SingleThreaded;
-            init.Run();
+            init.ExecuteScaler();
 
             var first = ProcessFactory.Create(process, new Options() { LogLevel = logLevel })[0];
             first.PipelineThreading = PipelineThreading.SingleThreaded;
-            first.Run();
+            first.ExecuteScaler();
             LogManager.Flush();
 
             Assert.AreEqual(3, first["Inventory"].Inserts);
@@ -73,7 +73,7 @@ namespace Transformalize.Test {
             //run again, no changes
             var second = ProcessFactory.Create(process, new Options() { LogLevel = logLevel })[0];
             second.PipelineThreading = PipelineThreading.SingleThreaded;
-            second.Run();
+            second.ExecuteScaler();
             LogManager.Flush();
 
             Assert.AreEqual(0, second["Inventory"].Inserts);
@@ -102,7 +102,7 @@ namespace Transformalize.Test {
             //run again
             var third = ProcessFactory.Create(process, new Options() { LogLevel = logLevel })[0];
             third.PipelineThreading = PipelineThreading.SingleThreaded;
-            third.Run();
+            third.ExecuteScaler();
             LogManager.Flush();
 
             Assert.AreEqual(0, third["Inventory"].Inserts);

@@ -68,7 +68,7 @@ namespace Transformalize.Run {
 
             foreach (var process in processes) {
                 try {
-                    process.Run();
+                    process.ExecuteScaler();
                 } catch (TransformalizeException e) {
                     Log.Error(e.Message);
                     break;

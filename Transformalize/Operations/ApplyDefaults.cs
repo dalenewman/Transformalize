@@ -31,23 +31,15 @@ namespace Transformalize.Operations {
         private readonly Field[] _fields;
         private readonly bool _defaultNulls;
 
-        public ApplyDefaults(bool defaultNulls, params Fields[] fields) {
-            _fields = PrepareFields(fields);
+        public ApplyDefaults(bool defaultNulls, Fields fields) {
+            _fields = fields.ToArray();
             UseTransaction = false;
             _defaultNulls = defaultNulls;
         }
 
-        private static Field[] PrepareFields(IEnumerable<Fields> fields) {
-            var list = new List<Field>();
-            foreach (var fieldArray in fields) {
-                list.AddRange(new FieldSqlWriter(fieldArray).ToArray()); //HasDefault()
-            }
-            return list.ToArray();
-        }
-
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
-                foreach (var field in _fields) {
+                foreach (Field field in _fields) {
                     var obj = row[field.Alias];
                     if ((_defaultNulls || !field.Input) && obj == null) {
                         row[field.Alias] = field.Default;

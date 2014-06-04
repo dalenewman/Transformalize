@@ -33,7 +33,6 @@ namespace Transformalize.Main {
 
     public class Entity {
 
-        private readonly int _tflBatchId;
         private List<IOperation> _operationsBeforeAggregation = new List<IOperation>(); 
         private List<IOperation> _operationsAfterAggregation = new List<IOperation>();
         private IEnumerable<Row> _rows = new List<Row>();
@@ -62,7 +61,7 @@ namespace Transformalize.Main {
         public long Updates { get; set; }
         public long Inserts { get; set; }
         public long Deletes { get; set; }
-        public int TflBatchId { get { return _tflBatchId; } }
+        public int TflBatchId { get; set; }
         public bool Delete { get; set; }
         public bool PrependProcessNameToOutputName { get; set; }
         public decimal Sample { get; set; }
@@ -76,8 +75,7 @@ namespace Transformalize.Main {
         public bool TrimAll { get; set; }
         public bool NoLock { get; set; }
 
-        public Entity(int batchId) {
-            _tflBatchId = batchId;
+        public Entity() {
             Name = string.Empty;
             Alias = string.Empty;
             Schema = string.Empty;
@@ -111,14 +109,14 @@ namespace Transformalize.Main {
         public bool Unicode { get; set; }
         public bool VariableLength { get; set; }
         public bool Sampled { get; set; }
-        public int Index { get; set; }
+        public short Index { get; set; }
 
         public string FirstKey() {
-            return PrimaryKey.First().Key;
+            return PrimaryKey.First().Alias;
         }
 
         public bool IsMaster() {
-            return PrimaryKey.Any(kv => kv.Value.FieldType.HasFlag(FieldType.MasterKey));
+            return PrimaryKey.WithMasterKey().Any();
         }
 
         public string OutputName() {
@@ -126,7 +124,7 @@ namespace Transformalize.Main {
         }
 
         public bool HasForeignKeys() {
-            return Fields.Any(f => f.Value.FieldType.HasFlag(FieldType.ForeignKey));
+            return Fields.WithForeignKey().Any();
         }
 
         public bool NeedsUpdate() {
@@ -138,23 +136,20 @@ namespace Transformalize.Main {
 
         public List<string> SelectKeys(AbstractConnection connection) {
             var selectKeys = new List<string>();
-            foreach (var field in PrimaryKey.OrderedFields().Where(f => f.Input)) {
+            foreach (Field field in PrimaryKey.WithInput()) {
                 selectKeys.Add(field.Alias.Equals(field.Name)
                     ? string.Concat(connection.L, field.Name, connection.R)
-                    : string.Format("{0} = {1}", field.Alias, connection.Enclose(field.Name)));
+                    : string.Format("{0} AS {1}", connection.Enclose(field.Name), connection.Enclose(field.Alias)));
             }
             return selectKeys;
         }
 
         public Fields InputFields() {
-            return new FieldSqlWriter(Fields, CalculatedFields).Input().Context();
+            return new Fields(Fields, CalculatedFields).WithInput();
         }
 
-        public IEnumerable<Field> OutputFields() {
-            var fields = new List<Field>();
-            fields.AddRange(Fields.Select(kv => kv.Value));
-            fields.AddRange(CalculatedFields.Select(kv => kv.Value));
-            return fields.Where(f => f.Output).OrderBy(f => f.Index);
+        public Fields OutputFields() {
+            return new Fields(Fields, CalculatedFields).WithOutput();
         }
 
         public override string ToString() {
@@ -197,9 +192,8 @@ namespace Transformalize.Main {
             return !(string.IsNullOrEmpty(Schema) || Schema.Equals("dbo", IC));
         }
 
-        public bool SortingEnabled() {
-            return Fields.Any(f => !f.Value.Sort.Equals(string.Empty))
-                   || CalculatedFields.Any(f => !f.Value.Sort.Equals(string.Empty));
+        public bool HasSort() {
+            return Fields.HaveSort() || CalculatedFields.HaveSort();
         }
 
         public bool HasSqlOverride() {

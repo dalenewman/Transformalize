@@ -18,14 +18,14 @@ namespace Transformalize.Operations.Transform {
             IgnoreComments = true
         };
 
-        public FromXmlOperation(string inKey, IEnumerable<KeyValuePair<string, Field>> fields)
+        public FromXmlOperation(string inKey, Fields fields)
             : base(inKey, string.Empty) {
 
-            foreach (var field in fields) {
-                if (!_searchAttributes && field.Value.NodeType.Equals("attribute", IC)) {
+            foreach (Field field in fields) {
+                if (!_searchAttributes && field.NodeType.Equals("attribute", IC)) {
                     _searchAttributes = true;
                 }
-                _nameMap[field.Value.Name] = field.Value;
+                _nameMap[field.Name] = field;
             }
             Name = string.Format("FromXmlOperation (in:{0})", inKey);
         }

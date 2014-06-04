@@ -29,13 +29,13 @@ using Transformalize.Libs.NLog;
 namespace Transformalize.Main {
     public class ProcessTransformParametersReader : ITransformParametersReader {
         private readonly char[] _dotArray = new[] { '.' };
-        private readonly Field[] _fields;
+        private readonly Fields _fields;
         private readonly Logger _log = LogManager.GetLogger("tfl");
         private readonly Process _process;
 
         public ProcessTransformParametersReader(Process process) {
             _process = process;
-            _fields = _process.OutputFields().OrderedFields().ToArray();
+            _fields = _process.OutputFields();
         }
 
 
@@ -56,8 +56,8 @@ namespace Transformalize.Main {
 
                 if (!string.IsNullOrEmpty(p.Field)) {
                     var fields = _process.OutputFields();
-                    if (fields.Any(Common.FieldFinder(p))) {
-                        var field = fields.Last(Common.FieldFinder(p)).Value;
+                    if (fields.FindByParamater(p).Any()) {
+                        var field = fields.FindByParamater(p).Last();
                         var name = string.IsNullOrEmpty(p.Name) ? field.Alias : p.Name;
                         parameters.Add(field.Alias, name, null, field.Type);
                     } else {
@@ -105,8 +105,8 @@ namespace Transformalize.Main {
                                                      IEnumerable<KeyValuePair<string, Item>> items) {
             foreach (var item in items) {
                 if (item.Value.UseParameter) {
-                    if (_fields.Any(Common.FieldFinder(item.Value.Parameter))) {
-                        item.Value.Parameter = _fields.First(Common.FieldFinder(item.Value.Parameter)).Alias;
+                    if (_fields.Find(item.Value.Parameter).Any()) {
+                        item.Value.Parameter = _fields.Find(item.Value.Parameter).First().Alias;
                         AddParameterToConfiguration(transform, item.Value.Parameter, false);
                     } else {
                         throw new TransformalizeException("The map parameter {0} does not exist.  Please make sure it matches a field's name or alias.", item.Value.Parameter);

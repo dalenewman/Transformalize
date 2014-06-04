@@ -23,7 +23,7 @@ namespace Transformalize.Main.Providers.PostgreSql
                         FROM ""{1}""
                         LIMIT 1
                     );
-                ", entity.PrimaryKey.First().Key, entity.OutputName())).DefaultIfEmpty(false).First();
+                ", entity.PrimaryKey.First().Alias, entity.OutputName())).DefaultIfEmpty(false).First();
                 return exists;
             }
         }

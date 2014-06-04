@@ -47,15 +47,12 @@ namespace Transformalize.Main.Providers {
 
             foreach (var entity in _process.Entities) {
                 if (entity.IsMaster()) {
-                    fields[StarFieldType.Master].AddRange(entity.Fields.Output());
-                    fields[StarFieldType.Master].AddRange(entity.CalculatedFields.Output());
-                    fields[StarFieldType.Master].AddRange(_process.CalculatedFields.Output());
+                    fields[StarFieldType.Master].Add(new Fields(entity.Fields, entity.CalculatedFields, _process.CalculatedFields).WithOutput());
                 } else {
-                    if (entity.Fields.Any(f => f.Value.FieldType.HasFlag(FieldType.ForeignKey))) {
-                        fields[StarFieldType.Foreign].AddRange(entity.Fields.ForeignKeyOutput());
+                    if (entity.Fields.WithForeignKey().Any()) {
+                        fields[StarFieldType.Foreign].Add(entity.Fields.WithOutput().WithForeignKey());
                     }
-                    fields[StarFieldType.Other].AddRange(entity.Fields.OtherOutput());
-                    fields[StarFieldType.Other].AddRange(entity.CalculatedFields.OtherOutput());
+                    fields[StarFieldType.Other].Add(new Fields(entity.Fields, entity.CalculatedFields).WithOutput().WithoutBytes().WithoutKey());
                 }
             }
 

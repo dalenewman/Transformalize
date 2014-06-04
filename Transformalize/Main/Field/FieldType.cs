@@ -22,14 +22,12 @@
 
 using System;
 
-namespace Transformalize.Main
-{
+namespace Transformalize.Main {
     [Flags]
-    public enum FieldType : short
-    {
+    public enum FieldType : short {
         None = 0,
         ForeignKey = 1,
-        Field = 2,
+        NonKey = 2,
         PrimaryKey = 4,
         MasterKey = 8
     }

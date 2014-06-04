@@ -68,7 +68,7 @@ namespace Transformalize.Main.Providers.Solr {
 
         public Dictionary<string, object> GetFields(Entity entity) {
             var fields = new Dictionary<string, object>();
-            foreach (var field in entity.OutputFields()) {
+            foreach (Field field in entity.OutputFields()) {
                 var alias = field.Alias.ToLower();
                 var type = _types.ContainsKey(field.SimpleType) ? _types[field.SimpleType] : field.SimpleType;
                 if (type.Equals("string")) {
@@ -103,7 +103,7 @@ namespace Transformalize.Main.Providers.Solr {
 
         public Dictionary<string, string> GetFieldMap(Entity entity) {
             var map = new Dictionary<string, string>();
-            foreach (var field in entity.OutputFields()) {
+            foreach (Field field in entity.OutputFields()) {
                 var alias = field.Alias.ToLower();
                 if (field.SimpleType.Equals("string")) {
                     foreach (var searchType in field.SearchTypes) {

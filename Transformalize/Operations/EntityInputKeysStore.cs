@@ -33,8 +33,8 @@ namespace Transformalize.Operations {
 
         public EntityInputKeysStore(Entity entity) {
             _entity = entity;
-            _firstKey = _entity.PrimaryKey.First().Key;
-            _keys = _entity.PrimaryKey.OrderedFields().Where(f => f.Input).Select(f => f.Alias).ToArray();
+            _firstKey = _entity.PrimaryKey.First().Alias;
+            _keys = _entity.PrimaryKey.WithInput().Aliases().ToArray();
         }
 
         protected override void Accumulate(Row row, Row aggregate) {

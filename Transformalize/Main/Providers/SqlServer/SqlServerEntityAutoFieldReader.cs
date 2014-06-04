@@ -53,12 +53,12 @@ namespace Transformalize.Main.Providers.SqlServer {
                     var columnName = result.COLUMN_NAME;
                     var type = GetSystemType(result.DATA_TYPE);
                     var length = result.CHARACTER_MAXIMUM_LENGTH;
-                    var fieldType = (bool)result.IS_PRIMARY_KEY ? (isMaster ? FieldType.MasterKey : FieldType.PrimaryKey) : FieldType.Field;
+                    var fieldType = (bool)result.IS_PRIMARY_KEY ? (isMaster ? FieldType.MasterKey : FieldType.PrimaryKey) : FieldType.NonKey;
                     var field = new Field(type, length, fieldType, true, string.Empty) {
                         Name = columnName,
                         Entity = name,
                         Process = process,
-                        Index = result.ORDINAL_POSITION,
+                        Index = result.ORDINAL_POSITION-1,
                         Schema = schema,
                         Input = true,
                         Precision = result.NUMERIC_PRECISION,

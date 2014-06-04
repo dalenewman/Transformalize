@@ -5,7 +5,7 @@
         private readonly Main.Fields _fields = new Main.Fields();
 
         public FieldBuilder Field(string name) {
-            var field = new Main.Field(Main.FieldType.Field) { Name = name, Alias = name };
+            var field = new Main.Field(Main.FieldType.NonKey) { Name = name, Alias = name };
             return Consume(field);
         }
 

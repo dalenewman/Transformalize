@@ -22,7 +22,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.Ninject.Syntax;
@@ -33,13 +32,13 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Providers;
 using Transformalize.Operations.Validate;
+using Transformalize.Runner;
 
 namespace Transformalize.Main {
 
     public class Process {
 
         private ValidationResults _validationResults = new ValidationResults();
-        private static readonly Stopwatch Timer = new Stopwatch();
         private readonly Logger _log = LogManager.GetLogger("tfl");
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private List<IOperation> _transformOperations = new List<IOperation>();
@@ -115,6 +114,7 @@ namespace Transformalize.Main {
         public bool IsReady() {
             if (Enabled || Options.Force) {
                 if (Connections.All(cn => cn.Value.IsReady())) {
+                    Setup();
                     return true;
                 }
                 _log.Warn("Process is not ready.");
@@ -124,27 +124,43 @@ namespace Transformalize.Main {
             return false;
         }
 
-        public IDictionary<string, IEnumerable<Row>> Run() {
-            Timer.Start();
-            var results = Options.ProcessRunner.Run(this);
-            Options.ProcessRunner.Dispose();
-            Timer.Stop();
-            _log.Info("Process affected {0} records in {1}.", Anything, Timer.Elapsed);
-            return results;
+        private IProcessRunner GetRunner() {
+            switch (Options.Mode.ToLower()) {
+                case "init":
+                    return new InitializeRunner();
+                case "metadata":
+                    return new MetadataRunner();
+                case "delete":
+                    return new DeleteRunner();
+                default:
+                    return new ProcessRunner();
+            }
+        }
+
+        public void ExecuteScaler() {
+            using (var runner = GetRunner()) {
+                runner.Run(this);
+            }
+        }
+
+        public IDictionary<string, IEnumerable<Row>> Execute() {
+            using (var runner = GetRunner()) {
+                return runner.Run(this);
+            }
         }
 
         public Fields OutputFields() {
             var fields = new Fields();
             foreach (var entity in Entities) {
-                fields.AddRange(entity.Fields.Output());
-                fields.AddRange(entity.CalculatedFields.Output());
-                fields.AddRange(CalculatedFields.Output());
+                fields.Add(entity.Fields);
+                fields.Add(entity.CalculatedFields);
             }
-            return fields;
+            fields.Add(CalculatedFields);
+            return fields.WithOutput();
         }
 
-        public IEnumerable<Field> SearchFields() {
-            return OutputFields().OrderedFields().Where(f => !f.SearchTypes.Any(st => st.Name.Equals("none")));
+        public Fields SearchFields() {
+            return OutputFields().WithSearchType();
         }
 
         public Entity this[string entity] {
@@ -154,22 +170,23 @@ namespace Transformalize.Main {
         }
 
         public int GetNextBatchId() {
+            if ((new[] { "init", "metadata" }).Any(m => m.Equals(Options.Mode, IC)) || !OutputConnection.IsDatabase)
+                return 1;
             return OutputConnection.NextBatchId(Name);
         }
 
         public Field GetField(string alias, string entity, bool issueWarning = true) {
 
-            foreach (var fields in Entities.Where(e => e.Alias == entity || entity == string.Empty).Select(e => e.Fields.OrderedFields()).Where(fields => fields.Any(Common.FieldFinder(alias)))) {
-                return fields.First(Common.FieldFinder(alias));
+            foreach (var fields in Entities.Where(e => e.Alias == entity || entity == string.Empty).Select(e => e.Fields).Where(fields => fields.Find(alias).Any())) {
+                return fields.Find(alias).First();
             }
 
-            foreach (var fields in Entities.Where(e => e.Alias == entity || entity == string.Empty).Select(e => e.CalculatedFields.OrderedFields()).Where(fields => fields.Any(Common.FieldFinder(alias)))) {
-                return fields.First(Common.FieldFinder(alias));
+            foreach (var fields in Entities.Where(e => e.Alias == entity || entity == string.Empty).Select(e => e.CalculatedFields).Where(fields => fields.Find(alias).Any())) {
+                return fields.Find(alias).First();
             }
 
-            var calculatedfields = CalculatedFields.OrderedFields().ToArray();
-            if (calculatedfields.Any(Common.FieldFinder(alias))) {
-                return calculatedfields.First(Common.FieldFinder(alias));
+            if (CalculatedFields.Find(alias).Any()) {
+                return CalculatedFields.Find(alias).First();
             }
 
             if (!IsValidationResultField(alias, entity) && issueWarning) {
@@ -221,6 +238,22 @@ namespace Transformalize.Main {
                 file = action.Connection.File;
             }
             return file;
+        }
+
+        public void Setup() {
+            IsFirstRun = false;
+            Anything = 0;
+            var batchId = GetNextBatchId();
+            foreach (var entity in Entities) {
+                entity.Inserts = 0;
+                entity.Updates = 0;
+                entity.Deletes = 0;
+                entity.Sampled = false;
+                entity.HasRows = false;
+                entity.HasRange = false;
+                entity.TflBatchId = batchId;
+                batchId++;
+            }
         }
     }
 }

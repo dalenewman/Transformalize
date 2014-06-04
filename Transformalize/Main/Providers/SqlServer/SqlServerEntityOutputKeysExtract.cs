@@ -34,14 +34,14 @@ namespace Transformalize.Main.Providers.SqlServer {
         private readonly AbstractConnection _connection;
         private readonly Entity _entity;
         private readonly List<string> _fields;
-        private readonly Field[] _key;
+        private readonly Fields _key;
 
         public SqlServerEntityOutputKeysExtract(AbstractConnection connection, Entity entity)
             : base(connection) {
             _connection = connection;
             _entity = entity;
             _fields = new List<string>(new FieldSqlWriter(entity.PrimaryKey).Alias(connection.L, connection.R).Keys()) { "TflKey" };
-            _key = new FieldSqlWriter(entity.PrimaryKey).ToArray();
+            _key = _entity.PrimaryKey;
         }
 
         protected override Row CreateRowFromReader(IDataReader reader) {
@@ -78,7 +78,7 @@ namespace Transformalize.Main.Providers.SqlServer {
 
         private bool VersionIsPrimaryKey() {
             var version = _entity.Version.Alias;
-            return _entity.PrimaryKey.Count == 1 && version.Equals(_entity.PrimaryKey.First().Key);
+            return _entity.PrimaryKey.Count == 1 && version.Equals(_entity.PrimaryKey.First().Alias);
         }
 
         private string PrepareSqlWithInputKeys() {
@@ -92,8 +92,8 @@ namespace Transformalize.Main.Providers.SqlServer {
             ";
 
             var builder = new StringBuilder();
-            builder.AppendLine(_connection.WriteTemporaryTable("@KEYS", _key.Where(f=>f.Input).ToArray()));
-            builder.AppendLine(SqlTemplates.BatchInsertValues(50, "@KEYS", _key.Where(f=>f.Input).ToArray(), _entity.InputKeys, _connection));
+            builder.AppendLine(_connection.WriteTemporaryTable("@KEYS", _key.WithInput()));
+            builder.AppendLine(SqlTemplates.BatchInsertValues(50, "@KEYS", _key.WithInput(), _entity.InputKeys, _connection));
 
             var selectKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias(_connection.L, _connection.R).Write(", e.", false);
             var joinKeys = new FieldSqlWriter(_entity.PrimaryKey).Input().Alias(_connection.L, _connection.R).Set("e", "k").Write(" AND ");

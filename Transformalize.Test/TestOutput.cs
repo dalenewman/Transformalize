@@ -55,7 +55,7 @@ namespace Transformalize.Test {
 
             var process = ProcessFactory.Create(cfg)[0];
 
-            var output = process.Run();
+            var output = process.Execute();
 
             Assert.IsInstanceOf<Dictionary<string, IEnumerable<Row>>>(output);
             Assert.AreEqual(3, output["entity"].Count());
@@ -95,7 +95,7 @@ namespace Transformalize.Test {
 
             var process = ProcessFactory.Create(cfg)[0];
 
-            var output = process.Run();
+            var output = process.Execute();
 
             Assert.IsNotNull(output);
 

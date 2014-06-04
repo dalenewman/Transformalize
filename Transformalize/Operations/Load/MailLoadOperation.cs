@@ -15,7 +15,7 @@ namespace Transformalize.Operations.Load
 
         public MailLoadOperation(Entity entity) {
             _name = Common.EntityOutputName(entity, entity.ProcessName);
-            _columns.AddRange(new FieldSqlWriter(entity.Fields, entity.CalculatedFields).Output().ToArray().Select(f => f.Alias));
+            _columns.AddRange(new Fields(entity.Fields, entity.CalculatedFields).WithOutput().Aliases());
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

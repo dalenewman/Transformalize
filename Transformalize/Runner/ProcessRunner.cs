@@ -21,6 +21,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
@@ -28,10 +29,14 @@ using Transformalize.Libs.Rhino.Etl.Pipelines;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
 using Transformalize.Processes;
+using Process = Transformalize.Main.Process;
 
 namespace Transformalize.Runner {
 
-    public class ProcessRunner : IProcessRunner {
+    public class ProcessRunner : IProcessRunner
+    {
+
+        private readonly Logger _log = LogManager.GetLogger("tfl");
 
         public IDictionary<string, IEnumerable<Row>> Run(Process process) {
 
@@ -39,6 +44,9 @@ namespace Transformalize.Runner {
             GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
 
             var results = new Dictionary<string, IEnumerable<Row>>();
+
+            var timer = new Stopwatch();
+            timer.Start();
 
             if (!process.IsReady())
                 return results;
@@ -53,6 +61,9 @@ namespace Transformalize.Runner {
             new TemplateManager(process).Manage();
 
             process.PerformActions(a => a.After);
+
+            timer.Stop();
+            _log.Info("Process affected {0} records in {1}.", process.Anything, timer.Elapsed);
 
             return process.Entities.ToDictionary(e => e.Alias, e => e.Rows);
         }
@@ -69,7 +80,7 @@ namespace Transformalize.Runner {
 
             process.IsFirstRun = process.MasterEntity == null || !process.OutputConnection.RecordsExist(process.MasterEntity);
 
-            foreach (var entityKeysProcess in process.Entities.Where(entity => entity.PrimaryKey.Any(kv=>kv.Value.Input)).Select(entity => new EntityKeysProcess(process, entity) {
+            foreach (var entityKeysProcess in process.Entities.Where(entity => entity.PrimaryKey.Any(kv=>kv.Input)).Select(entity => new EntityKeysProcess(process, entity) {
                 PipelineExecuter = entity.PipelineThreading == PipelineThreading.SingleThreaded ? (AbstractPipelineExecuter)new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter()
             })) {
                 entityKeysProcess.Execute();

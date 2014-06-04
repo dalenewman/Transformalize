@@ -58,7 +58,7 @@ namespace Transformalize.Main.Providers.File {
             _log.Debug(builder.Process().Serialize().Replace(Environment.NewLine, string.Empty));
 
             var runner = ProcessFactory.Create(builder.Process(), new Options() { Top = request.Top })[0];
-            var results = runner.Run()["Data"].ToList();
+            var results = runner.Execute()["Data"].ToList();
 
             foreach (var field in fileInformation.Fields) {
                 var foundMatch = false;

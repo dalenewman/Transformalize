@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Extensions;
+using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
@@ -31,22 +32,36 @@ using Transformalize.Main.Providers;
 
 namespace Transformalize.Operations {
     public class EntityKeysToOperations : AbstractOperation {
+        private readonly Process _process;
         private readonly Entity _entity;
         private readonly AbstractConnection _connection;
-        private readonly Field[] _key;
+        private readonly Fields _key;
         private readonly string _operationColumn;
         private readonly IList<Row> _keys = new List<Row>();
+        private readonly Logger _log = LogManager.GetLogger("tfl");
 
-        public EntityKeysToOperations(Entity entity, AbstractConnection connection, string operationColumn = "operation") {
+        public EntityKeysToOperations(Process process, Entity entity, AbstractConnection connection, string operationColumn = "operation") {
+            _process = process;
             _entity = entity;
             _connection = connection;
             _operationColumn = operationColumn;
-            _key = new FieldSqlWriter(_entity.PrimaryKey).Input().ToArray();
-            _keys = new List<Row>(_entity.InputKeys.Select(r => r.Clone()));
+            _key = _entity.PrimaryKey.WithInput();
+            _keys = new List<Row>(_entity.InputKeys);
+        }
+
+        void EntityKeysToOperations_OnFinishedProcessing(IOperation obj) {
+            if (_process.IsFirstRun || !_entity.DetectChanges) {
+                _keys.Clear();
+                _entity.InputKeys.Clear();
+                _log.Debug("Released input key memory.");
+            }
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
-            var fields = new FieldSqlWriter(_entity.Fields).Input().ToArray();
+
+            OnFinishedProcessing += EntityKeysToOperations_OnFinishedProcessing;
+
+            var fields = _entity.Fields.WithInput();
 
             if (_keys.Count > 0 && _keys.Count < _connection.BatchSize) {
                 yield return GetOperationRow(_keys, fields);
@@ -57,7 +72,7 @@ namespace Transformalize.Operations {
             }
         }
 
-        private Row GetOperationRow(IEnumerable<Row> batch, Field[] fields) {
+        private Row GetOperationRow(IEnumerable<Row> batch, Fields fields) {
             var sql = SelectByKeys(batch);
             var row = new Row();
             row[_operationColumn] = new EntityDataExtract(fields, sql, _connection);
@@ -77,5 +92,6 @@ namespace Transformalize.Operations {
 
             return sql;
         }
+
     }
 }

@@ -62,9 +62,9 @@ namespace Transformalize.Configuration {
             set { this[NAME] = value; }
         }
 
-        [ConfigurationProperty(INDEX, IsRequired = false, DefaultValue = 0)]
-        public int Index {
-            get { return (int)this[INDEX]; }
+        [ConfigurationProperty(INDEX, IsRequired = false, DefaultValue = short.MaxValue)]
+        public short Index {
+            get { return (short)this[INDEX]; }
             set { this[INDEX] = value; }
         }
 
