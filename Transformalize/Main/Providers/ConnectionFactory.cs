@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
+using Transformalize.Libs.Ninject;
 using Transformalize.Libs.Ninject.Parameters;
 using Transformalize.Libs.Ninject.Syntax;
 using Transformalize.Libs.NLog;
@@ -25,21 +25,32 @@ namespace Transformalize.Main.Providers {
     public class ConnectionFactory {
 
         private readonly Logger _log = LogManager.GetLogger("tfl");
-        private readonly Process _process;
-        private readonly ConnectionElementCollection _elements;
+        private Dictionary<string, string> _providers = new Dictionary<string, string>();
+        private readonly IKernel _kernal = new StandardKernel(new NinjectBindings());
 
-        public ConnectionFactory(Process process, ConnectionElementCollection elements) {
-            _process = process;
-            _elements = elements;
+        public ConnectionFactory() {
+            _providers.Add("sqlserver", "System.Data.SqlClient.SqlConnection, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
+            _providers.Add("sqlce", "System.Data.SqlServerCe.SqlCeConnection, System.Data.SqlServerCe");
+            _providers.Add("mysql", "MySql.Data.MySqlClient.MySqlConnection, MySql.Data");
+            _providers.Add("postgresql", "Npgsql.NpgsqlConnection, Npgsql");
+            var empties = new[] { "analysisservices", "file", "folder", "internal", "console", "log", "mail", "html", "elasticsearch", "solr" };
+            foreach (var empty in empties) {
+                _providers.Add(empty, empty);
+            }
+        }
+
+        public Dictionary<string, string> Providers {
+            get { return _providers; }
+            set { _providers = value; }
         }
 
         public AbstractConnection Create(ConnectionConfigurationElement element) {
             return GetConnection(element);
         }
 
-        public Dictionary<string, AbstractConnection> Create() {
+        public Dictionary<string, AbstractConnection> Create(ConnectionElementCollection elements) {
             var connections = new Dictionary<string, AbstractConnection>();
-            foreach (ConnectionConfigurationElement element in _elements) {
+            foreach (ConnectionConfigurationElement element in elements) {
                 Validate(element);
                 connections.Add(element.Name, GetConnection(element));
             }
@@ -51,7 +62,6 @@ namespace Transformalize.Main.Providers {
             var results = validator.Validate(element);
             if (!results.IsValid) {
                 foreach (var result in results) {
-                    _process.ValidationResults.AddResult(result);
                     _log.Error(result.Message);
                 }
                 throw new TransformalizeException("Connection validation failed. See error log.");
@@ -60,45 +70,64 @@ namespace Transformalize.Main.Providers {
 
         private AbstractConnection GetConnection(ConnectionConfigurationElement element) {
 
+            AbstractConnection connection;
             Validate(element);
 
             var parameters = new Libs.Ninject.Parameters.IParameter[] {
-                    new ConstructorArgument("process", _process),
-                    new ConstructorArgument("element", element)
-                };
+                new ConstructorArgument("element", element)
+            };
 
-            switch (element.Provider.ToLower()) {
+            var provider = element.Provider.ToLower();
+
+            switch (provider) {
                 case "sqlserver":
-                    return _process.Kernal.Get<SqlServerConnection>(parameters);
+                    connection = _kernal.Get<SqlServerConnection>(parameters);
+                    break;
                 case "mysql":
-                    return _process.Kernal.Get<MySqlConnection>(parameters);
+                    connection = _kernal.Get<MySqlConnection>(parameters);
+                    break;
                 case "postgresql":
-                    return _process.Kernal.Get<PostgreSqlConnection>(parameters);
+                    connection = _kernal.Get<PostgreSqlConnection>(parameters);
+                    break;
                 case "analysisservices":
-                    return _process.Kernal.Get<AnalysisServicesConnection>(parameters);
+                    connection = _kernal.Get<AnalysisServicesConnection>(parameters);
+                    break;
                 case "file":
-                    return _process.Kernal.Get<FileConnection>(parameters);
+                    connection = _kernal.Get<FileConnection>(parameters);
+                    break;
                 case "folder":
-                    return _process.Kernal.Get<FolderConnection>(parameters);
+                    connection = _kernal.Get<FolderConnection>(parameters);
+                    break;
                 case "internal":
-                    return _process.Kernal.Get<InternalConnection>(parameters);
+                    connection = _kernal.Get<InternalConnection>(parameters);
+                    break;
                 case "sqlce":
-                    return _process.Kernal.Get<SqlCe4Connection>(parameters);
+                    connection = _kernal.Get<SqlCe4Connection>(parameters);
+                    break;
                 case "console":
-                    return _process.Kernal.Get<ConsoleConnection>(parameters);
+                    connection = _kernal.Get<ConsoleConnection>(parameters);
+                    break;
                 case "log":
-                    return _process.Kernal.Get<LogConnection>(parameters);
+                    connection = _kernal.Get<LogConnection>(parameters);
+                    break;
                 case "mail":
-                    return _process.Kernal.Get<MailConnection>(parameters);
+                    connection = _kernal.Get<MailConnection>(parameters);
+                    break;
                 case "elasticsearch":
-                    return _process.Kernal.Get<ElasticSearchConnection>(parameters);
+                    connection = _kernal.Get<ElasticSearchConnection>(parameters);
+                    break;
                 case "html":
-                    return _process.Kernal.Get<HtmlConnection>(parameters);
+                    connection = _kernal.Get<HtmlConnection>(parameters);
+                    break;
                 case "solr":
-                    return _process.Kernal.Get<SolrConnection>(parameters);
+                    connection = _kernal.Get<SolrConnection>(parameters);
+                    break;
                 default:
                     throw new TransformalizeException("The provider '{0}' is not yet implemented.", element.Provider);
             }
+            connection.TypeAndAssemblyName = Providers[provider];
+            return connection;
         }
+
     }
 }

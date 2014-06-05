@@ -17,7 +17,7 @@ namespace Transformalize.Main.Providers.Internal {
             return 1;
         }
 
-        public override void WriteEndVersion(AbstractConnection input, Entity entity) {
+        public override void WriteEndVersion(AbstractConnection input, Entity entity, bool force = false) {
             //nope
         }
 
@@ -49,10 +49,8 @@ namespace Transformalize.Main.Providers.Internal {
             return new EntitySchema();
         }
 
-        public InternalConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
+        public InternalConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
-
-            TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
             Type = ProviderType.Internal;
         }
     }

@@ -25,7 +25,6 @@ using System.Text;
 using Transformalize.Extensions;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Dapper;
-using Transformalize.Libs.Rhino.Etl.Infrastructure;
 
 namespace Transformalize.Main.Providers.SqlServer {
     public class SqlServerViewWriter : IViewWriter {
@@ -38,7 +37,7 @@ namespace Transformalize.Main.Providers.SqlServer {
                 var sql = DropSql(process);
                 _log.Debug(sql);
                 cn.Execute(sql);
-                _log.Debug("Dropped Output {0}.", process.Star);
+                _log.Debug("Dropped Output {0}.", process.Name);
             }
         }
 

@@ -1,5 +1,3 @@
-using Transformalize.Libs.Rhino.Etl.Operations;
-
 namespace Transformalize.Main.Providers {
 
     public abstract class AbstractConnectionDependencies {

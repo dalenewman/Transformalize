@@ -14,10 +14,10 @@ namespace Transformalize.Configuration
         }
 
         public ProcessElementCollection Create() {
-            return Reader().Read();
+            return CreateReader().Read();
         }
 
-        private IReader<ProcessElementCollection> Reader() {
+        private IReader<ProcessElementCollection> CreateReader() {
             if (Path.HasExtension(_name)) {
                 return _name.StartsWith("http", IC) ?
                     new ProcessXmlConfigurationReader(_name, new ContentsWebReader()) :

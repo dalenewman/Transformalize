@@ -2,13 +2,7 @@ using System.Globalization;
 
 namespace Transformalize.Main.Providers.File {
     public class FileField {
-        private string _name;
-
-        public string Name {
-            get { return _name; }
-            set { _name = Common.CleanIdentifier(value); }
-        }
-
+        public string Name { get; set; }
         public char Quote { get; set; }
         public string Type { get; set; }
         public string Length { get; set; }

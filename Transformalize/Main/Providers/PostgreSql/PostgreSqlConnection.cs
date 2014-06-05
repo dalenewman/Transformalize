@@ -16,10 +16,8 @@ namespace Transformalize.Main.Providers.PostgreSql {
         public override string TrustedProperty { get { return string.Empty; } }
         public override string PersistSecurityInfoProperty { get { return string.Empty; } }
 
-        public PostgreSqlConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
+        public PostgreSqlConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
-
-            TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
             Type = ProviderType.PostgreSql;
             L = "\"";
             R = "\"";
@@ -28,7 +26,7 @@ namespace Transformalize.Main.Providers.PostgreSql {
             Views = true;
             Schemas = true;
             DefaultSchema = "public";
-            }
+        }
 
         public override string KeyAllQuery(Entity entity) {
             const string sql = @"SELECT {0} FROM ""{1}"";";
@@ -39,7 +37,7 @@ namespace Transformalize.Main.Providers.PostgreSql {
             );
         }
 
-        public override void WriteEndVersion(AbstractConnection input, Entity entity) {
+        public override void WriteEndVersion(AbstractConnection input, Entity entity, bool force = false) {
             //nope  
         }
 

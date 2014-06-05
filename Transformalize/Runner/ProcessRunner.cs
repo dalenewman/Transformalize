@@ -23,6 +23,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Transformalize.Libs.EnterpriseLibrary.Common.Configuration;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Pipelines;
@@ -33,15 +34,13 @@ using Process = Transformalize.Main.Process;
 
 namespace Transformalize.Runner {
 
-    public class ProcessRunner : IProcessRunner
-    {
+    public class ProcessRunner : IProcessRunner {
 
         private readonly Logger _log = LogManager.GetLogger("tfl");
 
         public IDictionary<string, IEnumerable<Row>> Run(Process process) {
 
-            GlobalDiagnosticsContext.Set("process", process.Name);
-            GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
+            ResetLog(process);
 
             var results = new Dictionary<string, IEnumerable<Row>>();
 
@@ -51,12 +50,15 @@ namespace Transformalize.Runner {
             if (!process.IsReady())
                 return results;
 
-            process.PerformActions(a=>a.Before);
+            process.PerformActions(a => a.Before);
 
             ProcessDeletes(process);
             ProcessEntities(process);
-            ProcessMaster(process);
-            ProcessTransforms(process);
+
+            if (process.StarEnabled && !process.OutputConnection.IsInternal()) {
+                ProcessMaster(process);
+                ProcessTransforms(process);
+            }
 
             new TemplateManager(process).Manage();
 
@@ -68,19 +70,26 @@ namespace Transformalize.Runner {
             return process.Entities.ToDictionary(e => e.Alias, e => e.Rows);
         }
 
+        private static void ResetLog(Process process) {
+            GlobalDiagnosticsContext.Set("process", process.Name);
+            GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
+        }
+
         private static void ProcessDeletes(Process process) {
             foreach (var entityDeleteProcess in process.Entities.Where(e => e.Delete).Select(entity => new EntityDeleteProcess(process, entity) {
                 PipelineExecuter = entity.PipelineThreading == PipelineThreading.SingleThreaded ? (AbstractPipelineExecuter)new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter()
             })) {
                 entityDeleteProcess.Execute();
             }
+
+            ResetLog(process);
         }
 
         private static void ProcessEntities(Process process) {
 
             process.IsFirstRun = process.MasterEntity == null || !process.OutputConnection.RecordsExist(process.MasterEntity);
 
-            foreach (var entityKeysProcess in process.Entities.Where(entity => entity.PrimaryKey.Any(kv=>kv.Input)).Select(entity => new EntityKeysProcess(process, entity) {
+            foreach (var entityKeysProcess in process.Entities.Where(entity => entity.PrimaryKey.Any(kv => kv.Input)).Select(entity => new EntityKeysProcess(process, entity) {
                 PipelineExecuter = entity.PipelineThreading == PipelineThreading.SingleThreaded ? (AbstractPipelineExecuter)new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter()
             })) {
                 entityKeysProcess.Execute();
@@ -91,26 +100,28 @@ namespace Transformalize.Runner {
             })) {
                 entityProcess.Execute();
             }
+
+            ResetLog(process);
         }
 
         private static void ProcessMaster(Process process) {
-            if (process.OutputConnection.Type == ProviderType.Internal)
-                return;
             var updateMasterProcess = new UpdateMasterProcess(ref process) {
                 PipelineExecuter = process.PipelineThreading == PipelineThreading.SingleThreaded ? (AbstractPipelineExecuter)new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter()
             };
             updateMasterProcess.Execute();
+
+            ResetLog(process);
         }
 
-        private static void ProcessTransforms(Process process) {
+        private void ProcessTransforms(Process process) {
             if (process.CalculatedFields.Count <= 0)
-                return;
-            if (process.OutputConnection.Type == ProviderType.Internal)
                 return;
             var transformProcess = new TransformProcess(process) {
                 PipelineExecuter = process.PipelineThreading == PipelineThreading.SingleThreaded ? (AbstractPipelineExecuter)new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter()
             };
             transformProcess.Execute();
+
+            ResetLog(process);
         }
 
         public void Dispose() {

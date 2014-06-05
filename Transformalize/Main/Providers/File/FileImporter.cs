@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -8,23 +9,43 @@ using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main.Providers.File {
     public class FileImporter {
+
         private readonly Logger _log = LogManager.GetLogger("tfl");
 
-        public FileImportResult Import(FileInfo fileInfo, FileInspectionRequest request, ConnectionConfigurationElement output) {
-
+        public void ImportScaler(FileInfo fileInfo, FileInspectionRequest request, ConnectionConfigurationElement output, string processName = null, string entityName = null) {
             var fileInformation = FileInformationFactory.Create(fileInfo, request);
+            var process = BuildProcess(fileInformation, request, output, processName, entityName);
+            ProcessFactory.Create(process, new Options { Mode = "init" })[0].ExecuteScaler();
+            ProcessFactory.Create(process)[0].ExecuteScaler();
+        }
 
-            var entityName = fileInformation.Identifier("TflAuto");
+        public FileImportResult Import(FileInfo fileInfo, FileInspectionRequest request, ConnectionConfigurationElement output, string processName = null, string entityName = null) {
+            var fileInformation = FileInformationFactory.Create(fileInfo, request);
+            var process = BuildProcess(fileInformation, request, output, processName, entityName);
+            return new FileImportResult {
+                Information = fileInformation,
+                Rows = ProcessFactory.Create(process)[0].ExecuteSingle()
+            };
+        }
+
+        private ProcessConfigurationElement BuildProcess(FileInformation fileInformation, FileInspectionRequest request, ConnectionConfigurationElement output, string processName = null, string entityName = null) {
+
+            if (String.IsNullOrEmpty(processName)) {
+                processName = Common.CleanIdentifier(Path.GetFileNameWithoutExtension(fileInformation.FileInfo.Name));
+            }
+
+            if (String.IsNullOrEmpty(entityName)) {
+                entityName = "TflAuto" + processName.GetHashCode().ToString(CultureInfo.InvariantCulture).Replace("-", "0").PadRight(13, '0');
+            }
 
             var builder = new ProcessBuilder(entityName)
-                .Star(fileInformation.ProcessName)
+                .Star(processName)
                 .Connection("input")
                     .Provider("file")
                     .File(fileInformation.FileInfo.FullName)
-                    .Delimiter(fileInformation.Delimiter.ToString(CultureInfo.InvariantCulture))
+                    .Delimiter(fileInformation.Delimiter == default(char) ? "|" : fileInformation.Delimiter.ToString(CultureInfo.InvariantCulture))
                     .Start(fileInformation.FirstRowIsHeader ? 2 : 1)
-                .Connection("output")
-                    .Element(output)
+                .Connection(output)
                 .Entity(entityName)
                     .PrependProcessNameToOutputName(false)
                     .DetectChanges(false);
@@ -45,14 +66,9 @@ namespace Transformalize.Main.Providers.File {
                     .QuotedWith(fileField.QuoteString());
             }
 
-            _log.Debug(builder.Process().Serialize().Replace(Environment.NewLine, string.Empty));
-
-            ProcessFactory.Create(builder.Process(), new Options { Mode = "init" })[0].Execute();
-            return new FileImportResult {
-                Fields = fields,
-                FileInformation = fileInformation,
-                Rows = ProcessFactory.Create(builder.Process())[0].Execute()[entityName]
-            };
+            var process = builder.Process();
+            _log.Debug(process.Serialize().Replace(Environment.NewLine, string.Empty));
+            return process;
         }
 
     }

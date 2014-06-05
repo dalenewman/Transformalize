@@ -39,7 +39,7 @@ namespace Transformalize.Main.Providers.AnalysisServices {
             return 1;
         }
 
-        public override void WriteEndVersion(AbstractConnection input, Entity entity) {
+        public override void WriteEndVersion(AbstractConnection input, Entity entity, bool force = false) {
             // do nothing
         }
 
@@ -71,9 +71,8 @@ namespace Transformalize.Main.Providers.AnalysisServices {
             return new EntitySchema();
         }
 
-        public AnalysisServicesConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
+        public AnalysisServicesConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
-            TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
             Type = ProviderType.AnalysisServices;
         }
     }

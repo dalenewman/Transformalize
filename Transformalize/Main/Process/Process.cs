@@ -23,7 +23,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.Ninject.Syntax;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Ninject;
@@ -38,7 +37,6 @@ namespace Transformalize.Main {
 
     public class Process {
 
-        private ValidationResults _validationResults = new ValidationResults();
         private readonly Logger _log = LogManager.GetLogger("tfl");
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private List<IOperation> _transformOperations = new List<IOperation>();
@@ -49,7 +47,7 @@ namespace Transformalize.Main {
         // fields (for now)
         public Fields CalculatedFields = new Fields();
         public List<Entity> Entities = new List<Entity>();
-        public IKernel Kernal = new StandardKernel();
+        public IKernel Kernal = new StandardKernel(new NinjectBindings());
         public Dictionary<string, Map> MapEndsWith = new Dictionary<string, Map>();
         public Dictionary<string, Map> MapEquals = new Dictionary<string, Map>();
         public Dictionary<string, Map> MapStartsWith = new Dictionary<string, Map>();
@@ -64,13 +62,18 @@ namespace Transformalize.Main {
         public Dictionary<string, Template> Templates = new Dictionary<string, Template>();
         public AbstractConnection OutputConnection;
         private PipelineThreading _pipelineThreading = PipelineThreading.MultiThreaded;
-        public long Anything { get; set; }
+        private string _star = Common.DefaultValue;
 
         // properties
-        public string Star { get; set; }
-        public string Bcp { get; set; }
         public string TimeZone { get; set; }
         public bool IsFirstRun { get; set; }
+        public long Anything { get; set; }
+        public bool StarEnabled { get; set; }
+
+        public string Star {
+            get { return _star.Equals(Common.DefaultValue) ? Name + "Star" : _star; }
+            set { _star = value; }
+        }
 
         public Dictionary<string, AbstractConnection> Connections {
             get { return _connections; }
@@ -85,11 +88,6 @@ namespace Transformalize.Main {
         public bool Enabled {
             get { return _enabled; }
             set { _enabled = value; }
-        }
-
-        public ValidationResults ValidationResults {
-            get { return _validationResults; }
-            set { _validationResults = value; }
         }
 
         public List<IOperation> TransformOperations {
@@ -107,7 +105,6 @@ namespace Transformalize.Main {
         //constructor
         public Process(string name = "") {
             Name = name;
-            Kernal.Load<NinjectBindings>();
         }
 
         //methods
@@ -149,6 +146,11 @@ namespace Transformalize.Main {
             }
         }
 
+        public IEnumerable<Row> ExecuteSingle() {
+            using (var runner = GetRunner()) {
+                return runner.Run(this)[Entities[0].Alias];
+            }
+        }
         public Fields OutputFields() {
             var fields = new Fields();
             foreach (var entity in Entities) {

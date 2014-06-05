@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Transformalize.Configuration;
+using Transformalize.Libs.Ninject;
 using Transformalize.Libs.Ninject.Syntax;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Libs.SolrNet;
@@ -10,10 +11,11 @@ using Transformalize.Operations.Transform;
 namespace Transformalize.Main.Providers.Solr {
 
     public class SolrConnection : AbstractConnection {
+
         private const string CORE_ID = "CoreId";
-        private readonly Process _process;
         private readonly string _coreUrl;
         private readonly Type _type = typeof(Dictionary<string, object>);
+        private IKernel _kernal = new StandardKernel();
 
         public override string UserProperty { get { return string.Empty; } }
         public override string PasswordProperty { get { return string.Empty; } }
@@ -24,10 +26,8 @@ namespace Transformalize.Main.Providers.Solr {
         public override string PersistSecurityInfoProperty { get { return string.Empty; } }
         public string CoreUrl { get { return _coreUrl; } }
 
-        public SolrConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
+        public SolrConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
-            _process = process;
-            TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
             Type = ProviderType.Solr;
             IsDatabase = true;
 
@@ -38,13 +38,13 @@ namespace Transformalize.Main.Providers.Solr {
             builder.Path = element.Path;
             _coreUrl = builder.ToString();
 
-            process.Kernal.Bind<ISolrConnection>().ToConstant(new Libs.SolrNet.Impl.SolrConnection(_coreUrl))
+            _kernal.Bind<ISolrConnection>().ToConstant(new Libs.SolrNet.Impl.SolrConnection(_coreUrl))
               .WithMetadata(CORE_ID, _coreUrl);
 
             var iSolrQueryExecuter = typeof(ISolrQueryExecuter<>).MakeGenericType(_type);
             var solrQueryExecuter = typeof(SolrQueryExecuter<>).MakeGenericType(_type);
 
-            process.Kernal.Bind(iSolrQueryExecuter).To(solrQueryExecuter)
+            _kernal.Bind(iSolrQueryExecuter).To(solrQueryExecuter)
                 .Named(_coreUrl + solrQueryExecuter)
                 .WithMetadata(CORE_ID, _coreUrl)
                 .WithConstructorArgument("connection", ctx => ctx.Kernel.Get<ISolrConnection>(bindingMetaData => bindingMetaData.Has(CORE_ID) && bindingMetaData.Get<string>(CORE_ID).Equals(_coreUrl)));
@@ -53,13 +53,13 @@ namespace Transformalize.Main.Providers.Solr {
             var solrBasicReadOnlyOperations = typeof(ISolrBasicReadOnlyOperations<>).MakeGenericType(_type);
             var solrBasicServer = typeof(SolrBasicServer<>).MakeGenericType(_type);
 
-            process.Kernal.Bind(solrBasicOperations).To(solrBasicServer)
+            _kernal.Bind(solrBasicOperations).To(solrBasicServer)
                 .Named(_coreUrl + solrBasicServer)
                 .WithMetadata(CORE_ID, _coreUrl)
                 .WithConstructorArgument("connection", ctx => ctx.Kernel.Get<ISolrConnection>(bindingMetaData => bindingMetaData.Has(CORE_ID) && bindingMetaData.Get<string>(CORE_ID).Equals(_coreUrl)))
                 .WithConstructorArgument("queryExecuter", ctx => ctx.Kernel.Get(iSolrQueryExecuter, bindingMetaData => bindingMetaData.Has(CORE_ID) && bindingMetaData.Get<string>(CORE_ID).Equals(_coreUrl)));
 
-            process.Kernal.Bind(solrBasicReadOnlyOperations).To(solrBasicServer)
+            _kernal.Bind(solrBasicReadOnlyOperations).To(solrBasicServer)
                 .Named(_coreUrl + solrBasicServer)
                 .WithMetadata(CORE_ID, _coreUrl)
                 .WithConstructorArgument("connection", ctx => ctx.Kernel.Get<ISolrConnection>(bindingMetaData => bindingMetaData.Has(CORE_ID) && bindingMetaData.Get<string>(CORE_ID).Equals(_coreUrl)))
@@ -69,11 +69,11 @@ namespace Transformalize.Main.Providers.Solr {
             var solrServer = typeof(SolrServer<>).MakeGenericType(_type);
             var solrReadOnlyOperations = typeof(ISolrReadOnlyOperations<>).MakeGenericType(_type);
 
-            process.Kernal.Bind(solrOperations).To(solrServer)
+            _kernal.Bind(solrOperations).To(solrServer)
                 .Named(_coreUrl)
                 .WithMetadata(CORE_ID, _coreUrl)
                 .WithConstructorArgument("basicServer", ctx => ctx.Kernel.Get(solrBasicOperations, bindingMetaData => bindingMetaData.Has(CORE_ID) && bindingMetaData.Get<string>(CORE_ID).Equals(_coreUrl)));
-            process.Kernal.Bind(solrReadOnlyOperations).To(solrServer)
+            _kernal.Bind(solrReadOnlyOperations).To(solrServer)
                 .Named(_coreUrl)
                 .WithMetadata(CORE_ID, _coreUrl)
                 .WithConstructorArgument("basicServer", ctx => ctx.Kernel.Get(solrBasicReadOnlyOperations, bindingMetaData => bindingMetaData.Has(CORE_ID) && bindingMetaData.Get<string>(CORE_ID).Equals(_coreUrl)));
@@ -86,10 +86,11 @@ namespace Transformalize.Main.Providers.Solr {
             return GetMaxTflBatchId(processName) + 1;
         }
 
-        public override void WriteEndVersion(AbstractConnection input, Entity entity) {
-            if (entity.Inserts + entity.Updates > 0 || _process.IsFirstRun) {
+        public override void WriteEndVersion(AbstractConnection input, Entity entity, bool force = false) {
 
-                var solr = _process.Kernal.Get<ISolrOperations<Dictionary<string, object>>>(_coreUrl);
+            if (entity.Updates + entity.Inserts > 0 || force) {
+
+                var solr = _kernal.Get<ISolrOperations<Dictionary<string, object>>>(_coreUrl);
                 var versionType = entity.Version == null ? "string" : entity.Version.SimpleType;
                 var end = versionType.Equals("byte[]") || versionType.Equals("rowversion") ? Common.BytesToHexString((byte[])entity.End) : new DefaultFactory().Convert(entity.End, versionType).ToString();
 

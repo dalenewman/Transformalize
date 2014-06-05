@@ -61,7 +61,7 @@ namespace Transformalize.Processes {
                 throw new TransformalizeException("Initialization Process failed for {0}. See error log.", _process.Name);
             }
 
-            if (_process.Entities.Count > 0) {
+            if (_process.StarEnabled && _process.Entities.Count > 0) {
                 _process.OutputConnection.ViewWriter.Create(_process);
             }
             base.PostProcessing();

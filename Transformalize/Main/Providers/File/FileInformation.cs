@@ -6,41 +6,45 @@ using System.Linq;
 namespace Transformalize.Main.Providers.File {
 
     public class FileInformation {
+        private string _processName;
+        private string _entityName;
 
         private bool _firstRowIsHeader = true;
-        private FileInfo _fileInfo;
         private List<FileField> _fields = new List<FileField>();
 
         //properties
-        public FileInfo FileInfo {
-            get { return _fileInfo; }
-            set { _fileInfo = value; }
-        }
+        public FileInfo FileInfo { get; private set; }
 
         public List<FileField> Fields {
             get { return _fields; }
             set { _fields = value; }
         }
 
-        public string ProcessName { get { return Common.CleanIdentifier(Path.GetFileNameWithoutExtension(_fileInfo.Name)); } }
-        public char Delimiter { get; set;}
+        public string ProcessName {
+            get { return _processName ?? (_processName = Common.CleanIdentifier(Path.GetFileNameWithoutExtension(FileInfo.Name))); }
+        }
+
+        public string EntityName {
+            get { return _entityName ?? (_entityName = "TflAuto" + ProcessName.GetHashCode().ToString(CultureInfo.InvariantCulture).Replace("-", "0").PadLeft(13, '0')); }
+        }
+
+        public char Delimiter { get; set; }
+
         public bool FirstRowIsHeader {
             get { return _firstRowIsHeader; }
             set { _firstRowIsHeader = value; }
         }
 
         //constructors
-        public FileInformation(FileInfo fileInfo) {
-            _fileInfo = fileInfo;
+        public FileInformation(FileInfo fileInfo, string processName = null, string entityName = null) {
+            _processName = processName;
+            _entityName = entityName;
+            FileInfo = fileInfo;
         }
 
         //methods
         public int ColumnCount() {
             return Fields.Count();
-        }
-
-        public string Identifier(string prefix = "") {
-            return prefix + ProcessName.GetHashCode().ToString(CultureInfo.InvariantCulture).Replace("-", "0").PadRight(13, '0');
         }
 
     }

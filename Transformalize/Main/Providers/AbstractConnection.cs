@@ -27,14 +27,12 @@ using System.IO;
 using Transformalize.Configuration;
 using Transformalize.Libs.Dapper;
 using Transformalize.Libs.FileHelpers.Enums;
-using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Operations;
 
 namespace Transformalize.Main.Providers {
 
     public abstract class AbstractConnection {
 
-        private readonly Logger _log = LogManager.GetLogger("tfl");
         private Uri _uri;
         private string _l = string.Empty;
         private string _r = string.Empty;
@@ -45,7 +43,7 @@ namespace Transformalize.Main.Providers {
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
         public string Name { get; set; }
-        protected string TypeAndAssemblyName { get; set; }
+        public string TypeAndAssemblyName { get; set; }
         public int BatchSize { get; set; }
         public string Process { get; set; }
         public string Path { get; set; }
@@ -99,8 +97,7 @@ namespace Transformalize.Main.Providers {
         public bool EnableSsl { get; set; }
         public bool TableSample { get; set; }
 
-        public string DefaultSchema
-        {
+        public string DefaultSchema {
             get { return _defaultSchema; }
             set { _defaultSchema = value; }
         }
@@ -345,7 +342,7 @@ namespace Transformalize.Main.Providers {
         public virtual string KeyQuery(Entity entity) { throw new NotImplementedException(); }
         public virtual string KeyAllQuery(Entity entity) { throw new NotImplementedException(); }
 
-        public abstract void WriteEndVersion(AbstractConnection input, Entity entity);
+        public abstract void WriteEndVersion(AbstractConnection input, Entity entity, bool force = false);
 
         public string Enclose(string field) {
             return L + field + R;
@@ -371,5 +368,8 @@ namespace Transformalize.Main.Providers {
 
         public abstract EntitySchema GetEntitySchema(string name, string schema = "", bool isMaster = false);
 
+        public bool IsInternal() {
+            return Type.Equals(ProviderType.Internal);
+        }
     }
 }

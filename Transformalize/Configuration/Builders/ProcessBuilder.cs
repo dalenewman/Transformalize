@@ -7,7 +7,7 @@ namespace Transformalize.Configuration.Builders {
         private readonly ProcessConfigurationElement _process;
 
         public ProcessBuilder(string name) {
-            _process = new ProcessConfigurationElement() { Name = name, Star = name + "Star" };
+            _process = new ProcessConfigurationElement() { Name = name };
             _process.SearchTypes.Add(
                 new SearchTypeConfigurationElement {
                     Name = "none",
@@ -31,6 +31,11 @@ namespace Transformalize.Configuration.Builders {
 
         public ConnectionBuilder Connection(string name) {
             var connection = new ConnectionConfigurationElement() { Name = name };
+            _process.Connections.Add(connection);
+            return new ConnectionBuilder(this, connection);
+        }
+
+        public ConnectionBuilder Connection(ConnectionConfigurationElement connection) {
             _process.Connections.Add(connection);
             return new ConnectionBuilder(this, connection);
         }
@@ -120,6 +125,11 @@ namespace Transformalize.Configuration.Builders {
 
         public ProcessBuilder Star(string star) {
             _process.Star = star;
+            return this;
+        }
+
+        public ProcessBuilder StarEnabled(bool enabled = true) {
+            _process.StarEnabled = enabled;
             return this;
         }
 

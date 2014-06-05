@@ -30,6 +30,7 @@ namespace Transformalize.Configuration {
         private const string TEMPLATE_CONTENT_TYPE = "template-content-type";
         private const string NAME = "name";
         private const string STAR = "star";
+        private const string STAR_ENABLED = "star-enabled";
         private const string ENABLED = "enabled";
         private const string INHERIT = "inherit";
         private const string TIMEZONE = "time-zone";
@@ -62,7 +63,13 @@ namespace Transformalize.Configuration {
             set { this[ENABLED] = value; }
         }
 
-        [ConfigurationProperty(STAR, IsRequired = false, DefaultValue = "")]
+        [ConfigurationProperty(STAR_ENABLED, IsRequired = false, DefaultValue = true)]
+        public bool StarEnabled {
+            get { return (bool)this[STAR_ENABLED]; }
+            set { this[STAR_ENABLED] = value; }
+        }
+
+        [ConfigurationProperty(STAR, IsRequired = false, DefaultValue = Common.DefaultValue)]
         public string Star {
             get { return this[STAR] as string; }
             set { this[STAR] = value; }
@@ -146,6 +153,7 @@ namespace Transformalize.Configuration {
             //properties
             Name = child.Name;
             Star = child.Star;
+            StarEnabled = child.StarEnabled;
             TimeZone = child.TimeZone;
             Enabled = child.Enabled;
             Scripts.Path = child.Scripts.Path;

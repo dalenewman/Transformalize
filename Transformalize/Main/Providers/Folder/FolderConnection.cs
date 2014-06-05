@@ -18,7 +18,7 @@ namespace Transformalize.Main.Providers.Folder {
             return 1;
         }
 
-        public override void WriteEndVersion(AbstractConnection input, Entity entity) {
+        public override void WriteEndVersion(AbstractConnection input, Entity entity, bool force = false) {
             //nope  
         }
 
@@ -60,10 +60,8 @@ namespace Transformalize.Main.Providers.Folder {
             return entitySchema;
         }
 
-        public FolderConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
+        public FolderConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
-
-            TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
             Type = ProviderType.Folder;
         }
 

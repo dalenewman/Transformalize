@@ -17,11 +17,12 @@ namespace Transformalize.Main.Providers.File {
 
         public List<FileField> Inspect(FileInformation fileInformation, FileInspectionRequest request) {
 
-            var builder = new ProcessBuilder("TypeCheck" + fileInformation.Identifier())
+            var builder = new ProcessBuilder(fileInformation.ProcessName)
+                .StarEnabled(false)
                 .Connection("input")
                     .Provider("file")
                     .File(fileInformation.FileInfo.FullName)
-                    .Delimiter(fileInformation.Delimiter == default(char) ? string.Empty : fileInformation.Delimiter.ToString(CultureInfo.InvariantCulture))
+                    .Delimiter(fileInformation.Delimiter == default(char) ? "|" : fileInformation.Delimiter.ToString(CultureInfo.InvariantCulture))
                     .Start(fileInformation.FirstRowIsHeader ? 2 : 1)
                 .Connection("output")
                     .Provider("internal")
@@ -58,7 +59,12 @@ namespace Transformalize.Main.Providers.File {
             _log.Debug(builder.Process().Serialize().Replace(Environment.NewLine, string.Empty));
 
             var runner = ProcessFactory.Create(builder.Process(), new Options() { Top = request.Top })[0];
-            var results = runner.Execute()["Data"].ToList();
+            var results = runner.ExecuteSingle().ToList();
+
+            if (results.Count <= 0) {
+                _log.Warn("Nothing imported from in {0}!", fileInformation.FileInfo.Name);
+                return fileInformation.Fields;
+            }
 
             foreach (var field in fileInformation.Fields) {
                 var foundMatch = false;
@@ -75,7 +81,6 @@ namespace Transformalize.Main.Providers.File {
                     field.Length = length.ToString(CultureInfo.InvariantCulture);
                 }
             }
-
             return fileInformation.Fields;
         }
 

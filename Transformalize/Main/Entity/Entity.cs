@@ -68,7 +68,6 @@ namespace Transformalize.Main {
         public int Top { get; set; }
         public string SqlOverride { get; set; }
         public string SqlKeysOverride { get; set; }
-        public Dictionary<string, IEnumerable<Row>> InternalOutput { get; set; }
         public List<NamedConnection> Output { get; set; }
         public List<NamedConnection> Input { get; set; }
         public bool DetectChanges { get; set; }
@@ -85,7 +84,6 @@ namespace Transformalize.Main {
             InputKeys = new List<Row>();
             Prefix = string.Empty;
             CalculatedFields = new Fields();
-            InternalOutput = new Dictionary<string, IEnumerable<Row>>();
             Output = new List<NamedConnection>();
             Input = new List<NamedConnection>();
             DetectChanges = true;

@@ -12,7 +12,6 @@ namespace Transformalize.Operations {
     public class SqlOverrideOperation : InputCommandOperation {
 
         private readonly Entity _entity;
-        private readonly Dictionary<string, Func<IDataReader, int, object, object>> _map = Common.GetReaderMap();
         private readonly NameAlias[] _fields;
 
         public SqlOverrideOperation(Entity entity, AbstractConnection connection)

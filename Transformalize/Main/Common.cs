@@ -43,6 +43,8 @@ namespace Transformalize.Main {
         private static readonly char[] Slash = { '\\' };
         private const string CLEAN_PATTERN = @"[^\w]";
 
+        public const string DefaultValue = "[default]";
+
         public static string GuardTimeZone(string timeZone, string defaultTimeZone) {
             var result = timeZone;
             if (timeZone == string.Empty) {
@@ -78,6 +80,7 @@ namespace Transformalize.Main {
             {"string", (x => x)},
             {"xml", (x => x)},
             {"int16", (x => Convert.ToInt16(x))},
+            {"short", (x => Convert.ToInt16(x))},
             {"int32", (x => Convert.ToInt32(x))},
             {"int", (x => Convert.ToInt32(x))},
             {"int64", (x => Convert.ToInt64(x))},
@@ -88,35 +91,13 @@ namespace Transformalize.Main {
             {"datetime", (x => Convert.ToDateTime(x))},
             {"boolean", (x => Convert.ToBoolean(x))},
             {"single", (x => Convert.ToSingle(x))},
+            {"real", (x => Convert.ToSingle(x))},
+            {"float", (x => Convert.ToSingle(x))},
             {"guid", (x => Guid.Parse(x))},
             {"byte", (x => Convert.ToByte(x))},
             {"byte[]", (HexStringToByteArray)},
             {"rowversion", (HexStringToByteArray)}
         };
-
-        public static Dictionary<string, Func<IDataReader, int, object, object>> GetReaderMap() {
-            return new Dictionary<string, Func<IDataReader, int, object, object>> {
-                {"string", ((x, y, z) => x.IsDBNull(y) ? z : x.GetString(y))},
-                {"xml", ((x, y, z) => x.IsDBNull(y) ? z : x.GetValue(y))},
-                {"int16", ((x, y, z) => x.IsDBNull(y) ? z : x.GetInt16(y))},
-                {"int32", ((x, y, z) => x.IsDBNull(y) ? z : x.GetInt32(y))},
-                {"int", ((x, y, z) => x.IsDBNull(y) ? z : x.GetInt32(y))},
-                {"int64", ((x, y, z) => x.IsDBNull(y) ? z : x.GetInt64(y))},
-                {"long", ((x, y, z) => x.IsDBNull(y) ? z : x.GetInt64(y))},
-                {"double", ((x, y, z) => x.IsDBNull(y) ? z : x.GetDouble(y))},
-                {"decimal", ((x, y, z) => x.IsDBNull(y) ? z : x.GetDecimal(y))},
-                {"datetime", ((x, y, z) => x.IsDBNull(y) ? z : x.GetDateTime(y))},
-                {"boolean", ((x, y, z) => !x.IsDBNull(y) && x.GetBoolean(y))},
-                {"single", ((x, y, z) => x.IsDBNull(y) ? z : x.GetValue(y))},
-                {"guid", ((x, y, z) => x.IsDBNull(y) ? z : x.GetGuid(y))},
-                {"byte", ((x, y, z) => x.IsDBNull(y) ? z : x.GetByte(y))},
-                {"byte[]", ((x, y, z) => x.IsDBNull(y) ? z : x.GetValue(y))},
-                {"rowversion", ((x, y, z) => x.IsDBNull(y) ? z : x.GetValue(y))},
-                {string.Empty, ((x, y, z) => x.IsDBNull(y) ? z : x.GetValue(y))}
-            };
-        }
-
-
 
         public static Dictionary<ComparisonOperator, Func<object, object, bool>> CompareMap = new Dictionary<ComparisonOperator, Func<object, object, bool>>() {
             {ComparisonOperator.Equal, ((x, y) => x.Equals(y))},
@@ -135,15 +116,18 @@ namespace Transformalize.Main {
                 {"int16", (x => x.ToString())},
                 {"int", (x => x.ToString())},
                 {"int32", (x => x.ToString())},
+                {"short", (x => x.ToString())},
                 {"int64", (x => x.ToString())},
-                {"long", (x => x.ToString())},
-                {"double", (x => x.ToString())},
-                {"decimal", (x => x.ToString())},
+                {"long", (x => x.ToString() + "L")},
+                {"double", (x => x.ToString() + "D")},
+                {"decimal", (x => x.ToString() + "M")},
                 {"char", (x => string.Format("'{0}'",x))},
                 {"datetime", (x => string.Format("Convert.ToDateTime(\"{0}\")",x))},
                 {"boolean", (x => x.ToString().ToLower())},
                 {"bool", (x => x.ToString().ToLower())},
                 {"single", (x => x.ToString())},
+                {"float", (x => x.ToString()+"F")},
+                {"real", (x => x.ToString())},
                 {"byte", (x => x.ToString())},
                 {"byte[]", (x => string.Format("Common.HexStringToByteArray(\"{0}\")",x))},
                 {"rowversion", (x => string.Format("Common.HexStringToByteArray(\"{0}\")",x))}
@@ -156,6 +140,7 @@ namespace Transformalize.Main {
                 {"xml", (x => x)},
                 {"guid", (x => Guid.Parse(x.ToString()))},
                 {"int16", (x => Convert.ToInt16(x))},
+                {"short", (x => Convert.ToInt16(x))},
                 {"int", (x => Convert.ToInt32(x))},
                 {"int32", (x => Convert.ToInt32(x))},
                 {"int64", (x => Convert.ToInt64(x))},
@@ -165,7 +150,9 @@ namespace Transformalize.Main {
                 {"char", (x => Convert.ToChar(x))},
                 {"datetime", (x => Convert.ToDateTime(x))},
                 {"boolean", (x => Convert.ToBoolean(x))},
+                {"float", (x => Convert.ToSingle(x))},
                 {"bool", (x => Convert.ToBoolean(x))},
+                {"real", (x => Convert.ToSingle(x))},
                 {"single", (x => Convert.ToSingle(x))},
                 {"byte", (x => Convert.ToByte(x))},
                 {"byte[]", (x => HexStringToByteArray(x.ToString()))},
@@ -234,6 +221,12 @@ namespace Transformalize.Main {
             if (result == "long") {
                 result = "int64";
             }
+            if (result == "short") {
+                result = "int16";
+            }
+            if (result == "real") {
+                result = "single";
+            }
             if (result == "bool") {
                 result = "boolean";
             }
@@ -277,15 +270,14 @@ namespace Transformalize.Main {
 
         public static string CleanIdentifier(string input) {
             var sb = new StringBuilder(Regex.Replace(input, CLEAN_PATTERN, "_"));
-            sb.Push(char.IsNumber);
-            sb.Push(c => c.Equals('_'));
+            sb.Push(c => c.Equals('_') || char.IsNumber(c));
             sb.Trim(" ");
             var result = sb.ToString();
-            if (result.Equals(string.Empty)) {
+            if (result.Equals(string.Empty) || result.All(c => c.Equals('_') || char.IsNumber(c))) {
                 throw new TransformalizeException("The name '{0}' is invalid. Please use at least one alphanumeric character to identify a field.", input);
             }
             if (!input.Equals(result)) {
-                Log.Warn("Had to rename '{0}' to '{1}' to prevent from using an invalid field name.", input, result);
+                Log.Warn("Renamed '{0}' to '{1}' to prevent from using an invalid field name.", input, result);
             }
             return sb.ToString();
         }

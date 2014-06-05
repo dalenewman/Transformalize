@@ -37,10 +37,8 @@ namespace Transformalize.Main.Providers.MySql {
         public override string TrustedProperty { get { return string.Empty; } }
         public override string PersistSecurityInfoProperty { get { return string.Empty; } }
 
-        public MySqlConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
+        public MySqlConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
-
-            TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
             Type = ProviderType.MySql;
             L = "`";
             R = "`";
@@ -62,7 +60,7 @@ namespace Transformalize.Main.Providers.MySql {
             );
         }
 
-        public override void WriteEndVersion(AbstractConnection input, Entity entity) {
+        public override void WriteEndVersion(AbstractConnection input, Entity entity, bool force = false) {
             //not yet
         }
 

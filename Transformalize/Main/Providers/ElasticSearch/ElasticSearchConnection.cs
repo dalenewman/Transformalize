@@ -6,7 +6,6 @@ using Transformalize.Operations.Transform;
 namespace Transformalize.Main.Providers.ElasticSearch {
 
     public class ElasticSearchConnection : AbstractConnection {
-        private readonly Process _process;
 
         public override string UserProperty { get { return string.Empty; } }
         public override string PasswordProperty { get { return string.Empty; } }
@@ -16,10 +15,8 @@ namespace Transformalize.Main.Providers.ElasticSearch {
         public override string TrustedProperty { get { return string.Empty; } }
         public override string PersistSecurityInfoProperty { get { return string.Empty; } }
 
-        public ElasticSearchConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
+        public ElasticSearchConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
-            _process = process;
-            TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
             Type = ProviderType.ElasticSearch;
             IsDatabase = true;
         }
@@ -31,8 +28,8 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             return GetMaxTflBatchId(processName) + 1;
         }
 
-        public override void WriteEndVersion(AbstractConnection input, Entity entity) {
-            if (entity.Inserts + entity.Updates > 0 || _process.IsFirstRun) {
+        public override void WriteEndVersion(AbstractConnection input, Entity entity, bool force = false) {
+            if (entity.Updates + entity.Inserts > 0 || force) {
                 var client = ElasticSearchClientFactory.Create(this, TflBatchEntity(entity.ProcessName));
                 var versionType = entity.Version == null ? "string" : entity.Version.SimpleType;
                 var end = versionType.Equals("byte[]") || versionType.Equals("rowversion") ? Common.BytesToHexString((byte[])entity.End) : new DefaultFactory().Convert(entity.End, versionType).ToString();

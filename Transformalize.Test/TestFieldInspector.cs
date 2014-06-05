@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using NUnit.Framework;
+using Transformalize.Configuration;
 using Transformalize.Main.Providers.File;
-using Transformalize.Extensions;
 
 namespace Transformalize.Test {
 
@@ -83,8 +81,38 @@ Saturday,15,6.6,6/1/2014");
             Assert.AreEqual("string", fields[2].Type);
             Assert.AreEqual("datetime", fields[3].Type);
 
-            //really do it
-            //new FileImporter().Import(new FileInfo(file), request);
+        }
+
+        [Test]
+        public void TestFalseBoolean()
+        {
+            var file = Path.GetTempFileName();
+            const string contents = @"34149771
+34150506
+34148432
+39844261
+34149561
+65313203
+76674170
+83513345
+85501135
+55975869
+89604649
+72561004
+94461202
+71436264
+39905508
+29692312
+a
+b
+c";
+            File.WriteAllText(file, contents);
+
+            var request = new FileInspectionRequest();
+            var information = FileInformationFactory.Create(file, request);
+            var fields = new FieldInspector().Inspect(information, request).ToArray();
+
+            Assert.AreEqual("string", fields[0].Type);
 
         }
 

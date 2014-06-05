@@ -144,9 +144,8 @@ namespace Transformalize.Configuration.Builders {
             return _processBuilder.Action(action);
         }
 
-        public ConnectionBuilder Element(ConnectionConfigurationElement element) {
-            _connection = element;
-            return this;
+        public ConnectionBuilder Connection(ConnectionConfigurationElement element) {
+            return _processBuilder.Connection(element);
         }
     }
 }

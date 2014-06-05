@@ -53,15 +53,19 @@ namespace Transformalize.Main {
             _process = new Process(_element.Name) {
                 Options = _options,
                 TemplateContentType = _element.TemplateContentType.Equals("raw") ? Encoding.Raw : Encoding.Html,
-                Providers = new ProviderReader(_element.Providers).Read(),
                 Enabled = _element.Enabled,
-                Star = string.IsNullOrEmpty(_element.Star) ? _element.Name + "Star" : _element.Star,
+                Star = _element.Star,
+                StarEnabled = _element.StarEnabled,
                 TimeZone = string.IsNullOrEmpty(_element.TimeZone) ? TimeZoneInfo.Local.Id : _element.TimeZone,
                 PipelineThreading = (PipelineThreading)Enum.Parse(typeof(PipelineThreading), _element.PipelineThreading, true)
             };
 
             //shared across the process
-            _process.Connections = new ConnectionFactory(_process, _element.Connections).Create();
+            var connectionFactory = new ConnectionFactory();
+            foreach (ProviderConfigurationElement element in _element.Providers) {
+                connectionFactory.Providers[element.Name.ToLower()] = element.Type;
+            }
+            _process.Connections = connectionFactory.Create(_element.Connections);
             if (!_process.Connections.ContainsKey("output")) {
                 throw new TransformalizeException("Missing required 'output' connection.  If you don't want an ouput, set output to internal");
             }

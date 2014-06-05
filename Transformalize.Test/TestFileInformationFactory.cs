@@ -15,7 +15,7 @@ namespace Transformalize.Test {
             var actual = FileInformationFactory.Create(fileInfo, request);
 
             Assert.AreEqual(3, actual.ColumnCount());
-            Assert.AreEqual("Header_2", actual.Fields[1].Name);
+            Assert.AreEqual("Header 2", actual.Fields[1].Name);
         }
 
         [Test]
@@ -26,7 +26,7 @@ namespace Transformalize.Test {
 
             Assert.AreEqual(',', actual.Delimiter);
             Assert.AreEqual(3, actual.ColumnCount());
-            Assert.AreEqual("Header_2", actual.Fields[1].Name);
+            Assert.AreEqual("Header 2", actual.Fields[1].Name);
         }
 
         [Test]
@@ -37,7 +37,7 @@ namespace Transformalize.Test {
 
             Assert.AreEqual('|', actual.Delimiter);
             Assert.AreEqual(3, actual.ColumnCount());
-            Assert.AreEqual("Header_2", actual.Fields[1].Name);
+            Assert.AreEqual("Header 2", actual.Fields[1].Name);
         }
 
         [Test]
@@ -48,7 +48,7 @@ namespace Transformalize.Test {
 
             Assert.AreEqual('\t', actual.Delimiter);
             Assert.AreEqual(3, actual.ColumnCount());
-            Assert.AreEqual("Header_2", actual.Fields[1].Name);
+            Assert.AreEqual("Header 2", actual.Fields[1].Name);
         }
 
         [Test]
@@ -59,7 +59,7 @@ namespace Transformalize.Test {
 
             Assert.AreEqual(default(char), actual.Delimiter);
             Assert.AreEqual(1, actual.ColumnCount());
-            Assert.AreEqual("Header_1", actual.Fields[0].Name);
+            Assert.AreEqual("Header 1", actual.Fields[0].Name);
             Assert.AreEqual("1024", actual.Fields[0].Length);
         }
 

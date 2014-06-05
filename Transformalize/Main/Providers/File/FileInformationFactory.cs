@@ -9,6 +9,10 @@ namespace Transformalize.Main.Providers.File {
             return Create(new FileInfo(file), new FileInspectionRequest());
         }
 
+        public static FileInformation Create(string file, FileInspectionRequest request) {
+            return Create(new FileInfo(file), new FileInspectionRequest());
+        }
+
         public static FileInformation Create(FileInfo fileInfo, FileInspectionRequest request) {
             var ext = fileInfo.Extension.ToLower();
 

@@ -29,7 +29,6 @@ using Transformalize.Libs.Rhino.Etl.Operations;
 namespace Transformalize.Main.Providers.SqlServer {
 
     public class SqlServerConnection : AbstractConnection {
-        private readonly Process _process;
 
         private readonly Logger _log = LogManager.GetLogger("tfl");
         public override string UserProperty { get { return "User Id"; } }
@@ -40,11 +39,9 @@ namespace Transformalize.Main.Providers.SqlServer {
         public override string TrustedProperty { get { return "Trusted_Connection"; } }
         public override string PersistSecurityInfoProperty { get { return "Persist Security Info"; } }
 
-        public SqlServerConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
+        public SqlServerConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
-            _process = process;
 
-            TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
             Type = ProviderType.SqlServer;
             L = "[";
             R = "]";
@@ -60,7 +57,7 @@ namespace Transformalize.Main.Providers.SqlServer {
             MaxDop = true;
             TableSample = true;
             DefaultSchema = "dbo";
-            }
+        }
 
         public override int NextBatchId(string processName) {
             var tflEntity = new Entity() { TflBatchId = 1, Name = "TflBatch", Alias = "TflBatch", Schema = "dbo", PrimaryKey = new Fields() { new Field(FieldType.PrimaryKey) { Name = "TflBatchId" } } };
@@ -140,9 +137,9 @@ namespace Transformalize.Main.Providers.SqlServer {
             return sql;
         }
 
-        public override void WriteEndVersion(AbstractConnection input, Entity entity) {
+        public override void WriteEndVersion(AbstractConnection input, Entity entity, bool force = false) {
             //default implementation for relational database
-            if (entity.Inserts + entity.Updates > 0 || _process.IsFirstRun) {
+            if (entity.Inserts + entity.Updates > 0 || force) {
                 using (var cn = GetConnection()) {
                     cn.Open();
 

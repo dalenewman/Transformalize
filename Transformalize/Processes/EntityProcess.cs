@@ -204,13 +204,8 @@ namespace Transformalize.Processes {
                 throw new TransformalizeException("Entity Process failed for {0}. See error log.", _entity.Alias);
             }
 
-            if (_process.OutputConnection.Type == ProviderType.Internal) {
+            if (_process.OutputConnection.IsInternal()) {
                 _entity.Rows = _collectors[STANDARD_OUTPUT].Rows;
-                foreach (var output in _entity.Output) {
-                    if (output.Connection.Type == ProviderType.Internal) {
-                        _entity.InternalOutput[output.Name] = _collectors[output.Name].Rows;
-                    }
-                }
             } else {
                 // not handling things by input yet, so just use first
                 _process.OutputConnection.WriteEndVersion(_entity.Input.First().Connection, _entity);

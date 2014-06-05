@@ -1453,6 +1453,7 @@
     <Compile Include="Main\Providers\File\FileField.cs" />
     <Compile Include="Main\Providers\File\FieldInspector.cs" />
     <Compile Include="Main\Providers\File\FileImporter.cs" />
+    <Compile Include="Main\Providers\File\FileImportResult.cs" />
     <Compile Include="Main\Providers\File\FileInformation.cs" />
     <Compile Include="Main\Providers\File\FileInformationFactory.cs" />
     <Compile Include="Main\Providers\File\FileInformationReader.cs" />
@@ -1461,7 +1462,6 @@
     <Compile Include="Main\Providers\File\Line.cs" />
     <Compile Include="Main\Providers\File\LineLoader.cs" />
     <Compile Include="Main\Providers\File\Lines.cs" />
-    <Compile Include="Main\Providers\File\FileImportResult.cs" />
     <Compile Include="Main\Providers\Solr\SolrConnection.cs" />
     <Compile Include="Main\Providers\Solr\SolrConnectionChecker.cs" />
     <Compile Include="Main\Providers\Solr\SolrDependencies.cs" />
@@ -1534,7 +1534,6 @@
     <Compile Include="Main\Providers\PostgreSql\PostgreSqlTableQueryWriter.cs" />
     <Compile Include="Main\Providers\PostgreSql\PostgreSqlTflWriter.cs" />
     <Compile Include="Main\Providers\PostgreSql\PostgreSqlViewWriter.cs" />
-    <Compile Include="Main\Providers\ProviderReader.cs" />
     <Compile Include="Main\Providers\QueryWriter.cs" />
     <Compile Include="Main\Providers\SqlCe4\SqlCe4Connection.cs" />
     <Compile Include="Main\Providers\SqlCe4\SqlCe4ConnectionChecker.cs" />
@@ -1652,6 +1651,7 @@
     <Compile Include="Main\Template\TemplateManager.cs" />
     <Compile Include="Main\Template\TemplateReader.cs" />
     <Compile Include="Main\TransformalizeException.cs" />
+    <Compile Include="Main\Transform\NewGuidOperation.cs" />
     <Compile Include="Main\Transform\TransformOperationFactory.cs" />
     <Compile Include="Main\Transform\ITransformParametersReader.cs" />
     <Compile Include="Main\Transform\ITransformLoader.cs" />

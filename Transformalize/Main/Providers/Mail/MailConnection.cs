@@ -5,6 +5,7 @@ using Transformalize.Operations.Transform;
 
 namespace Transformalize.Main.Providers.Mail {
     public class MailConnection : AbstractConnection {
+
         public override string UserProperty { get { return string.Empty; } }
         public override string PasswordProperty { get { return string.Empty; } }
         public override string PortProperty { get { return string.Empty; } }
@@ -17,7 +18,7 @@ namespace Transformalize.Main.Providers.Mail {
             return 1;
         }
 
-        public override void WriteEndVersion(AbstractConnection input, Entity entity) {
+        public override void WriteEndVersion(AbstractConnection input, Entity entity, bool force = false) {
             // do nothing
         }
 
@@ -49,10 +50,8 @@ namespace Transformalize.Main.Providers.Mail {
             return new EntitySchema();
         }
 
-        public MailConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
+        public MailConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
-
-            TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
             Type = ProviderType.Mail;
         }
 

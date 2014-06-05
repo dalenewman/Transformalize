@@ -1,15 +1,14 @@
 using System;
 using System.Data;
 using Transformalize.Configuration;
-using Transformalize.Extensions;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Providers.SqlServer;
 using Transformalize.Operations.Transform;
 
 namespace Transformalize.Main.Providers.SqlCe4 {
+
     public class SqlCe4Connection : AbstractConnection {
-        private readonly Process _process;
 
         private readonly Logger _log = LogManager.GetLogger("tfl");
         public override string UserProperty { get { return string.Empty; } }
@@ -20,11 +19,8 @@ namespace Transformalize.Main.Providers.SqlCe4 {
         public override string TrustedProperty { get { return string.Empty; } }
         public override string PersistSecurityInfoProperty { get { return "Persist Security Info"; } }
 
-        public SqlCe4Connection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
+        public SqlCe4Connection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
-            _process = process;
-
-            TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
             Type = ProviderType.SqlCe4;
             L = "[";
             R = "]";
@@ -99,9 +95,9 @@ namespace Transformalize.Main.Providers.SqlCe4 {
                 );
         }
 
-        public override void WriteEndVersion(AbstractConnection input, Entity entity) {
+        public override void WriteEndVersion(AbstractConnection input, Entity entity, bool force = false) {
             //default implementation for relational database
-            if (entity.Inserts + entity.Updates > 0 || _process.IsFirstRun) {
+            if (entity.Inserts + entity.Updates > 0 || force) {
                 using (var cn = GetConnection()) {
                     cn.Open();
 

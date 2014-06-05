@@ -3,11 +3,11 @@ using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Operations;
 using Transformalize.Operations.Load;
 using Transformalize.Operations.Transform;
-using Transformalize.Processes;
 
 namespace Transformalize.Main.Providers.Html {
 
     public class HtmlConnection : AbstractConnection {
+
         public override string UserProperty { get { return string.Empty; } }
         public override string PasswordProperty { get { return string.Empty; } }
         public override string PortProperty { get { return string.Empty; } }
@@ -19,7 +19,7 @@ namespace Transformalize.Main.Providers.Html {
             return 1;
         }
 
-        public override void WriteEndVersion(AbstractConnection input, Entity entity) {
+        public override void WriteEndVersion(AbstractConnection input, Entity entity, bool force = false) {
             //do nothing
         }
 
@@ -54,10 +54,8 @@ namespace Transformalize.Main.Providers.Html {
             return new EntitySchema();
         }
 
-        public HtmlConnection(Process process, ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
+        public HtmlConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
-
-            TypeAndAssemblyName = process.Providers[element.Provider.ToLower()];
             Type = ProviderType.Html;
             IncludeHeader = true;
             IncludeFooter = true;

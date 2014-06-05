@@ -72,7 +72,6 @@ namespace Transformalize.Main {
                 SqlOverride = element.SqlOverride.Sql,
                 SqlKeysOverride = element.SqlKeysOverride.Sql,
                 Alias = string.IsNullOrEmpty(element.Alias) ? element.Name : element.Alias,
-                InternalOutput = element.Output.Cast<IoConfigurationElement>().ToDictionary(o => o.Name, o => Enumerable.Repeat(new Row(), 0)),
                 InputOperation = element.InputOperation,
                 Index = entityIndex
             };
@@ -179,7 +178,6 @@ namespace Transformalize.Main {
             var results = validator.Validate(element);
             if (!results.IsValid) {
                 foreach (var result in results) {
-                    _process.ValidationResults.AddResult(result);
                     _log.Error(result.Message);
                 }
                 throw new TransformalizeException("Entity validation failed. See error log.");

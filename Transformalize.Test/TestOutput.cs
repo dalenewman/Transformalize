@@ -21,6 +21,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration.Builders;
@@ -62,7 +63,11 @@ namespace Transformalize.Test {
         }
 
         [Test]
-        public void TestSecondaryOutputs() {
+        public void TestSecondaryOutputs()
+        {
+
+            var file1 = Path.GetTempFileName();
+            var file2 = Path.GetTempFileName();
 
             var input = new RowsBuilder()
                 .Row("id", 1).Field("name", "one")
@@ -75,8 +80,8 @@ namespace Transformalize.Test {
                 .Connection("input").Provider("internal")
                 .Connection("output").Provider("internal")
 
-                .Connection("c1").Provider("internal")
-                .Connection("c2").Provider("internal")
+                .Connection("c1").Provider("file").File(file1)
+                .Connection("c2").Provider("file").File(file2)
 
                 .Entity("entity")
                     .InputOperation(input)
@@ -95,13 +100,18 @@ namespace Transformalize.Test {
 
             var process = ProcessFactory.Create(cfg)[0];
 
-            var output = process.Execute();
+            var rows = process.ExecuteSingle();
 
-            Assert.IsNotNull(output);
+            Assert.IsNotNull(rows);
 
-            Assert.AreEqual(3, output["entity"].Count());
-            Assert.AreEqual(1, process["entity"].InternalOutput["o1"].Count());
-            Assert.AreEqual(2, process["entity"].InternalOutput["o2"].Count());
+            Assert.AreEqual(3, rows.Count());
+            System.Diagnostics.Process.Start(file1);
+            System.Diagnostics.Process.Start(file2);
+
+            const int header = 1;
+            Assert.AreEqual(1, File.ReadAllLines(file1).Length-header);
+            Assert.AreEqual(2, File.ReadAllLines(file2).Length-header);
+
         }
 
     }
