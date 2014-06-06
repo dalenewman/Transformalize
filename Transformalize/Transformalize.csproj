@@ -1978,6 +1978,7 @@
     <Compile Include="Libs\Rhino.Etl\Pipelines\ThreadPoolPipelineExecuter.cs" />
     <Compile Include="Libs\Rhino.Etl\Row.cs" />
     <Compile Include="Libs\Rhino.Etl\WithLoggingMixin.cs" />
+    <Compile Include="Operations\AliasDefault.cs" />
     <Compile Include="Operations\AliasOperation.cs" />
     <Compile Include="Operations\EntityInputKeysExtractAllForDelete.cs" />
     <Compile Include="Operations\EntityOutputOperation.cs" />

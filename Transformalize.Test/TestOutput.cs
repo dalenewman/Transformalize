@@ -105,9 +105,6 @@ namespace Transformalize.Test {
             Assert.IsNotNull(rows);
 
             Assert.AreEqual(3, rows.Count());
-            System.Diagnostics.Process.Start(file1);
-            System.Diagnostics.Process.Start(file2);
-
             const int header = 1;
             Assert.AreEqual(1, File.ReadAllLines(file1).Length-header);
             Assert.AreEqual(2, File.ReadAllLines(file2).Length-header);

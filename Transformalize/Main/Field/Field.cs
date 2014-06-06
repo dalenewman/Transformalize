@@ -78,6 +78,7 @@ namespace Transformalize.Main {
         public string Delimiter { get; set; }
         public bool Distinct { get; set; }
         public int EntityIndex { get; set; }
+        public bool IsCalculated { get; set; }
 
         public object Default {
             get { return _default; }

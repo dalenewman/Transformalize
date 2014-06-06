@@ -54,11 +54,11 @@ namespace Transformalize.Libs.Rhino.Etl.Operations {
                 foreach (var row in rows) {
                     var command = new SqlCommand();
                     PrepareCommand(row, command);
-                    if (command.Parameters.Count == 0) //workaround around a framework bug
-                    {
-                        var guid = Guid.NewGuid();
-                        command.Parameters.AddWithValue(guid.ToString(), guid);
-                    }
+                    //if (command.Parameters.Count == 0) //workaround around a framework bug
+                    //{
+                    //    var guid = Guid.NewGuid();
+                    //    command.Parameters.AddWithValue(guid.ToString(), guid);
+                    //}
                     commandSet.Append(command);
                     if (commandSet.CountOfCommands >= _batchSize) {
                         Trace("Executing batch of {0} commands", commandSet.CountOfCommands);

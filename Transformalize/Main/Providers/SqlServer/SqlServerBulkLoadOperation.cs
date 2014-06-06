@@ -38,6 +38,7 @@ namespace Transformalize.Main.Providers.SqlServer {
             TurnOptionOn(SqlBulkCopyOptions.UseInternalTransaction);
             TurnOptionOff(SqlBulkCopyOptions.CheckConstraints);
             TurnOptionOff(SqlBulkCopyOptions.FireTriggers);
+            TurnOptionOn(SqlBulkCopyOptions.KeepNulls);
         }
 
         protected override void PrepareSchema() {

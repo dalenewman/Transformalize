@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Configuration.Builders;
 using Transformalize.Libs.NLog;

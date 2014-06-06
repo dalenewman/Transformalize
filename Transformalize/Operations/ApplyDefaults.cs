@@ -28,20 +28,25 @@ using Transformalize.Main;
 
 namespace Transformalize.Operations {
     public class ApplyDefaults : AbstractOperation {
-        private readonly Field[] _fields;
+        private readonly AliasDefault[] _initialize;
+        private readonly AliasDefault[] _fields;
         private readonly bool _defaultNulls;
 
         public ApplyDefaults(bool defaultNulls, Fields fields) {
-            _fields = fields.ToArray();
+            _initialize = fields.WithoutInput().AsAliasDefaults();
+            _fields = fields.WithInput().AsAliasDefaults();
             UseTransaction = false;
             _defaultNulls = defaultNulls;
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
-                foreach (Field field in _fields) {
+                foreach (var field in _initialize) {
+                    row[field.Alias] = field.Default;
+                }
+                foreach (var field in _fields) {
                     var obj = row[field.Alias];
-                    if ((_defaultNulls || !field.Input) && obj == null) {
+                    if (_defaultNulls && obj == null) {
                         row[field.Alias] = field.Default;
                     } else if ((field.DefaultBlank || field.DefaultWhiteSpace) && obj != null) {
                         if (field.DefaultBlank && obj.Equals(string.Empty))

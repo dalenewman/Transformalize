@@ -162,7 +162,11 @@ namespace Transformalize.Main {
         }
 
         public Fields SearchFields() {
-            return OutputFields().WithSearchType();
+            var fields = new Fields();
+            foreach (var pair in new StarFields(this).TypedFields()) {
+                fields.Add(pair.Value.WithSearchType());
+            }
+            return fields;
         }
 
         public Entity this[string entity] {

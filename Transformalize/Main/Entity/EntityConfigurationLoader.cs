@@ -106,6 +106,7 @@ namespace Transformalize.Main {
                     field.Index = autoIndex;
                 }
 
+                field.IsCalculated = true;
                 field.Input = false;
                 entity.CalculatedFields.Add(field);
                 if (cf.PrimaryKey) {

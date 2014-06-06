@@ -24,7 +24,6 @@ using System.Data.SqlClient;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
-using Transformalize.Main.Providers;
 
 namespace Transformalize.Operations {
     public class ResultsLoad : SqlBatchOperation {

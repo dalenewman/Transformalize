@@ -24,25 +24,19 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 using Transformalize.Configuration;
-using Transformalize.Libs.Newtonsoft.Json.Utilities;
 using Transformalize.Main.Providers.ElasticSearch;
 using Transformalize.Operations;
-using Transformalize.Processes;
 
 namespace Transformalize.Main {
 
-    public abstract class OrderedFields : IEnumerable {
+    public abstract class OrderedFields : IEnumerable<Field> {
+
         protected const StringComparison Ic = StringComparison.OrdinalIgnoreCase;
         protected const string BatchId = "TflBatchId";
         protected const string SurrogateKey = "TflKey";
 
         private List<Field> _fields = new List<Field>();
-
-        public IEnumerator GetEnumerator() {
-            return _fields.GetEnumerator();
-        }
 
         protected void AddSorted(IEnumerable<Field> fields) {
             _fields.AddRange(fields);
@@ -71,7 +65,15 @@ namespace Transformalize.Main {
         }
 
         public int Count { get { return _fields.Count; } }
+        public bool IsReadOnly { get { return false; } }
 
+        public IEnumerator<Field> GetEnumerator() {
+            return _fields.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() {
+            return GetEnumerator();
+        }
     }
 
     public class Fields : OrderedFields {
@@ -165,12 +167,12 @@ namespace Transformalize.Main {
             return new Fields(Storage.Where(f => f.FieldType.HasFlag(FieldType.ForeignKey)));
         }
 
-        public bool Any() {
-            return Storage.Any();
+        public Fields WithoutForeignKey() {
+            return new Fields(Storage.Where(f => !f.FieldType.HasFlag(FieldType.ForeignKey)));
         }
 
-        public bool Any(Func<Field, bool> predicate) {
-            return Storage.Any(predicate);
+        public bool Any() {
+            return Storage.Any();
         }
 
         public Fields WithoutRowVersion() {
@@ -207,16 +209,8 @@ namespace Transformalize.Main {
             return Storage.First();
         }
 
-        public Field First(Func<Field, bool> predicate) {
-            return Storage.First(predicate);
-        }
-
         public Field Last() {
             return Storage.Last();
-        }
-
-        public Field Last(Func<Field, bool> predicate) {
-            return Storage.Last(predicate);
         }
 
         public Fields WithMasterKey() {
@@ -251,6 +245,7 @@ namespace Transformalize.Main {
         }
 
         public static Field GetSurrogateKeyField(int entityIndex, bool forCreate = true) {
+
             if (forCreate)
                 return new Field("System.Int32", "8", FieldType.NonKey, true, "0") {
                     Alias = SurrogateKey,
@@ -259,12 +254,12 @@ namespace Transformalize.Main {
                     EntityIndex = entityIndex,
                     Index = 1001
                 };
-            else
-                return new Field("System.Int32", "8", FieldType.NonKey, true, "0") {
-                    Alias = SurrogateKey,
-                    EntityIndex = entityIndex,
-                    Index = 1001
-                };
+
+            return new Field("System.Int32", "8", FieldType.NonKey, true, "0") {
+                Alias = SurrogateKey,
+                EntityIndex = entityIndex,
+                Index = 1001
+            };
         }
 
 
@@ -278,6 +273,30 @@ namespace Transformalize.Main {
             get { return Storage[index]; }
         }
 
+        public Fields WithCalculated() {
+            return new Fields(Storage.Where(f => f.IsCalculated));
+        }
+
+        public Fields WithoutCalculated() {
+            return new Fields(Storage.Where(f => !f.IsCalculated));
+        }
+
+        public AliasDefault[] AsAliasDefaults() {
+            return Storage.Select(f => new AliasDefault() { Alias = f.Alias, Default = f.Default, DefaultBlank = f.DefaultBlank, DefaultWhiteSpace = f.DefaultWhiteSpace }).ToArray();
+        }
+
+
+        public Fields WithDefaultBlank() {
+            return new Fields(Storage.Where(f => f.DefaultBlank));
+        }
+
+        public Fields WithDefaultWhiteSpace() {
+            return new Fields(Storage.Where(f => f.DefaultWhiteSpace));
+        }
+
+        public Fields WithoutInput() {
+            return new Fields(Storage.Where(f => !f.Input));
+        }
     }
 
 }

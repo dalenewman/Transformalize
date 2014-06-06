@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -25,30 +26,32 @@ namespace Transformalize.Libs.Rhino.Etl {
         private static readonly Dictionary<Type, List<FieldInfo>> FieldsCache = new Dictionary<Type, List<FieldInfo>>();
 
         private static readonly StringComparer Ic = StringComparer.InvariantCultureIgnoreCase;
-        private IDictionary<string, object> _storage;
+        private Hashtable _storage;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Row" /> class.
         /// </summary>
         public Row() {
-            _storage = new Dictionary<string, object>(Ic);
+            _storage = new Hashtable(Ic);
         }
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Row" /> class.
         /// </summary>
         /// <param name="itemsToClone">The items to clone.</param>
-        protected Row(IDictionary<string, object> itemsToClone) {
-            _storage = new Dictionary<string, object>(itemsToClone, Ic);
+        protected Row(Hashtable itemsToClone) {
+            _storage = new Hashtable(itemsToClone, Ic);
         }
 
 
         public IEnumerable<string> Columns {
-            get { return new List<string>(_storage.Keys); }
+            get {
+                return from DictionaryEntry pair in _storage select (string)pair.Key;
+            }
         }
 
-        public object this[string key] {
-            get { return _storage.ContainsKey(key) ? _storage[key] : null; }
+        public object this[object key] {
+            get { return _storage[key]; }
             set {
                 if (value == DBNull.Value)
                     _storage[key] = null;
@@ -65,8 +68,8 @@ namespace Transformalize.Libs.Rhino.Etl {
         ///     Creates a copy of the given source, erasing whatever is in the row currently.
         /// </summary>
         /// <param name="source">The source row.</param>
-        public void Copy(IDictionary<string, object> source) {
-            _storage = new Dictionary<string, object>(source, Ic);
+        public void Copy(Hashtable source) {
+            _storage = new Hashtable(source, Ic);
         }
 
         /// <summary>
@@ -183,25 +186,6 @@ namespace Transformalize.Libs.Rhino.Etl {
                     info.SetValue(instance, _storage[info.Name]);
             }
             return instance;
-        }
-
-        public override string ToString() {
-            var sb = new StringBuilder();
-            sb.Append("{");
-            foreach (var pair in _storage) {
-                sb.Append(pair.Key)
-                    .Append(" : ");
-                if (pair.Value is string) {
-                    sb.Append("\"")
-                        .Append(pair.Value)
-                        .Append("\"");
-                } else {
-                    sb.Append(pair.Value);
-                }
-                sb.Append(", ");
-            }
-            sb.Append("}");
-            return sb.ToString();
         }
 
     }
