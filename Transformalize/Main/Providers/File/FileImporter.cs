@@ -10,6 +10,10 @@ namespace Transformalize.Main.Providers.File {
 
         private readonly Logger _log = LogManager.GetLogger("tfl");
 
+        public void ImportScaler(FileInfo fileInfo, ConnectionConfigurationElement output, string processName = null, string entityName = null) {
+            ImportScaler(fileInfo, new FileInspectionRequest(), output, processName, entityName);
+        }
+
         public void ImportScaler(FileInfo fileInfo, FileInspectionRequest request, ConnectionConfigurationElement output, string processName = null, string entityName = null) {
             var fileInformation = FileInformationFactory.Create(fileInfo, request);
             var process = BuildProcess(fileInformation, request, output, processName, entityName);
@@ -17,9 +21,14 @@ namespace Transformalize.Main.Providers.File {
             ProcessFactory.Create(process)[0].ExecuteScaler();
         }
 
+        public FileImportResult Import(FileInfo fileInfo, ConnectionConfigurationElement output, string processName = null, string entityName = null) {
+            return Import(fileInfo, new FileInspectionRequest(), output, processName, entityName);
+        }
+
         public FileImportResult Import(FileInfo fileInfo, FileInspectionRequest request, ConnectionConfigurationElement output, string processName = null, string entityName = null) {
             var fileInformation = FileInformationFactory.Create(fileInfo, request);
             var process = BuildProcess(fileInformation, request, output, processName, entityName);
+            ProcessFactory.CreateSingle(process, new Options { Mode = "init" }).ExecuteScaler();
             return new FileImportResult {
                 Information = fileInformation,
                 Rows = ProcessFactory.Create(process)[0].ExecuteSingle()
@@ -62,6 +71,11 @@ namespace Transformalize.Main.Providers.File {
                     .Length(fileField.Length)
                     .Type(fileField.Type)
                     .QuotedWith(fileField.QuoteString());
+
+                if (output != null) {
+
+                }
+
             }
 
             var process = builder.Process();

@@ -55,6 +55,9 @@ namespace Transformalize.Configuration {
         private const string INCLUDE_FOOTER = "include-footer";
         private const string PATH = "path";
         private const string ENABLE_SSL = "enable-ssl";
+        private const string SCHEMA = "schema";
+        private const string TABLE = "table";
+        private const string VIEW = "view";
 
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
@@ -68,6 +71,24 @@ namespace Transformalize.Configuration {
         public string User {
             get { return this[USER] as string; }
             set { this[USER] = value; }
+        }
+
+        [ConfigurationProperty(SCHEMA, IsRequired = false, DefaultValue = "")]
+        public string Schema {
+            get { return this[SCHEMA] as string; }
+            set { this[SCHEMA] = value; }
+        }
+
+        [ConfigurationProperty(TABLE, IsRequired = false, DefaultValue = "")]
+        public string Table {
+            get { return this[TABLE] as string; }
+            set { this[TABLE] = value; }
+        }
+
+        [ConfigurationProperty(VIEW, IsRequired = false, DefaultValue = "")]
+        public string View {
+            get { return this[VIEW] as string; }
+            set { this[VIEW] = value; }
         }
 
         [ConfigurationProperty(PATH, IsRequired = false, DefaultValue = "")]

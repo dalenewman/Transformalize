@@ -28,6 +28,7 @@ using Transformalize.Main.Providers;
 namespace Transformalize.Main {
 
     public class TemplateAction {
+        private readonly Process _process;
 
         private readonly Logger _log = LogManager.GetLogger("tfl");
         public string Action { get; set; }
@@ -55,33 +56,8 @@ namespace Transformalize.Main {
         public string OldValue { get; set; }
         public string NewValue { get; set; }
 
-        public TemplateAction() {
-            Action = string.Empty;
-            Modes = new List<string>();
-            File = string.Empty;
-            From = string.Empty;
-            Method = string.Empty;
-            RenderedFile = string.Empty;
-            TemplateName = string.Empty;
-            To = string.Empty;
-            Url = string.Empty;
-            Arguments = string.Empty;
-            Cc = string.Empty;
-            Bcc = string.Empty;
-            Html = true;
-            Username = string.Empty;
-            Password = string.Empty;
-            Subject = string.Empty;
-            Host = string.Empty;
-            Body = string.Empty;
-            Before = false;
-            After = true;
-            Conditional = false;
-            OldValue = string.Empty;
-            NewValue = string.Empty;
-        }
-
-        public TemplateAction(string template, ActionConfigurationElement action, IEnumerable<string> modes) {
+        public TemplateAction(Process process, string template, ActionConfigurationElement action, IEnumerable<string> modes) {
+            _process = process;
             Action = action.Action;
             File = action.File;
             Method = action.Method;
@@ -106,7 +82,7 @@ namespace Transformalize.Main {
         public void Handle(string file) {
 
             var handlers = new Dictionary<string, TemplateActionHandler>() {
-                {"copy", new TemplateActionCopy()},
+                {"copy", new TemplateActionCopy(_process)},
                 {"open", new TemplateActionOpen()},
                 {"run", new TemplateActionRun()},
                 {"web", new TemplateActionWeb()},

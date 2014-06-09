@@ -11,7 +11,7 @@ namespace Transformalize.Main {
         private static readonly Logger Log = LogManager.GetLogger("tfl");
 
         public static Process[] Create(string resource, Options options = null) {
-            InitializeLogger(Regex.Replace(resource,@"\..*$", string.Empty));
+            InitializeLogger(Regex.Replace(resource, @"\..*$", string.Empty));
             var element = new ConfigurationFactory(resource).Create();
             return Create(element, options);
         }
@@ -67,5 +67,8 @@ namespace Transformalize.Main {
             GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
         }
 
+        public static Process CreateSingle(ProcessConfigurationElement process, Options options = null) {
+            return Create(process, options)[0];
+        }
     }
 }

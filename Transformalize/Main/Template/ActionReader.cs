@@ -21,7 +21,7 @@ namespace Transformalize.Main {
                 if (modes.Length > 0 && !modes.Contains("*") && !modes.Any(m => m.Equals(_process.Options.Mode, IC)))
                     continue;
 
-                var templateAction = new TemplateAction(string.Empty, action, modes);
+                var templateAction = new TemplateAction(_process, string.Empty, action, modes);
 
                 if (!String.IsNullOrEmpty(action.Connection)) {
                     if (_process.Connections.ContainsKey(action.Connection)) {

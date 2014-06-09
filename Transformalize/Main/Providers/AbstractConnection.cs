@@ -42,6 +42,7 @@ namespace Transformalize.Main.Providers {
 
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
+        public ConnectionConfigurationElement Source { get; set; }
         public string Name { get; set; }
         public string TypeAndAssemblyName { get; set; }
         public int BatchSize { get; set; }
@@ -132,6 +133,7 @@ namespace Transformalize.Main.Providers {
             ConnectionConfigurationElement element,
             AbstractConnectionDependencies dependencies
         ) {
+            Source = element;
             BatchSize = element.BatchSize;
             Name = element.Name;
             Start = element.Start;

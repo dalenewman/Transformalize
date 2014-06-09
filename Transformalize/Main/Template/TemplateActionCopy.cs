@@ -21,10 +21,48 @@
 #endregion
 
 using System.IO;
+using System.Text.RegularExpressions;
+using Transformalize.Main.Providers;
+using Transformalize.Main.Providers.File;
 
 namespace Transformalize.Main {
 
+    public enum CopyType {
+        FileToFile,
+        FileToConnection,
+        ConnectionToFile,
+        ConnectionToConnection,
+        Unknown
+    }
+
     public class TemplateActionCopy : TemplateActionHandler {
+        private readonly Process _process;
+
+        public TemplateActionCopy(Process process) {
+            _process = process;
+        }
+
+        private CopyType DeterminCopyType(string from, string to) {
+            if (IsConnectionName(from)) {
+                if (IsConnectionName(to)) {
+                    return CopyType.ConnectionToConnection;
+                }
+                if (IsValidFileName(to)) {
+                    return CopyType.ConnectionToFile;
+                }
+            } else if (IsValidFileName(from)) {
+                {
+                    if (IsConnectionName(to)) {
+                        return CopyType.FileToConnection;
+                    }
+                    if (IsValidFileName(to)) {
+                        return CopyType.FileToFile;
+                    }
+                }
+            }
+            return CopyType.Unknown;
+        }
+
 
         public override void Handle(TemplateAction action) {
 
@@ -41,20 +79,56 @@ namespace Transformalize.Main {
                 rendered = true;
             }
 
-            var fromInfo = new FileInfo(from);
-            if (!fromInfo.Exists) {
-                Log.Warn("Can't copy {0} to {1}, because {0} doesn't exist.", rendered ? action.TemplateName + " rendered output" : from, to);
+            var copyType = DeterminCopyType(from, to);
+            if (copyType.Equals(CopyType.Unknown)) {
+                Log.Warn("Unable to determine copy operation, from {0} to {1}.", from, to);
+                Log.Warn("From must be a file name, a connection name, or blank to assume output from template.");
+                Log.Warn("To must be a file name, or a connection name.");
+                Log.Warn("Skipping {0} action.", action.Action);
                 return;
             }
 
-            var toInfo = new FileInfo(to);
+            FileInfo fromInfo;
 
-            if (toInfo.Directory != null && toInfo.Directory.Exists) {
-                File.Copy(fromInfo.FullName, toInfo.FullName, true);
-                Log.Info("Copied {0} to {1}.", rendered ? action.TemplateName + " rendered output" : from, to);
-            } else {
-                Log.Warn("Unable to copy file to folder {0}.  The folder doesn't exist.", toInfo.DirectoryName);
+            switch (copyType) {
+                case CopyType.ConnectionToConnection:
+                    break;
+                case CopyType.ConnectionToFile:
+                    break;
+                case CopyType.FileToConnection:
+                    fromInfo = new FileInfo(from);
+                    if (fromInfo.Exists) {
+                        var output = _process.Connections[to.ToLower()].Source;
+                        var results = new FileImporter().Import(fromInfo, output);
+                        Log.Info("Copied {0} to {1} connection.  Process name: {2}, Entity Name: {3}.", fromInfo.Name, to, results.Information.ProcessName, results.Information.EntityName);
+                    } else {
+                        Log.Warn("Unable to copy file {0}.  It doesn't exist.", fromInfo.Name);
+                    }
+                    break;
+                default:
+                    fromInfo = new FileInfo(from);
+                    var toInfo = new FileInfo(to);
+                    if (fromInfo.Exists) {
+                        File.Copy(fromInfo.FullName, toInfo.FullName, true);
+                        Log.Info("Copied {0} to {1}.", rendered ? action.TemplateName + " rendered output" : from, to);
+                    } else {
+                        Log.Warn("Unable to copy file to folder {0}.  The folder doesn't exist.", toInfo.DirectoryName);
+                    }
+                    break;
             }
+
+        }
+
+        private static bool IsValidFileName(string name) {
+            var containsABadCharacter = new Regex("[" + Regex.Escape(string.Concat(Path.GetInvalidPathChars(), Path.GetInvalidFileNameChars())) + "]");
+            if (containsABadCharacter.IsMatch(name)) {
+                return false;
+            };
+            return name.Contains(".");
+        }
+
+        private bool IsConnectionName(string name) {
+            return _process.Connections.ContainsKey(name.ToLower());
         }
     }
 }

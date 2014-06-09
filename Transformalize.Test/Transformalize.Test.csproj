@@ -68,6 +68,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.AnalysisServices.11.0.2100.60\lib\net40\Microsoft.AnalysisServices.DLL</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Mono.Security">
       <HintPath>..\packages\Npgsql.2.0.14.3\lib\net45\Mono.Security.dll</HintPath>
     </Reference>
@@ -115,6 +116,7 @@
     <Compile Include="TestColumnNameValidator.cs" />
     <Compile Include="TestFieldInspector.cs" />
     <Compile Include="TestFields.cs" />
+    <Compile Include="TestActions.cs" />
     <Compile Include="TestFieldType.cs" />
     <Compile Include="TestFileInformationFactory.cs" />
     <Compile Include="TestInput.cs" />

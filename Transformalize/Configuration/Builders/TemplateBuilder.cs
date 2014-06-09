@@ -60,6 +60,10 @@ namespace Transformalize.Configuration.Builders {
             return _processBuilder.ScriptPath(path);
         }
 
+        public ProcessConfigurationElement Process() {
+            return _processBuilder.Process();
+        }
+
         public TemplateBuilder Setting(string name, object value) {
             var setting = new SettingConfigurationElement() { Name = name, Value = value.ToString() };
             _template.Settings.Add(setting);

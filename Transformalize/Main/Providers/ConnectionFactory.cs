@@ -48,6 +48,10 @@ namespace Transformalize.Main.Providers {
             return GetConnection(element);
         }
 
+        public InternalConnection Internal(string name) {
+            return GetConnection(new ConnectionConfigurationElement() { Name = name, Provider = "internal" }) as InternalConnection;
+        }
+
         public Dictionary<string, AbstractConnection> Create(ConnectionElementCollection elements) {
             var connections = new Dictionary<string, AbstractConnection>();
             foreach (ConnectionConfigurationElement element in elements) {
@@ -129,5 +133,8 @@ namespace Transformalize.Main.Providers {
             return connection;
         }
 
+        public SqlServerConnection SqlServer(string name, string database, string server = "localhost") {
+            return GetConnection(new ConnectionConfigurationElement() { Name = name, Server = server, Database = database }) as SqlServerConnection;
+        }
     }
 }

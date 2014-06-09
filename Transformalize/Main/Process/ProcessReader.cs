@@ -25,8 +25,10 @@ using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
 using Transformalize.Libs.NLog;
+using Transformalize.Libs.NLog.Internal;
 using Transformalize.Libs.RazorEngine;
 using Transformalize.Main.Providers;
+using Transformalize.Main.Providers.ElasticSearch;
 
 namespace Transformalize.Main {
 
@@ -67,9 +69,11 @@ namespace Transformalize.Main {
             }
             _process.Connections = connectionFactory.Create(_element.Connections);
             if (!_process.Connections.ContainsKey("output")) {
-                throw new TransformalizeException("Missing required 'output' connection.  If you don't want an ouput, set output to internal");
+                _log.Warn("No output connection detected.  Defaulting to internal.");
+                _process.OutputConnection = new ConnectionFactory().Internal("output");
+            } else {
+                _process.OutputConnection = _process.Connections["output"];
             }
-            _process.OutputConnection = _process.Connections["output"];
 
             _process.Scripts = new ScriptReader(_element.Scripts).Read();
             _process.Actions = new ActionReader(_process).Read(_element.Actions);

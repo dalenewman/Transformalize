@@ -1,7 +1,6 @@
-namespace Transformalize.Configuration.Builders
-{
-    public interface IActionHolder
-    {
+namespace Transformalize.Configuration.Builders {
+
+    public interface IActionHolder {
         ActionBuilder Action(string action);
         TemplateBuilder Template(string name);
         EntityBuilder Entity(string name);
@@ -9,5 +8,6 @@ namespace Transformalize.Configuration.Builders
         MapBuilder Map(string name);
         ProcessBuilder TemplatePath(string path);
         ProcessBuilder ScriptPath(string path);
+        ProcessConfigurationElement Process();
     }
 }
