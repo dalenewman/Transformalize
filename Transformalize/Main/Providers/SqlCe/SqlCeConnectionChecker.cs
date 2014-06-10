@@ -1,8 +1,8 @@
 ﻿using System.IO;
 
-namespace Transformalize.Main.Providers.SqlCe4
+namespace Transformalize.Main.Providers.SqlCe
 {
-    public class SqlCe4ConnectionChecker : DefaultConnectionChecker, IConnectionChecker {
+    public class SqlCeConnectionChecker : DefaultConnectionChecker, IConnectionChecker {
 
         public new bool Check(AbstractConnection connection) {
             if (CachedResults.ContainsKey(connection.Name)) {

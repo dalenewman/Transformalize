@@ -1,12 +1,13 @@
 using System.Data;
 using Transformalize.Libs.Rhino.Etl;
 
-namespace Transformalize.Main.Providers.SqlCe4 {
-    public class SqlCe4TflWriter : WithLoggingMixin, ITflWriter {
+namespace Transformalize.Main.Providers.SqlCe {
+
+    public class SqlCeTflWriter : WithLoggingMixin, ITflWriter {
 
         public void Initialize(Process process) {
 
-            if (!new SqlCe4TableExists(process.OutputConnection).Exists("dbo", "TflBatch")) {
+            if (!new SqlCeTableExists(process.OutputConnection).Exists("dbo", "TflBatch")) {
                 Execute(process.OutputConnection, @"
                     CREATE TABLE [TflBatch](
                         [TflBatchId] INT NOT NULL,

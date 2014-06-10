@@ -25,6 +25,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
+using Transformalize.Libs.SolrNet.Utils;
 using Transformalize.Main.Providers.ElasticSearch;
 using Transformalize.Operations;
 
@@ -192,9 +193,20 @@ namespace Transformalize.Main {
         }
 
         public Fields FindByParamater(ParameterConfigurationElement element) {
-            if (element.Entity != string.Empty)
-                return new Fields(Storage.Where(f => f.Alias.Equals(element.Field, Ic) && f.Entity.Equals(element.Entity, Ic) || f.Name.Equals(element.Field, Ic) && f.Entity.Equals(element.Entity, Ic)));
-            return new Fields(Storage.First(f => f.Alias.Equals(element.Field, Ic) || f.Name.Equals(element.Field, Ic)));
+            if (element.Entity != string.Empty) {
+                if (Storage.Any(f => f.Alias.Equals(element.Field, Ic) && f.Entity.Equals(element.Entity, Ic))) {
+                    return new Fields(Storage.Where(f => f.Alias.Equals(element.Field, Ic) && f.Entity.Equals(element.Entity, Ic)));
+                }
+                if (Storage.Any(f => f.Name.Equals(element.Field, Ic) && f.Entity.Equals(element.Entity, Ic))) {
+                    return new Fields(Storage.Where(f => f.Name.Equals(element.Field, Ic) && f.Entity.Equals(element.Entity, Ic)));
+                }
+                throw new TransformalizeException("Can not find parameter with entity '{0}' and field name (or alias) of '{1}'.", element.Entity, element.Field);
+            }
+
+            if (Storage.Any(f => f.Alias.Equals(element.Field, Ic) || f.Name.Equals(element.Field, Ic))) {
+                return new Fields(Storage.First(f => f.Alias.Equals(element.Field, Ic) || f.Name.Equals(element.Field, Ic)));
+            }
+            throw new TransformalizeException("Can not find parameter with name (or alias) of '{0}'.", element.Field);
         }
 
         public bool HaveField(string nameOrAlias) {

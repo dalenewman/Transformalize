@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Transformalize.Libs.Ninject.Modules;
-using Transformalize.Libs.Ninject.Syntax;
 using Transformalize.Libs.SolrNet;
 using Transformalize.Libs.SolrNet.Impl;
 using Transformalize.Libs.SolrNet.Impl.DocumentPropertyVisitors;
@@ -26,7 +25,7 @@ using Transformalize.Main.Providers.Mail;
 using Transformalize.Main.Providers.MySql;
 using Transformalize.Main.Providers.PostgreSql;
 using Transformalize.Main.Providers.Solr;
-using Transformalize.Main.Providers.SqlCe4;
+using Transformalize.Main.Providers.SqlCe;
 using Transformalize.Main.Providers.SqlServer;
 
 namespace Transformalize.Main {
@@ -34,11 +33,17 @@ namespace Transformalize.Main {
     public class NinjectBindings : NinjectModule {
 
         public override void Load() {
+
             // databases
             Bind<AbstractConnectionDependencies>().To<SqlServerDependencies>().WhenInjectedInto<SqlServerConnection>();
             Bind<AbstractConnectionDependencies>().To<MySqlDependencies>().WhenInjectedInto<MySqlConnection>();
             Bind<AbstractConnectionDependencies>().To<PostgreSqlDependencies>().WhenInjectedInto<PostgreSqlConnection>();
-            Bind<AbstractConnectionDependencies>().To<SqlCe4Dependencies>().WhenInjectedInto<SqlCe4Connection>();
+            Bind<AbstractConnectionDependencies>().To<SqlCeDependencies>().WhenInjectedInto<SqlCeConnection>();
+
+            Bind<AbstractConnection>().To<SqlServerConnection>().Named("sqlserver");
+            Bind<AbstractConnection>().To<MySqlConnection>().Named("mysql");
+            Bind<AbstractConnection>().To<PostgreSqlConnection>().Named("postgresql");
+            Bind<AbstractConnection>().To<SqlCeConnection>().Named("sqlce");
 
             // others
             Bind<AbstractConnectionDependencies>().To<AnalysisServicesDependencies>().WhenInjectedInto<AnalysisServicesConnection>();
@@ -51,6 +56,17 @@ namespace Transformalize.Main {
             Bind<AbstractConnectionDependencies>().To<HtmlDependencies>().WhenInjectedInto<HtmlConnection>();
             Bind<AbstractConnectionDependencies>().To<ElasticSearchDependencies>().WhenInjectedInto<ElasticSearchConnection>();
             Bind<AbstractConnectionDependencies>().To<SolrDependencies>().WhenInjectedInto<Providers.Solr.SolrConnection>();
+
+            Bind<AbstractConnection>().To<AnalysisServicesConnection>().Named("analysisservices");
+            Bind<AbstractConnection>().To<FileConnection>().Named("file");
+            Bind<AbstractConnection>().To<FolderConnection>().Named("folder");
+            Bind<AbstractConnection>().To<InternalConnection>().Named("internal");
+            Bind<AbstractConnection>().To<ConsoleConnection>().Named("console");
+            Bind<AbstractConnection>().To<LogConnection>().Named("log");
+            Bind<AbstractConnection>().To<MailConnection>().Named("mail");
+            Bind<AbstractConnection>().To<HtmlConnection>().Named("html");
+            Bind<AbstractConnection>().To<ElasticSearchConnection>().Named("elasticsearch");
+            Bind<AbstractConnection>().To<Providers.Solr.SolrConnection>().Named("solr");
 
             //solrnet
             var mapper = new MemoizingMappingManager(new AttributesMappingManager());
@@ -67,6 +83,7 @@ namespace Transformalize.Main {
             Bind(typeof(ISolrAbstractResponseParser<>)).To(typeof(DefaultResponseParser<>));
             Bind<ISolrHeaderResponseParser>().To<HeaderResponseParser<string>>();
             Bind<ISolrExtractResponseParser>().To<ExtractResponseParser>();
+            
             foreach (var p in new[] {
                 typeof(MappedPropertiesIsInSolrSchemaRule),
                 typeof(RequiredFieldsAreMappedRule),
@@ -74,6 +91,7 @@ namespace Transformalize.Main {
                 typeof(MultivaluedMappedToCollectionRule),
             })
                 Bind<IValidationRule>().To(p);
+
             Bind(typeof(ISolrMoreLikeThisHandlerQueryResultsParser<>)).To(typeof(SolrMoreLikeThisHandlerQueryResultsParser<>));
             Bind(typeof(ISolrDocumentSerializer<>)).To(typeof(SolrDocumentSerializer<>));
             Bind(typeof(ISolrDocumentSerializer<Dictionary<string, object>>)).To(typeof(SolrDictionarySerializer));

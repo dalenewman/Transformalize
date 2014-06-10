@@ -102,17 +102,17 @@ namespace Transformalize.Main {
                         var results = new FileImporter().Import(fromInfo, output);
                         Log.Info("Copied {0} to {1} connection.  Process name: {2}, Entity Name: {3}.", fromInfo.Name, to, results.Information.ProcessName, results.Information.EntityName);
                     } else {
-                        Log.Warn("Unable to copy file {0}.  It doesn't exist.", fromInfo.Name);
+                        Log.Warn("Unable to copy file {0}.  It may not exist.", fromInfo.Name);
                     }
                     break;
                 default:
                     fromInfo = new FileInfo(from);
                     var toInfo = new FileInfo(to);
-                    if (fromInfo.Exists) {
+                    if (fromInfo.Exists && toInfo.Directory != null && toInfo.Directory.Exists) {
                         File.Copy(fromInfo.FullName, toInfo.FullName, true);
                         Log.Info("Copied {0} to {1}.", rendered ? action.TemplateName + " rendered output" : from, to);
                     } else {
-                        Log.Warn("Unable to copy file to folder {0}.  The folder doesn't exist.", toInfo.DirectoryName);
+                        Log.Warn("Unable to copy file {0} to folder {1}.  The folder may not exist.", fromInfo.Name, toInfo.DirectoryName);
                     }
                     break;
             }

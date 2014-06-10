@@ -25,10 +25,8 @@ using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
 using Transformalize.Libs.NLog;
-using Transformalize.Libs.NLog.Internal;
 using Transformalize.Libs.RazorEngine;
 using Transformalize.Main.Providers;
-using Transformalize.Main.Providers.ElasticSearch;
 
 namespace Transformalize.Main {
 
@@ -63,14 +61,14 @@ namespace Transformalize.Main {
             };
 
             //shared across the process
-            var connectionFactory = new ConnectionFactory();
+            var connectionFactory = new ConnectionFactory(_process.Kernal);
             foreach (ProviderConfigurationElement element in _element.Providers) {
                 connectionFactory.Providers[element.Name.ToLower()] = element.Type;
             }
             _process.Connections = connectionFactory.Create(_element.Connections);
             if (!_process.Connections.ContainsKey("output")) {
                 _log.Warn("No output connection detected.  Defaulting to internal.");
-                _process.OutputConnection = new ConnectionFactory().Internal("output");
+                _process.OutputConnection = connectionFactory.Create(new ConnectionConfigurationElement() { Name = "output", Provider = "internal" });
             } else {
                 _process.OutputConnection = _process.Connections["output"];
             }

@@ -1,11 +1,11 @@
-namespace Transformalize.Main.Providers.SqlCe4
+namespace Transformalize.Main.Providers.SqlCe
 {
-    public class SqlCe4EntityRecordsExist : IEntityRecordsExist {
+    public class SqlCeEntityRecordsExist : IEntityRecordsExist {
         public IEntityExists EntityExists { get; set; }
 
 
-        public SqlCe4EntityRecordsExist() {
-            EntityExists = new SqlCe4EntityExists();
+        public SqlCeEntityRecordsExist() {
+            EntityExists = new SqlCeEntityExists();
         }
 
         public bool RecordsExist(AbstractConnection connection, Entity entity) {

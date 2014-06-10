@@ -92,5 +92,9 @@ namespace Transformalize.Configuration.Builders {
         public ProcessBuilder ScriptPath(string path) {
             return _builder.ScriptPath(path);
         }
+
+        public ProcessConfigurationElement Process() {
+            return _builder.Process();
+        }
     }
 }

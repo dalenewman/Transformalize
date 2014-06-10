@@ -26,6 +26,7 @@ using System.IO;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.FileHelpers.Enums;
+using Transformalize.Libs.NLog.Internal;
 
 namespace Transformalize.Configuration {
     [HasSelfValidation]
@@ -222,7 +223,7 @@ namespace Transformalize.Configuration {
 
         [ConfigurationProperty(INCLUDE_HEADER, IsRequired = false, DefaultValue = true)]
         public bool IncludeHeader {
-            get { return (bool) this[INCLUDE_HEADER]; }
+            get { return (bool)this[INCLUDE_HEADER]; }
             set { this[INCLUDE_HEADER] = value; }
         }
 
@@ -238,6 +239,28 @@ namespace Transformalize.Configuration {
 
         [SelfValidation]
         public void Validate(ValidationResults results) {
+
+            var provider = Provider.ToLower();
+            var providers = new[] {
+                "sqlserver",
+                "mysql",
+                "postgresql",
+                "sqlce",
+                "analysisservices",
+                "file",
+                "folder",
+                "internal",
+                "console",
+                "log",
+                "mail",
+                "html",
+                "elasticsearch"
+            };
+
+            if (!providers.Any(p => p.Equals(provider))) {
+                results.AddResult(new ValidationResult("The provider " + provider + " is not yet implemented.", this, null, null, null));
+            }
+
             if (Provider.Equals("file", IC)) {
                 if (string.IsNullOrEmpty(File)) {
                     var message = string.Format("The {0} provider requires the File property setting.", Provider);

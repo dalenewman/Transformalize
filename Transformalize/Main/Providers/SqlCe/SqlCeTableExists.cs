@@ -1,12 +1,12 @@
 using System.Data;
 
-namespace Transformalize.Main.Providers.SqlCe4
+namespace Transformalize.Main.Providers.SqlCe
 {
-    public class SqlCe4TableExists : ITableExists {
+    public class SqlCeTableExists : ITableExists {
 
         private readonly AbstractConnection _connection;
 
-        public SqlCe4TableExists(AbstractConnection connection) {
+        public SqlCeTableExists(AbstractConnection connection) {
             _connection = connection;
         }
 

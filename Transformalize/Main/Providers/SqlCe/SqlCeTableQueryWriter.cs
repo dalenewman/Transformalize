@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Transformalize.Main.Providers.SqlCe4 {
+namespace Transformalize.Main.Providers.SqlCe {
 
-    public class SqlCe4TableQueryWriter : QueryWriter, ITableQueryWriter {
+    public class SqlCeTableQueryWriter : QueryWriter, ITableQueryWriter {
 
         public string CreateTable(string name, IEnumerable<string> defs) {
             var defList = string.Join(",", defs);

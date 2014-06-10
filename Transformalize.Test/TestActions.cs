@@ -23,9 +23,9 @@
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
+using Transformalize.Configuration;
 using Transformalize.Configuration.Builders;
 using Transformalize.Libs.Dapper;
-using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
 
@@ -92,7 +92,7 @@ namespace Transformalize.Test {
 
             ProcessFactory.CreateSingle(process).ExecuteScaler();
             var expected = Common.CleanIdentifier(Path.GetFileNameWithoutExtension(file1));
-            var sqlServer = new ConnectionFactory().SqlServer("test", "TestOutput");
+            var sqlServer = new ConnectionFactory().Create(new ConnectionConfigurationElement() { Name = "test", Provider = "sqlserver", Database = "TestOutput" });
 
             var rows = sqlServer.GetConnection().Query(string.Format("SELECT f1, f2, f3 FROM {0}", expected)).ToArray();
             Assert.AreEqual(1, rows.Length);
