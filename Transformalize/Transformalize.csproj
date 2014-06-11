@@ -1450,7 +1450,6 @@
     <Compile Include="Main\Providers\File\ColumnNameGenerator.cs" />
     <Compile Include="Main\Providers\File\ColumnNameValidator.cs" />
     <Compile Include="Main\Providers\File\ExcelInformationReader.cs" />
-    <Compile Include="Main\Providers\File\FileField.cs" />
     <Compile Include="Main\Providers\File\FieldInspector.cs" />
     <Compile Include="Main\Providers\File\FileImporter.cs" />
     <Compile Include="Main\Providers\File\FileImportResult.cs" />

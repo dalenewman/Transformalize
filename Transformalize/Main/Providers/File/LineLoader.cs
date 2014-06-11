@@ -6,6 +6,7 @@ using System.Linq;
 namespace Transformalize.Main.Providers.File {
 
     public class LineLoader {
+        private const char DOUBLE_QUOTE = '\"';
         private readonly FileInspectionRequest _request;
         private readonly FileLineLoader _loader;
         private readonly bool _isCsv;
@@ -17,9 +18,11 @@ namespace Transformalize.Main.Providers.File {
         }
 
         public IEnumerable<Line> Load() {
-            return _isCsv ?
-                _loader.Load().Select(content => new Line(content, '\"', _request)) :
-                _loader.Load().Select(content => new Line(content, _request));
+
+            return _loader.Load().Select(
+                content => _isCsv && content.Contains(DOUBLE_QUOTE) && content.Count(c => c.Equals(DOUBLE_QUOTE)) % 2 == 0 ?
+                    new Line(content, DOUBLE_QUOTE, _request) :
+                    new Line(content, _request));
         }
     }
 }

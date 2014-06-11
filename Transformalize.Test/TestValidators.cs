@@ -207,9 +207,9 @@ namespace Transformalize.Test {
             var output = process.Execute()["entity"].ToList();
 
             Assert.AreNotEqual(string.Empty, crap);
-            Assert.AreEqual("DALE", output[0]["new_name"]);
-            Assert.AreEqual("vlad", output[1]["new_name"]);
-            Assert.AreEqual("tara", output[2]["new_name"]);
+            Assert.AreEqual("DALE", output[0]["new-name"]);
+            Assert.AreEqual("vlad", output[1]["new-name"]);
+            Assert.AreEqual("tara", output[2]["new-name"]);
         }
 
 

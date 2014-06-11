@@ -49,14 +49,7 @@ namespace Transformalize.Main.Providers.Folder {
         public override EntitySchema GetEntitySchema(string name, string schema = "", bool isMaster = false) {
             var entitySchema = new EntitySchema();
             var file = Folder.TrimEnd("\\".ToCharArray()) + "\\" + name.TrimStart("\\".ToCharArray());
-            var fileFields = new FieldInspector().Inspect(file);
-            foreach (var fileField in fileFields) {
-                var field = new Field(fileField.Type, fileField.Length, FieldType.NonKey, true, string.Empty) {
-                    Name = fileField.Name,
-                    QuotedWith = fileField.QuoteString()
-                };
-                entitySchema.Fields.Add(field);
-            }
+            entitySchema.Fields = new FieldInspector().Inspect(file);
             return entitySchema;
         }
 

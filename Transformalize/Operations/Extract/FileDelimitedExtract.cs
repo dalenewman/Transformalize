@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -48,15 +49,15 @@ namespace Transformalize.Operations.Extract {
             };
 
             foreach (var field in _fields) {
-                if (!field.QuotedWith.Equals(string.Empty)) {
-                    cb.AddField(new DelimitedFieldBuilder(field.Alias, typeof(string)) {
+                if (field.IsQuoted()) {
+                    cb.AddField(new DelimitedFieldBuilder(field.Identifier, typeof(string)) {
                         FieldQuoted = true,
-                        QuoteChar = field.QuotedWith[0],
+                        QuoteChar = field.QuotedWith,
                         QuoteMode = QuoteMode.OptionalForRead,
                         FieldOptional = field.Optional
                     });
                 } else {
-                    cb.AddField(new DelimitedFieldBuilder(field.Alias, typeof(string)) {
+                    cb.AddField(new DelimitedFieldBuilder(field.Identifier, typeof(string)) {
                         FieldOptional = field.Optional
                     });
                 }
@@ -69,11 +70,7 @@ namespace Transformalize.Operations.Extract {
             if (_top > 0) {
                 using (var file = new FluentFile(cb.CreateRecordClass()).From(_fullName).OnError(_errorMode)) {
                     foreach (var row in from object obj in file select Row.FromObject(obj)) {
-                        row["TflFileName"] = _fullName;
-                        foreach (var field in _fields.Where(f => !f.SimpleType.Equals("string"))) {
-                            var value = row[field.Alias] == null || !field.SimpleType.Equals("string") && row[field.Alias].ToString().Equals(string.Empty) ? field.Default : row[field.Alias];
-                            row[field.Alias] = conversionMap[field.SimpleType](value);
-                        }
+                        ProcessRow(row, conversionMap);
                         if (_counter < _top) {
                             Interlocked.Increment(ref _counter);
                             yield return row;
@@ -87,17 +84,29 @@ namespace Transformalize.Operations.Extract {
             } else {
                 using (var file = new FluentFile(cb.CreateRecordClass()).From(_fullName).OnError(_errorMode)) {
                     foreach (var row in from object obj in file select Row.FromObject(obj)) {
-                        row["TflFileName"] = _fullName;
-                        foreach (var field in _fields.Where(f => !f.SimpleType.Equals("string"))) {
-                            var value = row[field.Alias] == null || !field.SimpleType.Equals("string") && row[field.Alias].ToString().Equals(string.Empty) ? field.Default : row[field.Alias];
-                            row[field.Alias] = conversionMap[field.SimpleType](value);
-                        }
+                        ProcessRow(row, conversionMap);
                         yield return row;
                     }
                     HandleErrors(file);
                 }
             }
 
+        }
+
+        private void ProcessRow(Row row, IReadOnlyDictionary<string, Func<object, object>> conversionMap) {
+            foreach (var field in _fields) {
+                if (field.SimpleType.Equals("string") && !field.Alias.Equals(field.Identifier)) {
+                    row[field.Alias] = row[field.Identifier];
+                    row.Remove(field.Identifier);
+                } else {
+                    var value = row[field.Identifier] == null || !field.SimpleType.Equals("string") && row[field.Identifier].ToString().Equals(string.Empty) ? field.Default : row[field.Identifier];
+                    row[field.Alias] = conversionMap[field.SimpleType](value);
+                    if (!field.Alias.Equals(field.Identifier)) {
+                        row.Remove(field.Identifier);
+                    }
+                }
+            }
+            row["TflFileName"] = _fullName;
         }
 
         private void HandleErrors(FileEngine file) {
@@ -107,7 +116,6 @@ namespace Transformalize.Operations.Extract {
             var errorInfo = new FileInfo(Common.GetTemporaryFolder(_entity.ProcessName).TrimEnd(new[] { '\\' }) + @"\" + _name + ".errors.txt");
             file.OutputErrors(errorInfo.FullName);
             Warn("Errors sent to {0}.", errorInfo.Name);
-            return;
         }
     }
 }

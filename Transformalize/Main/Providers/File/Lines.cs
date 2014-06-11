@@ -31,7 +31,7 @@ namespace Transformalize.Main.Providers.File {
             foreach (var delimiter in _request.Delimiters.Keys) {
                 foreach (var line in _storage) {
                     var count = line.Values[delimiter].Length - 1;
-                    if (count > 0 && _storage.All(l => l.Values[delimiter].Length-1 == count)) {
+                    if (count > 0 && _storage.All(l => l.Values[delimiter].Length - 1 == count)) {
                         candidates[delimiter] = count;
                         if (count > max) {
                             max = count;
@@ -50,29 +50,34 @@ namespace Transformalize.Main.Providers.File {
             return _bestDelimiter;
         }
 
-        public List<FileField> InitialFieldTypes() {
+        public Fields InitialFieldTypes() {
 
-            var fileFields = new List<FileField>();
+            var fields = new Fields();
             var delimiter = FindDelimiter();
             var firstLine = _storage[0];
 
             if (delimiter == default(char)) {
-                fileFields.Add(new FileField(firstLine.Content, _request.DefaultType, _request.DefaultLength));
-                return fileFields;
+                var field = new Field(_request.DefaultType, _request.DefaultLength, FieldType.NonKey, true, string.Empty) {
+                    Name = firstLine.Content
+                };
+                fields.Add(field);
+                return fields;
             }
 
             var names = firstLine.Values[delimiter];
 
             for (var i = 0; i < names.Length; i++) {
                 var name = names[i];
-                var field = new FileField(name, _request.DefaultType, _request.DefaultLength);
-                if (_storage.Any(l => l.Values[delimiter][i].Contains(delimiter.ToString(CultureInfo.InvariantCulture)))) {
-                    field.Quote = firstLine.Quote;
+                var field = new Field(_request.DefaultType, _request.DefaultLength, FieldType.NonKey, true, string.Empty) {
+                    Name = name
+                };
+                if (_storage.Any(x => x.Values[delimiter][i].Contains(delimiter) || _storage.Skip(1).All(y=> y.Quote != default(char) && y.Values[delimiter][i].StartsWith(y.Quote.ToString(CultureInfo.InvariantCulture)) && y.Values[delimiter][i].EndsWith(y.Quote.ToString(CultureInfo.InvariantCulture))))) {
+                    field.QuotedWith = _storage.Skip(1).First().Quote;
                 }
-                fileFields.Add(field);
+                fields.Add(field);
             }
 
-            return fileFields;
+            return fields;
         }
 
     }

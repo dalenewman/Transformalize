@@ -87,7 +87,7 @@ KS,""9,000,000"",Rectangle");
 
             Assert.IsFalse(actual.Fields[0].IsQuoted());
             Assert.IsTrue(actual.Fields[1].IsQuoted());
-            Assert.AreEqual('\"', actual.Fields[1].Quote);
+            Assert.AreEqual('\"', actual.Fields[1].QuotedWith);
             Assert.IsFalse(actual.Fields[2].IsQuoted());
 
             Assert.AreEqual("1024", actual.Fields[0].Length);

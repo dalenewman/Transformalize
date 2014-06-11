@@ -9,8 +9,8 @@ namespace Transformalize.Main.Providers.File {
         private readonly int _count;
         private readonly int _distinctCount;
 
-        public ColumnNameValidator(IEnumerable<string> names) {
-            _names = names.ToArray();
+        public ColumnNameValidator(params string[] names) {
+            _names = names;
             _count = _names.Count();
             _distinctCount = _names.Distinct().Count();
         }

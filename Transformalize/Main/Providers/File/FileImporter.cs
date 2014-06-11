@@ -59,22 +59,18 @@ namespace Transformalize.Main.Providers.File {
 
             var fields = new FieldInspector().Inspect(fileInformation, request);
 
-            foreach (var fileField in fields) {
-                if (fileField.Type.Equals("string")) {
-                    _log.Info("Using {0} character string for {1}.", fileField.Length, fileField.Name);
+            foreach (var field in fields) {
+                if (field.Type.Equals("string")) {
+                    _log.Info("Using {0} character string for {1}.", field.Length, field.Name);
                 } else {
-                    _log.Info("Using {0} for {1}.", fileField.Type, fileField.Name);
+                    _log.Info("Using {0} for {1}.", field.Type, field.Name);
                 }
 
                 builder
-                    .Field(fileField.Name)
-                    .Length(fileField.Length)
-                    .Type(fileField.Type)
-                    .QuotedWith(fileField.QuoteString());
-
-                if (output != null) {
-
-                }
+                    .Field(field.Name)
+                    .Length(field.Length)
+                    .Type(field.Type)
+                    .QuotedWith(field.QuotedWith);
 
             }
 

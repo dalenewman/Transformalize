@@ -47,8 +47,6 @@ namespace Transformalize.Operations {
                 Debug("No data detected in {0}.", _entity.Alias);
             }
 
-            if (!_entity.HasRange) return;
-
             if (_entity.BeginAndEndAreEqual()) {
                 Debug("No changes detected in {0}.", _entity.Alias);
             }
@@ -57,9 +55,12 @@ namespace Transformalize.Operations {
                 ? connection.KeyQuery(_entity)
                 : connection.KeyAllQuery(_entity);
 
-            _sql = _entity.HasRange ?
+            var sql = _entity.HasRange ?
                 connection.KeyRangeQuery(_entity) :
                 keyQuery;
+
+            Debug(sql);
+            _sql = sql;
 
         }
 

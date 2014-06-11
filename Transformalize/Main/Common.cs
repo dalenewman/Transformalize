@@ -274,10 +274,10 @@ namespace Transformalize.Main {
             sb.Trim(" ");
             var result = sb.ToString();
             if (result.Equals(string.Empty) || result.All(c => c.Equals('_') || char.IsNumber(c))) {
-                throw new TransformalizeException("The name '{0}' is invalid. Please use at least one alphanumeric character to identify a field.", input);
+                result = "I" + input.GetHashCode().ToString(CultureInfo.InvariantCulture).Replace("-", "0");
             }
             if (!input.Equals(result)) {
-                Log.Warn("Renamed '{0}' to '{1}' to prevent from using an invalid field name.", input, result);
+                Log.Debug("Using '{0}' to identify field '{1}'.", input, result);
             }
             return sb.ToString();
         }

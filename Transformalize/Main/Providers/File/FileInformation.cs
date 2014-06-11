@@ -10,12 +10,12 @@ namespace Transformalize.Main.Providers.File {
         private string _entityName;
 
         private bool _firstRowIsHeader = true;
-        private List<FileField> _fields = new List<FileField>();
+        private Fields _fields = new Fields();
 
         //properties
         public FileInfo FileInfo { get; private set; }
 
-        public List<FileField> Fields {
+        public Fields Fields {
             get { return _fields; }
             set { _fields = value; }
         }

@@ -11,11 +11,15 @@ namespace Transformalize.Main.Providers.File {
 
         private readonly Logger _log = LogManager.GetLogger(string.Empty);
 
-        public List<FileField> Inspect(string file) {
+        public Fields Inspect(string file) {
             return Inspect(FileInformationFactory.Create(file), new FileInspectionRequest());
         }
 
-        public List<FileField> Inspect(FileInformation fileInformation, FileInspectionRequest request) {
+        public Fields Inspect(FileInformation fileInformation) {
+            return Inspect(fileInformation, new FileInspectionRequest());
+        }
+
+        public Fields Inspect(FileInformation fileInformation, FileInspectionRequest request) {
 
             var builder = new ProcessBuilder(fileInformation.ProcessName)
                 .StarEnabled(false)
@@ -32,9 +36,9 @@ namespace Transformalize.Main.Providers.File {
             foreach (var field in fileInformation.Fields) {
                 builder
                     .Field(field.Name)
-                        .Length(field.Length)
-                        .Type(field.Type)
-                        .QuotedWith(field.QuoteString());
+                    .Length(field.Length)
+                    .Type(field.Type)
+                    .QuotedWith(field.QuotedWith);
             }
 
             foreach (var dataType in request.DataTypes) {
@@ -50,7 +54,7 @@ namespace Transformalize.Main.Providers.File {
             }
 
             foreach (var field in fileInformation.Fields) {
-                var result = field.Name + "Length";
+                var result = LengthField(field.Name);
                 builder.CalculatedField(result).Int32()
                     .Transform("length")
                     .Parameter(field.Name);
@@ -58,7 +62,7 @@ namespace Transformalize.Main.Providers.File {
 
             _log.Debug(builder.Process().Serialize().Replace(Environment.NewLine, string.Empty));
 
-            var runner = ProcessFactory.Create(builder.Process(), new Options() { Top = request.Top })[0];
+            var runner = ProcessFactory.CreateSingle(builder.Process(), new Options() { Top = request.Top });
             var results = runner.ExecuteSingle().ToList();
 
             if (results.Count <= 0) {
@@ -77,7 +81,7 @@ namespace Transformalize.Main.Providers.File {
                     }
                 }
                 if (!foundMatch) {
-                    var length = results.Max(row => (int)row[field.Name + "Length"]) + 1;
+                    var length = results.Max(row => (int)row[LengthField(field.Name)]) + 1;
                     field.Length = length.ToString(CultureInfo.InvariantCulture);
                 }
             }
@@ -85,7 +89,11 @@ namespace Transformalize.Main.Providers.File {
         }
 
         private static string IsDataTypeField(string name, string dataType) {
-            return name + "Is" + dataType;
+            return name + "Is" + char.ToUpper(dataType[0]) + dataType.Substring(1);
+        }
+
+        private static string LengthField(string name) {
+            return name + "Length";
         }
 
     }

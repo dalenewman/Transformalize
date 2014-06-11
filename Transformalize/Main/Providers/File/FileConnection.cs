@@ -49,16 +49,9 @@ namespace Transformalize.Main.Providers.File {
         }
 
         public override EntitySchema GetEntitySchema(string name, string schema = "", bool isMaster = false) {
-            var entitySchema = new EntitySchema();
-            var fileFields = new FieldInspector().Inspect(File);
-            foreach (var fileField in fileFields) {
-                var field = new Field(fileField.Type, fileField.Length, FieldType.NonKey, true, string.Empty) {
-                    Name = fileField.Name,
-                    QuotedWith = fileField.QuoteString()
-                };
-                entitySchema.Fields.Add(field);
-            }
-            return entitySchema;
+            return new EntitySchema {
+                Fields = new FieldInspector().Inspect(File)
+            };
         }
 
         public FileConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)

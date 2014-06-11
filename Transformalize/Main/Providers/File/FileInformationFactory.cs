@@ -10,7 +10,7 @@ namespace Transformalize.Main.Providers.File {
         }
 
         public static FileInformation Create(string file, FileInspectionRequest request) {
-            return Create(new FileInfo(file), new FileInspectionRequest());
+            return Create(new FileInfo(file), request);
         }
 
         public static FileInformation Create(FileInfo fileInfo, FileInspectionRequest request) {
@@ -20,7 +20,7 @@ namespace Transformalize.Main.Providers.File {
                 new ExcelInformationReader(request).Read(fileInfo) :
                 new FileInformationReader(request).Read(fileInfo);
 
-            var validator = new ColumnNameValidator(fileInformation.Fields.Select(f => f.Name));
+            var validator = new ColumnNameValidator(fileInformation.Fields.Select(f => f.Name).ToArray());
             if (validator.Valid())
                 return fileInformation;
 

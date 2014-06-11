@@ -74,7 +74,7 @@ namespace Transformalize.Configuration {
                 var alias = this[ALIAS] as string;
                 return alias == null || alias.Equals(string.Empty) ? Name : alias;
             }
-            set { this[ALIAS] = Common.CleanIdentifier(value); }
+            set { this[ALIAS] = value; }
         }
 
         [ConfigurationProperty(TYPE, IsRequired = false, DefaultValue = "System.String")]
@@ -89,9 +89,9 @@ namespace Transformalize.Configuration {
             set { this[DELIMITER] = value; }
         }
 
-        [ConfigurationProperty(QUOTED_WITH, IsRequired = false)]
-        public string QuotedWith {
-            get { return this[QUOTED_WITH] as string; }
+        [ConfigurationProperty(QUOTED_WITH, IsRequired = false, DefaultValue = default(char))]
+        public char QuotedWith {
+            get { return (char) this[QUOTED_WITH]; }
             set { this[QUOTED_WITH] = value; }
         }
 

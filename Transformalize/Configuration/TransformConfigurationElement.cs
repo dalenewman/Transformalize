@@ -323,13 +323,13 @@ namespace Transformalize.Configuration {
         [ConfigurationProperty(MESSAGE_FIELD, IsRequired = false, DefaultValue = "[default]")]
         public string MessageField {
             get { return this[MESSAGE_FIELD] as string; }
-            set { this[MESSAGE_FIELD] = String.IsNullOrEmpty(value) ? value : Common.CleanIdentifier(value); }
+            set { this[MESSAGE_FIELD] = value; }
         }
 
         [ConfigurationProperty(RESULT_FIELD, IsRequired = false, DefaultValue = "[default]")]
         public string ResultField {
             get { return this[RESULT_FIELD] as string; }
-            set { this[RESULT_FIELD] = String.IsNullOrEmpty(value) ? value : Common.CleanIdentifier(value); }
+            set { this[RESULT_FIELD] = value; }
         }
 
         [ConfigurationProperty(CHARACTERS, IsRequired = false, DefaultValue = "")]
@@ -419,7 +419,7 @@ namespace Transformalize.Configuration {
         [ConfigurationProperty(TARGET_FIELD, IsRequired = false, DefaultValue = "")]
         public string TargetField {
             get { return this[TARGET_FIELD] as string; }
-            set { this[TARGET_FIELD] = Common.CleanIdentifier(value); }
+            set { this[TARGET_FIELD] = value; }
         }
 
         [ConfigurationProperty(RIGHT, IsRequired = false, DefaultValue = "")]
@@ -480,7 +480,7 @@ namespace Transformalize.Configuration {
         [ConfigurationProperty(RUN_FIELD, IsRequired = false, DefaultValue = "")]
         public string RunField {
             get { return this[RUN_FIELD] as string; }
-            set { this[RUN_FIELD] = Common.CleanIdentifier(value); }
+            set { this[RUN_FIELD] = value; }
         }
 
         [ConfigurationProperty(RUN_TYPE, IsRequired = false, DefaultValue = "[default]")]

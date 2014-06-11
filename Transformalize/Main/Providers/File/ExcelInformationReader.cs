@@ -15,7 +15,7 @@ namespace Transformalize.Main.Providers.File {
         public FileInformation Read(FileInfo fileInfo) {
 
             var fileInformation = new FileInformation(fileInfo);
-            var columnNames = new List<string>();
+            var names = new List<string>();
 
             var stream = System.IO.File.Open(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             var isXml = fileInfo.Extension.Equals(".xlsx", StringComparison.OrdinalIgnoreCase);
@@ -25,12 +25,15 @@ namespace Transformalize.Main.Providers.File {
             for (var i = 0; i < excelReader.FieldCount; i++) {
                 var name = excelReader.GetString(i);
                 if (name != null)
-                    columnNames.Add(name);
+                    names.Add(name);
             }
 
             excelReader.Close();
-            foreach (var value in columnNames) {
-                fileInformation.Fields.Add(new FileField(value, _request.DefaultType, _request.DefaultLength));
+            foreach (var name in names) {
+                var field = new Field(_request.DefaultType, _request.DefaultLength, FieldType.NonKey, true, string.Empty) {
+                    Name = name
+                };
+                fileInformation.Fields.Add(field);
             }
 
             return fileInformation;

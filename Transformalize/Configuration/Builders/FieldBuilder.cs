@@ -26,7 +26,7 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
-        public FieldBuilder QuotedWith(string quoteChar) {
+        public FieldBuilder QuotedWith(char quoteChar) {
             _field.QuotedWith = quoteChar;
             return this;
         }

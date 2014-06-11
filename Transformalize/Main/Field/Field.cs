@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Transformalize.Main.Providers.SqlServer;
 
@@ -32,6 +33,7 @@ namespace Transformalize.Main {
         private readonly string[] _stringTypes = new[] { "string", "char", "datetime", "guid", "xml" };
 
         private FieldType _fieldType = FieldType.NonKey;
+        private string _identifier = "identifier";
         private string _name = "field";
         private string _sqlDataType;
         private string _type = "System.String";
@@ -48,7 +50,16 @@ namespace Transformalize.Main {
 
         public string Alias {
             get { return _alias; }
-            set { _alias = Common.CleanIdentifier(value); }
+            set {
+                if (!value.Equals(_alias)) {
+                    _alias = value;
+                    _identifier = Common.CleanIdentifier(value);
+                }
+            }
+        }
+
+        public string Identifier {
+            get { return _identifier; }
         }
 
         public string Schema { get; set; }
@@ -72,7 +83,7 @@ namespace Transformalize.Main {
         public bool HasParameters { get; set; }
         public bool DefaultBlank { get; set; }
         public bool DefaultWhiteSpace { get; set; }
-        public string QuotedWith { get; set; }
+        public char QuotedWith { get; set; }
         public bool Optional { get; set; }
         public List<string> Transforms { get; set; }
         public string Delimiter { get; set; }
@@ -203,6 +214,10 @@ namespace Transformalize.Main {
                 Value = useDefaultForValue ? Default : null,
                 SimpleType = SimpleType
             };
+        }
+
+        public bool IsQuoted() {
+            return QuotedWith != default(char);
         }
     }
 }

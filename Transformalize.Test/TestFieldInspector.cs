@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using NUnit.Framework;
-using Transformalize.Configuration;
 using Transformalize.Main.Providers.File;
 
 namespace Transformalize.Test {
@@ -32,14 +31,44 @@ KS,""9,000,000"",Rectangle");
             Assert.AreEqual("decimal", actual[1].Type);
             Assert.AreEqual("string", actual[2].Type);
 
-            Assert.AreEqual(default(char), actual[0].Quote);
-            Assert.AreEqual('\"', actual[1].Quote);
-            Assert.AreEqual(default(char), actual[2].Quote);
+            Assert.AreEqual(default(char), actual[0].QuotedWith);
+            Assert.AreEqual('\"', actual[1].QuotedWith);
+            Assert.AreEqual(default(char), actual[2].QuotedWith);
 
             Assert.AreEqual("3", actual[0].Length);
             Assert.AreEqual(string.Empty, actual[1].Length);
             Assert.AreEqual("10", actual[2].Length);
         }
+
+        [Test]
+        public void TestFieldQuotedCsv2() {
+
+            var file = Path.GetTempFileName().Replace(".tmp", ".csv");
+            File.WriteAllText(file, @"Field 1,Field 2,Field 3,Field 4,Field 5,Field 6
+""0007282100"",""O721"",20,""1111 COUNTY RD 1 SOUTH POINT OH 11111"",,""1""
+""0007382201"",""O722"",25,""2222 COUNTY RD 1 SOUTH POINT OH 22222"",,""1""
+""0007482302"",""O723"",30,""3333 COUNTY RD 1 SOUTH POINT OH 33333"",,""1""
+");
+            var info = FileInformationFactory.Create(file);
+            var actual = new FieldInspector().Inspect(info);
+
+            Assert.AreEqual(6, actual.Count);
+
+            Assert.AreEqual("Field 1", actual[0].Name);
+            Assert.AreEqual("Field 2", actual[1].Name);
+            Assert.AreEqual("Field 3", actual[2].Name);
+            Assert.AreEqual("Field 4", actual[3].Name);
+            Assert.AreEqual("Field 5", actual[4].Name);
+            Assert.AreEqual("Field 6", actual[5].Name);
+
+            Assert.AreEqual("int", actual[0].Type);
+            Assert.AreEqual("string", actual[1].Type);
+            Assert.AreEqual("int", actual[2].Type);
+            Assert.AreEqual("string", actual[3].Type);
+            Assert.AreEqual("string", actual[4].Type);
+            Assert.AreEqual("int", actual[5].Type);
+        }
+
 
         [Test]
         public void TestIssue001A() {
@@ -108,14 +137,9 @@ b
 c";
             File.WriteAllText(file, contents);
 
-            var request = new FileInspectionRequest();
-            var information = FileInformationFactory.Create(file, request);
-            var fields = new FieldInspector().Inspect(information, request).ToArray();
-
+            var fields = new FieldInspector().Inspect(file).ToArray();
             Assert.AreEqual("string", fields[0].Type);
-
         }
-
 
     }
 }
