@@ -12,6 +12,9 @@ namespace Transformalize.Main {
 
         public override void Handle(TemplateAction action) {
 
+            var isTemplate = string.IsNullOrEmpty(action.File);
+            var file = isTemplate ? action.RenderedFile : action.File;
+
             var mail = new MailMessage {
                 From = new MailAddress(action.From)
             };
@@ -40,35 +43,44 @@ namespace Transformalize.Main {
             mail.IsBodyHtml = action.Html;
             if (!string.IsNullOrEmpty(action.Body)) {
                 mail.Body = action.Body;
-                if (!string.IsNullOrEmpty(action.RenderedFile)) {
-                    mail.Attachments.Add(new Attachment(action.RenderedFile));
+                if (!string.IsNullOrEmpty(file)) {
+                    var fileInfo = new FileInfo(file);
+                    if (fileInfo.Exists) {
+                        mail.Attachments.Add(new Attachment(fileInfo.FullName));
+                    }
                 }
             } else {
-                mail.Body = File.ReadAllText(action.RenderedFile);
+                if (!string.IsNullOrEmpty(file)) {
+                    var fileInfo = new FileInfo(file);
+                    if (fileInfo.Exists) {
+                        mail.Body = File.ReadAllText(fileInfo.FullName);
+                    }
+                }
             }
 
             mail.Subject = action.Subject;
 
             try {
-                if (string.IsNullOrEmpty(action.Username)) {
+                var port = action.Connection.Port > 0 ? action.Connection.Port : 25;
+                if (string.IsNullOrEmpty(action.Connection.User)) {
                     new SmtpClient {
-                        Port = action.Connection.Port,
+                        Port = port,
                         EnableSsl = action.Connection.EnableSsl,
                         DeliveryMethod = SmtpDeliveryMethod.Network,
                         UseDefaultCredentials = true,
-                        Host = action.Host
+                        Host = action.Connection.Server
                     }.Send(mail);
                 } else {
                     new SmtpClient {
-                        Port = action.Connection.Port,
+                        Port = port,
                         EnableSsl = action.Connection.EnableSsl,
                         DeliveryMethod = SmtpDeliveryMethod.Network,
                         UseDefaultCredentials = false,
-                        Credentials = new NetworkCredential(action.Username, action.Password),
-                        Host = action.Host
+                        Credentials = new NetworkCredential(action.Connection.User, action.Connection.Password),
+                        Host = action.Connection.Server
                     }.Send(mail);
                 }
-                Log.Info("Emailed rendered content to: {0}.", action.To);
+                Log.Info(isTemplate ? "Emailed rendered content to: {0}." : "Email sent to {0}.", action.To);
             } catch (Exception e) {
                 Log.Warn("Couldn't send mail. {0}", e.Message);
                 Log.Debug(e.StackTrace);

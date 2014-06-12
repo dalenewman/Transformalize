@@ -205,6 +205,69 @@ namespace Transformalize.Test {
         }
 
         [Test]
+        public void FromNanoXmlInner() {
+            var input = new RowsBuilder().Row().Field("f1", "<order><id>1</id><total>7.25</total><lines><line product=\"1\"/><line product=\"2\"/></lines></order>").ToOperation();
+
+            var outFields = new FieldsBuilder()
+                .Field("id").Type("int32")
+                .Field("total").Type("decimal")
+                .Field("product").Type("int32").NodeType("attribute")
+                .Field("lines")
+                .ToFields();
+
+            var fromXml = new FromNanoXmlOperation("f1", outFields);
+
+            var rows = TestOperation(input, fromXml);
+
+            Assert.AreEqual(1, rows[0]["id"]);
+            Assert.AreEqual(7.25M, rows[0]["total"]);
+            Assert.AreEqual("<line product=\"1\"></line><line product=\"2\"></line>", rows[0]["lines"]);
+            Assert.AreEqual(2, rows[0]["product"]);
+        }
+
+        [Test]
+        public void FromNanoXmlOuter() {
+            var input = new RowsBuilder().Row().Field("f1", "<order><id>1</id><total>7.25</total><lines><line product=\"1\"/><line product=\"2\"/></lines></order>").ToOperation();
+
+            var outFields = new FieldsBuilder()
+                .Field("id").Type("int32")
+                .Field("total").Type("decimal")
+                .Field("product").Type("int32").NodeType("attribute")
+                .Field("lines").ReadInnerXml(false)
+                .ToFields();
+
+            var fromXml = new FromNanoXmlOperation("f1", outFields);
+
+            var rows = TestOperation(input, fromXml);
+
+            Assert.AreEqual(1, rows[0]["id"]);
+            Assert.AreEqual(7.25M, rows[0]["total"]);
+            Assert.AreEqual("<lines><line product=\"1\"></line><line product=\"2\"></line></lines>", rows[0]["lines"]);
+            Assert.AreEqual(2, rows[0]["product"]);
+        }
+
+
+        [Test]
+        public void FromFirstXmlOuter() {
+            var input = new RowsBuilder().Row().Field("f1", "<order><id>1</id><total>7.25</total><lines><line product=\"1\"/><line product=\"2\"/></lines></order>").ToOperation();
+
+            var outFields = new FieldsBuilder()
+                .Field("id").Type("int32")
+                .Field("total").Type("decimal")
+                .Field("product").Type("int32").NodeType("attribute")
+                .ToFields();
+
+            var fromXml = new FromFirstXmlOperation("f1", outFields);
+
+            var rows = TestOperation(input, fromXml);
+
+            Assert.AreEqual(1, rows[0]["id"]);
+            Assert.AreEqual(7.25M, rows[0]["total"]);
+            Assert.AreEqual(1, rows[0]["product"]);
+        }
+
+
+        [Test]
         public void FromXmlDoublePass() {
             var input = new RowsBuilder().Row().Field("f1", "<order><id>1</id><total>7.25</total><lines><line product=\"1\"/><line product=\"2\"/></lines></order>").ToOperation();
 

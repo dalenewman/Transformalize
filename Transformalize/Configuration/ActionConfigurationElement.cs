@@ -47,6 +47,7 @@ namespace Transformalize.Configuration {
         private const string OLD_VALUE = "old-value";
         private const string NEW_VALUE = "new-value";
         private const string BODY = "body";
+        private const string COMMAND = "command";
 
         [ConfigurationProperty(ACTION, IsRequired = true)]
         public string Action {
@@ -58,6 +59,12 @@ namespace Transformalize.Configuration {
         public string File {
             get { return this[FILE] as string; }
             set { this[FILE] = value; }
+        }
+
+        [ConfigurationProperty(COMMAND, IsRequired = false, DefaultValue = "")]
+        public string Command {
+            get { return this[COMMAND] as string; }
+            set { this[COMMAND] = value; }
         }
 
         [ConfigurationProperty(MODE, IsRequired = false, DefaultValue = "")]

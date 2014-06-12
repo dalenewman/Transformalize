@@ -49,7 +49,7 @@ namespace Transformalize.Processes {
             }
 
             Register(new TruncateOperation(_process.CalculatedFields));
-            Register(new GatherOperation(_process));
+            Register(new GatherOperation());
             RegisterLast(new ResultsLoad(_process));
         }
 

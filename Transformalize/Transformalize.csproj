@@ -891,6 +891,7 @@
     <Compile Include="Libs\Microsoft\System.Web.Razor\Utils\EnumeratorExtensions.cs" />
     <Compile Include="Libs\Microsoft\System.Web.Razor\Utils\EnumUtil.cs" />
     <Compile Include="Libs\Microsoft\System.Web.Razor\VBRazorCodeLanguage.cs" />
+    <Compile Include="Libs\NanoXMLParser.cs" />
     <Compile Include="Libs\Newtonsoft.Json\Bson\BsonBinaryType.cs" />
     <Compile Include="Libs\Newtonsoft.Json\Bson\BsonBinaryWriter.cs" />
     <Compile Include="Libs\Newtonsoft.Json\Bson\BsonObjectId.cs" />
@@ -1650,7 +1651,6 @@
     <Compile Include="Main\Template\TemplateManager.cs" />
     <Compile Include="Main\Template\TemplateReader.cs" />
     <Compile Include="Main\TransformalizeException.cs" />
-    <Compile Include="Main\Transform\NewGuidOperation.cs" />
     <Compile Include="Main\Transform\TransformOperationFactory.cs" />
     <Compile Include="Main\Transform\ITransformParametersReader.cs" />
     <Compile Include="Main\Transform\ITransformLoader.cs" />
@@ -2013,6 +2013,8 @@
     <Compile Include="Operations\Transform\FormatOperation.cs" />
     <Compile Include="Operations\Transform\FromJsonOperation.cs" />
     <Compile Include="Operations\Transform\FromRegexOperation.cs" />
+    <Compile Include="Operations\Transform\FromNanoXmlOperation.cs" />
+    <Compile Include="Operations\Transform\FromFirstXmlOperation.cs" />
     <Compile Include="Operations\Transform\FromXmlOperation.cs" />
     <Compile Include="Operations\Transform\GetHashCodeOperation.cs" />
     <Compile Include="Operations\Transform\HtmlDecodeOperation.cs" />
@@ -2023,6 +2025,7 @@
     <Compile Include="Operations\Transform\JavascriptOperation.cs" />
     <Compile Include="Operations\Transform\JoinTransformOperation.cs" />
     <Compile Include="Operations\Transform\CopyOperation.cs" />
+    <Compile Include="Operations\Transform\NewGuidOperation.cs" />
     <Compile Include="Operations\Transform\NowOperation.cs" />
     <Compile Include="Operations\Transform\ObjectPool.cs" />
     <Compile Include="Operations\Transform\ShouldRunOperation.cs" />
@@ -2030,6 +2033,7 @@
     <Compile Include="Operations\Transform\TimeZoneOperation.cs" />
     <Compile Include="Operations\Transform\ValueOperation.cs" />
     <Compile Include="Operations\Transform\XmlEncodeOperation.cs" />
+    <Compile Include="Operations\Transform\XmlMode.cs" />
     <Compile Include="Operations\Transform\XpathOperation.cs" />
     <Compile Include="Operations\Transform\TimeOfDayOperation.cs" />
     <Compile Include="Operations\Transform\LeftOperation.cs" />

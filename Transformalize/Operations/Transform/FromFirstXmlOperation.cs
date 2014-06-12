@@ -8,7 +8,7 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
-    public class FromXmlOperation : ShouldRunOperation {
+    public class FromFirstXmlOperation : ShouldRunOperation {
 
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private readonly bool _searchAttributes;
@@ -18,7 +18,9 @@ namespace Transformalize.Operations.Transform {
             IgnoreComments = true
         };
 
-        public FromXmlOperation(string inKey, IEnumerable<Field> fields)
+        private readonly int _total;
+
+        public FromFirstXmlOperation(string inKey, IEnumerable<Field> fields)
             : base(inKey, string.Empty) {
 
             foreach (var field in fields) {
@@ -27,52 +29,42 @@ namespace Transformalize.Operations.Transform {
                 }
                 _nameMap[field.Name] = field;
             }
-            Name = string.Format("FromXmlOperation (in:{0})", inKey);
+            _total = _nameMap.Count;
+            Name = string.Format("FromFirstXmlOperation (in:{0})", inKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
                 if (ShouldRun(row)) {
-                    var outerRow = row;
-                    var innerRow = new Row();
-                    var innerRows = new List<Row>();
-                    string startKey = null;
-
                     using (var reader = XmlReader.Create(new StringReader(row[InKey].ToString()), Settings)) {
-                        while (reader.Read()) {
-
+                        var count = 0;
+                        while (reader.Read() && count < _total) {
                             if (_nameMap.ContainsKey(reader.Name)) {
-
                                 // must while here because reader.Read*Xml advances the reader
                                 while (_nameMap.ContainsKey(reader.Name) && reader.IsStartElement()) {
-                                    InnerRow(ref startKey, reader.Name, ref innerRow, ref outerRow, ref innerRows);
-
+                                    count++;
                                     var field = _nameMap[reader.Name];
                                     var value = field.ReadInnerXml ? reader.ReadInnerXml() : reader.ReadOuterXml();
-                                    if (value != string.Empty)
-                                        innerRow[field.Alias] = Common.ConversionMap[field.SimpleType](value);
+                                    if (value != string.Empty) {
+                                        row[field.Alias] = Common.ConversionMap[field.SimpleType](value);
+                                    }
                                 }
-
                             } else if (_searchAttributes && reader.HasAttributes) {
                                 for (var i = 0; i < reader.AttributeCount; i++) {
                                     reader.MoveToNextAttribute();
                                     if (!_nameMap.ContainsKey(reader.Name))
                                         continue;
 
-                                    InnerRow(ref startKey, reader.Name, ref innerRow, ref outerRow, ref innerRows);
-
+                                    count++;
                                     var field = _nameMap[reader.Name];
                                     if (!string.IsNullOrEmpty(reader.Value)) {
-                                        innerRow[field.Alias] = Common.ConversionMap[field.SimpleType](reader.Value);
+                                        row[field.Alias] = Common.ConversionMap[field.SimpleType](reader.Value);
                                     }
                                 }
                             }
                         }
                     }
-                    AddInnerRow(ref innerRow, ref outerRow, ref innerRows);
-                    foreach (var r in innerRows) {
-                        yield return r;
-                    }
+                    yield return row;
                 } else {
                     Interlocked.Increment(ref SkipCount);
                     yield return row;
@@ -80,32 +72,6 @@ namespace Transformalize.Operations.Transform {
             }
         }
 
-        private static bool ShouldYieldRow(ref string startKey, string key) {
-            if (startKey == null) {
-                startKey = key;
-            } else if (startKey.Equals(key)) {
-                return true;
-            }
-            return false;
-        }
-
-        private static void InnerRow(ref string startKey, string key, ref Row innerRow, ref Row outerRow, ref List<Row> innerRows) {
-            if (!ShouldYieldRow(ref startKey, key))
-                return;
-
-            AddInnerRow(ref innerRow, ref outerRow, ref innerRows);
-        }
-
-        private static void AddInnerRow(ref Row innerRow, ref Row outerRow, ref List<Row> innerRows) {
-            var r = innerRow.Clone();
-
-            foreach (var column in outerRow.Columns.Where(column => !r.ContainsKey(column))) {
-                r[column] = outerRow[column];
-            }
-
-            innerRows.Add(r);
-            innerRow = new Row();
-        }
     }
 
 }

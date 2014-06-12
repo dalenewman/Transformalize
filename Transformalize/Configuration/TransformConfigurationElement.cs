@@ -20,12 +20,12 @@
 
 #endregion
 
-using System;
 using System.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
-using Transformalize.Main;
+using Transformalize.Operations.Transform;
 
 namespace Transformalize.Configuration {
+
     public class TransformConfigurationElement : ConfigurationElement {
 
         private const string METHOD = "method";
@@ -62,13 +62,13 @@ namespace Transformalize.Configuration {
         private const string XPATH = "xpath";
         private const string INTERVAL = "interval";
         private const string ELIPSE = "elipse";
-        
+
         private const string LEFT = "left";
         private const string OPERATOR = "operator";
         private const string RIGHT = "right";
         private const string THEN = "then";
         private const string ELSE = "else";
-        
+
         private const string FROM_TIME_ZONE = "from-time-zone";
         private const string TO_TIME_ZONE = "to-time-zone";
 
@@ -94,6 +94,7 @@ namespace Transformalize.Configuration {
         private const string UPPER_UNIT = "upper-unit";
         private const string TIME_COMPONENT = "time-component";
         private const string REPLACE_SINGLE_QUOTES = "replace-single-quotes";
+        private const string XML_MODE = "xml-mode";
 
         //CONDITIONAL
         private const string RUN_FIELD = "run-field";
@@ -120,6 +121,13 @@ namespace Transformalize.Configuration {
         public string XPath {
             get { return this[XPATH] as string; }
             set { this[XPATH] = value; }
+        }
+
+        [EnumConversionValidator(typeof(XmlMode), MessageTemplate = "{1} must be a valid XmlMode. (e.g. Default, First, or All)")]
+        [ConfigurationProperty(XML_MODE, IsRequired = false, DefaultValue = "Default")]
+        public string XmlMode {
+            get { return this[XML_MODE] as string; }
+            set { this[XML_MODE] = value; }
         }
 
         [ConfigurationProperty(UNITS, IsRequired = false, DefaultValue = "meters")]
@@ -316,7 +324,7 @@ namespace Transformalize.Configuration {
         //validation
         [ConfigurationProperty(MESSAGE_APPEND, IsRequired = false, DefaultValue = false)]
         public bool MessageAppend {
-            get { return (bool) this[MESSAGE_APPEND]; }
+            get { return (bool)this[MESSAGE_APPEND]; }
             set { this[MESSAGE_APPEND] = value; }
         }
 
@@ -465,8 +473,7 @@ namespace Transformalize.Configuration {
         }
 
         [ConfigurationProperty(TIME_COMPONENT, IsRequired = false, DefaultValue = "milliseconds")]
-        public string TimeComponent
-        {
+        public string TimeComponent {
             get { return this[TIME_COMPONENT] as string; }
             set { this[TIME_COMPONENT] = value; }
         }
@@ -503,8 +510,8 @@ namespace Transformalize.Configuration {
         }
 
         [ConfigurationProperty(REPLACE_SINGLE_QUOTES, IsRequired = false, DefaultValue = true)]
-        public bool ReplaceSingleQuotes { 
-            get { return (bool) this[REPLACE_SINGLE_QUOTES]; }
+        public bool ReplaceSingleQuotes {
+            get { return (bool)this[REPLACE_SINGLE_QUOTES]; }
             set { this[REPLACE_SINGLE_QUOTES] = value; }
         }
 

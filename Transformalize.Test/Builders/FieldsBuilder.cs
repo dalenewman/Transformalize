@@ -57,5 +57,10 @@
         public Main.Fields ToFields() {
             return _fieldsBuilder.ToFields();
         }
+
+        public FieldBuilder Alias(string alias) {
+            _field.Alias = alias;
+            return this;
+        }
     }
 }

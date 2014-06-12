@@ -400,11 +400,23 @@ namespace Transformalize.Main {
                     ) { ShouldRun = shouldRun };
 
                 case "fromxml":
-                    return new FromXmlOperation(
-                        outKey,
-                        new Fields(_process, parameters, field.Entity)
-                    ) { ShouldRun = shouldRun };
-
+                    switch ((XmlMode)Enum.Parse(typeof(XmlMode), element.XmlMode)) {
+                        case XmlMode.First:
+                            return new FromFirstXmlOperation(
+                                outKey,
+                                new Fields(_process, parameters, field.Entity)
+                            ) { ShouldRun = shouldRun };
+                        case XmlMode.All:
+                            return new FromXmlOperation(
+                                outKey,
+                                new Fields(_process, parameters, field.Entity)
+                            ) { ShouldRun = shouldRun };
+                        default:
+                            return new FromNanoXmlOperation(
+                                outKey,
+                                new Fields(_process, parameters, field.Entity)
+                            ) { ShouldRun = shouldRun };
+                    }
                 case "fromregex":
                     return new FromRegexOperation(
                         outKey,
