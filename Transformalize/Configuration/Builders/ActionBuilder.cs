@@ -13,6 +13,16 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public ActionBuilder Command(string command) {
+            _action.Command = command;
+            return this;
+        }
+
+        public ActionBuilder TimeOut(int timeOut) {
+            _action.TimeOut = timeOut;
+            return this;
+        }
+
         public ActionBuilder Connection(string name) {
             _action.Connection = name;
             return this;

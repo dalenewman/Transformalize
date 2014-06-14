@@ -25,13 +25,14 @@ using System.Data;
 
 namespace Transformalize.Main.Providers {
     public class DatabaseScriptRunner : IScriptRunner {
-        public IScriptReponse Execute(AbstractConnection connection, string script) {
+        public IScriptReponse Execute(AbstractConnection connection, string script, int timeOut) {
             var response = new ScriptResponse();
 
             using (var cn = connection.GetConnection()) {
                 try {
                     cn.Open();
                     var cmd = cn.CreateCommand();
+                    cmd.CommandTimeout = timeOut;
                     cmd.CommandText = script;
                     cmd.CommandType = CommandType.Text;
                     response.RowsAffected = cmd.ExecuteNonQuery();

@@ -62,7 +62,7 @@ namespace Transformalize.Processes {
 
         protected override void PostProcessing() {
 
-            _entity.InputKeys.Clear();
+            _entity.InputKeys = new Row[0];
 
             var errors = GetAllErrors().ToArray();
             if (errors.Any()) {

@@ -53,6 +53,8 @@ namespace Transformalize.Processes {
             GlobalDiagnosticsContext.Set("process", _process.Name);
             GlobalDiagnosticsContext.Set("entity", Common.LogLength(_entity.Alias, 20));
 
+            Register(new EntityKeysPartial(_process, _entity));
+
             if (_entity.Input.Count == 1) {
                 Register(ComposeInputOperation(_entity.Input.First()));
             } else {
@@ -118,6 +120,7 @@ namespace Transformalize.Processes {
                     p.Register(new SqlOverrideOperation(_entity, input.Connection));
                 } else {
                     if (_entity.PrimaryKey.WithInput().Any()) {
+                        p.Register(new EntityKeysSaveOperation(_entity));
                         p.Register(new EntityKeysToOperations(_process, _entity, input.Connection));
                         p.Register(new SerialUnionAllOperation());
                     } else {
@@ -191,7 +194,7 @@ namespace Transformalize.Processes {
                 Info("Processed {0} insert{1}, and {2} update{3} in {4}.", _entity.Inserts, _entity.Inserts.Plural(), _entity.Updates, _entity.Updates.Plural(), _entity.Alias);
             }
 
-            _entity.InputKeys.Clear();
+            _entity.InputKeys = new Row[0];
 
             var errors = GetAllErrors().ToArray();
             if (errors.Any()) {

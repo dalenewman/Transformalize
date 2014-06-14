@@ -48,6 +48,7 @@ namespace Transformalize.Configuration {
         private const string NEW_VALUE = "new-value";
         private const string BODY = "body";
         private const string COMMAND = "command";
+        private const string TIME_OUT = "time-out";
 
         [ConfigurationProperty(ACTION, IsRequired = true)]
         public string Action {
@@ -65,6 +66,12 @@ namespace Transformalize.Configuration {
         public string Command {
             get { return this[COMMAND] as string; }
             set { this[COMMAND] = value; }
+        }
+
+        [ConfigurationProperty(TIME_OUT, IsRequired = false, DefaultValue = 0)]
+        public int TimeOut {
+            get { return (int) this[TIME_OUT]; }
+            set { this[TIME_OUT] = value; }
         }
 
         [ConfigurationProperty(MODE, IsRequired = false, DefaultValue = "")]

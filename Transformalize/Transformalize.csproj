@@ -2078,7 +2078,7 @@
     <Compile Include="Operations\ConsoleLoadOperation.cs" />
     <Compile Include="Processes\EntityDeleteProcess.cs" />
     <Compile Include="Operations\EntityDetectDeletes.cs" />
-    <Compile Include="Processes\EntityKeysProcess.cs" />
+    <Compile Include="Processes\EntityKeysPartial.cs" />
     <Compile Include="Extensions\XmlExtensions.cs" />
     <Compile Include="Extensions\LinqExtensions.cs" />
     <Compile Include="Extensions\StringBuilderExtensions.cs" />
@@ -2452,8 +2452,8 @@
     <Compile Include="Operations\EntityAction.cs" />
     <Compile Include="Operations\EntityActionFilter.cs" />
     <Compile Include="Operations\EntityJoinAction.cs" />
-    <Compile Include="Operations\EntityInputKeysStore.cs" />
-    <Compile Include="Operations\EntityInputKeysStoreExtract.cs" />
+    <Compile Include="Operations\EntityKeysDistinct.cs" />
+    <Compile Include="Processes\EntityKeysSaveOperation.cs" />
     <Compile Include="Processes\InitializationProcess.cs" />
     <Compile Include="Processes\EntityProcess.cs" />
     <Compile Include="Operations\TruncateOperation.cs" />

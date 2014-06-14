@@ -32,6 +32,7 @@ using Transformalize.Main;
 using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.SqlServer;
 using Transformalize.Operations;
+using Transformalize.Processes;
 using Transformalize.Runner;
 
 namespace Transformalize.Test {
@@ -56,12 +57,9 @@ namespace Transformalize.Test {
         public void TestEntityKeysToOperations() {
             var entity = _process.Entities.First();
 
-            TestOperation(
-                _entityKeysExtract.Object,
-                new EntityInputKeysStore(entity)
-            );
-
             var operations = TestOperation(
+                _entityKeysExtract.Object,
+                new EntityKeysDistinct(entity),
                 new EntityKeysToOperations(_process, entity, entity.Input.First().Connection)
             );
 

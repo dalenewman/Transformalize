@@ -21,7 +21,6 @@
 #endregion
 
 using System.IO;
-using System.Runtime.CompilerServices;
 using Transformalize.Extensions;
 
 namespace Transformalize.Main {
@@ -53,7 +52,7 @@ namespace Transformalize.Main {
                         return;
                     }
 
-                    var response = action.Connection.ExecuteScript(script);
+                    var response = action.Connection.ExecuteScript(script, action.Timeout);
                     if (response.Success) {
                         Log.Info("{0} ran successfully.", fileInfo.Name);
                         Log.Debug("{0} affected {1} rows.", fileInfo.Name, response.RowsAffected < 0 ? 0 : response.RowsAffected);

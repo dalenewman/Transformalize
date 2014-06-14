@@ -26,15 +26,14 @@ using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
 namespace Transformalize.Operations {
-    public class EntityInputKeysStore : AbstractAggregationOperation {
-        private readonly Entity _entity;
+    public class EntityKeysDistinct : AbstractAggregationOperation {
+
         private readonly string _firstKey;
         private readonly string[] _keys;
 
-        public EntityInputKeysStore(Entity entity) {
-            _entity = entity;
-            _firstKey = _entity.PrimaryKey.First().Alias;
-            _keys = _entity.PrimaryKey.WithInput().Aliases().ToArray();
+        public EntityKeysDistinct(Entity entity) {
+            _firstKey = entity.PrimaryKey.First().Alias;
+            _keys = entity.PrimaryKey.WithInput().Aliases().ToArray();
         }
 
         protected override void Accumulate(Row row, Row aggregate) {
@@ -49,8 +48,5 @@ namespace Transformalize.Operations {
             return _keys;
         }
 
-        protected override void FinishAggregation(Row aggregate) {
-            _entity.InputKeys.Add(aggregate);
-        }
     }
 }

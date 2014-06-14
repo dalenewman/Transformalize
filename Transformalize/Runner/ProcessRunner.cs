@@ -26,6 +26,7 @@ using System.Linq;
 using Transformalize.Libs.EnterpriseLibrary.Common.Configuration;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Libs.Rhino.Etl.Pipelines;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
@@ -88,12 +89,6 @@ namespace Transformalize.Runner {
         private static void ProcessEntities(Process process) {
 
             process.IsFirstRun = process.MasterEntity == null || !process.OutputConnection.RecordsExist(process.MasterEntity);
-
-            foreach (var entityKeysProcess in process.Entities.Where(entity => entity.PrimaryKey.Any(kv => kv.Input)).Select(entity => new EntityKeysProcess(process, entity) {
-                PipelineExecuter = entity.PipelineThreading == PipelineThreading.SingleThreaded ? (AbstractPipelineExecuter)new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter()
-            })) {
-                entityKeysProcess.Execute();
-            }
 
             foreach (var entityProcess in process.Entities.Select(entity => new EntityProcess(process, entity) {
                 PipelineExecuter = entity.PipelineThreading == PipelineThreading.SingleThreaded ? (AbstractPipelineExecuter)new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter()

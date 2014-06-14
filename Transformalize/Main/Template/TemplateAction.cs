@@ -52,6 +52,8 @@ namespace Transformalize.Main {
         public bool Conditional { get; set; }
         public string OldValue { get; set; }
         public string NewValue { get; set; }
+        public int Timeout { get; set; }
+        public string Command { get; set; }
 
         public TemplateAction(Process process, string template, ActionConfigurationElement action, IEnumerable<string> modes) {
             _process = process;
@@ -74,6 +76,8 @@ namespace Transformalize.Main {
             Conditional = action.Conditional;
             OldValue = action.OldValue;
             NewValue = action.NewValue;
+            Command = action.Command;
+            Timeout = action.TimeOut;
         }
 
         public void Handle(string file) {

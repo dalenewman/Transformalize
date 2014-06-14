@@ -6,7 +6,6 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Transformalize.Operations;
 
 namespace Transformalize.Libs.Rhino.Etl.Operations {
     public class SerialUnionAllOperation : AbstractOperation {
@@ -14,14 +13,6 @@ namespace Transformalize.Libs.Rhino.Etl.Operations {
 
         public SerialUnionAllOperation(string operationColumn = "operation") {
             OperationColumn = operationColumn;
-        }
-
-        public SerialUnionAllOperation(IEnumerable<IOperation> operations) {
-            _operations.AddRange(operations);
-        }
-
-        public SerialUnionAllOperation(params IOperation[] operations) {
-            _operations.AddRange(operations);
         }
 
         public string OperationColumn { get; set; }
@@ -32,12 +23,9 @@ namespace Transformalize.Libs.Rhino.Etl.Operations {
                     yield return row;
                 }
             } else {
-                foreach (var row in rows) {
-                    foreach (var innerRow in ((EntityDataExtract)row[OperationColumn]).Execute(null)) {
-                        yield return innerRow;
-                    }
+                foreach (var innerRow in rows.SelectMany(row => ((IOperation)row[OperationColumn]).Execute(null))) {
+                    yield return innerRow;
                 }
-
             }
         }
 

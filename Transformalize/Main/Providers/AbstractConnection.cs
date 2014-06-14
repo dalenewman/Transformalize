@@ -227,8 +227,8 @@ namespace Transformalize.Main.Providers {
             return connection;
         }
 
-        public IScriptReponse ExecuteScript(string script) {
-            return ScriptRunner.Execute(this, script);
+        public IScriptReponse ExecuteScript(string script, int timeOut = 0) {
+            return ScriptRunner.Execute(this, script, timeOut);
         }
 
         public string WriteTemporaryTable(string name, Fields fields, bool useAlias = true) {

@@ -30,7 +30,7 @@ namespace Transformalize.Main.Providers.AnalysisServices
     {
         private readonly Logger _log = LogManager.GetLogger("tfl");
 
-        public IScriptReponse Execute(AbstractConnection connection, string script)
+        public IScriptReponse Execute(AbstractConnection connection, string script, int timeOut = 0)
         {
             var response = new ScriptResponse();
             var server = new Server();

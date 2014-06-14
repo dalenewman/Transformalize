@@ -20,6 +20,7 @@
 
 #endregion
 
+using System;
 using System.Data;
 using System.Linq;
 using Transformalize.Libs.Dapper;
@@ -58,7 +59,7 @@ namespace Transformalize.Main.Providers.SqlServer {
                         Name = columnName,
                         Entity = name,
                         Process = process,
-                        Index = result.ORDINAL_POSITION-1,
+                        Index = Convert.ToInt16(result.ORDINAL_POSITION-1),
                         Schema = schema,
                         Input = true,
                         Precision = result.NUMERIC_PRECISION,
@@ -98,7 +99,6 @@ namespace Transformalize.Main.Providers.SqlServer {
                     ISNULL(c.NUMERIC_SCALE, 0) AS NUMERIC_SCALE, --5
                     ISNULL(pk.ORDINAL_POSITION,c.ORDINAL_POSITION) AS ORDINAL_POSITION, --6
                     CAST(CASE WHEN pk.COLUMN_NAME IS NULL THEN 0 ELSE 1 END AS BIT) AS IS_PRIMARY_KEY
-                    ,c.*
                 FROM INFORMATION_SCHEMA.COLUMNS c
                 LEFT OUTER JOIN (
                     SELECT

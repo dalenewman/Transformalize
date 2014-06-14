@@ -50,7 +50,7 @@ namespace Transformalize.Main {
         public object Begin { get; set; }
         public object End { get; set; }
         public IEnumerable<Relationship> RelationshipToMaster { get; set; }
-        public List<Row> InputKeys { get; set; }
+        public Row[] InputKeys { get; set; }
         public IDbCommand InputKeysCommand { get; set; }
         public string Prefix { get; set; }
         public bool Group { get; set; }
@@ -81,7 +81,7 @@ namespace Transformalize.Main {
             PrimaryKey = new Fields();
             Fields = new Fields();
             Joins = new Dictionary<string, Relationship>();
-            InputKeys = new List<Row>();
+            InputKeys = new Row[0];
             Prefix = string.Empty;
             CalculatedFields = new Fields();
             Output = new List<NamedConnection>();

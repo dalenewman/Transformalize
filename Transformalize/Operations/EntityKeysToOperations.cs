@@ -24,7 +24,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Extensions;
-using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
@@ -32,13 +31,12 @@ using Transformalize.Main.Providers;
 
 namespace Transformalize.Operations {
     public class EntityKeysToOperations : AbstractOperation {
-        private readonly Process _process;
         private readonly Entity _entity;
+        private readonly Process _process;
         private readonly AbstractConnection _connection;
         private readonly Fields _key;
         private readonly string _operationColumn;
-        private readonly IList<Row> _keys = new List<Row>();
-        private readonly Logger _log = LogManager.GetLogger("tfl");
+        private readonly Fields _fields;
 
         public EntityKeysToOperations(Process process, Entity entity, AbstractConnection connection, string operationColumn = "operation") {
             _process = process;
@@ -46,30 +44,19 @@ namespace Transformalize.Operations {
             _connection = connection;
             _operationColumn = operationColumn;
             _key = _entity.PrimaryKey.WithInput();
-            _keys = new List<Row>(_entity.InputKeys);
-        }
-
-        void EntityKeysToOperations_OnFinishedProcessing(IOperation obj) {
-            if (_process.IsFirstRun || !_entity.DetectChanges) {
-                _keys.Clear();
-                _entity.InputKeys.Clear();
-                _log.Debug("Released input key memory.");
-            }
+            _fields = _entity.Fields.WithInput();
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
-
             OnFinishedProcessing += EntityKeysToOperations_OnFinishedProcessing;
+            return rows.Partition(_connection.BatchSize).Select(batch => GetOperationRow(batch, _fields));
+        }
 
-            var fields = _entity.Fields.WithInput();
-
-            if (_keys.Count > 0 && _keys.Count < _connection.BatchSize) {
-                yield return GetOperationRow(_keys, fields);
-            } else {
-                foreach (var batch in _keys.Partition(_connection.BatchSize)) {
-                    yield return GetOperationRow(batch, fields);
-                }
-            }
+        void EntityKeysToOperations_OnFinishedProcessing(IOperation obj) {
+            if (!_process.IsFirstRun && _entity.DetectChanges)
+                return;
+            _entity.InputKeys = new Row[0];
+            Debug("Released input keys.");
         }
 
         private Row GetOperationRow(IEnumerable<Row> batch, Fields fields) {

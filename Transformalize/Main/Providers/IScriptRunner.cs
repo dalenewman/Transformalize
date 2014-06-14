@@ -22,6 +22,6 @@
 
 namespace Transformalize.Main.Providers {
     public interface IScriptRunner {
-        IScriptReponse Execute(AbstractConnection connection, string script);
+        IScriptReponse Execute(AbstractConnection connection, string script, int timeOut);
     }
 }
