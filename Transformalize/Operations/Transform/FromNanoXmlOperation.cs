@@ -41,7 +41,7 @@ namespace Transformalize.Operations.Transform {
                     var xml = new NanoXmlDocument(row[InKey].ToString());
                     if (_elements.ContainsKey(xml.RootNode.Name)) {
                         var field = _elements[xml.RootNode.Name];
-                        row[field.Alias] = _converter[field.SimpleType](xml.RootNode.Value ?? (field.ReadInnerXml ? xml.RootNode.InnerText() : xml.RootNode.OuterText()));
+                        row[field.Alias] = _converter[field.SimpleType](xml.RootNode.Value ?? (field.ReadInnerXml ? xml.RootNode.InnerText() : xml.RootNode.ToString()));
                         count++;
                     }
 
@@ -52,7 +52,7 @@ namespace Transformalize.Operations.Transform {
                             if (_elements.ContainsKey(node.Name)) {
                                 var field = _elements[node.Name];
                                 count++;
-                                var value = node.Value ?? (field.ReadInnerXml ? node.InnerText() : node.OuterText());
+                                var value = node.Value ?? (field.ReadInnerXml ? node.InnerText() : node.ToString());
                                 if (!string.IsNullOrEmpty(value)) {
                                     row[field.Alias] = _converter[field.SimpleType](value);
                                 }

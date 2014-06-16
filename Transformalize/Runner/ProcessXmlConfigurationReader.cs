@@ -21,11 +21,14 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Xml.Linq;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
-using Transformalize.Libs.NLog;
+using Transformalize.Libs;
 using Transformalize.Main;
 
 namespace Transformalize.Runner {
@@ -33,7 +36,6 @@ namespace Transformalize.Runner {
 
         private readonly string _file;
         private readonly IContentsReader _contentsReader;
-        private readonly Logger _log = LogManager.GetLogger("tfl");
 
         public ProcessXmlConfigurationReader(string file, IContentsReader contentsReader) {
             _file = file;
@@ -42,20 +44,21 @@ namespace Transformalize.Runner {
 
         public ProcessElementCollection Read() {
             var contents = _contentsReader.Read(_file);
+
             var section = new TransformalizeConfiguration();
 
             try {
                 var doc = XDocument.Parse(contents.Content);
-
                 var process = doc.Element("process");
+                string xml;
+
                 if (process == null) {
                     var transformalize = doc.Element("transformalize");
                     if (transformalize == null)
                         throw new TransformalizeException("Can't find the <process/> or <transformalize/> element in {0}.", _file);
-
-                    section.Deserialize(transformalize.ToString());
+                    xml = transformalize.ToString();
                 } else {
-                    var xml = string.Format(@"
+                    xml = string.Format(@"
                     <transformalize>
                         <processes>
                             <add name=""{0}"" enabled=""{1}"" inherit=""{2}"" time-zone=""{3}"" star=""{4}"" star-enabled=""{5}"">{6}</add>
@@ -69,13 +72,41 @@ namespace Transformalize.Runner {
                         SafeAttribute(process, "star-enabled", true),
                         process.InnerXml()
                     );
-                    section.Deserialize(xml);
                 }
 
+                var updated = ReplaceParameters(xml);
+                section.Deserialize(updated);
                 return section.Processes;
             } catch (Exception e) {
                 throw new TransformalizeException("Sorry.  I couldn't parse the file {0}.  Make sure it is valid XML and try again. {1}", contents.Name, e.Message);
             }
+        }
+
+        public static string ReplaceParameters(string xml) {
+
+            if (!xml.Contains("@"))
+                return xml;
+
+            var newXml = new StringBuilder("<transformalize><processes>");
+
+            var doc = new NanoXmlDocument(xml);
+            var processes = doc.RootNode.SubNodes.First().SubNodes;
+
+            foreach (var process in processes) {
+                var processXml = process.ToString();
+                if (process.SubNodes.Any(n => n.Name.Equals("parameters"))) {
+                    var parameters = process.SubNodes.First(n => n.Name.Equals("parameters")).SubNodes;
+                    foreach (var parameter in parameters) {
+                        var name = "@" + parameter.GetAttribute("name").Value.TrimStart("@".ToCharArray());
+                        var value = parameter.GetAttribute("value").Value;
+                        processXml = processXml.Replace(name, value);
+                    }
+                }
+                newXml.AppendLine(processXml);
+            }
+
+            newXml.AppendLine("</processes></transformalize>");
+            return newXml.ToString();
         }
 
         private static object SafeAttribute(XElement element, string attribute, object defaultValue) {
@@ -84,6 +115,5 @@ namespace Transformalize.Runner {
             }
             return defaultValue;
         }
-
     }
 }

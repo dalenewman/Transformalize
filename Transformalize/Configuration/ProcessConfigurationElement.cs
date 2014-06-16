@@ -37,6 +37,15 @@ namespace Transformalize.Configuration {
         private const string PIPELINE_THREADING = "pipeline-threading";
         private const string ACTIONS = "actions";
         private const string TEMPLATES = "templates";
+        private const string PARAMETERS = "parameters";
+        private const string CONNECTIONS = "connections";
+        private const string PROVIDERS = "providers";
+        private const string SEARCH_TYPES = "search-types";
+        private const string MAPS = "maps";
+        private const string SCRIPTS = "scripts";
+        private const string ENTITIES = "entities";
+        private const string RELATIONSHIPS = "relationships";
+        private const string CALCULATED_FIELDS = "calculated-fields";
 
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name {
@@ -55,7 +64,6 @@ namespace Transformalize.Configuration {
             get { return this[TIMEZONE] as string; }
             set { this[TIMEZONE] = value; }
         }
-
 
         [ConfigurationProperty(ENABLED, IsRequired = false, DefaultValue = true)]
         public bool Enabled {
@@ -82,44 +90,49 @@ namespace Transformalize.Configuration {
         }
 
 
-        [ConfigurationProperty("connections")]
+        [ConfigurationProperty(PARAMETERS)]
+        public ParameterElementCollection Parameters {
+            get { return this[PARAMETERS] as ParameterElementCollection; }
+        }
+
+        [ConfigurationProperty(CONNECTIONS)]
         public ConnectionElementCollection Connections {
-            get { return this["connections"] as ConnectionElementCollection; }
+            get { return this[CONNECTIONS] as ConnectionElementCollection; }
         }
 
-        [ConfigurationProperty("providers")]
+        [ConfigurationProperty(PROVIDERS)]
         public ProviderElementCollection Providers {
-            get { return this["providers"] as ProviderElementCollection; }
+            get { return this[PROVIDERS] as ProviderElementCollection; }
         }
 
-        [ConfigurationProperty("search-types")]
+        [ConfigurationProperty(SEARCH_TYPES)]
         public SearchTypeElementCollection SearchTypes {
-            get { return this["search-types"] as SearchTypeElementCollection; }
+            get { return this[SEARCH_TYPES] as SearchTypeElementCollection; }
         }
 
-        [ConfigurationProperty("maps")]
+        [ConfigurationProperty(MAPS)]
         public MapElementCollection Maps {
-            get { return this["maps"] as MapElementCollection; }
+            get { return this[MAPS] as MapElementCollection; }
         }
 
-        [ConfigurationProperty("scripts")]
+        [ConfigurationProperty(SCRIPTS)]
         public ScriptElementCollection Scripts {
-            get { return this["scripts"] as ScriptElementCollection; }
+            get { return this[SCRIPTS] as ScriptElementCollection; }
         }
 
-        [ConfigurationProperty("entities")]
+        [ConfigurationProperty(ENTITIES)]
         public EntityElementCollection Entities {
-            get { return this["entities"] as EntityElementCollection; }
+            get { return this[ENTITIES] as EntityElementCollection; }
         }
 
-        [ConfigurationProperty("relationships")]
+        [ConfigurationProperty(RELATIONSHIPS)]
         public RelationshipElementCollection Relationships {
-            get { return this["relationships"] as RelationshipElementCollection; }
+            get { return this[RELATIONSHIPS] as RelationshipElementCollection; }
         }
 
-        [ConfigurationProperty("calculated-fields")]
+        [ConfigurationProperty(CALCULATED_FIELDS)]
         public FieldElementCollection CalculatedFields {
-            get { return this["calculated-fields"] as FieldElementCollection; }
+            get { return this[CALCULATED_FIELDS] as FieldElementCollection; }
         }
 
         [ConfigurationProperty(TEMPLATES)]
@@ -160,6 +173,7 @@ namespace Transformalize.Configuration {
             Templates.Path = child.Templates.Path;
 
             //collections
+            Parameters.Merge(child.Parameters);
             CalculatedFields.Merge(child.CalculatedFields);
             Connections.Merge(child.Connections);
             Entities.Merge(child.Entities);

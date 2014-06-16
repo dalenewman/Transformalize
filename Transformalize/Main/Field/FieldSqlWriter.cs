@@ -321,7 +321,7 @@ namespace Transformalize.Main {
         public FieldSqlWriter SetParam() {
             foreach (var key in CopyOutputKeys()) {
                 var name = _output[key];
-                _output[key] = string.Concat(name, " = @", name.Trim("[]".ToCharArray()));
+                _output[key] = string.Concat(name, " = @", _original[key].Identifier);
             }
             return this;
         }

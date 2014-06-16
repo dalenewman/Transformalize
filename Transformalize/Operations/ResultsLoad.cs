@@ -39,8 +39,8 @@ namespace Transformalize.Operations {
         protected override void PrepareCommand(Row row, SqlCommand command) {
             var sets = new FieldSqlWriter(_process.CalculatedFields).Alias(_process.OutputConnection.L, _process.OutputConnection.R).SetParam().Write();
             command.CommandText = string.Format("UPDATE {0} SET {1} WHERE TflKey = @TflKey;", _process.MasterEntity.OutputName(), sets);
-            foreach (var alias in _process.CalculatedFields.Aliases()) {
-                AddParameter(command, alias, row[alias]);
+            foreach (var field in _process.CalculatedFields) {
+                AddParameter(command, field.Identifier, row[field.Alias]);
             }
             AddParameter(command, "TflKey", row["TflKey"]);
         }

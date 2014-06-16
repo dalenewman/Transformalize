@@ -49,8 +49,8 @@ namespace Transformalize.Main.Providers.SqlServer {
                 WHERE TflKey = @TflKey;
             ", _entity.OutputName(), sets);
 
-            foreach (var alias in fields.Aliases()) {
-                AddParameter(command, alias, row[alias]);
+            foreach (var field in fields) {
+                AddParameter(command, field.Identifier, row[field.Alias]);
             }
             AddParameter(command, "TflKey", row["TflKey"]);
             AddParameter(command, "TflBatchId", _entity.TflBatchId);

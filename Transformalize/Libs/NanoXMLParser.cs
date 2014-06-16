@@ -284,10 +284,16 @@ namespace Transformalize.Libs {
             }
         }
 
-        public string OuterText() {
-            var builder = new StringBuilder();
+        public override string ToString() {
+            var builder = new StringBuilder("<");
+            builder.Append(Name);
+            foreach (var attribute in Attributes) {
+                builder.AppendFormat(" {0}=\"{1}\"", attribute.Name, attribute.Value);
+            }
+            builder.Append(">");
             InnerText(ref builder);
-            return string.Format("<{0}>{1}</{0}>", Name, builder);
+            builder.AppendFormat("</{0}>", Name);
+            return builder.ToString();
         }
 
     }

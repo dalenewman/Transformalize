@@ -20,8 +20,11 @@
 
 #endregion
 
+using System.Linq;
+using System.Xml.Linq;
 using NUnit.Framework;
 using Transformalize.Main;
+using Transformalize.Runner;
 
 namespace Transformalize.Test
 {
@@ -43,6 +46,41 @@ namespace Transformalize.Test
             Assert.AreEqual("System.Int32", northWind.Entities[0].Fields["OrderDetailsQuantity"].Type);
             Assert.AreEqual(8, northWind.Entities.Count);
             Assert.AreEqual(4, northWind.Entities[1].CalculatedFields.Count);
+        }
+
+        [Test]
+        public void TestDefaultParameters()
+        {
+            const string xml = @"<transformalize>
+    <processes>
+        <add name=""test1"">
+            <parameters>
+                <add name=""t1"" value=""v1"" />
+            </parameters>
+            <actions>
+                <add action=""@t1"" />
+            </actions>
+        </add>
+        <add name=""test2"">
+            <parameters>
+                <add name=""t1"" value=""v2"" />
+                <add name=""t2"" value=""v3"" />
+            </parameters>
+            <actions>
+                <add action=""@t1"" />
+                <add action=""@t2"" />
+            </actions>
+        </add>
+    </processes>
+</transformalize>";
+            var output = ProcessXmlConfigurationReader.ReplaceParameters(xml);
+            var doc = XDocument.Parse(output);
+            var actions = doc.Descendants("add").Where(n=>n.Attributes("action").Any()).ToArray();
+            
+            Assert.AreEqual("v1", actions[0].Attribute("action").Value);
+            Assert.AreEqual("v2", actions[1].Attribute("action").Value);
+            Assert.AreEqual("v3", actions[2].Attribute("action").Value);
+
         }
     }
 }

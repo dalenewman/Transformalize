@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Web;
 using System.Xml.Linq;
 using Transformalize.Libs.Rhino.Etl;
 
@@ -15,7 +16,7 @@ namespace Transformalize.Operations.Transform {
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
                 if (ShouldRun(row)) {
-                    row[OutKey] = new XText(SanitizeXmlString(row[InKey].ToString())).ToString();
+                    row[OutKey] = SanitizeXmlString(HttpUtility.HtmlEncode(row[InKey]));
                 } else {
                     Interlocked.Increment(ref SkipCount);
                 }

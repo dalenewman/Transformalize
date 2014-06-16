@@ -24,7 +24,7 @@ using System.Configuration;
 
 namespace Transformalize.Configuration
 {
-    public class ParameterElementCollection : ConfigurationElementCollection
+    public class ParameterElementCollection : MyConfigurationElementCollection
     {
         public ParameterConfigurationElement this[int index]
         {

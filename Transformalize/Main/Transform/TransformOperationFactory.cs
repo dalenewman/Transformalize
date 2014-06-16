@@ -162,6 +162,9 @@ namespace Transformalize.Main {
                 case "newguid":
                     return new NewGuidOperation(inKey, outKey) { ShouldRun = shouldRun };
 
+                case "guid":
+                    return new NewGuidOperation(inKey, outKey) { ShouldRun = shouldRun };
+
                 case "now":
                     return new PartialProcessOperation()
                         .Register(
