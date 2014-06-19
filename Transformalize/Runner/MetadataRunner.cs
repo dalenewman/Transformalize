@@ -34,7 +34,7 @@ namespace Transformalize.Runner {
             System.Diagnostics.Process.Start(fileName);
 
             timer.Stop();
-            _log.Info("Calculated metadata in {1}.", timer.Elapsed);
+            _log.Info("Calculated metadata in {0}.", timer.Elapsed);
 
             return result;
         }

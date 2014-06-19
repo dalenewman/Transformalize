@@ -55,6 +55,7 @@ namespace Transformalize.Main {
                 TemplateContentType = _element.TemplateContentType.Equals("raw") ? Encoding.Raw : Encoding.Html,
                 Enabled = _element.Enabled,
                 Star = _element.Star,
+                View = _element.View,
                 StarEnabled = _element.StarEnabled,
                 TimeZone = string.IsNullOrEmpty(_element.TimeZone) ? TimeZoneInfo.Local.Id : _element.TimeZone,
                 PipelineThreading = (PipelineThreading)Enum.Parse(typeof(PipelineThreading), _element.PipelineThreading, true)

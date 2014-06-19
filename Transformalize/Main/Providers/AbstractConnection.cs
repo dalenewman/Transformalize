@@ -373,5 +373,6 @@ namespace Transformalize.Main.Providers {
         public bool IsInternal() {
             return Type.Equals(ProviderType.Internal);
         }
+
     }
 }

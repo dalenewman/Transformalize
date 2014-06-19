@@ -64,6 +64,7 @@ namespace Transformalize.Processes {
             if (_process.StarEnabled && _process.Entities.Count > 0) {
                 _process.OutputConnection.ViewWriter.Create(_process);
             }
+            _process.InitializeView();
             base.PostProcessing();
         }
     }

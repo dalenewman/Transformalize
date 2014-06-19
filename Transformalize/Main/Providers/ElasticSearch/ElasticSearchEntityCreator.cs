@@ -14,7 +14,9 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             {"datetime","date"},
             {"bool","boolean"},
             {"decimal","float"},
-            {"guid","string"}
+            {"single","double"},
+            {"guid","string"},
+            {"byte[]","binary"}
         };
 
         private readonly List<string> _analyzers = new List<string> {

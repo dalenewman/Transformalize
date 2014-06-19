@@ -20,14 +20,10 @@
 
 #endregion
 
-using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Web;
-using System.Xml.Linq;
 using Transformalize.Libs.NLog;
-using Transformalize.Libs.NLog.LayoutRenderers.Wrappers;
-using Transformalize.Libs.RazorEngine.Compilation;
 
 namespace Transformalize.Main {
     public class MetaDataWriter {
@@ -71,13 +67,14 @@ namespace Transformalize.Main {
         }
 
         private static void AppendField(StringBuilder content, Field f) {
-            content.AppendFormat("        <add name=\"{0}\" {1}{2}{3}{4}{5}{6}></add>\r\n",
+            content.AppendFormat("        <add name=\"{0}\" {1}{2}{3}{4}{5}{6}{7}></add>\r\n",
                 f.Name,
+                f.Name.Contains(" ") ? " alias=\"" + f.Name.Replace(" ",string.Empty) + "\" " : string.Empty,
                 f.SimpleType.Equals("string") ? string.Empty : "type=\"" + f.Type + "\" ",
                 !f.Length.Equals("0") && !f.Length.Equals(string.Empty) && !f.Length.Equals("64") ? "length=\"" + f.Length + "\" " : string.Empty,
                 f.SimpleType == "decimal" && f.Precision > 0 ? "precision=\"" + f.Precision + "\" " : string.Empty,
-                f.SimpleType == "decimal" && f.Scale > 0 ? "scale=\"" + f.Scale + "\"" : string.Empty,
-                f.FieldType.HasFlag(FieldType.PrimaryKey) || f.FieldType.HasFlag(FieldType.MasterKey) ? "primary-key=\"true\"" : string.Empty,
+                f.SimpleType == "decimal" && f.Scale > 0 ? "scale=\"" + f.Scale + "\" " : string.Empty,
+                f.FieldType.HasFlag(FieldType.PrimaryKey) || f.FieldType.HasFlag(FieldType.MasterKey) ? "primary-key=\"true\" " : string.Empty,
                 f.IsQuoted() ? string.Format("quoted-with=\"{0}\"", HttpUtility.HtmlEncode(f.QuotedWith)) : string.Empty);
         }
     }

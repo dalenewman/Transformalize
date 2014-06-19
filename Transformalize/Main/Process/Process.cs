@@ -22,8 +22,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using Transformalize.Extensions;
+using Transformalize.Libs.Dapper;
 using Transformalize.Libs.Elasticsearch.Net.Extensions;
 using Transformalize.Libs.Ninject.Syntax;
 using Transformalize.Libs.NLog;
@@ -65,6 +68,7 @@ namespace Transformalize.Main {
         public AbstractConnection OutputConnection;
         private PipelineThreading _pipelineThreading = PipelineThreading.MultiThreaded;
         private string _star = Common.DefaultValue;
+        private string _view = Common.DefaultValue;
 
         // properties
         public string TimeZone { get; set; }
@@ -75,6 +79,11 @@ namespace Transformalize.Main {
         public string Star {
             get { return _star.Equals(Common.DefaultValue) ? Name + "Star" : _star; }
             set { _star = value; }
+        }
+
+        public string View {
+            get { return _view.Equals(Common.DefaultValue) ? Name + "View" : _view; }
+            set { _view = value; }
         }
 
         public Dictionary<string, AbstractConnection> Connections {
@@ -327,7 +336,9 @@ namespace Transformalize.Main {
                     builder.Append(l);
                     builder.Append(j.RightField.Alias);
                     builder.Append(r);
+                    builder.Append(" AND ");
                 }
+                builder.TrimEnd(" AND ");
                 builder.Append(")");
             }
 
@@ -336,5 +347,23 @@ namespace Transformalize.Main {
 
         }
 
+        public void InitializeView() {
+
+            if (!OutputConnection.IsDatabase || Relationships.Count <= 0)
+                return;
+            var view = (MasterEntity.PrependProcessNameToOutputName ? Common.EntityOutputName(MasterEntity, Name) : MasterEntity.Alias) + View;
+            var fullName = MasterEntity.SchemaPrefix(OutputConnection.L, OutputConnection.R) + OutputConnection.Enclose(view);
+
+            var connection = OutputConnection.GetConnection();
+            connection.Open();
+
+            if (connection.Query("SELECT TOP(1) TABLE_NAME FROM INFORMATION_SCHEMA.VIEWS WHERE TABLE_SCHEMA = @Schema AND  TABLE_NAME = @View;", new { MasterEntity.Schema, View = view }).Any()) {
+                connection.Execute(string.Format("DROP VIEW {0};", fullName));
+            }
+
+            _log.Debug(ViewSql());
+            connection.Execute(string.Format("CREATE VIEW {0} AS {1}", fullName, ViewSql()));
+            connection.Close();
+        }
     }
 }

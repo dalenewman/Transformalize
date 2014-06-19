@@ -61,7 +61,7 @@ namespace Transformalize.Runner {
                     xml = string.Format(@"
                     <transformalize>
                         <processes>
-                            <add name=""{0}"" enabled=""{1}"" inherit=""{2}"" time-zone=""{3}"" star=""{4}"" star-enabled=""{5}"">{6}</add>
+                            <add name=""{0}"" enabled=""{1}"" inherit=""{2}"" time-zone=""{3}"" star=""{4}"" star-enabled=""{5}"" view=""{6}"">{7}</add>
                         </processes>
                     </transformalize>",
                         contents.Name,
@@ -70,6 +70,7 @@ namespace Transformalize.Runner {
                         SafeAttribute(process, "time-zone", string.Empty),
                         SafeAttribute(process, "star", Common.DefaultValue),
                         SafeAttribute(process, "star-enabled", true),
+                        SafeAttribute(process, "view", Common.DefaultValue),
                         process.InnerXml()
                     );
                 }
