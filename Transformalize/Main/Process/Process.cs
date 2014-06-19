@@ -23,15 +23,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using Transformalize.Libs.Elasticsearch.Net.Extensions;
 using Transformalize.Libs.Ninject.Syntax;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Ninject;
-using Transformalize.Libs.RazorEngine;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Providers;
 using Transformalize.Operations.Validate;
 using Transformalize.Runner;
+using Encoding = Transformalize.Libs.RazorEngine.Encoding;
 
 namespace Transformalize.Main {
 
@@ -261,5 +263,78 @@ namespace Transformalize.Main {
                 batchId++;
             }
         }
+
+        public string ViewSql() {
+            const string fieldSpacer = ",\r\n    ";
+            var builder = new StringBuilder();
+            var master = MasterEntity;
+            var l = OutputConnection.L;
+            var r = OutputConnection.R;
+            var schema = master.SchemaPrefix(l, r);
+
+            builder.AppendLine("SELECT");
+            builder.Append("    ");
+            builder.Append(new FieldSqlWriter(master.OutputFields()).Alias(l, r).Prepend("m.").Write(fieldSpacer));
+
+            foreach (var rel in Relationships) {
+                var joinFields = rel.Fields();
+                foreach (var field in rel.RightEntity.OutputFields()) {
+                    if (!joinFields.HaveField(field.Alias)) {
+                        builder.Append(fieldSpacer);
+                        builder.Append(new FieldSqlWriter(new Fields(field)).Alias(l, r).Prepend("r" + rel.RightEntity.Index + ".").Write(fieldSpacer));
+                    }
+                }
+            }
+
+            builder.AppendLine();
+            builder.Append("FROM ");
+            builder.Append(schema);
+            builder.Append(l);
+            builder.Append(master.OutputName());
+            builder.Append(r);
+            builder.Append(" m");
+
+            foreach (var rel in Relationships) {
+                builder.AppendLine();
+                builder.Append("LEFT OUTER JOIN ");
+                if (rel.RightEntity.IsMaster()) {
+                    builder.Append("m");
+                } else {
+                    builder.Append(rel.RightEntity.SchemaPrefix(l, r));
+                    builder.Append(l);
+                    builder.Append(rel.RightEntity.OutputName());
+                    builder.Append(r);
+                }
+                builder.Append(" ");
+                builder.Append("r");
+                builder.Append(rel.RightEntity.Index);
+                builder.Append(" ON (");
+                foreach (var j in rel.Join) {
+                    if (rel.LeftEntity.IsMaster()) {
+                        builder.Append("m");
+                    } else {
+                        builder.Append("r");
+                        builder.Append(rel.LeftEntity.Index);
+                    }
+                    builder.Append(".");
+                    builder.Append(l);
+                    builder.Append(j.LeftField.Alias);
+                    builder.Append(r);
+                    builder.Append(" = ");
+                    builder.Append("r");
+                    builder.Append(rel.RightEntity.Index);
+                    builder.Append(".");
+                    builder.Append(l);
+                    builder.Append(j.RightField.Alias);
+                    builder.Append(r);
+                }
+                builder.Append(")");
+            }
+
+            builder.Append(";");
+            return builder.ToString();
+
+        }
+
     }
 }

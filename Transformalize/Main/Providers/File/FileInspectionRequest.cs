@@ -22,6 +22,8 @@ namespace Transformalize.Main.Providers.File {
             set { _defaultType = value; }
         }
 
+        public bool IgnoreEmpty { get; set; }
+
         public string DefaultLength {
             get { return _defaultLength; }
             set { _defaultLength = value; }

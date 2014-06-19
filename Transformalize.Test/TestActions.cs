@@ -76,6 +76,7 @@ namespace Transformalize.Test {
         }
 
         [Test]
+        [Ignore("requires a local SQL Server and TestOutput database")]
         public void TestCopyFileToConnection() {
 
             var file1 = Path.GetTempFileName();

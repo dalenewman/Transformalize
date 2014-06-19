@@ -21,26 +21,30 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
-namespace Transformalize.Main
-{
-    public class Relationship
-    {
+namespace Transformalize.Main {
+    public class Relationship {
         public List<Join> Join;
         public Entity LeftEntity;
         public Entity RightEntity;
 
-        public Relationship()
-        {
+        public Relationship() {
             Join = new List<Join>();
         }
 
-        public override string ToString()
-        {
+        public Fields Fields() {
+            var fields = new Fields();
+            foreach (var join in Join) {
+                fields.Add(join.Fields());
+            }
+            return fields;
+        }
+
+        public override string ToString() {
             var builder = new StringBuilder();
-            foreach (var join in Join)
-            {
+            foreach (var join in Join) {
                 builder.Append(join);
                 builder.Append(" ");
             }

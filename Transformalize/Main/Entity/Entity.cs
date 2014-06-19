@@ -33,7 +33,7 @@ namespace Transformalize.Main {
 
     public class Entity {
 
-        private List<IOperation> _operationsBeforeAggregation = new List<IOperation>(); 
+        private List<IOperation> _operationsBeforeAggregation = new List<IOperation>();
         private List<IOperation> _operationsAfterAggregation = new List<IOperation>();
         private IEnumerable<Row> _rows = new List<Row>();
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
@@ -187,7 +187,7 @@ namespace Transformalize.Main {
         }
 
         public bool NeedsSchema() {
-            return !(string.IsNullOrEmpty(Schema) || Schema.Equals("dbo", IC));
+            return !(string.IsNullOrEmpty(Schema));
         }
 
         public bool HasSort() {
@@ -206,5 +206,8 @@ namespace Transformalize.Main {
             return DetectChanges && Version != null && Version.Input && isDatabase;
         }
 
+        public string SchemaPrefix(string l, string r) {
+            return NeedsSchema() ? string.Concat(l, Schema, r, ".") : string.Empty;
+        }
     }
 }

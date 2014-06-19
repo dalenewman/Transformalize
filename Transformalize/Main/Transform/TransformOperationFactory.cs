@@ -618,7 +618,8 @@ namespace Transformalize.Main {
                         Common.ToSystemType(element.Type),
                         element.MessageTemplate,
                         element.Negated,
-                        element.MessageAppend
+                        element.MessageAppend,
+                        element.IgnoreEmpty
                     );
 
             }

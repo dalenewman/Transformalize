@@ -20,8 +20,10 @@
 
 #endregion
 
+using System.Diagnostics;
 using NUnit.Framework;
 using Transformalize.Configuration.Builders;
+using Transformalize.Main;
 
 namespace Transformalize.Test {
     [TestFixture]
@@ -372,6 +374,82 @@ namespace Transformalize.Test {
             .Process();
 
             Assert.AreEqual(2, process.Scripts.Count);
+        }
+
+        [Test]
+        public void TestViewSql()
+        {
+            const string expected = @"SELECT
+    m.[OrderDetailId],
+    m.[OrderId],
+    m.[ProductId],
+    m.[Price],
+    m.[Quantity],
+    r1.[CustomerId],
+    r2.[FirstName],
+    r2.[LastName],
+    r3.[Product],
+    r3.[Description],
+    r4.[CategoryId],
+    r5.[Category]
+FROM [dbo].[TestOrderDetail] m
+LEFT OUTER JOIN [dbo].[TestOrder] r1 ON (m.[OrderId] = r1.[OrderId])
+LEFT OUTER JOIN [dbo].[TestCustomer] r2 ON (r1.[CustomerId] = r2.[CustomerId])
+LEFT OUTER JOIN [dbo].[TestProduct] r3 ON (m.[ProductId] = r3.[ProductId])
+LEFT OUTER JOIN [dbo].[TestProductCategory] r4 ON (r3.[ProductId] = r4.[ProductId])
+LEFT OUTER JOIN [dbo].[TestCategory] r5 ON (r4.[CategoryId] = r5.[CategoryId]);";
+
+            var process = ProcessFactory.CreateSingle(new ProcessBuilder("Test")
+                .Connection("output").Provider("sqlserver")
+                .Entity("OrderDetail")
+                    .Schema("dbo")
+                    .Field("OrderDetailId").PrimaryKey()
+                    .Field("OrderId")
+                    .Field("ProductId")
+                    .Field("Price")
+                    .Field("Quantity")
+                .Entity("Order")
+                    .Schema("dbo")
+                    .Field("OrderId").PrimaryKey()
+                    .Field("CustomerId")
+                .Entity("Customer")
+                    .Schema("dbo")
+                    .Field("CustomerId").PrimaryKey()
+                    .Field("FirstName")
+                    .Field("LastName")
+                .Entity("Product")
+                    .Schema("dbo")
+                    .Field("ProductId").PrimaryKey()
+                    .Field("Name").Alias("Product")
+                    .Field("Description")
+                .Entity("ProductCategory")
+                    .Schema("dbo")
+                    .Field("ProductId").PrimaryKey()
+                    .Field("CategoryId").PrimaryKey()
+                .Entity("Category")
+                    .Schema("dbo")
+                    .Field("CategoryId").PrimaryKey()
+                    .Field("Name").Alias("Category")
+                .Relationship()
+                    .LeftEntity("OrderDetail").LeftField("OrderId")
+                    .RightEntity("Order").RightField("OrderId")
+                .Relationship()
+                    .LeftEntity("Order").LeftField("CustomerId")
+                    .RightEntity("Customer").RightField("CustomerId")
+                .Relationship()
+                    .LeftEntity("OrderDetail").LeftField("ProductId")
+                    .RightEntity("Product").RightField("ProductId")
+                .Relationship()
+                    .LeftEntity("Product").LeftField("ProductId")
+                    .RightEntity("ProductCategory").RightField("ProductId")
+                .Relationship()
+                    .LeftEntity("ProductCategory").LeftField("CategoryId")
+                    .RightEntity("Category").RightField("CategoryId")
+            .Process());
+
+            var actual = process.ViewSql();
+
+            Assert.AreEqual(expected, actual);
         }
 
     }

@@ -17,7 +17,7 @@ MI,""10,000,000"",Mitten
 CA,""20,000,000"",Sock
 KS,""9,000,000"",Rectangle");
 
-            var request = new FileInspectionRequest {DataTypes = new List<string> {"decimal"}};
+            var request = new FileInspectionRequest { DataTypes = new List<string> { "decimal" } };
             var fileInformation = FileInformationFactory.Create(new FileInfo(file), request);
             var actual = new FieldInspector().Inspect(fileInformation, request);
 
@@ -82,7 +82,7 @@ Friday,14,5.5,5/1/2014
 Saturday,15,6.6,6/1/2014");
 
 
-            var request = new FileInspectionRequest {DataTypes = new List<string> {"int32", "double", "datetime"}};
+            var request = new FileInspectionRequest { DataTypes = new List<string> { "int32", "double", "datetime" } };
             var information = FileInformationFactory.Create(new FileInfo(file), request);
             var fields = new FieldInspector().Inspect(information, request).ToArray();
 
@@ -101,7 +101,7 @@ Saturday,15,6.6,6/1/2014");
 
             const string file = @"TestFiles\Headers\Issue002.xlsx";
 
-            var request = new FileInspectionRequest {DataTypes = new List<string> {"int32", "datetime"}};
+            var request = new FileInspectionRequest { DataTypes = new List<string> { "int32", "datetime" } };
             var information = FileInformationFactory.Create(new FileInfo(file), request);
             var fields = new FieldInspector().Inspect(information, request).ToArray();
 
@@ -113,8 +113,38 @@ Saturday,15,6.6,6/1/2014");
         }
 
         [Test]
-        public void TestFalseBoolean()
-        {
+        public void TestCsvBlanks() {
+
+            var file = Path.GetTempFileName().Replace(".tmp", ".csv");
+            File.WriteAllText(file, @"t1,t2,t3,t4,t5
+""Monday"",10,""1.1"",1/1/2014,
+""Tuesday"",11,""2.2"",2/1/2014,
+""Wednesday"",12,""3.3"",3/1/2014,
+""Thursday"",13,""4.4"",4/1/2014,
+""Friday"",14,,5/1/2014,
+""Saturday"",15,,6/1/2014,");
+
+            var request = new FileInspectionRequest {
+                DataTypes = new List<string> { "int32", "double", "datetime" },
+                IgnoreEmpty = true
+            };
+            var information = FileInformationFactory.Create(new FileInfo(file), request);
+            var fields = new FieldInspector().Inspect(information, request).ToArray();
+
+            Assert.AreEqual('"', fields[0].QuotedWith);
+            Assert.AreEqual("string", fields[0].Type);
+            Assert.AreEqual("int32", fields[1].Type);
+            Assert.AreEqual('"', fields[2].QuotedWith);
+            Assert.AreEqual("double", fields[2].Type);
+            Assert.AreEqual("datetime", fields[3].Type);
+            Assert.AreEqual("string", fields[4].Type);
+            Assert.AreEqual("1", fields[4].Length);
+
+        }
+
+
+        [Test]
+        public void TestFalseBoolean() {
             var file = Path.GetTempFileName();
             const string contents = @"34149771
 34150506

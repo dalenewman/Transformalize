@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 using System.Linq;
 using Transformalize.Configuration.Builders;
@@ -49,7 +50,8 @@ namespace Transformalize.Main.Providers.File {
                             .Type(dataType)
                             .ResultField(result)
                             .MessageField(string.Empty)
-                            .Parameter(field.Name);
+                            .Parameter(field.Name)
+                            .IgnoreEmpty(request.IgnoreEmpty);
                 }
             }
 
@@ -71,19 +73,21 @@ namespace Transformalize.Main.Providers.File {
             }
 
             foreach (var field in fileInformation.Fields) {
-                var foundMatch = false;
-                foreach (var dataType in request.DataTypes) {
-                    var result = IsDataTypeField(field.Name, dataType);
-                    if (!foundMatch && results.All(row => row[result].Equals(true))) {
+                if (!results.All(row => row[field.Name].Equals(string.Empty))) {
+                    foreach (var dataType in request.DataTypes) {
+                        var result = IsDataTypeField(field.Name, dataType);
+                        if (!results.All(row => row[result].Equals(true)))
+                            continue;
                         field.Type = dataType;
                         field.Length = string.Empty;
-                        foundMatch = true;
+                        break;
                     }
                 }
-                if (!foundMatch) {
-                    var length = results.Max(row => (int)row[LengthField(field.Name)]) + 1;
-                    field.Length = length.ToString(CultureInfo.InvariantCulture);
-                }
+                if (!field.Type.Equals("string"))
+                    continue;
+
+                var length = results.Max(row => (int)row[LengthField(field.Name)]) + 1;
+                field.Length = length.ToString(CultureInfo.InvariantCulture);
             }
             return fileInformation.Fields;
         }

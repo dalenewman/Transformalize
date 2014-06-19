@@ -95,6 +95,7 @@ namespace Transformalize.Configuration {
         private const string TIME_COMPONENT = "time-component";
         private const string REPLACE_SINGLE_QUOTES = "replace-single-quotes";
         private const string XML_MODE = "xml-mode";
+        private const string IGNORE_EMPTY = "ignore-empty";
 
         //CONDITIONAL
         private const string RUN_FIELD = "run-field";
@@ -519,6 +520,12 @@ namespace Transformalize.Configuration {
         public string Elipse {
             get { return this[ELIPSE] as string; }
             set { this[ELIPSE] = value; }
+        }
+
+        [ConfigurationProperty(IGNORE_EMPTY, IsRequired = false, DefaultValue = false)]
+        public bool IgnoreEmpty {
+            get { return (bool)this[IGNORE_EMPTY]; }
+            set { this[IGNORE_EMPTY] = value; }
         }
 
         public override bool IsReadOnly() {

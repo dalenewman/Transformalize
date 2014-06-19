@@ -343,7 +343,7 @@ namespace Transformalize.Test {
 
             var type = Common.ToSystemType("datetime");
 
-            var validator = new TypeConversionValidatorOperation("in", "out", "o2", type, "Can't parse {0} to a {3}.", false, false);
+            var validator = new TypeConversionValidatorOperation("in", "out", "o2", type, "Can't parse {0} to a {3}.", false, false, false);
 
             var output = TestOperation(input, validator);
 

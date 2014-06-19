@@ -79,8 +79,17 @@ namespace Transformalize.Main {
 
     public class Fields : OrderedFields {
 
+        public Fields() {
+        }
+
         public Fields(Field field) {
             Add(field);
+        }
+
+        public Fields(params Field[] fields) {
+            foreach (var field in fields) {
+                Add(field);
+            }
         }
 
         public Fields(params Fields[] fields) {

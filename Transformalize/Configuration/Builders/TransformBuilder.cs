@@ -198,6 +198,11 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public TransformBuilder IgnoreEmpty(bool ignore = true) {
+            _transform.IgnoreEmpty = ignore;
+            return this;
+        }
+
         public TransformBuilder LowerBound(string lowerBound) {
             _transform.LowerBound = lowerBound;
             return this;

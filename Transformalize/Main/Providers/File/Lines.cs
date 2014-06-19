@@ -71,7 +71,7 @@ namespace Transformalize.Main.Providers.File {
                 var field = new Field(_request.DefaultType, _request.DefaultLength, FieldType.NonKey, true, string.Empty) {
                     Name = name
                 };
-                if (_storage.Any(x => x.Values[delimiter][i].Contains(delimiter) || _storage.Skip(1).All(y=> y.Quote != default(char) && y.Values[delimiter][i].StartsWith(y.Quote.ToString(CultureInfo.InvariantCulture)) && y.Values[delimiter][i].EndsWith(y.Quote.ToString(CultureInfo.InvariantCulture))))) {
+                if (_storage.Any(x => x.Values[delimiter][i].Contains(delimiter) || _storage.Skip(1).Where(y=> !_request.IgnoreEmpty || !string.IsNullOrEmpty(y.Values[delimiter][i])).All(z=> z.Quote != default(char) && z.Values[delimiter][i].StartsWith(z.Quote.ToString(CultureInfo.InvariantCulture)) && z.Values[delimiter][i].EndsWith(z.Quote.ToString(CultureInfo.InvariantCulture))))) {
                     field.QuotedWith = _storage.Skip(1).First().Quote;
                 }
                 fields.Add(field);
