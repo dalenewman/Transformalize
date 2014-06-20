@@ -24,6 +24,9 @@ using System.Diagnostics;
 using NUnit.Framework;
 using Transformalize.Configuration.Builders;
 using Transformalize.Main;
+using Transformalize.Runner;
+using Transformalize.Test.Builders;
+using Process = Transformalize.Main.Process;
 
 namespace Transformalize.Test {
     [TestFixture]
@@ -377,8 +380,7 @@ namespace Transformalize.Test {
         }
 
         [Test]
-        public void TestViewSql()
-        {
+        public void TestViewSql() {
             const string expected = @"SELECT
     m.[OrderDetailId],
     m.[OrderId],
@@ -399,9 +401,25 @@ LEFT OUTER JOIN [dbo].[TestProduct] r3 ON (m.[ProductId] = r3.[ProductId])
 LEFT OUTER JOIN [dbo].[TestProductCategory] r4 ON (r3.[ProductId] = r4.[ProductId])
 LEFT OUTER JOIN [dbo].[TestCategory] r5 ON (r4.[CategoryId] = r5.[CategoryId]);";
 
-            var process = ProcessFactory.CreateSingle(new ProcessBuilder("Test")
-                .Connection("output").Provider("sqlserver")
+            var actual = GetTestProcess("sqlserver").ViewSql();
+
+            Assert.AreEqual(expected, actual);
+        }
+
+
+        private static Process GetTestProcess(string outputProvider) {
+            return ProcessFactory.CreateSingle(new ProcessBuilder("Test")
+                .StarEnabled(false)
+                .Connection("input").Provider("internal")
+                .Connection("output").Provider(outputProvider)
                 .Entity("OrderDetail")
+                    .InputOperation(
+                        new RowsBuilder()
+                            .Row("OrderDetailId", 1).Field("OrderId", 1).Field("ProductId", 1).Field("Quantity", 2).Field("Price", 2.0)
+                            .Row("OrderDetailId", 2).Field("OrderId", 1).Field("ProductId", 2).Field("Quantity", 2).Field("Price", 3.0)
+                            .Row("OrderDetailId", 3).Field("OrderId", 2).Field("ProductId", 2).Field("Quantity", 4).Field("Price", 3.0)
+                            .ToOperation()
+                    )
                     .Schema("dbo")
                     .Field("OrderDetailId").PrimaryKey()
                     .Field("OrderId")
@@ -409,24 +427,56 @@ LEFT OUTER JOIN [dbo].[TestCategory] r5 ON (r4.[CategoryId] = r5.[CategoryId]);"
                     .Field("Price")
                     .Field("Quantity")
                 .Entity("Order")
+                    .InputOperation(
+                        new RowsBuilder()
+                            .Row("OrderId", 1).Field("CustomerId", 1)
+                            .Row("OrderId", 2).Field("CustomerId", 2)
+                            .ToOperation()
+                    )
                     .Schema("dbo")
                     .Field("OrderId").PrimaryKey()
                     .Field("CustomerId")
                 .Entity("Customer")
+                    .InputOperation(
+                        new RowsBuilder()
+                            .Row("CustomerId", 1).Field("FirstName", "Dale").Field("LastName", "Newman")
+                            .Row("CustomerId", 2).Field("FirstName", "Tara").Field("LastName", "Newman")
+                            .ToOperation()
+                    )
                     .Schema("dbo")
                     .Field("CustomerId").PrimaryKey()
                     .Field("FirstName")
                     .Field("LastName")
                 .Entity("Product")
+                    .InputOperation(
+                        new RowsBuilder()
+                            .Row("ProductId", 1).Field("Name", "Beans").Field("Description", "Really nice beans.")
+                            .Row("ProductId", 2).Field("Name", "Cheese").Field("Description", "Very sharp cheese.")
+                            .ToOperation()
+                    )
                     .Schema("dbo")
                     .Field("ProductId").PrimaryKey()
                     .Field("Name").Alias("Product")
                     .Field("Description")
                 .Entity("ProductCategory")
+                    .InputOperation(
+                        new RowsBuilder()
+                            .Row("ProductId", 1).Field("CategoryId", 1)
+                            .Row("ProductId", 1).Field("CategoryId", 2)
+                            .Row("ProductId", 2).Field("CategoryId", 3)
+                            .ToOperation()
+                    )
                     .Schema("dbo")
                     .Field("ProductId").PrimaryKey()
                     .Field("CategoryId").PrimaryKey()
                 .Entity("Category")
+                    .InputOperation(
+                        new RowsBuilder()
+                            .Row("CategoryId", 1).Field("Name", "Proteins")
+                            .Row("CategoryId", 2).Field("Name", "Miracle Fruits")
+                            .Row("CategoryId", 3).Field("Name", "Dairy")
+                            .ToOperation()
+                    )
                     .Schema("dbo")
                     .Field("CategoryId").PrimaryKey()
                     .Field("Name").Alias("Category")
@@ -447,10 +497,10 @@ LEFT OUTER JOIN [dbo].[TestCategory] r5 ON (r4.[CategoryId] = r5.[CategoryId]);"
                     .RightEntity("Category").RightField("CategoryId")
             .Process());
 
-            var actual = process.ViewSql();
-
-            Assert.AreEqual(expected, actual);
         }
 
     }
+
+
+
 }

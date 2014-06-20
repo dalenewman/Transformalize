@@ -357,8 +357,14 @@ namespace Transformalize.Main {
             var connection = OutputConnection.GetConnection();
             connection.Open();
 
-            if (connection.Query("SELECT TOP(1) TABLE_NAME FROM INFORMATION_SCHEMA.VIEWS WHERE TABLE_SCHEMA = @Schema AND  TABLE_NAME = @View;", new { MasterEntity.Schema, View = view }).Any()) {
-                connection.Execute(string.Format("DROP VIEW {0};", fullName));
+            if (MasterEntity.NeedsSchema()) {
+                if (connection.Query("SELECT TOP(1) TABLE_NAME FROM INFORMATION_SCHEMA.VIEWS WHERE TABLE_SCHEMA = @Schema AND TABLE_NAME = @View;", new { MasterEntity.Schema, View = view }).Any()) {
+                    connection.Execute(string.Format("DROP VIEW {0};", fullName));
+                }
+            } else {
+                if (connection.Query("SELECT TOP(1) TABLE_NAME FROM INFORMATION_SCHEMA.VIEWS WHERE TABLE_NAME = @View;", new { View = view }).Any()) {
+                    connection.Execute(string.Format("DROP VIEW {0};", fullName));
+                }
             }
 
             _log.Debug(ViewSql());
