@@ -151,7 +151,7 @@ namespace Transformalize.Main {
             }
         }
 
-        public IDictionary<string, IEnumerable<Row>> Execute() {
+        public IEnumerable<Row> Execute() {
             using (var runner = GetRunner()) {
                 return runner.Run(this);
             }
@@ -159,7 +159,8 @@ namespace Transformalize.Main {
 
         public IEnumerable<Row> ExecuteSingle() {
             using (var runner = GetRunner()) {
-                return runner.Run(this)[Entities[0].Alias];
+                runner.Run(this);
+                return MasterEntity.Rows;
             }
         }
         public Fields OutputFields() {

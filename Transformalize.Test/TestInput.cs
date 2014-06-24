@@ -51,18 +51,18 @@ namespace Transformalize.Test {
                     .Field("name")
                 .Process();
 
-            var process = ProcessFactory.Create(cfg)[0];
+            var process = ProcessFactory.CreateSingle(cfg);
 
-            var output = process.Execute();
+            var output = process.Execute().ToArray();
 
-            Assert.IsInstanceOf<Dictionary<string, IEnumerable<Row>>>(output);
-            Assert.AreEqual(3, output["entity"].Count());
-            Assert.AreEqual(true, output["entity"].Any(r => r["id"].Equals(1)));
-            Assert.AreEqual(true, output["entity"].Any(r => r["id"].Equals(2)));
-            Assert.AreEqual(true, output["entity"].Any(r => r["id"].Equals(3)));
-            Assert.AreEqual(true, output["entity"].Any(r => r["name"].Equals("one")));
-            Assert.AreEqual(true, output["entity"].Any(r => r["name"].Equals("two")));
-            Assert.AreEqual(true, output["entity"].Any(r => r["name"].Equals("three")));
+            Assert.IsInstanceOf<IEnumerable<Row>>(output);
+            Assert.AreEqual(3, output.Count());
+            Assert.AreEqual(true, output.Any(r => r["id"].Equals(1)));
+            Assert.AreEqual(true, output.Any(r => r["id"].Equals(2)));
+            Assert.AreEqual(true, output.Any(r => r["id"].Equals(3)));
+            Assert.AreEqual(true, output.Any(r => r["name"].Equals("one")));
+            Assert.AreEqual(true, output.Any(r => r["name"].Equals("two")));
+            Assert.AreEqual(true, output.Any(r => r["name"].Equals("three")));
 
         }
 
@@ -90,13 +90,13 @@ namespace Transformalize.Test {
 
             var process = ProcessFactory.Create(cfg)[0];
 
-            var output = process.Execute();
+            var output = process.ExecuteSingle().ToArray();
 
-            Assert.IsInstanceOf<Dictionary<string, IEnumerable<Row>>>(output);
+            Assert.IsInstanceOf<IEnumerable<Row>>(output);
 
-            Assert.AreEqual(6, output["entity"].Count());
-            Assert.AreEqual(1+2+3+4+5+6, output["entity"].Sum(r => (int) r["id"]));
-            Assert.AreEqual("OneTwoThreeFourFiveSix", string.Concat(output["entity"].OrderBy(r => (int)r["id"]).Select(r => r["name"])));
+            Assert.AreEqual(6, output.Length);
+            Assert.AreEqual(1+2+3+4+5+6, output.Sum(r => (int) r["id"]));
+            Assert.AreEqual("OneTwoThreeFourFiveSix", string.Concat(output.OrderBy(r => (int)r["id"]).Select(r => r["name"])));
 
         }
 

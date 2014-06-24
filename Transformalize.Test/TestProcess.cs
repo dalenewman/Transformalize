@@ -20,11 +20,12 @@
 
 #endregion
 
-using System.Diagnostics;
+using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration.Builders;
+using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
-using Transformalize.Runner;
 using Transformalize.Test.Builders;
 using Process = Transformalize.Main.Process;
 
@@ -32,6 +33,97 @@ namespace Transformalize.Test {
     [TestFixture]
     public class TestProcess {
 
+        private static Process GetTestProcess(string outputProvider) {
+            return ProcessFactory.CreateSingle(new ProcessBuilder("Test")
+                .StarEnabled(false)
+                .Connection("input").Provider("internal")
+                .Connection("output").Provider(outputProvider)
+                .Entity("OrderDetail")
+                    .InputOperation(
+                        new RowsBuilder()
+                            .Row("OrderDetailId", 1).Field("OrderId", 1).Field("ProductId", 1).Field("Quantity", 2).Field("Price", 2.0)
+                            .Row("OrderDetailId", 2).Field("OrderId", 1).Field("ProductId", 2).Field("Quantity", 2).Field("Price", 3.0)
+                            .Row("OrderDetailId", 3).Field("OrderId", 2).Field("ProductId", 2).Field("Quantity", 4).Field("Price", 3.0)
+                            .ToOperation()
+                    )
+                    .Schema("dbo")
+                    .Field("OrderDetailId").PrimaryKey()
+                    .Field("OrderId")
+                    .Field("ProductId")
+                    .Field("Price")
+                    .Field("Quantity")
+                .Entity("Order")
+                    .InputOperation(
+                        new RowsBuilder()
+                            .Row("OrderId", 1).Field("CustomerId", 1)
+                            .Row("OrderId", 2).Field("CustomerId", 2)
+                            .ToOperation()
+                    )
+                    .Schema("dbo")
+                    .Field("OrderId").PrimaryKey()
+                    .Field("CustomerId")
+                .Entity("Customer")
+                    .InputOperation(
+                        new RowsBuilder()
+                            .Row("CustomerId", 1).Field("FirstName", "Dale").Field("LastName", "Newman")
+                            .Row("CustomerId", 2).Field("FirstName", "Tara").Field("LastName", "Newman")
+                            .ToOperation()
+                    )
+                    .Schema("dbo")
+                    .Field("CustomerId").PrimaryKey()
+                    .Field("FirstName")
+                    .Field("LastName")
+                .Entity("Product")
+                    .InputOperation(
+                        new RowsBuilder()
+                            .Row("ProductId", 1).Field("Name", "Beans").Field("Description", "Really nice beans.")
+                            .Row("ProductId", 2).Field("Name", "Cheese").Field("Description", "Very sharp cheese.")
+                            .ToOperation()
+                    )
+                    .Schema("dbo")
+                    .Field("ProductId").PrimaryKey()
+                    .Field("Name").Alias("Product")
+                    .Field("Description")
+                .Entity("ProductCategory")
+                    .InputOperation(
+                        new RowsBuilder()
+                            .Row("ProductId", 1).Field("CategoryId", 1)
+                            .Row("ProductId", 1).Field("CategoryId", 2)
+                            .Row("ProductId", 2).Field("CategoryId", 3)
+                            .ToOperation()
+                    )
+                    .Schema("dbo")
+                    .Field("ProductId").PrimaryKey()
+                    .Field("CategoryId").PrimaryKey()
+                .Entity("Category")
+                    .InputOperation(
+                        new RowsBuilder()
+                            .Row("CategoryId", 1).Field("Name", "Proteins")
+                            .Row("CategoryId", 2).Field("Name", "Miracle Fruits")
+                            .Row("CategoryId", 3).Field("Name", "Dairy")
+                            .ToOperation()
+                    )
+                    .Schema("dbo")
+                    .Field("CategoryId").PrimaryKey()
+                    .Field("Name").Alias("Category")
+                .Relationship()
+                    .LeftEntity("OrderDetail").LeftField("OrderId")
+                    .RightEntity("Order").RightField("OrderId")
+                .Relationship()
+                    .LeftEntity("Order").LeftField("CustomerId")
+                    .RightEntity("Customer").RightField("CustomerId")
+                .Relationship()
+                    .LeftEntity("OrderDetail").LeftField("ProductId")
+                    .RightEntity("Product").RightField("ProductId")
+                .Relationship()
+                    .LeftEntity("Product").LeftField("ProductId")
+                    .RightEntity("ProductCategory").RightField("ProductId")
+                .Relationship()
+                    .LeftEntity("ProductCategory").LeftField("CategoryId")
+                    .RightEntity("Category").RightField("CategoryId")
+            .Process());
+
+        }
 
         [Test]
         public void NorthWindProcessBuiltFromScratch() {
@@ -406,98 +498,61 @@ LEFT OUTER JOIN [dbo].[TestCategory] r5 ON (r4.[CategoryId] = r5.[CategoryId]);"
             Assert.AreEqual(expected, actual);
         }
 
+        [Test]
+        public void TestJoinInternalOutput() {
+            var process = GetTestProcess("internal");
+            var results = process.Execute().ToArray();
 
-        private static Process GetTestProcess(string outputProvider) {
-            return ProcessFactory.CreateSingle(new ProcessBuilder("Test")
-                .StarEnabled(false)
-                .Connection("input").Provider("internal")
-                .Connection("output").Provider(outputProvider)
-                .Entity("OrderDetail")
-                    .InputOperation(
-                        new RowsBuilder()
-                            .Row("OrderDetailId", 1).Field("OrderId", 1).Field("ProductId", 1).Field("Quantity", 2).Field("Price", 2.0)
-                            .Row("OrderDetailId", 2).Field("OrderId", 1).Field("ProductId", 2).Field("Quantity", 2).Field("Price", 3.0)
-                            .Row("OrderDetailId", 3).Field("OrderId", 2).Field("ProductId", 2).Field("Quantity", 4).Field("Price", 3.0)
-                            .ToOperation()
-                    )
-                    .Schema("dbo")
-                    .Field("OrderDetailId").PrimaryKey()
-                    .Field("OrderId")
-                    .Field("ProductId")
-                    .Field("Price")
-                    .Field("Quantity")
-                .Entity("Order")
-                    .InputOperation(
-                        new RowsBuilder()
-                            .Row("OrderId", 1).Field("CustomerId", 1)
-                            .Row("OrderId", 2).Field("CustomerId", 2)
-                            .ToOperation()
-                    )
-                    .Schema("dbo")
-                    .Field("OrderId").PrimaryKey()
-                    .Field("CustomerId")
-                .Entity("Customer")
-                    .InputOperation(
-                        new RowsBuilder()
-                            .Row("CustomerId", 1).Field("FirstName", "Dale").Field("LastName", "Newman")
-                            .Row("CustomerId", 2).Field("FirstName", "Tara").Field("LastName", "Newman")
-                            .ToOperation()
-                    )
-                    .Schema("dbo")
-                    .Field("CustomerId").PrimaryKey()
-                    .Field("FirstName")
-                    .Field("LastName")
-                .Entity("Product")
-                    .InputOperation(
-                        new RowsBuilder()
-                            .Row("ProductId", 1).Field("Name", "Beans").Field("Description", "Really nice beans.")
-                            .Row("ProductId", 2).Field("Name", "Cheese").Field("Description", "Very sharp cheese.")
-                            .ToOperation()
-                    )
-                    .Schema("dbo")
-                    .Field("ProductId").PrimaryKey()
-                    .Field("Name").Alias("Product")
-                    .Field("Description")
-                .Entity("ProductCategory")
-                    .InputOperation(
-                        new RowsBuilder()
-                            .Row("ProductId", 1).Field("CategoryId", 1)
-                            .Row("ProductId", 1).Field("CategoryId", 2)
-                            .Row("ProductId", 2).Field("CategoryId", 3)
-                            .ToOperation()
-                    )
-                    .Schema("dbo")
-                    .Field("ProductId").PrimaryKey()
-                    .Field("CategoryId").PrimaryKey()
-                .Entity("Category")
-                    .InputOperation(
-                        new RowsBuilder()
-                            .Row("CategoryId", 1).Field("Name", "Proteins")
-                            .Row("CategoryId", 2).Field("Name", "Miracle Fruits")
-                            .Row("CategoryId", 3).Field("Name", "Dairy")
-                            .ToOperation()
-                    )
-                    .Schema("dbo")
-                    .Field("CategoryId").PrimaryKey()
-                    .Field("Name").Alias("Category")
-                .Relationship()
-                    .LeftEntity("OrderDetail").LeftField("OrderId")
-                    .RightEntity("Order").RightField("OrderId")
-                .Relationship()
-                    .LeftEntity("Order").LeftField("CustomerId")
-                    .RightEntity("Customer").RightField("CustomerId")
-                .Relationship()
-                    .LeftEntity("OrderDetail").LeftField("ProductId")
-                    .RightEntity("Product").RightField("ProductId")
-                .Relationship()
-                    .LeftEntity("Product").LeftField("ProductId")
-                    .RightEntity("ProductCategory").RightField("ProductId")
-                .Relationship()
-                    .LeftEntity("ProductCategory").LeftField("CategoryId")
-                    .RightEntity("Category").RightField("CategoryId")
-            .Process());
+            Assert.IsInstanceOf<IEnumerable<Row>>(results);
+            Assert.AreEqual(4, results.Length);
+
+            var r0 = results[0];
+            Assert.AreEqual(1, r0["OrderDetailId"]);
+            Assert.AreEqual(1, r0["OrderId"]);
+            Assert.AreEqual(1, r0["ProductId"]);
+            Assert.AreEqual(2, r0["Quantity"]);
+            Assert.AreEqual(2.0m, r0["Price"]);
+            Assert.AreEqual(1, r0["CustomerId"]);
+            Assert.AreEqual("Dale", r0["FirstName"]);
+            Assert.AreEqual("Beans", r0["Product"]);
+            Assert.AreEqual("Proteins", r0["Category"]);
+
+            var r1 = results[1];
+            Assert.AreEqual(1, r1["OrderDetailId"]);
+            Assert.AreEqual(1, r1["OrderId"]);
+            Assert.AreEqual(1, r1["ProductId"]);
+            Assert.AreEqual(2, r1["Quantity"]);
+            Assert.AreEqual(2.0m, r1["Price"]);
+            Assert.AreEqual(1, r1["CustomerId"]);
+            Assert.AreEqual("Dale", r1["FirstName"]);
+            Assert.AreEqual("Beans", r1["Product"]);
+            Assert.AreEqual("Miracle Fruits", r1["Category"]);
+
+            var r2 = results[2];
+            Assert.AreEqual(2, r2["OrderDetailId"]);
+            Assert.AreEqual(1, r2["OrderId"]);
+            Assert.AreEqual(2, r2["ProductId"]);
+            Assert.AreEqual(2, r2["Quantity"]);
+            Assert.AreEqual(3.0m, r2["Price"]);
+            Assert.AreEqual(1, r2["CustomerId"]);
+            Assert.AreEqual("Dale", r2["FirstName"]);
+            Assert.AreEqual("Cheese", r2["Product"]);
+            Assert.AreEqual("Dairy", r2["Category"]);
+
+            var r3 = results[3];
+            Assert.AreEqual(3, r3["OrderDetailId"]);
+            Assert.AreEqual(2, r3["OrderId"]);
+            Assert.AreEqual(2, r3["ProductId"]);
+            Assert.AreEqual(4, r3["Quantity"]);
+            Assert.AreEqual(3.0m, r3["Price"]);
+            Assert.AreEqual(2, r3["CustomerId"]);
+            Assert.AreEqual("Tara", r3["FirstName"]);
+            Assert.AreEqual("Cheese", r3["Product"]);
+            Assert.AreEqual("Dairy", r3["Category"]);
 
         }
+
+
 
     }
 

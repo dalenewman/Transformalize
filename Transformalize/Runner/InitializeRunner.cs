@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
@@ -12,12 +13,12 @@ namespace Transformalize.Runner {
 
         private readonly Logger _log = LogManager.GetLogger("tfl");
 
-        public IDictionary<string, IEnumerable<Row>> Run(Process process) {
+        public IEnumerable<Row> Run(Process process) {
 
             GlobalDiagnosticsContext.Set("process", process.Name);
             GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
 
-            var result = new Dictionary<string, IEnumerable<Row>>();
+            var result = Enumerable.Empty<Row>();
 
             var timer = new Stopwatch();
             timer.Start();

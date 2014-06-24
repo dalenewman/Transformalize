@@ -58,8 +58,8 @@ namespace Transformalize.Test {
 
             var output = process.Execute();
 
-            Assert.IsInstanceOf<Dictionary<string, IEnumerable<Row>>>(output);
-            Assert.AreEqual(3, output["entity"].Count());
+            Assert.IsInstanceOf<IEnumerable<Row>>(output);
+            Assert.AreEqual(3, output.Count());
         }
 
         [Test]

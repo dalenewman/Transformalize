@@ -6,6 +6,6 @@ using Transformalize.Main;
 namespace Transformalize.Runner
 {
     public interface IProcessRunner : IDisposable {
-        IDictionary<string, IEnumerable<Row>> Run(Process process);
+        IEnumerable<Row> Run(Process process);
     }
 }

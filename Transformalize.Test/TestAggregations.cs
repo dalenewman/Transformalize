@@ -57,9 +57,9 @@ namespace Transformalize.Test {
                     .Field("count").Input(false).Aggregate("count").Int32()
                 .Process();
 
-            var output = ProcessFactory.Create(cfg)[0].Execute()["entity"].ToList();
+            var output = ProcessFactory.Create(cfg)[0].ExecuteSingle().ToArray();
 
-            Assert.AreEqual(2, output.Count);
+            Assert.AreEqual(2, output.Length);
 
             var r1 = output[0];
             Assert.AreEqual(1, r1["order"]);
@@ -87,9 +87,9 @@ namespace Transformalize.Test {
                     .Field("bytes").Aggregate("max").Type("byte[]")
                 .Process();
 
-            var output = ProcessFactory.Create(cfg)[0].Execute()["entity"].ToList();
+            var output = ProcessFactory.Create(cfg)[0].ExecuteSingle().ToArray();
 
-            Assert.AreEqual(2, output.Count);
+            Assert.AreEqual(2, output.Length);
 
             var r1 = output[0];
             Assert.AreEqual(1, r1["order"]);
@@ -121,9 +121,9 @@ namespace Transformalize.Test {
                     .Field("year").Aggregate("maxlength")
                 .Process();
 
-            var output = ProcessFactory.Create(cfg)[0].Execute()["entity"].ToList();
+            var output = ProcessFactory.Create(cfg)[0].ExecuteSingle().ToArray();
 
-            Assert.AreEqual(2, output.Count);
+            Assert.AreEqual(2, output.Length);
 
             var r1 = output[0];
             Assert.AreEqual(1, r1["order"]);
@@ -147,9 +147,9 @@ namespace Transformalize.Test {
                     .Field("year").Aggregate("minlength")
                 .Process();
 
-            var output = ProcessFactory.Create(cfg)[0].Execute()["entity"].ToList();
+            var output = ProcessFactory.Create(cfg)[0].ExecuteSingle().ToArray();
 
-            Assert.AreEqual(2, output.Count);
+            Assert.AreEqual(2, output.Length);
 
             var r1 = output[0];
             Assert.AreEqual(1, r1["order"]);
@@ -174,9 +174,9 @@ namespace Transformalize.Test {
                     .Field("int64").Aggregate("sum").Int64()
                 .Process();
 
-            var output = ProcessFactory.Create(cfg)[0].Execute()["entity"].ToList();
+            var output = ProcessFactory.Create(cfg)[0].ExecuteSingle().ToArray();
 
-            Assert.AreEqual(2, output.Count);
+            Assert.AreEqual(2, output.Length);
 
             var r1 = output[0];
             Assert.AreEqual(1, r1["order"]);
@@ -207,9 +207,9 @@ namespace Transformalize.Test {
                     .Field("bytes").Aggregate("min").Type("byte[]")
                 .Process();
 
-            var output = ProcessFactory.Create(cfg)[0].Execute()["entity"].ToList();
+            var output = ProcessFactory.Create(cfg)[0].ExecuteSingle().ToArray();
 
-            Assert.AreEqual(2, output.Count);
+            Assert.AreEqual(2, output.Length);
 
             var r1 = output[0];
             Assert.AreEqual(1, r1["order"]);
@@ -241,9 +241,9 @@ namespace Transformalize.Test {
                     .Field("year").Aggregate("last")
                 .Process();
 
-            var output = ProcessFactory.Create(cfg)[0].Execute()["entity"].ToList();
+            var output = ProcessFactory.Create(cfg)[0].ExecuteSingle().ToArray();
 
-            Assert.AreEqual(2, output.Count);
+            Assert.AreEqual(2, output.Length);
 
             var r1 = output[0];
             Assert.AreEqual(1, r1["order"]);
@@ -267,9 +267,9 @@ namespace Transformalize.Test {
                     .Field("year").Aggregate("first")
                 .Process();
 
-            var output = ProcessFactory.Create(cfg)[0].Execute()["entity"].ToList();
+            var output = ProcessFactory.Create(cfg)[0].ExecuteSingle().ToArray();
 
-            Assert.AreEqual(2, output.Count);
+            Assert.AreEqual(2, output.Length);
 
             var r1 = output[0];
             Assert.AreEqual(1, r1["order"]);
@@ -293,9 +293,9 @@ namespace Transformalize.Test {
                     .Field("year").Aggregate("count").Distinct().Int32().Alias("years")
                 .Process();
 
-            var output = ProcessFactory.Create(cfg)[0].Execute()["entity"].ToList();
+            var output = ProcessFactory.Create(cfg)[0].ExecuteSingle().ToArray();
 
-            Assert.AreEqual(2, output.Count);
+            Assert.AreEqual(2, output.Length);
 
             var r1 = output[0];
             Assert.AreEqual(1, r1["order"]);
@@ -319,9 +319,9 @@ namespace Transformalize.Test {
                     .Field("year").Alias("years").Aggregate("join")
                 .Process();
 
-            var output = ProcessFactory.Create(cfg)[0].Execute()["entity"].ToList();
+            var output = ProcessFactory.Create(cfg)[0].ExecuteSingle().ToArray();
 
-            Assert.AreEqual(2, output.Count);
+            Assert.AreEqual(2, output.Length);
 
             var r1 = output[0];
             Assert.AreEqual(1, r1["order"]);
@@ -345,9 +345,9 @@ namespace Transformalize.Test {
                     .Field("year").Alias("years").Aggregate("join").Distinct()
                 .Process();
 
-            var output = ProcessFactory.Create(cfg)[0].Execute()["entity"].ToList();
+            var output = ProcessFactory.Create(cfg)[0].ExecuteSingle().ToArray();
 
-            Assert.AreEqual(2, output.Count);
+            Assert.AreEqual(2, output.Length);
 
             var r1 = output[0];
             Assert.AreEqual(1, r1["order"]);
@@ -372,9 +372,9 @@ namespace Transformalize.Test {
                     .Field("year").Alias("years").Aggregate("array")
                 .Process();
 
-            var output = ProcessFactory.Create(cfg)[0].Execute()["entity"].ToList();
+            var output = ProcessFactory.Create(cfg)[0].ExecuteSingle().ToArray();
 
-            Assert.AreEqual(2, output.Count);
+            Assert.AreEqual(2, output.Length);
 
             var r1 = output[0];
             Assert.AreEqual(1, r1["order"]);
@@ -398,9 +398,9 @@ namespace Transformalize.Test {
                     .Field("year").Alias("years").Aggregate("array").Distinct()
                 .Process();
 
-            var output = ProcessFactory.Create(cfg)[0].Execute()["entity"].ToList();
+            var output = ProcessFactory.Create(cfg)[0].ExecuteSingle().ToArray();
 
-            Assert.AreEqual(2, output.Count);
+            Assert.AreEqual(2, output.Length);
 
             var r1 = output[0];
             Assert.AreEqual(1, r1["order"]);
