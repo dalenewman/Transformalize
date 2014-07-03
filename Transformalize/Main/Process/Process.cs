@@ -138,8 +138,6 @@ namespace Transformalize.Main {
                     return new InitializeRunner();
                 case "metadata":
                     return new MetadataRunner();
-                case "delete":
-                    return new DeleteRunner();
                 default:
                     return new ProcessRunner();
             }

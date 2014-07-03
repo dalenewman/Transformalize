@@ -492,6 +492,22 @@ namespace Transformalize.Main {
                         element.TimeComponent
                     ) { ShouldRun = shouldRun };
 
+                case "average":
+                    return new AverageOperation(
+                        outKey,
+                        outType,
+                        parameters
+                        ) { ShouldRun = shouldRun };
+
+                case "geocode":
+                    return new GeoCodeOperation(
+                        inKey,
+                        outKey,
+                        element.Sleep,
+                        element.UseHttps,
+                        parameters
+                    ) { ShouldRun = shouldRun };
+
                 // validators
                 case "containscharacters":
                     return new ContainsCharactersValidatorOperation(

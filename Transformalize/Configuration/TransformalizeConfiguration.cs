@@ -25,28 +25,29 @@ using System.IO;
 using System.Text;
 using System.Xml;
 
-namespace Transformalize.Configuration
-{
-    public class TransformalizeConfiguration : ConfigurationSection
-    {
+namespace Transformalize.Configuration {
+
+    public class TransformalizeConfiguration : ConfigurationSection {
+
+        [ConfigurationProperty("environments")]
+        public EnvironmentElementCollection Environments {
+            get { return this["environments"] as EnvironmentElementCollection; }
+        }
+
         [ConfigurationProperty("processes")]
-        public ProcessElementCollection Processes
-        {
+        public ProcessElementCollection Processes {
             get { return this["processes"] as ProcessElementCollection; }
         }
 
-        public override bool IsReadOnly()
-        {
+        public override bool IsReadOnly() {
             return false;
         }
 
-        public string Serialize(ConfigurationElement parentElement, string name, ConfigurationSaveMode saveMode)
-        {
+        public string Serialize(ConfigurationElement parentElement, string name, ConfigurationSaveMode saveMode) {
             return SerializeSection(parentElement, name, saveMode);
         }
 
-        public void Deserialize(string serializedConfiguration)
-        {
+        public void Deserialize(string serializedConfiguration) {
             var reader = XmlReader.Create(new StringReader(serializedConfiguration));
             if (!reader.ReadToFollowing("transformalize")) return;
             var stringBuilder = new StringBuilder().Append(reader.ReadOuterXml());

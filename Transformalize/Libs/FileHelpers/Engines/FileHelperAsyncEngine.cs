@@ -141,7 +141,9 @@ namespace Transformalize.Libs.FileHelpers.Engines
         /// <include file='FileHelperAsyncEngine.docs.xml' path='doc/BeginReadFile/*' />
         public void BeginReadFile(string fileName)
         {
-            BeginReadStream(new StreamReader(fileName, mEncoding, true));
+            //BeginReadStream(new StreamReader(fileName, mEncoding, true));
+            var stream = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            BeginReadStream(new StreamReader(stream, mEncoding, true));
         }
 
         /// <include file='FileHelperAsyncEngine.docs.xml' path='doc/BeginReadString/*' />

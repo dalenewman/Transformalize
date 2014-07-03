@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Net.Mail;
@@ -21,6 +20,11 @@ namespace Transformalize.Main {
 
             if (action.To.Equals(string.Empty)) {
                 Log.Warn("Couldn't send email. No 'to' provided.");
+                return;
+            }
+
+            if (action.Connection == null) {
+                Log.Warn("Couldn't send email.  Mail action needs a valid connection.");
                 return;
             }
 

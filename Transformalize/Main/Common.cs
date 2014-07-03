@@ -277,7 +277,7 @@ namespace Transformalize.Main {
                 result = "I" + input.GetHashCode().ToString(CultureInfo.InvariantCulture).Replace("-", "0");
             }
             if (!input.Equals(result)) {
-                Log.Debug("Using '{0}' to identify field '{1}'.", input, result);
+                Log.Debug("Using '{0}' to identify field '{1}'.", result, input);
             }
             return sb.ToString();
         }

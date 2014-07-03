@@ -44,12 +44,14 @@ namespace Transformalize.Operations {
                     leftRow["TflAction"] = EntityAction.Update;
                     leftRow["TflKey"] = rightRow["TflKey"];
                     leftRow["TflBatchId"] = _entity.TflBatchId;
+                    leftRow["TflDeleted"] = false;
                 } else {
                     leftRow["TflAction"] = EntityAction.None;
                 }
             } else {
                 leftRow["TflAction"] = EntityAction.Insert;
                 leftRow["TflBatchId"] = _entity.TflBatchId;
+                leftRow["TflDeleted"] = false;
             }
 
             return leftRow;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Transformalize.Libs;
+using Transformalize.Libs.NanoXml;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 

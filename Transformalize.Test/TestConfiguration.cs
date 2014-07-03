@@ -58,7 +58,7 @@ namespace Transformalize.Test
                 <add name=""t1"" value=""v1"" />
             </parameters>
             <actions>
-                <add action=""@t1"" />
+                <add action=""@(t1)"" />
             </actions>
         </add>
         <add name=""test2"">
@@ -67,8 +67,8 @@ namespace Transformalize.Test
                 <add name=""t2"" value=""v3"" />
             </parameters>
             <actions>
-                <add action=""@t1"" />
-                <add action=""@t2"" />
+                <add action=""@(t1)"" />
+                <add action=""@(t2)"" />
             </actions>
         </add>
     </processes>
@@ -82,5 +82,42 @@ namespace Transformalize.Test
             Assert.AreEqual("v3", actions[2].Attribute("action").Value);
 
         }
+
+        [Test]
+        public void TestEnvironmentParameters() {
+            const string xml = @"<transformalize>
+    <environments>
+        <add name=""e1"">
+            <parameters>
+                <add name=""t1"" value=""v1"" />
+                <add name=""t2"" value=""v2"" />
+                <add name=""t3"" value=""v3"" />
+            </parameters>
+        </add>
+    </environments>
+    <processes>
+        <add name=""test1"">
+            <actions>
+                <add action=""@(t1)"" />
+            </actions>
+        </add>
+        <add name=""test2"">
+            <actions>
+                <add action=""@(t2)"" />
+                <add action=""@(t3)"" />
+            </actions>
+        </add>
+    </processes>
+</transformalize>";
+            var output = ProcessXmlConfigurationReader.ReplaceParameters(xml);
+            var doc = XDocument.Parse(output);
+            var actions = doc.Descendants("add").Where(n => n.Attributes("action").Any()).ToArray();
+
+            Assert.AreEqual("v1", actions[0].Attribute("action").Value);
+            Assert.AreEqual("v2", actions[1].Attribute("action").Value);
+            Assert.AreEqual("v3", actions[2].Attribute("action").Value);
+
+        }
+
     }
 }

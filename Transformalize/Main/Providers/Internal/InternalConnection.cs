@@ -49,6 +49,10 @@ namespace Transformalize.Main.Providers.Internal {
             return new EntitySchema();
         }
 
+        public override string KeyAllQuery(Entity entity) {
+            return string.Empty;
+        }
+
         public InternalConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
             Type = ProviderType.Internal;

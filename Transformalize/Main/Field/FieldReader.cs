@@ -72,7 +72,7 @@ namespace Transformalize.Main {
 
             FieldSearchTypesLoader(field, element);
 
-            foreach (var keyField in new[] { "TflKey", "TflUpdate", "TflBatchId", "TflFileName" }) {
+            foreach (var keyField in new[] { "TflKey", "TflUpdate", "TflBatchId", "TflFileName", "TflDeleted" }) {
                 if (field.Alias.Equals(keyField, IC)) {
                     _log.Warn("{0}, defined in {1}, is a reserved field name.  Please alias this field.", field.Alias, field.Entity);
                 }
@@ -103,7 +103,7 @@ namespace Transformalize.Main {
                 Name = searchType.Name,
                 Index = searchType.Index,
                 Store = searchType.Store,
-                Type = searchType.Type.Equals("inherit", IC) ? field.SimpleType : searchType.Type,
+                Type = searchType.Analyzer.Equals(string.Empty) ? field.SimpleType : searchType.Analyzer,
                 MultiValued = searchType.MultiValued,
                 Analyzer = searchType.Analyzer
             };

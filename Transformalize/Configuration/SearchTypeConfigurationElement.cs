@@ -25,7 +25,6 @@ using System.Configuration;
 namespace Transformalize.Configuration {
     public class SearchTypeConfigurationElement : ConfigurationElement {
         private const string NAME = "name";
-        private const string TYPE = "type";
         private const string STORE = "store";
         private const string INDEX = "index";
         private const string MULTI_VALUED = "multi-valued";
@@ -35,12 +34,6 @@ namespace Transformalize.Configuration {
         public string Name {
             get { return this[NAME] as string; }
             set { this[NAME] = value; }
-        }
-
-        [ConfigurationProperty(TYPE, IsRequired = false, DefaultValue = "inherit")]
-        public string Type {
-            get { return this[TYPE] as string; }
-            set { this[TYPE] = value; }
         }
 
         [ConfigurationProperty(ANALYZER, IsRequired = false, DefaultValue = "")]

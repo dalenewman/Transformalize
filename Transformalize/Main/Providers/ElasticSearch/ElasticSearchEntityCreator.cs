@@ -116,12 +116,15 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             if (!fields.ContainsKey("tflbatchid")) {
                 fields.Add("tflbatchid", new Dictionary<string, object> { { "type", "long" } });
             }
+            if (!fields.ContainsKey("tfldeleted")) {
+                fields.Add("tfldeleted", new Dictionary<string, object> { { "type", "boolean" } });
+            }
             return fields;
         }
 
         public Dictionary<string, string> GetFieldMap(Entity entity) {
             var map = new Dictionary<string, string>();
-            foreach (Field field in entity.OutputFields()) {
+            foreach (var field in entity.OutputFields()) {
                 var alias = field.Alias.ToLower();
                 if (field.SimpleType.Equals("string")) {
                     foreach (var searchType in field.SearchTypes) {
@@ -137,6 +140,9 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             }
             if (!map.ContainsKey("tflbatchid")) {
                 map.Add("tflbatchid", "tflbatchid");
+            }
+            if (!map.ContainsKey("tfldeleted")) {
+                map.Add("tfldeleted", "tfldeleted");
             }
             return map;
         }

@@ -29,8 +29,8 @@
   <search-types>
     <add name="default" />
     <add name="none" store="false" index="false" />
-    <add name="facet" type="lowercase" store="true" index="true" />
-    <add name="standard" type="standard_lowercase" store="false" index="true"/>
+    <add name="facet" analyzer="lowercase" store="true" index="true" />
+    <add name="standard" analyzer="standard_lowercase" store="false" index="true"/>
   </search-types>
 
   <entities>

@@ -19,7 +19,6 @@ namespace Transformalize.Main {
                 Name = "none",
                 Index = false,
                 Store = false,
-                Type = "inherit",
                 MultiValued = false,
                 Analyzer = string.Empty
             };
@@ -32,7 +31,6 @@ namespace Transformalize.Main {
                         Index = st.Index,
                         Name = st.Name,
                         Store = st.Store,
-                        Type = st.Type,
                         MultiValued = st.MultiValued,
                         Analyzer = st.Analyzer
                     };

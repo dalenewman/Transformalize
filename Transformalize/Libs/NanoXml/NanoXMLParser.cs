@@ -3,9 +3,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Transformalize.Extensions;
 
-namespace Transformalize.Libs {
+namespace Transformalize.Libs.NanoXml {
     /// <summary>
     ///     Base class containing useful features for all XML classes
     /// </summary>

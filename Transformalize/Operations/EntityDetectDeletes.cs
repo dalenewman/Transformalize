@@ -19,8 +19,10 @@ namespace Transformalize.Operations
             var row = rightRow.Clone();
             if (leftRow.ContainsKey(_firstKey)) {
                 row["TflAction"] = EntityAction.None;
+                row["TflDeleted"] = false;
             } else {
                 row["TflAction"] = EntityAction.Delete;
+                row["TflDeleted"] = true;
             }
             return row;
         }

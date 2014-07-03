@@ -1,28 +1,29 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Operations.Transform;
 
 namespace Transformalize.Operations
 {
-    public class SampleOperation : AbstractOperation {
+    public class SampleOperation : ShouldRunOperation {
         private readonly decimal _sampleRate;
 
-        public SampleOperation(decimal sample) {
+        public SampleOperation(decimal sample)
+            : base(string.Empty, string.Empty) {
             _sampleRate = sample >= 1m ? sample * .01m : sample;
-        }
+            Name = string.Format("SampleOperation ({0:##} PERCENT)", sample);
+            IsFilter = true;
+            }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
-            var enumeratedRows = rows.ToArray();
-
-            var total = enumeratedRows.Count();
-            var take = Convert.ToInt32(Math.Round(total * _sampleRate, 0));
-            var rnd = new Random();
-
-            Info("Sampling {0} of {1} records ({2:P1}).", take, total, _sampleRate);
-
-            return enumeratedRows.OrderBy(x => rnd.Next()).Take(take);
+            foreach (var row in rows) {
+                if (_sampleRate >= Convert.ToDecimal(Guid.NewGuid().GetHashCode() & 0x7fffffff) / Convert.ToInt32(0x7fffffff)) {
+                    yield return row;
+                } else {
+                    Interlocked.Increment(ref SkipCount);
+                }
+            }
         }
     }
 }

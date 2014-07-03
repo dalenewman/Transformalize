@@ -70,7 +70,7 @@ namespace Transformalize.Operations.Extract {
             if (_top > 0) {
                 using (var file = new FluentFile(cb.CreateRecordClass()).From(_fullName).OnError(_errorMode)) {
                     foreach (var row in from object obj in file select Row.FromObject(obj)) {
-                        ProcessRow(row, conversionMap);
+                        ProcessRow(row, _fields, _fullName, conversionMap);
                         if (_counter < _top) {
                             Interlocked.Increment(ref _counter);
                             yield return row;
@@ -84,7 +84,7 @@ namespace Transformalize.Operations.Extract {
             } else {
                 using (var file = new FluentFile(cb.CreateRecordClass()).From(_fullName).OnError(_errorMode)) {
                     foreach (var row in from object obj in file select Row.FromObject(obj)) {
-                        ProcessRow(row, conversionMap);
+                        ProcessRow(row, _fields, _fullName, conversionMap);
                         yield return row;
                     }
                     HandleErrors(file);
@@ -93,8 +93,8 @@ namespace Transformalize.Operations.Extract {
 
         }
 
-        private void ProcessRow(Row row, IReadOnlyDictionary<string, Func<object, object>> conversionMap) {
-            foreach (var field in _fields) {
+        private static void ProcessRow(Row row, IEnumerable<Field> fields, string fileName, IReadOnlyDictionary<string, Func<object, object>> conversionMap) {
+            foreach (var field in fields) {
                 if (field.SimpleType.Equals("string") && !field.Alias.Equals(field.Identifier)) {
                     row[field.Alias] = row[field.Identifier];
                     row.Remove(field.Identifier);
@@ -106,7 +106,7 @@ namespace Transformalize.Operations.Extract {
                     }
                 }
             }
-            row["TflFileName"] = _fullName;
+            row["TflFileName"] = fileName;
         }
 
         private void HandleErrors(FileEngine file) {

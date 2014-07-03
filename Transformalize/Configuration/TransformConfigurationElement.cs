@@ -28,6 +28,7 @@ namespace Transformalize.Configuration {
 
     public class TransformConfigurationElement : ConfigurationElement {
 
+        private const string USE_HTTPS = "use-https";
         private const string METHOD = "method";
         private const string VALUE = "value";
         private const string PATTERN = "pattern";
@@ -76,6 +77,7 @@ namespace Transformalize.Configuration {
         private const string FROM_LONG = "from-long";
         private const string TO_LAT = "to-lat";
         private const string TO_LONG = "to-long";
+        private const string SLEEP = "sleep";
 
         //validation
         private const string CHARACTERS = "characters";
@@ -526,6 +528,18 @@ namespace Transformalize.Configuration {
         public bool IgnoreEmpty {
             get { return (bool)this[IGNORE_EMPTY]; }
             set { this[IGNORE_EMPTY] = value; }
+        }
+
+        [ConfigurationProperty(SLEEP, IsRequired = false, DefaultValue = 0)]
+        public int Sleep {
+            get { return (int) this[SLEEP]; }
+            set { this[SLEEP] = value; } 
+        }
+
+        [ConfigurationProperty(USE_HTTPS, IsRequired = false, DefaultValue = false)]
+        public bool UseHttps {
+            get { return (bool)this[USE_HTTPS]; }
+            set { this[USE_HTTPS] = value; }
         }
 
         public override bool IsReadOnly() {

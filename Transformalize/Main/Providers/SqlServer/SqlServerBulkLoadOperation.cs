@@ -45,9 +45,27 @@ namespace Transformalize.Main.Providers.SqlServer {
             NotifyBatchSize = 10000;
             BatchSize = _batchSize;
 
-            var fields = new Fields(_entity.Fields, _entity.CalculatedFields).WithOutput().AddBatchId(_entity.Index, false).ToArray();
-            foreach (var field in fields) {
+            var fromFields = new Fields(_entity.Fields, _entity.CalculatedFields).WithOutput().AddBatchId(_entity.Index, false);
+            if (_entity.IsMaster())
+                fromFields.AddDeleted(_entity.Index, false);
+
+            var toFields = new SqlServerEntityAutoFieldReader().Read(Connection, Connection.Process, _entity.Prefix, _entity.OutputName(), _entity.Schema, _entity.IsMaster());
+
+            foreach (var field in fromFields) {
                 Schema[field.Alias] = field.SystemType;
+            }
+
+            foreach (var from in fromFields) {
+                if (toFields.HaveField(from.Alias)) {
+                    var to = toFields.Find(from.Alias).First();
+                    if (!to.SimpleType.Equals(from.SimpleType)) {
+                        if (!to.SimpleType.Equals("byte[]") && from.SimpleType.Equals("rowversion")) {
+                            throw new TransformalizeException("{0} has a matching {1} fields, but different types: {2} != {3}.", TargetTable, from.Alias, from.SimpleType, to.SimpleType);
+                        }
+                    }
+                } else {
+                    throw new TransformalizeException("{0} does not have a matching {1} field.", TargetTable, from.Alias);
+                }
             }
         }
 

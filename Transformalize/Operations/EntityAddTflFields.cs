@@ -40,6 +40,7 @@ namespace Transformalize.Operations {
             OnFinishedProcessing += EntityAddTflFields_OnFinishedProcessing;
             foreach (var row in rows) {
                 row["TflBatchId"] = _entity.TflBatchId;
+                row["TflDeleted"] = false;
                 yield return row;
             }
         }

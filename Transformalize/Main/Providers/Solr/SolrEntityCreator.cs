@@ -98,6 +98,9 @@ namespace Transformalize.Main.Providers.Solr {
             if (!fields.ContainsKey("tflbatchid")) {
                 fields.Add("tflbatchid", new Dictionary<string, object> { { "type", "long" } });
             }
+            if (!fields.ContainsKey("tfldeleted")) {
+                fields.Add("tfldeleted", new Dictionary<string, object> { { "type", "boolean" } });
+            }
             return fields;
         }
 
@@ -119,6 +122,9 @@ namespace Transformalize.Main.Providers.Solr {
             }
             if (!map.ContainsKey("tflbatchid")) {
                 map.Add("tflbatchid", "tflbatchid");
+            }
+            if (!map.ContainsKey("tfldeleted")) {
+                map.Add("tfldeleted", "tfldeleted");
             }
             return map;
         }

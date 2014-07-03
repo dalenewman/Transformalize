@@ -29,6 +29,7 @@ using Transformalize.Configuration.Builders;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.NLog;
 using Transformalize.Main;
+using Transformalize.Main.Parameters;
 using Transformalize.Main.Providers;
 using Transformalize.Operations;
 using Transformalize.Operations.Transform;
@@ -55,12 +56,12 @@ namespace Transformalize.Test {
                 .Row().Field("f1", 12)
                 .ToOperation();
 
-            var sampler = new SampleOperation2(50);
+            var sampler = new SampleOperation(50);
 
             var rows = TestOperation(input, sampler);
 
             Console.WriteLine(rows.Count);
-            Assert.Greater(11, rows.Count);
+            Assert.Greater(12, rows.Count);
             Assert.Less(1, rows.Count);
 
 
@@ -1052,6 +1053,19 @@ namespace Transformalize.Test {
             Assert.AreEqual("Reclaim", output[0]["MeterCategory"]);
             Assert.AreEqual("Domestic", output[1]["MeterCategory"]);
         }
+
+        [Test]
+        public void TestGeoCode() {
+            var input = new RowsBuilder()
+                .Row("in", "1009 Broad St., St. Joseph, MI.  49085")
+                .ToOperation();
+            var geoCodeOperation = new GeoCodeOperation("in", "out",0, false, new Parameters());
+            var output = TestOperation(input, geoCodeOperation);
+
+            Assert.AreEqual(1, output.Count);
+            Assert.AreEqual("42.106686,-86.477273", output[0]["out"].ToString());
+        }
+
 
     }
 }

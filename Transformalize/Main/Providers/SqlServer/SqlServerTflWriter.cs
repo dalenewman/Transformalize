@@ -38,7 +38,7 @@ namespace Transformalize.Main.Providers.SqlServer {
                 Execute(process.OutputConnection, sql);
             }
 
-            Info("Initialized TrAnSfOrMaLiZeR {0} connection.", process.OutputConnection.Name);
+            Info("Initialized TrAnSfOrMaLiZe {0} connection.", process.OutputConnection.Name);
         }
 
         private static void Execute(AbstractConnection connection, string sqlFormat, params object[] values) {

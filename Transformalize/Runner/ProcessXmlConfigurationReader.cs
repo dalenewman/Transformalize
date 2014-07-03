@@ -21,14 +21,15 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
-using Transformalize.Libs;
+using Transformalize.Libs.NanoXml;
+using Transformalize.Libs.NLog;
 using Transformalize.Main;
 
 namespace Transformalize.Runner {
@@ -88,26 +89,68 @@ namespace Transformalize.Runner {
             if (!xml.Contains("@"))
                 return xml;
 
+            var doc = new NanoXmlDocument(xml);
+
+            var transformalize = doc.RootNode;
+            var processes = new NanoXmlNode[0];
+            var environments = new NanoXmlNode[0];
+            var environmentDefault = string.Empty;
+
+            foreach (var node in transformalize.SubNodes) {
+                switch (node.Name) {
+                    case "environments":
+                        environmentDefault = node.Attributes.Any() ? node.Attributes.First().Value : string.Empty;
+                        environments = node.SubNodes.ToArray();
+                        break;
+                    case "processes":
+                        processes = node.SubNodes.ToArray();
+                        break;
+                }
+            }
+
             var newXml = new StringBuilder("<transformalize><processes>");
 
-            var doc = new NanoXmlDocument(xml);
-            var processes = doc.RootNode.SubNodes.First().SubNodes;
+            if (environments.Length > 0) {
+                var parameters = environmentDefault.Equals(string.Empty) ?
+                    environments.First().SubNodes.First().SubNodes.ToArray() :
+                    environments.First(e => e.GetAttribute("name").Value.Equals(environmentDefault)).SubNodes.First().SubNodes.ToArray();
 
-            foreach (var process in processes) {
-                var processXml = process.ToString();
-                if (process.SubNodes.Any(n => n.Name.Equals("parameters"))) {
-                    var parameters = process.SubNodes.First(n => n.Name.Equals("parameters")).SubNodes;
-                    foreach (var parameter in parameters) {
-                        var name = "@" + parameter.GetAttribute("name").Value.TrimStart("@".ToCharArray());
-                        var value = parameter.GetAttribute("value").Value;
-                        processXml = processXml.Replace(name, value);
-                    }
+                LogParameters(environmentDefault, parameters, processes);
+
+                foreach (var process in processes) {
+                    newXml.AppendLine(ApplyParameters(process.ToString(), parameters));
                 }
-                newXml.AppendLine(processXml);
+            } else {
+                foreach (var process in processes) {
+                    var processXml = process.ToString();
+                    if (process.SubNodes.Any(n => n.Name.Equals("parameters"))) {
+                        processXml = ApplyParameters(processXml, process.SubNodes.First(n => n.Name.Equals("parameters")).SubNodes);
+                    }
+                    newXml.AppendLine(processXml);
+                }
             }
 
             newXml.AppendLine("</processes></transformalize>");
             return newXml.ToString();
+        }
+
+        private static void LogParameters(string environmentDefault, IEnumerable<NanoXmlNode> parameters, NanoXmlNode[] processes) {
+            var log = LogManager.GetLogger("tfl");
+            GlobalDiagnosticsContext.Set("process", processes.Count() > 1 ? "All" : processes.First().GetAttribute("name").Value);
+            GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
+            log.Info("Environment: {0}", environmentDefault.Equals(string.Empty) ? "first" : environmentDefault);
+            foreach (var parameter in parameters) {
+                log.Info("{0} = {1}", parameter.GetAttribute("name").Value, parameter.GetAttribute("value").Value);
+            }
+        }
+
+        private static string ApplyParameters(string xml, IEnumerable<NanoXmlNode> parameters) {
+            var result = xml;
+            foreach (var parameter in parameters) {
+                var name = parameter.GetAttribute("name").Value.Trim("@".ToCharArray());
+                result = result.Replace("@(" + name + ")", parameter.GetAttribute("value").Value);
+            }
+            return result;
         }
 
         private static object SafeAttribute(XElement element, string attribute, object defaultValue) {

@@ -71,7 +71,7 @@ namespace Transformalize.Test {
             process = GetInitialProcess(inventory, storageLocations, warehouses);
 
             //run again, no changes
-            var second = ProcessFactory.Create(process, new Options() { LogLevel = logLevel })[0];
+            var second = ProcessFactory.CreateSingle(process, new Options() { LogLevel = logLevel });
             second.PipelineThreading = PipelineThreading.SingleThreaded;
             second.ExecuteScaler();
             LogManager.Flush();

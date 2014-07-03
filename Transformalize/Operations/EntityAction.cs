@@ -20,10 +20,8 @@
 
 #endregion
 
-namespace Transformalize.Operations
-{
-    public enum EntityAction
-    {
+namespace Transformalize.Operations {
+    public enum EntityAction {
         Update,
         Insert,
         None,

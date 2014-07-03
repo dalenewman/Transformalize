@@ -20,15 +20,15 @@
 
 #endregion
 
-namespace Transformalize.Main
-{
-    public class SearchType
-    {
+namespace Transformalize.Main {
+
+    public class SearchType {
+
         public string Name { get; set; }
-        public string Type { get; set; }
         public bool Store { get; set; }
         public bool Index { get; set; }
         public bool MultiValued { get; set; }
         public string Analyzer { get; set; }
+        public string Type { get; set; }
     }
 }

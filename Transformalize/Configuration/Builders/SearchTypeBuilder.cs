@@ -8,11 +8,6 @@ namespace Transformalize.Configuration.Builders {
             _searchType = searchType;
         }
 
-        public SearchTypeBuilder Type(string type) {
-            _searchType.Type = type;
-            return this;
-        }
-
         public SearchTypeBuilder Analyzer(string analyzer) {
             _searchType.Analyzer = analyzer;
             return this;

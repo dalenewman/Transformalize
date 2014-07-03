@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using Transformalize.Libs.Rhino.Etl.DataReaders;
 using Transformalize.Libs.Rhino.Etl.Infrastructure;
+using Transformalize.Main;
 using Transformalize.Main.Providers;
 
 namespace Transformalize.Libs.Rhino.Etl.Operations {
@@ -191,10 +192,8 @@ namespace Transformalize.Libs.Rhino.Etl.Operations {
             CreateInputSchema();
 
             using (var cn = (SqlConnection)Use.Connection(Connection)) {
-
                 _sqlBulkCopy = CreateSqlBulkCopy(cn, null);
                 var adapter = new DictionaryEnumeratorDataReader(_inputSchema, rows);
-#if DEBUG
                 try {
                     _sqlBulkCopy.WriteToServer(adapter);
                 } catch (SqlException ex) {
@@ -236,11 +235,8 @@ namespace Transformalize.Libs.Rhino.Etl.Operations {
                         throw;
 
                     var length = l.GetValue(metadata);
-                    throw new Exception(String.Format("Column: {0} contains data with a length greater than: {1}", column, length));
+                    throw new TransformalizeException("Column: {0} contains data with a length greater than: {1}", column, length);
                 }
-#else
-                _sqlBulkCopy.WriteToServer(adapter);
-#endif
             }
             yield break;
         }

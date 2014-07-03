@@ -18,7 +18,16 @@ namespace Transformalize.Main.Providers.SqlServer {
                 new FieldSqlWriter(entity.Fields, entity.CalculatedFields);
 
             var primaryKey = writer.FieldType(keyType).Alias(connection.L, connection.R).Asc().Values();
-            var defs = writer.Reload().AddBatchId(entity.Index).AddSurrogateKey(entity.Index).Output().Alias(connection.L, connection.R).DataType(new SqlServerDataTypeService()).AppendIf(" NOT NULL", keyType).Values();
+            var defs = writer
+                .Reload()
+                .AddBatchId(entity.Index)
+                .AddDeleted(entity)
+                .AddSurrogateKey(entity.Index)
+                .Output()
+                .Alias(connection.L, connection.R)
+                .DataType(new SqlServerDataTypeService())
+                .AppendIf(" NOT NULL", keyType)
+                .Values();
 
             var createSql = connection.TableQueryWriter.CreateTable(entity.OutputName(), defs);
             Log.Debug(createSql);

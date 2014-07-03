@@ -67,7 +67,7 @@ namespace Transformalize.Main.Providers.SqlServer {
         public string CreateSql(Process process) {
             var builder = new StringBuilder();
             builder.AppendFormat("CREATE VIEW {0} AS\r\n", process.OutputConnection.Enclose(process.Star));
-            builder.AppendFormat("SELECT\r\n    d.TflKey,\r\n    d.TflBatchId,\r\n    b.TflUpdate,\r\n");
+            builder.AppendFormat("SELECT\r\n    d.TflKey,\r\n    d.TflBatchId,\r\n    d.TflDeleted,\r\n    b.TflUpdate,\r\n");
 
             var l = process.OutputConnection.L;
             var r = process.OutputConnection.R;

@@ -23,14 +23,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Libs.Rhino.Etl.Pipelines;
 using Transformalize.Main;
 using Transformalize.Operations;
-using Transformalize.Operations.Load;
 using Transformalize.Processes;
 using Process = Transformalize.Main.Process;
 
@@ -52,9 +49,12 @@ namespace Transformalize.Runner {
             if (!process.IsReady())
                 return results;
 
+            process.IsFirstRun = process.MasterEntity == null || !process.OutputConnection.RecordsExist(process.MasterEntity);
             process.PerformActions(a => a.Before);
 
-            ProcessDeletes(process);
+            if (!process.IsFirstRun) {
+                ProcessDeletes(process);
+            }
             ProcessEntities(process);
 
             if (process.StarEnabled && !process.OutputConnection.IsInternal()) {
@@ -86,18 +86,15 @@ namespace Transformalize.Runner {
         }
 
         private static void ProcessDeletes(Process process) {
-            foreach (var entityDeleteProcess in process.Entities.Where(e => e.Delete).Select(entity => new EntityDeleteProcess(process, entity) {
+            foreach (var entityDeleteProcess in process.Entities.Where(entity => entity.Delete).Select(entity => new EntityDeleteProcess(process, entity) {
                 PipelineExecuter = entity.PipelineThreading == PipelineThreading.SingleThreaded ? (AbstractPipelineExecuter)new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter()
             })) {
                 entityDeleteProcess.Execute();
             }
-
             ResetLog(process);
         }
 
         private static void ProcessEntities(Process process) {
-
-            process.IsFirstRun = process.MasterEntity == null || !process.OutputConnection.RecordsExist(process.MasterEntity);
 
             foreach (var entityProcess in process.Entities.Select(entity => new EntityProcess(process, entity) {
                 PipelineExecuter = entity.PipelineThreading == PipelineThreading.SingleThreaded ? (AbstractPipelineExecuter)new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter()
@@ -107,6 +104,7 @@ namespace Transformalize.Runner {
 
             ResetLog(process);
         }
+
 
         private static void ProcessMaster(Process process) {
             var updateMasterProcess = new UpdateMasterProcess(ref process) {
@@ -132,63 +130,5 @@ namespace Transformalize.Runner {
             LogManager.Flush();
         }
 
-    }
-
-    public class MasterJoinProcess : EtlProcess {
-        private readonly Process _process;
-        private readonly CollectorOperation _collector;
-
-        public MasterJoinProcess(Process process, ref CollectorOperation collector) {
-            _process = process;
-            _collector = collector;
-        }
-
-
-        protected override void Initialize() {
-            Register(new RowsOperation(_process.Relationships.First().LeftEntity.Rows));
-            foreach (var rel in _process.Relationships) {
-                Register(new EntityJoinOperation(rel).Right(new RowsOperation(rel.RightEntity.Rows)));
-                //Register(new GatherOperation());
-            }
-            Register(_collector);
-        }
-    }
-
-    public class EntityJoinOperation : JoinOperation {
-        private readonly Relationship _rel;
-        private readonly string[] _fields;
-
-        public EntityJoinOperation(Relationship rel) {
-            _rel = rel;
-            var rightFields = new HashSet<string>(rel.RightEntity.OutputFields().Aliases());
-            rightFields.ExceptWith(rel.LeftEntity.OutputFields().Aliases());
-            _fields = rightFields.ToArray();
-        }
-
-        protected override Row MergeRows(Row leftRow, Row rightRow) {
-            var row = leftRow.Clone();
-            foreach (var field in _fields) {
-                row[field] = rightRow[field];
-            }
-            return row;
-        }
-
-        protected override void SetupJoinConditions() {
-            LeftJoin
-                .Left(_rel.Join.Select(j => j.LeftField).Select(f => f.Alias).ToArray())
-                .Right(_rel.Join.Select(j => j.RightField).Select(f => f.Alias).ToArray());
-        }
-    }
-
-    public class RowsOperation : AbstractOperation {
-        private readonly IEnumerable<Row> _rows;
-
-        public RowsOperation(IEnumerable<Row> rows) {
-            _rows = rows;
-        }
-
-        public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
-            return _rows;
-        }
     }
 }

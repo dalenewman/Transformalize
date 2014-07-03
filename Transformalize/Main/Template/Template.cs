@@ -92,13 +92,11 @@ namespace Transformalize.Main {
         }
 
         public string Render() {
+            if (!CacheIsUsable())
+                return CacheContent(RenderContent());
 
-            if (CacheIsUsable()) {
-                _log.Debug("Returning {0} template output from cache.", Name);
-                return _renderedTemplateContent;
-            }
-
-            return CacheContent(RenderContent());
+            _log.Debug("Returning {0} template output from cache.", Name);
+            return _renderedTemplateContent;
         }
 
         private bool CacheIsUsable() {

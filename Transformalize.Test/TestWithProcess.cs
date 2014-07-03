@@ -32,7 +32,6 @@ using Transformalize.Main;
 using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.SqlServer;
 using Transformalize.Operations;
-using Transformalize.Processes;
 using Transformalize.Runner;
 
 namespace Transformalize.Test {
@@ -128,6 +127,7 @@ OPTION (MAXDOP 2);";
 SELECT
     d.TflKey,
     d.TflBatchId,
+    d.TflDeleted,
     b.TflUpdate,
     [d].[OrderDetailKey],
     [d].[OrderKey],

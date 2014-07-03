@@ -82,6 +82,8 @@
     <Compile Include="Configuration\ActionConfigurationElement.cs" />
     <Compile Include="Configuration\ActionElementCollection.cs" />
     <Compile Include="Configuration\BranchConfigurationElement.cs" />
+    <Compile Include="Configuration\EnvironmentConfigurationElement.cs" />
+    <Compile Include="Configuration\EnvironmentElementCollection.cs" />
     <Compile Include="Configuration\MyConfigurationElementCollection.cs" />
     <Compile Include="Configuration\BranchElementCollection.cs" />
     <Compile Include="Configuration\IoConfigurationElement.cs" />
@@ -583,6 +585,13 @@
     <Compile Include="Libs\ExcelDataReader\Exceptions\HeaderException.cs" />
     <Compile Include="Libs\ExcelDataReader\IExcelDataReader.cs" />
     <Compile Include="Libs\fastJSON\JsonTryParse.cs" />
+    <Compile Include="Libs\GoogleMaps.LocationServices\Address.cs" />
+    <Compile Include="Libs\GoogleMaps.LocationServices\Directions.cs" />
+    <Compile Include="Libs\GoogleMaps.LocationServices\GoogleLocationService.cs" />
+    <Compile Include="Libs\GoogleMaps.LocationServices\ILocationService.cs" />
+    <Compile Include="Libs\GoogleMaps.LocationServices\MapPoint.cs" />
+    <Compile Include="Libs\GoogleMaps.LocationServices\Region.cs" />
+    <Compile Include="Libs\GoogleMaps.LocationServices\Step.cs" />
     <Compile Include="Libs\HttpWebAdapters\IHttpWebRequest.cs" />
     <Compile Include="Libs\HttpWebAdapters\IHttpWebRequestFactory.cs" />
     <Compile Include="Libs\HttpWebAdapters\IHttpWebResponse.cs" />
@@ -891,7 +900,7 @@
     <Compile Include="Libs\Microsoft\System.Web.Razor\Utils\EnumeratorExtensions.cs" />
     <Compile Include="Libs\Microsoft\System.Web.Razor\Utils\EnumUtil.cs" />
     <Compile Include="Libs\Microsoft\System.Web.Razor\VBRazorCodeLanguage.cs" />
-    <Compile Include="Libs\NanoXMLParser.cs" />
+    <Compile Include="Libs\NanoXml\NanoXmlParser.cs" />
     <Compile Include="Libs\Newtonsoft.Json\Bson\BsonBinaryType.cs" />
     <Compile Include="Libs\Newtonsoft.Json\Bson\BsonBinaryWriter.cs" />
     <Compile Include="Libs\Newtonsoft.Json\Bson\BsonObjectId.cs" />
@@ -1651,6 +1660,8 @@
     <Compile Include="Main\Template\TemplateManager.cs" />
     <Compile Include="Main\Template\TemplateReader.cs" />
     <Compile Include="Main\TransformalizeException.cs" />
+    <Compile Include="Main\Transform\AverageOperation.cs" />
+    <Compile Include="Main\Transform\GeoCodeOperation.cs" />
     <Compile Include="Main\Transform\TransformOperationFactory.cs" />
     <Compile Include="Main\Transform\ITransformParametersReader.cs" />
     <Compile Include="Main\Transform\ITransformLoader.cs" />
@@ -1979,13 +1990,15 @@
     <Compile Include="Libs\Rhino.Etl\WithLoggingMixin.cs" />
     <Compile Include="Operations\AliasDefault.cs" />
     <Compile Include="Operations\AliasOperation.cs" />
+    <Compile Include="Operations\EntityDelete.cs" />
+    <Compile Include="Operations\EntityDetectDeletes.cs" />
     <Compile Include="Operations\EntityInputKeysExtractAllForDelete.cs" />
+    <Compile Include="Operations\EntityJoinOperation.cs" />
     <Compile Include="Operations\EntityOutputOperation.cs" />
     <Compile Include="Operations\Extract\FileDelimitedExtract.cs" />
     <Compile Include="Operations\Extract\FileExcelExtract.cs" />
     <Compile Include="Operations\Extract\FileFixedExtract.cs" />
     <Compile Include="Operations\EntityDataExtract.cs" />
-    <Compile Include="Operations\EntityDelete.cs" />
     <Compile Include="Operations\FieldTypeDefault.cs" />
     <Compile Include="Operations\GatherOperation.cs" />
     <Compile Include="Operations\HtmlRowOperation.cs" />
@@ -1994,8 +2007,8 @@
     <Compile Include="Operations\Load\LogLoadOperation.cs" />
     <Compile Include="Operations\Load\MailLoadOperation.cs" />
     <Compile Include="Operations\NameAlias.cs" />
+    <Compile Include="Operations\RowsOperation.cs" />
     <Compile Include="Operations\SampleOperation.cs" />
-    <Compile Include="Operations\SampleOperation2.cs" />
     <Compile Include="Operations\Sort.cs" />
     <Compile Include="Operations\SqlKeysOverrideOperation.cs" />
     <Compile Include="Operations\Transform\AppendOperation.cs" />
@@ -2077,7 +2090,6 @@
     <Compile Include="Operations\CollectorOperation.cs" />
     <Compile Include="Operations\ConsoleLoadOperation.cs" />
     <Compile Include="Processes\EntityDeleteProcess.cs" />
-    <Compile Include="Operations\EntityDetectDeletes.cs" />
     <Compile Include="Processes\EntityKeysPartial.cs" />
     <Compile Include="Extensions\XmlExtensions.cs" />
     <Compile Include="Extensions\LinqExtensions.cs" />
@@ -2459,6 +2471,7 @@
     <Compile Include="Operations\TruncateOperation.cs" />
     <Compile Include="Operations\SortOperation.cs" />
     <Compile Include="Operations\SqlOverrideOperation.cs" />
+    <Compile Include="Processes\MasterJoinProcess.cs" />
     <Compile Include="Processes\TransformProcess.cs" />
     <Compile Include="Processes\UpdateMasterProcess.cs" />
     <Compile Include="Operations\EntityUpdateMaster.cs" />
@@ -2470,7 +2483,6 @@
     <Compile Include="Runner\Contents.cs" />
     <Compile Include="Runner\ContentsFileReader.cs" />
     <Compile Include="Runner\ContentsWebReader.cs" />
-    <Compile Include="Runner\DeleteRunner.cs" />
     <Compile Include="Runner\IContentsReader.cs" />
     <Compile Include="Runner\InitializeRunner.cs" />
     <Compile Include="Runner\IProcessRunner.cs" />
@@ -2505,6 +2517,7 @@
     <Content Include="Libs\FileHelpers\LGPL - License.txt" />
     <Content Include="Libs\FileHelpers\MasterDetail\Examples.xml" />
     <Content Include="Libs\FileHelpers\MasterDetail\MasterDetailEngine.docs.xml" />
+    <Content Include="Libs\GoogleMaps.LocationServices\CREDIT.txt" />
     <Content Include="Libs\Microsoft\License.txt" />
     <Content Include="Libs\Ninject\LICENSE.txt" />
     <Content Include="Libs\NLog\LICENSE.txt" />

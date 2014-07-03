@@ -20,10 +20,12 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration.Builders;
+using Transformalize.Libs.fastJSON;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 using Transformalize.Test.Builders;
@@ -140,8 +142,8 @@ namespace Transformalize.Test {
                     .Action("web").Mode("first").Url("http://localhost:8983/solr/NorthWind/dataimport?command=full-import&clean=true&commit=true&optimize=true")
                     .Action("web").Mode("default").Url("http://localhost:8983/solr/NorthWind/dataimport?command=delta-import&clean=false&commit=true&optimize=true")
                 .Map("Managers").Connection("input").Sql("select EmployeeID, FirstName + ' ' + LastName FROM Employees;")
-                .SearchType("facet").Type("lowercase").Store(true).Index(true)
-                .SearchType("standard").Type("standard_lowercase").Store(false).Index(true)
+                .SearchType("facet").Analyzer("lowercase").Store(true).Index(true)
+                .SearchType("standard").Analyzer("standard_lowercase").Store(false).Index(true)
                 .Entity("Order Details").Version("RowVersion").Prefix("OrderDetails")
                     .Field("Discount").Single()
                     .Field("OrderID").Int32().PrimaryKey()
@@ -552,6 +554,99 @@ LEFT OUTER JOIN [dbo].[TestCategory] r5 ON (r4.[CategoryId] = r5.[CategoryId]);"
 
         }
 
+        [Test]
+        public void TestOutputToJson() {
+            var process = GetTestProcess("internal");
+            var results = process.Execute().ToArray();
+
+            const string json = @"
+[
+    {
+        'OrderDetailId':1,
+        'Order':{
+            'OrderId':1,
+            'Customer':{
+                'CustomerId':1,
+                'FirstName':'Dale',
+                'LastName':'Newman'
+            },
+            'Product':{
+                'ProductId':1,
+                'Name':'Beans',
+                'Description':'Really Nice Beans',
+                'Categories':[
+                    {
+                        'CategoryId':1,
+                        'Name':'Proteins'
+                    },
+                    {
+                        'CategoryId':2,
+                        'Name':'Miracle Fruits'
+                    }
+                ]
+            }
+        },
+        'Quantity':2,
+        'Price':2.0
+    },
+    {
+        'OrderDetailId':2,
+        'Order':{
+            'OrderId':1,
+            'Customer':{
+                'CustomerId':1,
+                'FirstName':'Dale',
+                'LastName':'Newman'
+            },
+            'Product':{
+                'ProductId':2,
+                'Name':'Cheese',
+                'Description':'Very Sharp Cheese',
+                'Category':[
+                    {
+                        'CategoryId':3,
+                        'Name':'Dairy'
+                    }
+                ]
+
+            }
+        },
+        'Quantity':2,
+        'Price':3.0
+    },
+    {
+        'OrderDetailId':3,
+        'Order':{
+            'OrderId':2,
+            'Customer':{
+                'CustomerId':2,
+                'FirstName':'Tara',
+                'LastName':'Newman'
+            },
+            'Product':{
+                'ProductId':2,
+                'Name':'Cheese',
+                'Description':'Very Sharp Cheese',
+                'Category':[
+                    {
+                        'CategoryId':3,
+                        'Name':'Dairy'
+                    }
+                ]
+            }
+        },
+        'Quantity':4,
+        'Price':3.0
+    }
+]";
+            var expected = (object[]) JSON.Instance.ToObject(json.Replace("'", "\""));
+
+            Assert.AreEqual(3, expected.Length);
+            Assert.AreEqual(1, ((Dictionary<string, object>)expected[0])["OrderDetailId"]);
+            Assert.AreEqual(2, ((Dictionary<string, object>)expected[1])["OrderDetailId"]);
+            Assert.AreEqual(3, ((Dictionary<string, object>)expected[2])["OrderDetailId"]);
+
+        }
 
 
     }

@@ -34,8 +34,9 @@ namespace Transformalize.Main {
     public abstract class OrderedFields : IEnumerable<Field> {
 
         protected const StringComparison Ic = StringComparison.OrdinalIgnoreCase;
-        protected const string BatchId = "TflBatchId";
-        protected const string SurrogateKey = "TflKey";
+        protected const string TflBatchId = "TflBatchId";
+        protected const string TflDeleted = "TflDeleted";
+        protected const string TflKey = "TflKey";
 
         private List<Field> _fields = new List<Field>();
 
@@ -209,13 +210,18 @@ namespace Transformalize.Main {
                 if (Storage.Any(f => f.Name.Equals(element.Field, Ic) && f.Entity.Equals(element.Entity, Ic))) {
                     return new Fields(Storage.Where(f => f.Name.Equals(element.Field, Ic) && f.Entity.Equals(element.Entity, Ic)));
                 }
-                throw new TransformalizeException("Can not find parameter with entity '{0}' and field name (or alias) of '{1}'.", element.Entity, element.Field);
+                if (!element.Field.StartsWith("tfl", Ic)) {
+                    throw new TransformalizeException("Can not find parameter with entity '{0}' and field name (or alias) of '{1}'.", element.Entity, element.Field);
+                }
             }
 
             if (Storage.Any(f => f.Alias.Equals(element.Field, Ic) || f.Name.Equals(element.Field, Ic))) {
                 return new Fields(Storage.First(f => f.Alias.Equals(element.Field, Ic) || f.Name.Equals(element.Field, Ic)));
             }
-            throw new TransformalizeException("Can not find parameter with name (or alias) of '{0}'.", element.Field);
+            if (!element.Field.StartsWith("tfl", Ic)) {
+                throw new TransformalizeException("Can not find parameter with name (or alias) of '{0}'.", element.Field);
+            }
+            return new Fields(new Field(element.Type, "128", FieldType.NonKey, false, element.Value) { Name = element.Field.Equals(string.Empty) ? element.Name : element.Field });
         }
 
         public bool HaveField(string nameOrAlias) {
@@ -251,6 +257,11 @@ namespace Transformalize.Main {
             return this;
         }
 
+        public Fields AddDeleted(int entityIndex, bool forCreate = true) {
+            Add(GetDeletedField(entityIndex, forCreate));
+            return this;
+        }
+
         public Fields AddSurrogateKey(int entityIndex, bool forCreate = true) {
             Add(GetSurrogateKeyField(entityIndex, forCreate));
             return this;
@@ -258,18 +269,26 @@ namespace Transformalize.Main {
 
         public static Field GetBatchField(int entityIndex, bool forCreate = true) {
             return new Field("System.Int32", "8", FieldType.NonKey, true, "0") {
-                Alias = BatchId,
+                Alias = TflBatchId,
                 NotNull = forCreate,
                 EntityIndex = entityIndex,
                 Index = 1000
             };
         }
 
+        public static Field GetDeletedField(int entityIndex, bool forCreate = true) {
+            return new Field("System.Boolean", "8", FieldType.NonKey, true, "true") {
+                Alias = TflDeleted,
+                NotNull = forCreate,
+                EntityIndex = entityIndex,
+                Index = 1002
+            };
+        }
         public static Field GetSurrogateKeyField(int entityIndex, bool forCreate = true) {
 
             if (forCreate)
                 return new Field("System.Int32", "8", FieldType.NonKey, true, "0") {
-                    Alias = SurrogateKey,
+                    Alias = TflKey,
                     NotNull = true,
                     Identity = true,
                     EntityIndex = entityIndex,
@@ -277,7 +296,7 @@ namespace Transformalize.Main {
                 };
 
             return new Field("System.Int32", "8", FieldType.NonKey, true, "0") {
-                Alias = SurrogateKey,
+                Alias = TflKey,
                 EntityIndex = entityIndex,
                 Index = 1001
             };

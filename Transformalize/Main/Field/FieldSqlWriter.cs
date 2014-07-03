@@ -333,6 +333,15 @@ namespace Transformalize.Main {
             return this;
         }
 
+        public FieldSqlWriter AddDeleted(Entity entity, bool forCreate = true) {
+            if (!entity.IsMaster())
+                return this;
+            var field = Fields.GetDeletedField(entity.Index, forCreate);
+            _original[field.Alias] = field;
+            _output[field.Alias] = string.Empty;
+            return this;
+        }
+
         public FieldSqlWriter AddSurrogateKey(int entityIndex, bool forCreate = true) {
             var field = Fields.GetSurrogateKeyField(entityIndex, forCreate);
             _original[field.Alias] = field;

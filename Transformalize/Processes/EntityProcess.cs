@@ -51,7 +51,7 @@ namespace Transformalize.Processes {
         protected override void Initialize() {
 
             GlobalDiagnosticsContext.Set("process", _process.Name);
-            GlobalDiagnosticsContext.Set("entity", Common.LogLength(_entity.Alias, 20));
+            GlobalDiagnosticsContext.Set("entity", Common.LogLength(_entity.Alias));
 
             Register(new EntityKeysPartial(_process, _entity));
 
@@ -66,7 +66,7 @@ namespace Transformalize.Processes {
             }
 
             if (!_entity.Sampled && _entity.Sample > 0m && _entity.Sample < 100m) {
-                Register(new SampleOperation2(_entity.Sample));
+                Register(new SampleOperation(_entity.Sample));
             }
 
             Register(new ApplyDefaults(true, new Fields(_entity.Fields, _entity.CalculatedFields)));
