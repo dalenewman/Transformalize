@@ -50,6 +50,7 @@ namespace Transformalize.Main {
         private Dictionary<string, AbstractConnection> _connections = new Dictionary<string, AbstractConnection>();
 
         // fields (for now)
+        public IEnumerable<Row> Results = Enumerable.Empty<Row>();
         public Fields CalculatedFields = new Fields();
         public List<Entity> Entities = new List<Entity>();
         public IKernel Kernal = new StandardKernel(new NinjectBindings());

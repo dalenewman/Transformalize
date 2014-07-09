@@ -35,8 +35,7 @@ namespace Transformalize.Main {
 
         private List<IOperation> _operationsBeforeAggregation = new List<IOperation>();
         private List<IOperation> _operationsAfterAggregation = new List<IOperation>();
-        private IEnumerable<Row> _rows = new List<Row>();
-        private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
+        private IEnumerable<Row> _rows = Enumerable.Empty<Row>();
 
         public IOperation InputOperation { get; set; }
         public string Schema { get; set; }

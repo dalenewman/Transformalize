@@ -41,13 +41,11 @@ namespace Transformalize.Runner {
 
             ResetLog(process);
 
-            var results = Enumerable.Empty<Row>();
-
             var timer = new Stopwatch();
             timer.Start();
 
             if (!process.IsReady())
-                return results;
+                return process.Results;
 
             process.IsFirstRun = process.MasterEntity == null || !process.OutputConnection.RecordsExist(process.MasterEntity);
             process.PerformActions(a => a.Before);
@@ -62,6 +60,15 @@ namespace Transformalize.Runner {
                 ProcessTransforms(process);
             }
 
+            if (process.Relationships.Any()) {
+                var collector = new CollectorOperation();
+                new MasterJoinProcess(process, ref collector).Execute();
+                process.Results = collector.Rows;
+            } else
+            {
+                process.Results = process.MasterEntity == null ? Enumerable.Empty<Row>() : process.MasterEntity.Rows;
+            }
+
             new TemplateManager(process).Manage();
 
             process.PerformActions(a => a.After);
@@ -69,15 +76,7 @@ namespace Transformalize.Runner {
             timer.Stop();
             _log.Info("Process affected {0} records in {1}.", process.Anything, timer.Elapsed);
 
-            if (!process.Entities.Any())
-                return Enumerable.Empty<Row>();
-
-            if (!process.Relationships.Any())
-                return process.MasterEntity.Rows;
-
-            var collector = new CollectorOperation();
-            new MasterJoinProcess(process, ref collector).Execute();
-            return collector.Rows;
+            return process.Results;
         }
 
         private static void ResetLog(Process process) {
