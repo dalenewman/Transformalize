@@ -3,7 +3,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Web;
-using System.Xml.Linq;
 using Transformalize.Libs.Rhino.Etl;
 
 namespace Transformalize.Operations.Transform {
@@ -25,7 +24,7 @@ namespace Transformalize.Operations.Transform {
             }
         }
 
-        public string SanitizeXmlString(string xml) {
+        public static string SanitizeXmlString(string xml) {
             var buffer = new StringBuilder(xml.Length);
             foreach (var c in xml.Where(c => IsLegalXmlChar(c))) {
                 buffer.Append(c);
@@ -33,7 +32,7 @@ namespace Transformalize.Operations.Transform {
             return buffer.ToString();
         }
 
-        public bool IsLegalXmlChar(int character) {
+        public static bool IsLegalXmlChar(int character) {
             return (
                 character == 0x9 /* == '\t' == 9   */          ||
                 character == 0xA /* == '\n' == 10  */          ||

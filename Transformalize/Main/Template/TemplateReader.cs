@@ -35,7 +35,7 @@ namespace Transformalize.Main {
                 if (!element.Enabled)
                     continue;
 
-                var reader = element.File.StartsWith("http", IC) ? (IContentsReader)new ContentsWebReader() : new ContentsFileReader(path);
+                var reader = element.File.StartsWith("http", IC) ? (ContentsReader)new ContentsWebReader() : new ContentsFileReader(path);
                 var template = new Template(_process, element, reader.Read(element.File));
 
                 foreach (SettingConfigurationElement setting in element.Settings) {

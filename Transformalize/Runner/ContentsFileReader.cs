@@ -1,10 +1,9 @@
 using System.IO;
 using System.Web;
-using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 
 namespace Transformalize.Runner {
-    public class ContentsFileReader : WithLoggingMixin, IContentsReader {
+    public class ContentsFileReader : ContentsReader {
 
         private readonly string _path;
         private readonly char[] _s = new[] { '\\' };
@@ -21,7 +20,7 @@ namespace Transformalize.Runner {
             return !string.IsNullOrEmpty(_path);
         }
 
-        public Contents Read(string file) {
+        public override Contents Read(string file) {
             var fileName = file.Contains("?") ? file.Substring(0, file.IndexOf('?')) : file;
 
             var fileInfo = Path.IsPathRooted(fileName) ?
@@ -44,11 +43,7 @@ namespace Transformalize.Runner {
                     Content = content
                 };
 
-            var query = HttpUtility.ParseQueryString(file.Substring(file.IndexOf('?')));
-            foreach (var key in query.AllKeys) {
-                content = content.Replace("@" + key, query[key]);
-                Debug("Replaced {0} with {1} per file's query string.", "@" + key, query[key]);
-            }
+            content = ReplaceParameters(content, HttpUtility.ParseQueryString(file.Substring(file.IndexOf('?'))));
 
             return new Contents {
                 Name = Path.GetFileNameWithoutExtension(fileInfo.FullName),

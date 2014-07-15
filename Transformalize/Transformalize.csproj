@@ -2482,6 +2482,7 @@
     <Compile Include="Operations\ApplyDefaults.cs" />
     <Compile Include="Runner\Contents.cs" />
     <Compile Include="Runner\ContentsFileReader.cs" />
+    <Compile Include="Runner\ContentsStringReader.cs" />
     <Compile Include="Runner\ContentsWebReader.cs" />
     <Compile Include="Runner\IContentsReader.cs" />
     <Compile Include="Runner\InitializeRunner.cs" />
@@ -2557,8 +2558,8 @@
   <PropertyGroup>
     <PostBuildEvent>IF EXIST c:\code\JunkDrawer XCOPY /s /y $(TargetDir)Transformalize.dll c:\code\JunkDrawer\Assemblies\
 IF EXIST c:\code\DataProfiler XCOPY /s /y $(TargetDir)Transformalize.dll c:\code\DataProfiler\Assemblies\
-IF EXIST c:\Code\Orchard171\src\Orchard.Web\Modules\Assemblies XCOPY /s /y $(TargetDir)Transformalize.dll c:\Code\Orchard171\src\Orchard.Web\Modules\Assemblies
-</PostBuildEvent>
+IF EXIST c:\code\Orchard171\lib\Transformalize XCOPY /s /y $(TargetDir)Transformalize.dll c:\Code\Orchard171\lib\Transformalize\
+IF EXIST c:\code\Orchard180\lib\Transformalize XCOPY /s /y $(TargetDir)Transformalize.dll c:\Code\Orchard180\lib\Transformalize\</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

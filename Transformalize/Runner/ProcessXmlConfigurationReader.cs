@@ -21,7 +21,6 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -35,16 +34,16 @@ using Transformalize.Main;
 namespace Transformalize.Runner {
     public class ProcessXmlConfigurationReader : IReader<ProcessElementCollection> {
 
-        private readonly string _file;
-        private readonly IContentsReader _contentsReader;
+        private readonly string _resource;
+        private readonly ContentsReader _contentsReader;
 
-        public ProcessXmlConfigurationReader(string file, IContentsReader contentsReader) {
-            _file = file;
+        public ProcessXmlConfigurationReader(string resource, ContentsReader contentsReader) {
+            _resource = resource;
             _contentsReader = contentsReader;
         }
 
         public ProcessElementCollection Read() {
-            var contents = _contentsReader.Read(_file);
+            var contents = _contentsReader.Read(_resource);
 
             var section = new TransformalizeConfiguration();
 
@@ -56,7 +55,7 @@ namespace Transformalize.Runner {
                 if (process == null) {
                     var transformalize = doc.Element("transformalize");
                     if (transformalize == null)
-                        throw new TransformalizeException("Can't find the <process/> or <transformalize/> element in {0}.", _file);
+                        throw new TransformalizeException("Can't find the <process/> or <transformalize/> element in {0}.", _resource);
                     xml = transformalize.ToString();
                 } else {
                     xml = string.Format(@"
@@ -76,7 +75,7 @@ namespace Transformalize.Runner {
                     );
                 }
 
-                var updated = ReplaceParameters(xml);
+                var updated = DefaultParameters(xml);
                 section.Deserialize(updated);
                 return section.Processes;
             } catch (Exception e) {
@@ -84,7 +83,7 @@ namespace Transformalize.Runner {
             }
         }
 
-        public static string ReplaceParameters(string xml) {
+        public static string DefaultParameters(string xml) {
 
             if (!xml.Contains("@"))
                 return xml;

@@ -73,7 +73,7 @@ namespace Transformalize.Test
         </add>
     </processes>
 </transformalize>";
-            var output = ProcessXmlConfigurationReader.ReplaceParameters(xml);
+            var output = ProcessXmlConfigurationReader.DefaultParameters(xml);
             var doc = XDocument.Parse(output);
             var actions = doc.Descendants("add").Where(n=>n.Attributes("action").Any()).ToArray();
             
@@ -109,7 +109,7 @@ namespace Transformalize.Test
         </add>
     </processes>
 </transformalize>";
-            var output = ProcessXmlConfigurationReader.ReplaceParameters(xml);
+            var output = ProcessXmlConfigurationReader.DefaultParameters(xml);
             var doc = XDocument.Parse(output);
             var actions = doc.Descendants("add").Where(n => n.Attributes("action").Any()).ToArray();
 
