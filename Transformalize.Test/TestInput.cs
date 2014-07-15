@@ -90,7 +90,7 @@ namespace Transformalize.Test {
 
             var process = ProcessFactory.Create(cfg)[0];
 
-            var output = process.ExecuteSingle().ToArray();
+            var output = process.Execute().ToArray();
 
             Assert.IsInstanceOf<IEnumerable<Row>>(output);
 

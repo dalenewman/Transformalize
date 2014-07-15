@@ -100,7 +100,7 @@ namespace Transformalize.Test {
 
             var process = ProcessFactory.Create(cfg)[0];
 
-            var rows = process.ExecuteSingle();
+            var rows = process.Execute();
 
             Assert.IsNotNull(rows);
 

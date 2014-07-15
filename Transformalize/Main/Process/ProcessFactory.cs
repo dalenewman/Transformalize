@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Text.RegularExpressions;
 using Transformalize.Configuration;
 using Transformalize.Libs.NLog;
 
@@ -11,7 +10,7 @@ namespace Transformalize.Main {
         private static readonly Logger Log = LogManager.GetLogger("tfl");
 
         public static Process[] Create(string resource, Options options = null) {
-            InitializeLogger(Regex.Replace(resource, @"\..*$", string.Empty));
+            InitializeLogger("All");
             var element = new ConfigurationFactory(resource).Create();
             return Create(element, options);
         }

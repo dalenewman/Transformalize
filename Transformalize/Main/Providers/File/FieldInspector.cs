@@ -65,7 +65,7 @@ namespace Transformalize.Main.Providers.File {
             _log.Debug(builder.Process().Serialize().Replace(Environment.NewLine, string.Empty));
 
             var runner = ProcessFactory.CreateSingle(builder.Process(), new Options() { Top = request.Top });
-            var results = runner.ExecuteSingle().ToList();
+            var results = runner.Execute().ToList();
 
             if (results.Count <= 0) {
                 _log.Warn("Nothing imported from in {0}!", fileInformation.FileInfo.Name);

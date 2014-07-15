@@ -31,7 +31,7 @@ namespace Transformalize.Main.Providers.File {
             ProcessFactory.CreateSingle(process, new Options { Mode = "init" }).ExecuteScaler();
             return new FileImportResult {
                 Information = fileInformation,
-                Rows = ProcessFactory.Create(process)[0].ExecuteSingle()
+                Rows = ProcessFactory.Create(process)[0].Execute()
             };
         }
 

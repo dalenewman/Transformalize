@@ -156,12 +156,6 @@ namespace Transformalize.Main {
             }
         }
 
-        public IEnumerable<Row> ExecuteSingle() {
-            using (var runner = GetRunner()) {
-                runner.Run(this);
-                return MasterEntity.Rows;
-            }
-        }
         public Fields OutputFields() {
             var fields = new Fields();
             foreach (var entity in Entities) {

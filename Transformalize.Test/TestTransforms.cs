@@ -518,7 +518,7 @@ namespace Transformalize.Test {
 
             var process = ProcessFactory.Create(config, new Options() { LogLevel = LogLevel.Debug })[0];
 
-            var output = process.ExecuteSingle().ToArray();
+            var output = process.Execute().ToArray();
 
             Assert.AreEqual(30, output[0]["MinuteDiff"]);
             Assert.AreEqual(29, output[1]["MinuteDiff"]);
@@ -596,7 +596,7 @@ namespace Transformalize.Test {
 
             var process = ProcessFactory.Create(config, new Options() { LogLevel = LogLevel.Debug })[0];
             process.PipelineThreading = PipelineThreading.SingleThreaded;
-            var output = process.ExecuteSingle().ToArray();
+            var output = process.Execute().ToArray();
 
             Assert.AreEqual(30, output[0]["MinuteDiff"]);
             Assert.AreEqual(29, output[1]["MinuteDiff"]);
@@ -645,7 +645,7 @@ namespace Transformalize.Test {
 
             var process = ProcessFactory.Create(config, new Options() { LogLevel = LogLevel.Debug })[0];
             process.PipelineThreading = PipelineThreading.SingleThreaded;
-            var output = process.ExecuteSingle().ToArray();
+            var output = process.Execute().ToArray();
 
             Assert.AreEqual(30, output[0]["MinuteDiff"]);
             Assert.AreEqual(29, output[1]["MinuteDiff"]);
@@ -1048,7 +1048,7 @@ namespace Transformalize.Test {
                 .Process();
 
             var process = ProcessFactory.Create(cfg)[0];
-            var output = process.ExecuteSingle().ToArray();
+            var output = process.Execute().ToArray();
 
             Assert.AreEqual("Reclaim", output[0]["MeterCategory"]);
             Assert.AreEqual("Domestic", output[1]["MeterCategory"]);
