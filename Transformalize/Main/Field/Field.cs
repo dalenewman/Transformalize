@@ -22,7 +22,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using Transformalize.Main.Providers.SqlServer;
 
@@ -47,6 +46,15 @@ namespace Transformalize.Main {
         private Type _systemType = typeof(string);
         private object _default;
         private string _alias;
+        private string _label = string.Empty;
+        private string _schema = string.Empty;
+        private string _entity = string.Empty;
+        private string _entityOutputName = string.Empty;
+        private IParameters _parameters = new Parameters.Parameters();
+        private string _sort = string.Empty;
+        private string _aggregate = string.Empty;
+        private string _process = string.Empty;
+        private string _length = "64";
 
         public string Alias {
             get { return _alias; }
@@ -62,12 +70,36 @@ namespace Transformalize.Main {
             get { return _identifier; }
         }
 
-        public string Schema { get; set; }
-        public string Entity { get; set; }
-        public string EntityOutputName { get; set; }
-        public string Process { get; set; }
-        public string Parent { get; set; }
-        public string Length { get; set; }
+        public string Schema
+        {
+            get { return _schema; }
+            set { _schema = value; }
+        }
+
+        public string Entity
+        {
+            get { return _entity; }
+            set { _entity = value; }
+        }
+
+        public string EntityOutputName
+        {
+            get { return _entityOutputName; }
+            set { _entityOutputName = value; }
+        }
+
+        public string Process
+        {
+            get { return _process; }
+            set { _process = value; }
+        }
+
+        public string Length
+        {
+            get { return _length; }
+            set { _length = value; }
+        }
+
         public int Precision { get; set; }
         public int Scale { get; set; }
         public bool NotNull { get; set; }
@@ -76,10 +108,30 @@ namespace Transformalize.Main {
         public bool Output { get; set; }
         public bool FileOutput { get; set; }
         public short Index { get; set; }
-        public string Aggregate { get; set; }
-        public string Sort { get; set; }
-        public string Label { get; set; }
-        public IParameters Parameters { get; set; }
+
+        public string Aggregate
+        {
+            get { return _aggregate; }
+            set { _aggregate = value; }
+        }
+
+        public string Sort
+        {
+            get { return _sort; }
+            set { _sort = value; }
+        }
+
+        public string Label {
+            get { return _label.Equals(string.Empty) ? Alias : _label; }
+            set { _label = value; }
+        }
+
+        public IParameters Parameters
+        {
+            get { return _parameters; }
+            set { _parameters = value; }
+        }
+
         public bool HasParameters { get; set; }
         public bool DefaultBlank { get; set; }
         public bool DefaultWhiteSpace { get; set; }

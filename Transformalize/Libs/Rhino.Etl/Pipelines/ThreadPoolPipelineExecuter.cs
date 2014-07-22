@@ -36,9 +36,7 @@ namespace Transformalize.Libs.Rhino.Etl.Pipelines {
                         Debug(inner.StackTrace);
                     }
                     threadedEnumerator.MarkAsFinished();
-#if DEBUG
                     throw new TransformalizeException(e.Message);
-#endif
                 } finally {
                     threadedEnumerator.MarkAsFinished();
                 }

@@ -127,7 +127,6 @@ OPTION (MAXDOP 2);";
 SELECT
     d.TflKey,
     d.TflBatchId,
-    d.TflDeleted,
     b.TflUpdate,
     [d].[OrderDetailKey],
     [d].[OrderKey],

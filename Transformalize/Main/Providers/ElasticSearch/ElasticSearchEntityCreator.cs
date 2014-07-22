@@ -86,7 +86,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
 
         public Dictionary<string, object> GetFields(Entity entity) {
             var fields = new Dictionary<string, object>();
-            foreach (Field field in entity.OutputFields()) {
+            foreach (var field in entity.OutputFields()) {
                 var alias = field.Alias.ToLower();
                 var type = _types.ContainsKey(field.SimpleType) ? _types[field.SimpleType] : field.SimpleType;
                 if (type.Equals("string")) {

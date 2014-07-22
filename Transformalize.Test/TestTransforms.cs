@@ -419,6 +419,19 @@ namespace Transformalize.Test {
         }
 
         [Test]
+        public void Filter() {
+            const int expected = 1;
+
+            var input = new RowsBuilder()
+                .Row("x", 3).Field("y", 4)
+                .Row("x", 3).Field("y", 5).ToOperation();
+            var filter = new FilterOperation("y","filter","string",5, ComparisonOperator.Equal);
+            var output = TestOperation(input, filter);
+
+            Assert.AreEqual(expected, output.Count);
+        }
+
+        [Test]
         public void JavascriptWithDates() {
             const string minuteDiff = @"
                 function minuteDiff(orderStatus, start, end) {

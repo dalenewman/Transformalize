@@ -8,7 +8,7 @@ namespace Transformalize.Libs.NanoXml {
     /// <summary>
     ///     Base class containing useful features for all XML classes
     /// </summary>
-    internal class NanoXmlBase {
+    public class NanoXmlBase {
         protected static bool IsSpace(char c) {
             return c == ' ' || c == '\t' || c == '\n' || c == '\r';
         }
@@ -77,7 +77,7 @@ namespace Transformalize.Libs.NanoXml {
     /// <summary>
     ///     Class representing whole DOM XML document
     /// </summary>
-    internal class NanoXmlDocument : NanoXmlBase {
+    public class NanoXmlDocument : NanoXmlBase {
         private readonly List<NanoXmlAttribute> declarations = new List<NanoXmlAttribute>();
         private readonly NanoXmlNode rootNode;
 
@@ -139,7 +139,7 @@ namespace Transformalize.Libs.NanoXml {
     /// <summary>
     ///     Element node of document
     /// </summary>
-    internal class NanoXmlNode : NanoXmlBase {
+    public class NanoXmlNode : NanoXmlBase {
         private readonly List<NanoXmlAttribute> attributes = new List<NanoXmlAttribute>();
         private readonly string name;
 
@@ -300,7 +300,7 @@ namespace Transformalize.Libs.NanoXml {
     /// <summary>
     ///     XML element attribute
     /// </summary>
-    internal class NanoXmlAttribute {
+    public class NanoXmlAttribute {
         private readonly string name;
         private readonly string value;
 

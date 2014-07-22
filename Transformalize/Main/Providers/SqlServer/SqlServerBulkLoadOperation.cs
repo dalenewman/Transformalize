@@ -49,7 +49,7 @@ namespace Transformalize.Main.Providers.SqlServer {
             if (_entity.IsMaster())
                 fromFields.AddDeleted(_entity.Index, false);
 
-            var toFields = new SqlServerEntityAutoFieldReader().Read(Connection, Connection.Process, _entity.Prefix, _entity.OutputName(), _entity.Schema, _entity.IsMaster());
+            var toFields = new SqlServerEntityAutoFieldReader().Read(Connection, _entity.ProcessName, _entity.Prefix, _entity.OutputName(), Connection.DefaultSchema, _entity.IsMaster());
 
             foreach (var field in fromFields) {
                 Schema[field.Alias] = field.SystemType;

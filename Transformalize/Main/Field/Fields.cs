@@ -25,7 +25,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
-using Transformalize.Libs.SolrNet.Utils;
 using Transformalize.Main.Providers.ElasticSearch;
 using Transformalize.Operations;
 

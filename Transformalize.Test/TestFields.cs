@@ -33,15 +33,13 @@ namespace Transformalize.Test {
             new Field("system.string", "10", FieldType.PrimaryKey, true, "") {
                     Alias = "Field1",
                     Name = "f1",
-                    Default = "x",
-                    Parent = "p1"
+                    Default = "x"
                 },
             new Field("system.int32", "8", FieldType.NonKey, false, "0")
                 {
                     Alias = "Field2",
                     Name = "f2",
-                    Default = 0,
-                    Parent = "p2"
+                    Default = 0
                 }
         };
 
