@@ -95,6 +95,12 @@ namespace Transformalize.Main {
                 case "copy":
                     return new CopyOperation(inKey, outKey) { ShouldRun = shouldRun };
 
+                case "compress":
+                    return new CompressOperation(inKey, outKey) { ShouldRun = shouldRun };
+
+                case "decompress":
+                    return new DecompressOperation(inKey, outKey) { ShouldRun = shouldRun };
+
                 case "elipse":
                     return new ElipseOperation(inKey, outKey, element.Length, element.Elipse) { ShouldRun = shouldRun };
 
