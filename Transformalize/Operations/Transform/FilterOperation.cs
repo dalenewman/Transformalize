@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Threading;
-using Transformalize.Extensions;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
@@ -10,7 +8,6 @@ namespace Transformalize.Operations.Transform {
     public class FilterOperation : ShouldRunOperation {
         private readonly object _value;
         private readonly ComparisonOperator _comparisonOperator;
-        private int _filteredOutCount;
 
         public FilterOperation(string inKey, string outKey, string outType, object value, ComparisonOperator comparisonOperator)
             : base(inKey, outKey) {

@@ -70,6 +70,7 @@ namespace Transformalize.Main {
         private PipelineThreading _pipelineThreading = PipelineThreading.MultiThreaded;
         private string _star = Common.DefaultValue;
         private string _view = Common.DefaultValue;
+        private string _mode;
 
         // properties
         public string TimeZone { get; set; }
@@ -85,6 +86,11 @@ namespace Transformalize.Main {
         public string View {
             get { return _view.Equals(Common.DefaultValue) ? Name + "View" : _view; }
             set { _view = value; }
+        }
+
+        public string Mode {
+            get { return _mode; }
+            set { _mode = value.ToLower(); }
         }
 
         public Dictionary<string, AbstractConnection> Connections {
@@ -134,7 +140,7 @@ namespace Transformalize.Main {
         }
 
         private IProcessRunner GetRunner() {
-            switch (Options.Mode.ToLower()) {
+            switch (Mode) {
                 case "init":
                     return new InitializeRunner();
                 case "metadata":
@@ -181,7 +187,7 @@ namespace Transformalize.Main {
         }
 
         public int GetNextBatchId() {
-            if ((new[] { "init", "metadata" }).Any(m => m.Equals(Options.Mode, IC)) || !OutputConnection.IsDatabase)
+            if ((new[] { "init", "metadata" }).Any(m => m.Equals(Mode)) || !OutputConnection.IsDatabase)
                 return 1;
             return OutputConnection.NextBatchId(Name);
         }

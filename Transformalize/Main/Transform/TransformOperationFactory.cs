@@ -89,6 +89,7 @@ namespace Transformalize.Main {
                         inType,
                         outKey,
                         Common.ToSimpleType(element.To),
+                        element.Encoding,
                         element.Format
                     ) { ShouldRun = shouldRun };
 

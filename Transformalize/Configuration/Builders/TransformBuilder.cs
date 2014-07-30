@@ -138,6 +138,11 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public TransformBuilder Encoding(string encoding) {
+            _transform.Encoding = encoding;
+            return this;
+        }
+
         public TransformBuilder Separator(string separator) {
             _transform.Separator = separator;
             return this;

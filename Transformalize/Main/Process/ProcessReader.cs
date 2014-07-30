@@ -56,10 +56,17 @@ namespace Transformalize.Main {
                 Enabled = _element.Enabled,
                 Star = _element.Star,
                 View = _element.View,
+                Mode = _element.Mode,
                 StarEnabled = _element.StarEnabled,
                 TimeZone = string.IsNullOrEmpty(_element.TimeZone) ? TimeZoneInfo.Local.Id : _element.TimeZone,
                 PipelineThreading = (PipelineThreading)Enum.Parse(typeof(PipelineThreading), _element.PipelineThreading, true)
             };
+
+            // options mode overrides process node
+            if (_options.Mode != Common.DefaultValue && _options.Mode != _process.Mode) {
+                _process.Mode = _options.Mode;
+            }
+            _log.Info("Mode: {0}", _process.Mode);
 
             //shared across the process
             var connectionFactory = new ConnectionFactory(_process.Kernal);

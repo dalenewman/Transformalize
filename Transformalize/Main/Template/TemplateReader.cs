@@ -44,7 +44,7 @@ namespace Transformalize.Main {
 
                 foreach (ActionConfigurationElement action in element.Actions) {
                     var modes = action.GetModes();
-                    if (modes.Length > 0 && !modes.Contains("*") && !modes.Any(m => m.Equals(_process.Options.Mode, IC)))
+                    if (modes.Length > 0 && !modes.Contains("*") && !modes.Any(m => m.Equals(_process.Mode, IC)))
                         continue;
 
                     var templateAction = new TemplateAction(_process, template.Name, action, modes);

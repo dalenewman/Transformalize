@@ -57,8 +57,6 @@ namespace Transformalize.Main.Providers.Html {
         public HtmlConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
             Type = ProviderType.Html;
-            IncludeHeader = true;
-            IncludeFooter = true;
         }
 
     }

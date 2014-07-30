@@ -45,28 +45,31 @@ namespace Transformalize.Operations.Load {
         }
 
         protected virtual void PrepareHeader(Entity entity) {
-            HeaderText = string.Empty;
-            foreach (Field field in entity.Fields.WithFileOutput()) {
-                if (field.SimpleType.Equals("string"))
-                    _strings.Add(field.Alias);
-                Headers.Add(field.Alias.Replace(_connection.Delimiter, string.Empty));
+            if (_connection.Header.Equals(Common.DefaultValue)) {
+                foreach (var field in entity.Fields.WithFileOutput()) {
+                    if (field.SimpleType.Equals("string"))
+                        _strings.Add(field.Alias);
+                    Headers.Add(field.Alias.Replace(_connection.Delimiter, string.Empty));
+                }
+                foreach (var field in entity.CalculatedFields.WithFileOutput()) {
+                    if (field.SimpleType.Equals("string"))
+                        _strings.Add(field.Alias);
+                    Headers.Add(field.Alias.Replace(_connection.Delimiter, string.Empty));
+                }
+                HeaderText = string.Join(_connection.Delimiter, Headers);
+            } else {
+                HeaderText = _connection.Header;
             }
-            foreach (Field field in entity.CalculatedFields.WithFileOutput()) {
-                if (field.SimpleType.Equals("string"))
-                    _strings.Add(field.Alias);
-                Headers.Add(field.Alias.Replace(_connection.Delimiter, string.Empty));
-            }
-            HeaderText = string.Join(_connection.Delimiter, Headers);
         }
 
         protected virtual void PrepareFooter(Entity entity) {
-            FooterText = string.Empty;
+            FooterText = _connection.Footer;
         }
 
         protected virtual void PrepareType(Entity entity) {
             var builder = new DelimitedClassBuilder("Tfl" + entity.OutputName()) { IgnoreEmptyLines = true, Delimiter = _connection.Delimiter, IgnoreFirstLines = 0 };
 
-            foreach (Field f in entity.Fields.WithFileOutput()) {
+            foreach (var f in entity.Fields.WithFileOutput()) {
                 var field = new DelimitedFieldBuilder(f.Alias, f.SystemType);
                 if (f.SimpleType.Equals("datetime")) {
                     field.Converter.Kind = ConverterKind.Date;
@@ -74,7 +77,7 @@ namespace Transformalize.Operations.Load {
                 }
                 builder.AddField(field);
             }
-            foreach (Field f in entity.CalculatedFields.WithFileOutput()) {
+            foreach (var f in entity.CalculatedFields.WithFileOutput()) {
                 var field = new DelimitedFieldBuilder(f.Alias, f.SystemType);
                 if (f.SimpleType.Equals("datetime")) {
                     field.Converter.Kind = ConverterKind.Date;
@@ -89,14 +92,14 @@ namespace Transformalize.Operations.Load {
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
 
             PrepareType(_entity);
-            var engine = new FluentFile(Type);
+            var engine = new FluentFile(Type) {Encoding = System.Text.Encoding.GetEncoding(_connection.Encoding)};
 
-            if (_connection.IncludeHeader) {
+            if (!_connection.Header.Equals(string.Empty)) {
                 PrepareHeader(_entity);
                 engine.HeaderText = HeaderText;
             }
 
-            if (_connection.IncludeFooter) {
+            if (!_connection.Footer.Equals(string.Empty)) {
                 PrepareFooter(_entity);
                 engine.FooterText = FooterText;
             }

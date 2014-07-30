@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Transformalize.Libs.NLog.Internal;
 
 namespace Transformalize.Libs.NanoXml {
     /// <summary>
@@ -253,12 +254,25 @@ namespace Transformalize.Libs.NanoXml {
         /// <param name="attributeName">Attribute name to get</param>
         /// <returns><see cref="NanoXmlAttribute" /> with given name or null if no such attribute</returns>
         public NanoXmlAttribute GetAttribute(string attributeName) {
-            foreach (NanoXmlAttribute nanoXmlAttribute in attributes)
+            foreach (var nanoXmlAttribute in attributes)
                 if (nanoXmlAttribute.Name == attributeName)
                     return nanoXmlAttribute;
 
             return null;
         }
+
+        public bool TryAttribute(string attributeName, out NanoXmlAttribute attribute) {
+            foreach (var nanoXmlAttribute in attributes)
+                if (nanoXmlAttribute.Name == attributeName)
+                {
+                    attribute = nanoXmlAttribute;
+                    return true;
+                }
+
+            attribute = null;
+            return false;
+        }
+
 
         public string InnerText() {
             var builder = new StringBuilder();

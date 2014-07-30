@@ -128,6 +128,11 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public ProcessBuilder Mode(string mode) {
+            _process.Mode = mode;
+            return this;
+        }
+
         public ProcessBuilder StarEnabled(bool enabled = true) {
             _process.StarEnabled = enabled;
             return this;

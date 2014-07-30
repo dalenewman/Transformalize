@@ -21,13 +21,18 @@
 #endregion
 
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration.Builders;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
+using Transformalize.Libs.NanoXml;
 using Transformalize.Libs.NLog;
+using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Libs.SolrNet.Utils;
 using Transformalize.Main;
 using Transformalize.Main.Parameters;
 using Transformalize.Main.Providers;
@@ -92,7 +97,7 @@ namespace Transformalize.Test {
         [Test]
         public void ConvertStringToNumber() {
             var input = new RowsBuilder().Row().Field("f1", "1").ToOperation();
-            var convert = new ConvertOperation("f1", "string", "o1", "int32");
+            var convert = new ConvertOperation("f1", "string", "o1", "int32", string.Empty);
 
             var rows = TestOperation(input, convert);
 
@@ -425,7 +430,7 @@ namespace Transformalize.Test {
             var input = new RowsBuilder()
                 .Row("x", 3).Field("y", 4)
                 .Row("x", 3).Field("y", 5).ToOperation();
-            var filter = new FilterOperation("y","filter","string",5, ComparisonOperator.Equal);
+            var filter = new FilterOperation("y", "filter", "string", 5, ComparisonOperator.Equal);
             var output = TestOperation(input, filter);
 
             Assert.AreEqual(expected, output.Count);
@@ -1072,13 +1077,13 @@ namespace Transformalize.Test {
             var input = new RowsBuilder()
                 .Row("in", "1009 Broad St., St. Joseph, MI.  49085")
                 .ToOperation();
-            var geoCodeOperation = new GeoCodeOperation("in", "out",0, false, new Parameters());
+            var geoCodeOperation = new GeoCodeOperation("in", "out", 0, false, new Parameters());
             var output = TestOperation(input, geoCodeOperation);
 
             Assert.AreEqual(1, output.Count);
             Assert.AreEqual("42.106686,-86.477273", output[0]["out"].ToString());
         }
 
-
     }
+
 }

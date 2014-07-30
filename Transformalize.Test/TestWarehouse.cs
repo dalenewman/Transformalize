@@ -48,7 +48,8 @@ namespace Transformalize.Test {
             var logLevel = LogLevel.Info;
 
             //init and run
-            var init = ProcessFactory.Create(process, new Options() { Mode = "init", LogLevel = logLevel })[0];
+            var init = ProcessFactory.Create(process, new Options() { LogLevel = logLevel })[0];
+            init.Mode = "init";
             init.PipelineThreading = PipelineThreading.SingleThreaded;
             init.ExecuteScaler();
 

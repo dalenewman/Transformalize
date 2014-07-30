@@ -17,7 +17,8 @@ namespace Transformalize.Main.Providers.File {
         public void ImportScaler(FileInfo fileInfo, FileInspectionRequest request, ConnectionConfigurationElement output, string processName = null, string entityName = null) {
             var fileInformation = FileInformationFactory.Create(fileInfo, request);
             var process = BuildProcess(fileInformation, request, output, processName, entityName);
-            ProcessFactory.Create(process, new Options { Mode = "init" })[0].ExecuteScaler();
+            process.Mode = "init";
+            ProcessFactory.Create(process)[0].ExecuteScaler();
             ProcessFactory.Create(process)[0].ExecuteScaler();
         }
 
@@ -28,7 +29,8 @@ namespace Transformalize.Main.Providers.File {
         public FileImportResult Import(FileInfo fileInfo, FileInspectionRequest request, ConnectionConfigurationElement output, string processName = null, string entityName = null) {
             var fileInformation = FileInformationFactory.Create(fileInfo, request);
             var process = BuildProcess(fileInformation, request, output, processName, entityName);
-            ProcessFactory.CreateSingle(process, new Options { Mode = "init" }).ExecuteScaler();
+            process.Mode = "init";
+            ProcessFactory.CreateSingle(process).ExecuteScaler();
             return new FileImportResult {
                 Information = fileInformation,
                 Rows = ProcessFactory.Create(process)[0].Execute()

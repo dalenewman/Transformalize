@@ -109,12 +109,15 @@ namespace Transformalize.Runner {
 
             var newXml = new StringBuilder("<transformalize><processes>");
 
+            GlobalDiagnosticsContext.Set("process", processes.Count() > 1 ? "All" : processes.First().GetAttribute("name").Value);
+            GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
+
             if (environments.Length > 0) {
                 var parameters = environmentDefault.Equals(string.Empty) ?
                     environments.First().SubNodes.First().SubNodes.ToArray() :
                     environments.First(e => e.GetAttribute("name").Value.Equals(environmentDefault)).SubNodes.First().SubNodes.ToArray();
 
-                LogParameters(environmentDefault, parameters, processes);
+                LogManager.GetLogger("tfl").Info("Environment: {0}", environmentDefault.Equals(string.Empty) ? "first" : environmentDefault);
 
                 foreach (var process in processes) {
                     newXml.AppendLine(ApplyParameters(process.ToString(), parameters));
@@ -133,21 +136,19 @@ namespace Transformalize.Runner {
             return newXml.ToString();
         }
 
-        private static void LogParameters(string environmentDefault, IEnumerable<NanoXmlNode> parameters, NanoXmlNode[] processes) {
-            var log = LogManager.GetLogger("tfl");
-            GlobalDiagnosticsContext.Set("process", processes.Count() > 1 ? "All" : processes.First().GetAttribute("name").Value);
-            GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
-            log.Info("Environment: {0}", environmentDefault.Equals(string.Empty) ? "first" : environmentDefault);
-            foreach (var parameter in parameters) {
-                log.Info("{0} = {1}", parameter.GetAttribute("name").Value, parameter.GetAttribute("value").Value);
-            }
-        }
-
         private static string ApplyParameters(string xml, IEnumerable<NanoXmlNode> parameters) {
+            var log = LogManager.GetLogger("tfl");
             var result = xml;
             foreach (var parameter in parameters) {
                 var name = parameter.GetAttribute("name").Value.Trim("@".ToCharArray());
-                result = result.Replace("@(" + name + ")", parameter.GetAttribute("value").Value);
+                var placeHolder = "@(" + name + ")";
+                if (result.Contains(placeHolder)) {
+                    var value = parameter.GetAttribute("value").Value;
+                    result = result.Replace(placeHolder, value);
+                    log.Info("{0} replaced with \"{1}\"", placeHolder, value);
+                } else {
+                    log.Info("{0} not found.", placeHolder);
+                }
             }
             return result;
         }

@@ -203,7 +203,8 @@ namespace Transformalize.Test {
                 .Process();
 
             var crap = cfg.Serialize();
-            var process = ProcessFactory.Create(cfg, new Options() { Mode = "test" })[0];
+            var process = ProcessFactory.Create(cfg)[0];
+            process.Mode = "test";
             var output = process.Execute().ToArray();
 
             Assert.AreNotEqual(string.Empty, crap);

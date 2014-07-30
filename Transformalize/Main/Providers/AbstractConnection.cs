@@ -39,7 +39,6 @@ namespace Transformalize.Main.Providers {
         private string _server;
         private int _port;
         private string _defaultSchema = string.Empty;
-
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
         public ConnectionConfigurationElement Source { get; set; }
@@ -48,7 +47,6 @@ namespace Transformalize.Main.Providers {
         public int BatchSize { get; set; }
         public string Process { get; set; }
         public string Path { get; set; }
-
         public IConnectionChecker ConnectionChecker { get; set; }
         public IEntityRecordsExist EntityRecordsExist { get; set; }
         public IEntityDropper EntityDropper { get; set; }
@@ -58,7 +56,6 @@ namespace Transformalize.Main.Providers {
         public ITflWriter TflWriter { get; set; }
         public IViewWriter ViewWriter { get; set; }
         public IDataTypeService DataTypeService { get; set; }
-
         public string Database { get; set; }
         public string User { get; set; }
         public string Password { get; set; }
@@ -70,17 +67,8 @@ namespace Transformalize.Main.Providers {
         public string LineDelimiter { get; set; }
         public string SearchPattern { get; set; }
         public SearchOption SearchOption { get; set; }
-
         public int Start { get; set; }
         public int End { get; set; }
-
-        public abstract string UserProperty { get; }
-        public abstract string PasswordProperty { get; }
-        public abstract string PortProperty { get; }
-        public abstract string DatabaseProperty { get; }
-        public abstract string ServerProperty { get; }
-        public abstract string TrustedProperty { get; }
-        public abstract string PersistSecurityInfoProperty { get; }
         public ProviderType Type { get; set; }
         public bool IsDatabase { get; set; }
         public bool InsertMultipleRows { get; set; }
@@ -93,8 +81,8 @@ namespace Transformalize.Main.Providers {
         public bool Views { get; set; }
         public bool Schemas { get; set; }
         public string DateFormat { get; set; }
-        public bool IncludeHeader { get; set; }
-        public bool IncludeFooter { get; set; }
+        public string Header { get; set; }
+        public string Footer { get; set; }
         public bool EnableSsl { get; set; }
         public bool TableSample { get; set; }
 
@@ -129,10 +117,17 @@ namespace Transformalize.Main.Providers {
             set { _r = value; }
         }
 
-        protected AbstractConnection(
-            ConnectionConfigurationElement element,
-            AbstractConnectionDependencies dependencies
-        ) {
+        public abstract string UserProperty { get; }
+        public abstract string PasswordProperty { get; }
+        public abstract string PortProperty { get; }
+        public abstract string DatabaseProperty { get; }
+        public abstract string ServerProperty { get; }
+        public abstract string TrustedProperty { get; }
+        public abstract string PersistSecurityInfoProperty { get; }
+        public string Encoding { get; set; }
+
+        protected AbstractConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies) {
+
             Source = element;
             BatchSize = element.BatchSize;
             Name = element.Name;
@@ -143,9 +138,10 @@ namespace Transformalize.Main.Providers {
             Delimiter = element.Delimiter;
             LineDelimiter = element.LineDelimiter;
             DateFormat = element.DateFormat;
-            IncludeHeader = element.IncludeHeader;
-            IncludeFooter = element.IncludeFooter;
+            Header = element.Header;
+            Footer = element.Footer;
             EnableSsl = element.EnableSsl;
+            Encoding = element.Encoding;
             Path = element.Path;
             ErrorMode = (ErrorMode)Enum.Parse(typeof(ErrorMode), element.ErrorMode, true);
             SearchOption = (SearchOption)Enum.Parse(typeof(SearchOption), element.SearchOption, true);
@@ -236,11 +232,8 @@ namespace Transformalize.Main.Providers {
         }
 
         public bool IsReady() {
-            var isReady = ConnectionChecker.Check(this);
-            return isReady;
+            return ConnectionChecker.Check(this);
         }
-
-        public abstract int NextBatchId(string processName);
 
         public void AddParameter(IDbCommand command, string name, object val) {
             var parameter = command.CreateParameter();
@@ -339,19 +332,50 @@ namespace Transformalize.Main.Providers {
             return EntityRecordsExist.EntityExists.Exists(this, TflBatchEntity(processName));
         }
 
-        //concrete class should override these
-        public virtual string KeyRangeQuery(Entity entity) { throw new NotImplementedException(); }
-        public virtual string KeyQuery(Entity entity) { throw new NotImplementedException(); }
-        public virtual string KeyAllQuery(Entity entity) { throw new NotImplementedException(); }
-
-        public abstract void WriteEndVersion(AbstractConnection input, Entity entity, bool force = false);
-
         public string Enclose(string field) {
             return L + field + R;
         }
 
+        public bool IsInternal() {
+            return Type.Equals(ProviderType.Internal);
+        }
+
+        //concrete class may override these
+        public virtual string KeyRangeQuery(Entity entity) { throw new NotImplementedException(); }
+        public virtual string KeyQuery(Entity entity) { throw new NotImplementedException(); }
+        public virtual string KeyAllQuery(Entity entity) { throw new NotImplementedException(); }
+
+        //concrete must implement these
+
+        /// <summary>
+        /// Get's the next batch id from the output.  Returns 0 on first run.
+        /// </summary>
+        /// <param name="processName">a common output may have many processes loading data into it, so you have to pass in the process name to get the right batch id.</param>
+        /// <returns></returns>
+        public abstract int NextBatchId(string processName);
+
+        /// <summary>
+        /// Complete the process by writing a batch record to the output.  Record the max date or rowversion read from input.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="entity"></param>
+        /// <param name="force"></param>
+        public abstract void WriteEndVersion(AbstractConnection input, Entity entity, bool force = false);
+
+        /// <summary>
+        /// Try to be clever and pull the matching input and output keys along with the version in order to detect changes.
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
         public abstract IOperation EntityOutputKeysExtract(Entity entity);
+
+        /// <summary>
+        /// Just get all the keys in the output
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
         public abstract IOperation EntityOutputKeysExtractAll(Entity entity);
+        
         public abstract IOperation EntityBulkLoad(Entity entity);
         public abstract IOperation EntityBatchUpdate(Entity entity);
 
@@ -369,10 +393,6 @@ namespace Transformalize.Main.Providers {
         public abstract void LoadEndVersion(Entity entity);
 
         public abstract EntitySchema GetEntitySchema(string name, string schema = "", bool isMaster = false);
-
-        public bool IsInternal() {
-            return Type.Equals(ProviderType.Internal);
-        }
 
     }
 }

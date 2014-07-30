@@ -27,6 +27,7 @@ using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.FileHelpers.Enums;
 using Transformalize.Libs.NLog.Internal;
+using Transformalize.Main;
 
 namespace Transformalize.Configuration {
     [HasSelfValidation]
@@ -52,13 +53,14 @@ namespace Transformalize.Configuration {
         private const string END = "end";
         private const string ERROR_MODE = "error-mode";
         private const string DATE_FORMAT = "date-format";
-        private const string INCLUDE_HEADER = "include-header";
-        private const string INCLUDE_FOOTER = "include-footer";
+        private const string HEADER = "header";
+        private const string FOOTER = "footer";
         private const string PATH = "path";
         private const string ENABLE_SSL = "enable-ssl";
         private const string SCHEMA = "schema";
         private const string TABLE = "table";
         private const string VIEW = "view";
+        private const string ENCODING = "encoding";
 
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
@@ -66,6 +68,12 @@ namespace Transformalize.Configuration {
         public string Name {
             get { return this[NAME] as string; }
             set { this[NAME] = value; }
+        }
+
+        [ConfigurationProperty(ENCODING, IsRequired = false, DefaultValue = "utf-8")]
+        public string Encoding {
+            get { return this[ENCODING] as string; }
+            set { this[ENCODING] = value; }
         }
 
         [ConfigurationProperty(USER, IsRequired = false, DefaultValue = "")]
@@ -221,16 +229,16 @@ namespace Transformalize.Configuration {
             set { this[DATE_FORMAT] = value; }
         }
 
-        [ConfigurationProperty(INCLUDE_HEADER, IsRequired = false, DefaultValue = true)]
-        public bool IncludeHeader {
-            get { return (bool)this[INCLUDE_HEADER]; }
-            set { this[INCLUDE_HEADER] = value; }
+        [ConfigurationProperty(HEADER, IsRequired = false, DefaultValue = Common.DefaultValue)]
+        public string Header {
+            get { return this[HEADER] as string; }
+            set { this[HEADER] = value; }
         }
 
-        [ConfigurationProperty(INCLUDE_FOOTER, IsRequired = false, DefaultValue = false)]
-        public bool IncludeFooter {
-            get { return (bool)this[INCLUDE_FOOTER]; }
-            set { this[INCLUDE_FOOTER] = value; }
+        [ConfigurationProperty(FOOTER, IsRequired = false, DefaultValue = "")]
+        public string Footer {
+            get { return this[FOOTER] as string; }
+            set { this[FOOTER] = value; }
         }
 
         public override bool IsReadOnly() {

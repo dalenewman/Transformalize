@@ -32,7 +32,7 @@ namespace Transformalize.Main {
 
         private readonly Logger _log = LogManager.GetLogger("tfl");
         private LogLevel _logLevel = LogLevel.Info;
-        private string _mode = "default";
+        private string _mode = Common.DefaultValue;
         private List<string> _problems = new List<string>();
 
         public int Top { get; set; }

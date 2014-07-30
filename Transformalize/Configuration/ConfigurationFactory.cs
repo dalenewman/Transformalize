@@ -30,15 +30,16 @@ namespace Transformalize.Configuration {
                 return new ProcessXmlConfigurationReader(_resource, new ContentsStringReader(_query));
             }
 
+            if (_resource.StartsWith("http")) {
+                return new ProcessXmlConfigurationReader(_resource, new ContentsWebReader());
+            }
+
             var name = _resource.Contains("?") ? _resource.Substring(0, _resource.IndexOf('?')) : _resource;
             if (Path.HasExtension(name)) {
-                return _resource.StartsWith("http", IC) ?
-                    new ProcessXmlConfigurationReader(_resource, new ContentsWebReader()) :
-                    new ProcessXmlConfigurationReader(_resource, new ContentsFileReader());
+                return new ProcessXmlConfigurationReader(_resource, new ContentsFileReader());
             }
 
             return new ProcessConfigurationReader(_resource);
-
         }
     }
 }

@@ -47,11 +47,18 @@ namespace Transformalize.Configuration {
         private const string ENTITIES = "entities";
         private const string RELATIONSHIPS = "relationships";
         private const string CALCULATED_FIELDS = "calculated-fields";
+        private const string MODE = "mode";
 
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name {
             get { return this[NAME] as string; }
             set { this[NAME] = value; }
+        }
+
+        [ConfigurationProperty(MODE, IsRequired = false, DefaultValue = "default")]
+        public string Mode {
+            get { return this[MODE] as string; }
+            set { this[MODE] = value.ToLower(); }
         }
 
         [ConfigurationProperty(INHERIT, IsRequired = false, DefaultValue = "")]
@@ -173,6 +180,7 @@ namespace Transformalize.Configuration {
             //properties
             Name = child.Name;
             Star = child.Star;
+            Mode = child.Mode;
             StarEnabled = child.StarEnabled;
             TimeZone = child.TimeZone;
             Enabled = child.Enabled;

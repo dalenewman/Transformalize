@@ -102,7 +102,7 @@ namespace Transformalize.Main {
         private bool CacheIsUsable() {
             return Cache &&
                 !_process.Options.ConfigurationUpdated &&
-                !_process.Options.Mode.StartsWith("init", StringComparison.OrdinalIgnoreCase) &&
+                !_process.Mode.StartsWith("init") &&
                 _renderedTemplateContentExists &&
                 _templateContentExists &&
                 _templateContent.Equals(Contents.Content);

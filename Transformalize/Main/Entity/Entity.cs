@@ -133,7 +133,7 @@ namespace Transformalize.Main {
 
         public List<string> SelectKeys(AbstractConnection connection) {
             var selectKeys = new List<string>();
-            foreach (Field field in PrimaryKey.WithInput()) {
+            foreach (var field in PrimaryKey.WithInput()) {
                 selectKeys.Add(field.Alias.Equals(field.Name)
                     ? string.Concat(connection.L, field.Name, connection.R)
                     : string.Format("{0} AS {1}", connection.Enclose(field.Name), connection.Enclose(field.Alias)));
@@ -201,6 +201,11 @@ namespace Transformalize.Main {
             return !string.IsNullOrEmpty(SqlKeysOverride);
         }
 
+        /// <summary>
+        /// In order to detect changes, the entity's detect-changes must be true, must have a version, must be input, and the input must be a database where specific columns can be requested
+        /// </summary>
+        /// <param name="isDatabase"></param>
+        /// <returns></returns>
         public bool CanDetectChanges(bool isDatabase) {
             return DetectChanges && Version != null && Version.Input && isDatabase;
         }

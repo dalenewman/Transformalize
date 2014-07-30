@@ -131,43 +131,33 @@ namespace Transformalize.Main {
             return entity;
         }
 
-        private void GuardAgainstNoFields(EntityConfigurationElement element, short entityIndex, Entity entity)
-        {
-            if (_process.Options.Mode != "metadata" && element.Fields.Count == 0 && _process.Connections.ContainsKey(element.Connection))
-            {
-                try
-                {
+        private void GuardAgainstNoFields(EntityConfigurationElement element, short entityIndex, Entity entity) {
+            if (_process.Mode != "metadata" && element.Fields.Count == 0 && _process.Connections.ContainsKey(element.Connection)) {
+                try {
                     _log.Info("Detecting fields.");
                     var connection = _process.Connections[element.Connection];
                     var schema = connection.GetEntitySchema(entity.Name, entity.Schema, entityIndex == 0);
-                    if (schema.Fields.Any())
-                    {
-                        foreach (var field in schema.Fields)
-                        {
+                    if (schema.Fields.Any()) {
+                        foreach (var field in schema.Fields) {
                             var f = new FieldConfigurationElement {
-                                                                      Type = field.Type,
-                                                                      Length = field.Length,
-                                                                      PrimaryKey = field.FieldType.Equals(FieldType.PrimaryKey) || field.FieldType.Equals(FieldType.MasterKey),
-                                                                      Output = true,
-                                                                      Default = string.Empty,
-                                                                      Name = field.Name,
-                                                                      Input = true,
-                                                                      Precision = field.Precision,
-                                                                      Scale = field.Scale
-                                                                  };
+                                Type = field.Type,
+                                Length = field.Length,
+                                PrimaryKey = field.FieldType.Equals(FieldType.PrimaryKey) || field.FieldType.Equals(FieldType.MasterKey),
+                                Output = true,
+                                Default = string.Empty,
+                                Name = field.Name,
+                                Input = true,
+                                Precision = field.Precision,
+                                Scale = field.Scale
+                            };
                             element.Fields.Add(f);
                         }
                         _log.Info("Detected {0} fields.", schema.Fields.Count);
                     }
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     throw new TransformalizeException("No fields defined.  Unable to detect them. {0}", ex.Message);
-                }
-                finally
-                {
-                    if (element.Fields.Count == 0)
-                    {
+                } finally {
+                    if (element.Fields.Count == 0) {
                         throw new TransformalizeException("No fields defined.  Unable to detect them.");
                     }
                 }

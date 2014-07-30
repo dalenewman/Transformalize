@@ -18,7 +18,7 @@ namespace Transformalize.Main {
         public IEnumerable<TemplateAction> Read(ActionElementCollection actions) {
             foreach (ActionConfigurationElement action in actions) {
                 var modes = action.GetModes();
-                if (modes.Length > 0 && !modes.Contains("*") && !modes.Any(m => m.Equals(_process.Options.Mode, IC)))
+                if (modes.Length > 0 && !modes.Contains("*") && !modes.Any(m => m.Equals(_process.Mode, IC)))
                     continue;
 
                 var templateAction = new TemplateAction(_process, string.Empty, action, modes);

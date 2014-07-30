@@ -34,13 +34,13 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
-        public ConnectionBuilder IncludeHeader(bool includeHeader) {
-            _connection.IncludeHeader = includeHeader;
+        public ConnectionBuilder Footer(string footer) {
+            _connection.Footer = footer;
             return this;
         }
 
-        public ConnectionBuilder IncludeFooter(bool includeFooter) {
-            _connection.IncludeFooter = includeFooter;
+        public ConnectionBuilder Header(string header) {
+            _connection.Header = header;
             return this;
         }
 

@@ -22,6 +22,7 @@
 
 using System.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
+using Transformalize.Main;
 using Transformalize.Operations.Transform;
 
 namespace Transformalize.Configuration {
@@ -49,6 +50,7 @@ namespace Transformalize.Configuration {
         private const string BRANCHES = "branches";
         private const string SCRIPTS = "scripts";
         private const string FORMAT = "format";
+        private const string ENCODING = "encoding";
         private const string SEPARATOR = "separator";
         private const string MODEL = "model";
         private const string NAME = "name";
@@ -254,6 +256,12 @@ namespace Transformalize.Configuration {
         public string Format {
             get { return this[FORMAT] as string; }
             set { this[FORMAT] = value; }
+        }
+
+        [ConfigurationProperty(ENCODING, IsRequired = false, DefaultValue = Common.DefaultValue)]
+        public string Encoding {
+            get { return this[ENCODING] as string; }
+            set { this[ENCODING] = value; }
         }
 
         [ConfigurationProperty(PARAMETER, IsRequired = false, DefaultValue = "")]
