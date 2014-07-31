@@ -2,9 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Mime;
+using System.Text;
 using Rhino.Etl.Core.Files;
 using Transformalize.Libs.FileHelpers.Enums;
 using Transformalize.Libs.FileHelpers.RunTime;
+using Transformalize.Libs.Ninject.Infrastructure.Language;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
@@ -17,6 +20,10 @@ namespace Transformalize.Operations.Load {
         private readonly AbstractConnection _connection;
         private readonly Entity _entity;
         private readonly List<string> _strings = new List<string>();
+        private readonly bool _isCsv;
+        private readonly Fields _fileFields = new Fields();
+        private readonly string[] _stringFields;
+
         protected FileInfo FileInfo { get; private set; }
         protected Type Type { get; set; }
         protected List<string> Headers { get; set; }
@@ -31,6 +38,11 @@ namespace Transformalize.Operations.Load {
             FooterText = string.Empty;
             _connection = connection;
             _entity = entity;
+            _isCsv = _connection.File.ToLower().EndsWith(".csv");
+
+            _fileFields.Add(_entity.Fields.WithFileOutput());
+            _fileFields.Add(_entity.CalculatedFields.WithFileOutput());
+            _stringFields = _fileFields.WithString().Aliases().ToArray();
 
             if (FileInfo.DirectoryName != null && !Directory.Exists(FileInfo.DirectoryName)) {
                 Info("Creating Output Folder(s).");
@@ -46,12 +58,7 @@ namespace Transformalize.Operations.Load {
 
         protected virtual void PrepareHeader(Entity entity) {
             if (_connection.Header.Equals(Common.DefaultValue)) {
-                foreach (var field in entity.Fields.WithFileOutput()) {
-                    if (field.SimpleType.Equals("string"))
-                        _strings.Add(field.Alias);
-                    Headers.Add(field.Alias.Replace(_connection.Delimiter, string.Empty));
-                }
-                foreach (var field in entity.CalculatedFields.WithFileOutput()) {
+                foreach (var field in _fileFields) {
                     if (field.SimpleType.Equals("string"))
                         _strings.Add(field.Alias);
                     Headers.Add(field.Alias.Replace(_connection.Delimiter, string.Empty));
@@ -69,30 +76,37 @@ namespace Transformalize.Operations.Load {
         protected virtual void PrepareType(Entity entity) {
             var builder = new DelimitedClassBuilder("Tfl" + entity.OutputName()) { IgnoreEmptyLines = true, Delimiter = _connection.Delimiter, IgnoreFirstLines = 0 };
 
-            foreach (var f in entity.Fields.WithFileOutput()) {
+            foreach (var f in _fileFields) {
                 var field = new DelimitedFieldBuilder(f.Alias, f.SystemType);
                 if (f.SimpleType.Equals("datetime")) {
                     field.Converter.Kind = ConverterKind.Date;
                     field.Converter.Arg1 = _connection.DateFormat;
                 }
-                builder.AddField(field);
-            }
-            foreach (var f in entity.CalculatedFields.WithFileOutput()) {
-                var field = new DelimitedFieldBuilder(f.Alias, f.SystemType);
-                if (f.SimpleType.Equals("datetime")) {
-                    field.Converter.Kind = ConverterKind.Date;
-                    field.Converter.Arg1 = _connection.DateFormat;
+                if (_isCsv) {
+                    field.FieldQuoted = true;
+                    field.QuoteChar = '"';
+                    field.QuoteMode = QuoteMode.OptionalForBoth;
+                    field.QuoteMultiline = MultilineMode.NotAllow;
                 }
                 builder.AddField(field);
             }
-
             Type = builder.CreateRecordClass();
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
 
             PrepareType(_entity);
-            var engine = new FluentFile(Type) {Encoding = System.Text.Encoding.GetEncoding(_connection.Encoding)};
+            FluentFile engine;
+
+            try {
+                engine = new FluentFile(Type) {
+                    Encoding = _connection.Encoding.Equals("utf-8w/obom") ?
+                        new UTF8Encoding(false) :
+                        Encoding.GetEncoding(_connection.Encoding)
+                };
+            } catch (Exception ex) {
+                throw new TransformalizeException(ex.Message);
+            }
 
             if (!_connection.Header.Equals(string.Empty)) {
                 PrepareHeader(_entity);
@@ -106,9 +120,14 @@ namespace Transformalize.Operations.Load {
 
             using (var file = engine.To(FileInfo.FullName)) {
                 foreach (var row in rows) {
-                    // you would think file helpers would handle this...
-                    foreach (var s in _strings) {
-                        row[s] = row[s].ToString().Replace(_connection.Delimiter, SPACE);
+                    foreach (var field in _stringFields) {
+                        var value = row[field].ToString();
+                        if (_isCsv) {
+                            row[field] = value.Replace("\r\n", "\n");
+                        } else {
+                            row[field] = value.Replace(_connection.Delimiter, SPACE);
+                        }
+
                     }
                     var record = row.ToObject(Type);
                     file.Write(record);

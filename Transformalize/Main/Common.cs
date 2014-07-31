@@ -85,6 +85,7 @@ namespace Transformalize.Main {
             {"int", (x => Convert.ToInt32(x))},
             {"int64", (x => Convert.ToInt64(x))},
             {"long", (x => Convert.ToInt64(x))},
+            {"uint64", (x => Convert.ToUInt64(x))},
             {"double", (x => Convert.ToDouble(x))},
             {"decimal", (x => decimal.Parse(x, NumberStyles.Float | NumberStyles.AllowThousands | NumberStyles.AllowCurrencySymbol, (IFormatProvider)CultureInfo.CurrentCulture.GetFormat(typeof(NumberFormatInfo))))},
             {"char", (x => Convert.ToChar(x))},
@@ -118,6 +119,7 @@ namespace Transformalize.Main {
                 {"int32", (x => x.ToString())},
                 {"short", (x => x.ToString())},
                 {"int64", (x => x.ToString())},
+                {"uint64", (x => x.ToString())},
                 {"long", (x => x.ToString() + "L")},
                 {"double", (x => x.ToString() + "D")},
                 {"decimal", (x => x.ToString() + "M")},
@@ -144,6 +146,7 @@ namespace Transformalize.Main {
                 {"int", (x => Convert.ToInt32(x))},
                 {"int32", (x => Convert.ToInt32(x))},
                 {"int64", (x => Convert.ToInt64(x))},
+                {"uint64", (x=> Convert.ToUInt64(x))},
                 {"long", (x => Convert.ToInt64(x))},
                 {"double", (x => Convert.ToDouble(x))},
                 {"decimal", (x => decimal.Parse(x.ToString(), NumberStyles.Float | NumberStyles.AllowThousands | NumberStyles.AllowCurrencySymbol, (IFormatProvider)CultureInfo.CurrentCulture.GetFormat(typeof(NumberFormatInfo))))},
@@ -242,6 +245,12 @@ namespace Transformalize.Main {
                     return typeof(byte[]);
                 case "datetime":
                     return typeof(DateTime);
+                case "uint16":
+                    return typeof(UInt16);
+                case "uint32":
+                    return typeof (UInt32);
+                case "uint64":
+                    return typeof (UInt64);
                 default:
                     var fullName = "System." + simpleType[0].ToString(CultureInfo.InvariantCulture).ToUpper() + simpleType.Substring(1);
                     return Type.GetType(fullName) ?? Type.GetType(simpleType);
