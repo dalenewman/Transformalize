@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
+using Transformalize.Extensions;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.RazorEngine;
 using Transformalize.Libs.RazorEngine.Configuration.Fluent;
@@ -38,8 +39,8 @@ namespace Transformalize.Main {
                 var reader = element.File.StartsWith("http", IC) ? (ContentsReader)new ContentsWebReader() : new ContentsFileReader(path);
                 var template = new Template(_process, element, reader.Read(element.File));
 
-                foreach (SettingConfigurationElement setting in element.Settings) {
-                    template.Settings[setting.Name] = _defaultFactory.Convert(setting.Value, setting.Type);
+                foreach (ParameterConfigurationElement parameter in element.Parameters) {
+                    template.Parameters[parameter.Name] = new Parameter(parameter.Name, _defaultFactory.Convert(parameter.Value, parameter.Type));
                 }
 
                 foreach (ActionConfigurationElement action in element.Actions) {
@@ -63,7 +64,7 @@ namespace Transformalize.Main {
                 }
 
                 templates[element.Name] = template;
-                _log.Debug("Loaded template {0} with {1} setting{2}.", element.File, template.Settings.Count, template.Settings.Count == 1 ? string.Empty : "s");
+                _log.Debug("Loaded template {0} with {1} parameter{2}.", element.File, template.Parameters.Count, template.Parameters.Count.Plural());
 
             }
 

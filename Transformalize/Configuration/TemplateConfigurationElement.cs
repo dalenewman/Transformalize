@@ -26,7 +26,7 @@ namespace Transformalize.Configuration {
     public class TemplateConfigurationElement : ConfigurationElement {
         private const string CONTENT_TYPE = "content-type";
         private const string FILE = "file";
-        private const string SETTINGS = "settings";
+        private const string PARAMETERS = "parameters";
         private const string ACTIONS = "actions";
         private const string NAME = "name";
         private const string CACHE = "cache";
@@ -69,9 +69,9 @@ namespace Transformalize.Configuration {
             set { this[CONTENT_TYPE] = value; }
         }
 
-        [ConfigurationProperty(SETTINGS)]
-        public SettingElementCollection Settings {
-            get { return this[SETTINGS] as SettingElementCollection; }
+        [ConfigurationProperty(PARAMETERS)]
+        public ParameterElementCollection Parameters {
+            get { return this[PARAMETERS] as ParameterElementCollection; }
         }
 
         [ConfigurationProperty(ACTIONS)]

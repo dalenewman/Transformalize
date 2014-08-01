@@ -22,6 +22,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 
 namespace Transformalize.Main.Parameters {
@@ -91,6 +92,14 @@ namespace Transformalize.Main.Parameters {
 
         public void Remove(string key) {
             _items.Remove(key);
+        }
+
+        public ExpandoObject ToExpandoObject() {
+            var parameters = new ExpandoObject();
+            foreach (var parameter in this) {
+                ((IDictionary<string, object>)parameters).Add(parameter.Value.Name, parameter.Value.Value);
+            }
+            return parameters;
         }
 
         public void Add(string field, IParameter parameter) {

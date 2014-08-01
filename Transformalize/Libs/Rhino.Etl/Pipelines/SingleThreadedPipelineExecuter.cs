@@ -4,7 +4,9 @@
 // */
 #endregion
 
+using System;
 using System.Collections.Generic;
+using Transformalize.Extensions;
 using Transformalize.Libs.Rhino.Etl.Enumerables;
 using Transformalize.Libs.Rhino.Etl.Operations;
 
@@ -24,5 +26,8 @@ namespace Transformalize.Libs.Rhino.Etl.Pipelines
         {
             return new CachingEnumerable<Row>(new EventRaisingEnumerator(operation, enumerator));
         }
+        
     }
+
+
 }

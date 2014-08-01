@@ -21,11 +21,10 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Dynamic;
 
-namespace Transformalize.Main
-{
-    public interface IParameters
-    {
+namespace Transformalize.Main {
+    public interface IParameters {
         int Count { get; }
         IEnumerable<string> Keys { get; }
         IParameter this[string key] { get; set; }
@@ -37,5 +36,6 @@ namespace Transformalize.Main
         IEnumerable<KeyValuePair<string, IParameter>> ToEnumerable();
         bool ContainsKey(string key);
         void Remove(string key);
+        ExpandoObject ToExpandoObject();
     }
 }

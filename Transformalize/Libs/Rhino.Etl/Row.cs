@@ -13,6 +13,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Transformalize.Libs.fastJSON;
 
 namespace Transformalize.Libs.Rhino.Etl {
     /// <summary>
@@ -186,6 +187,10 @@ namespace Transformalize.Libs.Rhino.Etl {
                     info.SetValue(instance, _storage[info.Name]);
             }
             return instance;
+        }
+
+        public override string ToString() {
+            return JSON.Instance.ToJSON(_storage);
         }
 
     }

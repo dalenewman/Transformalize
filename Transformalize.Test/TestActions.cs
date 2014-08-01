@@ -58,13 +58,13 @@ namespace Transformalize.Test {
             var template = Path.GetTempFileName();
             var file = Path.GetTempFileName();
 
-            File.WriteAllText(template, "Setting1: @Model.Settings.Setting1, Setting2: @Model.Settings.Setting2;");
+            File.WriteAllText(template, "Setting1: @Model.Parameters.Setting1, Setting2: @Model.Parameters.Setting2;");
 
             var process = new ProcessBuilder("TestCopyTemplateOutputToFile")
                 .Template("template")
                     .File(template)
-                .Setting("Setting1", 1)
-                .Setting("Setting2", 2)
+                .Parameter("Setting1", 1)
+                .Parameter("Setting2", 2)
                 .Action("Copy")
                     .To(file)
                 .Process();

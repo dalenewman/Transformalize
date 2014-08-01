@@ -64,15 +64,15 @@ namespace Transformalize.Configuration.Builders {
             return _processBuilder.Process();
         }
 
-        public TemplateBuilder Setting(string name, object value) {
-            var setting = new SettingConfigurationElement() { Name = name, Value = value.ToString() };
-            _template.Settings.Add(setting);
+        public TemplateBuilder Parameter(string name, object value) {
+            var parameter = new ParameterConfigurationElement() { Name = name, Value = value.ToString() };
+            _template.Parameters.Add(parameter);
             return this;
         }
 
-        public TemplateBuilder Setting(string name, object value, string type) {
-            var setting = new SettingConfigurationElement() { Name = name, Value = value.ToString(), Type = type };
-            _template.Settings.Add(setting);
+        public TemplateBuilder Parameter(string name, object value, string type) {
+            var parameter = new ParameterConfigurationElement() { Name = name, Value = value.ToString(), Type = type };
+            _template.Parameters.Add(parameter);
             return this;
         }
 

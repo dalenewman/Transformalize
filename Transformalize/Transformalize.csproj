@@ -100,8 +100,6 @@
     <Compile Include="Configuration\FieldSearchTypeElementCollection.cs" />
     <Compile Include="Configuration\TransformTemplateElementCollection.cs" />
     <Compile Include="Configuration\TransformTemplateConfigurationElement.cs" />
-    <Compile Include="Configuration\SettingElementCollection.cs" />
-    <Compile Include="Configuration\SettingConfigurationElement.cs" />
     <Compile Include="Configuration\TemplateElementCollection.cs" />
     <Compile Include="Configuration\TemplateConfigurationElement.cs" />
     <Compile Include="Configuration\TransformScriptConfigurationElement.cs" />

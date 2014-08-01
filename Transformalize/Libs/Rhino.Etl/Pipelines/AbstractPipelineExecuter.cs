@@ -96,16 +96,17 @@ namespace Transformalize.Libs.Rhino.Etl.Pipelines {
             var enumerator = pipeline.GetEnumerator();
             try {
 #pragma warning disable 642
-                while (enumerator.MoveNext())
-                    ;
+                while (enumerator.MoveNext()) ;
 #pragma warning restore 642
             } catch (Exception e) {
                 foreach (var x in e.FlattenHierarchy()) {
-                    Error("Failed to execute operation {0}. {1}", enumerator.Current, x.Message);
+                    Error("Failure in pipeline. {0}", (enumerator.Current + " " + x.Message.Replace("\n"," ")).Trim());
+                    if (x.TargetSite != null && x.TargetSite.DeclaringType != null) {
+                        Error("Error in {0}", x.TargetSite.DeclaringType.FullName);
+                    }
                 }
             }
         }
-
 
         /// <summary>
         ///     Destroys the pipeline.

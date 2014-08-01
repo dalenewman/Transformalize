@@ -20,9 +20,7 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.IO;
 using Transformalize.Configuration;
 using Transformalize.Libs.NLog;
@@ -39,7 +37,6 @@ namespace Transformalize.Main {
 
         private readonly Logger _log = LogManager.GetLogger("tfl");
         private readonly Process _process;
-        private readonly TemplateConfigurationElement _element;
 
         private readonly string _renderedTemplateFile;
         private readonly string _renderedTemplateContent;
@@ -50,7 +47,7 @@ namespace Transformalize.Main {
         private readonly bool _templateContentExists;
 
         public List<TemplateAction> Actions = new List<TemplateAction>();
-        public Dictionary<string, object> Settings = new Dictionary<string, object>();
+        public IParameters Parameters = new Parameters.Parameters();
         public Contents Contents { get; private set; }
         public string Name { get; private set; }
 
@@ -70,7 +67,6 @@ namespace Transformalize.Main {
             Contents = contents;
 
             _process = process;
-            _element = element;
 
             _renderedTemplateFile = GetFileName(RENDERED_TEMPLATE_CACHE_FOLDER);
             _renderedTemplateContentExists = TryRead(_renderedTemplateFile, out _renderedTemplateContent);
@@ -119,15 +115,9 @@ namespace Transformalize.Main {
             var templateService = new TemplateService(config);
             Razor.SetTemplateService(templateService);
 
-            var settings = new ExpandoObject();
-            foreach (var setting in Settings) {
-                ((IDictionary<string, object>)settings).Add(setting.Key, setting.Value);
-            }
-            ((IDictionary<string, object>)settings).Add("Process", _process);
-
             var renderedContent = Razor.Parse(Contents.Content, new {
                 Process = _process,
-                Settings = settings
+                Parameters = Parameters.ToExpandoObject()
             });
 
             _log.Debug("Rendered {0} template.", Name);
