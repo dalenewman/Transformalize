@@ -392,7 +392,7 @@ namespace Transformalize.Main.Providers {
         /// <param name="entity">an entity</param>
         public abstract void LoadEndVersion(Entity entity);
 
-        public abstract EntitySchema GetEntitySchema(string name, string schema = "", bool isMaster = false);
+        public abstract EntitySchema GetEntitySchema(Process process, string name, string schema = "", bool isMaster = false);
 
     }
 }

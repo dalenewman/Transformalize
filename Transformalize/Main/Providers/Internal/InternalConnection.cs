@@ -45,7 +45,7 @@ namespace Transformalize.Main.Providers.Internal {
             throw new System.NotImplementedException();
         }
 
-        public override EntitySchema GetEntitySchema(string name, string schema = "", bool isMaster = false) {
+        public override EntitySchema GetEntitySchema(Process process, string name, string schema = "", bool isMaster = false) {
             return new EntitySchema();
         }
 

@@ -34,6 +34,7 @@ using Transformalize.Libs.Ninject;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Providers;
+using Transformalize.Main.Providers.File;
 using Transformalize.Operations.Validate;
 using Transformalize.Runner;
 using Encoding = Transformalize.Libs.RazorEngine.Encoding;
@@ -119,6 +120,8 @@ namespace Transformalize.Main {
         }
 
         public IEnumerable<TemplateAction> Actions { get; set; }
+
+        public FileInspectionRequest FileInspectionRequest { get; set; }
 
         //constructor
         public Process(string name = "") {

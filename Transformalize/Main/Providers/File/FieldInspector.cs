@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 using System.Linq;
 using Transformalize.Configuration.Builders;
@@ -87,6 +85,12 @@ namespace Transformalize.Main.Providers.File {
                     continue;
 
                 var length = results.Max(row => (int)row[LengthField(field.Name)]) + 1;
+                if (request.MaxLength > 0 && length > request.MaxLength) {
+                    length = request.MaxLength;
+                }
+                if (request.MinLength > 0 && length < request.MinLength) {
+                    length = request.MinLength;
+                }
                 field.Length = length.ToString(CultureInfo.InvariantCulture);
             }
             return fileInformation.Fields;

@@ -46,7 +46,7 @@ namespace Transformalize.Main.Providers.Folder {
             throw new System.NotImplementedException();
         }
 
-        public override EntitySchema GetEntitySchema(string name, string schema = "", bool isMaster = false) {
+        public override EntitySchema GetEntitySchema(Process process, string name, string schema = "", bool isMaster = false) {
             var entitySchema = new EntitySchema();
             var file = Folder.TrimEnd("\\".ToCharArray()) + "\\" + name.TrimStart("\\".ToCharArray());
             entitySchema.Fields = new FieldInspector().Inspect(file);

@@ -27,6 +27,7 @@ using Transformalize.Extensions;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.RazorEngine;
 using Transformalize.Main.Providers;
+using Transformalize.Main.Providers.File;
 
 namespace Transformalize.Main {
 
@@ -54,6 +55,7 @@ namespace Transformalize.Main {
                 Options = _options,
                 TemplateContentType = _element.TemplateContentType.Equals("raw") ? Encoding.Raw : Encoding.Html,
                 Enabled = _element.Enabled,
+                FileInspectionRequest = _element.FileInspection == null ? new FileInspectionRequest() : _element.FileInspection.GetInspectionRequest(),
                 Star = _element.Star,
                 View = _element.View,
                 Mode = _element.Mode,

@@ -38,6 +38,7 @@ namespace Transformalize.Test
             Assert.AreEqual("int16", northWind.Entities[0].Fields["OrderDetailsQuantity"].Type);
             Assert.AreEqual(8, northWind.Entities.Count);
             Assert.AreEqual(3, northWind.Entities[1].CalculatedFields.Count);
+            Assert.AreEqual(2, northWind.FileInspectionRequest.DataTypes.Count);
         }
 
         [Test]

@@ -10,28 +10,19 @@ namespace Transformalize.Main.Providers.File {
             { '|', "pipe" },
             { ';', "semicolon" }
         };
-        private string _defaultType = "string";
-        private string _defaultLength = "1024";
+
         private List<string> _dataTypes = new List<string> { "boolean", "int", "long", "single", "double", "decimal", "datetime" };
         private bool _ignoreEmpty = true;
+        private string _defaultLength = "1024";
 
         public int Top { get; set; }
         public decimal Sample { get; set; }
+        public int MaxLength { get; set; }
+        public int MinLength { get; set; }
 
-        public string DefaultType {
-            get { return _defaultType; }
-            set { _defaultType = value; }
-        }
-
-        public bool IgnoreEmpty
-        {
+        public bool IgnoreEmpty {
             get { return _ignoreEmpty; }
             set { _ignoreEmpty = value; }
-        }
-
-        public string DefaultLength {
-            get { return _defaultLength; }
-            set { _defaultLength = value; }
         }
 
         public List<string> DataTypes {
@@ -44,5 +35,9 @@ namespace Transformalize.Main.Providers.File {
             set { _delimiters = value; }
         }
 
+        public string DefaultLength {
+            get { return _defaultLength; }
+            set { _defaultLength = value; }
+        }
     }
 }

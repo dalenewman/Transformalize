@@ -30,7 +30,7 @@ namespace Transformalize.Main.Providers.File {
 
             excelReader.Close();
             foreach (var name in names) {
-                var field = new Field(_request.DefaultType, _request.DefaultLength, FieldType.NonKey, true, string.Empty) {
+                var field = new Field("string", _request.DefaultLength, FieldType.NonKey, true, string.Empty) {
                     Name = name
                 };
                 fileInformation.Fields.Add(field);

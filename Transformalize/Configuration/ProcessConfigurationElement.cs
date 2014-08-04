@@ -48,6 +48,7 @@ namespace Transformalize.Configuration {
         private const string RELATIONSHIPS = "relationships";
         private const string CALCULATED_FIELDS = "calculated-fields";
         private const string MODE = "mode";
+        private const string FILE_INSPECTION = "file-inspection";
 
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name {
@@ -166,6 +167,12 @@ namespace Transformalize.Configuration {
             get { return this[ACTIONS] as ActionElementCollection; }
         }
 
+        [ConfigurationProperty(FILE_INSPECTION, IsRequired = false)]
+        public FileInspectionElement FileInspection {
+            get { return this[FILE_INSPECTION] as FileInspectionElement; }
+            set { this[FILE_INSPECTION] = value; }
+        }
+
         public override bool IsReadOnly() {
             return false;
         }
@@ -186,6 +193,7 @@ namespace Transformalize.Configuration {
             Enabled = child.Enabled;
             Scripts.Path = child.Scripts.Path;
             Templates.Path = child.Templates.Path;
+            FileInspection = child.FileInspection;
 
             //collections
             Parameters.Merge(child.Parameters);

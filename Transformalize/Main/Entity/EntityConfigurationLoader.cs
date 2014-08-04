@@ -136,7 +136,7 @@ namespace Transformalize.Main {
                 try {
                     _log.Info("Detecting fields.");
                     var connection = _process.Connections[element.Connection];
-                    var schema = connection.GetEntitySchema(entity.Name, entity.Schema, entityIndex == 0);
+                    var schema = connection.GetEntitySchema(_process, entity.Name, entity.Schema, entityIndex == 0);
                     if (schema.Fields.Any()) {
                         foreach (var field in schema.Fields) {
                             var f = new FieldConfigurationElement {

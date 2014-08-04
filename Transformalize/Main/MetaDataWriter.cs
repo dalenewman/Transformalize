@@ -30,6 +30,7 @@ namespace Transformalize.Main {
 
         private readonly Logger _log = LogManager.GetLogger("tfl");
         private readonly Process _process;
+        private static readonly char[] BadCharacters = new[] { ' ', '(', ')', '/', '\\' };
 
         public MetaDataWriter(Process process) {
             _process = process;
@@ -44,7 +45,7 @@ namespace Transformalize.Main {
             var count = 0;
             foreach (var entity in _process.Entities) {
                 var firstConnection = entity.Input.First().Connection;
-                var fields = firstConnection.GetEntitySchema(entity.Name, entity.Schema, count == 0).Fields;
+                var fields = firstConnection.GetEntitySchema(_process, entity.Name, entity.Schema, count == 0).Fields;
                 content.AppendFormat("    <add name=\"{0}\">\r\n", entity.Name);
                 AppendFields(fields.WithOutput(), content);
                 content.AppendLine("    </add>");
@@ -56,7 +57,7 @@ namespace Transformalize.Main {
             return content.ToString();
         }
 
-        private void AppendFields(Fields fields, StringBuilder content) {
+        private void AppendFields(OrderedFields fields, StringBuilder content) {
             _log.Debug("Entity auto found {0} field{1}.", fields.Count, fields.Count == 1 ? string.Empty : "s");
 
             content.AppendLine("      <fields>");
@@ -67,15 +68,24 @@ namespace Transformalize.Main {
         }
 
         private static void AppendField(StringBuilder content, Field f) {
-            content.AppendFormat("        <add name=\"{0}\" {1}{2}{3}{4}{5}{6}{7}></add>\r\n",
+            content.AppendFormat("        <add name=\"{0}\"{1}{2}{3}{4}{5}{6}{7}></add>\r\n",
                 f.Name,
-                f.Name.Contains(" ") ? " alias=\"" + f.Name.Replace(" ",string.Empty) + "\" " : string.Empty,
+                BadCharacters.Any(c => f.Name.Contains(c)) ? " alias=\"" + ReplaceBadCharacters(f.Name) + "\" " : " ",
                 f.SimpleType.Equals("string") ? string.Empty : "type=\"" + f.Type + "\" ",
                 !f.Length.Equals("0") && !f.Length.Equals(string.Empty) && !f.Length.Equals("64") ? "length=\"" + f.Length + "\" " : string.Empty,
                 f.SimpleType == "decimal" && f.Precision > 0 ? "precision=\"" + f.Precision + "\" " : string.Empty,
                 f.SimpleType == "decimal" && f.Scale > 0 ? "scale=\"" + f.Scale + "\" " : string.Empty,
                 f.FieldType.HasFlag(FieldType.PrimaryKey) || f.FieldType.HasFlag(FieldType.MasterKey) ? "primary-key=\"true\" " : string.Empty,
                 f.IsQuoted() ? string.Format("quoted-with=\"{0}\"", HttpUtility.HtmlEncode(f.QuotedWith)) : string.Empty);
+        }
+
+        private static string ReplaceBadCharacters(string input) {
+            var builder = new StringBuilder(input);
+            foreach (var c in BadCharacters) {
+                builder.Replace(c, ' ');
+            }
+            builder.Replace(" ", string.Empty);
+            return builder.ToString();
         }
     }
 }

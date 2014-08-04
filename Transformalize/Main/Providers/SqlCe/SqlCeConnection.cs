@@ -195,7 +195,7 @@ namespace Transformalize.Main.Providers.SqlCe {
             }
         }
 
-        public override EntitySchema GetEntitySchema(string name, string schema = "", bool isMaster = false) {
+        public override EntitySchema GetEntitySchema(Process process, string name, string schema = "", bool isMaster = false) {
             return new DatabaseEntitySchemaReader(this).Read(name, schema);
         }
     }

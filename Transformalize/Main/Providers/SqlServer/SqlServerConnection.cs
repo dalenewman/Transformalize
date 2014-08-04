@@ -236,7 +236,7 @@ namespace Transformalize.Main.Providers.SqlServer {
             }
         }
 
-        public override EntitySchema GetEntitySchema(string name, string schema = "", bool isMaster = false) {
+        public override EntitySchema GetEntitySchema(Process process, string name, string schema = "", bool isMaster = false) {
             var fields = new SqlServerEntityAutoFieldReader().Read(this, name, string.Empty, name, schema, isMaster);
             return new EntitySchema(fields);
         }

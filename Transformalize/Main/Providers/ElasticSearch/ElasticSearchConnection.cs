@@ -102,7 +102,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             entity.HasRows = entity.End != null;
         }
 
-        public override EntitySchema GetEntitySchema(string name, string schema = "", bool isMaster = false) {
+        public override EntitySchema GetEntitySchema(Process process, string name, string schema = "", bool isMaster = false) {
             return new EntitySchema();
         }
 
