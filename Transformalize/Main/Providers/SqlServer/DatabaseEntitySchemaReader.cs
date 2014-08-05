@@ -11,8 +11,8 @@ namespace Transformalize.Main.Providers.SqlServer
             _connection = connection;
         }
 
-        public EntitySchema Read(string name, string schema) {
-            var result = new EntitySchema();
+        public Fields Read(string name, string schema) {
+            var result = new Fields();
 
             using (var cn = _connection.GetConnection()) {
 
@@ -45,7 +45,7 @@ namespace Transformalize.Main.Providers.SqlServer
                             field.Length = "8";
                             field.Type = "rowversion";
                         }
-                        result.Fields.Add(field);
+                        result.Add(field);
                     }
                 }
 

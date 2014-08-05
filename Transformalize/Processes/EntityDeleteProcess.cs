@@ -46,11 +46,7 @@ namespace Transformalize.Processes {
 
             if (_entity.Input.Count == 1) {
                 var connection = _entity.Input.First().Connection;
-                if (connection.IsInternal()) {
-                    Register(_entity.InputOperation);
-                } else {
-                    Register(new EntityInputKeysExtractAll(_entity, connection));
-                }
+                Register(connection.Is.Internal() ? _entity.InputOperation : new EntityInputKeysExtractAll(_entity, connection));
             } else {
                 var multiInput = new ParallelUnionAllOperation();
                 foreach (var namedConnection in _entity.Input) {

@@ -55,7 +55,7 @@ namespace Transformalize.Runner {
             }
             ProcessEntities(process);
 
-            if (process.StarEnabled && !process.OutputConnection.IsInternal()) {
+            if (process.StarEnabled && !process.OutputConnection.Is.Internal()) {
                 ProcessMaster(process);
                 ProcessTransforms(process);
             }

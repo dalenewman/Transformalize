@@ -45,7 +45,7 @@ namespace Transformalize.Main {
             var count = 0;
             foreach (var entity in _process.Entities) {
                 var firstConnection = entity.Input.First().Connection;
-                var fields = firstConnection.GetEntitySchema(_process, entity.Name, entity.Schema, count == 0).Fields;
+                var fields = firstConnection.GetEntitySchema(_process, entity.Name, entity.Schema, count == 0);
                 content.AppendFormat("    <add name=\"{0}\">\r\n", entity.Name);
                 AppendFields(fields.WithOutput(), content);
                 content.AppendLine("    </add>");

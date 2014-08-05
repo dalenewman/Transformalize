@@ -7,14 +7,6 @@ namespace Transformalize.Main.Providers.ElasticSearch {
 
     public class ElasticSearchConnection : AbstractConnection {
 
-        public override string UserProperty { get { return string.Empty; } }
-        public override string PasswordProperty { get { return string.Empty; } }
-        public override string PortProperty { get { return string.Empty; } }
-        public override string DatabaseProperty { get { return string.Empty; } }
-        public override string ServerProperty { get { return string.Empty; } }
-        public override string TrustedProperty { get { return string.Empty; } }
-        public override string PersistSecurityInfoProperty { get { return string.Empty; } }
-
         public ElasticSearchConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
             Type = ProviderType.ElasticSearch;
@@ -102,8 +94,8 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             entity.HasRows = entity.End != null;
         }
 
-        public override EntitySchema GetEntitySchema(Process process, string name, string schema = "", bool isMaster = false) {
-            return new EntitySchema();
+        public override Fields GetEntitySchema(Process process, string name, string schema = "", bool isMaster = false) {
+            return new Fields();
         }
 
         private int GetMaxTflBatchId(Entity entity) {

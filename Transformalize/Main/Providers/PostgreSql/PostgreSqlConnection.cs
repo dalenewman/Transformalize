@@ -8,13 +8,6 @@ namespace Transformalize.Main.Providers.PostgreSql {
     public class PostgreSqlConnection : AbstractConnection {
 
         /* Pooling=true;Min Pool Size=0;Max Pool Size=100;Connection Lifetime=0; */
-        public override string UserProperty { get { return "User ID"; } }
-        public override string PasswordProperty { get { return "Password"; } }
-        public override string PortProperty { get { return "Port"; } }
-        public override string DatabaseProperty { get { return "Database"; } }
-        public override string ServerProperty { get { return "Host"; } }
-        public override string TrustedProperty { get { return string.Empty; } }
-        public override string PersistSecurityInfoProperty { get { return string.Empty; } }
 
         public PostgreSqlConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
@@ -26,6 +19,11 @@ namespace Transformalize.Main.Providers.PostgreSql {
             Views = true;
             Schemas = true;
             DefaultSchema = "public";
+            ConnectionStringProperties.UserProperty = "User ID";
+            ConnectionStringProperties.PasswordProperty = "Password";
+            ConnectionStringProperties.PortProperty = "Port";
+            ConnectionStringProperties.DatabaseProperty = "Database";
+            ConnectionStringProperties.ServerProperty = "Host";
         }
 
         public override string KeyAllQuery(Entity entity) {
@@ -153,7 +151,7 @@ namespace Transformalize.Main.Providers.PostgreSql {
             }
         }
 
-        public override EntitySchema GetEntitySchema(Process process, string name, string schema = "", bool isMaster = false) {
+        public override Fields GetEntitySchema(Process process, string name, string schema = "", bool isMaster = false) {
             return new DatabaseEntitySchemaReader(this).Read(name, schema);
         }
     }

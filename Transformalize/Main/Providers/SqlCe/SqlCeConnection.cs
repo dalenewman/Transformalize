@@ -11,13 +11,6 @@ namespace Transformalize.Main.Providers.SqlCe {
     public class SqlCeConnection : AbstractConnection {
 
         private readonly Logger _log = LogManager.GetLogger("tfl");
-        public override string UserProperty { get { return string.Empty; } }
-        public override string PasswordProperty { get { return string.Empty; } }
-        public override string PortProperty { get { return string.Empty; } }
-        public override string DatabaseProperty { get { return string.Empty; } }
-        public override string ServerProperty { get { return "Data Source"; } }
-        public override string TrustedProperty { get { return string.Empty; } }
-        public override string PersistSecurityInfoProperty { get { return "Persist Security Info"; } }
 
         public SqlCeConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
@@ -25,6 +18,8 @@ namespace Transformalize.Main.Providers.SqlCe {
             L = "[";
             R = "]";
             IsDatabase = true;
+            ConnectionStringProperties.ServerProperty = "Data Source";
+            ConnectionStringProperties.PersistSecurityInfoProperty = "Persist Security Info";
         }
 
         public override int NextBatchId(string processName) {
@@ -195,7 +190,7 @@ namespace Transformalize.Main.Providers.SqlCe {
             }
         }
 
-        public override EntitySchema GetEntitySchema(Process process, string name, string schema = "", bool isMaster = false) {
+        public override Fields GetEntitySchema(Process process, string name, string schema = "", bool isMaster = false) {
             return new DatabaseEntitySchemaReader(this).Read(name, schema);
         }
     }

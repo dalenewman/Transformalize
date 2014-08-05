@@ -22,15 +22,13 @@
 
 using System.Collections.Generic;
 
-namespace Transformalize.Main.Providers
-{
-    public interface ITableQueryWriter
-    {
+namespace Transformalize.Main.Providers {
+    public interface ITableQueryWriter {
         string CreateTable(string name, IEnumerable<string> defs);
         string AddPrimaryKey(string name, IEnumerable<string> primaryKey);
         string DropPrimaryKey(string name, IEnumerable<string> primaryKey);
         string AddUniqueClusteredIndex(string name);
         string DropUniqueClusteredIndex(string name);
-        string WriteTemporary(string name, Fields fields, AbstractConnection connection, bool useAlias = true);
+        string WriteTemporary(AbstractConnection connection, string name, Fields fields, bool useAlias = true);
     }
 }

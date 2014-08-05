@@ -1881,6 +1881,8 @@
     <Compile Include="Main\Providers\AbstractConnectionDependencies.cs" />
     <Compile Include="Main\Providers\AnalysisServices\AnalysisServicesEntityDropper.cs" />
     <Compile Include="Main\Providers\AnalysisServices\AnalysisServicesDependencies.cs" />
+    <Compile Include="Main\Providers\ConnectionIs.cs" />
+    <Compile Include="Main\Providers\ConnectionStringProperties.cs" />
     <Compile Include="Main\Providers\ElasticSearch\AliasType.cs" />
     <Compile Include="Main\Providers\FalseDataTypeService.cs" />
     <Compile Include="Main\Providers\ConnectionChecker.cs" />
@@ -1992,7 +1994,6 @@
     <Compile Include="Main\Providers\SqlServer\SqlServerEntityDropper.cs" />
     <Compile Include="Main\Providers\SqlServer\SqlServerEntityOutputKeysExtract.cs" />
     <Compile Include="Main\Providers\SqlServer\SqlServerEntityOutputKeysExtractAll.cs" />
-    <Compile Include="Main\Providers\EntitySchema.cs" />
     <Compile Include="Main\RelationshipsReader.cs" />
     <Compile Include="Main\SearchType.cs" />
     <Compile Include="Main\MapConfigurationReader.cs" />

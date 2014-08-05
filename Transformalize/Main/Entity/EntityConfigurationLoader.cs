@@ -136,9 +136,9 @@ namespace Transformalize.Main {
                 try {
                     _log.Info("Detecting fields.");
                     var connection = _process.Connections[element.Connection];
-                    var schema = connection.GetEntitySchema(_process, entity.Name, entity.Schema, entityIndex == 0);
-                    if (schema.Fields.Any()) {
-                        foreach (var field in schema.Fields) {
+                    var fields = connection.GetEntitySchema(_process, entity.Name, entity.Schema, entityIndex == 0);
+                    if (fields.Any()) {
+                        foreach (var field in fields) {
                             var f = new FieldConfigurationElement {
                                 Type = field.Type,
                                 Length = field.Length,
@@ -152,7 +152,7 @@ namespace Transformalize.Main {
                             };
                             element.Fields.Add(f);
                         }
-                        _log.Info("Detected {0} fields.", schema.Fields.Count);
+                        _log.Info("Detected {0} fields.", fields.Count);
                     }
                 } catch (Exception ex) {
                     throw new TransformalizeException("No fields defined.  Unable to detect them. {0}", ex.Message);

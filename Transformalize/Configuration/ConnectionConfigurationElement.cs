@@ -48,7 +48,6 @@ namespace Transformalize.Configuration {
         private const string USER = "user";
         private const string PASSWORD = "password";
         private const string CONNECTION_STRING = "connection-string";
-        private const string LINE_DELIMITER = "line-delimiter";
         private const string START = "start";
         private const string END = "end";
         private const string ERROR_MODE = "error-mode";
@@ -172,12 +171,6 @@ namespace Transformalize.Configuration {
         public string Delimiter {
             get { return this[DELIMITER] as string; }
             set { this[DELIMITER] = value; }
-        }
-
-        [ConfigurationProperty(LINE_DELIMITER, IsRequired = false, DefaultValue = "")]
-        public string LineDelimiter {
-            get { return this[LINE_DELIMITER] as string; }
-            set { this[LINE_DELIMITER] = value; }
         }
 
         [ConfigurationProperty(DATABASE, IsRequired = false, DefaultValue = "")]

@@ -31,13 +31,6 @@ namespace Transformalize.Main.Providers.SqlServer {
     public class SqlServerConnection : AbstractConnection {
 
         private readonly Logger _log = LogManager.GetLogger("tfl");
-        public override string UserProperty { get { return "User Id"; } }
-        public override string PasswordProperty { get { return "Password"; } }
-        public override string PortProperty { get { return string.Empty; } }
-        public override string DatabaseProperty { get { return "Database"; } }
-        public override string ServerProperty { get { return "Server"; } }
-        public override string TrustedProperty { get { return "Trusted_Connection"; } }
-        public override string PersistSecurityInfoProperty { get { return "Persist Security Info"; } }
 
         public SqlServerConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
@@ -57,6 +50,13 @@ namespace Transformalize.Main.Providers.SqlServer {
             MaxDop = true;
             TableSample = true;
             DefaultSchema = "dbo";
+            ConnectionStringProperties.UserProperty = "User Id";
+            ConnectionStringProperties.PasswordProperty = "Password";
+            ConnectionStringProperties.DatabaseProperty = "Database";
+            ConnectionStringProperties.ServerProperty = "Server";
+            ConnectionStringProperties.TrustedProperty = "Trusted_Connection";
+            ConnectionStringProperties.PersistSecurityInfoProperty = "Persist Security Info";
+
         }
 
         public override int NextBatchId(string processName) {
@@ -236,9 +236,8 @@ namespace Transformalize.Main.Providers.SqlServer {
             }
         }
 
-        public override EntitySchema GetEntitySchema(Process process, string name, string schema = "", bool isMaster = false) {
-            var fields = new SqlServerEntityAutoFieldReader().Read(this, name, string.Empty, name, schema, isMaster);
-            return new EntitySchema(fields);
+        public override Fields GetEntitySchema(Process process, string name, string schema = "", bool isMaster = false) {
+            return new SqlServerEntityAutoFieldReader().Read(this, name, string.Empty, name, schema, isMaster);
         }
     }
 }

@@ -22,15 +22,12 @@
 
 using System;
 using System.Data;
-using System.Data.Common;
 using System.IO;
 using Transformalize.Configuration;
-using Transformalize.Libs.Dapper;
 using Transformalize.Libs.FileHelpers.Enums;
 using Transformalize.Libs.Rhino.Etl.Operations;
 
 namespace Transformalize.Main.Providers {
-
     public abstract class AbstractConnection {
 
         private Uri _uri;
@@ -39,7 +36,7 @@ namespace Transformalize.Main.Providers {
         private string _server;
         private int _port;
         private string _defaultSchema = string.Empty;
-        private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
+        private ConnectionStringProperties _connectionStringProperties = new ConnectionStringProperties();
 
         public ConnectionConfigurationElement Source { get; set; }
         public string Name { get; set; }
@@ -64,7 +61,6 @@ namespace Transformalize.Main.Providers {
         public string Folder { get; set; }
         public ErrorMode ErrorMode { get; set; }
         public string Delimiter { get; set; }
-        public string LineDelimiter { get; set; }
         public string SearchPattern { get; set; }
         public SearchOption SearchOption { get; set; }
         public int Start { get; set; }
@@ -85,6 +81,13 @@ namespace Transformalize.Main.Providers {
         public string Footer { get; set; }
         public bool EnableSsl { get; set; }
         public bool TableSample { get; set; }
+        public string Encoding { get; set; }
+        public ConnectionIs Is { get; set; }
+
+        public ConnectionStringProperties ConnectionStringProperties {
+            get { return _connectionStringProperties; }
+            set { _connectionStringProperties = value; }
+        }
 
         public string DefaultSchema {
             get { return _defaultSchema; }
@@ -117,15 +120,6 @@ namespace Transformalize.Main.Providers {
             set { _r = value; }
         }
 
-        public abstract string UserProperty { get; }
-        public abstract string PasswordProperty { get; }
-        public abstract string PortProperty { get; }
-        public abstract string DatabaseProperty { get; }
-        public abstract string ServerProperty { get; }
-        public abstract string TrustedProperty { get; }
-        public abstract string PersistSecurityInfoProperty { get; }
-        public string Encoding { get; set; }
-
         protected AbstractConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies) {
 
             Source = element;
@@ -136,7 +130,6 @@ namespace Transformalize.Main.Providers {
             File = element.File;
             Folder = element.Folder;
             Delimiter = element.Delimiter;
-            LineDelimiter = element.LineDelimiter;
             DateFormat = element.DateFormat;
             Header = element.Header;
             Footer = element.Footer;
@@ -146,6 +139,8 @@ namespace Transformalize.Main.Providers {
             ErrorMode = (ErrorMode)Enum.Parse(typeof(ErrorMode), element.ErrorMode, true);
             SearchOption = (SearchOption)Enum.Parse(typeof(SearchOption), element.SearchOption, true);
             SearchPattern = element.SearchPattern;
+
+            ProcessConnectionString(element);
 
             TableQueryWriter = dependencies.TableQueryWriter;
             ConnectionChecker = dependencies.ConnectionChecker;
@@ -157,12 +152,16 @@ namespace Transformalize.Main.Providers {
             ScriptRunner = dependencies.ScriptRunner;
             DataTypeService = dependencies.DataTypeService;
 
-            ProcessConnectionString(element);
+            Is = new ConnectionIs(this);
         }
 
         private void ProcessConnectionString(ConnectionConfigurationElement element) {
             if (element.ConnectionString != string.Empty) {
-                ProcessConnectionString(element.ConnectionString);
+                Database = ConnectionStringParser.GetDatabaseName(element.ConnectionString);
+                Server = ConnectionStringParser.GetServerName(element.ConnectionString);
+                User = ConnectionStringParser.GetUsername(element.ConnectionString);
+                Password = ConnectionStringParser.GetPassword(element.ConnectionString);
+                PersistSecurityInfo = ConnectionStringParser.GetPersistSecurityInfo(element.ConnectionString);
             } else {
                 Server = element.Server;
                 Database = element.Database;
@@ -170,50 +169,6 @@ namespace Transformalize.Main.Providers {
                 Password = element.Password;
                 Port = element.Port;
             }
-        }
-
-        private void ProcessConnectionString(string connectionString) {
-            Database = ConnectionStringParser.GetDatabaseName(connectionString);
-            Server = ConnectionStringParser.GetServerName(connectionString);
-            User = ConnectionStringParser.GetUsername(connectionString);
-            Password = ConnectionStringParser.GetPassword(connectionString);
-            PersistSecurityInfo = ConnectionStringParser.GetPersistSecurityInfo(connectionString);
-        }
-
-
-        public string GetConnectionString() {
-
-            if (string.IsNullOrEmpty(ServerProperty))
-                return string.Empty;
-
-            var builder = new DbConnectionStringBuilder { { ServerProperty, Server } };
-
-            if (!string.IsNullOrEmpty(Database)) {
-                builder.Add(DatabaseProperty, Database);
-            }
-
-            if (!String.IsNullOrEmpty(User)) {
-                builder.Add(UserProperty, User);
-                builder.Add(PasswordProperty, Password);
-            } else {
-                if (!String.IsNullOrEmpty(TrustedProperty)) {
-                    builder.Add(TrustedProperty, true);
-                }
-            }
-
-            if (PersistSecurityInfoProperty != string.Empty && PersistSecurityInfo != string.Empty) {
-                builder.Add(PersistSecurityInfoProperty, PersistSecurityInfo);
-            }
-
-            if (Port <= 0)
-                return builder.ConnectionString;
-
-            if (PortProperty == string.Empty) {
-                builder[ServerProperty] += "," + Port;
-            } else {
-                builder.Add("Port", Port);
-            }
-            return builder.ConnectionString;
         }
 
         public IDbConnection GetConnection() {
@@ -228,7 +183,7 @@ namespace Transformalize.Main.Providers {
         }
 
         public string WriteTemporaryTable(string name, Fields fields, bool useAlias = true) {
-            return TableQueryWriter.WriteTemporary(name, fields, this, useAlias);
+            return TableQueryWriter.WriteTemporary(this, name, fields, useAlias);
         }
 
         public bool IsReady() {
@@ -248,60 +203,6 @@ namespace Transformalize.Main.Providers {
 
         public void Drop(Entity entity) {
             EntityDropper.Drop(this, entity);
-        }
-
-        public bool Exists(Entity entity) {
-            return EntityDropper.EntityExists.Exists(this, entity);
-        }
-
-        public bool IsDelimited() {
-            return !string.IsNullOrEmpty(Delimiter);
-        }
-
-        public bool IsTrusted() {
-            return string.IsNullOrEmpty(User);
-        }
-
-        public void DropPrimaryKey(Entity entity) {
-            var primaryKey = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).FieldType(entity.IsMaster() ? FieldType.MasterKey : FieldType.PrimaryKey).Alias(L, R).Asc().Values();
-            using (var cn = GetConnection()) {
-                cn.Open();
-                cn.Execute(TableQueryWriter.DropPrimaryKey(entity.OutputName(), primaryKey));
-            }
-        }
-
-        public void AddPrimaryKey(Entity entity) {
-            var primaryKey = new FieldSqlWriter(entity.Fields, entity.CalculatedFields).FieldType(entity.IsMaster() ? FieldType.MasterKey : FieldType.PrimaryKey).Alias(L, R).Asc().Values();
-            using (var cn = GetConnection()) {
-                cn.Open();
-                cn.Execute(TableQueryWriter.AddPrimaryKey(entity.OutputName(), primaryKey));
-            }
-        }
-
-        public void AddUniqueClusteredIndex(Entity entity) {
-            using (var cn = GetConnection()) {
-                cn.Open();
-                cn.Execute(TableQueryWriter.AddUniqueClusteredIndex(entity.OutputName()));
-            }
-        }
-
-        public void DropUniqueClusteredIndex(Entity entity) {
-            using (var cn = GetConnection()) {
-                cn.Open();
-                cn.Execute(TableQueryWriter.DropUniqueClusteredIndex(entity.OutputName()));
-            }
-        }
-
-        public bool IsExcel() {
-            return Type == ProviderType.File && (File.EndsWith(".xlsx", IC) || File.EndsWith(".xls", IC));
-        }
-
-        public bool IsFile() {
-            return Type == ProviderType.File;
-        }
-
-        public bool IsFolder() {
-            return Type == ProviderType.Folder;
         }
 
         public Uri Uri() {
@@ -336,8 +237,8 @@ namespace Transformalize.Main.Providers {
             return L + field + R;
         }
 
-        public bool IsInternal() {
-            return Type.Equals(ProviderType.Internal);
+        public string GetConnectionString() {
+            return ConnectionStringProperties.GetConnectionString(this);
         }
 
         //concrete class may override these
@@ -375,8 +276,19 @@ namespace Transformalize.Main.Providers {
         /// <param name="entity"></param>
         /// <returns></returns>
         public abstract IOperation EntityOutputKeysExtractAll(Entity entity);
-        
+
+        /// <summary>
+        /// Insert crap as fast as you can
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
         public abstract IOperation EntityBulkLoad(Entity entity);
+
+        /// <summary>
+        /// Update stuff as fast as you can
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
         public abstract IOperation EntityBatchUpdate(Entity entity);
 
         /// <summary>
@@ -392,7 +304,7 @@ namespace Transformalize.Main.Providers {
         /// <param name="entity">an entity</param>
         public abstract void LoadEndVersion(Entity entity);
 
-        public abstract EntitySchema GetEntitySchema(Process process, string name, string schema = "", bool isMaster = false);
+        public abstract Fields GetEntitySchema(Process process, string name, string schema = "", bool isMaster = false);
 
     }
 }

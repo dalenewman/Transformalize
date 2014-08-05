@@ -129,10 +129,10 @@ namespace Transformalize.Processes {
                     }
                 }
             } else {
-                if (input.Connection.IsFile()) {
+                if (input.Connection.Is.File()) {
                     p.Register(PrepareFileOperation(input.Connection));
                 } else {
-                    if (input.Connection.IsFolder()) {
+                    if (input.Connection.Is.Folder()) {
                         var union = new SerialUnionAllOperation();
                         foreach (var file in new DirectoryInfo(input.Connection.Folder).GetFiles(input.Connection.SearchPattern, input.Connection.SearchOption)) {
                             input.Connection.File = file.FullName;
@@ -150,10 +150,10 @@ namespace Transformalize.Processes {
         }
 
         private IOperation PrepareFileOperation(AbstractConnection connection) {
-            if (connection.IsExcel()) {
+            if (connection.Is.Excel()) {
                 return new FileExcelExtract(_entity, connection, _entity.Top + _process.Options.Top);
             }
-            if (connection.IsDelimited()) {
+            if (connection.Is.Delimited()) {
                 return new FileDelimitedExtract(_entity, connection, _entity.Top + _process.Options.Top);
             }
             return new FileFixedExtract(_entity, connection, _entity.Top + _process.Options.Top);
@@ -207,7 +207,7 @@ namespace Transformalize.Processes {
                 throw new TransformalizeException("Entity Process failed for {0}. See error log.", _entity.Alias);
             }
 
-            if (_process.OutputConnection.IsInternal()) {
+            if (_process.OutputConnection.Is.Internal()) {
                 _entity.Rows = _collectors[STANDARD_OUTPUT].Rows;
             } else {
                 // not handling things by input yet, so just use first

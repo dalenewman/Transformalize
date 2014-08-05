@@ -29,14 +29,6 @@ using Transformalize.Operations.Transform;
 namespace Transformalize.Main.Providers.MySql {
     public class MySqlConnection : AbstractConnection {
 
-        public override string UserProperty { get { return "Uid"; } }
-        public override string PasswordProperty { get { return "Pwd"; } }
-        public override string PortProperty { get { return "Port"; } }
-        public override string DatabaseProperty { get { return "Database"; } }
-        public override string ServerProperty { get { return "Server"; } }
-        public override string TrustedProperty { get { return string.Empty; } }
-        public override string PersistSecurityInfoProperty { get { return string.Empty; } }
-
         public MySqlConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
             Type = ProviderType.MySql;
@@ -44,6 +36,11 @@ namespace Transformalize.Main.Providers.MySql {
             R = "`";
             IsDatabase = true;
             Views = true;
+            ConnectionStringProperties.UserProperty = "Uid";
+            ConnectionStringProperties.PasswordProperty = "Pwd";
+            ConnectionStringProperties.PortProperty = "Port";
+            ConnectionStringProperties.DatabaseProperty = "Database";
+            ConnectionStringProperties.ServerProperty = "Server";
         }
 
         public override string KeyAllQuery(Entity entity) {
@@ -178,7 +175,7 @@ namespace Transformalize.Main.Providers.MySql {
             }
         }
 
-        public override EntitySchema GetEntitySchema(Process process, string name, string schema = "", bool isMaster = false) {
+        public override Fields GetEntitySchema(Process process, string name, string schema = "", bool isMaster = false) {
             return new DatabaseEntitySchemaReader(this).Read(name, schema);
         }
     }
