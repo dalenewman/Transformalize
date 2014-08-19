@@ -516,6 +516,15 @@ namespace Transformalize.Main {
                     ) { ShouldRun = shouldRun };
 
                 // validators
+                case "any":
+                    return new AnyOperation(
+                        string.IsNullOrEmpty(element.Value) ? GetParameter(field.Entity, element.Left, parameters) : new Parameter(element.Value, element.Value),
+                        outKey,
+                        (ComparisonOperator)Enum.Parse(typeof(ComparisonOperator), element.Operator, true),
+                        parameters,
+                        element.Negated
+                    ) { ShouldRun = shouldRun };
+
                 case "containscharacters":
                     return new ContainsCharactersValidatorOperation(
                         inKey,

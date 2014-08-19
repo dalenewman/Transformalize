@@ -2439,6 +2439,7 @@
     <Compile Include="Operations\SampleOperation.cs" />
     <Compile Include="Operations\Sort.cs" />
     <Compile Include="Operations\SqlKeysOverrideOperation.cs" />
+    <Compile Include="Operations\Transform\AnyOperation.cs" />
     <Compile Include="Operations\Transform\AppendOperation.cs" />
     <Compile Include="Operations\Transform\CompressOperation.cs" />
     <Compile Include="Operations\Transform\ConcatOperation.cs" />

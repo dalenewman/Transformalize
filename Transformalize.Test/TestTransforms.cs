@@ -21,24 +21,20 @@
 #endregion
 
 using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration.Builders;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
-using Transformalize.Libs.NanoXml;
 using Transformalize.Libs.NLog;
-using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Libs.Rhino.Etl.Operations;
-using Transformalize.Libs.SolrNet.Utils;
 using Transformalize.Main;
 using Transformalize.Main.Parameters;
 using Transformalize.Main.Providers;
 using Transformalize.Operations;
 using Transformalize.Operations.Transform;
 using Transformalize.Test.Builders;
+using Parameter = Transformalize.Libs.Ninject.Parameters.Parameter;
 
 namespace Transformalize.Test {
     [TestFixture]
@@ -389,6 +385,105 @@ namespace Transformalize.Test {
 
             Assert.AreEqual("x", output[0]["out"]);
             Assert.AreEqual("y", output[1]["out"]);
+        }
+
+        [Test]
+        public void AnyValue()
+        {
+            var input = new RowsBuilder()
+                .Row("x", "1").Field("y", "3").Field("any_1", null).Field("any_2", null)
+                .Row("x", "2").Field("y", "4").Field("any_1", null).Field("any_2", null)
+                .ToOperation();
+
+            var parameters = new ParametersBuilder()
+                .Parameter("x")
+                .Parameter("y")
+                .ToParameters();
+
+            var any1 = new AnyOperation(new Main.Parameter("1", "1"), "any_1", ComparisonOperator.Equal, parameters, false);
+            var any2 = new AnyOperation(new Main.Parameter("2", "2"), "any_2", ComparisonOperator.Equal, parameters, false);
+
+            var output = TestOperation(input, any1, any2);
+
+            Assert.AreEqual(true, output[0]["any_1"]);
+            Assert.AreEqual(false, output[0]["any_2"]);
+
+            Assert.AreEqual(false, output[1]["any_1"]);
+            Assert.AreEqual(true, output[1]["any_2"]);
+            
+        }
+
+        [Test]
+        public void AnyValueDifferentTypes() {
+            var input = new RowsBuilder()
+                .Row("x", "1").Field("y", "3").Field("any_1", null).Field("any_2", null)
+                .Row("x", "2").Field("y", "4").Field("any_1", null).Field("any_2", null)
+                .ToOperation();
+
+            var parameters = new ParametersBuilder()
+                .Parameter("x")
+                .Parameter("y")
+                .ToParameters();
+
+            var any1 = new AnyOperation(new Main.Parameter("1", 1), "any_1", ComparisonOperator.Equal, parameters, false);
+            var any2 = new AnyOperation(new Main.Parameter("2", 2), "any_2", ComparisonOperator.Equal, parameters, false);
+
+            var output = TestOperation(input, any1, any2);
+
+            Assert.AreEqual(false, output[0]["any_1"]);
+            Assert.AreEqual(false, output[0]["any_2"]);
+
+            Assert.AreEqual(false, output[1]["any_1"]);
+            Assert.AreEqual(false, output[1]["any_2"]);
+
+        }
+
+        [Test]
+        public void AnyParameter() {
+            var input = new RowsBuilder()
+                .Row("x", "1").Field("y", "3").Field("test","1").Field("any", null)
+                .Row("x", "2").Field("y", "4").Field("test","5").Field("any", null)
+                .ToOperation();
+
+            var parameters = new ParametersBuilder()
+                .Parameter("x")
+                .Parameter("y")
+                .ToParameters();
+
+            var pIn = new ParametersBuilder()
+                .Parameter("test")
+                .ToParameters();
+
+            var any = new AnyOperation(pIn["test"], "any", ComparisonOperator.Equal, parameters, false);
+
+            var output = TestOperation(input, any);
+
+            Assert.AreEqual(true, output[0]["any"]);
+            Assert.AreEqual(false, output[1]["any"]);
+        }
+
+        [Test]
+        public void AnyParameterDifferentTypes() {
+            var input = new RowsBuilder()
+                .Row("x", "1").Field("y", "3").Field("test", "1").Field("any", null)
+                .Row("x", "2").Field("y", "4").Field("test", 5.0).Field("any", null)
+                .ToOperation();
+
+            var parameters = new ParametersBuilder()
+                .Parameter("x")
+                .Parameter("y")
+                .ToParameters();
+
+            var pIn = new ParametersBuilder()
+                .Parameter("test")
+                .ToParameters();
+
+            var any = new AnyOperation(pIn["test"], "any", ComparisonOperator.Equal, parameters, false);
+
+            var output = TestOperation(input, any);
+
+            Assert.AreEqual(true, output[0]["any"]);
+            Assert.AreEqual(false, output[1]["any"]);
         }
 
         [Test]
