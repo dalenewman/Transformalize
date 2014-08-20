@@ -60,6 +60,7 @@ namespace Transformalize.Configuration {
         private const string TABLE = "table";
         private const string VIEW = "view";
         private const string ENCODING = "encoding";
+        private const string VERSION = "version";
 
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
@@ -110,6 +111,12 @@ namespace Transformalize.Configuration {
         public string ErrorMode {
             get { return this[ERROR_MODE] as string; }
             set { this[ERROR_MODE] = value; }
+        }
+
+        [ConfigurationProperty(ERROR_MODE, IsRequired = false, DefaultValue = Common.DefaultValue)]
+        public string Version {
+            get { return this[VERSION] as string; }
+            set { this[VERSION] = value; }
         }
 
         [ConfigurationProperty(PORT, IsRequired = false, DefaultValue = 0)]
@@ -255,7 +262,8 @@ namespace Transformalize.Configuration {
                 "log",
                 "mail",
                 "html",
-                "elasticsearch"
+                "elasticsearch",
+                "lucene"
             };
 
             if (!providers.Any(p => p.Equals(provider))) {

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main.Providers.ElasticSearch {
-
     public class ElasticSearchConnectionChecker : IConnectionChecker {
 
         private readonly Logger _log = LogManager.GetLogger("tfl");

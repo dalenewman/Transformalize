@@ -175,6 +175,56 @@ namespace Transformalize.Test {
         }
 
         [Test]
+        public void FromSplit()
+        {
+            var input = new RowsBuilder()
+                .Row("x","x.y.z")
+                .Row("x","z.y.x")
+                .ToOperation();
+            var outParameters = new ParametersBuilder()
+                .Parameter("e1")
+                .Parameter("e2")
+                .Parameter("e3")
+                .ToParameters();
+            var fromSplit = new FromSplitOperation("x", ".", outParameters);
+
+            var rows = TestOperation(input, fromSplit);
+
+            Assert.AreEqual("x", rows[0]["e1"]);
+            Assert.AreEqual("y", rows[0]["e2"]);
+            Assert.AreEqual("z", rows[0]["e3"]);
+
+            Assert.AreEqual("z", rows[1]["e1"]);
+            Assert.AreEqual("y", rows[1]["e2"]);
+            Assert.AreEqual("x", rows[1]["e3"]);
+            
+        }
+
+        [Test]
+        public void FromSplitWithTypes() {
+            var input = new RowsBuilder()
+                .Row("x", "1.y.1/1/2001")
+                .Row("x", "2.y.1/1/2002")
+                .ToOperation();
+            var outParameters = new ParametersBuilder()
+                .Parameter("e1").Type("int")
+                .Parameter("e2").Type("string")
+                .Parameter("e3").Type("datetime")
+                .ToParameters();
+            var fromSplit = new FromSplitOperation("x", ".", outParameters);
+
+            var rows = TestOperation(input, fromSplit);
+
+            Assert.AreEqual(1, rows[0]["e1"]);
+            Assert.AreEqual("y", rows[0]["e2"]);
+            Assert.AreEqual(new DateTime(2001,1,1), rows[0]["e3"]);
+
+            Assert.AreEqual(2, rows[1]["e1"]);
+            Assert.AreEqual("y", rows[1]["e2"]);
+            Assert.AreEqual(new DateTime(2002,1,1), rows[1]["e3"]);
+        }
+
+        [Test]
         public void FromRegex() {
             var input = new RowsBuilder().Row().Field("f1", "991.1 #Something INFO and a rambling message.").ToOperation();
             var outParameters = new ParametersBuilder().Parameter("p1").Type("decimal").Parameter("p2").Parameter("p3").ToParameters();

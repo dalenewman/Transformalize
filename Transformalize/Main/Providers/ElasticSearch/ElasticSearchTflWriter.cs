@@ -1,7 +1,6 @@
 using Transformalize.Libs.Rhino.Etl;
 
-namespace Transformalize.Main.Providers.ElasticSearch
-{
+namespace Transformalize.Main.Providers.ElasticSearch {
     public class ElasticSearchTflWriter : WithLoggingMixin, ITflWriter {
         public void Initialize(Process process) {
             var connection = process.OutputConnection;

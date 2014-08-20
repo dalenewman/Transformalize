@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Transformalize.Libs;
 using Transformalize.Libs.NanoXml;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
@@ -19,7 +18,6 @@ namespace Transformalize.Operations.Transform {
 
         public FromNanoXmlOperation(string inKey, IEnumerable<Field> fields)
             : base(inKey, string.Empty) {
-
 
             foreach (var field in fields) {
                 if (field.NodeType.Equals("attribute", IC)) {

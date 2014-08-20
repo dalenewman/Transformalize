@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.fastJSON;
@@ -8,11 +9,11 @@ namespace Transformalize.Operations.Transform {
 
     public class FromJsonOperation : ShouldRunOperation {
 
-        private readonly IEnumerable<KeyValuePair<string, IParameter>> _parameters;
+        private readonly KeyValuePair<string, IParameter>[] _parameters;
 
         public FromJsonOperation(string inKey, IParameters parameters)
             : base(inKey, string.Empty) {
-            _parameters = parameters.ToEnumerable();
+            _parameters = parameters.ToEnumerable().ToArray();
             Name = string.Format("FromJsonOperation (in:{0})", inKey);
         }
 

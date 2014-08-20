@@ -2,8 +2,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
-using Transformalize.Libs.NLog.Internal;
 
 namespace Transformalize.Libs.NanoXml {
     /// <summary>
@@ -145,7 +145,6 @@ namespace Transformalize.Libs.NanoXml {
         private readonly string name;
 
         private readonly List<NanoXmlNode> subNodes = new List<NanoXmlNode>();
-        private readonly string value;
 
         internal NanoXmlNode(string str, ref int i) {
             name = ParseAttributes(str, ref i, attributes, '>', '/');
@@ -184,7 +183,7 @@ namespace Transformalize.Libs.NanoXml {
                 i++; // skip <
             } else // parse value
             {
-                value = GetValue(str, ref i, '<', '\0', false);
+                Value = GetValue(str, ref i, '<', '\0', false);
                 i++; // skip <
 
                 if (str[i] != '/')
@@ -208,9 +207,7 @@ namespace Transformalize.Libs.NanoXml {
         /// <summary>
         ///     Element value
         /// </summary>
-        public string Value {
-            get { return value; }
-        }
+        public string Value { get; set; }
 
         /// <summary>
         ///     Element name
@@ -222,7 +219,7 @@ namespace Transformalize.Libs.NanoXml {
         /// <summary>
         ///     List of subelements
         /// </summary>
-        public IEnumerable<NanoXmlNode> SubNodes {
+        public List<NanoXmlNode> SubNodes {
             get { return subNodes; }
         }
 
@@ -263,8 +260,7 @@ namespace Transformalize.Libs.NanoXml {
 
         public bool TryAttribute(string attributeName, out NanoXmlAttribute attribute) {
             foreach (var nanoXmlAttribute in attributes)
-                if (nanoXmlAttribute.Name == attributeName)
-                {
+                if (nanoXmlAttribute.Name == attributeName) {
                     attribute = nanoXmlAttribute;
                     return true;
                 }
@@ -273,6 +269,9 @@ namespace Transformalize.Libs.NanoXml {
             return false;
         }
 
+        public bool HasAttribute(string attributeName) {
+            return attributes.Any(nanoXmlAttribute => nanoXmlAttribute.Name == attributeName);
+        }
 
         public string InnerText() {
             var builder = new StringBuilder();
@@ -288,10 +287,10 @@ namespace Transformalize.Libs.NanoXml {
                     builder.AppendFormat(" {0}=\"{1}\"", attribute.Name, attribute.Value);
                 }
                 builder.Append(">");
-                if (Value == null) {
+                if (node.Value == null) {
                     node.InnerText(ref builder);
                 } else {
-                    builder.Append(Value);
+                    builder.Append(node.Value);
                 }
                 builder.AppendFormat("</{0}>", node.Name);
             }
@@ -304,7 +303,12 @@ namespace Transformalize.Libs.NanoXml {
                 builder.AppendFormat(" {0}=\"{1}\"", attribute.Name, attribute.Value);
             }
             builder.Append(">");
-            InnerText(ref builder);
+            if (Value == null) {
+                InnerText(ref builder);
+            } else {
+                builder.Append(Value);
+            }
+
             builder.AppendFormat("</{0}>", Name);
             return builder.ToString();
         }

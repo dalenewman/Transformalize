@@ -440,6 +440,9 @@ namespace Transformalize.Main {
                         parameters
                     ) { ShouldRun = shouldRun };
 
+                case "fromsplit":
+                    return new FromSplitOperation(outKey, element.Separator, parameters) { ShouldRun = shouldRun };
+
                 case "distance":
 
                     return new DistanceOperation(

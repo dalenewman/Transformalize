@@ -4,7 +4,6 @@ using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Operations.Transform;
 
 namespace Transformalize.Main.Providers.ElasticSearch {
-
     public class ElasticSearchConnection : AbstractConnection {
 
         public ElasticSearchConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)

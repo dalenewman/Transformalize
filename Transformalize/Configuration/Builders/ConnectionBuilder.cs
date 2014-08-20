@@ -39,6 +39,16 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public ConnectionBuilder Encoding(string encoding) {
+            _connection.Encoding = encoding;
+            return this;
+        }
+
+        public ConnectionBuilder Version(string version) {
+            _connection.Version = version;
+            return this;
+        }
+
         public ConnectionBuilder Header(string header) {
             _connection.Header = header;
             return this;

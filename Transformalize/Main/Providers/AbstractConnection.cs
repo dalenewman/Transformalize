@@ -82,6 +82,7 @@ namespace Transformalize.Main.Providers {
         public bool EnableSsl { get; set; }
         public bool TableSample { get; set; }
         public string Encoding { get; set; }
+        public string Version { get; set; }
         public ConnectionIs Is { get; set; }
 
         public ConnectionStringProperties ConnectionStringProperties {
@@ -135,6 +136,7 @@ namespace Transformalize.Main.Providers {
             Footer = element.Footer;
             EnableSsl = element.EnableSsl;
             Encoding = element.Encoding;
+            Version = element.Version;
             Path = element.Path;
             ErrorMode = (ErrorMode)Enum.Parse(typeof(ErrorMode), element.ErrorMode, true);
             SearchOption = (SearchOption)Enum.Parse(typeof(SearchOption), element.SearchOption, true);

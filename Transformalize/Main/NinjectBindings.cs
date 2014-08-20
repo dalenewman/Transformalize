@@ -21,6 +21,7 @@ using Transformalize.Main.Providers.Folder;
 using Transformalize.Main.Providers.Html;
 using Transformalize.Main.Providers.Internal;
 using Transformalize.Main.Providers.Log;
+using Transformalize.Main.Providers.Lucene;
 using Transformalize.Main.Providers.Mail;
 using Transformalize.Main.Providers.MySql;
 using Transformalize.Main.Providers.PostgreSql;
@@ -56,6 +57,7 @@ namespace Transformalize.Main {
             Bind<AbstractConnectionDependencies>().To<HtmlDependencies>().WhenInjectedInto<HtmlConnection>();
             Bind<AbstractConnectionDependencies>().To<ElasticSearchDependencies>().WhenInjectedInto<ElasticSearchConnection>();
             Bind<AbstractConnectionDependencies>().To<SolrDependencies>().WhenInjectedInto<Providers.Solr.SolrConnection>();
+            Bind<AbstractConnectionDependencies>().To<LuceneDependencies>().WhenInjectedInto<LuceneConnection>();
 
             Bind<AbstractConnection>().To<AnalysisServicesConnection>().Named("analysisservices");
             Bind<AbstractConnection>().To<FileConnection>().Named("file");
@@ -67,6 +69,7 @@ namespace Transformalize.Main {
             Bind<AbstractConnection>().To<HtmlConnection>().Named("html");
             Bind<AbstractConnection>().To<ElasticSearchConnection>().Named("elasticsearch");
             Bind<AbstractConnection>().To<Providers.Solr.SolrConnection>().Named("solr");
+            Bind<AbstractConnection>().To<LuceneConnection>().Named("lucene");
 
             //solrnet
             var mapper = new MemoizingMappingManager(new AttributesMappingManager());

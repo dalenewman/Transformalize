@@ -3,7 +3,6 @@ using Transformalize.Libs.fastJSON;
 using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main.Providers.ElasticSearch {
-
     public class ElasticSearchEntityCreator : IEntityCreator {
         private readonly Logger _log = LogManager.GetLogger("tfl");
         private readonly Dictionary<string, string> _types = new Dictionary<string, string>() {

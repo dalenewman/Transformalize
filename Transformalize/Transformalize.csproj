@@ -1884,6 +1884,9 @@
     <Compile Include="Main\Providers\ConnectionIs.cs" />
     <Compile Include="Main\Providers\ConnectionStringProperties.cs" />
     <Compile Include="Main\Providers\ElasticSearch\AliasType.cs" />
+    <Compile Include="Main\Providers\ElasticSearch\LuceneAnalyzerFactory.cs" />
+    <Compile Include="Main\Providers\ElasticSearch\LuceneEntityCreator.cs" />
+    <Compile Include="Main\Providers\ElasticSearch\LuceneIndexWriterFactory.cs" />
     <Compile Include="Main\Providers\FalseDataTypeService.cs" />
     <Compile Include="Main\Providers\ConnectionChecker.cs" />
     <Compile Include="Main\Providers\File\ColumnNameGenerator.cs" />
@@ -1900,6 +1903,12 @@
     <Compile Include="Main\Providers\File\Line.cs" />
     <Compile Include="Main\Providers\File\LineLoader.cs" />
     <Compile Include="Main\Providers\File\Lines.cs" />
+    <Compile Include="Main\Providers\Lucene\LuceneConnection.cs" />
+    <Compile Include="Main\Providers\Lucene\LuceneConnectionChecker.cs" />
+    <Compile Include="Main\Providers\Lucene\LuceneDirectoryFactory.cs" />
+    <Compile Include="Main\Providers\Lucene\LuceneEntityDropper.cs" />
+    <Compile Include="Main\Providers\Lucene\LuceneEntityExists.cs" />
+    <Compile Include="Main\Providers\Lucene\LuceneEntityRecordsExist.cs" />
     <Compile Include="Main\Providers\Solr\SolrConnection.cs" />
     <Compile Include="Main\Providers\Solr\SolrConnectionChecker.cs" />
     <Compile Include="Main\Providers\Solr\SolrDependencies.cs" />
@@ -2457,6 +2466,7 @@
     <Compile Include="Operations\Transform\FromRegexOperation.cs" />
     <Compile Include="Operations\Transform\FromNanoXmlOperation.cs" />
     <Compile Include="Operations\Transform\FromFirstXmlOperation.cs" />
+    <Compile Include="Operations\Transform\FromSplitOperation.cs" />
     <Compile Include="Operations\Transform\FromXmlOperation.cs" />
     <Compile Include="Operations\Transform\GetHashCodeOperation.cs" />
     <Compile Include="Operations\Transform\HtmlDecodeOperation.cs" />

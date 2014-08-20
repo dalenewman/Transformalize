@@ -38,7 +38,7 @@ namespace Transformalize.Main {
         private readonly Options _options;
         private readonly string _processName = string.Empty;
         private Process _process;
-        private readonly string[] _transformToFields = new[] { "fromxml", "fromregex", "fromjson" };
+        private readonly string[] _transformToFields = new[] { "fromxml", "fromregex", "fromjson", "fromsplit" };
 
         public ProcessReader(ProcessConfigurationElement process, Options options) {
             _element = Adapt(process, _transformToFields);
