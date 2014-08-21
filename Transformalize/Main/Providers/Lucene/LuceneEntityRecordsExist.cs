@@ -9,7 +9,7 @@ namespace Transformalize.Main.Providers.Lucene
             if (!checker.Check(connection))
                 return false;
 
-            using (var indexDirectory = LuceneDirectoryFactory.Create(connection, entity) ) {
+            using (var indexDirectory = LuceneIndexDirectoryFactory.Create(connection, entity) ) {
                 using (var reader = IndexReader.Open(indexDirectory, true)) {
                     var count = reader.NumDocs();
                     return count > 0;

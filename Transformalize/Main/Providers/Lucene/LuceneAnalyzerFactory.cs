@@ -3,7 +3,7 @@ using Transformalize.Libs.Lucene.Net.Analysis;
 using Transformalize.Libs.Lucene.Net.Analysis.Standard;
 using Version = Transformalize.Libs.Lucene.Net.Util.Version;
 
-namespace Transformalize.Main.Providers.ElasticSearch {
+namespace Transformalize.Main.Providers.Lucene {
     public class LuceneAnalyzerFactory {
         public static Analyzer Create(string analyzer, string version) {
             switch (analyzer.ToLower()) {

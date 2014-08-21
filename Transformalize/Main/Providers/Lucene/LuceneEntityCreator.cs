@@ -1,6 +1,4 @@
-using Transformalize.Main.Providers.Lucene;
-
-namespace Transformalize.Main.Providers.ElasticSearch {
+namespace Transformalize.Main.Providers.Lucene {
     public class LuceneEntityCreator : IEntityCreator {
 
         public IEntityExists EntityExists { get; set; }
@@ -10,7 +8,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
         }
 
         public void Create(AbstractConnection connection, Process process, Entity entity) {
-            LuceneDirectoryFactory.Create(connection, entity);
+            LuceneIndexDirectoryFactory.Create(connection, entity);
         }
 
     }

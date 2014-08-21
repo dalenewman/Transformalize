@@ -10,7 +10,7 @@ namespace Transformalize.Main.Providers.Lucene
         public void Drop(AbstractConnection connection, Entity entity) {
             if (!EntityExists.Exists(connection, entity))
                 return;
-            using (var dir = LuceneDirectoryFactory.Create(connection, entity)) {
+            using (var dir = LuceneIndexDirectoryFactory.Create(connection, entity)) {
                 dir.Directory.Delete(true);
             }
         }

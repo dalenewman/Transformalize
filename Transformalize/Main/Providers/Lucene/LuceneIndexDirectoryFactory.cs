@@ -2,7 +2,7 @@
 using Transformalize.Libs.Lucene.Net.Store;
 
 namespace Transformalize.Main.Providers.Lucene {
-    public class LuceneDirectoryFactory {
+    public class LuceneIndexDirectoryFactory {
 
         public static FSDirectory Create(AbstractConnection connection) {
             var directoryInfo = new DirectoryInfo(connection.Folder);

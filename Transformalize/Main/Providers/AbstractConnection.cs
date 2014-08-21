@@ -251,7 +251,7 @@ namespace Transformalize.Main.Providers {
         //concrete must implement these
 
         /// <summary>
-        /// Get's the next batch id from the output.  Returns 0 on first run.
+        /// Get's the next batch id from the output.  Returns 1 on first run.
         /// </summary>
         /// <param name="processName">a common output may have many processes loading data into it, so you have to pass in the process name to get the right batch id.</param>
         /// <returns></returns>

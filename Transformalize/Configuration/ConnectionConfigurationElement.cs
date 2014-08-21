@@ -113,7 +113,7 @@ namespace Transformalize.Configuration {
             set { this[ERROR_MODE] = value; }
         }
 
-        [ConfigurationProperty(ERROR_MODE, IsRequired = false, DefaultValue = Common.DefaultValue)]
+        [ConfigurationProperty(VERSION, IsRequired = false, DefaultValue = Common.DefaultValue)]
         public string Version {
             get { return this[VERSION] as string; }
             set { this[VERSION] = value; }

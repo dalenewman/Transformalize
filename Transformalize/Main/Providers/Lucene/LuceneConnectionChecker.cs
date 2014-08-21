@@ -15,7 +15,7 @@ namespace Transformalize.Main.Providers.Lucene {
             }
 
             try {
-                using (var indexDirectory = LuceneDirectoryFactory.Create(connection)) {
+                using (var indexDirectory = LuceneIndexDirectoryFactory.Create(connection)) {
                     using (var reader = IndexReader.Open(indexDirectory, true)) {
                         _log.Debug("Successfully connected to lucene index in {0}.", connection.Folder);
                         return true;
