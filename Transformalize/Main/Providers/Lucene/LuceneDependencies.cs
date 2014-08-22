@@ -1,9 +1,9 @@
 namespace Transformalize.Main.Providers.Lucene {
     public class LuceneDependencies : AbstractConnectionDependencies {
-        public LuceneDependencies()
+        public LuceneDependencies(string processName)
             : base(
                 new FalseTableQueryWriter(),
-                new LuceneConnectionChecker(),
+                new LuceneConnectionChecker(processName),
                 new LuceneEntityRecordsExist(),
                 new LuceneEntityDropper(),
                 new LuceneEntityCreator(),

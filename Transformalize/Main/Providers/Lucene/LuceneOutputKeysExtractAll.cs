@@ -12,7 +12,7 @@ namespace Transformalize.Main.Providers.Lucene {
             _luceneConnection = luceneConnection;
             _entity = entity;
             _fields = entity.PrimaryKey;
-            if (!_fields.HaveField(entity.Version.Alias)) {
+            if (entity.Version != null && !_fields.HaveField(entity.Version.Alias)) {
                 _fields.Add(entity.Version);
             }
         }
@@ -30,7 +30,7 @@ namespace Transformalize.Main.Providers.Lucene {
                     var row = new Row();
 
                     foreach (var field in _fields) {
-                        row[field.Alias] = Common.ConversionMap[field.SimpleType](doc.GetField(field.Alias).StringValue);
+                        row[field.Alias] = Common.ConversionMap[field.SimpleType](doc.GetField(field.AliasLower).StringValue);
                     }
 
                     yield return row;

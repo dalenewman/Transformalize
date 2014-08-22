@@ -147,7 +147,7 @@ namespace Transformalize.Runner {
                     result = result.Replace(placeHolder, value);
                     log.Info("{0} replaced with \"{1}\"", placeHolder, value);
                 } else {
-                    log.Info("{0} not found.", placeHolder);
+                    log.Debug("{0} not found.", placeHolder);
                 }
             }
             return result;

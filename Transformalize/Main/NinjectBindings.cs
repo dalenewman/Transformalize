@@ -32,6 +32,12 @@ using Transformalize.Main.Providers.SqlServer;
 namespace Transformalize.Main {
 
     public class NinjectBindings : NinjectModule {
+        private readonly string _processName;
+
+        public NinjectBindings(string processName)
+        {
+            _processName = processName;
+        }
 
         public override void Load() {
 
@@ -57,7 +63,7 @@ namespace Transformalize.Main {
             Bind<AbstractConnectionDependencies>().To<HtmlDependencies>().WhenInjectedInto<HtmlConnection>();
             Bind<AbstractConnectionDependencies>().To<ElasticSearchDependencies>().WhenInjectedInto<ElasticSearchConnection>();
             Bind<AbstractConnectionDependencies>().To<SolrDependencies>().WhenInjectedInto<Providers.Solr.SolrConnection>();
-            Bind<AbstractConnectionDependencies>().To<LuceneDependencies>().WhenInjectedInto<LuceneConnection>();
+            Bind<AbstractConnectionDependencies>().To<LuceneDependencies>().WhenInjectedInto<LuceneConnection>().WithConstructorArgument("processName", _processName);
 
             Bind<AbstractConnection>().To<AnalysisServicesConnection>().Named("analysisservices");
             Bind<AbstractConnection>().To<FileConnection>().Named("file");

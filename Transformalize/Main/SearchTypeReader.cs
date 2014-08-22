@@ -23,6 +23,14 @@ namespace Transformalize.Main {
                 Analyzer = string.Empty
             };
 
+            searchTypes["default"] = new SearchType {
+                Name = "default",
+                Index = true,
+                Store = true,
+                MultiValued = false,
+                Analyzer = string.Empty
+            };
+
             var configuredTypes = _elements.Cast<SearchTypeConfigurationElement>().ToArray();
 
             if (configuredTypes.Any()) {

@@ -12,9 +12,12 @@ namespace Transformalize.Main.Providers.Lucene {
             return FSDirectory.Open(directoryInfo);
         }
 
+        public static string Path(AbstractConnection connection, Entity entity) {
+            return connection.Folder.TrimEnd(new[] { '\\' }) + "\\" + entity.OutputName().TrimStart(new[] { '\\' });
+        }
+
         public static FSDirectory Create(AbstractConnection connection, Entity entity) {
-            var path = connection.Folder.TrimEnd(new[] { '\\' }) + "\\" + entity.OutputName().TrimStart(new[] { '\\' });
-            var directoryInfo = new DirectoryInfo(path);
+            var directoryInfo = new DirectoryInfo(Path(connection, entity));
             if (!directoryInfo.Exists) {
                 directoryInfo.Create();
             }

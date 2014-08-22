@@ -55,6 +55,7 @@ namespace Transformalize.Main {
         private string _aggregate = string.Empty;
         private string _process = string.Empty;
         private string _length = "64";
+        private string _aliasLower = string.Empty;
 
         public string Alias {
             get { return _alias; }
@@ -62,40 +63,40 @@ namespace Transformalize.Main {
                 if (!value.Equals(_alias)) {
                     _alias = value;
                     _identifier = Common.CleanIdentifier(value);
+                    _aliasLower = value.ToLower();
                 }
             }
+        }
+
+        public string AliasLower {
+            get { return _aliasLower; }
         }
 
         public string Identifier {
             get { return _identifier; }
         }
 
-        public string Schema
-        {
+        public string Schema {
             get { return _schema; }
             set { _schema = value; }
         }
 
-        public string Entity
-        {
+        public string Entity {
             get { return _entity; }
             set { _entity = value; }
         }
 
-        public string EntityOutputName
-        {
+        public string EntityOutputName {
             get { return _entityOutputName; }
             set { _entityOutputName = value; }
         }
 
-        public string Process
-        {
+        public string Process {
             get { return _process; }
             set { _process = value; }
         }
 
-        public string Length
-        {
+        public string Length {
             get { return _length; }
             set { _length = value; }
         }
@@ -109,14 +110,12 @@ namespace Transformalize.Main {
         public bool FileOutput { get; set; }
         public short Index { get; set; }
 
-        public string Aggregate
-        {
+        public string Aggregate {
             get { return _aggregate; }
             set { _aggregate = value; }
         }
 
-        public string Sort
-        {
+        public string Sort {
             get { return _sort; }
             set { _sort = value; }
         }
@@ -126,8 +125,7 @@ namespace Transformalize.Main {
             set { _label = value; }
         }
 
-        public IParameters Parameters
-        {
+        public IParameters Parameters {
             get { return _parameters; }
             set { _parameters = value; }
         }

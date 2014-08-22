@@ -145,6 +145,10 @@ namespace Transformalize.Main {
             return new Fields(Storage.Where(f => f.SimpleType.Equals("string")));
         }
 
+        public Fields WithIdentifiers() {
+            return new Fields(Storage.Where(f => !f.Identifier.Equals(f.Alias)));
+        }
+
         public Fields WithGuid() {
             return new Fields(Storage.Where(f => f.SimpleType.Equals("guid")));
         }

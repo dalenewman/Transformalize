@@ -14,8 +14,8 @@ namespace Transformalize.Main.Providers {
         private Dictionary<string, string> _providers = new Dictionary<string, string>();
         private readonly IKernel _kernal;
 
-        public ConnectionFactory(IKernel kernal = null) {
-            _kernal = kernal ?? new StandardKernel(new NinjectBindings());
+        public ConnectionFactory(string processName, IKernel kernal = null) {
+            _kernal = kernal ?? new StandardKernel(new NinjectBindings(processName));
             _providers.Add("sqlserver", "System.Data.SqlClient.SqlConnection, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
             _providers.Add("sqlce", "System.Data.SqlServerCe.SqlCeConnection, System.Data.SqlServerCe");
             _providers.Add("mysql", "MySql.Data.MySqlClient.MySqlConnection, MySql.Data");

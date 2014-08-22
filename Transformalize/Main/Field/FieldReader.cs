@@ -92,8 +92,10 @@ namespace Transformalize.Main {
             }
 
             var searchType = element.SearchType.ToLower();
-            if (_process.SearchTypes.ContainsKey(searchType)) {
-                field.SearchTypes.Add(InheritType(_process.SearchTypes[searchType], field));
+            if (_process.SearchTypes.Any()) {
+                if (_process.SearchTypes.ContainsKey(searchType)) {
+                    field.SearchTypes.Add(InheritType(_process.SearchTypes[searchType], field));
+                }
             }
 
         }

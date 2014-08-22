@@ -2,12 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Mime;
 using System.Text;
 using Rhino.Etl.Core.Files;
 using Transformalize.Libs.FileHelpers.Enums;
 using Transformalize.Libs.FileHelpers.RunTime;
-using Transformalize.Libs.Ninject.Infrastructure.Language;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
@@ -23,6 +21,7 @@ namespace Transformalize.Operations.Load {
         private readonly bool _isCsv;
         private readonly Fields _fileFields = new Fields();
         private readonly string[] _stringFields;
+        private readonly Field[] _mapFields = new Field[0];
 
         protected FileInfo FileInfo { get; private set; }
         protected Type Type { get; set; }
@@ -43,6 +42,7 @@ namespace Transformalize.Operations.Load {
             _fileFields.Add(_entity.Fields.WithFileOutput());
             _fileFields.Add(_entity.CalculatedFields.WithFileOutput());
             _stringFields = _fileFields.WithString().Aliases().ToArray();
+            _mapFields = _fileFields.WithIdentifiers().ToArray();
 
             if (FileInfo.DirectoryName != null && !Directory.Exists(FileInfo.DirectoryName)) {
                 Info("Creating Output Folder(s).");
@@ -77,7 +77,7 @@ namespace Transformalize.Operations.Load {
             var builder = new DelimitedClassBuilder("Tfl" + entity.OutputName()) { IgnoreEmptyLines = true, Delimiter = _connection.Delimiter, IgnoreFirstLines = 0 };
 
             foreach (var f in _fileFields) {
-                var field = new DelimitedFieldBuilder(f.Alias, f.SystemType);
+                var field = new DelimitedFieldBuilder(f.Identifier, f.SystemType);
                 if (f.SimpleType.Equals("datetime")) {
                     field.Converter.Kind = ConverterKind.Date;
                     field.Converter.Arg1 = _connection.DateFormat;
@@ -127,7 +127,9 @@ namespace Transformalize.Operations.Load {
                         } else {
                             row[field] = value.Replace(_connection.Delimiter, SPACE);
                         }
-
+                    }
+                    foreach (var field in _mapFields) {
+                        row[field.Identifier] = row[field.Alias];
                     }
                     var record = row.ToObject(Type);
                     file.Write(record);

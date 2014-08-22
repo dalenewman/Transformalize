@@ -93,7 +93,7 @@ namespace Transformalize.Test {
 
             ProcessFactory.CreateSingle(process).ExecuteScaler();
             var expected = Common.CleanIdentifier(Path.GetFileNameWithoutExtension(file1));
-            var sqlServer = new ConnectionFactory().Create(new ConnectionConfigurationElement() { Name = "test", Provider = "sqlserver", Database = "TestOutput" });
+            var sqlServer = new ConnectionFactory(process.Name).Create(new ConnectionConfigurationElement() { Name = "test", Provider = "sqlserver", Database = "TestOutput" });
 
             var rows = sqlServer.GetConnection().Query(string.Format("SELECT f1, f2, f3 FROM {0}", expected)).ToArray();
             Assert.AreEqual(1, rows.Length);

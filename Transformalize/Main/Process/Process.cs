@@ -54,7 +54,7 @@ namespace Transformalize.Main {
         public IEnumerable<Row> Results = Enumerable.Empty<Row>();
         public Fields CalculatedFields = new Fields();
         public List<Entity> Entities = new List<Entity>();
-        public IKernel Kernal = new StandardKernel(new NinjectBindings());
+        public IKernel Kernal;
         public Dictionary<string, Map> MapEndsWith = new Dictionary<string, Map>();
         public Dictionary<string, Map> MapEquals = new Dictionary<string, Map>();
         public Dictionary<string, Map> MapStartsWith = new Dictionary<string, Map>();
@@ -126,6 +126,7 @@ namespace Transformalize.Main {
         //constructor
         public Process(string name = "") {
             Name = name;
+            Kernal = new StandardKernel(new NinjectBindings(name));
         }
 
         //methods

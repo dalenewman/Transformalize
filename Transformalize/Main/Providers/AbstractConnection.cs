@@ -224,7 +224,18 @@ namespace Transformalize.Main.Providers {
         }
 
         public Entity TflBatchEntity(string processName) {
-            return new Entity { TflBatchId = 1, Name = "TflBatch", ProcessName = processName, Alias = "TflBatch", Schema = "dbo", PrimaryKey = new Fields() { new Field(FieldType.PrimaryKey) { Name = "TflBatchId" } } };
+            return new Entity {
+                TflBatchId = 1,
+                Name = "TflBatch",
+                ProcessName = processName,
+                Alias = "TflBatch",
+                Schema = "dbo",
+                PrimaryKey = new Fields() {
+                    new Field(FieldType.PrimaryKey) {
+                        Name = "TflBatchId"
+                    }
+                }
+            };
         }
 
         public bool TflBatchRecordsExist(string processName) {
@@ -294,7 +305,7 @@ namespace Transformalize.Main.Providers {
         public abstract IOperation EntityBatchUpdate(Entity entity);
 
         /// <summary>
-        /// Get a correctly typed version for the maximum tflbatchid given an entity
+        /// Get a correctly typed version for the maximum tflbatchid given an entity and process name
         /// Sets entity.HasRange and entity.Begin.
         /// </summary>
         /// <param name="entity">an entity</param>

@@ -42,6 +42,7 @@ namespace Transformalize.Main {
 
         public ProcessReader(ProcessConfigurationElement process, Options options) {
             _element = Adapt(process, _transformToFields);
+            _processName = process.Name;
             _options = options;
         }
 
@@ -71,7 +72,7 @@ namespace Transformalize.Main {
             _log.Info("Mode: {0}", _process.Mode);
 
             //shared across the process
-            var connectionFactory = new ConnectionFactory(_process.Kernal);
+            var connectionFactory = new ConnectionFactory(_process.Name, _process.Kernal);
             foreach (ProviderConfigurationElement element in _element.Providers) {
                 connectionFactory.Providers[element.Name.ToLower()] = element.Type;
             }
