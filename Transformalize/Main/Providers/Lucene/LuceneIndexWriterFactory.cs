@@ -4,9 +4,11 @@ using System.Web;
 using Transformalize.Libs.Lucene.Net.Analysis;
 using Transformalize.Libs.Lucene.Net.Document;
 using Transformalize.Libs.Lucene.Net.Index;
+using Transformalize.Libs.Lucene.Net.QueryParser;
 using Transformalize.Libs.Lucene.Net.Search;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.SolrNet.Utils;
+using Version = Transformalize.Libs.Lucene.Net.Util.Version;
 
 namespace Transformalize.Main.Providers.Lucene {
     public class LuceneIndexWriterFactory {
@@ -31,10 +33,59 @@ namespace Transformalize.Main.Providers.Lucene {
             {"float", SortField.FLOAT},
             {"date", SortField.LONG},
             {"datetime", SortField.LONG},
+            {"bool", SortField.STRING},
+            {"boolean", SortField.STRING},
             {"*", SortField.STRING}
         };
 
-        public static AbstractField GetAbstractField(string type, string name, bool store, bool index, object value) {
+        public static Query GetAbstractQuery(string name, string type, object value) {
+            Query query;
+            switch (type) {
+                case "byte":
+                    query = NumericRangeQuery.NewIntRange(name, Convert.ToInt32(value), Convert.ToInt32(value), true, true);
+                    break;
+                case "int16":
+                    query = NumericRangeQuery.NewIntRange(name, Convert.ToInt32(value), Convert.ToInt32(value), true, true);
+                    break;
+                case "int":
+                    var intValue = (int)value;
+                    query = NumericRangeQuery.NewIntRange(name, intValue, intValue, true, true);
+                    break;
+                case "int32":
+                    var int32Value = (int)value;
+                    query = NumericRangeQuery.NewIntRange(name, int32Value, int32Value, true, true);
+                    break;
+                case "int64":
+                    var int64Value = (long)value;
+                    query = NumericRangeQuery.NewLongRange(name, int64Value, int64Value, true, true);
+                    break;
+                case "long":
+                    var longValue = (long)value;
+                    query = NumericRangeQuery.NewLongRange(name, longValue, longValue, true, true);
+                    break;
+                case "double":
+                    var doubleValue = (double)value;
+                    query = NumericRangeQuery.NewDoubleRange(name, doubleValue, doubleValue, true, true);
+                    break;
+                case "float":
+                    var floatValue = (float)value;
+                    query = NumericRangeQuery.NewFloatRange(name, floatValue, floatValue, true, true);
+                    break;
+                case "datetime":
+                    var datetimeValue = ((DateTime)value).Ticks;
+                    query = NumericRangeQuery.NewLongRange(name, datetimeValue, datetimeValue, true, true);
+                    break;
+                case "string":
+                    query = new TermQuery(new Term((string)value));
+                    break;
+                default:
+                    query = new TermQuery(new Term(name, Convert.ToString(value)));
+                    break;
+            }
+            return query;
+        }
+
+        public static AbstractField GetAbstractField(string name, string type, string analyzer, bool store, bool index, object value) {
             var s = store ? Libs.Lucene.Net.Document.Field.Store.YES : Libs.Lucene.Net.Document.Field.Store.NO;
             AbstractField abstractField;
             switch (type) {
@@ -65,10 +116,16 @@ namespace Transformalize.Main.Providers.Lucene {
                 case "datetime":
                     abstractField = new NumericField(name, s, index).SetLongValue(((DateTime)value).Ticks);
                     break;
-                default:
-                    var i = index ? Libs.Lucene.Net.Document.Field.Index.ANALYZED : Libs.Lucene.Net.Document.Field.Index.NO;
+                case "string":
+                    var i = index ?
+                        (analyzer.Equals("keyword") ? Libs.Lucene.Net.Document.Field.Index.NOT_ANALYZED_NO_NORMS : Libs.Lucene.Net.Document.Field.Index.ANALYZED_NO_NORMS) :
+                        Libs.Lucene.Net.Document.Field.Index.NO;
                     abstractField = new Libs.Lucene.Net.Document.Field(name, value.ToString(), s, i);
                     break;
+                default:
+                    abstractField = new Libs.Lucene.Net.Document.Field(name, value.ToString(), s, index ? Libs.Lucene.Net.Document.Field.Index.NOT_ANALYZED_NO_NORMS : Libs.Lucene.Net.Document.Field.Index.NO);
+                    break;
+
             }
             return abstractField;
 

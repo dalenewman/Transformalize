@@ -27,10 +27,11 @@ namespace Transformalize.Main.Providers.Lucene {
                         continue;
 
                     var doc = reader.Document(i);
+                    
                     var row = new Row();
 
                     foreach (var field in _fields) {
-                        row[field.Alias] = Common.ConversionMap[field.SimpleType](doc.GetField(field.AliasLower).StringValue);
+                        row[field.Alias] = Common.ConversionMap[field.SimpleType](doc.Get(field.AliasLower));
                     }
 
                     yield return row;

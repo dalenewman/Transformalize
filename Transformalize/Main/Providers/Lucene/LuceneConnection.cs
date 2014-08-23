@@ -53,7 +53,7 @@ namespace Transformalize.Main.Providers.Lucene {
                     doc.fields.Add(new NumericField("updates", Libs.Lucene.Net.Document.Field.Store.YES, true).SetLongValue(entity.Updates));
                     doc.fields.Add(new NumericField("inserts", Libs.Lucene.Net.Document.Field.Store.YES, true).SetLongValue(entity.Inserts));
                     doc.fields.Add(new NumericField("deletes", Libs.Lucene.Net.Document.Field.Store.YES, true).SetLongValue(entity.Deletes));
-                    doc.fields.Add(LuceneIndexWriterFactory.GetAbstractField(versionType, "version", true, true, end));
+                    doc.fields.Add(LuceneIndexWriterFactory.GetAbstractField("version", versionType, "keyword", true, true, end));
                     doc.fields.Add(new Libs.Lucene.Net.Document.Field("version_type", versionType, Libs.Lucene.Net.Document.Field.Store.YES, Libs.Lucene.Net.Document.Field.Index.NOT_ANALYZED));
                     doc.fields.Add(new NumericField("tflupdate", Libs.Lucene.Net.Document.Field.Store.YES, true).SetLongValue(DateTime.UtcNow.Ticks));
                     writer.AddDocument(doc);
@@ -83,7 +83,7 @@ namespace Transformalize.Main.Providers.Lucene {
             using (var searcher = LuceneIndexSearcherFactory.Create(this, TflBatchEntity(entity.ProcessName))) {
 
                 var parser = new MultiFieldQueryParser(LuceneVersion(), new[] { "process", "entity" }, new KeywordAnalyzer());
-                var query = parser.Parse("process:\"{0}\" AND entity:\"{1}\"");
+                var query = parser.Parse(string.Format("process:\"{0}\" AND entity:\"{1}\"", entity.ProcessName, entity.Alias));
                 var sort = new Sort(new SortField("id", SortField.INT, true));
                 var hits = searcher.Search(query, null, 1, sort);
 
