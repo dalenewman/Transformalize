@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Transformalize.Main.Providers.SqlServer
+namespace Transformalize.Main.Providers.PostgreSql
 {
     public class PostgreSqlDataTypeService : IDataTypeService {
         private Dictionary<string, string> _reverseTypes;

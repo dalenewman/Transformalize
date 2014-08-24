@@ -26,6 +26,8 @@ using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
+using Transformalize.Main.Providers.Sql;
+using Transformalize.Main.Providers.SqlServer;
 using Transformalize.Operations;
 
 namespace Transformalize.Processes {
@@ -46,18 +48,22 @@ namespace Transformalize.Processes {
 
             if (_entity.Input.Count == 1) {
                 var connection = _entity.Input.First().Connection;
-                Register(connection.Is.Internal() ? _entity.InputOperation : new EntityInputKeysExtractAll(_entity, connection));
+                Register(
+                    connection.Is.Internal() ?
+                    _entity.InputOperation :
+                    connection.ExtractAllKeysFromInput(_entity)
+                );
             } else {
                 var multiInput = new ParallelUnionAllOperation();
                 foreach (var namedConnection in _entity.Input) {
-                    multiInput.Add(new EntityInputKeysExtractAll(_entity, namedConnection.Connection));
+                    multiInput.Add(namedConnection.Connection.ExtractAllKeysFromInput(_entity));
                 }
                 Register(multiInput);
             }
 
-            Register(new EntityDetectDeletes(_entity).Right(_process.OutputConnection.EntityOutputKeysExtractAll(_entity)));
+            Register(new EntityDetectDeletes(_entity).Right(_process.OutputConnection.ExtractAllKeysFromOutput(_entity)));
             Register(new EntityActionFilter(ref _process, ref _entity, EntityAction.Delete));
-            Register(new EntityDelete(_process, _entity));
+            Register(_process.OutputConnection.Delete(_entity));
         }
 
         protected override void PostProcessing() {

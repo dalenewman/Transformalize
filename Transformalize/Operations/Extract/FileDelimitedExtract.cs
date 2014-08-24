@@ -26,7 +26,7 @@ namespace Transformalize.Operations.Extract {
 
         private int _counter;
 
-        public FileDelimitedExtract(Entity entity, AbstractConnection connection, int top) {
+        public FileDelimitedExtract(AbstractConnection connection, Entity entity, int top) {
 
             var fileInfo = new FileInfo(connection.File);
 

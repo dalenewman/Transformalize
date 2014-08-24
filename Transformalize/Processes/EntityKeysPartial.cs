@@ -2,6 +2,7 @@ using System.Linq;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
+using Transformalize.Main.Providers.Sql;
 using Transformalize.Operations;
 using Transformalize.Operations.Transform;
 
@@ -47,7 +48,7 @@ namespace Transformalize.Processes {
             }
 
             if (_process.IsFirstRun || !_entity.CanDetectChanges(connection.IsDatabase)) {
-                return new EntityInputKeysExtractAll(_entity, connection);
+                return connection.ExtractAllKeysFromInput(_entity);
             }
 
             var operation = new EntityInputKeysExtractDelta(_process, _entity, connection);

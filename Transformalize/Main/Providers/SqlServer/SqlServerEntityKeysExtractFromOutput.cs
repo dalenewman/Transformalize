@@ -29,14 +29,14 @@ using Transformalize.Libs.Rhino.Etl.Operations;
 
 namespace Transformalize.Main.Providers.SqlServer {
 
-    public class SqlServerEntityOutputKeysExtract : InputCommandOperation {
+    public class SqlServerEntityKeysExtractFromOutput : InputCommandOperation {
 
         private readonly AbstractConnection _connection;
         private readonly Entity _entity;
         private readonly List<string> _fields;
         private readonly Fields _key;
 
-        public SqlServerEntityOutputKeysExtract(AbstractConnection connection, Entity entity)
+        public SqlServerEntityKeysExtractFromOutput(AbstractConnection connection, Entity entity)
             : base(connection) {
             _connection = connection;
             _entity = entity;

@@ -8,7 +8,7 @@ namespace Transformalize.Main.Providers.Lucene {
         }
 
         public void Create(AbstractConnection connection, Process process, Entity entity) {
-            LuceneIndexDirectoryFactory.Create(connection, entity);
+            LuceneDirectoryFactory.Create(connection, entity);
         }
 
     }

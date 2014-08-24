@@ -16,22 +16,26 @@ namespace Transformalize.Main.Providers.Html {
             //do nothing
         }
 
-        public override IOperation EntityOutputKeysExtract(Entity entity) {
+        public override IOperation ExtractCorrespondingKeysFromOutput(Entity entity) {
             return new EmptyOperation();
         }
 
-        public override IOperation EntityOutputKeysExtractAll(Entity entity) {
+        public override IOperation ExtractAllKeysFromOutput(Entity entity) {
             return new EmptyOperation();
         }
 
-        public override IOperation EntityBulkLoad(Entity entity) {
+        public override IOperation ExtractAllKeysFromInput(Entity entity) {
+            return new EmptyOperation();
+        }
+
+        public override IOperation Insert(Entity entity) {
             var process = new PartialProcessOperation();
             process.Register(new HtmlRowOperation(entity, "HtmlRow"));
             process.RegisterLast(new HtmlLoadOperation(this, entity, "HtmlRow"));
             return process;
         }
 
-        public override IOperation EntityBatchUpdate(Entity entity) {
+        public override IOperation Update(Entity entity) {
             return new EmptyOperation();
         }
 
@@ -45,6 +49,16 @@ namespace Transformalize.Main.Providers.Html {
 
         public override Fields GetEntitySchema(Process process, string name, string schema = "", bool isMaster = false) {
             return new Fields();
+        }
+
+        public override IOperation Delete(Entity entity)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override IOperation Extract(Entity entity, bool firstRun)
+        {
+            throw new System.NotImplementedException();
         }
 
         public HtmlConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)

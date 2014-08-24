@@ -29,6 +29,7 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
+using Transformalize.Main.Providers.Sql;
 using Transformalize.Operations;
 using Transformalize.Operations.Extract;
 using Transformalize.Operations.Transform;
@@ -56,11 +57,11 @@ namespace Transformalize.Processes {
             Register(new EntityKeysPartial(_process, _entity));
 
             if (_entity.Input.Count == 1) {
-                Register(ComposeInputOperation(_entity.Input.First()));
+                Register(_entity.Input.First().Connection.Extract(_entity, _process.IsFirstRun));
             } else {
                 var union = new ParallelUnionAllOperation();
                 foreach (var input in _entity.Input) {
-                    union.Add(ComposeInputOperation(input));
+                    union.Add(input.Connection.Extract(_entity, _process.IsFirstRun));
                 }
                 Register(union);
             }
@@ -105,60 +106,6 @@ namespace Transformalize.Processes {
 
         }
 
-        private IOperation ComposeInputOperation(NamedConnection input) {
-
-            var p = new PartialProcessOperation();
-
-            var isDatabase = input.Connection.IsDatabase;
-
-            if (isDatabase) {
-                if (input.Connection.Schemas && _entity.Schema.Equals(string.Empty)) {
-                    _entity.Schema = input.Connection.DefaultSchema;
-                }
-
-                if (_entity.HasSqlOverride()) {
-                    p.Register(new SqlOverrideOperation(_entity, input.Connection));
-                } else {
-                    if (_entity.PrimaryKey.WithInput().Any()) {
-                        p.Register(new EntityKeysSaveOperation(_entity));
-                        p.Register(new EntityKeysToOperations(_process, _entity, input.Connection));
-                        p.Register(new SerialUnionAllOperation());
-                    } else {
-                        _entity.SqlOverride = SqlTemplates.Select(_entity, input.Connection);
-                        p.Register(new SqlOverrideOperation(_entity, input.Connection));
-                    }
-                }
-            } else {
-                if (input.Connection.Is.File()) {
-                    p.Register(PrepareFileOperation(input.Connection));
-                } else {
-                    if (input.Connection.Is.Folder()) {
-                        var union = new SerialUnionAllOperation();
-                        foreach (var file in new DirectoryInfo(input.Connection.Folder).GetFiles(input.Connection.SearchPattern, input.Connection.SearchOption)) {
-                            input.Connection.File = file.FullName;
-                            union.Add(PrepareFileOperation(input.Connection));
-                        }
-                        p.Register(union);
-                    } else {
-                        p.Register(_entity.InputOperation);
-                        p.Register(new AliasOperation(_entity));
-                    }
-                }
-            }
-
-            return p;
-        }
-
-        private IOperation PrepareFileOperation(AbstractConnection connection) {
-            if (connection.Is.Excel()) {
-                return new FileExcelExtract(_entity, connection, _entity.Top + _process.Options.Top);
-            }
-            if (connection.Is.Delimited()) {
-                return new FileDelimitedExtract(_entity, connection, _entity.Top + _process.Options.Top);
-            }
-            return new FileFixedExtract(_entity, connection, _entity.Top + _process.Options.Top);
-        }
-
         private PartialProcessOperation PrepareOutputOperation(NamedConnection nc) {
 
             var process = new PartialProcessOperation();
@@ -169,16 +116,16 @@ namespace Transformalize.Processes {
             } else {
                 if (_process.IsFirstRun || !_entity.DetectChanges) {
                     process.Register(new EntityAddTflFields(ref _process, ref _entity));
-                    process.RegisterLast(nc.Connection.EntityBulkLoad(_entity));
+                    process.RegisterLast(nc.Connection.Insert(_entity));
                 } else {
-                    process.Register(new EntityJoinAction(_entity).Right(nc.Connection.EntityOutputKeysExtract(_entity)));
+                    process.Register(new EntityJoinAction(_entity).Right(nc.Connection.ExtractCorrespondingKeysFromOutput(_entity)));
                     var branch = new BranchingOperation()
                         .Add(new PartialProcessOperation()
                             .Register(new EntityActionFilter(ref _process, ref _entity, EntityAction.Insert))
-                            .RegisterLast(nc.Connection.EntityBulkLoad(_entity)))
+                            .RegisterLast(nc.Connection.Insert(_entity)))
                         .Add(new PartialProcessOperation()
                             .Register(new EntityActionFilter(ref _process, ref _entity, EntityAction.Update))
-                            .RegisterLast(nc.Connection.EntityBatchUpdate(_entity)));
+                            .RegisterLast(nc.Connection.Update(_entity)));
 
                     process.RegisterLast(branch);
                 }

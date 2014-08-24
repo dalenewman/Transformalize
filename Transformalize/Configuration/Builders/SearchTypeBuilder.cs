@@ -13,6 +13,11 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public SearchTypeBuilder Norms(bool norms) {
+            _searchType.Norms = norms;
+            return this;
+        }
+
         public SearchTypeBuilder MultiValued(bool multiValued) {
             _searchType.MultiValued = multiValued;
             return this;

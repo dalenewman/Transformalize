@@ -29,7 +29,7 @@ namespace Transformalize.Operations.Extract {
 
         private int _counter;
 
-        public FileFixedExtract(Entity entity, AbstractConnection connection, int top) {
+        public FileFixedExtract(AbstractConnection connection, Entity entity, int top) {
 
             var fileInfo = new FileInfo(connection.File);
 

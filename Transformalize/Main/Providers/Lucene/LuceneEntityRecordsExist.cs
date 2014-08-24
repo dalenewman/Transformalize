@@ -16,7 +16,7 @@ namespace Transformalize.Main.Providers.Lucene {
             if (!checker.Check(connection))
                 return false;
 
-            var directoryInfo = new DirectoryInfo(LuceneIndexDirectoryFactory.Path(connection, entity));
+            var directoryInfo = new DirectoryInfo(LuceneDirectoryFactory.Path(connection, entity));
 
             if (!directoryInfo.Exists)
                 return false;
@@ -24,7 +24,7 @@ namespace Transformalize.Main.Providers.Lucene {
             if(directoryInfo.GetFiles().Length == 0)
                 return false;
 
-            using (var indexDirectory = LuceneIndexDirectoryFactory.Create(connection, entity)) {
+            using (var indexDirectory = LuceneDirectoryFactory.Create(connection, entity)) {
                 using (var reader = IndexReader.Open(indexDirectory, true)) {
                     var count = reader.NumDocs();
                     return count > 0;

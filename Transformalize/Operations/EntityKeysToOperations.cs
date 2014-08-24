@@ -32,16 +32,16 @@ using Transformalize.Main.Providers;
 namespace Transformalize.Operations {
     public class EntityKeysToOperations : AbstractOperation {
         private readonly Entity _entity;
-        private readonly Process _process;
         private readonly AbstractConnection _connection;
+        private readonly bool _firstRun;
         private readonly Fields _key;
         private readonly string _operationColumn;
         private readonly Fields _fields;
 
-        public EntityKeysToOperations(Process process, Entity entity, AbstractConnection connection, string operationColumn = "operation") {
-            _process = process;
+        public EntityKeysToOperations(Entity entity, AbstractConnection connection, bool firstRun, string operationColumn = "operation") {
             _entity = entity;
             _connection = connection;
+            _firstRun = firstRun;
             _operationColumn = operationColumn;
             _key = _entity.PrimaryKey.WithInput();
             _fields = _entity.Fields.WithInput();
@@ -53,7 +53,7 @@ namespace Transformalize.Operations {
         }
 
         void EntityKeysToOperations_OnFinishedProcessing(IOperation obj) {
-            if (!_process.IsFirstRun && _entity.DetectChanges)
+            if (!_firstRun && _entity.DetectChanges)
                 return;
             _entity.InputKeys = new Row[0];
             Debug("Released input keys.");

@@ -40,7 +40,8 @@ namespace Transformalize.Main {
                         Name = st.Name,
                         Store = st.Store,
                         MultiValued = st.MultiValued,
-                        Analyzer = st.Analyzer
+                        Analyzer = st.Analyzer,
+                        Norms = st.Norms
                     };
                 }
             }

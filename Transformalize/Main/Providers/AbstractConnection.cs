@@ -281,28 +281,35 @@ namespace Transformalize.Main.Providers {
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public abstract IOperation EntityOutputKeysExtract(Entity entity);
+        public abstract IOperation ExtractCorrespondingKeysFromOutput(Entity entity);
 
         /// <summary>
-        /// Just get all the keys in the output
+        /// Just get all the keys from the output, certain assumptions can be made about output
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public abstract IOperation EntityOutputKeysExtractAll(Entity entity);
+        public abstract IOperation ExtractAllKeysFromOutput(Entity entity);
+
+        /// <summary>
+        /// Just get all the keys from the input
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public abstract IOperation ExtractAllKeysFromInput(Entity entity);
 
         /// <summary>
         /// Insert crap as fast as you can
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public abstract IOperation EntityBulkLoad(Entity entity);
+        public abstract IOperation Insert(Entity entity);
 
         /// <summary>
         /// Update stuff as fast as you can
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public abstract IOperation EntityBatchUpdate(Entity entity);
+        public abstract IOperation Update(Entity entity);
 
         /// <summary>
         /// Get a correctly typed version for the maximum tflbatchid given an entity and process name
@@ -319,5 +326,8 @@ namespace Transformalize.Main.Providers {
 
         public abstract Fields GetEntitySchema(Process process, string name, string schema = "", bool isMaster = false);
 
+        public abstract IOperation Delete(Entity entity);
+
+        public abstract IOperation Extract(Entity entity, bool firstRun);
     }
 }

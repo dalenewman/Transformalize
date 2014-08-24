@@ -12,7 +12,7 @@ namespace Transformalize.Main.Providers.Lucene
         public void Drop(AbstractConnection connection, Entity entity) {
             if (!EntityExists.Exists(connection, entity))
                 return;
-            new DirectoryInfo(LuceneIndexDirectoryFactory.Path(connection, entity)).Delete(true);
+            new DirectoryInfo(LuceneDirectoryFactory.Path(connection, entity)).Delete(true);
         }
     }
 }

@@ -36,19 +36,22 @@ namespace Transformalize.Main.Providers.AnalysisServices {
             // do nothing
         }
 
-        public override IOperation EntityOutputKeysExtract(Entity entity) {
+        public override IOperation ExtractCorrespondingKeysFromOutput(Entity entity) {
             return new EmptyOperation();
         }
 
-        public override IOperation EntityOutputKeysExtractAll(Entity entity) {
+        public override IOperation ExtractAllKeysFromOutput(Entity entity) {
+            return new EmptyOperation();
+        }
+        public override IOperation ExtractAllKeysFromInput(Entity entity) {
             return new EmptyOperation();
         }
 
-        public override IOperation EntityBulkLoad(Entity entity) {
+        public override IOperation Insert(Entity entity) {
             return new EmptyOperation();
         }
 
-        public override IOperation EntityBatchUpdate(Entity entity) {
+        public override IOperation Update(Entity entity) {
             return new EmptyOperation();
         }
 
@@ -62,6 +65,16 @@ namespace Transformalize.Main.Providers.AnalysisServices {
 
         public override Fields GetEntitySchema(Process process, string name, string schema = "", bool isMaster = false) {
             return new Fields();
+        }
+
+        public override IOperation Delete(Entity entity)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override IOperation Extract(Entity entity, bool firstRun)
+        {
+            throw new System.NotImplementedException();
         }
 
         public AnalysisServicesConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)

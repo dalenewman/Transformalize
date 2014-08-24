@@ -3,8 +3,11 @@ using System.Data;
 using Transformalize.Configuration;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Main.Providers.Sql;
 using Transformalize.Main.Providers.SqlServer;
+using Transformalize.Operations;
 using Transformalize.Operations.Transform;
+using Transformalize.Processes;
 
 namespace Transformalize.Main.Providers.SqlCe {
 
@@ -133,19 +136,23 @@ namespace Transformalize.Main.Providers.SqlCe {
 
         }
 
-        public override IOperation EntityOutputKeysExtract(Entity entity) {
+        public override IOperation ExtractCorrespondingKeysFromOutput(Entity entity) {
             return new EmptyOperation();
         }
 
-        public override IOperation EntityOutputKeysExtractAll(Entity entity) {
+        public override IOperation ExtractAllKeysFromInput(Entity entity) {
             return new EmptyOperation();
         }
 
-        public override IOperation EntityBulkLoad(Entity entity) {
+        public override IOperation ExtractAllKeysFromOutput(Entity entity) {
             return new EmptyOperation();
         }
 
-        public override IOperation EntityBatchUpdate(Entity entity) {
+        public override IOperation Insert(Entity entity) {
+            return new EmptyOperation();
+        }
+
+        public override IOperation Update(Entity entity) {
             return new EmptyOperation();
         }
 
@@ -191,7 +198,32 @@ namespace Transformalize.Main.Providers.SqlCe {
         }
 
         public override Fields GetEntitySchema(Process process, string name, string schema = "", bool isMaster = false) {
-            return new DatabaseEntitySchemaReader(this).Read(name, schema);
+            return new SqlEntitySchemaReader(this).Read(name, schema);
+        }
+
+        public override IOperation Delete(Entity entity) {
+            throw new NotImplementedException();
+        }
+
+        public override IOperation Extract(Entity entity, bool firstRun) {
+            if (Schemas && entity.Schema.Equals(string.Empty)) {
+                entity.Schema = DefaultSchema;
+            }
+            var p = new PartialProcessOperation();
+            if (entity.HasSqlOverride()) {
+                p.Register(new SqlOverrideOperation(entity, this));
+            } else {
+                if (entity.PrimaryKey.WithInput().Any()) {
+                    p.Register(new EntityKeysSaveOperation(entity));
+                    p.Register(new EntityKeysToOperations(entity, this, firstRun));
+                    p.Register(new SerialUnionAllOperation());
+                } else {
+                    entity.SqlOverride = SqlTemplates.Select(entity, this);
+                    p.Register(new SqlOverrideOperation(entity, this));
+                }
+            }
+            return p;
+
         }
     }
 }

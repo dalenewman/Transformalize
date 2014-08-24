@@ -105,21 +105,25 @@ namespace Transformalize.Main.Providers.Solr {
             }
         }
 
-        public override IOperation EntityOutputKeysExtract(Entity entity) {
+        public override IOperation ExtractCorrespondingKeysFromOutput(Entity entity) {
             return new EmptyOperation();
             //need to learn search type scan / scroll functionality for bigger result sets
             //return new SolrEntityOutputKeysExtract(this, entity);
         }
 
-        public override IOperation EntityOutputKeysExtractAll(Entity entity) {
+        public override IOperation ExtractAllKeysFromOutput(Entity entity) {
             return new SolrEntityOutputKeysExtract(this, entity);
         }
 
-        public override IOperation EntityBulkLoad(Entity entity) {
+        public override IOperation ExtractAllKeysFromInput(Entity entity) {
+            return new EmptyOperation();
+        }
+
+        public override IOperation Insert(Entity entity) {
             return new SolrLoadOperation(entity, this);
         }
 
-        public override IOperation EntityBatchUpdate(Entity entity) {
+        public override IOperation Update(Entity entity) {
             return new SolrLoadOperation(entity, this);
         }
 
@@ -150,6 +154,16 @@ namespace Transformalize.Main.Providers.Solr {
 
         public override Fields GetEntitySchema(Process process, string name, string schema = "", bool isMaster = false) {
             return new Fields();
+        }
+
+        public override IOperation Delete(Entity entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IOperation Extract(Entity entity, bool firstRun)
+        {
+            throw new NotImplementedException();
         }
 
         private int GetMaxTflBatchId(Entity entity) {

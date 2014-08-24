@@ -29,11 +29,18 @@ namespace Transformalize.Configuration {
         private const string INDEX = "index";
         private const string MULTI_VALUED = "multi-valued";
         private const string ANALYZER = "analyzer";
+        private const string NORMS = "norms";
 
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name {
             get { return this[NAME] as string; }
             set { this[NAME] = value; }
+        }
+
+        [ConfigurationProperty(NORMS, IsRequired = false, DefaultValue = false)]
+        public bool Norms {
+            get { return (bool) this[NORMS]; }
+            set { this[NORMS] = value; }
         }
 
         [ConfigurationProperty(ANALYZER, IsRequired = false, DefaultValue = "")]

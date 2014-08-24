@@ -31,7 +31,7 @@ namespace Transformalize.Operations {
             }
 
             if (calculatedFields != null) {
-                foreach (Field field in calculatedFields.WithString()) {
+                foreach (var field in calculatedFields.WithString()) {
                     if (!_aliases.Contains(field.Alias)) {
                         _aliases.Add(field.Alias);
                         var value = field.Length.Equals("max", IC) ? Int32.MaxValue.ToString(CultureInfo.InvariantCulture) : field.Length;

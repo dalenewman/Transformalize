@@ -21,7 +21,7 @@ namespace Transformalize.Main.Providers.Lucene {
             }
 
             try {
-                using (var indexDirectory = LuceneIndexDirectoryFactory.Create(connection, connection.TflBatchEntity(_processName))) {
+                using (var indexDirectory = LuceneDirectoryFactory.Create(connection, connection.TflBatchEntity(_processName))) {
                     using (var reader = IndexReader.Open(indexDirectory, true)) {
                         _log.Debug("Successfully connected to lucene index in {0}.", connection.Folder);
                         Checks[hashCode] = true;

@@ -14,7 +14,7 @@ namespace Transformalize.Main.Providers {
         }
 
         public bool Excel() {
-            return _connection.Type == ProviderType.File && (_connection.File.EndsWith(".xlsx", IC) || _connection.File.EndsWith(".xls", IC));
+            return (_connection.Type == ProviderType.File || _connection.Type == ProviderType.Folder) && (_connection.File.EndsWith(".xlsx", IC) || _connection.File.EndsWith(".xls", IC));
         }
 
         public bool File() {

@@ -24,11 +24,22 @@ namespace Transformalize.Main {
 
     public class SearchType {
 
+        public SearchType() {
+            Name = string.Empty;
+            Store = true;
+            Index = true;
+            MultiValued = false;
+            Analyzer = string.Empty;
+            Type = "string";
+            Norms = false;
+        }
+
         public string Name { get; set; }
         public bool Store { get; set; }
         public bool Index { get; set; }
         public bool MultiValued { get; set; }
         public string Analyzer { get; set; }
-        public string Type { get; set; }
+        public string Type { get; set; }  //for backwards compatibility with solr templates
+        public bool Norms { get; set; }
     }
 }
