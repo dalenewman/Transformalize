@@ -6,14 +6,12 @@
 
 using System;
 
-namespace Transformalize.Libs.Rhino.Etl
-{
+namespace Transformalize.Libs.Rhino.Etl {
     /// <summary>
     ///     Helper class for guard statements, which allow prettier
     ///     code for guard clauses
     /// </summary>
-    public class Guard
-    {
+    public class Guard {
         /// <summary>
         ///     Will throw a <see cref="InvalidOperationException" /> if the assertion
         ///     is true, with the specificied message.
@@ -28,11 +26,10 @@ namespace Transformalize.Libs.Rhino.Etl
         /// Guard.Against(string.IsNullOrEmpty(name), "Name must have a value");
         /// </code>
         /// </example>
-        public static void Against(bool assertion, string message)
-        {
+        public static void Against(bool assertion, string message, params object[] args) {
             if (assertion == false)
                 return;
-            throw new InvalidOperationException(message);
+            throw new InvalidOperationException(string.Format(message, args));
         }
 
         /// <summary>
@@ -52,11 +49,10 @@ namespace Transformalize.Libs.Rhino.Etl
         /// ]]>
         /// </code>
         /// </example>
-        public static void Against<TException>(bool assertion, string message) where TException : Exception
-        {
+        public static void Against<TException>(bool assertion, string message) where TException : Exception {
             if (assertion == false)
                 return;
-            throw (TException) Activator.CreateInstance(typeof (TException), message);
+            throw (TException)Activator.CreateInstance(typeof(TException), message);
         }
     }
 }

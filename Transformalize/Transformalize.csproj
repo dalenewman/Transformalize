@@ -2110,6 +2110,7 @@
     <Compile Include="Main\TransformalizeException.cs" />
     <Compile Include="Main\Transform\AverageOperation.cs" />
     <Compile Include="Main\Transform\GeoCodeOperation.cs" />
+    <Compile Include="Main\Transform\ShortHandFactory.cs" />
     <Compile Include="Main\Transform\TransformOperationFactory.cs" />
     <Compile Include="Main\Transform\ITransformParametersReader.cs" />
     <Compile Include="Main\Transform\ITransformLoader.cs" />

@@ -126,6 +126,7 @@
     <Compile Include="TestProcess.cs" />
     <Compile Include="TestSqlTemplates.cs" />
     <Compile Include="TestStringBuilderExtensions.cs" />
+    <Compile Include="TestShortHand.cs" />
     <Compile Include="TestTransforms.cs" />
     <Compile Include="TestValidators.cs" />
     <Compile Include="TestWarehouse.cs" />

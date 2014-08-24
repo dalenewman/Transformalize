@@ -76,6 +76,32 @@ namespace Transformalize.Main {
             return Validators.ContainsKey(method.ToLower());
         }
 
+
+
+        public static Dictionary<string, byte> TypeMap = new Dictionary<string, byte> {
+            {"string", 0},
+            {"xml", 0},
+            {"int16", 1},
+            {"short", 1},
+            {"int32", 2},
+            {"int", 2},
+            {"int64", 3},
+            {"long", 3},
+            {"uint64", 4},
+            {"double", 5},
+            {"decimal", 6},
+            {"char", 7},
+            {"datetime", 8},
+            {"boolean", 9},
+            {"single", 10},
+            {"real", 11},
+            {"float", 12},
+            {"guid", 13},
+            {"byte", 14},
+            {"byte[]", 15},
+            {"rowversion", 15}
+        };
+
         public static Dictionary<string, Func<string, object>> ConversionMap = new Dictionary<string, Func<string, object>> {
             {"string", (x => x)},
             {"xml", (x => x)},
