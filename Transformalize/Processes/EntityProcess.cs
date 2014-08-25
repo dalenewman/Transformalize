@@ -21,7 +21,6 @@
 #endregion
 
 using System.Collections.Concurrent;
-using System.IO;
 using System.Linq;
 using Transformalize.Extensions;
 using Transformalize.Libs.NLog;
@@ -29,9 +28,7 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
-using Transformalize.Main.Providers.Sql;
 using Transformalize.Operations;
-using Transformalize.Operations.Extract;
 using Transformalize.Operations.Transform;
 
 namespace Transformalize.Processes {

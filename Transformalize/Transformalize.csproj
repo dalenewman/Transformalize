@@ -1868,6 +1868,8 @@
     <Compile Include="Libs\SolrNet\Utils\UriValidator.cs" />
     <Compile Include="Libs\SolrNet\Utils\X.cs" />
     <Compile Include="Main\Common.cs" />
+    <Compile Include="Main\Data.cs" />
+    <Compile Include="Main\DataCaster.cs" />
     <Compile Include="Main\Entity\EntitiesLoader.cs" />
     <Compile Include="Main\Entity\EntityParametersReader.cs" />
     <Compile Include="Main\Entity\EntityRelationshipLoader.cs" />

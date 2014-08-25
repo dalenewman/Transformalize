@@ -34,11 +34,9 @@ using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main {
-
     public static class Common {
 
         private static readonly Logger Log = LogManager.GetLogger("tfl");
-        private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private const string APPLICATION_FOLDER = @"\Tfl\";
         private static readonly char[] Slash = { '\\' };
         private const string CLEAN_PATTERN = @"[^\w]";
@@ -87,19 +85,22 @@ namespace Transformalize.Main {
             {"int", 2},
             {"int64", 3},
             {"long", 3},
-            {"uint64", 4},
-            {"double", 5},
-            {"decimal", 6},
-            {"char", 7},
-            {"datetime", 8},
-            {"boolean", 9},
-            {"single", 10},
-            {"real", 11},
-            {"float", 12},
-            {"guid", 13},
-            {"byte", 14},
-            {"byte[]", 15},
-            {"rowversion", 15}
+            {"double", 4},
+            {"decimal", 5},
+            {"char", 6},
+            {"datetime", 7},
+            {"date", 7},
+            {"boolean", 8},
+            {"bool", 8},
+            {"single", 9},
+            {"real", 9},
+            {"float", 9},
+            {"guid", 10},
+            {"byte", 11},
+            {"byte[]", 12},
+            {"rowversion", 12},
+            {"uint64", 13},
+            {"object", 14}
         };
 
         public static Dictionary<string, Func<string, object>> ConversionMap = new Dictionary<string, Func<string, object>> {
@@ -274,9 +275,9 @@ namespace Transformalize.Main {
                 case "uint16":
                     return typeof(UInt16);
                 case "uint32":
-                    return typeof (UInt32);
+                    return typeof(UInt32);
                 case "uint64":
-                    return typeof (UInt64);
+                    return typeof(UInt64);
                 default:
                     var fullName = "System." + simpleType[0].ToString(CultureInfo.InvariantCulture).ToUpper() + simpleType.Substring(1);
                     return Type.GetType(fullName) ?? Type.GetType(simpleType);

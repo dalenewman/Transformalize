@@ -72,7 +72,7 @@ namespace Transformalize.Main {
 
             FieldSearchTypesLoader(field, element);
 
-            foreach (var keyField in new[] { "TflKey", "TflUpdate", "TflBatchId", "TflFileName", "TflDeleted" }) {
+            foreach (var keyField in new[] { "TflKey", "TflUpdate", "TflBatchId", "TflFileName", "TflDeleted", "TflAction" }) {
                 if (field.Alias.Equals(keyField, IC) && field.Input) {
                     _log.Warn("{0}, defined in {1}, is a reserved field name.  Please alias this field.", field.Alias, field.Entity);
                 }
