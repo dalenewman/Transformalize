@@ -157,6 +157,68 @@ namespace Transformalize.Test {
             Assert.AreEqual("gethashcode", result.Method);
         }
 
+        [Test]
+        public void CompressField() {
+            const string expression = "co(";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("compress", result.Method);
+            Assert.AreEqual("", result.Parameter);
+        }
+
+        [Test]
+        public void CompressParameter()
+        {
+            const string expression = "co(p";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("compress",result.Method);
+            Assert.AreEqual("p", result.Parameter);
+        }
+
+        [Test]
+        public void DeCompressField() {
+            const string expression = "de(";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("decompress", result.Method);
+            Assert.AreEqual("", result.Parameter);
+        }
+
+        [Test]
+        public void DeCompressParameter() {
+            const string expression = "de(p";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("decompress", result.Method);
+            Assert.AreEqual("p", result.Parameter);
+        }
+
+        [Test]
+        public void Elipse() {
+            const string expression = "e(20,.....";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("elipse", result.Method);
+            Assert.AreEqual(20, result.Length);
+            Assert.AreEqual(".....", result.Elipse);
+        }
+
+        [Test]
+        public void RegexReplace() {
+            const string expression = "rr(^x|y$,Z";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("regexreplace", result.Method);
+            Assert.AreEqual("^x|y$", result.Pattern);
+            Assert.AreEqual("Z", result.Replacement);
+            Assert.AreEqual(0, result.Count);
+        }
+
+        [Test]
+        public void ElipseEscapeComma() {
+            const string expression = @"e(20,\,\,\,";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("elipse", result.Method);
+            Assert.AreEqual(20, result.Length);
+            Assert.AreEqual(",,,", result.Elipse);
+        }
+
+
 
     }
 }
