@@ -38,11 +38,6 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
-        public TransformBuilder To(string type) {
-            _transform.To = type;
-            return this;
-        }
-
         public TransformBuilder Value(string value) {
             _transform.Value = value;
             return this;

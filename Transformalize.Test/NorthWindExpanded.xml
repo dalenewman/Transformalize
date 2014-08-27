@@ -61,7 +61,7 @@
         <add name="TimeOrderYearNumber" type="Int16" default="0">
           <transforms>
             <add method="tostring" format="yyyy" parameter="OrderDate" />
-            <add method="convert" to="Int16" />
+            <add method="convert" />
           </transforms>
         </add>
       </calculated-fields>

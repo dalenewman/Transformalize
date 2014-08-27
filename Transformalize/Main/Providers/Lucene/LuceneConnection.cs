@@ -129,7 +129,7 @@ namespace Transformalize.Main.Providers.Lucene {
 
         public override IOperation Extract(Entity entity, bool firstRun)
         {
-            throw new NotImplementedException();
+            return new LuceneExtract(this, entity);
         }
 
         public static Version GetLuceneVersion(string version) {

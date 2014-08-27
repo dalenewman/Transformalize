@@ -214,5 +214,10 @@ namespace Transformalize.Configuration.Builders {
             _field.Distinct = distinct;
             return this;
         }
+
+        public FieldBuilder ShortHand(string shortHand) {
+            _field.ShortHand = shortHand;
+            return this;
+        }
     }
 }

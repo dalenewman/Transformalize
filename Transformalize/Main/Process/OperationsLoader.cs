@@ -1,6 +1,9 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using Transformalize.Configuration;
+using Transformalize.Main.Transform;
 using Transformalize.Operations.Transform;
 
 namespace Transformalize.Main {
@@ -32,6 +35,8 @@ namespace Transformalize.Main {
                         entity.OperationsAfterAggregation.Add(new TrimOperation(field.Alias, field.Alias, " "));
                     }
 
+                    AddShortHandTransforms(f);
+
                     foreach (TransformConfigurationElement t in f.Transforms) {
                         field.Transforms.Add(t.Method.ToLower());
                         var reader = new FieldParametersReader();
@@ -50,6 +55,8 @@ namespace Transformalize.Main {
 
                     var field = _process.GetField(cf.Alias, entity.Alias);
 
+                    AddShortHandTransforms(cf);
+
                     foreach (TransformConfigurationElement t in cf.Transforms) {
                         var reader = t.Parameter.Equals("*") ?
                             (ITransformParametersReader)new EntityParametersReader(entity) :
@@ -64,7 +71,24 @@ namespace Transformalize.Main {
                         AddBranches(t.Branches, entity, field, reader);
                     }
                 }
+
+
             }
+
+        }
+
+        private static void AddShortHandTransforms(FieldConfigurationElement f) {
+            if (f.ShortHand == string.Empty)
+                return;
+            var transforms = new List<TransformConfigurationElement>(f.ShortHand.Split(new[] { ';' }).Select(ShortHandFactory.Interpret));
+            var collection = new TransformElementCollection();
+            foreach (var transform in transforms) {
+                collection.Add(transform);
+            }
+            foreach (TransformConfigurationElement transform in f.Transforms) {
+                collection.Add(transform);
+            }
+            f.Transforms = collection;
         }
 
         private void AddBranches(IEnumerable branches, Entity entity, Field field, ITransformParametersReader reader) {

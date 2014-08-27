@@ -59,7 +59,6 @@ namespace Transformalize.Configuration {
         private const string TYPE = "type";
         private const string ROOT = "root";
         private const string FIELDS = "fields";
-        private const string TO = "to";
         private const string UNITS = "units";
         private const string DOMAIN = "domain";
         private const string XPATH = "xpath";
@@ -139,12 +138,6 @@ namespace Transformalize.Configuration {
         public string Units {
             get { return this[UNITS] as string; }
             set { this[UNITS] = value; }
-        }
-
-        [ConfigurationProperty(TO, IsRequired = false, DefaultValue = "")]
-        public string To {
-            get { return this[TO] as string; }
-            set { this[TO] = value; }
         }
 
         [ConfigurationProperty(VALUE, IsRequired = false, DefaultValue = "")]

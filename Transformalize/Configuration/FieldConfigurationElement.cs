@@ -55,6 +55,7 @@ namespace Transformalize.Configuration {
         private const string LABEL = "label";
         private const string DELIMITER = "delimiter";
         private const string DISTINCT = "distinct";
+        private const string SHORT_HAND = "t";
 
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name {
@@ -224,6 +225,12 @@ namespace Transformalize.Configuration {
         public bool Distinct {
             get { return (bool)this[DISTINCT]; }
             set { this[DISTINCT] = value; }
+        }
+
+        [ConfigurationProperty(SHORT_HAND, IsRequired = false, DefaultValue = "")]
+        public string ShortHand {
+            get { return (string)this[SHORT_HAND]; }
+            set { this[SHORT_HAND] = value; }
         }
 
         public override bool IsReadOnly() {

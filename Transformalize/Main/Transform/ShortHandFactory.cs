@@ -4,7 +4,6 @@ using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
-using Transformalize.Libs.Rhino.Etl;
 
 namespace Transformalize.Main.Transform {
     public class ShortHandFactory {
@@ -13,15 +12,22 @@ namespace Transformalize.Main.Transform {
             {"l","left"},
             {"ri","right"},
             {"a","append"},
-            {"i","if"}
+            {"i","if"},
+            {"cv","convert"},
+            {"cp","copy"},
+            {"cc","concat"},
+            {"hc","hashcode"}
         };
         public static readonly Dictionary<string, Func<string, TransformConfigurationElement>> Functions = new Dictionary<string, Func<string, TransformConfigurationElement>> {
             {"replace", Replace},
             {"left", Left},
             {"right", Right},
             {"append", arg => new TransformConfigurationElement() { Method="append", Value = arg}},
-            {"if", If}
-
+            {"if", If},
+            {"convert", Convert},
+            {"copy", arg => new TransformConfigurationElement() { Method ="copy", Parameter = arg}},
+            {"concat", arg => new TransformConfigurationElement() {Method = "concat", Parameter = arg}},
+            {"hashcode", arg => new TransformConfigurationElement() {Method = "gethashcode"}}
         };
 
         public static TransformConfigurationElement Interpret(string expression) {
@@ -47,6 +53,23 @@ namespace Transformalize.Main.Transform {
             return new TransformConfigurationElement() {
                 Method = "replace", OldValue = oldValue, NewValue = newValue
             };
+        }
+
+        private static TransformConfigurationElement Convert(string arg) {
+            var split = Split(arg);
+            Guard.Against(split.Length < 1, "The convert method requires one parameter referencing another field's alias (or name).");
+
+            var element = new TransformConfigurationElement() { Method = "convert", Parameter = split[0] };
+            if (split.Length <= 1)
+                return element;
+
+            var second = split[1];
+            if (System.Text.Encoding.GetEncodings().Any(e => e.Name.Equals(second, StringComparison.OrdinalIgnoreCase))) {
+                element.Encoding = second;
+            } else {
+                element.Format = second;
+            }
+            return element;
         }
 
         private static TransformConfigurationElement If(string arg) {

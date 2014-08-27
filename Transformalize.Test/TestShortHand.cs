@@ -22,7 +22,6 @@
 
 using NUnit.Framework;
 using Transformalize.Main.Transform;
-using Transformalize.Operations;
 
 namespace Transformalize.Test {
     [TestFixture]
@@ -108,6 +107,56 @@ namespace Transformalize.Test {
             Assert.AreEqual("yes", result.Then);
             Assert.AreEqual("", result.Else);
         }
+
+        [Test]
+        public void Convert() {
+            const string expression = "cv(p";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("convert", result.Method);
+            Assert.AreEqual("p", result.Parameter);
+        }
+
+        [Test]
+        public void ConvertDate() {
+            const string expression = "cv(d,MMMM-DD-YYYY";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("convert", result.Method);
+            Assert.AreEqual("d", result.Parameter);
+            Assert.AreEqual("MMMM-DD-YYYY", result.Format);
+        }
+
+        [Test]
+        public void ConvertWithEncoding() {
+            const string expression = "cv(b,UTF-8";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("convert", result.Method);
+            Assert.AreEqual("b", result.Parameter);
+            Assert.AreEqual("UTF-8", result.Encoding);
+        }
+
+        [Test]
+        public void Copy() {
+            const string expression = "cp(a";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("copy", result.Method);
+            Assert.AreEqual("a", result.Parameter);
+        }
+
+        [Test]
+        public void Concat() {
+            const string expression = "cc(*";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("concat", result.Method);
+            Assert.AreEqual("*", result.Parameter);
+        }
+
+        [Test]
+        public void HashCode() {
+            const string expression = "hc(";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("gethashcode", result.Method);
+        }
+
 
     }
 }

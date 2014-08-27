@@ -88,12 +88,15 @@ namespace Transformalize.Main {
                         inKey,
                         inType,
                         outKey,
-                        Common.ToSimpleType(element.To),
+                        outType,
                         element.Encoding,
                         element.Format
                     ) { ShouldRun = shouldRun };
 
                 case "copy":
+                    if (!hasParameters) {
+                        throw new TransformalizeException("The copy transform requires a parameter.  It copies the parameter value into the calculated field.");
+                    }
                     return new CopyOperation(inKey, outKey) { ShouldRun = shouldRun };
 
                 case "compress":

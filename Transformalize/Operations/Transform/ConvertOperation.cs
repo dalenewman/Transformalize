@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Threading;
+using Transformalize.Libs.NLog.Internal;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 
@@ -22,8 +22,14 @@ namespace Transformalize.Operations.Transform {
             if (_outType == "int32" && inType == "datetime") {
                 _conversionMap[_outType] = (x => Common.DateTimeToInt32((DateTime)x));
             }
+            if (_outType == "long" && inType == "datetime") {
+                _conversionMap[_outType] = (x => ((DateTime)x).Ticks);
+            }
             if (_outType.Equals("string") && inType == "byte[]") {
                 if (!encoding.Equals(Common.DefaultValue)) {
+                    if (System.Text.Encoding.GetEncodings().Any(e => e.Name.Equals(encoding))) {
+                        throw new TransformalizeException("The encoding `{0}` declared in your convert transform does not exist in System.Text.Encoding (see www.iana.org for standard encoding names).");
+                    }
                     _conversionMap[_outType] = (x => System.Text.Encoding.GetEncoding(encoding).GetString((byte[])x));
                 }
             }
