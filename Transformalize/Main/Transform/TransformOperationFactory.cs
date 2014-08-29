@@ -125,6 +125,15 @@ namespace Transformalize.Main {
                         element.Count
                     ) { ShouldRun = shouldRun };
 
+                case "striphtml":
+                    return new RegexReplaceOperation(
+                        inKey,
+                        outKey,
+                        @"<[^>]+>|&nbsp;",
+                        string.Empty,
+                        0
+                    ) { ShouldRun = shouldRun};
+
                 case "insert":
                     return new InsertOperation(
                         inKey,
@@ -149,10 +158,11 @@ namespace Transformalize.Main {
                     ) { ShouldRun = shouldRun };
 
                 case "if":
+                    var leftParameter = GetParameter(field.Entity, element.Left, parameters);
                     return new IfOperation(
-                        GetParameter(field.Entity, element.Left, parameters),
+                        leftParameter,
                         (ComparisonOperator)Enum.Parse(typeof(ComparisonOperator), element.Operator, true),
-                        GetParameter(field.Entity, element.Right, parameters),
+                        GetParameter(field.Entity, element.Right, parameters, leftParameter.SimpleType),
                         GetParameter(field.Entity, element.Then, parameters),
                         GetParameter(field.Entity, element.Else, parameters),
                         outKey,
@@ -673,7 +683,7 @@ namespace Transformalize.Main {
                 new Parameter(parameter, parameter);
         }
 
-        private IParameter GetParameter(string entity, string parameter, IParameters parameters) {
+        private IParameter GetParameter(string entity, string parameter, IParameters parameters, string newParameterType = "string") {
             Field f;
             if (_process.TryGetField(parameter, entity, out f, false)) {
                 return f.ToParameter();
@@ -682,7 +692,7 @@ namespace Transformalize.Main {
                 return parameters[parameter];
             }
 
-            return new Parameter(parameter, parameter);
+            return new Parameter(parameter, parameter) { SimpleType = newParameterType};
         }
 
     }

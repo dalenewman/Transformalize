@@ -51,7 +51,6 @@ namespace Transformalize.Main {
             if (_element == null) {
                 throw new TransformalizeException("Can't find a process named {0}.", _processName);
             }
-
             _process = new Process(_element.Name) {
                 Options = _options,
                 TemplateContentType = _element.TemplateContentType.Equals("raw") ? Encoding.Raw : Encoding.Html,
@@ -60,6 +59,7 @@ namespace Transformalize.Main {
                 Star = _element.Star,
                 View = _element.View,
                 Mode = _element.Mode,
+                LogLevel = _element.LogLevel,
                 StarEnabled = _element.StarEnabled,
                 TimeZone = string.IsNullOrEmpty(_element.TimeZone) ? TimeZoneInfo.Local.Id : _element.TimeZone,
                 PipelineThreading = (PipelineThreading)Enum.Parse(typeof(PipelineThreading), _element.PipelineThreading, true)

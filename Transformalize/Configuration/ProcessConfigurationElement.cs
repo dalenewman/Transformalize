@@ -48,6 +48,7 @@ namespace Transformalize.Configuration {
         private const string RELATIONSHIPS = "relationships";
         private const string CALCULATED_FIELDS = "calculated-fields";
         private const string MODE = "mode";
+        private const string LOG_LEVEL = "log-level";
         private const string FILE_INSPECTION = "file-inspection";
 
         [ConfigurationProperty(NAME, IsRequired = true)]
@@ -60,6 +61,12 @@ namespace Transformalize.Configuration {
         public string Mode {
             get { return this[MODE] as string; }
             set { this[MODE] = value.ToLower(); }
+        }
+
+        [ConfigurationProperty(LOG_LEVEL, IsRequired = false, DefaultValue = Common.DefaultValue)]
+        public string LogLevel {
+            get { return this[LOG_LEVEL] as string; }
+            set { this[LOG_LEVEL] = value.ToLower(); }
         }
 
         [ConfigurationProperty(INHERIT, IsRequired = false, DefaultValue = "")]
@@ -188,6 +195,7 @@ namespace Transformalize.Configuration {
             Name = child.Name;
             Star = child.Star;
             Mode = child.Mode;
+            LogLevel = child.LogLevel;
             StarEnabled = child.StarEnabled;
             TimeZone = child.TimeZone;
             Enabled = child.Enabled;

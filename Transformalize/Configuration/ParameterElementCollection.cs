@@ -22,47 +22,37 @@
 
 using System.Configuration;
 
-namespace Transformalize.Configuration
-{
-    public class ParameterElementCollection : MyConfigurationElementCollection
-    {
-        public ParameterConfigurationElement this[int index]
-        {
+namespace Transformalize.Configuration {
+    public class ParameterElementCollection : MyConfigurationElementCollection {
+        public ParameterConfigurationElement this[int index] {
             get { return BaseGet(index) as ParameterConfigurationElement; }
-            set
-            {
-                if (BaseGet(index) != null)
-                {
+            set {
+                if (BaseGet(index) != null) {
                     BaseRemoveAt(index);
                 }
                 BaseAdd(index, value);
             }
         }
 
-        public override bool IsReadOnly()
-        {
+        public override bool IsReadOnly() {
             return false;
         }
 
-        protected override ConfigurationElement CreateNewElement()
-        {
+        protected override ConfigurationElement CreateNewElement() {
             return new ParameterConfigurationElement();
         }
 
-        protected override object GetElementKey(ConfigurationElement element)
-        {
-            var parameter = (ParameterConfigurationElement) element;
+        protected override object GetElementKey(ConfigurationElement element) {
+            var parameter = (ParameterConfigurationElement)element;
             var key = string.IsNullOrEmpty(parameter.Name) ? parameter.Field : parameter.Name;
             return string.Concat(parameter.Entity, key).ToLower();
         }
 
-        public void Insert(ParameterConfigurationElement element)
-        {
+        public void Insert(ParameterConfigurationElement element) {
             BaseAdd(0, element);
         }
 
-        public void Add(ParameterConfigurationElement element)
-        {
+        public void Add(ParameterConfigurationElement element) {
             BaseAdd(element);
         }
     }

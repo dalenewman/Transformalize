@@ -65,15 +65,15 @@ namespace Transformalize.Main.Providers.MySql {
         }
 
         public override IOperation ExtractCorrespondingKeysFromOutput(Entity entity) {
-            return new EmptyOperation();
+            return new SqlEntityKeysExtractAllFromOutput(this, entity);
         }
 
         public override IOperation ExtractAllKeysFromOutput(Entity entity) {
-            return new EmptyOperation();
+            return new SqlEntityKeysExtractAllFromOutput(this, entity);
         }
 
         public override IOperation ExtractAllKeysFromInput(Entity entity) {
-            return new EmptyOperation();
+            return new SqlEntityKeysExtractAllFromInput(this, entity);
         }
 
         public override IOperation Insert(Entity entity) {

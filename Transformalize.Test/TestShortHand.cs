@@ -62,7 +62,7 @@ namespace Transformalize.Test {
 
         [Test]
         public void If() {
-            const string expression = "i(x,y,yes,no";
+            const string expression = "if(x,y,yes,no";
             var result = ShortHandFactory.Interpret(expression);
             Assert.AreEqual("if", result.Method);
             Assert.AreEqual("x", result.Left);
@@ -151,6 +151,35 @@ namespace Transformalize.Test {
         }
 
         [Test]
+        public void ConcatWithParameters()
+        {
+            const string expression = "cc(p1,p2";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("concat", result.Method);
+            Assert.AreEqual("p1", result.Parameters[0].Field);
+            Assert.AreEqual("p2", result.Parameters[1].Field);
+        }
+
+        [Test]
+        public void Join() {
+            const string expression = @"j(\,,*";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("join", result.Method);
+            Assert.AreEqual(",", result.Separator);
+            Assert.AreEqual("*", result.Parameter);
+        }
+
+        [Test]
+        public void JoinWithParameters() {
+            const string expression = "j( ,p1,p2";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("join", result.Method);
+            Assert.AreEqual(" ", result.Separator);
+            Assert.AreEqual("p1", result.Parameters[0].Field);
+            Assert.AreEqual("p2", result.Parameters[1].Field);
+        }
+
+        [Test]
         public void HashCode() {
             const string expression = "hc(";
             var result = ShortHandFactory.Interpret(expression);
@@ -218,6 +247,24 @@ namespace Transformalize.Test {
             Assert.AreEqual(",,,", result.Elipse);
         }
 
+        [Test]
+        public void Format() {
+            const string expression = @"f(mailto:{0},email";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("format", result.Method);
+            Assert.AreEqual("mailto:{0}", result.Format);
+            Assert.AreEqual("email", result.Parameter);
+        }
+
+        [Test]
+        public void FormatTwoParameters() {
+            const string expression = @"f(mailto:{0}@{1},username,domain";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("format", result.Method);
+            Assert.AreEqual("mailto:{0}@{1}", result.Format);
+            Assert.AreEqual("username", result.Parameters[0].Field);
+            Assert.AreEqual("domain", result.Parameters[1].Field);
+        }
 
 
     }

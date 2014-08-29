@@ -78,6 +78,7 @@ namespace Transformalize.Main {
         public bool IsFirstRun { get; set; }
         public long Anything { get; set; }
         public bool StarEnabled { get; set; }
+        public string LogLevel { get; set; }
 
         public string Star {
             get { return _star.Equals(Common.DefaultValue) ? Name + "Star" : _star; }

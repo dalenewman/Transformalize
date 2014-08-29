@@ -7,7 +7,6 @@ using Transformalize.Runner;
 namespace Transformalize.Configuration {
     public class ConfigurationFactory {
         private readonly NameValueCollection _query;
-        private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private readonly string _resource;
 
         /// <summary>

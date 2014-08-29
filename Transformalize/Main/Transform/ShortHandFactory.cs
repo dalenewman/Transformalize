@@ -37,7 +37,13 @@ namespace Transformalize.Main.Transform {
             {"e","elipse"},
             {"elipse","elipse"},
             {"rr","regexreplace"},
-            {"regexreplace","regexreplace"}
+            {"regexreplace","regexreplace"},
+            {"sh","striphtml"},
+            {"striphtml","striphtml"},
+            {"join","join"},
+            {"j","join"},
+            {"f","format"},
+            {"format","format"}
         };
         public static readonly Dictionary<string, Func<string, TransformConfigurationElement>> Functions = new Dictionary<string, Func<string, TransformConfigurationElement>> {
             {"replace", Replace},
@@ -47,13 +53,66 @@ namespace Transformalize.Main.Transform {
             {"if", If},
             {"convert", Convert},
             {"copy", arg => new TransformConfigurationElement() { Method ="copy", Parameter = arg}},
-            {"concat", arg => new TransformConfigurationElement() {Method = "concat", Parameter = arg}},
+            {"concat", Concat},
             {"hashcode", arg => new TransformConfigurationElement() {Method = "gethashcode"}},
             {"compress", arg => new TransformConfigurationElement() {Method = "compress", Parameter = arg} },
             {"decompress", arg => new TransformConfigurationElement() {Method = "decompress", Parameter = arg}},
             {"elipse", Elipse},
-            {"regexreplace", RegexReplace}
+            {"regexreplace", RegexReplace},
+            {"striphtml", arg=>new TransformConfigurationElement() {Method = "striphtml", Parameter = arg}},
+            {"join",Join},
+            {"format", Format}
         };
+
+        private static TransformConfigurationElement Join(string arg) {
+            var split = SplitComma(arg);
+            Guard.Against(split.Length == 0, "The join method requires a a separator, and then a * (for all fields) or a comma delimited list of parameters that reference fields.");
+
+            var element = new TransformConfigurationElement() { Method = "join", Separator = split[0] };
+
+            if (split.Length == 2) {
+                element.Parameter = split[1];
+                return element;
+            }
+
+            foreach (var p in split.Skip(1)) {
+                element.Parameters.Add(new ParameterConfigurationElement() { Field = p });
+            }
+
+            return element;
+        }
+
+        private static TransformConfigurationElement Concat(string arg) {
+            var split = SplitComma(arg);
+            Guard.Against(split.Length == 0, "The concat method requires a * parameter, or a comma delimited list of parameters that reference fields.");
+
+            var element = new TransformConfigurationElement() { Method = "concat" };
+
+            if (split.Length == 1) {
+                element.Parameter = split[0];
+            } else {
+                foreach (var p in split) {
+                    element.Parameters.Add(new ParameterConfigurationElement() { Field = p });
+                }
+            }
+            return element;
+        }
+
+        public static TransformConfigurationElement Interpret(string expression) {
+
+            Guard.Against(expression == null, "You may not pass a null expression.");
+            // ReSharper disable once PossibleNullReferenceException
+
+            var split = expression.Contains("(") ?
+                expression.Split(new[] { '(' }, StringSplitOptions.None) :
+                new[] { expression, "" };
+
+            var method = split[0].ToLower();
+
+            Guard.Against(!Methods.ContainsKey(method), "Sorry. Your expression '{0}' references an undefined method: '{1}'.", expression, method);
+
+            return Functions[Methods[method]](split[1].TrimEnd(new[] { ')' }));
+        }
 
         private static TransformConfigurationElement RegexReplace(string arg) {
 
@@ -76,21 +135,6 @@ namespace Transformalize.Main.Transform {
             element.Count = count;
 
             return element;
-        }
-
-        public static TransformConfigurationElement Interpret(string expression) {
-
-            Guard.Against(expression == null, "You may not pass a null expression.");
-            // ReSharper disable once PossibleNullReferenceException
-            Guard.Against(!expression.Contains("("), "The short-hand expression must contain a '(' character that separates the method from the arguments.  Your expression of '{0}' does not have one.", expression);
-
-            var split = expression.Split(new[] { '(' }, StringSplitOptions.None);
-
-            var method = split[0].ToLower();
-
-            Guard.Against(!Methods.ContainsKey(method), "Sorry. Your expression '{0}' references an undefined method: '{1}'.", expression, method);
-
-            return Functions[Methods[method]](split[1].TrimEnd(new[] { ')' }));
         }
 
         private static TransformConfigurationElement Replace(string arg) {
@@ -174,7 +218,7 @@ namespace Transformalize.Main.Transform {
                 return new string[0];
 
             var placeHolder = arg.GetHashCode().ToString(CultureInfo.InvariantCulture);
-            var split = arg.Replace("\\,",placeHolder).Split(new[] { ',' }, StringSplitOptions.None);
+            var split = arg.Replace("\\,", placeHolder).Split(new[] { ',' }, StringSplitOptions.None);
             return split.Select(s => s.Replace(placeHolder, ",")).ToArray();
         }
 
@@ -189,6 +233,25 @@ namespace Transformalize.Main.Transform {
 
             if (split.Length > 1) {
                 element.Elipse = split[1];
+            }
+            return element;
+        }
+
+        private static TransformConfigurationElement Format(string arg) {
+            var split = SplitComma(arg);
+            Guard.Against(split.Length < 1, "The format method requires at least one parameter; the format with {{0}} style place-holders in it.  For each place-holder, add additional parameters that reference fields.  If no fields are referenced, the first parameter is assumed to be the field this transform is nested in.");
+            var element = new TransformConfigurationElement() { Method = "format", Format = split[0] };
+
+            if (split.Length <= 1)
+                return element;
+
+            if (split.Length == 2) {
+                element.Parameter = split[1];
+                return element;
+            }
+
+            foreach (var s in split.Skip(1)) {
+                element.Parameters.Add(new ParameterConfigurationElement() { Field = s });
             }
             return element;
         }
