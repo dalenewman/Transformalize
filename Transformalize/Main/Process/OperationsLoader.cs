@@ -28,7 +28,7 @@ namespace Transformalize.Main {
                 foreach (FieldConfigurationElement f in entityElement.Fields) {
 
                     var alias = Common.GetAlias(f, true, entityElement.Prefix);
-                    var field = _process.GetField(alias, entity.Alias);
+                    var field = _process.GetField(entity.Alias, alias);
 
                     if (entity.TrimAll && field.Input && field.SimpleType.Equals("string")) {
                         field.Transforms.Insert(0, "trim");
@@ -53,7 +53,7 @@ namespace Transformalize.Main {
                 // calculated fields do not have prefixes, and have access to all or some of an entity's parameters
                 foreach (FieldConfigurationElement cf in entityElement.CalculatedFields) {
 
-                    var field = _process.GetField(cf.Alias, entity.Alias);
+                    var field = _process.GetField(entity.Alias, cf.Alias);
 
                     AddShortHandTransforms(cf);
 
@@ -97,7 +97,7 @@ namespace Transformalize.Main {
 
                     Field f;
                     transform.RunField = branch.RunField.Equals(DEFAULT) ? (Common.IsValidator(transform.Method) ? (transform.ResultField.Equals(DEFAULT) ? transform.ResultField + "Result" : transform.ResultField) : field.Alias) : branch.RunField;
-                    transform.RunType = _process.TryGetField(transform.RunField, entity.Name, out f) ? f.SimpleType : "boolean";
+                    transform.RunType = _process.TryGetField(entity.Name, transform.RunField, out f) ? f.SimpleType : "boolean";
                     transform.RunOperator = branch.RunOperator;
                     transform.RunValue = branch.RunValue;
 

@@ -108,7 +108,7 @@ namespace Transformalize.Main {
                     };
                     Add(field);
                 } else {
-                    Add(process.GetField(parameter.Value.Name, entity));
+                    Add(process.GetField(entity, parameter.Value.Name));
                 }
             }
         }

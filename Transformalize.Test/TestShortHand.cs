@@ -151,8 +151,7 @@ namespace Transformalize.Test {
         }
 
         [Test]
-        public void ConcatWithParameters()
-        {
+        public void ConcatWithParameters() {
             const string expression = "cc(p1,p2";
             var result = ShortHandFactory.Interpret(expression);
             Assert.AreEqual("concat", result.Method);
@@ -195,11 +194,10 @@ namespace Transformalize.Test {
         }
 
         [Test]
-        public void CompressParameter()
-        {
+        public void CompressParameter() {
             const string expression = "co(p";
             var result = ShortHandFactory.Interpret(expression);
-            Assert.AreEqual("compress",result.Method);
+            Assert.AreEqual("compress", result.Method);
             Assert.AreEqual("p", result.Parameter);
         }
 
@@ -266,6 +264,38 @@ namespace Transformalize.Test {
             Assert.AreEqual("domain", result.Parameters[1].Field);
         }
 
+        [Test]
+        public void Insert() {
+            const string expression = @"in(3,three";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("insert", result.Method);
+            Assert.AreEqual(3, result.StartIndex);
+            Assert.AreEqual("three", result.Parameter);
+        }
+
+        [Test]
+        public void InsertInterval() {
+            const string expression = @"ii(3,three";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("insertinterval", result.Method);
+            Assert.AreEqual(3, result.Interval);
+            Assert.AreEqual("three", result.Value);
+        }
+
+        [Test]
+        public void Transliterate() {
+            const string expression = @"tl(";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("transliterate", result.Method);
+        }
+
+        [Test]
+        public void Slug() {
+            const string expression = @"sl(50";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("slug", result.Method);
+            Assert.AreEqual(50, result.Length);
+        }
 
     }
 }

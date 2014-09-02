@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // /*
 // Transformalize - Replicate, Transform, and Denormalize Your Data...
@@ -23,9 +23,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Web;
 using Transformalize.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
+using Transformalize.Libs.Jint.Native.RegExp;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
@@ -132,14 +134,15 @@ namespace Transformalize.Main {
                         @"<[^>]+>|&nbsp;",
                         string.Empty,
                         0
-                    ) { ShouldRun = shouldRun};
+                    ) { ShouldRun = shouldRun };
 
                 case "insert":
                     return new InsertOperation(
                         inKey,
                         outKey,
                         element.StartIndex,
-                        element.Value
+                        element.Value,
+                        parameters[0].Name.Equals(outKey) ? null : GetParameter(field.Entity, parameters[0].Name)
                     ) { ShouldRun = shouldRun };
 
                 case "insertinterval":
@@ -531,6 +534,15 @@ namespace Transformalize.Main {
                         parameters
                     ) { ShouldRun = shouldRun };
 
+                case "transliterate":
+                    return new TransliterateOperation(inKey, outKey) { ShouldRun = shouldRun };
+
+                case "slug":
+                    return new SlugOperation(inKey, outKey, element.Length) { ShouldRun = shouldRun };
+
+                case "cyrtolat":
+                    return new CyrToLatOperation(inKey, outKey) { ShouldRun = shouldRun };
+
                 // validators
                 case "any":
                     return new AnyOperation(
@@ -678,21 +690,21 @@ namespace Transformalize.Main {
 
         private IParameter GetParameter(string entity, string parameter) {
             Field f;
-            return _process.TryGetField(parameter, entity, out f, false) ?
+            return _process.TryGetField(entity, parameter, out f, false) ?
                 f.ToParameter() :
                 new Parameter(parameter, parameter);
         }
 
         private IParameter GetParameter(string entity, string parameter, IParameters parameters, string newParameterType = "string") {
             Field f;
-            if (_process.TryGetField(parameter, entity, out f, false)) {
+            if (_process.TryGetField(entity, parameter, out f, false)) {
                 return f.ToParameter();
             }
             if (parameters.ContainsKey(parameter)) {
                 return parameters[parameter];
             }
 
-            return new Parameter(parameter, parameter) { SimpleType = newParameterType};
+            return new Parameter(parameter, parameter) { SimpleType = newParameterType };
         }
 
     }

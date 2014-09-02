@@ -1867,6 +1867,8 @@
     <Compile Include="Libs\SolrNet\Utils\Unit.cs" />
     <Compile Include="Libs\SolrNet\Utils\UriValidator.cs" />
     <Compile Include="Libs\SolrNet\Utils\X.cs" />
+    <Compile Include="Libs\UnidecodeSharpFork\Characters.cs" />
+    <Compile Include="Libs\UnidecodeSharpFork\Unidecoder.cs" />
     <Compile Include="Main\Common.cs" />
     <Compile Include="Main\Data.cs" />
     <Compile Include="Main\Entity\EntitiesLoader.cs" />
@@ -2112,11 +2114,14 @@
     <Compile Include="Main\Template\TemplateReader.cs" />
     <Compile Include="Main\TransformalizeException.cs" />
     <Compile Include="Main\Transform\AverageOperation.cs" />
+    <Compile Include="Main\Transform\CyrToLatOperation.cs" />
     <Compile Include="Main\Transform\GeoCodeOperation.cs" />
     <Compile Include="Main\Transform\ShortHandFactory.cs" />
+    <Compile Include="Main\Transform\SlugOperation.cs" />
     <Compile Include="Main\Transform\TransformOperationFactory.cs" />
     <Compile Include="Main\Transform\ITransformParametersReader.cs" />
     <Compile Include="Main\Transform\ITransformLoader.cs" />
+    <Compile Include="Main\Transform\TransliterateOperation.cs" />
     <Compile Include="Main\Web.cs" />
     <Compile Include="Libs\FileHelpers\Attributes\ConditionalRecordAttribute.cs" />
     <Compile Include="Libs\FileHelpers\Attributes\DelimitedRecordAttribute.cs" />
@@ -2957,6 +2962,7 @@
     <None Include="Libs\RazorEngine\ClassDiagram.cd" />
     <None Include="Libs\RazorEngine\packages.config" />
     <None Include="Libs\SharpZLib\obj\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
+    <None Include="Libs\UnidecodeSharpFork\README.md" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

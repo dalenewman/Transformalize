@@ -34,7 +34,6 @@ using Transformalize.Main.Providers;
 using Transformalize.Operations;
 using Transformalize.Operations.Transform;
 using Transformalize.Test.Builders;
-using Parameter = Transformalize.Libs.Ninject.Parameters.Parameter;
 
 namespace Transformalize.Test {
     [TestFixture]
@@ -64,7 +63,6 @@ namespace Transformalize.Test {
             Console.WriteLine(rows.Count);
             Assert.Greater(12, rows.Count);
             Assert.Less(1, rows.Count);
-
 
         }
 
@@ -539,7 +537,18 @@ namespace Transformalize.Test {
         [Test]
         public void Insert() {
             var input = new RowsBuilder().Row("f1", "Insertere").ToOperation();
-            var insert = new InsertOperation("f1", "o1", 6, " H");
+            var insert = new InsertOperation("f1", "o1", 6, " H", null);
+            var output = TestOperation(input, insert);
+
+            Assert.AreEqual("Insert Here", output[0]["o1"]);
+        }
+
+        [Test]
+        public void InsertAnotherField() {
+            var input = new RowsBuilder()
+                .Row("f1", "Insertere").Field("f2"," H")
+                .ToOperation();
+            var insert = new InsertOperation("f1", "o1", 6, string.Empty, new Parameter("f2",null));
             var output = TestOperation(input, insert);
 
             Assert.AreEqual("Insert Here", output[0]["o1"]);
@@ -549,7 +558,7 @@ namespace Transformalize.Test {
         public void InsertInterval() {
             var input = new RowsBuilder().Row("date", "140607").ToOperation();
             var insertInterval = new InsertIntervalOperation("date", "date", 2, "-");
-            var insert = new InsertOperation("date", "date", 0, "20");
+            var insert = new InsertOperation("date", "date", 0, "20", null);
             var output = TestOperation(input, insertInterval, insert);
 
             Assert.AreEqual("2014-06-07", output[0]["date"]);
@@ -1229,6 +1238,68 @@ namespace Transformalize.Test {
             Assert.AreEqual("42.106686,-86.477273", output[0]["out"].ToString());
         }
 
+        [Test]
+        public void TestTransliterate()
+        {
+            const string russian = "Мечниковская простокваша с манго";
+            const string expected = "Mechnikovskaya prostokvasha s mango";
+
+            var input = new RowsBuilder()
+                .Row("in", russian)
+                .ToOperation();
+            var transliterateOperation = new TransliterateOperation("in", "in");
+            var output = TestOperation(input, transliterateOperation);
+
+            Assert.AreEqual(expected, output[0]["in"].ToString());
+
+        }
+
+        [Test]
+        public void TestTransliteratedSlug() {
+            const string russian = "Мечниковская простокваша с манго";
+            const string expected = "mechnikovskaya-prostokvasha-s-mango";
+
+            var input = new RowsBuilder()
+                .Row("in", russian)
+                .ToOperation();
+            var slugOperation = new SlugOperation("in", "in", 60);
+            var transliterateOperation = new TransliterateOperation("in", "in");
+            var output = TestOperation(input, transliterateOperation, slugOperation);
+
+            Assert.AreEqual(expected, output[0]["in"].ToString());
+
+        }
+
+        [Test]
+        public void TestCyrToLatSlug() {
+            const string russian = "Икра из печеных баклажанов";
+            const string expected = "ikra-iz-pechenyih-baklazhanov";
+
+            var input = new RowsBuilder()
+                .Row("in", russian)
+                .ToOperation();
+            var c2L = new CyrToLatOperation("in", "in");
+            var output = TestOperation(input, c2L);
+
+            Assert.AreEqual(expected, output[0]["in"].ToString());
+
+        }
+
+        [Test]
+        public void TestTransliteratedFault2() {
+            const string russian = "Кислые щи с белыми грибами";
+            const string expected = "kislyie-shhi-s-belyimi-gribami";
+
+            var input = new RowsBuilder()
+                .Row("in", russian)
+                .ToOperation();
+            var cyrToLatOperation = new CyrToLatOperation("in", "in");
+            var output = TestOperation(input, cyrToLatOperation);
+
+            Assert.AreEqual(expected, output[0]["in"].ToString());
+
+        }
+    
     }
 
 }

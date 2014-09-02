@@ -197,7 +197,7 @@ namespace Transformalize.Main {
             return OutputConnection.NextBatchId(Name);
         }
 
-        public Field GetField(string alias, string entity, bool issueWarning = true) {
+        public Field GetField(string entity, string alias, bool issueWarning = true) {
 
             foreach (var fields in Entities.Where(e => e.Alias == entity || entity == string.Empty).Select(e => e.Fields).Where(fields => fields.Find(alias).Any())) {
                 return fields.Find(alias).First();
@@ -224,8 +224,8 @@ namespace Transformalize.Main {
                     .Any(e => e.OperationsAfterAggregation.OfType<ValidationOperation>().Any(operation => operation.ResultKey.Equals(alias)));
         }
 
-        public bool TryGetField(string alias, string entity, out Field field, bool issueWarning = true) {
-            field = GetField(alias, entity, issueWarning);
+        public bool TryGetField(string entity, string alias, out Field field, bool issueWarning = true) {
+            field = GetField(entity, alias, issueWarning);
             return field != null;
         }
 

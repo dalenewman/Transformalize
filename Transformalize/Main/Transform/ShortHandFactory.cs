@@ -43,7 +43,18 @@ namespace Transformalize.Main.Transform {
             {"join","join"},
             {"j","join"},
             {"f","format"},
-            {"format","format"}
+            {"format","format"},
+            {"in","insert"},
+            {"insert","insert"},
+            {"ii","insertinterval"},
+            {"insertinterval","insertinterval"},
+            {"tl","transliterate"},
+            {"transliterate","transliterate"},
+            {"sl","slug"},
+            {"slug","slug"},
+            {"slugify","slug"},
+            {"cl","cyrtolat"},
+            {"cyrtolat","cyrtolat"}
         };
         public static readonly Dictionary<string, Func<string, TransformConfigurationElement>> Functions = new Dictionary<string, Func<string, TransformConfigurationElement>> {
             {"replace", Replace},
@@ -61,8 +72,68 @@ namespace Transformalize.Main.Transform {
             {"regexreplace", RegexReplace},
             {"striphtml", arg=>new TransformConfigurationElement() {Method = "striphtml", Parameter = arg}},
             {"join",Join},
-            {"format", Format}
+            {"format", Format},
+            {"insert", Insert},
+            {"insertinterval", InsertInterval},
+            {"transliterate", arg=>new TransformConfigurationElement() { Method="transliterate", Parameter = arg}},
+            {"slug", Slug},
+            {"cyrtolat", arg=>new TransformConfigurationElement() {Method = "cyrtolat", Parameter = arg}}
         };
+
+        private static TransformConfigurationElement Slug(string arg) {
+            var element = new TransformConfigurationElement() { Method = "slug" };
+
+            var split = SplitComma(arg);
+
+            Guard.Against(split.Length > 2, "The slug method takes up to 2 arguments; an integer representing the maximum length of the slug, and a parameter.  The parameter is optional if you intend to operate on a field (instead of a calculated field). '{0}' has too many arguments.", arg);
+
+            foreach (var p in split) {
+                int length;
+                if (int.TryParse(p, out length)) {
+                    element.Length = length;
+                } else {
+                    element.Parameter = p;
+                }
+            }
+
+            return element;
+        }
+
+        private static TransformConfigurationElement InsertInterval(string arg) {
+            //interval, value
+            var split = SplitComma(arg);
+
+            Guard.Against(split.Length != 2, "The insertinterval method requires two parameters: the interval (e.g. every certain number of characters), and the value to insert. '{0}' has {1} parameter{2}.", arg, split.Length, split.Length.Plural());
+
+            var element = new TransformConfigurationElement() { Method = "insertinterval" };
+
+            int interval;
+            if (int.TryParse(split[0], out interval)) {
+                element.Interval = interval;
+            } else {
+                throw new TransformalizeException("The insertinterval method's first parameter must be an integer.  {0} is not an integer.", split[0]);
+            }
+
+            element.Value = split[1];
+            return element;
+        }
+
+        private static TransformConfigurationElement Insert(string arg) {
+            var split = SplitComma(arg);
+            Guard.Against(split.Length != 2, "The insert method requires two parameters; the start index, and the value (or field reference) you'd like to insert.  '{0}' has {1} parameter{2}.", arg, split.Length, split.Length.Plural());
+
+            var element = new TransformConfigurationElement() { Method = "insert" };
+
+            int startIndex;
+            if (int.TryParse(split[0], out startIndex)) {
+                element.StartIndex = startIndex;
+            } else {
+                throw new TransformalizeException("The insert method's first parameter must be an integer.  {0} is not an integer.", split[0]);
+            }
+
+            element.Parameter = split[1];
+            return element;
+        }
 
         private static TransformConfigurationElement Join(string arg) {
             var split = SplitComma(arg);
