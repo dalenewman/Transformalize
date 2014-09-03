@@ -1,8 +1,8 @@
+using System;
 using System.Data;
 using Transformalize.Configuration;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Providers.Sql;
-using Transformalize.Main.Providers.SqlServer;
 using Transformalize.Operations;
 using Transformalize.Operations.Transform;
 using Transformalize.Processes;
@@ -39,27 +39,27 @@ namespace Transformalize.Main.Providers.PostgreSql {
         }
 
         public override void WriteEndVersion(AbstractConnection input, Entity entity, bool force = false) {
-            //nope  
+            throw new NotImplementedException();
         }
 
         public override IOperation ExtractCorrespondingKeysFromOutput(Entity entity) {
-            return new EmptyOperation();
+            return new SqlEntityKeysExtractAllFromOutput(this, entity);
         }
 
         public override IOperation ExtractAllKeysFromOutput(Entity entity) {
-            return new EmptyOperation();
+            return new SqlEntityKeysExtractAllFromOutput(this, entity);
         }
 
         public override IOperation ExtractAllKeysFromInput(Entity entity) {
-            return new EmptyOperation();
+            return new SqlEntityKeysExtractAllFromInput(this, entity);
         }
 
         public override IOperation Insert(Entity entity) {
-            return new EmptyOperation();
+            throw new NotImplementedException();
         }
 
         public override IOperation Update(Entity entity) {
-            return new EmptyOperation();
+            throw new NotImplementedException();
         }
 
         public override int NextBatchId(string processName) {

@@ -1287,8 +1287,8 @@ namespace Transformalize.Test {
 
         [Test]
         public void TestTransliteratedFault2() {
-            const string russian = "Кислые щи с белыми грибами";
-            const string expected = "kislyie-shhi-s-belyimi-gribami";
+            const string russian = "Сэндвич с салатом из морской капусты и яиц с тахинной заправкой";
+            const string expected = "sendvich-s-salatom-iz-morskoy-kapustyi-i-yaits-s-tahinnoy-zapravkoy";
 
             var input = new RowsBuilder()
                 .Row("in", russian)

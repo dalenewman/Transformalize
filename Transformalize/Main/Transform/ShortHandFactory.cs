@@ -77,7 +77,9 @@ namespace Transformalize.Main.Transform {
             {"ss","substring"},
             {"sub","substring"},
             {"map","map"},
-            {"m","map"}
+            {"m","map"},
+            {"urlencode","urlencode"},
+            {"ue","urlencode"}
         };
 
         public static readonly Dictionary<string, Func<string, TransformConfigurationElement>> Functions = new Dictionary<string, Func<string, TransformConfigurationElement>> {
@@ -111,7 +113,8 @@ namespace Transformalize.Main.Transform {
             {"trimend", arg=> new TransformConfigurationElement() {Method = "trimend", TrimChars = arg}},
             {"trim", arg=> new TransformConfigurationElement() {Method = "trim", TrimChars = arg}},
             {"substring", Substring},
-            {"map", Map}
+            {"map", Map},
+            {"urlencode", arg=>new TransformConfigurationElement() {Method = "urlencode", Parameter = arg}},
         };
 
         private static TransformConfigurationElement Map(string arg) {

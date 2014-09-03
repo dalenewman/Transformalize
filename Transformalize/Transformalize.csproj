@@ -2117,6 +2117,7 @@
     <Compile Include="Main\Transform\TransformOperationFactory.cs" />
     <Compile Include="Main\Transform\ITransformParametersReader.cs" />
     <Compile Include="Main\Transform\ITransformLoader.cs" />
+    <Compile Include="Main\Transform\UrlEncodeOperation.cs" />
     <Compile Include="Main\Web.cs" />
     <Compile Include="Libs\FileHelpers\Attributes\ConditionalRecordAttribute.cs" />
     <Compile Include="Libs\FileHelpers\Attributes\DelimitedRecordAttribute.cs" />

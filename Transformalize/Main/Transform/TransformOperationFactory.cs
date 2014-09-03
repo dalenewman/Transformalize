@@ -500,6 +500,9 @@ namespace Transformalize.Main {
                 case "xmlencode":
                     return new XmlEncodeOperation(inKey, outKey) { ShouldRun = shouldRun };
 
+                case "urlencode":
+                    return new UrlEncodeOperation(inKey, outKey) { ShouldRun = shouldRun };
+
                 case "htmlencode":
                     return new HtmlEncodeOperation(inKey, outKey) { ShouldRun = shouldRun };
 

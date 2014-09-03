@@ -23,7 +23,6 @@ namespace Transformalize.Operations.Extract {
         private readonly int _ignoreFirstLines;
         private readonly string _delimiter;
         private readonly ErrorMode _errorMode;
-
         private int _counter;
 
         public FileDelimitedExtract(AbstractConnection connection, Entity entity, int top) {
@@ -70,7 +69,15 @@ namespace Transformalize.Operations.Extract {
             if (_top > 0) {
                 using (var file = new FluentFile(cb.CreateRecordClass()).From(_fullName).OnError(_errorMode)) {
                     foreach (var row in from object obj in file select Row.FromObject(obj)) {
-                        ProcessRow(row, _fields, _fullName, conversionMap);
+                        if (_counter == 0) {
+                            try {
+                                ProcessRow(row, _fields, _fullName, conversionMap);
+                            } catch (Exception ex) {
+                                Warn("First row from '{0}' failed to process.  You may have headers.  If so, set start=\"2\" on connection. Note: start is 1-based. {0}", _name, ex.Message);
+                            }
+                        } else {
+                            ProcessRow(row, _fields, _fullName, conversionMap);
+                        }
                         if (_counter < _top) {
                             Interlocked.Increment(ref _counter);
                             yield return row;
@@ -80,11 +87,18 @@ namespace Transformalize.Operations.Extract {
                     }
                     HandleErrors(file);
                 }
-
             } else {
                 using (var file = new FluentFile(cb.CreateRecordClass()).From(_fullName).OnError(_errorMode)) {
                     foreach (var row in from object obj in file select Row.FromObject(obj)) {
-                        ProcessRow(row, _fields, _fullName, conversionMap);
+                        if (_counter == 0) {
+                            try {
+                                ProcessRow(row, _fields, _fullName, conversionMap);
+                            } catch (Exception ex) {
+                                Warn("First row failed to process.  You may have headers.  If so, set start-index=\"2\" on connection. {0}", ex.Message);
+                            }
+                        } else {
+                            ProcessRow(row, _fields, _fullName, conversionMap);
+                        }
                         yield return row;
                     }
                     HandleErrors(file);

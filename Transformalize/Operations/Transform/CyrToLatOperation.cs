@@ -1,13 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Transformalize.Libs.Rhino.Etl;
 
 namespace Transformalize.Operations.Transform {
     public class CyrToLatOperation : ShouldRunOperation {
 
-        private static readonly Regex Invalid = new Regex(@"[^A-Za-z0-9`'_\-\.]", RegexOptions.Compiled);
-        private static readonly Regex Doubles = new Regex(@"\-{2,}", RegexOptions.Compiled);
         private static readonly Dictionary<char, string> Map = new Dictionary<char, string>(){
             {'А',"A"},
             {'Б',"B"},
@@ -110,7 +107,7 @@ namespace Transformalize.Operations.Transform {
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
                 if (ShouldRun(row)) {
-                    row[OutKey] = Doubles.Replace(Invalid.Replace(CyrToLat(row[InKey].ToString()), "-"),"-");
+                    row[OutKey] = SlugOperation.GenerateSlug(CyrToLat(row[InKey].ToString()), 0);
                 }
                 yield return row;
             }

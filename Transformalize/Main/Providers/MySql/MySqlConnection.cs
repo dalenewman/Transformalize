@@ -20,11 +20,11 @@
 
 #endregion
 
+using System;
 using System.Data;
 using Transformalize.Configuration;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Providers.Sql;
-using Transformalize.Main.Providers.SqlServer;
 using Transformalize.Operations;
 using Transformalize.Operations.Transform;
 using Transformalize.Processes;
@@ -61,7 +61,7 @@ namespace Transformalize.Main.Providers.MySql {
         }
 
         public override void WriteEndVersion(AbstractConnection input, Entity entity, bool force = false) {
-            //not yet
+            throw new NotImplementedException();
         }
 
         public override IOperation ExtractCorrespondingKeysFromOutput(Entity entity) {
@@ -77,11 +77,11 @@ namespace Transformalize.Main.Providers.MySql {
         }
 
         public override IOperation Insert(Entity entity) {
-            return new EmptyOperation();
+            throw new NotImplementedException();
         }
 
         public override IOperation Update(Entity entity) {
-            return new EmptyOperation();
+            throw new NotImplementedException();
         }
 
         public override string KeyQuery(Entity entity) {
