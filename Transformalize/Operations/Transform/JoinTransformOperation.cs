@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
+using Transformalize.Main.Parameters;
 
 namespace Transformalize.Operations.Transform {
     public class JoinTransformOperation : ShouldRunOperation {

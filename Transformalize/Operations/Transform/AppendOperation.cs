@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
+using Transformalize.Main.Parameters;
 
 namespace Transformalize.Operations.Transform {
     public class AppendOperation : ShouldRunOperation {

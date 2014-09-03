@@ -23,7 +23,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Transformalize.Main {
+namespace Transformalize.Main.Parameters {
 
     public class Parameter : IParameter {
 

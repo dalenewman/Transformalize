@@ -1878,6 +1878,8 @@
     <Compile Include="Main\Entity\NamedConnection.cs" />
     <Compile Include="Main\Guard.cs" />
     <Compile Include="Main\NinjectBindings.cs" />
+    <Compile Include="Main\Parameters\IParameter.cs" />
+    <Compile Include="Main\Parameters\Parameter.cs" />
     <Compile Include="Main\PipelineThreading.cs" />
     <Compile Include="Main\Process\ProcessFactory.cs" />
     <Compile Include="Main\Process\ProcessOperationsLoader.cs" />
@@ -2050,8 +2052,6 @@
     <Compile Include="Main\Parameters\IParameters.cs" />
     <Compile Include="Main\Parameters\IParametersReader.cs" />
     <Compile Include="Main\Parameters\Parameters.cs" />
-    <Compile Include="Main\Parameter\IParameter.cs" />
-    <Compile Include="Main\Parameter\Parameter.cs" />
     <Compile Include="Main\Process\TransformFieldsMoveAdapter.cs" />
     <Compile Include="Main\Process\TransformFieldsToParametersAdapter.cs" />
     <Compile Include="Main\Process\Process.cs" />
@@ -2113,15 +2113,10 @@
     <Compile Include="Main\Template\TemplateManager.cs" />
     <Compile Include="Main\Template\TemplateReader.cs" />
     <Compile Include="Main\TransformalizeException.cs" />
-    <Compile Include="Main\Transform\AverageOperation.cs" />
-    <Compile Include="Main\Transform\CyrToLatOperation.cs" />
-    <Compile Include="Main\Transform\GeoCodeOperation.cs" />
     <Compile Include="Main\Transform\ShortHandFactory.cs" />
-    <Compile Include="Main\Transform\SlugOperation.cs" />
     <Compile Include="Main\Transform\TransformOperationFactory.cs" />
     <Compile Include="Main\Transform\ITransformParametersReader.cs" />
     <Compile Include="Main\Transform\ITransformLoader.cs" />
-    <Compile Include="Main\Transform\TransliterateOperation.cs" />
     <Compile Include="Main\Web.cs" />
     <Compile Include="Libs\FileHelpers\Attributes\ConditionalRecordAttribute.cs" />
     <Compile Include="Libs\FileHelpers\Attributes\DelimitedRecordAttribute.cs" />
@@ -2467,10 +2462,12 @@
     <Compile Include="Operations\Sort.cs" />
     <Compile Include="Operations\Transform\AnyOperation.cs" />
     <Compile Include="Operations\Transform\AppendOperation.cs" />
+    <Compile Include="Operations\Transform\AverageOperation.cs" />
     <Compile Include="Operations\Transform\CompressOperation.cs" />
     <Compile Include="Operations\Transform\ConcatOperation.cs" />
     <Compile Include="Operations\Transform\ConvertOperation.cs" />
     <Compile Include="Operations\Transform\CSharpOperation.cs" />
+    <Compile Include="Operations\Transform\CyrToLatOperation.cs" />
     <Compile Include="Operations\Transform\DatePartOperation.cs" />
     <Compile Include="Operations\Transform\DecompressOperation.cs" />
     <Compile Include="Operations\Transform\DistanceOperation.cs" />
@@ -2485,6 +2482,7 @@
     <Compile Include="Operations\Transform\FromFirstXmlOperation.cs" />
     <Compile Include="Operations\Transform\FromSplitOperation.cs" />
     <Compile Include="Operations\Transform\FromXmlOperation.cs" />
+    <Compile Include="Operations\Transform\GeoCodeOperation.cs" />
     <Compile Include="Operations\Transform\GetHashCodeOperation.cs" />
     <Compile Include="Operations\Transform\HtmlDecodeOperation.cs" />
     <Compile Include="Operations\Transform\HtmlEncodeOperation.cs" />
@@ -2498,8 +2496,10 @@
     <Compile Include="Operations\Transform\NowOperation.cs" />
     <Compile Include="Operations\Transform\ObjectPool.cs" />
     <Compile Include="Operations\Transform\ShouldRunOperation.cs" />
+    <Compile Include="Operations\Transform\SlugOperation.cs" />
     <Compile Include="Operations\Transform\SplitIndexOperation.cs" />
     <Compile Include="Operations\Transform\TimeZoneOperation.cs" />
+    <Compile Include="Operations\Transform\TransliterateOperation.cs" />
     <Compile Include="Operations\Transform\ValueOperation.cs" />
     <Compile Include="Operations\Transform\XmlEncodeOperation.cs" />
     <Compile Include="Operations\Transform\XmlMode.cs" />

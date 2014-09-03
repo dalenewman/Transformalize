@@ -2,9 +2,8 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Transformalize.Extensions;
 using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Operations.Transform;
 
-namespace Transformalize.Main {
+namespace Transformalize.Operations.Transform {
 
     public class SlugOperation : ShouldRunOperation {
         private readonly int _length;

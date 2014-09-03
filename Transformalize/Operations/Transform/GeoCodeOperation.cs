@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Libs.GoogleMaps.LocationServices;
 using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Operations.Transform;
+using Transformalize.Main;
+using Transformalize.Main.Parameters;
 
-namespace Transformalize.Main {
+namespace Transformalize.Operations.Transform {
 
     public class GeoCodeOperation : ShouldRunOperation {
         private readonly int _throttle;

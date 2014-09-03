@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.UnidecodeSharpFork;
-using Transformalize.Operations.Transform;
 
-namespace Transformalize.Main {
+namespace Transformalize.Operations.Transform {
     public class TransliterateOperation : ShouldRunOperation {
         public TransliterateOperation(string inKey, string outKey)
             : base(inKey, outKey) {

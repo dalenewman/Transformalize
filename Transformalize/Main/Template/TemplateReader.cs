@@ -7,6 +7,7 @@ using Transformalize.Libs.NLog;
 using Transformalize.Libs.RazorEngine;
 using Transformalize.Libs.RazorEngine.Configuration.Fluent;
 using Transformalize.Libs.RazorEngine.Templating;
+using Transformalize.Main.Parameters;
 using Transformalize.Runner;
 
 namespace Transformalize.Main {

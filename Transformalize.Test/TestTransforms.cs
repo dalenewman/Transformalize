@@ -448,8 +448,8 @@ namespace Transformalize.Test {
                 .Parameter("y")
                 .ToParameters();
 
-            var any1 = new AnyOperation(new Main.Parameter("1", "1"), "any_1", ComparisonOperator.Equal, parameters, false);
-            var any2 = new AnyOperation(new Main.Parameter("2", "2"), "any_2", ComparisonOperator.Equal, parameters, false);
+            var any1 = new AnyOperation(new Parameter("1", "1"), "any_1", ComparisonOperator.Equal, parameters, false);
+            var any2 = new AnyOperation(new Parameter("2", "2"), "any_2", ComparisonOperator.Equal, parameters, false);
 
             var output = TestOperation(input, any1, any2);
 
@@ -473,8 +473,8 @@ namespace Transformalize.Test {
                 .Parameter("y")
                 .ToParameters();
 
-            var any1 = new AnyOperation(new Main.Parameter("1", 1), "any_1", ComparisonOperator.Equal, parameters, false);
-            var any2 = new AnyOperation(new Main.Parameter("2", 2), "any_2", ComparisonOperator.Equal, parameters, false);
+            var any1 = new AnyOperation(new Parameter("1", 1), "any_1", ComparisonOperator.Equal, parameters, false);
+            var any2 = new AnyOperation(new Parameter("2", 2), "any_2", ComparisonOperator.Equal, parameters, false);
 
             var output = TestOperation(input, any1, any2);
 

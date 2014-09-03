@@ -2,9 +2,8 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Operations.Transform;
 
-namespace Transformalize.Main {
+namespace Transformalize.Operations.Transform {
     public class CyrToLatOperation : ShouldRunOperation {
 
         private static readonly Regex Invalid = new Regex(@"[^A-Za-z0-9`'_\-\.]", RegexOptions.Compiled);

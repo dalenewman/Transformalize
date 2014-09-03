@@ -29,6 +29,7 @@ using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Main.Parameters;
 using Transformalize.Operations.Transform;
 using Transformalize.Operations.Validate;
 using System.Linq;

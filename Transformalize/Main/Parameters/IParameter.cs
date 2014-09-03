@@ -20,7 +20,7 @@
 
 #endregion
 
-namespace Transformalize.Main
+namespace Transformalize.Main.Parameters
 {
     public interface IParameter
     {

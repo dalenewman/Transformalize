@@ -22,6 +22,7 @@
 
 using System.Collections.Generic;
 using System.Dynamic;
+using Transformalize.Main.Parameters;
 
 namespace Transformalize.Main {
     public interface IParameters {

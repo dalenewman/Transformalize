@@ -4,6 +4,7 @@ using System.Threading;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
+using Transformalize.Main.Parameters;
 
 namespace Transformalize.Operations.Transform {
     public class IfOperation : ShouldRunOperation {
