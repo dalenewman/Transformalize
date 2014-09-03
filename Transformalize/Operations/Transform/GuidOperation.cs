@@ -4,8 +4,8 @@ using Transformalize.Libs.Rhino.Etl;
 
 namespace Transformalize.Operations.Transform {
 
-    public class NewGuidOperation : ShouldRunOperation {
-        public NewGuidOperation(string inKey, string outKey)
+    public class GuidOperation : ShouldRunOperation {
+        public GuidOperation(string inKey, string outKey)
             : base(inKey, outKey) {
             Name = string.Format("NewGuid ({0})", outKey);
         }

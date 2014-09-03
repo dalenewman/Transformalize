@@ -2494,7 +2494,7 @@
     <Compile Include="Operations\Transform\JavascriptOperation.cs" />
     <Compile Include="Operations\Transform\JoinTransformOperation.cs" />
     <Compile Include="Operations\Transform\CopyOperation.cs" />
-    <Compile Include="Operations\Transform\NewGuidOperation.cs" />
+    <Compile Include="Operations\Transform\GuidOperation.cs" />
     <Compile Include="Operations\Transform\NowOperation.cs" />
     <Compile Include="Operations\Transform\ObjectPool.cs" />
     <Compile Include="Operations\Transform\ShouldRunOperation.cs" />

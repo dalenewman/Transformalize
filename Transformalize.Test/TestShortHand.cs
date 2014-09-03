@@ -57,7 +57,7 @@ namespace Transformalize.Test {
             const string expression = "a(...";
             var result = ShortHandFactory.Interpret(expression);
             Assert.AreEqual("append", result.Method);
-            Assert.AreEqual("...", result.Value);
+            Assert.AreEqual("...", result.Parameter);
         }
 
         [Test]
@@ -132,6 +132,15 @@ namespace Transformalize.Test {
             Assert.AreEqual("convert", result.Method);
             Assert.AreEqual("b", result.Parameter);
             Assert.AreEqual("UTF-8", result.Encoding);
+        }
+
+        [Test]
+        public void ConvertWithType() {
+            const string expression = "cv(b,int";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("convert", result.Method);
+            Assert.AreEqual("b", result.Parameter);
+            Assert.AreEqual("int32", result.To);
         }
 
         [Test]
@@ -295,6 +304,98 @@ namespace Transformalize.Test {
             var result = ShortHandFactory.Interpret(expression);
             Assert.AreEqual("slug", result.Method);
             Assert.AreEqual(50, result.Length);
+        }
+
+        [Test]
+        public void DistinctWords() {
+            const string expression = @"dw( ";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("distinctwords", result.Method);
+            Assert.AreEqual(" ", result.Separator);
+        }
+
+        [Test]
+        public void Now() {
+            const string expression = @"now";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("now", result.Method);
+        }
+
+        [Test]
+        public void Remove() {
+            const string expression = @"rm(3,2";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("remove", result.Method);
+            Assert.AreEqual(3, result.StartIndex);
+            Assert.AreEqual(2, result.Length);
+        }
+
+        [Test]
+        public void TrimStart() {
+            const string expression = @"ts(. ";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("trimstart", result.Method);
+            Assert.AreEqual(". ", result.TrimChars);
+        }
+
+        [Test]
+        public void TrimStartAppend() {
+            const string expression = @"tsa(*+, ";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("trimstartappend", result.Method);
+            Assert.AreEqual("*+", result.TrimChars);
+            Assert.AreEqual(" ", result.Separator);
+        }
+
+        [Test]
+        public void TrimEnd() {
+            const string expression = @"te(^%";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("trimend", result.Method);
+            Assert.AreEqual("^%", result.TrimChars);
+        }
+
+        [Test]
+        public void Trim() {
+            const string expression = @"t(|,";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("trim", result.Method);
+            Assert.AreEqual("|,", result.TrimChars);
+        }
+
+        [Test]
+        public void Substring() {
+            const string expression = @"ss(3,2";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("substring", result.Method);
+            Assert.AreEqual(3, result.StartIndex);
+            Assert.AreEqual(2, result.Length);
+        }
+
+        [Test]
+        public void Map() {
+            const string expression = @"m(map,param";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("map", result.Method);
+            Assert.AreEqual("map", result.Map);
+            Assert.AreEqual("param", result.Parameter);
+        }
+
+        [Test]
+        public void MapInline() {
+            const string expression = @"m(x=1,y=2,z=3";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("map", result.Method);
+            Assert.AreEqual("x=1,y=2,z=3", result.Map);
+        }
+
+        [Test]
+        public void MapInlineWithParam() {
+            const string expression = @"m(param,x=1,y=2,z=3";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("map", result.Method);
+            Assert.AreEqual("x=1,y=2,z=3", result.Map);
+            Assert.AreEqual("param", result.Parameter);
         }
 
     }

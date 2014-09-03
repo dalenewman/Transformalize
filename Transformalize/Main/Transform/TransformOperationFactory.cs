@@ -23,11 +23,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Web;
 using Transformalize.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
-using Transformalize.Libs.Jint.Native.RegExp;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
@@ -38,7 +36,6 @@ using System.Linq;
 namespace Transformalize.Main {
 
     public class TransformOperationFactory {
-        private const string DEFAULT = "[default]";
         private const string SPACE = " ";
         private const string COMMA = ",";
 
@@ -69,8 +66,8 @@ namespace Transformalize.Main {
             var inType = hasParameters ? parameters[0].SimpleType : field.SimpleType;
             var outKey = field.Alias;
             var outType = field.SimpleType;
-            var resultKey = element.ResultField.Equals(DEFAULT) ? field.Alias + "Result" : element.ResultField;
-            var messageKey = element.MessageField.Equals(DEFAULT) ? field.Alias + "Message" : element.MessageField;
+            var resultKey = element.ResultField.Equals(Common.DefaultValue) ? field.Alias + "Result" : element.ResultField;
+            var messageKey = element.MessageField.Equals(Common.DefaultValue) ? field.Alias + "Message" : element.MessageField;
             var scripts = new Dictionary<string, Script>();
 
             if (!hasParameters) {
@@ -79,7 +76,7 @@ namespace Transformalize.Main {
 
             if (!element.RunField.Equals(string.Empty)) {
                 var op = (ComparisonOperator)Enum.Parse(typeof(ComparisonOperator), element.RunOperator, true);
-                var simpleType = Common.ToSimpleType(element.RunType.Equals(DEFAULT) ? "boolean" : element.RunType);
+                var simpleType = Common.ToSimpleType(element.RunType.Equals(Common.DefaultValue) ? "boolean" : element.RunType);
                 var value = Common.ConversionMap[simpleType](element.RunValue);
                 shouldRun = row => Common.CompareMap[op](row[element.RunField], value);
             }
@@ -90,7 +87,7 @@ namespace Transformalize.Main {
                         inKey,
                         inType,
                         outKey,
-                        outType,
+                        element.To.Equals(string.Empty) ? outType : element.To,
                         element.Encoding,
                         element.Format
                     ) { ShouldRun = shouldRun };
@@ -157,7 +154,8 @@ namespace Transformalize.Main {
                     return new AppendOperation(
                         inKey,
                         outKey,
-                        element.Value
+                        element.Value,
+                        parameters[0].Name.Equals(outKey) ? null : GetParameter(field.Entity, parameters[0].Name)
                     ) { ShouldRun = shouldRun };
 
                 case "if":
@@ -173,7 +171,7 @@ namespace Transformalize.Main {
                     ) { ShouldRun = shouldRun };
 
                 case "distinctwords":
-                    if (element.Separator.Equals(DEFAULT)) {
+                    if (element.Separator.Equals(Common.DefaultValue)) {
                         element.Separator = SPACE;
                     }
                     return new DistinctWordsOperation(
@@ -182,11 +180,8 @@ namespace Transformalize.Main {
                         element.Separator
                     ) { ShouldRun = shouldRun };
 
-                case "newguid":
-                    return new NewGuidOperation(inKey, outKey) { ShouldRun = shouldRun };
-
                 case "guid":
-                    return new NewGuidOperation(inKey, outKey) { ShouldRun = shouldRun };
+                    return new GuidOperation(inKey, outKey) { ShouldRun = shouldRun };
 
                 case "now":
                     return new PartialProcessOperation()
@@ -218,7 +213,7 @@ namespace Transformalize.Main {
                     ) { ShouldRun = shouldRun };
 
                 case "trimstartappend":
-                    if (element.Separator.Equals(DEFAULT)) {
+                    if (element.Separator.Equals(Common.DefaultValue)) {
                         element.Separator = SPACE;
                     }
                     return new TrimStartAppendOperation(
@@ -276,7 +271,26 @@ namespace Transformalize.Main {
                     var endsWith = _process.MapEndsWith.ContainsKey(element.Map) ? _process.MapEndsWith[element.Map] : new Map();
 
                     if (equals.Count == 0 && startsWith.Count == 0 && endsWith.Count == 0) {
-                        throw new TransformalizeException("Map '{0}' is not defined.", element.Map);
+                        if (element.Map.Contains("=")) {
+                            foreach (var item in element.Map.Split(new[] { ',' })) {
+                                var split = item.Split(new[] { '=' });
+                                if (split.Length == 2) {
+                                    var left = split[0];
+                                    var right = split[1];
+                                    Field tryField;
+                                    if (_process.TryGetField(field.Entity, right, out tryField, false)) {
+                                        equals.Add(left, new Item(tryField.Alias, right));
+                                    } else {
+                                        equals.Add(left, new Item(right));
+                                    }
+                                }
+                            }
+                            if (equals.Count == 0) {
+                                throw new TransformalizeException("Map '{0}' is not defined.", element.Map);
+                            }
+                        } else {
+                            throw new TransformalizeException("Map '{0}' is not defined.", element.Map);
+                        }
                     }
 
                     return new MapOperation(
@@ -394,7 +408,7 @@ namespace Transformalize.Main {
                     ) { ShouldRun = shouldRun };
 
                 case "join":
-                    if (element.Separator.Equals(DEFAULT)) {
+                    if (element.Separator.Equals(Common.DefaultValue)) {
                         element.Separator = SPACE;
                     }
                     return new JoinTransformOperation(
@@ -580,7 +594,7 @@ namespace Transformalize.Main {
                     );
 
                 case "domain":
-                    if (element.Separator.Equals(DEFAULT)) {
+                    if (element.Separator.Equals(Common.DefaultValue)) {
                         element.Separator = COMMA;
                     }
                     var domain = element.Domain.Split(element.Separator.ToCharArray()).Select(s => _conversionMap[field.SimpleType](s));

@@ -54,13 +54,37 @@ namespace Transformalize.Main.Transform {
             {"slug","slug"},
             {"slugify","slug"},
             {"cl","cyrtolat"},
-            {"cyrtolat","cyrtolat"}
+            {"cyrtolat","cyrtolat"},
+            {"distinctwords","distinctwords"},
+            {"dw","distinctwords"},
+            {"guid","guid"},
+            {"g","guid"},
+            {"now","now"},
+            {"n","now"},
+            {"remove","remove"},
+            {"rm","remove"},
+            {"ts","trimstart"},
+            {"trimstart","trimstart"},
+            {"ta","trimstartappend"},
+            {"tsa","trimstartappend"},
+            {"trimstartappend","trimstartappend"},
+            {"trimend","trimend"},
+            {"te", "trimend"},
+            {"t","trim"},
+            {"tr","trim"},
+            {"trim","trim"},
+            {"substring","substring"},
+            {"ss","substring"},
+            {"sub","substring"},
+            {"map","map"},
+            {"m","map"}
         };
+
         public static readonly Dictionary<string, Func<string, TransformConfigurationElement>> Functions = new Dictionary<string, Func<string, TransformConfigurationElement>> {
             {"replace", Replace},
             {"left", Left},
             {"right", Right},
-            {"append", arg => new TransformConfigurationElement() { Method="append", Value = arg}},
+            {"append", arg => new TransformConfigurationElement() { Method="append", Parameter = arg}},
             {"if", If},
             {"convert", Convert},
             {"copy", arg => new TransformConfigurationElement() { Method ="copy", Parameter = arg}},
@@ -70,15 +94,90 @@ namespace Transformalize.Main.Transform {
             {"decompress", arg => new TransformConfigurationElement() {Method = "decompress", Parameter = arg}},
             {"elipse", Elipse},
             {"regexreplace", RegexReplace},
-            {"striphtml", arg=>new TransformConfigurationElement() {Method = "striphtml", Parameter = arg}},
+            {"striphtml", arg=> new TransformConfigurationElement() {Method = "striphtml", Parameter = arg}},
             {"join",Join},
             {"format", Format},
             {"insert", Insert},
             {"insertinterval", InsertInterval},
-            {"transliterate", arg=>new TransformConfigurationElement() { Method="transliterate", Parameter = arg}},
+            {"transliterate", arg=> new TransformConfigurationElement() { Method="transliterate", Parameter = arg}},
             {"slug", Slug},
-            {"cyrtolat", arg=>new TransformConfigurationElement() {Method = "cyrtolat", Parameter = arg}}
+            {"cyrtolat", arg=> new TransformConfigurationElement() {Method = "cyrtolat", Parameter = arg}},
+            {"distinctwords", arg=> new TransformConfigurationElement() {Method = "distinctwords", Separator = arg}},
+            {"guid", arg=>new TransformConfigurationElement() { Method = "guid"}},
+            {"now", arg=>new TransformConfigurationElement() { Method = "now"}},
+            {"remove", Remove},
+            {"trimstart", arg=> new TransformConfigurationElement() {Method = "trimstart", TrimChars = arg}},
+            {"trimstartappend", TrimStartAppend},
+            {"trimend", arg=> new TransformConfigurationElement() {Method = "trimend", TrimChars = arg}},
+            {"trim", arg=> new TransformConfigurationElement() {Method = "trim", TrimChars = arg}},
+            {"substring", Substring},
+            {"map", Map}
         };
+
+        private static TransformConfigurationElement Map(string arg) {
+            Guard.Against(arg.Equals(string.Empty), "The map method requires at least one parameter; the map name.  An additional parameter may reference another field to represent the value being mapped.");
+            var split = SplitComma(arg);
+            var element = new TransformConfigurationElement() { Method = "map" };
+            var hasInlineMap = arg.Contains("=");
+            foreach (var p in split) {
+                if (hasInlineMap) {
+                    if (p.Contains("=")) {
+                        element.Map = element.Map + "," + p;
+                    } else {
+                        element.Parameter = p;
+                    }
+                } else {
+                    if (element.Map.Equals(string.Empty)) {
+                        element.Map = p;
+                    } else {
+                        element.Parameter = p;
+                    }
+                }
+            }
+            if (hasInlineMap) {
+                element.Map = element.Map.TrimStart(new[] { ',' });
+            }
+
+            return element;
+        }
+
+        private static TransformConfigurationElement TrimStartAppend(string arg) {
+            var split = SplitComma(arg);
+            Guard.Against(split.Length < 1, "The trimstartappend method requires at least one parameter indicating the trim characters.");
+
+            var element = new TransformConfigurationElement() { Method = "trimstartappend", TrimChars = split[0] };
+
+            if (split.Length > 1) {
+                element.Separator = split[1];
+            }
+            return element;
+        }
+
+        private static TransformConfigurationElement Substring(string arg) {
+            var split = SplitComma(arg);
+            Guard.Against(split.Length < 2, "The substring method requires start index and length. You have {0} parameter{1}.", split.Length, split.Length.Plural());
+
+            int startIndex;
+            int length;
+            if (int.TryParse(split[0], out startIndex) && int.TryParse(split[1], out length)) {
+                return new TransformConfigurationElement() { Method = "substring", StartIndex = startIndex, Length = length };
+            }
+
+            throw new TransformalizeException("The substring method requires two integers indicating start index and length. '{0}' doesn't represent two integers.", arg);
+        }
+
+        private static TransformConfigurationElement Remove(string arg) {
+            var split = SplitComma(arg);
+            Guard.Against(split.Length < 2, "The remove method requires start index and length. You have {0} parameter{1}.", split.Length, split.Length.Plural());
+
+            int startIndex;
+            int length;
+            if (int.TryParse(split[0], out startIndex) && int.TryParse(split[1], out length)) {
+                return new TransformConfigurationElement() { Method = "remove", StartIndex = startIndex, Length = length };
+            }
+
+            throw new TransformalizeException("The remove method requires two integer parameters indicating start index and length. '{0}' doesn't represent two integers.", arg);
+        }
 
         private static TransformConfigurationElement Slug(string arg) {
             var element = new TransformConfigurationElement() { Method = "slug" };
@@ -220,18 +319,22 @@ namespace Transformalize.Main.Transform {
 
         private static TransformConfigurationElement Convert(string arg) {
             var split = SplitComma(arg);
-            Guard.Against(split.Length < 1, "The convert method requires one parameter referencing another field's alias (or name).");
+            Guard.Against(split.Length < 1, "The convert method requires the first parameter reference another field's alias (or name).");
 
             var element = new TransformConfigurationElement() { Method = "convert", Parameter = split[0] };
             if (split.Length <= 1)
                 return element;
 
-            var second = split[1];
-            if (System.Text.Encoding.GetEncodings().Any(e => e.Name.Equals(second, StringComparison.OrdinalIgnoreCase))) {
-                element.Encoding = second;
-            } else {
-                element.Format = second;
+            foreach (var p in split.Skip(1)) {
+                if (System.Text.Encoding.GetEncodings().Any(e => e.Name.Equals(p, StringComparison.OrdinalIgnoreCase))) {
+                    element.Encoding = p;
+                } else if (Common.TypeMap.ContainsKey(Common.ToSimpleType(p))) {
+                    element.To = Common.ToSimpleType(p);
+                } else {
+                    element.Format = p;
+                }
             }
+
             return element;
         }
 

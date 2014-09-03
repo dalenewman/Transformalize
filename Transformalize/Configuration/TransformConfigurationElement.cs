@@ -108,6 +108,7 @@ namespace Transformalize.Configuration {
 
         private const string BEFORE_AGGREGATION = "before-aggregation";
         private const string AFTER_AGGREGATION = "after-aggregation";
+        private const string TO = "to";
 
         [ConfigurationProperty(METHOD, IsRequired = true)]
         public string Method {
@@ -119,6 +120,12 @@ namespace Transformalize.Configuration {
         public string Name {
             get { return this[NAME] as string; }
             set { this[NAME] = value; }
+        }
+
+        [ConfigurationProperty(TO, IsRequired = false, DefaultValue = "")]
+        public string To {
+            get { return this[TO] as string; }
+            set { this[TO] = value; }
         }
 
         [ConfigurationProperty(XPATH, IsRequired = false, DefaultValue = "")]
