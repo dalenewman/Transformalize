@@ -2118,6 +2118,7 @@
     <Compile Include="Main\Transform\ITransformParametersReader.cs" />
     <Compile Include="Main\Transform\ITransformLoader.cs" />
     <Compile Include="Main\Transform\UrlEncodeOperation.cs" />
+    <Compile Include="Main\Transform\WebOperation.cs" />
     <Compile Include="Main\Web.cs" />
     <Compile Include="Libs\FileHelpers\Attributes\ConditionalRecordAttribute.cs" />
     <Compile Include="Libs\FileHelpers\Attributes\DelimitedRecordAttribute.cs" />
@@ -2461,6 +2462,7 @@
     <Compile Include="Operations\RowsOperation.cs" />
     <Compile Include="Operations\SampleOperation.cs" />
     <Compile Include="Operations\Sort.cs" />
+    <Compile Include="Operations\Transform\AddOperation.cs" />
     <Compile Include="Operations\Transform\AnyOperation.cs" />
     <Compile Include="Operations\Transform\AppendOperation.cs" />
     <Compile Include="Operations\Transform\AverageOperation.cs" />

@@ -97,7 +97,6 @@ namespace Transformalize.Main {
 
         private bool CacheIsUsable() {
             return Cache &&
-                !_process.Options.ConfigurationUpdated &&
                 !_process.Mode.StartsWith("init") &&
                 _renderedTemplateContentExists &&
                 _templateContentExists &&

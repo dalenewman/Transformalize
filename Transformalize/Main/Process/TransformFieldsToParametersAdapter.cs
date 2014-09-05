@@ -35,18 +35,26 @@ namespace Transformalize.Main {
         public int Adapt(string transformName) {
             var count = 0;
             foreach (EntityConfigurationElement entity in _process.Entities) {
-                foreach (FieldConfigurationElement field in entity.Fields) {
-                    foreach (TransformConfigurationElement transform in field.Transforms) {
-                        if (!transform.Method.Equals(transformName, StringComparison.OrdinalIgnoreCase)) continue;
+                count += AddParameters(entity.Fields, transformName, entity.Alias);
+                count += AddParameters(entity.CalculatedFields, transformName, entity.Alias);
+            }
+            return count;
+        }
 
-                        foreach (FieldConfigurationElement tField in transform.Fields) {
-                            transform.Parameters.Add(new ParameterConfigurationElement {
-                                Entity = entity.Alias,
-                                Field = tField.Alias,
-                                Name = tField.Name
-                            });
-                            count++;
-                        }
+        public int AddParameters(FieldElementCollection fields, string transformName, string entity) {
+            var count = 0;
+            foreach (FieldConfigurationElement field in fields) {
+                foreach (TransformConfigurationElement transform in field.Transforms) {
+                    if (!transform.Method.Equals(transformName, StringComparison.OrdinalIgnoreCase)) continue;
+
+                    foreach (FieldConfigurationElement tField in transform.Fields) {
+                        transform.Parameters.Add(new ParameterConfigurationElement {
+                            Entity = entity,
+                            Field = tField.Alias,
+                            Name = tField.Name,
+                            Input = false
+                        });
+                        count++;
                     }
                 }
             }

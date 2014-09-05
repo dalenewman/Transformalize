@@ -60,8 +60,6 @@ namespace Transformalize.Main.Providers.File {
                     .Parameter(field.Name);
             }
 
-            _log.Debug(builder.Process().Serialize().Replace(Environment.NewLine, string.Empty));
-
             var runner = ProcessFactory.CreateSingle(builder.Process(), new Options() { Top = request.Top });
             var results = runner.Execute().ToList();
 

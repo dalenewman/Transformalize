@@ -39,7 +39,6 @@ namespace Transformalize.Main {
 
         public List<string> Problems { get { return _problems; } set { _problems = value; } }
         public bool Force { get; set; }
-        public bool ConfigurationUpdated { get; set; }
 
         public LogLevel LogLevel {
             get { return _logLevel; }

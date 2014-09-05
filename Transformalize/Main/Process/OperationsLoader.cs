@@ -35,8 +35,6 @@ namespace Transformalize.Main {
                         entity.OperationsAfterAggregation.Add(new TrimOperation(field.Alias, field.Alias, " "));
                     }
 
-                    AddShortHandTransforms(f);
-
                     foreach (TransformConfigurationElement t in f.Transforms) {
                         field.Transforms.Add(t.Method.ToLower());
                         var reader = new FieldParametersReader();
@@ -54,8 +52,6 @@ namespace Transformalize.Main {
                 foreach (FieldConfigurationElement cf in entityElement.CalculatedFields) {
 
                     var field = _process.GetField(entity.Alias, cf.Alias);
-
-                    AddShortHandTransforms(cf);
 
                     foreach (TransformConfigurationElement t in cf.Transforms) {
                         var reader = t.Parameter.Equals("*") ?
@@ -75,20 +71,6 @@ namespace Transformalize.Main {
 
             }
 
-        }
-
-        private static void AddShortHandTransforms(FieldConfigurationElement f) {
-            if (f.ShortHand == string.Empty)
-                return;
-            var transforms = new List<TransformConfigurationElement>(f.ShortHand.Split(new[] { ';' }).Select(ShortHandFactory.Interpret));
-            var collection = new TransformElementCollection();
-            foreach (var transform in transforms) {
-                collection.Add(transform);
-            }
-            foreach (TransformConfigurationElement transform in f.Transforms) {
-                collection.Add(transform);
-            }
-            f.Transforms = collection;
         }
 
         private void AddBranches(IEnumerable branches, Entity entity, Field field, ITransformParametersReader reader) {

@@ -22,52 +22,56 @@
 
 using System.Configuration;
 
-namespace Transformalize.Configuration
-{
-    public class ParameterConfigurationElement : ConfigurationElement
-    {
-        [ConfigurationProperty("entity", IsRequired = false)]
-        public string Entity
-        {
-            get { return this["entity"] as string; }
-            set { this["entity"] = value; }
+namespace Transformalize.Configuration {
+    public class ParameterConfigurationElement : ConfigurationElement {
+        private const string ENTITY = "entity";
+        private const string FIELD = "field";
+        private const string NAME = "name";
+        private const string VALUE = "value";
+        private const string INPUT = "input";
+        private const string TYPE = "type";
+
+        [ConfigurationProperty(ENTITY, IsRequired = false)]
+        public string Entity {
+            get { return this[ENTITY] as string; }
+            set { this[ENTITY] = value; }
         }
 
-        [ConfigurationProperty("field", IsRequired = false)]
-        public string Field
-        {
-            get { return this["field"] as string; }
-            set { this["field"] = value; }
+        [ConfigurationProperty(FIELD, IsRequired = false)]
+        public string Field {
+            get { return this[FIELD] as string; }
+            set { this[FIELD] = value; }
         }
 
-        [ConfigurationProperty("name", IsRequired = false)]
-        public string Name
-        {
-            get { return this["name"] as string; }
-            set { this["name"] = value; }
+        [ConfigurationProperty(NAME, IsRequired = false)]
+        public string Name {
+            get { return this[NAME] as string; }
+            set { this[NAME] = value; }
         }
 
-        [ConfigurationProperty("value", IsRequired = false)]
-        public string Value
-        {
-            get { return this["value"] as string; }
-            set { this["value"] = value; }
+        [ConfigurationProperty(VALUE, IsRequired = false)]
+        public string Value {
+            get { return this[VALUE] as string; }
+            set { this[VALUE] = value; }
         }
 
-        [ConfigurationProperty("type", IsRequired = false, DefaultValue = "System.String")]
-        public string Type
-        {
-            get { return this["type"] as string; }
-            set { this["type"] = value; }
+        [ConfigurationProperty(INPUT, IsRequired = false, DefaultValue = true)]
+        public bool Input {
+            get { return (bool)this[INPUT]; }
+            set { this[INPUT] = value; }
         }
 
-        public override bool IsReadOnly()
-        {
+        [ConfigurationProperty(TYPE, IsRequired = false, DefaultValue = "System.String")]
+        public string Type {
+            get { return this[TYPE] as string; }
+            set { this[TYPE] = value; }
+        }
+
+        public override bool IsReadOnly() {
             return false;
         }
 
-        public bool HasValue()
-        {
+        public bool HasValue() {
             return !string.IsNullOrEmpty(Value);
         }
     }

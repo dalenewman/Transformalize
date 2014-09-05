@@ -5,8 +5,7 @@ using System.Linq;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 
-namespace Transformalize.Operations.Transform
-{
+namespace Transformalize.Operations.Transform {
     public class AverageOperation : ShouldRunOperation {
         private readonly string _outType;
         private readonly IParameters _parameters;
@@ -18,7 +17,7 @@ namespace Transformalize.Operations.Transform
             _parameters = parameters;
             _typeSafe = parameters.ToEnumerable().All(kv => kv.Value.SimpleType.Equals(outType));
             Name = string.Format("Average ({0})", outKey);
-            }
+        }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             if (_typeSafe) {

@@ -467,7 +467,7 @@ namespace Transformalize.Main {
 
                 case "fromjson":
                     return new FromJsonOperation(
-                        outKey,
+                        TryRemoveInputParameters(element, parameters) ? inKey : outKey,
                         parameters
                     ) { ShouldRun = shouldRun };
 
@@ -543,6 +543,13 @@ namespace Transformalize.Main {
                         parameters
                         ) { ShouldRun = shouldRun };
 
+                case "add":
+                    return new AddOperation(
+                        outKey,
+                        outType,
+                        parameters
+                        ) { ShouldRun = shouldRun };
+
                 case "geocode":
                     return new GeoCodeOperation(
                         inKey,
@@ -560,6 +567,16 @@ namespace Transformalize.Main {
 
                 case "cyrtolat":
                     return new CyrToLatOperation(inKey, outKey) { ShouldRun = shouldRun };
+
+                case "web":
+                    return new WebOperation(
+                        element.Url.Equals(string.Empty) ? parameters[0] : GetParameter(field.Entity, element.Url, parameters),
+                        outKey,
+                        element.Sleep,
+                        element.WebMethod,
+                        GetParameter(field.Entity, element.Data, parameters),
+                        element.ContentType
+                    ) { ShouldRun = shouldRun };
 
                 // validators
                 case "any":
@@ -723,6 +740,20 @@ namespace Transformalize.Main {
             }
 
             return new Parameter(parameter, parameter) { SimpleType = newParameterType };
+        }
+
+        private static bool TryRemoveInputParameters(TransformConfigurationElement element, IParameters parameters) {
+            //if inKey (the field, or first parameter) is not in fields,
+            //then it is an input parameter, not an output parameter (or field)
+            var parameterElements = element.Parameters.Cast<ParameterConfigurationElement>().ToArray();
+            if (parameterElements.Any(f => f.Input)) {
+                var key = parameterElements.First(f => f.Input).Field;
+                if (parameters.ContainsKey(key)) {
+                    parameters.Remove(key);
+                    return true;
+                }
+            }
+            return false;
         }
 
     }

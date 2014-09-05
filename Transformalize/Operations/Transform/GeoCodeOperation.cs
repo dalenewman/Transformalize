@@ -9,14 +9,14 @@ using Transformalize.Main.Parameters;
 namespace Transformalize.Operations.Transform {
 
     public class GeoCodeOperation : ShouldRunOperation {
-        private readonly int _throttle;
+        private readonly int _sleep;
         private readonly IParameter[] _parameters;
         private readonly ILocationService _service;
         private readonly bool _useParameters;
 
-        public GeoCodeOperation(string inKey, string outKey, int throttle, bool useHttps, IParameters parameters)
+        public GeoCodeOperation(string inKey, string outKey, int sleep, bool useHttps, IParameters parameters)
             : base(inKey, outKey) {
-            _throttle = throttle;
+            _sleep = sleep;
             _parameters = parameters.ToEnumerable().Select(kv => kv.Value).ToArray();
             _service = new GoogleLocationService(useHttps);
             _useParameters = parameters.Count > 1;
@@ -36,9 +36,9 @@ namespace Transformalize.Operations.Transform {
                         row[OutKey] = "0,0";
                         Warn("GeoCoding failed for {0}. {1}", address, e.Message);
                     }
-                    if (_throttle > 0) {
+                    if (_sleep > 0) {
                         Info("GeoCoded {0} to {1}.", address, row[OutKey]);
-                        System.Threading.Thread.Sleep(_throttle);
+                        System.Threading.Thread.Sleep(_sleep);
                     }
                 }
                 yield return row;

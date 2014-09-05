@@ -77,7 +77,6 @@ namespace Transformalize.Main.Providers.File {
             }
 
             var process = builder.Process();
-            _log.Debug(process.Serialize().Replace(Environment.NewLine, string.Empty));
             return process;
         }
 

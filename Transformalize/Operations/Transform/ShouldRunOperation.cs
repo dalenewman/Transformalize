@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using System.Threading;
 using Transformalize.Extensions;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
@@ -50,6 +51,10 @@ namespace Transformalize.Operations.Transform {
             var convertible = value as IConvertible;
 
             return convertible != null;
+        }
+
+        protected void Skip() {
+            Interlocked.Increment(ref SkipCount);
         }
 
     }

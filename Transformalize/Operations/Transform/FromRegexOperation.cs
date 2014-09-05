@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -39,7 +40,11 @@ namespace Transformalize.Operations.Transform {
                     foreach (var pair in _parameters) {
                         var group = match.Groups[pair.Key];
                         if (@group != null) {
-                            row[pair.Key] = Common.ConversionMap[pair.Value.SimpleType](@group.Value);
+                            try {
+                                row[pair.Key] = Common.ConversionMap[pair.Value.SimpleType](@group.Value);
+                            } catch (Exception ex) {
+                                Warn("Trouble converting '{0}' to '{1}' type.  Matched from {2}. {3}", row[pair.Key], pair.Value.SimpleType, row[InKey], ex.Message);
+                            }
                         }
                     }
                 } else {

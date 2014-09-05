@@ -22,6 +22,7 @@
 
 using NUnit.Framework;
 using Transformalize.Main.Transform;
+using Transformalize.Operations;
 
 namespace Transformalize.Test {
     [TestFixture]
@@ -54,7 +55,7 @@ namespace Transformalize.Test {
 
         [Test]
         public void Append() {
-            const string expression = "a(...";
+            const string expression = "ap(...";
             var result = ShortHandFactory.Interpret(expression);
             Assert.AreEqual("append", result.Method);
             Assert.AreEqual("...", result.Parameter);
@@ -397,6 +398,29 @@ namespace Transformalize.Test {
             Assert.AreEqual("x=1,y=2,z=3", result.Map);
             Assert.AreEqual("param", result.Parameter);
         }
+
+        [Test]
+        public void Add() {
+            const string expression = "add(p1,7.2";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("add", result.Method);
+            Assert.AreEqual("p1", result.Parameters[0].Field);
+            Assert.AreEqual("7.2", result.Parameters[1].Value);
+        }
+
+        [Test]
+        public void FromJson() {
+            const string expression = "fj(p1,[result][metadata][globalCounts][count],int";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("fromjson", result.Method);
+            Assert.AreEqual("p1", result.Parameters[0].Field);
+            Assert.AreEqual("result", result.Fields[0].Name);
+            Assert.AreEqual("metadata", result.Fields[0].Transforms[0].Fields[0].Name);
+            Assert.AreEqual("globalCounts", result.Fields[0].Transforms[0].Fields[0].Transforms[0].Fields[0].Name);
+            Assert.AreEqual("count", result.Fields[0].Transforms[0].Fields[0].Transforms[0].Fields[0].Transforms[0].Fields[0].Name);
+            Assert.AreEqual("int32", result.Fields[0].Transforms[0].Fields[0].Transforms[0].Fields[0].Transforms[0].Fields[0].Type);
+        }
+
 
     }
 }

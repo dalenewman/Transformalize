@@ -109,6 +109,10 @@ namespace Transformalize.Configuration {
         private const string BEFORE_AGGREGATION = "before-aggregation";
         private const string AFTER_AGGREGATION = "after-aggregation";
         private const string TO = "to";
+        private const string WEB_METHOD = "web-method";
+        private const string URL = "url";
+        private const string DATA = "data";
+        private const string CONTENT_TYPE = "content-type";
 
         [ConfigurationProperty(METHOD, IsRequired = true)]
         public string Method {
@@ -125,7 +129,31 @@ namespace Transformalize.Configuration {
         [ConfigurationProperty(TO, IsRequired = false, DefaultValue = "")]
         public string To {
             get { return this[TO] as string; }
-            set { this[TO] = value; }
+            set { this[TO] = Common.ToSimpleType(value); }
+        }
+
+        [ConfigurationProperty(WEB_METHOD, IsRequired = false, DefaultValue = "GET")]
+        public string WebMethod {
+            get { return this[WEB_METHOD] as string; }
+            set { this[WEB_METHOD] = value; }
+        }
+
+        [ConfigurationProperty(DATA, IsRequired = false, DefaultValue = Common.DefaultValue)]
+        public string Data {
+            get { return this[DATA] as string; }
+            set { this[DATA] = value; }
+        }
+
+        [ConfigurationProperty(CONTENT_TYPE, IsRequired = false, DefaultValue = "")]
+        public string ContentType {
+            get { return this[CONTENT_TYPE] as string; }
+            set { this[CONTENT_TYPE] = value; }
+        }
+
+        [ConfigurationProperty(URL, IsRequired = false, DefaultValue = "")]
+        public string Url {
+            get { return this[URL] as string; }
+            set { this[URL] = value; }
         }
 
         [ConfigurationProperty(XPATH, IsRequired = false, DefaultValue = "")]

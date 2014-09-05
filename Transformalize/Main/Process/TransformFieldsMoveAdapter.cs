@@ -34,31 +34,50 @@ namespace Transformalize.Main {
             _process = process;
         }
 
-        public int Adapt(string transformName)
-        {
-            var count = 0;
+        public void Adapt(string transformName) {
+
             var fields = new Dictionary<string, Dictionary<string, List<FieldConfigurationElement>>>();
+            var calculatedFields = new Dictionary<string, Dictionary<string, List<FieldConfigurationElement>>>();
 
             foreach (EntityConfigurationElement entity in _process.Entities) {
+                fields[entity.Alias] = GetFields(entity.Fields, transformName);
+                RemoveFields(entity.Fields, transformName);
 
-                fields[entity.Alias] = new Dictionary<string, List<FieldConfigurationElement>>();
+                calculatedFields[entity.Alias] = GetFields(entity.CalculatedFields, transformName);
+                RemoveFields(entity.CalculatedFields, transformName);
+            }
 
-                foreach (FieldConfigurationElement field in entity.Fields) {
-                    foreach (TransformConfigurationElement transform in field.Transforms) {
-                        if (!transform.Method.Equals(transformName, StringComparison.OrdinalIgnoreCase)) continue;
+            InsertFields(fields);
+            InsertCalculatedFields(calculatedFields);
+        }
 
-                        fields[entity.Alias][field.Alias] = new List<FieldConfigurationElement>();
-                        foreach (FieldConfigurationElement tField in transform.Fields) {
-                            tField.Input = false;
-                            fields[entity.Alias][field.Alias].Add(tField);
-                            count++;
-                        }
-
-                        transform.Fields.Clear();
+        public Dictionary<string, List<FieldConfigurationElement>> GetFields(FieldElementCollection fields, string transformName) {
+            var result = new Dictionary<string, List<FieldConfigurationElement>>();
+            foreach (FieldConfigurationElement field in fields) {
+                foreach (TransformConfigurationElement transform in field.Transforms) {
+                    if (!transform.Method.Equals(transformName, StringComparison.OrdinalIgnoreCase))
+                        continue;
+                    result[field.Alias] = new List<FieldConfigurationElement>();
+                    foreach (FieldConfigurationElement tField in transform.Fields) {
+                        tField.Input = false;
+                        result[field.Alias].Add(tField);
                     }
                 }
             }
+            return result;
+        }
 
+        public void RemoveFields(FieldElementCollection fields, string transformName) {
+            foreach (FieldConfigurationElement field in fields) {
+                foreach (TransformConfigurationElement transform in field.Transforms) {
+                    if (!transform.Method.Equals(transformName, StringComparison.OrdinalIgnoreCase))
+                        continue;
+                    transform.Fields.Clear();
+                }
+            }
+        }
+
+        public void InsertFields(Dictionary<string, Dictionary<string, List<FieldConfigurationElement>>> fields) {
             foreach (var entity in fields) {
                 foreach (var field in entity.Value) {
                     var entityElement = _process.Entities.Cast<EntityConfigurationElement>().First(e => e.Alias == entity.Key);
@@ -70,7 +89,21 @@ namespace Transformalize.Main {
                     }
                 }
             }
-            return count;
         }
+
+        public void InsertCalculatedFields(Dictionary<string, Dictionary<string, List<FieldConfigurationElement>>> fields) {
+            foreach (var entity in fields) {
+                foreach (var field in entity.Value) {
+                    var entityElement = _process.Entities.Cast<EntityConfigurationElement>().First(e => e.Alias == entity.Key);
+                    var fieldElement = entityElement.CalculatedFields.Cast<FieldConfigurationElement>().First(f => f.Alias == field.Key);
+                    var index = entityElement.CalculatedFields.IndexOf(fieldElement) + 1;
+                    foreach (var element in field.Value) {
+                        entityElement.CalculatedFields.InsertAt(element, index);
+                        index++;
+                    }
+                }
+            }
+        }
+
     }
 }

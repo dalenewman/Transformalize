@@ -30,26 +30,10 @@ namespace Transformalize.Main {
                 options = options ?? new Options();
                 var collected = Collect(element);
 
-                DetectConfigurationUpdate(options, collected);
-
                 processes.Add(new ProcessReader(collected, options).Read());
             }
 
             return processes.ToArray();
-        }
-
-        private static void DetectConfigurationUpdate(Options options, ProcessConfigurationElement collected) {
-            var contents = collected.Serialize();
-            var configFile = new FileInfo(Path.Combine(Common.GetTemporaryFolder(collected.Name), "Configuration.xml"));
-
-            options.ConfigurationUpdated = !configFile.Exists || File.ReadAllText(configFile.FullName).GetHashCode() != contents.GetHashCode();
-            if (options.ConfigurationUpdated) {
-                Log.Info("Detected configuration update.");
-            }
-
-            if (collected.Enabled) {
-                File.WriteAllText(configFile.FullName, contents);
-            }
         }
 
         private static ProcessConfigurationElement Collect(ProcessConfigurationElement child) {

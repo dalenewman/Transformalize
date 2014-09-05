@@ -7,6 +7,7 @@ using Transformalize.Extensions;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 
 namespace Transformalize.Main.Transform {
+
     public class ShortHandFactory {
 
         private static readonly Dictionary<string, string> Methods = new Dictionary<string, string> {
@@ -16,7 +17,7 @@ namespace Transformalize.Main.Transform {
             {"left","left"},
             {"ri","right"},
             {"right","right"},
-            {"a","append"},
+            {"ap","append"},
             {"append","append"},
             {"i","if"},
             {"if","if"},
@@ -79,7 +80,14 @@ namespace Transformalize.Main.Transform {
             {"map","map"},
             {"m","map"},
             {"urlencode","urlencode"},
-            {"ue","urlencode"}
+            {"ue","urlencode"},
+            {"w","web"},
+            {"web","web"},
+            {"ad", "add"},
+            {"add", "add"},
+            {"sum", "add"},
+            {"fj","fromjson"},
+            {"fromjson","fromjson"}
         };
 
         public static readonly Dictionary<string, Func<string, TransformConfigurationElement>> Functions = new Dictionary<string, Func<string, TransformConfigurationElement>> {
@@ -115,7 +123,58 @@ namespace Transformalize.Main.Transform {
             {"substring", Substring},
             {"map", Map},
             {"urlencode", arg=>new TransformConfigurationElement() {Method = "urlencode", Parameter = arg}},
+            {"web", Web},
+            {"add", Add},
+            {"fromjson",FromJson}
         };
+
+        private static TransformConfigurationElement FromJson(string arg) {
+            Guard.Against(arg.Equals(string.Empty), "The fromjson method requires at least one parameter: the json field name, or path in brackets (i.e. [customer] or [customer][first_name]).");
+
+            var element = new TransformConfigurationElement() { Method = "fromjson" };
+            var type = "string";
+            TransformConfigurationElement current = element;
+            foreach (var p in SplitComma(arg)) {
+                if (Common.TypeMap.ContainsKey(Common.ToSimpleType(p.ToLower()))) {
+                    type = Common.ToSimpleType(p);
+                } else if (p.StartsWith("[")) {
+                    var brackets = new[] { ']', '[' };
+                    var fields = p.Trim(brackets).Split(brackets, StringSplitOptions.RemoveEmptyEntries);
+                    for (var i = 0; i < fields.Length; i++) {
+                        var field = fields[i];
+                        if (i < fields.Length - 1) {
+                            current.Fields.Add(new FieldConfigurationElement() { Name = field, Length = "4000", Output = false });
+                            var fromJson = new TransformConfigurationElement() { Method = "fromjson" };
+                            current.Fields[0].Transforms.Add(fromJson);
+                            current = fromJson;
+                        } else { //last
+                            current.Fields.Add(new FieldConfigurationElement() { Name = field, Length = "4000", Output = true });
+                        }
+                    }
+                } else {
+                    element.Parameters.Add(new ParameterConfigurationElement() { Field = p });
+                }
+            }
+            current.Fields[0].Type = type;
+            return element;
+        }
+
+        private static TransformConfigurationElement Web(string arg) {
+            var split = SplitComma(arg);
+            Guard.Against(split.Length > 2, "The web method takes two optional parameters: a parameter referencing a field, and an integer representing sleep ms in between web requests.  You have {0} parameter{1} in '{2}'.", split.Length, split.Length.Plural(), arg);
+
+            var element = new TransformConfigurationElement() { Method = "web" };
+
+            foreach (var p in split) {
+                int sleep;
+                if (int.TryParse(p, out sleep)) {
+                    element.Sleep = sleep;
+                } else {
+                    element.Parameter = p;
+                }
+            }
+            return element;
+        }
 
         private static TransformConfigurationElement Map(string arg) {
             Guard.Against(arg.Equals(string.Empty), "The map method requires at least one parameter; the map name.  An additional parameter may reference another field to represent the value being mapped.");
@@ -252,6 +311,25 @@ namespace Transformalize.Main.Transform {
                 element.Parameters.Add(new ParameterConfigurationElement() { Field = p });
             }
 
+            return element;
+        }
+
+        private static TransformConfigurationElement Add(string arg) {
+            var split = SplitComma(arg);
+            Guard.Against(split.Length == 0, "The add method requires a * parameter, or a comma delimited list of parameters that reference numeric fields.");
+
+            var element = new TransformConfigurationElement() { Method = "add" };
+
+            if (split.Length == 1) {
+                element.Parameter = split[0];
+            } else {
+                foreach (var p in split) {
+                    element.Parameters.Add(
+                        p.IsNumeric() ?
+                            new ParameterConfigurationElement() { Name = p, Value = p } :
+                            new ParameterConfigurationElement() { Field = p });
+                }
+            }
             return element;
         }
 
