@@ -77,39 +77,6 @@ namespace Transformalize.Main {
             Bind<AbstractConnection>().To<Providers.Solr.SolrConnection>().Named("solr");
             Bind<AbstractConnection>().To<LuceneConnection>().Named("lucene");
 
-            //solrnet
-            var mapper = new MemoizingMappingManager(new AttributesMappingManager());
-            Bind<IReadOnlyMappingManager>().ToConstant(mapper);
-            //Bind<ISolrCache>().To<HttpRuntimeCache>();
-            Bind<ISolrDocumentPropertyVisitor>().To<DefaultDocumentVisitor>();
-            Bind<ISolrFieldParser>().To<DefaultFieldParser>();
-            Bind(typeof(ISolrDocumentActivator<>)).To(typeof(SolrDocumentActivator<>));
-            Bind(typeof(ISolrDocumentResponseParser<>)).To(typeof(SolrDocumentResponseParser<>));
-            Bind<ISolrDocumentResponseParser<Dictionary<string, object>>>().To<SolrDictionaryDocumentResponseParser>();
-            Bind<ISolrFieldSerializer>().To<DefaultFieldSerializer>();
-            Bind<ISolrQuerySerializer>().To<DefaultQuerySerializer>();
-            Bind<ISolrFacetQuerySerializer>().To<DefaultFacetQuerySerializer>();
-            Bind(typeof(ISolrAbstractResponseParser<>)).To(typeof(DefaultResponseParser<>));
-            Bind<ISolrHeaderResponseParser>().To<HeaderResponseParser<string>>();
-            Bind<ISolrExtractResponseParser>().To<ExtractResponseParser>();
-            
-            foreach (var p in new[] {
-                typeof(MappedPropertiesIsInSolrSchemaRule),
-                typeof(RequiredFieldsAreMappedRule),
-                typeof(UniqueKeyMatchesMappingRule),
-                typeof(MultivaluedMappedToCollectionRule),
-            })
-                Bind<IValidationRule>().To(p);
-
-            Bind(typeof(ISolrMoreLikeThisHandlerQueryResultsParser<>)).To(typeof(SolrMoreLikeThisHandlerQueryResultsParser<>));
-            Bind(typeof(ISolrDocumentSerializer<>)).To(typeof(SolrDocumentSerializer<>));
-            Bind(typeof(ISolrDocumentSerializer<Dictionary<string, object>>)).To(typeof(SolrDictionarySerializer));
-
-            Bind<ISolrSchemaParser>().To<SolrSchemaParser>();
-            Bind<ISolrDIHStatusParser>().To<SolrDIHStatusParser>();
-            Bind<IMappingValidator>().To<MappingValidator>();
-            Bind<ISolrStatusResponseParser>().To<SolrStatusResponseParser>();
-            Bind<ISolrCoreAdmin>().To<SolrCoreAdmin>();
         }
 
     }

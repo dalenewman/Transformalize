@@ -68,7 +68,7 @@ namespace Transformalize.Main {
         }
 
         private static void AppendField(StringBuilder content, Field f) {
-            content.AppendFormat("        <add name=\"{0}\"{1}{2}{3}{4}{5}{6}{7}></add>\r\n",
+            content.AppendFormat("        <add name=\"{0}\"{1}{2}{3}{4}{5}{6}{7}{8}></add>\r\n",
                 f.Name,
                 BadCharacters.Any(c => f.Name.Contains(c)) ? " alias=\"" + ReplaceBadCharacters(f.Name) + "\" " : " ",
                 f.SimpleType.Equals("string") ? string.Empty : "type=\"" + f.Type + "\" ",
@@ -76,7 +76,9 @@ namespace Transformalize.Main {
                 f.SimpleType == "decimal" && f.Precision > 0 ? "precision=\"" + f.Precision + "\" " : string.Empty,
                 f.SimpleType == "decimal" && f.Scale > 0 ? "scale=\"" + f.Scale + "\" " : string.Empty,
                 f.FieldType.HasFlag(FieldType.PrimaryKey) || f.FieldType.HasFlag(FieldType.MasterKey) ? "primary-key=\"true\" " : string.Empty,
-                f.IsQuoted() ? string.Format("quoted-with=\"{0}\"", HttpUtility.HtmlEncode(f.QuotedWith)) : string.Empty);
+                f.IsQuoted() ? string.Format("quoted-with=\"{0}\" ", HttpUtility.HtmlEncode(f.QuotedWith)) : string.Empty,
+                !f.Input ? string.Format("input=\"false\" ") : string.Empty
+            );
         }
 
         private static string ReplaceBadCharacters(string input) {

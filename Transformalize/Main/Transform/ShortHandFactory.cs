@@ -298,7 +298,7 @@ namespace Transformalize.Main.Transform {
 
         private static TransformConfigurationElement Join(string arg) {
             var split = SplitComma(arg);
-            Guard.Against(split.Length == 0, "The join method requires a a separator, and then a * (for all fields) or a comma delimited list of parameters that reference fields.");
+            Guard.Against(split.Length == 0, "The join method requires a separator, and then a * (for all fields) or a comma delimited list of parameters that reference fields.");
 
             var element = new TransformConfigurationElement() { Method = "join", Separator = split[0] };
 

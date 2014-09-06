@@ -1227,6 +1227,7 @@ namespace Transformalize.Test {
         }
 
         [Test]
+        [Ignore("because it requires internet connection")]
         public void TestGeoCode() {
             var input = new RowsBuilder()
                 .Row("in", "1009 Broad St., St. Joseph, MI.  49085")

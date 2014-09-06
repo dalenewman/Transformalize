@@ -263,6 +263,7 @@ namespace Transformalize.Configuration {
                 "mail",
                 "html",
                 "elasticsearch",
+                "solr",
                 "lucene"
             };
 

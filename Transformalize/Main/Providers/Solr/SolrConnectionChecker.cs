@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
 using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main.Providers.Solr {
@@ -11,19 +12,21 @@ namespace Transformalize.Main.Providers.Solr {
 
         public bool Check(AbstractConnection connection) {
 
+            var solrConnection = (SolrConnection)connection;
+
             var hashCode = connection.Uri().GetHashCode();
             if (Checks.ContainsKey(hashCode)) {
                 return Checks[hashCode];
             }
 
             try {
-                throw new NotImplementedException();
+                new WebClient().DownloadString(solrConnection.GetPingUrl());
+                Checks[hashCode] = true;
+                return true;
             } catch (Exception e) {
-                _log.Warn("Failed to connect to {0}, {1}:{2}. {3}", connection.Name, connection.Server, connection.Port, e.Message);
+                _log.Warn("Failed to connect to {0}. Pinging {1} resulted in: {3}", connection.Name, solrConnection.GetPingUrl(), e.Message);
                 return false;
             }
-
-            return false;
         }
     }
 }
