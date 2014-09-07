@@ -36,6 +36,8 @@ namespace Transformalize.Main.Providers.Solr {
             {"text_en_splitting","string"}
         };
 
+        public IKernel Kernal { get { return _kernal; } }
+
         public SolrConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
             Type = ProviderType.Solr;
@@ -267,7 +269,7 @@ namespace Transformalize.Main.Providers.Solr {
         }
 
         public override IOperation Extract(Entity entity, bool firstRun) {
-            throw new NotImplementedException();
+            return new SolrExtract(this, entity);
         }
 
         private int GetMaxTflBatchId(Entity entity) {

@@ -1932,6 +1932,7 @@
     <Compile Include="Main\Providers\Solr\SolrEntityExists.cs" />
     <Compile Include="Main\Providers\Solr\SolrEntityOutputKeysExtract.cs" />
     <Compile Include="Main\Providers\Solr\SolrEntityRecordsExist.cs" />
+    <Compile Include="Main\Providers\Solr\SolrExtract.cs" />
     <Compile Include="Main\Providers\Solr\SolrLoadOperation.cs" />
     <Compile Include="Main\Providers\Solr\SolrTflWriter.cs" />
     <Compile Include="Main\Providers\ElasticSearch\ElasticSearchClient.cs" />
