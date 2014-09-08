@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
@@ -141,7 +142,7 @@ namespace Transformalize.Main {
         /// </summary>
         /// <param name="f">the field</param>
         private static void AddShortHandTransforms(FieldConfigurationElement f) {
-            var transforms = new List<TransformConfigurationElement>(f.ShortHand.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).Select(ShortHandFactory.Interpret));
+            var transforms = new List<TransformConfigurationElement>(Common.Split(f.ShortHand, ';').Where(t => !string.IsNullOrEmpty(t)).Select(ShortHandFactory.Interpret));
             var collection = new TransformElementCollection();
             foreach (var transform in transforms) {
                 foreach (FieldConfigurationElement field in transform.Fields) {
@@ -157,7 +158,6 @@ namespace Transformalize.Main {
             }
             f.Transforms = collection;
         }
-
 
         private void Summarize() {
 
@@ -176,6 +176,5 @@ namespace Transformalize.Main {
             var mapCount = _process.MapStartsWith.Count + _process.MapEquals.Count + _process.MapEndsWith.Count;
             _log.Debug("{0} Map{1}.", mapCount, mapCount.Plural());
         }
-
     }
 }

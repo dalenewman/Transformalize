@@ -49,7 +49,7 @@ namespace Transformalize.Main.Transform {
             {"insert","insert"},
             {"ii","insertinterval"},
             {"insertinterval","insertinterval"},
-            {"tl","transliterate"},
+            {"tlr","transliterate"},
             {"transliterate","transliterate"},
             {"sl","slug"},
             {"slug","slug"},
@@ -87,7 +87,23 @@ namespace Transformalize.Main.Transform {
             {"add", "add"},
             {"sum", "add"},
             {"fj","fromjson"},
-            {"fromjson","fromjson"}
+            {"fromjson","fromjson"},
+            {"padleft","padleft"},
+            {"pl","padleft"},
+            {"padright","padright"},
+            {"pr","padright"},
+            {"tos","tostring"},
+            {"tostring","tostring"},
+            {"tl","tolower"},
+            {"tolower","tolower"},
+            {"low","tolower"},
+            {"lower","tolower"},
+            {"tu","toupper"},
+            {"toupper","toupper"},
+            {"up","toupper"},
+            {"upper","toupper"},
+            {"javascript","javascript"},
+            {"js","javascript"}
         };
 
         public static readonly Dictionary<string, Func<string, TransformConfigurationElement>> Functions = new Dictionary<string, Func<string, TransformConfigurationElement>> {
@@ -119,14 +135,71 @@ namespace Transformalize.Main.Transform {
             {"trimstart", arg=> new TransformConfigurationElement() {Method = "trimstart", TrimChars = arg}},
             {"trimstartappend", TrimStartAppend},
             {"trimend", arg=> new TransformConfigurationElement() {Method = "trimend", TrimChars = arg}},
-            {"trim", arg=> new TransformConfigurationElement() {Method = "trim", TrimChars = arg}},
+            {"trim", arg=> new TransformConfigurationElement() { Method = "trim", TrimChars = arg}},
             {"substring", Substring},
             {"map", Map},
-            {"urlencode", arg=>new TransformConfigurationElement() {Method = "urlencode", Parameter = arg}},
+            {"urlencode", arg=>new TransformConfigurationElement() { Method = "urlencode", Parameter = arg}},
             {"web", Web},
             {"add", Add},
-            {"fromjson",FromJson}
+            {"fromjson",FromJson},
+            {"padleft", PadLeft},
+            {"padright", PadRight},
+            {"tostring", arg=> new TransformConfigurationElement() { Method = "tostring", Format = arg }},
+            {"tolower", arg=> new TransformConfigurationElement() { Method = "tolower"} },
+            {"toupper", arg=> new TransformConfigurationElement() { Method = "toupper"}},
+            {"javascript", JavaScript}
         };
+
+        private static TransformConfigurationElement JavaScript(string arg) {
+            var split = SplitComma(arg);
+
+            Guard.Against(split.Length < 2, "The javascript method requires at least two paramters: a script, and a parameter.");
+
+            var element = new TransformConfigurationElement() { Method = "javascript", Script = split[0] };
+
+            if (split.Length == 2) {
+                element.Parameter = split[1];
+            } else {
+                foreach (var s in split.Skip(1)) {
+                    element.Parameters.Add(new ParameterConfigurationElement() { Field = s });
+                }
+            }
+
+            return element;
+        }
+
+        private static TransformConfigurationElement PadLeft(string arg) {
+            return Pad("padleft", arg);
+        }
+
+        private static TransformConfigurationElement PadRight(string arg) {
+            return Pad("padright", arg);
+        }
+
+        private static TransformConfigurationElement Pad(string method, string arg) {
+
+            Guard.Against(arg.Equals(string.Empty), "The {0} method requires two pararmeters: the total width, and the padding character(s).", method);
+
+            var split = SplitComma(arg);
+            Guard.Against(split.Length < 2, "The {0} method requires two pararmeters: the total width, and the padding character(s).  You've provided {1} parameter{2}.", method, split.Length, split.Length.Plural());
+
+            var element = new TransformConfigurationElement() { Method = method };
+
+            int totalWidth;
+            if (int.TryParse(split[0], out totalWidth)) {
+                element.TotalWidth = totalWidth;
+            } else {
+                throw new TransformalizeException("The {0} method requires the first parameter to be total width; an integer. {1} is not an integer", method, split[0]);
+            }
+
+            element.PaddingChar = split[1];
+            Guard.Against(element.PaddingChar.Length < 1, "The {0} second parameter, the padding character(s), must be at least one character.  You can't pad something with nothing.", method);
+
+            if (split.Length > 2) {
+                element.Parameter = split[2];
+            }
+            return element;
+        }
 
         private static TransformConfigurationElement FromJson(string arg) {
             Guard.Against(arg.Equals(string.Empty), "The fromjson method requires at least one parameter: the json field name, or path in brackets (i.e. [customer] or [customer][first_name]).");
@@ -351,18 +424,21 @@ namespace Transformalize.Main.Transform {
 
         public static TransformConfigurationElement Interpret(string expression) {
 
+            string method;
+            var arg = string.Empty;
             Guard.Against(expression == null, "You may not pass a null expression.");
             // ReSharper disable once PossibleNullReferenceException
-
-            var split = expression.Contains("(") ?
-                expression.Split(new[] { '(' }, StringSplitOptions.None) :
-                new[] { expression, "" };
-
-            var method = split[0].ToLower();
+            if (expression.Contains("(")) {
+                var index = expression.IndexOf('(');
+                method = expression.Left(index).ToLower();
+                arg = expression.Remove(0, index + 1).TrimEnd(new[] { ')' });
+            } else {
+                method = expression;
+            }
 
             Guard.Against(!Methods.ContainsKey(method), "Sorry. Your expression '{0}' references an undefined method: '{1}'.", expression, method);
 
-            return Functions[Methods[method]](split[1].TrimEnd(new[] { ')' }));
+            return Functions[Methods[method]](arg);
         }
 
         private static TransformConfigurationElement RegexReplace(string arg) {
@@ -469,12 +545,7 @@ namespace Transformalize.Main.Transform {
         }
 
         private static string[] SplitComma(string arg) {
-            if (arg.Equals(string.Empty))
-                return new string[0];
-
-            var placeHolder = arg.GetHashCode().ToString(CultureInfo.InvariantCulture);
-            var split = arg.Replace("\\,", placeHolder).Split(new[] { ',' }, StringSplitOptions.None);
-            return split.Select(s => s.Replace(placeHolder, ",")).ToArray();
+            return Common.Split(arg, ',');
         }
 
         private static TransformConfigurationElement Elipse(string arg) {

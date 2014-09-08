@@ -45,7 +45,7 @@ namespace Transformalize.Main {
 
         public static string GuardTimeZone(string timeZone, string defaultTimeZone) {
             var result = timeZone;
-            if (timeZone == string.Empty) {
+            if (timeZone == String.Empty) {
                 result = defaultTimeZone;
                 Log.Debug("Defaulting From TimeZone to {0}.", defaultTimeZone);
             } else {
@@ -114,7 +114,7 @@ namespace Transformalize.Main {
             {"long", (x => Convert.ToInt64(x))},
             {"uint64", (x => Convert.ToUInt64(x))},
             {"double", (x => Convert.ToDouble(x))},
-            {"decimal", (x => decimal.Parse(x, NumberStyles.Float | NumberStyles.AllowThousands | NumberStyles.AllowCurrencySymbol, (IFormatProvider)CultureInfo.CurrentCulture.GetFormat(typeof(NumberFormatInfo))))},
+            {"decimal", (x => Decimal.Parse(x, NumberStyles.Float | NumberStyles.AllowThousands | NumberStyles.AllowCurrencySymbol, (IFormatProvider)CultureInfo.CurrentCulture.GetFormat(typeof(NumberFormatInfo))))},
             {"char", (x => Convert.ToChar(x))},
             {"datetime", (x => Convert.ToDateTime(x))},
             {"boolean", (x => Convert.ToBoolean(x))},
@@ -138,9 +138,9 @@ namespace Transformalize.Main {
 
         public static Dictionary<string, Func<object, string>> GetLiteral() {
             return new Dictionary<string, Func<object, string>> {
-                {"string", (x => string.Format("\"{0}\"",x))},
-                {"xml", (x => string.Format("\"{0}\"",x))},
-                {"guid", (x => string.Format("Guid.Parse(\"{0}\")",x))},
+                {"string", (x => String.Format("\"{0}\"",x))},
+                {"xml", (x => String.Format("\"{0}\"",x))},
+                {"guid", (x => String.Format("Guid.Parse(\"{0}\")",x))},
                 {"int16", (x => x.ToString())},
                 {"int", (x => x.ToString())},
                 {"int32", (x => x.ToString())},
@@ -150,16 +150,16 @@ namespace Transformalize.Main {
                 {"long", (x => x.ToString() + "L")},
                 {"double", (x => x.ToString() + "D")},
                 {"decimal", (x => x.ToString() + "M")},
-                {"char", (x => string.Format("'{0}'",x))},
-                {"datetime", (x => string.Format("Convert.ToDateTime(\"{0}\")",x))},
+                {"char", (x => String.Format("'{0}'",x))},
+                {"datetime", (x => String.Format("Convert.ToDateTime(\"{0}\")",x))},
                 {"boolean", (x => x.ToString().ToLower())},
                 {"bool", (x => x.ToString().ToLower())},
                 {"single", (x => x.ToString())},
                 {"float", (x => x.ToString()+"F")},
                 {"real", (x => x.ToString())},
                 {"byte", (x => x.ToString())},
-                {"byte[]", (x => string.Format("Common.HexStringToByteArray(\"{0}\")",x))},
-                {"rowversion", (x => string.Format("Common.HexStringToByteArray(\"{0}\")",x))}
+                {"byte[]", (x => String.Format("Common.HexStringToByteArray(\"{0}\")",x))},
+                {"rowversion", (x => String.Format("Common.HexStringToByteArray(\"{0}\")",x))}
             };
         }
 
@@ -176,7 +176,7 @@ namespace Transformalize.Main {
                 {"uint64", (x=> Convert.ToUInt64(x))},
                 {"long", (x => Convert.ToInt64(x))},
                 {"double", (x => Convert.ToDouble(x))},
-                {"decimal", (x => decimal.Parse(x.ToString(), NumberStyles.Float | NumberStyles.AllowThousands | NumberStyles.AllowCurrencySymbol, (IFormatProvider)CultureInfo.CurrentCulture.GetFormat(typeof(NumberFormatInfo))))},
+                {"decimal", (x => Decimal.Parse(x.ToString(), NumberStyles.Float | NumberStyles.AllowThousands | NumberStyles.AllowCurrencySymbol, (IFormatProvider)CultureInfo.CurrentCulture.GetFormat(typeof(NumberFormatInfo))))},
                 {"char", (x => Convert.ToChar(x))},
                 {"datetime", (x => Convert.ToDateTime(x))},
                 {"boolean", (x => Convert.ToBoolean(x))},
@@ -191,7 +191,7 @@ namespace Transformalize.Main {
         }
 
         public static string GetAlias(FieldConfigurationElement element, bool usePrefix, string prefix) {
-            return usePrefix && element.Alias.Equals(element.Name) && !string.IsNullOrEmpty(prefix) ? prefix + element.Name : element.Alias;
+            return usePrefix && element.Alias.Equals(element.Name) && !String.IsNullOrEmpty(prefix) ? prefix + element.Name : element.Alias;
         }
 
         public static string GetTemporaryFolder(string processName) {
@@ -260,7 +260,7 @@ namespace Transformalize.Main {
             if (result == "bool") {
                 result = "boolean";
             }
-            return result.Replace("system.", string.Empty);
+            return result.Replace("system.", String.Empty);
         }
 
         public static Type ToSystemType(string simpleType) {
@@ -297,7 +297,7 @@ namespace Transformalize.Main {
         }
 
         public static string EntityOutputName(Entity entity, string processName) {
-            return entity.PrependProcessNameToOutputName ? string.Concat(processName.Replace("-", string.Empty), entity.Alias).Replace(" ", string.Empty) : entity.Alias;
+            return entity.PrependProcessNameToOutputName ? String.Concat(processName.Replace("-", String.Empty), entity.Alias).Replace(" ", String.Empty) : entity.Alias;
         }
 
         public static bool AreEqual(byte[] b1, byte[] b2) {
@@ -306,10 +306,10 @@ namespace Transformalize.Main {
 
         public static string CleanIdentifier(string input) {
             var sb = new StringBuilder(Regex.Replace(input, CLEAN_PATTERN, "_"));
-            sb.Push(c => c.Equals('_') || char.IsNumber(c));
+            sb.Push(c => c.Equals('_') || Char.IsNumber(c));
             sb.Trim(" ");
             var result = sb.ToString();
-            if (result.Equals(string.Empty) || result.All(c => c.Equals('_') || char.IsNumber(c))) {
+            if (result.Equals(String.Empty) || result.All(c => c.Equals('_') || Char.IsNumber(c))) {
                 result = "I" + input.GetHashCode().ToString(CultureInfo.InvariantCulture).Replace("-", "0");
             }
             if (!input.Equals(result)) {
@@ -318,5 +318,13 @@ namespace Transformalize.Main {
             return sb.ToString();
         }
 
+        public static string[] Split(string arg, char splitter) {
+            if (arg.Equals(String.Empty))
+                return new string[0];
+
+            var placeHolder = arg.GetHashCode().ToString(CultureInfo.InvariantCulture);
+            var split = arg.Replace("\\" + splitter, placeHolder).Split(new[] { splitter }, StringSplitOptions.None);
+            return split.Select(s => s.Replace(placeHolder, splitter.ToString(CultureInfo.InvariantCulture))).ToArray();
+        }
     }
 }

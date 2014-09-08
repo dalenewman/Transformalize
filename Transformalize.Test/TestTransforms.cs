@@ -173,11 +173,10 @@ namespace Transformalize.Test {
         }
 
         [Test]
-        public void FromSplit()
-        {
+        public void FromSplit() {
             var input = new RowsBuilder()
-                .Row("x","x.y.z")
-                .Row("x","z.y.x")
+                .Row("x", "x.y.z")
+                .Row("x", "z.y.x")
                 .ToOperation();
             var outParameters = new ParametersBuilder()
                 .Parameter("e1")
@@ -195,7 +194,7 @@ namespace Transformalize.Test {
             Assert.AreEqual("z", rows[1]["e1"]);
             Assert.AreEqual("y", rows[1]["e2"]);
             Assert.AreEqual("x", rows[1]["e3"]);
-            
+
         }
 
         [Test]
@@ -215,11 +214,11 @@ namespace Transformalize.Test {
 
             Assert.AreEqual(1, rows[0]["e1"]);
             Assert.AreEqual("y", rows[0]["e2"]);
-            Assert.AreEqual(new DateTime(2001,1,1), rows[0]["e3"]);
+            Assert.AreEqual(new DateTime(2001, 1, 1), rows[0]["e3"]);
 
             Assert.AreEqual(2, rows[1]["e1"]);
             Assert.AreEqual("y", rows[1]["e2"]);
-            Assert.AreEqual(new DateTime(2002,1,1), rows[1]["e3"]);
+            Assert.AreEqual(new DateTime(2002, 1, 1), rows[1]["e3"]);
         }
 
         [Test]
@@ -436,8 +435,7 @@ namespace Transformalize.Test {
         }
 
         [Test]
-        public void AnyValue()
-        {
+        public void AnyValue() {
             var input = new RowsBuilder()
                 .Row("x", "1").Field("y", "3").Field("any_1", null).Field("any_2", null)
                 .Row("x", "2").Field("y", "4").Field("any_1", null).Field("any_2", null)
@@ -458,7 +456,7 @@ namespace Transformalize.Test {
 
             Assert.AreEqual(false, output[1]["any_1"]);
             Assert.AreEqual(true, output[1]["any_2"]);
-            
+
         }
 
         [Test]
@@ -489,8 +487,8 @@ namespace Transformalize.Test {
         [Test]
         public void AnyParameter() {
             var input = new RowsBuilder()
-                .Row("x", "1").Field("y", "3").Field("test","1").Field("any", null)
-                .Row("x", "2").Field("y", "4").Field("test","5").Field("any", null)
+                .Row("x", "1").Field("y", "3").Field("test", "1").Field("any", null)
+                .Row("x", "2").Field("y", "4").Field("test", "5").Field("any", null)
                 .ToOperation();
 
             var parameters = new ParametersBuilder()
@@ -546,9 +544,9 @@ namespace Transformalize.Test {
         [Test]
         public void InsertAnotherField() {
             var input = new RowsBuilder()
-                .Row("f1", "Insertere").Field("f2"," H")
+                .Row("f1", "Insertere").Field("f2", " H")
                 .ToOperation();
-            var insert = new InsertOperation("f1", "o1", 6, string.Empty, new Parameter("f2",null));
+            var insert = new InsertOperation("f1", "o1", 6, string.Empty, new Parameter("f2", null));
             var output = TestOperation(input, insert);
 
             Assert.AreEqual("Insert Here", output[0]["o1"]);
@@ -562,6 +560,24 @@ namespace Transformalize.Test {
             var output = TestOperation(input, insertInterval, insert);
 
             Assert.AreEqual("2014-06-07", output[0]["date"]);
+        }
+
+        [Test]
+        public void JsonWithJavascript() {
+            var input = new RowsBuilder()
+                .Row("x", "[{\"value\":false},{\"value\":true}]")
+                .ToOperation();
+            var parameters = new ParametersBuilder()
+                .Parameter("x")
+                .ToParameters();
+            var js = new JavascriptOperation("out", @"
+                JSON.parse(x)[1].value",
+                new Dictionary<string, Script>(),
+                parameters
+            );
+            var output = TestOperation(input, js);
+
+            Assert.AreEqual(true, output[0]["out"]);
         }
 
         [Test]
@@ -1240,8 +1256,7 @@ namespace Transformalize.Test {
         }
 
         [Test]
-        public void TestTransliterate()
-        {
+        public void TestTransliterate() {
             const string russian = "Мечниковская простокваша с манго";
             const string expected = "Mechnikovskaya prostokvasha s mango";
 
@@ -1300,7 +1315,7 @@ namespace Transformalize.Test {
             Assert.AreEqual(expected, output[0]["in"].ToString());
 
         }
-    
+
     }
 
 }

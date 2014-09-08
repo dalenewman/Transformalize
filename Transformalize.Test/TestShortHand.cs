@@ -22,7 +22,6 @@
 
 using NUnit.Framework;
 using Transformalize.Main.Transform;
-using Transformalize.Operations;
 
 namespace Transformalize.Test {
     [TestFixture]
@@ -294,7 +293,7 @@ namespace Transformalize.Test {
 
         [Test]
         public void Transliterate() {
-            const string expression = @"tl(";
+            const string expression = @"tlr(";
             var result = ShortHandFactory.Interpret(expression);
             Assert.AreEqual("transliterate", result.Method);
         }
@@ -421,6 +420,75 @@ namespace Transformalize.Test {
             Assert.AreEqual("int32", result.Fields[0].Transforms[0].Fields[0].Transforms[0].Fields[0].Transforms[0].Fields[0].Type);
         }
 
+        [Test]
+        public void PadLeft() {
+            const string expression = "pl(10,*";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("padleft", result.Method);
+            Assert.AreEqual(10, result.TotalWidth);
+            Assert.AreEqual("*", result.PaddingChar);
+        }
+
+        [Test]
+        public void PadLeftWithParam() {
+            const string expression = "pl(10,*,p2";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("padleft", result.Method);
+            Assert.AreEqual(10, result.TotalWidth);
+            Assert.AreEqual("*", result.PaddingChar);
+            Assert.AreEqual("p2", result.Parameter);
+        }
+
+        [Test]
+        public void PadRight() {
+            const string expression = "pr(10,*";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("padright", result.Method);
+            Assert.AreEqual(10, result.TotalWidth);
+            Assert.AreEqual("*", result.PaddingChar);
+        }
+
+        [Test]
+        public void ToStringTest() {
+            const string expression = "tos(#,##0.00";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("tostring", result.Method);
+            Assert.AreEqual("#,##0.00", result.Format);
+        }
+
+        [Test]
+        public void ToLower() {
+            const string expression = "tl";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("tolower", result.Method);
+        }
+
+        [Test]
+        public void ToUpper() {
+            const string expression = "tu";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("toupper", result.Method);
+        }
+
+        [Test]
+        public void JavaScript() {
+            const string expression = "js(JSON.parse(x)[0].value,x";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("javascript", result.Method);
+            Assert.AreEqual("JSON.parse(x)[0].value", result.Script);
+            Assert.AreEqual("x", result.Parameter);
+        }
+
+        [Test]
+        public void JavaScriptWithTwoParameters() {
+            const string expression = @"js(x*y;,x,y";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("javascript", result.Method);
+            Assert.AreEqual("x*y;", result.Script);
+            Assert.AreEqual("x", result.Parameters[0].Field);
+            Assert.AreEqual("y", result.Parameters[1].Field);
+
+        }
 
     }
 }
