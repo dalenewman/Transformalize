@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
@@ -11,151 +11,217 @@ namespace Transformalize.Main.Transform {
     public class ShortHandFactory {
 
         private static readonly Dictionary<string, string> Methods = new Dictionary<string, string> {
-            {"r","replace"},
-            {"replace","replace"},
-            {"l","left"},
-            {"left","left"},
-            {"ri","right"},
-            {"right","right"},
+            {"ad", "add"},
+            {"add", "add"},
             {"ap","append"},
             {"append","append"},
-            {"i","if"},
-            {"if","if"},
-            {"iif","if"},
-            {"cv","convert"},
-            {"convert","convert"},
-            {"cp","copy"},
-            {"copy","copy"},
             {"cc","concat"},
-            {"concat","concat"},
-            {"hc","hashcode"},
-            {"hash","hashcode"},
-            {"hashcode","hashcode"},
+            {"cl","cyrtolat"},
             {"co","compress"},
             {"compress","compress"},
+            {"concat","concat"},
+            {"convert","convert"},
+            {"copy","copy"},
+            {"cp","copy"},
+            {"cs","csharp"},
+            {"csharp","csharp"},
+            {"cv","convert"},
+            {"cyrtolat","cyrtolat"},
             {"de","decompress"},
             {"decompress","decompress"},
+            {"distinctwords","distinctwords"},
+            {"dw","distinctwords"},
             {"e","elipse"},
             {"elipse","elipse"},
-            {"rr","regexreplace"},
-            {"regexreplace","regexreplace"},
-            {"sh","striphtml"},
-            {"striphtml","striphtml"},
-            {"join","join"},
-            {"j","join"},
             {"f","format"},
+            {"fj","fromjson"},
             {"format","format"},
+            {"fr","fromregex"},
+            {"fromjson","fromjson"},
+            {"fromregex", "fromregex"},
+            {"fromsplit","fromsplit"},
+            {"fromxml","fromxml"},
+            {"fs","fromsplit"},
+            {"fx", "fromxml"},
+            {"g","guid"},
+            {"guid","guid"},
+            {"hash","hashcode"},
+            {"hashcode","hashcode"},
+            {"hc","hashcode"},
+            {"i","if"},
+            {"if","if"},
+            {"ii","insertinterval"},
+            {"iif","if"},
             {"in","insert"},
             {"insert","insert"},
-            {"ii","insertinterval"},
             {"insertinterval","insertinterval"},
-            {"tlr","transliterate"},
-            {"transliterate","transliterate"},
+            {"j","join"},
+            {"javascript","javascript"},
+            {"join","join"},
+            {"js","javascript"},
+            {"l","left"},
+            {"left","left"},
+            {"low","tolower"},
+            {"lower","tolower"},
+            {"m","map"},
+            {"map","map"},
+            {"n","now"},
+            {"now","now"},
+            {"padleft","padleft"},
+            {"padright","padright"},
+            {"pl","padleft"},
+            {"pr","padright"},
+            {"r","replace"},
+            {"regexreplace","regexreplace"},
+            {"remove","remove"},
+            {"replace","replace"},
+            {"ri","right"},
+            {"right","right"},
+            {"rm","remove"},
+            {"rr","regexreplace"},
+            {"sh","striphtml"},
             {"sl","slug"},
             {"slug","slug"},
             {"slugify","slug"},
-            {"cl","cyrtolat"},
-            {"cyrtolat","cyrtolat"},
-            {"distinctwords","distinctwords"},
-            {"dw","distinctwords"},
-            {"guid","guid"},
-            {"g","guid"},
-            {"now","now"},
-            {"n","now"},
-            {"remove","remove"},
-            {"rm","remove"},
-            {"ts","trimstart"},
-            {"trimstart","trimstart"},
-            {"ta","trimstartappend"},
-            {"tsa","trimstartappend"},
-            {"trimstartappend","trimstartappend"},
-            {"trimend","trimend"},
-            {"te", "trimend"},
-            {"t","trim"},
-            {"tr","trim"},
-            {"trim","trim"},
-            {"substring","substring"},
             {"ss","substring"},
+            {"striphtml","striphtml"},
             {"sub","substring"},
-            {"map","map"},
-            {"m","map"},
-            {"urlencode","urlencode"},
-            {"ue","urlencode"},
-            {"w","web"},
-            {"web","web"},
-            {"ad", "add"},
-            {"add", "add"},
+            {"substring","substring"},
             {"sum", "add"},
-            {"fj","fromjson"},
-            {"fromjson","fromjson"},
-            {"padleft","padleft"},
-            {"pl","padleft"},
-            {"padright","padright"},
-            {"pr","padright"},
+            {"t","trim"},
+            {"ta","trimstartappend"},
+            {"tc","totitlecase"},
+            {"te", "trimend"},
+            {"template","tempalte"},
+            {"timezone","timezone"},
+            {"titlecase","totitlecase"},
+            {"tj","tojson"},
+            {"tl","tolower"},
+            {"tlr","transliterate"},
+            {"tp","template"},
+            {"tojson","tojson"},
+            {"tolower","tolower"},
             {"tos","tostring"},
             {"tostring","tostring"},
-            {"tl","tolower"},
-            {"tolower","tolower"},
-            {"low","tolower"},
-            {"lower","tolower"},
-            {"tu","toupper"},
+            {"totitlecase","totitlecase"},
             {"toupper","toupper"},
+            {"tr","trim"},
+            {"transliterate","transliterate"},
+            {"trim","trim"},
+            {"trimend","trimend"},
+            {"trimstart","trimstart"},
+            {"trimstartappend","trimstartappend"},
+            {"ts","trimstart"},
+            {"tsa","trimstartappend"},
+            {"tu","toupper"},
+            {"tz","timezone"},
+            {"ue","urlencode"},
             {"up","toupper"},
             {"upper","toupper"},
-            {"javascript","javascript"},
-            {"js","javascript"}
+            {"urlencode","urlencode"},
+            {"w","web"},
+            {"web","web"}
         };
 
         public static readonly Dictionary<string, Func<string, TransformConfigurationElement>> Functions = new Dictionary<string, Func<string, TransformConfigurationElement>> {
             {"replace", Replace},
             {"left", Left},
             {"right", Right},
-            {"append", arg => new TransformConfigurationElement() { Method="append", Parameter = arg}},
+            {"append", arg => new TransformConfigurationElement() { Method="append", Parameter = arg, IsShortHand = true}},
             {"if", If},
             {"convert", Convert},
-            {"copy", arg => new TransformConfigurationElement() { Method ="copy", Parameter = arg}},
+            {"copy", arg => new TransformConfigurationElement() { Method ="copy", Parameter = arg, IsShortHand = true}},
             {"concat", Concat},
-            {"hashcode", arg => new TransformConfigurationElement() {Method = "gethashcode"}},
-            {"compress", arg => new TransformConfigurationElement() {Method = "compress", Parameter = arg} },
-            {"decompress", arg => new TransformConfigurationElement() {Method = "decompress", Parameter = arg}},
+            {"hashcode", arg => new TransformConfigurationElement() {Method = "gethashcode", IsShortHand = true}},
+            {"compress", arg => new TransformConfigurationElement() {Method = "compress", Parameter = arg, IsShortHand = true} },
+            {"decompress", arg => new TransformConfigurationElement() {Method = "decompress", Parameter = arg, IsShortHand = true}},
             {"elipse", Elipse},
             {"regexreplace", RegexReplace},
-            {"striphtml", arg=> new TransformConfigurationElement() {Method = "striphtml", Parameter = arg}},
+            {"striphtml", arg=> new TransformConfigurationElement() {Method = "striphtml", Parameter = arg, IsShortHand = true}},
             {"join",Join},
             {"format", Format},
             {"insert", Insert},
             {"insertinterval", InsertInterval},
-            {"transliterate", arg=> new TransformConfigurationElement() { Method="transliterate", Parameter = arg}},
+            {"transliterate", arg=> new TransformConfigurationElement() { Method="transliterate", Parameter = arg, IsShortHand = true}},
             {"slug", Slug},
-            {"cyrtolat", arg=> new TransformConfigurationElement() {Method = "cyrtolat", Parameter = arg}},
-            {"distinctwords", arg=> new TransformConfigurationElement() {Method = "distinctwords", Separator = arg}},
-            {"guid", arg=>new TransformConfigurationElement() { Method = "guid"}},
-            {"now", arg=>new TransformConfigurationElement() { Method = "now"}},
+            {"cyrtolat", arg=> new TransformConfigurationElement() {Method = "cyrtolat", Parameter = arg, IsShortHand = true}},
+            {"distinctwords", arg=> new TransformConfigurationElement() {Method = "distinctwords", Separator = arg, IsShortHand = true}},
+            {"guid", arg=>new TransformConfigurationElement() { Method = "guid", IsShortHand = true}},
+            {"now", arg=>new TransformConfigurationElement() { Method = "now", IsShortHand = true}},
             {"remove", Remove},
-            {"trimstart", arg=> new TransformConfigurationElement() {Method = "trimstart", TrimChars = arg}},
+            {"trimstart", arg=> new TransformConfigurationElement() {Method = "trimstart", TrimChars = arg, IsShortHand = true}},
             {"trimstartappend", TrimStartAppend},
-            {"trimend", arg=> new TransformConfigurationElement() {Method = "trimend", TrimChars = arg}},
-            {"trim", arg=> new TransformConfigurationElement() { Method = "trim", TrimChars = arg}},
+            {"trimend", arg=> new TransformConfigurationElement() {Method = "trimend", TrimChars = arg, IsShortHand = true}},
+            {"trim", arg=> new TransformConfigurationElement() { Method = "trim", TrimChars = arg, IsShortHand = true}},
             {"substring", Substring},
             {"map", Map},
-            {"urlencode", arg=>new TransformConfigurationElement() { Method = "urlencode", Parameter = arg}},
+            {"urlencode", arg=>new TransformConfigurationElement() { Method = "urlencode", Parameter = arg, IsShortHand = true}},
             {"web", Web},
             {"add", Add},
             {"fromjson",FromJson},
             {"padleft", PadLeft},
             {"padright", PadRight},
-            {"tostring", arg=> new TransformConfigurationElement() { Method = "tostring", Format = arg }},
-            {"tolower", arg=> new TransformConfigurationElement() { Method = "tolower"} },
-            {"toupper", arg=> new TransformConfigurationElement() { Method = "toupper"}},
-            {"javascript", JavaScript}
+            {"tostring", arg=> new TransformConfigurationElement() { Method = "tostring", Format = arg, IsShortHand = true }},
+            {"tolower", arg=> new TransformConfigurationElement() { Method = "tolower", Parameter = arg, IsShortHand = true} },
+            {"toupper", arg=> new TransformConfigurationElement() { Method = "toupper", Parameter = arg, IsShortHand = true}},
+            {"javascript", JavaScript},
+            {"csharp", CSharp},
+            {"template", Template},
+            {"totitlecase", arg=> new TransformConfigurationElement() {Method="totitlecase", Parameter = arg, IsShortHand = true}},
+            {"timezone",TimeZone},
+            {"tojson", ToJson},
+            {"fromxml", FromXml},
+            {"fromregex", FromRegex},
+            {"fromsplit", FromSplit}
         };
 
-        private static TransformConfigurationElement JavaScript(string arg) {
+        private static TransformConfigurationElement FromSplit(string arg) {
             var split = SplitComma(arg);
 
-            Guard.Against(split.Length < 2, "The javascript method requires at least two paramters: a script, and a parameter.");
+            Guard.Against(split.Length < 2, "The fromsplit method requires atleast two parameters: the separator, and a field.");
 
-            var element = new TransformConfigurationElement() { Method = "javascript", Script = split[0] };
+            var element = Fields("fromsplit", arg);
+            element.Separator = split[0];
+            element.Fields.RemoveAt(0);
+            return element;
+        }
+
+        private static TransformConfigurationElement FromRegex(string arg) {
+            var split = SplitComma(arg);
+
+            Guard.Against(split.Length < 2, "The fromregex requires at least two parameters; a pattern with a named group in it, and a field name (with the same name).  Hmm... I guess that is redundant, but that's the way it is for now.");
+
+            var element = new TransformConfigurationElement() { Method = "fromregex", Pattern = split[0], IsShortHand = true };
+
+            foreach (var p in split.Skip(1)) {
+                element.Fields.Add(new FieldConfigurationElement() { Name = p, Length = "4000", Input = false });
+            }
+            return element;
+        }
+
+        private static TransformConfigurationElement FromXml(string arg) {
+            return Fields("fromxml", arg);
+        }
+
+        private static TransformConfigurationElement ToJson(string arg) {
+            var element = Parameters("tojson", arg);
+            foreach (ParameterConfigurationElement p in element.Parameters) {
+                if (!p.Field.Contains("="))
+                    continue;
+                var split = p.Field.Split(new[] { '=' });
+                p.Field = string.Empty;
+                p.Name = split[0];
+                p.Value = split[1];
+            }
+            return element;
+        }
+
+        private static TransformConfigurationElement Template(string arg) {
+            var split = SplitComma(arg);
+
+            Guard.Against(split.Length < 2, "The {0} method requires at least two paramters: a script, and a parameter.");
+
+            var element = new TransformConfigurationElement() { Method = "template", Template = split[0], IsShortHand = true };
 
             if (split.Length == 2) {
                 element.Parameter = split[1];
@@ -166,6 +232,32 @@ namespace Transformalize.Main.Transform {
             }
 
             return element;
+        }
+
+        private static TransformConfigurationElement Script(string method, string arg) {
+            var split = SplitComma(arg);
+
+            Guard.Against(split.Length < 2, "The {0} method requires at least two paramters: a script, and a parameter.", method);
+
+            var element = new TransformConfigurationElement() { Method = method, Script = split[0], IsShortHand = true };
+
+            if (split.Length == 2) {
+                element.Parameter = split[1];
+            } else {
+                foreach (var s in split.Skip(1)) {
+                    element.Parameters.Add(new ParameterConfigurationElement() { Field = s });
+                }
+            }
+
+            return element;
+        }
+
+        private static TransformConfigurationElement CSharp(string arg) {
+            return Script("csharp", arg);
+        }
+
+        private static TransformConfigurationElement JavaScript(string arg) {
+            return Script("javascript", arg);
         }
 
         private static TransformConfigurationElement PadLeft(string arg) {
@@ -183,7 +275,7 @@ namespace Transformalize.Main.Transform {
             var split = SplitComma(arg);
             Guard.Against(split.Length < 2, "The {0} method requires two pararmeters: the total width, and the padding character(s).  You've provided {1} parameter{2}.", method, split.Length, split.Length.Plural());
 
-            var element = new TransformConfigurationElement() { Method = method };
+            var element = new TransformConfigurationElement() { Method = method, IsShortHand = true };
 
             int totalWidth;
             if (int.TryParse(split[0], out totalWidth)) {
@@ -204,7 +296,7 @@ namespace Transformalize.Main.Transform {
         private static TransformConfigurationElement FromJson(string arg) {
             Guard.Against(arg.Equals(string.Empty), "The fromjson method requires at least one parameter: the json field name, or path in brackets (i.e. [customer] or [customer][first_name]).");
 
-            var element = new TransformConfigurationElement() { Method = "fromjson" };
+            var element = new TransformConfigurationElement() { Method = "fromjson", IsShortHand = true };
             var type = "string";
             TransformConfigurationElement current = element;
             foreach (var p in SplitComma(arg)) {
@@ -236,7 +328,7 @@ namespace Transformalize.Main.Transform {
             var split = SplitComma(arg);
             Guard.Against(split.Length > 2, "The web method takes two optional parameters: a parameter referencing a field, and an integer representing sleep ms in between web requests.  You have {0} parameter{1} in '{2}'.", split.Length, split.Length.Plural(), arg);
 
-            var element = new TransformConfigurationElement() { Method = "web" };
+            var element = new TransformConfigurationElement() { Method = "web", IsShortHand = true };
 
             foreach (var p in split) {
                 int sleep;
@@ -252,7 +344,7 @@ namespace Transformalize.Main.Transform {
         private static TransformConfigurationElement Map(string arg) {
             Guard.Against(arg.Equals(string.Empty), "The map method requires at least one parameter; the map name.  An additional parameter may reference another field to represent the value being mapped.");
             var split = SplitComma(arg);
-            var element = new TransformConfigurationElement() { Method = "map" };
+            var element = new TransformConfigurationElement() { Method = "map", IsShortHand = true };
             var hasInlineMap = arg.Contains("=");
             foreach (var p in split) {
                 if (hasInlineMap) {
@@ -280,7 +372,7 @@ namespace Transformalize.Main.Transform {
             var split = SplitComma(arg);
             Guard.Against(split.Length < 1, "The trimstartappend method requires at least one parameter indicating the trim characters.");
 
-            var element = new TransformConfigurationElement() { Method = "trimstartappend", TrimChars = split[0] };
+            var element = new TransformConfigurationElement() { Method = "trimstartappend", TrimChars = split[0], IsShortHand = true };
 
             if (split.Length > 1) {
                 element.Separator = split[1];
@@ -295,7 +387,7 @@ namespace Transformalize.Main.Transform {
             int startIndex;
             int length;
             if (int.TryParse(split[0], out startIndex) && int.TryParse(split[1], out length)) {
-                return new TransformConfigurationElement() { Method = "substring", StartIndex = startIndex, Length = length };
+                return new TransformConfigurationElement() { Method = "substring", StartIndex = startIndex, Length = length, IsShortHand = true };
             }
 
             throw new TransformalizeException("The substring method requires two integers indicating start index and length. '{0}' doesn't represent two integers.", arg);
@@ -308,14 +400,14 @@ namespace Transformalize.Main.Transform {
             int startIndex;
             int length;
             if (int.TryParse(split[0], out startIndex) && int.TryParse(split[1], out length)) {
-                return new TransformConfigurationElement() { Method = "remove", StartIndex = startIndex, Length = length };
+                return new TransformConfigurationElement() { Method = "remove", StartIndex = startIndex, Length = length, IsShortHand = true };
             }
 
             throw new TransformalizeException("The remove method requires two integer parameters indicating start index and length. '{0}' doesn't represent two integers.", arg);
         }
 
         private static TransformConfigurationElement Slug(string arg) {
-            var element = new TransformConfigurationElement() { Method = "slug" };
+            var element = new TransformConfigurationElement() { Method = "slug", IsShortHand = true };
 
             var split = SplitComma(arg);
 
@@ -339,7 +431,7 @@ namespace Transformalize.Main.Transform {
 
             Guard.Against(split.Length != 2, "The insertinterval method requires two parameters: the interval (e.g. every certain number of characters), and the value to insert. '{0}' has {1} parameter{2}.", arg, split.Length, split.Length.Plural());
 
-            var element = new TransformConfigurationElement() { Method = "insertinterval" };
+            var element = new TransformConfigurationElement() { Method = "insertinterval", IsShortHand = true };
 
             int interval;
             if (int.TryParse(split[0], out interval)) {
@@ -356,7 +448,7 @@ namespace Transformalize.Main.Transform {
             var split = SplitComma(arg);
             Guard.Against(split.Length != 2, "The insert method requires two parameters; the start index, and the value (or field reference) you'd like to insert.  '{0}' has {1} parameter{2}.", arg, split.Length, split.Length.Plural());
 
-            var element = new TransformConfigurationElement() { Method = "insert" };
+            var element = new TransformConfigurationElement() { Method = "insert", IsShortHand = true };
 
             int startIndex;
             if (int.TryParse(split[0], out startIndex)) {
@@ -373,7 +465,7 @@ namespace Transformalize.Main.Transform {
             var split = SplitComma(arg);
             Guard.Against(split.Length == 0, "The join method requires a separator, and then a * (for all fields) or a comma delimited list of parameters that reference fields.");
 
-            var element = new TransformConfigurationElement() { Method = "join", Separator = split[0] };
+            var element = new TransformConfigurationElement() { Method = "join", Separator = split[0], IsShortHand = true };
 
             if (split.Length == 2) {
                 element.Parameter = split[1];
@@ -391,7 +483,7 @@ namespace Transformalize.Main.Transform {
             var split = SplitComma(arg);
             Guard.Against(split.Length == 0, "The add method requires a * parameter, or a comma delimited list of parameters that reference numeric fields.");
 
-            var element = new TransformConfigurationElement() { Method = "add" };
+            var element = new TransformConfigurationElement() { Method = "add", IsShortHand = true };
 
             if (split.Length == 1) {
                 element.Parameter = split[0];
@@ -406,12 +498,11 @@ namespace Transformalize.Main.Transform {
             return element;
         }
 
-        private static TransformConfigurationElement Concat(string arg) {
+        private static TransformConfigurationElement Parameters(string method, string arg) {
             var split = SplitComma(arg);
-            Guard.Against(split.Length == 0, "The concat method requires a * parameter, or a comma delimited list of parameters that reference fields.");
+            Guard.Against(split.Length == 0, "The {0} method requires a * parameter, or a comma delimited list of parameters that reference fields.", method);
 
-            var element = new TransformConfigurationElement() { Method = "concat" };
-
+            var element = new TransformConfigurationElement() { Method = method, IsShortHand = true };
             if (split.Length == 1) {
                 element.Parameter = split[0];
             } else {
@@ -420,6 +511,22 @@ namespace Transformalize.Main.Transform {
                 }
             }
             return element;
+        }
+
+        private static TransformConfigurationElement Fields(string method, string arg) {
+            var split = SplitComma(arg);
+            Guard.Against(split.Length == 0, "The {0} method requires a comma delimited list of fields.", method);
+
+            var element = new TransformConfigurationElement() { Method = method, IsShortHand = true };
+            foreach (var p in split) {
+                element.Fields.Add(new FieldConfigurationElement() { Name = p, Length = "4000", Input = false });
+            }
+            return element;
+        }
+
+
+        private static TransformConfigurationElement Concat(string arg) {
+            return Parameters("concat", arg);
         }
 
         public static TransformConfigurationElement Interpret(string expression) {
@@ -451,7 +558,7 @@ namespace Transformalize.Main.Transform {
             var element = new TransformConfigurationElement() {
                 Method = "regexreplace",
                 Pattern = split[0],
-                Replacement = split[1]
+                Replacement = split[1], IsShortHand = true
             };
 
             if (split.Length <= 2)
@@ -470,7 +577,7 @@ namespace Transformalize.Main.Transform {
             var oldValue = split[0];
             var newValue = split[1];
             return new TransformConfigurationElement() {
-                Method = "replace", OldValue = oldValue, NewValue = newValue
+                Method = "replace", OldValue = oldValue, NewValue = newValue, IsShortHand = true
             };
         }
 
@@ -478,7 +585,7 @@ namespace Transformalize.Main.Transform {
             var split = SplitComma(arg);
             Guard.Against(split.Length < 1, "The convert method requires the first parameter reference another field's alias (or name).");
 
-            var element = new TransformConfigurationElement() { Method = "convert", Parameter = split[0] };
+            var element = new TransformConfigurationElement() { Method = "convert", Parameter = split[0], IsShortHand = true };
             if (split.Length <= 1)
                 return element;
 
@@ -503,7 +610,7 @@ namespace Transformalize.Main.Transform {
             // left is required first, assign and remove
             var element = new TransformConfigurationElement() {
                 Method = "if",
-                Left = linked.First.Value
+                Left = linked.First.Value, IsShortHand = true
             };
             linked.RemoveFirst();
 
@@ -535,13 +642,13 @@ namespace Transformalize.Main.Transform {
         private static TransformConfigurationElement Right(string arg) {
             int length;
             Guard.Against(!int.TryParse(arg, out length), "The right method requires a single integer representing the length, or how many right-most characters you want. You passed in '{0}'.", arg);
-            return new TransformConfigurationElement() { Method = "right", Length = length };
+            return new TransformConfigurationElement() { Method = "right", Length = length, IsShortHand = true };
         }
 
         public static TransformConfigurationElement Left(string arg) {
             int length;
             Guard.Against(!int.TryParse(arg, out length), "The left method requires a single integer representing the length, or how many left-most characters you want. You passed in '{0}'.", arg);
-            return new TransformConfigurationElement() { Method = "left", Length = length };
+            return new TransformConfigurationElement() { Method = "left", Length = length, IsShortHand = true };
         }
 
         private static string[] SplitComma(string arg) {
@@ -549,7 +656,7 @@ namespace Transformalize.Main.Transform {
         }
 
         private static TransformConfigurationElement Elipse(string arg) {
-            var element = new TransformConfigurationElement() { Method = "elipse" };
+            var element = new TransformConfigurationElement() { Method = "elipse", IsShortHand = true };
             var split = SplitComma(arg);
             Guard.Against(split.Length == 0, "The elipse method requires a an integer representing the number of characters allowed before the elipse.");
 
@@ -566,7 +673,7 @@ namespace Transformalize.Main.Transform {
         private static TransformConfigurationElement Format(string arg) {
             var split = SplitComma(arg);
             Guard.Against(split.Length < 1, "The format method requires at least one parameter; the format with {{0}} style place-holders in it.  For each place-holder, add additional parameters that reference fields.  If no fields are referenced, the first parameter is assumed to be the field this transform is nested in.");
-            var element = new TransformConfigurationElement() { Method = "format", Format = split[0] };
+            var element = new TransformConfigurationElement() { Method = "format", Format = split[0], IsShortHand = true };
 
             if (split.Length <= 1)
                 return element;
@@ -578,6 +685,32 @@ namespace Transformalize.Main.Transform {
 
             foreach (var s in split.Skip(1)) {
                 element.Parameters.Add(new ParameterConfigurationElement() { Field = s });
+            }
+            return element;
+        }
+
+        private static TransformConfigurationElement TimeZone(string arg) {
+            var split = SplitComma(arg);
+
+            Guard.Against(split.Length < 2, "The timezone method requires at least two parameters: the from-time-zone, and the to-time-zone.");
+
+            var element = new TransformConfigurationElement() { Method = "timezone", IsShortHand = true };
+
+            foreach (var p in split) {
+                try {
+                    TimeZoneInfo.FindSystemTimeZoneById(p);
+                    if (string.IsNullOrEmpty(element.FromTimeZone)) {
+                        element.FromTimeZone = p;
+                    } else {
+                        element.ToTimeZone = p;
+                    }
+                } catch (TimeZoneNotFoundException ex) {
+                    if (string.IsNullOrEmpty(element.Parameter)) {
+                        element.Parameter = p;
+                    } else {
+                        throw new TransformalizeException("The timezone method already has a parameter of {0}, and it can't interpret {1} as a valid time-zone identifer. {2}", element.Parameter, p, ex.Message);
+                    }
+                }
             }
             return element;
         }

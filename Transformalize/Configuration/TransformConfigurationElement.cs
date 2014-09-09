@@ -578,6 +578,8 @@ namespace Transformalize.Configuration {
             set { this[USE_HTTPS] = value; }
         }
 
+        public bool IsShortHand { get; set; }
+
         public override bool IsReadOnly() {
             return false;
         }

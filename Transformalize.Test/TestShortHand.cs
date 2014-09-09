@@ -487,7 +487,93 @@ namespace Transformalize.Test {
             Assert.AreEqual("x*y;", result.Script);
             Assert.AreEqual("x", result.Parameters[0].Field);
             Assert.AreEqual("y", result.Parameters[1].Field);
+        }
 
+        [Test]
+        public void CSharp() {
+            const string expression = "cs(return d.AddDays(-1);,d";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("csharp", result.Method);
+            Assert.AreEqual("return d.AddDays(-1);", result.Script);
+            Assert.AreEqual("d", result.Parameter);
+        }
+
+        [Test]
+        public void Template() {
+            const string expression = "tp(@{ var x = Model.theParameter.PadLeft(5); }@{x} plus more text,theParameter";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("template", result.Method);
+            Assert.AreEqual("@{ var x = Model.theParameter.PadLeft(5); }@{x} plus more text", result.Template);
+            Assert.AreEqual("theParameter", result.Parameter);
+        }
+
+        [Test]
+        public void TitleCase() {
+            const string expression = "tc";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("totitlecase", result.Method);
+            Assert.AreEqual("", result.Parameter);
+        }
+
+        [Test]
+        public void TimeZone() {
+            const string expression = "tz(UTC,Eastern Standard Time,dateParam";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("timezone", result.Method);
+            Assert.AreEqual("UTC", result.FromTimeZone);
+            Assert.AreEqual("Eastern Standard Time", result.ToTimeZone);
+            Assert.AreEqual("dateParam", result.Parameter);
+        }
+
+        [Test]
+        public void ToJson() {
+            const string expression = "tj(p1,p2,p3";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("tojson", result.Method);
+            Assert.AreEqual("p1", result.Parameters[0].Field);
+            Assert.AreEqual("p2", result.Parameters[1].Field);
+            Assert.AreEqual("p3", result.Parameters[2].Field);
+        }
+
+        [Test]
+        public void ToJsonWithLiterals() {
+            const string expression = "tj(p1,k=v,p3";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("tojson", result.Method);
+            Assert.AreEqual("p1", result.Parameters[0].Field);
+            Assert.AreEqual("k", result.Parameters[1].Name);
+            Assert.AreEqual("v", result.Parameters[1].Value);
+            Assert.AreEqual("p3", result.Parameters[2].Field);
+        }
+
+        [Test]
+        public void FromXml() {
+            const string expression = "fx(p1,p2,p3";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("fromxml", result.Method);
+            Assert.AreEqual("p1", result.Fields[0].Name);
+            Assert.AreEqual("p2", result.Fields[1].Name);
+            Assert.AreEqual("p3", result.Fields[2].Name);
+        }
+
+        [Test]
+        public void FromRegex() {
+            const string expression = @"fr([0-9]{2\,}(?<p1>[a-z]*),p1";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("fromregex", result.Method);
+            Assert.AreEqual("[0-9]{2,}(?<p1>[a-z]*)", result.Pattern);
+            Assert.AreEqual("p1", result.Fields[0].Name);
+        }
+
+        [Test]
+        public void FromSplit() {
+            const string expression = "fs(|,p1,p2,p3";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("fromsplit", result.Method);
+            Assert.AreEqual("|", result.Separator);
+            Assert.AreEqual("p1", result.Fields[0].Name);
+            Assert.AreEqual("p2", result.Fields[1].Name);
+            Assert.AreEqual("p3", result.Fields[2].Name);
         }
 
     }

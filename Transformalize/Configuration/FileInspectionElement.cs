@@ -7,6 +7,7 @@ using Transformalize.Main.Providers.File;
 namespace Transformalize.Configuration {
 
     public class FileInspectionElement : ConfigurationElement {
+
         private const string TYPES = "types";
         private const string DELIMITERS = "delimiters";
         private const string SAMPLE = "sample";

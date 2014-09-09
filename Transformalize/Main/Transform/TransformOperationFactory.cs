@@ -458,6 +458,7 @@ namespace Transformalize.Main {
                                 new Fields(_process, parameters, field.Entity)
                             ) { ShouldRun = shouldRun };
                     }
+
                 case "fromregex":
                     return new FromRegexOperation(
                         outKey,
