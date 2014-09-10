@@ -162,8 +162,8 @@ namespace Transformalize.Configuration {
             get { return this[TEMPLATES] as TemplateElementCollection; }
         }
 
-        [EnumConversionValidator(typeof(PipelineThreading), MessageTemplate = "{1} must be SingleThreaded, or MultiThreaded.")]
-        [ConfigurationProperty(PIPELINE_THREADING, IsRequired = false, DefaultValue = "MultiThreaded")]
+        [EnumConversionValidator(typeof(PipelineThreading), MessageTemplate = "{1} must be SingleThreaded, MultiThreaded, or Default.")]
+        [ConfigurationProperty(PIPELINE_THREADING, IsRequired = false, DefaultValue = "Default")]
         public string PipelineThreading {
             get { return this[PIPELINE_THREADING] as string; }
             set { this[PIPELINE_THREADING] = value; }

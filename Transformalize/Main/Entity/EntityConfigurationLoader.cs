@@ -45,19 +45,10 @@ namespace Transformalize.Main {
 
             Validate(element);
 
-            var threading = _process.PipelineThreading;
-
-            if (!string.IsNullOrEmpty(element.PipelineThreading)) {
-                PipelineThreading elementThreading;
-                if (Enum.TryParse(element.PipelineThreading, true, out elementThreading)) {
-                    threading = elementThreading;
-                }
-            }
-
             var entity = new Entity() {
                 ProcessName = _process.Name,
                 Schema = element.Schema,
-                PipelineThreading = threading,
+                PipelineThreading = DetermineThreading(element),
                 Name = element.Name,
                 Prefix = element.Prefix,
                 Group = element.Group,
@@ -129,6 +120,25 @@ namespace Transformalize.Main {
             entity.Output = PrepareIo(element.Output, entity.Fields);
 
             return entity;
+        }
+
+        private PipelineThreading DetermineThreading(EntityConfigurationElement element)
+        {
+            var threading = PipelineThreading.Default;
+            if (_process.PipelineThreading != PipelineThreading.Default)
+            {
+                threading = _process.PipelineThreading;
+            }
+
+            if (!element.PipelineThreading.Equals("Default"))
+            {
+                PipelineThreading entityThreading;
+                if (Enum.TryParse(element.PipelineThreading, true, out entityThreading))
+                {
+                    threading = entityThreading;
+                }
+            }
+            return threading;
         }
 
         private void GuardAgainstNoFields(EntityConfigurationElement element, short entityIndex, Entity entity) {

@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Transformalize.Libs.NLog;
+using Transformalize.Libs.RazorEngine.Templating;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Pipelines;
 using Transformalize.Main;
@@ -64,8 +65,7 @@ namespace Transformalize.Runner {
                 var collector = new CollectorOperation();
                 new MasterJoinProcess(process, ref collector).Execute();
                 process.Results = collector.Rows;
-            } else
-            {
+            } else {
                 process.Results = process.MasterEntity == null ? Enumerable.Empty<Row>() : process.MasterEntity.Rows;
             }
 
@@ -94,13 +94,11 @@ namespace Transformalize.Runner {
         }
 
         private static void ProcessEntities(Process process) {
-
-            foreach (var entityProcess in process.Entities.Select(entity => new EntityProcess(process, entity) {
-                PipelineExecuter = entity.PipelineThreading == PipelineThreading.SingleThreaded ? (AbstractPipelineExecuter)new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter()
-            })) {
-                entityProcess.Execute();
-            }
-
+            process.Entities.AsParallel().ForAll(e => new EntityProcess(process, e) {
+                PipelineExecuter = e.PipelineThreading == PipelineThreading.SingleThreaded ?
+                    (IPipelineExecuter) new SingleThreadedPipelineExecuter() :
+                    (IPipelineExecuter) new ThreadPoolPipelineExecuter()
+            }.Execute());
             ResetLog(process);
         }
 

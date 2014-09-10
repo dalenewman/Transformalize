@@ -22,7 +22,9 @@
 
 using System;
 using System.Configuration;
+using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Main;
 
 namespace Transformalize.Configuration {
 
@@ -77,7 +79,8 @@ namespace Transformalize.Configuration {
             set { this[SCHEMA] = value; }
         }
 
-        [ConfigurationProperty(PIPELINE_THREADING, IsRequired = false, DefaultValue = null)]
+        [EnumConversionValidator(typeof(PipelineThreading), MessageTemplate = "{1} must be SingleThreaded, MultiThreaded, or Default.")]
+        [ConfigurationProperty(PIPELINE_THREADING, IsRequired = false, DefaultValue = "Default")]
         public string PipelineThreading {
             get { return this[PIPELINE_THREADING] as string; }
             set { this[PIPELINE_THREADING] = value; }

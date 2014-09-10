@@ -26,6 +26,7 @@ using Transformalize.Extensions;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Libs.Rhino.Etl.Pipelines;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
 using Transformalize.Operations;
@@ -44,6 +45,8 @@ namespace Transformalize.Processes {
             _process = process;
             _entity = entity;
             _collectors[STANDARD_OUTPUT] = new CollectorOperation();
+            PipelineExecuter = entity.PipelineThreading == PipelineThreading.SingleThreaded ? (AbstractPipelineExecuter) new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter();
+
         }
 
         protected override void Initialize() {
