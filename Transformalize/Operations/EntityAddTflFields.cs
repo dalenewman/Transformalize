@@ -30,7 +30,7 @@ namespace Transformalize.Operations {
         private readonly Process _process;
         private readonly Entity _entity;
 
-        public EntityAddTflFields(ref Process process, ref Entity entity) {
+        public EntityAddTflFields(Process process, Entity entity) {
             _process = process;
             _entity = entity;
             UseTransaction = false;

@@ -46,7 +46,6 @@ namespace Transformalize.Main {
         }
 
         private static void InitializeLogger(string name) {
-            GlobalDiagnosticsContext.Set("process", name);
             GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
         }
 

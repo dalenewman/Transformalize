@@ -61,7 +61,7 @@ namespace Transformalize.Runner {
                     xml = string.Format(@"
                     <transformalize>
                         <processes>
-                            <add name=""{0}"" enabled=""{1}"" inherit=""{2}"" time-zone=""{3}"" star=""{4}"" star-enabled=""{5}"" view=""{6}"" mode=""{7}"" log-level=""{8}"">{9}</add>
+                            <add name=""{0}"" enabled=""{1}"" inherit=""{2}"" time-zone=""{3}"" star=""{4}"" star-enabled=""{5}"" view=""{6}"" mode=""{7}"" log-level=""{8}"" log-rows=""{9}"">{10}</add>
                         </processes>
                     </transformalize>",
                         contents.Name,
@@ -72,7 +72,8 @@ namespace Transformalize.Runner {
                         SafeAttribute(process, "star-enabled", true),
                         SafeAttribute(process, "view", Common.DefaultValue),
                         SafeAttribute(process, "mode", "default"),
-                        SafeAttribute(process, "log-level", Common.DefaultValue),
+                        SafeAttribute(process, "log-level", "Info"),
+                        SafeAttribute(process, "log-rows", (long)10000),
                         process.InnerXml()
                     );
                 }
@@ -111,7 +112,6 @@ namespace Transformalize.Runner {
 
             var newXml = new StringBuilder("<transformalize><processes>");
 
-            GlobalDiagnosticsContext.Set("process", processes.Count() > 1 ? "All" : processes.First().GetAttribute("name").Value);
             GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
 
             if (environments.Length > 0) {

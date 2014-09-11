@@ -26,7 +26,7 @@ namespace Transformalize.Libs.Rhino.Etl
         /// <summary>
         ///     Ordered list of the operations in this process
         /// </summary>
-        protected readonly List<IOperation> operations = new List<IOperation>();
+        protected readonly List<IOperation> Operations = new List<IOperation>();
 
         /// <summary>
         ///     Gets the name of this instance
@@ -50,7 +50,7 @@ namespace Transformalize.Libs.Rhino.Etl
         public TDerived Register(IOperation operation)
         {
             operation.UseTransaction = UseTransaction;
-            operations.Add(operation);
+            Operations.Add(operation);
             Debug("Register {0} in {1}", operation.Name, Name);
             return (TDerived) this;
         }
@@ -71,7 +71,7 @@ namespace Transformalize.Libs.Rhino.Etl
         /// </summary>
         protected void MergeLastOperationsToOperations()
         {
-            operations.AddRange(_lastOperations);
+            Operations.AddRange(_lastOperations);
         }
     }
 }

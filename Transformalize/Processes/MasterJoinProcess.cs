@@ -2,14 +2,13 @@ using System.Linq;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 using Transformalize.Operations;
-using Transformalize.Runner;
 
 namespace Transformalize.Processes {
     public class MasterJoinProcess : EtlProcess {
         private readonly Process _process;
         private readonly CollectorOperation _collector;
 
-        public MasterJoinProcess(Process process, ref CollectorOperation collector) {
+        public MasterJoinProcess(Process process, ref CollectorOperation collector) : base(process) {
             _process = process;
             _collector = collector;
         }

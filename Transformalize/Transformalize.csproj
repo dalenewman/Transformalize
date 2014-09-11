@@ -1517,6 +1517,7 @@
     <Compile Include="Libs\Newtonsoft.Json\Utilities\ValidationUtils.cs" />
     <Compile Include="Libs\Newtonsoft.Json\WriteState.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\AbstractSortedAggregationOperation.cs" />
+    <Compile Include="Libs\Rhino.Etl\Operations\DapperBulkUpdateOperation.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\ParallelUnionAllOperation.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\SortMergeJoinOperation.cs" />
     <Compile Include="Libs\SharpZLib\BZip2\BZip2.cs" />
@@ -1923,6 +1924,8 @@
     <Compile Include="Main\Providers\Lucene\LuceneLoadOperation.cs" />
     <Compile Include="Main\Providers\Lucene\LuceneKeysExtractAll.cs" />
     <Compile Include="Main\Providers\Lucene\LuceneTflWriter.cs" />
+    <Compile Include="Main\Providers\Mail\MailConnection.cs" />
+    <Compile Include="Main\Providers\Mail\MailDependencies.cs" />
     <Compile Include="Main\Providers\PostgreSql\PostgreSqlDataTypeService.cs" />
     <Compile Include="Main\Providers\Solr\SolrConnection.cs" />
     <Compile Include="Main\Providers\Solr\SolrConnectionChecker.cs" />
@@ -1975,8 +1978,6 @@
     <Compile Include="Main\Providers\ElasticSearch\ElasticSearchConnection.cs" />
     <Compile Include="Main\Providers\Log\LogDependencies.cs" />
     <Compile Include="Main\Providers\Log\LogConnection.cs" />
-    <Compile Include="Main\Providers\Mail\MailConnection.cs" />
-    <Compile Include="Main\Providers\Mail\MailDependencies.cs" />
     <Compile Include="Main\Providers\MySql\MySqlDependencies.cs" />
     <Compile Include="Main\Providers\MySql\MySqlEntityDropper.cs" />
     <Compile Include="Main\Providers\MySql\MySqlEntityExists.cs" />
@@ -2444,6 +2445,7 @@
     <Compile Include="Libs\Rhino.Etl\WithLoggingMixin.cs" />
     <Compile Include="Operations\AliasDefault.cs" />
     <Compile Include="Operations\AliasOperation.cs" />
+    <Compile Include="Operations\DapperResultsLoad.cs" />
     <Compile Include="Operations\EntityDetectDeletes.cs" />
     <Compile Include="Operations\EntityInputKeysExtractAllForDelete.cs" />
     <Compile Include="Operations\EntityJoinOperation.cs" />
@@ -2944,6 +2946,7 @@
     <Compile Include="Runner\ContentsWebReader.cs" />
     <Compile Include="Runner\IContentsReader.cs" />
     <Compile Include="Runner\InitializeRunner.cs" />
+    <Compile Include="Runner\AbstractProcessRunner.cs" />
     <Compile Include="Runner\IProcessRunner.cs" />
     <Compile Include="Runner\MetadataRunner.cs" />
     <Compile Include="Runner\ProcessRunner.cs" />

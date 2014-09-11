@@ -37,31 +37,28 @@ namespace Transformalize.Processes {
     public class EntityProcess : EtlProcess {
 
         private const string STANDARD_OUTPUT = "output";
-        private Process _process;
-        private Entity _entity;
+        private readonly Entity _entity;
         private readonly ConcurrentDictionary<string, CollectorOperation> _collectors = new ConcurrentDictionary<string, CollectorOperation>();
 
-        public EntityProcess(Process process, Entity entity) {
-            _process = process;
+        public EntityProcess(Process process, Entity entity)
+            : base(process) {
             _entity = entity;
             _collectors[STANDARD_OUTPUT] = new CollectorOperation();
-            PipelineExecuter = entity.PipelineThreading == PipelineThreading.SingleThreaded ? (AbstractPipelineExecuter) new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter();
-
+            PipelineExecuter = entity.PipelineThreading == PipelineThreading.SingleThreaded ? (AbstractPipelineExecuter)new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter();
         }
 
         protected override void Initialize() {
 
-            GlobalDiagnosticsContext.Set("process", _process.Name);
             GlobalDiagnosticsContext.Set("entity", Common.LogLength(_entity.Alias));
 
-            Register(new EntityKeysPartial(_process, _entity));
+            Register(new EntityKeysPartial(Process, _entity));
 
             if (_entity.Input.Count == 1) {
-                Register(_entity.Input.First().Connection.Extract(_entity, _process.IsFirstRun));
+                Register(_entity.Input.First().Connection.Extract(_entity, Process.IsFirstRun));
             } else {
                 var union = new ParallelUnionAllOperation();
                 foreach (var input in _entity.Input) {
-                    union.Add(input.Connection.Extract(_entity, _process.IsFirstRun));
+                    union.Add(input.Connection.Extract(_entity, Process.IsFirstRun));
                 }
                 Register(union);
             }
@@ -90,7 +87,7 @@ namespace Transformalize.Processes {
 
             Register(new TruncateOperation(_entity.Fields, _entity.CalculatedFields));
 
-            var standardOutput = new NamedConnection { Connection = _process.OutputConnection, Name = STANDARD_OUTPUT };
+            var standardOutput = new NamedConnection { Connection = Process.OutputConnection, Name = STANDARD_OUTPUT };
 
             if (_entity.Output.Count > 0) {
                 var branch = new BranchingOperation()
@@ -114,17 +111,17 @@ namespace Transformalize.Processes {
             if (nc.Connection.Type == ProviderType.Internal) {
                 process.RegisterLast(_collectors[nc.Name]);
             } else {
-                if (_process.IsFirstRun || !_entity.DetectChanges) {
-                    process.Register(new EntityAddTflFields(ref _process, ref _entity));
+                if (Process.IsFirstRun || !_entity.DetectChanges) {
+                    process.Register(new EntityAddTflFields(Process, _entity));
                     process.RegisterLast(nc.Connection.Insert(_entity));
                 } else {
                     process.Register(new EntityJoinAction(_entity).Right(nc.Connection.ExtractCorrespondingKeysFromOutput(_entity)));
                     var branch = new BranchingOperation()
                         .Add(new PartialProcessOperation()
-                            .Register(new EntityActionFilter(ref _process, ref _entity, EntityAction.Insert))
+                            .Register(new EntityActionFilter(Process, _entity, EntityAction.Insert))
                             .RegisterLast(nc.Connection.Insert(_entity)))
                         .Add(new PartialProcessOperation()
-                            .Register(new EntityActionFilter(ref _process, ref _entity, EntityAction.Update))
+                            .Register(new EntityActionFilter(Process, _entity, EntityAction.Update))
                             .RegisterLast(nc.Connection.Update(_entity)));
 
                     process.RegisterLast(branch);
@@ -154,11 +151,11 @@ namespace Transformalize.Processes {
                 throw new TransformalizeException("Entity Process failed for {0}. See error log.", _entity.Alias);
             }
 
-            if (_process.OutputConnection.Is.Internal()) {
+            if (Process.OutputConnection.Is.Internal()) {
                 _entity.Rows = _collectors[STANDARD_OUTPUT].Rows;
             } else {
                 // not handling things by input yet, so just use first
-                _process.OutputConnection.WriteEndVersion(_entity.Input.First().Connection, _entity);
+                Process.OutputConnection.WriteEndVersion(_entity.Input.First().Connection, _entity);
             }
 
             base.PostProcessing();

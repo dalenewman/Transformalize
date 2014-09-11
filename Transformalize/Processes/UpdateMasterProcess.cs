@@ -30,18 +30,16 @@ using Transformalize.Operations;
 
 namespace Transformalize.Processes {
     public class UpdateMasterProcess : EtlProcess {
-        private readonly Process _process;
 
-        public UpdateMasterProcess(ref Process process) {
-            _process = process;
+        public UpdateMasterProcess(Process process)
+            : base(process) {
         }
 
         protected override void Initialize() {
-            GlobalDiagnosticsContext.Set("process", _process.Name);
             GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
 
-            foreach (var entity in _process.Entities) {
-                Register(new EntityUpdateMaster(_process, entity));
+            foreach (var entity in Process.Entities) {
+                Register(new EntityUpdateMaster(Process, entity));
             }
         }
 
@@ -54,7 +52,7 @@ namespace Transformalize.Processes {
                         Debug(e.StackTrace);
                     }
                 }
-                throw new TransformalizeException("Update Master Process failed for {0}", _process.Name);
+                throw new TransformalizeException("Update Master Process failed for {0}", Process.Name);
             }
 
             base.PostProcessing();

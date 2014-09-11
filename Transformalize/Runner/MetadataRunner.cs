@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -10,15 +11,13 @@ using Process = Transformalize.Main.Process;
 
 namespace Transformalize.Runner {
 
-    public class MetadataRunner : IProcessRunner
-    {
+    public class MetadataRunner : AbstractProcessRunner, IDisposable {
 
         private readonly Logger _log = LogManager.GetLogger("tfl");
 
-        public IEnumerable<Row> Run(Process process) {
+        public override IEnumerable<Row> Run(Process process) {
 
-            GlobalDiagnosticsContext.Set("process", process.Name);
-            GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
+            SetLog(process);
 
             var result = Enumerable.Empty<Row>();
 

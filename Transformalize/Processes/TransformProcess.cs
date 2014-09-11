@@ -30,27 +30,26 @@ using Transformalize.Operations;
 
 namespace Transformalize.Processes {
     public class TransformProcess : EtlProcess {
-        private readonly Process _process;
 
-        public TransformProcess(Process process) {
-            _process = process;
+        public TransformProcess(Process process)
+            : base(process) {
         }
 
         protected override void Initialize() {
 
-            GlobalDiagnosticsContext.Set("process", _process.Name);
             GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
 
-            Register(new ParametersExtract(_process));
-            Register(new ApplyDefaults(true, _process.CalculatedFields));
+            Register(new ParametersExtract(Process));
+            Register(new ApplyDefaults(true, Process.CalculatedFields));
 
-            foreach (var transform in _process.TransformOperations) {
+            foreach (var transform in Process.TransformOperations) {
                 Register(transform);
             }
 
-            Register(new TruncateOperation(_process.CalculatedFields));
+            Register(new TruncateOperation(Process.CalculatedFields));
             Register(new GatherOperation());
-            RegisterLast(new ResultsLoad(_process));
+            //RegisterLast(new ResultsLoad(Process));
+            RegisterLast(new DapperResultsLoad(Process));
         }
 
         protected override void PostProcessing() {
@@ -62,7 +61,7 @@ namespace Transformalize.Processes {
                         Debug(e.StackTrace);
                     }
                 }
-                throw new TransformalizeException("Transform process failed for {0}.", _process.Name);
+                throw new TransformalizeException("Transform process failed for {0}.", Process.Name);
             }
 
             base.PostProcessing();

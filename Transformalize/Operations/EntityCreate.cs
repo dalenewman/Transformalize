@@ -32,7 +32,7 @@ namespace Transformalize.Operations {
         private readonly Entity _entity;
         private readonly Process _process;
 
-        public EntityCreate(Entity entity, Process process) {
+        public EntityCreate(Process process, Entity entity) {
             Name = "Entity Create";
             _entity = entity;
             _process = process;

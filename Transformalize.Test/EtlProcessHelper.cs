@@ -25,69 +25,59 @@ using System.Linq;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Libs.Rhino.Etl.Pipelines;
+using Transformalize.Main;
 
-namespace Transformalize.Test
-{
-    public class EtlProcessHelper
-    {
-        protected List<Row> TestOperation(params IOperation[] operations)
-        {
+namespace Transformalize.Test {
+    public class EtlProcessHelper {
+        protected List<Row> TestOperation(params IOperation[] operations) {
             return new TestProcess(operations).ExecuteWithResults();
         }
 
-        protected List<Row> TestOperation(IEnumerable<IOperation> operations)
-        {
+        protected List<Row> TestOperation(IEnumerable<IOperation> operations) {
             return new TestProcess(operations).ExecuteWithResults();
         }
 
-        protected class TestProcess : EtlProcess
-        {
+        protected class TestProcess : EtlProcess {
             private readonly List<Row> _returnRows = new List<Row>();
             private readonly IEnumerable<IOperation> _testOperations;
 
             public TestProcess(params IOperation[] testOperations)
-            {
+                : base(new Process("test")) {
                 this.PipelineExecuter = new SingleThreadedNonCachedPipelineExecuter();
                 this._testOperations = testOperations;
             }
 
             public TestProcess(IEnumerable<IOperation> testOperations)
-            {
+                : base(new Process("test")) {
                 this._testOperations = testOperations;
             }
 
-            protected override void Initialize()
-            {
+            protected override void Initialize() {
                 foreach (var testOperation in _testOperations)
                     Register(testOperation);
 
                 Register(new ResultsOperation(_returnRows));
             }
 
-            public List<Row> ExecuteWithResults()
-            {
+            public List<Row> ExecuteWithResults() {
                 Execute();
                 return _returnRows;
             }
 
-            protected override void PostProcessing()
-            {
+            protected override void PostProcessing() {
                 var errors = GetAllErrors().ToArray();
                 if (errors.Any())
                     throw errors.First();
             }
 
-            private class ResultsOperation : AbstractOperation
-            {
+            private class ResultsOperation : AbstractOperation {
                 private readonly List<Row> _rows;
 
-                public ResultsOperation(List<Row> returnRows)
-                {
+                public ResultsOperation(List<Row> returnRows) {
                     _rows = returnRows;
                 }
 
-                public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
-                {
+                public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
                     var r = rows.ToArray();
                     _rows.AddRange(r);
                     return r;

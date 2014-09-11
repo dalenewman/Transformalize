@@ -29,24 +29,20 @@ using Transformalize.Operations;
 
 namespace Transformalize.Processes {
     public class InitializationProcess : EtlProcess {
-        private readonly Process _process;
 
-        public InitializationProcess(Process process) {
-
-            _process = process;
-
+        public InitializationProcess(Process process) : base(process)
+        {
             process.OutputConnection.TflWriter.Initialize(process);
             process.OutputConnection.ViewWriter.Drop(process);
         }
 
         protected override void Initialize() {
 
-            GlobalDiagnosticsContext.Set("process", _process.Name);
             GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
 
-            foreach (var entity in _process.Entities) {
-                Register(new EntityDrop(_process, entity));
-                Register(new EntityCreate(entity, _process));
+            foreach (var entity in Process.Entities) {
+                Register(new EntityDrop(Process, entity));
+                Register(new EntityCreate(Process, entity));
             }
         }
 
@@ -58,13 +54,13 @@ namespace Transformalize.Processes {
                         Error("Failed execution. {0} {1}", inner.Message, inner.StackTrace);
                     }
                 }
-                throw new TransformalizeException("Initialization Process failed for {0}. See error log.", _process.Name);
+                throw new TransformalizeException("Initialization Process failed for {0}. See error log.", Process.Name);
             }
 
-            if (_process.StarEnabled && _process.Entities.Count > 0) {
-                _process.OutputConnection.ViewWriter.Create(_process);
+            if (Process.StarEnabled && Process.Entities.Count > 0) {
+                Process.OutputConnection.ViewWriter.Create(Process);
             }
-            _process.InitializeView();
+            Process.InitializeView();
             base.PostProcessing();
         }
     }

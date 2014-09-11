@@ -199,7 +199,8 @@ namespace Transformalize.Main.Providers.SqlServer {
         }
 
         public override IOperation Update(Entity entity) {
-            return new SqlServerEntityBatchUpdate(this, entity);
+            return new DapperBulkUpdateOperation(this, entity);
+            //return new SqlServerEntityBatchUpdate(this, entity);
         }
 
         public override void LoadBeginVersion(Entity entity) {

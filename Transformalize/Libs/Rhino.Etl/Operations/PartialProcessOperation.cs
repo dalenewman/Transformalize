@@ -24,14 +24,14 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         {
             add
             {
-                foreach (var operation in operations)
+                foreach (var operation in Operations)
                 {
                     operation.OnFinishedProcessing += value;
                 }
             }
             remove
             {
-                foreach (var operation in operations)
+                foreach (var operation in Operations)
                 {
                     operation.OnFinishedProcessing -= value;
                 }
@@ -45,7 +45,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         public void PrepareForExecution(IPipelineExecuter pipelineExecuter)
         {
             pipelineExeuter = pipelineExecuter;
-            foreach (var    operation in operations)
+            foreach (var    operation in Operations)
             {
                 operation.PrepareForExecution(pipelineExecuter);
             }
@@ -68,14 +68,14 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         {
             add
             {
-                foreach (var operation in operations)
+                foreach (var operation in Operations)
                 {
                     operation.OnRowProcessed += value;
                 }
             }
             remove
             {
-                foreach (var operation in operations)
+                foreach (var operation in Operations)
                 {
                     operation.OnRowProcessed -= value;
                 }
@@ -90,7 +90,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         public IEnumerable<Row> Execute(IEnumerable<Row> rows)
         {
             MergeLastOperationsToOperations();
-            return pipelineExeuter.PipelineToEnumerable(operations, rows, enumerable => enumerable);
+            return pipelineExeuter.PipelineToEnumerable(Operations, rows, enumerable => enumerable);
         }
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// <filterpriority>2</filterpriority>
         public void Dispose()
         {
-            foreach (var operation in operations)
+            foreach (var operation in Operations)
             {
                 operation.Dispose();
             }
@@ -132,7 +132,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// <returns></returns>
         public IEnumerable<Exception> GetAllErrors()
         {
-            foreach (var operation in operations)
+            foreach (var operation in Operations)
             {
                 foreach (var error in operation.GetAllErrors())
                 {

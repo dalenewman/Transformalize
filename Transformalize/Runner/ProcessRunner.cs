@@ -20,11 +20,11 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Transformalize.Libs.NLog;
-using Transformalize.Libs.RazorEngine.Templating;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Pipelines;
 using Transformalize.Main;
@@ -34,13 +34,13 @@ using Process = Transformalize.Main.Process;
 
 namespace Transformalize.Runner {
 
-    public class ProcessRunner : IProcessRunner {
+    public class ProcessRunner : AbstractProcessRunner, IDisposable {
 
         private readonly Logger _log = LogManager.GetLogger("tfl");
 
-        public IEnumerable<Row> Run(Process process) {
+        public override IEnumerable<Row> Run(Process process) {
 
-            ResetLog(process);
+            SetLog(process);
 
             var timer = new Stopwatch();
             timer.Start();
@@ -79,37 +79,28 @@ namespace Transformalize.Runner {
             return process.Results;
         }
 
-        private static void ResetLog(Process process) {
-            GlobalDiagnosticsContext.Set("process", process.Name);
-            GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
-        }
-
         private static void ProcessDeletes(Process process) {
             foreach (var entityDeleteProcess in process.Entities.Where(entity => entity.Delete).Select(entity => new EntityDeleteProcess(process, entity) {
                 PipelineExecuter = entity.PipelineThreading == PipelineThreading.SingleThreaded ? (AbstractPipelineExecuter)new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter()
             })) {
                 entityDeleteProcess.Execute();
             }
-            ResetLog(process);
         }
 
         private static void ProcessEntities(Process process) {
             process.Entities.AsParallel().ForAll(e => new EntityProcess(process, e) {
                 PipelineExecuter = e.PipelineThreading == PipelineThreading.SingleThreaded ?
-                    (IPipelineExecuter) new SingleThreadedPipelineExecuter() :
-                    (IPipelineExecuter) new ThreadPoolPipelineExecuter()
+                    (IPipelineExecuter)new SingleThreadedPipelineExecuter() :
+                    (IPipelineExecuter)new ThreadPoolPipelineExecuter()
             }.Execute());
-            ResetLog(process);
         }
 
 
         private static void ProcessMaster(Process process) {
-            var updateMasterProcess = new UpdateMasterProcess(ref process) {
+            var updateMasterProcess = new UpdateMasterProcess(process) {
                 PipelineExecuter = process.PipelineThreading == PipelineThreading.SingleThreaded ? (AbstractPipelineExecuter)new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter()
             };
             updateMasterProcess.Execute();
-
-            ResetLog(process);
         }
 
         private static void ProcessTransforms(Process process) {
@@ -119,8 +110,6 @@ namespace Transformalize.Runner {
                 PipelineExecuter = process.PipelineThreading == PipelineThreading.SingleThreaded ? (AbstractPipelineExecuter)new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter()
             };
             transformProcess.Execute();
-
-            ResetLog(process);
         }
 
         public void Dispose() {

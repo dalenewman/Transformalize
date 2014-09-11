@@ -22,6 +22,7 @@
 
 using System.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
+using Transformalize.Libs.NLog;
 using Transformalize.Main;
 
 namespace Transformalize.Configuration {
@@ -49,6 +50,7 @@ namespace Transformalize.Configuration {
         private const string CALCULATED_FIELDS = "calculated-fields";
         private const string MODE = "mode";
         private const string LOG_LEVEL = "log-level";
+        private const string LOG_ROWS = "log-rows";
         private const string FILE_INSPECTION = "file-inspection";
 
         [ConfigurationProperty(NAME, IsRequired = true)]
@@ -63,10 +65,16 @@ namespace Transformalize.Configuration {
             set { this[MODE] = value.ToLower(); }
         }
 
-        [ConfigurationProperty(LOG_LEVEL, IsRequired = false, DefaultValue = Common.DefaultValue)]
+        [ConfigurationProperty(LOG_LEVEL, IsRequired = false, DefaultValue = "Info")]
         public string LogLevel {
             get { return this[LOG_LEVEL] as string; }
             set { this[LOG_LEVEL] = value.ToLower(); }
+        }
+
+        [ConfigurationProperty(LOG_ROWS, IsRequired = false, DefaultValue = (long)10000)]
+        public long LogRows {
+            get { return (long)this[LOG_ROWS]; }
+            set { this[LOG_ROWS] = value; }
         }
 
         [ConfigurationProperty(INHERIT, IsRequired = false, DefaultValue = "")]

@@ -22,13 +22,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Transformalize.Extensions;
 using Transformalize.Libs.Dapper;
-using Transformalize.Libs.Elasticsearch.Net.Extensions;
-using Transformalize.Libs.Ninject.Syntax;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Ninject;
 using Transformalize.Libs.Rhino.Etl;
@@ -72,13 +69,20 @@ namespace Transformalize.Main {
         private string _star = Common.DefaultValue;
         private string _view = Common.DefaultValue;
         private string _mode;
+        private long _logRows = 10000;
+        private LogLevel _logLevel = LogLevel.Info;
 
         // properties
         public string TimeZone { get; set; }
         public bool IsFirstRun { get; set; }
         public long Anything { get; set; }
         public bool StarEnabled { get; set; }
-        public string LogLevel { get; set; }
+
+        public LogLevel LogLevel
+        {
+            get { return _logLevel; }
+            set { _logLevel = value; }
+        }
 
         public string Star {
             get { return _star.Equals(Common.DefaultValue) ? Name + "Star" : _star; }
@@ -124,6 +128,12 @@ namespace Transformalize.Main {
 
         public FileInspectionRequest FileInspectionRequest { get; set; }
 
+        public long LogRows
+        {
+            get { return _logRows; }
+            set { _logRows = value; }
+        }
+
         //constructor
         public Process(string name = "") {
             Name = name;
@@ -144,7 +154,7 @@ namespace Transformalize.Main {
             return false;
         }
 
-        private IProcessRunner GetRunner() {
+        private AbstractProcessRunner GetRunner() {
             switch (Mode) {
                 case "init":
                     return new InitializeRunner();
@@ -376,5 +386,6 @@ namespace Transformalize.Main {
             connection.Execute(string.Format("CREATE VIEW {0} AS {1}", fullName, ViewSql()));
             connection.Close();
         }
+
     }
 }

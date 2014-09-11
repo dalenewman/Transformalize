@@ -7,6 +7,8 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Dynamic;
+using System.Linq;
 using Transformalize.Libs.Rhino.Etl.Infrastructure;
 using Transformalize.Main.Providers;
 

@@ -26,24 +26,20 @@ using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
-using Transformalize.Main.Providers.Sql;
-using Transformalize.Main.Providers.SqlServer;
 using Transformalize.Operations;
 
 namespace Transformalize.Processes {
 
     public class EntityDeleteProcess : EtlProcess {
-        private Process _process;
         private Entity _entity;
 
-        public EntityDeleteProcess(Process process, Entity entity) {
-            _process = process;
+        public EntityDeleteProcess(Process process, Entity entity)
+            : base(process) {
             _entity = entity;
         }
 
         protected override void Initialize() {
 
-            GlobalDiagnosticsContext.Set("process", _process.Name);
             GlobalDiagnosticsContext.Set("entity", Common.LogLength(_entity.Alias));
 
             if (_entity.Input.Count == 1) {
@@ -61,9 +57,9 @@ namespace Transformalize.Processes {
                 Register(multiInput);
             }
 
-            Register(new EntityDetectDeletes(_entity).Right(_process.OutputConnection.ExtractAllKeysFromOutput(_entity)));
-            Register(new EntityActionFilter(ref _process, ref _entity, EntityAction.Delete));
-            Register(_process.OutputConnection.Delete(_entity));
+            Register(new EntityDetectDeletes(_entity).Right(Process.OutputConnection.ExtractAllKeysFromOutput(_entity)));
+            Register(new EntityActionFilter(Process, _entity, EntityAction.Delete));
+            Register(Process.OutputConnection.Delete(_entity));
         }
 
         protected override void PostProcessing() {

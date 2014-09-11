@@ -63,7 +63,7 @@ namespace Transformalize.Main {
                 Star = _element.Star,
                 View = _element.View,
                 Mode = _element.Mode,
-                LogLevel = _element.LogLevel,
+                LogLevel = LogLevel.FromString(_element.LogLevel),
                 StarEnabled = _element.StarEnabled,
                 TimeZone = string.IsNullOrEmpty(_element.TimeZone) ? TimeZoneInfo.Local.Id : _element.TimeZone,
                 PipelineThreading = (PipelineThreading)Enum.Parse(typeof(PipelineThreading), _element.PipelineThreading, true)

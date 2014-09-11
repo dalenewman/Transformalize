@@ -32,7 +32,7 @@ namespace Transformalize.Operations {
         private readonly Entity _entity;
         private readonly EntityAction _entityAction;
 
-        public EntityActionFilter(ref Process process, ref Entity entity, EntityAction entityAction) {
+        public EntityActionFilter(Process process, Entity entity, EntityAction entityAction) {
             _process = process;
             _entity = entity;
             _entityAction = entityAction;
