@@ -36,7 +36,7 @@ namespace Transformalize.Operations {
         private readonly Entity _entity;
         private readonly Process _process;
 
-        public EntityUpdateMaster(Process process, Entity entity) {
+        public EntityUpdateMaster(ref Process process, Entity entity) {
             _process = process;
             _entity = entity;
             UseTransaction = false;

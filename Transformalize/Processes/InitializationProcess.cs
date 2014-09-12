@@ -30,8 +30,8 @@ using Transformalize.Operations;
 namespace Transformalize.Processes {
     public class InitializationProcess : EtlProcess {
 
-        public InitializationProcess(Process process) : base(process)
-        {
+        public InitializationProcess(Process process)
+            : base(ref process) {
             process.OutputConnection.TflWriter.Initialize(process);
             process.OutputConnection.ViewWriter.Drop(process);
         }

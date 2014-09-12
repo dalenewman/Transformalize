@@ -29,7 +29,7 @@ namespace Transformalize.Operations {
     public class ResultsLoad : SqlBatchOperation {
         private readonly Process _process;
 
-        public ResultsLoad(Process process)
+        public ResultsLoad(ref Process process)
             : base(process.OutputConnection) {
             _process = process;
             BatchSize = process.OutputConnection.BatchSize;

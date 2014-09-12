@@ -75,7 +75,7 @@ namespace Transformalize.Main.Providers.Lucene {
             return new LuceneKeysExtractAll(this, entity, input: true);
         }
 
-        public override IOperation Insert(Entity entity) {
+        public override IOperation Insert(ref Process process, Entity entity) {
             return new LuceneLoadOperation(this, entity);
         }
 
@@ -127,8 +127,7 @@ namespace Transformalize.Main.Providers.Lucene {
             return new LuceneEntityDelete(this, entity);
         }
 
-        public override IOperation Extract(Entity entity, bool firstRun)
-        {
+        public override IOperation Extract(ref Process process, Entity entity, bool firstRun) {
             return new LuceneExtract(this, entity);
         }
 

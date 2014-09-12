@@ -70,19 +70,13 @@ namespace Transformalize.Main {
         private string _view = Common.DefaultValue;
         private string _mode;
         private long _logRows = 10000;
-        private LogLevel _logLevel = LogLevel.Info;
+        private List<Log> _logList = new List<Log>();
 
         // properties
         public string TimeZone { get; set; }
         public bool IsFirstRun { get; set; }
         public long Anything { get; set; }
         public bool StarEnabled { get; set; }
-
-        public LogLevel LogLevel
-        {
-            get { return _logLevel; }
-            set { _logLevel = value; }
-        }
 
         public string Star {
             get { return _star.Equals(Common.DefaultValue) ? Name + "Star" : _star; }
@@ -128,10 +122,14 @@ namespace Transformalize.Main {
 
         public FileInspectionRequest FileInspectionRequest { get; set; }
 
-        public long LogRows
-        {
+        public long LogRows {
             get { return _logRows; }
             set { _logRows = value; }
+        }
+
+        public List<Log> Log {
+            get { return _logList; }
+            set { _logList = value; }
         }
 
         //constructor
@@ -167,13 +165,15 @@ namespace Transformalize.Main {
 
         public void ExecuteScaler() {
             using (var runner = GetRunner()) {
-                runner.Run(this);
+                var p = this;
+                runner.Run(ref p);
             }
         }
 
         public IEnumerable<Row> Execute() {
             using (var runner = GetRunner()) {
-                return runner.Run(this);
+                var p = this;
+                return runner.Run(ref p);
             }
         }
 

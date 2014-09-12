@@ -26,7 +26,7 @@ namespace Transformalize.Main.Providers.Log {
             return new EmptyOperation();
         }
 
-        public override IOperation Insert(Entity entity) {
+        public override IOperation Insert(ref Process process, Entity entity) {
             return new LogLoadOperation(entity);
         }
 
@@ -46,13 +46,11 @@ namespace Transformalize.Main.Providers.Log {
             return new Fields();
         }
 
-        public override IOperation Delete(Entity entity)
-        {
+        public override IOperation Delete(Entity entity) {
             throw new System.NotImplementedException();
         }
 
-        public override IOperation Extract(Entity entity, bool firstRun)
-        {
+        public override IOperation Extract(ref Process process, Entity entity, bool firstRun) {
             throw new System.NotImplementedException();
         }
 

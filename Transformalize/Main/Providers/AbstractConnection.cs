@@ -302,7 +302,7 @@ namespace Transformalize.Main.Providers {
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public abstract IOperation Insert(Entity entity);
+        public abstract IOperation Insert(ref Process process, Entity entity);
 
         /// <summary>
         /// Update stuff as fast as you can
@@ -328,6 +328,6 @@ namespace Transformalize.Main.Providers {
 
         public abstract IOperation Delete(Entity entity);
 
-        public abstract IOperation Extract(Entity entity, bool firstRun);
+        public abstract IOperation Extract(ref Process process, Entity entity, bool firstRun);
     }
 }

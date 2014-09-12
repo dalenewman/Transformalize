@@ -31,10 +31,12 @@ using Transformalize.Operations;
 namespace Transformalize.Processes {
 
     public class EntityDeleteProcess : EtlProcess {
-        private Entity _entity;
+        private Process _process;
+        private readonly Entity _entity;
 
-        public EntityDeleteProcess(Process process, Entity entity)
-            : base(process) {
+        public EntityDeleteProcess(ref Process process, Entity entity)
+            : base(ref process) {
+            _process = process;
             _entity = entity;
         }
 
@@ -57,9 +59,9 @@ namespace Transformalize.Processes {
                 Register(multiInput);
             }
 
-            Register(new EntityDetectDeletes(_entity).Right(Process.OutputConnection.ExtractAllKeysFromOutput(_entity)));
-            Register(new EntityActionFilter(Process, _entity, EntityAction.Delete));
-            Register(Process.OutputConnection.Delete(_entity));
+            Register(new EntityDetectDeletes(ref _process, _entity).Right(_process.OutputConnection.ExtractAllKeysFromOutput(_entity)));
+            Register(new EntityActionFilter(ref _process, _entity, EntityAction.Delete));
+            Register(_process.OutputConnection.Delete(_entity));
         }
 
         protected override void PostProcessing() {

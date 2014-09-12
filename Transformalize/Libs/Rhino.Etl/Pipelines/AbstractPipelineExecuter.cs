@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Transformalize.Extensions;
 using Transformalize.Libs.Rhino.Etl.Operations;
 

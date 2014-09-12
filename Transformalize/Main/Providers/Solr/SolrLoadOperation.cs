@@ -36,9 +36,7 @@ namespace Transformalize.Main.Providers.Solr {
 
         void SolrLoadOperation_OnRowProcessed(IOperation arg1, Row arg2) {
             Interlocked.Increment(ref _count);
-            if (_count % 1000 == 0) {
-                Debug("Processed {0} records.", _count);
-            } else if (_count % 10000 == 0) {
+            if (_count % arg1.LogRows == 0) {
                 Info("Processed {0} records.", _count);
             }
         }

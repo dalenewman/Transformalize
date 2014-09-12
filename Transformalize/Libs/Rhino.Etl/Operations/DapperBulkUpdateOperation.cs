@@ -9,6 +9,7 @@ using Transformalize.Main;
 using Transformalize.Main.Providers;
 
 namespace Transformalize.Libs.Rhino.Etl.Operations {
+
     public class DapperBulkUpdateOperation : AbstractOperation {
         private readonly AbstractConnection _connection;
         private readonly Fields _fields;

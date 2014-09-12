@@ -9,7 +9,8 @@ namespace Transformalize.Operations {
         private readonly Relationship _rel;
         private readonly string[] _fields;
 
-        public EntityJoinOperation(Relationship rel) {
+        public EntityJoinOperation(ref Process process, Relationship rel)
+            : base(ref process) {
             _rel = rel;
             var rightFields = new HashSet<string>(rel.RightEntity.OutputFields().Aliases());
             rightFields.ExceptWith(rel.LeftEntity.OutputFields().Aliases());

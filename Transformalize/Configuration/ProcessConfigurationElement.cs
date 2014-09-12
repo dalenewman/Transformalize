@@ -22,7 +22,6 @@
 
 using System.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
-using Transformalize.Libs.NLog;
 using Transformalize.Main;
 
 namespace Transformalize.Configuration {
@@ -49,9 +48,8 @@ namespace Transformalize.Configuration {
         private const string RELATIONSHIPS = "relationships";
         private const string CALCULATED_FIELDS = "calculated-fields";
         private const string MODE = "mode";
-        private const string LOG_LEVEL = "log-level";
-        private const string LOG_ROWS = "log-rows";
         private const string FILE_INSPECTION = "file-inspection";
+        private const string LOG = "log";
 
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name {
@@ -63,18 +61,6 @@ namespace Transformalize.Configuration {
         public string Mode {
             get { return this[MODE] as string; }
             set { this[MODE] = value.ToLower(); }
-        }
-
-        [ConfigurationProperty(LOG_LEVEL, IsRequired = false, DefaultValue = "Info")]
-        public string LogLevel {
-            get { return this[LOG_LEVEL] as string; }
-            set { this[LOG_LEVEL] = value.ToLower(); }
-        }
-
-        [ConfigurationProperty(LOG_ROWS, IsRequired = false, DefaultValue = (long)10000)]
-        public long LogRows {
-            get { return (long)this[LOG_ROWS]; }
-            set { this[LOG_ROWS] = value; }
         }
 
         [ConfigurationProperty(INHERIT, IsRequired = false, DefaultValue = "")]
@@ -133,6 +119,11 @@ namespace Transformalize.Configuration {
         [ConfigurationProperty(PROVIDERS)]
         public ProviderElementCollection Providers {
             get { return this[PROVIDERS] as ProviderElementCollection; }
+        }
+
+        [ConfigurationProperty(LOG)]
+        public LogElementCollection Log {
+            get { return this[LOG] as LogElementCollection; }
         }
 
         [ConfigurationProperty(SEARCH_TYPES)]
@@ -203,7 +194,6 @@ namespace Transformalize.Configuration {
             Name = child.Name;
             Star = child.Star;
             Mode = child.Mode;
-            LogLevel = child.LogLevel;
             StarEnabled = child.StarEnabled;
             TimeZone = child.TimeZone;
             Enabled = child.Enabled;
@@ -223,6 +213,7 @@ namespace Transformalize.Configuration {
             SearchTypes.Merge(child.SearchTypes);
             Templates.Merge(child.Templates);
             Actions.Merge(child.Actions);
+            Log.Merge(child.Log);
         }
     }
 }

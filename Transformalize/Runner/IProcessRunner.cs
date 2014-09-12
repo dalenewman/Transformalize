@@ -5,7 +5,7 @@ using Transformalize.Main;
 
 namespace Transformalize.Runner {
     public interface IProcessRunner : IDisposable {
-        IEnumerable<Row> Run(Process process);
-        void SetLog(Process process);
+        IEnumerable<Row> Run(ref Process process);
+        void SetLog(ref Process process);
     }
 }

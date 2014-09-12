@@ -4,7 +4,6 @@ using Transformalize.Configuration;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Providers.Sql;
-using Transformalize.Main.Providers.SqlServer;
 using Transformalize.Operations;
 using Transformalize.Operations.Transform;
 using Transformalize.Processes;
@@ -148,7 +147,7 @@ namespace Transformalize.Main.Providers.SqlCe {
             return new EmptyOperation();
         }
 
-        public override IOperation Insert(Entity entity) {
+        public override IOperation Insert(ref Process process, Entity entity) {
             return new EmptyOperation();
         }
 
@@ -205,11 +204,11 @@ namespace Transformalize.Main.Providers.SqlCe {
             throw new NotImplementedException();
         }
 
-        public override IOperation Extract(Entity entity, bool firstRun) {
+        public override IOperation Extract(ref Process process, Entity entity, bool firstRun) {
             if (Schemas && entity.Schema.Equals(string.Empty)) {
                 entity.Schema = DefaultSchema;
             }
-            var p = new PartialProcessOperation();
+            var p = new PartialProcessOperation(ref process);
             if (entity.HasSqlOverride()) {
                 p.Register(new SqlOverrideOperation(entity, this));
             } else {

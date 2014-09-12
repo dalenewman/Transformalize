@@ -61,7 +61,7 @@ namespace Transformalize.Runner {
                     xml = string.Format(@"
                     <transformalize>
                         <processes>
-                            <add name=""{0}"" enabled=""{1}"" inherit=""{2}"" time-zone=""{3}"" star=""{4}"" star-enabled=""{5}"" view=""{6}"" mode=""{7}"" log-level=""{8}"" log-rows=""{9}"">{10}</add>
+                            <add name=""{0}"" enabled=""{1}"" inherit=""{2}"" time-zone=""{3}"" star=""{4}"" star-enabled=""{5}"" view=""{6}"" mode=""{7}"">{8}</add>
                         </processes>
                     </transformalize>",
                         contents.Name,
@@ -72,8 +72,6 @@ namespace Transformalize.Runner {
                         SafeAttribute(process, "star-enabled", true),
                         SafeAttribute(process, "view", Common.DefaultValue),
                         SafeAttribute(process, "mode", "default"),
-                        SafeAttribute(process, "log-level", "Info"),
-                        SafeAttribute(process, "log-rows", (long)10000),
                         process.InnerXml()
                     );
                 }
@@ -112,6 +110,7 @@ namespace Transformalize.Runner {
 
             var newXml = new StringBuilder("<transformalize><processes>");
 
+            GlobalDiagnosticsContext.Set("Process", Common.LogLength("All"));
             GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
 
             if (environments.Length > 0) {
@@ -119,9 +118,8 @@ namespace Transformalize.Runner {
                     environments.First().SubNodes.First().SubNodes.ToArray() :
                     environments.First(e => e.GetAttribute("name").Value.Equals(environmentDefault)).SubNodes.First().SubNodes.ToArray();
 
-                LogManager.GetLogger("tfl").Info("Environment: {0}", environmentDefault.Equals(string.Empty) ? "first" : environmentDefault);
-
                 foreach (var process in processes) {
+                    LogManager.GetLogger("tfl").Info("Environment: {0}", environmentDefault.Equals(string.Empty) ? "first" : environmentDefault);
                     newXml.AppendLine(ApplyParameters(process.ToString(), parameters));
                 }
             } else {

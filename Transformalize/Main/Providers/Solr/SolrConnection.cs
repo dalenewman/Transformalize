@@ -203,7 +203,7 @@ namespace Transformalize.Main.Providers.Solr {
             return new EmptyOperation();
         }
 
-        public override IOperation Insert(Entity entity) {
+        public override IOperation Insert(ref Process process, Entity entity) {
             return new SolrLoadOperation(entity, this);
         }
 
@@ -268,7 +268,7 @@ namespace Transformalize.Main.Providers.Solr {
             throw new NotImplementedException();
         }
 
-        public override IOperation Extract(Entity entity, bool firstRun) {
+        public override IOperation Extract(ref Process process, Entity entity, bool firstRun) {
             return new SolrExtract(this, entity);
         }
 

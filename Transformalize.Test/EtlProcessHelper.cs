@@ -40,15 +40,16 @@ namespace Transformalize.Test {
         protected class TestProcess : EtlProcess {
             private readonly List<Row> _returnRows = new List<Row>();
             private readonly IEnumerable<IOperation> _testOperations;
+            private static Process _process = new Process("test");
 
             public TestProcess(params IOperation[] testOperations)
-                : base(new Process("test")) {
+                : base(ref _process) {
                 this.PipelineExecuter = new SingleThreadedNonCachedPipelineExecuter();
                 this._testOperations = testOperations;
             }
 
             public TestProcess(IEnumerable<IOperation> testOperations)
-                : base(new Process("test")) {
+                : base(ref _process) {
                 this._testOperations = testOperations;
             }
 

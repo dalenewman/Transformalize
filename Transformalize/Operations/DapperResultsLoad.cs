@@ -14,7 +14,7 @@ namespace Transformalize.Operations {
         private readonly string _sql;
         private readonly Fields _fields;
 
-        public DapperResultsLoad(Process process) {
+        public DapperResultsLoad(ref Process process) {
             _process = process;
             _fields = _process.CalculatedFields;
             var sets = new FieldSqlWriter(_fields).Alias(_process.OutputConnection.L, _process.OutputConnection.R).SetParam().Write();

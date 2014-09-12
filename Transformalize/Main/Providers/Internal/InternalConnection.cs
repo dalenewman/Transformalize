@@ -27,7 +27,7 @@ namespace Transformalize.Main.Providers.Internal {
             return new EmptyOperation();
         }
 
-        public override IOperation Insert(Entity entity) {
+        public override IOperation Insert(ref Process process, Entity entity) {
             return new EmptyOperation();
         }
 
@@ -51,8 +51,8 @@ namespace Transformalize.Main.Providers.Internal {
             throw new System.NotImplementedException();
         }
 
-        public override IOperation Extract(Entity entity, bool firstRun) {
-            var p = new PartialProcessOperation();
+        public override IOperation Extract(ref Process process, Entity entity, bool firstRun) {
+            var p = new PartialProcessOperation(ref process);
             p.Register(entity.InputOperation);
             p.Register(new AliasOperation(entity));
             return p;

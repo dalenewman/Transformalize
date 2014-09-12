@@ -35,7 +35,7 @@ namespace Transformalize.Operations {
         private readonly string[] _fields;
         private readonly int _length;
 
-        public EntityInputKeysExtractDelta(Process process, Entity entity, AbstractConnection connection)
+        public EntityInputKeysExtractDelta(ref Process process, Entity entity, AbstractConnection connection)
             : base(connection) {
             _entity = entity;
             _fields = _entity.PrimaryKey.WithInput().Aliases().ToArray();

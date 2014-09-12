@@ -38,9 +38,9 @@ namespace Transformalize.Runner {
 
         private readonly Logger _log = LogManager.GetLogger("tfl");
 
-        public override IEnumerable<Row> Run(Process process) {
+        public override IEnumerable<Row> Run(ref Process process) {
 
-            SetLog(process);
+            SetLog(ref process);
 
             var timer = new Stopwatch();
             timer.Start();
@@ -52,18 +52,18 @@ namespace Transformalize.Runner {
             process.PerformActions(a => a.Before);
 
             if (!process.IsFirstRun) {
-                ProcessDeletes(process);
+                ProcessDeletes(ref process);
             }
-            ProcessEntities(process);
+            ProcessEntities(ref process);
 
             if (process.StarEnabled && !process.OutputConnection.Is.Internal()) {
-                ProcessMaster(process);
-                ProcessTransforms(process);
+                ProcessMaster(ref process);
+                ProcessTransforms(ref process);
             }
 
             if (process.Relationships.Any()) {
                 var collector = new CollectorOperation();
-                new MasterJoinProcess(process, ref collector).Execute();
+                new MasterJoinProcess(ref process, ref collector).Execute();
                 process.Results = collector.Rows;
             } else {
                 process.Results = process.MasterEntity == null ? Enumerable.Empty<Row>() : process.MasterEntity.Rows;
@@ -79,16 +79,18 @@ namespace Transformalize.Runner {
             return process.Results;
         }
 
-        private static void ProcessDeletes(Process process) {
-            foreach (var entityDeleteProcess in process.Entities.Where(entity => entity.Delete).Select(entity => new EntityDeleteProcess(process, entity) {
+        private static void ProcessDeletes(ref Process process) {
+            var p = process;
+            foreach (var entityDeleteProcess in process.Entities.Where(entity => entity.Delete).Select(entity => new EntityDeleteProcess(ref p, entity) {
                 PipelineExecuter = entity.PipelineThreading == PipelineThreading.SingleThreaded ? (AbstractPipelineExecuter)new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter()
             })) {
                 entityDeleteProcess.Execute();
             }
         }
 
-        private static void ProcessEntities(Process process) {
-            process.Entities.AsParallel().ForAll(e => new EntityProcess(process, e) {
+        private static void ProcessEntities(ref Process process) {
+            var p = process;
+            process.Entities.AsParallel().ForAll(e => new EntityProcess(ref p, e) {
                 PipelineExecuter = e.PipelineThreading == PipelineThreading.SingleThreaded ?
                     (IPipelineExecuter)new SingleThreadedPipelineExecuter() :
                     (IPipelineExecuter)new ThreadPoolPipelineExecuter()
@@ -96,23 +98,23 @@ namespace Transformalize.Runner {
         }
 
 
-        private static void ProcessMaster(Process process) {
-            var updateMasterProcess = new UpdateMasterProcess(process) {
+        private static void ProcessMaster(ref Process process) {
+            var updateMasterProcess = new UpdateMasterProcess(ref process) {
                 PipelineExecuter = process.PipelineThreading == PipelineThreading.SingleThreaded ? (AbstractPipelineExecuter)new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter()
             };
             updateMasterProcess.Execute();
         }
 
-        private static void ProcessTransforms(Process process) {
+        private static void ProcessTransforms(ref Process process) {
             if (process.CalculatedFields.Count <= 0)
                 return;
-            var transformProcess = new TransformProcess(process) {
+            var transformProcess = new TransformProcess(ref process) {
                 PipelineExecuter = process.PipelineThreading == PipelineThreading.SingleThreaded ? (AbstractPipelineExecuter)new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter()
             };
             transformProcess.Execute();
         }
 
-        public void Dispose() {
+        public new void Dispose() {
             LogManager.Flush();
         }
 

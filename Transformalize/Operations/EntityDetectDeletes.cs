@@ -3,14 +3,14 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
-namespace Transformalize.Operations
-{
+namespace Transformalize.Operations {
     public class EntityDetectDeletes : JoinOperation {
 
         private readonly string[] _keys;
         private readonly string _firstKey;
 
-        public EntityDetectDeletes(Entity entity) {
+        public EntityDetectDeletes(ref Process process, Entity entity)
+            : base(ref process) {
             _keys = entity.PrimaryKey.Aliases().ToArray();
             _firstKey = _keys[0];
         }

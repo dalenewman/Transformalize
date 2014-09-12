@@ -7,27 +7,30 @@
 using System;
 using System.Collections.Generic;
 using Transformalize.Libs.Rhino.Etl.Enumerables;
+using Transformalize.Main;
 
-namespace Transformalize.Libs.Rhino.Etl.Operations
-{
+namespace Transformalize.Libs.Rhino.Etl.Operations {
     /// <summary>
     ///     Perform a join between two sources. The left part of the join is optional and if not specified it will use the current pipeline as input.
     /// </summary>
-    public abstract class NestedLoopsJoinOperation : AbstractOperation
-    {
+    public abstract class NestedLoopsJoinOperation : AbstractOperation {
         private static readonly string IsEmptyRowMarker = Guid.NewGuid().ToString();
-        private readonly PartialProcessOperation left = new PartialProcessOperation();
-        private readonly PartialProcessOperation right = new PartialProcessOperation();
+        private readonly PartialProcessOperation left;
+        private readonly PartialProcessOperation right;
         private Row currentLeftRow;
         private Row currentRightRow;
         private bool leftRegistered;
+
+        protected NestedLoopsJoinOperation(ref Process process) {
+            left = new PartialProcessOperation(ref process);
+            right = new PartialProcessOperation(ref process);
+        }
 
         /// <summary>
         ///     Sets the right part of the join
         /// </summary>
         /// <value>The right.</value>
-        public NestedLoopsJoinOperation Right(IOperation value)
-        {
+        public NestedLoopsJoinOperation Right(IOperation value) {
             right.Register(value);
             return this;
         }
@@ -36,8 +39,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         ///     Sets the left part of the join
         /// </summary>
         /// <value>The left.</value>
-        public NestedLoopsJoinOperation Left(IOperation value)
-        {
+        public NestedLoopsJoinOperation Left(IOperation value) {
             left.Register(value);
             leftRegistered = true;
             return this;
@@ -48,8 +50,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// </summary>
         /// <param name="rows">Rows in pipeline. These are only used if a left part of the join was not specified.</param>
         /// <returns></returns>
-        public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
-        {
+        public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             Initialize();
 
             Guard.Against(left == null, "Left branch of a join cannot be null");
@@ -60,22 +61,18 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
                 new EventRaisingEnumerator(right, right.Execute(null))
                 );
             var execute = left.Execute(leftRegistered ? null : rows);
-            foreach (Row leftRow in new EventRaisingEnumerator(left, execute))
-            {
+            foreach (Row leftRow in new EventRaisingEnumerator(left, execute)) {
                 var leftNeedOuterJoin = true;
                 currentLeftRow = leftRow;
-                foreach (Row rightRow in rightEnumerable)
-                {
+                foreach (Row rightRow in rightEnumerable) {
                     currentRightRow = rightRow;
-                    if (MatchJoinCondition(leftRow, rightRow))
-                    {
+                    if (MatchJoinCondition(leftRow, rightRow)) {
                         leftNeedOuterJoin = false;
                         matchedRightRows[rightRow] = null;
                         yield return MergeRows(leftRow, rightRow);
                     }
                 }
-                if (leftNeedOuterJoin)
-                {
+                if (leftNeedOuterJoin) {
                     var emptyRow = new Row();
                     emptyRow[IsEmptyRowMarker] = IsEmptyRowMarker;
                     currentRightRow = emptyRow;
@@ -85,8 +82,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
                         LeftOrphanRow(leftRow);
                 }
             }
-            foreach (Row rightRow in rightEnumerable)
-            {
+            foreach (Row rightRow in rightEnumerable) {
                 if (matchedRightRows.ContainsKey(rightRow))
                     continue;
                 currentRightRow = rightRow;
@@ -105,8 +101,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         ///     the join condition, allow a derived class to perform
         ///     logic associated to that, such as logging
         /// </summary>
-        protected virtual void RightOrphanRow(Row row)
-        {
+        protected virtual void RightOrphanRow(Row row) {
         }
 
         /// <summary>
@@ -115,8 +110,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         ///     logic associated to that, such as logging
         /// </summary>
         /// <param name="row">The row.</param>
-        protected virtual void LeftOrphanRow(Row row)
-        {
+        protected virtual void LeftOrphanRow(Row row) {
         }
 
         /// <summary>
@@ -138,15 +132,13 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// <summary>
         ///     Initializes this instance.
         /// </summary>
-        protected virtual void Initialize()
-        {
+        protected virtual void Initialize() {
         }
 
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        public override void Dispose()
-        {
+        public override void Dispose() {
             left.Dispose();
             right.Dispose();
         }
@@ -156,8 +148,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         ///     Initializes this instance
         /// </summary>
         /// <param name="pipelineExecuter">The current pipeline executer.</param>
-        public override void PrepareForExecution(IPipelineExecuter pipelineExecuter)
-        {
+        public override void PrepareForExecution(IPipelineExecuter pipelineExecuter) {
             left.PrepareForExecution(pipelineExecuter);
             right.PrepareForExecution(pipelineExecuter);
         }
@@ -166,14 +157,11 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         ///     Gets all errors that occured when running this operation
         /// </summary>
         /// <returns></returns>
-        public override IEnumerable<Exception> GetAllErrors()
-        {
-            foreach (var error in left.GetAllErrors())
-            {
+        public override IEnumerable<Exception> GetAllErrors() {
+            foreach (var error in left.GetAllErrors()) {
                 yield return error;
             }
-            foreach (var error in right.GetAllErrors())
-            {
+            foreach (var error in right.GetAllErrors()) {
                 yield return error;
             }
         }
@@ -185,8 +173,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// <param name="left">The left.</param>
         /// <param name="right">The right.</param>
         /// <returns></returns>
-        protected virtual bool InnerJoin(object left, object right)
-        {
+        protected virtual bool InnerJoin(object left, object right) {
             if (IsEmptyRow(currentLeftRow) || IsEmptyRow(currentRightRow))
                 return false;
             if (left == null || right == null)
@@ -194,8 +181,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
             return left.Equals(right);
         }
 
-        private static bool IsEmptyRow(Row row)
-        {
+        private static bool IsEmptyRow(Row row) {
             return row.Contains(IsEmptyRowMarker);
         }
 
@@ -208,8 +194,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// <param name="left">The left.</param>
         /// <param name="right">The right.</param>
         /// <returns></returns>
-        protected virtual bool LeftJoin(object left, object right)
-        {
+        protected virtual bool LeftJoin(object left, object right) {
             if (IsEmptyRow(currentRightRow))
                 return true;
             if (left == null || right == null)
@@ -226,8 +211,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// <param name="left">The left.</param>
         /// <param name="right">The right.</param>
         /// <returns></returns>
-        protected virtual bool RightJoin(object left, object right)
-        {
+        protected virtual bool RightJoin(object left, object right) {
             if (IsEmptyRow(currentLeftRow))
                 return true;
             if (left == null || right == null)
@@ -243,8 +227,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// <param name="left">The left.</param>
         /// <param name="right">The right.</param>
         /// <returns></returns>
-        protected virtual bool FullJoin(object left, object right)
-        {
+        protected virtual bool FullJoin(object left, object right) {
             if (IsEmptyRow(currentLeftRow) || IsEmptyRow(currentRightRow))
                 return true;
             if (left == null || right == null)

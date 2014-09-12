@@ -91,6 +91,8 @@
     <Compile Include="Configuration\BranchElementCollection.cs" />
     <Compile Include="Configuration\IoConfigurationElement.cs" />
     <Compile Include="Configuration\IoElementCollection.cs" />
+    <Compile Include="Configuration\LogElementCollection.cs" />
+    <Compile Include="Configuration\LogConfigurationElement.cs" />
     <Compile Include="Configuration\SqlOverride.cs" />
     <Compile Include="Configuration\TypeConfigurationElement.cs" />
     <Compile Include="Configuration\TypeElementCollection.cs" />
@@ -1882,6 +1884,7 @@
     <Compile Include="Main\Parameters\IParameter.cs" />
     <Compile Include="Main\Parameters\Parameter.cs" />
     <Compile Include="Main\PipelineThreading.cs" />
+    <Compile Include="Main\Log.cs" />
     <Compile Include="Main\Process\ProcessFactory.cs" />
     <Compile Include="Main\Process\ProcessOperationsLoader.cs" />
     <Compile Include="Main\Process\OperationsLoader.cs" />
@@ -3026,6 +3029,7 @@
     <PostBuildEvent>IF EXIST c:\code\JunkDrawer XCOPY /s /y $(TargetDir)Transformalize.dll c:\code\JunkDrawer\Assemblies\
 IF EXIST c:\code\DataProfiler XCOPY /s /y $(TargetDir)Transformalize.dll c:\code\DataProfiler\Assemblies\
 IF EXIST c:\code\Orchard171\lib\Transformalize XCOPY /s /y $(TargetDir)Transformalize.dll c:\Code\Orchard171\lib\Transformalize\
+IF EXIST C:\Code\Orchard171\src\Orchard.Web\Modules\Transformalize.Orchard\Libs XCOPY /s /y $(TargetDir)Transformalize.dll C:\Code\Orchard171\src\Orchard.Web\Modules\Transformalize.Orchard\Libs\
 IF EXIST c:\code\Orchard180\lib\Transformalize XCOPY /s /y $(TargetDir)Transformalize.dll c:\Code\Orchard180\lib\Transformalize\</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

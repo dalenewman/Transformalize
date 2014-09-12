@@ -704,7 +704,7 @@ namespace Transformalize.Test {
                                 .Parameter("EndDate")
             .Process();
 
-            var process = ProcessFactory.Create(config, new Options() { LogLevel = LogLevel.Debug })[0];
+            var process = ProcessFactory.Create(config)[0];
 
             var output = process.Execute().ToArray();
 
@@ -782,7 +782,7 @@ namespace Transformalize.Test {
                                 .Parameter("EndDate")
             .Process();
 
-            var process = ProcessFactory.Create(config, new Options() { LogLevel = LogLevel.Debug })[0];
+            var process = ProcessFactory.Create(config)[0];
             process.PipelineThreading = PipelineThreading.SingleThreaded;
             var output = process.Execute().ToArray();
 
@@ -831,7 +831,7 @@ namespace Transformalize.Test {
                             .Parameter("EndDate")
             .Process();
 
-            var process = ProcessFactory.Create(config, new Options() { LogLevel = LogLevel.Debug })[0];
+            var process = ProcessFactory.Create(config )[0];
             process.PipelineThreading = PipelineThreading.SingleThreaded;
             var output = process.Execute().ToArray();
 

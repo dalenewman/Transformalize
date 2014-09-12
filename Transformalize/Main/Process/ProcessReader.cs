@@ -22,11 +22,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
+using System.Configuration;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
 using Transformalize.Libs.NLog;
+using Transformalize.Libs.NLog.Targets;
 using Transformalize.Libs.RazorEngine;
 using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.File;
@@ -63,7 +64,6 @@ namespace Transformalize.Main {
                 Star = _element.Star,
                 View = _element.View,
                 Mode = _element.Mode,
-                LogLevel = LogLevel.FromString(_element.LogLevel),
                 StarEnabled = _element.StarEnabled,
                 TimeZone = string.IsNullOrEmpty(_element.TimeZone) ? TimeZoneInfo.Local.Id : _element.TimeZone,
                 PipelineThreading = (PipelineThreading)Enum.Parse(typeof(PipelineThreading), _element.PipelineThreading, true)
@@ -103,9 +103,59 @@ namespace Transformalize.Main {
 
             new EntityRelationshipLoader(ref _process).Load();
 
+            LoadLogConfiguration(_process.Options);
+
             Summarize();
 
             return _process;
+        }
+
+        private void LoadLogConfiguration(Options options) {
+
+            _process.LogRows = _element.Log.Rows;
+
+            if (options.MemoryTarget != null) {
+                _process.Log.Add(new Log {
+                    Provider = ProviderType.Internal,
+                    Name = "memory",
+                    MemoryTarget = options.MemoryTarget,
+                    Level = options.LogLevel
+                });
+            }
+
+            if (_element.Log.Count <= 0)
+                return;
+
+            foreach (LogConfigurationElement element in _element.Log) {
+                var log = new Log {
+                    Name = element.Name,
+                    Subject = element.Subject,
+                    From = element.From,
+                    To = element.To,
+                    Layout = element.Layout,
+                    File = element.File
+                };
+
+                if (element.Connection != Common.DefaultValue) {
+                    if (_process.Connections.ContainsKey(element.Connection)) {
+                        log.Connection = _process.Connections[element.Connection];
+                        if (log.Connection.Type == ProviderType.File && log.File.Equals(Common.DefaultValue)) {
+                            log.File = log.Connection.File;
+                        }
+                    } else {
+                        throw new TransformalizeException("You are referencing an invalid connection name in your log configuration.  {0} is not confiured in <connections/>.", element.Connection);
+                    }
+                }
+
+                try {
+                    log.Level = LogLevel.FromString(element.LogLevel);
+                    log.Provider = (ProviderType)Enum.Parse(typeof(ProviderType), element.Provider, true);
+                } catch (Exception ex) {
+                    throw new TransformalizeException("Log configuration invalid. {0}", ex.Message);
+                }
+                _process.Log.Add(log);
+
+            }
         }
 
         private static ProcessConfigurationElement Adapt(ProcessConfigurationElement process, IEnumerable<string> transformToFields) {
@@ -172,6 +222,7 @@ namespace Transformalize.Main {
             _log.Debug("{0} Script{1}.", _process.Scripts.Count, _process.Scripts.Count.Plural());
             _log.Debug("{0} Template{1}.", _process.Templates.Count, _process.Templates.Count.Plural());
             _log.Debug("{0} SearchType{1}.", _process.SearchTypes.Count, _process.SearchTypes.Count.Plural());
+            _log.Debug("{0} Log{0}", _process.Log.Count, _process.Log.Count.Plural());
 
             var mapCount = _process.MapStartsWith.Count + _process.MapEquals.Count + _process.MapEndsWith.Count;
             _log.Debug("{0} Map{1}.", mapCount, mapCount.Plural());

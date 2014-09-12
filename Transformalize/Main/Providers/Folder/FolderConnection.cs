@@ -29,7 +29,7 @@ namespace Transformalize.Main.Providers.Folder {
             return new EmptyOperation();
         }
 
-        public override IOperation Insert(Entity entity) {
+        public override IOperation Insert(ref Process process, Entity entity) {
             return new EmptyOperation();
         }
 
@@ -54,12 +54,12 @@ namespace Transformalize.Main.Providers.Folder {
             throw new System.NotImplementedException();
         }
 
-        public override IOperation Extract(Entity entity, bool firstRun) {
+        public override IOperation Extract(ref Process process, Entity entity, bool firstRun) {
             var union = new SerialUnionAllOperation();
             foreach (var file in new DirectoryInfo(Folder).GetFiles(SearchPattern, SearchOption)) {
                 File = file.FullName;
                 if (Is.Excel()) {
-                    union.Add(new FileExcelExtract(entity, this, entity.Top));
+                    union.Add(new FileExcelExtract(this, entity, entity.Top));
                 } else {
                     if (Is.Delimited()) {
                         union.Add(new FileDelimitedExtract(this, entity, entity.Top));
@@ -67,11 +67,9 @@ namespace Transformalize.Main.Providers.Folder {
                         union.Add(new FileFixedExtract(this, entity, entity.Top));
                     }
                 }
-
                 union.Add();
             }
             return union;
-
         }
 
         public FolderConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)

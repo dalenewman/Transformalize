@@ -25,13 +25,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.fastJSON;
+using Transformalize.Libs.NLog.Targets;
 
 namespace Transformalize.Main {
 
     public class Options {
 
         private readonly Logger _log = LogManager.GetLogger("tfl");
-        private LogLevel _logLevel = LogLevel.Info;
         private string _mode = Common.DefaultValue;
         private List<string> _problems = new List<string>();
 
@@ -39,14 +39,8 @@ namespace Transformalize.Main {
 
         public List<string> Problems { get { return _problems; } set { _problems = value; } }
         public bool Force { get; set; }
-
-        public LogLevel LogLevel {
-            get { return _logLevel; }
-            set {
-                _logLevel = value;
-                SetLogLevel(value);
-            }
-        }
+        public MemoryTarget MemoryTarget { get; set; }
+        public LogLevel LogLevel { get; set; }
 
         public string Mode {
             get { return _mode; }
@@ -71,10 +65,6 @@ namespace Transformalize.Main {
 
                             case "mode":
                                 Mode = value;
-                                break;
-
-                            case "loglevel":
-                                LogLevel = LogLevel.FromString(value);
                                 break;
 
                             case "force":

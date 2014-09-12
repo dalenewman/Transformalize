@@ -10,22 +10,20 @@ namespace Transformalize.Processes {
 
     public class EntityKeysPartial : PartialProcessOperation {
         private readonly Entity _entity;
-        private readonly Process _process;
 
-        public EntityKeysPartial(Process process, Entity entity) {
-            _process = process;
+        public EntityKeysPartial(ref Process process, Entity entity) : base(ref process) {
             _entity = entity;
 
             if (entity.Input.Count == 1) {
                 var connection = entity.Input.First().Connection;
                 if (connection.IsDatabase && !entity.HasSqlOverride()) {
-                    Register(ComposeInputOperation(connection));
+                    Register(ComposeInputOperation(ref process, connection));
                 }
             } else {
                 var union = new ParallelUnionAllOperation();
                 foreach (var input in entity.Input) {
                     if (input.Connection.IsDatabase && !_entity.HasSqlOverride()) {
-                        union.Add(ComposeInputOperation(input.Connection));
+                        union.Add(ComposeInputOperation(ref process, input.Connection));
                     }
                 }
                 Register(union);
@@ -33,7 +31,7 @@ namespace Transformalize.Processes {
             Register(new EntityKeysDistinct(_entity));
         }
 
-        private IOperation ComposeInputOperation(AbstractConnection connection) {
+        private IOperation ComposeInputOperation(ref Process process, AbstractConnection connection) {
 
             if (connection.Schemas && _entity.Schema.Equals(string.Empty)) {
                 _entity.Schema = connection.DefaultSchema;
@@ -47,11 +45,11 @@ namespace Transformalize.Processes {
                 return new EmptyOperation();
             }
 
-            if (_process.IsFirstRun || !_entity.CanDetectChanges(connection.IsDatabase)) {
+            if (process.IsFirstRun || !_entity.CanDetectChanges(connection.IsDatabase)) {
                 return connection.ExtractAllKeysFromInput(_entity);
             }
 
-            var operation = new EntityInputKeysExtractDelta(_process, _entity, connection);
+            var operation = new EntityInputKeysExtractDelta(ref process, _entity, connection);
             if (operation.NeedsToRun()) {
                 return operation;
             }

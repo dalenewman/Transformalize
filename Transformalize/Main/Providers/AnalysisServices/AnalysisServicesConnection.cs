@@ -47,7 +47,7 @@ namespace Transformalize.Main.Providers.AnalysisServices {
             return new EmptyOperation();
         }
 
-        public override IOperation Insert(Entity entity) {
+        public override IOperation Insert(ref Process process, Entity entity) {
             return new EmptyOperation();
         }
 
@@ -72,7 +72,7 @@ namespace Transformalize.Main.Providers.AnalysisServices {
             throw new System.NotImplementedException();
         }
 
-        public override IOperation Extract(Entity entity, bool firstRun)
+        public override IOperation Extract(ref Process process, Entity entity, bool firstRun)
         {
             throw new System.NotImplementedException();
         }

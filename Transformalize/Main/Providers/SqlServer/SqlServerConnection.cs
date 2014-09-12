@@ -194,13 +194,13 @@ namespace Transformalize.Main.Providers.SqlServer {
             return new SqlEntityKeysExtractAllFromInput(this, entity);
         }
 
-        public override IOperation Insert(Entity entity) {
+        public override IOperation Insert(ref Process process, Entity entity) {
             return new SqlServerBulkLoadOperation(this, entity);
         }
 
         public override IOperation Update(Entity entity) {
-            return new DapperBulkUpdateOperation(this, entity);
-            //return new SqlServerEntityBatchUpdate(this, entity);
+            //return new DapperBulkUpdateOperation(this, entity);
+            return new SqlServerEntityBatchUpdate(this, entity);
         }
 
         public override void LoadBeginVersion(Entity entity) {
@@ -252,11 +252,11 @@ namespace Transformalize.Main.Providers.SqlServer {
             return new SqlEntityDelete(this, entity);
         }
 
-        public override IOperation Extract(Entity entity, bool firstRun) {
+        public override IOperation Extract(ref Process process, Entity entity, bool firstRun) {
             if (Schemas && entity.Schema.Equals(string.Empty)) {
                 entity.Schema = DefaultSchema;
             }
-            var p = new PartialProcessOperation();
+            var p = new PartialProcessOperation(ref process);
             if (entity.HasSqlOverride()) {
                 p.Register(new SqlOverrideOperation(entity, this));
             } else {

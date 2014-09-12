@@ -19,18 +19,21 @@ namespace Transformalize.Main.Providers.File {
         }
 
         public override IOperation ExtractCorrespondingKeysFromOutput(Entity entity) {
-            return Extract(entity, true);
+            var p = new Process("blank");
+            return Extract(ref p, entity, true);
         }
 
         public override IOperation ExtractAllKeysFromOutput(Entity entity) {
-            return Extract(entity, true);
+            var p = new Process("blank");
+            return Extract(ref p, entity, true);
         }
 
         public override IOperation ExtractAllKeysFromInput(Entity entity) {
-            return Extract(entity, true);
+            var p = new Process("blank");
+            return Extract(ref p, entity, true);
         }
 
-        public override IOperation Insert(Entity entity) {
+        public override IOperation Insert(ref Process process, Entity entity) {
             return new FileLoadOperation(this, entity);
         }
 
@@ -54,9 +57,9 @@ namespace Transformalize.Main.Providers.File {
             throw new NotImplementedException();
         }
 
-        public override IOperation Extract(Entity entity, bool firstRun) {
+        public override IOperation Extract(ref Process process, Entity entity, bool firstRun) {
             if (Is.Excel()) {
-                return new FileExcelExtract(entity, this, entity.Top);
+                return new FileExcelExtract(this, entity, entity.Top);
             }
             if (Is.Delimited()) {
                 return new FileDelimitedExtract(this, entity, entity.Top);

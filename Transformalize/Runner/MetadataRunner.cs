@@ -15,9 +15,9 @@ namespace Transformalize.Runner {
 
         private readonly Logger _log = LogManager.GetLogger("tfl");
 
-        public override IEnumerable<Row> Run(Process process) {
+        public override IEnumerable<Row> Run(ref Process process) {
 
-            SetLog(process);
+            SetLog(ref process);
 
             var result = Enumerable.Empty<Row>();
 

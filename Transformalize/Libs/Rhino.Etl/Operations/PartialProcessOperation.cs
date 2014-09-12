@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using Transformalize.Main;
 
 namespace Transformalize.Libs.Rhino.Etl.Operations
 {
@@ -16,6 +17,8 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
     {
         private readonly OperationStatistics statistics = new OperationStatistics();
         private IPipelineExecuter pipelineExeuter;
+
+        public PartialProcessOperation(ref Process process) : base(ref process) {}
 
         /// <summary>
         ///     Occurs when all the rows has finished processing.
@@ -45,12 +48,14 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         public void PrepareForExecution(IPipelineExecuter pipelineExecuter)
         {
             pipelineExeuter = pipelineExecuter;
-            foreach (var    operation in Operations)
+            foreach (var operation in Operations)
             {
                 operation.PrepareForExecution(pipelineExecuter);
             }
             Statistics.MarkStarted();
         }
+
+        public long LogRows { get; set; }
 
         /// <summary>
         ///     Gets the statistics for this operation

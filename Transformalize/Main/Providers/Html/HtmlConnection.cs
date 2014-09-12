@@ -28,11 +28,11 @@ namespace Transformalize.Main.Providers.Html {
             return new EmptyOperation();
         }
 
-        public override IOperation Insert(Entity entity) {
-            var process = new PartialProcessOperation();
-            process.Register(new HtmlRowOperation(entity, "HtmlRow"));
-            process.RegisterLast(new HtmlLoadOperation(this, entity, "HtmlRow"));
-            return process;
+        public override IOperation Insert(ref Process process, Entity entity) {
+            var pp = new PartialProcessOperation(ref process);
+            pp.Register(new HtmlRowOperation(entity, "HtmlRow"));
+            pp.RegisterLast(new HtmlLoadOperation(this, entity, "HtmlRow"));
+            return pp;
         }
 
         public override IOperation Update(Entity entity) {
@@ -51,13 +51,11 @@ namespace Transformalize.Main.Providers.Html {
             return new Fields();
         }
 
-        public override IOperation Delete(Entity entity)
-        {
+        public override IOperation Delete(Entity entity) {
             throw new System.NotImplementedException();
         }
 
-        public override IOperation Extract(Entity entity, bool firstRun)
-        {
+        public override IOperation Extract(ref Process process, Entity entity, bool firstRun) {
             throw new System.NotImplementedException();
         }
 

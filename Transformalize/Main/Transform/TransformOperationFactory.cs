@@ -41,7 +41,7 @@ namespace Transformalize.Main {
         private const string COMMA = ",";
 
         private readonly Logger _log = LogManager.GetLogger("tfl");
-        private readonly Process _process;
+        private Process _process;
         private readonly Validator<TransformConfigurationElement> _validator = ValidationFactory.CreateValidator<TransformConfigurationElement>();
         private readonly Dictionary<string, Func<object, object>> _conversionMap = Common.GetObjectConversionMap();
 
@@ -185,7 +185,7 @@ namespace Transformalize.Main {
                     return new GuidOperation(inKey, outKey) { ShouldRun = shouldRun };
 
                 case "now":
-                    return new PartialProcessOperation()
+                    return new PartialProcessOperation(ref _process)
                         .Register(
                             new NowOperation(
                                 inKey,

@@ -20,7 +20,6 @@
 
 #endregion
 
-using System;
 using System.Linq;
 using Transformalize.Extensions;
 using Transformalize.Libs.NLog;
@@ -30,16 +29,18 @@ using Transformalize.Operations;
 
 namespace Transformalize.Processes {
     public class UpdateMasterProcess : EtlProcess {
+        private Process _process;
 
-        public UpdateMasterProcess(Process process)
-            : base(process) {
+        public UpdateMasterProcess(ref Process process)
+            : base(ref process) {
+            _process = process;
         }
 
         protected override void Initialize() {
             GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
 
-            foreach (var entity in Process.Entities) {
-                Register(new EntityUpdateMaster(Process, entity));
+            foreach (var entity in _process.Entities) {
+                Register(new EntityUpdateMaster(ref _process, entity));
             }
         }
 

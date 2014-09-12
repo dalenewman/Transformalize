@@ -32,7 +32,7 @@ namespace Transformalize.Operations {
         private int[] _batchIds;
         private readonly string[] _keys;
 
-        public ParametersExtract(Process process) : base(process.OutputConnection) {
+        public ParametersExtract(ref Process process) : base(process.OutputConnection) {
             _process = process;
             UseTransaction = false;
             _keys = _process.Parameters.ToEnumerable().Where(p => !p.Value.HasValue()).Select(p => p.Key).ToArray();

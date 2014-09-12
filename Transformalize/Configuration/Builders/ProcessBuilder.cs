@@ -133,11 +133,6 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
-        public ProcessBuilder LogLevel(string logLevel) {
-            _process.LogLevel = logLevel;
-            return this;
-        }
-
         public ProcessBuilder StarEnabled(bool enabled = true) {
             _process.StarEnabled = enabled;
             return this;

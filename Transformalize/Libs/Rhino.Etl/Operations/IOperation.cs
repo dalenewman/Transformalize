@@ -20,6 +20,8 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// <value>The name.</value>
         string Name { get; }
 
+        long LogRows { get; set; }
+
         /// <summary>
         ///     Sets the transaction.
         /// </summary>

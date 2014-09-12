@@ -55,7 +55,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             return new EmptyOperation();
         }
 
-        public override IOperation Insert(Entity entity) {
+        public override IOperation Insert(ref Process process, Entity entity) {
             return new ElasticSearchLoadOperation(entity, this);
         }
 
@@ -101,13 +101,11 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             return new Fields();
         }
 
-        public override IOperation Delete(Entity entity)
-        {
+        public override IOperation Delete(Entity entity) {
             throw new NotImplementedException();
         }
 
-        public override IOperation Extract(Entity entity, bool firstRun)
-        {
+        public override IOperation Extract(ref Process process, Entity entity, bool firstRun) {
             throw new NotImplementedException();
         }
 

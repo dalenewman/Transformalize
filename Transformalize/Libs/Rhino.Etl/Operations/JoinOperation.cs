@@ -7,16 +7,16 @@
 using System;
 using System.Collections.Generic;
 using Transformalize.Libs.Rhino.Etl.Enumerables;
+using Transformalize.Main;
 
-namespace Transformalize.Libs.Rhino.Etl.Operations
-{
+namespace Transformalize.Libs.Rhino.Etl.Operations {
     /// <summary>
     ///     Perform a join between two sources. The left part of the join is optional and if not specified it will use the current pipeline as input.
     /// </summary>
-    public abstract class JoinOperation : AbstractOperation
-    {
-        private readonly PartialProcessOperation left = new PartialProcessOperation();
-        private readonly PartialProcessOperation right = new PartialProcessOperation();
+    public abstract class JoinOperation : AbstractOperation {
+
+        private readonly PartialProcessOperation left;
+        private readonly PartialProcessOperation right;
         private readonly Dictionary<ObjectArrayKeys, List<Row>> rightRowsByJoinKey = new Dictionary<ObjectArrayKeys, List<Row>>();
         private readonly Dictionary<Row, object> rightRowsWereMatched = new Dictionary<Row, object>();
         private JoinType jointype;
@@ -24,12 +24,16 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         private bool leftRegistered;
         private string[] rightColumns;
 
+        protected JoinOperation(ref Process process) {
+            left = new PartialProcessOperation(ref process);
+            right = new PartialProcessOperation(ref process);
+        }
+
         /// <summary>
         ///     Create an inner join
         /// </summary>
         /// <value>The inner.</value>
-        protected JoinBuilder InnerJoin
-        {
+        protected JoinBuilder InnerJoin {
             get { return new JoinBuilder(this, JoinType.Inner); }
         }
 
@@ -37,8 +41,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         ///     Create a left outer join
         /// </summary>
         /// <value>The inner.</value>
-        protected JoinBuilder LeftJoin
-        {
+        protected JoinBuilder LeftJoin {
             get { return new JoinBuilder(this, JoinType.Left); }
         }
 
@@ -47,8 +50,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         ///     Create a right outer join
         /// </summary>
         /// <value>The inner.</value>
-        protected JoinBuilder RightJoin
-        {
+        protected JoinBuilder RightJoin {
             get { return new JoinBuilder(this, JoinType.Right); }
         }
 
@@ -57,8 +59,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         ///     Create a full outer join
         /// </summary>
         /// <value>The inner.</value>
-        protected JoinBuilder FullOuterJoin
-        {
+        protected JoinBuilder FullOuterJoin {
             get { return new JoinBuilder(this, JoinType.Full); }
         }
 
@@ -66,8 +67,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         ///     Sets the right part of the join
         /// </summary>
         /// <value>The right.</value>
-        public JoinOperation Right(IOperation value)
-        {
+        public JoinOperation Right(IOperation value) {
             right.Register(value);
             return this;
         }
@@ -77,8 +77,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         ///     Sets the left part of the join
         /// </summary>
         /// <value>The left.</value>
-        public JoinOperation Left(IOperation value)
-        {
+        public JoinOperation Left(IOperation value) {
             left.Register(value);
             leftRegistered = true;
             return this;
@@ -89,37 +88,28 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// </summary>
         /// <param name="rows">Rows in pipeline. These are only used if a left part of the join was not specified.</param>
         /// <returns></returns>
-        public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
-        {
+        public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             PrepareForJoin();
 
             var rightEnumerable = GetRightEnumerable();
 
             var execute = left.Execute(leftRegistered ? null : rows);
-            foreach (Row leftRow in new EventRaisingEnumerator(left, execute))
-            {
+            foreach (Row leftRow in new EventRaisingEnumerator(left, execute)) {
                 var key = leftRow.CreateKey(leftColumns);
                 List<Row> rightRows;
-                if (rightRowsByJoinKey.TryGetValue(key, out rightRows))
-                {
-                    foreach (var rightRow in rightRows)
-                    {
+                if (rightRowsByJoinKey.TryGetValue(key, out rightRows)) {
+                    foreach (var rightRow in rightRows) {
                         rightRowsWereMatched[rightRow] = null;
                         yield return MergeRows(leftRow, rightRow);
                     }
-                }
-                else if ((jointype & JoinType.Left) != 0)
-                {
+                } else if ((jointype & JoinType.Left) != 0) {
                     var emptyRow = new Row();
                     yield return MergeRows(leftRow, emptyRow);
-                }
-                else
-                {
+                } else {
                     LeftOrphanRow(leftRow);
                 }
             }
-            foreach (var rightRow in rightEnumerable)
-            {
+            foreach (var rightRow in rightEnumerable) {
                 if (rightRowsWereMatched.ContainsKey(rightRow))
                     continue;
                 var emptyRow = new Row();
@@ -130,8 +120,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
             }
         }
 
-        private void PrepareForJoin()
-        {
+        private void PrepareForJoin() {
             Initialize();
 
             Guard.Against(left == null, "Left branch of a join cannot be null");
@@ -143,17 +132,14 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
             Guard.Against(rightColumns == null, "You must setup the right columns");
         }
 
-        private IEnumerable<Row> GetRightEnumerable()
-        {
+        private IEnumerable<Row> GetRightEnumerable() {
             IEnumerable<Row> rightEnumerable = new CachingEnumerable<Row>(
                 new EventRaisingEnumerator(right, right.Execute(null))
                 );
-            foreach (var row in rightEnumerable)
-            {
+            foreach (var row in rightEnumerable) {
                 var key = row.CreateKey(rightColumns);
                 List<Row> rowsForKey;
-                if (rightRowsByJoinKey.TryGetValue(key, out rowsForKey) == false)
-                {
+                if (rightRowsByJoinKey.TryGetValue(key, out rowsForKey) == false) {
                     rightRowsByJoinKey[key] = rowsForKey = new List<Row>();
                 }
                 rowsForKey.Add(row);
@@ -166,8 +152,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         ///     the join condition, allow a derived class to perform
         ///     logic associated to that, such as logging
         /// </summary>
-        protected virtual void RightOrphanRow(Row row)
-        {
+        protected virtual void RightOrphanRow(Row row) {
         }
 
         /// <summary>
@@ -176,8 +161,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         ///     logic associated to that, such as logging
         /// </summary>
         /// <param name="row">The row.</param>
-        protected virtual void LeftOrphanRow(Row row)
-        {
+        protected virtual void LeftOrphanRow(Row row) {
         }
 
         /// <summary>
@@ -191,8 +175,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// <summary>
         ///     Initializes this instance.
         /// </summary>
-        protected virtual void Initialize()
-        {
+        protected virtual void Initialize() {
         }
 
         /// <summary>
@@ -204,8 +187,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        public override void Dispose()
-        {
+        public override void Dispose() {
             left.Dispose();
             right.Dispose();
         }
@@ -215,8 +197,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         ///     Initializes this instance
         /// </summary>
         /// <param name="pipelineExecuter">The current pipeline executer.</param>
-        public override void PrepareForExecution(IPipelineExecuter pipelineExecuter)
-        {
+        public override void PrepareForExecution(IPipelineExecuter pipelineExecuter) {
             left.PrepareForExecution(pipelineExecuter);
             right.PrepareForExecution(pipelineExecuter);
         }
@@ -225,14 +206,11 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         ///     Gets all errors that occured when running this operation
         /// </summary>
         /// <returns></returns>
-        public override IEnumerable<Exception> GetAllErrors()
-        {
-            foreach (var error in left.GetAllErrors())
-            {
+        public override IEnumerable<Exception> GetAllErrors() {
+            foreach (var error in left.GetAllErrors()) {
                 yield return error;
             }
-            foreach (var error in right.GetAllErrors())
-            {
+            foreach (var error in right.GetAllErrors()) {
                 yield return error;
             }
         }
@@ -240,17 +218,14 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// <summary>
         ///     Occurs when    a row is processed.
         /// </summary>
-        public override event Action<IOperation, Row> OnRowProcessed
-        {
-            add
-            {
-                foreach (IOperation    operation in new[] {left, right})
+        public override event Action<IOperation, Row> OnRowProcessed {
+            add {
+                foreach (IOperation operation in new[] { left, right })
                     operation.OnRowProcessed += value;
                 base.OnRowProcessed += value;
             }
-            remove
-            {
-                foreach (IOperation    operation in new[] {left, right})
+            remove {
+                foreach (IOperation operation in new[] { left, right })
                     operation.OnRowProcessed -= value;
                 base.OnRowProcessed -= value;
             }
@@ -259,17 +234,14 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// <summary>
         ///     Occurs when    all    the    rows has finished processing.
         /// </summary>
-        public override event Action<IOperation> OnFinishedProcessing
-        {
-            add
-            {
-                foreach (IOperation    operation in new[] {left, right})
+        public override event Action<IOperation> OnFinishedProcessing {
+            add {
+                foreach (IOperation operation in new[] { left, right })
                     operation.OnFinishedProcessing += value;
                 base.OnFinishedProcessing += value;
             }
-            remove
-            {
-                foreach (IOperation    operation in new[] {left, right})
+            remove {
+                foreach (IOperation operation in new[] { left, right })
                     operation.OnFinishedProcessing -= value;
                 base.OnFinishedProcessing -= value;
             }
@@ -278,8 +250,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// <summary>
         ///     Fluent interface to create joins
         /// </summary>
-        public class JoinBuilder
-        {
+        public class JoinBuilder {
             private readonly JoinOperation parent;
 
             /// <summary>
@@ -287,8 +258,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
             /// </summary>
             /// <param name="parent">The parent.</param>
             /// <param name="joinType">Type of the join.</param>
-            public JoinBuilder(JoinOperation parent, JoinType joinType)
-            {
+            public JoinBuilder(JoinOperation parent, JoinType joinType) {
                 this.parent = parent;
                 parent.jointype = joinType;
             }
@@ -298,8 +268,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
             /// </summary>
             /// <param name="columns">The columns.</param>
             /// <returns></returns>
-            public JoinBuilder Left(params string[] columns)
-            {
+            public JoinBuilder Left(params string[] columns) {
                 parent.leftColumns = columns;
                 return this;
             }
@@ -309,8 +278,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
             /// </summary>
             /// <param name="columns">The columns.</param>
             /// <returns></returns>
-            public JoinBuilder Right(params string[] columns)
-            {
+            public JoinBuilder Right(params string[] columns) {
                 parent.rightColumns = columns;
                 return this;
             }

@@ -3,6 +3,11 @@
   <processes>
     <add name="NorthWind" enabled="true">
 
+      <log rows="1000">
+        <add name="console" provider="console" level="info"/>
+        <add name="file" provider="file" level="info" file="${basedir}/logs/NorthWind-Tfl-${date:format=yyyy-MM-dd}.log" />
+      </log>
+
       <file-inspection>
         <types>
           <add type="decimal"/>
@@ -19,7 +24,7 @@
       <connections>
         <add name="input" connection-string="Server=localhost;Database=NorthWind;Trusted_Connection=True;" />
         <add name="output" database="NorthWindStar" port="1433" />
-        <add name="ssas" database="NorthWind" provider="AnalysisServices"></add>
+        <add name="ssas" database="NorthWind" provider="AnalysisServices" />
       </connections>
       
       <templates path="Templates">

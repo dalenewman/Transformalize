@@ -4,7 +4,6 @@ using Transformalize.Configuration;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Providers.Sql;
 using Transformalize.Operations;
-using Transformalize.Operations.Transform;
 using Transformalize.Processes;
 
 namespace Transformalize.Main.Providers.PostgreSql {
@@ -54,7 +53,7 @@ namespace Transformalize.Main.Providers.PostgreSql {
             return new SqlEntityKeysExtractAllFromInput(this, entity);
         }
 
-        public override IOperation Insert(Entity entity) {
+        public override IOperation Insert(ref Process process, Entity entity) {
             throw new NotImplementedException();
         }
 
@@ -166,12 +165,12 @@ namespace Transformalize.Main.Providers.PostgreSql {
             return new SqlEntityDelete(this, entity);
         }
 
-        public override IOperation Extract(Entity entity, bool firstRun) {
+        public override IOperation Extract(ref Process process, Entity entity, bool firstRun) {
             if (Schemas && entity.Schema.Equals(string.Empty)) {
                 entity.Schema = DefaultSchema;
             }
 
-            var p = new PartialProcessOperation();
+            var p = new PartialProcessOperation(ref process);
             if (entity.HasSqlOverride()) {
                 p.Register(new SqlOverrideOperation(entity, this));
             } else {

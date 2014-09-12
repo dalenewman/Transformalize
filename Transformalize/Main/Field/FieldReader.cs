@@ -70,6 +70,10 @@ namespace Transformalize.Main {
                 Distinct = element.Distinct
             };
 
+            if (!field.SimpleType.Equals("string")) {
+                field.DefaultBlank = true;
+            }
+
             FieldSearchTypesLoader(field, element);
 
             foreach (var keyField in new[] { "TflKey", "TflUpdate", "TflBatchId", "TflFileName", "TflDeleted", "TflAction" }) {

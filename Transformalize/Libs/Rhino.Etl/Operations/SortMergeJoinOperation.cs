@@ -7,17 +7,21 @@
 using System;
 using System.Collections.Generic;
 using Transformalize.Libs.Rhino.Etl.Enumerables;
+using Transformalize.Main;
 
-namespace Transformalize.Libs.Rhino.Etl.Operations
-{
+namespace Transformalize.Libs.Rhino.Etl.Operations {
     /// <summary>
     /// Perform a join between two sources. The left part of the join is optional and if not specified it will use the current pipeline as input.
     /// </summary>
-    public abstract class SortMergeJoinOperation : AbstractOperation
-    {
-        private readonly PartialProcessOperation left = new PartialProcessOperation();
-        private readonly PartialProcessOperation right = new PartialProcessOperation();
+    public abstract class SortMergeJoinOperation : AbstractOperation {
+        private readonly PartialProcessOperation left;
+        private readonly PartialProcessOperation right;
         private bool leftRegistered;
+
+        protected SortMergeJoinOperation(ref Process process) {
+            left = new PartialProcessOperation(ref process);
+            right = new PartialProcessOperation(ref process);
+        }
 
         /// <summary>
         /// The type of join to be performed
@@ -28,8 +32,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// Sets the right part of the join
         /// </summary>
         /// <value>The right.</value>
-        public SortMergeJoinOperation Right(IOperation value)
-        {
+        public SortMergeJoinOperation Right(IOperation value) {
             right.Register(value);
             return this;
         }
@@ -38,8 +41,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// Sets the left part of the join
         /// </summary>
         /// <value>The left.</value>
-        public SortMergeJoinOperation Left(IOperation value)
-        {
+        public SortMergeJoinOperation Left(IOperation value) {
             left.Register(value);
             leftRegistered = true;
             return this;
@@ -50,8 +52,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// </summary>
         /// <param name="rows">Rows in pipeline. These are only used if a left part of the join was not specified.</param>
         /// <returns></returns>
-        public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
-        {
+        public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             Initialize();
 
             Guard.Against(left == null, "Left branch of a join cannot be null");
@@ -59,29 +60,25 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
 
             var leftRows = new EventRaisingEnumerator(left, left.Execute(leftRegistered ? null : rows)).GetEnumerator();
             leftRows.MoveNext();
-            var leftRow = (Row) leftRows.Current;
+            var leftRow = (Row)leftRows.Current;
 
             var rightRows = new EventRaisingEnumerator(right, right.Execute(null)).GetEnumerator();
             rightRows.MoveNext();
-            var rightRow = (Row) rightRows.Current;
+            var rightRow = (Row)rightRows.Current;
 
-            while (leftRow != null && rightRow != null)
-            {
+            while (leftRow != null && rightRow != null) {
                 var match = MatchJoinCondition(leftRow, rightRow);
                 Row mergedRow = null;
 
-                if (match == 0)
-                {
+                if (match == 0) {
                     mergedRow = MergeRows(leftRow, rightRow);
                     leftRow = leftRows.MoveNext()
-                        ? (Row) leftRows.Current
+                        ? (Row)leftRows.Current
                         : null;
                     rightRow = rightRows.MoveNext()
-                        ? (Row) rightRows.Current
+                        ? (Row)rightRows.Current
                         : null;
-                }
-                else if (match < 0)
-                {
+                } else if (match < 0) {
                     if ((JoinType & JoinType.Left) != 0)
                         mergedRow = MergeRows(leftRow, new Row());
                     else
@@ -90,9 +87,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
                     leftRow = leftRows.MoveNext()
                         ? (Row)leftRows.Current
                         : null;
-                }
-                else if (match > 0)
-                {
+                } else if (match > 0) {
                     if ((JoinType & JoinType.Right) != 0)
                         mergedRow = MergeRows(new Row(), rightRow);
                     else
@@ -116,8 +111,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// the join condition, allow a derived class to perform 
         /// logic associated to that, such as logging
         /// </summary>
-        protected virtual void RightOrphanRow(Row row)
-        {
+        protected virtual void RightOrphanRow(Row row) {
 
         }
 
@@ -127,8 +121,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// logic associated to that, such as logging
         /// </summary>
         /// <param name="row">The row.</param>
-        protected virtual void LeftOrphanRow(Row row)
-        {
+        protected virtual void LeftOrphanRow(Row row) {
 
         }
 
@@ -155,15 +148,13 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// <summary>
         /// Initializes this instance.
         /// </summary>
-        protected virtual void Initialize()
-        {
+        protected virtual void Initialize() {
         }
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        public override void Dispose()
-        {
+        public override void Dispose() {
             left.Dispose();
             right.Dispose();
         }
@@ -172,8 +163,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// Initializes this instance
         /// </summary>
         /// <param name="pipelineExecuter">The current pipeline executer.</param>
-        public override void PrepareForExecution(IPipelineExecuter pipelineExecuter)
-        {
+        public override void PrepareForExecution(IPipelineExecuter pipelineExecuter) {
             left.PrepareForExecution(pipelineExecuter);
             right.PrepareForExecution(pipelineExecuter);
         }
@@ -182,14 +172,11 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// Gets all errors that occured when running this operation
         /// </summary>
         /// <returns></returns>
-        public override IEnumerable<Exception> GetAllErrors()
-        {
-            foreach (var error in left.GetAllErrors())
-            {
+        public override IEnumerable<Exception> GetAllErrors() {
+            foreach (var error in left.GetAllErrors()) {
                 yield return error;
             }
-            foreach (var error in right.GetAllErrors())
-            {
+            foreach (var error in right.GetAllErrors()) {
                 yield return error;
             }
         }

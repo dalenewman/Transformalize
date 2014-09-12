@@ -18,12 +18,9 @@ namespace Transformalize.Libs.Rhino.Etl {
     ///     A single etl process
     /// </summary>
     public abstract class EtlProcess : EtlProcessBase<EtlProcess>, IDisposable {
-        public Process Process { get; set; }
         private IPipelineExecuter _pipelineExecuter = new ThreadPoolPipelineExecuter();
 
-        protected EtlProcess(Process process) {
-            Process = process;
-        }
+        protected EtlProcess(ref Process process) : base(ref process) {}
 
         /// <summary>
         ///     Gets the pipeline executer.
@@ -35,14 +32,6 @@ namespace Transformalize.Libs.Rhino.Etl {
                 Debug("Setting PipelineExecutor to {0}", value.GetType().ToString());
                 _pipelineExecuter = value;
             }
-        }
-
-
-        /// <summary>
-        ///     Gets a new partial process that we can work with
-        /// </summary>
-        protected static PartialProcessOperation Partial {
-            get { return new PartialProcessOperation(); }
         }
 
         #region IDisposable Members
@@ -111,7 +100,7 @@ namespace Transformalize.Libs.Rhino.Etl {
         /// <param name="op">The operation.</param>
         /// <param name="dictionary">The dictionary.</param>
         protected virtual void OnRowProcessed(IOperation op, Row dictionary) {
-            if (op.Statistics.OutputtedRows % Process.LogRows == 0) {
+            if (op.Statistics.OutputtedRows % op.LogRows == 0) {
                 Info("Processed {0} rows in {1}", op.Statistics.OutputtedRows, op.Name);
             }
         }

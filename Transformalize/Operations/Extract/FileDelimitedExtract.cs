@@ -23,6 +23,7 @@ namespace Transformalize.Operations.Extract {
         private readonly int _ignoreFirstLines;
         private readonly string _delimiter;
         private readonly ErrorMode _errorMode;
+        private bool _warned;
         private int _counter;
 
         public FileDelimitedExtract(AbstractConnection connection, Entity entity, int top) {
@@ -73,18 +74,22 @@ namespace Transformalize.Operations.Extract {
                             try {
                                 ProcessRow(row, _fields, _fullName, conversionMap);
                             } catch (Exception ex) {
-                                Warn("First row from '{0}' failed to process.  You may have headers.  If so, set start=\"2\" on connection. Note: start is 1-based. {0}", _name, ex.Message);
+                                if (!_warned) {
+                                    Warn("First row from '{0}' failed to process.  You may have headers.  If so, set start=\"2\" on connection. Note: start is 1-based. {0}", _name, ex.Message);
+                                    _warned = true;
+                                }
+
                             }
                         } else {
                             ProcessRow(row, _fields, _fullName, conversionMap);
                         }
                         if (_counter < _top) {
-                            Interlocked.Increment(ref _counter);
                             yield return row;
                         } else {
                             yield break;
                         }
                     }
+                    Interlocked.Increment(ref _counter);
                     HandleErrors(file);
                 }
             } else {
@@ -100,6 +105,7 @@ namespace Transformalize.Operations.Extract {
                             ProcessRow(row, _fields, _fullName, conversionMap);
                         }
                         yield return row;
+                        Interlocked.Increment(ref _counter);
                     }
                     HandleErrors(file);
                 }

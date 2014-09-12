@@ -33,6 +33,8 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
             set { _name = value; }
         }
 
+        public long LogRows { get; set; }
+
         /// <summary>
         ///     Gets or sets whether we are using a transaction
         /// </summary>
