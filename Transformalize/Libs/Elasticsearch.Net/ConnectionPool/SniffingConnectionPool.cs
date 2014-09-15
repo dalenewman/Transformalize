@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Transformalize.Libs.Elasticsearch.Net.Connection;
-using Transformalize.Libs.Elasticsearch.Net.Extensions;
 using Transformalize.Libs.Elasticsearch.Net.Providers;
 
 namespace Transformalize.Libs.Elasticsearch.Net.ConnectionPool
@@ -12,7 +10,7 @@ namespace Transformalize.Libs.Elasticsearch.Net.ConnectionPool
 	{
 		private readonly ReaderWriterLockSlim _readerWriter = new ReaderWriterLockSlim();
 
-		private bool _seenStartup = false;
+		public override bool AcceptsUpdates { get { return true; } }
 
 		public SniffingConnectionPool(
 			IEnumerable<Uri> uris, 
@@ -22,26 +20,16 @@ namespace Transformalize.Libs.Elasticsearch.Net.ConnectionPool
 		{
 		}
 
-		public override void Sniff(IConnection connection, bool fromStartupHint = false)
+		public override void UpdateNodeList(IList<Uri> newClusterState, Uri sniffNode = null)
 		{
-			if (fromStartupHint && _seenStartup)
-				return;
-
 			try
 			{
-				int seed; bool shouldPingHint;
-				var uri = this.GetNext(null, out seed, out shouldPingHint);
-				
 				this._readerWriter.EnterWriteLock();
-				var nodes = connection.Sniff(uri);
-				if (!nodes.HasAny())
-					return;
-
-				this._nodeUris = nodes;
-				this._uriLookup = nodes.ToDictionary(k => k, v => new EndpointState());
-				if (fromStartupHint)
-					this._seenStartup = true;
-
+				this.NodeUris = newClusterState;
+				this.UriLookup = newClusterState.ToDictionary(k => k, v => new EndpointState()
+				{
+					Attemps = v.Equals(sniffNode) ? 1 : 0
+				});
 			}
 			finally
 			{

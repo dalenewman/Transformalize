@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using Transformalize.Libs.Elasticsearch.Net.Domain.Response;
 using Transformalize.Libs.Elasticsearch.Net.Extensions;
 using Transformalize.Libs.Elasticsearch.Net.Serialization;
 
@@ -30,14 +31,11 @@ namespace Transformalize.Libs.Elasticsearch.Net.Providers
 			return new Uri("{0}://{1}:{2}".F(scheme, host, port));
 
 		}
-		public static IList<Uri> FromStream(Stream stream, IElasticsearchSerializer serializer)
+		public static IList<Uri> FromStream(IElasticsearchResponse response, Stream stream, IElasticsearchSerializer serializer)
 		{
-			using (var memoryStream = new MemoryStream())
-			{
-				stream.CopyTo(memoryStream);
-				var response = serializer.Deserialize<NodeInfoResponse>(memoryStream.ToArray());
+				var result = serializer.Deserialize<NodeInfoResponse>(stream);
 				var l = new List<Uri>();
-				foreach(var kv in response.nodes.Values)
+				foreach(var kv in result.nodes.Values)
 				{
 					if (!kv.http_address.IsNullOrEmpty())
 						l.Add(Parse("http", kv.http_address));
@@ -47,7 +45,6 @@ namespace Transformalize.Libs.Elasticsearch.Net.Providers
 						l.Add(Parse("http", kv.thrift_address));
 				}
 				return l;
-			}
 		}
 	}
 }

@@ -1,13 +1,14 @@
 ﻿using System;
-using Transformalize.Libs.Elasticsearch.Net.Connection;
+using System.Collections.Generic;
 
 namespace Transformalize.Libs.Elasticsearch.Net.ConnectionPool
 {
 	public class SingleNodeConnectionPool : IConnectionPool
 	{
 		private readonly Uri _uri;
-		
 		public int MaxRetries { get { return 0;  } }
+
+		public bool AcceptsUpdates { get { return false; } }
 
 		public SingleNodeConnectionPool(Uri uri)
 		{
@@ -27,17 +28,15 @@ namespace Transformalize.Libs.Elasticsearch.Net.ConnectionPool
 
 		public void MarkDead(Uri uri, int? deadTimeout = null, int? maxDeadTimeout = null)
 		{
-
 		}
 
 		public void MarkAlive(Uri uri)
 		{
-			
 		}
 
-		public void Sniff(IConnection connection, bool fromStartupHint = false)
+		public void UpdateNodeList(IList<Uri> newClusterState, Uri sniffNode = null)
 		{
-			
 		}
+
 	}
 }

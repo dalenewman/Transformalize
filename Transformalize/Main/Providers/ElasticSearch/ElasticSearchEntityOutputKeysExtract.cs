@@ -27,14 +27,14 @@ namespace Transformalize.Main.Providers.ElasticSearch
             var client = ElasticSearchClientFactory.Create(_connection, _entity);
 
             var count = client.Client.SearchGet(client.Index, client.Type, s => s
-                .Add("q", "*:*")
-                .Add("search_type", "count")
+                .AddQueryString("q", "*:*")
+                .AddQueryString("search_type", "count")
             );
 
             var result = client.Client.SearchGet(client.Index, client.Type, s => s
-                .Add("q", "*:*")
-                .Add("_source_include", string.Join(",", _sourceInclude))
-                .Add("size", count.Response["hits"].total)
+                .AddQueryString("q", "*:*")
+                .AddQueryString("_source_include", string.Join(",", _sourceInclude))
+                .AddQueryString("size", count.Response["hits"].total)
             );
 
             var hits = result.Response["hits"].hits;

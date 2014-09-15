@@ -1,50 +1,69 @@
-﻿using System.Net;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using Transformalize.Libs.Elasticsearch.Net.Domain;
+using Transformalize.Libs.Elasticsearch.Net.Connection.Configuration;
+using Transformalize.Libs.Elasticsearch.Net.Domain.Response;
 
 namespace Transformalize.Libs.Elasticsearch.Net.Connection
 {
-	/// <summary>
-	/// 
-	/// </summary>
 	public class InMemoryConnection : HttpConnection
 	{
-		private ElasticsearchResponse _fixedResult;
-		private readonly byte[] _fixedResultBytes = Encoding.UTF8.GetBytes("{ \"USING NEST IN MEMORY CONNECTION\"  : null }");
+		private byte[] _fixedResultBytes = Encoding.UTF8.GetBytes("{ \"USING NEST IN MEMORY CONNECTION\"  : null }");
+		private int _statusCode;
 
-		public InMemoryConnection(IConnectionConfigurationValues settings)
-			: base(settings)
+		public List<Tuple<string, Uri, byte[]>> Requests = new List<Tuple<string, Uri, byte[]>>(); 
+		
+		public bool RecordRequests { get; set;}
+
+		public InMemoryConnection() : base(new ConnectionConfiguration())
 		{
-
+			
 		}
-		public InMemoryConnection(IConnectionConfigurationValues settings, ElasticsearchResponse fixedResult)
-			: base(settings)
+		public InMemoryConnection(IConnectionConfigurationValues settings) : base(settings)
 		{
-			this._fixedResult = fixedResult;
-		}
-
-		protected override ElasticsearchResponse DoSynchronousRequest(HttpWebRequest request, byte[] data = null)
-		{
-			return this.ReturnConnectionStatus(request, data);
+			_statusCode = 200;
 		}
 
-		private ElasticsearchResponse ReturnConnectionStatus(HttpWebRequest request, byte[] data)
+		public InMemoryConnection(IConnectionConfigurationValues settings, string fixedResult, int statusCode = 200) : this(settings)
+		{
+			_fixedResultBytes = Encoding.UTF8.GetBytes(fixedResult);
+			_statusCode = statusCode;
+		}
+		
+		
+
+
+		protected override ElasticsearchResponse<Stream> DoSynchronousRequest(HttpWebRequest request, byte[] data = null, IRequestConfiguration requestSpecificConfig = null)
+		{
+			return this.ReturnConnectionStatus(request, data, requestSpecificConfig);
+		}
+
+		private ElasticsearchResponse<Stream> ReturnConnectionStatus(HttpWebRequest request, byte[] data, IRequestConfiguration requestSpecificConfig = null)
 		{
 			var method = request.Method;
 			var path = request.RequestUri.ToString();
 
-			var cs = ElasticsearchResponse.Create(this._ConnectionSettings, 200, method, path, data, _fixedResultBytes);
-			_ConnectionSettings.ConnectionStatusHandler(cs);
+			var cs = ElasticsearchResponse<Stream>.Create(this.ConnectionSettings, _statusCode, method, path, data);
+			cs.Response = new MemoryStream(_fixedResultBytes);
+			if (this.ConnectionSettings.ConnectionStatusHandler != null)
+				this.ConnectionSettings.ConnectionStatusHandler(cs);
+
+			if (this.RecordRequests)
+			{
+				this.Requests.Add(Tuple.Create(method, request.RequestUri, data));
+			}
+
 			return cs;
 		}
 
-		protected override Task<ElasticsearchResponse> DoAsyncRequest(HttpWebRequest request, byte[] data = null)
+		protected override Task<ElasticsearchResponse<Stream>> DoAsyncRequest(HttpWebRequest request, byte[] data = null, IRequestConfiguration requestSpecificConfig = null)
 		{
-			return Task.Factory.StartNew<ElasticsearchResponse>(() =>
+			return Task.Factory.StartNew(() =>
 			{
-				var cs = this.ReturnConnectionStatus(request, data);
-				_ConnectionSettings.ConnectionStatusHandler(cs);
+				var cs = this.ReturnConnectionStatus(request, data, requestSpecificConfig);
 				return cs;
 			});
 		}

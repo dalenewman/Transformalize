@@ -68,9 +68,9 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             if (tflBatchId > 0) {
                 var client = ElasticSearchClientFactory.Create(this, TflBatchEntity(entity.ProcessName));
                 var result = client.Client.SearchGet(client.Index, client.Type, s => s
-                    .Add("q", "tflbatchid:" + tflBatchId)
-                    .Add("_source_include", "version,version_type")
-                    .Add("size", 1)
+                    .AddQueryString("q", "tflbatchid:" + tflBatchId)
+                    .AddQueryString("_source_include", "version,version_type")
+                    .AddQueryString("size", 1)
                 );
                 var hits = result.Response["hits"].hits;
                 var versionType = (string)hits[0]["_source"]["version_type"].Value;

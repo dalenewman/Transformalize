@@ -79,7 +79,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             if (response.Success)
                 return;
 
-            _log.Error(response.Error.ExceptionMessage);
+            _log.Error(response.ServerError.Error);
             throw new TransformalizeException("Error writing ElasticSearch mapping.");
         }
 

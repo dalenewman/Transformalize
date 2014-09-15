@@ -1,32 +1,31 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
-using Transformalize.Libs.Elasticsearch.Net.Domain;
+using Transformalize.Libs.Elasticsearch.Net.Connection.Configuration;
+using Transformalize.Libs.Elasticsearch.Net.Domain.Response;
 
 namespace Transformalize.Libs.Elasticsearch.Net.Connection
 {
 	public interface IConnection
 	{
-		Task<ElasticsearchResponse> Get(Uri uri);
-		ElasticsearchResponse GetSync(Uri uri);
 
-		Task<ElasticsearchResponse> Head(Uri uri);
-		ElasticsearchResponse HeadSync(Uri uri);
+		Task<ElasticsearchResponse<Stream>> Get(Uri uri, IRequestConfiguration requestConfiguration = null);
+		ElasticsearchResponse<Stream> GetSync(Uri uri, IRequestConfiguration requestConfiguration = null);
 
-		Task<ElasticsearchResponse> Post(Uri uri, byte[] data);
-		ElasticsearchResponse PostSync(Uri uri, byte[] data);
+		Task<ElasticsearchResponse<Stream>> Head(Uri uri, IRequestConfiguration requestConfiguration = null);
+		ElasticsearchResponse<Stream> HeadSync(Uri uri, IRequestConfiguration requestConfiguration = null);
 
-		Task<ElasticsearchResponse> Put(Uri uri, byte[] data);
-		ElasticsearchResponse PutSync(Uri uri, byte[] data);
+		Task<ElasticsearchResponse<Stream>> Post(Uri uri, byte[] data, IRequestConfiguration requestConfiguration = null);
+		ElasticsearchResponse<Stream> PostSync(Uri uri, byte[] data, IRequestConfiguration requestConfiguration = null);
 
-		Task<ElasticsearchResponse> Delete(Uri uri);
-		ElasticsearchResponse DeleteSync(Uri uri);
+		Task<ElasticsearchResponse<Stream>> Put(Uri uri, byte[] data, IRequestConfiguration requestConfiguration = null);
+		ElasticsearchResponse<Stream> PutSync(Uri uri, byte[] data, IRequestConfiguration requestConfiguration = null);
 
-		Task<ElasticsearchResponse> Delete(Uri uri, byte[] data);
-		ElasticsearchResponse DeleteSync(Uri uri, byte[] data);
+		Task<ElasticsearchResponse<Stream>> Delete(Uri uri, IRequestConfiguration requestConfiguration = null);
+		ElasticsearchResponse<Stream> DeleteSync(Uri uri, IRequestConfiguration requestConfiguration = null);
 
-		bool Ping(Uri uri);
-		IList<Uri> Sniff(Uri uri);
+		Task<ElasticsearchResponse<Stream>> Delete(Uri uri, byte[] data, IRequestConfiguration requestConfiguration = null);
+		ElasticsearchResponse<Stream> DeleteSync(Uri uri, byte[] data, IRequestConfiguration requestConfiguration = null);
 
 	}
 }

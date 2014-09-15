@@ -68,7 +68,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
                     body.AppendLine(JSON.Instance.ToJSON(_elasticMap.ToDictionary(item => item.Key.ToLower(), item => row[item.Value])));
                 }
                 _client.Client.Bulk(body.ToString(), nv => nv
-                    .Add("refresh", @"true")
+                    .AddQueryString("refresh", @"true")
                 );
             }
             yield break;

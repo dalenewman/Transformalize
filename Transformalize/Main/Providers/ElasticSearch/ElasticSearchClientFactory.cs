@@ -1,6 +1,5 @@
-﻿using System;
-using Transformalize.Libs.Elasticsearch.Net;
-using Transformalize.Libs.Elasticsearch.Net.Connection;
+﻿using Transformalize.Libs.Elasticsearch.Net;
+using Transformalize.Libs.Elasticsearch.Net.Connection.Configuration;
 using Transformalize.Libs.Elasticsearch.Net.ConnectionPool;
 using Transformalize.Libs.NLog;
 

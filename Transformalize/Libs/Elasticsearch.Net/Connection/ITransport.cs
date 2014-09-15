@@ -1,6 +1,7 @@
-using System.Collections.Specialized;
 using System.Threading.Tasks;
-using Transformalize.Libs.Elasticsearch.Net.Domain;
+using Transformalize.Libs.Elasticsearch.Net.Connection.Configuration;
+using Transformalize.Libs.Elasticsearch.Net.Domain.RequestParameters;
+using Transformalize.Libs.Elasticsearch.Net.Domain.Response;
 using Transformalize.Libs.Elasticsearch.Net.Serialization;
 
 namespace Transformalize.Libs.Elasticsearch.Net.Connection
@@ -10,16 +11,17 @@ namespace Transformalize.Libs.Elasticsearch.Net.Connection
 		IConnectionConfigurationValues Settings { get; }
 		IElasticsearchSerializer Serializer { get; }
 		
-		ElasticsearchResponse DoRequest(string method, string path, object data = null, NameValueCollection queryString = null, int retried = 0, int? seed = null);
-
-		Task<ElasticsearchResponse> DoRequestAsync(
+		ElasticsearchResponse<T> DoRequest<T>(
 			string method, 
 			string path, 
-			object data = null, NameValueCollection queryString = null, int retried = 0, int? seed = null);
+			object data = null, 
+			IRequestParameters requestParameters = null);
+
+		Task<ElasticsearchResponse<T>> DoRequestAsync<T>(
+			string method, 
+			string path, 
+			object data = null, 
+			IRequestParameters requestParameters = null);
 	}
 
-	public interface ITransportValues
-	{
-		IElasticsearchSerializer Serializer { get; }
-	}
 }

@@ -22,7 +22,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
                     _log.Debug("Successful ping of {0}.", connection.Name);
                     return true;
                 }
-                _log.Warn("Failed to connect to {0}, {1}:{2}. {3}", connection.Name, connection.Server, connection.Port, response.Error.ExceptionMessage);
+                _log.Warn("Failed to connect to {0}, {1}:{2}. {3}", connection.Name, connection.Server, connection.Port, response.ServerError.Error);
             } catch (Exception e) {
                 _log.Warn("Failed to connect to {0}, {1}:{2}. {3}", connection.Name, connection.Server, connection.Port, e.Message);
                 return false;

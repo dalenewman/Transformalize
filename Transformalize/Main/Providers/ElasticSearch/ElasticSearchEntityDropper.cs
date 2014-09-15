@@ -19,7 +19,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             if (response.Success)
                 return;
 
-            _log.Warn(response.Error.ExceptionMessage);
+            _log.Warn(response.ServerError.Error);
             _log.Warn("Trouble deleting {0} {1}.", client.Index, client.Type);
         }
     }
