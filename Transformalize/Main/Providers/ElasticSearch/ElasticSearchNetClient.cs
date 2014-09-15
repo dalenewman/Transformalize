@@ -4,13 +4,13 @@ namespace Transformalize.Main.Providers.ElasticSearch {
     /// <summary>
     /// Get these from ElasticSearchClientFactory
     /// </summary>
-    public class ElasticSearchClient {
+    public class ElasticSearchNetClient {
 
         public ElasticsearchClient Client { get; set; }
         public string Index { get; set; }
         public string Type { get; set; }
 
-        public ElasticSearchClient(ElasticsearchClient client, string index, string type) {
+        public ElasticSearchNetClient(ElasticsearchClient client, string index, string type) {
             Client = client;
             Index = index;
             Type = type;

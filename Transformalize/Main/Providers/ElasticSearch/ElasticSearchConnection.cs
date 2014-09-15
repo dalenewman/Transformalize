@@ -1,7 +1,7 @@
 using System;
+using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Libs.Rhino.Etl.Operations;
-using Transformalize.Operations.Transform;
 
 namespace Transformalize.Main.Providers.ElasticSearch {
     public class ElasticSearchConnection : AbstractConnection {
@@ -23,7 +23,16 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             if (entity.Updates + entity.Inserts > 0 || force) {
                 var client = ElasticSearchClientFactory.Create(this, TflBatchEntity(entity.ProcessName));
                 var versionType = entity.Version == null ? "string" : entity.Version.SimpleType;
-                var end = versionType.Equals("byte[]") || versionType.Equals("rowversion") ? Common.BytesToHexString((byte[])entity.End) : new DefaultFactory().Convert(entity.End, versionType).ToString();
+
+                string end;
+                if (versionType.Equals("datetime") && entity.End is DateTime) {
+                    end = ((DateTime)entity.End).ToString("yyyy-MM-ddTHH:mm:ss.fff");
+                } else if (versionType.Equals("byte[]") || versionType.Equals("rowversion")) {
+                    end = Common.BytesToHexString((byte[])entity.End);
+                } else {
+                    end = new DefaultFactory().Convert(entity.End, versionType).ToString();
+                }
+
                 var body = new {
                     id = entity.TflBatchId,
                     tflbatchid = entity.TflBatchId,
@@ -42,9 +51,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
         }
 
         public override IOperation ExtractCorrespondingKeysFromOutput(Entity entity) {
-            return new EmptyOperation();
-            //need to learn search type scan / scroll functionality for bigger result sets
-            //return new ElasticSearchEntityOutputKeysExtract(this, entity);
+            return new ElasticSearchEntityOutputKeysExtract(this, entity);
         }
 
         public override IOperation ExtractAllKeysFromOutput(Entity entity) {
@@ -52,7 +59,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
         }
 
         public override IOperation ExtractAllKeysFromInput(Entity entity) {
-            return new EmptyOperation();
+            return new ElasticSearchEntityExtract(this, entity, entity.PrimaryKey.Aliases().ToArray());
         }
 
         public override IOperation Insert(ref Process process, Entity entity) {
@@ -98,7 +105,19 @@ namespace Transformalize.Main.Providers.ElasticSearch {
         }
 
         public override Fields GetEntitySchema(Process process, string name, string schema = "", bool isMaster = false) {
-            return new Fields();
+            var client = ElasticSearchClientFactory.CreateNest(this, new Entity() { Name = name, Alias = name, ProcessName = process.Name });
+            var mapping = client.Client.GetMapping<dynamic>(m => m
+                .Index(client.Index)
+                .Type(client.Type)
+            );
+            if (!mapping.IsValid) {
+                throw new TransformalizeException("Trouble getting mapping for {0}:{1} {2}", client.Index, client.Type, mapping.ServerError.Error);
+            }
+            var fields = new Fields();
+            foreach (var pair in mapping.Mapping.Properties) {
+                fields.Add(new Field(pair.Value.Type.Name, "64", FieldType.None, true, "") { Name = pair.Key.Name });
+            }
+            return fields;
         }
 
         public override IOperation Delete(Entity entity) {
@@ -106,7 +125,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
         }
 
         public override IOperation Extract(ref Process process, Entity entity, bool firstRun) {
-            throw new NotImplementedException();
+            return new ElasticSearchEntityExtract(this, entity, entity.OutputFields().Aliases().ToArray());
         }
 
         private int GetMaxTflBatchId(Entity entity) {

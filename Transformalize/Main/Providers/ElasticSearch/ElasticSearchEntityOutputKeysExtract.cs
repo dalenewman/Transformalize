@@ -4,34 +4,30 @@ using System.Linq;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 
-namespace Transformalize.Main.Providers.ElasticSearch
-{
+namespace Transformalize.Main.Providers.ElasticSearch {
     public class ElasticSearchEntityOutputKeysExtract : AbstractOperation {
-        private readonly AbstractConnection _connection;
-        private readonly Entity _entity;
         private readonly List<AliasType> _aliasTypes = new List<AliasType>();
         private readonly string[] _sourceInclude;
         private readonly Dictionary<string, Func<object, object>> _conversionMap = Common.GetObjectConversionMap();
+        private readonly ElasticSearchNetClient _client;
 
         public ElasticSearchEntityOutputKeysExtract(AbstractConnection connection, Entity entity) {
-            _connection = connection;
-            _entity = entity;
-            _aliasTypes = _entity.PrimaryKey.AliasTypes().ToList();
-            if (_entity.Version != null) {
-                _aliasTypes.Add(new AliasType() { Alias = _entity.Version.Alias, AliasLower = _entity.Version.Alias.ToLower(), SimpleType = _entity.Version.SimpleType });
+            _aliasTypes = entity.PrimaryKey.AliasTypes().ToList();
+            if (entity.Version != null) {
+                _aliasTypes.Add(new AliasType() { Alias = entity.Version.Alias, AliasLower = entity.Version.Alias.ToLower(), SimpleType = entity.Version.SimpleType });
             }
             _sourceInclude = _aliasTypes.Select(at => at.AliasLower).ToArray();
+            _client = ElasticSearchClientFactory.Create(connection, entity);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
-            var client = ElasticSearchClientFactory.Create(_connection, _entity);
 
-            var count = client.Client.SearchGet(client.Index, client.Type, s => s
+            var count = _client.Client.SearchGet(_client.Index, _client.Type, s => s
                 .AddQueryString("q", "*:*")
                 .AddQueryString("search_type", "count")
             );
 
-            var result = client.Client.SearchGet(client.Index, client.Type, s => s
+            var result = _client.Client.SearchGet(_client.Index, _client.Type, s => s
                 .AddQueryString("q", "*:*")
                 .AddQueryString("_source_include", string.Join(",", _sourceInclude))
                 .AddQueryString("size", count.Response["hits"].total)
@@ -47,5 +43,6 @@ namespace Transformalize.Main.Providers.ElasticSearch
                 yield return row;
             }
         }
+
     }
 }

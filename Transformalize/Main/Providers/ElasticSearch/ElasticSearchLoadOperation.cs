@@ -12,7 +12,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
 
     public sealed class ElasticSearchLoadOperation : AbstractOperation {
 
-        private readonly ElasticSearchClient _client;
+        private readonly ElasticSearchNetClient _client;
         private readonly string _prefix;
         private readonly bool _singleKey;
         private readonly string[] _keys;
@@ -40,16 +40,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
 
         }
 
-        void ElasticSearchLoadOperation_OnRowProcessed(IOperation arg1, Row arg2) {
-            Interlocked.Increment(ref _count);
-            if (_count % arg1.LogRows == 0) {
-                Info("Processed {0} records.", _count);
-            }
-        }
-
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
-
-            OnRowProcessed += ElasticSearchLoadOperation_OnRowProcessed;
 
             foreach (var batch in rows.Partition(_batchSize)) {
                 var body = new StringBuilder();
@@ -66,10 +57,14 @@ namespace Transformalize.Main.Providers.ElasticSearch {
                     body.Append(key);
                     body.AppendLine("\"}}");
                     body.AppendLine(JSON.Instance.ToJSON(_elasticMap.ToDictionary(item => item.Key.ToLower(), item => row[item.Value])));
+                    Interlocked.Increment(ref _count);
                 }
                 _client.Client.Bulk(body.ToString(), nv => nv
                     .AddQueryString("refresh", @"true")
                 );
+                if (_count % LogRows == 0) {
+                    Info("Processed {0} rows in {1}", _count, Name);
+                }
             }
             yield break;
 

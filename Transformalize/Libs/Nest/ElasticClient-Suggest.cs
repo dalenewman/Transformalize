@@ -1,0 +1,50 @@
+﻿using System;
+using System.Threading.Tasks;
+using Transformalize.Libs.Elasticsearch.Net.Domain.RequestParameters;
+using Transformalize.Libs.Nest.Domain.Responses;
+using Transformalize.Libs.Nest.DSL;
+
+namespace Transformalize.Libs.Nest
+{
+	public partial class ElasticClient
+	{
+		/// <inheritdoc />
+		public ISuggestResponse Suggest<T>(Func<SuggestDescriptor<T>, SuggestDescriptor<T>> selector)
+			where T : class
+		{
+			return this.Dispatch<SuggestDescriptor<T>, SuggestRequestParameters, SuggestResponse>(
+				selector,
+				(p, d) => this.RawDispatch.SuggestDispatch<SuggestResponse>(p, d)
+			);
+		}
+
+		/// <inheritdoc />
+		public ISuggestResponse Suggest(ISuggestRequest suggestRequest)
+		{
+			return this.Dispatch<ISuggestRequest, SuggestRequestParameters, SuggestResponse>(
+				suggestRequest,
+				(p, d) => this.RawDispatch.SuggestDispatch<SuggestResponse>(p, d)
+			);
+		}
+
+		/// <inheritdoc />
+		public Task<ISuggestResponse> SuggestAsync<T>(Func<SuggestDescriptor<T>, SuggestDescriptor<T>> selector)
+			where T : class
+		{
+			return this.DispatchAsync<SuggestDescriptor<T>, SuggestRequestParameters, SuggestResponse, ISuggestResponse>(
+				selector,
+				(p, d) => this.RawDispatch.SuggestDispatchAsync<SuggestResponse>(p, d)
+			);
+		}
+
+		/// <inheritdoc />
+		public Task<ISuggestResponse> SuggestAsync(ISuggestRequest suggestRequest)
+		{
+			return this.DispatchAsync<ISuggestRequest, SuggestRequestParameters, SuggestResponse, ISuggestResponse>(
+				suggestRequest,
+				(p, d) => this.RawDispatch.SuggestDispatchAsync<SuggestResponse>(p, d)
+			);
+		}
+
+	}
+}

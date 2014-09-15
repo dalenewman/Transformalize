@@ -1,0 +1,30 @@
+﻿using System.Collections.Generic;
+using Transformalize.Libs.Newtonsoft.Json;
+using Transformalize.Libs.Nest.Resolvers.Converters;
+
+namespace Transformalize.Libs.Nest.Domain.Stats
+{
+	[JsonObject]
+	public class IndexingStats
+	{
+		[JsonProperty(PropertyName = "index_total")]
+		public long Total { get; set; }
+		[JsonProperty(PropertyName = "index_time")]
+		public string Time { get; set; }
+		[JsonProperty(PropertyName = "index_time_in_millis")]
+		public double TimeInMilliseconds { get; set; }
+		[JsonProperty(PropertyName = "index_current")]
+		public long Current { get; set; }
+		[JsonProperty(PropertyName = "delete_total")]
+		public long DeleteTotal { get; set; }
+		[JsonProperty(PropertyName = "delete_time")]
+		public string DeleteTime { get; set; }
+		[JsonProperty(PropertyName = "delete_time_in_millis")]
+		public double DeleteTimeInMilliseconds { get; set; }
+		[JsonProperty(PropertyName = "delete_current")]
+		public long DeleteCurrent { get; set; }
+		[JsonProperty(PropertyName = "types")]
+		[JsonConverter(typeof(DictionaryKeysAreNotPropertyNamesJsonConverter))]
+		public Dictionary<string, TypeStats> Types { get; set; }
+	}
+}
