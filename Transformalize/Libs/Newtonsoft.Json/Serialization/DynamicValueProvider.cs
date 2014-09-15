@@ -26,7 +26,7 @@
 using Transformalize.Libs.Newtonsoft.Json.Utilities;
 #if !(PORTABLE40 || PORTABLE || NETFX_CORE)
 #if NET20
-using Transformalize.Libs.Newtonsoft.Json.Utilities.LinqBridge;
+using Newtonsoft.Json.Utilities.LinqBridge;
 #endif
 using System;
 using System.Reflection;
@@ -108,5 +108,4 @@ namespace Transformalize.Libs.Newtonsoft.Json.Serialization
         }
     }
 }
-
 #endif

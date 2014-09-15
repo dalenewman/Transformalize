@@ -41,7 +41,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 #if NET20
-using Transformalize.Libs.Newtonsoft.Json.Utilities.LinqBridge;
+using Newtonsoft.Json.Utilities.LinqBridge;
 #else
 #endif
 using Transformalize.Libs.Newtonsoft.Json.Converters;
@@ -368,34 +368,41 @@ namespace Transformalize.Libs.Newtonsoft.Json.Serialization
             contract.MemberSerialization = JsonTypeReflector.GetObjectMemberSerialization(contract.NonNullableUnderlyingType, ignoreSerializableAttribute);
             contract.Properties.AddRange(CreateProperties(contract.NonNullableUnderlyingType, contract.MemberSerialization));
 
-            JsonObjectAttribute attribute = JsonTypeReflector.GetJsonObjectAttribute(contract.NonNullableUnderlyingType);
+            JsonObjectAttribute attribute = JsonTypeReflector.GetCachedAttribute<JsonObjectAttribute>(contract.NonNullableUnderlyingType);
             if (attribute != null)
                 contract.ItemRequired = attribute._itemRequired;
 
-            ConstructorInfo overrideConstructor = GetAttributeConstructor(contract.NonNullableUnderlyingType);
+            if (contract.IsInstantiable)
+            {
+                ConstructorInfo overrideConstructor = GetAttributeConstructor(contract.NonNullableUnderlyingType);
 
-            // check if a JsonConstructorAttribute has been defined and use that
-            if (overrideConstructor != null)
-            {
-                contract.OverrideConstructor = overrideConstructor;
-                contract.ConstructorParameters.AddRange(CreateConstructorParameters(overrideConstructor, contract.Properties));
-            }
-            else if (contract.MemberSerialization == MemberSerialization.Fields)
-            {
-#if !(NETFX_CORE || PORTABLE40 || PORTABLE)
-                // mimic DataContractSerializer behaviour when populating fields by overriding default creator to create an uninitialized object
-                // note that this is only possible when the application is fully trusted so fall back to using the default constructor (if available) in partial trust
-                if (JsonTypeReflector.FullyTrusted)
-                    contract.DefaultCreator = contract.GetUninitializedObject;
-#endif
-            }
-            else if (contract.DefaultCreator == null || contract.DefaultCreatorNonPublic)
-            {
-                ConstructorInfo constructor = GetParametrizedConstructor(contract.NonNullableUnderlyingType);
-                if (constructor != null)
+                // check if a JsonConstructorAttribute has been defined and use that
+                if (overrideConstructor != null)
                 {
-                    contract.ParametrizedConstructor = constructor;
-                    contract.ConstructorParameters.AddRange(CreateConstructorParameters(constructor, contract.Properties));
+#pragma warning disable 618
+                    contract.OverrideConstructor = overrideConstructor;
+#pragma warning restore 618
+                    contract.CreatorParameters.AddRange(CreateConstructorParameters(overrideConstructor, contract.Properties));
+                }
+                else if (contract.MemberSerialization == MemberSerialization.Fields)
+                {
+#if !(NETFX_CORE || PORTABLE40 || PORTABLE)
+                    // mimic DataContractSerializer behaviour when populating fields by overriding default creator to create an uninitialized object
+                    // note that this is only possible when the application is fully trusted so fall back to using the default constructor (if available) in partial trust
+                    if (JsonTypeReflector.FullyTrusted)
+                        contract.DefaultCreator = contract.GetUninitializedObject;
+#endif
+                }
+                else if (contract.DefaultCreator == null || contract.DefaultCreatorNonPublic)
+                {
+                    ConstructorInfo constructor = GetParametrizedConstructor(contract.NonNullableUnderlyingType);
+                    if (constructor != null)
+                    {
+#pragma warning disable 618
+                        contract.ParametrizedConstructor = constructor;
+#pragma warning restore 618
+                        contract.CreatorParameters.AddRange(CreateConstructorParameters(constructor, contract.Properties));
+                    }
                 }
             }
 
@@ -482,14 +489,14 @@ namespace Transformalize.Libs.Newtonsoft.Json.Serialization
                 // convert object value to JToken so it is compatible with dictionary
                 // could happen because of primitive types, type name handling and references
                 if (isJTokenValueType && !(value is JToken))
-                    value = (value != null) ? JToken.FromObject(value) : new JValue(null, JTokenType.Null);
+                    value = (value != null) ? JToken.FromObject(value) : JValue.CreateNull();
 
                 setExtensionDataDictionaryValue(dictionary, key, value);
             };
 
             Type enumerableWrapper = typeof(DictionaryEnumerator<,>).MakeGenericType(keyType, valueType);
             ConstructorInfo constructors = enumerableWrapper.GetConstructors().First();
-            MethodCall<object, object> createEnumerableWrapper = JsonTypeReflector.ReflectionDelegateFactory.CreateMethodCall<object>(constructors);
+            ObjectConstructor<object> createEnumerableWrapper = JsonTypeReflector.ReflectionDelegateFactory.CreateParametrizedConstructor(constructors);
 
             ExtensionDataGetter extensionDataGetter = o =>
             {
@@ -497,7 +504,7 @@ namespace Transformalize.Libs.Newtonsoft.Json.Serialization
                 if (dictionary == null)
                     return null;
 
-                return (IEnumerable<KeyValuePair<object, object>>)createEnumerableWrapper(null, dictionary);
+                return (IEnumerable<KeyValuePair<object, object>>)createEnumerableWrapper(dictionary);
             };
 
             if (extensionDataAttribute.ReadData)
@@ -663,7 +670,7 @@ namespace Transformalize.Libs.Newtonsoft.Json.Serialization
         /// <returns>The contract's default <see cref="JsonConverter" />.</returns>
         protected virtual JsonConverter ResolveContractConverter(Type objectType)
         {
-            return JsonTypeReflector.GetJsonConverter(objectType, objectType);
+            return JsonTypeReflector.GetJsonConverter(objectType);
         }
 
         private Func<object> GetDefaultCreator(Type createdType)
@@ -676,7 +683,7 @@ namespace Transformalize.Libs.Newtonsoft.Json.Serialization
 #endif
         private void InitializeContract(JsonContract contract)
         {
-            JsonContainerAttribute containerAttribute = JsonTypeReflector.GetJsonContainerAttribute(contract.NonNullableUnderlyingType);
+            JsonContainerAttribute containerAttribute = JsonTypeReflector.GetCachedAttribute<JsonContainerAttribute>(contract.NonNullableUnderlyingType);
             if (containerAttribute != null)
             {
                 contract.IsReference = containerAttribute._isReference;
@@ -696,8 +703,8 @@ namespace Transformalize.Libs.Newtonsoft.Json.Serialization
             // then see whether object is compadible with any of the built in converters
             contract.InternalConverter = JsonSerializer.GetMatchingConverter(BuiltInConverters, contract.NonNullableUnderlyingType);
 
-            if (ReflectionUtils.HasDefaultConstructor(contract.CreatedType, true)
-                || contract.CreatedType.IsValueType())
+            if (contract.IsInstantiable
+                && (ReflectionUtils.HasDefaultConstructor(contract.CreatedType, true) || contract.CreatedType.IsValueType()))
             {
                 contract.DefaultCreator = GetDefaultCreator(contract.CreatedType);
 
@@ -906,9 +913,9 @@ namespace Transformalize.Libs.Newtonsoft.Json.Serialization
             ConstructorInfo constructorInfo = contract.NonNullableUnderlyingType.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { typeof(SerializationInfo), typeof(StreamingContext) }, null);
             if (constructorInfo != null)
             {
-                MethodCall<object, object> methodCall = JsonTypeReflector.ReflectionDelegateFactory.CreateMethodCall<object>(constructorInfo);
+                ObjectConstructor<object> creator = JsonTypeReflector.ReflectionDelegateFactory.CreateParametrizedConstructor(constructorInfo);
 
-                contract.ISerializableCreator = (args => methodCall(null, args));
+                contract.ISerializableCreator = creator;
             }
 
             return contract;
@@ -953,18 +960,19 @@ namespace Transformalize.Libs.Newtonsoft.Json.Serialization
         /// <returns>A <see cref="JsonContract"/> for the given type.</returns>
         protected virtual JsonContract CreateContract(Type objectType)
         {
-            Type t = ReflectionUtils.EnsureNotNullableType(objectType);
-
             if (IsJsonPrimitiveType(objectType))
                 return CreatePrimitiveContract(objectType);
 
-            if (JsonTypeReflector.GetJsonObjectAttribute(t) != null)
+            Type t = ReflectionUtils.EnsureNotNullableType(objectType);
+            JsonContainerAttribute containerAttribute = JsonTypeReflector.GetCachedAttribute<JsonContainerAttribute>(t);
+
+            if (containerAttribute is JsonObjectAttribute)
                 return CreateObjectContract(objectType);
 
-            if (JsonTypeReflector.GetJsonArrayAttribute(t) != null)
+            if (containerAttribute is JsonArrayAttribute)
                 return CreateArrayContract(objectType);
 
-            if (JsonTypeReflector.GetJsonDictionaryAttribute(t) != null)
+            if (containerAttribute is JsonDictionaryAttribute)
                 return CreateDictionaryContract(objectType);
 
             if (t == typeof(JToken) || t.IsSubclassOf(typeof(JToken)))
@@ -1123,7 +1131,7 @@ namespace Transformalize.Libs.Newtonsoft.Json.Serialization
             else
                 valueProvider = new ReflectionValueProvider(member);
 #elif !(PORTABLE40)
-      valueProvider = new ExpressionValueProvider(member);
+            valueProvider = new ExpressionValueProvider(member);
 #else
             valueProvider = new ReflectionValueProvider(member);
 #endif
@@ -1242,8 +1250,8 @@ namespace Transformalize.Libs.Newtonsoft.Json.Serialization
 
             // resolve converter for property
             // the class type might have a converter but the property converter takes presidence
-            property.Converter = JsonTypeReflector.GetJsonConverter(attributeProvider, property.PropertyType);
-            property.MemberConverter = JsonTypeReflector.GetJsonConverter(attributeProvider, property.PropertyType);
+            property.Converter = JsonTypeReflector.GetJsonConverter(attributeProvider);
+            property.MemberConverter = JsonTypeReflector.GetJsonConverter(attributeProvider);
 
             DefaultValueAttribute defaultValueAttribute = JsonTypeReflector.GetAttribute<DefaultValueAttribute>(attributeProvider);
             if (defaultValueAttribute != null)
@@ -1258,7 +1266,7 @@ namespace Transformalize.Libs.Newtonsoft.Json.Serialization
             property.ItemIsReference = (propertyAttribute != null) ? propertyAttribute._itemIsReference : null;
             property.ItemConverter =
                 (propertyAttribute != null && propertyAttribute.ItemConverterType != null)
-                    ? JsonConverterAttribute.CreateJsonConverterInstance(propertyAttribute.ItemConverterType)
+                    ? JsonTypeReflector.CreateJsonConverterInstance(propertyAttribute.ItemConverterType)
                     : null;
             property.ItemReferenceLoopHandling = (propertyAttribute != null) ? propertyAttribute._itemReferenceLoopHandling : null;
             property.ItemTypeNameHandling = (propertyAttribute != null) ? propertyAttribute._itemTypeNameHandling : null;

@@ -25,10 +25,10 @@
 
 using System;
 using System.Reflection;
-
 #if NET20
-using Transformalize.Libs.Newtonsoft.Json.Utilities.LinqBridge;
+using Newtonsoft.Json.Utilities.LinqBridge;
 #endif
+using Transformalize.Libs.Newtonsoft.Json.Serialization;
 
 namespace Transformalize.Libs.Newtonsoft.Json.Utilities
 {
@@ -39,6 +39,17 @@ namespace Transformalize.Libs.Newtonsoft.Json.Utilities
         internal static ReflectionDelegateFactory Instance
         {
             get { return _instance; }
+        }
+
+        public override ObjectConstructor<object> CreateParametrizedConstructor(MethodBase method)
+        {
+            ValidationUtils.ArgumentNotNull(method, "method");
+
+            ConstructorInfo c = method as ConstructorInfo;
+            if (c != null)
+                return c.Invoke;
+
+            return a => method.Invoke(null, a);
         }
 
         public override MethodCall<T, object> CreateMethodCall<T>(MethodBase method)

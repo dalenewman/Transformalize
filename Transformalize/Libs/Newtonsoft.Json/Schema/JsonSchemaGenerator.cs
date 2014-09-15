@@ -29,7 +29,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 #if NET20
-using Transformalize.Libs.Newtonsoft.Json.Utilities.LinqBridge;
+using Newtonsoft.Json.Utilities.LinqBridge;
 #else
 #endif
 using Transformalize.Libs.Newtonsoft.Json.Linq;
@@ -165,7 +165,7 @@ namespace Transformalize.Libs.Newtonsoft.Json.Schema
 
         private string GetTitle(Type type)
         {
-            JsonContainerAttribute containerAttribute = JsonTypeReflector.GetJsonContainerAttribute(type);
+            JsonContainerAttribute containerAttribute = JsonTypeReflector.GetCachedAttribute<JsonContainerAttribute>(type);
 
             if (containerAttribute != null && !string.IsNullOrEmpty(containerAttribute.Title))
                 return containerAttribute.Title;
@@ -175,7 +175,7 @@ namespace Transformalize.Libs.Newtonsoft.Json.Schema
 
         private string GetDescription(Type type)
         {
-            JsonContainerAttribute containerAttribute = JsonTypeReflector.GetJsonContainerAttribute(type);
+            JsonContainerAttribute containerAttribute = JsonTypeReflector.GetCachedAttribute<JsonContainerAttribute>(type);
 
             if (containerAttribute != null && !string.IsNullOrEmpty(containerAttribute.Description))
                 return containerAttribute.Description;
@@ -191,7 +191,7 @@ namespace Transformalize.Libs.Newtonsoft.Json.Schema
 
         private string GetTypeId(Type type, bool explicitOnly)
         {
-            JsonContainerAttribute containerAttribute = JsonTypeReflector.GetJsonContainerAttribute(type);
+            JsonContainerAttribute containerAttribute = JsonTypeReflector.GetCachedAttribute<JsonContainerAttribute>(type);
 
             if (containerAttribute != null && !string.IsNullOrEmpty(containerAttribute.Id))
                 return containerAttribute.Id;
@@ -277,7 +277,7 @@ namespace Transformalize.Libs.Newtonsoft.Json.Schema
 
                         CurrentSchema.Id = GetTypeId(type, false);
 
-                        JsonArrayAttribute arrayAttribute = JsonTypeReflector.GetJsonContainerAttribute(type) as JsonArrayAttribute;
+                        JsonArrayAttribute arrayAttribute = JsonTypeReflector.GetCachedAttribute<JsonArrayAttribute>(type);
                         bool allowNullItem = (arrayAttribute == null || arrayAttribute.AllowNullItems);
 
                         Type collectionItemType = ReflectionUtils.GetCollectionItemType(type);
@@ -294,7 +294,7 @@ namespace Transformalize.Libs.Newtonsoft.Json.Schema
                         {
                             CurrentSchema.Enum = new List<JToken>();
 
-                            EnumValues<long> enumValues = EnumUtils.GetNamesAndValues<long>(type);
+                            IList<EnumValue<long>> enumValues = EnumUtils.GetNamesAndValues<long>(type);
                             foreach (EnumValue<long> enumValue in enumValues)
                             {
                                 JToken value = JToken.FromObject(enumValue.Value);

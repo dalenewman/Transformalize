@@ -23,7 +23,9 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-#if !(PORTABLE40 || NET20 || NET35)
+using Transformalize.Libs.Newtonsoft.Json.Serialization;
+#if !(NET20 || NET35)
+using System.Collections.Generic;
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -39,6 +41,22 @@ namespace Transformalize.Libs.Newtonsoft.Json.Utilities
             get { return _instance; }
         }
 
+        public override ObjectConstructor<object> CreateParametrizedConstructor(MethodBase method)
+        {
+            ValidationUtils.ArgumentNotNull(method, "method");
+
+            Type type = typeof(object);
+
+            ParameterExpression argsParameterExpression = Expression.Parameter(typeof(object[]), "args");
+
+            Expression callExpression = BuildMethodCall(method, type, null, argsParameterExpression);
+
+            LambdaExpression lambdaExpression = Expression.Lambda(typeof(ObjectConstructor<object>), callExpression, argsParameterExpression);
+
+            ObjectConstructor<object> compiled = (ObjectConstructor<object>)lambdaExpression.Compile();
+            return compiled;
+        }
+
         public override MethodCall<T, object> CreateMethodCall<T>(MethodBase method)
         {
             ValidationUtils.ArgumentNotNull(method, "method");
@@ -48,41 +66,92 @@ namespace Transformalize.Libs.Newtonsoft.Json.Utilities
             ParameterExpression targetParameterExpression = Expression.Parameter(type, "target");
             ParameterExpression argsParameterExpression = Expression.Parameter(typeof(object[]), "args");
 
+            Expression callExpression = BuildMethodCall(method, type, targetParameterExpression, argsParameterExpression);
+
+            LambdaExpression lambdaExpression = Expression.Lambda(typeof(MethodCall<T, object>), callExpression, targetParameterExpression, argsParameterExpression);
+
+            MethodCall<T, object> compiled = (MethodCall<T, object>)lambdaExpression.Compile();
+            return compiled;
+        }
+
+        private class ByRefParameter
+        {
+            public Expression Value;
+            public ParameterExpression Variable;
+            public bool IsOut;
+        }
+
+        private Expression BuildMethodCall(MethodBase method, Type type, ParameterExpression targetParameterExpression, ParameterExpression argsParameterExpression)
+        {
             ParameterInfo[] parametersInfo = method.GetParameters();
 
             Expression[] argsExpression = new Expression[parametersInfo.Length];
+            IList<ByRefParameter> refParameterMap = new List<ByRefParameter>();
 
             for (int i = 0; i < parametersInfo.Length; i++)
             {
+                ParameterInfo parameter = parametersInfo[i];
+                Type parameterType = parameter.ParameterType;
+                bool isByRef = false;
+                if (parameterType.IsByRef)
+                {
+                    parameterType = parameterType.GetElementType();
+                    isByRef = true;
+                }
+
                 Expression indexExpression = Expression.Constant(i);
 
                 Expression paramAccessorExpression = Expression.ArrayIndex(argsParameterExpression, indexExpression);
 
-                paramAccessorExpression = EnsureCastExpression(paramAccessorExpression, parametersInfo[i].ParameterType);
+                Expression argExpression;
 
-                argsExpression[i] = paramAccessorExpression;
+                if (parameterType.IsValueType())
+                {
+                    BinaryExpression ensureValueTypeNotNull = Expression.Coalesce(paramAccessorExpression, Expression.New(parameterType));
+
+                    argExpression = EnsureCastExpression(ensureValueTypeNotNull, parameterType);
+                }
+                else
+                {
+                    argExpression = EnsureCastExpression(paramAccessorExpression, parameterType);
+                }
+
+                if (isByRef)
+                {
+                    ParameterExpression variable = Expression.Variable(parameterType);
+                    refParameterMap.Add(new ByRefParameter
+                    {
+                        Value = argExpression,
+                        Variable = variable,
+                        IsOut = parameter.IsOut
+                    });
+
+                    argExpression = variable;
+                }
+
+                argsExpression[i] = argExpression;
             }
 
             Expression callExpression;
             if (method.IsConstructor)
             {
-                callExpression = Expression.New((ConstructorInfo)method, argsExpression);
+                callExpression = Expression.New((ConstructorInfo) method, argsExpression);
             }
             else if (method.IsStatic)
             {
-                callExpression = Expression.Call((MethodInfo)method, argsExpression);
+                callExpression = Expression.Call((MethodInfo) method, argsExpression);
             }
             else
             {
                 Expression readParameter = EnsureCastExpression(targetParameterExpression, method.DeclaringType);
 
-                callExpression = Expression.Call(readParameter, (MethodInfo)method, argsExpression);
+                callExpression = Expression.Call(readParameter, (MethodInfo) method, argsExpression);
             }
 
             if (method is MethodInfo)
             {
-                MethodInfo m = (MethodInfo)method;
-                if (m.ReturnType != typeof(void))
+                MethodInfo m = (MethodInfo) method;
+                if (m.ReturnType != typeof (void))
                     callExpression = EnsureCastExpression(callExpression, type);
                 else
                     callExpression = Expression.Block(callExpression, Expression.Constant(null));
@@ -92,10 +161,24 @@ namespace Transformalize.Libs.Newtonsoft.Json.Utilities
                 callExpression = EnsureCastExpression(callExpression, type);
             }
 
-            LambdaExpression lambdaExpression = Expression.Lambda(typeof(MethodCall<T, object>), callExpression, targetParameterExpression, argsParameterExpression);
+            if (refParameterMap.Count > 0)
+            {
+                IList<ParameterExpression> variableExpressions = new List<ParameterExpression>();
+                IList<Expression> bodyExpressions = new List<Expression>();
+                foreach (ByRefParameter p in refParameterMap)
+                {
+                    if (!p.IsOut)
+                        bodyExpressions.Add(Expression.Assign(p.Variable, p.Value));
 
-            MethodCall<T, object> compiled = (MethodCall<T, object>)lambdaExpression.Compile();
-            return compiled;
+                    variableExpressions.Add(p.Variable);
+                }
+
+                bodyExpressions.Add(callExpression);
+
+                callExpression = Expression.Block(variableExpressions, bodyExpressions);
+            }
+
+            return callExpression;
         }
 
         public override Func<T> CreateDefaultConstructor<T>(Type type)

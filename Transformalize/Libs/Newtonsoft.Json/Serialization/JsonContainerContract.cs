@@ -25,7 +25,7 @@
 
 using System;
 #if NET20
-using Transformalize.Libs.Newtonsoft.Json.Utilities.LinqBridge;
+using Newtonsoft.Json.Utilities.LinqBridge;
 #else
 #endif
 using Transformalize.Libs.Newtonsoft.Json.Utilities;
@@ -95,12 +95,12 @@ namespace Transformalize.Libs.Newtonsoft.Json.Serialization
         internal JsonContainerContract(Type underlyingType)
             : base(underlyingType)
         {
-            JsonContainerAttribute jsonContainerAttribute = JsonTypeReflector.GetJsonContainerAttribute(underlyingType);
+            JsonContainerAttribute jsonContainerAttribute = JsonTypeReflector.GetCachedAttribute<JsonContainerAttribute>(underlyingType);
 
             if (jsonContainerAttribute != null)
             {
                 if (jsonContainerAttribute.ItemConverterType != null)
-                    ItemConverter = JsonConverterAttribute.CreateJsonConverterInstance(jsonContainerAttribute.ItemConverterType);
+                    ItemConverter = JsonTypeReflector.CreateJsonConverterInstance(jsonContainerAttribute.ItemConverterType);
 
                 ItemIsReference = jsonContainerAttribute._itemIsReference;
                 ItemReferenceLoopHandling = jsonContainerAttribute._itemReferenceLoopHandling;

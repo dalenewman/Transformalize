@@ -24,9 +24,9 @@
 #endregion
 
 using Transformalize.Libs.Newtonsoft.Json.Utilities;
-#if !(NET20 || NET35 || PORTABLE40)
+#if !(NET20 || NET35)
 #if NET20
-using Transformalize.Libs.Newtonsoft.Json.Utilities.LinqBridge;
+using Newtonsoft.Json.Utilities.LinqBridge;
 #endif
 using System;
 using System.Reflection;

@@ -23,37 +23,26 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-
 namespace Transformalize.Libs.Newtonsoft.Json
 {
     /// <summary>
-    /// Instructs the <see cref="JsonSerializer"/> to use the specified <see cref="JsonConverter"/> when serializing the member or class.
+    /// Specifies metadata property handling options for the <see cref="JsonSerializer"/>.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface | AttributeTargets.Enum | AttributeTargets.Parameter, AllowMultiple = false)]
-    public sealed class JsonConverterAttribute : Attribute
+    public enum MetadataPropertyHandling
     {
-        private readonly Type _converterType;
+        /// <summary>
+        /// Read metadata properties located at the start of a JSON object.
+        /// </summary>
+        Default = 0,
 
         /// <summary>
-        /// Gets the type of the converter.
+        /// Read metadata properties located anywhere in a JSON object. Note that this setting will impact performance.
         /// </summary>
-        /// <value>The type of the converter.</value>
-        public Type ConverterType
-        {
-            get { return _converterType; }
-        }
+        ReadAhead = 1,
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="JsonConverterAttribute"/> class.
+        /// Do not try to read metadata properties.
         /// </summary>
-        /// <param name="converterType">Type of the converter.</param>
-        public JsonConverterAttribute(Type converterType)
-        {
-            if (converterType == null)
-                throw new ArgumentNullException("converterType");
-
-            _converterType = converterType;
-        }
+        Ignore = 2
     }
 }

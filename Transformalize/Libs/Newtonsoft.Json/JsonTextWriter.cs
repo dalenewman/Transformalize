@@ -155,7 +155,7 @@ namespace Transformalize.Libs.Newtonsoft.Json
         {
             InternalWriteStart(JsonToken.StartObject, JsonContainerType.Object);
 
-            _writer.Write("{");
+            _writer.Write('{');
         }
 
         /// <summary>
@@ -165,7 +165,7 @@ namespace Transformalize.Libs.Newtonsoft.Json
         {
             InternalWriteStart(JsonToken.StartArray, JsonContainerType.Array);
 
-            _writer.Write("[");
+            _writer.Write('[');
         }
 
         /// <summary>
@@ -178,7 +178,7 @@ namespace Transformalize.Libs.Newtonsoft.Json
 
             _writer.Write("new ");
             _writer.Write(name);
-            _writer.Write("(");
+            _writer.Write('(');
         }
 
         /// <summary>
@@ -190,13 +190,13 @@ namespace Transformalize.Libs.Newtonsoft.Json
             switch (token)
             {
                 case JsonToken.EndObject:
-                    _writer.Write("}");
+                    _writer.Write('}');
                     break;
                 case JsonToken.EndArray:
-                    _writer.Write("]");
+                    _writer.Write(']');
                     break;
                 case JsonToken.EndConstructor:
-                    _writer.Write(")");
+                    _writer.Write(')');
                     break;
                 default:
                     throw JsonWriterException.Create(this, "Invalid JsonToken: " + token, null);
@@ -263,7 +263,7 @@ namespace Transformalize.Libs.Newtonsoft.Json
         /// </summary>
         protected override void WriteIndent()
         {
-            _writer.Write(Environment.NewLine);
+            _writer.WriteLine();
 
             // levels of indentation multiplied by the indent count
             int currentIndentCount = Top * _indentation;

@@ -24,7 +24,7 @@
 #endregion
 
 #if NET20
-using Transformalize.Libs.Newtonsoft.Json.Utilities.LinqBridge;
+using Newtonsoft.Json.Utilities.LinqBridge;
 #else
 #endif
 using System;
@@ -98,7 +98,7 @@ namespace Transformalize.Libs.Newtonsoft.Json.Schema
             {
                 string reference = schema.DeferredReference;
 
-                bool locationReference = (reference.StartsWith("#", StringComparison.OrdinalIgnoreCase));
+                bool locationReference = (reference.StartsWith("#", StringComparison.Ordinal));
                 if (locationReference)
                     reference = UnescapeReference(reference);
 

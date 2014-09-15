@@ -37,7 +37,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Security;
 #if NET20
-using Transformalize.Libs.Newtonsoft.Json.Utilities.LinqBridge;
+using Newtonsoft.Json.Utilities.LinqBridge;
 #else
 #endif
 using Transformalize.Libs.Newtonsoft.Json.Linq;
@@ -140,14 +140,15 @@ namespace Transformalize.Libs.Newtonsoft.Json.Serialization
                 return;
             }
 
-            JsonConverter converter;
-            if ((((converter = (member != null) ? member.Converter : null) != null)
-                 || ((converter = (containerProperty != null) ? containerProperty.ItemConverter : null) != null)
-                 || ((converter = (containerContract != null) ? containerContract.ItemConverter : null) != null)
-                 || ((converter = valueContract.Converter) != null)
-                 || ((converter = Serializer.GetMatchingConverter(valueContract.UnderlyingType)) != null)
-                 || ((converter = valueContract.InternalConverter) != null))
-                && converter.CanWrite)
+            JsonConverter converter = 
+                ((member != null) ? member.Converter : null) ??
+                ((containerProperty != null) ? containerProperty.ItemConverter : null) ??
+                ((containerContract != null) ? containerContract.ItemConverter : null) ??
+                valueContract.Converter ??
+                Serializer.GetMatchingConverter(valueContract.UnderlyingType) ??
+                valueContract.InternalConverter;
+
+            if (converter != null && converter.CanWrite)
             {
                 SerializeConvertable(writer, converter, value, valueContract, containerContract, containerProperty);
                 return;

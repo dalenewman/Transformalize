@@ -432,7 +432,7 @@ namespace Transformalize.Libs.Newtonsoft.Json
             if (value == null)
                 return Null;
 
-            PrimitiveTypeCode typeCode = ConvertUtils.GetTypeCode(value);
+            PrimitiveTypeCode typeCode = ConvertUtils.GetTypeCode(value.GetType());
 
             switch (typeCode)
             {
@@ -549,7 +549,7 @@ namespace Transformalize.Libs.Newtonsoft.Json
         /// </summary>
         /// <param name="value">The object to serialize.</param>
         /// <param name="settings">The <see cref="JsonSerializerSettings"/> used to serialize the object.
-        /// If this is null, default serialization settings will be is used.</param>
+        /// If this is null, default serialization settings will be used.</param>
         /// <returns>
         /// A JSON string representation of the object.
         /// </returns>
@@ -563,7 +563,7 @@ namespace Transformalize.Libs.Newtonsoft.Json
         /// </summary>
         /// <param name="value">The object to serialize.</param>
         /// <param name="settings">The <see cref="JsonSerializerSettings"/> used to serialize the object.
-        /// If this is null, default serialization settings will be is used.</param>
+        /// If this is null, default serialization settings will be used.</param>
         /// <param name="type">
         /// The type of the value being serialized.
         /// This parameter is used when <see cref="TypeNameHandling"/> is Auto to write out the type name if the type of the value does not match.
@@ -585,7 +585,7 @@ namespace Transformalize.Libs.Newtonsoft.Json
         /// <param name="value">The object to serialize.</param>
         /// <param name="formatting">Indicates how the output is formatted.</param>
         /// <param name="settings">The <see cref="JsonSerializerSettings"/> used to serialize the object.
-        /// If this is null, default serialization settings will be is used.</param>
+        /// If this is null, default serialization settings will be used.</param>
         /// <returns>
         /// A JSON string representation of the object.
         /// </returns>
@@ -600,7 +600,7 @@ namespace Transformalize.Libs.Newtonsoft.Json
         /// <param name="value">The object to serialize.</param>
         /// <param name="formatting">Indicates how the output is formatted.</param>
         /// <param name="settings">The <see cref="JsonSerializerSettings"/> used to serialize the object.
-        /// If this is null, default serialization settings will be is used.</param>
+        /// If this is null, default serialization settings will be used.</param>
         /// <param name="type">
         /// The type of the value being serialized.
         /// This parameter is used when <see cref="TypeNameHandling"/> is Auto to write out the type name if the type of the value does not match.
@@ -640,7 +640,7 @@ namespace Transformalize.Libs.Newtonsoft.Json
         /// <returns>
         /// A task that represents the asynchronous serialize operation. The value of the <c>TResult</c> parameter contains a JSON string representation of the object.
         /// </returns>
-        [Obsolete("SerializeObjectAsync is obsolete. Use the Task.Factory.StartNew method to serialize JSON asynchronously: Task.Factory.StartNew(() => SerializeObject(value))")]
+        [Obsolete("SerializeObjectAsync is obsolete. Use the Task.Factory.StartNew method to serialize JSON asynchronously: Task.Factory.StartNew(() => JsonConvert.SerializeObject(value))")]
         public static Task<string> SerializeObjectAsync(object value)
         {
             return SerializeObjectAsync(value, Formatting.None, null);
@@ -655,7 +655,7 @@ namespace Transformalize.Libs.Newtonsoft.Json
         /// <returns>
         /// A task that represents the asynchronous serialize operation. The value of the <c>TResult</c> parameter contains a JSON string representation of the object.
         /// </returns>
-        [Obsolete("SerializeObjectAsync is obsolete. Use the Task.Factory.StartNew method to serialize JSON asynchronously: Task.Factory.StartNew(() => SerializeObject(value, formatting))")]
+        [Obsolete("SerializeObjectAsync is obsolete. Use the Task.Factory.StartNew method to serialize JSON asynchronously: Task.Factory.StartNew(() => JsonConvert.SerializeObject(value, formatting))")]
         public static Task<string> SerializeObjectAsync(object value, Formatting formatting)
         {
             return SerializeObjectAsync(value, formatting, null);
@@ -668,11 +668,11 @@ namespace Transformalize.Libs.Newtonsoft.Json
         /// <param name="value">The object to serialize.</param>
         /// <param name="formatting">Indicates how the output is formatted.</param>
         /// <param name="settings">The <see cref="JsonSerializerSettings"/> used to serialize the object.
-        /// If this is null, default serialization settings will be is used.</param>
+        /// If this is null, default serialization settings will be used.</param>
         /// <returns>
         /// A task that represents the asynchronous serialize operation. The value of the <c>TResult</c> parameter contains a JSON string representation of the object.
         /// </returns>
-        [Obsolete("SerializeObjectAsync is obsolete. Use the Task.Factory.StartNew method to serialize JSON asynchronously: Task.Factory.StartNew(() => SerializeObject(value, formatting, settings))")]
+        [Obsolete("SerializeObjectAsync is obsolete. Use the Task.Factory.StartNew method to serialize JSON asynchronously: Task.Factory.StartNew(() => JsonConvert.SerializeObject(value, formatting, settings))")]
         public static Task<string> SerializeObjectAsync(object value, Formatting formatting, JsonSerializerSettings settings)
         {
             return Task.Factory.StartNew(() => SerializeObject(value, formatting, settings));
@@ -685,7 +685,7 @@ namespace Transformalize.Libs.Newtonsoft.Json
         /// Deserializes the JSON to a .NET object.
         /// </summary>
         /// <param name="value">The JSON to deserialize.</param>
-        /// <returns>The deserialized object from the Json string.</returns>
+        /// <returns>The deserialized object from the JSON string.</returns>
         public static object DeserializeObject(string value)
         {
             return DeserializeObject(value, null, (JsonSerializerSettings)null);
@@ -697,7 +697,7 @@ namespace Transformalize.Libs.Newtonsoft.Json
         /// <param name="value">The JSON to deserialize.</param>
         /// <param name="settings">
         /// The <see cref="JsonSerializerSettings"/> used to deserialize the object.
-        /// If this is null, default serialization settings will be is used.
+        /// If this is null, default serialization settings will be used.
         /// </param>
         /// <returns>The deserialized object from the JSON string.</returns>
         public static object DeserializeObject(string value, JsonSerializerSettings settings)
@@ -710,7 +710,7 @@ namespace Transformalize.Libs.Newtonsoft.Json
         /// </summary>
         /// <param name="value">The JSON to deserialize.</param>
         /// <param name="type">The <see cref="Type"/> of object being deserialized.</param>
-        /// <returns>The deserialized object from the Json string.</returns>
+        /// <returns>The deserialized object from the JSON string.</returns>
         public static object DeserializeObject(string value, Type type)
         {
             return DeserializeObject(value, type, (JsonSerializerSettings)null);
@@ -721,7 +721,7 @@ namespace Transformalize.Libs.Newtonsoft.Json
         /// </summary>
         /// <typeparam name="T">The type of the object to deserialize to.</typeparam>
         /// <param name="value">The JSON to deserialize.</param>
-        /// <returns>The deserialized object from the Json string.</returns>
+        /// <returns>The deserialized object from the JSON string.</returns>
         public static T DeserializeObject<T>(string value)
         {
             return DeserializeObject<T>(value, (JsonSerializerSettings)null);
@@ -755,7 +755,7 @@ namespace Transformalize.Libs.Newtonsoft.Json
         /// <param name="anonymousTypeObject">The anonymous type object.</param>
         /// <param name="settings">
         /// The <see cref="JsonSerializerSettings"/> used to deserialize the object.
-        /// If this is null, default serialization settings will be is used.
+        /// If this is null, default serialization settings will be used.
         /// </param>
         /// <returns>The deserialized anonymous type from the JSON string.</returns>
         public static T DeserializeAnonymousType<T>(string value, T anonymousTypeObject, JsonSerializerSettings settings)
@@ -782,7 +782,7 @@ namespace Transformalize.Libs.Newtonsoft.Json
         /// <param name="value">The object to deserialize.</param>
         /// <param name="settings">
         /// The <see cref="JsonSerializerSettings"/> used to deserialize the object.
-        /// If this is null, default serialization settings will be is used.
+        /// If this is null, default serialization settings will be used.
         /// </param>
         /// <returns>The deserialized object from the JSON string.</returns>
         public static T DeserializeObject<T>(string value, JsonSerializerSettings settings)
@@ -813,7 +813,7 @@ namespace Transformalize.Libs.Newtonsoft.Json
         /// <param name="type">The type of the object to deserialize to.</param>
         /// <param name="settings">
         /// The <see cref="JsonSerializerSettings"/> used to deserialize the object.
-        /// If this is null, default serialization settings will be is used.
+        /// If this is null, default serialization settings will be used.
         /// </param>
         /// <returns>The deserialized object from the JSON string.</returns>
         public static object DeserializeObject(string value, Type type, JsonSerializerSettings settings)
@@ -842,7 +842,7 @@ namespace Transformalize.Libs.Newtonsoft.Json
         /// <returns>
         /// A task that represents the asynchronous deserialize operation. The value of the <c>TResult</c> parameter contains the deserialized object from the JSON string.
         /// </returns>
-        [Obsolete("DeserializeObjectAsync is obsolete. Use the Task.Factory.StartNew method to deserialize JSON asynchronously: Task.Factory.StartNew(() => DeserializeObject<T>(value))")]
+        [Obsolete("DeserializeObjectAsync is obsolete. Use the Task.Factory.StartNew method to deserialize JSON asynchronously: Task.Factory.StartNew(() => JsonConvert.DeserializeObject<T>(value))")]
         public static Task<T> DeserializeObjectAsync<T>(string value)
         {
             return DeserializeObjectAsync<T>(value, null);
@@ -856,12 +856,12 @@ namespace Transformalize.Libs.Newtonsoft.Json
         /// <param name="value">The JSON to deserialize.</param>
         /// <param name="settings">
         /// The <see cref="JsonSerializerSettings"/> used to deserialize the object.
-        /// If this is null, default serialization settings will be is used.
+        /// If this is null, default serialization settings will be used.
         /// </param>
         /// <returns>
         /// A task that represents the asynchronous deserialize operation. The value of the <c>TResult</c> parameter contains the deserialized object from the JSON string.
         /// </returns>
-        [Obsolete("DeserializeObjectAsync is obsolete. Use the Task.Factory.StartNew method to deserialize JSON asynchronously: Task.Factory.StartNew(() => DeserializeObject<T>(value, settings))")]
+        [Obsolete("DeserializeObjectAsync is obsolete. Use the Task.Factory.StartNew method to deserialize JSON asynchronously: Task.Factory.StartNew(() => JsonConvert.DeserializeObject<T>(value, settings))")]
         public static Task<T> DeserializeObjectAsync<T>(string value, JsonSerializerSettings settings)
         {
             return Task.Factory.StartNew(() => DeserializeObject<T>(value, settings));
@@ -875,7 +875,7 @@ namespace Transformalize.Libs.Newtonsoft.Json
         /// <returns>
         /// A task that represents the asynchronous deserialize operation. The value of the <c>TResult</c> parameter contains the deserialized object from the JSON string.
         /// </returns>
-        [Obsolete("DeserializeObjectAsync is obsolete. Use the Task.Factory.StartNew method to deserialize JSON asynchronously: Task.Factory.StartNew(() => DeserializeObject(value))")]
+        [Obsolete("DeserializeObjectAsync is obsolete. Use the Task.Factory.StartNew method to deserialize JSON asynchronously: Task.Factory.StartNew(() => JsonConvert.DeserializeObject(value))")]
         public static Task<object> DeserializeObjectAsync(string value)
         {
             return DeserializeObjectAsync(value, null, null);
@@ -889,12 +889,12 @@ namespace Transformalize.Libs.Newtonsoft.Json
         /// <param name="type">The type of the object to deserialize to.</param>
         /// <param name="settings">
         /// The <see cref="JsonSerializerSettings"/> used to deserialize the object.
-        /// If this is null, default serialization settings will be is used.
+        /// If this is null, default serialization settings will be used.
         /// </param>
         /// <returns>
         /// A task that represents the asynchronous deserialize operation. The value of the <c>TResult</c> parameter contains the deserialized object from the JSON string.
         /// </returns>
-        [Obsolete("DeserializeObjectAsync is obsolete. Use the Task.Factory.StartNew method to deserialize JSON asynchronously: Task.Factory.StartNew(() => DeserializeObject(value, type, settings))")]
+        [Obsolete("DeserializeObjectAsync is obsolete. Use the Task.Factory.StartNew method to deserialize JSON asynchronously: Task.Factory.StartNew(() => JsonConvert.DeserializeObject(value, type, settings))")]
         public static Task<object> DeserializeObjectAsync(string value, Type type, JsonSerializerSettings settings)
         {
             return Task.Factory.StartNew(() => DeserializeObject(value, type, settings));
@@ -919,7 +919,7 @@ namespace Transformalize.Libs.Newtonsoft.Json
         /// <param name="target">The target object to populate values onto.</param>
         /// <param name="settings">
         /// The <see cref="JsonSerializerSettings"/> used to deserialize the object.
-        /// If this is null, default serialization settings will be is used.
+        /// If this is null, default serialization settings will be used.
         /// </param>
         public static void PopulateObject(string value, object target, JsonSerializerSettings settings)
         {
@@ -942,12 +942,12 @@ namespace Transformalize.Libs.Newtonsoft.Json
         /// <param name="target">The target object to populate values onto.</param>
         /// <param name="settings">
         /// The <see cref="JsonSerializerSettings"/> used to deserialize the object.
-        /// If this is null, default serialization settings will be is used.
+        /// If this is null, default serialization settings will be used.
         /// </param>
         /// <returns>
         /// A task that represents the asynchronous populate operation.
         /// </returns>
-        [Obsolete("PopulateObjectAsync is obsolete. Use the Task.Factory.StartNew method to populate an object with JSON values asynchronously: Task.Factory.StartNew(() => PopulateObject(value, target, settings))")]
+        [Obsolete("PopulateObjectAsync is obsolete. Use the Task.Factory.StartNew method to populate an object with JSON values asynchronously: Task.Factory.StartNew(() => JsonConvert.PopulateObject(value, target, settings))")]
         public static Task PopulateObjectAsync(string value, object target, JsonSerializerSettings settings)
         {
             return Task.Factory.StartNew(() => PopulateObject(value, target, settings));

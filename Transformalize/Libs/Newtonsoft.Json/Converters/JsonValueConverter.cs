@@ -29,7 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Security;
-using Transformalize.Libs.Newtonsoft.Json.Utilities;
+using Newtonsoft.Json.Utilities;
 using Windows.Data.Json;
 
 namespace Newtonsoft.Json.Converters

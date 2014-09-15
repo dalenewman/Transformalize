@@ -47,6 +47,17 @@ namespace Transformalize.Libs.Newtonsoft.Json.Linq
             get { return _values; }
         }
 
+        internal override void MergeItem(object content, JsonMergeSettings settings)
+        {
+            JConstructor c = content as JConstructor;
+            if (c == null)
+                return;
+
+            if (c.Name != null)
+                Name = c.Name;
+            MergeEnumerableContent(this, c, settings);
+        }
+
         /// <summary>
         /// Gets or sets the name of this constructor.
         /// </summary>

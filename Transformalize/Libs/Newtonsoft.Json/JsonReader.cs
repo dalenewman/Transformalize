@@ -29,7 +29,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 #if NET20
-using Transformalize.Libs.Newtonsoft.Json.Utilities.LinqBridge;
+using Newtonsoft.Json.Utilities.LinqBridge;
 #else
 #endif
 using Transformalize.Libs.Newtonsoft.Json.Serialization;
@@ -126,6 +126,7 @@ namespace Transformalize.Libs.Newtonsoft.Json
         private bool _hasExceededMaxDepth;
         internal DateParseHandling _dateParseHandling;
         internal FloatParseHandling _floatParseHandling;
+        private string _dateFormatString;
         private readonly List<JsonPosition> _stack;
 
         /// <summary>
@@ -190,6 +191,15 @@ namespace Transformalize.Libs.Newtonsoft.Json
         {
             get { return _floatParseHandling; }
             set { _floatParseHandling = value; }
+        }
+
+        /// <summary>
+        /// Get or set how custom date formatted strings are parsed when reading JSON.
+        /// </summary>
+        public string DateFormatString
+        {
+            get { return _dateFormatString; }
+            set { _dateFormatString = value; }
         }
 
         /// <summary>
@@ -428,7 +438,6 @@ namespace Transformalize.Libs.Newtonsoft.Json
             if (t == JsonToken.Null)
                 return null;
 
-            DateTimeOffset dt;
             if (t == JsonToken.String)
             {
                 string s = (string)Value;
@@ -439,7 +448,8 @@ namespace Transformalize.Libs.Newtonsoft.Json
                 }
 
                 object temp;
-                if (DateTimeUtils.TryParseDateTime(s, DateParseHandling.DateTimeOffset, DateTimeZoneHandling, out temp))
+                DateTimeOffset dt;
+                if (DateTimeUtils.TryParseDateTime(s, DateParseHandling.DateTimeOffset, DateTimeZoneHandling, _dateFormatString, Culture, out temp))
                 {
                     dt = (DateTimeOffset)temp;
                     SetToken(JsonToken.Date, dt, false);
@@ -493,7 +503,23 @@ namespace Transformalize.Libs.Newtonsoft.Json
             if (t == JsonToken.String)
             {
                 string s = (string)Value;
-                byte[] data = (s.Length == 0) ? new byte[0] : Convert.FromBase64String(s);
+
+                byte[] data;
+
+                Guid g;
+                if (s.Length == 0)
+                {
+                    data = new byte[0];
+                }
+                else if (ConvertUtils.TryConvertGuid(s, out g))
+                {
+                    data = g.ToByteArray();
+                }
+                else
+                {
+                    data = Convert.FromBase64String(s);
+                }
+
                 SetToken(JsonToken.Bytes, data, false);
                 return data;
             }
@@ -502,7 +528,16 @@ namespace Transformalize.Libs.Newtonsoft.Json
                 return null;
 
             if (t == JsonToken.Bytes)
+            {
+                if (ValueType == typeof(Guid))
+                {
+                    byte[] data = ((Guid)Value).ToByteArray();
+                    SetToken(JsonToken.Bytes, data, false);
+                    return data;
+                }
+
                 return (byte[])Value;
+            }
 
             if (t == JsonToken.StartArray)
             {
@@ -567,7 +602,6 @@ namespace Transformalize.Libs.Newtonsoft.Json
             if (t == JsonToken.Null)
                 return null;
 
-            decimal d;
             if (t == JsonToken.String)
             {
                 string s = (string)Value;
@@ -577,6 +611,7 @@ namespace Transformalize.Libs.Newtonsoft.Json
                     return null;
                 }
 
+                decimal d;
                 if (decimal.TryParse(s, NumberStyles.Number, Culture, out d))
                 {
                     SetToken(JsonToken.Float, d, false);
@@ -716,7 +751,6 @@ namespace Transformalize.Libs.Newtonsoft.Json
             if (TokenType == JsonToken.Null)
                 return null;
 
-            DateTime dt;
             if (TokenType == JsonToken.String)
             {
                 string s = (string)Value;
@@ -726,8 +760,9 @@ namespace Transformalize.Libs.Newtonsoft.Json
                     return null;
                 }
 
+                DateTime dt;
                 object temp;
-                if (DateTimeUtils.TryParseDateTime(s, DateParseHandling.DateTime, DateTimeZoneHandling, out temp))
+                if (DateTimeUtils.TryParseDateTime(s, DateParseHandling.DateTime, DateTimeZoneHandling, _dateFormatString, Culture, out temp))
                 {
                     dt = (DateTime)temp;
                     dt = DateTimeUtils.EnsureDateTime(dt, DateTimeZoneHandling);
@@ -763,7 +798,7 @@ namespace Transformalize.Libs.Newtonsoft.Json
                 if (Value.ToString() == JsonTypeReflector.TypePropertyName)
                 {
                     ReadInternal();
-                    if (Value != null && Value.ToString().StartsWith("System.Byte[]"))
+                    if (Value != null && Value.ToString().StartsWith("System.Byte[]", StringComparison.Ordinal))
                     {
                         ReadInternal();
                         if (Value.ToString() == JsonTypeReflector.ValuePropertyName)
@@ -858,15 +893,20 @@ namespace Transformalize.Libs.Newtonsoft.Json
                 case JsonToken.String:
                 case JsonToken.Raw:
                 case JsonToken.Bytes:
-                    if (Peek() != JsonContainerType.None)
-                        _currentState = State.PostValue;
-                    else
-                        SetFinished();
-
-                    if (updateIndex)
-                        UpdateScopeWithFinishedValue();
+                    SetPostValueState(updateIndex);
                     break;
             }
+        }
+
+        internal void SetPostValueState(bool updateIndex)
+        {
+            if (Peek() != JsonContainerType.None)
+                _currentState = State.PostValue;
+            else
+                SetFinished();
+
+            if (updateIndex)
+                UpdateScopeWithFinishedValue();
         }
 
         private void UpdateScopeWithFinishedValue()

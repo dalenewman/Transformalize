@@ -24,7 +24,7 @@
 #endregion
 
 #if NET20
-using Transformalize.Libs.Newtonsoft.Json.Utilities.LinqBridge;
+using Newtonsoft.Json.Utilities.LinqBridge;
 #else
 #endif
 using System;
@@ -98,9 +98,10 @@ namespace Transformalize.Libs.Newtonsoft.Json.Utilities
             return false;
         }
 
-        public static ConstructorInfo ResolveEnumableCollectionConstructor(Type collectionType, Type collectionItemType)
+        public static ConstructorInfo ResolveEnumerableCollectionConstructor(Type collectionType, Type collectionItemType)
         {
             Type genericEnumerable = typeof(IEnumerable<>).MakeGenericType(collectionItemType);
+            ConstructorInfo match = null;
 
             foreach (ConstructorInfo constructor in collectionType.GetConstructors(BindingFlags.Public | BindingFlags.Instance))
             {
@@ -108,12 +109,23 @@ namespace Transformalize.Libs.Newtonsoft.Json.Utilities
 
                 if (parameters.Count == 1)
                 {
-                    if (genericEnumerable.IsAssignableFrom(parameters[0].ParameterType))
-                        return constructor;
+                    if (genericEnumerable == parameters[0].ParameterType)
+                    {
+                        // exact match
+                        match = constructor;
+                        break;
+                    }
+
+                    // incase we can't find an exact match, use first inexact
+                    if (match == null)
+                    {
+                        if (genericEnumerable.IsAssignableFrom(parameters[0].ParameterType))
+                            match = constructor;
+                    }
                 }
             }
 
-            return null;
+            return match;
         }
 
         public static bool AddDistinct<T>(this IList<T> list, T value)

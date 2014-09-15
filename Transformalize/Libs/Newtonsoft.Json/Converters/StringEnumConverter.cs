@@ -24,13 +24,12 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 #if NET20
-using Transformalize.Libs.Newtonsoft.Json.Utilities.LinqBridge;
+using Newtonsoft.Json.Utilities.LinqBridge;
 #else
 #endif
 using Transformalize.Libs.Newtonsoft.Json.Utilities;
@@ -42,7 +41,7 @@ namespace Transformalize.Libs.Newtonsoft.Json.Converters
     /// </summary>
     public class StringEnumConverter : JsonConverter
     {
-        private readonly Dictionary<Type, BidirectionalDictionary<string, string>> _enumMemberNamesPerType = new Dictionary<Type, BidirectionalDictionary<string, string>>();
+        private static readonly ThreadSafeStore<Type, BidirectionalDictionary<string, string>> EnumMemberNamesPerType = new ThreadSafeStore<Type, BidirectionalDictionary<string, string>>(InitializeEnumType);
 
         /// <summary>
         /// Gets or sets a value indicating whether the written enum text should be camel case.
@@ -89,7 +88,7 @@ namespace Transformalize.Libs.Newtonsoft.Json.Converters
             }
             else
             {
-                BidirectionalDictionary<string, string> map = GetEnumNameMap(e.GetType());
+                BidirectionalDictionary<string, string> map = EnumMemberNamesPerType.Get(e.GetType());
 
                 string[] names = enumName.Split(',');
                 for (int i = 0; i < names.Length; i++)
@@ -143,7 +142,7 @@ namespace Transformalize.Libs.Newtonsoft.Json.Converters
 
                     string finalEnumText;
 
-                    BidirectionalDictionary<string, string> map = GetEnumNameMap(t);
+                    BidirectionalDictionary<string, string> map = EnumMemberNamesPerType.Get(t);
                     if (enumText.IndexOf(',') != -1)
                     {
                         string[] names = enumText.Split(',');
@@ -189,52 +188,6 @@ namespace Transformalize.Libs.Newtonsoft.Json.Converters
             return resolvedEnumName;
         }
 
-        private BidirectionalDictionary<string, string> GetEnumNameMap(Type t)
-        {
-            BidirectionalDictionary<string, string> map;
-
-            if (!_enumMemberNamesPerType.TryGetValue(t, out map))
-            {
-                lock (_enumMemberNamesPerType)
-                {
-                    if (_enumMemberNamesPerType.TryGetValue(t, out map))
-                        return map;
-
-                    map = new BidirectionalDictionary<string, string>(
-                        StringComparer.OrdinalIgnoreCase,
-                        StringComparer.OrdinalIgnoreCase);
-
-                    foreach (FieldInfo f in t.GetFields())
-                    {
-                        string n1 = f.Name;
-                        string n2;
-
-#if !NET20
-                        n2 = f.GetCustomAttributes(typeof(EnumMemberAttribute), true)
-                            .Cast<EnumMemberAttribute>()
-                            .Select(a => a.Value)
-                            .SingleOrDefault() ?? f.Name;
-#else
-                        n2 = f.Name;
-#endif
-
-                        string s;
-                        if (map.TryGetBySecond(n2, out s))
-                        {
-                            throw new InvalidOperationException("Enum name '{0}' already exists on enum '{1}'."
-                                .FormatWith(CultureInfo.InvariantCulture, n2, t.Name));
-                        }
-
-                        map.Set(n1, n2);
-                    }
-
-                    _enumMemberNamesPerType[t] = map;
-                }
-            }
-
-            return map;
-        }
-
         /// <summary>
         /// Determines whether this instance can convert the specified object type.
         /// </summary>
@@ -249,6 +202,36 @@ namespace Transformalize.Libs.Newtonsoft.Json.Converters
                 : objectType;
 
             return t.IsEnum();
+        }
+
+        private static BidirectionalDictionary<string, string> InitializeEnumType(Type type)
+        {
+            BidirectionalDictionary<string, string> map = new BidirectionalDictionary<string, string>(
+                StringComparer.OrdinalIgnoreCase,
+                StringComparer.OrdinalIgnoreCase);
+
+            foreach (FieldInfo f in type.GetFields())
+            {
+                string n1 = f.Name;
+                string n2;
+
+#if !NET20
+                n2 = f.GetCustomAttributes(typeof(EnumMemberAttribute), true)
+                    .Cast<EnumMemberAttribute>()
+                    .Select(a => a.Value)
+                    .SingleOrDefault() ?? f.Name;
+#else
+                n2 = f.Name;
+#endif
+
+                string s;
+                if (map.TryGetBySecond(n2, out s))
+                    throw new InvalidOperationException("Enum name '{0}' already exists on enum '{1}'.".FormatWith(CultureInfo.InvariantCulture, n2, type.Name));
+
+                map.Set(n1, n2);
+            }
+
+            return map;
         }
     }
 }

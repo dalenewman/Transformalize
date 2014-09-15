@@ -1,6 +1,6 @@
 ﻿
 #if (NETFX_CORE || PORTABLE40 || PORTABLE)
-using Transformalize.Libs.Newtonsoft.Json.Serialization;
+using Newtonsoft.Json.Serialization;
 
 namespace Newtonsoft.Json
 {

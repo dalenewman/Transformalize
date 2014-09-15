@@ -33,7 +33,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using Transformalize.Libs.Newtonsoft.Json.Serialization;
+using Newtonsoft.Json.Serialization;
 
 namespace Newtonsoft.Json.Utilities.LinqBridge
 {

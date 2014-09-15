@@ -28,7 +28,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 #if NET20
-using Transformalize.Libs.Newtonsoft.Json.Utilities.LinqBridge;
+using Newtonsoft.Json.Utilities.LinqBridge;
 #else
 
 #endif
@@ -67,6 +67,20 @@ namespace Transformalize.Libs.Newtonsoft.Json.Utilities
         }
 
         private const string EscapedUnicodeText = "!";
+
+        public static bool ShouldEscapeJavaScriptString(string s, bool[] charEscapeFlags)
+        {
+            if (s == null)
+                return false;
+
+            foreach (char c in s)
+            {
+                if (c >= charEscapeFlags.Length || charEscapeFlags[c])
+                    return true;
+            }
+
+            return false;
+        }
 
         public static void WriteEscapedJavaScriptString(TextWriter writer, string s, char delimiter, bool appendDelimiters,
             bool[] charEscapeFlags, StringEscapeHandling stringEscapeHandling, ref char[] writeBuffer)

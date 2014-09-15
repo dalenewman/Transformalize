@@ -24,7 +24,7 @@
 #endregion
 
 #if NET20
-using Transformalize.Libs.Newtonsoft.Json.Utilities.LinqBridge;
+using Newtonsoft.Json.Utilities.LinqBridge;
 #endif
 using System;
 using System.Collections.Generic;

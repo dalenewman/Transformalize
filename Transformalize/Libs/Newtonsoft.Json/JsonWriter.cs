@@ -30,11 +30,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 #if NET20
-using Transformalize.Libs.Newtonsoft.Json.Utilities.LinqBridge;
+using Newtonsoft.Json.Utilities.LinqBridge;
 #else
 #endif
-using System.Numerics;
 using Transformalize.Libs.Newtonsoft.Json.Utilities;
 
 namespace Transformalize.Libs.Newtonsoft.Json
@@ -1225,7 +1225,7 @@ namespace Transformalize.Libs.Newtonsoft.Json
                     throw CreateUnsupportedTypeException(this, value);
 #endif
 
-                WriteValue(this, ConvertUtils.GetTypeCode(value), value);
+                WriteValue(this, ConvertUtils.GetTypeCode(value.GetType()), value);
             }
         }
         #endregion

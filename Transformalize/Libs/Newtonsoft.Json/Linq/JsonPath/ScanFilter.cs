@@ -18,7 +18,7 @@ namespace Transformalize.Libs.Newtonsoft.Json.Linq.JsonPath
 
                 while (true)
                 {
-                    if (container != null)
+                    if (container != null && container.HasValues)
                     {
                         value = container.First;
                     }

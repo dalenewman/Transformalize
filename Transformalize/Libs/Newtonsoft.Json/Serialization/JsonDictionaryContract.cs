@@ -29,7 +29,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reflection;
 #if NET20
-using Transformalize.Libs.Newtonsoft.Json.Utilities.LinqBridge;
+using Newtonsoft.Json.Utilities.LinqBridge;
 #endif
 using Transformalize.Libs.Newtonsoft.Json.Utilities;
 
@@ -60,16 +60,33 @@ namespace Transformalize.Libs.Newtonsoft.Json.Serialization
 
         internal JsonContract KeyContract { get; set; }
 
-        private readonly bool _isDictionaryValueTypeNullableType;
         private readonly Type _genericCollectionDefinitionType;
 
         private Type _genericWrapperType;
-        private MethodCall<object, object> _genericWrapperCreator;
+        private ObjectConstructor<object> _genericWrapperCreator;
 
         private Func<object> _genericTemporaryDictionaryCreator;
 
         internal bool ShouldCreateWrapper { get; private set; }
-        internal MethodBase ParametrizedConstructor { get; private set; }
+
+        private readonly ConstructorInfo _parametrizedConstructor;
+
+        private ObjectConstructor<object> _parametrizedCreator;
+        internal ObjectConstructor<object> ParametrizedCreator
+        {
+            get
+            {
+                if (_parametrizedCreator == null)
+                    _parametrizedCreator = JsonTypeReflector.ReflectionDelegateFactory.CreateParametrizedConstructor(_parametrizedConstructor);
+
+                return _parametrizedCreator;
+            }
+        }
+
+        internal bool HasParametrizedCreator
+        {
+            get { return _parametrizedCreator != null || _parametrizedConstructor != null; }
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="JsonDictionaryContract"/> class.
@@ -117,13 +134,13 @@ namespace Transformalize.Libs.Newtonsoft.Json.Serialization
 
             if (keyType != null && valueType != null)
             {
-                ParametrizedConstructor = CollectionUtils.ResolveEnumableCollectionConstructor(CreatedType, typeof(KeyValuePair<,>).MakeGenericType(keyType, valueType));
+                _parametrizedConstructor = CollectionUtils.ResolveEnumerableCollectionConstructor(CreatedType, typeof(KeyValuePair<,>).MakeGenericType(keyType, valueType));
 
 #if !(NET35 || NET20 || NETFX_CORE)
-                if (ParametrizedConstructor == null && underlyingType.Name == FSharpUtils.FSharpMapTypeName)
+                if (!HasParametrizedCreator && underlyingType.Name == FSharpUtils.FSharpMapTypeName)
                 {
                     FSharpUtils.EnsureInitialized(underlyingType.Assembly());
-                    ParametrizedConstructor = FSharpUtils.CreateMap(keyType, valueType);
+                    _parametrizedCreator = FSharpUtils.CreateMap(keyType, valueType);
                 }
 #endif
             }
@@ -133,28 +150,27 @@ namespace Transformalize.Libs.Newtonsoft.Json.Serialization
             DictionaryKeyType = keyType;
             DictionaryValueType = valueType;
 
-            if (DictionaryValueType != null)
-                _isDictionaryValueTypeNullableType = ReflectionUtils.IsNullableType(DictionaryValueType);
-
 #if (NET20 || NET35)
-      Type tempDictioanryType;
+            if (DictionaryValueType != null && ReflectionUtils.IsNullableType(DictionaryValueType))
+            {
+                Type tempDictioanryType;
 
-        // bug in .NET 2.0 & 3.5 that Dictionary<TKey, Nullable<TValue>> throws an error when adding null via IDictionary[key] = object
-      // wrapper will handle calling Add(T) instead
-      if (_isDictionaryValueTypeNullableType
-        && (ReflectionUtils.InheritsGenericDefinition(CreatedType, typeof(Dictionary<,>), out tempDictioanryType)))
-      {
-        ShouldCreateWrapper = true;
-      }
+                // bug in .NET 2.0 & 3.5 that Dictionary<TKey, Nullable<TValue>> throws an error when adding null via IDictionary[key] = object
+                // wrapper will handle calling Add(T) instead
+                if (ReflectionUtils.InheritsGenericDefinition(CreatedType, typeof(Dictionary<,>), out tempDictioanryType))
+                {
+                    ShouldCreateWrapper = true;
+                }
+            }
 #endif
 
 #if !(NET20 || NET35 || NET40 || PORTABLE40)
             Type immutableCreatedType;
-            MethodBase immutableParameterizedCreator;
+            ObjectConstructor<object> immutableParameterizedCreator;
             if (ImmutableCollectionsUtils.TryBuildImmutableForDictionaryContract(underlyingType, DictionaryKeyType, DictionaryValueType, out immutableCreatedType, out immutableParameterizedCreator))
             {
                 CreatedType = immutableCreatedType;
-                ParametrizedConstructor = immutableParameterizedCreator;
+                _parametrizedCreator = immutableParameterizedCreator;
                 IsReadOnlyOrFixedSize = true;
             }
 #endif
@@ -167,10 +183,10 @@ namespace Transformalize.Libs.Newtonsoft.Json.Serialization
                 _genericWrapperType = typeof(DictionaryWrapper<,>).MakeGenericType(DictionaryKeyType, DictionaryValueType);
 
                 ConstructorInfo genericWrapperConstructor = _genericWrapperType.GetConstructor(new[] { _genericCollectionDefinitionType });
-                _genericWrapperCreator = JsonTypeReflector.ReflectionDelegateFactory.CreateMethodCall<object>(genericWrapperConstructor);
+                _genericWrapperCreator = JsonTypeReflector.ReflectionDelegateFactory.CreateParametrizedConstructor(genericWrapperConstructor);
             }
 
-            return (IWrappedDictionary)_genericWrapperCreator(null, dictionary);
+            return (IWrappedDictionary)_genericWrapperCreator(dictionary);
         }
 
         internal IDictionary CreateTemporaryDictionary()

@@ -25,7 +25,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using Transformalize.Libs.Newtonsoft.Json.Serialization;
 using Transformalize.Libs.Newtonsoft.Json.Utilities;
 
@@ -39,6 +38,17 @@ namespace Transformalize.Libs.Newtonsoft.Json.Converters
         private const string KeyName = "Key";
         private const string ValueName = "Value";
 
+        private static readonly ThreadSafeStore<Type, ReflectionObject> ReflectionObjectPerType = new ThreadSafeStore<Type, ReflectionObject>(InitializeReflectionObject);
+
+        private static ReflectionObject InitializeReflectionObject(Type t)
+        {
+            IList<Type> genericArguments = t.GetGenericArguments();
+            Type keyType = genericArguments[0];
+            Type valueType = genericArguments[1];
+
+            return ReflectionObject.Create(t, t.GetConstructor(new[] { keyType, valueType }), KeyName, ValueName);
+        }
+
         /// <summary>
         /// Writes the JSON representation of the object.
         /// </summary>
@@ -47,22 +57,15 @@ namespace Transformalize.Libs.Newtonsoft.Json.Converters
         /// <param name="serializer">The calling serializer.</param>
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            Type t = value.GetType();
-            IList<Type> genericArguments = t.GetGenericArguments();
-            Type keyType = genericArguments[0];
-            Type valueType = genericArguments[1];
-
-            PropertyInfo keyProperty = t.GetProperty(KeyName);
-            PropertyInfo valueProperty = t.GetProperty(ValueName);
+            ReflectionObject reflectionObject = ReflectionObjectPerType.Get(value.GetType());
 
             DefaultContractResolver resolver = serializer.ContractResolver as DefaultContractResolver;
 
             writer.WriteStartObject();
-
             writer.WritePropertyName((resolver != null) ? resolver.GetResolvedPropertyName(KeyName) : KeyName);
-            serializer.Serialize(writer, ReflectionUtils.GetMemberValue(keyProperty, value), keyType);
+            serializer.Serialize(writer, reflectionObject.GetValue(value, KeyName), reflectionObject.GetType(KeyName));
             writer.WritePropertyName((resolver != null) ? resolver.GetResolvedPropertyName(ValueName) : ValueName);
-            serializer.Serialize(writer, ReflectionUtils.GetMemberValue(valueProperty, value), valueType);
+            serializer.Serialize(writer, reflectionObject.GetValue(value, ValueName), reflectionObject.GetType(ValueName));
             writer.WriteEndObject();
         }
 
@@ -78,6 +81,12 @@ namespace Transformalize.Libs.Newtonsoft.Json.Converters
         {
             bool isNullable = ReflectionUtils.IsNullableType(objectType);
 
+            Type t = (isNullable)
+                ? Nullable.GetUnderlyingType(objectType)
+                : objectType;
+
+            ReflectionObject reflectionObject = ReflectionObjectPerType.Get(t);
+
             if (reader.TokenType == JsonToken.Null)
             {
                 if (!isNullable)
@@ -86,41 +95,33 @@ namespace Transformalize.Libs.Newtonsoft.Json.Converters
                 return null;
             }
 
-            Type t = (isNullable)
-                ? Nullable.GetUnderlyingType(objectType)
-                : objectType;
-
-            IList<Type> genericArguments = t.GetGenericArguments();
-            Type keyType = genericArguments[0];
-            Type valueType = genericArguments[1];
-
             object key = null;
             object value = null;
 
-            reader.Read();
+            ReadAndAssert(reader);
 
             while (reader.TokenType == JsonToken.PropertyName)
             {
                 string propertyName = reader.Value.ToString();
                 if (string.Equals(propertyName, KeyName, StringComparison.OrdinalIgnoreCase))
                 {
-                    reader.Read();
-                    key = serializer.Deserialize(reader, keyType);
+                    ReadAndAssert(reader);
+                    key = serializer.Deserialize(reader, reflectionObject.GetType(KeyName));
                 }
                 else if (string.Equals(propertyName, ValueName, StringComparison.OrdinalIgnoreCase))
                 {
-                    reader.Read();
-                    value = serializer.Deserialize(reader, valueType);
+                    ReadAndAssert(reader);
+                    value = serializer.Deserialize(reader, reflectionObject.GetType(ValueName));
                 }
                 else
                 {
                     reader.Skip();
                 }
 
-                reader.Read();
+                ReadAndAssert(reader);
             }
 
-            return Activator.CreateInstance(t, key, value);
+            return reflectionObject.Creator(key, value);
         }
 
         /// <summary>
@@ -140,6 +141,12 @@ namespace Transformalize.Libs.Newtonsoft.Json.Converters
                 return (t.GetGenericTypeDefinition() == typeof(KeyValuePair<,>));
 
             return false;
+        }
+
+        private static void ReadAndAssert(JsonReader reader)
+        {
+            if (!reader.Read())
+                throw JsonSerializationException.Create(reader, "Unexpected end when reading KeyValuePair.");
         }
     }
 }

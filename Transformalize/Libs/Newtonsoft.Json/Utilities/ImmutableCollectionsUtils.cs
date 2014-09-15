@@ -23,11 +23,12 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-#if !(NET20 || NET35 || NET40 || PORTABLE40)
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Transformalize.Libs.Newtonsoft.Json.Serialization;
+#if !(NET20 || NET35 || NET40 || PORTABLE40)
 
 namespace Transformalize.Libs.Newtonsoft.Json.Utilities
 {
@@ -99,7 +100,7 @@ namespace Transformalize.Libs.Newtonsoft.Json.Utilities
             new ImmutableCollectionTypeInfo(ImmutableDictionaryGenericTypeName, ImmutableDictionaryGenericTypeName, ImmutableDictionaryTypeName)
         };
 
-        internal static bool TryBuildImmutableForArrayContract(Type underlyingType, Type collectionItemType, out Type createdType, out MethodBase parameterizedCreator)
+        internal static bool TryBuildImmutableForArrayContract(Type underlyingType, Type collectionItemType, out Type createdType, out ObjectConstructor<object> parameterizedCreator)
         {
             if (underlyingType.IsGenericType())
             {
@@ -115,7 +116,8 @@ namespace Transformalize.Libs.Newtonsoft.Json.Utilities
                         if (mb != null)
                         {
                             createdType = createdTypeDefinition.MakeGenericType(collectionItemType);
-                            parameterizedCreator = mb.MakeGenericMethod(collectionItemType);
+                            MethodInfo method = mb.MakeGenericMethod(collectionItemType);
+                            parameterizedCreator = JsonTypeReflector.ReflectionDelegateFactory.CreateParametrizedConstructor(method);
                             return true;
                         }
                     }
@@ -127,7 +129,7 @@ namespace Transformalize.Libs.Newtonsoft.Json.Utilities
             return false;
         }
 
-        internal static bool TryBuildImmutableForDictionaryContract(Type underlyingType, Type keyItemType, Type valueItemType, out Type createdType, out MethodBase parameterizedCreator)
+        internal static bool TryBuildImmutableForDictionaryContract(Type underlyingType, Type keyItemType, Type valueItemType, out Type createdType, out ObjectConstructor<object> parameterizedCreator)
         {
             if (underlyingType.IsGenericType())
             {
@@ -148,7 +150,8 @@ namespace Transformalize.Libs.Newtonsoft.Json.Utilities
                         if (mb != null)
                         {
                             createdType = createdTypeDefinition.MakeGenericType(keyItemType, valueItemType);
-                            parameterizedCreator = mb.MakeGenericMethod(keyItemType, valueItemType);
+                            MethodInfo method = mb.MakeGenericMethod(keyItemType, valueItemType);
+                            parameterizedCreator = JsonTypeReflector.ReflectionDelegateFactory.CreateParametrizedConstructor(method);
                             return true;
                         }
                     }
@@ -161,5 +164,4 @@ namespace Transformalize.Libs.Newtonsoft.Json.Utilities
         }
     }
 }
-
 #endif

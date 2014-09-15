@@ -26,10 +26,10 @@
 using System;
 using System.Globalization;
 using System.Reflection;
-
 #if NET20
-using Transformalize.Libs.Newtonsoft.Json.Utilities.LinqBridge;
+using Newtonsoft.Json.Utilities.LinqBridge;
 #endif
+using Transformalize.Libs.Newtonsoft.Json.Serialization;
 
 namespace Transformalize.Libs.Newtonsoft.Json.Utilities
 {
@@ -62,6 +62,7 @@ namespace Transformalize.Libs.Newtonsoft.Json.Utilities
         }
 
         public abstract MethodCall<T, object> CreateMethodCall<T>(MethodBase method);
+        public abstract ObjectConstructor<object> CreateParametrizedConstructor(MethodBase method);
         public abstract Func<T> CreateDefaultConstructor<T>(Type type);
         public abstract Func<T, object> CreateGet<T>(PropertyInfo propertyInfo);
         public abstract Func<T, object> CreateGet<T>(FieldInfo fieldInfo);

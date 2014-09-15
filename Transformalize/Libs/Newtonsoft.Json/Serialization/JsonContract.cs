@@ -84,12 +84,12 @@ namespace Transformalize.Libs.Newtonsoft.Json.Serialization
     {
         internal bool IsNullable;
         internal bool IsConvertable;
-        internal bool IsSealed;
         internal bool IsEnum;
         internal Type NonNullableUnderlyingType;
         internal ReadType InternalReadType;
         internal JsonContractType ContractType;
         internal bool IsReadOnlyOrFixedSize;
+        internal bool IsSealed;
         internal bool IsInstantiable;
 
         private List<SerializationCallback> _onDeserializedCallbacks;
@@ -97,6 +97,7 @@ namespace Transformalize.Libs.Newtonsoft.Json.Serialization
         private IList<SerializationCallback> _onSerializedCallbacks;
         private IList<SerializationCallback> _onSerializingCallbacks;
         private IList<SerializationErrorCallback> _onErrorCallbacks;
+        private Type _createdType;
 
         /// <summary>
         /// Gets the underlying type for the contract.
@@ -108,7 +109,17 @@ namespace Transformalize.Libs.Newtonsoft.Json.Serialization
         /// Gets or sets the type created during deserialization.
         /// </summary>
         /// <value>The type created during deserialization.</value>
-        public Type CreatedType { get; set; }
+        public Type CreatedType
+        {
+            get { return _createdType; }
+            set
+            {
+                _createdType = value;
+
+                IsSealed = _createdType.IsSealed();
+                IsInstantiable = !(_createdType.IsInterface() || _createdType.IsAbstract());
+            }
+        }
 
         /// <summary>
         /// Gets or sets whether this type contract is serialized as a reference.
@@ -293,9 +304,6 @@ namespace Transformalize.Libs.Newtonsoft.Json.Serialization
             ValidationUtils.ArgumentNotNull(underlyingType, "underlyingType");
 
             UnderlyingType = underlyingType;
-
-            IsSealed = underlyingType.IsSealed();
-            IsInstantiable = !(underlyingType.IsInterface() || underlyingType.IsAbstract());
 
             IsNullable = ReflectionUtils.IsNullable(underlyingType);
             NonNullableUnderlyingType = (IsNullable && ReflectionUtils.IsNullableType(underlyingType)) ? Nullable.GetUnderlyingType(underlyingType) : underlyingType;

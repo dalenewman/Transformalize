@@ -30,9 +30,9 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Globalization;
 using System.Linq.Expressions;
+using System.Numerics;
 #if !(NET20 || NET35 || PORTABLE40 || PORTABLE)
 #endif
-using System.Numerics;
 using Transformalize.Libs.Newtonsoft.Json.Utilities;
 
 namespace Transformalize.Libs.Newtonsoft.Json.Linq
@@ -540,6 +540,24 @@ namespace Transformalize.Libs.Newtonsoft.Json.Linq
             return new JValue(value, JTokenType.String);
         }
 
+        /// <summary>
+        /// Creates a <see cref="JValue"/> null value.
+        /// </summary>
+        /// <returns>A <see cref="JValue"/> null value.</returns>
+        public static JValue CreateNull()
+        {
+            return new JValue(null, JTokenType.Null);
+        }
+
+        /// <summary>
+        /// Creates a <see cref="JValue"/> null value.
+        /// </summary>
+        /// <returns>A <see cref="JValue"/> null value.</returns>
+        public static JValue CreateUndefined()
+        {
+            return new JValue(null, JTokenType.Undefined);
+        }
+
         private static JTokenType GetValueType(JTokenType? current, object value)
         {
             if (value == null)
@@ -705,7 +723,8 @@ namespace Transformalize.Libs.Newtonsoft.Json.Linq
         {
             int valueHashCode = (_value != null) ? _value.GetHashCode() : 0;
 
-            return _valueType.GetHashCode() ^ valueHashCode;
+            // GetHashCode on an enum boxes so cast to int
+            return ((int)_valueType).GetHashCode() ^ valueHashCode;
         }
 
         private static bool ValuesEquals(JValue v1, JValue v2)
@@ -853,7 +872,7 @@ namespace Transformalize.Libs.Newtonsoft.Json.Linq
                     return ReflectionUtils.IsNullable(binder.Type);
                 }
 
-                result = ConvertUtils.Convert(instance.Value, CultureInfo.InvariantCulture, binder.Type);
+                result = ConvertUtils.Convert(value, CultureInfo.InvariantCulture, binder.Type);
                 return true;
             }
 

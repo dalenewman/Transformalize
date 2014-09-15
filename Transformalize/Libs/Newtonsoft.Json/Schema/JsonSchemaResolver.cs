@@ -27,7 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 #if NET20
-using Transformalize.Libs.Newtonsoft.Json.Utilities.LinqBridge;
+using Newtonsoft.Json.Utilities.LinqBridge;
 #else
 
 #endif
