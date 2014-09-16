@@ -70,11 +70,11 @@ namespace Transformalize.Configuration {
 
         [ConfigurationProperty(TIME_OUT, IsRequired = false, DefaultValue = 0)]
         public int TimeOut {
-            get { return (int) this[TIME_OUT]; }
+            get { return (int)this[TIME_OUT]; }
             set { this[TIME_OUT] = value; }
         }
 
-        [ConfigurationProperty(MODE, IsRequired = false, DefaultValue = "")]
+        [ConfigurationProperty(MODE, IsRequired = false, DefaultValue = "*")]
         public string Mode {
             get { return this[MODE] as string; }
             set { this[MODE] = value; }
@@ -142,7 +142,7 @@ namespace Transformalize.Configuration {
 
         [ConfigurationProperty(HTML, IsRequired = false, DefaultValue = true)]
         public bool Html {
-            get { return (bool) this[HTML]; }
+            get { return (bool)this[HTML]; }
             set { this[HTML] = value; }
         }
 
@@ -188,11 +188,12 @@ namespace Transformalize.Configuration {
         public string[] GetModes() {
             var modes = new List<string>();
 
-            if (Mode != string.Empty) {
-                modes.Add(Mode);
+            if (Modes.Count > 0) {
+                modes.AddRange(from ModeConfigurationElement mode in Modes select mode.Mode);
+                return modes.ToArray();
             }
 
-            modes.AddRange(from ModeConfigurationElement mode in Modes select mode.Mode);
+            modes.Add(Mode);
             return modes.ToArray();
         }
 

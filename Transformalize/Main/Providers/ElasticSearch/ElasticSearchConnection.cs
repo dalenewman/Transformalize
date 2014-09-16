@@ -19,7 +19,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             return GetMaxTflBatchId(processName) + 1;
         }
 
-        public override void WriteEndVersion(AbstractConnection input, Entity entity, bool force = false) {
+        public override void WriteEndVersion(Process process, AbstractConnection input, Entity entity, bool force = false) {
             if (entity.Updates + entity.Inserts > 0 || force) {
                 var client = ElasticSearchClientFactory.Create(this, TflBatchEntity(entity.ProcessName));
                 var versionType = entity.Version == null ? "string" : entity.Version.SimpleType;
@@ -58,11 +58,11 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             return new ElasticSearchEntityOutputKeysExtract(this, entity);
         }
 
-        public override IOperation ExtractAllKeysFromInput(Entity entity) {
+        public override IOperation ExtractAllKeysFromInput(Process process, Entity entity) {
             return new ElasticSearchEntityExtract(this, entity, entity.PrimaryKey.Aliases().ToArray());
         }
 
-        public override IOperation Insert(ref Process process, Entity entity) {
+        public override IOperation Insert(Process process, Entity entity) {
             return new ElasticSearchLoadOperation(entity, this);
         }
 
@@ -104,8 +104,8 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             entity.HasRows = entity.End != null;
         }
 
-        public override Fields GetEntitySchema(Process process, string name, string schema = "", bool isMaster = false) {
-            var client = ElasticSearchClientFactory.CreateNest(this, new Entity() { Name = name, Alias = name, ProcessName = process.Name });
+        public override Fields GetEntitySchema(Process process, Entity entity, bool isMaster = false) {
+            var client = ElasticSearchClientFactory.CreateNest(this, entity);
             var mapping = client.Client.GetMapping<dynamic>(m => m
                 .Index(client.Index)
                 .Type(client.Type)
@@ -124,7 +124,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             throw new NotImplementedException();
         }
 
-        public override IOperation Extract(ref Process process, Entity entity, bool firstRun) {
+        public override IOperation Extract(Process process, Entity entity, bool firstRun) {
             return new ElasticSearchEntityExtract(this, entity, entity.OutputFields().Aliases().ToArray());
         }
 

@@ -22,6 +22,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main {
@@ -50,6 +51,11 @@ namespace Transformalize.Main {
 
                 if (!template.Enabled) {
                     _log.Warn("Template {0} is disabled.", template.Name);
+                    continue;
+                }
+
+                if (template.Actions.All(a => a.Modes.All(m => !m.Equals("*") && !m.Equals(_process.Mode, StringComparison.OrdinalIgnoreCase)))) {
+                    _log.Info("Template {0} not rendered in {1} mode.", template.Name, _process.Mode);
                     continue;
                 }
 

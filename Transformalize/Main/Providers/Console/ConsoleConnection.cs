@@ -10,7 +10,7 @@ namespace Transformalize.Main.Providers.Console {
             return 1;
         }
 
-        public override void WriteEndVersion(AbstractConnection input, Entity entity, bool force = false) {
+        public override void WriteEndVersion(Process process, AbstractConnection input, Entity entity, bool force = false) {
             //nope  
         }
 
@@ -21,11 +21,11 @@ namespace Transformalize.Main.Providers.Console {
         public override IOperation ExtractAllKeysFromOutput(Entity entity) {
             return new EmptyOperation();
         }
-        public override IOperation ExtractAllKeysFromInput(Entity entity) {
+        public override IOperation ExtractAllKeysFromInput(Process process, Entity entity) {
             return new EmptyOperation();
         }
 
-        public override IOperation Insert(ref Process process, Entity entity) {
+        public override IOperation Insert(Process process, Entity entity) {
             return new ConsoleLoadOperation(entity);
         }
 
@@ -41,7 +41,7 @@ namespace Transformalize.Main.Providers.Console {
             throw new System.NotImplementedException();
         }
 
-        public override Fields GetEntitySchema(Process process, string name, string schema = "", bool isMaster = false) {
+        public override Fields GetEntitySchema(Process process, Entity entity, bool isMaster = false) {
             return new Fields();
         }
 
@@ -49,7 +49,7 @@ namespace Transformalize.Main.Providers.Console {
             throw new System.NotImplementedException();
         }
 
-        public override IOperation Extract(ref Process process, Entity entity, bool firstRun) {
+        public override IOperation Extract(Process process, Entity entity, bool firstRun) {
             throw new System.NotImplementedException();
         }
 

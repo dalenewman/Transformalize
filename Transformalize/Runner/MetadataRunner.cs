@@ -38,7 +38,7 @@ namespace Transformalize.Runner {
             return result;
         }
 
-        public void Dispose() {
+        public new void Dispose() {
             LogManager.Flush();
         }
     }

@@ -59,7 +59,7 @@ namespace Transformalize.Test {
             var operations = TestOperation(
                 _entityKeysExtract.Object,
                 new EntityKeysDistinct(entity),
-                new EntityKeysToOperations(entity, entity.Input.First().Connection, true)
+                new EntityKeysToOperations(ref entity, entity.Input.First().Connection, true)
             );
 
             Assert.AreEqual(1, operations.Count);

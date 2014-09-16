@@ -18,7 +18,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         private readonly OperationStatistics statistics = new OperationStatistics();
         private IPipelineExecuter pipelineExeuter;
 
-        public PartialProcessOperation(ref Process process) : base(ref process) {}
+        public PartialProcessOperation(Process process) : base(process) {}
 
         /// <summary>
         ///     Occurs when all the rows has finished processing.

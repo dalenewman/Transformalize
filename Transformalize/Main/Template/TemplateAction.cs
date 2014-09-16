@@ -70,7 +70,7 @@ namespace Transformalize.Main {
             Subject = action.Subject;
             To = action.To;
             Body = action.Body;
-            Modes = modes;
+            Modes = action.GetModes();
             Before = action.Before;
             After = action.After;
             Conditional = action.Conditional;

@@ -5,11 +5,11 @@ using Transformalize.Operations;
 
 namespace Transformalize.Processes {
     public class MasterJoinProcess : EtlProcess {
-        private Process _process;
+        private readonly Process _process;
         private readonly CollectorOperation _collector;
 
-        public MasterJoinProcess(ref Process process, ref CollectorOperation collector) : base(ref process)
-        {
+        public MasterJoinProcess(Process process, ref CollectorOperation collector)
+            : base(process) {
             _process = process;
             _collector = collector;
         }
@@ -17,7 +17,7 @@ namespace Transformalize.Processes {
         protected override void Initialize() {
             Register(new RowsOperation(_process.Relationships.First().LeftEntity.Rows));
             foreach (var rel in _process.Relationships) {
-                Register(new EntityJoinOperation(ref _process, rel).Right(new RowsOperation(rel.RightEntity.Rows)));
+                Register(new EntityJoinOperation(_process, rel).Right(new RowsOperation(rel.RightEntity.Rows)));
             }
             Register(_collector);
         }

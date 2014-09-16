@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
-using Transformalize.Libs.Ninject;
 using Transformalize.Libs.Ninject.Parameters;
 using Transformalize.Libs.Ninject.Syntax;
 using Transformalize.Libs.NLog;
@@ -9,13 +8,12 @@ using Transformalize.Libs.NLog;
 namespace Transformalize.Main.Providers {
 
     public class ConnectionFactory {
-
+        private readonly Process _process;
         private readonly Logger _log = LogManager.GetLogger("tfl");
         private Dictionary<string, string> _providers = new Dictionary<string, string>();
-        private readonly IKernel _kernal;
 
-        public ConnectionFactory(string processName, IKernel kernal = null) {
-            _kernal = kernal ?? new StandardKernel(new NinjectBindings(processName));
+        public ConnectionFactory(Process process) {
+            _process = process;
             _providers.Add("sqlserver", "System.Data.SqlClient.SqlConnection, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
             _providers.Add("sqlce", "System.Data.SqlServerCe.SqlCeConnection, System.Data.SqlServerCe");
             _providers.Add("mysql", "MySql.Data.MySqlClient.MySqlConnection, MySql.Data");
@@ -57,11 +55,11 @@ namespace Transformalize.Main.Providers {
 
         private AbstractConnection GetConnection(ConnectionConfigurationElement element) {
             Validate(element);
-            var parameters = new Libs.Ninject.Parameters.IParameter[] {
+            var parameters = new IParameter[] {
                 new ConstructorArgument("element", element)
             };
             var provider = element.Provider.ToLower();
-            var connection = _kernal.Get<AbstractConnection>(provider, parameters);
+            var connection = _process.Kernal.Get<AbstractConnection>(provider, parameters);
             connection.TypeAndAssemblyName = Providers[provider];
             return connection;
         }

@@ -24,9 +24,9 @@ namespace Transformalize.Libs.Rhino.Etl.Operations {
         private bool leftRegistered;
         private string[] rightColumns;
 
-        protected JoinOperation(ref Process process) {
-            left = new PartialProcessOperation(ref process);
-            right = new PartialProcessOperation(ref process);
+        protected JoinOperation(Process process) {
+            left = new PartialProcessOperation(process);
+            right = new PartialProcessOperation(process);
         }
 
         /// <summary>

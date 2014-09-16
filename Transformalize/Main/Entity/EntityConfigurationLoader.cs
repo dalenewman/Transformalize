@@ -35,7 +35,7 @@ namespace Transformalize.Main {
 
         private const string DEFAULT = "[default]";
         private readonly Logger _log = LogManager.GetLogger("tfl");
-        private readonly Process _process;
+        private Process _process;
 
         public EntityConfigurationLoader(Process process) {
             _process = process;
@@ -146,7 +146,7 @@ namespace Transformalize.Main {
                 try {
                     _log.Info("Detecting fields.");
                     var connection = _process.Connections[element.Connection];
-                    var fields = connection.GetEntitySchema(_process, entity.Name, entity.Schema, entityIndex == 0);
+                    var fields = connection.GetEntitySchema(_process, entity, isMaster: entityIndex == 0);
                     if (fields.Any()) {
                         foreach (var field in fields) {
                             var f = new FieldConfigurationElement {

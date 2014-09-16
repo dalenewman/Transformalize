@@ -32,8 +32,8 @@ namespace Transformalize.Operations {
         private readonly string[] _keys;
         private readonly string[] _bytes = new[] { "byte[]", "rowversion" };
 
-        public EntityJoinAction(ref Process process, Entity entity)
-            : base(ref process) {
+        public EntityJoinAction(Process process, Entity entity)
+            : base(process) {
             _entity = entity;
             _keys = entity.PrimaryKey.Aliases().ToArray();
             _firstKey = _keys[0];

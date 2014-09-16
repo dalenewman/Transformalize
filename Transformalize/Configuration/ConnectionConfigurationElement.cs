@@ -32,6 +32,8 @@ using Transformalize.Main;
 namespace Transformalize.Configuration {
     [HasSelfValidation]
     public class ConnectionConfigurationElement : ConfigurationElement {
+        private readonly char[] _slash = { '/' };
+
         private const string NAME = "name";
         private const string COMPATABILITY_LEVEL = "compatibility-level";
         private const string PROVIDER = "provider";
@@ -244,6 +246,23 @@ namespace Transformalize.Configuration {
         public override bool IsReadOnly() {
             return false;
         }
+
+        public string NormalizeUrl(int defaultPort) {
+            var builder = new UriBuilder(Server);
+            if (Port > 0) {
+                builder.Port = Port;
+            }
+            if (builder.Port == 0) {
+                builder.Port = defaultPort;
+            }
+            if (!Path.Equals(string.Empty) && Path != builder.Path) {
+                builder.Path = builder.Path.TrimEnd(_slash) + "/" + Path.TrimStart(_slash);
+            } else if (!Folder.Equals(string.Empty) && Folder != builder.Path) {
+                builder.Path = builder.Path.TrimEnd(_slash) + "/" + Folder.TrimStart(_slash);
+            }
+            return builder.ToString();
+        }
+
 
         [SelfValidation]
         public void Validate(ValidationResults results) {

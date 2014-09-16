@@ -13,7 +13,7 @@ namespace Transformalize.Main.Providers.Folder {
             return 1;
         }
 
-        public override void WriteEndVersion(AbstractConnection input, Entity entity, bool force = false) {
+        public override void WriteEndVersion(Process process, AbstractConnection input, Entity entity, bool force = false) {
             //nope  
         }
 
@@ -25,11 +25,11 @@ namespace Transformalize.Main.Providers.Folder {
             return new EmptyOperation();
         }
 
-        public override IOperation ExtractAllKeysFromInput(Entity entity) {
+        public override IOperation ExtractAllKeysFromInput(Process process, Entity entity) {
             return new EmptyOperation();
         }
 
-        public override IOperation Insert(ref Process process, Entity entity) {
+        public override IOperation Insert(Process process, Entity entity) {
             return new EmptyOperation();
         }
 
@@ -45,8 +45,8 @@ namespace Transformalize.Main.Providers.Folder {
             throw new System.NotImplementedException();
         }
 
-        public override Fields GetEntitySchema(Process process, string name, string schema = "", bool isMaster = false) {
-            var file = Folder.TrimEnd("\\".ToCharArray()) + "\\" + name.TrimStart("\\".ToCharArray());
+        public override Fields GetEntitySchema(Process process, Entity entity, bool isMaster = false) {
+            var file = Folder.TrimEnd("\\".ToCharArray()) + "\\" + entity.Name.TrimStart("\\".ToCharArray());
             return new FieldInspector().Inspect(file);
         }
 
@@ -54,7 +54,7 @@ namespace Transformalize.Main.Providers.Folder {
             throw new System.NotImplementedException();
         }
 
-        public override IOperation Extract(ref Process process, Entity entity, bool firstRun) {
+        public override IOperation Extract(Process process, Entity entity, bool firstRun) {
             var union = new SerialUnionAllOperation();
             foreach (var file in new DirectoryInfo(Folder).GetFiles(SearchPattern, SearchOption)) {
                 File = file.FullName;

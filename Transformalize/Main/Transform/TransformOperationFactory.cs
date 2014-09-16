@@ -41,15 +41,20 @@ namespace Transformalize.Main {
         private const string COMMA = ",";
 
         private readonly Logger _log = LogManager.GetLogger("tfl");
-        private Process _process;
+        private readonly Process _process;
         private readonly Validator<TransformConfigurationElement> _validator = ValidationFactory.CreateValidator<TransformConfigurationElement>();
         private readonly Dictionary<string, Func<object, object>> _conversionMap = Common.GetObjectConversionMap();
+        private readonly bool _isInitMode;
 
         public TransformOperationFactory(Process process) {
             _process = process;
+            _isInitMode = process.IsInitMode();
         }
 
         public IOperation Create(Field field, TransformConfigurationElement element, IParameters parameters) {
+
+            if (_isInitMode)
+                return new EmptyOperation();
 
             Func<Row, bool> shouldRun = row => true;
             var toTimeZone = string.IsNullOrEmpty(element.ToTimeZone) ? _process.TimeZone : element.ToTimeZone;
@@ -185,7 +190,7 @@ namespace Transformalize.Main {
                     return new GuidOperation(inKey, outKey) { ShouldRun = shouldRun };
 
                 case "now":
-                    return new PartialProcessOperation(ref _process)
+                    return new PartialProcessOperation(_process)
                         .Register(
                             new NowOperation(
                                 inKey,

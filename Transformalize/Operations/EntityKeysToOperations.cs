@@ -38,7 +38,7 @@ namespace Transformalize.Operations {
         private readonly string _operationColumn;
         private readonly Fields _fields;
 
-        public EntityKeysToOperations(Entity entity, AbstractConnection connection, bool firstRun, string operationColumn = "operation") {
+        public EntityKeysToOperations(ref Entity entity, AbstractConnection connection, bool firstRun, string operationColumn = "operation") {
             _entity = entity;
             _connection = connection;
             _firstRun = firstRun;

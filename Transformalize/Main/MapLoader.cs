@@ -1,11 +1,10 @@
 ﻿using System;
 using Transformalize.Configuration;
-using Transformalize.Libs.NLog;
 using Transformalize.Main.Providers;
 
 namespace Transformalize.Main {
     public class MapLoader {
-        private readonly Logger _log = LogManager.GetLogger("tfl");
+
         private readonly Process _process;
         private readonly MapElementCollection _elements;
 

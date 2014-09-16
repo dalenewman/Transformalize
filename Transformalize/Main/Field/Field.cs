@@ -136,6 +136,7 @@ namespace Transformalize.Main {
         public bool DefaultWhiteSpace { get; set; }
         public char QuotedWith { get; set; }
         public bool Optional { get; set; }
+        public bool Raw { get; set; }
         public List<string> Transforms { get; set; }
         public string Delimiter { get; set; }
         public bool Distinct { get; set; }

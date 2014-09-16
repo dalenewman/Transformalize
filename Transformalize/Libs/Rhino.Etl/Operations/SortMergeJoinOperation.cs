@@ -18,9 +18,9 @@ namespace Transformalize.Libs.Rhino.Etl.Operations {
         private readonly PartialProcessOperation right;
         private bool leftRegistered;
 
-        protected SortMergeJoinOperation(ref Process process) {
-            left = new PartialProcessOperation(ref process);
-            right = new PartialProcessOperation(ref process);
+        protected SortMergeJoinOperation(Process process) {
+            left = new PartialProcessOperation(process);
+            right = new PartialProcessOperation(process);
         }
 
         /// <summary>

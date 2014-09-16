@@ -135,7 +135,6 @@ namespace Transformalize.Main {
         //constructor
         public Process(string name = "") {
             Name = name;
-            Kernal = new StandardKernel(new NinjectBindings(name));
         }
 
         //methods
@@ -387,5 +386,8 @@ namespace Transformalize.Main {
             connection.Close();
         }
 
+        public bool IsInitMode() {
+            return Mode.Equals("init", StringComparison.OrdinalIgnoreCase);
+        }
     }
 }

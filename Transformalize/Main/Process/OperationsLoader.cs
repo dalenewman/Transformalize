@@ -1,9 +1,6 @@
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using Transformalize.Configuration;
-using Transformalize.Main.Transform;
 using Transformalize.Operations.Transform;
 
 namespace Transformalize.Main {

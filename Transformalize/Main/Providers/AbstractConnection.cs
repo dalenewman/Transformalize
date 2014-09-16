@@ -271,10 +271,11 @@ namespace Transformalize.Main.Providers {
         /// <summary>
         /// Complete the process by writing a batch record to the output.  Record the max date or rowversion read from input.
         /// </summary>
+        /// <param name="process"></param>
         /// <param name="input"></param>
         /// <param name="entity"></param>
         /// <param name="force"></param>
-        public abstract void WriteEndVersion(AbstractConnection input, Entity entity, bool force = false);
+        public abstract void WriteEndVersion(Process process, AbstractConnection input, Entity entity, bool force = false);
 
         /// <summary>
         /// Try to be clever and pull the matching input and output keys along with the version in order to detect changes.
@@ -293,16 +294,18 @@ namespace Transformalize.Main.Providers {
         /// <summary>
         /// Just get all the keys from the input
         /// </summary>
+        /// <param name="process"></param>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public abstract IOperation ExtractAllKeysFromInput(Entity entity);
+        public abstract IOperation ExtractAllKeysFromInput(Process process, Entity entity);
 
         /// <summary>
         /// Insert crap as fast as you can
         /// </summary>
+        /// <param name="process"></param>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public abstract IOperation Insert(ref Process process, Entity entity);
+        public abstract IOperation Insert(Process process, Entity entity);
 
         /// <summary>
         /// Update stuff as fast as you can
@@ -324,10 +327,10 @@ namespace Transformalize.Main.Providers {
         /// <param name="entity">an entity</param>
         public abstract void LoadEndVersion(Entity entity);
 
-        public abstract Fields GetEntitySchema(Process process, string name, string schema = "", bool isMaster = false);
+        public abstract Fields GetEntitySchema(Process process, Entity entity, bool isMaster = false);
 
         public abstract IOperation Delete(Entity entity);
 
-        public abstract IOperation Extract(ref Process process, Entity entity, bool firstRun);
+        public abstract IOperation Extract(Process process, Entity entity, bool firstRun);
     }
 }

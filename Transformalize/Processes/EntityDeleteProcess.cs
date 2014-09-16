@@ -31,11 +31,11 @@ using Transformalize.Operations;
 namespace Transformalize.Processes {
 
     public class EntityDeleteProcess : EtlProcess {
-        private Process _process;
+        private readonly Process _process;
         private readonly Entity _entity;
 
-        public EntityDeleteProcess(ref Process process, Entity entity)
-            : base(ref process) {
+        public EntityDeleteProcess(Process process, Entity entity)
+            : base(process) {
             _process = process;
             _entity = entity;
         }
@@ -49,18 +49,18 @@ namespace Transformalize.Processes {
                 Register(
                     connection.Is.Internal() ?
                     _entity.InputOperation :
-                    connection.ExtractAllKeysFromInput(_entity)
+                    connection.ExtractAllKeysFromInput(_process, _entity)
                 );
             } else {
                 var multiInput = new ParallelUnionAllOperation();
                 foreach (var namedConnection in _entity.Input) {
-                    multiInput.Add(namedConnection.Connection.ExtractAllKeysFromInput(_entity));
+                    multiInput.Add(namedConnection.Connection.ExtractAllKeysFromInput(_process, _entity));
                 }
                 Register(multiInput);
             }
 
-            Register(new EntityDetectDeletes(ref _process, _entity).Right(_process.OutputConnection.ExtractAllKeysFromOutput(_entity)));
-            Register(new EntityActionFilter(ref _process, _entity, EntityAction.Delete));
+            Register(new EntityDetectDeletes(_process, _entity).Right(_process.OutputConnection.ExtractAllKeysFromOutput(_entity)));
+            Register(new EntityActionFilter(_process, _entity, EntityAction.Delete));
             Register(_process.OutputConnection.Delete(_entity));
         }
 

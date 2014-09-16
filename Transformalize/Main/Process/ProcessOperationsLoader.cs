@@ -19,7 +19,7 @@ namespace Transformalize.Main {
 
             foreach (FieldConfigurationElement f in _elements) {
                 var field = new FieldReader(_process, _process.MasterEntity, false).Read(f);
-                
+
                 if (field.Index.Equals(short.MaxValue)) {
                     field.Index = autoIndex;
                 }

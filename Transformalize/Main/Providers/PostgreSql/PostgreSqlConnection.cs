@@ -37,7 +37,7 @@ namespace Transformalize.Main.Providers.PostgreSql {
             );
         }
 
-        public override void WriteEndVersion(AbstractConnection input, Entity entity, bool force = false) {
+        public override void WriteEndVersion(Process process, AbstractConnection input, Entity entity, bool force = false) {
             throw new NotImplementedException();
         }
 
@@ -49,11 +49,11 @@ namespace Transformalize.Main.Providers.PostgreSql {
             return new SqlEntityKeysExtractAllFromOutput(this, entity);
         }
 
-        public override IOperation ExtractAllKeysFromInput(Entity entity) {
+        public override IOperation ExtractAllKeysFromInput(Process process, Entity entity) {
             return new SqlEntityKeysExtractAllFromInput(this, entity);
         }
 
-        public override IOperation Insert(ref Process process, Entity entity) {
+        public override IOperation Insert(Process process, Entity entity) {
             throw new NotImplementedException();
         }
 
@@ -157,26 +157,26 @@ namespace Transformalize.Main.Providers.PostgreSql {
             }
         }
 
-        public override Fields GetEntitySchema(Process process, string name, string schema = "", bool isMaster = false) {
-            return new SqlEntitySchemaReader(this).Read(name, schema);
+        public override Fields GetEntitySchema(Process process, Entity entity, bool isMaster = false) {
+            return new SqlEntitySchemaReader(this).Read(entity.Name, entity.Schema);
         }
 
         public override IOperation Delete(Entity entity) {
             return new SqlEntityDelete(this, entity);
         }
 
-        public override IOperation Extract(ref Process process, Entity entity, bool firstRun) {
+        public override IOperation Extract(Process process, Entity entity, bool firstRun) {
             if (Schemas && entity.Schema.Equals(string.Empty)) {
                 entity.Schema = DefaultSchema;
             }
 
-            var p = new PartialProcessOperation(ref process);
+            var p = new PartialProcessOperation(process);
             if (entity.HasSqlOverride()) {
                 p.Register(new SqlOverrideOperation(entity, this));
             } else {
                 if (entity.PrimaryKey.WithInput().Any()) {
                     p.Register(new EntityKeysSaveOperation(entity));
-                    p.Register(new EntityKeysToOperations(entity, this, firstRun));
+                    p.Register(new EntityKeysToOperations(ref entity, this, firstRun));
                     p.Register(new SerialUnionAllOperation());
                 } else {
                     entity.SqlOverride = SqlTemplates.Select(entity, this);

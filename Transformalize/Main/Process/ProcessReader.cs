@@ -26,6 +26,7 @@ using System.Configuration;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
+using Transformalize.Libs.Ninject;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.NLog.Targets;
 using Transformalize.Libs.RazorEngine;
@@ -66,7 +67,8 @@ namespace Transformalize.Main {
                 Mode = _element.Mode,
                 StarEnabled = _element.StarEnabled,
                 TimeZone = string.IsNullOrEmpty(_element.TimeZone) ? TimeZoneInfo.Local.Id : _element.TimeZone,
-                PipelineThreading = (PipelineThreading)Enum.Parse(typeof(PipelineThreading), _element.PipelineThreading, true)
+                PipelineThreading = (PipelineThreading)Enum.Parse(typeof(PipelineThreading), _element.PipelineThreading, true),
+                Kernal = new StandardKernel(new NinjectBindings(_element))
             };
 
             // options mode overrides process node
@@ -76,7 +78,7 @@ namespace Transformalize.Main {
             _log.Info("Mode: {0}", _process.Mode);
 
             //shared across the process
-            var connectionFactory = new ConnectionFactory(_process.Name, _process.Kernal);
+            var connectionFactory = new ConnectionFactory(_process);
             foreach (ProviderConfigurationElement element in _element.Providers) {
                 connectionFactory.Providers[element.Name.ToLower()] = element.Type;
             }
@@ -100,7 +102,6 @@ namespace Transformalize.Main {
 
             _process.Relationships = new RelationshipsReader(_process, _element.Relationships).Read();
             new ProcessOperationsLoader(ref _process, _element.CalculatedFields).Load();
-
             new EntityRelationshipLoader(ref _process).Load();
 
             LoadLogConfiguration(_process.Options);

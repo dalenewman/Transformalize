@@ -37,12 +37,12 @@ namespace Transformalize.Processes {
     public class EntityProcess : EtlProcess {
 
         private const string STANDARD_OUTPUT = "output";
-        private Process _process;
+        private readonly Process _process;
         private readonly Entity _entity;
         private readonly ConcurrentDictionary<string, CollectorOperation> _collectors = new ConcurrentDictionary<string, CollectorOperation>();
 
-        public EntityProcess(ref Process process, Entity entity)
-            : base(ref process) {
+        public EntityProcess(Process process, Entity entity)
+            : base(process) {
             _process = process;
             _entity = entity;
             _collectors[STANDARD_OUTPUT] = new CollectorOperation();
@@ -53,14 +53,14 @@ namespace Transformalize.Processes {
 
             GlobalDiagnosticsContext.Set("entity", Common.LogLength(_entity.Alias));
 
-            Register(new EntityKeysPartial(ref _process, _entity));
+            Register(new EntityKeysPartial(_process, _entity));
 
             if (_entity.Input.Count == 1) {
-                Register(_entity.Input.First().Connection.Extract(ref _process, _entity, _process.IsFirstRun));
+                Register(_entity.Input.First().Connection.Extract(_process, _entity, _process.IsFirstRun));
             } else {
                 var union = new ParallelUnionAllOperation();
                 foreach (var input in _entity.Input) {
-                    union.Add(input.Connection.Extract(ref _process, _entity, Process.IsFirstRun));
+                    union.Add(input.Connection.Extract(_process, _entity, Process.IsFirstRun));
                 }
                 Register(union);
             }
@@ -93,37 +93,37 @@ namespace Transformalize.Processes {
 
             if (_entity.Output.Count > 0) {
                 var branch = new BranchingOperation()
-                    .Add(PrepareOutputOperation(ref _process, standardOutput));
+                    .Add(PrepareOutputOperation(_process, standardOutput));
                 foreach (var output in _entity.Output) {
                     _collectors[output.Name] = new CollectorOperation();
-                    branch.Add(PrepareOutputOperation(ref _process, output));
+                    branch.Add(PrepareOutputOperation(_process, output));
                 }
                 Register(branch);
             } else {
-                Register(PrepareOutputOperation(ref _process, standardOutput));
+                Register(PrepareOutputOperation(_process, standardOutput));
             }
 
         }
 
-        private PartialProcessOperation PrepareOutputOperation(ref Process process, NamedConnection nc) {
+        private PartialProcessOperation PrepareOutputOperation(Process process, NamedConnection nc) {
 
-            var partial = new PartialProcessOperation(ref process);
+            var partial = new PartialProcessOperation(process);
             partial.Register(new FilterOutputOperation(nc.ShouldRun));
 
             if (nc.Connection.Type == ProviderType.Internal) {
                 partial.RegisterLast(_collectors[nc.Name]);
             } else {
                 if (Process.IsFirstRun || !_entity.DetectChanges) {
-                    partial.Register(new EntityAddTflFields(ref process, _entity));
-                    partial.RegisterLast(nc.Connection.Insert(ref process, _entity));
+                    partial.Register(new EntityAddTflFields(process, _entity));
+                    partial.RegisterLast(nc.Connection.Insert(process, _entity));
                 } else {
-                    partial.Register(new EntityJoinAction(ref process,_entity).Right(nc.Connection.ExtractCorrespondingKeysFromOutput(_entity)));
+                    partial.Register(new EntityJoinAction(process, _entity).Right(nc.Connection.ExtractCorrespondingKeysFromOutput(_entity)));
                     var branch = new BranchingOperation()
-                        .Add(new PartialProcessOperation(ref process)
-                            .Register(new EntityActionFilter(ref process, _entity, EntityAction.Insert))
-                            .RegisterLast(nc.Connection.Insert(ref process, _entity)))
-                        .Add(new PartialProcessOperation(ref process)
-                            .Register(new EntityActionFilter(ref process, _entity, EntityAction.Update))
+                        .Add(new PartialProcessOperation(process)
+                            .Register(new EntityActionFilter(process, _entity, EntityAction.Insert))
+                            .RegisterLast(nc.Connection.Insert(process, _entity)))
+                        .Add(new PartialProcessOperation(process)
+                            .Register(new EntityActionFilter(process, _entity, EntityAction.Update))
                             .RegisterLast(nc.Connection.Update(_entity)));
 
                     partial.RegisterLast(branch);
@@ -157,7 +157,7 @@ namespace Transformalize.Processes {
                 _entity.Rows = _collectors[STANDARD_OUTPUT].Rows;
             } else {
                 // not handling things by input yet, so just use first
-                Process.OutputConnection.WriteEndVersion(_entity.Input.First().Connection, _entity);
+                Process.OutputConnection.WriteEndVersion(_process, _entity.Input.First().Connection, _entity);
             }
 
             base.PostProcessing();

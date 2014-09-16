@@ -20,6 +20,7 @@
 
 #endregion
 
+using System.CodeDom;
 using System.Configuration;
 using Transformalize.Main;
 
@@ -56,6 +57,7 @@ namespace Transformalize.Configuration {
         private const string DELIMITER = "delimiter";
         private const string DISTINCT = "distinct";
         private const string SHORT_HAND = "t";
+        private const string RAW = "raw";
 
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name {
@@ -100,6 +102,12 @@ namespace Transformalize.Configuration {
         public bool Optional {
             get { return (bool)this[OPTIONAL]; }
             set { this[OPTIONAL] = value; }
+        }
+
+        [ConfigurationProperty(RAW, IsRequired = false, DefaultValue = false)]
+        public bool Raw {
+            get { return (bool)this[RAW]; }
+            set { this[RAW] = value; }
         }
 
         [ConfigurationProperty(DEFAULT_BLANK, IsRequired = false, DefaultValue = false)]

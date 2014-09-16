@@ -43,13 +43,13 @@ namespace Transformalize.Test {
             private static Process _process = new Process("test");
 
             public TestProcess(params IOperation[] testOperations)
-                : base(ref _process) {
+                : base(_process) {
                 this.PipelineExecuter = new SingleThreadedNonCachedPipelineExecuter();
                 this._testOperations = testOperations;
             }
 
             public TestProcess(IEnumerable<IOperation> testOperations)
-                : base(ref _process) {
+                : base(_process) {
                 this._testOperations = testOperations;
             }
 

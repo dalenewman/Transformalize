@@ -9,12 +9,12 @@ using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
 namespace Transformalize.Operations {
-    public class DapperResultsLoad : AbstractOperation {
+    public class SqlResultsLoad : AbstractOperation {
         private readonly Process _process;
         private readonly string _sql;
         private readonly Fields _fields;
 
-        public DapperResultsLoad(ref Process process) {
+        public SqlResultsLoad(Process process) {
             _process = process;
             _fields = _process.CalculatedFields;
             var sets = new FieldSqlWriter(_fields).Alias(_process.OutputConnection.L, _process.OutputConnection.R).SetParam().Write();

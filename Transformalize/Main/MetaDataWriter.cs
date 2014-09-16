@@ -29,7 +29,7 @@ namespace Transformalize.Main {
     public class MetaDataWriter {
 
         private readonly Logger _log = LogManager.GetLogger("tfl");
-        private readonly Process _process;
+        private Process _process;
         private static readonly char[] BadCharacters = new[] { ' ', '(', ')', '/', '\\' };
 
         public MetaDataWriter(Process process) {
@@ -45,7 +45,8 @@ namespace Transformalize.Main {
             var count = 0;
             foreach (var entity in _process.Entities) {
                 var firstConnection = entity.Input.First().Connection;
-                var fields = firstConnection.GetEntitySchema(_process, entity.Name, entity.Schema, count == 0);
+                var e = entity;
+                var fields = firstConnection.GetEntitySchema(_process, e, isMaster: count == 0);
                 content.AppendFormat("    <add name=\"{0}\">\r\n", entity.Name);
                 AppendFields(fields.WithOutput(), content);
                 content.AppendLine("    </add>");

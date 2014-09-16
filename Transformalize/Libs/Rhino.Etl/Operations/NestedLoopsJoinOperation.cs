@@ -21,9 +21,9 @@ namespace Transformalize.Libs.Rhino.Etl.Operations {
         private Row currentRightRow;
         private bool leftRegistered;
 
-        protected NestedLoopsJoinOperation(ref Process process) {
-            left = new PartialProcessOperation(ref process);
-            right = new PartialProcessOperation(ref process);
+        protected NestedLoopsJoinOperation(Process process) {
+            left = new PartialProcessOperation(process);
+            right = new PartialProcessOperation(process);
         }
 
         /// <summary>

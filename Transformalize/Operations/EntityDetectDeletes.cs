@@ -9,8 +9,8 @@ namespace Transformalize.Operations {
         private readonly string[] _keys;
         private readonly string _firstKey;
 
-        public EntityDetectDeletes(ref Process process, Entity entity)
-            : base(ref process) {
+        public EntityDetectDeletes(Process process, Entity entity)
+            : base(process) {
             _keys = entity.PrimaryKey.Aliases().ToArray();
             _firstKey = _keys[0];
         }

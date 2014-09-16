@@ -3223,7 +3223,7 @@
     <Compile Include="Libs\Rhino.Etl\WithLoggingMixin.cs" />
     <Compile Include="Operations\AliasDefault.cs" />
     <Compile Include="Operations\AliasOperation.cs" />
-    <Compile Include="Operations\DapperResultsLoad.cs" />
+    <Compile Include="Operations\SqlResultsLoad.cs" />
     <Compile Include="Operations\EntityDetectDeletes.cs" />
     <Compile Include="Operations\EntityInputKeysExtractAllForDelete.cs" />
     <Compile Include="Operations\EntityJoinOperation.cs" />

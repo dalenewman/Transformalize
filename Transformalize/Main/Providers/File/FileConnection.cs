@@ -14,26 +14,26 @@ namespace Transformalize.Main.Providers.File {
             return 1;
         }
 
-        public override void WriteEndVersion(AbstractConnection input, Entity entity, bool force = false) {
+        public override void WriteEndVersion(Process process, AbstractConnection input, Entity entity, bool force = false) {
             //do nothing
         }
 
         public override IOperation ExtractCorrespondingKeysFromOutput(Entity entity) {
             var p = new Process("blank");
-            return Extract(ref p, entity, true);
+            return Extract(p, entity, true);
         }
 
         public override IOperation ExtractAllKeysFromOutput(Entity entity) {
             var p = new Process("blank");
-            return Extract(ref p, entity, true);
+            return Extract(p, entity, true);
         }
 
-        public override IOperation ExtractAllKeysFromInput(Entity entity) {
+        public override IOperation ExtractAllKeysFromInput(Process process, Entity entity) {
             var p = new Process("blank");
-            return Extract(ref p, entity, true);
+            return Extract(p, entity, true);
         }
 
-        public override IOperation Insert(ref Process process, Entity entity) {
+        public override IOperation Insert(Process process, Entity entity) {
             return new FileLoadOperation(this, entity);
         }
 
@@ -49,7 +49,7 @@ namespace Transformalize.Main.Providers.File {
             throw new System.NotImplementedException();
         }
 
-        public override Fields GetEntitySchema(Process process, string name, string schema = "", bool isMaster = false) {
+        public override Fields GetEntitySchema(Process process, Entity entity, bool isMaster = false) {
             return new FieldInspector().Inspect(FileInformationFactory.Create(File), process.FileInspectionRequest);
         }
 
@@ -57,7 +57,7 @@ namespace Transformalize.Main.Providers.File {
             throw new NotImplementedException();
         }
 
-        public override IOperation Extract(ref Process process, Entity entity, bool firstRun) {
+        public override IOperation Extract(Process process, Entity entity, bool firstRun) {
             if (Is.Excel()) {
                 return new FileExcelExtract(this, entity, entity.Top);
             }

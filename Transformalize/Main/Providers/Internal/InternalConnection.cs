@@ -11,7 +11,7 @@ namespace Transformalize.Main.Providers.Internal {
             return 1;
         }
 
-        public override void WriteEndVersion(AbstractConnection input, Entity entity, bool force = false) {
+        public override void WriteEndVersion(Process process, AbstractConnection input, Entity entity, bool force = false) {
             //nope
         }
 
@@ -23,11 +23,11 @@ namespace Transformalize.Main.Providers.Internal {
             return new EmptyOperation();
         }
 
-        public override IOperation ExtractAllKeysFromInput(Entity entity) {
+        public override IOperation ExtractAllKeysFromInput(Process process, Entity entity) {
             return new EmptyOperation();
         }
 
-        public override IOperation Insert(ref Process process, Entity entity) {
+        public override IOperation Insert(Process process, Entity entity) {
             return new EmptyOperation();
         }
 
@@ -43,7 +43,7 @@ namespace Transformalize.Main.Providers.Internal {
             throw new System.NotImplementedException();
         }
 
-        public override Fields GetEntitySchema(Process process, string name, string schema = "", bool isMaster = false) {
+        public override Fields GetEntitySchema(Process process, Entity entity, bool isMaster = false) {
             return new Fields();
         }
 
@@ -51,8 +51,8 @@ namespace Transformalize.Main.Providers.Internal {
             throw new System.NotImplementedException();
         }
 
-        public override IOperation Extract(ref Process process, Entity entity, bool firstRun) {
-            var p = new PartialProcessOperation(ref process);
+        public override IOperation Extract(Process process, Entity entity, bool firstRun) {
+            var p = new PartialProcessOperation(process);
             p.Register(entity.InputOperation);
             p.Register(new AliasOperation(entity));
             return p;

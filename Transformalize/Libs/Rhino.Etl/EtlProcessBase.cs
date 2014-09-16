@@ -20,7 +20,7 @@ namespace Transformalize.Libs.Rhino.Etl {
 
         protected Process Process { get { return _process; } }
 
-        public EtlProcessBase(ref Process process) {
+        public EtlProcessBase(Process process) {
             _process = process;
         }
 

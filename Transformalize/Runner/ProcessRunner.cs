@@ -63,7 +63,7 @@ namespace Transformalize.Runner {
 
             if (process.Relationships.Any()) {
                 var collector = new CollectorOperation();
-                new MasterJoinProcess(ref process, ref collector).Execute();
+                new MasterJoinProcess(process, ref collector).Execute();
                 process.Results = collector.Rows;
             } else {
                 process.Results = process.MasterEntity == null ? Enumerable.Empty<Row>() : process.MasterEntity.Rows;
@@ -81,7 +81,7 @@ namespace Transformalize.Runner {
 
         private static void ProcessDeletes(ref Process process) {
             var p = process;
-            foreach (var entityDeleteProcess in process.Entities.Where(entity => entity.Delete).Select(entity => new EntityDeleteProcess(ref p, entity) {
+            foreach (var entityDeleteProcess in process.Entities.Where(entity => entity.Delete).Select(entity => new EntityDeleteProcess(p, entity) {
                 PipelineExecuter = entity.PipelineThreading == PipelineThreading.SingleThreaded ? (AbstractPipelineExecuter)new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter()
             })) {
                 entityDeleteProcess.Execute();
@@ -90,7 +90,7 @@ namespace Transformalize.Runner {
 
         private static void ProcessEntities(ref Process process) {
             var p = process;
-            process.Entities.AsParallel().ForAll(e => new EntityProcess(ref p, e) {
+            process.Entities.AsParallel().ForAll(e => new EntityProcess(p, e) {
                 PipelineExecuter = e.PipelineThreading == PipelineThreading.SingleThreaded ?
                     (IPipelineExecuter)new SingleThreadedPipelineExecuter() :
                     (IPipelineExecuter)new ThreadPoolPipelineExecuter()
@@ -99,7 +99,7 @@ namespace Transformalize.Runner {
 
 
         private static void ProcessMaster(ref Process process) {
-            var updateMasterProcess = new UpdateMasterProcess(ref process) {
+            var updateMasterProcess = new UpdateMasterProcess(process) {
                 PipelineExecuter = process.PipelineThreading == PipelineThreading.SingleThreaded ? (AbstractPipelineExecuter)new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter()
             };
             updateMasterProcess.Execute();
@@ -108,7 +108,7 @@ namespace Transformalize.Runner {
         private static void ProcessTransforms(ref Process process) {
             if (process.CalculatedFields.Count <= 0)
                 return;
-            var transformProcess = new TransformProcess(ref process) {
+            var transformProcess = new TransformProcess(process) {
                 PipelineExecuter = process.PipelineThreading == PipelineThreading.SingleThreaded ? (AbstractPipelineExecuter)new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter()
             };
             transformProcess.Execute();

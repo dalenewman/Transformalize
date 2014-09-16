@@ -36,7 +36,7 @@ namespace Transformalize.Main.Providers.Lucene {
             }
         }
 
-        public override void WriteEndVersion(AbstractConnection input, Entity entity, bool force = false) {
+        public override void WriteEndVersion(Process process, AbstractConnection input, Entity entity, bool force = false) {
             if (entity.Updates + entity.Inserts <= 0 && !force)
                 return;
 
@@ -71,11 +71,11 @@ namespace Transformalize.Main.Providers.Lucene {
             return new LuceneKeysExtractAll(this, entity, input: false);
         }
 
-        public override IOperation ExtractAllKeysFromInput(Entity entity) {
+        public override IOperation ExtractAllKeysFromInput(Process process, Entity entity) {
             return new LuceneKeysExtractAll(this, entity, input: true);
         }
 
-        public override IOperation Insert(ref Process process, Entity entity) {
+        public override IOperation Insert(Process process, Entity entity) {
             return new LuceneLoadOperation(this, entity);
         }
 
@@ -119,7 +119,7 @@ namespace Transformalize.Main.Providers.Lucene {
             }
         }
 
-        public override Fields GetEntitySchema(Process process, string name, string schema = "", bool isMaster = false) {
+        public override Fields GetEntitySchema(Process process, Entity entity, bool isMaster = false) {
             throw new NotImplementedException();
         }
 
@@ -127,7 +127,7 @@ namespace Transformalize.Main.Providers.Lucene {
             return new LuceneEntityDelete(this, entity);
         }
 
-        public override IOperation Extract(ref Process process, Entity entity, bool firstRun) {
+        public override IOperation Extract(Process process, Entity entity, bool firstRun) {
             return new LuceneExtract(this, entity);
         }
 

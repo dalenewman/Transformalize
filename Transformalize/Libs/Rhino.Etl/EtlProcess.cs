@@ -20,7 +20,7 @@ namespace Transformalize.Libs.Rhino.Etl {
     public abstract class EtlProcess : EtlProcessBase<EtlProcess>, IDisposable {
         private IPipelineExecuter _pipelineExecuter = new ThreadPoolPipelineExecuter();
 
-        protected EtlProcess(ref Process process) : base(ref process) {}
+        protected EtlProcess(Process process) : base(process) {}
 
         /// <summary>
         ///     Gets the pipeline executer.

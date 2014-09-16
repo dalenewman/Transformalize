@@ -29,10 +29,10 @@ using Transformalize.Operations;
 
 namespace Transformalize.Processes {
     public class UpdateMasterProcess : EtlProcess {
-        private Process _process;
+        private readonly Process _process;
 
-        public UpdateMasterProcess(ref Process process)
-            : base(ref process) {
+        public UpdateMasterProcess(Process process)
+            : base(process) {
             _process = process;
         }
 
@@ -40,7 +40,7 @@ namespace Transformalize.Processes {
             GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
 
             foreach (var entity in _process.Entities) {
-                Register(new EntityUpdateMaster(ref _process, entity));
+                Register(new EntityUpdateMaster(_process, entity));
             }
         }
 

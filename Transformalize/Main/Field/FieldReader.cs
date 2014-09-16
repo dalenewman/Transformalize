@@ -66,6 +66,7 @@ namespace Transformalize.Main {
                 DefaultWhiteSpace = element.DefaultWhiteSpace,
                 QuotedWith = element.QuotedWith,
                 Optional = element.Optional,
+                Raw = element.Raw,
                 Delimiter = element.Delimiter,
                 Distinct = element.Distinct
             };

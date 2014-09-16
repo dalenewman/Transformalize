@@ -39,7 +39,7 @@ namespace Transformalize.Main.Providers.SqlServer {
             var fields = new Fields();
 
             if (schema.Equals(string.Empty)) {
-                schema = "dbo";
+                schema = connection.DefaultSchema;
             }
 
             using (var cn = connection.GetConnection()) {
