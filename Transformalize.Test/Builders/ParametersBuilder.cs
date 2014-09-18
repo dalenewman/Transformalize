@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
-using Transformalize.Main;
 using Transformalize.Main.Parameters;
 
-namespace Transformalize.Test.Builders
-{
+namespace Transformalize.Test.Builders {
     public class ParametersBuilder {
         private readonly IList<KeyValuePair<string, IParameter>> _params = new List<KeyValuePair<string, IParameter>>();
         private int _index;
@@ -13,12 +11,26 @@ namespace Transformalize.Test.Builders
             return Consume(inKey, parameter);
         }
 
+        public ParameterBuilder Parameter(string inKey, IParameter parameter) {
+            return Consume(inKey, parameter);
+        }
+
+        public ParameterBuilder Parameter(string inKey, string name, object value) {
+            var parameter = new Parameter() {
+                Index = _index,
+                Name = name,
+                Value = value,
+                SimpleType = "string"
+            };
+            return Consume(inKey, parameter);
+        }
+
         public ParameterBuilder Parameter(string inKey) {
             var parameter = new Parameter() { Index = _index, Name = inKey, SimpleType = "string" };
             return Consume(inKey, parameter);
         }
 
-        private ParameterBuilder Consume(string inKey, Parameter parameter) {
+        private ParameterBuilder Consume(string inKey, IParameter parameter) {
             _index++;
             _params.Add(new KeyValuePair<string, IParameter>(inKey, parameter));
             var parametersBuilder = this;

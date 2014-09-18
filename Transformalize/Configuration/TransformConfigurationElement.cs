@@ -114,6 +114,8 @@ namespace Transformalize.Configuration {
         private const string DATA = "data";
         private const string CONTENT_TYPE = "content-type";
         private const string TAG = "tag";
+        private const string ENCODE = "encode";
+        private const string DECODE = "decode";
 
         [ConfigurationProperty(METHOD, IsRequired = true)]
         public string Method {
@@ -583,6 +585,18 @@ namespace Transformalize.Configuration {
         public string Tag {
             get { return this[TAG] as string; }
             set { this[TAG] = value; }
+        }
+
+        [ConfigurationProperty(ENCODE, IsRequired = false, DefaultValue = true)]
+        public bool Encode {
+            get { return (bool)this[ENCODE]; }
+            set { this[ENCODE] = value; }
+        }
+
+        [ConfigurationProperty(DECODE, IsRequired = false, DefaultValue = true)]
+        public bool Decode {
+            get { return (bool)this[DECODE]; }
+            set { this[DECODE] = value; }
         }
 
         public bool IsShortHand { get; set; }

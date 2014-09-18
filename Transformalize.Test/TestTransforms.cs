@@ -1105,7 +1105,7 @@ It is False#end", templates, parameters);
                 .Parameter("input")
                 .Parameter("another")
                 .ToParameters();
-            var tagOperation = new TagOperation("out","a", parameters);
+            var tagOperation = new TagOperation("out","a", parameters, false, false);
             var output = TestOperation(input, tagOperation);
 
             Assert.AreEqual("<a x=\"3\" input=\"2\" another=\"thing\" />", output[0]["out"]);
@@ -1124,12 +1124,33 @@ It is False#end", templates, parameters);
                 .Parameter("input")
                 .Parameter("another")
                 .ToParameters();
-            var tagOperation = new TagOperation("out", "a", parameters);
+            var tagOperation = new TagOperation("out", "a", parameters, true, true);
             var output = TestOperation(input, tagOperation);
 
             Assert.AreEqual("<a x=\"3\" input=\"2\" another=\"&amp;thing\">it wants &amp; needs it</a>", output[0]["out"]);
             Assert.AreEqual("<a x=\"3\" input=\"4\" another=\"element\">it wants &amp; needs it</a>", output[1]["out"]);
         }
+
+        [Test]
+        public void TagWithNamedParameters() {
+            var input = new RowsBuilder()
+                .Row("input", 2).Field("another", "thing").Field("out", "")
+                .Row("input", 4).Field("another", "element").Field("out", "")
+                .ToOperation();
+            var parameters = new ParametersBuilder()
+                .Parameter("x", 3)
+                .Parameter("content", "it wants & needs it")
+                .Parameter("input")
+                .Parameter("another")
+                .Parameter("y","input", true)
+                .ToParameters();
+            var tagOperation = new TagOperation("out", "a", parameters, false, true);
+            var output = TestOperation(input, tagOperation);
+
+            Assert.AreEqual("<a x=\"3\" input=\"2\" another=\"thing\" y=\"2\">it wants &amp; needs it</a>", output[0]["out"]);
+            Assert.AreEqual("<a x=\"3\" input=\"4\" another=\"element\" y=\"4\">it wants &amp; needs it</a>", output[1]["out"]);
+        }
+
         [Test]
         public void TemplateInt() {
             var input = new RowsBuilder().Row("input", 2).Field("out", "").ToOperation();

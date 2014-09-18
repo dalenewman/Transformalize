@@ -22,24 +22,31 @@
 
 using System;
 using System.Collections.Generic;
+using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main.Parameters {
 
     public class Parameter : IParameter {
 
+        private Logger _log = LogManager.GetLogger("tfl");
         private readonly Dictionary<string, Func<object, object>> _conversionMap = Common.GetObjectConversionMap();
         private string _simpleType = "string";
 
         public int Index { get; set; }
         public string Name { get; set; }
         public object Value { get; set; }
+        public bool ValueReferencesField { get; set; }
 
         public string SimpleType {
             get { return _simpleType; }
             set {
-                _simpleType = value;
+                _simpleType = Common.ToSimpleType(value);
                 if (Value != null) {
-                    Value = _conversionMap[value](Value);
+                    if (_conversionMap.ContainsKey(_simpleType)) {
+                        Value = _conversionMap[_simpleType](Value);
+                    } else {
+                        _log.Warn("Parameter type {0} is not mapped for conversion.", _simpleType);
+                    }
                 }
             }
         }
@@ -55,5 +62,6 @@ namespace Transformalize.Main.Parameters {
         public bool HasValue() {
             return Name != null && Value != null;
         }
+
     }
 }

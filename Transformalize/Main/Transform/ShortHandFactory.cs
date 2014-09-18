@@ -533,9 +533,9 @@ namespace Transformalize.Main.Transform {
                 if (!p.Field.Contains("="))
                     continue;
                 var pair = p.Field.Split(new[] { '=' });
+                p.Field = string.Empty;
                 p.Name = pair[0];
                 p.Value = pair[1];
-                p.Field = pair[1];
             }
 
             return element;

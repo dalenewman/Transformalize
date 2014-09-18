@@ -20,14 +20,13 @@
 
 #endregion
 
-namespace Transformalize.Main.Parameters
-{
-    public interface IParameter
-    {
+namespace Transformalize.Main.Parameters {
+    public interface IParameter {
         string Name { get; set; }
         object Value { get; set; }
         string SimpleType { get; set; }
-        int Index { get; set; }
         bool HasValue();
+        bool ValueReferencesField { get; set; }
+        int Index { get; set; }
     }
 }

@@ -597,11 +597,11 @@ namespace Transformalize.Test {
             Assert.AreEqual(string.Empty, result.Parameters[0].Value);
 
             Assert.AreEqual("content", result.Parameters[1].Name);
-            Assert.AreEqual("stuff", result.Parameters[1].Field);
+            Assert.AreEqual(string.Empty, result.Parameters[1].Field);
             Assert.AreEqual("stuff", result.Parameters[1].Value);
 
             Assert.AreEqual("target", result.Parameters[2].Name);
-            Assert.AreEqual("field2", result.Parameters[2].Field);
+            Assert.AreEqual(string.Empty, result.Parameters[2].Field);
             Assert.AreEqual("field2", result.Parameters[2].Value);
         }
 

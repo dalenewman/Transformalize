@@ -412,7 +412,9 @@ namespace Transformalize.Main {
                     return new TagOperation(
                         outKey,
                         element.Tag,
-                        parameters
+                        parameters,
+                        element.Decode,
+                        element.Encode
                     ) { ShouldRun = shouldRun };
 
                 case "format":

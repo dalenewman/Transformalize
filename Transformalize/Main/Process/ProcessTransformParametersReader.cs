@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Libs.NLog;
+using Transformalize.Main.Parameters;
 
 namespace Transformalize.Main {
     public class ProcessTransformParametersReader : ITransformParametersReader {
@@ -54,8 +55,8 @@ namespace Transformalize.Main {
 
             foreach (ParameterConfigurationElement p in transform.Parameters) {
 
+                var fields = _process.OutputFields();
                 if (!string.IsNullOrEmpty(p.Field)) {
-                    var fields = _process.OutputFields();
                     if (fields.FindByParamater(p).Any()) {
                         var field = fields.FindByParamater(p).Last();
                         var name = string.IsNullOrEmpty(p.Name) ? field.Alias : p.Name;
@@ -66,7 +67,11 @@ namespace Transformalize.Main {
                         parameters.Add(p.Field, name, p.HasValue() ? p.Value : null, p.Type);
                     }
                 } else {
-                    parameters.Add(p.Name, p.Name, p.Value, p.Type);
+                    var parameter = new Parameter(p.Name, p.Value) {
+                        SimpleType = Common.ToSimpleType(p.Type),
+                        ValueReferencesField = p.HasValue() && fields.Find(p.Value).Any()
+                    };
+                    parameters.Add(p.Name, parameter);
                 }
             }
 

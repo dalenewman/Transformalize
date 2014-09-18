@@ -22,6 +22,7 @@
 
 using Transformalize.Configuration;
 using Transformalize.Libs.NLog;
+using Transformalize.Main.Parameters;
 
 namespace Transformalize.Main {
     public class EntityTransformParametersReader : ITransformParametersReader {
@@ -47,8 +48,8 @@ namespace Transformalize.Main {
                     throw new TransformalizeException("The entity {0} has a {1} transform parameter without a field attribute, or name and value attributes.  Entity parameters require one or the other.", _entity.Alias, transform.Method);
                 }
 
+                var fields = new Fields(_entity.Fields, _entity.CalculatedFields);
                 if (!string.IsNullOrEmpty(p.Field)) {
-                    var fields = new Fields(_entity.Fields, _entity.CalculatedFields);
                     if (fields.FindByParamater(p).Any()) {
                         var field = fields.FindByParamater(p).Last();
                         var name = string.IsNullOrEmpty(p.Name) ? field.Alias : p.Name;
@@ -61,7 +62,11 @@ namespace Transformalize.Main {
                         parameters.Add(p.Field, name, p.HasValue() ? p.Value : null, "System.String");
                     }
                 } else {
-                    parameters.Add(p.Name, p.Name, p.Value, p.Type);
+                    var parameter = new Parameter(p.Name, p.Value) {
+                        SimpleType = Common.ToSimpleType(p.Type),
+                        ValueReferencesField = p.HasValue() && fields.Find(p.Value).Any()
+                    };
+                    parameters.Add(p.Name, parameter);
                 }
             }
 
