@@ -32,6 +32,12 @@ namespace Transformalize.Operations.Transform {
             return buffer.ToString();
         }
 
+        public static void SanitizeXmlString(string xml, ref StringBuilder builder) {
+            foreach (var c in xml.Where(c => IsLegalXmlChar(c))) {
+                builder.Append(c);
+            }
+        }
+
         public static bool IsLegalXmlChar(int character) {
             return (
                 character == 0x9 /* == '\t' == 9   */          ||

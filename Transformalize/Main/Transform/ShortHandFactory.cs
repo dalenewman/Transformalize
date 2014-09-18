@@ -72,6 +72,7 @@ namespace Transformalize.Main.Transform {
             {"pl","padleft"},
             {"pr","padright"},
             {"r","replace"},
+            {"razor","template"},
             {"regexreplace","regexreplace"},
             {"remove","remove"},
             {"replace","replace"},
@@ -79,6 +80,7 @@ namespace Transformalize.Main.Transform {
             {"right","right"},
             {"rm","remove"},
             {"rr","regexreplace"},
+            {"rz", "template"},
             {"sh","striphtml"},
             {"sl","slug"},
             {"slug","slug"},
@@ -90,9 +92,10 @@ namespace Transformalize.Main.Transform {
             {"sum", "add"},
             {"t","trim"},
             {"ta","trimstartappend"},
+            {"tag","tag"},
             {"tc","totitlecase"},
             {"te", "trimend"},
-            {"template","tempalte"},
+            {"template","template"},
             {"timezone","timezone"},
             {"titlecase","totitlecase"},
             {"tj","tojson"},
@@ -119,8 +122,10 @@ namespace Transformalize.Main.Transform {
             {"up","toupper"},
             {"upper","toupper"},
             {"urlencode","urlencode"},
+            {"v","velocity"},
+            {"velocity","velocity"},
             {"w","web"},
-            {"web","web"}
+            {"web","web"},
         };
 
         public static readonly Dictionary<string, Func<string, TransformConfigurationElement>> Functions = new Dictionary<string, Func<string, TransformConfigurationElement>> {
@@ -172,7 +177,9 @@ namespace Transformalize.Main.Transform {
             {"tojson", ToJson},
             {"fromxml", FromXml},
             {"fromregex", FromRegex},
-            {"fromsplit", FromSplit}
+            {"fromsplit", FromSplit},
+            {"velocity", Velocity},
+            {"tag",Tag}
         };
 
         private static TransformConfigurationElement FromSplit(string arg) {
@@ -203,25 +210,36 @@ namespace Transformalize.Main.Transform {
             return Fields("fromxml", arg);
         }
 
+
         private static TransformConfigurationElement ToJson(string arg) {
-            var element = Parameters("tojson", arg);
-            foreach (ParameterConfigurationElement p in element.Parameters) {
-                if (!p.Field.Contains("="))
-                    continue;
-                var split = p.Field.Split(new[] { '=' });
-                p.Field = string.Empty;
-                p.Name = split[0];
-                p.Value = split[1];
-            }
+            var element = Parameters("tojson", arg, 0);
             return element;
         }
 
         private static TransformConfigurationElement Template(string arg) {
             var split = SplitComma(arg);
 
-            Guard.Against(split.Length < 2, "The {0} method requires at least two paramters: a script, and a parameter.");
+            Guard.Against(split.Length < 2, "The template/razor method requires at least two paramters: a template, and a parameter.");
 
             var element = new TransformConfigurationElement() { Method = "template", Template = split[0], IsShortHand = true };
+
+            if (split.Length == 2) {
+                element.Parameter = split[1];
+            } else {
+                foreach (var s in split.Skip(1)) {
+                    element.Parameters.Add(new ParameterConfigurationElement() { Field = s });
+                }
+            }
+
+            return element;
+        }
+
+        private static TransformConfigurationElement Velocity(string arg) {
+            var split = SplitComma(arg);
+
+            Guard.Against(split.Length < 2, "The velocity method requires at least two paramters: a template, and a parameter.");
+
+            var element = new TransformConfigurationElement() { Method = "velocity", Template = split[0], IsShortHand = true };
 
             if (split.Length == 2) {
                 element.Parameter = split[1];
@@ -498,9 +516,9 @@ namespace Transformalize.Main.Transform {
             return element;
         }
 
-        private static TransformConfigurationElement Parameters(string method, string arg) {
-            var split = SplitComma(arg);
-            Guard.Against(split.Length == 0, "The {0} method requires a * parameter, or a comma delimited list of parameters that reference fields.", method);
+        private static TransformConfigurationElement Parameters(string method, string arg, int skip) {
+            var split = SplitComma(arg, skip);
+            Guard.Against(split.Length == 0, "The {0} method requires parameters.", method);
 
             var element = new TransformConfigurationElement() { Method = method, IsShortHand = true };
             if (split.Length == 1) {
@@ -510,6 +528,16 @@ namespace Transformalize.Main.Transform {
                     element.Parameters.Add(new ParameterConfigurationElement() { Field = p });
                 }
             }
+
+            foreach (ParameterConfigurationElement p in element.Parameters) {
+                if (!p.Field.Contains("="))
+                    continue;
+                var pair = p.Field.Split(new[] { '=' });
+                p.Name = pair[0];
+                p.Value = pair[1];
+                p.Field = pair[1];
+            }
+
             return element;
         }
 
@@ -526,7 +554,7 @@ namespace Transformalize.Main.Transform {
 
 
         private static TransformConfigurationElement Concat(string arg) {
-            return Parameters("concat", arg);
+            return Parameters("concat", arg, 0);
         }
 
         public static TransformConfigurationElement Interpret(string expression) {
@@ -651,8 +679,8 @@ namespace Transformalize.Main.Transform {
             return new TransformConfigurationElement() { Method = "left", Length = length, IsShortHand = true };
         }
 
-        private static string[] SplitComma(string arg) {
-            return Common.Split(arg, ',');
+        private static string[] SplitComma(string arg, int skip = 0) {
+            return Common.Split(arg, ',', skip);
         }
 
         private static TransformConfigurationElement Elipse(string arg) {
@@ -712,6 +740,14 @@ namespace Transformalize.Main.Transform {
                     }
                 }
             }
+            return element;
+        }
+
+        private static TransformConfigurationElement Tag(string arg) {
+            var split = SplitComma(arg).ToList();
+            Guard.Against(split.Count < 2, "The tag method requires at least 2 parameters: the tag (aka element name), and a parameter (which becomes an attribute of the tag/element).  With {0}, You passed in {1} parameter{2}.", arg, split.Count, split.Count.Plural());
+            var element = Parameters("tag", arg, 1);
+            element.Tag = split[0];
             return element;
         }
     }

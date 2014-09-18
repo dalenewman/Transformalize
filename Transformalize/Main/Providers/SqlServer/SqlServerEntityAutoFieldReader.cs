@@ -44,11 +44,10 @@ namespace Transformalize.Main.Providers.SqlServer {
 
             using (var cn = connection.GetConnection()) {
                 cn.Open();
-                var cmd = cn.CreateCommand();
-                cmd.CommandText = PrepareSql();
-                cmd.CommandType = CommandType.Text;
+                var sql = PrepareSql();
+                _log.Debug(sql);
 
-                var results = cn.Query(PrepareSql(), new { name, schema });
+                var results = cn.Query(sql, new { name, schema });
 
                 foreach (var result in results) {
                     var columnName = result.COLUMN_NAME;

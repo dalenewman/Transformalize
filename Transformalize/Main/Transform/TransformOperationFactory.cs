@@ -27,6 +27,7 @@ using Transformalize.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.NLog;
+using Transformalize.Libs.NVelocity.App;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Parameters;
@@ -85,6 +86,15 @@ namespace Transformalize.Main {
                 var simpleType = Common.ToSimpleType(element.RunType.Equals(Common.DefaultValue) ? "boolean" : element.RunType);
                 var value = Common.ConversionMap[simpleType](element.RunValue);
                 shouldRun = row => Common.CompareMap[op](row[element.RunField], value);
+            }
+
+            var templates = new Dictionary<string, Template>();
+            foreach (TransformTemplateConfigurationElement template in element.Templates) {
+                if (!_process.Templates.ContainsKey(template.Name)) {
+                    throw new TransformalizeException("Invalid template reference: {0}", template.Name);
+                }
+                templates[template.Name] = _process.Templates[template.Name];
+                _process.Templates[template.Name].IsUsedInPipeline = true;
             }
 
             switch (element.Method.ToLower()) {
@@ -373,24 +383,35 @@ namespace Transformalize.Main {
                         parameters
                     ) { ShouldRun = shouldRun };
 
-
                 case "template":
-
-                    var templates = new Dictionary<string, Template>();
-                    foreach (TransformTemplateConfigurationElement template in element.Templates) {
-                        if (!_process.Templates.ContainsKey(template.Name)) {
-                            throw new TransformalizeException("Invalid template reference: {0}", template.Name);
-                        }
-                        templates[template.Name] = _process.Templates[template.Name];
-                        _process.Templates[template.Name].IsUsedInPipeline = true;
-                    }
-
-                    return new TemplateOperation(
+                    return new RazorOperation(
                         outKey,
                         outType,
                         element.Template,
                         element.Model,
                         templates,
+                        parameters
+                    ) { ShouldRun = shouldRun };
+
+                case "razor":
+                    goto case "template";
+
+                case "velocity":
+                    if (!_process.VelocityInitialized) {
+                        Velocity.Init();
+                    }
+                    return new VelocityOperation(
+                        outKey,
+                        outType,
+                        element.Template,
+                        templates,
+                        parameters
+                    ) { ShouldRun = shouldRun };
+
+                case "tag":
+                    return new TagOperation(
+                        outKey,
+                        element.Tag,
                         parameters
                     ) { ShouldRun = shouldRun };
 

@@ -28,6 +28,9 @@ using Transformalize.Extensions;
 using Transformalize.Libs.Dapper;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Ninject;
+using Transformalize.Libs.NLog.Config;
+using Transformalize.Libs.NLog.Targets;
+using Transformalize.Libs.NLog.Targets.Wrappers;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Providers;
@@ -132,6 +135,8 @@ namespace Transformalize.Main {
             set { _logList = value; }
         }
 
+        public bool VelocityInitialized { get; set; }
+
         //constructor
         public Process(string name = "") {
             Name = name;
@@ -151,7 +156,7 @@ namespace Transformalize.Main {
             return false;
         }
 
-        private AbstractProcessRunner GetRunner() {
+        private IProcessRunner GetRunner() {
             switch (Mode) {
                 case "init":
                     return new InitializeRunner();
@@ -389,5 +394,6 @@ namespace Transformalize.Main {
         public bool IsInitMode() {
             return Mode.Equals("init", StringComparison.OrdinalIgnoreCase);
         }
+
     }
 }

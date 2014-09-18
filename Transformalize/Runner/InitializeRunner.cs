@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -9,13 +8,11 @@ using Transformalize.Processes;
 using Process = Transformalize.Main.Process;
 
 namespace Transformalize.Runner {
-    public class InitializeRunner : AbstractProcessRunner, IDisposable {
+    public class InitializeRunner : IProcessRunner {
 
         private readonly Logger _log = LogManager.GetLogger("tfl");
 
-        public override IEnumerable<Row> Run(ref Process process) {
-
-            SetLog(ref process);    
+        public IEnumerable<Row> Run(ref Process process) {
 
             var result = Enumerable.Empty<Row>();
 

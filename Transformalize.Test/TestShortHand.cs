@@ -508,6 +508,15 @@ namespace Transformalize.Test {
         }
 
         [Test]
+        public void Velocity() {
+            const string expression = "v(#set( $x = $theParameter.PadLeft(5))$x plus more text,theParameter";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("velocity", result.Method);
+            Assert.AreEqual("#set( $x = $theParameter.PadLeft(5))$x plus more text", result.Template);
+            Assert.AreEqual("theParameter", result.Parameter);
+        }
+
+        [Test]
         public void TitleCase() {
             const string expression = "tc";
             var result = ShortHandFactory.Interpret(expression);
@@ -574,6 +583,26 @@ namespace Transformalize.Test {
             Assert.AreEqual("p1", result.Fields[0].Name);
             Assert.AreEqual("p2", result.Fields[1].Name);
             Assert.AreEqual("p3", result.Fields[2].Name);
+        }
+
+        [Test]
+        public void Tag() {
+            const string expression = "tag(a,field1,content=stuff,target=field2";
+            var result = ShortHandFactory.Interpret(expression);
+            Assert.AreEqual("tag", result.Method);
+            Assert.AreEqual("a", result.Tag);
+
+            Assert.AreEqual(string.Empty, result.Parameters[0].Name);
+            Assert.AreEqual("field1", result.Parameters[0].Field);
+            Assert.AreEqual(string.Empty, result.Parameters[0].Value);
+
+            Assert.AreEqual("content", result.Parameters[1].Name);
+            Assert.AreEqual("stuff", result.Parameters[1].Field);
+            Assert.AreEqual("stuff", result.Parameters[1].Value);
+
+            Assert.AreEqual("target", result.Parameters[2].Name);
+            Assert.AreEqual("field2", result.Parameters[2].Field);
+            Assert.AreEqual("field2", result.Parameters[2].Value);
         }
 
     }

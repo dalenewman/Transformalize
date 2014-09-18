@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Specialized;
 using System.IO;
 using Transformalize.Main;
@@ -40,5 +39,6 @@ namespace Transformalize.Configuration {
 
             return new ProcessConfigurationReader(_resource);
         }
+
     }
 }

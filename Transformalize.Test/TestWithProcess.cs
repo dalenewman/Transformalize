@@ -40,9 +40,11 @@ namespace Transformalize.Test {
 
         private readonly Mock<IOperation> _entityKeysExtract;
         private static readonly ProcessConfigurationElement Element = new ProcessConfigurationReader("Test").Read()[0];
-        private readonly Process _process = new ProcessReader(Element, new Options()).Read();
+        private readonly Process _process;
 
         public TestWithProcess() {
+            var options = new Options();
+            _process = new ProcessReader(Element, ref options).Read();
             _entityKeysExtract = new Mock<IOperation>();
             _entityKeysExtract.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row> {
                 new Row { {"OrderDetailKey", 1} },
@@ -157,7 +159,7 @@ LEFT OUTER JOIN TestCustomer ON (d.[CustomerKey] = TestCustomer.[CustomerKey])
 LEFT OUTER JOIN TestProduct ON (d.[ProductKey] = TestProduct.[ProductKey])
 ;", actual);
 
-            
+
         }
     }
 }

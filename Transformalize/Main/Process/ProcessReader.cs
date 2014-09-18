@@ -28,7 +28,10 @@ using Transformalize.Configuration;
 using Transformalize.Extensions;
 using Transformalize.Libs.Ninject;
 using Transformalize.Libs.NLog;
+using Transformalize.Libs.NLog.Config;
 using Transformalize.Libs.NLog.Targets;
+using Transformalize.Libs.NLog.Targets.Wrappers;
+using Transformalize.Libs.NVelocity.App;
 using Transformalize.Libs.RazorEngine;
 using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.File;
@@ -45,7 +48,7 @@ namespace Transformalize.Main {
         private Process _process;
         private readonly string[] _transformToFields = new[] { "fromxml", "fromregex", "fromjson", "fromsplit" };
 
-        public ProcessReader(ProcessConfigurationElement process, Options options) {
+        public ProcessReader(ProcessConfigurationElement process, ref Options options) {
             AddShortHandTransforms(process);
             _element = Adapt(process, _transformToFields);
             _processName = process.Name;
@@ -90,11 +93,20 @@ namespace Transformalize.Main {
                 _process.OutputConnection = _process.Connections["output"];
             }
 
+            //logs set after connections, because they may depend on them
+            LoadLogConfiguration(_element, ref _process);
+            SetLog(ref _process);
+
             _process.Scripts = new ScriptReader(_element.Scripts).Read();
             _process.Actions = new ActionReader(_process).Read(_element.Actions);
             _process.Templates = new TemplateReader(_process, _element.Templates).Read();
             _process.SearchTypes = new SearchTypeReader(_element.SearchTypes).Read();
             new MapLoader(ref _process, _element.Maps).Load();
+
+            if (_process.Templates.Any(t => t.Value.Engine.Equals("velocity", StringComparison.OrdinalIgnoreCase))) {
+                Velocity.Init();
+                _process.VelocityInitialized = true;
+            }
 
             //these depend on the shared process properties
             new EntitiesLoader(ref _process, _element.Entities).Load();
@@ -104,60 +116,122 @@ namespace Transformalize.Main {
             new ProcessOperationsLoader(ref _process, _element.CalculatedFields).Load();
             new EntityRelationshipLoader(ref _process).Load();
 
-            LoadLogConfiguration(_process.Options);
-
             Summarize();
 
             return _process;
         }
 
-        private void LoadLogConfiguration(Options options) {
+        private static void LoadLogConfiguration(ProcessConfigurationElement element, ref Process process) {
 
-            _process.LogRows = _element.Log.Rows;
+            process.LogRows = element.Log.Rows;
 
-            if (options.MemoryTarget != null) {
-                _process.Log.Add(new Log {
+            if (element.Log.Count == 0)
+                return;
+
+            if (process.Options.MemoryTarget != null) {
+                process.Log.Add(new Log {
                     Provider = ProviderType.Internal,
                     Name = "memory",
-                    MemoryTarget = options.MemoryTarget,
-                    Level = options.LogLevel
+                    MemoryTarget = process.Options.MemoryTarget,
+                    Level = process.Options.LogLevel
                 });
             }
 
-            if (_element.Log.Count <= 0)
-                return;
-
-            foreach (LogConfigurationElement element in _element.Log) {
+            foreach (LogConfigurationElement logElement in element.Log) {
                 var log = new Log {
-                    Name = element.Name,
-                    Subject = element.Subject,
-                    From = element.From,
-                    To = element.To,
-                    Layout = element.Layout,
-                    File = element.File
+                    Name = logElement.Name,
+                    Subject = logElement.Subject,
+                    From = logElement.From,
+                    To = logElement.To,
+                    Layout = logElement.Layout,
+                    File = logElement.File
                 };
 
-                if (element.Connection != Common.DefaultValue) {
-                    if (_process.Connections.ContainsKey(element.Connection)) {
-                        log.Connection = _process.Connections[element.Connection];
+                if (logElement.Connection != Common.DefaultValue) {
+                    if (process.Connections.ContainsKey(logElement.Connection)) {
+                        log.Connection = process.Connections[logElement.Connection];
                         if (log.Connection.Type == ProviderType.File && log.File.Equals(Common.DefaultValue)) {
                             log.File = log.Connection.File;
                         }
                     } else {
-                        throw new TransformalizeException("You are referencing an invalid connection name in your log configuration.  {0} is not confiured in <connections/>.", element.Connection);
+                        throw new TransformalizeException("You are referencing an invalid connection name in your log configuration.  {0} is not confiured in <connections/>.", logElement.Connection);
                     }
                 }
 
                 try {
-                    log.Level = LogLevel.FromString(element.LogLevel);
-                    log.Provider = (ProviderType)Enum.Parse(typeof(ProviderType), element.Provider, true);
+                    log.Level = LogLevel.FromString(logElement.LogLevel);
+                    log.Provider = (ProviderType)Enum.Parse(typeof(ProviderType), logElement.Provider, true);
                 } catch (Exception ex) {
                     throw new TransformalizeException("Log configuration invalid. {0}", ex.Message);
                 }
-                _process.Log.Add(log);
-
+                process.Log.Add(log);
             }
         }
+
+        public void SetLog(ref Process process) {
+
+            if (process.Log.Count > 0) {
+                var config = new LoggingConfiguration();
+
+                foreach (var log in process.Log) {
+                    switch (log.Provider) {
+                        case ProviderType.Console:
+                            //console
+                            var consoleTarget = new ColoredConsoleTarget {
+                                Name = log.Name,
+                                Layout = log.Layout.Equals(Common.DefaultValue) ? @"${date:format=HH\:mm\:ss} | ${level} | " + process.Name + " | ${gdc:item=entity} | ${message}" : log.Layout
+                            };
+                            var consoleRule = new LoggingRule("tfl", log.Level, consoleTarget);
+                            config.AddTarget(log.Name, consoleTarget);
+                            config.LoggingRules.Add(consoleRule);
+                            break;
+                        case ProviderType.File:
+                            var fileTarget = new AsyncTargetWrapper(new FileTarget {
+                                Name = log.Name,
+                                FileName = log.File.Equals(Common.DefaultValue) ? "${basedir}/logs/tfl-" + process.Name + "-${date:format=yyyy-MM-dd}.log" : log.File,
+                                Layout = log.Layout.Equals(Common.DefaultValue) ? @"${date:format=HH\:mm\:ss} | ${level} | " + process.Name + " | ${gdc:item=entity} | ${message}" : log.Layout
+                            });
+                            var fileRule = new LoggingRule("tfl", log.Level, fileTarget);
+                            config.AddTarget(log.Name, fileTarget);
+                            config.LoggingRules.Add(fileRule);
+                            break;
+                        case ProviderType.Internal:
+                            var memoryRule = new LoggingRule("tfl", log.Level, log.MemoryTarget);
+                            config.LoggingRules.Add(memoryRule);
+                            break;
+                        case ProviderType.Mail:
+                            if (log.Connection == null) {
+                                throw new TransformalizeException("The mail logger needs to reference a mail connection in <connections/> collection.");
+                            }
+                            var mailTarget = new MailTarget {
+                                Name = log.Name,
+                                SmtpPort = log.Connection.Port.Equals(0) ? 25 : log.Connection.Port,
+                                SmtpUserName = log.Connection.User,
+                                SmtpPassword = log.Connection.Password,
+                                SmtpServer = log.Connection.Server,
+                                EnableSsl = log.Connection.EnableSsl,
+                                Subject = log.Subject.Equals(Common.DefaultValue) ? "Tfl Error (" + process.Name + ")" : log.Subject,
+                                From = log.From,
+                                To = log.To,
+                                Layout = log.Layout.Equals(Common.DefaultValue) ? @"${date:format=HH\:mm\:ss} | ${level} | ${gdc:item=entity} | ${message}" : log.Layout
+                            };
+                            var mailRule = new LoggingRule("tfl", LogLevel.Error, mailTarget);
+                            config.AddTarget(log.Name, mailTarget);
+                            config.LoggingRules.Add(mailRule);
+                            break;
+                        default:
+                            throw new TransformalizeException("Log does not support {0} provider.", log.Provider);
+                    }
+                }
+
+                LogManager.Configuration = config;
+            }
+
+            GlobalDiagnosticsContext.Set("process", Common.LogLength(process.Name));
+            GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
+        }
+
+
 
         private static ProcessConfigurationElement Adapt(ProcessConfigurationElement process, IEnumerable<string> transformToFields) {
 

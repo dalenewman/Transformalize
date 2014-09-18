@@ -34,13 +34,11 @@ using Process = Transformalize.Main.Process;
 
 namespace Transformalize.Runner {
 
-    public class ProcessRunner : AbstractProcessRunner, IDisposable {
+    public class ProcessRunner : IProcessRunner {
 
         private readonly Logger _log = LogManager.GetLogger("tfl");
 
-        public override IEnumerable<Row> Run(ref Process process) {
-
-            SetLog(ref process);
+        public IEnumerable<Row> Run(ref Process process) {
 
             var timer = new Stopwatch();
             timer.Start();

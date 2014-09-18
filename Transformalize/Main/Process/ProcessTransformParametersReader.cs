@@ -61,8 +61,9 @@ namespace Transformalize.Main {
                         var name = string.IsNullOrEmpty(p.Name) ? field.Alias : p.Name;
                         parameters.Add(field.Alias, name, null, field.Type);
                     } else {
-                        _log.Warn("A {0} transform references {1}, but I can't find the definition for {1}.\r\nYou may need to define the entity attribute in the parameter element.\r\nOr, set the output attribute to true in the field element. Process transforms rely on fields being output.\r\nOne other possibility is that the partipates in a relationship with another field with the same name and Tfl doesn't know which one you want.  If that's the case, you have to alias one of them.", transform.Method, p.Field);
-                        parameters.Add(p.Name, p.Name, p.Value, p.Type);
+                        _log.Warn("A {0} transform references {1}, but I can't find the definition for {1}.\r\nYou may need to define the entity attribute in the parameter element.\r\nOr, set the output attribute to true in the field element. Process transforms rely on fields being output.\r\nOne other possibility is that the participates in a relationship with another field with the same name and Transformalize doesn't know which one you want.  If that's the case, you have to alias one of them.", transform.Method, p.Field);
+                        var name = p.Name.Equals(string.Empty) ? p.Field : p.Name;
+                        parameters.Add(p.Field, name, p.HasValue() ? p.Value : null, p.Type);
                     }
                 } else {
                     parameters.Add(p.Name, p.Name, p.Value, p.Type);

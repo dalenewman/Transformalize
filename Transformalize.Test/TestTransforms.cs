@@ -28,6 +28,7 @@ using NUnit.Framework;
 using Transformalize.Configuration.Builders;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.NLog;
+using Transformalize.Libs.NVelocity.App;
 using Transformalize.Main;
 using Transformalize.Main.Parameters;
 using Transformalize.Main.Providers;
@@ -1055,17 +1056,86 @@ namespace Transformalize.Test {
             var input = new RowsBuilder().Row("input", 2).Field("out", "").ToOperation();
             var templates = new List<KeyValuePair<string, Template>>();
             var parameters = new ParametersBuilder().Parameter("x", 3).Parameter("input").ToParameters();
-            var templateOperation = new TemplateOperation("out", "string", "@{var result = Model.input * Model.x;}@result", "dynamic", templates, parameters);
+            var templateOperation = new RazorOperation("out", "string", "@{var result = Model.input * Model.x;}@result", "dynamic", templates, parameters);
             var output = TestOperation(input, templateOperation);
             Assert.AreEqual("6", output[0]["out"]);
         }
 
         [Test]
+        public void TemplateNVelocity() {
+            Velocity.Init();
+            var input = new RowsBuilder()
+                .Row("input", 2).Field("out", "")
+                .Row("input", 4).Field("out", "")
+                .ToOperation();
+            var templates = new List<KeyValuePair<string, Template>>();
+            var parameters = new ParametersBuilder().Parameter("x", 3).Parameter("input").ToParameters();
+            var velocityOperation = new VelocityOperation("out", "string", "#set($result = $input * $x)\r\n$result", templates, parameters);
+            var output = TestOperation(input, velocityOperation);
+            Assert.AreEqual("6", output[0]["out"]);
+            Assert.AreEqual("12", output[1]["out"]);
+        }
+
+        [Test]
+        public void TemplateNVelocityIf() {
+            Velocity.Init();
+            var input = new RowsBuilder()
+                .Row("input", true)
+                .Row("output", "")
+                .ToOperation();
+            var templates = new List<KeyValuePair<string, Template>>();
+            var parameters = new ParametersBuilder()
+                .Parameter("input")
+                .ToParameters();
+            var velocityOperation = new VelocityOperation("output", "string", @"#if($input)
+It is True#else
+It is False#end", templates, parameters);
+            var output = TestOperation(input, velocityOperation);
+            Assert.AreEqual("It is True", output[0]["output"]);
+        }
+
+        [Test]
+        public void Tag() {
+            var input = new RowsBuilder()
+                .Row("input", 2).Field("another","thing").Field("out", "")
+                .Row("input", 4).Field("another","element").Field("out", "")
+                .ToOperation();
+            var parameters = new ParametersBuilder()
+                .Parameter("x", 3)
+                .Parameter("input")
+                .Parameter("another")
+                .ToParameters();
+            var tagOperation = new TagOperation("out","a", parameters);
+            var output = TestOperation(input, tagOperation);
+
+            Assert.AreEqual("<a x=\"3\" input=\"2\" another=\"thing\" />", output[0]["out"]);
+            Assert.AreEqual("<a x=\"3\" input=\"4\" another=\"element\" />", output[1]["out"]);
+        }
+
+        [Test]
+        public void TagWithContentAndEntities() {
+            var input = new RowsBuilder()
+                .Row("input", 2).Field("another", "&amp;thing").Field("out", "")
+                .Row("input", 4).Field("another", "element").Field("out", "")
+                .ToOperation();
+            var parameters = new ParametersBuilder()
+                .Parameter("x", 3)
+                .Parameter("content","it wants & needs it")
+                .Parameter("input")
+                .Parameter("another")
+                .ToParameters();
+            var tagOperation = new TagOperation("out", "a", parameters);
+            var output = TestOperation(input, tagOperation);
+
+            Assert.AreEqual("<a x=\"3\" input=\"2\" another=\"&amp;thing\">it wants &amp; needs it</a>", output[0]["out"]);
+            Assert.AreEqual("<a x=\"3\" input=\"4\" another=\"element\">it wants &amp; needs it</a>", output[1]["out"]);
+        }
+        [Test]
         public void TemplateInt() {
             var input = new RowsBuilder().Row("input", 2).Field("out", "").ToOperation();
             var templates = new List<KeyValuePair<string, Template>>();
             var parameters = new ParametersBuilder().Parameter("x", 3).Parameter("input").ToParameters();
-            var templateOperation = new TemplateOperation("out", "int", "@{var result = Model.input * Model.x;}@result", "dynamic", templates, parameters);
+            var templateOperation = new RazorOperation("out", "int", "@{var result = Model.input * Model.x;}@result", "dynamic", templates, parameters);
             var output = TestOperation(input, templateOperation);
             Assert.AreEqual(6, output[0]["out"]);
         }

@@ -22,8 +22,11 @@
 
 using System.Collections.Generic;
 using System.IO;
+using System.Web.WebSockets;
 using Transformalize.Configuration;
 using Transformalize.Libs.NLog;
+using Transformalize.Libs.NVelocity;
+using Transformalize.Libs.NVelocity.App;
 using Transformalize.Libs.RazorEngine;
 using Transformalize.Libs.RazorEngine.Configuration.Fluent;
 using Transformalize.Libs.RazorEngine.Templating;
@@ -56,12 +59,14 @@ namespace Transformalize.Main {
         public Encoding ContentType { get; private set; }
         public bool IsUsedInPipeline { get; set; }
         public bool Conditional { get; set; }
+        public string Engine { get; set; }
 
         public Template(Process process, TemplateConfigurationElement element, Contents contents) {
 
             Cache = element.Cache;
             Enabled = element.Enabled;
             Conditional = element.Conditional;
+            Engine = element.Engine;
             Name = element.Name;
             ContentType = element.ContentType.Equals("raw") ? Encoding.Raw : Encoding.Html;
             Contents = contents;
@@ -110,14 +115,27 @@ namespace Transformalize.Main {
                 return string.Empty;
             }
 
-            var config = new FluentTemplateServiceConfiguration(c => c.WithEncoding(ContentType));
-            var templateService = new TemplateService(config);
-            Razor.SetTemplateService(templateService);
+            string renderedContent;
+            if (Engine.Equals("velocity")) {
+                var context = new VelocityContext();
+                context.Put("Process", _process);
+                foreach (var parameter in Parameters) {
+                    context.Put(parameter.Value.Name, parameter.Value.Value);
+                }
+                using (var sw = new StringWriter()) {
+                    Velocity.Evaluate(context, sw, string.Empty, Contents.Content);
+                    renderedContent = sw.GetLifetimeService().ToString();
+                }
+            } else {
+                var config = new FluentTemplateServiceConfiguration(c => c.WithEncoding(ContentType));
+                var templateService = new TemplateService(config);
+                Razor.SetTemplateService(templateService);
 
-            var renderedContent = Razor.Parse(Contents.Content, new {
-                Process = _process,
-                Parameters = Parameters.ToExpandoObject()
-            });
+                renderedContent = Razor.Parse(Contents.Content, new {
+                    Process = _process,
+                    Parameters = Parameters.ToExpandoObject()
+                });
+            }
 
             _log.Debug("Rendered {0} template.", Name);
             return renderedContent;

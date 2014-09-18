@@ -245,7 +245,7 @@ namespace Transformalize.Main.Providers.SqlServer {
         }
 
         public override Fields GetEntitySchema(Process process, Entity entity, bool isMaster = false) {
-            return new SqlServerEntityAutoFieldReader().Read(entity, isMaster);
+            return new SqlServerEntityAutoFieldReader().Read(this, entity.ProcessName, entity.Prefix, entity.Name, entity.Schema, isMaster);
         }
 
         public override IOperation Delete(Entity entity) {

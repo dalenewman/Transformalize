@@ -113,6 +113,7 @@ namespace Transformalize.Configuration {
         private const string URL = "url";
         private const string DATA = "data";
         private const string CONTENT_TYPE = "content-type";
+        private const string TAG = "tag";
 
         [ConfigurationProperty(METHOD, IsRequired = true)]
         public string Method {
@@ -576,6 +577,12 @@ namespace Transformalize.Configuration {
         public bool UseHttps {
             get { return (bool)this[USE_HTTPS]; }
             set { this[USE_HTTPS] = value; }
+        }
+
+        [ConfigurationProperty(TAG, IsRequired = false, DefaultValue = "")]
+        public string Tag {
+            get { return this[TAG] as string; }
+            set { this[TAG] = value; }
         }
 
         public bool IsShortHand { get; set; }

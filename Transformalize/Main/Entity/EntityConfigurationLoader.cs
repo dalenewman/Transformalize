@@ -70,8 +70,17 @@ namespace Transformalize.Main {
 
             GuardAgainstInvalidGrouping(element, entity);
             GuardAgainstMissingPrimaryKey(element);
-            GuardAgainstNoFields(element, entityIndex, entity);
 
+            // wire up connections
+            if (!string.IsNullOrEmpty(element.Connection) && _process.Connections.ContainsKey(element.Connection)) {
+                var connection = _process.Connections[element.Connection];
+                entity.Input.Add(new NamedConnection() { Connection = connection, Name = connection.Name });
+            }
+
+            //needs an input connection
+            GuardAgainstMissingFields(element, entity, entityIndex);
+
+            //fields
             short autoIndex = 0;
 
             foreach (FieldConfigurationElement f in element.Fields) {
@@ -109,13 +118,8 @@ namespace Transformalize.Main {
                 autoIndex++;
             }
 
+            //depend on fields
             LoadVersion(element, entity);
-
-            // wire up connections
-            if (!string.IsNullOrEmpty(element.Connection) && _process.Connections.ContainsKey(element.Connection)) {
-                var connection = _process.Connections[element.Connection];
-                entity.Input.Add(new NamedConnection() { Connection = connection, Name = connection.Name });
-            }
             entity.Input.AddRange(PrepareIo(element.Input, entity.Fields));
             entity.Output = PrepareIo(element.Output, entity.Fields);
 
@@ -141,14 +145,17 @@ namespace Transformalize.Main {
             return threading;
         }
 
-        private void GuardAgainstNoFields(EntityConfigurationElement element, short entityIndex, Entity entity) {
+        private void GuardAgainstMissingFields(EntityConfigurationElement element, Entity entity, short entityIndex) {
             if (_process.Mode != "metadata" && element.Fields.Count == 0 && _process.Connections.ContainsKey(element.Connection)) {
                 try {
                     _log.Info("Detecting fields.");
                     var connection = _process.Connections[element.Connection];
-                    var fields = connection.GetEntitySchema(_process, entity, isMaster: entityIndex == 0);
+                    var fields = connection.GetEntitySchema( _process, entity, entityIndex == 0);
                     if (fields.Any()) {
                         foreach (var field in fields) {
+                            if (String.IsNullOrEmpty(field.Label) || field.Label.Equals(field.Alias)) {
+                                field.Label = MetaDataWriter.AddSpacesToSentence(field.Alias, true).Replace("_", " ");
+                            }
                             var f = new FieldConfigurationElement {
                                 Type = field.Type,
                                 Length = field.Length,
@@ -158,17 +165,18 @@ namespace Transformalize.Main {
                                 Name = field.Name,
                                 Input = true,
                                 Precision = field.Precision,
-                                Scale = field.Scale
+                                Scale = field.Scale,
+                                Label = field.Label
                             };
                             element.Fields.Add(f);
                         }
                         _log.Info("Detected {0} fields.", fields.Count);
                     }
                 } catch (Exception ex) {
-                    throw new TransformalizeException("No fields defined.  Unable to detect them. {0}", ex.Message);
+                    throw new TransformalizeException("No fields defined.  Unable to detect them for {0}. {1}", entity.Name, ex.Message);
                 } finally {
                     if (element.Fields.Count == 0) {
-                        throw new TransformalizeException("No fields defined.  Unable to detect them.");
+                        throw new TransformalizeException("No fields defined.  Unable to detect them for {0}.", entity.Name);
                     }
                 }
             }

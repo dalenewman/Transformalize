@@ -206,33 +206,40 @@ namespace Transformalize.Main {
         }
 
         public Fields FindByParamater(ParameterConfigurationElement element) {
-            if (element.Entity != string.Empty) {
-                if (Storage.Any(f => f.Alias.Equals(element.Field, Ic) && f.Entity.Equals(element.Entity, Ic))) {
-                    return new Fields(Storage.Where(f => f.Alias.Equals(element.Field, Ic) && f.Entity.Equals(element.Entity, Ic)));
-                }
-                if (Storage.Any(f => f.Name.Equals(element.Field, Ic) && f.Entity.Equals(element.Entity, Ic))) {
-                    return new Fields(Storage.Where(f => f.Name.Equals(element.Field, Ic) && f.Entity.Equals(element.Entity, Ic)));
-                }
-                if (!element.Field.StartsWith("tfl", Ic)) {
-                    throw new TransformalizeException("Can not find parameter with entity '{0}' and field name (or alias) of '{1}'.", element.Entity, element.Field);
-                }
+            if (HaveField(element.Entity, element.Field)) {
+                return Find(element.Entity, element.Field);
             }
-
-            if (Storage.Any(f => f.Alias.Equals(element.Field, Ic) || f.Name.Equals(element.Field, Ic))) {
-                return new Fields(Storage.First(f => f.Alias.Equals(element.Field, Ic) || f.Name.Equals(element.Field, Ic)));
-            }
-            if (!element.Field.StartsWith("tfl", Ic)) {
-                throw new TransformalizeException("Can not find parameter with name (or alias) of '{0}'.", element.Field);
-            }
-            return new Fields(new Field(element.Type, "128", FieldType.NonKey, false, element.Value) { Name = element.Field.Equals(string.Empty) ? element.Name : element.Field });
+            return new Fields();
         }
 
         public bool HaveField(string nameOrAlias) {
             return Storage.Any(f => f.Alias.Equals(nameOrAlias, Ic) || f.Name.Equals(nameOrAlias, Ic));
         }
 
+        public bool HaveField(string entity, string nameOrAlias) {
+            if (entity.Equals(string.Empty)) {
+                return HaveField(nameOrAlias);
+            }
+            return Storage.Any(
+                f => f.Entity.Equals(entity, Ic) && f.Alias.Equals(nameOrAlias, Ic) ||
+                     f.Entity.Equals(entity, Ic) && f.Name.Equals(nameOrAlias, Ic)
+            );
+        }
+
         public Fields Find(string nameOrAlias) {
             return new Fields(Storage.Where(f => f.Alias.Equals(nameOrAlias, Ic) || f.Name.Equals(nameOrAlias, Ic)));
+        }
+
+        public Fields Find(string entity, string nameOrAlias) {
+            if (entity.Equals(string.Empty)) {
+                return Find(nameOrAlias);
+            }
+            return new Fields(
+                Storage.Where(
+                    f => f.Entity.Equals(entity, Ic) && f.Alias.Equals(nameOrAlias, Ic) ||
+                         f.Entity.Equals(entity, Ic) && f.Name.Equals(nameOrAlias, Ic)
+                )
+            );
         }
 
         public Field First() {

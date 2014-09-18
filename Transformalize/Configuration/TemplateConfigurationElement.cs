@@ -32,6 +32,7 @@ namespace Transformalize.Configuration {
         private const string CACHE = "cache";
         private const string ENABLED = "enabled";
         private const string CONDITIONAL = "conditional";
+        private const string ENGINE = "engine";
 
         [ConfigurationProperty(CONDITIONAL, IsRequired = false, DefaultValue = false)]
         public bool Conditional {
@@ -43,6 +44,12 @@ namespace Transformalize.Configuration {
         public string Name {
             get { return this[NAME] as string; }
             set { this[NAME] = value; }
+        }
+
+        [ConfigurationProperty(ENGINE, IsRequired = false, DefaultValue = "razor")]
+        public string Engine {
+            get { return this[ENGINE] as string; }
+            set { this[ENGINE] = value; }
         }
 
         [ConfigurationProperty(FILE, IsRequired = true)]

@@ -11,13 +11,11 @@ using Process = Transformalize.Main.Process;
 
 namespace Transformalize.Runner {
 
-    public class MetadataRunner : AbstractProcessRunner, IDisposable {
+    public class MetadataRunner : IProcessRunner {
 
         private readonly Logger _log = LogManager.GetLogger("tfl");
 
-        public override IEnumerable<Row> Run(ref Process process) {
-
-            SetLog(ref process);
+        public IEnumerable<Row> Run(ref Process process) {
 
             var result = Enumerable.Empty<Row>();
 

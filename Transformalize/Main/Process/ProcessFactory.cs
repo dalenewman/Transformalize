@@ -2,35 +2,33 @@
 using System.IO;
 using Transformalize.Configuration;
 using Transformalize.Libs.NLog;
+using Transformalize.Libs.NLog.Config;
 
 namespace Transformalize.Main {
 
     public static class ProcessFactory {
 
-        private static readonly Logger Log = LogManager.GetLogger("tfl");
-
         public static Process[] Create(string resource, Options options = null) {
-            InitializeLogger("All");
+            InitializeLogger("All", options);
             var element = new ConfigurationFactory(resource).Create();
             return Create(element, options);
         }
 
         public static Process[] Create(ProcessConfigurationElement element, Options options = null) {
-            InitializeLogger(element.Name);
+            InitializeLogger(element.Name, options);
             return Create(new ProcessElementCollection() { element }, options);
         }
 
-        public static Process[] Create(ProcessElementCollection elements, Options options = null) {
+        private static Process[] Create(ProcessElementCollection elements, Options options = null) {
 
             var processes = new List<Process>();
+            if (options == null) {
+                options = new Options();
+            }
 
             foreach (ProcessConfigurationElement element in elements) {
-                InitializeLogger(element.Name);
-
-                options = options ?? new Options();
                 var collected = Collect(element);
-
-                processes.Add(new ProcessReader(collected, options).Read());
+                processes.Add(new ProcessReader(collected, ref options).Read());
             }
 
             return processes.ToArray();
@@ -45,7 +43,11 @@ namespace Transformalize.Main {
             return child;
         }
 
-        private static void InitializeLogger(string name) {
+        private static void InitializeLogger(string name, Options options) {
+            if (options != null && options.MemoryTarget != null) {
+                SimpleConfigurator.ConfigureForTargetLogging(options.MemoryTarget, options.LogLevel);
+            }
+            GlobalDiagnosticsContext.Set("process", Common.LogLength(name));
             GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
         }
 

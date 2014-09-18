@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using Transformalize.Libs.Jint.Native.String;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 using Transformalize.Main.Parameters;
@@ -30,7 +28,7 @@ namespace Transformalize.Operations.Transform {
                     sb.Clear();
                     StringBuilders.PutObject(sb);
                 } else {
-                    Interlocked.Increment(ref SkipCount);
+                    Skip();
                 }
                 yield return row;
             }
