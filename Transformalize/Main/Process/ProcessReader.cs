@@ -46,10 +46,10 @@ namespace Transformalize.Main {
         private readonly Options _options;
         private readonly string _processName = string.Empty;
         private Process _process;
-        private readonly string[] _transformToFields = new[] { "fromxml", "fromregex", "fromjson", "fromsplit" };
+        private readonly string[] _transformToFields = { "fromxml", "fromregex", "fromjson", "fromsplit" };
 
         public ProcessReader(ProcessConfigurationElement process, ref Options options) {
-            AddShortHandTransforms(process);
+            ShortHandFactory.ExpandShortHandTransforms(process);
             _element = Adapt(process, _transformToFields);
             _processName = process.Name;
             _options = options;
@@ -242,46 +242,6 @@ namespace Transformalize.Main {
             }
 
             return process;
-        }
-
-        /// <summary>
-        /// Converts t attribute to configuration items for the whole process
-        /// </summary>
-        /// <param name="process"></param>
-        private static void AddShortHandTransforms(ProcessConfigurationElement process) {
-            foreach (EntityConfigurationElement entity in process.Entities) {
-                foreach (FieldConfigurationElement field in entity.Fields) {
-                    AddShortHandTransforms(field);
-                }
-                foreach (FieldConfigurationElement field in entity.CalculatedFields) {
-                    AddShortHandTransforms(field);
-                }
-            }
-            foreach (FieldConfigurationElement field in process.CalculatedFields) {
-                AddShortHandTransforms(field);
-            }
-        }
-
-        /// <summary>
-        /// Converts t attribute to configuration items for one field.
-        /// </summary>
-        /// <param name="f">the field</param>
-        private static void AddShortHandTransforms(FieldConfigurationElement f) {
-            var transforms = new List<TransformConfigurationElement>(Common.Split(f.ShortHand, ';').Where(t => !string.IsNullOrEmpty(t)).Select(ShortHandFactory.Interpret));
-            var collection = new TransformElementCollection();
-            foreach (var transform in transforms) {
-                foreach (FieldConfigurationElement field in transform.Fields) {
-                    AddShortHandTransforms(field);
-                }
-                collection.Add(transform);
-            }
-            foreach (TransformConfigurationElement transform in f.Transforms) {
-                foreach (FieldConfigurationElement field in transform.Fields) {
-                    AddShortHandTransforms(field);
-                }
-                collection.Add(transform);
-            }
-            f.Transforms = collection;
         }
 
         private void Summarize() {

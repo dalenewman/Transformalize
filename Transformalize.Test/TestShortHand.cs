@@ -21,6 +21,7 @@
 #endregion
 
 using NUnit.Framework;
+using Transformalize.Configuration;
 using Transformalize.Main.Transform;
 
 namespace Transformalize.Test {
@@ -546,7 +547,7 @@ namespace Transformalize.Test {
 
         [Test]
         public void ToJsonWithLiterals() {
-            const string expression = "tj(p1,k=v,p3";
+            const string expression = "tj(p1,k:v,p3";
             var result = ShortHandFactory.Interpret(expression);
             Assert.AreEqual("tojson", result.Method);
             Assert.AreEqual("p1", result.Parameters[0].Field);
@@ -587,7 +588,7 @@ namespace Transformalize.Test {
 
         [Test]
         public void Tag() {
-            const string expression = "tag(a,field1,content=stuff,target=field2";
+            const string expression = "tag(a,field1,content:stuff,target:field2";
             var result = ShortHandFactory.Interpret(expression);
             Assert.AreEqual("tag", result.Method);
             Assert.AreEqual("a", result.Tag);
@@ -603,6 +604,36 @@ namespace Transformalize.Test {
             Assert.AreEqual("target", result.Parameters[2].Name);
             Assert.AreEqual(string.Empty, result.Parameters[2].Field);
             Assert.AreEqual("field2", result.Parameters[2].Value);
+        }
+
+        [Test]
+        public void TwoMethods() {
+            var field = new FieldConfigurationElement() {
+                Name = "test",
+                ShortHand = "left(10).right(2)"
+            };
+            ShortHandFactory.ExpandShortHandTransforms(field);
+
+            Assert.AreEqual(2,field.Transforms.Count);
+            Assert.AreEqual("left", field.Transforms[0].Method);
+            Assert.AreEqual(10, field.Transforms[0].Length);
+            Assert.AreEqual("right", field.Transforms[1].Method);
+            Assert.AreEqual(2, field.Transforms[1].Length);
+        }
+
+        [Test]
+        public void TwoMethodsShorter() {
+            var field = new FieldConfigurationElement() {
+                Name = "test",
+                ShortHand = "l(10).ri(2)"
+            };
+            ShortHandFactory.ExpandShortHandTransforms(field);
+
+            Assert.AreEqual(2, field.Transforms.Count);
+            Assert.AreEqual("left", field.Transforms[0].Method);
+            Assert.AreEqual(10, field.Transforms[0].Length);
+            Assert.AreEqual("right", field.Transforms[1].Method);
+            Assert.AreEqual(2, field.Transforms[1].Length);
         }
 
     }

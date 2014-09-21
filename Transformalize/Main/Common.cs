@@ -318,12 +318,12 @@ namespace Transformalize.Main {
             return sb.ToString();
         }
 
-        public static string[] Split(string arg, char splitter, int skip = 0) {
+        public static string[] Split(string arg, string splitter, int skip = 0) {
             if (arg.Equals(String.Empty))
                 return new string[0];
 
             var placeHolder = arg.GetHashCode().ToString(CultureInfo.InvariantCulture);
-            var split = arg.Replace("\\" + splitter, placeHolder).Split(new[] { splitter }, StringSplitOptions.None);
+            var split = arg.Replace("\\" + splitter, placeHolder).Split(new string[] { splitter }, StringSplitOptions.None);
             return split.Select(s => s.Replace(placeHolder, splitter.ToString(CultureInfo.InvariantCulture))).Skip(skip).ToArray();
         }
     }

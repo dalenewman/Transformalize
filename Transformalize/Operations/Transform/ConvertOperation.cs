@@ -13,8 +13,12 @@ namespace Transformalize.Operations.Transform {
 
         public ConvertOperation(string inKey, string inType, string outKey, string outType, string encoding, string fromFormat = "")
             : base(inKey, outKey) {
-            _outType = outType;
+            _outType = Common.ToSimpleType(outType);
             _fromFormat = fromFormat;
+
+            if (!_conversionMap.ContainsKey(_outType)) {
+                throw new TransformalizeException("Type {0} is not mapped for conversion.", _outType);
+            }
 
             if (_outType == "datetime" && !string.IsNullOrEmpty(_fromFormat)) {
                 _conversionMap[_outType] = (x => DateTime.ParseExact(x.ToString(), _fromFormat, System.Globalization.CultureInfo.InvariantCulture));

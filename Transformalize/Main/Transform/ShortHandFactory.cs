@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
@@ -181,6 +180,46 @@ namespace Transformalize.Main.Transform {
             {"velocity", Velocity},
             {"tag",Tag}
         };
+
+        /// <summary>
+        /// Converts t attribute to transforms.
+        /// </summary>
+        /// <param name="f">the field</param>
+        public static void ExpandShortHandTransforms(FieldConfigurationElement f) {
+            var transforms = new List<TransformConfigurationElement>(Common.Split(f.ShortHand, ").").Where(t => !string.IsNullOrEmpty(t)).Select(ShortHandFactory.Interpret));
+            var collection = new TransformElementCollection();
+            foreach (var transform in transforms) {
+                foreach (FieldConfigurationElement field in transform.Fields) {
+                    ExpandShortHandTransforms(field);
+                }
+                collection.Add(transform);
+            }
+            foreach (TransformConfigurationElement transform in f.Transforms) {
+                foreach (FieldConfigurationElement field in transform.Fields) {
+                    ExpandShortHandTransforms(field);
+                }
+                collection.Add(transform);
+            }
+            f.Transforms = collection;
+        }
+
+        /// <summary>
+        /// Converts t attribute to configuration items for the whole process
+        /// </summary>
+        /// <param name="process">the process</param>
+        public static void ExpandShortHandTransforms(ProcessConfigurationElement process) {
+            foreach (EntityConfigurationElement entity in process.Entities) {
+                foreach (FieldConfigurationElement field in entity.Fields) {
+                    ExpandShortHandTransforms(field);
+                }
+                foreach (FieldConfigurationElement field in entity.CalculatedFields) {
+                    ExpandShortHandTransforms(field);
+                }
+            }
+            foreach (FieldConfigurationElement field in process.CalculatedFields) {
+                ExpandShortHandTransforms(field);
+            }
+        }
 
         private static TransformConfigurationElement FromSplit(string arg) {
             var split = SplitComma(arg);
@@ -530,9 +569,9 @@ namespace Transformalize.Main.Transform {
             }
 
             foreach (ParameterConfigurationElement p in element.Parameters) {
-                if (!p.Field.Contains("="))
+                if (!p.Field.Contains(":"))
                     continue;
-                var pair = p.Field.Split(new[] { '=' });
+                var pair = p.Field.Split(new[] { ':' }, StringSplitOptions.None);
                 p.Field = string.Empty;
                 p.Name = pair[0];
                 p.Value = pair[1];
@@ -680,7 +719,7 @@ namespace Transformalize.Main.Transform {
         }
 
         private static string[] SplitComma(string arg, int skip = 0) {
-            return Common.Split(arg, ',', skip);
+            return Common.Split(arg, ",", skip);
         }
 
         private static TransformConfigurationElement Elipse(string arg) {

@@ -51,12 +51,36 @@ namespace Transformalize.Configuration {
         private const string FILE_INSPECTION = "file-inspection";
         private const string LOG = "log";
 
+        /// <summary>
+        /// A name (of your choosing) used to identify the process.
+        /// </summary>
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name {
             get { return this[NAME] as string; }
             set { this[NAME] = value; }
         }
 
+        /// <summary>
+        /// A choice between `Multithreaded`, `SingleThreaded`, and `Default`.
+        /// The default defers to the entity's PipelineThreading.
+        /// </summary>
+        [EnumConversionValidator(typeof(PipelineThreading), MessageTemplate = "{1} must be SingleThreaded, MultiThreaded, or Default.")]
+        [ConfigurationProperty(PIPELINE_THREADING, IsRequired = false, DefaultValue = "Default")]
+        public string PipelineThreading {
+            get { return this[PIPELINE_THREADING] as string; }
+            set { this[PIPELINE_THREADING] = value; }
+        }
+
+        /// <summary>
+        /// A mode reflects the intent of running the process.
+        /// Built in modes are init, and default.
+        /// 
+        /// * init wipes everything out
+        /// * default runs with default behavior, which is to move data from input to output; detecting changes along the way.
+        /// 
+        /// Aside from these, you may use any mode you want to make up, and set corresponding modes in
+        /// templates and/or actions that will run only if the mode matches.
+        /// </summary>
         [ConfigurationProperty(MODE, IsRequired = false, DefaultValue = "default")]
         public string Mode {
             get { return this[MODE] as string; }
@@ -159,13 +183,6 @@ namespace Transformalize.Configuration {
         [ConfigurationProperty(TEMPLATES)]
         public TemplateElementCollection Templates {
             get { return this[TEMPLATES] as TemplateElementCollection; }
-        }
-
-        [EnumConversionValidator(typeof(PipelineThreading), MessageTemplate = "{1} must be SingleThreaded, MultiThreaded, or Default.")]
-        [ConfigurationProperty(PIPELINE_THREADING, IsRequired = false, DefaultValue = "Default")]
-        public string PipelineThreading {
-            get { return this[PIPELINE_THREADING] as string; }
-            set { this[PIPELINE_THREADING] = value; }
         }
 
         [ConfigurationProperty(ACTIONS)]

@@ -417,6 +417,57 @@
     <Compile Include="Libs\EnterpriseLibrary\Common\Utility\StaticReflection.cs" />
     <Compile Include="Libs\EnterpriseLibrary\Common\Utility\TypeExtensions.cs" />
     <Compile Include="Libs\EnterpriseLibrary\Common\Utility\WrappedAsyncOperation.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\ConsoleLog.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\EventEntry.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\FlatFileLog.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Formatters\DefaultConsoleColorMapper.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Formatters\EventTextFormatter.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Formatters\EventTextFormatting.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Formatters\IConsoleColorMapper.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Formatters\IEventTextFormatter.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Formatters\JsonEventTextFormatter.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Formatters\PropertyNames.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Formatters\XmlEventTextFormatter.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\GlobalSuppressions.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Keywords.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\ObservableEventListener.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Observable\EventEntrySubject.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Observable\ObservableProjection.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\RollingFlatFileLog.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Schema\EventSchema.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Schema\EventSourceSchemaCache.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Schema\EventSourceSchemaReader.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\SemanticLoggingEventSource.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\SemanticLoggingEventSourceResources1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SemanticLoggingEventSourceResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\SinkSubscription.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Sinks\ConsoleSink.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Sinks\FlatFileSink.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Sinks\FlushFailedException.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Sinks\RollFileExistsBehavior.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Sinks\RollingFlatFilePurger.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Sinks\RollingFlatFileSink.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Sinks\RollingFlatFileSink.Inner.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Sinks\RollInterval.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Sinks\TallyKeepingFileStreamWriter.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Utility\BufferedEventPublisher.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Utility\Buffering.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Utility\EventEntryExtensions.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Utility\EventEntryUtil.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Utility\EventSourceAnalyzer.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Utility\EventSourceAnalyzerException.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Utility\FileUtil.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Utility\Guard.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Utility\TextFormatterExtensions.cs" />
+    <Compile Include="Libs\EnterpriseLibrary\SemanticLogging\Utility\TypeExtensions.cs" />
     <Compile Include="Libs\EnterpriseLibrary\Validation\AttributeValidatorFactory.cs" />
     <Compile Include="Libs\EnterpriseLibrary\Validation\CompositeValidatorBuilder.cs" />
     <Compile Include="Libs\EnterpriseLibrary\Validation\CompositeValidatorFactory.cs" />
@@ -3901,6 +3952,14 @@
     <None Include="Libs\Lucene.Net\Analysis\Standard\StandardTokenizerImpl.jflex" />
     <None Include="Libs\Lucene.Net\QueryParser\QueryParser.JJ" />
     <None Include="Libs\Nest\README.markdown" />
+    <EmbeddedResource Include="Libs\EnterpriseLibrary\SemanticLogging\Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Libs\EnterpriseLibrary\SemanticLogging\SemanticLoggingEventSourceResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SemanticLoggingEventSourceResources1.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Libs\NVelocity\Runtime\Defaults\directive.properties" />
     <EmbeddedResource Include="Libs\NVelocity\Runtime\Defaults\nvelocity.properties" />
     <None Include="Libs\RazorEngine\ClassDiagram.cd" />
