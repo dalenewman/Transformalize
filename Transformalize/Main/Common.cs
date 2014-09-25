@@ -36,25 +36,11 @@ using Transformalize.Libs.NLog;
 namespace Transformalize.Main {
     public static class Common {
 
-        private static readonly Logger Log = LogManager.GetLogger("tfl");
         private const string APPLICATION_FOLDER = @"\Tfl\";
         private static readonly char[] Slash = { '\\' };
         private const string CLEAN_PATTERN = @"[^\w]";
 
         public const string DefaultValue = "[default]";
-
-        public static string GuardTimeZone(string timeZone, string defaultTimeZone) {
-            var result = timeZone;
-            if (timeZone == String.Empty) {
-                result = defaultTimeZone;
-                Log.Debug("Defaulting From TimeZone to {0}.", defaultTimeZone);
-            } else {
-                if (!TimeZoneInfo.GetSystemTimeZones().Any(tz => tz.Id.Equals(timeZone))) {
-                    throw new TransformalizeException("From Timezone Id {0} is invalid.", timeZone);
-                }
-            }
-            return result;
-        }
 
         public static Dictionary<string, byte> Validators = new Dictionary<string, byte> {
             {"containscharacters", 1},
@@ -313,11 +299,19 @@ namespace Transformalize.Main {
                 result = "I" + input.GetHashCode().ToString(CultureInfo.InvariantCulture).Replace("-", "0");
             }
             if (!input.Equals(result)) {
-                Log.Debug("Using '{0}' to identify field '{1}'.", result, input);
+                TflLogger.Debug(string.Empty, string.Empty, "Using '{0}' to identify field '{1}'.", result, input);
             }
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Splits a sting by a splitter (aka delimiter), 
+        /// but first escapes any splitters prefixed with a forward slash.
+        /// </summary>
+        /// <param name="arg">arguments</param>
+        /// <param name="splitter">the splitter (aka delimiter)</param>
+        /// <param name="skip">An optional number of post-split elements to skip over.</param>
+        /// <returns>properly split strings</returns>
         public static string[] Split(string arg, string splitter, int skip = 0) {
             if (arg.Equals(String.Empty))
                 return new string[0];

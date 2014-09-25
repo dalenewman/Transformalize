@@ -13,6 +13,7 @@ namespace Transformalize.Main.Providers.Sql
         public SqlEntityKeysExtractAllFromOutput(AbstractConnection connection, Entity entity)
             : base(connection) {
             _entity = entity;
+            EntityName = entity.Name;
             _keys = new List<string>(entity.PrimaryKey.Aliases()) { "TflKey" };
             }
 

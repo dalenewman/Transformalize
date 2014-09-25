@@ -38,13 +38,14 @@ namespace Transformalize.Operations {
 
         public EntityDataExtract(Fields fields, string sql, AbstractConnection connection)
             : base(connection) {
-            
+
             _fields = fields.ToArray();
             _length = _fields.Length;
             _sql = sql;
 
             UseTransaction = false;
             Name = "EntityDataExtract";
+            EntityName = fields[0].Entity;
         }
 
         protected override Row CreateRowFromReader(IDataReader reader) {

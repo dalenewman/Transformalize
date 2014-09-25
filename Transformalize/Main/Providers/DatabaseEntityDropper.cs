@@ -20,15 +20,12 @@
 
 #endregion
 
-using System;
-using Transformalize.Libs.NLog;
 using Transformalize.Libs.Dapper;
 
 namespace Transformalize.Main.Providers {
     public class DatabaseEntityDropper : IEntityDropper {
         public IEntityExists EntityExists { get; set; }
         private const string FORMAT = "DROP TABLE {0};";
-        private readonly Logger _log = LogManager.GetLogger("tfl");
 
         public DatabaseEntityDropper(IEntityExists entityExists) {
             EntityExists = entityExists;
@@ -43,7 +40,7 @@ namespace Transformalize.Main.Providers {
             using (var cn = connection.GetConnection()) {
                 cn.Open();
                 cn.Execute(sql);
-                _log.Debug("Dropped Output {0}", entity.OutputName());
+                TflLogger.Debug(entity.ProcessName, entity.Name, "Dropped Output {0}", entity.OutputName());
             }
         }
 

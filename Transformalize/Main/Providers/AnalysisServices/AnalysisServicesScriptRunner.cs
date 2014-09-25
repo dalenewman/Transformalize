@@ -22,45 +22,32 @@
 
 using System;
 using Microsoft.AnalysisServices;
-using Transformalize.Libs.NLog;
 
-namespace Transformalize.Main.Providers.AnalysisServices
-{
-    public class AnalysisServicesScriptRunner : IScriptRunner
-    {
-        private readonly Logger _log = LogManager.GetLogger("tfl");
+namespace Transformalize.Main.Providers.AnalysisServices {
+    public class AnalysisServicesScriptRunner : IScriptRunner {
 
-        public IScriptReponse Execute(AbstractConnection connection, string script, int timeOut = 0)
-        {
+        public IScriptReponse Execute(AbstractConnection connection, string script, int timeOut = 0) {
             var response = new ScriptResponse();
             var server = new Server();
 
-            try
-            {
-                _log.Debug("Connecting to {0} on {1}.", connection.Database, connection.Server);
+            try {
+                TflLogger.Debug(string.Empty, string.Empty, "Connecting to {0} on {1}.", connection.Database, connection.Server);
                 server.Connect(connection.GetConnectionString());
 
                 var results = server.Execute(script);
 
-                foreach (XmlaResult result in results)
-                {
-                    foreach (XmlaMessage message in result.Messages)
-                    {
+                foreach (XmlaResult result in results) {
+                    foreach (XmlaMessage message in result.Messages) {
                         response.Messages.Add(message.Description);
                     }
                 }
                 response.Success = response.Messages.Count == 0;
-            }
-            catch (Exception e)
-            {
-                _log.Debug(e.Message + (e.InnerException != null ? " " + e.InnerException.Message : string.Empty));
+            } catch (Exception e) {
+                TflLogger.Debug(string.Empty, string.Empty, e.Message + (e.InnerException != null ? " " + e.InnerException.Message : string.Empty));
                 response.Messages.Add(e.Message);
-            }
-            finally
-            {
-                if (server.Connected)
-                {
-                    _log.Debug("Disconnecting from {0} on {1}.", connection.Database, connection.Server);
+            } finally {
+                if (server.Connected) {
+                    TflLogger.Debug(string.Empty, string.Empty, "Disconnecting from {0} on {1}.", connection.Database, connection.Server);
                     server.Disconnect();
                 }
             }

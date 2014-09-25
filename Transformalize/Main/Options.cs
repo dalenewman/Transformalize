@@ -31,7 +31,6 @@ namespace Transformalize.Main {
 
     public class Options {
 
-        private readonly Logger _log = LogManager.GetLogger("tfl");
         private string _mode = Common.DefaultValue;
         private List<string> _problems = new List<string>();
 
@@ -92,7 +91,7 @@ namespace Transformalize.Main {
                     }
                 } catch (Exception e) {
                     var message = string.Format("Couldn't parse options: {0}.", settings);
-                    _log.DebugException(message + " " + e.Message, e);
+                    TflLogger.Debug(string.Empty, string.Empty, message + " " + e.Message);
                     Problems.Add(message);
                 }
             }

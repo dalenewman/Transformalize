@@ -42,8 +42,6 @@ namespace Transformalize.Processes {
 
         protected override void Initialize() {
 
-            GlobalDiagnosticsContext.Set("entity", Common.LogLength(_entity.Alias));
-
             if (_entity.Input.Count == 1) {
                 var connection = _entity.Input.First().Connection;
                 Register(

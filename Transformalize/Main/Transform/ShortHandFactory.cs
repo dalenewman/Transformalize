@@ -571,7 +571,7 @@ namespace Transformalize.Main.Transform {
             foreach (ParameterConfigurationElement p in element.Parameters) {
                 if (!p.Field.Contains(":"))
                     continue;
-                var pair = p.Field.Split(new[] { ':' }, StringSplitOptions.None);
+                var pair = Common.Split(p.Field,":");
                 p.Field = string.Empty;
                 p.Name = pair[0];
                 p.Value = pair[1];

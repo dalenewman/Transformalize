@@ -1,10 +1,9 @@
 using System;
-using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main.Providers.Solr {
 
     public class SolrEntityDropper : IEntityDropper {
-        private readonly Logger _log = LogManager.GetLogger("tfl");
+
         public IEntityExists EntityExists { get; set; }
 
         public SolrEntityDropper() {

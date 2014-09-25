@@ -51,8 +51,6 @@ namespace Transformalize.Processes {
 
         protected override void Initialize() {
 
-            GlobalDiagnosticsContext.Set("entity", Common.LogLength(_entity.Alias));
-
             Register(new EntityKeysPartial(_process, _entity));
 
             if (_entity.Input.Count == 1) {

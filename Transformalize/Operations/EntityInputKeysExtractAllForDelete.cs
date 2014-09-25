@@ -19,7 +19,8 @@ namespace Transformalize.Operations
             _connection = connection;
             _fields = _entity.PrimaryKey.WithInput().Aliases().ToArray();
             _length = _fields.Length;
-        }
+            EntityName = entity.Name;
+            }
 
         protected override Row CreateRowFromReader(IDataReader reader) {
             var row = new Row();

@@ -56,8 +56,9 @@ namespace Transformalize.Libs.Rhino.Etl {
         public TDerived Register(IOperation operation) {
             operation.UseTransaction = UseTransaction;
             operation.LogRows = _process.LogRows;
+            operation.ProcessName = _process.Name;
             Operations.Add(operation);
-            Debug("Register {0} in {1}", operation.Name, Name);
+            TflLogger.Debug(_process.Name, operation.EntityName, "Register {0}", operation.Name);
             return (TDerived)this;
         }
 
@@ -67,8 +68,9 @@ namespace Transformalize.Libs.Rhino.Etl {
         /// <param name="operation">The operation.</param>
         public TDerived RegisterLast(IOperation operation) {
             operation.LogRows = _process.LogRows;
+            operation.ProcessName = _process.Name;
             _lastOperations.Add(operation);
-            Debug("RegisterLast {0} in {1}", operation.Name, Name);
+            TflLogger.Debug(operation.ProcessName, operation.EntityName, "RegisterLast {0} in {1}", operation.Name, _process.Name);
             return (TDerived)this;
         }
 

@@ -10,13 +10,13 @@ namespace Transformalize.Main.Providers.SqlCe
             }
 
             if (!new FileInfo(connection.Server).Exists) {
-                Log.Warn("{0} not found.", connection.Server);
+                TflLogger.Warn(string.Empty, string.Empty, "{0} not found.", connection.Server);
 
                 var type = System.Type.GetType("System.Data.SqlServerCe.SqlCeEngine, System.Data.SqlServerCe", false, true);
                 dynamic engine = System.Activator.CreateInstance(type, connection.GetConnectionString());
                 engine.CreateDatabase();
-                
-                Log.Warn("Created {0} database file.", connection.Server);
+
+                TflLogger.Warn(string.Empty, string.Empty, "Created {0} database file.", connection.Server);
             };
 
             return CheckConnection(connection);

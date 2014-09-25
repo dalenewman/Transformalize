@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
+using Transformalize.Libs.Newtonsoft.Json.Converters;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
@@ -12,8 +14,6 @@ using Process = Transformalize.Main.Process;
 namespace Transformalize.Runner {
 
     public class MetadataRunner : IProcessRunner {
-
-        private readonly Logger _log = LogManager.GetLogger("tfl");
 
         public IEnumerable<Row> Run(ref Process process) {
 
@@ -31,12 +31,12 @@ namespace Transformalize.Runner {
             System.Diagnostics.Process.Start(fileName);
 
             timer.Stop();
-            _log.Info("Calculated metadata in {0}.", timer.Elapsed);
+            TflLogger.Info(process.Name, string.Empty, "Calculated metadata in {0}.", timer.Elapsed);
 
             return result;
         }
 
-        public new void Dispose() {
+        public void Dispose() {
             LogManager.Flush();
         }
     }

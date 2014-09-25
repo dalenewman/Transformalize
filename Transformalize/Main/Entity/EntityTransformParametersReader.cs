@@ -27,7 +27,6 @@ using Transformalize.Main.Parameters;
 namespace Transformalize.Main {
     public class EntityTransformParametersReader : ITransformParametersReader {
         private readonly Entity _entity;
-        private readonly Logger _log = LogManager.GetLogger("tfl");
 
         public EntityTransformParametersReader(Entity entity) {
             _entity = entity;
@@ -56,7 +55,7 @@ namespace Transformalize.Main {
                         parameters.Add(field.Alias, name, null, field.Type);
                     } else {
                         if (!p.Field.StartsWith("Tfl")) {
-                            _log.Warn("The entity {0} has a {1} transform parameter that references field {2}.  This field hasn't been defined yet in {0}.", _entity.Alias, transform.Method, p.Field);
+                            TflLogger.Warn(_entity.ProcessName, _entity.Name, "The entity {0} has a {1} transform parameter that references field {2}.  This field hasn't been defined yet in {0}.", _entity.Alias, transform.Method, p.Field);
                         }
                         var name = string.IsNullOrEmpty(p.Name) ? p.Field : p.Name;
                         parameters.Add(p.Field, name, p.HasValue() ? p.Value : null, "System.String");

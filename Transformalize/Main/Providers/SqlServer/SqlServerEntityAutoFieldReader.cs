@@ -21,15 +21,12 @@
 #endregion
 
 using System;
-using System.Data;
 using System.Linq;
 using Transformalize.Libs.Dapper;
-using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main.Providers.SqlServer {
     public class SqlServerEntityAutoFieldReader : IEntityAutoFieldReader {
         private readonly IDataTypeService _dataTypeService = new SqlServerDataTypeService();
-        private readonly Logger _log = LogManager.GetLogger("tfl");
 
         public Fields Read(Entity entity, bool isMaster) {
             return Read(entity.Input.First().Connection, entity.ProcessName, entity.Prefix, entity.Name, entity.Schema, entity.IsMaster());
@@ -45,7 +42,7 @@ namespace Transformalize.Main.Providers.SqlServer {
             using (var cn = connection.GetConnection()) {
                 cn.Open();
                 var sql = PrepareSql();
-                _log.Debug(sql);
+                TflLogger.Debug(process, name, sql);
 
                 var results = cn.Query(sql, new { name, schema });
 
@@ -72,11 +69,10 @@ namespace Transformalize.Main.Providers.SqlServer {
             return fields;
         }
 
-
         private string GetSystemType(string dataType) {
             var typeDefined = _dataTypeService.TypesReverse.ContainsKey(dataType);
             if (!typeDefined) {
-                _log.Warn("Transformalize hasn't mapped the SQL data type: {0} to a .NET data type.  It will default to string.", dataType);
+                TflLogger.Warn(string.Empty, string.Empty, "Transformalize hasn't mapped the SQL data type: {0} to a .NET data type.  It will default to string.", dataType);
             }
             return typeDefined ? _dataTypeService.TypesReverse[dataType] : "System.String";
         }

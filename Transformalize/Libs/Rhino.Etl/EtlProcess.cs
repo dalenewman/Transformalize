@@ -101,7 +101,7 @@ namespace Transformalize.Libs.Rhino.Etl {
         /// <param name="dictionary">The dictionary.</param>
         protected virtual void OnRowProcessed(IOperation op, Row dictionary) {
             if (op.Statistics.OutputtedRows % op.LogRows == 0) {
-                Info("Processed {0} rows in {1}", op.Statistics.OutputtedRows, op.Name);
+                TflLogger.Info(op.ProcessName, op.EntityName, "Processed {0} rows in {1}", op.Statistics.OutputtedRows, op.Name);
             }
         }
 

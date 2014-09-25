@@ -22,27 +22,19 @@
 
 using System;
 using Microsoft.AnalysisServices;
-using Transformalize.Libs.NLog;
 
-namespace Transformalize.Main.Providers.AnalysisServices
-{
-    public class AnalysisServicesConnectionChecker : IConnectionChecker
-    {
-        private readonly Logger _log = LogManager.GetLogger("tfl");
+namespace Transformalize.Main.Providers.AnalysisServices {
+    public class AnalysisServicesConnectionChecker : IConnectionChecker {
 
-        public bool Check(AbstractConnection connection)
-        {
+        public bool Check(AbstractConnection connection) {
             bool isReady;
             var server = new Server();
-            try
-            {
+            try {
                 server.Connect(connection.GetConnectionString());
                 isReady = server.Connected;
                 server.Disconnect();
-            }
-            catch (Exception e)
-            {
-                _log.Warn("Error checking {0} connection. {1}", connection.Name, e.Message);
+            } catch (Exception e) {
+                TflLogger.Warn(string.Empty, string.Empty, "Error checking {0} connection. {1}", connection.Name, e.Message);
                 return false;
             }
             return isReady;

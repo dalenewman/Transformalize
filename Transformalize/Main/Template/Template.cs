@@ -38,7 +38,6 @@ namespace Transformalize.Main {
         private const string TEMPLATE_CACHE_FOLDER = "TemplateCache";
         private const string RENDERED_TEMPLATE_CACHE_FOLDER = "RenderedTemplateCache";
 
-        private readonly Logger _log = LogManager.GetLogger("tfl");
         private readonly Process _process;
 
         private readonly string _renderedTemplateFile;
@@ -96,7 +95,7 @@ namespace Transformalize.Main {
             if (!CacheIsUsable())
                 return CacheContent(RenderContent());
 
-            _log.Debug("Returning {0} template output from cache.", Name);
+            TflLogger.Debug(_process.Name, string.Empty, "Returning {0} template output from cache.", Name);
             return _renderedTemplateContent;
         }
 
@@ -111,7 +110,7 @@ namespace Transformalize.Main {
         private string RenderContent() {
 
             if (Contents.Content.Equals(string.Empty)) {
-                _log.Warn("Template {0} is empty.", Name);
+                TflLogger.Warn(_process.Name, string.Empty, "Template {0} is empty.", Name);
                 return string.Empty;
             }
 
@@ -137,7 +136,7 @@ namespace Transformalize.Main {
                 });
             }
 
-            _log.Debug("Rendered {0} template.", Name);
+            TflLogger.Debug(_process.Name, string.Empty, "Rendered {0} template.", Name);
             return renderedContent;
         }
 
@@ -145,7 +144,7 @@ namespace Transformalize.Main {
             if (Cache && !string.IsNullOrEmpty(renderedContent)) {
                 File.WriteAllText(_renderedTemplateFile, renderedContent);
                 File.WriteAllText(_templateFile, Contents.Content);
-                _log.Debug("Cached {0} template output.", Name);
+                TflLogger.Debug(_process.Name, string.Empty, "Cached {0} template output.", Name);
             }
             return renderedContent;
         }

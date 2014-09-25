@@ -1,9 +1,7 @@
-using Transformalize.Libs.NLog;
-
 namespace Transformalize.Main.Providers.ElasticSearch {
 
     public class ElasticSearchEntityDropper : IEntityDropper {
-        private readonly Logger _log = LogManager.GetLogger("tfl");
+
         public IEntityExists EntityExists { get; set; }
 
         public ElasticSearchEntityDropper() {
@@ -19,8 +17,8 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             if (response.Success)
                 return;
 
-            _log.Warn(response.ServerError.Error);
-            _log.Warn("Trouble deleting {0} {1}.", client.Index, client.Type);
+            TflLogger.Warn(entity.ProcessName, entity.Name, response.ServerError.Error);
+            TflLogger.Warn(entity.ProcessName, entity.Name, "Trouble deleting {0} {1}.", client.Index, client.Type);
         }
     }
 }

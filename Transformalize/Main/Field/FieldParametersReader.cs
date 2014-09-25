@@ -25,7 +25,6 @@ using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main {
     public class FieldParametersReader : ITransformParametersReader {
-        private readonly Logger _log = LogManager.GetLogger("tfl");
 
         public IParameters Read(TransformConfigurationElement transform) {
             var parameters = new Parameters.Parameters();
@@ -38,7 +37,7 @@ namespace Transformalize.Main {
 
             foreach (ParameterConfigurationElement p in transform.Parameters) {
                 if (string.IsNullOrEmpty(p.Name)) {
-                    _log.Warn("Detected a {0} transform parameter without a name attribute.  Field parameters require names and values.", transform.Method);
+                    TflLogger.Warn(string.Empty, string.Empty, "Detected a {0} transform parameter without a name attribute.  Field parameters require names and values.", transform.Method);
                     return new Parameters.Parameters();
                 }
 

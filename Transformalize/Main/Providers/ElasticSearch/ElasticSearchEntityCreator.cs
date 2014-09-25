@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using Transformalize.Libs.fastJSON;
-using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main.Providers.ElasticSearch {
     public class ElasticSearchEntityCreator : IEntityCreator {
-        private readonly Logger _log = LogManager.GetLogger("tfl");
+
         private readonly Dictionary<string, string> _types = new Dictionary<string, string>() {
             {"int64", "long"},
             {"int16","integer"},
@@ -79,7 +78,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             if (response.Success)
                 return;
 
-            _log.Error(response.ServerError.Error);
+            TflLogger.Error(process.Name, entity.Name, response.ServerError.Error);
             throw new TransformalizeException("Error writing ElasticSearch mapping.");
         }
 
@@ -102,7 +101,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
                                 }
                             }
                         } else {
-                            _log.Warn("Analyzer '{0}' specified in search type '{1}' is not supported.  Please use a built-in analyzer for Elasticsearch.", analyzer, searchType.Name);
+                            TflLogger.Warn(entity.ProcessName, entity.Name, "Analyzer '{0}' specified in search type '{1}' is not supported.  Please use a built-in analyzer for Elasticsearch.", analyzer, searchType.Name);
                             if (!fields.ContainsKey(alias)) {
                                 fields[alias] = new Dictionary<string, object>() { { "type", type } };
                             }

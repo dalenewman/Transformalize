@@ -7,65 +7,53 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Exceptions;
+using Transformalize.Main;
 
-namespace Transformalize.Libs.Rhino.Etl
-{
+namespace Transformalize.Libs.Rhino.Etl {
     /// <summary>
     ///     A base class that expose easily logging events
     /// </summary>
-    public class WithLoggingMixin
-    {
+    public class WithLoggingMixin {
         private readonly List<Exception> _errors = new List<Exception>();
-        private readonly Logger _log;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="WithLoggingMixin" /> class.
         /// </summary>
-        protected WithLoggingMixin()
-        {
-            _log = LogManager.GetLogger("tfl");
+        protected WithLoggingMixin() {
         }
 
         /// <summary>
         ///     Gets all the errors
         /// </summary>
         /// <value>The errors.</value>
-        public Exception[] Errors
-        {
+        public Exception[] Errors {
             get { return _errors.ToArray(); }
         }
 
-        protected void Error(Exception exception, string format, params object[] args)
-        {
+        protected void Error(Exception exception, string format, params object[] args) {
             var message = string.Format(CultureInfo.InvariantCulture, format, args);
             var errorMessage = exception != null ? string.Format("{0}: {1}", message, exception.Message) : message;
 
             _errors.Add(new RhinoEtlException(errorMessage, exception));
-            if (_log.IsErrorEnabled)
-            {
-                _log.Error(message, exception);
+            if (TflLogger.IsErrorEnabled) {
+                TflLogger.Error(string.Empty, string.Empty, message, exception);
             }
         }
 
-        protected void Error(string format, params object[] args)
-        {
-            if (_log.IsErrorEnabled)
-                _log.Error(format, args);
+        protected void Error(string format, params object[] args) {
+            if (TflLogger.IsErrorEnabled)
+                TflLogger.Error(string.Empty, string.Empty, format, args);
         }
 
-        protected void Error(string message)
-        {
-            if (_log.IsErrorEnabled)
-                _log.Error(message);
+        protected void Error(string message) {
+            if (TflLogger.IsErrorEnabled)
+                TflLogger.Error(string.Empty, string.Empty, message);
         }
 
-        protected void Warn(string format, params object[] args)
-        {
-            if (_log.IsWarnEnabled)
-            {
-                _log.Warn(format, args);
+        protected void Warn(string format, params object[] args) {
+            if (TflLogger.IsWarnEnabled) {
+                TflLogger.Warn(string.Empty, string.Empty, format, args);
             }
         }
 
@@ -74,11 +62,9 @@ namespace Transformalize.Libs.Rhino.Etl
         /// </summary>
         /// <param name="format">The format.</param>
         /// <param name="args">The args.</param>
-        protected void Debug(string format, params object[] args)
-        {
-            if (_log.IsDebugEnabled)
-            {
-                _log.Debug(format, args);
+        protected void Debug(string format, params object[] args) {
+            if (TflLogger.IsDebugEnabled) {
+                TflLogger.Debug(string.Empty, string.Empty, format, args);
             }
         }
 
@@ -88,36 +74,29 @@ namespace Transformalize.Libs.Rhino.Etl
         /// </summary>
         /// <param name="format">The format.</param>
         /// <param name="args">The args.</param>
-        protected void Trace(string format, params object[] args)
-        {
-            if (_log.IsTraceEnabled)
-            {
-                _log.Trace(format, args);
+        protected void Trace(string format, params object[] args) {
+            if (TflLogger.IsTraceEnabled) {
+                TflLogger.Trace(string.Empty, string.Empty, format, args);
             }
         }
-
 
         /// <summary>
         ///     Logs an information message
         /// </summary>
         /// <param name="format">The format.</param>
         /// <param name="args">The args.</param>
-        protected void Info(string format, params object[] args)
-        {
-            if (_log.IsInfoEnabled)
-            {
-                _log.Info(format, args);
+        protected void Info(string format, params object[] args) {
+            if (TflLogger.IsInfoEnabled) {
+                TflLogger.Info(string.Empty, string.Empty, format, args);
             }
         }
 
-        protected bool IsDebugEnabled()
-        {
-            return _log.IsDebugEnabled;
+        protected bool IsDebugEnabled() {
+            return TflLogger.IsDebugEnabled;
         }
 
-        protected bool IsTraceEnabled()
-        {
-            return _log.IsTraceEnabled;
+        protected bool IsTraceEnabled() {
+            return TflLogger.IsTraceEnabled;
         }
     }
 }

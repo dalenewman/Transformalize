@@ -41,7 +41,6 @@ namespace Transformalize.Main {
         private const string SPACE = " ";
         private const string COMMA = ",";
 
-        private readonly Logger _log = LogManager.GetLogger("tfl");
         private readonly Process _process;
         private readonly Validator<TransformConfigurationElement> _validator = ValidationFactory.CreateValidator<TransformConfigurationElement>();
         private readonly Dictionary<string, Func<object, object>> _conversionMap = Common.GetObjectConversionMap();
@@ -61,9 +60,9 @@ namespace Transformalize.Main {
             var toTimeZone = string.IsNullOrEmpty(element.ToTimeZone) ? _process.TimeZone : element.ToTimeZone;
             var results = _validator.Validate(element);
             if (!results.IsValid) {
-                _log.Error("There is a problem with the transform element for field {0}.", field.Alias);
+                TflLogger.Error(field.Process, field.Entity, "There is a problem with the transform element for field {0}.", field.Alias);
                 foreach (var result in results) {
-                    _log.Error(result.Message);
+                    TflLogger.Error(field.Process, field.Entity, result.Message);
                 }
                 throw new TransformalizeException("Transform validation failed. See error log.");
             }
@@ -106,22 +105,22 @@ namespace Transformalize.Main {
                         element.To.Equals(string.Empty) ? outType : element.To,
                         element.Encoding,
                         element.Format
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "copy":
                     if (!hasParameters) {
                         throw new TransformalizeException("The copy transform requires a parameter.  It copies the parameter value into the calculated field.");
                     }
-                    return new CopyOperation(inKey, outKey) { ShouldRun = shouldRun };
+                    return new CopyOperation(inKey, outKey) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "compress":
-                    return new CompressOperation(inKey, outKey) { ShouldRun = shouldRun };
+                    return new CompressOperation(inKey, outKey) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "decompress":
-                    return new DecompressOperation(inKey, outKey) { ShouldRun = shouldRun };
+                    return new DecompressOperation(inKey, outKey) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "elipse":
-                    return new ElipseOperation(inKey, outKey, element.Length, element.Elipse) { ShouldRun = shouldRun };
+                    return new ElipseOperation(inKey, outKey, element.Length, element.Elipse) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "replace":
                     return new ReplaceOperation(
@@ -129,7 +128,7 @@ namespace Transformalize.Main {
                         outKey,
                         element.OldValue,
                         element.NewValue
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "regexreplace":
                     return new RegexReplaceOperation(
@@ -138,7 +137,7 @@ namespace Transformalize.Main {
                         element.Pattern,
                         element.Replacement,
                         element.Count
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "striphtml":
                     return new RegexReplaceOperation(
@@ -147,7 +146,7 @@ namespace Transformalize.Main {
                         @"<[^>]+>|&nbsp;",
                         string.Empty,
                         0
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "insert":
                     return new InsertOperation(
@@ -156,7 +155,7 @@ namespace Transformalize.Main {
                         element.StartIndex,
                         element.Value,
                         parameters[0].Name.Equals(outKey) ? null : GetParameter(field.Entity, parameters[0].Name)
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "insertinterval":
                     return new InsertIntervalOperation(
@@ -164,7 +163,7 @@ namespace Transformalize.Main {
                         outKey,
                         element.Interval,
                         element.Value
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "append":
                     return new AppendOperation(
@@ -172,7 +171,7 @@ namespace Transformalize.Main {
                         outKey,
                         element.Value,
                         parameters[0].Name.Equals(outKey) ? null : GetParameter(field.Entity, parameters[0].Name)
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "if":
                     var leftParameter = GetParameter(field.Entity, element.Left, parameters);
@@ -184,7 +183,7 @@ namespace Transformalize.Main {
                         GetParameter(field.Entity, element.Else, parameters),
                         outKey,
                         outType
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "distinctwords":
                     if (element.Separator.Equals(Common.DefaultValue)) {
@@ -194,18 +193,19 @@ namespace Transformalize.Main {
                         inKey,
                         outKey,
                         element.Separator
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "guid":
-                    return new GuidOperation(inKey, outKey) { ShouldRun = shouldRun };
+                    return new GuidOperation(inKey, outKey) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "now":
+                    toTimeZone = TimeZoneOperation.GuardTimeZone(field.Process, field.Entity, toTimeZone, TimeZoneInfo.Local.Id);
                     return new PartialProcessOperation(_process)
                         .Register(
                             new NowOperation(
                                 inKey,
                                 outKey
-                                ) { ShouldRun = shouldRun })
+                                ) { ShouldRun = shouldRun, EntityName = field.Entity })
                         .Register(
                             new TimeZoneOperation(
                                 outKey,
@@ -219,14 +219,14 @@ namespace Transformalize.Main {
                         outKey,
                         element.StartIndex,
                         element.Length
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "trimstart":
                     return new TrimStartOperation(
                         inKey,
                         outKey,
                         element.TrimChars
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "trimstartappend":
                     if (element.Separator.Equals(Common.DefaultValue)) {
@@ -237,21 +237,21 @@ namespace Transformalize.Main {
                         outKey,
                         element.TrimChars,
                         element.Separator
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "trimend":
                     return new TrimEndOperation(
                         inKey,
                         outKey,
                         element.TrimChars
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "trim":
                     return new TrimOperation(
                         inKey,
                         outKey,
                         element.TrimChars
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "substring":
                     return new SubstringOperation(
@@ -259,27 +259,30 @@ namespace Transformalize.Main {
                         outKey,
                         element.StartIndex,
                         element.Length
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "left":
                     return new LeftOperation(
                         inKey,
                         outKey,
                         element.Length
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "right":
                     return new RightOperation(
                         inKey,
                         outKey,
                         element.Length
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "gethashcode":
                     return new GetHashCodeOperation(
                         inKey,
                         outKey
-                    );
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
+
+                case "hashcode":
+                    goto case "gethashcode";
 
                 case "map":
                     var equals = _process.MapEquals.ContainsKey(element.Map) ? _process.MapEquals[element.Map] : new Map();
@@ -314,7 +317,10 @@ namespace Transformalize.Main {
                         outKey,
                         outType,
                         new[] { @equals, startsWith, endsWith }
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
+
+                case "markdown":
+                    return new MarkDownOperation(inKey, outKey) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "padleft":
                     return new PadLeftOperation(
@@ -322,7 +328,7 @@ namespace Transformalize.Main {
                         outKey,
                         element.TotalWidth,
                         element.PaddingChar
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "padright":
                     return new PadRightOperation(
@@ -330,7 +336,7 @@ namespace Transformalize.Main {
                         outKey,
                         element.TotalWidth,
                         element.PaddingChar
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "tostring":
                     return new ToStringOperation(
@@ -338,19 +344,19 @@ namespace Transformalize.Main {
                         inType,
                         outKey,
                         element.Format
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "toupper":
                     return new ToUpperOperation(
                         inKey,
                         outKey
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "tolower":
                     return new ToLowerOperation(
                         inKey,
                         outKey
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "javascript":
                     foreach (TransformScriptConfigurationElement script in element.Scripts) {
@@ -365,7 +371,7 @@ namespace Transformalize.Main {
                         element.Script,
                         scripts,
                         parameters
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "csharp":
                     foreach (TransformScriptConfigurationElement script in element.Scripts) {
@@ -381,7 +387,7 @@ namespace Transformalize.Main {
                         (element.ReplaceSingleQuotes ? Regex.Replace(element.Script, @"(?<=[^'])'{1}(?=[^'])", "\"") : element.Script),
                         scripts,
                         parameters
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "template":
                     return new RazorOperation(
@@ -391,7 +397,7 @@ namespace Transformalize.Main {
                         element.Model,
                         templates,
                         parameters
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "razor":
                     goto case "template";
@@ -406,7 +412,7 @@ namespace Transformalize.Main {
                         element.Template,
                         templates,
                         parameters
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "tag":
                     return new TagOperation(
@@ -415,26 +421,26 @@ namespace Transformalize.Main {
                         parameters,
                         element.Decode,
                         element.Encode
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "format":
                     return new FormatOperation(
                         outKey,
                         element.Format,
                         parameters
-                        ) { ShouldRun = shouldRun };
+                        ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "concat":
                     return new ConcatOperation(
                         outKey,
                         parameters
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "totitlecase":
                     return new ToTitleCaseOperation(
                         inKey,
                         outKey
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "join":
                     if (element.Separator.Equals(Common.DefaultValue)) {
@@ -444,7 +450,7 @@ namespace Transformalize.Main {
                         outKey,
                         element.Separator,
                         parameters
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "tolocaltime":
                     return new ToLocalTimeOperation(
@@ -452,21 +458,23 @@ namespace Transformalize.Main {
                         outKey,
                         element.FromTimeZone,
                         element.ToTimeZone
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "timezone":
+                    element.FromTimeZone = TimeZoneOperation.GuardTimeZone(field.Process, field.Entity, element.FromTimeZone, "UTC");
+                    toTimeZone = TimeZoneOperation.GuardTimeZone(field.Process, field.Entity, toTimeZone, TimeZoneInfo.Local.Id);
                     return new TimeZoneOperation(
                         inKey,
                         outKey,
                         element.FromTimeZone,
                         toTimeZone
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "tojson":
                     return new ToJsonOperation(
                         outKey,
                         parameters
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "fromxml":
                     switch ((XmlMode)Enum.Parse(typeof(XmlMode), element.XmlMode)) {
@@ -474,17 +482,17 @@ namespace Transformalize.Main {
                             return new FromFirstXmlOperation(
                                 outKey,
                                 new Fields(_process, parameters, field.Entity)
-                            ) { ShouldRun = shouldRun };
+                            ) { ShouldRun = shouldRun, EntityName = field.Entity };
                         case XmlMode.All:
                             return new FromXmlOperation(
                                 outKey,
                                 new Fields(_process, parameters, field.Entity)
-                            ) { ShouldRun = shouldRun };
+                            ) { ShouldRun = shouldRun, EntityName = field.Entity };
                         default:
                             return new FromNanoXmlOperation(
                                 outKey,
                                 new Fields(_process, parameters, field.Entity)
-                            ) { ShouldRun = shouldRun };
+                            ) { ShouldRun = shouldRun, EntityName = field.Entity };
                     }
 
                 case "fromregex":
@@ -492,16 +500,16 @@ namespace Transformalize.Main {
                         outKey,
                         element.Pattern,
                         parameters
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "fromjson":
                     return new FromJsonOperation(
                         TryRemoveInputParameters(element, parameters) ? inKey : outKey,
                         parameters
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "fromsplit":
-                    return new FromSplitOperation(outKey, element.Separator, parameters) { ShouldRun = shouldRun };
+                    return new FromSplitOperation(outKey, element.Separator, parameters) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "distance":
 
@@ -512,31 +520,31 @@ namespace Transformalize.Main {
                         GetParameter(field.Entity, element.FromLong),
                         GetParameter(field.Entity, element.ToLat),
                         GetParameter(field.Entity, element.ToLong)
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "length":
-                    return new LengthOperation(inKey, outKey) { ShouldRun = shouldRun };
+                    return new LengthOperation(inKey, outKey) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "timeofday":
-                    return new TimeOfDayOperation(inKey, inType, outKey, outType, element.TimeComponent) { ShouldRun = shouldRun };
+                    return new TimeOfDayOperation(inKey, inType, outKey, outType, element.TimeComponent) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "value":
-                    return new ValueOperation(outKey, outType, element.Value, parameters) { ShouldRun = shouldRun };
+                    return new ValueOperation(outKey, outType, element.Value, parameters) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "xpath":
-                    return new XPathOperation(inKey, outKey, outType, element.XPath) { ShouldRun = shouldRun };
+                    return new XPathOperation(inKey, outKey, outType, element.XPath) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "xmlencode":
-                    return new XmlEncodeOperation(inKey, outKey) { ShouldRun = shouldRun };
+                    return new XmlEncodeOperation(inKey, outKey) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "urlencode":
-                    return new UrlEncodeOperation(inKey, outKey) { ShouldRun = shouldRun };
+                    return new UrlEncodeOperation(inKey, outKey) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "htmlencode":
-                    return new HtmlEncodeOperation(inKey, outKey) { ShouldRun = shouldRun };
+                    return new HtmlEncodeOperation(inKey, outKey) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "htmldecode":
-                    return new HtmlDecodeOperation(inKey, outKey) { ShouldRun = shouldRun };
+                    return new HtmlDecodeOperation(inKey, outKey) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "filter":
                     return new FilterOperation(
@@ -545,7 +553,7 @@ namespace Transformalize.Main {
                         outType,
                         element.Value,
                         (ComparisonOperator)Enum.Parse(typeof(ComparisonOperator), element.Operator, true)
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "splitindex":
                     return new SplitIndexOperation(
@@ -555,7 +563,7 @@ namespace Transformalize.Main {
                         element.Separator,
                         element.Count,
                         element.Index
-                        ) { ShouldRun = shouldRun };
+                        ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "datepart":
                     return new DatePartOperation(
@@ -563,21 +571,21 @@ namespace Transformalize.Main {
                         outKey,
                         outType,
                         element.TimeComponent
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "average":
                     return new AverageOperation(
                         outKey,
                         outType,
                         parameters
-                        ) { ShouldRun = shouldRun };
+                        ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "add":
                     return new AddOperation(
                         outKey,
                         outType,
                         parameters
-                        ) { ShouldRun = shouldRun };
+                        ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "geocode":
                     return new GeoCodeOperation(
@@ -586,16 +594,16 @@ namespace Transformalize.Main {
                         element.Sleep,
                         element.UseHttps,
                         parameters
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "transliterate":
-                    return new TransliterateOperation(inKey, outKey) { ShouldRun = shouldRun };
+                    return new TransliterateOperation(inKey, outKey) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "slug":
-                    return new SlugOperation(inKey, outKey, element.Length) { ShouldRun = shouldRun };
+                    return new SlugOperation(inKey, outKey, element.Length) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "cyrtolat":
-                    return new CyrToLatOperation(inKey, outKey) { ShouldRun = shouldRun };
+                    return new CyrToLatOperation(inKey, outKey) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "web":
                     return new WebOperation(
@@ -605,7 +613,7 @@ namespace Transformalize.Main {
                         element.WebMethod,
                         GetParameter(field.Entity, element.Data, parameters),
                         element.ContentType
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 // validators
                 case "any":
@@ -615,7 +623,7 @@ namespace Transformalize.Main {
                         (ComparisonOperator)Enum.Parse(typeof(ComparisonOperator), element.Operator, true),
                         parameters,
                         element.Negated
-                    ) { ShouldRun = shouldRun };
+                    ) { ShouldRun = shouldRun, EntityName = field.Entity };
 
                 case "containscharacters":
                     return new ContainsCharactersValidatorOperation(
@@ -748,7 +756,7 @@ namespace Transformalize.Main {
 
             }
 
-            _log.Warn("{0} method is undefined.  It will not be used.", element.Method);
+            TflLogger.Warn(field.Process, field.Entity, "{0} method is undefined.  It will not be used.", element.Method);
             return new EmptyOperation();
         }
 

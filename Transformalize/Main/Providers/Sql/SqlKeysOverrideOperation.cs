@@ -14,6 +14,7 @@ namespace Transformalize.Main.Providers.Sql
         public SqlKeysOverrideOperation(Entity entity, AbstractConnection connection)
             : base(connection) {
             _entity = entity;
+            EntityName = entity.Name;
             _fields = entity.PrimaryKey.Aliases().ToArray();
             _length = _fields.Length;
 

@@ -27,12 +27,11 @@ namespace Transformalize.Main {
 
     public class TransformalizeException : Exception {
 
-        private readonly Logger _log = LogManager.GetLogger("tfl");
         private readonly string _message;
 
         public TransformalizeException(string message) {
             _message = message;
-            _log.Error(message);
+            TflLogger.Error(string.Empty, string.Empty, message);
             LogManager.Flush();
         }
 

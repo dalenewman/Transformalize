@@ -39,6 +39,7 @@ namespace Transformalize.Main.Providers.SqlServer {
         public SqlServerEntityKeysExtractFromOutput(AbstractConnection connection, Entity entity)
             : base(connection) {
             _connection = connection;
+            EntityName = entity.Name;
             _entity = entity;
             _fields = new List<string>(new FieldSqlWriter(entity.PrimaryKey).Alias(connection.L, connection.R).Keys()) { "TflKey" };
             _key = _entity.PrimaryKey;

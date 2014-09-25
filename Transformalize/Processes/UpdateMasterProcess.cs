@@ -37,8 +37,6 @@ namespace Transformalize.Processes {
         }
 
         protected override void Initialize() {
-            GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
-
             foreach (var entity in _process.Entities) {
                 Register(new EntityUpdateMaster(_process, entity));
             }

@@ -38,6 +38,7 @@ namespace Transformalize.Main.Providers.Sql {
             : base(connection) {
 
             _entity = entity;
+            EntityName = entity.Name;
             _fields = _entity.PrimaryKey.WithInput().Aliases().ToArray();
             _length = _fields.Length;
 

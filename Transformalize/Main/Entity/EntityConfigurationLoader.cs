@@ -34,8 +34,7 @@ namespace Transformalize.Main {
     public class EntityConfigurationLoader {
 
         private const string DEFAULT = "[default]";
-        private readonly Logger _log = LogManager.GetLogger("tfl");
-        private Process _process;
+        private readonly Process _process;
 
         public EntityConfigurationLoader(Process process) {
             _process = process;
@@ -148,7 +147,8 @@ namespace Transformalize.Main {
         private void GuardAgainstMissingFields(EntityConfigurationElement element, Entity entity, short entityIndex) {
             if (_process.Mode != "metadata" && element.Fields.Count == 0 && _process.Connections.ContainsKey(element.Connection)) {
                 try {
-                    _log.Info("Detecting fields.");
+                    
+                    TflLogger.Info(entity.ProcessName, entity.Name, "Detecting fields.");
                     var connection = _process.Connections[element.Connection];
                     var fields = connection.GetEntitySchema( _process, entity, entityIndex == 0);
                     if (fields.Any()) {
@@ -170,7 +170,7 @@ namespace Transformalize.Main {
                             };
                             element.Fields.Add(f);
                         }
-                        _log.Info("Detected {0} fields.", fields.Count);
+                        TflLogger.Info(entity.ProcessName, entity.Name, "Detected {0} fields.", fields.Count);
                     }
                 } catch (Exception ex) {
                     throw new TransformalizeException("No fields defined.  Unable to detect them for {0}. {1}", entity.Name, ex.Message);
@@ -184,6 +184,7 @@ namespace Transformalize.Main {
 
         private List<NamedConnection> PrepareIo(IoElementCollection collection, Fields fields) {
             var namedConnections = new List<NamedConnection>();
+            var entity = fields.Any() ? fields[0].Entity : "None";
 
             var validator = ValidationFactory.CreateValidator<IoConfigurationElement>();
             foreach (IoConfigurationElement io in collection) {
@@ -192,7 +193,6 @@ namespace Transformalize.Main {
                 if (results.IsValid) {
                     if (_process.Connections.ContainsKey(io.Connection)) {
                         Func<Row, bool> shouldRun = row => true;
-
                         if (!io.RunField.Equals(string.Empty)) {
                             var f = io.RunField;
                             var match = fields.Find(f).ToArray();
@@ -206,7 +206,7 @@ namespace Transformalize.Main {
                                 var value = Common.ConversionMap[simpleType](io.RunValue);
                                 shouldRun = row => Common.CompareMap[op](row[field.Alias], value);
                             } else {
-                                _log.Warn("Field {0} specified in {1} output doesn't exist.  It will not affect the output.", io.RunField, io.Name);
+                                TflLogger.Warn(_process.Name, entity, "Field {0} specified in {1} output doesn't exist.  It will not affect the output.", io.RunField, io.Name);
                             }
                         }
 
@@ -216,12 +216,12 @@ namespace Transformalize.Main {
                             ShouldRun = shouldRun
                         });
                     } else {
-                        _log.Warn("Can't add output {0} because connection {1} doesn't exist.", io.Name, io.Connection);
+                        TflLogger.Warn(_process.Name, entity, "Can't add output {0} because connection {1} doesn't exist.", io.Name, io.Connection);
                     }
                 } else {
-                    _log.Warn("Output {0} is invalid.", io.Name);
+                    TflLogger.Warn(_process.Name, entity, "Output {0} is invalid.", io.Name);
                     foreach (var reason in results) {
-                        _log.Warn(reason.Message);
+                        TflLogger.Warn(_process.Name, entity, reason.Message);
                     }
                 }
             }
@@ -233,7 +233,7 @@ namespace Transformalize.Main {
             var results = validator.Validate(element);
             if (!results.IsValid) {
                 foreach (var result in results) {
-                    _log.Error(result.Message);
+                    TflLogger.Error(_process.Name, element.Name, result.Message);
                 }
                 throw new TransformalizeException("Entity validation failed. See error log.");
             }
@@ -247,7 +247,7 @@ namespace Transformalize.Main {
             if (element.CalculatedFields.Cast<FieldConfigurationElement>().Any(cf => cf.PrimaryKey))
                 return;
 
-            _log.Info("Adding TflHashCode primary key for {0}.", element.Name);
+            TflLogger.Info(_process.Name, element.Name, "Adding TflHashCode primary key for {0}.", element.Name);
             var pk = new FieldConfigurationElement {
                 Name = "TflHashCode",
                 Type = "System.Int32",

@@ -19,12 +19,12 @@ namespace Transformalize.Main {
             };
 
             if (action.To.Equals(string.Empty)) {
-                Log.Warn("Couldn't send email. No 'to' provided.");
+                TflLogger.Warn(string.Empty, string.Empty, "Couldn't send email. No 'to' provided.");
                 return;
             }
 
             if (action.Connection == null) {
-                Log.Warn("Couldn't send email.  Mail action needs a valid connection.");
+                TflLogger.Warn(string.Empty, string.Empty, "Couldn't send email.  Mail action needs a valid connection.");
                 return;
             }
 
@@ -84,10 +84,10 @@ namespace Transformalize.Main {
                         Host = action.Connection.Server
                     }.Send(mail);
                 }
-                Log.Info(isTemplate ? "Emailed rendered content to: {0}." : "Email sent to {0}.", action.To);
+                TflLogger.Info(string.Empty, string.Empty, isTemplate ? "Emailed rendered content to: {0}." : "Email sent to {0}.", action.To);
             } catch (Exception e) {
-                Log.Warn("Couldn't send mail. {0}", e.Message);
-                Log.Debug(e.StackTrace);
+                TflLogger.Warn(string.Empty, string.Empty, "Couldn't send mail. {0}", e.Message);
+                TflLogger.Debug(string.Empty, string.Empty, e.StackTrace);
             }
         }
     }

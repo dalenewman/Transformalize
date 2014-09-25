@@ -23,21 +23,19 @@
 using System.Linq;
 using System.Text;
 using Transformalize.Extensions;
-using Transformalize.Libs.NLog;
 using Transformalize.Libs.Dapper;
 
 namespace Transformalize.Main.Providers.SqlServer {
     public class SqlServerViewWriter : IViewWriter {
-        private readonly Logger _log = LogManager.GetLogger("tfl");
 
         public void Drop(Process process) {
             using (var cn = process.OutputConnection.GetConnection()) {
                 cn.Open();
 
                 var sql = DropSql(process);
-                _log.Debug(sql);
+                TflLogger.Debug(process.Name, string.Empty, sql);
                 cn.Execute(sql);
-                _log.Debug("Dropped Output {0}.", process.Name);
+                TflLogger.Debug(process.Name, string.Empty, "Dropped Output {0}.", process.Name);
             }
         }
 
@@ -47,9 +45,9 @@ namespace Transformalize.Main.Providers.SqlServer {
                 cn.Open();
                 var sql = CreateSql(process);
 
-                _log.Debug(sql);
+                TflLogger.Debug(process.Name, string.Empty, sql);
                 cn.Execute(sql);
-                _log.Debug("Created Output {0}.", process.Star);
+                TflLogger.Debug(process.Name, string.Empty, "Created Output {0}.", process.Star);
             }
         }
 

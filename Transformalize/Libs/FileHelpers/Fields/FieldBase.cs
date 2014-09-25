@@ -13,7 +13,6 @@ using Transformalize.Libs.FileHelpers.Core;
 using Transformalize.Libs.FileHelpers.Enums;
 using Transformalize.Libs.FileHelpers.ErrorHandling;
 using Transformalize.Libs.FileHelpers.Helpers;
-using Transformalize.Libs.NLog;
 using Transformalize.Main;
 using Convert = System.Convert;
 
@@ -24,7 +23,6 @@ namespace Transformalize.Libs.FileHelpers.Fields
     {
         #region "  Private & Internal Fields  "
 
-        private readonly Logger _log = LogManager.GetLogger("tfl");
         private static readonly Type strType = typeof (string);
 
         internal Type mFieldType;
@@ -99,11 +97,10 @@ namespace Transformalize.Libs.FileHelpers.Fields
 
         #endregion
 
-        private static readonly char[] WhitespaceChars = new[]
-                                                             {
-                                                                 '\t', '\n', '\v', '\f', '\r', ' ', '\x00a0', '\u2000', '\u2001', '\u2002', '\u2003', '\u2004', '\u2005', '\u2006', '\u2007', '\u2008',
-                                                                 '\u2009', '\u200a', '\u200b', '\u3000', '\ufeff'
-                                                             };
+        private static readonly char[] WhitespaceChars = new[] {
+            '\t', '\n', '\v', '\f', '\r', ' ', '\x00a0', '\u2000', '\u2001', '\u2002', '\u2003', '\u2004', '\u2005', '\u2006', '\u2007', '\u2008',
+            '\u2009', '\u200a', '\u200b', '\u3000', '\ufeff'
+        };
 
         #region "  MustOverride (String Handling)  " 
 

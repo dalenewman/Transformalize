@@ -38,8 +38,6 @@ namespace Transformalize.Processes {
 
         protected override void Initialize() {
 
-            GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
-
             foreach (var entity in Process.Entities) {
                 Register(new EntityDrop(Process, entity));
                 Register(new EntityCreate(Process, entity));

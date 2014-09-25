@@ -4,12 +4,11 @@ using Transformalize.Libs.Lucene.Net.Analysis;
 using Transformalize.Libs.Lucene.Net.Document;
 using Transformalize.Libs.Lucene.Net.Index;
 using Transformalize.Libs.Lucene.Net.Search;
-using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 
 namespace Transformalize.Main.Providers.Lucene {
+
     public class LuceneWriter {
-        private static readonly Logger Log = LogManager.GetLogger("tfl");
         private static readonly List<string> Analyzers = new List<string> {
             "standard",
             "simple",
@@ -182,7 +181,7 @@ namespace Transformalize.Main.Providers.Lucene {
                             fields[field.Alias] = LuceneAnalyzerFactory.Create(searchType.Analyzer, version);
                         }
                     } else {
-                        Log.Warn("Analyzer '{0}' specified in search type '{1}' is not supported.  Lucene is limited to standard, simple, keyword, or whitespace.", searchType.Analyzer, searchType.Name);
+                        TflLogger.Warn(entity.ProcessName, entity.Name, "Analyzer '{0}' specified in search type '{1}' is not supported.  Lucene is limited to standard, simple, keyword, or whitespace.", searchType.Analyzer, searchType.Name);
                         if (!fields.ContainsKey(field.Alias)) {
                             fields[field.Alias] = LuceneAnalyzerFactory.Create(searchType.Analyzer, version);
                         }

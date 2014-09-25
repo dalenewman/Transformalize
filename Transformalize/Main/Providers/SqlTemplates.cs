@@ -24,14 +24,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Transformalize.Extensions;
-using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 
 namespace Transformalize.Main.Providers {
 
     public static class SqlTemplates {
-
-        public static Logger Log = LogManager.GetLogger("tfl");
 
         public static string TruncateTable(string name, string schema) {
             return string.Format(@"
@@ -80,7 +77,9 @@ namespace Transformalize.Main.Providers {
 
             var tableSample = string.Empty;
             if (sample > 0m && sample < 100m && connection.TableSample) {
-                Log.Info("Sample enforced at query level: {0:##} percent.", sample);
+                var process = fields.Any() ? fields[0].Process : string.Empty;
+                var entity = fields.Any() ? fields[0].Entity : string.Empty;
+                TflLogger.Info(process, entity, "Sample enforced at query level: {0:##} percent.", sample);
                 tableSample = string.Format(" TABLESAMPLE ({0:##} PERCENT)", sample);
             }
 

@@ -7,15 +7,14 @@
 using System;
 using System.Collections.Generic;
 
-namespace Transformalize.Libs.Rhino.Etl.Operations
-{
+namespace Transformalize.Libs.Rhino.Etl.Operations {
     /// <summary>
     ///     Represent a single operation that can occure during the ETL process
     /// </summary>
-    public abstract class AbstractOperation : WithLoggingMixin, IOperation
-    {
+    public abstract class AbstractOperation : WithLoggingMixin, IOperation {
         private string _name;
         private readonly OperationStatistics _statistics = new OperationStatistics();
+        private string _entityName = string.Empty;
 
         /// <summary>
         ///     Gets the pipeline executer.
@@ -27,13 +26,18 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         ///     Gets the name of this instance
         /// </summary>
         /// <value>The name.</value>
-        public string Name
-        {
+        public string Name {
             get { return _name ?? GetType().Name; }
             set { _name = value; }
         }
 
         public long LogRows { get; set; }
+        public string ProcessName { get; set; }
+
+        public string EntityName {
+            get { return _entityName; }
+            set { _entityName = value; }
+        }
 
         /// <summary>
         ///     Gets or sets whether we are using a transaction
@@ -45,8 +49,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         ///     Gets the statistics for this operation
         /// </summary>
         /// <value>The statistics.</value>
-        public OperationStatistics Statistics
-        {
+        public OperationStatistics Statistics {
             get { return _statistics; }
         }
 
@@ -64,8 +67,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         ///     Initializes this instance
         /// </summary>
         /// <param name="pipelineExecuter">The current pipeline executer.</param>
-        public virtual void PrepareForExecution(IPipelineExecuter pipelineExecuter)
-        {
+        public virtual void PrepareForExecution(IPipelineExecuter pipelineExecuter) {
             PipelineExecuter = pipelineExecuter;
             Statistics.MarkStarted();
         }
@@ -74,8 +76,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         ///     Raises the row processed event
         /// </summary>
         /// <param name="dictionary">The dictionary.</param>
-        void IOperation.RaiseRowProcessed(Row dictionary)
-        {
+        void IOperation.RaiseRowProcessed(Row dictionary) {
             Statistics.MarkRowProcessed();
             OnRowProcessed(this, dictionary);
         }
@@ -83,8 +84,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         /// <summary>
         ///     Raises the finished processing event
         /// </summary>
-        void IOperation.RaiseFinishedProcessing()
-        {
+        void IOperation.RaiseFinishedProcessing() {
             Statistics.MarkFinished();
             OnFinishedProcessing(this);
         }
@@ -93,8 +93,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         ///     Gets all errors that occured when running this operation
         /// </summary>
         /// <returns></returns>
-        public virtual IEnumerable<Exception> GetAllErrors()
-        {
+        public virtual IEnumerable<Exception> GetAllErrors() {
             return Errors;
         }
 
@@ -109,8 +108,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         /// <filterpriority>2</filterpriority>
-        public virtual void Dispose()
-        {
+        public virtual void Dispose() {
         }
     }
 }

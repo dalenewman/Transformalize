@@ -15,13 +15,15 @@ using Transformalize.Main;
 
 namespace Transformalize.Operations.Load {
     public class LogLoadOperation : AbstractOperation {
-        private readonly Logger _log = LogManager.GetLogger("file-output");
+        private readonly Entity _entity;
+
         private readonly List<string> _columns = new List<string>();
         private readonly string _name;
         private readonly List<string> _guids = new List<string>();
         private readonly List<string> _byteArrays = new List<string>();
 
         public LogLoadOperation(Entity entity) {
+            _entity = entity;
             _name = Common.EntityOutputName(entity, entity.ProcessName);
             var fields = new Fields(entity.Fields, entity.CalculatedFields).WithOutput();
             _columns.AddRange(fields.Aliases());
@@ -39,7 +41,7 @@ namespace Transformalize.Operations.Load {
                 foreach (var byteArray in _byteArrays) {
                     row[byteArray] = Common.BytesToHexString((byte[])row[byteArray]);
                 }
-                _log.Info(JSON.Instance.ToJSON(_columns.ToDictionary(alias => alias, alias => row[alias])));
+                TflLogger.Info(_entity.ProcessName, _entity.Name, JSON.Instance.ToJSON(_columns.ToDictionary(alias => alias, alias => row[alias])));
             }
             LogManager.Flush();
             yield break;

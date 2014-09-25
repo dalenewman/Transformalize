@@ -36,8 +36,6 @@ namespace Transformalize.Runner {
 
     public class ProcessRunner : IProcessRunner {
 
-        private readonly Logger _log = LogManager.GetLogger("tfl");
-
         public IEnumerable<Row> Run(ref Process process) {
 
             var timer = new Stopwatch();
@@ -72,7 +70,7 @@ namespace Transformalize.Runner {
             process.PerformActions(a => a.After);
 
             timer.Stop();
-            _log.Info("Process affected {0} records in {1}.", process.Anything, timer.Elapsed);
+            TflLogger.Info(process.Name, string.Empty, "Process affected {0} records in {1}.", process.Anything, timer.Elapsed);
 
             return process.Results;
         }
@@ -112,7 +110,7 @@ namespace Transformalize.Runner {
             transformProcess.Execute();
         }
 
-        public new void Dispose() {
+        public void Dispose() {
             LogManager.Flush();
         }
 

@@ -47,8 +47,6 @@ namespace Transformalize.Main {
             if (options != null && options.MemoryTarget != null) {
                 SimpleConfigurator.ConfigureForTargetLogging(options.MemoryTarget, options.LogLevel);
             }
-            GlobalDiagnosticsContext.Set("process", Common.LogLength(name));
-            GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
         }
 
         public static Process CreateSingle(ProcessConfigurationElement process, Options options = null) {

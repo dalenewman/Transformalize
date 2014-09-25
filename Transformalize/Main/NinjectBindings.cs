@@ -4,8 +4,6 @@ using System.Web;
 using Transformalize.Configuration;
 using Transformalize.Libs.Ninject.Modules;
 using Transformalize.Libs.Ninject.Syntax;
-using Transformalize.Libs.NLog;
-using Transformalize.Libs.NLog.Internal;
 using Transformalize.Libs.SolrNet;
 using Transformalize.Libs.SolrNet.Impl;
 using Transformalize.Libs.SolrNet.Impl.DocumentPropertyVisitors;
@@ -42,7 +40,6 @@ namespace Transformalize.Main {
     public class NinjectBindings : NinjectModule {
         private readonly ProcessConfigurationElement _element;
         private const string CORE_ID = "CoreId";
-        private readonly Logger _log = LogManager.GetLogger("tfl");
         private readonly Type _type = typeof(Dictionary<string, object>);
 
         public NinjectBindings(ProcessConfigurationElement element) {
@@ -129,7 +126,7 @@ namespace Transformalize.Main {
                     foreach (ConnectionConfigurationElement cn in solrConnections) {
                         if (cn.Name.Equals(entity.Connection, StringComparison.OrdinalIgnoreCase)) {
                             var coreUrl = cn.NormalizeUrl(8983) + "/" + (entity.PrependProcessNameToOutputName ? _element.Name + entity.Alias : entity.Alias);
-                            _log.Info("Registering SOLR core {0}", coreUrl);
+                            TflLogger.Info(_element.Name, entity.Name, "Registering SOLR core {0}", coreUrl);
 
                             Bind<ISolrConnection>().ToConstant(new Libs.SolrNet.Impl.SolrConnection(coreUrl))
                               .WithMetadata(CORE_ID, coreUrl);

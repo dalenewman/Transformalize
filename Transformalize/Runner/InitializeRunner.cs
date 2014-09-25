@@ -10,8 +10,6 @@ using Process = Transformalize.Main.Process;
 namespace Transformalize.Runner {
     public class InitializeRunner : IProcessRunner {
 
-        private readonly Logger _log = LogManager.GetLogger("tfl");
-
         public IEnumerable<Row> Run(ref Process process) {
 
             var result = Enumerable.Empty<Row>();
@@ -30,7 +28,7 @@ namespace Transformalize.Runner {
             process.PerformActions(a => a.After);
 
             timer.Stop();
-            _log.Info("Initialized output in {0}.", timer.Elapsed);
+            TflLogger.Info(process.Name, string.Empty, "Initialized output in {0}.", timer.Elapsed);
 
             return result;
         }

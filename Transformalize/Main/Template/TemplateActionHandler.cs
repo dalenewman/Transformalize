@@ -20,13 +20,8 @@
 
 #endregion
 
-using Transformalize.Libs.NLog;
-
-namespace Transformalize.Main
-{
-    public abstract class TemplateActionHandler
-    {
-        protected Logger Log = LogManager.GetLogger("tfl");
+namespace Transformalize.Main {
+    public abstract class TemplateActionHandler {
         public abstract void Handle(TemplateAction action);
     }
 }

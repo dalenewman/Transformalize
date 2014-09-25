@@ -39,8 +39,6 @@ namespace Transformalize.Processes {
 
         protected override void Initialize() {
 
-            GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
-
             Register(new ParametersExtract(_process));
             Register(new ApplyDefaults(true, _process.CalculatedFields));
 

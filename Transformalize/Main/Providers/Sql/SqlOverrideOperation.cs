@@ -13,6 +13,7 @@ namespace Transformalize.Main.Providers.Sql {
         public SqlOverrideOperation(Entity entity, AbstractConnection connection)
             : base(connection) {
             CommandBehavior = CommandBehavior.Default;
+            EntityName = entity.Name;
             _entity = entity;
             _fields = entity.Fields.WithInput().NameAliases().ToArray();
         }

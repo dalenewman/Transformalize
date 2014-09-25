@@ -40,6 +40,7 @@ namespace Transformalize.Operations {
             _entity = entity;
             _fields = _entity.PrimaryKey.WithInput().Aliases().ToArray();
             _length = _fields.Length;
+            EntityName = entity.Name;
 
             _entity.CheckForChanges(process, connection);
 

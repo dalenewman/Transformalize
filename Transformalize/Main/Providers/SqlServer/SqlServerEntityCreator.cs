@@ -7,7 +7,7 @@ namespace Transformalize.Main.Providers.SqlServer {
         public override void Create(AbstractConnection connection, Process process, Entity entity) {
 
             if (EntityExists != null && EntityExists.Exists(connection, entity)) {
-                Log.Warn("Trying to create entity that already exists! {0}", entity.Name);
+                TflLogger.Warn(process.Name, entity.Name, "Trying to create entity that already exists! {0}", entity.Name);
                 return;
             }
 
@@ -30,20 +30,20 @@ namespace Transformalize.Main.Providers.SqlServer {
                 .Values();
 
             var createSql = connection.TableQueryWriter.CreateTable(entity.OutputName(), defs);
-            Log.Debug(createSql);
+            TflLogger.Debug(process.Name, entity.Name, createSql);
 
             var indexSql = connection.TableQueryWriter.AddUniqueClusteredIndex(entity.OutputName());
-            Log.Debug(indexSql);
+            TflLogger.Debug(process.Name, entity.Name, indexSql);
 
             var keySql = connection.TableQueryWriter.AddPrimaryKey(entity.OutputName(), primaryKey);
-            Log.Debug(keySql);
+            TflLogger.Debug(process.Name, entity.Name, keySql);
 
             using (var cn = connection.GetConnection()) {
                 cn.Open();
                 cn.Execute(createSql);
                 cn.Execute(indexSql);
                 cn.Execute(keySql);
-                Log.Info("Initialized {0} in {1} on {2}.", entity.OutputName(), connection.Database, connection.Server);
+                TflLogger.Info(process.Name, entity.Name, "Initialized {0} in {1} on {2}.", entity.OutputName(), connection.Database, connection.Server);
             }
         }
     }

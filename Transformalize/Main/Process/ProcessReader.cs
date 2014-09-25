@@ -22,7 +22,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
@@ -42,7 +41,6 @@ namespace Transformalize.Main {
     public class ProcessReader : IReader<Process> {
 
         private readonly ProcessConfigurationElement _element;
-        private readonly Logger _log = LogManager.GetLogger("tfl");
         private readonly Options _options;
         private readonly string _processName = string.Empty;
         private Process _process;
@@ -78,7 +76,7 @@ namespace Transformalize.Main {
             if (_options.Mode != Common.DefaultValue && _options.Mode != _process.Mode) {
                 _process.Mode = _options.Mode;
             }
-            _log.Info("Mode: {0}", _process.Mode);
+            TflLogger.Info(_processName, string.Empty, "Mode: {0}", _process.Mode);
 
             //shared across the process
             var connectionFactory = new ConnectionFactory(_process);
@@ -87,7 +85,7 @@ namespace Transformalize.Main {
             }
             _process.Connections = connectionFactory.Create(_element.Connections);
             if (!_process.Connections.ContainsKey("output")) {
-                _log.Warn("No output connection detected.  Defaulting to internal.");
+                TflLogger.Warn(_processName, string.Empty, "No output connection detected.  Defaulting to internal.");
                 _process.OutputConnection = connectionFactory.Create(new ConnectionConfigurationElement() { Name = "output", Provider = "internal" });
             } else {
                 _process.OutputConnection = _process.Connections["output"];
@@ -128,15 +126,6 @@ namespace Transformalize.Main {
             if (element.Log.Count == 0)
                 return;
 
-            if (process.Options.MemoryTarget != null) {
-                process.Log.Add(new Log {
-                    Provider = ProviderType.Internal,
-                    Name = "memory",
-                    MemoryTarget = process.Options.MemoryTarget,
-                    Level = process.Options.LogLevel
-                });
-            }
-
             foreach (LogConfigurationElement logElement in element.Log) {
                 var log = new Log {
                     Name = logElement.Name,
@@ -171,6 +160,8 @@ namespace Transformalize.Main {
         public void SetLog(ref Process process) {
 
             if (process.Log.Count > 0) {
+
+                var memoryTarget = LogManager.Configuration.FindTargetByName("memory");
                 var config = new LoggingConfiguration();
 
                 foreach (var log in process.Log) {
@@ -195,10 +186,6 @@ namespace Transformalize.Main {
                             config.AddTarget(log.Name, fileTarget);
                             config.LoggingRules.Add(fileRule);
                             break;
-                        case ProviderType.Internal:
-                            var memoryRule = new LoggingRule("tfl", log.Level, log.MemoryTarget);
-                            config.LoggingRules.Add(memoryRule);
-                            break;
                         case ProviderType.Mail:
                             if (log.Connection == null) {
                                 throw new TransformalizeException("The mail logger needs to reference a mail connection in <connections/> collection.");
@@ -222,16 +209,16 @@ namespace Transformalize.Main {
                         default:
                             throw new TransformalizeException("Log does not support {0} provider.", log.Provider);
                     }
+
+                    if (memoryTarget != null) {
+                        config.AddTarget("memory", memoryTarget);
+                    }
+
                 }
 
                 LogManager.Configuration = config;
             }
-
-            GlobalDiagnosticsContext.Set("process", Common.LogLength(process.Name));
-            GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
         }
-
-
 
         private static ProcessConfigurationElement Adapt(ProcessConfigurationElement process, IEnumerable<string> transformToFields) {
 
@@ -246,21 +233,21 @@ namespace Transformalize.Main {
 
         private void Summarize() {
 
-            if (!_log.IsDebugEnabled)
+            if (!TflLogger.IsDebugEnabled)
                 return;
 
-            _log.Debug("Process Loaded.");
-            _log.Debug("{0} Provider{1}.", _process.Providers.Count, _process.Providers.Count.Plural());
-            _log.Debug("{0} Connection{1}.", _process.Connections.Count, _process.Connections.Count.Plural());
-            _log.Debug("{0} Entit{1}.", _process.Entities.Count, _process.Entities.Count.Pluralize());
-            _log.Debug("{0} Relationship{1}.", _process.Relationships.Count, _process.Relationships.Count.Plural());
-            _log.Debug("{0} Script{1}.", _process.Scripts.Count, _process.Scripts.Count.Plural());
-            _log.Debug("{0} Template{1}.", _process.Templates.Count, _process.Templates.Count.Plural());
-            _log.Debug("{0} SearchType{1}.", _process.SearchTypes.Count, _process.SearchTypes.Count.Plural());
-            _log.Debug("{0} Log{0}", _process.Log.Count, _process.Log.Count.Plural());
+            TflLogger.Debug(_processName, string.Empty, "Process Loaded.");
+            TflLogger.Debug(_processName, string.Empty, "{0} Provider{1}.", _process.Providers.Count, _process.Providers.Count.Plural());
+            TflLogger.Debug(_processName, string.Empty, "{0} Connection{1}.", _process.Connections.Count, _process.Connections.Count.Plural());
+            TflLogger.Debug(_processName, string.Empty, "{0} Entit{1}.", _process.Entities.Count, _process.Entities.Count.Pluralize());
+            TflLogger.Debug(_processName, string.Empty, "{0} Relationship{1}.", _process.Relationships.Count, _process.Relationships.Count.Plural());
+            TflLogger.Debug(_processName, string.Empty, "{0} Script{1}.", _process.Scripts.Count, _process.Scripts.Count.Plural());
+            TflLogger.Debug(_processName, string.Empty, "{0} Template{1}.", _process.Templates.Count, _process.Templates.Count.Plural());
+            TflLogger.Debug(_processName, string.Empty, "{0} SearchType{1}.", _process.SearchTypes.Count, _process.SearchTypes.Count.Plural());
+            TflLogger.Debug(_processName, string.Empty, "{0} Log{0}", _process.Log.Count, _process.Log.Count.Plural());
 
             var mapCount = _process.MapStartsWith.Count + _process.MapEquals.Count + _process.MapEndsWith.Count;
-            _log.Debug("{0} Map{1}.", mapCount, mapCount.Plural());
+            TflLogger.Debug(_processName, string.Empty, "{0} Map{1}.", mapCount, mapCount.Plural());
         }
     }
 }

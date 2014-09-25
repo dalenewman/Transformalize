@@ -22,14 +22,12 @@
 
 using System;
 using System.Collections.Generic;
-using Transformalize.Libs.NLog;
 using Transformalize.Main;
 using Process = Transformalize.Main.Process;
 
 namespace Transformalize.Run {
     internal class Program {
 
-        private static readonly Logger Log = LogManager.GetLogger("tfl");
         private static Options _options = new Options();
 
         private static void Main(string[] args) {
@@ -53,16 +51,16 @@ namespace Transformalize.Run {
                         processes.AddRange(ProcessFactory.Create(resource, _options));
                     } else {
                         foreach (var problem in _options.Problems) {
-                            Log.Error(resource + " | " + problem);
+                            TflLogger.Error(string.Empty, string.Empty, resource + " | " + problem);
                         }
-                        Log.Warn(resource + " | Aborting process.");
+                        TflLogger.Warn(string.Empty, string.Empty, resource + " | Aborting process.");
                         Environment.Exit(1);
                     }
                 } else {
                     processes.AddRange(ProcessFactory.Create(resource));
                 }
             } catch (Exception e) {
-                Log.Error(e.Message);
+                TflLogger.Error(string.Empty, string.Empty, e.Message);
                 return;
             }
 
@@ -70,7 +68,7 @@ namespace Transformalize.Run {
                 try {
                     process.ExecuteScaler();
                 } catch (TransformalizeException e) {
-                    Log.Error(e.Message);
+                    TflLogger.Error(string.Empty, string.Empty, e.Message);
                     break;
                 }
             }

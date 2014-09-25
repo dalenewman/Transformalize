@@ -1,7 +1,6 @@
 using System;
 using System.Data;
 using Transformalize.Configuration;
-using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Providers.Sql;
 using Transformalize.Operations;
@@ -11,8 +10,6 @@ using Transformalize.Processes;
 namespace Transformalize.Main.Providers.SqlCe {
 
     public class SqlCeConnection : AbstractConnection {
-
-        private readonly Logger _log = LogManager.GetLogger("tfl");
 
         public SqlCeConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
@@ -128,7 +125,7 @@ namespace Transformalize.Main.Providers.SqlCe {
                         AddParameter(cmd, "@End", end);
                     }
 
-                    _log.Debug(cmd.CommandText);
+                    TflLogger.Debug(entity.ProcessName, entity.Name, cmd.CommandText);
                     cmd.ExecuteNonQuery();
                 }
             }

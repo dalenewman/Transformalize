@@ -17,13 +17,14 @@ using Transformalize.Libs.Microsoft.System.Web.Razor;
 using Transformalize.Libs.Microsoft.System.Web.Razor.Parser;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.RazorEngine.Templating;
+using Transformalize.Main;
 
 namespace Transformalize.Libs.RazorEngine.Compilation {
     /// <summary>
     ///     Provides a base implementation of a direct compiler service.
     /// </summary>
     public abstract class DirectCompilerServiceBase : CompilerServiceBase, IDisposable {
-        private readonly Logger _log = LogManager.GetLogger("tfl");
+        private const string _none = "None";
 
         #region Fields
 
@@ -116,10 +117,10 @@ namespace Transformalize.Libs.RazorEngine.Compilation {
             var compileResult = result.Item1;
 
             if (compileResult.Errors != null && compileResult.Errors.Count > 0) {
-                _log.Warn("The following template content will not compile:");
-                _log.Info(Environment.NewLine + context.TemplateContent);
+                TflLogger.Warn(_none,_none, "The following template content will not compile:");
+                TflLogger.Info(_none,_none, context.TemplateContent);
                 foreach (var error in compileResult.Errors) {
-                    _log.Error(error.ToString().Split(':').Last().Trim(' '));
+                    TflLogger.Error(_none,_none,error.ToString().Split(':').Last().Trim(' '));
                 }
                 throw new TemplateCompilationException(compileResult.Errors, result.Item2, context.TemplateContent);
             }

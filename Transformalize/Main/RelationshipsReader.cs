@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
-using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main {
     public class RelationshipsReader {
 
         private readonly Process _process;
         private readonly RelationshipElementCollection _elements;
-        private readonly Logger _log = LogManager.GetLogger("tfl");
 
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 

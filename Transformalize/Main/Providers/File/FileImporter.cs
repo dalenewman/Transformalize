@@ -3,12 +3,9 @@ using System.Globalization;
 using System.IO;
 using Transformalize.Configuration;
 using Transformalize.Configuration.Builders;
-using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main.Providers.File {
     public class FileImporter {
-
-        private readonly Logger _log = LogManager.GetLogger("tfl");
 
         public void ImportScaler(FileInfo fileInfo, ConnectionConfigurationElement output, string processName = null, string entityName = null) {
             ImportScaler(fileInfo, new FileInspectionRequest(), output, processName, entityName);
@@ -63,9 +60,9 @@ namespace Transformalize.Main.Providers.File {
 
             foreach (var field in fields) {
                 if (field.Type.Equals("string")) {
-                    _log.Info("Using {0} character string for {1}.", field.Length, field.Name);
+                    TflLogger.Info(processName, entityName, "Using {0} character string for {1}.", field.Length, field.Name);
                 } else {
-                    _log.Info("Using {0} for {1}.", field.Type, field.Name);
+                    TflLogger.Info(processName, entityName, "Using {0} for {1}.", field.Type, field.Name);
                 }
 
                 builder
@@ -73,7 +70,6 @@ namespace Transformalize.Main.Providers.File {
                     .Length(field.Length)
                     .Type(field.Type)
                     .QuotedWith(field.QuotedWith);
-
             }
 
             var process = builder.Process();

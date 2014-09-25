@@ -1,17 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main.Providers {
     public class DatabaseEntityCreator : IEntityCreator {
 
-        protected Logger Log { get; set; }
         public IEntityExists EntityExists { get; set; }
-
-        public DatabaseEntityCreator() {
-            Log = LogManager.GetLogger("tfl");
-        }
 
         protected Fields GetRelationshipFields(IEnumerable<Relationship> rel, Entity entity) {
 

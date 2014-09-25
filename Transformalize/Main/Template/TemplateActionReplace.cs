@@ -60,12 +60,12 @@ namespace Transformalize.Main {
             if (fileInfo.Exists) {
                 var content = File.ReadAllText(fileInfo.FullName);
                 File.WriteAllText(fileInfo.FullName, content.Replace(action.OldValue, action.NewValue));
-                Log.Info("Performed {0} action on {1}.", action.Action, fileInfo.Name);
+                TflLogger.Info(string.Empty, string.Empty, "Performed {0} action on {1}.", action.Action, fileInfo.Name);
             } else {
                 if (action.TemplateName.Equals(string.Empty)) {
-                    Log.Warn("Skipping {0} action. File '{1}' does not exist.", action.Action, fileName);
+                    TflLogger.Warn(string.Empty, string.Empty, "Skipping {0} action. File '{1}' does not exist.", action.Action, fileName);
                 } else {
-                    Log.Warn("Skipping {0} action in {1} template. Niether file '{2}' nor rendered file '{3}' exist.", action.Action, action.TemplateName, action.File, action.RenderedFile);
+                    TflLogger.Warn(string.Empty, string.Empty, "Skipping {0} action in {1} template. Niether file '{2}' nor rendered file '{3}' exist.", action.Action, action.TemplateName, action.File, action.RenderedFile);
                 }
             }
         }

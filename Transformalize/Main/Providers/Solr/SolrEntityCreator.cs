@@ -1,10 +1,9 @@
 using System.Collections.Generic;
-using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main.Providers.Solr {
 
     public class SolrEntityCreator : IEntityCreator {
-        private readonly Logger _log = LogManager.GetLogger("tfl");
+
         private readonly Dictionary<string, string> _types = new Dictionary<string, string>() {
             {"int64", "long"},
             {"int16","integer"},
@@ -85,7 +84,7 @@ namespace Transformalize.Main.Providers.Solr {
                                 }
                             }
                         } else {
-                            _log.Warn("Analyzer '{0}' specified in search type '{1}' is not supported.  Please use a built-in analyzer for Solr.", analyzer, searchType.Name);
+                            TflLogger.Warn(entity.ProcessName, entity.Name, "Analyzer '{0}' specified in search type '{1}' is not supported.  Please use a built-in analyzer for Solr.", analyzer, searchType.Name);
                             if (!fields.ContainsKey(alias)) {
                                 fields[alias] = new Dictionary<string, object>() { { "type", type } };
                             }

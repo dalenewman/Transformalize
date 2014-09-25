@@ -110,16 +110,13 @@ namespace Transformalize.Runner {
 
             var newXml = new StringBuilder("<transformalize><processes>");
 
-            GlobalDiagnosticsContext.Set("Process", Common.LogLength("All"));
-            GlobalDiagnosticsContext.Set("entity", Common.LogLength("All"));
-
             if (environments.Length > 0) {
                 var parameters = environmentDefault.Equals(string.Empty) ?
                     environments.First().SubNodes.First().SubNodes.ToArray() :
                     environments.First(e => e.GetAttribute("name").Value.Equals(environmentDefault)).SubNodes.First().SubNodes.ToArray();
 
                 foreach (var process in processes) {
-                    LogManager.GetLogger("tfl").Info("Environment: {0}", environmentDefault.Equals(string.Empty) ? "first" : environmentDefault);
+                    TflLogger.Info(process.Name, string.Empty, "Environment: {0}", environmentDefault.Equals(string.Empty) ? "first" : environmentDefault);
                     newXml.AppendLine(ApplyParameters(process.ToString(), parameters));
                 }
             } else {
@@ -137,7 +134,6 @@ namespace Transformalize.Runner {
         }
 
         private static string ApplyParameters(string xml, IEnumerable<NanoXmlNode> parameters) {
-            var log = LogManager.GetLogger("tfl");
             var result = xml;
             foreach (var parameter in parameters) {
                 var name = parameter.GetAttribute("name").Value.Trim("@".ToCharArray());
@@ -145,9 +141,9 @@ namespace Transformalize.Runner {
                 if (result.Contains(placeHolder)) {
                     var value = parameter.GetAttribute("value").Value;
                     result = result.Replace(placeHolder, value);
-                    log.Info("{0} replaced with \"{1}\"", placeHolder, value);
+                    TflLogger.Info(string.Empty, string.Empty, "{0} replaced with \"{1}\"", placeHolder, value);
                 } else {
-                    log.Debug("{0} not found.", placeHolder);
+                    TflLogger.Debug(string.Empty, string.Empty, "{0} not found.", placeHolder);
                 }
             }
             return result;

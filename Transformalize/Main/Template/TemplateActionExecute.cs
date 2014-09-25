@@ -4,7 +4,7 @@ namespace Transformalize.Main {
     public class TemplateActionExecute : TemplateActionHandler {
 
         public override void Handle(TemplateAction action) {
-            Log.Info("Running {0}.", action.File);
+            TflLogger.Info(string.Empty, string.Empty, "Running {0}.", action.File);
 
             var fileInfo = new FileInfo(action.File);
 
@@ -19,12 +19,12 @@ namespace Transformalize.Main {
                     }
                 };
 
-                executable.OutputDataReceived += (sender, args) => Log.Info(args.Data);
+                executable.OutputDataReceived += (sender, args) => TflLogger.Info(string.Empty, string.Empty, args.Data);
                 executable.Start();
                 executable.BeginOutputReadLine();
                 executable.WaitForExit();
             } else {
-                Log.Warn("Couldn't find and execute {0}.", action.File);
+                TflLogger.Warn(string.Empty, string.Empty, "Couldn't find and execute {0}.", action.File);
             }
         }
     }

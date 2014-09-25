@@ -24,6 +24,7 @@
     <Prefer32Bit>false</Prefer32Bit>
     <Optimize>true</Optimize>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <OutputPath>bin\Release\</OutputPath>
@@ -38,6 +39,8 @@
     <Optimize>true</Optimize>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.AnalysisServices, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
@@ -1247,6 +1250,7 @@
     <Compile Include="Libs\Lucene.Net\Util\ToStringUtils.cs" />
     <Compile Include="Libs\Lucene.Net\Util\UnicodeUtil.cs" />
     <Compile Include="Libs\Lucene.Net\Util\Version.cs" />
+    <Compile Include="Libs\MarkdownSharp\Markdown.cs" />
     <Compile Include="Libs\Microsoft\System.Web.Razor\Common\CommonResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -2854,6 +2858,7 @@
     <Compile Include="Libs\UnidecodeSharpFork\Characters.cs" />
     <Compile Include="Libs\UnidecodeSharpFork\Unidecoder.cs" />
     <Compile Include="Main\Common.cs" />
+    <Compile Include="Main\TflLogger.cs" />
     <Compile Include="Main\Data.cs" />
     <Compile Include="Main\Entity\EntitiesLoader.cs" />
     <Compile Include="Main\Entity\EntityParametersReader.cs" />
@@ -3097,10 +3102,12 @@
     <Compile Include="Main\Template\TemplateActionOpen.cs" />
     <Compile Include="Main\Template\TemplateActionReplace.cs" />
     <Compile Include="Main\Template\TemplateActionRun.cs" />
+    <Compile Include="Main\Template\TemplateActionTfl.cs" />
     <Compile Include="Main\Template\TemplateActionWeb.cs" />
     <Compile Include="Main\Template\TemplateManager.cs" />
     <Compile Include="Main\Template\TemplateReader.cs" />
     <Compile Include="Main\TransformalizeException.cs" />
+    <Compile Include="Main\Transform\MarkDownOperation.cs" />
     <Compile Include="Main\Transform\ShortHandFactory.cs" />
     <Compile Include="Main\Transform\TagOperation.cs" />
     <Compile Include="Main\Transform\TransformOperationFactory.cs" />
@@ -3491,9 +3498,11 @@
     <Compile Include="Operations\Transform\ShouldRunOperation.cs" />
     <Compile Include="Operations\Transform\SlugOperation.cs" />
     <Compile Include="Operations\Transform\SplitIndexOperation.cs" />
+    <Compile Include="Operations\Transform\TemplateOperation.cs" />
     <Compile Include="Operations\Transform\TimeZoneOperation.cs" />
     <Compile Include="Operations\Transform\TransliterateOperation.cs" />
     <Compile Include="Operations\Transform\ValueOperation.cs" />
+    <Compile Include="Operations\Transform\VelocityOperation.cs" />
     <Compile Include="Operations\Transform\XmlEncodeOperation.cs" />
     <Compile Include="Operations\Transform\XmlMode.cs" />
     <Compile Include="Operations\Transform\XpathOperation.cs" />

@@ -56,6 +56,8 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         }
 
         public long LogRows { get; set; }
+        public string ProcessName { get; set; }
+        public string EntityName { get; set; }
 
         /// <summary>
         ///     Gets the statistics for this operation

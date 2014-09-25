@@ -22,7 +22,6 @@
 
 using System.Collections.Generic;
 using Transformalize.Configuration;
-using Transformalize.Libs.NLog;
 using Transformalize.Main.Providers;
 
 namespace Transformalize.Main {
@@ -30,7 +29,6 @@ namespace Transformalize.Main {
     public class TemplateAction {
         private readonly Process _process;
 
-        private readonly Logger _log = LogManager.GetLogger("tfl");
         public string Action { get; set; }
         public AbstractConnection Connection { get; set; }
         public string File { get; set; }
@@ -87,6 +85,7 @@ namespace Transformalize.Main {
                 {"open", new TemplateActionOpen()},
                 {"run", new TemplateActionRun()},
                 {"web", new TemplateActionWeb()},
+                {"tfl", new TemplateActionTfl()},
                 {"exec", new TemplateActionExecute()},
                 {"execute", new TemplateActionExecute()},
                 {"mail", new TemplateActionMail()},
@@ -99,7 +98,7 @@ namespace Transformalize.Main {
                 RenderedFile = file;
                 handlers[Action.ToLower()].Handle(this);
             } else {
-                _log.Warn("The {0} action is not implemented.", Action);
+                TflLogger.Warn(_process.Name, string.Empty, "The {0} action is not implemented.", Action);
             }
         }
     }

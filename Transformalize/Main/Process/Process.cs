@@ -43,7 +43,6 @@ namespace Transformalize.Main {
 
     public class Process {
 
-        private readonly Logger _log = LogManager.GetLogger("tfl");
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private List<IOperation> _transformOperations = new List<IOperation>();
         private IParameters _parameters = new Parameters.Parameters();
@@ -149,10 +148,10 @@ namespace Transformalize.Main {
                     Setup();
                     return true;
                 }
-                _log.Warn("Process is not ready.");
+                TflLogger.Warn(Name, string.Empty, "Process is not ready.");
                 return false;
             }
-            _log.Error("Process is disabled. Data is not being updated.");
+            TflLogger.Error(Name, string.Empty, "Process is disabled. Data is not being updated.");
             return false;
         }
 
@@ -226,7 +225,7 @@ namespace Transformalize.Main {
             }
 
             if (!IsValidationResultField(alias, entity) && issueWarning) {
-                _log.Warn("Can't find field with alias: {0}.", alias);
+                TflLogger.Warn(Name, entity, "Can't find field with alias: {0}.", alias);
             }
 
             return null;
@@ -386,7 +385,7 @@ namespace Transformalize.Main {
                 }
             }
 
-            _log.Debug(ViewSql());
+            TflLogger.Debug(Name, string.Empty, ViewSql());
             connection.Execute(string.Format("CREATE VIEW {0} AS {1}", fullName, ViewSql()));
             connection.Close();
         }

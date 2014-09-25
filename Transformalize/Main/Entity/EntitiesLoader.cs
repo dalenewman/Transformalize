@@ -9,7 +9,6 @@ namespace Transformalize.Main {
 
     public class EntitiesLoader {
 
-        private readonly Logger _log = LogManager.GetLogger("tfl");
         private readonly Process _process;
         private readonly EntityElementCollection _elements;
 
@@ -43,7 +42,7 @@ namespace Transformalize.Main {
             if (!entityKeys.Any()) return;
 
             var count = entityKeys.Count;
-            _log.Warn("field overlap error in {3}.  The field{1}: {0} {2} already defined in previous entities.  You must alias (rename) these.", string.Join(", ", entityKeys), count.Plural(), count == 1 ? "is" : "are", entity.Alias);
+            TflLogger.Warn(entity.ProcessName, entity.Name, "field overlap error in {3}.  The field{1}: {0} {2} already defined in previous entities.  You must alias (rename) these.", string.Join(", ", entityKeys), count.Plural(), count == 1 ? "is" : "are", entity.Alias);
         }
     }
 }

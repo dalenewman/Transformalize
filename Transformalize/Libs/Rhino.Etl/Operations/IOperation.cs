@@ -7,13 +7,11 @@
 using System;
 using System.Collections.Generic;
 
-namespace Transformalize.Libs.Rhino.Etl.Operations
-{
+namespace Transformalize.Libs.Rhino.Etl.Operations {
     /// <summary>
     ///     A single operation in an etl process
     /// </summary>
-    public interface IOperation : IDisposable
-    {
+    public interface IOperation : IDisposable {
         /// <summary>
         ///     Gets the name.
         /// </summary>
@@ -21,6 +19,8 @@ namespace Transformalize.Libs.Rhino.Etl.Operations
         string Name { get; }
 
         long LogRows { get; set; }
+        string ProcessName { get; set; }
+        string EntityName { get; set; }
 
         /// <summary>
         ///     Sets the transaction.

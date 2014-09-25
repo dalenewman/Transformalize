@@ -23,14 +23,11 @@
 using System;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Web;
-using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main {
     public class MetaDataWriter {
 
-        private readonly Logger _log = LogManager.GetLogger("tfl");
         private readonly Process _process;
         private static readonly char[] BadCharacters = { ' ', '(', ')', '/', '\\' };
 
@@ -61,7 +58,8 @@ namespace Transformalize.Main {
         }
 
         private void AppendFields(OrderedFields fields, StringBuilder content) {
-            _log.Debug("Entity auto found {0} field{1}.", fields.Count, fields.Count == 1 ? string.Empty : "s");
+            var entity = fields.Any() ? fields.First().Entity : string.Empty;
+            TflLogger.Debug(_process.Name, entity, "Entity auto found {0} field{1}.", fields.Count, fields.Count == 1 ? string.Empty : "s");
 
             content.AppendLine("      <fields>");
             foreach (var f in fields) {

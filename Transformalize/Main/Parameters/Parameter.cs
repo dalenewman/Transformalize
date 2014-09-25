@@ -22,13 +22,11 @@
 
 using System;
 using System.Collections.Generic;
-using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main.Parameters {
 
     public class Parameter : IParameter {
 
-        private Logger _log = LogManager.GetLogger("tfl");
         private readonly Dictionary<string, Func<object, object>> _conversionMap = Common.GetObjectConversionMap();
         private string _simpleType = "string";
 
@@ -45,7 +43,7 @@ namespace Transformalize.Main.Parameters {
                     if (_conversionMap.ContainsKey(_simpleType)) {
                         Value = _conversionMap[_simpleType](Value);
                     } else {
-                        _log.Warn("Parameter type {0} is not mapped for conversion.", _simpleType);
+                        TflLogger.Warn(string.Empty, string.Empty, "Parameter type {0} is not mapped for conversion.", _simpleType);
                     }
                 }
             }

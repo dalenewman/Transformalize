@@ -1,25 +1,25 @@
-using Transformalize.Libs.NLog;
+using Transformalize.Main;
 
 namespace Transformalize.Libs.NVelocity.Runtime.Log {
     public class NLogSystem : ILogSystem {
-        private Logger _log;
+        private const string NONE = "None";
+
         public void Init(IRuntimeServices rs) {
-            _log = NLog.LogManager.GetLogger("tfl");
         }
 
         public void LogVelocityMessage(LogLevel level, string message) {
             switch (level) {
                 case LogLevel.Debug:
-                    _log.Debug(message);
+                    TflLogger.Debug(NONE, NONE, message);
                     break;
                 case LogLevel.Error:
-                    _log.Error(message);
+                    TflLogger.Error(NONE, NONE, message);
                     break;
                 case LogLevel.Warn:
-                    _log.Warn(message);
+                    TflLogger.Warn(NONE, NONE, message);
                     break;
                 default:
-                    _log.Info(message);
+                    TflLogger.Info(NONE, NONE, message);
                     break;
             }
         }

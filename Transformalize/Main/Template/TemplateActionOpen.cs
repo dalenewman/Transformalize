@@ -34,9 +34,9 @@ namespace Transformalize.Main {
 
             if (!file.Equals(string.Empty) && File.Exists(file)) {
                 System.Diagnostics.Process.Start(file);
-                Log.Info("Opened file {0}.", file);
+                TflLogger.Info(string.Empty, string.Empty, "Opened file {0}.", file);
             } else {
-                Log.Warn("Can't open '{0}'.", file);
+                TflLogger.Warn(string.Empty, string.Empty, "Can't open '{0}'.", file);
             }
         }
     }

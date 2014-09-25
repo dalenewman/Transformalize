@@ -2,23 +2,18 @@
 using System.IO;
 using System.Linq;
 using Transformalize.Configuration;
-using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main {
-    public class ScriptReader
-    {
+    public class ScriptReader {
 
-        private readonly Logger _log = LogManager.GetLogger("tfl");
         private readonly ScriptElementCollection _elements;
-        private readonly char[] _s = new[] {'\\'};
+        private readonly char[] _s = new[] { '\\' };
 
-        public ScriptReader(ScriptElementCollection elements)
-        {
+        public ScriptReader(ScriptElementCollection elements) {
             _elements = elements;
         }
 
-        public Dictionary<string, Script> Read()
-        {
+        public Dictionary<string, Script> Read() {
             var scriptElements = _elements.Cast<ScriptConfigurationElement>().ToArray();
             var path = _elements.Path;
 
@@ -27,15 +22,15 @@ namespace Transformalize.Main {
             foreach (var script in scriptElements) {
                 var fileInfo = path.Equals(string.Empty) ? new FileInfo(script.File) : new FileInfo(path.TrimEnd(_s) + @"\" + script.File);
                 if (!fileInfo.Exists) {
-                    _log.Warn("Missing Script: {0}.", fileInfo.FullName);
+                    TflLogger.Warn(string.Empty, string.Empty, "Missing Script: {0}.", fileInfo.FullName);
                 } else {
                     scripts[script.Name] = new Script(script.Name, File.ReadAllText(fileInfo.FullName), fileInfo.FullName);
-                    _log.Debug("Loaded script {0}.", fileInfo.FullName);
+                    TflLogger.Debug(string.Empty, string.Empty, "Loaded script {0}.", fileInfo.FullName);
                 }
             }
 
             return scripts;
 
-        } 
+        }
     }
 }

@@ -15,7 +15,6 @@ namespace Transformalize.Main {
     public class TemplateReader {
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
-        private readonly Logger _log = LogManager.GetLogger("tfl");
         private readonly Process _process;
         private readonly TemplateElementCollection _elements;
         private readonly DefaultFactory _defaultFactory = new DefaultFactory();
@@ -56,7 +55,7 @@ namespace Transformalize.Main {
                             templateAction.Connection = _process.Connections[action.Connection];
                         } else {
                             var message = string.Format("The template '{0}' refers to an invalid connection named '{1}'.", action.Action, action.Connection);
-                            _log.Error(message);
+                            TflLogger.Error(_process.Name, string.Empty, message);
                             throw new TransformalizeException(message);
                         }
                     }
@@ -65,7 +64,7 @@ namespace Transformalize.Main {
                 }
 
                 templates[element.Name] = template;
-                _log.Debug("Loaded template {0} with {1} parameter{2}.", element.File, template.Parameters.Count, template.Parameters.Count.Plural());
+                TflLogger.Debug(_process.Name, string.Empty, "Loaded template {0} with {1} parameter{2}.", element.File, template.Parameters.Count, template.Parameters.Count.Plural());
 
             }
 
@@ -82,7 +81,7 @@ namespace Transformalize.Main {
             var config = new FluentTemplateServiceConfiguration(c => c.WithEncoding(_process.TemplateContentType));
             var templateService = new TemplateService(config);
             Razor.SetTemplateService(templateService);
-            _log.Debug("Set RazorEngine to {0} content type.", _process.TemplateContentType);
+            TflLogger.Debug(_process.Name, string.Empty, "Set RazorEngine to {0} content type.", _process.TemplateContentType);
         }
     }
 }

@@ -23,13 +23,11 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main.Providers {
     public class DefaultConnectionChecker : IConnectionChecker {
 
         protected static readonly Dictionary<string, bool> CachedResults = new Dictionary<string, bool>();
-        protected readonly Logger Log = LogManager.GetLogger("tfl");
         private readonly int _timeOut;
 
         public DefaultConnectionChecker(int timeOut = 3) {
@@ -59,12 +57,12 @@ namespace Transformalize.Main.Providers {
                         cn.Open();
                         result = cn.State == ConnectionState.Open;
                         if (result) {
-                            Log.Debug("{0} connection is ready.", connection.Name);
+                            TflLogger.Debug(string.Empty, string.Empty, "{0} connection is ready.", connection.Name);
                         } else {
-                            Log.Warn("{0} connection is not responding.", connection.Name);
+                            TflLogger.Warn(string.Empty, string.Empty, "{0} connection is not responding.", connection.Name);
                         }
                     } catch (Exception e) {
-                        Log.Error("{0} connection caused error message: {1}", connection.Name, e.Message);
+                        TflLogger.Error(string.Empty, string.Empty, "{0} connection caused error message: {1}", connection.Name, e.Message);
                     }
                 }
             } catch (Exception ex) {

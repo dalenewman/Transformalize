@@ -12,8 +12,6 @@ namespace Transformalize.Main {
             _process = process;
         }
 
-        private readonly Logger _log = LogManager.GetLogger("tfl");
-
         public void Load() {
             if (_process.Entities.Count == 1)
                 return;
@@ -22,7 +20,7 @@ namespace Transformalize.Main {
                 entity.RelationshipToMaster = ReadRelationshipToMaster(entity);
                 if (!entity.RelationshipToMaster.Any() && !entity.IsMaster()) {
                     if (_process.Mode == "metadata") {
-                        _log.Warn("The entity {0} must have a relationship to the master entity {1}.", entity.Name, _process.MasterEntity == null ? "undefined" : _process.MasterEntity.Name);
+                        TflLogger.Warn(entity.ProcessName, entity.Name, "The entity {0} must have a relationship to the master entity {1}.", entity.Name, _process.MasterEntity == null ? "undefined" : _process.MasterEntity.Name);
                     } else {
                         throw new TransformalizeException("The entity {0} must have a relationship to the master entity {1}.", entity.Name, _process.MasterEntity == null ? "undefined" : _process.MasterEntity.Name);
                     }

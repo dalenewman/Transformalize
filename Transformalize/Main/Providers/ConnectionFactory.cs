@@ -3,13 +3,11 @@ using Transformalize.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.Ninject.Parameters;
 using Transformalize.Libs.Ninject.Syntax;
-using Transformalize.Libs.NLog;
 
 namespace Transformalize.Main.Providers {
 
     public class ConnectionFactory {
         private readonly Process _process;
-        private readonly Logger _log = LogManager.GetLogger("tfl");
         private Dictionary<string, string> _providers = new Dictionary<string, string>();
 
         public ConnectionFactory(Process process) {
@@ -47,7 +45,7 @@ namespace Transformalize.Main.Providers {
             var results = validator.Validate(element);
             if (!results.IsValid) {
                 foreach (var result in results) {
-                    _log.Error(result.Message);
+                    TflLogger.Error(_process.Name, string.Empty, result.Message);
                 }
                 throw new TransformalizeException("Connection validation failed. See error log.");
             }

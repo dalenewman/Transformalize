@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
@@ -14,9 +15,6 @@ namespace Transformalize.Operations.Transform {
 
         public TimeZoneOperation(string inKey, string outKey, string fromTimeZone, string toTimeZone)
             : base(inKey, outKey) {
-
-            fromTimeZone = Common.GuardTimeZone(fromTimeZone, "UTC");
-            toTimeZone = Common.GuardTimeZone(toTimeZone, TimeZoneInfo.Local.Id);
 
             var fromTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(fromTimeZone);
             _toTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(toTimeZone);
@@ -46,5 +44,19 @@ namespace Transformalize.Operations.Transform {
                 yield return row;
             }
         }
+
+        public static string GuardTimeZone(string process, string entity, string timeZone, string defaultTimeZone) {
+            var result = timeZone;
+            if (timeZone == String.Empty) {
+                result = defaultTimeZone;
+                TflLogger.Debug(process, entity, "Defaulting From TimeZone to {0}.", defaultTimeZone);
+            } else {
+                if (!TimeZoneInfo.GetSystemTimeZones().Any(tz => tz.Id.Equals(timeZone))) {
+                    throw new TransformalizeException("From Timezone Id {0} is invalid.", timeZone);
+                }
+            }
+            return result;
+        }
+
     }
 }

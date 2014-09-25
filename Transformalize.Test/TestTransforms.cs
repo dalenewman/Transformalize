@@ -27,7 +27,6 @@ using System.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration.Builders;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
-using Transformalize.Libs.NLog;
 using Transformalize.Libs.NVelocity.App;
 using Transformalize.Main;
 using Transformalize.Main.Parameters;
@@ -924,6 +923,49 @@ namespace Transformalize.Test {
             Assert.AreEqual("yes", output[0]["o1"], "test1 maps to yes");
             Assert.AreEqual("yes", output[1]["o1"], "test2 maps to yes");
             Assert.AreEqual("no", output[2]["o1"], "test maps to no (via catch-all)");
+        }
+
+        [Test]
+        public void Markdown()
+        {
+            const string input = @"#Header
+
+1. Number 1
+2. Number 2
+
+---
+";
+            var rows = new RowsBuilder()
+                .Row("input", input)
+                .ToOperation();
+
+            var markdownTransform = new MarkDownOperation("input", "input");
+
+            var output = TestOperation(rows, markdownTransform);
+
+            Assert.AreEqual("<h1>Header</h1>\n\n<ol>\n<li>Number 1</li>\n<li>Number 2</li>\n</ol>\n\n<hr />\n", output[0]["input"]);
+
+        }
+
+        [Test]
+        public void MarkdownCode() {
+            const string input = @"#Code Example
+
+    <transformalize>
+        <processes>
+        </processes>
+    </transformalize>
+";
+            var rows = new RowsBuilder()
+                .Row("input", input)
+                .ToOperation();
+
+            var markdownTransform = new MarkDownOperation("input", "input");
+
+            var output = TestOperation(rows, markdownTransform);
+
+            Assert.AreEqual("<h1>Code Example</h1>\n\n<pre><code>&lt;transformalize&gt;\n    &lt;processes&gt;\n    &lt;/processes&gt;\n&lt;/transformalize&gt;\n</code></pre>\n", output[0]["input"]);
+
         }
 
         [Test]
