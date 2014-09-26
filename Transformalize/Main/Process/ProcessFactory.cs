@@ -1,25 +1,26 @@
 ﻿using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 using Transformalize.Configuration;
-using Transformalize.Libs.NLog;
-using Transformalize.Libs.NLog.Config;
 
 namespace Transformalize.Main {
 
     public static class ProcessFactory {
 
         public static Process[] Create(string resource, Options options = null) {
-            InitializeLogger("All", options);
             var element = new ConfigurationFactory(resource).Create();
             return Create(element, options);
         }
 
         public static Process[] Create(ProcessConfigurationElement element, Options options = null) {
-            InitializeLogger(element.Name, options);
             return Create(new ProcessElementCollection() { element }, options);
         }
 
         private static Process[] Create(ProcessElementCollection elements, Options options = null) {
+
+            var host = System.Net.Dns.GetHostName();
+            var ip = string.Join(", ", System.Net.Dns.GetHostEntry(host).AddressList.Select(a => a.ToString()));
+            TflLogger.Info(string.Empty, string.Empty, "Host: {0}", host);
+            TflLogger.Info(string.Empty, string.Empty, "IP(s): {0}", ip);
 
             var processes = new List<Process>();
             if (options == null) {
@@ -41,12 +42,6 @@ namespace Transformalize.Main {
                 child = parent;
             }
             return child;
-        }
-
-        private static void InitializeLogger(string name, Options options) {
-            if (options != null && options.MemoryTarget != null) {
-                SimpleConfigurator.ConfigureForTargetLogging(options.MemoryTarget, options.LogLevel);
-            }
         }
 
         public static Process CreateSingle(ProcessConfigurationElement process, Options options = null) {

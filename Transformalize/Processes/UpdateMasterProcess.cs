@@ -22,12 +22,12 @@
 
 using System.Linq;
 using Transformalize.Extensions;
-using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 using Transformalize.Operations;
 
 namespace Transformalize.Processes {
+
     public class UpdateMasterProcess : EtlProcess {
         private readonly Process _process;
 

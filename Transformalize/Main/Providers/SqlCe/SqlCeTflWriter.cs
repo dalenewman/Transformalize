@@ -42,7 +42,7 @@ namespace Transformalize.Main.Providers.SqlCe {
 
             Execute(process.OutputConnection, "DELETE FROM TflBatch WHERE ProcessName = '{0}';", process.Name);
 
-            Info("Initialized TrAnSfOrMaLiZeR {0} connection.", process.OutputConnection.Name);
+            TflLogger.Info(process.Name, string.Empty, "Initialized TrAnSfOrMaLiZeR {0} connection.", process.OutputConnection.Name);
         }
 
         private static void Execute(AbstractConnection connection, string sqlFormat, params object[] values) {

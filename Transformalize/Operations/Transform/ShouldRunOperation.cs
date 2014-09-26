@@ -28,13 +28,13 @@ namespace Transformalize.Operations.Transform {
         void TflOperation_OnFinishedProcessing(IOperation obj) {
             if (SkipCount > 0) {
                 if (IsFilter) {
-                    Info("Blocked {0} row{1}. Allowed {2} row{3}.", SkipCount, SkipCount.Plural(), obj.Statistics.OutputtedRows, obj.Statistics.OutputtedRows.Plural());
+                    TflLogger.Info(ProcessName, EntityName, "Blocked {0} row{1}. Allowed {2} row{3}.", SkipCount, SkipCount.Plural(), obj.Statistics.OutputtedRows, obj.Statistics.OutputtedRows.Plural());
                 } else {
-                    Info("Skipped {0} of {1} row{2}.", SkipCount, obj.Statistics.OutputtedRows, obj.Statistics.OutputtedRows.Plural());
+                    TflLogger.Info(ProcessName, EntityName, "Skipped {0} of {1} row{2}.", SkipCount, obj.Statistics.OutputtedRows, obj.Statistics.OutputtedRows.Plural());
                 }
             }
             var seconds = Convert.ToInt64(obj.Statistics.Duration.TotalSeconds);
-            Info("Completed {0} rows in {1}: {2} second{3}.", obj.Statistics.OutputtedRows, Name, seconds, seconds.Plural());
+            TflLogger.Info(ProcessName, EntityName, "Completed {0} rows in {1}: {2} second{3}.", obj.Statistics.OutputtedRows, Name, seconds, seconds.Plural());
         }
 
         protected static bool CanChangeType(object value, string simpleType) {

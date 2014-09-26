@@ -170,7 +170,7 @@ namespace Transformalize.Main {
                             //console
                             var consoleTarget = new ColoredConsoleTarget {
                                 Name = log.Name,
-                                Layout = log.Layout.Equals(Common.DefaultValue) ? @"${date:format=HH\:mm\:ss} | ${level} | " + process.Name + " | ${gdc:item=entity} | ${message}" : log.Layout
+                                Layout = log.Layout.Equals(Common.DefaultValue) ? @"${date:format=HH\:mm\:ss} | ${message}" : log.Layout
                             };
                             var consoleRule = new LoggingRule("tfl", log.Level, consoleTarget);
                             config.AddTarget(log.Name, consoleTarget);
@@ -180,7 +180,7 @@ namespace Transformalize.Main {
                             var fileTarget = new AsyncTargetWrapper(new FileTarget {
                                 Name = log.Name,
                                 FileName = log.File.Equals(Common.DefaultValue) ? "${basedir}/logs/tfl-" + process.Name + "-${date:format=yyyy-MM-dd}.log" : log.File,
-                                Layout = log.Layout.Equals(Common.DefaultValue) ? @"${date:format=HH\:mm\:ss} | ${level} | " + process.Name + " | ${gdc:item=entity} | ${message}" : log.Layout
+                                Layout = log.Layout.Equals(Common.DefaultValue) ? @"${date:format=HH\:mm\:ss} | ${message}" : log.Layout
                             });
                             var fileRule = new LoggingRule("tfl", log.Level, fileTarget);
                             config.AddTarget(log.Name, fileTarget);
@@ -200,7 +200,7 @@ namespace Transformalize.Main {
                                 Subject = log.Subject.Equals(Common.DefaultValue) ? "Tfl Error (" + process.Name + ")" : log.Subject,
                                 From = log.From,
                                 To = log.To,
-                                Layout = log.Layout.Equals(Common.DefaultValue) ? @"${date:format=HH\:mm\:ss} | ${level} | ${gdc:item=entity} | ${message}" : log.Layout
+                                Layout = log.Layout.Equals(Common.DefaultValue) ? @"${date:format=HH\:mm\:ss} | ${message}" : log.Layout
                             };
                             var mailRule = new LoggingRule("tfl", LogLevel.Error, mailTarget);
                             config.AddTarget(log.Name, mailTarget);

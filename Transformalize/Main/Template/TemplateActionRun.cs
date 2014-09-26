@@ -33,7 +33,7 @@ namespace Transformalize.Main {
             var file = isTemplate ? action.RenderedFile : action.File;
 
             if (string.IsNullOrEmpty(file)) {
-                TflLogger.Warn(string.Empty, string.Empty, "Skipping run action.  It needs a template file, OR an action file attribute set.  Note: the action file superceeds the template file.");
+                TflLogger.Warn(action.ProcessName, string.Empty, "Skipping run action.  It needs a template file, OR an action file attribute set.  Note: the action file superceeds the template file.");
                 return;
             }
 
@@ -45,31 +45,31 @@ namespace Transformalize.Main {
 
                     if (action.Connection == null) {
                         if (isTemplate) {
-                            TflLogger.Warn(string.Empty, string.Empty, "Could not run {0} action for {1} template.  No connection provided.", action.Action, action.TemplateName);
+                            TflLogger.Warn(action.ProcessName, string.Empty, "Could not run {0} action for {1} template.  No connection provided.", action.Action, action.TemplateName);
                         } else {
-                            TflLogger.Warn(string.Empty, string.Empty, "Could not run {0} action.  No connection provided.", action.Action);
+                            TflLogger.Warn(action.ProcessName, string.Empty, "Could not run {0} action.  No connection provided.", action.Action);
                         }
                         return;
                     }
 
                     var response = action.Connection.ExecuteScript(script, action.Timeout);
                     if (response.Success) {
-                        TflLogger.Info(string.Empty, string.Empty, "{0} ran successfully.", fileInfo.Name);
-                        TflLogger.Debug(string.Empty, string.Empty, "{0} affected {1} rows.", fileInfo.Name, response.RowsAffected < 0 ? 0 : response.RowsAffected);
+                        TflLogger.Info(action.ProcessName, string.Empty, "{0} ran successfully.", fileInfo.Name);
+                        TflLogger.Debug(action.ProcessName, string.Empty, "{0} affected {1} rows.", fileInfo.Name, response.RowsAffected < 0 ? 0 : response.RowsAffected);
                     } else {
-                        TflLogger.Error(string.Empty, string.Empty, "{0} failed. {1} Error{2}.", fileInfo.Name, response.Messages.Count, response.Messages.Count.Plural());
+                        TflLogger.Error(action.ProcessName, string.Empty, "{0} failed. {1} Error{2}.", fileInfo.Name, response.Messages.Count, response.Messages.Count.Plural());
                         foreach (var message in response.Messages) {
-                            TflLogger.Error(string.Empty, string.Empty, message);
+                            TflLogger.Error(action.ProcessName, string.Empty, message);
                         }
                     }
                 } else {
-                    TflLogger.Warn(string.Empty, string.Empty, "{0} is empty.", fileInfo.Name);
+                    TflLogger.Warn(action.ProcessName, string.Empty, "{0} is empty.", fileInfo.Name);
                 }
             } else {
                 if(isTemplate)
-                    TflLogger.Warn(string.Empty, string.Empty, "file rendered output from {0} is not available.  It will not run.", action.TemplateName);
+                    TflLogger.Warn(action.ProcessName, string.Empty, "file rendered output from {0} is not available.  It will not run.", action.TemplateName);
                 else
-                    TflLogger.Warn(string.Empty, string.Empty, "file {0} output is not available.  It will not run.", fileInfo.Name);
+                    TflLogger.Warn(action.ProcessName, string.Empty, "file {0} output is not available.  It will not run.", fileInfo.Name);
             }
         }
     }

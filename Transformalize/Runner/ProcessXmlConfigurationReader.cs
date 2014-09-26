@@ -26,9 +26,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using Transformalize.Configuration;
-using Transformalize.Extensions;
 using Transformalize.Libs.NanoXml;
-using Transformalize.Libs.NLog;
 using Transformalize.Main;
 
 namespace Transformalize.Runner {
@@ -49,38 +47,17 @@ namespace Transformalize.Runner {
 
             try {
                 var doc = XDocument.Parse(contents.Content);
-                var process = doc.Element("process");
-                string xml;
+                var transformalize = doc.Element("transformalize");
 
-                if (process == null) {
-                    var transformalize = doc.Element("transformalize");
-                    if (transformalize == null)
-                        throw new TransformalizeException("Can't find the <process/> or <transformalize/> element in {0}.", _resource);
-                    xml = transformalize.ToString();
-                } else {
-                    xml = string.Format(@"
-                    <transformalize>
-                        <processes>
-                            <add name=""{0}"" enabled=""{1}"" inherit=""{2}"" time-zone=""{3}"" star=""{4}"" star-enabled=""{5}"" view=""{6}"" mode=""{7}"">{8}</add>
-                        </processes>
-                    </transformalize>",
-                        contents.Name,
-                        SafeAttribute(process, "enabled", true),
-                        SafeAttribute(process, "inherit", string.Empty),
-                        SafeAttribute(process, "time-zone", string.Empty),
-                        SafeAttribute(process, "star", Common.DefaultValue),
-                        SafeAttribute(process, "star-enabled", true),
-                        SafeAttribute(process, "view", Common.DefaultValue),
-                        SafeAttribute(process, "mode", "default"),
-                        process.InnerXml()
-                    );
-                }
+                if (transformalize == null)
+                    throw new TransformalizeException("Can't find the <transformalize/> element in {0}.", contents.Content);
 
-                var updated = DefaultParameters(xml);
-                section.Deserialize(updated);
+                section.Deserialize(
+                    DefaultParameters(transformalize.ToString())
+                );
                 return section.Processes;
             } catch (Exception e) {
-                throw new TransformalizeException("Sorry.  I couldn't parse the file {0}.  Make sure it is valid XML and try again. {1}", contents.Name, e.Message);
+                throw new TransformalizeException("Sorry.  I couldn't parse the file {0}.  Make sure it is valid XML and try again. {1} {2}", contents.Name, e.Message, contents.Content);
             }
         }
 
@@ -116,7 +93,7 @@ namespace Transformalize.Runner {
                     environments.First(e => e.GetAttribute("name").Value.Equals(environmentDefault)).SubNodes.First().SubNodes.ToArray();
 
                 foreach (var process in processes) {
-                    TflLogger.Info(process.Name, string.Empty, "Environment: {0}", environmentDefault.Equals(string.Empty) ? "first" : environmentDefault);
+                    TflLogger.Info(string.Empty, string.Empty, "Environment: {0}", environmentDefault.Equals(string.Empty) ? "first" : environmentDefault);
                     newXml.AppendLine(ApplyParameters(process.ToString(), parameters));
                 }
             } else {
@@ -149,11 +126,5 @@ namespace Transformalize.Runner {
             return result;
         }
 
-        private static object SafeAttribute(XElement element, string attribute, object defaultValue) {
-            if (element.HasAttributes && element.Attributes().Any(a => a.Name.ToString().Equals(attribute))) {
-                return Convert.ChangeType(element.Attribute(attribute).Value, defaultValue.GetType());
-            }
-            return defaultValue;
-        }
     }
 }

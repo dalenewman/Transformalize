@@ -19,7 +19,7 @@ namespace Transformalize.Main {
             foreach (EntityConfigurationElement entityElement in _entities) {
 
                 var entity = _process.Entities.First(e => e.Alias == entityElement.Alias);
-                var factory = new TransformOperationFactory(_process);
+                var factory = new TransformOperationFactory(_process, entity.Name);
 
                 //fields can have prefixes and are limited to literal parameters (parameters with name and value provided in configuration)
                 foreach (FieldConfigurationElement f in entityElement.Fields) {
@@ -80,7 +80,7 @@ namespace Transformalize.Main {
                     transform.RunOperator = branch.RunOperator;
                     transform.RunValue = branch.RunValue;
 
-                    var operation = new TransformOperationFactory(_process).Create(field, transform, reader.Read(transform));
+                    var operation = new TransformOperationFactory(_process, entity.Name).Create(field, transform, reader.Read(transform));
                     entity.OperationsAfterAggregation.Add(operation);
                     if (transform.Branches.Count > 0) {
                         AddBranches(transform.Branches, entity, field, reader);

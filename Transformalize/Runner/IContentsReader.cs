@@ -2,6 +2,7 @@ using System;
 using System.Collections.Specialized;
 using System.Text;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Main;
 using Transformalize.Operations.Transform;
 
 namespace Transformalize.Runner {
@@ -16,7 +17,7 @@ namespace Transformalize.Runner {
             var builder = new StringBuilder(content);
             foreach (var key in query.AllKeys) {
                 builder.Replace(string.Format("@({0})", key), XmlEncodeOperation.SanitizeXmlString(query[key]));
-                Debug("Replaced {0} with {1} per url's query string.", "@" + key, query[key]);
+                TflLogger.Debug(string.Empty, string.Empty, "Replaced {0} with {1} per url's query string.", "@" + key, query[key]);
             }
             return builder.ToString();
         }

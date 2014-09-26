@@ -260,7 +260,7 @@ namespace Transformalize.Main.Providers.SqlServer {
                 if (entity.PrimaryKey.WithInput().Any()) {
                     p.Register(new EntityKeysSaveOperation(entity));
                     p.Register(new EntityKeysToOperations(ref entity, this, firstRun));
-                    p.Register(new SerialUnionAllOperation());
+                    p.Register(new SerialUnionAllOperation(entity));
                 } else {
                     entity.SqlOverride = SqlTemplates.Select(entity, this);
                     p.Register(new SqlOverrideOperation(entity, this));

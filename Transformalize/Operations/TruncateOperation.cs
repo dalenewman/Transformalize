@@ -20,6 +20,8 @@ namespace Transformalize.Operations {
         public TruncateOperation(Fields fields, Fields calculatedFields = null)
             : base(string.Empty, string.Empty) {
 
+            EntityName = fields.First().Entity;
+
             foreach (Field field in fields.WithString()) {
                 _aliases.Add(field.Alias);
                 var value = field.Length.Equals("max", IC) ? Int32.MaxValue.ToString(CultureInfo.InvariantCulture) : field.Length;

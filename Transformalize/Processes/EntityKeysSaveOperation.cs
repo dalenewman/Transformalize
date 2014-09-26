@@ -10,6 +10,7 @@ namespace Transformalize.Processes {
 
         public EntityKeysSaveOperation(Entity entity) {
             _entity = entity;
+            EntityName = entity.Name;
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

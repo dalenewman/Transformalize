@@ -29,12 +29,12 @@ namespace Transformalize.Main {
             if (!string.IsNullOrEmpty(action.Url)) {
                 var response = method == "post" ? Web.Post(action.Url, string.Empty) : Web.Get(action.Url);
                 if (response.Code == HttpStatusCode.OK) {
-                    TflLogger.Info(string.Empty, string.Empty, "Made web request to {0}.", action.Url);
+                    TflLogger.Info(action.ProcessName, string.Empty, "Made web request to {0}.", action.Url);
                 } else {
-                    TflLogger.Warn(string.Empty, string.Empty, "Web request to {0} returned {1}.", action.Url, response.Code);
+                    TflLogger.Warn(action.ProcessName, string.Empty, "Web request to {0} returned {1}.", action.Url, response.Code);
                 }
             } else {
-                TflLogger.Warn(string.Empty, string.Empty, "Missing url for web action.");
+                TflLogger.Warn(action.ProcessName, string.Empty, "Missing url for web action.");
             }
         }
     }

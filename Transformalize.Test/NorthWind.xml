@@ -4,8 +4,8 @@
     <add name="NorthWind" enabled="true">
 
       <log rows="1000">
-        <add name="console" provider="console" level="info"/>
-        <add name="file" provider="file" level="info" file="${basedir}/logs/NorthWind-Tfl-${date:format=yyyy-MM-dd}.log" />
+        <add name="console" provider="console" level="info" layout="${date:format=HH\:mm\:ss} | ${message}"/>
+        <add name="file" provider="file" level="info" file="${basedir}/logs/NorthWind-Tfl-${date:format=yyyy-MM-dd}.log" layout="${date:format=HH\:mm\:ss} | ${message}" />
       </log>
 
       <file-inspection>

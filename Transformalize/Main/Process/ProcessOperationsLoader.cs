@@ -31,7 +31,7 @@ namespace Transformalize.Main {
 
                 foreach (TransformConfigurationElement t in f.Transforms) {
 
-                    var factory = new TransformOperationFactory(_process);
+                    var factory = new TransformOperationFactory(_process, string.Empty);
                     var parameters = t.Parameter == "*" ?
                         new ProcessParametersReader(_process).Read() :
                         new ProcessTransformParametersReader(_process).Read(t);

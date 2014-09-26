@@ -21,7 +21,6 @@
 #endregion
 
 using System.IO;
-using Transformalize.Extensions;
 
 namespace Transformalize.Main {
 
@@ -60,12 +59,12 @@ namespace Transformalize.Main {
             if (fileInfo.Exists) {
                 var content = File.ReadAllText(fileInfo.FullName);
                 File.WriteAllText(fileInfo.FullName, content.Replace(action.OldValue, action.NewValue));
-                TflLogger.Info(string.Empty, string.Empty, "Performed {0} action on {1}.", action.Action, fileInfo.Name);
+                TflLogger.Info(action.ProcessName, string.Empty, "Performed {0} action on {1}.", action.Action, fileInfo.Name);
             } else {
                 if (action.TemplateName.Equals(string.Empty)) {
-                    TflLogger.Warn(string.Empty, string.Empty, "Skipping {0} action. File '{1}' does not exist.", action.Action, fileName);
+                    TflLogger.Warn(action.ProcessName, string.Empty, "Skipping {0} action. File '{1}' does not exist.", action.Action, fileName);
                 } else {
-                    TflLogger.Warn(string.Empty, string.Empty, "Skipping {0} action in {1} template. Niether file '{2}' nor rendered file '{3}' exist.", action.Action, action.TemplateName, action.File, action.RenderedFile);
+                    TflLogger.Warn(action.ProcessName, string.Empty, "Skipping {0} action in {1} template. Niether file '{2}' nor rendered file '{3}' exist.", action.Action, action.TemplateName, action.File, action.RenderedFile);
                 }
             }
         }

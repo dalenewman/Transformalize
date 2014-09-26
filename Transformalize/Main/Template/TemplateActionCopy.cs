@@ -81,10 +81,10 @@ namespace Transformalize.Main {
 
             var copyType = DeterminCopyType(from, to);
             if (copyType.Equals(CopyType.Unknown)) {
-                TflLogger.Warn(string.Empty,string.Empty,"Unable to determine copy operation, from {0} to {1}.", from, to);
-                TflLogger.Warn(string.Empty, string.Empty, "From must be a file name, a connection name, or blank to assume output from template.");
-                TflLogger.Warn(string.Empty, string.Empty, "To must be a file name, or a connection name.");
-                TflLogger.Warn(string.Empty, string.Empty, "Skipping {0} action.", action.Action);
+                TflLogger.Warn(action.ProcessName,string.Empty,"Unable to determine copy operation, from {0} to {1}.", from, to);
+                TflLogger.Warn(action.ProcessName, string.Empty, "From must be a file name, a connection name, or blank to assume output from template.");
+                TflLogger.Warn(action.ProcessName, string.Empty, "To must be a file name, or a connection name.");
+                TflLogger.Warn(action.ProcessName, string.Empty, "Skipping {0} action.", action.Action);
                 return;
             }
 
@@ -100,9 +100,9 @@ namespace Transformalize.Main {
                     if (fromInfo.Exists) {
                         var output = _process.Connections[to.ToLower()].Source;
                         var results = new FileImporter().Import(fromInfo, output);
-                        TflLogger.Info(string.Empty, string.Empty, "Copied {0} to {1} connection.  Process name: {2}, Entity Name: {3}.", fromInfo.Name, to, results.Information.ProcessName, results.Information.EntityName);
+                        TflLogger.Info(action.ProcessName, string.Empty, "Copied {0} to {1} connection.  Process name: {2}, Entity Name: {3}.", fromInfo.Name, to, results.Information.ProcessName, results.Information.EntityName);
                     } else {
-                        TflLogger.Warn(string.Empty, string.Empty, "Unable to copy file {0}.  It may not exist.", fromInfo.Name);
+                        TflLogger.Warn(action.ProcessName, string.Empty, "Unable to copy file {0}.  It may not exist.", fromInfo.Name);
                     }
                     break;
                 default:
@@ -110,9 +110,9 @@ namespace Transformalize.Main {
                     var toInfo = new FileInfo(to);
                     if (fromInfo.Exists && toInfo.Directory != null && toInfo.Directory.Exists) {
                         File.Copy(fromInfo.FullName, toInfo.FullName, true);
-                        TflLogger.Info(string.Empty, string.Empty, "Copied {0} to {1}.", rendered ? action.TemplateName + " rendered output" : from, to);
+                        TflLogger.Info(action.ProcessName, string.Empty, "Copied {0} to {1}.", rendered ? action.TemplateName + " rendered output" : from, to);
                     } else {
-                        TflLogger.Warn(string.Empty, string.Empty, "Unable to copy file {0} to folder {1}.  The folder may not exist.", fromInfo.Name, toInfo.DirectoryName);
+                        TflLogger.Warn(action.ProcessName, string.Empty, "Unable to copy file {0} to folder {1}.  The folder may not exist.", fromInfo.Name, toInfo.DirectoryName);
                     }
                     break;
             }

@@ -23,7 +23,6 @@
 using System.Collections.Concurrent;
 using System.Linq;
 using Transformalize.Extensions;
-using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Libs.Rhino.Etl.Pipelines;
@@ -64,10 +63,10 @@ namespace Transformalize.Processes {
             }
 
             if (!_entity.Sampled && _entity.Sample > 0m && _entity.Sample < 100m) {
-                Register(new SampleOperation(_entity.Sample));
+                Register(new SampleOperation(_entity.Sample) { EntityName = _entity.Name });
             }
 
-            Register(new ApplyDefaults(true, new Fields(_entity.Fields, _entity.CalculatedFields)));
+            Register(new ApplyDefaults(true, new Fields(_entity.Fields, _entity.CalculatedFields)) { EntityName = _entity.Name });
 
             foreach (var transform in _entity.OperationsBeforeAggregation) {
                 Register(transform);
@@ -82,7 +81,7 @@ namespace Transformalize.Processes {
             }
 
             if (_entity.HasSort()) {
-                Register(new SortOperation(_entity));
+                Register(new SortOperation(_entity) { EntityName = _entity.Name });
             }
 
             Register(new TruncateOperation(_entity.Fields, _entity.CalculatedFields));
@@ -106,7 +105,7 @@ namespace Transformalize.Processes {
         private PartialProcessOperation PrepareOutputOperation(Process process, NamedConnection nc) {
 
             var partial = new PartialProcessOperation(process);
-            partial.Register(new FilterOutputOperation(nc.ShouldRun));
+            partial.Register(new FilterOutputOperation(nc.ShouldRun) { EntityName = _entity.Name });
 
             if (nc.Connection.Type == ProviderType.Internal) {
                 partial.RegisterLast(_collectors[nc.Name]);
@@ -133,9 +132,9 @@ namespace Transformalize.Processes {
         protected override void PostProcessing() {
 
             if (_entity.Delete) {
-                Info("Processed {0} insert{1}, {2} update{3}, and {4} delete{5} in {6}.", _entity.Inserts, _entity.Inserts.Plural(), _entity.Updates, _entity.Updates.Plural(), _entity.Deletes, _entity.Deletes.Plural(), _entity.Alias);
+                TflLogger.Info(_entity.ProcessName, _entity.Name, "Processed {0} insert{1}, {2} update{3}, and {4} delete{5} in {6}.", _entity.Inserts, _entity.Inserts.Plural(), _entity.Updates, _entity.Updates.Plural(), _entity.Deletes, _entity.Deletes.Plural(), _entity.Alias);
             } else {
-                Info("Processed {0} insert{1}, and {2} update{3} in {4}.", _entity.Inserts, _entity.Inserts.Plural(), _entity.Updates, _entity.Updates.Plural(), _entity.Alias);
+                TflLogger.Info(_entity.ProcessName, _entity.Name, "Processed {0} insert{1}, and {2} update{3} in {4}.", _entity.Inserts, _entity.Inserts.Plural(), _entity.Updates, _entity.Updates.Plural(), _entity.Alias);
             }
 
             _entity.InputKeys = new Row[0];

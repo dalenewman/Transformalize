@@ -29,13 +29,11 @@ namespace Transformalize.Main {
 
         private readonly string _message;
 
-        public TransformalizeException(string message) {
+        public TransformalizeException(string message, params object[] args) {
             _message = message;
-            TflLogger.Error(string.Empty, string.Empty, message);
+            TflLogger.Error(string.Empty, string.Empty, message, args);
             LogManager.Flush();
         }
-
-        public TransformalizeException(string message, params object[] args) : this(string.Format(message, args)) { }
 
         public override string Message {
             get { return _message; }

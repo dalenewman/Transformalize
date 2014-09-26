@@ -21,10 +21,8 @@
 #endregion
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web.WebSockets;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
@@ -47,6 +45,7 @@ namespace Transformalize.Operations {
 
         public EntityAggregation(Entity entity) {
 
+            EntityName = entity.Name;
             _keysToGroupBy = new Fields(entity.Fields, entity.CalculatedFields).WithGroup().Aliases().ToArray();
             _firstKey = _keysToGroupBy[0];
             _fieldsToAccumulate = new Fields(entity.Fields, entity.CalculatedFields).WithAccumulate().ToArray();
@@ -80,8 +79,7 @@ namespace Transformalize.Operations {
             }
 
             //accumulate
-            foreach (var field in _fieldsToAccumulate)
-            {
+            foreach (var field in _fieldsToAccumulate) {
                 int len;
                 switch (field.Aggregate) {
                     case "count":

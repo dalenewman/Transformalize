@@ -24,7 +24,7 @@ namespace Transformalize.Main {
                 executable.BeginOutputReadLine();
                 executable.WaitForExit();
             } else {
-                TflLogger.Warn(string.Empty, string.Empty, "Couldn't find and execute {0}.", action.File);
+                TflLogger.Warn(action.ProcessName, string.Empty, "Couldn't find and execute {0}.", action.File);
             }
         }
     }

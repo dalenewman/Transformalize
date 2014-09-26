@@ -55,7 +55,7 @@ namespace Transformalize.Main.Providers.Folder {
         }
 
         public override IOperation Extract(Process process, Entity entity, bool firstRun) {
-            var union = new SerialUnionAllOperation();
+            var union = new SerialUnionAllOperation(entity);
             foreach (var file in new DirectoryInfo(Folder).GetFiles(SearchPattern, SearchOption)) {
                 File = file.FullName;
                 if (Is.Excel()) {

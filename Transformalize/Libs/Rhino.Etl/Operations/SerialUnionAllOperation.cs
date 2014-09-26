@@ -6,13 +6,16 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Transformalize.Main;
 
 namespace Transformalize.Libs.Rhino.Etl.Operations {
     public class SerialUnionAllOperation : AbstractOperation {
         private readonly List<IOperation> _operations = new List<IOperation>();
 
-        public SerialUnionAllOperation(string operationColumn = "operation") {
+        public SerialUnionAllOperation(Entity entity, string operationColumn = "operation") {
             OperationColumn = operationColumn;
+            ProcessName = entity.ProcessName;
+            EntityName = entity.Name;
         }
 
         public string OperationColumn { get; set; }

@@ -25,7 +25,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Libs.NLog;
 using Transformalize.Libs.fastJSON;
-using Transformalize.Libs.NLog.Targets;
 
 namespace Transformalize.Main {
 
@@ -38,7 +37,6 @@ namespace Transformalize.Main {
 
         public List<string> Problems { get { return _problems; } set { _problems = value; } }
         public bool Force { get; set; }
-        public MemoryTarget MemoryTarget { get; set; }
         public LogLevel LogLevel { get; set; }
 
         public string Mode {
@@ -96,25 +94,6 @@ namespace Transformalize.Main {
                 }
             }
 
-        }
-
-        private static void SetLogLevel(LogLevel logLevel) {
-
-            if (logLevel == LogLevel.Info)
-                return;
-
-            foreach (var rule in LogManager.Configuration.LoggingRules) {
-                if (rule.Targets.All(t => t.Name != "console"))
-                    continue;
-
-                foreach (var level in rule.Levels) {
-                    if (level.Ordinal < logLevel.Ordinal)
-                        rule.DisableLoggingForLevel(level);
-                    else
-                        rule.EnableLoggingForLevel(logLevel);
-                }
-            }
-            LogManager.ReconfigExistingLoggers();
         }
 
         public bool Valid() {

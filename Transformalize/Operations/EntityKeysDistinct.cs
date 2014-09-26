@@ -32,6 +32,7 @@ namespace Transformalize.Operations {
         private readonly string[] _keys;
 
         public EntityKeysDistinct(Entity entity) {
+            EntityName = entity.Name;
             _firstKey = entity.PrimaryKey.First().Alias;
             _keys = entity.PrimaryKey.WithInput().Aliases().ToArray();
         }

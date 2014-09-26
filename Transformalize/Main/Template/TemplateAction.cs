@@ -52,9 +52,11 @@ namespace Transformalize.Main {
         public string NewValue { get; set; }
         public int Timeout { get; set; }
         public string Command { get; set; }
+        public string ProcessName { get; set; }
 
         public TemplateAction(Process process, string template, ActionConfigurationElement action, IEnumerable<string> modes) {
             _process = process;
+            ProcessName = process.Name;
             Action = action.Action;
             File = action.File;
             Method = action.Method;
@@ -78,7 +80,7 @@ namespace Transformalize.Main {
             Timeout = action.TimeOut;
         }
 
-        public void Handle(string file) {
+       public void Handle(string file) {
 
             var handlers = new Dictionary<string, TemplateActionHandler>() {
                 {"copy", new TemplateActionCopy(_process)},

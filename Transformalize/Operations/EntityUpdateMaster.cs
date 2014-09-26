@@ -39,6 +39,7 @@ namespace Transformalize.Operations {
         public EntityUpdateMaster(Process process, Entity entity) {
             _process = process;
             _entity = entity;
+            EntityName = entity.Name;
             UseTransaction = false;
         }
 

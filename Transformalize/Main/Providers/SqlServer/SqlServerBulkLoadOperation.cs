@@ -70,7 +70,7 @@ namespace Transformalize.Main.Providers.SqlServer {
         }
 
         protected override void OnSqlRowsCopied(object sender, SqlRowsCopiedEventArgs e) {
-            Info("Processed {0} rows in EntityBulkInsert", e.RowsCopied);
+            TflLogger.Info(_entity.ProcessName, _entity.Name, "Processed {0} rows in EntityBulkInsert", e.RowsCopied);
         }
     }
 }
