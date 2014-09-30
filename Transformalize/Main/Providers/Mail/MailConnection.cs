@@ -1,3 +1,5 @@
+using System.Net;
+using System.Net.Mail;
 using Transformalize.Configuration;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Operations.Load;
@@ -5,6 +7,8 @@ using Transformalize.Operations.Transform;
 
 namespace Transformalize.Main.Providers.Mail {
     public class MailConnection : AbstractConnection {
+
+        private SmtpClient _smtpClient;
 
         public override int NextBatchId(string processName) {
             return 1;
@@ -54,10 +58,31 @@ namespace Transformalize.Main.Providers.Mail {
             throw new System.NotImplementedException();
         }
 
+        public SmtpClient SmtpClient { get { return _smtpClient; } }
+
         public MailConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
             Type = ProviderType.Mail;
-        }
 
+            var port = Port > 0 ? Port : 25;
+            if (string.IsNullOrEmpty(User)) {
+                _smtpClient = new SmtpClient {
+                    Port = port,
+                    EnableSsl = EnableSsl,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    UseDefaultCredentials = true,
+                    Host = Server
+                };
+            } else {
+                _smtpClient = new SmtpClient {
+                    Port = port,
+                    EnableSsl = EnableSsl,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential(User, Password),
+                    Host = Server
+                };
+            }
+        }
     }
 }

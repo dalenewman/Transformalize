@@ -36,6 +36,8 @@ namespace Transformalize.Main {
         bool Any();
         IEnumerable<KeyValuePair<string, IParameter>> ToEnumerable();
         bool ContainsKey(string key);
+        bool ContainsName(string name);
+        string GetKeyByName(string name);
         void Remove(string key);
         ExpandoObject ToExpandoObject();
     }

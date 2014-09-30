@@ -90,6 +90,14 @@ namespace Transformalize.Main.Parameters {
             return _items.ContainsKey(key);
         }
 
+        public bool ContainsName(string name) {
+            return _items.Any(p => p.Value.Name.Equals(name));
+        }
+
+        public string GetKeyByName(string name) {
+            return _items.First(kv => kv.Value.Name.Equals(name)).Key;
+        }
+
         public void Remove(string key) {
             _items.Remove(key);
         }

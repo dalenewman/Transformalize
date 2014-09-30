@@ -79,13 +79,11 @@ namespace Transformalize.Operations.Transform {
             if (value.Equals(string.Empty) && !otherType.Equals("string")) {
                 return new DefaultFactory().Convert(value, otherType);
             }
-
             return _conversionMap[otherType](value);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
-
                 if (ShouldRun(row)) {
                     var leftValue = _leftHasValue ? _leftValue : row[_left.Key];
                     var rightValue = _rightHasValue ? _rightValue : row[_right.Key];
@@ -98,8 +96,6 @@ namespace Transformalize.Operations.Transform {
                 } else {
                     Interlocked.Increment(ref SkipCount);
                 }
-
-
                 yield return row;
             }
         }

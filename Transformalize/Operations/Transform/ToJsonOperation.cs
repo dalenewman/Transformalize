@@ -23,7 +23,7 @@ namespace Transformalize.Operations.Transform {
                     }
                     row[OutKey] = JSON.Instance.ToJSON(data, new JSONParameters() { UseEscapedUnicode = false });
                 } else {
-                    Interlocked.Increment(ref SkipCount);
+                    Skip();
                 }
 
                 yield return row;

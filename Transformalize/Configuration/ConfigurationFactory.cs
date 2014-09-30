@@ -15,7 +15,7 @@ namespace Transformalize.Configuration {
         /// <param name="resource">May be a named process in your application *.config, an xml file name, a url pointing to an xml file on a web server, or the xml configuration itself.  Way too many choices!</param>
         /// <param name="query">an optional collection of named values for replacing $(parameter) place-holders in the configuration.</param>
         public ConfigurationFactory(string resource, NameValueCollection query = null) {
-            _resource = resource;
+            _resource = resource.Trim();
             _query = query;
         }
 

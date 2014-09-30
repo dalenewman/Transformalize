@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.Mail;
+using Transformalize.Main.Providers.Mail;
 
 namespace Transformalize.Main {
 
@@ -63,27 +64,10 @@ namespace Transformalize.Main {
             }
 
             mail.Subject = action.Subject;
-
+            
             try {
-                var port = action.Connection.Port > 0 ? action.Connection.Port : 25;
-                if (string.IsNullOrEmpty(action.Connection.User)) {
-                    new SmtpClient {
-                        Port = port,
-                        EnableSsl = action.Connection.EnableSsl,
-                        DeliveryMethod = SmtpDeliveryMethod.Network,
-                        UseDefaultCredentials = true,
-                        Host = action.Connection.Server
-                    }.Send(mail);
-                } else {
-                    new SmtpClient {
-                        Port = port,
-                        EnableSsl = action.Connection.EnableSsl,
-                        DeliveryMethod = SmtpDeliveryMethod.Network,
-                        UseDefaultCredentials = false,
-                        Credentials = new NetworkCredential(action.Connection.User, action.Connection.Password),
-                        Host = action.Connection.Server
-                    }.Send(mail);
-                }
+                var connection = ((MailConnection)action.Connection).SmtpClient;
+                connection.Send(mail);
                 TflLogger.Info(action.ProcessName, string.Empty, isTemplate ? "Emailed rendered content to: {0}." : "Email sent to {0}.", action.To);
             } catch (Exception e) {
                 TflLogger.Warn(action.ProcessName, string.Empty, "Couldn't send mail. {0}", e.Message);

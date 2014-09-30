@@ -116,6 +116,7 @@ namespace Transformalize.Configuration {
         private const string TAG = "tag";
         private const string ENCODE = "encode";
         private const string DECODE = "decode";
+        private const string CONNECTION = "connection";
 
         [ConfigurationProperty(METHOD, IsRequired = true)]
         public string Method {
@@ -585,6 +586,15 @@ namespace Transformalize.Configuration {
         public string Tag {
             get { return this[TAG] as string; }
             set { this[TAG] = value; }
+        }
+
+        /// <summary>
+        /// References a connection.  Currently only used for row-level mail operations.
+        /// </summary>
+        [ConfigurationProperty(CONNECTION, IsRequired = false, DefaultValue = "")]
+        public string Connection {
+            get { return this[CONNECTION] as string; }
+            set { this[CONNECTION] = value; }
         }
 
         [ConfigurationProperty(ENCODE, IsRequired = false, DefaultValue = true)]

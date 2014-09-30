@@ -12,7 +12,8 @@ namespace Transformalize.Operations.Transform {
         public VelocityOperation(string outKey, string outType, string template, IEnumerable<KeyValuePair<string, Template>> templates, IParameters parameters)
             : base(outKey, outType, template, templates, parameters) {
             _context = new VelocityContext();
-        }
+            Name = "Velocity (" + outKey + ")";
+            }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {

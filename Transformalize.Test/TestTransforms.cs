@@ -435,6 +435,53 @@ namespace Transformalize.Test {
         }
 
         [Test]
+        public void IfProblem()
+        {
+            const string xml = @"
+<transformalize>
+    <processes>
+        <add name='test'>
+            <connections>
+                <add name='input' provider='internal' />
+                <add name='output' provider='internal' />
+            </connections>
+            <entities>
+                <add name='test' detect-changes='false'>
+                    <fields>
+                        <add name='email' primary-key='true' default='none' default-blank='true' />
+                    </fields>
+                    <calculated-fields>
+                        <add name='has_email' type='bool' t='if(email,none,false,true)' />
+                        <add name='another' type='bool'>
+                            <transforms>
+                                <add method='if' left='email' right='none' then='false' else='true' />
+                            </transforms>
+                        </add>
+                    </calculated-fields>
+                </add>
+            </entities>
+        </add>
+    </processes>
+</transformalize>
+";
+            var process = ProcessFactory.Create(xml.Replace('\'','"'));
+
+            var input = new RowsBuilder()
+                .Row("email", "")                    .Field("has_email", null, "bool")
+                .Row("email", "dalenewman@gmail.com").Field("has_email", null, "bool")
+                .ToOperation();
+
+            process[0].Entities[0].InputOperation = input;
+
+            var output = process[0].Execute().ToArray();
+
+            Assert.AreEqual(false, output[0]["has_email"]);
+            Assert.AreEqual(false, output[0]["another"]);
+            Assert.AreEqual(true, output[1]["has_email"]);
+            Assert.AreEqual(true, output[1]["another"]);
+        }
+
+        [Test]
         public void AnyValue() {
             var input = new RowsBuilder()
                 .Row("x", "1").Field("y", "3").Field("any_1", null).Field("any_2", null)

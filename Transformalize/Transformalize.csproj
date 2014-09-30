@@ -3107,6 +3107,7 @@
     <Compile Include="Main\Template\TemplateManager.cs" />
     <Compile Include="Main\Template\TemplateReader.cs" />
     <Compile Include="Main\TransformalizeException.cs" />
+    <Compile Include="Main\Transform\MailOperation.cs" />
     <Compile Include="Main\Transform\MarkDownOperation.cs" />
     <Compile Include="Main\Transform\ShortHandFactory.cs" />
     <Compile Include="Main\Transform\TagOperation.cs" />

@@ -22,7 +22,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using System.Web.UI.WebControls;
 using Transformalize.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
@@ -30,9 +32,12 @@ using Transformalize.Libs.NVelocity.App;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Parameters;
+using Transformalize.Main.Providers;
+using Transformalize.Main.Providers.Mail;
 using Transformalize.Operations.Transform;
 using Transformalize.Operations.Validate;
 using System.Linq;
+using Parameter = Transformalize.Main.Parameters.Parameter;
 
 namespace Transformalize.Main {
 
@@ -84,7 +89,8 @@ namespace Transformalize.Main {
             if (!element.RunField.Equals(string.Empty)) {
                 var op = (ComparisonOperator)Enum.Parse(typeof(ComparisonOperator), element.RunOperator, true);
                 var simpleType = Common.ToSimpleType(element.RunType.Equals(Common.DefaultValue) ? "boolean" : element.RunType);
-                var value = Common.ConversionMap[simpleType](element.RunValue);
+                var runValue = simpleType.StartsWith("bool") && element.RunValue.Equals(Common.DefaultValue) ? "true" : element.RunValue;
+                var value = Common.ConversionMap[simpleType](runValue);
                 shouldRun = row => Common.CompareMap[op](row[element.RunField], value);
             }
 
@@ -284,6 +290,26 @@ namespace Transformalize.Main {
 
                 case "hashcode":
                     goto case "gethashcode";
+
+                case "mail":
+                    Guard.Against(string.IsNullOrEmpty(element.Connection), "The mail transform operations requires the connection attribute be set.");
+
+                    var connection = _process.Connections[element.Connection];
+
+                    Guard.Against(connection.Type != ProviderType.Mail, "The mail transform requires a valid mail connection.  The connection you referenced is {0}", connection.Type);
+
+                    if (!parameters.ContainsName("body")) {
+                        parameters.Add(field.Alias, "body", null, "string");
+                    }
+
+                    if (_process.Connections.ContainsKey(element.Connection)) {
+                        return new MailOperation(
+                            (MailConnection)connection,
+                            parameters
+                            ) { ShouldRun = shouldRun, EntityName = _entityName };
+                    }
+
+                    throw new TransformalizeException("Mail operation references invalid connection {0}", element.Connection);
 
                 case "map":
                     var equals = _process.MapEquals.ContainsKey(element.Map) ? _process.MapEquals[element.Map] : new Map();

@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Main;
 
-namespace Transformalize.Test.Builders
-{
+namespace Transformalize.Test.Builders {
     public class RowBuilder {
         private readonly RowsBuilder _rowsBuilder;
         private readonly Row _row;
@@ -18,12 +18,16 @@ namespace Transformalize.Test.Builders
             return this;
         }
 
+        public RowBuilder Field(string key, object value, string type) {
+            _row[key] = Common.GetObjectConversionMap()[Common.ToSimpleType(type)](value);
+            return this;
+        }
+
         public RowBuilder Row() {
             return _rowsBuilder.Row();
         }
 
-        public RowBuilder Row(string key, object value)
-        {
+        public RowBuilder Row(string key, object value) {
             return _rowsBuilder.Row(key, value);
         }
 
