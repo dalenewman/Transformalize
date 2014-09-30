@@ -1,26 +1,54 @@
-#region License
-// /*
-// See license included in this library folder.
-// */
-#endregion
+﻿// 
+// Copyright (c) 2004-2011 Jaroslaw Kowalski <jaak@jkowalski.net>
+// 
+// All rights reserved.
+// 
+// Redistribution and use in source and binary forms, with or without 
+// modification, are permitted provided that the following conditions 
+// are met:
+// 
+// * Redistributions of source code must retain the above copyright notice, 
+//   this list of conditions and the following disclaimer. 
+// 
+// * Redistributions in binary form must reproduce the above copyright notice,
+//   this list of conditions and the following disclaimer in the documentation
+//   and/or other materials provided with the distribution. 
+// 
+// * Neither the name of Jaroslaw Kowalski nor the names of its 
+//   contributors may be used to endorse or promote products derived from this
+//   software without specific prior written permission. 
+// 
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
+// THE POSSIBILITY OF SUCH DAMAGE.
+// 
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using Transformalize.Libs.NLog.Common;
 using Transformalize.Libs.NLog.Config;
 
 namespace Transformalize.Libs.NLog.Internal
 {
     /// <summary>
-    ///     Scans (breadth-first) the object graph following all the edges whose are
-    ///     instances have <see cref="NLogConfigurationItemAttribute" /> attached and returns
-    ///     all objects implementing a specified interfaces.
+    /// Scans (breadth-first) the object graph following all the edges whose are 
+    /// instances have <see cref="NLogConfigurationItemAttribute"/> attached and returns 
+    /// all objects implementing a specified interfaces.
     /// </summary>
     internal class ObjectGraphScanner
     {
         /// <summary>
-        ///     Finds the objects which have attached <see cref="NLogConfigurationItemAttribute" /> which are reachable
-        ///     from any of the given root objects when traversing the object graph over public properties.
+        /// Finds the objects which have attached <see cref="NLogConfigurationItemAttribute"/> which are reachable
+        /// from any of the given root objects when traversing the object graph over public properties.
         /// </summary>
         /// <typeparam name="T">Type of the objects to return.</typeparam>
         /// <param name="rootObjects">The root objects.</param>
@@ -28,7 +56,7 @@ namespace Transformalize.Libs.NLog.Internal
         public static T[] FindReachableObjects<T>(params object[] rootObjects)
             where T : class
         {
-            InternalLogger.Trace("FindReachableObject<{0}>:", typeof (T));
+            InternalLogger.Trace("FindReachableObject<{0}>:", typeof(T));
             var result = new List<T>();
             var visitedObjects = new Dictionary<object, int>();
 
@@ -48,7 +76,7 @@ namespace Transformalize.Libs.NLog.Internal
                 return;
             }
 
-            if (!o.GetType().IsDefined(typeof (NLogConfigurationItemAttribute), true))
+            if (!o.GetType().IsDefined(typeof(NLogConfigurationItemAttribute), true))
             {
                 return;
             }
@@ -71,14 +99,14 @@ namespace Transformalize.Libs.NLog.Internal
                 InternalLogger.Trace("{0}Scanning {1} '{2}'", new string(' ', level), o.GetType().Name, o);
             }
 
-            foreach (var prop in PropertyHelper.GetAllReadableProperties(o.GetType()))
+            foreach (PropertyInfo prop in PropertyHelper.GetAllReadableProperties(o.GetType()))
             {
-                if (prop.PropertyType.IsPrimitive || prop.PropertyType.IsEnum || prop.PropertyType == typeof (string))
+                if (prop.PropertyType.IsPrimitive || prop.PropertyType.IsEnum || prop.PropertyType == typeof(string))
                 {
                     continue;
                 }
 
-                var value = prop.GetValue(o, null);
+                object value = prop.GetValue(o, null);
                 if (value == null)
                 {
                     continue;
@@ -87,7 +115,7 @@ namespace Transformalize.Libs.NLog.Internal
                 var enumerable = value as IEnumerable;
                 if (enumerable != null)
                 {
-                    foreach (var element in enumerable.OfType<object>().ToList())
+                    foreach (object element in enumerable.OfType<object>().ToList())
                     {
                         ScanProperties(result, element, level + 1, visitedObjects);
                     }

@@ -1,8 +1,35 @@
-#region License
-// /*
-// See license included in this library folder.
-// */
-#endregion
+// 
+// Copyright (c) 2004-2011 Jaroslaw Kowalski <jaak@jkowalski.net>
+// 
+// All rights reserved.
+// 
+// Redistribution and use in source and binary forms, with or without 
+// modification, are permitted provided that the following conditions 
+// are met:
+// 
+// * Redistributions of source code must retain the above copyright notice, 
+//   this list of conditions and the following disclaimer. 
+// 
+// * Redistributions in binary form must reproduce the above copyright notice,
+//   this list of conditions and the following disclaimer in the documentation
+//   and/or other materials provided with the distribution. 
+// 
+// * Neither the name of Jaroslaw Kowalski nor the names of its 
+//   contributors may be used to endorse or promote products derived from this
+//   software without specific prior written permission. 
+// 
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
+// THE POSSIBILITY OF SUCH DAMAGE.
+// 
 
 using System;
 using System.Globalization;
@@ -11,80 +38,78 @@ using System.Text;
 using Transformalize.Libs.NLog.Config;
 using Transformalize.Libs.NLog.Internal;
 
-#if !NET_CF && !SILVERLIGHT
+#if !SILVERLIGHT
 
 namespace Transformalize.Libs.NLog.LayoutRenderers
 {
     /// <summary>
-    ///     ASP Request variable.
+    /// ASP Request variable.
     /// </summary>
     [LayoutRenderer("asp-request")]
     public class AspRequestValueLayoutRenderer : LayoutRenderer
     {
         /// <summary>
-        ///     Gets or sets the item name. The QueryString, Form, Cookies, or ServerVariables collection variables having the specified name are rendered.
+        /// Gets or sets the item name. The QueryString, Form, Cookies, or ServerVariables collection variables having the specified name are rendered.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         [DefaultParameter]
         public string Item { get; set; }
 
         /// <summary>
-        ///     Gets or sets the QueryString variable to be rendered.
+        /// Gets or sets the QueryString variable to be rendered.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         public string QueryString { get; set; }
 
         /// <summary>
-        ///     Gets or sets the form variable to be rendered.
+        /// Gets or sets the form variable to be rendered.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         public string Form { get; set; }
 
         /// <summary>
-        ///     Gets or sets the cookie to be rendered.
+        /// Gets or sets the cookie to be rendered.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         public string Cookie { get; set; }
 
         /// <summary>
-        ///     Gets or sets the ServerVariables item to be rendered.
+        /// Gets or sets the ServerVariables item to be rendered.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         public string ServerVariable { get; set; }
 
         /// <summary>
-        ///     Renders the specified ASP Request variable and appends it to the specified <see cref="StringBuilder" />.
+        /// Renders the specified ASP Request variable and appends it to the specified <see cref="StringBuilder" />.
         /// </summary>
-        /// <param name="builder">
-        ///     The <see cref="StringBuilder" /> to append the rendered data to.
-        /// </param>
+        /// <param name="builder">The <see cref="StringBuilder"/> to append the rendered data to.</param>
         /// <param name="logEvent">Logging event.</param>
         protected override void Append(StringBuilder builder, LogEventInfo logEvent)
         {
-            var request = AspHelper.GetRequestObject();
+            AspHelper.IRequest request = AspHelper.GetRequestObject();
             if (request != null)
             {
-                if (QueryString != null)
+                if (this.QueryString != null)
                 {
-                    builder.Append(GetItem(request.GetQueryString(), QueryString));
+                    builder.Append(GetItem(request.GetQueryString(), this.QueryString));
                 }
-                else if (Form != null)
+                else if (this.Form != null)
                 {
-                    builder.Append(GetItem(request.GetForm(), Form));
+                    builder.Append(GetItem(request.GetForm(), this.Form));
                 }
-                else if (Cookie != null)
+                else if (this.Cookie != null)
                 {
-                    var cookie = request.GetCookies().GetItem(Cookie);
+                    object cookie = request.GetCookies().GetItem(this.Cookie);
                     builder.Append(Convert.ToString(AspHelper.GetComDefaultProperty(cookie), CultureInfo.InvariantCulture));
                 }
-                else if (ServerVariable != null)
+                else if (this.ServerVariable != null)
                 {
-                    builder.Append(GetItem(request.GetServerVariables(), ServerVariable));
+                    builder.Append(GetItem(request.GetServerVariables(), this.ServerVariable));
                 }
-                else if (Item != null)
+                else if (this.Item != null)
                 {
-                    var o = request.GetItem(Item);
-                    var sl = o as AspHelper.IStringList;
+                    AspHelper.IDispatch o = request.GetItem(this.Item);
+                    AspHelper.IStringList sl = o as AspHelper.IStringList;
                     if (sl != null)
                     {
                         if (sl.GetCount() > 0)
@@ -103,8 +128,8 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
         private static string GetItem(AspHelper.IRequestDictionary dict, string key)
         {
             object retVal = null;
-            var o = dict.GetItem(key);
-            var sl = o as AspHelper.IStringList;
+            object o = dict.GetItem(key);
+            AspHelper.IStringList sl = o as AspHelper.IStringList;
             if (sl != null)
             {
                 if (sl.GetCount() > 0)

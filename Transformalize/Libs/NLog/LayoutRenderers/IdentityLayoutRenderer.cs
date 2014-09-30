@@ -1,84 +1,109 @@
-#region License
-// /*
-// See license included in this library folder.
-// */
-#endregion
+// 
+// Copyright (c) 2004-2011 Jaroslaw Kowalski <jaak@jkowalski.net>
+// 
+// All rights reserved.
+// 
+// Redistribution and use in source and binary forms, with or without 
+// modification, are permitted provided that the following conditions 
+// are met:
+// 
+// * Redistributions of source code must retain the above copyright notice, 
+//   this list of conditions and the following disclaimer. 
+// 
+// * Redistributions in binary form must reproduce the above copyright notice,
+//   this list of conditions and the following disclaimer in the documentation
+//   and/or other materials provided with the distribution. 
+// 
+// * Neither the name of Jaroslaw Kowalski nor the names of its 
+//   contributors may be used to endorse or promote products derived from this
+//   software without specific prior written permission. 
+// 
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
+// THE POSSIBILITY OF SUCH DAMAGE.
+// 
 
 using System.ComponentModel;
+using System.Security.Principal;
 using System.Text;
-using System.Threading;
 
-#if !NET_CF && !SILVERLIGHT
+#if !SILVERLIGHT
 
 namespace Transformalize.Libs.NLog.LayoutRenderers
 {
     /// <summary>
-    ///     Thread identity information (name and authentication information).
+    /// Thread identity information (name and authentication information).
     /// </summary>
     [LayoutRenderer("identity")]
     public class IdentityLayoutRenderer : LayoutRenderer
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="IdentityLayoutRenderer" /> class.
+        /// Initializes a new instance of the <see cref="IdentityLayoutRenderer" /> class.
         /// </summary>
         public IdentityLayoutRenderer()
         {
-            Name = true;
-            AuthType = true;
-            IsAuthenticated = true;
-            Separator = ":";
+            this.Name = true;
+            this.AuthType = true;
+            this.IsAuthenticated = true;
+            this.Separator = ":";
         }
 
         /// <summary>
-        ///     Gets or sets the separator to be used when concatenating
-        ///     parts of identity information.
+        /// Gets or sets the separator to be used when concatenating 
+        /// parts of identity information.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         [DefaultValue(":")]
         public string Separator { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether to render Thread.CurrentPrincipal.Identity.Name.
+        /// Gets or sets a value indicating whether to render Thread.CurrentPrincipal.Identity.Name.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         [DefaultValue(true)]
         public bool Name { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether to render Thread.CurrentPrincipal.Identity.AuthenticationType.
+        /// Gets or sets a value indicating whether to render Thread.CurrentPrincipal.Identity.AuthenticationType.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         [DefaultValue(true)]
         public bool AuthType { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether to render Thread.CurrentPrincipal.Identity.IsAuthenticated.
+        /// Gets or sets a value indicating whether to render Thread.CurrentPrincipal.Identity.IsAuthenticated.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         [DefaultValue(true)]
         public bool IsAuthenticated { get; set; }
 
         /// <summary>
-        ///     Renders the specified identity information and appends it to the specified <see cref="StringBuilder" />.
+        /// Renders the specified identity information and appends it to the specified <see cref="StringBuilder" />.
         /// </summary>
-        /// <param name="builder">
-        ///     The <see cref="StringBuilder" /> to append the rendered data to.
-        /// </param>
+        /// <param name="builder">The <see cref="StringBuilder"/> to append the rendered data to.</param>
         /// <param name="logEvent">Logging event.</param>
         protected override void Append(StringBuilder builder, LogEventInfo logEvent)
         {
-            var principal = Thread.CurrentPrincipal;
+            IPrincipal principal = System.Threading.Thread.CurrentPrincipal;
             if (principal != null)
             {
-                var identity = principal.Identity;
+                IIdentity identity = principal.Identity;
                 if (identity != null)
                 {
-                    var separator = string.Empty;
+                    string separator = string.Empty;
 
-                    if (IsAuthenticated)
+                    if (this.IsAuthenticated)
                     {
                         builder.Append(separator);
-                        separator = Separator;
+                        separator = this.Separator;
 
                         if (identity.IsAuthenticated)
                         {
@@ -90,14 +115,14 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
                         }
                     }
 
-                    if (AuthType)
+                    if (this.AuthType)
                     {
                         builder.Append(separator);
-                        separator = Separator;
+                        separator = this.Separator;
                         builder.Append(identity.AuthenticationType);
                     }
 
-                    if (Name)
+                    if (this.Name)
                     {
                         builder.Append(separator);
                         builder.Append(identity.Name);

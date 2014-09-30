@@ -57,7 +57,7 @@ namespace Transformalize.Runner {
                 );
                 return section.Processes;
             } catch (Exception e) {
-                throw new TransformalizeException("Sorry.  I couldn't parse the file {0}.  Make sure it is valid XML and try again. {1} {2}", contents.Name, e.Message, contents.Content);
+                throw new TransformalizeException("Couldn't parse {0}.  Make sure it is valid XML and try again. {1}", contents.Name, e.Message);
             }
         }
 

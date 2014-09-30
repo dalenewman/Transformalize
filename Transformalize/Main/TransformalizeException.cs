@@ -30,13 +30,14 @@ namespace Transformalize.Main {
         private readonly string _message;
 
         public TransformalizeException(string message, params object[] args) {
-            _message = message;
-            TflLogger.Error(string.Empty, string.Empty, message, args);
+            _message = args.Length > 0 ? string.Format(message, args) : message;
+            TflLogger.Error(string.Empty, string.Empty, _message);
             LogManager.Flush();
         }
 
         public override string Message {
             get { return _message; }
         }
+
     }
 }

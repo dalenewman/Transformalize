@@ -1,8 +1,35 @@
-#region License
-// /*
-// See license included in this library folder.
-// */
-#endregion
+// 
+// Copyright (c) 2004-2011 Jaroslaw Kowalski <jaak@jkowalski.net>
+// 
+// All rights reserved.
+// 
+// Redistribution and use in source and binary forms, with or without 
+// modification, are permitted provided that the following conditions 
+// are met:
+// 
+// * Redistributions of source code must retain the above copyright notice, 
+//   this list of conditions and the following disclaimer. 
+// 
+// * Redistributions in binary form must reproduce the above copyright notice,
+//   this list of conditions and the following disclaimer in the documentation
+//   and/or other materials provided with the distribution. 
+// 
+// * Neither the name of Jaroslaw Kowalski nor the names of its 
+//   contributors may be used to endorse or promote products derived from this
+//   software without specific prior written permission. 
+// 
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
+// THE POSSIBILITY OF SUCH DAMAGE.
+// 
 
 using System;
 using System.Collections.Generic;
@@ -16,8 +43,8 @@ using Transformalize.Libs.NLog.Internal;
 namespace Transformalize.Libs.NLog.LayoutRenderers
 {
     /// <summary>
-    ///     Exception information provided through
-    ///     a call to one of the Logger.*Exception() methods.
+    /// Exception information provided through 
+    /// a call to one of the Logger.*Exception() methods.
     /// </summary>
     [LayoutRenderer("exception")]
     [ThreadAgnostic]
@@ -27,117 +54,121 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
         private string innerFormat = string.Empty;
         private ExceptionDataTarget[] exceptionDataTargets;
         private ExceptionDataTarget[] innerExceptionDataTargets;
-
+        
         /// <summary>
-        ///     Initializes a new instance of the <see cref="ExceptionLayoutRenderer" /> class.
+        /// Initializes a new instance of the <see cref="ExceptionLayoutRenderer" /> class.
         /// </summary>
         public ExceptionLayoutRenderer()
         {
-            Format = "message";
-            Separator = " ";
-            InnerExceptionSeparator = EnvironmentHelper.NewLine;
-            MaxInnerExceptionLevel = 0;
+            this.Format = "message";
+            this.Separator = " ";
+            this.InnerExceptionSeparator = EnvironmentHelper.NewLine;
+            this.MaxInnerExceptionLevel = 0;
         }
 
         private delegate void ExceptionDataTarget(StringBuilder sb, Exception ex);
 
         /// <summary>
-        ///     Gets or sets the format of the output. Must be a comma-separated list of exception
-        ///     properties: Message, Type, ShortType, ToString, Method, StackTrace.
-        ///     This parameter value is case-insensitive.
+        /// Gets or sets the format of the output. Must be a comma-separated list of exception
+        /// properties: Message, Type, ShortType, ToString, Method, StackTrace.
+        /// This parameter value is case-insensitive.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         [DefaultParameter]
         public string Format
         {
-            get { return format; }
+            get
+            {
+                return this.format;
+            }
 
             set
             {
-                format = value;
-                exceptionDataTargets = CompileFormat(value);
+                this.format = value;
+                this.exceptionDataTargets = CompileFormat(value);
             }
         }
 
         /// <summary>
-        ///     Gets or sets the format of the output of inner exceptions. Must be a comma-separated list of exception
-        ///     properties: Message, Type, ShortType, ToString, Method, StackTrace.
-        ///     This parameter value is case-insensitive.
+        /// Gets or sets the format of the output of inner exceptions. Must be a comma-separated list of exception
+        /// properties: Message, Type, ShortType, ToString, Method, StackTrace.
+        /// This parameter value is case-insensitive.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         public string InnerFormat
         {
-            get { return innerFormat; }
+            get
+            {
+                return this.innerFormat;
+            }
 
             set
             {
-                innerFormat = value;
-                innerExceptionDataTargets = CompileFormat(value);
+                this.innerFormat = value;
+                this.innerExceptionDataTargets = CompileFormat(value);
             }
         }
 
         /// <summary>
-        ///     Gets or sets the separator used to concatenate parts specified in the Format.
+        /// Gets or sets the separator used to concatenate parts specified in the Format.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         [DefaultValue(" ")]
         public string Separator { get; set; }
 
         /// <summary>
-        ///     Gets or sets the maximum number of inner exceptions to include in the output.
-        ///     By default inner exceptions are not enabled for compatibility with NLog 1.0.
+        /// Gets or sets the maximum number of inner exceptions to include in the output.
+        /// By default inner exceptions are not enabled for compatibility with NLog 1.0.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         [DefaultValue(0)]
         public int MaxInnerExceptionLevel { get; set; }
 
         /// <summary>
-        ///     Gets or sets the separator between inner exceptions.
+        /// Gets or sets the separator between inner exceptions.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         public string InnerExceptionSeparator { get; set; }
 
         /// <summary>
-        ///     Renders the specified exception information and appends it to the specified <see cref="StringBuilder" />.
+        /// Renders the specified exception information and appends it to the specified <see cref="StringBuilder" />.
         /// </summary>
-        /// <param name="builder">
-        ///     The <see cref="StringBuilder" /> to append the rendered data to.
-        /// </param>
+        /// <param name="builder">The <see cref="StringBuilder"/> to append the rendered data to.</param>
         /// <param name="logEvent">Logging event.</param>
         protected override void Append(StringBuilder builder, LogEventInfo logEvent)
         {
             if (logEvent.Exception != null)
             {
                 var sb2 = new StringBuilder(128);
-                var separator = string.Empty;
+                string separator = string.Empty;
 
-                foreach (var targetRenderFunc in exceptionDataTargets)
+                foreach (ExceptionDataTarget targetRenderFunc in this.exceptionDataTargets)
                 {
                     sb2.Append(separator);
                     targetRenderFunc(sb2, logEvent.Exception);
-                    separator = Separator;
+                    separator = this.Separator;
                 }
 
-                var currentException = logEvent.Exception.InnerException;
-                var currentLevel = 0;
-                while (currentException != null && currentLevel < MaxInnerExceptionLevel)
+                Exception currentException = logEvent.Exception.InnerException;
+                int currentLevel = 0;
+                while (currentException != null && currentLevel < this.MaxInnerExceptionLevel)
                 {
                     // separate inner exceptions
-                    sb2.Append(InnerExceptionSeparator);
+                    sb2.Append(this.InnerExceptionSeparator);
 
                     separator = string.Empty;
-                    foreach (var targetRenderFunc in innerExceptionDataTargets ?? exceptionDataTargets)
+                    foreach (ExceptionDataTarget targetRenderFunc in this.innerExceptionDataTargets ?? this.exceptionDataTargets)
                     {
                         sb2.Append(separator);
                         targetRenderFunc(sb2, currentException);
-                        separator = Separator;
+                        separator = this.Separator;
                     }
 
                     currentException = currentException.InnerException;
                     currentLevel++;
                 }
 
-                builder.Append(sb2);
+                builder.Append(sb2.ToString());
             }
         }
 
@@ -148,12 +179,12 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
 
         private static void AppendMethod(StringBuilder sb, Exception ex)
         {
-#if SILVERLIGHT || NET_CF
+#if SILVERLIGHT
             sb.Append(ParseMethodNameFromStackTrace(ex.StackTrace));
 #else
             if (ex.TargetSite != null)
             {
-                sb.Append(ex.TargetSite);
+                sb.Append(ex.TargetSite.ToString());
             }
 #endif
         }
@@ -165,7 +196,7 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
 
         private static void AppendToString(StringBuilder sb, Exception ex)
         {
-            sb.Append(ex);
+            sb.Append(ex.ToString());
         }
 
         private static void AppendType(StringBuilder sb, Exception ex)
@@ -178,12 +209,23 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
             sb.Append(ex.GetType().Name);
         }
 
+        private static void AppendData(StringBuilder sb, Exception ex)
+        {
+            string separator = string.Empty;
+            foreach (var key in ex.Data.Keys)
+            {
+                sb.Append(separator);
+                sb.AppendFormat("{0}: {1}", key, ex.Data[key]);
+                separator = ";";
+            }
+        }
+
         private static ExceptionDataTarget[] CompileFormat(string formatSpecifier)
         {
-            var parts = formatSpecifier.Replace(" ", string.Empty).Split(',');
+            string[] parts = formatSpecifier.Replace(" ", string.Empty).Split(',');
             var dataTargets = new List<ExceptionDataTarget>();
 
-            foreach (var s in parts)
+            foreach (string s in parts)
             {
                 switch (s.ToUpper(CultureInfo.InvariantCulture))
                 {
@@ -211,6 +253,10 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
                         dataTargets.Add(AppendStackTrace);
                         break;
 
+                    case "DATA":
+                        dataTargets.Add(AppendData);
+                        break;
+
                     default:
                         InternalLogger.Warn("Unknown exception data target: {0}", s);
                         break;
@@ -220,7 +266,7 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
             return dataTargets.ToArray();
         }
 
-#if SILVERLIGHT || NET_CF
+#if SILVERLIGHT
         private static string ParseMethodNameFromStackTrace(string stackTrace)
         {
             // get the first line of the stack trace

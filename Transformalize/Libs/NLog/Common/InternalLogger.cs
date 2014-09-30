@@ -1,34 +1,65 @@
-#region License
-// /*
-// See license included in this library folder.
-// */
-#endregion
+// 
+// Copyright (c) 2004-2011 Jaroslaw Kowalski <jaak@jkowalski.net>
+// 
+// All rights reserved.
+// 
+// Redistribution and use in source and binary forms, with or without 
+// modification, are permitted provided that the following conditions 
+// are met:
+// 
+// * Redistributions of source code must retain the above copyright notice, 
+//   this list of conditions and the following disclaimer. 
+// 
+// * Redistributions in binary form must reproduce the above copyright notice,
+//   this list of conditions and the following disclaimer in the documentation
+//   and/or other materials provided with the distribution. 
+// 
+// * Neither the name of Jaroslaw Kowalski nor the names of its 
+//   contributors may be used to endorse or promote products derived from this
+//   software without specific prior written permission. 
+// 
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
+// THE POSSIBILITY OF SUCH DAMAGE.
+// 
 
 using System;
 using System.ComponentModel;
-using System.Configuration;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Text;
 using Transformalize.Libs.NLog.Internal;
+using Transformalize.Libs.NLog.Time;
+using ConfigurationManager = System.Configuration.ConfigurationManager;
 
 namespace Transformalize.Libs.NLog.Common
 {
-    /// <summary>
-    ///     NLog internal logger.
+    #if !SILVERLIGHT
+
+#endif
+
+	/// <summary>
+    /// NLog internal logger.
     /// </summary>
     public static class InternalLogger
     {
-        private static readonly object lockObject = new object();
+        private static object lockObject = new object();
 
         /// <summary>
-        ///     Initializes static members of the InternalLogger class.
+        /// Initializes static members of the InternalLogger class.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = "Significant logic in .cctor()")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = "Significant logic in .cctor()")]
         static InternalLogger()
         {
-#if !NET_CF && !SILVERLIGHT
+#if !SILVERLIGHT
             LogToConsole = GetSetting("nlog.internalLogToConsole", "NLOG_INTERNAL_LOG_TO_CONSOLE", false);
             LogToConsoleError = GetSetting("nlog.internalLogToConsoleError", "NLOG_INTERNAL_LOG_TO_CONSOLE_ERROR", false);
             LogLevel = GetSetting("nlog.internalLogLevel", "NLOG_INTERNAL_LOG_LEVEL", LogLevel.Info);
@@ -41,40 +72,38 @@ namespace Transformalize.Libs.NLog.Common
         }
 
         /// <summary>
-        ///     Gets or sets the internal log level.
+        /// Gets or sets the internal log level.
         /// </summary>
         public static LogLevel LogLevel { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether internal messages should be written to the console output stream.
+        /// Gets or sets a value indicating whether internal messages should be written to the console output stream.
         /// </summary>
         public static bool LogToConsole { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether internal messages should be written to the console error stream.
+        /// Gets or sets a value indicating whether internal messages should be written to the console error stream.
         /// </summary>
         public static bool LogToConsoleError { get; set; }
 
         /// <summary>
-        ///     Gets or sets the name of the internal log file.
+        /// Gets or sets the name of the internal log file.
         /// </summary>
-        /// <remarks>
-        ///     A value of <see langword="null" /> value disables internal logging to a file.
-        /// </remarks>
+        /// <remarks>A value of <see langword="null" /> value disables internal logging to a file.</remarks>
         public static string LogFile { get; set; }
 
         /// <summary>
-        ///     Gets or sets the text writer that will receive internal logs.
+        /// Gets or sets the text writer that will receive internal logs.
         /// </summary>
         public static TextWriter LogWriter { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether timestamp should be included in internal log output.
+        /// Gets or sets a value indicating whether timestamp should be included in internal log output.
         /// </summary>
         public static bool IncludeTimestamp { get; set; }
 
         /// <summary>
-        ///     Gets a value indicating whether internal log includes Trace messages.
+        /// Gets a value indicating whether internal log includes Trace messages.
         /// </summary>
         public static bool IsTraceEnabled
         {
@@ -82,7 +111,7 @@ namespace Transformalize.Libs.NLog.Common
         }
 
         /// <summary>
-        ///     Gets a value indicating whether internal log includes Debug messages.
+        /// Gets a value indicating whether internal log includes Debug messages.
         /// </summary>
         public static bool IsDebugEnabled
         {
@@ -90,7 +119,7 @@ namespace Transformalize.Libs.NLog.Common
         }
 
         /// <summary>
-        ///     Gets a value indicating whether internal log includes Info messages.
+        /// Gets a value indicating whether internal log includes Info messages.
         /// </summary>
         public static bool IsInfoEnabled
         {
@@ -98,7 +127,7 @@ namespace Transformalize.Libs.NLog.Common
         }
 
         /// <summary>
-        ///     Gets a value indicating whether internal log includes Warn messages.
+        /// Gets a value indicating whether internal log includes Warn messages.
         /// </summary>
         public static bool IsWarnEnabled
         {
@@ -106,7 +135,7 @@ namespace Transformalize.Libs.NLog.Common
         }
 
         /// <summary>
-        ///     Gets a value indicating whether internal log includes Error messages.
+        /// Gets a value indicating whether internal log includes Error messages.
         /// </summary>
         public static bool IsErrorEnabled
         {
@@ -114,7 +143,7 @@ namespace Transformalize.Libs.NLog.Common
         }
 
         /// <summary>
-        ///     Gets a value indicating whether internal log includes Fatal messages.
+        /// Gets a value indicating whether internal log includes Fatal messages.
         /// </summary>
         public static bool IsFatalEnabled
         {
@@ -122,7 +151,7 @@ namespace Transformalize.Libs.NLog.Common
         }
 
         /// <summary>
-        ///     Logs the specified message at the specified level.
+        /// Logs the specified message at the specified level.
         /// </summary>
         /// <param name="level">Log level.</param>
         /// <param name="message">Message which may include positional parameters.</param>
@@ -133,7 +162,7 @@ namespace Transformalize.Libs.NLog.Common
         }
 
         /// <summary>
-        ///     Logs the specified message at the specified level.
+        /// Logs the specified message at the specified level.
         /// </summary>
         /// <param name="level">Log level.</param>
         /// <param name="message">Log message.</param>
@@ -143,7 +172,7 @@ namespace Transformalize.Libs.NLog.Common
         }
 
         /// <summary>
-        ///     Logs the specified message at the Trace level.
+        /// Logs the specified message at the Trace level.
         /// </summary>
         /// <param name="message">Message which may include positional parameters.</param>
         /// <param name="args">Arguments to the message.</param>
@@ -153,7 +182,7 @@ namespace Transformalize.Libs.NLog.Common
         }
 
         /// <summary>
-        ///     Logs the specified message at the Trace level.
+        /// Logs the specified message at the Trace level.
         /// </summary>
         /// <param name="message">Log message.</param>
         public static void Trace([Localizable(false)] string message)
@@ -162,7 +191,7 @@ namespace Transformalize.Libs.NLog.Common
         }
 
         /// <summary>
-        ///     Logs the specified message at the Debug level.
+        /// Logs the specified message at the Debug level.
         /// </summary>
         /// <param name="message">Message which may include positional parameters.</param>
         /// <param name="args">Arguments to the message.</param>
@@ -172,7 +201,7 @@ namespace Transformalize.Libs.NLog.Common
         }
 
         /// <summary>
-        ///     Logs the specified message at the Debug level.
+        /// Logs the specified message at the Debug level.
         /// </summary>
         /// <param name="message">Log message.</param>
         public static void Debug([Localizable(false)] string message)
@@ -181,7 +210,7 @@ namespace Transformalize.Libs.NLog.Common
         }
 
         /// <summary>
-        ///     Logs the specified message at the Info level.
+        /// Logs the specified message at the Info level.
         /// </summary>
         /// <param name="message">Message which may include positional parameters.</param>
         /// <param name="args">Arguments to the message.</param>
@@ -191,7 +220,7 @@ namespace Transformalize.Libs.NLog.Common
         }
 
         /// <summary>
-        ///     Logs the specified message at the Info level.
+        /// Logs the specified message at the Info level.
         /// </summary>
         /// <param name="message">Log message.</param>
         public static void Info([Localizable(false)] string message)
@@ -200,7 +229,7 @@ namespace Transformalize.Libs.NLog.Common
         }
 
         /// <summary>
-        ///     Logs the specified message at the Warn level.
+        /// Logs the specified message at the Warn level.
         /// </summary>
         /// <param name="message">Message which may include positional parameters.</param>
         /// <param name="args">Arguments to the message.</param>
@@ -210,7 +239,7 @@ namespace Transformalize.Libs.NLog.Common
         }
 
         /// <summary>
-        ///     Logs the specified message at the Warn level.
+        /// Logs the specified message at the Warn level.
         /// </summary>
         /// <param name="message">Log message.</param>
         public static void Warn([Localizable(false)] string message)
@@ -219,7 +248,7 @@ namespace Transformalize.Libs.NLog.Common
         }
 
         /// <summary>
-        ///     Logs the specified message at the Error level.
+        /// Logs the specified message at the Error level.
         /// </summary>
         /// <param name="message">Message which may include positional parameters.</param>
         /// <param name="args">Arguments to the message.</param>
@@ -229,7 +258,7 @@ namespace Transformalize.Libs.NLog.Common
         }
 
         /// <summary>
-        ///     Logs the specified message at the Error level.
+        /// Logs the specified message at the Error level.
         /// </summary>
         /// <param name="message">Log message.</param>
         public static void Error([Localizable(false)] string message)
@@ -238,7 +267,7 @@ namespace Transformalize.Libs.NLog.Common
         }
 
         /// <summary>
-        ///     Logs the specified message at the Fatal level.
+        /// Logs the specified message at the Fatal level.
         /// </summary>
         /// <param name="message">Message which may include positional parameters.</param>
         /// <param name="args">Arguments to the message.</param>
@@ -248,7 +277,7 @@ namespace Transformalize.Libs.NLog.Common
         }
 
         /// <summary>
-        ///     Logs the specified message at the Fatal level.
+        /// Logs the specified message at the Fatal level.
         /// </summary>
         /// <param name="message">Log message.</param>
         public static void Fatal([Localizable(false)] string message)
@@ -270,7 +299,7 @@ namespace Transformalize.Libs.NLog.Common
 
             try
             {
-                var formattedMessage = message;
+                string formattedMessage = message;
                 if (args != null)
                 {
                     formattedMessage = string.Format(CultureInfo.InvariantCulture, message, args);
@@ -279,14 +308,14 @@ namespace Transformalize.Libs.NLog.Common
                 var builder = new StringBuilder(message.Length + 32);
                 if (IncludeTimestamp)
                 {
-                    builder.Append(CurrentTimeGetter.Now.ToString("yyyy-MM-dd HH:mm:ss.ffff", CultureInfo.InvariantCulture));
+                    builder.Append(TimeSource.Current.Time.ToString("yyyy-MM-dd HH:mm:ss.ffff", CultureInfo.InvariantCulture));
                     builder.Append(" ");
                 }
 
-                builder.Append(level);
+                builder.Append(level.ToString());
                 builder.Append(" ");
                 builder.Append(formattedMessage);
-                var msg = builder.ToString();
+                string msg = builder.ToString();
 
                 // log to file
                 var logFile = LogFile;
@@ -331,10 +360,10 @@ namespace Transformalize.Libs.NLog.Common
             }
         }
 
-#if !NET_CF && !SILVERLIGHT
+#if !SILVERLIGHT
         private static string GetSettingString(string configName, string envName)
         {
-            var settingValue = ConfigurationManager.AppSettings[configName];
+            string settingValue = ConfigurationManager.AppSettings[configName];
             if (settingValue == null)
             {
                 try
@@ -355,7 +384,7 @@ namespace Transformalize.Libs.NLog.Common
 
         private static LogLevel GetSetting(string configName, string envName, LogLevel defaultValue)
         {
-            var value = GetSettingString(configName, envName);
+            string value = GetSettingString(configName, envName);
             if (value == null)
             {
                 return defaultValue;
@@ -378,7 +407,7 @@ namespace Transformalize.Libs.NLog.Common
 
         private static T GetSetting<T>(string configName, string envName, T defaultValue)
         {
-            var value = GetSettingString(configName, envName);
+            string value = GetSettingString(configName, envName);
             if (value == null)
             {
                 return defaultValue;
@@ -386,7 +415,7 @@ namespace Transformalize.Libs.NLog.Common
 
             try
             {
-                return (T) Convert.ChangeType(value, typeof (T), CultureInfo.InvariantCulture);
+                return (T)Convert.ChangeType(value, typeof(T), CultureInfo.InvariantCulture);
             }
             catch (Exception exception)
             {

@@ -1,8 +1,35 @@
-#region License
-// /*
-// See license included in this library folder.
-// */
-#endregion
+// 
+// Copyright (c) 2004-2011 Jaroslaw Kowalski <jaak@jkowalski.net>
+// 
+// All rights reserved.
+// 
+// Redistribution and use in source and binary forms, with or without 
+// modification, are permitted provided that the following conditions 
+// are met:
+// 
+// * Redistributions of source code must retain the above copyright notice, 
+//   this list of conditions and the following disclaimer. 
+// 
+// * Redistributions in binary form must reproduce the above copyright notice,
+//   this list of conditions and the following disclaimer in the documentation
+//   and/or other materials provided with the distribution. 
+// 
+// * Neither the name of Jaroslaw Kowalski nor the names of its 
+//   contributors may be used to endorse or promote products derived from this
+//   software without specific prior written permission. 
+// 
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
+// THE POSSIBILITY OF SUCH DAMAGE.
+// 
 
 using System;
 using System.Collections.Generic;
@@ -14,30 +41,28 @@ using Transformalize.Libs.NLog.Layouts;
 namespace Transformalize.Libs.NLog.Conditions
 {
     /// <summary>
-    ///     Condition parser. Turns a string representation of condition expression
-    ///     into an expression tree.
+    /// Condition parser. Turns a string representation of condition expression
+    /// into an expression tree.
     /// </summary>
     public class ConditionParser
     {
-        private readonly ConfigurationItemFactory configurationItemFactory;
         private readonly ConditionTokenizer tokenizer;
+        private readonly ConfigurationItemFactory configurationItemFactory;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="ConditionParser" /> class.
+        /// Initializes a new instance of the <see cref="ConditionParser"/> class.
         /// </summary>
         /// <param name="stringReader">The string reader.</param>
-        /// <param name="configurationItemFactory">
-        ///     Instance of <see cref="ConfigurationItemFactory" /> used to resolve references to condition methods and layout renderers.
-        /// </param>
+        /// <param name="configurationItemFactory">Instance of <see cref="ConfigurationItemFactory"/> used to resolve references to condition methods and layout renderers.</param>
         private ConditionParser(SimpleStringReader stringReader, ConfigurationItemFactory configurationItemFactory)
         {
             this.configurationItemFactory = configurationItemFactory;
-            tokenizer = new ConditionTokenizer(stringReader);
+            this.tokenizer = new ConditionTokenizer(stringReader);
         }
 
         /// <summary>
-        ///     Parses the specified condition string and turns it into
-        ///     <see cref="ConditionExpression" /> tree.
+        /// Parses the specified condition string and turns it into
+        /// <see cref="ConditionExpression"/> tree.
         /// </summary>
         /// <param name="expressionText">The expression to be parsed.</param>
         /// <returns>The root of the expression syntax tree which can be used to get the value of the condition in a specified context.</returns>
@@ -47,13 +72,11 @@ namespace Transformalize.Libs.NLog.Conditions
         }
 
         /// <summary>
-        ///     Parses the specified condition string and turns it into
-        ///     <see cref="ConditionExpression" /> tree.
+        /// Parses the specified condition string and turns it into
+        /// <see cref="ConditionExpression"/> tree.
         /// </summary>
         /// <param name="expressionText">The expression to be parsed.</param>
-        /// <param name="configurationItemFactories">
-        ///     Instance of <see cref="ConfigurationItemFactory" /> used to resolve references to condition methods and layout renderers.
-        /// </param>
+        /// <param name="configurationItemFactories">Instance of <see cref="ConfigurationItemFactory"/> used to resolve references to condition methods and layout renderers.</param>
         /// <returns>The root of the expression syntax tree which can be used to get the value of the condition in a specified context.</returns>
         public static ConditionExpression ParseExpression(string expressionText, ConfigurationItemFactory configurationItemFactories)
         {
@@ -63,7 +86,7 @@ namespace Transformalize.Libs.NLog.Conditions
             }
 
             var parser = new ConditionParser(new SimpleStringReader(expressionText), configurationItemFactories);
-            var expression = parser.ParseExpression();
+            ConditionExpression expression = parser.ParseExpression();
             if (!parser.tokenizer.IsEOF())
             {
                 throw new ConditionParseException("Unexpected token: " + parser.tokenizer.TokenValue);
@@ -73,21 +96,19 @@ namespace Transformalize.Libs.NLog.Conditions
         }
 
         /// <summary>
-        ///     Parses the specified condition string and turns it into
-        ///     <see cref="ConditionExpression" /> tree.
+        /// Parses the specified condition string and turns it into
+        /// <see cref="ConditionExpression"/> tree.
         /// </summary>
         /// <param name="stringReader">The string reader.</param>
-        /// <param name="configurationItemFactories">
-        ///     Instance of <see cref="ConfigurationItemFactory" /> used to resolve references to condition methods and layout renderers.
-        /// </param>
+        /// <param name="configurationItemFactories">Instance of <see cref="ConfigurationItemFactory"/> used to resolve references to condition methods and layout renderers.</param>
         /// <returns>
-        ///     The root of the expression syntax tree which can be used to get the value of the condition in a specified context.
+        /// The root of the expression syntax tree which can be used to get the value of the condition in a specified context.
         /// </returns>
         internal static ConditionExpression ParseExpression(SimpleStringReader stringReader, ConfigurationItemFactory configurationItemFactories)
         {
             var parser = new ConditionParser(stringReader, configurationItemFactories);
-            var expression = parser.ParseExpression();
-
+            ConditionExpression expression = parser.ParseExpression();
+        
             return expression;
         }
 
@@ -95,22 +116,22 @@ namespace Transformalize.Libs.NLog.Conditions
         {
             var par = new List<ConditionExpression>();
 
-            while (!tokenizer.IsEOF() && tokenizer.TokenType != ConditionTokenType.RightParen)
+            while (!this.tokenizer.IsEOF() && this.tokenizer.TokenType != ConditionTokenType.RightParen)
             {
                 par.Add(ParseExpression());
-                if (tokenizer.TokenType != ConditionTokenType.Comma)
+                if (this.tokenizer.TokenType != ConditionTokenType.Comma)
                 {
                     break;
                 }
 
-                tokenizer.GetNextToken();
+                this.tokenizer.GetNextToken();
             }
 
-            tokenizer.Expect(ConditionTokenType.RightParen);
+            this.tokenizer.Expect(ConditionTokenType.RightParen);
 
             try
             {
-                var methodInfo = configurationItemFactory.ConditionMethods.CreateInstance(functionName);
+                var methodInfo = this.configurationItemFactory.ConditionMethods.CreateInstance(functionName);
                 return new ConditionMethodExpression(functionName, methodInfo, par);
             }
             catch (Exception exception)
@@ -126,24 +147,24 @@ namespace Transformalize.Libs.NLog.Conditions
 
         private ConditionExpression ParseLiteralExpression()
         {
-            if (tokenizer.IsToken(ConditionTokenType.LeftParen))
+            if (this.tokenizer.IsToken(ConditionTokenType.LeftParen))
             {
-                tokenizer.GetNextToken();
-                var e = ParseExpression();
-                tokenizer.Expect(ConditionTokenType.RightParen);
+                this.tokenizer.GetNextToken();
+                ConditionExpression e = this.ParseExpression();
+                this.tokenizer.Expect(ConditionTokenType.RightParen);
                 return e;
             }
 
-            if (tokenizer.IsToken(ConditionTokenType.Minus))
+            if (this.tokenizer.IsToken(ConditionTokenType.Minus))
             {
-                tokenizer.GetNextToken();
-                if (!tokenizer.IsNumber())
+                this.tokenizer.GetNextToken();
+                if (!this.tokenizer.IsNumber())
                 {
-                    throw new ConditionParseException("Number expected, got " + tokenizer.TokenType);
+                    throw new ConditionParseException("Number expected, got " + this.tokenizer.TokenType);
                 }
 
-                var numberString = tokenizer.TokenValue;
-                tokenizer.GetNextToken();
+                string numberString = this.tokenizer.TokenValue;
+                this.tokenizer.GetNextToken();
                 if (numberString.IndexOf('.') >= 0)
                 {
                     return new ConditionLiteralExpression(-double.Parse(numberString, CultureInfo.InvariantCulture));
@@ -152,10 +173,10 @@ namespace Transformalize.Libs.NLog.Conditions
                 return new ConditionLiteralExpression(-int.Parse(numberString, CultureInfo.InvariantCulture));
             }
 
-            if (tokenizer.IsNumber())
+            if (this.tokenizer.IsNumber())
             {
-                var numberString = tokenizer.TokenValue;
-                tokenizer.GetNextToken();
+                string numberString = this.tokenizer.TokenValue;
+                this.tokenizer.GetNextToken();
                 if (numberString.IndexOf('.') >= 0)
                 {
                     return new ConditionLiteralExpression(double.Parse(numberString, CultureInfo.InvariantCulture));
@@ -164,16 +185,16 @@ namespace Transformalize.Libs.NLog.Conditions
                 return new ConditionLiteralExpression(int.Parse(numberString, CultureInfo.InvariantCulture));
             }
 
-            if (tokenizer.TokenType == ConditionTokenType.String)
+            if (this.tokenizer.TokenType == ConditionTokenType.String)
             {
-                ConditionExpression e = new ConditionLayoutExpression(Layout.FromString(tokenizer.StringTokenValue, configurationItemFactory));
-                tokenizer.GetNextToken();
+                ConditionExpression e = new ConditionLayoutExpression(Layout.FromString(this.tokenizer.StringTokenValue, this.configurationItemFactory));
+                this.tokenizer.GetNextToken();
                 return e;
             }
 
-            if (tokenizer.TokenType == ConditionTokenType.Keyword)
+            if (this.tokenizer.TokenType == ConditionTokenType.Keyword)
             {
-                var keyword = tokenizer.EatKeyword();
+                string keyword = this.tokenizer.EatKeyword();
 
                 if (0 == string.Compare(keyword, "level", StringComparison.OrdinalIgnoreCase))
                 {
@@ -192,8 +213,8 @@ namespace Transformalize.Libs.NLog.Conditions
 
                 if (0 == string.Compare(keyword, "loglevel", StringComparison.OrdinalIgnoreCase))
                 {
-                    tokenizer.Expect(ConditionTokenType.Dot);
-                    return new ConditionLiteralExpression(LogLevel.FromString(tokenizer.EatKeyword()));
+                    this.tokenizer.Expect(ConditionTokenType.Dot);
+                    return new ConditionLiteralExpression(LogLevel.FromString(this.tokenizer.EatKeyword()));
                 }
 
                 if (0 == string.Compare(keyword, "true", StringComparison.OrdinalIgnoreCase))
@@ -211,56 +232,56 @@ namespace Transformalize.Libs.NLog.Conditions
                     return new ConditionLiteralExpression(null);
                 }
 
-                if (tokenizer.TokenType == ConditionTokenType.LeftParen)
+                if (this.tokenizer.TokenType == ConditionTokenType.LeftParen)
                 {
-                    tokenizer.GetNextToken();
+                    this.tokenizer.GetNextToken();
 
-                    var predicateExpression = ParsePredicate(keyword);
+                    ConditionMethodExpression predicateExpression = this.ParsePredicate(keyword);
                     return predicateExpression;
                 }
             }
 
-            throw new ConditionParseException("Unexpected token: " + tokenizer.TokenValue);
+            throw new ConditionParseException("Unexpected token: " + this.tokenizer.TokenValue);
         }
 
         private ConditionExpression ParseBooleanRelation()
         {
-            var e = ParseLiteralExpression();
+            ConditionExpression e = this.ParseLiteralExpression();
 
-            if (tokenizer.IsToken(ConditionTokenType.EqualTo))
+            if (this.tokenizer.IsToken(ConditionTokenType.EqualTo))
             {
-                tokenizer.GetNextToken();
-                return new ConditionRelationalExpression(e, ParseLiteralExpression(), ConditionRelationalOperator.Equal);
+                this.tokenizer.GetNextToken();
+                return new ConditionRelationalExpression(e, this.ParseLiteralExpression(), ConditionRelationalOperator.Equal);
             }
 
-            if (tokenizer.IsToken(ConditionTokenType.NotEqual))
+            if (this.tokenizer.IsToken(ConditionTokenType.NotEqual))
             {
-                tokenizer.GetNextToken();
-                return new ConditionRelationalExpression(e, ParseLiteralExpression(), ConditionRelationalOperator.NotEqual);
+                this.tokenizer.GetNextToken();
+                return new ConditionRelationalExpression(e, this.ParseLiteralExpression(), ConditionRelationalOperator.NotEqual);
             }
 
-            if (tokenizer.IsToken(ConditionTokenType.LessThan))
+            if (this.tokenizer.IsToken(ConditionTokenType.LessThan))
             {
-                tokenizer.GetNextToken();
-                return new ConditionRelationalExpression(e, ParseLiteralExpression(), ConditionRelationalOperator.Less);
+                this.tokenizer.GetNextToken();
+                return new ConditionRelationalExpression(e, this.ParseLiteralExpression(), ConditionRelationalOperator.Less);
             }
 
-            if (tokenizer.IsToken(ConditionTokenType.GreaterThan))
+            if (this.tokenizer.IsToken(ConditionTokenType.GreaterThan))
             {
-                tokenizer.GetNextToken();
-                return new ConditionRelationalExpression(e, ParseLiteralExpression(), ConditionRelationalOperator.Greater);
+                this.tokenizer.GetNextToken();
+                return new ConditionRelationalExpression(e, this.ParseLiteralExpression(), ConditionRelationalOperator.Greater);
             }
 
-            if (tokenizer.IsToken(ConditionTokenType.LessThanOrEqualTo))
+            if (this.tokenizer.IsToken(ConditionTokenType.LessThanOrEqualTo))
             {
-                tokenizer.GetNextToken();
-                return new ConditionRelationalExpression(e, ParseLiteralExpression(), ConditionRelationalOperator.LessOrEqual);
+                this.tokenizer.GetNextToken();
+                return new ConditionRelationalExpression(e, this.ParseLiteralExpression(), ConditionRelationalOperator.LessOrEqual);
             }
 
-            if (tokenizer.IsToken(ConditionTokenType.GreaterThanOrEqualTo))
+            if (this.tokenizer.IsToken(ConditionTokenType.GreaterThanOrEqualTo))
             {
-                tokenizer.GetNextToken();
-                return new ConditionRelationalExpression(e, ParseLiteralExpression(), ConditionRelationalOperator.GreaterOrEqual);
+                this.tokenizer.GetNextToken();
+                return new ConditionRelationalExpression(e, this.ParseLiteralExpression(), ConditionRelationalOperator.GreaterOrEqual);
             }
 
             return e;
@@ -268,23 +289,23 @@ namespace Transformalize.Libs.NLog.Conditions
 
         private ConditionExpression ParseBooleanPredicate()
         {
-            if (tokenizer.IsKeyword("not") || tokenizer.IsToken(ConditionTokenType.Not))
+            if (this.tokenizer.IsKeyword("not") || this.tokenizer.IsToken(ConditionTokenType.Not))
             {
-                tokenizer.GetNextToken();
-                return new ConditionNotExpression(ParseBooleanPredicate());
+                this.tokenizer.GetNextToken();
+                return new ConditionNotExpression(this.ParseBooleanPredicate());
             }
 
-            return ParseBooleanRelation();
+            return this.ParseBooleanRelation();
         }
 
         private ConditionExpression ParseBooleanAnd()
         {
-            var expression = ParseBooleanPredicate();
+            ConditionExpression expression = this.ParseBooleanPredicate();
 
-            while (tokenizer.IsKeyword("and") || tokenizer.IsToken(ConditionTokenType.And))
+            while (this.tokenizer.IsKeyword("and") || this.tokenizer.IsToken(ConditionTokenType.And))
             {
-                tokenizer.GetNextToken();
-                expression = new ConditionAndExpression(expression, ParseBooleanPredicate());
+                this.tokenizer.GetNextToken();
+                expression = new ConditionAndExpression(expression, this.ParseBooleanPredicate());
             }
 
             return expression;
@@ -292,12 +313,12 @@ namespace Transformalize.Libs.NLog.Conditions
 
         private ConditionExpression ParseBooleanOr()
         {
-            var expression = ParseBooleanAnd();
+            ConditionExpression expression = this.ParseBooleanAnd();
 
-            while (tokenizer.IsKeyword("or") || tokenizer.IsToken(ConditionTokenType.Or))
+            while (this.tokenizer.IsKeyword("or") || this.tokenizer.IsToken(ConditionTokenType.Or))
             {
-                tokenizer.GetNextToken();
-                expression = new ConditionOrExpression(expression, ParseBooleanAnd());
+                this.tokenizer.GetNextToken();
+                expression = new ConditionOrExpression(expression, this.ParseBooleanAnd());
             }
 
             return expression;
@@ -305,12 +326,12 @@ namespace Transformalize.Libs.NLog.Conditions
 
         private ConditionExpression ParseBooleanExpression()
         {
-            return ParseBooleanOr();
+            return this.ParseBooleanOr();
         }
 
         private ConditionExpression ParseExpression()
         {
-            return ParseBooleanExpression();
+            return this.ParseBooleanExpression();
         }
     }
 }

@@ -15,7 +15,6 @@ using System.Security;
 using System.Text;
 using Transformalize.Libs.Microsoft.System.Web.Razor;
 using Transformalize.Libs.Microsoft.System.Web.Razor.Parser;
-using Transformalize.Libs.NLog;
 using Transformalize.Libs.RazorEngine.Templating;
 using Transformalize.Main;
 

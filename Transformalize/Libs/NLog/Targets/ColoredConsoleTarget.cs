@@ -1,8 +1,35 @@
-#region License
-// /*
-// See license included in this library folder.
-// */
-#endregion
+// 
+// Copyright (c) 2004-2011 Jaroslaw Kowalski <jaak@jkowalski.net>
+// 
+// All rights reserved.
+// 
+// Redistribution and use in source and binary forms, with or without 
+// modification, are permitted provided that the following conditions 
+// are met:
+// 
+// * Redistributions of source code must retain the above copyright notice, 
+//   this list of conditions and the following disclaimer. 
+// 
+// * Redistributions in binary form must reproduce the above copyright notice,
+//   this list of conditions and the following disclaimer in the documentation
+//   and/or other materials provided with the distribution. 
+// 
+// * Neither the name of Jaroslaw Kowalski nor the names of its 
+//   contributors may be used to endorse or promote products derived from this
+//   software without specific prior written permission. 
+// 
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
+// THE POSSIBILITY OF SUCH DAMAGE.
+// 
 
 using System;
 using System.Collections.Generic;
@@ -10,143 +37,143 @@ using System.ComponentModel;
 using System.IO;
 using Transformalize.Libs.NLog.Config;
 
-#if !NET_CF && !SILVERLIGHT
+#if !SILVERLIGHT
 
 namespace Transformalize.Libs.NLog.Targets
 {
     /// <summary>
-    ///     Writes log messages to the console with customizable coloring.
+    /// Writes log messages to the console with customizable coloring.
     /// </summary>
     /// <seealso href="http://nlog-project.org/wiki/ColoredConsole_target">Documentation on NLog Wiki</seealso>
     [Target("ColoredConsole")]
     public sealed class ColoredConsoleTarget : TargetWithLayoutHeaderAndFooter
     {
-        private static readonly IList<ConsoleRowHighlightingRule> defaultConsoleRowHighlightingRules = new List<ConsoleRowHighlightingRule>
-                                                                                                           {
-                                                                                                               new ConsoleRowHighlightingRule("level == LogLevel.Fatal", ConsoleOutputColor.Red, ConsoleOutputColor.NoChange),
-                                                                                                               new ConsoleRowHighlightingRule("level == LogLevel.Error", ConsoleOutputColor.Yellow, ConsoleOutputColor.NoChange),
-                                                                                                               new ConsoleRowHighlightingRule("level == LogLevel.Warn", ConsoleOutputColor.Magenta, ConsoleOutputColor.NoChange),
-                                                                                                               new ConsoleRowHighlightingRule("level == LogLevel.Info", ConsoleOutputColor.White, ConsoleOutputColor.NoChange),
-                                                                                                               new ConsoleRowHighlightingRule("level == LogLevel.Debug", ConsoleOutputColor.Gray, ConsoleOutputColor.NoChange),
-                                                                                                               new ConsoleRowHighlightingRule("level == LogLevel.Trace", ConsoleOutputColor.DarkGray, ConsoleOutputColor.NoChange),
-                                                                                                           };
+        private static readonly IList<ConsoleRowHighlightingRule> defaultConsoleRowHighlightingRules = new List<ConsoleRowHighlightingRule>()
+        {
+            new ConsoleRowHighlightingRule("level == LogLevel.Fatal", ConsoleOutputColor.Red, ConsoleOutputColor.NoChange),
+            new ConsoleRowHighlightingRule("level == LogLevel.Error", ConsoleOutputColor.Yellow, ConsoleOutputColor.NoChange),
+            new ConsoleRowHighlightingRule("level == LogLevel.Warn", ConsoleOutputColor.Magenta, ConsoleOutputColor.NoChange),
+            new ConsoleRowHighlightingRule("level == LogLevel.Info", ConsoleOutputColor.White, ConsoleOutputColor.NoChange),
+            new ConsoleRowHighlightingRule("level == LogLevel.Debug", ConsoleOutputColor.Gray, ConsoleOutputColor.NoChange),
+            new ConsoleRowHighlightingRule("level == LogLevel.Trace", ConsoleOutputColor.DarkGray, ConsoleOutputColor.NoChange),
+        };
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="ColoredConsoleTarget" /> class.
+        /// Initializes a new instance of the <see cref="ColoredConsoleTarget" /> class.
         /// </summary>
         /// <remarks>
-        ///     The default value of the layout is: <code>${longdate}|${level:uppercase=true}|${logger}|${message}</code>
+        /// The default value of the layout is: <code>${longdate}|${level:uppercase=true}|${logger}|${message}</code>
         /// </remarks>
         public ColoredConsoleTarget()
         {
-            WordHighlightingRules = new List<ConsoleWordHighlightingRule>();
-            RowHighlightingRules = new List<ConsoleRowHighlightingRule>();
-            UseDefaultRowHighlightingRules = true;
+            this.WordHighlightingRules = new List<ConsoleWordHighlightingRule>();
+            this.RowHighlightingRules = new List<ConsoleRowHighlightingRule>();
+            this.UseDefaultRowHighlightingRules = true;
         }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether the error stream (stderr) should be used instead of the output stream (stdout).
+        /// Gets or sets a value indicating whether the error stream (stderr) should be used instead of the output stream (stdout).
         /// </summary>
         /// <docgen category='Output Options' order='10' />
         [DefaultValue(false)]
         public bool ErrorStream { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether to use default row highlighting rules.
+        /// Gets or sets a value indicating whether to use default row highlighting rules.
         /// </summary>
         /// <remarks>
-        ///     The default rules are:
-        ///     <table>
-        ///         <tr>
-        ///             <th>Condition</th>
-        ///             <th>Foreground Color</th>
-        ///             <th>Background Color</th>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>level == LogLevel.Fatal</td>
-        ///             <td>Red</td>
-        ///             <td>NoChange</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>level == LogLevel.Error</td>
-        ///             <td>Yellow</td>
-        ///             <td>NoChange</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>level == LogLevel.Warn</td>
-        ///             <td>Magenta</td>
-        ///             <td>NoChange</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>level == LogLevel.Info</td>
-        ///             <td>White</td>
-        ///             <td>NoChange</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>level == LogLevel.Debug</td>
-        ///             <td>Gray</td>
-        ///             <td>NoChange</td>
-        ///         </tr>
-        ///         <tr>
-        ///             <td>level == LogLevel.Trace</td>
-        ///             <td>DarkGray</td>
-        ///             <td>NoChange</td>
-        ///         </tr>
-        ///     </table>
+        /// The default rules are:
+        /// <table>
+        /// <tr>
+        /// <th>Condition</th>
+        /// <th>Foreground Color</th>
+        /// <th>Background Color</th>
+        /// </tr>
+        /// <tr>
+        /// <td>level == LogLevel.Fatal</td>
+        /// <td>Red</td>
+        /// <td>NoChange</td>
+        /// </tr>
+        /// <tr>
+        /// <td>level == LogLevel.Error</td>
+        /// <td>Yellow</td>
+        /// <td>NoChange</td>
+        /// </tr>
+        /// <tr>
+        /// <td>level == LogLevel.Warn</td>
+        /// <td>Magenta</td>
+        /// <td>NoChange</td>
+        /// </tr>
+        /// <tr>
+        /// <td>level == LogLevel.Info</td>
+        /// <td>White</td>
+        /// <td>NoChange</td>
+        /// </tr>
+        /// <tr>
+        /// <td>level == LogLevel.Debug</td>
+        /// <td>Gray</td>
+        /// <td>NoChange</td>
+        /// </tr>
+        /// <tr>
+        /// <td>level == LogLevel.Trace</td>
+        /// <td>DarkGray</td>
+        /// <td>NoChange</td>
+        /// </tr>
+        /// </table>
         /// </remarks>
         /// <docgen category='Highlighting Rules' order='9' />
         [DefaultValue(true)]
         public bool UseDefaultRowHighlightingRules { get; set; }
 
         /// <summary>
-        ///     Gets the row highlighting rules.
+        /// Gets the row highlighting rules.
         /// </summary>
         /// <docgen category='Highlighting Rules' order='10' />
-        [ArrayParameter(typeof (ConsoleRowHighlightingRule), "highlight-row")]
+        [ArrayParameter(typeof(ConsoleRowHighlightingRule), "highlight-row")]
         public IList<ConsoleRowHighlightingRule> RowHighlightingRules { get; private set; }
 
         /// <summary>
-        ///     Gets the word highlighting rules.
+        /// Gets the word highlighting rules.
         /// </summary>
         /// <docgen category='Highlighting Rules' order='11' />
-        [ArrayParameter(typeof (ConsoleWordHighlightingRule), "highlight-word")]
+        [ArrayParameter(typeof(ConsoleWordHighlightingRule), "highlight-word")]
         public IList<ConsoleWordHighlightingRule> WordHighlightingRules { get; private set; }
 
         /// <summary>
-        ///     Initializes the target.
+        /// Initializes the target.
         /// </summary>
         protected override void InitializeTarget()
         {
             base.InitializeTarget();
             if (Header != null)
             {
-                var lei = LogEventInfo.CreateNullEvent();
-                Output(lei, Header.Render(lei));
+                LogEventInfo lei = LogEventInfo.CreateNullEvent();
+                this.Output(lei, Header.Render(lei));
             }
         }
 
         /// <summary>
-        ///     Closes the target and releases any unmanaged resources.
+        /// Closes the target and releases any unmanaged resources.
         /// </summary>
         protected override void CloseTarget()
         {
             if (Footer != null)
             {
-                var lei = LogEventInfo.CreateNullEvent();
-                Output(lei, Footer.Render(lei));
+                LogEventInfo lei = LogEventInfo.CreateNullEvent();
+                this.Output(lei, Footer.Render(lei));
             }
 
             base.CloseTarget();
         }
 
-        /// <summary>
-        ///     Writes the specified log event to the console highlighting entries
-        ///     and words based on a set of defined rules.
+            /// <summary>
+        /// Writes the specified log event to the console highlighting entries
+        /// and words based on a set of defined rules.
         /// </summary>
         /// <param name="logEvent">Log event.</param>
         protected override void Write(LogEventInfo logEvent)
         {
-            Output(logEvent, Layout.Render(logEvent));
+            this.Output(logEvent, this.Layout.Render(logEvent));
         }
 
         private static void ColorizeEscapeSequences(
@@ -159,11 +186,11 @@ namespace Transformalize.Libs.NLog.Targets
 
             colorStack.Push(startingColor);
 
-            var p0 = 0;
+            int p0 = 0;
 
             while (p0 < message.Length)
             {
-                var p1 = p0;
+                int p1 = p0;
                 while (p1 < message.Length && message[p1] >= 32)
                 {
                     p1++;
@@ -182,8 +209,8 @@ namespace Transformalize.Libs.NLog.Targets
                 }
 
                 // control characters
-                var c1 = message[p1];
-                var c2 = (char) 0;
+                char c1 = message[p1];
+                char c2 = (char)0;
 
                 if (p1 + 1 < message.Length)
                 {
@@ -219,17 +246,17 @@ namespace Transformalize.Libs.NLog.Targets
                         continue;
                     }
 
-                    var foreground = (ConsoleOutputColor) (c2 - 'A');
-                    var background = (ConsoleOutputColor) (message[p1 + 2] - 'A');
+                    var foreground = (ConsoleOutputColor)(c2 - 'A');
+                    var background = (ConsoleOutputColor)(message[p1 + 2] - 'A');
 
                     if (foreground != ConsoleOutputColor.NoChange)
                     {
-                        Console.ForegroundColor = (ConsoleColor) foreground;
+                        Console.ForegroundColor = (ConsoleColor)foreground;
                     }
 
                     if (background != ConsoleOutputColor.NoChange)
                     {
-                        Console.BackgroundColor = (ConsoleColor) background;
+                        Console.BackgroundColor = (ConsoleColor)background;
                     }
 
                     colorStack.Push(new ColorPair(Console.ForegroundColor, Console.BackgroundColor));
@@ -249,14 +276,14 @@ namespace Transformalize.Libs.NLog.Targets
 
         private void Output(LogEventInfo logEvent, string message)
         {
-            var oldForegroundColor = Console.ForegroundColor;
-            var oldBackgroundColor = Console.BackgroundColor;
+            ConsoleColor oldForegroundColor = Console.ForegroundColor;
+            ConsoleColor oldBackgroundColor = Console.BackgroundColor;
 
             try
             {
                 ConsoleRowHighlightingRule matchingRule = null;
 
-                foreach (var cr in RowHighlightingRules)
+                foreach (ConsoleRowHighlightingRule cr in this.RowHighlightingRules)
                 {
                     if (cr.CheckCondition(logEvent))
                     {
@@ -265,9 +292,9 @@ namespace Transformalize.Libs.NLog.Targets
                     }
                 }
 
-                if (UseDefaultRowHighlightingRules && matchingRule == null)
+                if (this.UseDefaultRowHighlightingRules && matchingRule == null)
                 {
-                    foreach (var cr in defaultConsoleRowHighlightingRules)
+                    foreach (ConsoleRowHighlightingRule cr in defaultConsoleRowHighlightingRules)
                     {
                         if (cr.CheckCondition(logEvent))
                         {
@@ -284,22 +311,22 @@ namespace Transformalize.Libs.NLog.Targets
 
                 if (matchingRule.ForegroundColor != ConsoleOutputColor.NoChange)
                 {
-                    Console.ForegroundColor = (ConsoleColor) matchingRule.ForegroundColor;
+                    Console.ForegroundColor = (ConsoleColor)matchingRule.ForegroundColor;
                 }
 
                 if (matchingRule.BackgroundColor != ConsoleOutputColor.NoChange)
                 {
-                    Console.BackgroundColor = (ConsoleColor) matchingRule.BackgroundColor;
+                    Console.BackgroundColor = (ConsoleColor)matchingRule.BackgroundColor;
                 }
 
                 message = message.Replace("\a", "\a\a");
 
-                foreach (var hl in WordHighlightingRules)
+                foreach (ConsoleWordHighlightingRule hl in this.WordHighlightingRules)
                 {
                     message = hl.ReplaceWithEscapeSequences(message);
                 }
 
-                ColorizeEscapeSequences(ErrorStream ? Console.Error : Console.Out, message, new ColorPair(Console.ForegroundColor, Console.BackgroundColor), new ColorPair(oldForegroundColor, oldBackgroundColor));
+                ColorizeEscapeSequences(this.ErrorStream ? Console.Error : Console.Out, message, new ColorPair(Console.ForegroundColor, Console.BackgroundColor), new ColorPair(oldForegroundColor, oldBackgroundColor));
             }
             finally
             {
@@ -307,7 +334,7 @@ namespace Transformalize.Libs.NLog.Targets
                 Console.BackgroundColor = oldBackgroundColor;
             }
 
-            if (ErrorStream)
+            if (this.ErrorStream)
             {
                 Console.Error.WriteLine();
             }
@@ -318,12 +345,12 @@ namespace Transformalize.Libs.NLog.Targets
         }
 
         /// <summary>
-        ///     Color pair (foreground and background).
+        /// Color pair (foreground and background).
         /// </summary>
         internal struct ColorPair
         {
-            private readonly ConsoleColor backgroundColor;
             private readonly ConsoleColor foregroundColor;
+            private readonly ConsoleColor backgroundColor;
 
             internal ColorPair(ConsoleColor foregroundColor, ConsoleColor backgroundColor)
             {
@@ -333,12 +360,12 @@ namespace Transformalize.Libs.NLog.Targets
 
             internal ConsoleColor BackgroundColor
             {
-                get { return backgroundColor; }
+                get { return this.backgroundColor; }
             }
 
             internal ConsoleColor ForegroundColor
             {
-                get { return foregroundColor; }
+                get { return this.foregroundColor; }
             }
         }
     }

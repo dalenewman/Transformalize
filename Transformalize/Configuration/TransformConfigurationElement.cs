@@ -597,13 +597,13 @@ namespace Transformalize.Configuration {
             set { this[CONNECTION] = value; }
         }
 
-        [ConfigurationProperty(ENCODE, IsRequired = false, DefaultValue = true)]
+        [ConfigurationProperty(ENCODE, IsRequired = false, DefaultValue = false)]
         public bool Encode {
             get { return (bool)this[ENCODE]; }
             set { this[ENCODE] = value; }
         }
 
-        [ConfigurationProperty(DECODE, IsRequired = false, DefaultValue = true)]
+        [ConfigurationProperty(DECODE, IsRequired = false, DefaultValue = false)]
         public bool Decode {
             get { return (bool)this[DECODE]; }
             set { this[DECODE] = value; }

@@ -1,58 +1,84 @@
-#region License
-// /*
-// See license included in this library folder.
-// */
-#endregion
+// 
+// Copyright (c) 2004-2011 Jaroslaw Kowalski <jaak@jkowalski.net>
+// 
+// All rights reserved.
+// 
+// Redistribution and use in source and binary forms, with or without 
+// modification, are permitted provided that the following conditions 
+// are met:
+// 
+// * Redistributions of source code must retain the above copyright notice, 
+//   this list of conditions and the following disclaimer. 
+// 
+// * Redistributions in binary form must reproduce the above copyright notice,
+//   this list of conditions and the following disclaimer in the documentation
+//   and/or other materials provided with the distribution. 
+// 
+// * Neither the name of Jaroslaw Kowalski nor the names of its 
+//   contributors may be used to endorse or promote products derived from this
+//   software without specific prior written permission. 
+// 
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
+// THE POSSIBILITY OF SUCH DAMAGE.
+// 
 
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Text;
 using Transformalize.Libs.NLog.Config;
 using Transformalize.Libs.NLog.Internal;
 
-#if !NET_CF
-
 namespace Transformalize.Libs.NLog.LayoutRenderers
 {
     /// <summary>
-    ///     Stack trace renderer.
+    /// Stack trace renderer.
     /// </summary>
     [LayoutRenderer("stacktrace")]
     [ThreadAgnostic]
     public class StackTraceLayoutRenderer : LayoutRenderer, IUsesStackTrace
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="StackTraceLayoutRenderer" /> class.
+        /// Initializes a new instance of the <see cref="StackTraceLayoutRenderer" /> class.
         /// </summary>
         public StackTraceLayoutRenderer()
         {
-            Separator = " => ";
-            TopFrames = 3;
-            Format = StackTraceFormat.Flat;
+            this.Separator = " => ";
+            this.TopFrames = 3;
+            this.Format = StackTraceFormat.Flat;
         }
 
         /// <summary>
-        ///     Gets or sets the output format of the stack trace.
+        /// Gets or sets the output format of the stack trace.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         [DefaultValue("Flat")]
         public StackTraceFormat Format { get; set; }
 
         /// <summary>
-        ///     Gets or sets the number of top stack frames to be rendered.
+        /// Gets or sets the number of top stack frames to be rendered.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         [DefaultValue(3)]
         public int TopFrames { get; set; }
 
         /// <summary>
-        ///     Gets or sets the stack frame separator string.
+        /// Gets or sets the stack frame separator string.
         /// </summary>
         /// <docgen category='Rendering Options' order='10' />
         [DefaultValue(" => ")]
         public string Separator { get; set; }
 
         /// <summary>
-        ///     Gets the level of stack trace information required by the implementing class.
+        /// Gets the level of stack trace information required by the implementing class.
         /// </summary>
         /// <value></value>
         StackTraceUsage IUsesStackTrace.StackTraceUsage
@@ -61,39 +87,37 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
         }
 
         /// <summary>
-        ///     Renders the call site and appends it to the specified <see cref="StringBuilder" />.
+        /// Renders the call site and appends it to the specified <see cref="StringBuilder" />.
         /// </summary>
-        /// <param name="builder">
-        ///     The <see cref="StringBuilder" /> to append the rendered data to.
-        /// </param>
+        /// <param name="builder">The <see cref="StringBuilder"/> to append the rendered data to.</param>
         /// <param name="logEvent">Logging event.</param>
         protected override void Append(StringBuilder builder, LogEventInfo logEvent)
         {
-            var first = true;
-            var startingFrame = logEvent.UserStackFrameNumber + TopFrames - 1;
+            bool first = true;
+            int startingFrame = logEvent.UserStackFrameNumber + this.TopFrames - 1;
             if (startingFrame >= logEvent.StackTrace.FrameCount)
             {
                 startingFrame = logEvent.StackTrace.FrameCount - 1;
             }
 
-            switch (Format)
+            switch (this.Format)
             {
                 case StackTraceFormat.Raw:
-                    for (var i = startingFrame; i >= logEvent.UserStackFrameNumber; --i)
+                    for (int i = startingFrame; i >= logEvent.UserStackFrameNumber; --i)
                     {
-                        var f = logEvent.StackTrace.GetFrame(i);
-                        builder.Append(f);
+                        StackFrame f = logEvent.StackTrace.GetFrame(i);
+                        builder.Append(f.ToString());
                     }
 
                     break;
 
                 case StackTraceFormat.Flat:
-                    for (var i = startingFrame; i >= logEvent.UserStackFrameNumber; --i)
+                    for (int i = startingFrame; i >= logEvent.UserStackFrameNumber; --i)
                     {
-                        var f = logEvent.StackTrace.GetFrame(i);
+                        StackFrame f = logEvent.StackTrace.GetFrame(i);
                         if (!first)
                         {
-                            builder.Append(Separator);
+                            builder.Append(this.Separator);
                         }
 
                         var type = f.GetMethod().DeclaringType;
@@ -115,12 +139,12 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
                     break;
 
                 case StackTraceFormat.DetailedFlat:
-                    for (var i = startingFrame; i >= logEvent.UserStackFrameNumber; --i)
+                    for (int i = startingFrame; i >= logEvent.UserStackFrameNumber; --i)
                     {
-                        var f = logEvent.StackTrace.GetFrame(i);
+                        StackFrame f = logEvent.StackTrace.GetFrame(i);
                         if (!first)
                         {
-                            builder.Append(Separator);
+                            builder.Append(this.Separator);
                         }
 
                         builder.Append("[");
@@ -134,5 +158,3 @@ namespace Transformalize.Libs.NLog.LayoutRenderers
         }
     }
 }
-
-#endif

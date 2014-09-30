@@ -1,8 +1,35 @@
-#region License
-// /*
-// See license included in this library folder.
-// */
-#endregion
+// 
+// Copyright (c) 2004-2011 Jaroslaw Kowalski <jaak@jkowalski.net>
+// 
+// All rights reserved.
+// 
+// Redistribution and use in source and binary forms, with or without 
+// modification, are permitted provided that the following conditions 
+// are met:
+// 
+// * Redistributions of source code must retain the above copyright notice, 
+//   this list of conditions and the following disclaimer. 
+// 
+// * Redistributions in binary form must reproduce the above copyright notice,
+//   this list of conditions and the following disclaimer in the documentation
+//   and/or other materials provided with the distribution. 
+// 
+// * Neither the name of Jaroslaw Kowalski nor the names of its 
+//   contributors may be used to endorse or promote products derived from this
+//   software without specific prior written permission. 
+// 
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
+// THE POSSIBILITY OF SUCH DAMAGE.
+// 
 
 using System;
 using System.Collections.Generic;
@@ -19,7 +46,7 @@ using Transformalize.Libs.NLog.LayoutRenderers.Wrappers;
 namespace Transformalize.Libs.NLog.Layouts
 {
     /// <summary>
-    ///     Parses layout strings.
+    /// Parses layout strings.
     /// </summary>
     internal sealed class LayoutParser
     {
@@ -30,7 +57,7 @@ namespace Transformalize.Libs.NLog.Layouts
 
             int ch;
 
-            var p0 = sr.Position;
+            int p0 = sr.Position;
 
             while ((ch = sr.Peek()) != -1)
             {
@@ -49,7 +76,7 @@ namespace Transformalize.Libs.NLog.Layouts
                         literalBuf.Length = 0;
                     }
 
-                    var newLayoutRenderer = ParseLayoutRenderer(configurationItemFactory, sr);
+                    LayoutRenderer newLayoutRenderer = ParseLayoutRenderer(configurationItemFactory, sr);
                     if (CanBeConvertedToLiteral(newLayoutRenderer))
                     {
                         newLayoutRenderer = ConvertToLiteral(newLayoutRenderer);
@@ -60,7 +87,7 @@ namespace Transformalize.Libs.NLog.Layouts
                 }
                 else
                 {
-                    literalBuf.Append((char) ch);
+                    literalBuf.Append((char)ch);
                 }
             }
 
@@ -70,7 +97,7 @@ namespace Transformalize.Libs.NLog.Layouts
                 literalBuf.Length = 0;
             }
 
-            var p1 = sr.Position;
+            int p1 = sr.Position;
 
             MergeLiterals(result);
             text = sr.Substring(p0, p1);
@@ -90,7 +117,7 @@ namespace Transformalize.Libs.NLog.Layouts
                     break;
                 }
 
-                nameBuf.Append((char) ch);
+                nameBuf.Append((char)ch);
                 sr.Read();
             }
 
@@ -100,7 +127,7 @@ namespace Transformalize.Libs.NLog.Layouts
         private static string ParseParameterName(SimpleStringReader sr)
         {
             int ch;
-            var nestLevel = 0;
+            int nestLevel = 0;
 
             var nameBuf = new StringBuilder();
             while ((ch = sr.Peek()) != -1)
@@ -135,11 +162,11 @@ namespace Transformalize.Libs.NLog.Layouts
                     sr.Read();
 
                     // append next character
-                    nameBuf.Append((char) sr.Read());
+                    nameBuf.Append((char)sr.Read());
                     continue;
                 }
 
-                nameBuf.Append((char) ch);
+                nameBuf.Append((char)ch);
                 sr.Read();
             }
 
@@ -158,30 +185,135 @@ namespace Transformalize.Libs.NLog.Layouts
                     break;
                 }
 
+                // Code in this condition was replaced
+                // to support escape codes e.g. '\r' '\n' '\u003a',
+                // which can not be used directly as they are used as tokens by the parser
+                // All escape codes listed in the following link were included
+                // in addition to "\{", "\}", "\:" which are NLog specific:
+                // http://blogs.msdn.com/b/csharpfaq/archive/2004/03/12/what-character-escape-sequences-are-available.aspx
                 if (ch == '\\')
                 {
                     // skip the backslash
                     sr.Read();
 
-                    // append next character
-                    nameBuf.Append((char) sr.Read());
+                    var nextChar = (char)sr.Peek();
+
+                    switch (nextChar)
+                    {
+                        case ':':
+                            sr.Read();
+                            nameBuf.Append(':');
+                            break;
+                        case '{':
+                            sr.Read();
+                            nameBuf.Append('{');
+                            break;
+                        case '}':
+                            sr.Read();
+                            nameBuf.Append('}');
+                            break;
+
+                        case '\'':
+                            sr.Read();
+                            nameBuf.Append('\'');
+                            break;
+                        case '"':
+                            sr.Read();
+                            nameBuf.Append('"');
+                            break;
+                        case '\\':
+                            sr.Read();
+                            nameBuf.Append('\\');
+                            break;
+                        case '0':
+                            sr.Read();
+                            nameBuf.Append('\0');
+                            break;
+                        case 'a':
+                            sr.Read();
+                            nameBuf.Append('\a');
+                            break;
+                        case 'b':
+                            sr.Read();
+                            nameBuf.Append('\b');
+                            break;
+                        case 'f':
+                            sr.Read();
+                            nameBuf.Append('\f');
+                            break;
+                        case 'n':
+                            sr.Read();
+                            nameBuf.Append('\n');
+                            break;
+                        case 'r':
+                            sr.Read();
+                            nameBuf.Append('\r');
+                            break;
+                        case 't':
+                            sr.Read();
+                            nameBuf.Append('\t');
+                            break;
+                        case 'u':
+                            sr.Read();
+                            var uChar = GetUnicode(sr, 4); // 4 digits
+                            nameBuf.Append(uChar);
+                            break;
+                        case 'U':
+                            sr.Read();
+                            var UChar = GetUnicode(sr, 8); // 8 digits
+                            nameBuf.Append(UChar);
+                            break;
+                        case 'x':
+                            sr.Read();
+                            var xChar = GetUnicode(sr, 4); // 1-4 digits
+                            nameBuf.Append(xChar);
+                            break;
+                        case 'v':
+                            sr.Read();
+                            nameBuf.Append('\v');
+                            break;
+                    }
+
                     continue;
                 }
 
-                nameBuf.Append((char) ch);
+                nameBuf.Append((char)ch);
                 sr.Read();
             }
 
             return nameBuf.ToString();
         }
 
+        private static char GetUnicode(SimpleStringReader sr, int maxDigits)
+        {
+            int code = 0;
+
+            for (int cnt = 0; cnt < maxDigits; cnt++)
+            {
+                var digitCode = sr.Peek();
+                if (digitCode >= (int)'0' && digitCode <= (int)'9')
+                    digitCode = digitCode - (int)'0';
+                else if (digitCode >= (int)'a' && digitCode <= (int)'f')
+                    digitCode = digitCode - (int)'a' + 10;
+                else if (digitCode >= (int)'A' && digitCode <= (int)'F')
+                    digitCode = digitCode - (int)'A' + 10;
+                else
+                    break;
+
+                sr.Read();
+                code = code * 16 + digitCode;
+            }
+
+            return (char)code;
+        }
+
         private static LayoutRenderer ParseLayoutRenderer(ConfigurationItemFactory configurationItemFactory, SimpleStringReader sr)
         {
-            var ch = sr.Read();
+            int ch = sr.Read();
             Debug.Assert(ch == '{', "'{' expected in layout specification");
 
-            var name = ParseLayoutRendererName(sr);
-            var lr = configurationItemFactory.LayoutRenderers.CreateInstance(name);
+            string name = ParseLayoutRendererName(sr);
+            LayoutRenderer lr = configurationItemFactory.LayoutRenderers.CreateInstance(name);
 
             var wrappers = new Dictionary<Type, LayoutRenderer>();
             var orderedWrappers = new List<LayoutRenderer>();
@@ -189,12 +321,12 @@ namespace Transformalize.Libs.NLog.Layouts
             ch = sr.Read();
             while (ch != -1 && ch != '}')
             {
-                var parameterName = ParseParameterName(sr).Trim();
+                string parameterName = ParseParameterName(sr).Trim();
                 if (sr.Peek() == '=')
                 {
                     sr.Read(); // skip the '='
                     PropertyInfo pi;
-                    var parameterTarget = lr;
+                    LayoutRenderer parameterTarget = lr;
 
                     if (!PropertyHelper.TryGetPropertyInfo(lr, parameterName, out pi))
                     {
@@ -228,23 +360,23 @@ namespace Transformalize.Libs.NLog.Layouts
                     }
                     else
                     {
-                        if (typeof (Layout).IsAssignableFrom(pi.PropertyType))
+                        if (typeof(Layout).IsAssignableFrom(pi.PropertyType))
                         {
                             var nestedLayout = new SimpleLayout();
                             string txt;
-                            var renderers = CompileLayout(configurationItemFactory, sr, true, out txt);
+                            LayoutRenderer[] renderers = CompileLayout(configurationItemFactory, sr, true, out txt);
 
                             nestedLayout.SetRenderers(renderers, txt);
                             pi.SetValue(parameterTarget, nestedLayout, null);
                         }
-                        else if (typeof (ConditionExpression).IsAssignableFrom(pi.PropertyType))
+                        else if (typeof(ConditionExpression).IsAssignableFrom(pi.PropertyType))
                         {
                             var conditionExpression = ConditionParser.ParseExpression(sr, configurationItemFactory);
                             pi.SetValue(parameterTarget, conditionExpression, null);
                         }
                         else
                         {
-                            var value = ParseParameterValue(sr);
+                            string value = ParseParameterValue(sr);
                             PropertyHelper.SetPropertyFromString(parameterTarget, parameterName, value, configurationItemFactory);
                         }
                     }
@@ -257,13 +389,13 @@ namespace Transformalize.Libs.NLog.Layouts
 
                     if (PropertyHelper.TryGetPropertyInfo(lr, string.Empty, out pi))
                     {
-                        if (typeof (SimpleLayout) == pi.PropertyType)
+                        if (typeof(SimpleLayout) == pi.PropertyType)
                         {
                             pi.SetValue(lr, new SimpleLayout(parameterName), null);
                         }
                         else
                         {
-                            var value = parameterName;
+                            string value = parameterName;
                             PropertyHelper.SetPropertyFromString(lr, pi.Name, value, configurationItemFactory);
                         }
                     }
@@ -283,16 +415,16 @@ namespace Transformalize.Libs.NLog.Layouts
 
         private static LayoutRenderer ApplyWrappers(ConfigurationItemFactory configurationItemFactory, LayoutRenderer lr, List<LayoutRenderer> orderedWrappers)
         {
-            for (var i = orderedWrappers.Count - 1; i >= 0; --i)
+            for (int i = orderedWrappers.Count - 1; i >= 0; --i)
             {
-                var newRenderer = (WrapperLayoutRendererBase) orderedWrappers[i];
+                var newRenderer = (WrapperLayoutRendererBase)orderedWrappers[i];
                 InternalLogger.Trace("Wrapping {0} with {1}", lr.GetType().Name, newRenderer.GetType().Name);
                 if (CanBeConvertedToLiteral(lr))
                 {
                     lr = ConvertToLiteral(lr);
                 }
 
-                newRenderer.Inner = new SimpleLayout(new[] {lr}, string.Empty, configurationItemFactory);
+                newRenderer.Inner = new SimpleLayout(new[] { lr }, string.Empty, configurationItemFactory);
                 lr = newRenderer;
             }
 
@@ -301,14 +433,14 @@ namespace Transformalize.Libs.NLog.Layouts
 
         private static bool CanBeConvertedToLiteral(LayoutRenderer lr)
         {
-            foreach (var renderable in ObjectGraphScanner.FindReachableObjects<IRenderable>(lr))
+            foreach (IRenderable renderable in ObjectGraphScanner.FindReachableObjects<IRenderable>(lr))
             {
-                if (renderable.GetType() == typeof (SimpleLayout))
+                if (renderable.GetType() == typeof(SimpleLayout))
                 {
                     continue;
                 }
 
-                if (!renderable.GetType().IsDefined(typeof (AppDomainFixedOutputAttribute), false))
+                if (!renderable.GetType().IsDefined(typeof(AppDomainFixedOutputAttribute), false))
                 {
                     return false;
                 }
@@ -319,7 +451,7 @@ namespace Transformalize.Libs.NLog.Layouts
 
         private static void MergeLiterals(List<LayoutRenderer> list)
         {
-            for (var i = 0; i + 1 < list.Count;)
+            for (int i = 0; i + 1 < list.Count;)
             {
                 var lr1 = list[i] as LiteralLayoutRenderer;
                 var lr2 = list[i + 1] as LiteralLayoutRenderer;

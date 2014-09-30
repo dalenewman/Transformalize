@@ -1,33 +1,60 @@
-#region License
-// /*
-// See license included in this library folder.
-// */
-#endregion
+// 
+// Copyright (c) 2004-2011 Jaroslaw Kowalski <jaak@jkowalski.net>
+// 
+// All rights reserved.
+// 
+// Redistribution and use in source and binary forms, with or without 
+// modification, are permitted provided that the following conditions 
+// are met:
+// 
+// * Redistributions of source code must retain the above copyright notice, 
+//   this list of conditions and the following disclaimer. 
+// 
+// * Redistributions in binary form must reproduce the above copyright notice,
+//   this list of conditions and the following disclaimer in the documentation
+//   and/or other materials provided with the distribution. 
+// 
+// * Neither the name of Jaroslaw Kowalski nor the names of its 
+//   contributors may be used to endorse or promote products derived from this
+//   software without specific prior written permission. 
+// 
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
+// THE POSSIBILITY OF SUCH DAMAGE.
+// 
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Threading;
 using Transformalize.Libs.NLog.Common;
 using Transformalize.Libs.NLog.Config;
 using Transformalize.Libs.NLog.Filters;
 using Transformalize.Libs.NLog.Internal;
+using Transformalize.Libs.NLog.Targets;
 
 namespace Transformalize.Libs.NLog
 {
     /// <summary>
-    ///     Implementation of logging engine.
+    /// Implementation of logging engine.
     /// </summary>
     internal static class LoggerImpl
     {
         private const int StackTraceSkipMethods = 0;
-        private static readonly Assembly nlogAssembly = typeof (LoggerImpl).Assembly;
-        private static readonly Assembly mscorlibAssembly = typeof (string).Assembly;
-        private static readonly Assembly systemAssembly = typeof (Debug).Assembly;
+        private static readonly Assembly nlogAssembly = typeof(LoggerImpl).Assembly;
+        private static readonly Assembly mscorlibAssembly = typeof(string).Assembly;
+        private static readonly Assembly systemAssembly = typeof(Debug).Assembly;
 
-        [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", Justification = "Using 'NLog' in message.")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", Justification = "Using 'NLog' in message.")]
         internal static void Write(Type loggerType, TargetWithFilterChain targets, LogEventInfo logEvent, LogFactory factory)
         {
             if (targets == null)
@@ -35,8 +62,7 @@ namespace Transformalize.Libs.NLog
                 return;
             }
 
-#if !NET_CF
-            var stu = targets.GetStackTraceUsage();
+            StackTraceUsage stu = targets.GetStackTraceUsage();
 
             if (stu != StackTraceUsage.None && !logEvent.HasStackTrace)
             {
@@ -47,23 +73,22 @@ namespace Transformalize.Libs.NLog
                 stackTrace = new StackTrace();
 #endif
 
-                var firstUserFrame = FindCallingMethodOnStackTrace(stackTrace, loggerType);
+                int firstUserFrame = FindCallingMethodOnStackTrace(stackTrace, loggerType);
 
                 logEvent.SetStackTrace(stackTrace, firstUserFrame);
             }
-#endif
 
-            var originalThreadId = Thread.CurrentThread.ManagedThreadId;
+            int originalThreadId = Thread.CurrentThread.ManagedThreadId;
             AsyncContinuation exceptionHandler = ex =>
-                                                     {
-                                                         if (ex != null)
-                                                         {
-                                                             if (factory.ThrowExceptions && Thread.CurrentThread.ManagedThreadId == originalThreadId)
-                                                             {
-                                                                 throw new NLogRuntimeException("Exception occurred in NLog", ex);
-                                                             }
-                                                         }
-                                                     };
+                {
+                    if (ex != null)
+                    {
+                        if (factory.ThrowExceptions && Thread.CurrentThread.ManagedThreadId == originalThreadId)
+                        {
+                            throw new NLogRuntimeException("Exception occurred in NLog", ex);
+                        }
+                    }
+                };
 
             for (var t = targets; t != null; t = t.NextInChain)
             {
@@ -74,35 +99,55 @@ namespace Transformalize.Libs.NLog
             }
         }
 
-#if !NET_CF
         private static int FindCallingMethodOnStackTrace(StackTrace stackTrace, Type loggerType)
         {
-            var firstUserFrame = 0;
-            for (var i = 0; i < stackTrace.FrameCount; ++i)
+            int? firstUserFrame = null;
+
+            if (loggerType != null)
             {
-                var frame = stackTrace.GetFrame(i);
-                var mb = frame.GetMethod();
-                Assembly methodAssembly = null;
+                for (int i = 0; i < stackTrace.FrameCount; ++i)
+                {
+                    StackFrame frame = stackTrace.GetFrame(i);
+                    MethodBase mb = frame.GetMethod();
 
-                if (mb.DeclaringType != null)
-                {
-                    methodAssembly = mb.DeclaringType.Assembly;
-                }
-
-                if (SkipAssembly(methodAssembly) || mb.DeclaringType == loggerType)
-                {
-                    firstUserFrame = i + 1;
-                }
-                else
-                {
-                    if (firstUserFrame != 0)
-                    {
+                    if (mb.DeclaringType == loggerType)
+                        firstUserFrame = i + 1;
+                    else if (firstUserFrame != null)
                         break;
+                }
+            }
+
+            if (firstUserFrame == stackTrace.FrameCount)
+                firstUserFrame = null;
+            
+            if (firstUserFrame == null)
+            {
+                for (int i = 0; i < stackTrace.FrameCount; ++i)
+                {
+                    StackFrame frame = stackTrace.GetFrame(i);
+                    MethodBase mb = frame.GetMethod();
+                    Assembly methodAssembly = null;
+
+                    if (mb.DeclaringType != null)
+                    {
+                        methodAssembly = mb.DeclaringType.Assembly;
+                    }
+
+                    if (SkipAssembly(methodAssembly))
+                    {
+                        firstUserFrame = i + 1;
+                    }
+                    else
+                    {
+                        if (firstUserFrame != 0)
+                        {
+                            break;
+                        }
                     }
                 }
             }
 
-            return firstUserFrame;
+            return firstUserFrame ?? 0;
         }
 
         private static bool SkipAssembly(Assembly assembly)
@@ -124,12 +169,11 @@ namespace Transformalize.Libs.NLog
 
             return false;
         }
-#endif
 
         private static bool WriteToTargetWithFilterChain(TargetWithFilterChain targetListHead, LogEventInfo logEvent, AsyncContinuation onException)
         {
-            var target = targetListHead.Target;
-            var result = GetFilterResult(targetListHead.FilterChain, logEvent);
+            Target target = targetListHead.Target;
+            FilterResult result = GetFilterResult(targetListHead.FilterChain, logEvent);
 
             if ((result == FilterResult.Ignore) || (result == FilterResult.IgnoreFinal))
             {
@@ -156,18 +200,18 @@ namespace Transformalize.Libs.NLog
         }
 
         /// <summary>
-        ///     Gets the filter result.
+        /// Gets the filter result.
         /// </summary>
         /// <param name="filterChain">The filter chain.</param>
         /// <param name="logEvent">The log event.</param>
         /// <returns>The result of the filter.</returns>
         private static FilterResult GetFilterResult(IEnumerable<Filter> filterChain, LogEventInfo logEvent)
         {
-            var result = FilterResult.Neutral;
+            FilterResult result = FilterResult.Neutral;
 
             try
             {
-                foreach (var f in filterChain)
+                foreach (Filter f in filterChain)
                 {
                     result = f.GetFilterResult(logEvent);
                     if (result != FilterResult.Neutral)

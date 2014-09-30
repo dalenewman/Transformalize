@@ -1,8 +1,35 @@
-#region License
-// /*
-// See license included in this library folder.
-// */
-#endregion
+// 
+// Copyright (c) 2004-2011 Jaroslaw Kowalski <jaak@jkowalski.net>
+// 
+// All rights reserved.
+// 
+// Redistribution and use in source and binary forms, with or without 
+// modification, are permitted provided that the following conditions 
+// are met:
+// 
+// * Redistributions of source code must retain the above copyright notice, 
+//   this list of conditions and the following disclaimer. 
+// 
+// * Redistributions in binary form must reproduce the above copyright notice,
+//   this list of conditions and the following disclaimer in the documentation
+//   and/or other materials provided with the distribution. 
+// 
+// * Neither the name of Jaroslaw Kowalski nor the names of its 
+//   contributors may be used to endorse or promote products derived from this
+//   software without specific prior written permission. 
+// 
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
+// THE POSSIBILITY OF SUCH DAMAGE.
+// 
 
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,7 +40,7 @@ using Transformalize.Libs.NLog.Config;
 namespace Transformalize.Libs.NLog.Layouts
 {
     /// <summary>
-    ///     A specialized layout that renders CSV-formatted events.
+    /// A specialized layout that renders CSV-formatted events.
     /// </summary>
     [Layout("CsvLayout")]
     [ThreadAgnostic]
@@ -25,111 +52,109 @@ namespace Transformalize.Libs.NLog.Layouts
         private char[] quotableCharacters;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="CsvLayout" /> class.
+        /// Initializes a new instance of the <see cref="CsvLayout"/> class.
         /// </summary>
         public CsvLayout()
         {
-            Columns = new List<CsvColumn>();
-            WithHeader = true;
-            Delimiter = CsvColumnDelimiterMode.Auto;
-            Quoting = CsvQuotingMode.Auto;
-            QuoteChar = "\"";
-            Layout = this;
-            Header = new CsvHeaderLayout(this);
-            Footer = null;
+            this.Columns = new List<CsvColumn>();
+            this.WithHeader = true;
+            this.Delimiter = CsvColumnDelimiterMode.Auto;
+            this.Quoting = CsvQuotingMode.Auto;
+            this.QuoteChar = "\"";
+            this.Layout = this;
+            this.Header = new CsvHeaderLayout(this);
+            this.Footer = null;
         }
 
         /// <summary>
-        ///     Gets the array of parameters to be passed.
+        /// Gets the array of parameters to be passed.
         /// </summary>
         /// <docgen category='CSV Options' order='10' />
-        [ArrayParameter(typeof (CsvColumn), "column")]
+        [ArrayParameter(typeof(CsvColumn), "column")]
         public IList<CsvColumn> Columns { get; private set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether CVS should include header.
+        /// Gets or sets a value indicating whether CVS should include header.
         /// </summary>
-        /// <value>
-        ///     A value of <c>true</c> if CVS should include header; otherwise, <c>false</c>.
-        /// </value>
+        /// <value>A value of <c>true</c> if CVS should include header; otherwise, <c>false</c>.</value>
         /// <docgen category='CSV Options' order='10' />
         public bool WithHeader { get; set; }
 
         /// <summary>
-        ///     Gets or sets the column delimiter.
+        /// Gets or sets the column delimiter.
         /// </summary>
         /// <docgen category='CSV Options' order='10' />
         [DefaultValue("Auto")]
         public CsvColumnDelimiterMode Delimiter { get; set; }
 
         /// <summary>
-        ///     Gets or sets the quoting mode.
+        /// Gets or sets the quoting mode.
         /// </summary>
         /// <docgen category='CSV Options' order='10' />
         [DefaultValue("Auto")]
         public CsvQuotingMode Quoting { get; set; }
 
         /// <summary>
-        ///     Gets or sets the quote Character.
+        /// Gets or sets the quote Character.
         /// </summary>
         /// <docgen category='CSV Options' order='10' />
         [DefaultValue("\"")]
         public string QuoteChar { get; set; }
 
         /// <summary>
-        ///     Gets or sets the custom column delimiter value (valid when ColumnDelimiter is set to 'Custom').
+        /// Gets or sets the custom column delimiter value (valid when ColumnDelimiter is set to 'Custom').
         /// </summary>
         /// <docgen category='CSV Options' order='10' />
         public string CustomColumnDelimiter { get; set; }
 
         /// <summary>
-        ///     Initializes the layout.
+        /// Initializes the layout.
         /// </summary>
         protected override void InitializeLayout()
         {
             base.InitializeLayout();
-            if (!WithHeader)
+            if (!this.WithHeader)
             {
-                Header = null;
+                this.Header = null;
             }
 
-            switch (Delimiter)
+            switch (this.Delimiter)
             {
                 case CsvColumnDelimiterMode.Auto:
-                    actualColumnDelimiter = CultureInfo.CurrentCulture.TextInfo.ListSeparator;
+                    this.actualColumnDelimiter = CultureInfo.CurrentCulture.TextInfo.ListSeparator;
                     break;
 
                 case CsvColumnDelimiterMode.Comma:
-                    actualColumnDelimiter = ",";
+                    this.actualColumnDelimiter = ",";
                     break;
 
                 case CsvColumnDelimiterMode.Semicolon:
-                    actualColumnDelimiter = ";";
+                    this.actualColumnDelimiter = ";";
                     break;
 
                 case CsvColumnDelimiterMode.Pipe:
-                    actualColumnDelimiter = "|";
+                    this.actualColumnDelimiter = "|";
                     break;
 
                 case CsvColumnDelimiterMode.Tab:
-                    actualColumnDelimiter = "\t";
+                    this.actualColumnDelimiter = "\t";
                     break;
 
                 case CsvColumnDelimiterMode.Space:
-                    actualColumnDelimiter = " ";
+                    this.actualColumnDelimiter = " ";
                     break;
 
                 case CsvColumnDelimiterMode.Custom:
-                    actualColumnDelimiter = CustomColumnDelimiter;
+                    this.actualColumnDelimiter = this.CustomColumnDelimiter;
                     break;
             }
 
-            quotableCharacters = (QuoteChar + "\r\n" + actualColumnDelimiter).ToCharArray();
-            doubleQuoteChar = QuoteChar + QuoteChar;
+            this.quotableCharacters = (this.QuoteChar + "\r\n" + this.actualColumnDelimiter).ToCharArray();
+            this.doubleQuoteChar = this.QuoteChar + this.QuoteChar;
         }
 
         /// <summary>
-        ///     Formats the log event for write.
+        /// Formats the log event for write.
         /// </summary>
         /// <param name="logEvent">The log event to be formatted.</param>
         /// <returns>A string representation of the log event.</returns>
@@ -143,21 +168,21 @@ namespace Transformalize.Libs.NLog.Layouts
             }
 
             var sb = new StringBuilder();
-            var first = true;
+            bool first = true;
 
-            foreach (var col in Columns)
+            foreach (CsvColumn col in this.Columns)
             {
                 if (!first)
                 {
-                    sb.Append(actualColumnDelimiter);
+                    sb.Append(this.actualColumnDelimiter);
                 }
 
                 first = false;
 
                 bool useQuoting;
-                var text = col.Layout.Render(logEvent);
+                string text = col.Layout.Render(logEvent);
 
-                switch (Quoting)
+                switch (this.Quoting)
                 {
                     case CsvQuotingMode.Nothing:
                         useQuoting = false;
@@ -169,7 +194,7 @@ namespace Transformalize.Libs.NLog.Layouts
 
                     default:
                     case CsvQuotingMode.Auto:
-                        if (text.IndexOfAny(quotableCharacters) >= 0)
+                        if (text.IndexOfAny(this.quotableCharacters) >= 0)
                         {
                             useQuoting = true;
                         }
@@ -183,12 +208,12 @@ namespace Transformalize.Libs.NLog.Layouts
 
                 if (useQuoting)
                 {
-                    sb.Append(QuoteChar);
+                    sb.Append(this.QuoteChar);
                 }
 
                 if (useQuoting)
                 {
-                    sb.Append(text.Replace(QuoteChar, doubleQuoteChar));
+                    sb.Append(text.Replace(this.QuoteChar, this.doubleQuoteChar));
                 }
                 else
                 {
@@ -197,7 +222,7 @@ namespace Transformalize.Libs.NLog.Layouts
 
                 if (useQuoting)
                 {
-                    sb.Append(QuoteChar);
+                    sb.Append(this.QuoteChar);
                 }
             }
 
@@ -208,21 +233,21 @@ namespace Transformalize.Libs.NLog.Layouts
         {
             var sb = new StringBuilder();
 
-            var first = true;
+            bool first = true;
 
-            foreach (var col in Columns)
+            foreach (CsvColumn col in this.Columns)
             {
                 if (!first)
                 {
-                    sb.Append(actualColumnDelimiter);
+                    sb.Append(this.actualColumnDelimiter);
                 }
 
                 first = false;
 
                 bool useQuoting;
-                var text = col.Name;
+                string text = col.Name;
 
-                switch (Quoting)
+                switch (this.Quoting)
                 {
                     case CsvQuotingMode.Nothing:
                         useQuoting = false;
@@ -234,7 +259,7 @@ namespace Transformalize.Libs.NLog.Layouts
 
                     default:
                     case CsvQuotingMode.Auto:
-                        if (text.IndexOfAny(quotableCharacters) >= 0)
+                        if (text.IndexOfAny(this.quotableCharacters) >= 0)
                         {
                             useQuoting = true;
                         }
@@ -248,12 +273,12 @@ namespace Transformalize.Libs.NLog.Layouts
 
                 if (useQuoting)
                 {
-                    sb.Append(QuoteChar);
+                    sb.Append(this.QuoteChar);
                 }
 
                 if (useQuoting)
                 {
-                    sb.Append(text.Replace(QuoteChar, doubleQuoteChar));
+                    sb.Append(text.Replace(this.QuoteChar, this.doubleQuoteChar));
                 }
                 else
                 {
@@ -262,7 +287,7 @@ namespace Transformalize.Libs.NLog.Layouts
 
                 if (useQuoting)
                 {
-                    sb.Append(QuoteChar);
+                    sb.Append(this.QuoteChar);
                 }
             }
 
@@ -270,15 +295,15 @@ namespace Transformalize.Libs.NLog.Layouts
         }
 
         /// <summary>
-        ///     Header for CSV layout.
+        /// Header for CSV layout.
         /// </summary>
         [ThreadAgnostic]
         private class CsvHeaderLayout : Layout
         {
-            private readonly CsvLayout parent;
+            private CsvLayout parent;
 
             /// <summary>
-            ///     Initializes a new instance of the <see cref="CsvHeaderLayout" /> class.
+            /// Initializes a new instance of the <see cref="CsvHeaderLayout"/> class.
             /// </summary>
             /// <param name="parent">The parent.</param>
             public CsvHeaderLayout(CsvLayout parent)
@@ -287,7 +312,7 @@ namespace Transformalize.Libs.NLog.Layouts
             }
 
             /// <summary>
-            ///     Renders the layout for the specified logging event by invoking layout renderers.
+            /// Renders the layout for the specified logging event by invoking layout renderers.
             /// </summary>
             /// <param name="logEvent">The logging event.</param>
             /// <returns>The rendered layout.</returns>
@@ -300,7 +325,7 @@ namespace Transformalize.Libs.NLog.Layouts
                     return cached;
                 }
 
-                return logEvent.AddCachedLayoutValue(this, parent.GetHeader());
+                return logEvent.AddCachedLayoutValue(this, this.parent.GetHeader());
             }
         }
     }
