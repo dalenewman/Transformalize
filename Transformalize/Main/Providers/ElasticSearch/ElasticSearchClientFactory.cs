@@ -16,7 +16,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
 
             TflLogger.Debug(processName, entityName, "Preparing Elasticsearch.NET client for {0}", connection.Uri());
             var pool = new SingleNodeConnectionPool(connection.Uri());
-            var settings = new ConnectionConfiguration(pool);
+            var settings = new ConnectionConfiguration(pool).SetTimeout(System.Threading.Timeout.Infinite);
 
             return new ElasticSearchNetClient(
                 new ElasticsearchClient(settings),
@@ -34,13 +34,13 @@ namespace Transformalize.Main.Providers.ElasticSearch {
 
             TflLogger.Debug(processName, entityName, "Preparing NEST client for {0}", connection.Uri());
             var pool = new SingleNodeConnectionPool(connection.Uri());
-            var settings = new ConnectionSettings(pool);
+            var settings = new ConnectionSettings(pool).SetTimeout(System.Threading.Timeout.Infinite);
 
             return new NestClient(
                 new ElasticClient(settings),
                 processName.ToLower(),
                 alias
-                );
+            );
         }
 
     }

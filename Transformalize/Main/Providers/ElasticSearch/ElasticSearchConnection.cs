@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Operations.Transform;
 
 namespace Transformalize.Main.Providers.ElasticSearch {
     public class ElasticSearchConnection : AbstractConnection {
@@ -51,11 +53,22 @@ namespace Transformalize.Main.Providers.ElasticSearch {
         }
 
         public override IOperation ExtractCorrespondingKeysFromOutput(Entity entity) {
-            return new ElasticSearchEntityOutputKeysExtract(this, entity);
+            //return new ElasticSearchEntityOutputKeysExtract(this, entity);
+            var keys = new List<string>(entity.PrimaryKey.Aliases());
+            if (!keys.Contains(entity.Version.Alias)) {
+                keys.Add(entity.Version.Alias);
+            }
+
+            return new ElasticSearchEntityExtract(this, entity, keys.ToArray(), correspondingKeys: true);
         }
 
         public override IOperation ExtractAllKeysFromOutput(Entity entity) {
-            return new ElasticSearchEntityOutputKeysExtract(this, entity);
+            //return new ElasticSearchEntityOutputKeysExtract(this, entity);
+            var keys = new List<string>(entity.PrimaryKey.Aliases());
+            if (!keys.Contains(entity.Version.Alias)) {
+                keys.Add(entity.Version.Alias);
+            }
+            return new ElasticSearchEntityExtract(this, entity, keys.ToArray());
         }
 
         public override IOperation ExtractAllKeysFromInput(Process process, Entity entity) {

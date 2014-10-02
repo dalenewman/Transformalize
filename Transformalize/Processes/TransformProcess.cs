@@ -20,10 +20,8 @@
 
 #endregion
 
-using System;
 using System.Linq;
 using Transformalize.Extensions;
-using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 using Transformalize.Operations;
@@ -46,7 +44,7 @@ namespace Transformalize.Processes {
                 Register(transform);
             }
 
-            Register(new TruncateOperation(_process.CalculatedFields));
+            Register(new TruncateOperation(string.Empty, _process.CalculatedFields));
             Register(new GatherOperation());
             RegisterLast(new ResultsLoad(_process));
             //RegisterLast(new DapperResultsLoad(ref _process));

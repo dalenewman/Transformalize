@@ -36,6 +36,7 @@ namespace Transformalize.Configuration {
         private const string TO = "to";
         private const string SUBJECT = "subject";
         private const string FILE = "file";
+        private const string FOLDER = "folder";
 
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name {
@@ -59,6 +60,12 @@ namespace Transformalize.Configuration {
         public string File {
             get { return this[FILE] as string; }
             set { this[File] = value; }
+        }
+
+        [ConfigurationProperty(FOLDER, IsRequired = false, DefaultValue = Common.DefaultValue)]
+        public string Folder {
+            get { return this[FOLDER] as string; }
+            set { this[FOLDER] = value; }
         }
 
         [ConfigurationProperty(SUBJECT, IsRequired = false, DefaultValue = Common.DefaultValue)]

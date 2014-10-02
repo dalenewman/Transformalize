@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Transformalize.Extensions;
@@ -167,6 +168,7 @@ namespace Transformalize.Main {
         }
 
         public void ExecuteScaler() {
+            SetLog();
             using (var runner = GetRunner()) {
                 var p = this;
                 runner.Run(ref p);
@@ -174,20 +176,89 @@ namespace Transformalize.Main {
         }
 
         public IEnumerable<Row> Execute() {
+            SetLog();
             using (var runner = GetRunner()) {
                 var p = this;
                 return runner.Run(ref p);
             }
         }
 
+        public void SetLog() {
+
+            if (Log.Count <= 0)
+                return;
+            var memoryTarget = LogManager.Configuration.FindTargetByName("memory");
+            var config = new LoggingConfiguration();
+
+            foreach (var log in Log) {
+                switch (log.Provider) {
+                    case ProviderType.Console:
+                        //console
+                        var consoleTarget = new ColoredConsoleTarget {
+                            Name = log.Name,
+                            Layout = log.Layout.Equals(Common.DefaultValue) ? @"${date:format=HH\:mm\:ss} | ${message}" : log.Layout
+                        };
+                        var consoleRule = new LoggingRule("tfl", log.Level, consoleTarget);
+                        config.AddTarget(log.Name, consoleTarget);
+                        config.LoggingRules.Add(consoleRule);
+                        break;
+                    case ProviderType.File:
+                        var folder = (log.Folder.Equals(Common.DefaultValue) ? "${basedir}/logs" : log.Folder).TrimEnd('/') + "/";
+                        var fileName = (log.File.Equals(Common.DefaultValue) ? "tfl-" + Name + "-${date:format=yyyy-MM-dd}.log" : log.File).TrimStart('/');
+                        var fileTarget = new AsyncTargetWrapper(new FileTarget {
+                            Name = log.Name,
+                            FileName = folder + fileName,
+                            Layout = log.Layout.Equals(Common.DefaultValue) ? @"${date:format=HH\:mm\:ss} | ${message}" : log.Layout
+                        });
+                        var fileRule = new LoggingRule("tfl", log.Level, fileTarget);
+                        config.AddTarget(log.Name, fileTarget);
+                        config.LoggingRules.Add(fileRule);
+                        break;
+                    case ProviderType.Mail:
+                        if (log.Connection == null) {
+                            throw new TransformalizeException("The mail logger needs to reference a mail connection in <connections/> collection.");
+                        }
+                        var mailTarget = new MailTarget {
+                            Name = log.Name,
+                            SmtpPort = log.Connection.Port.Equals(0) ? 25 : log.Connection.Port,
+                            SmtpUserName = log.Connection.User,
+                            SmtpPassword = log.Connection.Password,
+                            SmtpServer = log.Connection.Server,
+                            EnableSsl = log.Connection.EnableSsl,
+                            Subject = log.Subject.Equals(Common.DefaultValue) ? "Tfl Error (" + Name + ")" : log.Subject,
+                            From = log.From,
+                            To = log.To,
+                            Layout = log.Layout.Equals(Common.DefaultValue) ? @"${date:format=HH\:mm\:ss} | ${message}" : log.Layout
+                        };
+                        var mailRule = new LoggingRule("tfl", LogLevel.Error, mailTarget);
+                        config.AddTarget(log.Name, mailTarget);
+                        config.LoggingRules.Add(mailRule);
+                        break;
+                    default:
+                        throw new TransformalizeException("Log does not support {0} provider.", log.Provider);
+                }
+
+                if (memoryTarget != null) {
+                    config.AddTarget("memory", memoryTarget);
+                }
+
+            }
+
+            LogManager.Configuration = config;
+        }
+
         public Fields OutputFields() {
+            return Fields().WithOutput();
+        }
+
+        public Fields Fields() {
             var fields = new Fields();
             foreach (var entity in Entities) {
                 fields.Add(entity.Fields);
                 fields.Add(entity.CalculatedFields);
             }
             fields.Add(CalculatedFields);
-            return fields.WithOutput();
+            return fields;
         }
 
         public Fields SearchFields() {

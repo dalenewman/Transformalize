@@ -84,7 +84,7 @@ namespace Transformalize.Processes {
                 Register(new SortOperation(_entity) { EntityName = _entity.Name });
             }
 
-            Register(new TruncateOperation(_entity.Fields, _entity.CalculatedFields));
+            Register(new TruncateOperation(_entity.Name, _entity.Fields, _entity.CalculatedFields));
 
             var standardOutput = new NamedConnection { Connection = _process.OutputConnection, Name = STANDARD_OUTPUT };
 

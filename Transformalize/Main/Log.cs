@@ -13,5 +13,6 @@ namespace Transformalize.Main {
         public LogLevel Level { get; set; }
         public string Layout { get; set; }
         public string File { get; set; }
+        public string Folder { get; set; }
     }
 }

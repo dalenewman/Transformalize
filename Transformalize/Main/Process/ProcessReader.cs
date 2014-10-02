@@ -93,7 +93,6 @@ namespace Transformalize.Main {
 
             //logs set after connections, because they may depend on them
             LoadLogConfiguration(_element, ref _process);
-            SetLog(ref _process);
 
             _process.Scripts = new ScriptReader(_element.Scripts).Read();
             _process.Actions = new ActionReader(_process).Read(_element.Actions);
@@ -133,7 +132,8 @@ namespace Transformalize.Main {
                     From = logElement.From,
                     To = logElement.To,
                     Layout = logElement.Layout,
-                    File = logElement.File
+                    File = logElement.File,
+                    Folder = logElement.Folder
                 };
 
                 if (logElement.Connection != Common.DefaultValue) {
@@ -154,69 +154,6 @@ namespace Transformalize.Main {
                     throw new TransformalizeException("Log configuration invalid. {0}", ex.Message);
                 }
                 process.Log.Add(log);
-            }
-        }
-
-        public void SetLog(ref Process process) {
-
-            if (process.Log.Count > 0) {
-
-                var memoryTarget = LogManager.Configuration.FindTargetByName("memory");
-                var config = new LoggingConfiguration();
-
-                foreach (var log in process.Log) {
-                    switch (log.Provider) {
-                        case ProviderType.Console:
-                            //console
-                            var consoleTarget = new ColoredConsoleTarget {
-                                Name = log.Name,
-                                Layout = log.Layout.Equals(Common.DefaultValue) ? @"${date:format=HH\:mm\:ss} | ${message}" : log.Layout
-                            };
-                            var consoleRule = new LoggingRule("tfl", log.Level, consoleTarget);
-                            config.AddTarget(log.Name, consoleTarget);
-                            config.LoggingRules.Add(consoleRule);
-                            break;
-                        case ProviderType.File:
-                            var fileTarget = new AsyncTargetWrapper(new FileTarget {
-                                Name = log.Name,
-                                FileName = log.File.Equals(Common.DefaultValue) ? "${basedir}/logs/tfl-" + process.Name + "-${date:format=yyyy-MM-dd}.log" : log.File,
-                                Layout = log.Layout.Equals(Common.DefaultValue) ? @"${date:format=HH\:mm\:ss} | ${message}" : log.Layout
-                            });
-                            var fileRule = new LoggingRule("tfl", log.Level, fileTarget);
-                            config.AddTarget(log.Name, fileTarget);
-                            config.LoggingRules.Add(fileRule);
-                            break;
-                        case ProviderType.Mail:
-                            if (log.Connection == null) {
-                                throw new TransformalizeException("The mail logger needs to reference a mail connection in <connections/> collection.");
-                            }
-                            var mailTarget = new MailTarget {
-                                Name = log.Name,
-                                SmtpPort = log.Connection.Port.Equals(0) ? 25 : log.Connection.Port,
-                                SmtpUserName = log.Connection.User,
-                                SmtpPassword = log.Connection.Password,
-                                SmtpServer = log.Connection.Server,
-                                EnableSsl = log.Connection.EnableSsl,
-                                Subject = log.Subject.Equals(Common.DefaultValue) ? "Tfl Error (" + process.Name + ")" : log.Subject,
-                                From = log.From,
-                                To = log.To,
-                                Layout = log.Layout.Equals(Common.DefaultValue) ? @"${date:format=HH\:mm\:ss} | ${message}" : log.Layout
-                            };
-                            var mailRule = new LoggingRule("tfl", LogLevel.Error, mailTarget);
-                            config.AddTarget(log.Name, mailTarget);
-                            config.LoggingRules.Add(mailRule);
-                            break;
-                        default:
-                            throw new TransformalizeException("Log does not support {0} provider.", log.Provider);
-                    }
-
-                    if (memoryTarget != null) {
-                        config.AddTarget("memory", memoryTarget);
-                    }
-
-                }
-
-                LogManager.Configuration = config;
             }
         }
 

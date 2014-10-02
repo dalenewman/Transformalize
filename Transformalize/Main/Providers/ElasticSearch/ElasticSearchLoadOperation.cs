@@ -11,6 +11,7 @@ using Transformalize.Libs.Rhino.Etl.Operations;
 namespace Transformalize.Main.Providers.ElasticSearch {
 
     public sealed class ElasticSearchLoadOperation : AbstractOperation {
+        private readonly Entity _entity;
 
         private readonly ElasticSearchNetClient _client;
         private readonly string _prefix;
@@ -24,6 +25,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
         private readonly Dictionary<string, string> _elasticMap; 
 
         public ElasticSearchLoadOperation(Entity entity, AbstractConnection connection) {
+            _entity = entity;
 
             _guids.AddRange(new Fields(entity.Fields, entity.CalculatedFields).WithOutput().WithGuid().Aliases());
             _dates.AddRange(new Fields(entity.Fields, entity.CalculatedFields).WithOutput().WithDate().Aliases());
@@ -63,7 +65,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
                     .AddQueryString("refresh", @"true")
                 );
                 if (_count % LogRows == 0) {
-                    Info("Processed {0} rows in {1}", _count, Name);
+                    TflLogger.Info(_entity.ProcessName, _entity.Name, "Processed {0} rows in {1}", _count, Name);
                 }
             }
             yield break;

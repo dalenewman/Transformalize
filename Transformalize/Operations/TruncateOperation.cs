@@ -17,10 +17,10 @@ namespace Transformalize.Operations {
         private readonly Dictionary<string, byte> _truncatedFields = new Dictionary<string, byte>();
         private const Byte HIT = default(byte);
 
-        public TruncateOperation(Fields fields, Fields calculatedFields = null)
+        public TruncateOperation(string entityName, Fields fields, Fields calculatedFields = null)
             : base(string.Empty, string.Empty) {
 
-            EntityName = fields.First().Entity;
+            EntityName = entityName;
 
             foreach (Field field in fields.WithString()) {
                 _aliases.Add(field.Alias);
@@ -51,7 +51,9 @@ namespace Transformalize.Operations {
 
         void StringLengthOperation_OnFinishedProcessing(IOperation obj) {
             if (_count > 0)
-                Warn("Please address truncated {0} fields: {1}.", _count, string.Join(", ", _truncatedFields.Select(kv => kv.Key)));
+            {
+             TflLogger.Warn(ProcessName, EntityName, "Please address truncated {0} fields: {1}.", _count, string.Join(", ", _truncatedFields.Select(kv => kv.Key)));
+            }
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
