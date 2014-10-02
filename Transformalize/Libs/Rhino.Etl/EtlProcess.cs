@@ -20,7 +20,7 @@ namespace Transformalize.Libs.Rhino.Etl {
     public abstract class EtlProcess : EtlProcessBase<EtlProcess>, IDisposable {
         private IPipelineExecuter _pipelineExecuter = new ThreadPoolPipelineExecuter();
 
-        protected EtlProcess(Process process) : base(process) {}
+        protected EtlProcess(Process process) : base(process) { }
 
         /// <summary>
         ///     Gets the pipeline executer.
@@ -100,7 +100,7 @@ namespace Transformalize.Libs.Rhino.Etl {
         /// <param name="op">The operation.</param>
         /// <param name="dictionary">The dictionary.</param>
         protected virtual void OnRowProcessed(IOperation op, Row dictionary) {
-            if (op.Statistics.OutputtedRows % op.LogRows == 0) {
+            if (op.Statistics.OutputtedRows > 0 && op.Statistics.OutputtedRows % op.LogRows == 0) {
                 TflLogger.Info(op.ProcessName, op.EntityName, "Processed {0} rows in {1}", op.Statistics.OutputtedRows, op.Name);
             }
         }

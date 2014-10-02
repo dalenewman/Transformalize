@@ -70,6 +70,7 @@ namespace Transformalize.Main {
         public List<NamedConnection> Output { get; set; }
         public List<NamedConnection> Input { get; set; }
         public bool DetectChanges { get; set; }
+        public bool Compare { get; set; }
         public bool TrimAll { get; set; }
         public bool NoLock { get; set; }
 
@@ -86,6 +87,7 @@ namespace Transformalize.Main {
             Output = new List<NamedConnection>();
             Input = new List<NamedConnection>();
             DetectChanges = true;
+            Compare = true;
         }
 
         public IEnumerable<Row> Rows {

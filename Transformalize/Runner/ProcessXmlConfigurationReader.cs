@@ -50,7 +50,7 @@ namespace Transformalize.Runner {
                 var transformalize = doc.Element("transformalize");
 
                 if (transformalize == null)
-                    throw new TransformalizeException("Can't find the <transformalize/> element in {0}.", contents.Content);
+                    throw new TransformalizeException("Can't find the <transformalize/> element in {0}.", string.IsNullOrEmpty(contents.Name) ? "the configuration" : contents.Name);
 
                 section.Deserialize(
                     DefaultParameters(transformalize.ToString())

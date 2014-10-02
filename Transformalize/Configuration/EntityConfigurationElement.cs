@@ -48,6 +48,7 @@ namespace Transformalize.Configuration {
         private const string OUTPUT = "output";
         private const string INPUT = "input";
         private const string DETECT_CHANGES = "detect-changes";
+        private const string COMPARE = "compare";
         private const string TRIM_ALL = "trim-all";
         private const string UNICODE = "unicode";
         private const string VARIABLE_LENGTH = "variable-length";
@@ -59,6 +60,12 @@ namespace Transformalize.Configuration {
         public bool DetectChanges {
             get { return (bool)this[DETECT_CHANGES]; }
             set { this[DETECT_CHANGES] = value; }
+        }
+
+        [ConfigurationProperty(COMPARE, IsRequired = false, DefaultValue = true)]
+        public bool Compare {
+            get { return (bool)this[COMPARE]; }
+            set { this[COMPARE] = value; }
         }
 
         [ConfigurationProperty(TRIM_ALL, IsRequired = false, DefaultValue = false)]

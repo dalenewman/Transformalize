@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
+using Transformalize.Libs.Jint.Parser.Ast;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Operations.Transform;
 
@@ -23,7 +24,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
 
         public override void WriteEndVersion(Process process, AbstractConnection input, Entity entity, bool force = false) {
             if (entity.Updates + entity.Inserts > 0 || force) {
-                var client = ElasticSearchClientFactory.Create(this, TflBatchEntity(entity.ProcessName));
+                var client = new ElasticSearchClientFactory().Create(this, TflBatchEntity(entity.ProcessName));
                 var versionType = entity.Version == null ? "string" : entity.Version.SimpleType;
 
                 string end;
@@ -53,22 +54,11 @@ namespace Transformalize.Main.Providers.ElasticSearch {
         }
 
         public override IOperation ExtractCorrespondingKeysFromOutput(Entity entity) {
-            //return new ElasticSearchEntityOutputKeysExtract(this, entity);
-            var keys = new List<string>(entity.PrimaryKey.Aliases());
-            if (!keys.Contains(entity.Version.Alias)) {
-                keys.Add(entity.Version.Alias);
-            }
-
-            return new ElasticSearchEntityExtract(this, entity, keys.ToArray(), correspondingKeys: true);
+            return new EmptyOperation();
         }
 
         public override IOperation ExtractAllKeysFromOutput(Entity entity) {
-            //return new ElasticSearchEntityOutputKeysExtract(this, entity);
-            var keys = new List<string>(entity.PrimaryKey.Aliases());
-            if (!keys.Contains(entity.Version.Alias)) {
-                keys.Add(entity.Version.Alias);
-            }
-            return new ElasticSearchEntityExtract(this, entity, keys.ToArray());
+            return new EmptyOperation();
         }
 
         public override IOperation ExtractAllKeysFromInput(Process process, Entity entity) {
@@ -86,7 +76,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
         public override void LoadBeginVersion(Entity entity) {
             var tflBatchId = GetMaxTflBatchId(entity);
             if (tflBatchId > 0) {
-                var client = ElasticSearchClientFactory.Create(this, TflBatchEntity(entity.ProcessName));
+                var client = new ElasticSearchClientFactory().Create(this, TflBatchEntity(entity.ProcessName));
                 var result = client.Client.SearchGet(client.Index, client.Type, s => s
                     .AddQueryString("q", "tflbatchid:" + tflBatchId)
                     .AddQueryString("_source_include", "version,version_type")
@@ -101,7 +91,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
 
         public override void LoadEndVersion(Entity entity) {
 
-            var client = ElasticSearchClientFactory.Create(this, entity);
+            var client = new ElasticSearchClientFactory().Create(this, entity);
             var body = new {
                 aggs = new {
                     version = new {
@@ -118,7 +108,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
         }
 
         public override Fields GetEntitySchema(Process process, Entity entity, bool isMaster = false) {
-            var client = ElasticSearchClientFactory.CreateNest(this, entity);
+            var client = new ElasticSearchClientFactory().CreateNest(this, entity);
             var mapping = client.Client.GetMapping<dynamic>(m => m
                 .Index(client.Index)
                 .Type(client.Type)
@@ -142,7 +132,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
         }
 
         private int GetMaxTflBatchId(Entity entity) {
-            var client = ElasticSearchClientFactory.Create(this, TflBatchEntity(entity.ProcessName));
+            var client = new ElasticSearchClientFactory().Create(this, TflBatchEntity(entity.ProcessName));
             var body = new {
                 query = new {
                     query_string = new {
@@ -164,7 +154,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
         }
 
         private int GetMaxTflBatchId(string processName) {
-            var client = ElasticSearchClientFactory.Create(this, TflBatchEntity(processName));
+            var client = new ElasticSearchClientFactory().Create(this, TflBatchEntity(processName));
             var body = new {
                 aggs = new {
                     tflbatchid = new {

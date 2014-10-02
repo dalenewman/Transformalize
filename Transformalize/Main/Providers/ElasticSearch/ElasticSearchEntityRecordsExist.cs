@@ -6,7 +6,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
 
             var checker = new ElasticSearchConnectionChecker();
             if (checker.Check(connection)) {
-                var client = ElasticSearchClientFactory.Create(connection, entity);
+                var client = new ElasticSearchClientFactory().Create(connection, entity);
                 const string body = @"{ _source: false, from: 0, size:1, query: { match_all: {} } }";
                 var response = client.Client.Search(client.Index, client.Type, body);
                 if (!response.Success)

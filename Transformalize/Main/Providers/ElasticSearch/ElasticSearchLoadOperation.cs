@@ -30,7 +30,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             _guids.AddRange(new Fields(entity.Fields, entity.CalculatedFields).WithOutput().WithGuid().Aliases());
             _dates.AddRange(new Fields(entity.Fields, entity.CalculatedFields).WithOutput().WithDate().Aliases());
 
-            _client = ElasticSearchClientFactory.Create(connection, entity);
+            _client = new ElasticSearchClientFactory().Create(connection, entity);
             _prefix = "{\"index\": {\"_index\": \"" + _client.Index + "\", \"_type\": \"" + _client.Type + "\", \"_id\": \"";
 
             _singleKey = entity.PrimaryKey.Count == 1;

@@ -64,7 +64,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
 
         public void Create(AbstractConnection connection, Process process, Entity entity) {
 
-            var client = ElasticSearchClientFactory.Create(connection, entity);
+            var client = new ElasticSearchClientFactory().Create(connection, entity);
 
             client.Client.IndicesCreate(client.Index, "{ \"settings\":{}}");
 

@@ -29,6 +29,10 @@ namespace Transformalize.Main {
         }
 
         private static void LengthAppend(string input, ref StringBuilder sb, int limit) {
+            if (input == null) {
+                sb.Append('.', limit);
+                return;
+            }
             var length = input.Length;
             if (length >= limit) {
                 sb.Append(input, 0, limit);

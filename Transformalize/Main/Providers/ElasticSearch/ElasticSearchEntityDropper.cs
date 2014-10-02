@@ -12,7 +12,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             if (!EntityExists.Exists(connection, entity))
                 return;
 
-            var client = ElasticSearchClientFactory.Create(connection, entity);
+            var client = new ElasticSearchClientFactory().Create(connection, entity);
             var response = client.Client.IndicesDelete(client.Index);
             if (response.Success)
                 return;

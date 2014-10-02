@@ -13,7 +13,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
                 return Checks[hashCode];
             }
 
-            var client = ElasticSearchClientFactory.Create(connection, null);
+            var client = new ElasticSearchClientFactory().Create(connection, null);
             try {
                 var response = client.Client.Ping();
                 if (response.HttpStatusCode != null && response.HttpStatusCode == 200) {

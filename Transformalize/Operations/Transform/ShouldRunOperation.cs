@@ -33,6 +33,8 @@ namespace Transformalize.Operations.Transform {
                     TflLogger.Info(ProcessName, EntityName, "Skipped {0} of {1} row{2}.", SkipCount, obj.Statistics.OutputtedRows, obj.Statistics.OutputtedRows.Plural());
                 }
             }
+            if (obj.Statistics.OutputtedRows <= 0)
+                return;
             var seconds = Convert.ToInt64(obj.Statistics.Duration.TotalSeconds);
             TflLogger.Info(ProcessName, EntityName, "Completed {0} rows in {1}: {2} second{3}.", obj.Statistics.OutputtedRows, Name, seconds, seconds.Plural());
         }

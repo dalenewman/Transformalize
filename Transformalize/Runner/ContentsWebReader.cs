@@ -9,7 +9,17 @@ namespace Transformalize.Runner {
 
         public override Contents Read(string resource) {
 
-            var uri = new Uri(resource);
+            Uri uri;
+            try {
+                uri = new Uri(resource);
+            } catch (Exception) {
+                resource = HttpUtility.UrlDecode(resource);
+                try {
+                    uri = new Uri(resource);
+                } catch (Exception ex) {
+                    throw new TransformalizeException("Trouble fetching {0}. {1}", resource, ex.Message);
+                }
+            }
 
             var response = Web.Get(uri.OriginalString);
             if (response.Code == HttpStatusCode.OK) {

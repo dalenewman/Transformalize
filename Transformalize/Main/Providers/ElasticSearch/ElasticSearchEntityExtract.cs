@@ -20,7 +20,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             _correspondingKeys = correspondingKeys;
 
             _fields = fields.Select(a => a.ToLower()).ToArray(); //for now
-            _client = ElasticSearchClientFactory.CreateNest(connection, entity);
+            _client = new ElasticSearchClientFactory().CreateNest(connection, entity);
             Name = string.Format("ElasticsearchEntityExtract ({0}:{1})", _client.Index, _client.Type);
         }
 
@@ -78,10 +78,10 @@ namespace Transformalize.Main.Providers.ElasticSearch {
                         .QueryString(query)
                         .Fields(_fields)
                         .SearchType(Libs.Elasticsearch.Net.Domain.SearchType.Scan)
-                        .Scroll("4s")
+                        .Scroll("1m")
                         );
                     results = _client.Client.Scroll<dynamic>(s => s
-                        .Scroll("2s")
+                        .Scroll("5s")
                         .ScrollId(scanResults.ScrollId)
                         );
                 }
@@ -95,10 +95,10 @@ namespace Transformalize.Main.Providers.ElasticSearch {
                     .MatchAll()
                     .Fields(_fields)
                     .SearchType(Libs.Elasticsearch.Net.Domain.SearchType.Scan)
-                    .Scroll("4s")
+                    .Scroll("1m")
                     );
                 results = _client.Client.Scroll<dynamic>(s => s
-                    .Scroll("2s")
+                    .Scroll("5s")
                     .ScrollId(scanResults.ScrollId)
                     );
             }
@@ -115,7 +115,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
                         yield return row;
                     }
                     results = _client.Client.Scroll<dynamic>(s => s
-                        .Scroll("2s")
+                        .Scroll("5s")
                         .ScrollId(localResults.ScrollId));
                 }
             } else {

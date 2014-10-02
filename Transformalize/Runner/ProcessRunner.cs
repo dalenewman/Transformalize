@@ -86,13 +86,16 @@ namespace Transformalize.Runner {
 
         private static void ProcessEntities(ref Process process) {
             var p = process;
-            process.Entities.AsParallel().ForAll(e => new EntityProcess(p, e) {
-                PipelineExecuter = e.PipelineThreading == PipelineThreading.SingleThreaded ?
-                    (IPipelineExecuter)new SingleThreadedPipelineExecuter() :
-                    (IPipelineExecuter)new ThreadPoolPipelineExecuter()
-            }.Execute());
+            if (process.Entities.Count == 1) {
+                new EntityProcess(p, process.Entities[0]).Execute();
+            } else {
+                process.Entities.AsParallel().ForAll(e => new EntityProcess(p, e) {
+                    PipelineExecuter = e.PipelineThreading == PipelineThreading.SingleThreaded ?
+                        (IPipelineExecuter)new SingleThreadedPipelineExecuter() :
+                        (IPipelineExecuter)new ThreadPoolPipelineExecuter()
+                }.Execute());
+            }
         }
-
 
         private static void ProcessMaster(ref Process process) {
             var updateMasterProcess = new UpdateMasterProcess(process) {

@@ -17,7 +17,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
                 _aliasTypes.Add(new AliasType() { Alias = entity.Version.Alias, AliasLower = entity.Version.Alias.ToLower(), SimpleType = entity.Version.SimpleType });
             }
             _sourceInclude = _aliasTypes.Select(at => at.AliasLower).ToArray();
-            _client = ElasticSearchClientFactory.Create(connection, entity);
+            _client = new ElasticSearchClientFactory().Create(connection, entity);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
