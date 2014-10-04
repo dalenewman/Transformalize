@@ -146,6 +146,7 @@ namespace Transformalize.Main {
         }
 
         private void GuardAgainstMissingFields(EntityConfigurationElement element, Entity entity, short entityIndex) {
+
             if (_process.Mode != "metadata" && element.Fields.Count == 0 && _process.Connections.ContainsKey(element.Connection)) {
                 try {
                     

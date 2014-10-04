@@ -26,6 +26,7 @@ using Transformalize.Extensions;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Libs.Rhino.Etl.Pipelines;
+using Transformalize.Libs.Sqloogle.Processes;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
 using Transformalize.Operations;
@@ -50,20 +51,29 @@ namespace Transformalize.Processes {
 
         protected override void Initialize() {
 
-            Register(new EntityKeysPartial(_process, _entity));
-
-            if (_entity.Input.Count == 1) {
-                Register(_entity.Input.First().Connection.Extract(_process, _entity, _process.IsFirstRun));
-            } else {
+            if (_entity.Name.Equals("sqloogle")) {
                 var union = new ParallelUnionAllOperation();
                 foreach (var input in _entity.Input) {
-                    union.Add(input.Connection.Extract(_process, _entity, Process.IsFirstRun));
+                    union.Add(new SqloogleProcess(_process, input.Connection));
                 }
                 Register(union);
-            }
+            } else {
+                Register(new EntityKeysPartial(_process, _entity));
 
-            if (!_entity.Sampled && _entity.Sample > 0m && _entity.Sample < 100m) {
-                Register(new SampleOperation(_entity.Sample) { EntityName = _entity.Name });
+                if (_entity.Input.Count == 1) {
+                    Register(_entity.Input.First().Connection.Extract(_process, _entity, _process.IsFirstRun));
+                } else {
+                    var union = new ParallelUnionAllOperation();
+                    foreach (var input in _entity.Input) {
+                        union.Add(input.Connection.Extract(_process, _entity, Process.IsFirstRun));
+                    }
+                    Register(union);
+                }
+
+                if (!_entity.Sampled && _entity.Sample > 0m && _entity.Sample < 100m) {
+                    Register(new SampleOperation(_entity.Sample) { EntityName = _entity.Name });
+                }
+
             }
 
             Register(new ApplyDefaults(true, new Fields(_entity.Fields, _entity.CalculatedFields)) { EntityName = _entity.Name });

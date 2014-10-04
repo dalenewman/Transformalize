@@ -16,7 +16,19 @@ namespace Transformalize.Main.Providers {
             _providers.Add("sqlce", "System.Data.SqlServerCe.SqlCeConnection, System.Data.SqlServerCe");
             _providers.Add("mysql", "MySql.Data.MySqlClient.MySqlConnection, MySql.Data");
             _providers.Add("postgresql", "Npgsql.NpgsqlConnection, Npgsql");
-            var empties = new[] { "analysisservices", "file", "folder", "internal", "console", "log", "html", "elasticsearch", "solr", "lucene", "mail" };
+            var empties = new[] {
+                "analysisservices",
+                "file",
+                "folder",
+                "internal",
+                "console",
+                "log",
+                "html",
+                "elasticsearch",
+                "solr",
+                "lucene",
+                "mail"
+            };
             foreach (var empty in empties) {
                 _providers.Add(empty, empty);
             }
