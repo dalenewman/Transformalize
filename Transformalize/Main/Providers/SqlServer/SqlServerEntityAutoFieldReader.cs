@@ -49,13 +49,13 @@ namespace Transformalize.Main.Providers.SqlServer {
                 foreach (var result in results) {
                     var columnName = result.COLUMN_NAME;
                     var type = GetSystemType(result.DATA_TYPE);
-                    var length = result.CHARACTER_MAXIMUM_LENGTH;
+                    var length = result.CHARACTER_MAXIMUM_LENGTH == "0" || result.CHARACTER_MAXIMUM_LENGTH == "-1" ? "64" : result.CHARACTER_MAXIMUM_LENGTH;
                     var fieldType = (bool)result.IS_PRIMARY_KEY ? (isMaster ? FieldType.MasterKey : FieldType.PrimaryKey) : FieldType.NonKey;
                     var field = new Field(type, length, fieldType, true, string.Empty) {
                         Name = columnName,
                         Entity = name,
                         Process = process,
-                        Index = Convert.ToInt16(result.ORDINAL_POSITION-1),
+                        Index = Convert.ToInt16(result.ORDINAL_POSITION - 1),
                         Schema = schema,
                         Input = true,
                         Precision = result.NUMERIC_PRECISION,

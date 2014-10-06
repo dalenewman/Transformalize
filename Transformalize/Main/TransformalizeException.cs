@@ -35,6 +35,14 @@ namespace Transformalize.Main {
             LogManager.Flush();
         }
 
+        public TransformalizeException(Exception exception, string message, params object[] args) {
+            _message = args.Length > 0 ? string.Format(message, args) : message;
+            TflLogger.Error(string.Empty, string.Empty, _message);
+            TflLogger.Error(string.Empty, string.Empty, exception.Message);
+            TflLogger.Error(string.Empty, string.Empty, exception.StackTrace);
+            LogManager.Flush();
+        }
+
         public override string Message {
             get { return _message; }
         }

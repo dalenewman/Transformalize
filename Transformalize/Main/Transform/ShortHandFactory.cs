@@ -47,6 +47,8 @@ namespace Transformalize.Main.Transform {
             {"hash","hashcode"},
             {"hashcode","hashcode"},
             {"hc","hashcode"},
+            {"he","htmlencode"},
+            {"htmlencode","htmlencode"},
             {"i","if"},
             {"if","if"},
             {"ii","insertinterval"},
@@ -54,6 +56,8 @@ namespace Transformalize.Main.Transform {
             {"in","insert"},
             {"insert","insert"},
             {"insertinterval","insertinterval"},
+            {"ids","isdaylightsavings"},
+            {"isdaylightsavings","isdaylightsavings"},
             {"j","join"},
             {"javascript","javascript"},
             {"join","join"},
@@ -178,7 +182,9 @@ namespace Transformalize.Main.Transform {
             {"fromregex", FromRegex},
             {"fromsplit", FromSplit},
             {"velocity", Velocity},
-            {"tag",Tag}
+            {"tag",Tag},
+            {"htmlencode", arg=>new TransformConfigurationElement() {Method="htmlencode", Parameter= arg, IsShortHand = true}},
+            {"isdaylightsavings", arg=>new TransformConfigurationElement() {Method="isdaylightsavings", Parameter = arg, IsShortHand = true}}
         };
 
         /// <summary>
@@ -571,7 +577,7 @@ namespace Transformalize.Main.Transform {
             foreach (ParameterConfigurationElement p in element.Parameters) {
                 if (!p.Field.Contains(":"))
                     continue;
-                var pair = Common.Split(p.Field,":");
+                var pair = Common.Split(p.Field, ":");
                 p.Field = string.Empty;
                 p.Name = pair[0];
                 p.Value = pair[1];

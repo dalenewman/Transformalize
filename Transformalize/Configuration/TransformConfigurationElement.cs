@@ -546,7 +546,7 @@ namespace Transformalize.Configuration {
             set { this[RUN_OPERATOR] = value; }
         }
 
-        [ConfigurationProperty(RUN_VALUE, IsRequired = false, DefaultValue = "")]
+        [ConfigurationProperty(RUN_VALUE, IsRequired = false, DefaultValue = Common.DefaultValue)]
         public string RunValue {
             get { return this[RUN_VALUE] as string; }
             set { this[RUN_VALUE] = value; }

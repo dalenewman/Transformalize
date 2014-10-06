@@ -153,8 +153,16 @@ namespace Transformalize.Operations {
                         Keep(field.Alias, row);
                         break;
 
+                    case "concat":
+                        Keep(field.Alias, row);
+                        break;
+
                     case "array":
                         Keep(field.Alias, row);
+                        break;
+
+                    default:
+                        Error("The '{0}' aggregate is not implemented", field.Aggregate);
                         break;
                 }
             }
@@ -212,6 +220,9 @@ namespace Transformalize.Operations {
                 switch (field.Aggregate) {
                     case "join":
                         aggregate[field.Alias] = string.Join(field.Delimiter, field.Distinct ? _lists[field.Alias][@group].Distinct() : _lists[field.Alias][@group]);
+                        break;
+                    case "concat":
+                        aggregate[field.Alias] = string.Concat(field.Distinct ? _lists[field.Alias][@group].Distinct() : _lists[field.Alias][@group]);
                         break;
                     case "array":
                         aggregate[field.Alias] = (field.Distinct ? _lists[field.Alias][@group].Distinct() : _lists[field.Alias][@group]).ToArray();

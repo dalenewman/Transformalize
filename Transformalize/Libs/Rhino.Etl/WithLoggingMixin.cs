@@ -34,16 +34,11 @@ namespace Transformalize.Libs.Rhino.Etl {
         protected void Error(Exception exception, string format, params object[] args) {
             var message = string.Format(CultureInfo.InvariantCulture, format, args);
             var errorMessage = exception != null ? string.Format("{0}: {1}", message, exception.Message) : message;
-
-            _errors.Add(new RhinoEtlException(errorMessage, exception));
-            if (TflLogger.IsErrorEnabled) {
-                TflLogger.Error(string.Empty, string.Empty, message, exception);
-            }
+            _errors.Add(new TransformalizeException(exception, errorMessage));
         }
 
         protected void Error(string format, params object[] args) {
-            if (TflLogger.IsErrorEnabled)
-                TflLogger.Error(string.Empty, string.Empty, format, args);
+            _errors.Add(new TransformalizeException(format, args));
         }
 
         protected void Error(string message) {

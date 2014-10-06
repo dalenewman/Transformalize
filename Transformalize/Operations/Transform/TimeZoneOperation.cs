@@ -38,7 +38,7 @@ namespace Transformalize.Operations.Transform {
                     //    row[OutKey] = new DateTime(date.Ticks, DateTimeKind.Local);
                     //}
                 } else {
-                    Interlocked.Increment(ref SkipCount);
+                    Skip();
                 }
 
                 yield return row;

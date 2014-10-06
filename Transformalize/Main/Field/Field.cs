@@ -99,7 +99,21 @@ namespace Transformalize.Main {
 
         public string Length {
             get { return _length; }
-            set { _length = value; }
+            set {
+                int test;
+                if (int.TryParse(value, out test)) {
+                    if (test <= 0) {
+                        TflLogger.Warn(this.Process, this.Entity, "The field length {0} is invalid.  It must be greater than zero.", value);
+                        return;
+                    }
+                } else {
+                    if (!value.Equals("max", StringComparison.OrdinalIgnoreCase)) {
+                        TflLogger.Warn(this.Process, this.Entity, "The field length {0} is invalid.  It must be a number greater than zero or max.", value);
+                        return;
+                    }
+                }
+                _length = value;
+            }
         }
 
         public int Precision { get; set; }

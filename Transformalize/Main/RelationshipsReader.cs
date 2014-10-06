@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.SqlServer.Server;
 using Transformalize.Configuration;
 
 namespace Transformalize.Main {
@@ -20,8 +21,20 @@ namespace Transformalize.Main {
             var relationships = new List<Relationship>();
 
             foreach (RelationshipConfigurationElement r in _elements) {
-                var leftEntity = _process.Entities.First(e => e.Alias.Equals(r.LeftEntity, IC));
-                var rightEntity = _process.Entities.First(e => e.Alias.Equals(r.RightEntity, IC));
+                Entity leftEntity;
+                if (_process.Entities.Any(e => e.Alias.Equals(r.LeftEntity, IC))) {
+                    leftEntity = _process.Entities.First(e => e.Alias.Equals(r.LeftEntity, IC));
+                } else {
+                    throw new TransformalizeException("Can't find left entity {0}.", r.LeftEntity);
+                }
+
+                Entity rightEntity;
+                if (_process.Entities.Any(e => e.Alias.Equals(r.RightEntity, IC))) {
+                    rightEntity = _process.Entities.First(e => e.Alias.Equals(r.RightEntity, IC));
+                } else {
+                    throw new TransformalizeException("Can't find right entity {0}.", r.RightEntity);
+                }
+
                 var join = GetJoins(r, leftEntity, rightEntity);
                 var relationship = new Relationship {
                     LeftEntity = leftEntity,

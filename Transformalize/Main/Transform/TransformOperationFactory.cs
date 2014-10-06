@@ -94,14 +94,7 @@ namespace Transformalize.Main {
                 shouldRun = row => Common.CompareMap[op](row[element.RunField], value);
             }
 
-            var templates = new Dictionary<string, Template>();
-            foreach (TransformTemplateConfigurationElement template in element.Templates) {
-                if (!_process.Templates.ContainsKey(template.Name)) {
-                    throw new TransformalizeException("Invalid template reference: {0}", template.Name);
-                }
-                templates[template.Name] = _process.Templates[template.Name];
-                _process.Templates[template.Name].IsUsedInPipeline = true;
-            }
+            var templates = ComposeTemplates(field, ref element);
 
             switch (element.Method.ToLower()) {
                 case "convert":
@@ -643,6 +636,12 @@ namespace Transformalize.Main {
                     ) { ShouldRun = shouldRun, EntityName = _entityName };
 
                 // validators
+                case "isdaylightsavings":
+                    return new IsDaylightSavingsOperation(
+                        inKey,
+                        outKey
+                    ) { ShouldRun = shouldRun, EntityName = _entityName };
+
                 case "any":
                     return new AnyOperation(
                         string.IsNullOrEmpty(element.Value) ? GetParameter(_entityName, element.Left, parameters) : new Parameter(element.Value, element.Value),
@@ -785,6 +784,32 @@ namespace Transformalize.Main {
 
             TflLogger.Warn(field.Process, _entityName, "{0} method is undefined.  It will not be used.", element.Method);
             return new EmptyOperation();
+        }
+
+        private Dictionary<string, Template> ComposeTemplates(Field field, ref TransformConfigurationElement element) {
+            var templates = new Dictionary<string, Template>();
+            var method = element.Method.ToLower();
+            if (new[] { "razor", "template", "velocity" }.All(n => n != method))
+                return templates;
+
+            foreach (TransformTemplateConfigurationElement template in element.Templates) {
+                if (!_process.Templates.ContainsKey(template.Name)) {
+                    throw new TransformalizeException("Invalid template reference: {0}", template.Name);
+                }
+                templates[template.Name] = _process.Templates[template.Name];
+                _process.Templates[template.Name].IsUsedInPipeline = true;
+            }
+            if (_process.Templates.ContainsKey(element.Template)) {
+                templates[element.Template] = _process.Templates[element.Template];
+                _process.Templates[element.Template].IsUsedInPipeline = true;
+                element.Template = string.Empty;
+            }
+            if (!templates.Any() && string.IsNullOrEmpty(element.Template) && _process.Templates.ContainsKey(field.Alias)) {
+                templates[field.Alias] = _process.Templates[field.Alias];
+                _process.Templates[field.Alias].IsUsedInPipeline = true;
+                element.Template = string.Empty;
+            }
+            return templates;
         }
 
         private IParameter GetParameter(string entity, string parameter) {
