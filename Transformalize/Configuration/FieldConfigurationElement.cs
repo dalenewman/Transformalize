@@ -20,9 +20,7 @@
 
 #endregion
 
-using System.CodeDom;
 using System.Configuration;
-using Transformalize.Main;
 
 namespace Transformalize.Configuration {
 

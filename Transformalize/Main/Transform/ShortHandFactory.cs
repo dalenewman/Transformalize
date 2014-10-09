@@ -17,6 +17,8 @@ namespace Transformalize.Main.Transform {
             {"cc","concat"},
             {"cl","cyrtolat"},
             {"co","compress"},
+            {"col","collapse"},
+            {"collapse","collapse"},
             {"compress","compress"},
             {"concat","concat"},
             {"convert","convert"},
@@ -184,7 +186,8 @@ namespace Transformalize.Main.Transform {
             {"velocity", Velocity},
             {"tag",Tag},
             {"htmlencode", arg=>new TransformConfigurationElement() {Method="htmlencode", Parameter= arg, IsShortHand = true}},
-            {"isdaylightsavings", arg=>new TransformConfigurationElement() {Method="isdaylightsavings", Parameter = arg, IsShortHand = true}}
+            {"isdaylightsavings", arg=>new TransformConfigurationElement() {Method="isdaylightsavings", Parameter = arg, IsShortHand = true}},
+            {"collapse", arg=>new TransformConfigurationElement(){ Method = "collapse", Parameter = arg, IsShortHand = true }}
         };
 
         /// <summary>
@@ -440,6 +443,11 @@ namespace Transformalize.Main.Transform {
             if (split.Length > 1) {
                 element.Separator = split[1];
             }
+
+            if (split.Length > 2) {
+                element.Parameter = split[2];
+            }
+
             return element;
         }
 
@@ -566,6 +574,7 @@ namespace Transformalize.Main.Transform {
             Guard.Against(split.Length == 0, "The {0} method requires parameters.", method);
 
             var element = new TransformConfigurationElement() { Method = method, IsShortHand = true };
+
             if (split.Length == 1) {
                 element.Parameter = split[0];
             } else {
@@ -574,6 +583,18 @@ namespace Transformalize.Main.Transform {
                 }
             }
 
+            // handle single parameter that is named parameter
+            if (element.Parameter.Contains(":")) {
+                var pair = Common.Split(element.Parameter, ":");
+                element.Parameters.Insert(new ParameterConfigurationElement() {
+                    Field = string.Empty,
+                    Name = pair[0],
+                    Value = pair[1]
+                });
+                element.Parameter = string.Empty;
+            }
+
+            // handle regular parameters
             foreach (ParameterConfigurationElement p in element.Parameters) {
                 if (!p.Field.Contains(":"))
                     continue;
@@ -718,7 +739,7 @@ namespace Transformalize.Main.Transform {
             return new TransformConfigurationElement() { Method = "right", Length = length, IsShortHand = true };
         }
 
-        public static TransformConfigurationElement Left(string arg) {
+        private static TransformConfigurationElement Left(string arg) {
             int length;
             Guard.Against(!int.TryParse(arg, out length), "The left method requires a single integer representing the length, or how many left-most characters you want. You passed in '{0}'.", arg);
             return new TransformConfigurationElement() { Method = "left", Length = length, IsShortHand = true };

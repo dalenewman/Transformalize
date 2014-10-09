@@ -234,9 +234,15 @@ namespace Transformalize.Main.Providers.SqlServer {
                 command.CommandText = sql;
                 command.CommandTimeout = 0;
                 cn.Open();
-                using (var reader = command.ExecuteReader(CommandBehavior.CloseConnection & CommandBehavior.SingleResult)) {
-                    entity.HasRows = reader.Read();
-                    entity.End = entity.HasRows ? reader.GetValue(0) : null;
+                try {
+                    using (var reader = command.ExecuteReader(CommandBehavior.CloseConnection & CommandBehavior.SingleResult)) {
+                        entity.HasRows = reader.Read();
+                        entity.End = entity.HasRows ? reader.GetValue(0) : null;
+                    }
+                } catch (Exception ex) {
+                    TflLogger.Error(entity.ProcessName, entity.Name, ex.Message);
+                    TflLogger.Error(entity.ProcessName, entity.Name, ex.StackTrace);
+                    throw new TransformalizeException(ex.Message);
                 }
             }
         }

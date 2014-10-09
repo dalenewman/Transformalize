@@ -48,7 +48,7 @@ namespace Transformalize.Operations {
             EntityName = entity.Name;
             _keysToGroupBy = new Fields(entity.Fields, entity.CalculatedFields).WithGroup().Aliases().ToArray();
             _firstKey = _keysToGroupBy[0];
-            _fieldsToAccumulate = new Fields(entity.Fields, entity.CalculatedFields).WithAccumulate().ToArray();
+            _fieldsToAccumulate = new Fields(entity.Fields, entity.CalculatedFields).WithOutput().WithAccumulate().ToArray();
 
             foreach (var field in _fieldsToAccumulate) {
                 _lists[field.Alias] = new Dictionary<ObjectArrayKeys, IList<object>>();
@@ -142,6 +142,12 @@ namespace Transformalize.Operations {
                         len = row[field.Alias].ToString().Length;
                         if (len < (dynamic)aggregate[field.Alias]) {
                             aggregate[field.Alias] = len;
+                        }
+                        break;
+
+                    case "first":
+                        if (aggregate[field.Alias] == null) {
+                            aggregate[field.Alias] = row[field.Alias];
                         }
                         break;
 

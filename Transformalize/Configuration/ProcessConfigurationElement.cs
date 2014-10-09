@@ -61,6 +61,8 @@ namespace Transformalize.Configuration {
         }
 
         /// <summary>
+        /// Optional.  `Default` by default.
+        /// 
         /// A choice between `Multithreaded`, `SingleThreaded`, and `Default`.
         /// The default defers to the entity's PipelineThreading.
         /// </summary>
@@ -72,14 +74,18 @@ namespace Transformalize.Configuration {
         }
 
         /// <summary>
+        /// Optional. 
+        /// 
+        /// Overrides the default mode if set.
+        /// 
         /// A mode reflects the intent of running the process.
-        /// Built in modes are init, and default.
+        /// Built in modes are `init`, and `default`.
         /// 
-        /// * init wipes everything out
-        /// * default runs with default behavior, which is to move data from input to output; detecting changes along the way.
+        /// * `init` wipes everything out
+        /// * `default` moves data from input to output.
         /// 
-        /// Aside from these, you may use any mode you want to make up, and set corresponding modes in
-        /// templates and/or actions that will run only if the mode matches.
+        /// Aside from these, you may use any mode (of your choosing), to control
+        /// whether or not templates and/or actions run.
         /// </summary>
         [ConfigurationProperty(MODE, IsRequired = false, DefaultValue = "default")]
         public string Mode {
@@ -87,24 +93,51 @@ namespace Transformalize.Configuration {
             set { this[MODE] = value.ToLower(); }
         }
 
+        /// <summary>
+        /// Optional.
+        /// 
+        /// Refers to another Transformalize process (via name, file name, or web address).
+        /// Inherits configuration from a parent process.
+        /// </summary>
         [ConfigurationProperty(INHERIT, IsRequired = false, DefaultValue = "")]
         public string Inherit {
             get { return this[INHERIT] as string; }
             set { this[INHERIT] = value; }
         }
 
+        /// <summary>
+        /// Optional.  The system's time zone by default.
+        /// 
+        /// Indicates the data's time zone.
+        /// By default, it is the system's time zone.
+        /// Is used as `to-time-zone` value in now() and timezone() transformations if
+        /// `to-time-zone` is not provided.
+        /// 
+        /// Normally, you want to keep that data in UTC until it is presented to the user, 
+        /// and have the client application convert UTC to the local or user time zone.
+        /// </summary>
         [ConfigurationProperty(TIMEZONE, IsRequired = false, DefaultValue = "")]
         public string TimeZone {
             get { return this[TIMEZONE] as string; }
             set { this[TIMEZONE] = value; }
         }
 
+        /// <summary>
+        /// Optional. True by default. Indicates the process is disabled.  The included executable 
+        /// respects this attribute and will not run the process it is set to false.
+        /// </summary>
         [ConfigurationProperty(ENABLED, IsRequired = false, DefaultValue = true)]
         public bool Enabled {
             get { return (bool)this[ENABLED]; }
             set { this[ENABLED] = value; }
         }
 
+        /// <summary>
+        /// Optional.  True by default.
+        /// 
+        /// Star refers to star schema, reflecting the intent of Transformalize to
+        /// transform relational data into a star-schema model.  
+        /// </summary>
         [ConfigurationProperty(STAR_ENABLED, IsRequired = false, DefaultValue = true)]
         public bool StarEnabled {
             get { return (bool)this[STAR_ENABLED]; }

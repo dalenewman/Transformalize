@@ -36,7 +36,7 @@ KS,""9,000,000"",Rectangle");
             Assert.AreEqual(default(char), actual[2].QuotedWith);
 
             Assert.AreEqual("3", actual[0].Length);
-            Assert.AreEqual(string.Empty, actual[1].Length);
+            Assert.AreEqual("1024", actual[1].Length);
             Assert.AreEqual("10", actual[2].Length);
         }
 

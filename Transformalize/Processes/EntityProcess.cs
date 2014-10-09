@@ -82,16 +82,16 @@ namespace Transformalize.Processes {
                 Register(transform);
             }
 
+            if (_entity.HasSort()) {
+                Register(new SortOperation(_entity) { EntityName = _entity.Name });
+            }
+
             if (_entity.Group) {
                 Register(new EntityAggregation(_entity));
             }
 
             foreach (var transform in _entity.OperationsAfterAggregation) {
                 Register(transform);
-            }
-
-            if (_entity.HasSort()) {
-                Register(new SortOperation(_entity) { EntityName = _entity.Name });
             }
 
             Register(new TruncateOperation(_entity.Name, _entity.Fields, _entity.CalculatedFields));

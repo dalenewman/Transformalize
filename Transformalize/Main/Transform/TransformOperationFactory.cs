@@ -22,9 +22,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using System.Web.UI.WebControls;
 using Transformalize.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
@@ -34,6 +32,7 @@ using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Parameters;
 using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.Mail;
+using Transformalize.Main.Transform;
 using Transformalize.Operations.Transform;
 using Transformalize.Operations.Validate;
 using System.Linq;
@@ -61,6 +60,19 @@ namespace Transformalize.Main {
 
             if (_isInitMode)
                 return new EmptyOperation();
+
+            if (element.Method == string.Empty && element.ShortHand != string.Empty) {
+                var split = Common.Split(element.ShortHand, ").");
+                var partial = new PartialProcessOperation(_process);
+                foreach (var shortHand in split.Select(ShortHandFactory.Interpret)) {
+                    shortHand.AfterAggregation = element.AfterAggregation;
+                    shortHand.BeforeAggregation = element.BeforeAggregation;
+                    shortHand.Decode = element.Decode;
+                    shortHand.Encode = element.Encode;
+                    partial.Register(Create(field, shortHand, parameters));
+                }
+                return partial;
+            }
 
             Func<Row, bool> shouldRun = row => true;
             var toTimeZone = string.IsNullOrEmpty(element.ToTimeZone) ? _process.TimeZone : element.ToTimeZone;
@@ -112,6 +124,13 @@ namespace Transformalize.Main {
                         throw new TransformalizeException("The copy transform requires a parameter.  It copies the parameter value into the calculated field.");
                     }
                     return new CopyOperation(inKey, outKey) { ShouldRun = shouldRun, EntityName = _entityName };
+
+                case "collapse":
+                    var partial = new PartialProcessOperation(_process);
+                    partial.Register(new RegexReplaceOperation(inKey, outKey, "[\r\n]{2,}", "\r\n", 0) { ShouldRun = shouldRun, EntityName = _entityName});
+                    partial.Register(new RegexReplaceOperation(inKey, outKey, " {2,}", " ", 0) { ShouldRun = shouldRun, EntityName = _entityName });
+                    partial.Register(new TrimOperation(inKey, outKey, " ") { ShouldRun = shouldRun, EntityName = _entityName });
+                    return partial;
 
                 case "compress":
                     return new CompressOperation(inKey, outKey) { ShouldRun = shouldRun, EntityName = _entityName };

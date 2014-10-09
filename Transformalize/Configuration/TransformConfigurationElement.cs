@@ -117,8 +117,9 @@ namespace Transformalize.Configuration {
         private const string ENCODE = "encode";
         private const string DECODE = "decode";
         private const string CONNECTION = "connection";
+        private const string SHORT_HAND = "t";
 
-        [ConfigurationProperty(METHOD, IsRequired = true)]
+        [ConfigurationProperty(METHOD, IsRequired = false)]
         public string Method {
             get { return this[METHOD] as string; }
             set { this[METHOD] = value; }
@@ -607,6 +608,12 @@ namespace Transformalize.Configuration {
         public bool Decode {
             get { return (bool)this[DECODE]; }
             set { this[DECODE] = value; }
+        }
+
+        [ConfigurationProperty(SHORT_HAND, IsRequired = false, DefaultValue = "")]
+        public string ShortHand {
+            get { return (string)this[SHORT_HAND]; }
+            set { this[SHORT_HAND] = value; }
         }
 
         public bool IsShortHand { get; set; }

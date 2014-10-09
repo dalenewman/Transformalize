@@ -26,14 +26,14 @@ namespace Transformalize.Main.Providers.PostgreSql {
             ConnectionStringProperties.PortProperty = "Port";
             ConnectionStringProperties.DatabaseProperty = "Database";
             ConnectionStringProperties.ServerProperty = "Host";
+            NoLock = false;
         }
 
         public override string KeyAllQuery(Entity entity) {
-            const string sql = @"SELECT {0} FROM ""{1}"";";
             return string.Format(
-                sql,
+                @"SELECT {0} FROM {1};",
                 string.Join(", ", entity.SelectKeys(this)),
-                entity.Name
+                Enclose(entity.Name)
             );
         }
 
@@ -83,35 +83,21 @@ namespace Transformalize.Main.Providers.PostgreSql {
         }
 
         public override string KeyRangeQuery(Entity entity) {
-
-            const string sql = @"
-                SELECT {0}
-                FROM ""{1}""
-                WHERE ""{2}"" BETWEEN @Begin AND @End;
-            ";
-
             return string.Format(
-                sql,
+                @"SELECT {0} FROM {1} WHERE {2} BETWEEN @Begin AND @End;",
                 string.Join(", ", entity.SelectKeys(this)),
-                entity.Name,
-                entity.Version.Name
+                Enclose(entity.Name),
+                Enclose(entity.Version.Name)
             );
 
         }
 
         public override string KeyQuery(Entity entity) {
-
-            const string sql = @"
-                SELECT {0}
-                FROM ""{1}""
-                WHERE ""{2}"" <= @End;
-            ";
-
             return string.Format(
-                sql,
+                @"SELECT {0} FROM {1} WHERE {2} <= @End;",
                 string.Join(", ", entity.SelectKeys(this)),
-                entity.Name,
-                entity.Version.Name
+                Enclose(entity.Name),
+                Enclose(entity.Version.Name)
             );
 
         }

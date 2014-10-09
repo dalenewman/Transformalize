@@ -136,9 +136,11 @@ namespace Transformalize.Main {
         public List<string> SelectKeys(AbstractConnection connection) {
             var selectKeys = new List<string>();
             foreach (var field in PrimaryKey.WithInput()) {
-                selectKeys.Add(field.Alias.Equals(field.Name)
-                    ? string.Concat(connection.L, field.Name, connection.R)
-                    : string.Format("{0} AS {1}", connection.Enclose(field.Name), connection.Enclose(field.Alias)));
+                selectKeys.Add(
+                    field.Alias.Equals(field.Name)
+                    ? connection.Enclose(field.Name)
+                    : string.Format("{0} AS {1}", connection.Enclose(field.Name), connection.Enclose(field.Alias))
+                );
             }
             return selectKeys;
         }

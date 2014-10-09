@@ -249,7 +249,7 @@ namespace Transformalize.Main {
             if (element.CalculatedFields.Cast<FieldConfigurationElement>().Any(cf => cf.PrimaryKey))
                 return;
 
-            TflLogger.Info(_process.Name, element.Name, "Adding TflHashCode primary key for {0}.", element.Name);
+            TflLogger.Warn(_process.Name, element.Name, "Adding TflHashCode primary key for {0}.", element.Name);
             var pk = new FieldConfigurationElement {
                 Name = "TflHashCode",
                 Type = "System.Int32",
