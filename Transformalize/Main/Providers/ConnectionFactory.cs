@@ -27,7 +27,8 @@ namespace Transformalize.Main.Providers {
                 "elasticsearch",
                 "solr",
                 "lucene",
-                "mail"
+                "mail",
+                "web"
             };
             foreach (var empty in empties) {
                 _providers.Add(empty, empty);

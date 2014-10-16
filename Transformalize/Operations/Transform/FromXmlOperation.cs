@@ -4,11 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Xml;
+using Transformalize.Libs.Nest.DSL.Repository;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
     public class FromXmlOperation : ShouldRunOperation {
+        private readonly string _root;
+        private readonly bool _findRoot;
 
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private readonly bool _searchAttributes;
@@ -18,8 +21,10 @@ namespace Transformalize.Operations.Transform {
             IgnoreComments = true
         };
 
-        public FromXmlOperation(string inKey, IEnumerable<Field> fields)
+        public FromXmlOperation(string inKey, string root, IEnumerable<Field> fields)
             : base(inKey, string.Empty) {
+            _root = root;
+            _findRoot = !string.IsNullOrEmpty(root);
 
             foreach (var field in fields) {
                 if (!_searchAttributes && field.NodeType.Equals("attribute", IC)) {
@@ -39,8 +44,16 @@ namespace Transformalize.Operations.Transform {
                     string startKey = null;
 
                     using (var reader = XmlReader.Create(new StringReader(row[InKey].ToString()), Settings)) {
-                        while (reader.Read()) {
 
+                        if (_findRoot) {
+                            do {
+                                reader.Read();
+                            } while (reader.Name != _root);
+                        } else {
+                            reader.Read();
+                        }
+
+                        do {
                             if (_nameMap.ContainsKey(reader.Name)) {
 
                                 // must while here because reader.Read*Xml advances the reader
@@ -67,7 +80,10 @@ namespace Transformalize.Operations.Transform {
                                     }
                                 }
                             }
-                        }
+                            if (_findRoot && !reader.IsStartElement() && reader.Name == _root) {
+                                break;
+                            }
+                        } while (reader.Read());
                     }
                     AddInnerRow(ref innerRow, ref outerRow, ref innerRows);
                     foreach (var r in innerRows) {

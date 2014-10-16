@@ -3,8 +3,9 @@ using System.Configuration;
 
 namespace Transformalize.Configuration
 {
-    public class SqlOverride : ConfigurationElementCollection {
+    public class SqlOverrideElementCollection : ConfigurationElementCollection {
         private const string SQL = "sql";
+        private const string SCRIPT = "script";
 
         public EmptyConfigurationElement this[int index] {
             get { return BaseGet(index) as EmptyConfigurationElement; }
@@ -16,10 +17,16 @@ namespace Transformalize.Configuration
             }
         }
 
-        [ConfigurationProperty(SQL, IsRequired = true)]
+        [ConfigurationProperty(SQL, IsRequired = false, DefaultValue = "")]
         public string Sql {
             get { return this[SQL] as string; }
             set { this[SQL] = value; }
+        }
+
+        [ConfigurationProperty(SCRIPT, IsRequired = false, DefaultValue = "")]
+        public string Script {
+            get { return this[SCRIPT] as string; }
+            set { this[SCRIPT] = value; }
         }
 
         public override bool IsReadOnly() {

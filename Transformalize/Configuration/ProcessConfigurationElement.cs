@@ -25,6 +25,10 @@ using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Main;
 
 namespace Transformalize.Configuration {
+    /// <summary>
+    /// A specialized ETL process focusing on de-normalization, transformation
+    /// and syncing a destination with it's sources.
+    /// </summary>
     public class ProcessConfigurationElement : ConfigurationElement {
 
         private const string TEMPLATE_CONTENT_TYPE = "template-content-type";
@@ -52,7 +56,7 @@ namespace Transformalize.Configuration {
         private const string LOG = "log";
 
         /// <summary>
-        /// A name (of your choosing) used to identify the process.
+        /// A name (of your choosing) to identify the process.
         /// </summary>
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name {
@@ -61,10 +65,11 @@ namespace Transformalize.Configuration {
         }
 
         /// <summary>
-        /// Optional.  `Default` by default.
+        /// Optional.
         /// 
-        /// A choice between `Multithreaded`, `SingleThreaded`, and `Default`.
-        /// The default defers to the entity's PipelineThreading.
+        /// A choice between `Multithreaded`, `SingleThreaded`, and <strong>`Default`</strong>.
+        /// 
+        /// `Default` defers this decision to the entity's PipelineThreading setting.
         /// </summary>
         [EnumConversionValidator(typeof(PipelineThreading), MessageTemplate = "{1} must be SingleThreaded, MultiThreaded, or Default.")]
         [ConfigurationProperty(PIPELINE_THREADING, IsRequired = false, DefaultValue = "Default")]
@@ -76,16 +81,13 @@ namespace Transformalize.Configuration {
         /// <summary>
         /// Optional. 
         /// 
-        /// Overrides the default mode if set.
-        /// 
         /// A mode reflects the intent of running the process.
-        /// Built in modes are `init`, and `default`.
-        /// 
+        ///  
         /// * `init` wipes everything out
-        /// * `default` moves data from input to output.
+        /// * <strong>`default`</strong> moves data through the pipeline, from input to output.
         /// 
-        /// Aside from these, you may use any mode (of your choosing), to control
-        /// whether or not templates and/or actions run.
+        /// Aside from these, you may use any mode (of your choosing).  Then, you can control
+        /// whether or not templates and/or actions run by setting their modes.
         /// </summary>
         [ConfigurationProperty(MODE, IsRequired = false, DefaultValue = "default")]
         public string Mode {
@@ -96,8 +98,13 @@ namespace Transformalize.Configuration {
         /// <summary>
         /// Optional.
         /// 
-        /// Refers to another Transformalize process (via name, file name, or web address).
-        /// Inherits configuration from a parent process.
+        /// Refers to another Transformalize process via:
+        /// 
+        /// * a process name as defined in your *.config
+        /// * a file containing a process
+        /// * a web address (url) to an http hosted file containing a process
+        /// 
+        /// Set this if you'd like to inherit settings from another process.
         /// </summary>
         [ConfigurationProperty(INHERIT, IsRequired = false, DefaultValue = "")]
         public string Inherit {
@@ -106,15 +113,15 @@ namespace Transformalize.Configuration {
         }
 
         /// <summary>
-        /// Optional.  The system's time zone by default.
+        /// Optional.
         /// 
         /// Indicates the data's time zone.
-        /// By default, it is the system's time zone.
-        /// Is used as `to-time-zone` value in now() and timezone() transformations if
-        /// `to-time-zone` is not provided.
         /// 
-        /// Normally, you want to keep that data in UTC until it is presented to the user, 
-        /// and have the client application convert UTC to the local or user time zone.
+        /// It is used as the `to-time-zone` setting for `now()` and `timezone()` transformations
+        /// if the `to-time-zone` is not set.
+        /// 
+        /// NOTE: Normally, you should keep the dates in UTC until presented to the user. 
+        /// Then, have the client application convert UTC to the user's time zone.
         /// </summary>
         [ConfigurationProperty(TIMEZONE, IsRequired = false, DefaultValue = "")]
         public string TimeZone {
@@ -123,8 +130,12 @@ namespace Transformalize.Configuration {
         }
 
         /// <summary>
-        /// Optional. True by default. Indicates the process is disabled.  The included executable 
-        /// respects this attribute and will not run the process it is set to false.
+        /// Optional.
+        /// 
+        /// `True` by default.
+        /// 
+        /// Indicates the process is enabed.  The included executable (e.g. `tfl.exe`) 
+        /// respects this setting and does not run the process if disabled (or `False`).
         /// </summary>
         [ConfigurationProperty(ENABLED, IsRequired = false, DefaultValue = true)]
         public bool Enabled {
@@ -133,10 +144,13 @@ namespace Transformalize.Configuration {
         }
 
         /// <summary>
-        /// Optional.  True by default.
+        /// Optional.
         /// 
-        /// Star refers to star schema, reflecting the intent of Transformalize to
-        /// transform relational data into a star-schema model.  
+        /// `True` by default.
+        /// 
+        /// Star refers to star-schema Transformalize is creating.  You can turn this off 
+        /// if your intention is not to create a star-schema.  A `False` setting here may
+        /// speed things up.
         /// </summary>
         [ConfigurationProperty(STAR_ENABLED, IsRequired = false, DefaultValue = true)]
         public bool StarEnabled {
@@ -144,85 +158,150 @@ namespace Transformalize.Configuration {
             set { this[STAR_ENABLED] = value; }
         }
 
+        /// <summary>
+        /// Optional.
+        /// 
+        /// If your output is a relational database that supports views and `StarEnabled` is `True`,
+        /// this is the name of a view that projects fields from all the entities in the
+        /// star-schema as a single flat projection.
+        /// 
+        /// If not set, it is the combination of the process name, and "Star." 
+        /// </summary>
         [ConfigurationProperty(STAR, IsRequired = false, DefaultValue = Common.DefaultValue)]
         public string Star {
             get { return this[STAR] as string; }
             set { this[STAR] = value; }
         }
 
+        /// <summary>
+        /// Optional
+        /// 
+        /// If your output is a relational database that supports views, this is the name of
+        /// a view that projects fields from all the entities.  This is different from 
+        /// the Star view, as it's joins are exactly as configured in the <relationships/> 
+        /// collection.
+        /// 
+        /// If not set, it is the combination of the process name, and "View." 
+        /// </summary>
         [ConfigurationProperty(VIEW, IsRequired = false, DefaultValue = Common.DefaultValue)]
         public string View {
             get { return this[VIEW] as string; }
             set { this[VIEW] = value; }
         }
 
+        /// <summary>
+        /// Optional.
+        /// 
+        /// Choices are `html` and <strong>`raw`</strong>.
+        /// 
+        /// This refers to the razor templating engine's content type.  If you're rendering HTML 
+        /// markup, use `html`, if not, using `raw` may inprove performance.
+        /// </summary>
         [ConfigurationProperty(TEMPLATE_CONTENT_TYPE, IsRequired = false, DefaultValue = "raw")]
         public string TemplateContentType {
             get { return this[TEMPLATE_CONTENT_TYPE] as string; }
             set { this[TEMPLATE_CONTENT_TYPE] = value; }
         }
 
-
+        /// <summary>
+        /// A collection of [Parameters](/parameter).
+        /// </summary>
         [ConfigurationProperty(PARAMETERS)]
         public ParameterElementCollection Parameters {
             get { return this[PARAMETERS] as ParameterElementCollection; }
         }
 
+        /// <summary>
+        /// A collection of [Connections](/connection)
+        /// </summary>
         [ConfigurationProperty(CONNECTIONS)]
         public ConnectionElementCollection Connections {
             get { return this[CONNECTIONS] as ConnectionElementCollection; }
         }
 
+        /// <summary>
+        /// A collection of [Providers](/provider)
+        /// </summary>
         [ConfigurationProperty(PROVIDERS)]
         public ProviderElementCollection Providers {
             get { return this[PROVIDERS] as ProviderElementCollection; }
         }
 
+        /// <summary>
+        /// A collection of [Logs](/log)
+        /// </summary>
         [ConfigurationProperty(LOG)]
         public LogElementCollection Log {
             get { return this[LOG] as LogElementCollection; }
         }
 
+        /// <summary>
+        /// A collection of [Search Types](/search-type)
+        /// </summary>
         [ConfigurationProperty(SEARCH_TYPES)]
         public SearchTypeElementCollection SearchTypes {
             get { return this[SEARCH_TYPES] as SearchTypeElementCollection; }
         }
 
+        /// <summary>
+        /// A collection of [Maps](/map)
+        /// </summary>
         [ConfigurationProperty(MAPS)]
         public MapElementCollection Maps {
             get { return this[MAPS] as MapElementCollection; }
         }
 
+        /// <summary>
+        /// A collection of [Scripts](/script)
+        /// </summary>
         [ConfigurationProperty(SCRIPTS)]
         public ScriptElementCollection Scripts {
             get { return this[SCRIPTS] as ScriptElementCollection; }
         }
 
+        /// <summary>
+        /// A collection of [Entities](/entity)
+        /// </summary>
         [ConfigurationProperty(ENTITIES)]
         public EntityElementCollection Entities {
             get { return this[ENTITIES] as EntityElementCollection; }
         }
 
+        /// <summary>
+        /// A collection of [Relationships](/relationship)
+        /// </summary>
         [ConfigurationProperty(RELATIONSHIPS)]
         public RelationshipElementCollection Relationships {
             get { return this[RELATIONSHIPS] as RelationshipElementCollection; }
         }
 
+        /// <summary>
+        /// A collection of [Calculated Fields](/calculated-field)
+        /// </summary>
         [ConfigurationProperty(CALCULATED_FIELDS)]
         public FieldElementCollection CalculatedFields {
             get { return this[CALCULATED_FIELDS] as FieldElementCollection; }
         }
 
+        /// <summary>
+        /// A collection of [Templates](/template)
+        /// </summary>
         [ConfigurationProperty(TEMPLATES)]
         public TemplateElementCollection Templates {
             get { return this[TEMPLATES] as TemplateElementCollection; }
         }
 
+        /// <summary>
+        /// A collection of [Actions](/action)
+        /// </summary>
         [ConfigurationProperty(ACTIONS)]
         public ActionElementCollection Actions {
             get { return this[ACTIONS] as ActionElementCollection; }
         }
 
+        /// <summary>
+        /// Settings to control [file inspection](/file-inspection).
+        /// </summary>
         [ConfigurationProperty(FILE_INSPECTION, IsRequired = false)]
         public FileInspectionElement FileInspection {
             get { return this[FILE_INSPECTION] as FileInspectionElement; }

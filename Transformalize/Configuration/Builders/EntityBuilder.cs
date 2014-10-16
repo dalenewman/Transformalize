@@ -102,6 +102,11 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public EntityBuilder SqlOverride(object script) {
+            _entity.SqlOverride.Script = script.ToString();
+            return this;
+        }
+
         public EntityBuilder DetectChanges(bool detect) {
             _entity.DetectChanges = detect;
             return this;

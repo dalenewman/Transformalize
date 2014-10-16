@@ -124,7 +124,7 @@ namespace Transformalize.Operations.Load {
                         var value = row[field].ToString();
                         if (_isCsv) {
                             row[field] = value.Replace("\r\n", "\n");
-                        } else {
+                        } else if(_connection.Delimiter != SPACE) {
                             row[field] = value.Replace(_connection.Delimiter, SPACE);
                         }
                     }

@@ -63,6 +63,12 @@ namespace Transformalize.Configuration {
         private const string VIEW = "view";
         private const string ENCODING = "encoding";
         private const string VERSION = "version";
+        private const string DIRECT = "direct";
+
+        private const string WEB_METHOD = "web-method";
+        private const string URL = "url";
+        private const string DATA = "data";
+        private const string CONTENT_TYPE = "content-type";
 
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
@@ -70,6 +76,30 @@ namespace Transformalize.Configuration {
         public string Name {
             get { return this[NAME] as string; }
             set { this[NAME] = value; }
+        }
+
+        [ConfigurationProperty(WEB_METHOD, IsRequired = false, DefaultValue = "GET")]
+        public string WebMethod {
+            get { return this[WEB_METHOD] as string; }
+            set { this[WEB_METHOD] = value; }
+        }
+
+        [ConfigurationProperty(DATA, IsRequired = false, DefaultValue = Common.DefaultValue)]
+        public string Data {
+            get { return this[DATA] as string; }
+            set { this[DATA] = value; }
+        }
+
+        [ConfigurationProperty(CONTENT_TYPE, IsRequired = false, DefaultValue = "")]
+        public string ContentType {
+            get { return this[CONTENT_TYPE] as string; }
+            set { this[CONTENT_TYPE] = value; }
+        }
+
+        [ConfigurationProperty(URL, IsRequired = false, DefaultValue = "")]
+        public string Url {
+            get { return this[URL] as string; }
+            set { this[URL] = value; }
         }
 
         [ConfigurationProperty(ENCODING, IsRequired = false, DefaultValue = "utf-8")]
@@ -225,6 +255,12 @@ namespace Transformalize.Configuration {
             set { this[ENABLE_SSL] = value; }
         }
 
+        [ConfigurationProperty(DIRECT, IsRequired = false, DefaultValue = false)]
+        public bool Direct {
+            get { return (bool)this[DIRECT]; }
+            set { this[DIRECT] = value; }
+        }
+
         [ConfigurationProperty(DATE_FORMAT, IsRequired = false, DefaultValue = "MM/dd/yyyy h:mm:ss tt")]
         public string DateFormat {
             get { return this[DATE_FORMAT] as string; }
@@ -283,7 +319,8 @@ namespace Transformalize.Configuration {
                 "html",
                 "elasticsearch",
                 "solr",
-                "lucene"
+                "lucene",
+                "web"
             };
 
             if (!providers.Any(p => p.Equals(provider))) {

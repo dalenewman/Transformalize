@@ -1,5 +1,3 @@
-using Transformalize.Main.Providers.AnalysisServices;
-
 namespace Transformalize.Main.Providers.File {
     public class FileDependencies : AbstractConnectionDependencies {
         public FileDependencies()

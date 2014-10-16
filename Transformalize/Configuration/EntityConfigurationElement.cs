@@ -161,13 +161,13 @@ namespace Transformalize.Configuration {
         }
 
         [ConfigurationProperty(SQL_OVERRIDE)]
-        public SqlOverride SqlOverride {
-            get { return this[SQL_OVERRIDE] as SqlOverride; }
+        public SqlOverrideElementCollection SqlOverride {
+            get { return this[SQL_OVERRIDE] as SqlOverrideElementCollection; }
         }
 
         [ConfigurationProperty(SQL_KEYS_OVERRIDE)]
-        public SqlOverride SqlKeysOverride {
-            get { return this[SQL_KEYS_OVERRIDE] as SqlOverride; }
+        public SqlOverrideElementCollection SqlKeysOverride {
+            get { return this[SQL_KEYS_OVERRIDE] as SqlOverrideElementCollection; }
         }
 
         [ConfigurationProperty(OUTPUT)]

@@ -79,6 +79,7 @@ namespace Transformalize.Configuration {
         private const string TO_LAT = "to-lat";
         private const string TO_LONG = "to-long";
         private const string SLEEP = "sleep";
+        private const string TIME_OUT = "time-out";
 
         //validation
         private const string CHARACTERS = "characters";
@@ -577,6 +578,12 @@ namespace Transformalize.Configuration {
             set { this[SLEEP] = value; } 
         }
 
+        [ConfigurationProperty(TIME_OUT, IsRequired = false, DefaultValue = 0)]
+        public int TimeOut {
+            get { return (int)this[TIME_OUT]; }
+            set { this[TIME_OUT] = value; }
+        }
+
         [ConfigurationProperty(USE_HTTPS, IsRequired = false, DefaultValue = false)]
         public bool UseHttps {
             get { return (bool)this[USE_HTTPS]; }
@@ -590,7 +597,7 @@ namespace Transformalize.Configuration {
         }
 
         /// <summary>
-        /// References a connection.  Currently only used for row-level mail operations.
+        /// References a connection.  used for row-level mail, and run (e.g. sql) operations.
         /// </summary>
         [ConfigurationProperty(CONNECTION, IsRequired = false, DefaultValue = "")]
         public string Connection {

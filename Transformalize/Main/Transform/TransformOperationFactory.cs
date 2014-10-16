@@ -127,7 +127,7 @@ namespace Transformalize.Main {
 
                 case "collapse":
                     var partial = new PartialProcessOperation(_process);
-                    partial.Register(new RegexReplaceOperation(inKey, outKey, "[\r\n]{2,}", "\r\n", 0) { ShouldRun = shouldRun, EntityName = _entityName});
+                    partial.Register(new RegexReplaceOperation(inKey, outKey, "[\r\n]{2,}", "\r\n", 0) { ShouldRun = shouldRun, EntityName = _entityName });
                     partial.Register(new RegexReplaceOperation(inKey, outKey, " {2,}", " ", 0) { ShouldRun = shouldRun, EntityName = _entityName });
                     partial.Register(new TrimOperation(inKey, outKey, " ") { ShouldRun = shouldRun, EntityName = _entityName });
                     return partial;
@@ -525,6 +525,7 @@ namespace Transformalize.Main {
                         case XmlMode.All:
                             return new FromXmlOperation(
                                 outKey,
+                                element.Root,
                                 new Fields(_process, parameters, _entityName)
                             ) { ShouldRun = shouldRun, EntityName = _entityName };
                         default:
@@ -652,6 +653,15 @@ namespace Transformalize.Main {
                         element.WebMethod,
                         GetParameter(_entityName, element.Data, parameters),
                         element.ContentType
+                    ) { ShouldRun = shouldRun, EntityName = _entityName };
+
+                case "run":
+                    Guard.Against(string.IsNullOrEmpty(element.Connection), "Run transform requires a connection.");
+                    Guard.Against(!_process.Connections.ContainsKey(element.Connection), "Run transform requires a connection defined in <connections/>. {0} is not defined.", element.Connection);
+                    return new RunOperation(
+                        inKey,
+                        _process.Connections[element.Connection],
+                        element.TimeOut
                     ) { ShouldRun = shouldRun, EntityName = _entityName };
 
                 // validators

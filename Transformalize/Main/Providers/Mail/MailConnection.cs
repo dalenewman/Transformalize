@@ -8,7 +8,7 @@ using Transformalize.Operations.Transform;
 namespace Transformalize.Main.Providers.Mail {
     public class MailConnection : AbstractConnection {
 
-        private SmtpClient _smtpClient;
+        private readonly SmtpClient _smtpClient;
 
         public override int NextBatchId(string processName) {
             return 1;

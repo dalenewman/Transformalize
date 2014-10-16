@@ -97,7 +97,7 @@
     <Compile Include="Configuration\IoElementCollection.cs" />
     <Compile Include="Configuration\LogElementCollection.cs" />
     <Compile Include="Configuration\LogConfigurationElement.cs" />
-    <Compile Include="Configuration\SqlOverride.cs" />
+    <Compile Include="Configuration\SqlOverrideElementCollection.cs" />
     <Compile Include="Configuration\TypeConfigurationElement.cs" />
     <Compile Include="Configuration\TypeElementCollection.cs" />
     <Compile Include="Configuration\ValidatorElementCollection.cs" />
@@ -3317,6 +3317,8 @@
     <Compile Include="Libs\UnidecodeSharpFork\Characters.cs" />
     <Compile Include="Libs\UnidecodeSharpFork\Unidecoder.cs" />
     <Compile Include="Main\Common.cs" />
+    <Compile Include="Main\Providers\Mail\WebConnection.cs" />
+    <Compile Include="Main\Providers\Mail\WebDependencies.cs" />
     <Compile Include="Main\TflLogger.cs" />
     <Compile Include="Main\Data.cs" />
     <Compile Include="Main\Entity\EntitiesLoader.cs" />
@@ -3569,6 +3571,7 @@
     <Compile Include="Main\Transform\IsDaylightSavingsOperation.cs" />
     <Compile Include="Main\Transform\MailOperation.cs" />
     <Compile Include="Main\Transform\MarkDownOperation.cs" />
+    <Compile Include="Main\Transform\RunOperation.cs" />
     <Compile Include="Main\Transform\ShortHandFactory.cs" />
     <Compile Include="Main\Transform\TagOperation.cs" />
     <Compile Include="Main\Transform\TransformOperationFactory.cs" />
@@ -3900,6 +3903,7 @@
     <Compile Include="Libs\Rhino.Etl\WithLoggingMixin.cs" />
     <Compile Include="Operations\AliasDefault.cs" />
     <Compile Include="Operations\AliasOperation.cs" />
+    <Compile Include="Operations\Extract\FileContentsExtract.cs" />
     <Compile Include="Operations\SqlResultsLoad.cs" />
     <Compile Include="Operations\EntityDetectDeletes.cs" />
     <Compile Include="Operations\EntityInputKeysExtractAllForDelete.cs" />

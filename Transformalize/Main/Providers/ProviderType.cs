@@ -36,6 +36,7 @@ namespace Transformalize.Main.Providers {
         Html,
         ElasticSearch,
         Solr,
-        Lucene
+        Lucene,
+        Web
     }
 }

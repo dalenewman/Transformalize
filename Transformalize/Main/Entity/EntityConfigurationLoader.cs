@@ -62,6 +62,7 @@ namespace Transformalize.Main {
                 Unicode = element.Unicode,
                 VariableLength = element.VariableLength,
                 SqlOverride = element.SqlOverride.Sql,
+                SqlScriptOverride = element.SqlOverride.Script,
                 SqlKeysOverride = element.SqlKeysOverride.Sql,
                 Alias = string.IsNullOrEmpty(element.Alias) ? element.Name : element.Alias,
                 InputOperation = element.InputOperation,

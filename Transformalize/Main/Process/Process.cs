@@ -169,16 +169,16 @@ namespace Transformalize.Main {
 
         public void ExecuteScaler() {
             SetLog();
+            var p = this;
             using (var runner = GetRunner()) {
-                var p = this;
                 runner.Run(ref p);
             }
         }
 
         public IEnumerable<Row> Execute() {
             SetLog();
+            var p = this;
             using (var runner = GetRunner()) {
-                var p = this;
                 return runner.Run(ref p);
             }
         }

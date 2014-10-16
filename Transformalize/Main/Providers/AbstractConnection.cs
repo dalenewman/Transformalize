@@ -23,6 +23,7 @@
 using System;
 using System.Data;
 using System.IO;
+using System.Numerics;
 using Transformalize.Configuration;
 using Transformalize.Libs.FileHelpers.Enums;
 using Transformalize.Libs.Rhino.Etl.Operations;
@@ -80,6 +81,7 @@ namespace Transformalize.Main.Providers {
         public string Header { get; set; }
         public string Footer { get; set; }
         public bool EnableSsl { get; set; }
+        public bool Direct { get; set; }
         public bool TableSample { get; set; }
         public string Encoding { get; set; }
         public string Version { get; set; }
@@ -135,6 +137,7 @@ namespace Transformalize.Main.Providers {
             Header = element.Header;
             Footer = element.Footer;
             EnableSsl = element.EnableSsl;
+            Direct = element.Direct;
             Encoding = element.Encoding;
             Version = element.Version;
             Path = element.Path;

@@ -1,6 +1,6 @@
 namespace Transformalize.Main.Providers.Mail {
-    public class MailDependencies : AbstractConnectionDependencies {
-        public MailDependencies()
+    public class WebDependencies : AbstractConnectionDependencies {
+        public WebDependencies()
             : base(
                 new FalseTableQueryWriter(),
                 new FalseConnectionChecker(),
@@ -10,7 +10,7 @@ namespace Transformalize.Main.Providers.Mail {
                 new FalseViewWriter(),
                 new FalseTflWriter(),
                 new FalseScriptRunner(),
-            new FalseDataTypeService()
-            ) { }
+                new FalseDataTypeService()
+                ) { }
     }
 }

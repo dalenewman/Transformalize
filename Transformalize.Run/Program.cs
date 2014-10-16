@@ -48,7 +48,14 @@ namespace Transformalize.Run {
                 if (OptionsMayExist(args)) {
                     _options = new Options(CombineArguments(args));
                     if (_options.Valid()) {
-                        processes.AddRange(ProcessFactory.Create(resource, _options));
+                        if (_options.Mode.Equals("rebuild", StringComparison.OrdinalIgnoreCase)) {
+                            _options.Mode = "init";
+                            processes.AddRange(ProcessFactory.Create(resource, _options));
+                            _options.Mode = "first";
+                            processes.AddRange(ProcessFactory.Create(resource, _options));
+                        } else {
+                            processes.AddRange(ProcessFactory.Create(resource, _options));
+                        }
                     } else {
                         foreach (var problem in _options.Problems) {
                             TflLogger.Error(string.Empty, string.Empty, resource + " | " + problem);

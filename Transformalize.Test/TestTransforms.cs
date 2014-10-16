@@ -244,7 +244,7 @@ namespace Transformalize.Test {
                 .Field("lines")
                 .ToFields();
 
-            var fromXml = new FromXmlOperation("f1", outFields);
+            var fromXml = new FromXmlOperation("f1", string.Empty, outFields);
 
             var rows = TestOperation(input, fromXml);
 
@@ -326,7 +326,7 @@ namespace Transformalize.Test {
                 .Field("lines").ReadInnerXml(false)
                 .ToFields();
 
-            var fromXml = new FromXmlOperation("f1", outFields);
+            var fromXml = new FromXmlOperation("f1", string.Empty, outFields);
 
             var output = TestOperation(input, fromXml);
 
@@ -337,7 +337,7 @@ namespace Transformalize.Test {
             //second pass to get lines
             input = new RowsBuilder(output).ToOperation();
             outFields = new FieldsBuilder().Field("product").Type("int32").NodeType("attribute").ToFields();
-            fromXml = new FromXmlOperation("lines", outFields);
+            fromXml = new FromXmlOperation("lines", string.Empty, outFields);
             output = TestOperation(input, fromXml);
 
             Assert.AreEqual(1, output[0]["id"]);
@@ -367,7 +367,7 @@ namespace Transformalize.Test {
                 .Field("color").Type("string").NodeType("attribute")
                 .ToFields();
 
-            var fromXmlTransform = new FromXmlOperation("xml", outFields);
+            var fromXmlTransform = new FromXmlOperation("xml", string.Empty, outFields);
 
             var output = TestOperation(input, fromXmlTransform);
 

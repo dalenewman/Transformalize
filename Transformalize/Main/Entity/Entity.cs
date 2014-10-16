@@ -66,6 +66,7 @@ namespace Transformalize.Main {
         public decimal Sample { get; set; }
         public int Top { get; set; }
         public string SqlOverride { get; set; }
+        public string SqlScriptOverride { get; set; }
         public string SqlKeysOverride { get; set; }
         public List<NamedConnection> Output { get; set; }
         public List<NamedConnection> Input { get; set; }
@@ -198,7 +199,7 @@ namespace Transformalize.Main {
         }
 
         public bool HasSqlOverride() {
-            return !string.IsNullOrEmpty(SqlOverride);
+            return !string.IsNullOrEmpty(SqlOverride) || !string.IsNullOrEmpty(SqlScriptOverride);
         }
 
         public bool HasSqlKeysOverride() {

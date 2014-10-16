@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using Transformalize.Configuration;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Operations.Extract;
@@ -58,6 +57,10 @@ namespace Transformalize.Main.Providers.File {
         }
 
         public override IOperation Extract(Process process, Entity entity, bool firstRun) {
+            if (Direct) {
+                return new FileContentsExtract(this, entity);
+            }
+
             if (Is.Excel()) {
                 return new FileExcelExtract(this, entity, entity.Top);
             }

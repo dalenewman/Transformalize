@@ -71,6 +71,7 @@ namespace Transformalize.Main {
             Bind<AbstractConnectionDependencies>().To<ElasticSearchDependencies>().WhenInjectedInto<ElasticSearchConnection>();
             Bind<AbstractConnectionDependencies>().To<SolrDependencies>().WhenInjectedInto<SolrConnection>();
             Bind<AbstractConnectionDependencies>().To<LuceneDependencies>().WhenInjectedInto<LuceneConnection>().WithConstructorArgument("processName", _element.Name);
+            Bind<AbstractConnectionDependencies>().To<WebDependencies>().WhenInjectedInto<WebConnection>();
 
             Bind<AbstractConnection>().To<AnalysisServicesConnection>().Named("analysisservices");
             Bind<AbstractConnection>().To<FileConnection>().Named("file");
@@ -83,8 +84,9 @@ namespace Transformalize.Main {
             Bind<AbstractConnection>().To<ElasticSearchConnection>().Named("elasticsearch");
             Bind<AbstractConnection>().To<SolrConnection>().Named("solr");
             Bind<AbstractConnection>().To<LuceneConnection>().Named("lucene");
+            Bind<AbstractConnection>().To<WebConnection>().Named("web");
 
-            //solrnet binding is a major pain in the ass
+            //solrnet binding
             var solrConnections = _element.Connections.Cast<ConnectionConfigurationElement>().Where(c => c.Provider.Equals("solr", StringComparison.OrdinalIgnoreCase)).ToArray();
             if (solrConnections.Any()) {
                 var mapper = new MemoizingMappingManager(new AttributesMappingManager());
