@@ -39,6 +39,7 @@ namespace Transformalize.Main {
                 var relationship = new Relationship {
                     LeftEntity = leftEntity,
                     RightEntity = rightEntity,
+                    Index = r.Index,
                     Join = join
                 };
 

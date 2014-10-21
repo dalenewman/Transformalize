@@ -23,6 +23,7 @@
 using System;
 using System.Linq;
 using Transformalize.Configuration;
+using Transformalize.Logging;
 
 namespace Transformalize.Main {
 

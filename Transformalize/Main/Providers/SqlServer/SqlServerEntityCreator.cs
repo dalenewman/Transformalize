@@ -1,4 +1,5 @@
 using Transformalize.Libs.Dapper;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.SqlServer {
 
@@ -46,5 +47,6 @@ namespace Transformalize.Main.Providers.SqlServer {
                 TflLogger.Info(process.Name, entity.Name, "Initialized {0} in {1} on {2}.", entity.OutputName(), connection.Database, connection.Server);
             }
         }
+
     }
 }

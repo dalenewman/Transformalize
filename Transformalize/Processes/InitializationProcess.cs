@@ -20,9 +20,9 @@
 
 #endregion
 
+using System;
 using System.Linq;
 using Transformalize.Extensions;
-using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 using Transformalize.Operations;
@@ -37,11 +37,11 @@ namespace Transformalize.Processes {
         }
 
         protected override void Initialize() {
-
             foreach (var entity in Process.Entities) {
                 Register(new EntityDrop(Process, entity));
                 Register(new EntityCreate(Process, entity));
             }
+            Register(new MasterEntityIndex(Process));
         }
 
         protected override void PostProcessing() {

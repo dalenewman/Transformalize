@@ -24,6 +24,7 @@ using System;
 using System.Data;
 using Transformalize.Configuration;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Logging;
 using Transformalize.Main.Providers.Sql;
 using Transformalize.Operations;
 using Transformalize.Processes;

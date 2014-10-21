@@ -5,6 +5,7 @@ using Transformalize.Libs.Lucene.Net.Document;
 using Transformalize.Libs.Lucene.Net.Index;
 using Transformalize.Libs.Lucene.Net.Search;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.Lucene {
 

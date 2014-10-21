@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using Transformalize.Configuration;
 using Transformalize.Configuration.Builders;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.File {
     public class FileImporter {

@@ -21,6 +21,7 @@
 #endregion
 
 using System.IO;
+using Transformalize.Logging;
 using Transformalize.Main.Providers;
 
 namespace Transformalize.Main {

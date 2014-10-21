@@ -24,20 +24,32 @@ namespace Transformalize.Configuration {
 
         private IReader<ProcessElementCollection> CreateReader() {
 
-            if (_resource.StartsWith("<")) {
-                return new ProcessXmlConfigurationReader(_resource, new ContentsStringReader(_query));
+            var source = DetermineConfigurationSource(_resource);
+
+            switch (source) {
+                case ConfigurationSource.Xml:
+                    return new ProcessXmlConfigurationReader(_resource, new ContentsStringReader(_query));
+                case ConfigurationSource.WebFile:
+                    return new ProcessXmlConfigurationReader(_resource, new ContentsWebReader());
+                default:
+                    var name = _resource.Contains("?") ? _resource.Substring(0, _resource.IndexOf('?')) : _resource;
+                    if (Path.HasExtension(name)) {
+                        return new ProcessXmlConfigurationReader(_resource, new ContentsFileReader());
+                    }
+
+                    return new ProcessConfigurationReader(_resource);
             }
 
-            if (_resource.StartsWith("http")) {
-                return new ProcessXmlConfigurationReader(_resource, new ContentsWebReader());
+        }
+
+        public static ConfigurationSource DetermineConfigurationSource(string resource) {
+            if (resource.StartsWith("<")) {
+                return ConfigurationSource.Xml;
             }
 
-            var name = _resource.Contains("?") ? _resource.Substring(0, _resource.IndexOf('?')) : _resource;
-            if (Path.HasExtension(name)) {
-                return new ProcessXmlConfigurationReader(_resource, new ContentsFileReader());
-            }
-
-            return new ProcessConfigurationReader(_resource);
+            return resource.StartsWith("http") ?
+                ConfigurationSource.WebFile :
+                ConfigurationSource.LocalFile;
         }
 
     }

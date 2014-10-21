@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
-using Transformalize.Libs.NLog;
 using Transformalize.Libs.RazorEngine;
 using Transformalize.Libs.RazorEngine.Configuration.Fluent;
 using Transformalize.Libs.RazorEngine.Templating;
+using Transformalize.Logging;
 using Transformalize.Main.Parameters;
 using Transformalize.Runner;
 
@@ -28,7 +28,7 @@ namespace Transformalize.Main {
         public Dictionary<string, Template> Read() {
 
             var templateElements = _elements.Cast<TemplateConfigurationElement>().ToArray();
-            var path = _elements.Path;
+            var path = _elements.Path == Common.DefaultValue ? string.Empty : _elements.Path;
             var templates = new Dictionary<string, Template>();
 
             foreach (var element in templateElements) {

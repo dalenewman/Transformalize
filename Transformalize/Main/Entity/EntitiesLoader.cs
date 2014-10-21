@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
-using Transformalize.Libs.NLog;
+using Transformalize.Logging;
 
 namespace Transformalize.Main {
 

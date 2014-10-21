@@ -326,8 +326,10 @@ namespace Transformalize.Configuration {
             StarEnabled = child.StarEnabled;
             TimeZone = child.TimeZone;
             Enabled = child.Enabled;
-            Scripts.Path = child.Scripts.Path;
-            Templates.Path = child.Templates.Path;
+
+            Scripts.Path = child.Scripts.Path == Common.DefaultValue ? Scripts.Path : child.Scripts.Path;
+            Templates.Path = child.Templates.Path == Common.DefaultValue ? Templates.Path : child.Templates.Path;
+            Relationships.IndexMode = child.Relationships.IndexMode == Common.DefaultValue ? Relationships.IndexMode : child.Relationships.IndexMode;
             FileInspection = child.FileInspection;
 
             //collections

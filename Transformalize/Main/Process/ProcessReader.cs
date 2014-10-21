@@ -22,13 +22,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
 using Transformalize.Libs.Ninject;
-using Transformalize.Libs.NLog;
 using Transformalize.Libs.NVelocity.App;
 using Transformalize.Libs.RazorEngine;
+using Transformalize.Logging;
 using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.File;
 using Transformalize.Main.Transform;
@@ -73,7 +74,7 @@ namespace Transformalize.Main {
             if (_options.Mode != Common.DefaultValue && _options.Mode != _process.Mode) {
                 _process.Mode = _options.Mode;
             }
-            TflLogger.Info(_processName, string.Empty, "Mode: {0}", _process.Mode);
+            TflLogger.Info(_processName, string.Empty, "Mode is set to {0}", _process.Mode);
 
             //shared across the process
             var connectionFactory = new ConnectionFactory(_process);
@@ -81,7 +82,8 @@ namespace Transformalize.Main {
                 connectionFactory.Providers[element.Name.ToLower()] = element.Type;
             }
             _process.Connections = connectionFactory.Create(_element.Connections);
-            if (!_process.Connections.ContainsKey("output")) {
+            if (!_process.Connections.ContainsKey("output"))
+            {
                 TflLogger.Warn(_processName, string.Empty, "No output connection detected.  Defaulting to internal.");
                 _process.OutputConnection = connectionFactory.Create(new ConnectionConfigurationElement() { Name = "output", Provider = "internal" });
             } else {
@@ -107,10 +109,9 @@ namespace Transformalize.Main {
             new OperationsLoader(ref _process, _element.Entities).Load();
 
             _process.Relationships = new RelationshipsReader(_process, _element.Relationships).Read();
+            _process.RelationshipsIndexMode = _element.Relationships.IndexMode;
             new ProcessOperationsLoader(ref _process, _element.CalculatedFields).Load();
             new EntityRelationshipLoader(ref _process).Load();
-
-            Summarize();
 
             return _process;
         }
@@ -145,7 +146,9 @@ namespace Transformalize.Main {
                 }
 
                 try {
-                    log.Level = LogLevel.FromString(logElement.LogLevel);
+                    EventLevel eventLevel;
+                    Enum.TryParse(logElement.LogLevel, out eventLevel);
+                    log.Level = eventLevel;
                     log.Provider = (ProviderType)Enum.Parse(typeof(ProviderType), logElement.Provider, true);
                 } catch (Exception ex) {
                     throw new TransformalizeException("Log configuration invalid. {0}", ex.Message);
@@ -165,23 +168,5 @@ namespace Transformalize.Main {
             return process;
         }
 
-        private void Summarize() {
-
-            if (!TflLogger.IsDebugEnabled)
-                return;
-
-            TflLogger.Debug(_processName, string.Empty, "Process Loaded.");
-            TflLogger.Debug(_processName, string.Empty, "{0} Provider{1}.", _process.Providers.Count, _process.Providers.Count.Plural());
-            TflLogger.Debug(_processName, string.Empty, "{0} Connection{1}.", _process.Connections.Count, _process.Connections.Count.Plural());
-            TflLogger.Debug(_processName, string.Empty, "{0} Entit{1}.", _process.Entities.Count, _process.Entities.Count.Pluralize());
-            TflLogger.Debug(_processName, string.Empty, "{0} Relationship{1}.", _process.Relationships.Count, _process.Relationships.Count.Plural());
-            TflLogger.Debug(_processName, string.Empty, "{0} Script{1}.", _process.Scripts.Count, _process.Scripts.Count.Plural());
-            TflLogger.Debug(_processName, string.Empty, "{0} Template{1}.", _process.Templates.Count, _process.Templates.Count.Plural());
-            TflLogger.Debug(_processName, string.Empty, "{0} SearchType{1}.", _process.SearchTypes.Count, _process.SearchTypes.Count.Plural());
-            TflLogger.Debug(_processName, string.Empty, "{0} Log{0}", _process.Log.Count, _process.Log.Count.Plural());
-
-            var mapCount = _process.MapStartsWith.Count + _process.MapEquals.Count + _process.MapEndsWith.Count;
-            TflLogger.Debug(_processName, string.Empty, "{0} Map{1}.", mapCount, mapCount.Plural());
-        }
     }
 }

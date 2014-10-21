@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.Solr {
 

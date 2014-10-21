@@ -26,8 +26,8 @@ using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
-using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Logging;
 
 namespace Transformalize.Main {
 

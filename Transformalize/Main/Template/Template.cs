@@ -22,14 +22,13 @@
 
 using System.Collections.Generic;
 using System.IO;
-using System.Web.WebSockets;
 using Transformalize.Configuration;
-using Transformalize.Libs.NLog;
 using Transformalize.Libs.NVelocity;
 using Transformalize.Libs.NVelocity.App;
 using Transformalize.Libs.RazorEngine;
 using Transformalize.Libs.RazorEngine.Configuration.Fluent;
 using Transformalize.Libs.RazorEngine.Templating;
+using Transformalize.Logging;
 using Transformalize.Runner;
 
 namespace Transformalize.Main {

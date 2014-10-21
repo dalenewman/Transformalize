@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Processes;
 using Process = Transformalize.Main.Process;
@@ -34,7 +34,7 @@ namespace Transformalize.Runner {
         }
 
         public void Dispose() {
-            LogManager.Flush();
+            //LogManager.Flush();
         }
     }
 }

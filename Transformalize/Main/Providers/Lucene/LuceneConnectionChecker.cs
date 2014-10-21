@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Transformalize.Libs.Lucene.Net.Index;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.Lucene {
 

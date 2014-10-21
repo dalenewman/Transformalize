@@ -1,4 +1,4 @@
-﻿using Transformalize.Libs.NLog;
+﻿using System.Diagnostics.Tracing;
 using Transformalize.Main.Providers;
 
 namespace Transformalize.Main {
@@ -11,7 +11,7 @@ namespace Transformalize.Main {
         private string _subject = Common.DefaultValue;
         private string _from = Common.DefaultValue;
         private string _to = Common.DefaultValue;
-        private LogLevel _level = LogLevel.Info;
+        private EventLevel _level = EventLevel.Informational;
         private ProviderType _provider = ProviderType.Console;
 
 
@@ -42,7 +42,7 @@ namespace Transformalize.Main {
             set { _to = value; }
         }
 
-        public LogLevel Level {
+        public EventLevel Level {
             get { return _level; }
             set { _level = value; }
         }

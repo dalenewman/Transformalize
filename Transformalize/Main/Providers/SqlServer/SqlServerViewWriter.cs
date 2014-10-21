@@ -24,6 +24,7 @@ using System.Linq;
 using System.Text;
 using Transformalize.Extensions;
 using Transformalize.Libs.Dapper;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.SqlServer {
     public class SqlServerViewWriter : IViewWriter {

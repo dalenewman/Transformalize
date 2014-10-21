@@ -31,6 +31,7 @@ namespace Transformalize.Configuration {
         private const string LEFT_FIELD = "left-field";
         private const string RIGHT_FIELD = "right-field";
         private const string JOIN = "join";
+        private const string INDEX = "index";
 
         [ConfigurationProperty(LEFT_ENTITY, IsRequired = true)]
         public string LeftEntity {
@@ -54,6 +55,12 @@ namespace Transformalize.Configuration {
         public string RightField {
             get { return this[RIGHT_FIELD] as string; }
             set { this[RIGHT_FIELD] = value; }
+        }
+
+        [ConfigurationProperty(INDEX, IsRequired = false, DefaultValue = false)]
+        public bool Index {
+            get { return (bool)this[INDEX]; }
+            set { this[INDEX] = value; }
         }
 
         [ConfigurationProperty(JOIN)]

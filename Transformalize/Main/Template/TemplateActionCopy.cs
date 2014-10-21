@@ -22,6 +22,7 @@
 
 using System.IO;
 using System.Text.RegularExpressions;
+using Transformalize.Logging;
 using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.File;
 

@@ -63,12 +63,12 @@ namespace Transformalize.Libs.Rhino.Etl.Operations {
                     //}
                     commandSet.Append(command);
                     if (commandSet.CountOfCommands >= _batchSize) {
-                        Trace("Executing batch of {0} commands", commandSet.CountOfCommands);
+                        Debug("Executing batch of {0} commands", commandSet.CountOfCommands);
                         commandSet.ExecuteNonQuery();
                         CreateCommandSet(cn, transaction, ref commandSet, _timeout);
                     }
                 }
-                Trace("Executing final batch of {0} commands", commandSet.CountOfCommands);
+                Debug("Executing final batch of {0} commands", commandSet.CountOfCommands);
                 commandSet.ExecuteNonQuery();
 
                 if (transaction != null) {
@@ -77,9 +77,9 @@ namespace Transformalize.Libs.Rhino.Etl.Operations {
                         transaction.Rollback();
                         Warn(null, "Rolled back transaction in {0}", Name);
                     } else {
-                        Trace("Committing {0}", Name);
+                        Debug("Committing {0}", Name);
                         transaction.Commit();
-                        Trace("Committed {0}", Name);
+                        Debug("Committed {0}", Name);
                     }
                 }
             }

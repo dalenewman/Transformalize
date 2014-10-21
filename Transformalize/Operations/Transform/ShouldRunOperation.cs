@@ -6,6 +6,7 @@ using System.Xml;
 using Transformalize.Extensions;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Logging;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {

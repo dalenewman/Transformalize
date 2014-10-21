@@ -22,6 +22,7 @@
 
 using System;
 using Microsoft.AnalysisServices;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.AnalysisServices {
     public class AnalysisServicesConnectionChecker : IConnectionChecker {

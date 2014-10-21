@@ -27,6 +27,7 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Libs.Rhino.Etl.Pipelines;
 using Transformalize.Libs.Sqloogle.Processes;
+using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
 using Transformalize.Operations;
@@ -122,18 +123,18 @@ namespace Transformalize.Processes {
             } else {
                 if (Process.IsFirstRun || !_entity.DetectChanges) {
                     partial.Register(new EntityAddTflFields(process, _entity));
-                    partial.RegisterLast(nc.Connection.Insert(process, _entity));
+                    partial.Register(nc.Connection.Insert(process, _entity));
                 } else {
                     partial.Register(new EntityJoinAction(process, _entity).Right(nc.Connection.ExtractCorrespondingKeysFromOutput(_entity)));
                     var branch = new BranchingOperation()
                         .Add(new PartialProcessOperation(process)
                             .Register(new EntityActionFilter(process, _entity, EntityAction.Insert))
-                            .RegisterLast(nc.Connection.Insert(process, _entity)))
+                            .Register(nc.Connection.Insert(process, _entity)))
                         .Add(new PartialProcessOperation(process)
                             .Register(new EntityActionFilter(process, _entity, EntityAction.Update))
-                            .RegisterLast(nc.Connection.Update(_entity)));
+                            .Register(nc.Connection.Update(_entity)));
 
-                    partial.RegisterLast(branch);
+                    partial.Register(branch);
                 }
             }
             return partial;

@@ -21,11 +21,12 @@
 #endregion
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace Transformalize.Main {
+
     public class Relationship {
+
         public List<Join> Join;
         public Entity LeftEntity;
         public Entity RightEntity;
@@ -33,6 +34,8 @@ namespace Transformalize.Main {
         public Relationship() {
             Join = new List<Join>();
         }
+
+        public bool Index { get; set; }
 
         public Fields Fields() {
             var fields = new Fields();

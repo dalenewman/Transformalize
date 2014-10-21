@@ -22,6 +22,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
+using Transformalize.Libs.EnterpriseLibrary.SemanticLogging;
+using Transformalize.Logging;
 using Transformalize.Main;
 using Process = Transformalize.Main.Process;
 
@@ -44,6 +47,10 @@ namespace Transformalize.Run {
 
             var resource = args[0];
 
+            var listener = new ObservableEventListener();
+            listener.EnableEvents(TflEventSource.Log, EventLevel.Informational);
+            var subscription = listener.LogToConsole(new LegacyLogFormatter());
+
             try {
                 if (OptionsMayExist(args)) {
                     _options = new Options(CombineArguments(args));
@@ -58,16 +65,18 @@ namespace Transformalize.Run {
                         }
                     } else {
                         foreach (var problem in _options.Problems) {
-                            TflLogger.Error(string.Empty, string.Empty, resource + " | " + problem);
+                            Console.WriteLine(resource + " | " + problem);
                         }
-                        TflLogger.Warn(string.Empty, string.Empty, resource + " | Aborting process.");
+                        Console.WriteLine(resource + " | Aborting process.");
                         Environment.Exit(1);
                     }
                 } else {
                     processes.AddRange(ProcessFactory.Create(resource));
                 }
             } catch (Exception e) {
-                TflLogger.Error(string.Empty, string.Empty, e.Message);
+                Console.WriteLine(e.Message);
+                listener.DisableEvents(TflEventSource.Log);
+                listener.Dispose();
                 return;
             }
 
@@ -75,12 +84,14 @@ namespace Transformalize.Run {
                 try {
                     process.ExecuteScaler();
                 } catch (TransformalizeException e) {
-                    TflLogger.Error(string.Empty, string.Empty, e.Message);
+                    Console.WriteLine(e.Message);
                     break;
                 }
             }
 
-
+            
+            listener.DisableEvents(TflEventSource.Log);
+            listener.Dispose();
         }
 
         private static string CombineArguments(IEnumerable<string> args) {

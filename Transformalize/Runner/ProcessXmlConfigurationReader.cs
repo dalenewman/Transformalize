@@ -27,6 +27,7 @@ using System.Text;
 using System.Xml.Linq;
 using Transformalize.Configuration;
 using Transformalize.Libs.NanoXml;
+using Transformalize.Logging;
 using Transformalize.Main;
 
 namespace Transformalize.Runner {

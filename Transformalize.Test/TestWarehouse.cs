@@ -20,10 +20,10 @@
 
 #endregion
 
+using System.Diagnostics.Tracing;
 using NUnit.Framework;
 using Transformalize.Configuration;
 using Transformalize.Configuration.Builders;
-using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 using Transformalize.Test.Builders;
@@ -33,8 +33,8 @@ namespace Transformalize.Test {
     public class TestWarehouse {
         [SetUp]
         public void SetUp() {
-            LogManager.Configuration.LoggingRules[0].EnableLoggingForLevel(LogLevel.Info);
-            LogManager.ReconfigExistingLoggers();
+            //LogManager.Configuration.LoggingRules[0].EnableLoggingForLevel(LogLevel.Info);
+            //LogManager.ReconfigExistingLoggers();
         }
 
         [Test]
@@ -45,7 +45,7 @@ namespace Transformalize.Test {
             var warehouses = GetInitialWarehouses();
             var process = GetInitialProcess(inventory, storageLocations, warehouses);
 
-            var logLevel = LogLevel.Info;
+            var logLevel = EventLevel.Informational;
 
             //init and run
             var init = ProcessFactory.Create(process, new Options())[0];
@@ -56,7 +56,7 @@ namespace Transformalize.Test {
             var first = ProcessFactory.Create(process, new Options())[0];
             first.PipelineThreading = PipelineThreading.SingleThreaded;
             first.ExecuteScaler();
-            LogManager.Flush();
+            //LogManager.Flush();
 
             Assert.AreEqual(3, first["Inventory"].Inserts);
             Assert.AreEqual(2, first["StorageLocation"].Inserts);
@@ -75,7 +75,7 @@ namespace Transformalize.Test {
             var second = ProcessFactory.CreateSingle(process);
             second.PipelineThreading = PipelineThreading.SingleThreaded;
             second.ExecuteScaler();
-            LogManager.Flush();
+            //LogManager.Flush();
 
             Assert.AreEqual(0, second["Inventory"].Inserts);
             Assert.AreEqual(0, second["StorageLocation"].Inserts);
@@ -104,7 +104,7 @@ namespace Transformalize.Test {
             var third = ProcessFactory.Create(process)[0];
             third.PipelineThreading = PipelineThreading.SingleThreaded;
             third.ExecuteScaler();
-            LogManager.Flush();
+            //LogManager.Flush();
 
             Assert.AreEqual(0, third["Inventory"].Inserts);
             Assert.AreEqual(0, third["StorageLocation"].Inserts);

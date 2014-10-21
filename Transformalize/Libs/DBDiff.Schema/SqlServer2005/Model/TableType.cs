@@ -1,5 +1,6 @@
 ﻿using System;
 using Transformalize.Libs.DBDiff.Schema.Model;
+using Transformalize.Logging;
 using Transformalize.Main;
 
 namespace Transformalize.Libs.DBDiff.Schema.SqlServer2005.Model {

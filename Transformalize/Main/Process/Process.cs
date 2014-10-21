@@ -22,18 +22,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.Tracing;
 using System.Linq;
 using System.Text;
 using Transformalize.Extensions;
 using Transformalize.Libs.Dapper;
-using Transformalize.Libs.Newtonsoft.Json.Utilities;
-using Transformalize.Libs.NLog;
+using Transformalize.Libs.EnterpriseLibrary.SemanticLogging;
+using Transformalize.Libs.EnterpriseLibrary.SemanticLogging.Sinks;
 using Transformalize.Libs.Ninject;
-using Transformalize.Libs.NLog.Config;
-using Transformalize.Libs.NLog.Targets;
-using Transformalize.Libs.NLog.Targets.Wrappers;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Logging;
 using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.File;
 using Transformalize.Operations.Validate;
@@ -63,6 +63,7 @@ namespace Transformalize.Main {
         public Options Options = new Options();
         public Dictionary<string, string> Providers = new Dictionary<string, string>();
         public List<Relationship> Relationships = new List<Relationship>();
+        public string RelationshipsIndexMode = "";
         public Dictionary<string, Script> Scripts = new Dictionary<string, Script>();
         public Dictionary<string, SearchType> SearchTypes = new Dictionary<string, SearchType>();
         public Encoding TemplateContentType = Encoding.Raw;
@@ -149,10 +150,10 @@ namespace Transformalize.Main {
                     Setup();
                     return true;
                 }
-                TflLogger.Warn(Name, string.Empty, "Process is not ready.");
+                TflLogger.Warn(Name, string.Empty, "Connection(s) failed.");
                 return false;
             }
-            TflLogger.Error(Name, string.Empty, "Process is disabled. Data is not being updated.");
+            TflLogger.Error(Name, string.Empty, "Process is disabled.");
             return false;
         }
 
@@ -187,99 +188,40 @@ namespace Transformalize.Main {
 
             try {
 
-                if (Log == null || Log.Count <= 0)
-                    return;
+                if (Log != null && Log.Count > 0) {
+                    foreach (var log in Log) {
+                        switch (log.Provider) {
+                            case ProviderType.File:
+                                log.Folder = log.Folder.Replace('/', '\\');
+                                log.File = log.File.Replace('/', '\\');
 
-                //preserve memory target (if exists)
-                MemoryTarget memoryTarget = null;
-                var logs = new string[0];
-                if (LogManager.Configuration.AllTargets.Any(t => t is MemoryTarget || t.Name == "memory")) {
-                    TflLogger.Info(Name, string.Empty, "Found memory logging target");
-                    memoryTarget = (MemoryTarget)LogManager.Configuration.AllTargets.First(t => t is MemoryTarget || t.Name == "memory");
-                    if (memoryTarget.Logs != null) {
-                        var keep = memoryTarget.Logs.ToArray();
-                        if (keep.Length > 0) {
-                            logs = new string[keep.Length];
-                            Array.Copy(keep, logs, keep.Length); ;
+                                var folder = (log.Folder.Equals(Common.DefaultValue) ? "logs" : log.Folder).TrimEnd('\\') + "\\";
+                                var fileName = (log.File.Equals(Common.DefaultValue) ? "tfl-" + Name + ".log" : log.File).TrimStart('\\');
+                                var fileListener = new ObservableEventListener();
+                                fileListener.EnableEvents(TflEventSource.Log, EventLevel.Informational);
+                                fileListener.LogToRollingFlatFile(folder + fileName, 5000, "yyyy-MM-dd", RollFileExistsBehavior.Increment, RollInterval.Day, new LegacyLogFormatter(), 0, true);
+                                TflLogger.Info(Name, "Log","Writing errors to {0}", folder + fileName);
+                                break;
+                            case ProviderType.Mail:
+                                if (log.Connection == null) {
+                                    throw new TransformalizeException("The mail logger needs to reference a mail connection in <connections/> collection.");
+                                }
+                                var mailListener = new ObservableEventListener();
+                                mailListener.EnableEvents(TflEventSource.Log, EventLevel.Error);
+                                mailListener.LogToEmail(log);
+                                TflLogger.Info(Name,"Log","Mailing errors to {0}", log.To);
+                                break;
+                            default:
+                                throw new TransformalizeException("Log does not support {0} provider. You may only add mail and file providers from the configuration.", log.Provider);
                         }
-                    }
-                }
 
-                //force a console target if interactive (i.e. in console app)
-                if (Environment.UserInteractive && Log.All(l => l.Provider != ProviderType.Console)) {
-                    Log.Insert(0, new Log() {
-                        Name = "console",
-                        Provider = ProviderType.Console
-                    });
-                    TflLogger.Info(Name, string.Empty, "Added console logging target");
-                }
-
-                var config = new LoggingConfiguration();
-
-                foreach (var log in Log) {
-                    switch (log.Provider) {
-                        case ProviderType.Console:
-                            //console
-                            var consoleTarget = new ColoredConsoleTarget {
-                                Name = log.Name,
-                                Layout = log.Layout.Equals(Common.DefaultValue) ? @"${date:format=HH\:mm\:ss} | ${message}" : log.Layout
-                            };
-                            var consoleRule = new LoggingRule("tfl", log.Level, consoleTarget);
-                            config.AddTarget(log.Name, consoleTarget);
-                            config.LoggingRules.Add(consoleRule);
-                            break;
-                        case ProviderType.File:
-                            var folder = (log.Folder.Equals(Common.DefaultValue) ? "${basedir}/logs" : log.Folder).TrimEnd('/') + "/";
-                            var fileName = (log.File.Equals(Common.DefaultValue) ? "tfl-" + Name + "-${date:format=yyyy-MM-dd}.log" : log.File).TrimStart('/');
-                            var fileTarget = new AsyncTargetWrapper(new FileTarget {
-                                Name = log.Name,
-                                FileName = folder + fileName,
-                                Layout = log.Layout.Equals(Common.DefaultValue) ? @"${date:format=HH\:mm\:ss} | ${message}" : log.Layout
-                            });
-                            var fileRule = new LoggingRule("tfl", log.Level, fileTarget);
-                            config.AddTarget(log.Name, fileTarget);
-                            config.LoggingRules.Add(fileRule);
-                            break;
-                        case ProviderType.Mail:
-                            if (log.Connection == null) {
-                                throw new TransformalizeException("The mail logger needs to reference a mail connection in <connections/> collection.");
-                            }
-                            var mailTarget = new MailTarget {
-                                Name = log.Name,
-                                SmtpPort = log.Connection.Port.Equals(0) ? 25 : log.Connection.Port,
-                                SmtpUserName = log.Connection.User,
-                                SmtpPassword = log.Connection.Password,
-                                SmtpServer = log.Connection.Server,
-                                EnableSsl = log.Connection.EnableSsl,
-                                Subject = log.Subject.Equals(Common.DefaultValue) ? "Tfl Error (" + Name + ")" : log.Subject,
-                                From = log.From,
-                                To = log.To,
-                                Layout = log.Layout.Equals(Common.DefaultValue) ? @"${date:format=HH\:mm\:ss} | ${message}" : log.Layout
-                            };
-                            var mailRule = new LoggingRule("tfl", LogLevel.Error, mailTarget);
-                            config.AddTarget(log.Name, mailTarget);
-                            config.LoggingRules.Add(mailRule);
-                            break;
-                        default:
-                            throw new TransformalizeException("Log does not support {0} provider.", log.Provider);
                     }
 
                 }
-
-                LogManager.Configuration = config;
-                if (memoryTarget == null)
-                    return;
-
-                SimpleConfigurator.ConfigureForTargetLogging(memoryTarget);
-                if (logs.Length == 0 || memoryTarget.Logs != null && memoryTarget.Logs.Count > 0)
-                    return;
-
-                TflLogger.Info(Name, string.Empty, "Preserving {0} memory log entr{1}.", logs.Length, logs.Length.Pluralize());
-                memoryTarget.Logs.AddRange(logs);
-
             } catch (Exception ex) {
                 TflLogger.Warn(Name, string.Empty, "Troubling handling logging configuration. {0} {1}", ex.Message, ex.StackTrace);
             }
+
         }
 
         public Fields OutputFields() {
@@ -331,7 +273,7 @@ namespace Transformalize.Main {
             }
 
             if (!IsValidationResultField(alias, entity) && issueWarning) {
-                TflLogger.Warn(Name, entity, "Can't find field with alias: {0}.", alias);
+                TflLogger.Warn(Name, entity, "Can't find field with alias {0}", alias);
             }
 
             return null;
@@ -491,8 +433,9 @@ namespace Transformalize.Main {
                 }
             }
 
-            TflLogger.Debug(Name, string.Empty, ViewSql());
-            connection.Execute(string.Format("CREATE VIEW {0} AS {1}", fullName, ViewSql()));
+            var outputSql = string.Format("CREATE VIEW {0} AS {1}", fullName, ViewSql());
+            TflLogger.Debug(Name, string.Empty, outputSql);
+            connection.Execute(outputSql);
             connection.Close();
         }
 

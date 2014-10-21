@@ -21,7 +21,7 @@
 #endregion
 
 using System.Configuration;
-using Transformalize.Libs.NLog.Internal;
+using System.Linq;
 
 namespace Transformalize.Configuration {
     public class SearchTypeElementCollection : MyConfigurationElementCollection {

@@ -1,5 +1,6 @@
 using System.Data;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.SqlCe {
 

@@ -10,6 +10,7 @@ using System.Data;
 using Transformalize.Libs.Rhino.Etl.Infrastructure;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Libs.Rhino.Etl.Pipelines;
+using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
 
@@ -60,7 +61,7 @@ namespace Transformalize.Libs.Rhino.Etl {
             Initialize();
             MergeLastOperationsToOperations();
             RegisterToOperationsEvents();
-            Trace("Executing {0}", Name);
+            Debug("Executing {0}", Name);
             PipelineExecuter.Execute(Name, Operations, TranslateRows);
             PostProcessing();
         }
@@ -79,13 +80,12 @@ namespace Transformalize.Libs.Rhino.Etl {
             }
         }
 
-
         /// <summary>
         ///     Called when this process has finished processing.
         /// </summary>
         /// <param name="op">The op.</param>
         protected virtual void OnFinishedProcessing(IOperation op) {
-            Trace("Finished {0}: {1}", op.Name, op.Statistics);
+            Debug("Finished {0}: {1}", op.Name, op.Statistics);
         }
 
         /// <summary>

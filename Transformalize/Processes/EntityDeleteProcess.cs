@@ -22,7 +22,6 @@
 
 using System.Linq;
 using Transformalize.Extensions;
-using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;

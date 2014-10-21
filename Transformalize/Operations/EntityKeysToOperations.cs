@@ -75,7 +75,7 @@ namespace Transformalize.Operations {
                 SqlTemplates.Select(_entity.Fields, _entity.Name, tableName, _connection, _entity.Schema, string.Empty) +
                 (_connection.TableVariable ? string.Empty : string.Format("DROP TABLE {0};", tableName));
 
-            Trace(sql);
+            Debug(sql);
 
             return sql;
         }

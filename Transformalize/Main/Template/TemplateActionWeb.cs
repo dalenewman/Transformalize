@@ -21,6 +21,7 @@
 #endregion
 
 using System.Net;
+using Transformalize.Logging;
 
 namespace Transformalize.Main {
     public class TemplateActionWeb : TemplateActionHandler {

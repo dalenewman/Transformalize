@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using Transformalize.Libs.NLog;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.File {
 
@@ -12,7 +12,6 @@ namespace Transformalize.Main.Providers.File {
         private readonly FileInspectionRequest _request;
         private readonly List<Line> _storage = new List<Line>();
         private char _bestDelimiter;
-        private readonly Logger _log = LogManager.GetCurrentClassLogger();
 
         public Lines(FileSystemInfo fileInfo, FileInspectionRequest request) {
             _fileInfo = fileInfo;
@@ -41,12 +40,12 @@ namespace Transformalize.Main.Providers.File {
             }
 
             if (!candidates.Any()) {
-                _log.Warn("Can't find a delimiter for {0}.  Defaulting to single column.", _fileInfo.Name);
+                TflLogger.Warn(string.Empty, string.Empty, "Can't find a delimiter for {0}.  Defaulting to single column.", _fileInfo.Name);
                 return default(char);
             }
 
             _bestDelimiter = candidates.First(kv => kv.Value.Equals(max)).Key;
-            _log.Info("Delimiter is '{0}'", _bestDelimiter);
+            TflLogger.Info(string.Empty, string.Empty, "Delimiter is '{0}'", _bestDelimiter);
             return _bestDelimiter;
         }
 

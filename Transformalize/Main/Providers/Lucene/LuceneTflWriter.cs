@@ -1,4 +1,5 @@
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.Lucene {
     public class LuceneTflWriter : WithLoggingMixin, ITflWriter {

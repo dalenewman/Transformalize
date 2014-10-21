@@ -8,9 +8,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Libs.fastJSON;
-using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Logging;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Load {
@@ -32,7 +32,7 @@ namespace Transformalize.Operations.Load {
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
-            GlobalDiagnosticsContext.Set("output", _name);
+            //GlobalDiagnosticsContext.Set("output", _name);
 
             foreach (var row in rows) {
                 foreach (var guid in _guids) {
@@ -43,7 +43,7 @@ namespace Transformalize.Operations.Load {
                 }
                 TflLogger.Info(_entity.ProcessName, _entity.Name, JSON.Instance.ToJSON(_columns.ToDictionary(alias => alias, alias => row[alias])));
             }
-            LogManager.Flush();
+            //LogManager.Flush();
             yield break;
         }
     }

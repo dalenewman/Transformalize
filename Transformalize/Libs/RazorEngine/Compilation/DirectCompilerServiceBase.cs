@@ -16,6 +16,7 @@ using System.Text;
 using Transformalize.Libs.Microsoft.System.Web.Razor;
 using Transformalize.Libs.Microsoft.System.Web.Razor.Parser;
 using Transformalize.Libs.RazorEngine.Templating;
+using Transformalize.Logging;
 using Transformalize.Main;
 
 namespace Transformalize.Libs.RazorEngine.Compilation {

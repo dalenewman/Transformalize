@@ -22,6 +22,7 @@
 
 using System.IO;
 using Transformalize.Extensions;
+using Transformalize.Logging;
 
 namespace Transformalize.Main {
 

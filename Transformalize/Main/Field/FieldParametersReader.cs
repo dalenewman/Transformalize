@@ -21,7 +21,7 @@
 #endregion
 
 using Transformalize.Configuration;
-using Transformalize.Libs.NLog;
+using Transformalize.Logging;
 
 namespace Transformalize.Main {
     public class FieldParametersReader : ITransformParametersReader {

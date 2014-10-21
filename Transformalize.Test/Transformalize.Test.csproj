@@ -120,6 +120,7 @@
     <Compile Include="TestFieldType.cs" />
     <Compile Include="TestFileInformationFactory.cs" />
     <Compile Include="TestInput.cs" />
+    <Compile Include="TestEventSource.cs" />
     <Compile Include="TestOptions.cs" />
     <Compile Include="TestOutput.cs" />
     <Compile Include="TestParameters.cs" />

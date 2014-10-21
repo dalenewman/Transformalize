@@ -29,6 +29,7 @@ using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.NVelocity.App;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Logging;
 using Transformalize.Main.Parameters;
 using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.Mail;

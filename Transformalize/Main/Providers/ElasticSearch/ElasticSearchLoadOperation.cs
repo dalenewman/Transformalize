@@ -7,6 +7,7 @@ using Transformalize.Extensions;
 using Transformalize.Libs.fastJSON;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.ElasticSearch {
 

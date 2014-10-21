@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Transformalize.Extensions;
-using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl.Enumerables;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;

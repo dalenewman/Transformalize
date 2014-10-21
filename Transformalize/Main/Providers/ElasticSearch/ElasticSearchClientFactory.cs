@@ -3,6 +3,7 @@ using Transformalize.Libs.Elasticsearch.Net.Connection.Configuration;
 using Transformalize.Libs.Elasticsearch.Net.ConnectionPool;
 using Transformalize.Libs.Nest;
 using Transformalize.Libs.Nest.Domain.Connection;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.ElasticSearch {
 

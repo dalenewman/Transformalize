@@ -22,6 +22,7 @@
 
 using System.Collections.Generic;
 using Transformalize.Configuration;
+using Transformalize.Logging;
 using Transformalize.Main.Providers;
 
 namespace Transformalize.Main {

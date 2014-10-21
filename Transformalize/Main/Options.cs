@@ -22,9 +22,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using System.Linq;
-using Transformalize.Libs.NLog;
 using Transformalize.Libs.fastJSON;
+using Transformalize.Logging;
 
 namespace Transformalize.Main {
 
@@ -37,7 +38,7 @@ namespace Transformalize.Main {
 
         public List<string> Problems { get { return _problems; } set { _problems = value; } }
         public bool Force { get; set; }
-        public LogLevel LogLevel { get; set; }
+        public EventLevel LogLevel { get; set; }
 
         public string Mode {
             get { return _mode; }

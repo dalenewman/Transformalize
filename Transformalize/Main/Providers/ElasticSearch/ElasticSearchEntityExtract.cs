@@ -5,6 +5,7 @@ using Transformalize.Extensions;
 using Transformalize.Libs.Nest.Domain.Responses;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.ElasticSearch {
 

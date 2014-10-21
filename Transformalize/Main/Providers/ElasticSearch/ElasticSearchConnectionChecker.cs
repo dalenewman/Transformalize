@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.ElasticSearch {
     public class ElasticSearchConnectionChecker : IConnectionChecker {

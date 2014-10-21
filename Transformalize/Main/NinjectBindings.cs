@@ -16,6 +16,7 @@ using Transformalize.Libs.SolrNet.Mapping;
 using Transformalize.Libs.SolrNet.Mapping.Validation;
 using Transformalize.Libs.SolrNet.Mapping.Validation.Rules;
 using Transformalize.Libs.SolrNet.Schema;
+using Transformalize.Logging;
 using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.AnalysisServices;
 using Transformalize.Main.Providers.Console;

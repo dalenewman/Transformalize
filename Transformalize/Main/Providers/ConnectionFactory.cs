@@ -3,6 +3,7 @@ using Transformalize.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.Ninject.Parameters;
 using Transformalize.Libs.Ninject.Syntax;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers {
 

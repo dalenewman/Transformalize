@@ -3,6 +3,7 @@ using System.Data;
 using Transformalize.Libs.Dapper;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Logging;
 using Transformalize.Main.Providers;
 using Transformalize.Operations.Transform;
 

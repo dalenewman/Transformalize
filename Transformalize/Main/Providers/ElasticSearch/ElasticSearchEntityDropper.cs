@@ -1,3 +1,5 @@
+using Transformalize.Logging;
+
 namespace Transformalize.Main.Providers.ElasticSearch {
 
     public class ElasticSearchEntityDropper : IEntityDropper {

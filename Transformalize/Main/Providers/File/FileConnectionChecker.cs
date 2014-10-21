@@ -1,4 +1,5 @@
 using System.IO;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.File {
     public class FileConnectionChecker : IConnectionChecker {

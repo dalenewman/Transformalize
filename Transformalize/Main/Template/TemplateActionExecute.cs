@@ -1,4 +1,5 @@
 using System.IO;
+using Transformalize.Logging;
 
 namespace Transformalize.Main {
     public class TemplateActionExecute : TemplateActionHandler {

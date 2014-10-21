@@ -21,7 +21,7 @@
 #endregion
 
 using System;
-using Transformalize.Libs.NLog;
+using Transformalize.Logging;
 
 namespace Transformalize.Main {
 
@@ -32,7 +32,7 @@ namespace Transformalize.Main {
         public TransformalizeException(string message, params object[] args) {
             _message = args.Length > 0 ? string.Format(message, args) : message;
             TflLogger.Error(string.Empty, string.Empty, _message);
-            LogManager.Flush();
+            //LogManager.Flush();
         }
 
         public TransformalizeException(Exception exception, string message, params object[] args) {
@@ -40,7 +40,7 @@ namespace Transformalize.Main {
             TflLogger.Error(string.Empty, string.Empty, _message);
             TflLogger.Error(string.Empty, string.Empty, exception.Message);
             TflLogger.Error(string.Empty, string.Empty, exception.StackTrace);
-            LogManager.Flush();
+            //LogManager.Flush();
         }
 
         public override string Message {

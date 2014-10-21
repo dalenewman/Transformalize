@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using Transformalize.Libs.DBDiff.Schema.Model;
 using Transformalize.Libs.DBDiff.Schema.SqlServer2005.Model.Interfaces;
+using Transformalize.Logging;
 using Transformalize.Main;
 
 namespace Transformalize.Libs.DBDiff.Schema.SqlServer2005.Model {

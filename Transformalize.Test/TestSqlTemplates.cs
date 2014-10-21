@@ -23,14 +23,11 @@
 using NUnit.Framework;
 using Transformalize.Main.Providers;
 
-namespace Transformalize.Test
-{
+namespace Transformalize.Test {
     [TestFixture]
-    public class TestSqlTemplates
-    {
+    public class TestSqlTemplates {
         [Test]
-        public void TestDropSql()
-        {
+        public void TestDropSql() {
             Assert.AreEqual(@"
                 IF EXISTS(
         	        SELECT *
@@ -38,12 +35,11 @@ namespace Transformalize.Test
         	        WHERE TABLE_SCHEMA = 'dbo'
         	        AND TABLE_NAME = 'TEST'
                 )	DROP TABLE [dbo].[TEST];
-            ", SqlTemplates.DropTable("TEST","dbo"));
+            ", SqlTemplates.DropTable("TEST", "dbo"));
         }
 
         [Test]
-        public void TestTruncateSql()
-        {
+        public void TestTruncateSql() {
             Assert.AreEqual(@"
                 IF EXISTS(
         	        SELECT *
@@ -51,7 +47,8 @@ namespace Transformalize.Test
         	        WHERE TABLE_SCHEMA = 'dbo'
         	        AND TABLE_NAME = 'Test'
                 )	TRUNCATE TABLE [dbo].[Test];
-            ", SqlTemplates.TruncateTable("Test","dbo"));
+            ", SqlTemplates.TruncateTable("Test", "dbo"));
         }
+
     }
 }

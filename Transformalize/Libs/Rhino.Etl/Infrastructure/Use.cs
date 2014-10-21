@@ -6,7 +6,6 @@
 
 using System;
 using System.Data;
-using Transformalize.Libs.NLog;
 using Transformalize.Main.Providers;
 
 namespace Transformalize.Libs.Rhino.Etl.Infrastructure

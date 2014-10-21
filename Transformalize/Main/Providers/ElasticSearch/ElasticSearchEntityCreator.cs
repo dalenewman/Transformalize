@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Transformalize.Libs.fastJSON;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.ElasticSearch {
     public class ElasticSearchEntityCreator : IEntityCreator {

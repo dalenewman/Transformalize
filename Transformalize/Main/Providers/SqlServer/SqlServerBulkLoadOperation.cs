@@ -22,6 +22,7 @@
 
 using System.Data.SqlClient;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.SqlServer {
     public class SqlServerBulkLoadOperation : SqlBulkInsertOperation {
@@ -42,7 +43,7 @@ namespace Transformalize.Main.Providers.SqlServer {
         }
 
         protected override void PrepareSchema() {
-            NotifyBatchSize = 10000;
+            NotifyBatchSize = (int)LogRows;
             BatchSize = _batchSize;
 
             var fromFields = new Fields(_entity.Fields, _entity.CalculatedFields).WithOutput().AddBatchId(_entity.Index, false);

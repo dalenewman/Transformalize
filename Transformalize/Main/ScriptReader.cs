@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using Transformalize.Configuration;
+using Transformalize.Logging;
 
 namespace Transformalize.Main {
     public class ScriptReader {
@@ -15,7 +16,7 @@ namespace Transformalize.Main {
 
         public Dictionary<string, Script> Read() {
             var scriptElements = _elements.Cast<ScriptConfigurationElement>().ToArray();
-            var path = _elements.Path;
+            var path = _elements.Path == Common.DefaultValue ? string.Empty : _elements.Path;
 
             var scripts = new Dictionary<string, Script>();
 

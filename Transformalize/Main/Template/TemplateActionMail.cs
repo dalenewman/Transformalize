@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.Mail;
+using Transformalize.Logging;
 using Transformalize.Main.Providers.Mail;
 
 namespace Transformalize.Main {

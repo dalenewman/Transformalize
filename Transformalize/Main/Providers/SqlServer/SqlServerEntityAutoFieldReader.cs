@@ -23,6 +23,7 @@
 using System;
 using System.Linq;
 using Transformalize.Libs.Dapper;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.SqlServer {
     public class SqlServerEntityAutoFieldReader : IEntityAutoFieldReader {

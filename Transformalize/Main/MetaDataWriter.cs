@@ -24,6 +24,7 @@ using System;
 using System.Linq;
 using System.Text;
 using System.Web;
+using Transformalize.Logging;
 
 namespace Transformalize.Main {
     public class MetaDataWriter {

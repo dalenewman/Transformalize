@@ -1,3 +1,5 @@
+using Transformalize.Logging;
+
 namespace Transformalize.Main {
     public class TemplateActionTfl : TemplateActionHandler {
         public override void Handle(TemplateAction action) {

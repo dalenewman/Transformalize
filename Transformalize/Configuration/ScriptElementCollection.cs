@@ -21,6 +21,7 @@
 #endregion
 
 using System.Configuration;
+using Transformalize.Main;
 
 namespace Transformalize.Configuration {
     public class ScriptElementCollection : MyConfigurationElementCollection {
@@ -34,7 +35,7 @@ namespace Transformalize.Configuration {
             }
         }
 
-        [ConfigurationProperty("path", IsRequired = false, DefaultValue = "")]
+        [ConfigurationProperty("path", IsRequired = false, DefaultValue = Common.DefaultValue)]
         public string Path {
             get { return this["path"] as string; }
             set { this["path"] = value; }

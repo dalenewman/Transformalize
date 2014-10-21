@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Text;
 using Transformalize.Extensions;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers {
 

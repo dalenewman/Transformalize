@@ -2,6 +2,7 @@ using System;
 using System.Collections.Specialized;
 using System.Text;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Operations.Transform;
 

@@ -1,14 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using Transformalize.Libs.Jint;
 using Transformalize.Libs.Jint.Parser;
 using Transformalize.Libs.Jint.Parser.Ast;
-using Transformalize.Libs.Newtonsoft.Json.Converters;
-using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Logging;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {

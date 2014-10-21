@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers {
     public class DefaultConnectionChecker : IConnectionChecker {

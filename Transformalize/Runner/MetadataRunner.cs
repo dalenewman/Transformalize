@@ -1,13 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
-using Transformalize.Libs.Newtonsoft.Json.Converters;
-using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Logging;
 using Transformalize.Main;
 using Process = Transformalize.Main.Process;
 
@@ -37,7 +34,7 @@ namespace Transformalize.Runner {
         }
 
         public void Dispose() {
-            LogManager.Flush();
+            //LogManager.Flush();
         }
     }
 }

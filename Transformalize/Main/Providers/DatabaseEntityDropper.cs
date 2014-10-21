@@ -21,6 +21,7 @@
 #endregion
 
 using Transformalize.Libs.Dapper;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers {
     public class DatabaseEntityDropper : IEntityDropper {

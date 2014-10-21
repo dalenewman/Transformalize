@@ -22,6 +22,7 @@
 
 using System.Data;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.SqlServer {
     public class SqlServerTflWriter : WithLoggingMixin, ITflWriter {

@@ -31,7 +31,7 @@ using System.Text.RegularExpressions;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
-using Transformalize.Libs.NLog;
+using Transformalize.Logging;
 
 namespace Transformalize.Main {
     public static class Common {

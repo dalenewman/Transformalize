@@ -21,9 +21,13 @@
 #endregion
 
 using System.Configuration;
+using Transformalize.Main;
 
 namespace Transformalize.Configuration {
     public class RelationshipElementCollection : MyConfigurationElementCollection {
+
+        private const string INDEX_MODE = "index-mode";
+
         public RelationshipConfigurationElement this[int index] {
             get { return BaseGet(index) as RelationshipConfigurationElement; }
             set {
@@ -32,6 +36,12 @@ namespace Transformalize.Configuration {
                 }
                 BaseAdd(index, value);
             }
+        }
+
+        [ConfigurationProperty(INDEX_MODE, IsRequired = false, DefaultValue = Common.DefaultValue)]
+        public string IndexMode {
+            get { return this[INDEX_MODE] as string; }
+            set { this[INDEX_MODE] = value; }
         }
 
         public override bool IsReadOnly() {

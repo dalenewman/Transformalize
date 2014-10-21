@@ -33,7 +33,7 @@ namespace Transformalize.Libs.Rhino.Etl.Pipelines {
                     var start = DateTime.Now;
                     ExecutePipeline(enumerablePipeline);
                     RaiseNotifyExecutionCompleting();
-                    Trace("Completed process {0} in {1}", pipelineName, DateTime.Now - start);
+                    Debug("Completed process {0} in {1}", pipelineName, DateTime.Now - start);
                 } catch (Exception e) {
                     Error(e.Message);
                     Error(e, "Failed to execute pipeline {0}", pipelineName);

@@ -1,3 +1,4 @@
+using Transformalize.Logging;
 using Transformalize.Main;
 
 namespace Transformalize.Libs.NVelocity.Runtime.Log {

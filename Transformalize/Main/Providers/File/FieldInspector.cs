@@ -1,14 +1,11 @@
-using System;
 using System.Globalization;
 using System.Linq;
 using Transformalize.Configuration.Builders;
-using Transformalize.Libs.NLog;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.File {
 
     public class FieldInspector {
-
-        private readonly Logger _log = LogManager.GetLogger(string.Empty);
 
         public Fields Inspect(string file) {
             return Inspect(FileInformationFactory.Create(file), new FileInspectionRequest());
@@ -64,7 +61,7 @@ namespace Transformalize.Main.Providers.File {
             var results = runner.Execute().ToList();
 
             if (results.Count <= 0) {
-                _log.Warn("Nothing imported from in {0}!", fileInformation.FileInfo.Name);
+                TflLogger.Warn(string.Empty,string.Empty,"Nothing imported from in {0}!", fileInformation.FileInfo.Name);
                 return fileInformation.Fields;
             }
 

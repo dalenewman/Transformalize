@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Transformalize.Logging;
 using Transformalize.Main.Parameters;
 using Transformalize.Main.Providers.SqlServer;
 

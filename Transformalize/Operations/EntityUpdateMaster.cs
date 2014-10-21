@@ -23,12 +23,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Transformalize.Libs.NLog;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Libs.Dapper;
-using Transformalize.Main.Providers;
 
 namespace Transformalize.Operations {
     public class EntityUpdateMaster : AbstractOperation {
@@ -44,6 +43,10 @@ namespace Transformalize.Operations {
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
+
+            if (_entity.IsMaster()) {
+                new MasterEntityIndexBuilder(_process).Create();
+            }
 
             //escape 1
             if (_entity.IsMaster() || (!_entity.HasForeignKeys() && _process.IsFirstRun))
@@ -65,28 +68,37 @@ namespace Transformalize.Operations {
                 string where;
                 if (entityChanged && masterChanged) {
                     where = string.Format("WHERE {0}.TflBatchId = @TflBatchId OR {1}.TflBatchId = @MasterTflBatchId;", entity, master);
-                    var sql = PrepareSql(master, entity, _process.OutputConnection) + where;
+                    var sql = PrepareSql() + where;
                     Debug(sql);
                     records = cn.Execute(sql, new { _entity.TflBatchId, MasterTflBatchId = _process.MasterEntity.TflBatchId }, commandTimeout: 0);
                 } else {
                     where = string.Format("WHERE {0}.TflBatchId = @TflBatchId;", entityChanged ? entity : master);
-                    var sql = PrepareSql(master, entity, _process.OutputConnection) + where;
+                    var sql = PrepareSql() + where;
                     Debug(sql);
                     records = cn.Execute(sql, new { TflBatchId = entityChanged ? _entity.TflBatchId : _process.MasterEntity.TflBatchId }, commandTimeout: 0);
                 }
 
-                Debug("TflBatchId = {0}.", _entity.TflBatchId);
-                Info("Processed {0} rows. Updated {1} with {2}.", records, _process.MasterEntity.Alias, _entity.Alias);
+                TflLogger.Debug(ProcessName, EntityName, "TflBatchId = {0}.", _entity.TflBatchId);
+                TflLogger.Info(ProcessName, EntityName, "Processed {0} rows. Updated {1} with {2}.", records, _process.MasterEntity.Alias, _entity.Alias);
             }
             return rows;
         }
 
-        private string PrepareSql(string master, string entity, AbstractConnection connection) {
+        public string PrepareSql() {
             //note: TflBatchId is updated and next process depends it.
 
+            var connection = _process.OutputConnection;
+            var master = connection.Enclose(_process.MasterEntity.OutputName());
+            var entity = connection.Enclose(_entity.OutputName());
             var builder = new StringBuilder();
 
-            var sets = _entity.HasForeignKeys() ? new FieldSqlWriter(_entity.Fields).FieldType(FieldType.ForeignKey).Alias(connection.L, connection.R).Set(master, entity).Write(",\r\n    ") + "," : string.Empty;
+            var sets = _entity.HasForeignKeys() ?
+                new FieldSqlWriter(_entity.Fields)
+                    .FieldType(FieldType.ForeignKey)
+                    .Alias(connection.L, connection.R)
+                    .Set(master, entity)
+                    .Write(",\r\n    ") + "," :
+                string.Empty;
 
             builder.AppendFormat("UPDATE {0}\r\n", master);
             builder.AppendFormat("SET {0} {1}.TflBatchId = @TflBatchId\r\n", sets, master);
@@ -95,7 +107,18 @@ namespace Transformalize.Operations {
             foreach (var relationship in _entity.RelationshipToMaster) {
                 var left = connection.Enclose(relationship.LeftEntity.OutputName());
                 var right = connection.Enclose(relationship.RightEntity.OutputName());
-                var join = string.Join(" AND ", relationship.Join.Select(j => string.Format("{0}.{1} = {2}.{3}", left, connection.Enclose(j.LeftField.Alias), right, connection.Enclose(j.RightField.Alias))));
+                var join = string.Join(
+                    " AND ",
+                    relationship.Join
+                        .Select(j => string.Format(
+                            "{0}.{1} = {2}.{3}",
+                            left,
+                            connection.Enclose(j.LeftField.Alias),
+                            right,
+                            connection.Enclose(j.RightField.Alias)
+                        )
+                    )
+                );
                 builder.AppendFormat("INNER JOIN {0} ON ({1})\r\n", left, join);
             }
 

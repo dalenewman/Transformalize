@@ -1,5 +1,5 @@
 using System.Configuration;
-using Transformalize.Libs.NLog.Internal;
+using System.Linq;
 
 namespace Transformalize.Configuration {
     public abstract class MyConfigurationElementCollection : ConfigurationElementCollection {

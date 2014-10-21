@@ -23,7 +23,7 @@
 using System;
 using System.Collections.Generic;
 using Transformalize.Configuration;
-using Transformalize.Libs.NLog;
+using Transformalize.Logging;
 using Transformalize.Main.Parameters;
 
 namespace Transformalize.Main {
