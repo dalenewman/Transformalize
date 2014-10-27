@@ -43,14 +43,13 @@ namespace Transformalize.Libs.Rhino.Etl {
         }
 
         protected void Error(string message) {
-            //if (TflLogger.IsErrorEnabled)
-                TflLogger.Error(string.Empty, string.Empty, message);
+            _errors.Add(new TransformalizeException(message));
         }
 
         protected void Warn(string format, params object[] args) {
-            //if (TflLogger.IsWarnEnabled) {
+            if (TflLogger.IsWarnEnabled) {
                 TflLogger.Warn(string.Empty, string.Empty, format, args);
-            //}
+            }
         }
 
         /// <summary>
@@ -59,9 +58,9 @@ namespace Transformalize.Libs.Rhino.Etl {
         /// <param name="format">The format.</param>
         /// <param name="args">The args.</param>
         protected void Debug(string format, params object[] args) {
-            //if (TflLogger.IsDebugEnabled) {
+            if (TflLogger.IsDebugEnabled) {
                 TflLogger.Debug(string.Empty, string.Empty, format, args);
-            //}
+            }
         }
 
         /// <summary>
@@ -70,19 +69,10 @@ namespace Transformalize.Libs.Rhino.Etl {
         /// <param name="format">The format.</param>
         /// <param name="args">The args.</param>
         protected void Info(string format, params object[] args) {
-            //if (TflLogger.IsInfoEnabled) {
+            if (TflLogger.IsInfoEnabled) {
                 TflLogger.Info(string.Empty, string.Empty, format, args);
-            //}
+            }
         }
 
-        protected bool IsDebugEnabled()
-        {
-            return false;// TflLogger.IsDebugEnabled;
-        }
-
-        protected bool IsTraceEnabled()
-        {
-            return false;// TflLogger.IsTraceEnabled;
-        }
     }
 }

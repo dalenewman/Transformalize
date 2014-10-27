@@ -216,13 +216,13 @@ namespace Transformalize.Main {
             return Storage.Any(f => f.Alias.Equals(nameOrAlias, Ic) || f.Name.Equals(nameOrAlias, Ic));
         }
 
-        public bool HaveField(string entity, string nameOrAlias) {
-            if (entity.Equals(string.Empty)) {
+        public bool HaveField(string entityAlias, string nameOrAlias) {
+            if (entityAlias.Equals(string.Empty)) {
                 return HaveField(nameOrAlias);
             }
             return Storage.Any(
-                f => f.Entity.Equals(entity, Ic) && f.Alias.Equals(nameOrAlias, Ic) ||
-                     f.Entity.Equals(entity, Ic) && f.Name.Equals(nameOrAlias, Ic)
+                f => f.Entity.Equals(entityAlias, Ic) && f.Alias.Equals(nameOrAlias, Ic) ||
+                     f.Entity.Equals(entityAlias, Ic) && f.Name.Equals(nameOrAlias, Ic)
             );
         }
 
@@ -230,14 +230,14 @@ namespace Transformalize.Main {
             return new Fields(Storage.Where(f => f.Alias.Equals(nameOrAlias, Ic) || f.Name.Equals(nameOrAlias, Ic)));
         }
 
-        public Fields Find(string entity, string nameOrAlias) {
-            if (entity.Equals(string.Empty)) {
+        public Fields Find(string entityAlias, string nameOrAlias) {
+            if (entityAlias.Equals(string.Empty)) {
                 return Find(nameOrAlias);
             }
             return new Fields(
                 Storage.Where(
-                    f => f.Entity.Equals(entity, Ic) && f.Alias.Equals(nameOrAlias, Ic) ||
-                         f.Entity.Equals(entity, Ic) && f.Name.Equals(nameOrAlias, Ic)
+                    f => f.Entity.Equals(entityAlias, Ic) && f.Alias.Equals(nameOrAlias, Ic) ||
+                         f.Entity.Equals(entityAlias, Ic) && f.Name.Equals(nameOrAlias, Ic)
                 )
             );
         }

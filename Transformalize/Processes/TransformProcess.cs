@@ -23,6 +23,7 @@
 using System.Linq;
 using Transformalize.Extensions;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Operations;
 
@@ -55,8 +56,8 @@ namespace Transformalize.Processes {
             if (errors.Any()) {
                 foreach (var error in errors) {
                     foreach (var e in error.FlattenHierarchy()) {
-                        Error(e.Message);
-                        Debug(e.StackTrace);
+                        TflLogger.Error(this.Process.Name, string.Empty, e.Message);
+                        TflLogger.Debug(this.Process.Name, string.Empty, e.StackTrace);
                     }
                 }
                 throw new TransformalizeException("Transform process failed for {0}.", Process.Name);

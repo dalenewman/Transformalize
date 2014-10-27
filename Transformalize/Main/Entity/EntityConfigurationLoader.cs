@@ -266,15 +266,15 @@ namespace Transformalize.Main {
             }
         }
 
-        private void LoadVersion(EntityConfigurationElement element, Entity entity) {
+        private static void LoadVersion(EntityConfigurationElement element, Entity entity) {
             if (String.IsNullOrEmpty(element.Version))
                 return;
 
-            if (entity.Fields.HaveField(element.Version)) {
-                entity.Version = entity.Fields.Find(element.Version).First();
+            if (entity.Fields.HaveField(entity.Alias, element.Version)) {
+                entity.Version = entity.Fields.Find(entity.Alias, element.Version).First();
             } else {
-                if (entity.CalculatedFields.HaveField(element.Version)) {
-                    entity.Version = entity.CalculatedFields.Find(element.Version).First();
+                if (entity.CalculatedFields.HaveField(entity.Alias, element.Version)) {
+                    entity.Version = entity.CalculatedFields.Find(entity.Alias, element.Version).First();
                 } else {
                     throw new TransformalizeException("version field reference '{0}' is undefined in {1}.", element.Version, element.Name);
                 }

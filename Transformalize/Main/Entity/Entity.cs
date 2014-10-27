@@ -20,7 +20,6 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
@@ -30,7 +29,6 @@ using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Providers;
 
 namespace Transformalize.Main {
-
     public class Entity {
 
         private List<IOperation> _operationsBeforeAggregation = new List<IOperation>();

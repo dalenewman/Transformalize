@@ -22,16 +22,12 @@ namespace Transformalize.Main {
 
             foreach (RelationshipConfigurationElement r in _elements) {
                 Entity leftEntity;
-                if (_process.Entities.Any(e => e.Alias.Equals(r.LeftEntity, IC))) {
-                    leftEntity = _process.Entities.First(e => e.Alias.Equals(r.LeftEntity, IC));
-                } else {
+                if (!_process.Entities.TryFind(r.LeftEntity, out leftEntity)) {
                     throw new TransformalizeException("Can't find left entity {0}.", r.LeftEntity);
                 }
 
                 Entity rightEntity;
-                if (_process.Entities.Any(e => e.Alias.Equals(r.RightEntity, IC))) {
-                    rightEntity = _process.Entities.First(e => e.Alias.Equals(r.RightEntity, IC));
-                } else {
+                if (!_process.Entities.TryFind(r.RightEntity, out rightEntity)) {
                     throw new TransformalizeException("Can't find right entity {0}.", r.RightEntity);
                 }
 

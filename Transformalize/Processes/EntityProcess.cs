@@ -154,8 +154,8 @@ namespace Transformalize.Processes {
             if (errors.Any()) {
                 foreach (var error in errors) {
                     foreach (var e in error.FlattenHierarchy()) {
-                        Error(e.Message);
-                        Debug(e.StackTrace);
+                        TflLogger.Error(_entity.ProcessName, _entity.Name, e.Message);
+                        TflLogger.Debug(_entity.ProcessName, _entity.Name, e.StackTrace);
                     }
                 }
                 throw new TransformalizeException("Entity Process failed for {0}. See error log.", _entity.Alias);

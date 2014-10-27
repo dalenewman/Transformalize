@@ -21,6 +21,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Transformalize.Main.Providers.SqlServer {
@@ -39,6 +40,8 @@ namespace Transformalize.Main.Providers.SqlServer {
                         {"bool", "BIT"},
                         {"string", "NVARCHAR"},
                         {"datetime", "DATETIME"},
+                        {"date","DATETIME"},
+                        {"time","DATETIME"},
                         {"decimal", "DECIMAL"},
                         {"double", "FLOAT"},
                         {"int32", "INT"},
@@ -58,13 +61,15 @@ namespace Transformalize.Main.Providers.SqlServer {
 
         public Dictionary<string, string> TypesReverse {
             get {
-                if (_reverseTypes == null) {
+                if (_reverseTypes == null)
+                {
                     _reverseTypes = new Dictionary<string, string> {
                         {"BIGINT", "System.Int64"},
                         {"BIT", "System.Boolean"},
                         {"NVARCHAR", "System.String"},
                         {"DATE", "System.DateTime"},
                         {"DATETIME", "System.DateTime"},
+                        {"TIME","System.DateTime"},
                         {"SMALLDATETIME", "System.DateTime"},
                         {"DECIMAL", "System.Decimal"},
                         {"NUMERIC", "System.Decimal"},
@@ -95,6 +100,11 @@ namespace Transformalize.Main.Providers.SqlServer {
             var dimensions = (new[] { "decimal" }).Any(s => s.Equals(field.SimpleType)) ? string.Format("({0},{1})", field.Precision, field.Scale) : string.Empty;
             var notNull = field.NotNull ? " NOT NULL" : string.Empty;
             var surrogate = field.Identity ? " IDENTITY(1,1) " : string.Empty;
+
+            if (!Types.ContainsKey(field.SimpleType)) {
+                throw new TransformalizeException("Field type {0} is not implemented.", field.SimpleType);
+            }
+
             var sqlDataType = Types[field.SimpleType];
 
             if (!field.Unicode && sqlDataType.StartsWith("N")) {

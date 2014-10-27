@@ -20,14 +20,15 @@
 
 #endregion
 
-using System;
 using System.Linq;
 using Transformalize.Extensions;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Operations;
 
 namespace Transformalize.Processes {
+
     public class InitializationProcess : EtlProcess {
 
         public InitializationProcess(Process process)
@@ -49,7 +50,8 @@ namespace Transformalize.Processes {
             if (errors.Any()) {
                 foreach (var error in errors) {
                     foreach (var inner in error.FlattenHierarchy()) {
-                        Error("Failed execution. {0} {1}", inner.Message, inner.StackTrace);
+                        TflLogger.Error(this.Process.Name, string.Empty, inner.Message);
+                        TflLogger.Debug(this.Process.Name, string.Empty, inner.StackTrace);
                     }
                 }
                 throw new TransformalizeException("Initialization Process failed for {0}. See error log.", Process.Name);

@@ -24,6 +24,7 @@ using System.Linq;
 using Transformalize.Extensions;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Operations;
 
@@ -68,8 +69,8 @@ namespace Transformalize.Processes {
             var errors = GetAllErrors().ToArray();
             if (errors.Any()) {
                 foreach (var e in errors.SelectMany(error => error.FlattenHierarchy())) {
-                    Error(e.Message);
-                    Debug(e.StackTrace);
+                    TflLogger.Error(this.Process.Name, string.Empty, e.Message);
+                    TflLogger.Debug(this.Process.Name, string.Empty, e.StackTrace);
                 }
                 throw new TransformalizeException("Entity Delete Process for {0} failed. See error log", _entity.Alias);
             }

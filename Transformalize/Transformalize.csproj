@@ -3042,6 +3042,7 @@
     <Compile Include="Logging\TflEventSource.cs" />
     <Compile Include="Logging\TflLogger.cs" />
     <Compile Include="Main\Common.cs" />
+    <Compile Include="Main\Entity\Entities.cs" />
     <Compile Include="Main\Providers\Mail\WebConnection.cs" />
     <Compile Include="Main\Providers\Mail\WebDependencies.cs" />
     <Compile Include="Main\Data.cs" />

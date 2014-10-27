@@ -15,6 +15,7 @@ namespace Transformalize.Logging {
         public static bool IsErrorEnabled { get { return TflEventSource.Log.IsEnabled(EventLevel.Error, Keywords.All); } }
         public static bool IsWarnEnabled { get { return TflEventSource.Log.IsEnabled(EventLevel.Warning, Keywords.All); } }
         public static bool IsInfoEnabled { get { return TflEventSource.Log.IsEnabled(EventLevel.Informational, Keywords.All); } }
+        public static bool IsTraceEnabled { get { return TflEventSource.Log.IsEnabled(EventLevel.LogAlways, Keywords.All); } }
 
         private static StringBuilder GetStringBuilder(string level, string process, string entity) {
             var sb = StringBuilders.GetObject();

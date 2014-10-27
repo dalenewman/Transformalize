@@ -10,6 +10,7 @@ using Transformalize.Libs.Rhino.Etl.Infrastructure;
 using Transformalize.Main.Providers;
 
 namespace Transformalize.Libs.Rhino.Etl.Operations {
+
     /// <summary>
     ///     Generic input command operation
     /// </summary>

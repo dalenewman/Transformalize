@@ -11,6 +11,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             {"int","integer"},
             {"int32","integer"},
             {"datetime","date"},
+            {"time","date"},
             {"bool","boolean"},
             {"decimal","float"},
             {"single","double"},

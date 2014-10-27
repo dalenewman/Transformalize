@@ -53,7 +53,7 @@ namespace Transformalize.Main {
         // fields (for now)
         public IEnumerable<Row> Results = Enumerable.Empty<Row>();
         public Fields CalculatedFields = new Fields();
-        public List<Entity> Entities = new List<Entity>();
+        public Entities Entities = new Entities();
         public IKernel Kernal;
         public Dictionary<string, Map> MapEndsWith = new Dictionary<string, Map>();
         public Dictionary<string, Map> MapEquals = new Dictionary<string, Map>();
