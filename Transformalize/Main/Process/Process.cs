@@ -22,7 +22,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.Tracing;
 using System.Linq;
 using System.Text;
@@ -75,6 +74,7 @@ namespace Transformalize.Main {
         private string _mode;
         private long _logRows = 10000;
         private List<Log> _logList = new List<Log>();
+        private bool _shouldLog = true;
 
         // properties
         public string TimeZone { get; set; }
@@ -138,6 +138,12 @@ namespace Transformalize.Main {
 
         public bool VelocityInitialized { get; set; }
 
+        public bool ShouldLog
+        {
+            get { return _shouldLog; }
+            set { _shouldLog = value; }
+        }
+
         //constructor
         public Process(string name = "") {
             Name = name;
@@ -188,7 +194,7 @@ namespace Transformalize.Main {
 
             try {
 
-                if (Log != null && Log.Count > 0) {
+                if (ShouldLog && Log != null && Log.Count > 0) {
                     foreach (var log in Log) {
                         switch (log.Provider) {
                             case ProviderType.File:

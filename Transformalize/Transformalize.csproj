@@ -3943,7 +3943,9 @@
 IF EXIST c:\code\DataProfiler XCOPY /s /y $(TargetDir)Transformalize.dll c:\code\DataProfiler\Assemblies\
 IF EXIST c:\code\Orchard171\lib\Transformalize XCOPY /s /y $(TargetDir)Transformalize.dll c:\Code\Orchard171\lib\Transformalize\
 IF EXIST C:\Code\Orchard171\src\Orchard.Web\Modules\Transformalize.Orchard\Libs XCOPY /s /y $(TargetDir)Transformalize.dll C:\Code\Orchard171\src\Orchard.Web\Modules\Transformalize.Orchard\Libs\
-IF EXIST c:\code\Orchard180\lib\Transformalize XCOPY /s /y $(TargetDir)Transformalize.dll c:\Code\Orchard180\lib\Transformalize\</PostBuildEvent>
+IF EXIST c:\code\Orchard181\lib\Transformalize XCOPY /s /y $(TargetDir)Transformalize.dll c:\Code\Orchard181\lib\Transformalize\
+IF EXIST C:\Code\Orchard181\src\Orchard.Web\Modules\Transformalize.Orchard\Libs XCOPY /s /y $(TargetDir)Transformalize.dll C:\Code\Orchard181\src\Orchard.Web\Modules\Transformalize.Orchard\Libs\
+</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

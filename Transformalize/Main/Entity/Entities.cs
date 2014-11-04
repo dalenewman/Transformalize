@@ -17,12 +17,21 @@ namespace Transformalize.Main {
         }
 
         /// <summary>
-        /// Find the first entity in this collection, checking for alias first, then name.
+        /// Find the first entity in this collection, matching:
+        /// Just Name (without alias)
+        /// Both Alias AND Name
+        /// Alias OR Name
+        /// Matching both name and alias to nameOrAlias takes precedence matching name or alias
         /// </summary>
         /// <param name="nameOrAlias"></param>
         /// <returns></returns>
         private Entity Find(string nameOrAlias) {
-            return this.First(e => e.Alias.Equals(nameOrAlias, IC) || e.Name.Equals(nameOrAlias));
+            if (this.Any(e => e.Alias.Equals(string.Empty) && e.Name.Equals(nameOrAlias, IC))) {
+                return this.First(e => e.Alias.Equals(string.Empty) && e.Name.Equals(nameOrAlias, IC));
+            }
+            return this.Any(e => e.Alias.Equals(nameOrAlias, IC) && e.Name.Equals(nameOrAlias, IC)) ?
+                this.First(e => e.Alias.Equals(nameOrAlias, IC) && e.Name.Equals(nameOrAlias, IC)) :
+                this.First(e => e.Alias.Equals(nameOrAlias, IC) || e.Name.Equals(nameOrAlias, IC));
         }
 
         /// <summary>

@@ -44,7 +44,7 @@ namespace Transformalize.Main {
             return relationships;
         }
 
-        private List<Join> GetJoins(RelationshipConfigurationElement r, Entity leftEntity, Entity rightEntity) {
+        private static List<Join> GetJoins(RelationshipConfigurationElement r, Entity leftEntity, Entity rightEntity) {
             if (string.IsNullOrEmpty(r.LeftField)) {
                 return (
                     from JoinConfigurationElement j in r.Join
@@ -62,24 +62,20 @@ namespace Transformalize.Main {
 
             var leftFields = leftEntity.OutputFields();
             var rightFields = rightEntity.OutputFields();
-            var leftHit = leftFields.Any(f => f.Alias.Equals(leftField));
-            var rightHit = rightFields.Any(f => f.Alias.Equals(rightField));
+            var leftHit = leftFields.HaveField(leftEntity.Alias, leftField);
+            var rightHit = rightFields.HaveField(rightEntity.Alias, rightField);
 
-            if (!leftHit && !leftFields.Find(leftField).Any()) {
+            if (!leftHit) {
                 throw new TransformalizeException("The left entity {0} does not have a field named {1} for joining to the right entity {2} with field {3}.", leftEntity.Alias, leftField, rightEntity.Alias, rightField);
             }
 
-            if (!rightHit && !rightFields.Find(rightField).Any()) {
+            if (!rightHit) {
                 throw new TransformalizeException("The right entity {0} does not have a field named {1} for joining to the left entity {2} with field {3}.", rightEntity.Alias, rightField, leftEntity.Alias, leftField);
             }
 
             var join = new Join {
-                LeftField = leftHit
-                        ? leftFields.First(f => f.Alias.Equals(leftField))
-                        : leftFields.Find(leftField).First(),
-                RightField = rightHit
-                        ? rightFields.First(f => f.Alias.Equals(rightField))
-                        : rightFields.Find(rightField).First()
+                LeftField = leftFields.Find(leftEntity.Alias, leftField).First(),
+                RightField = rightFields.Find(rightEntity.Alias, rightField).First()
             };
 
             if (join.LeftField.FieldType.HasFlag(FieldType.MasterKey) || join.LeftField.FieldType.HasFlag(FieldType.PrimaryKey)) {

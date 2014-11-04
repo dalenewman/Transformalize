@@ -32,6 +32,7 @@ namespace Transformalize.Test
     public class TestConfiguration
     {
         [Test]
+        [Ignore("Because this requires a NorthWind database.")]
         public void TestBase()
         {
             var northWind = ProcessFactory.Create("NorthWind.xml")[0];

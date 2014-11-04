@@ -1267,7 +1267,7 @@ It is False#end", templates, parameters);
             var input = new RowsBuilder().Row("time", now).ToOperation();
             var transform = new ToLocalTimeOperation("time", "time", "UTC", "Eastern Standard Time");
             var output = TestOperation(input, transform);
-            Assert.AreEqual(local, output[0]["time"], "Change to your time zone to get this to pass.");
+            Assert.AreEqual(local.ToString(), output[0]["time"].ToString(), "Change to your time zone to get this to pass.");
         }
 
         [Test]

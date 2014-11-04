@@ -12,7 +12,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
 using Transformalize.Libs.fastJSON;
 
 namespace Transformalize.Libs.Rhino.Etl {
@@ -21,27 +20,30 @@ namespace Transformalize.Libs.Rhino.Etl {
     /// </summary>
     [DebuggerDisplay("Count = {items.Count}")]
     [Serializable]
-    public class Row : IEnumerable {
+    public class Row : IEnumerable
+    {
 
         private static readonly Dictionary<Type, List<PropertyInfo>> PropertiesCache = new Dictionary<Type, List<PropertyInfo>>();
         private static readonly Dictionary<Type, List<FieldInfo>> FieldsCache = new Dictionary<Type, List<FieldInfo>>();
 
-        private static readonly StringComparer Ic = StringComparer.InvariantCultureIgnoreCase;
+        public static StringComparer DefaultComparer { get; set; }
         private Hashtable _storage;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Row" /> class.
         /// </summary>
-        public Row() {
-            _storage = new Hashtable(Ic);
+        public Row()
+        {
+            DefaultComparer = StringComparer.Ordinal;
+            _storage = new Hashtable(DefaultComparer);
         }
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Row" /> class.
         /// </summary>
         /// <param name="itemsToClone">The items to clone.</param>
-        protected Row(Hashtable itemsToClone) {
-            _storage = new Hashtable(itemsToClone, Ic);
+        protected Row(IDictionary itemsToClone) {
+            _storage = new Hashtable(itemsToClone, DefaultComparer);
         }
 
 
@@ -70,7 +72,7 @@ namespace Transformalize.Libs.Rhino.Etl {
         /// </summary>
         /// <param name="source">The source row.</param>
         public void Copy(Hashtable source) {
-            _storage = new Hashtable(source, Ic);
+            _storage = new Hashtable(source, DefaultComparer);
         }
 
         /// <summary>

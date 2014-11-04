@@ -24,7 +24,10 @@ using System.Diagnostics.Tracing;
 using NUnit.Framework;
 using Transformalize.Configuration;
 using Transformalize.Configuration.Builders;
+using Transformalize.Libs.EnterpriseLibrary.SemanticLogging;
+using Transformalize.Libs.EnterpriseLibrary.SemanticLogging.Sinks;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Test.Builders;
 
@@ -33,11 +36,13 @@ namespace Transformalize.Test {
     public class TestWarehouse {
         [SetUp]
         public void SetUp() {
-            //LogManager.Configuration.LoggingRules[0].EnableLoggingForLevel(LogLevel.Info);
-            //LogManager.ReconfigExistingLoggers();
+            var console = new ObservableEventListener();
+            console.EnableEvents(TflEventSource.Log, EventLevel.Informational);
+            console.LogToConsole(new LegacyLogFormatter());
         }
 
         [Test]
+        [Ignore("Depends on having a SQL Server database named Junk.")]
         public void TestBug() {
 
             var inventory = GetInitialInventory();
