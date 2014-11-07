@@ -43,47 +43,51 @@ namespace Transformalize.Operations.Transform {
                     var innerRows = new List<Row>();
                     string startKey = null;
 
-                    using (var reader = XmlReader.Create(new StringReader(row[InKey].ToString()), Settings)) {
+                    var xml = row[InKey].ToString().Trim();
 
-                        if (_findRoot) {
-                            do {
+                    if (!xml.Equals(string.Empty)) {
+                        using (var reader = XmlReader.Create(new StringReader(xml), Settings)) {
+
+                            if (_findRoot) {
+                                do {
+                                    reader.Read();
+                                } while (reader.Name != _root);
+                            } else {
                                 reader.Read();
-                            } while (reader.Name != _root);
-                        } else {
-                            reader.Read();
-                        }
+                            }
 
-                        do {
-                            if (_nameMap.ContainsKey(reader.Name)) {
+                            do {
+                                if (_nameMap.ContainsKey(reader.Name)) {
 
-                                // must while here because reader.Read*Xml advances the reader
-                                while (_nameMap.ContainsKey(reader.Name) && reader.IsStartElement()) {
-                                    InnerRow(ref startKey, reader.Name, ref innerRow, ref outerRow, ref innerRows);
+                                    // must while here because reader.Read*Xml advances the reader
+                                    while (_nameMap.ContainsKey(reader.Name) && reader.IsStartElement()) {
+                                        InnerRow(ref startKey, reader.Name, ref innerRow, ref outerRow, ref innerRows);
 
-                                    var field = _nameMap[reader.Name];
-                                    var value = field.ReadInnerXml ? reader.ReadInnerXml() : reader.ReadOuterXml();
-                                    if (value != string.Empty)
-                                        innerRow[field.Alias] = Common.ConversionMap[field.SimpleType](value);
-                                }
+                                        var field = _nameMap[reader.Name];
+                                        var value = field.ReadInnerXml ? reader.ReadInnerXml() : reader.ReadOuterXml();
+                                        if (value != string.Empty)
+                                            innerRow[field.Alias] = Common.ConversionMap[field.SimpleType](value);
+                                    }
 
-                            } else if (_searchAttributes && reader.HasAttributes) {
-                                for (var i = 0; i < reader.AttributeCount; i++) {
-                                    reader.MoveToNextAttribute();
-                                    if (!_nameMap.ContainsKey(reader.Name))
-                                        continue;
+                                } else if (_searchAttributes && reader.HasAttributes) {
+                                    for (var i = 0; i < reader.AttributeCount; i++) {
+                                        reader.MoveToNextAttribute();
+                                        if (!_nameMap.ContainsKey(reader.Name))
+                                            continue;
 
-                                    InnerRow(ref startKey, reader.Name, ref innerRow, ref outerRow, ref innerRows);
+                                        InnerRow(ref startKey, reader.Name, ref innerRow, ref outerRow, ref innerRows);
 
-                                    var field = _nameMap[reader.Name];
-                                    if (!string.IsNullOrEmpty(reader.Value)) {
-                                        innerRow[field.Alias] = Common.ConversionMap[field.SimpleType](reader.Value);
+                                        var field = _nameMap[reader.Name];
+                                        if (!string.IsNullOrEmpty(reader.Value)) {
+                                            innerRow[field.Alias] = Common.ConversionMap[field.SimpleType](reader.Value);
+                                        }
                                     }
                                 }
-                            }
-                            if (_findRoot && !reader.IsStartElement() && reader.Name == _root) {
-                                break;
-                            }
-                        } while (reader.Read());
+                                if (_findRoot && !reader.IsStartElement() && reader.Name == _root) {
+                                    break;
+                                }
+                            } while (reader.Read());
+                        }
                     }
                     AddInnerRow(ref innerRow, ref outerRow, ref innerRows);
                     foreach (var r in innerRows) {

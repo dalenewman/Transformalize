@@ -27,6 +27,7 @@ using System.Linq;
 using System.Text;
 using Transformalize.Extensions;
 using Transformalize.Libs.Dapper;
+using Transformalize.Libs.EnterpriseLibrary.Common.Configuration.Design;
 using Transformalize.Libs.EnterpriseLibrary.SemanticLogging;
 using Transformalize.Libs.EnterpriseLibrary.SemanticLogging.Sinks;
 using Transformalize.Libs.Ninject;
@@ -138,8 +139,7 @@ namespace Transformalize.Main {
 
         public bool VelocityInitialized { get; set; }
 
-        public bool ShouldLog
-        {
+        public bool ShouldLog {
             get { return _shouldLog; }
             set { _shouldLog = value; }
         }
@@ -193,39 +193,54 @@ namespace Transformalize.Main {
         public void SetLog() {
 
             try {
+                if (!ShouldLog || Log == null || Log.Count <= 0)
+                    return;
 
-                if (ShouldLog && Log != null && Log.Count > 0) {
-                    foreach (var log in Log) {
-                        switch (log.Provider) {
-                            case ProviderType.File:
-                                log.Folder = log.Folder.Replace('/', '\\');
-                                log.File = log.File.Replace('/', '\\');
+                foreach (var log in Log) {
+                    switch (log.Provider) {
+                        case ProviderType.File:
+                            log.Folder = log.Folder.Replace('/', '\\');
+                            log.File = log.File.Replace('/', '\\');
+                            log.Folder = (log.Folder.Equals(Common.DefaultValue) ? "logs" : log.Folder).TrimEnd('\\') + "\\";
+                            log.File = (log.File.Equals(Common.DefaultValue) ? "tfl-" + Name + ".log" : log.File).TrimStart('\\');
 
-                                var folder = (log.Folder.Equals(Common.DefaultValue) ? "logs" : log.Folder).TrimEnd('\\') + "\\";
-                                var fileName = (log.File.Equals(Common.DefaultValue) ? "tfl-" + Name + ".log" : log.File).TrimStart('\\');
-                                var fileListener = new ObservableEventListener();
-                                fileListener.EnableEvents(TflEventSource.Log, EventLevel.Informational);
-                                fileListener.LogToRollingFlatFile(folder + fileName, 5000, "yyyy-MM-dd", RollFileExistsBehavior.Increment, RollInterval.Day, new LegacyLogFormatter(), 0, true);
-                                TflLogger.Info(Name, "Log","Writing errors to {0}", folder + fileName);
-                                break;
-                            case ProviderType.Mail:
-                                if (log.Connection == null) {
-                                    throw new TransformalizeException("The mail logger needs to reference a mail connection in <connections/> collection.");
-                                }
-                                var mailListener = new ObservableEventListener();
-                                mailListener.EnableEvents(TflEventSource.Log, EventLevel.Error);
-                                mailListener.LogToEmail(log);
-                                TflLogger.Info(Name,"Log","Mailing errors to {0}", log.To);
-                                break;
-                            default:
-                                throw new TransformalizeException("Log does not support {0} provider. You may only add mail and file providers from the configuration.", log.Provider);
-                        }
-
+                            var fileListener = new ObservableEventListener();
+                            fileListener.EnableEvents(TflEventSource.Log, EventLevel.Informational);
+                            fileListener.LogToRollingFlatFile(log.Folder + log.File, 5000, "yyyy-MM-dd", RollFileExistsBehavior.Increment, RollInterval.Day, new LegacyLogFormatter(), 0, log.Async);
+                            break;
+                        case ProviderType.Mail:
+                            if (log.Connection == null) {
+                                throw new TransformalizeException("The mail logger needs to reference a mail connection in <connections/> collection.");
+                            }
+                            if (log.Subject.Equals(Common.DefaultValue)) {
+                                log.Subject = Name + " " + log.Level;
+                            }
+                            var mailListener = new ObservableEventListener();
+                            mailListener.EnableEvents(TflEventSource.Log, EventLevel.Error);
+                            mailListener.LogToEmail(log);
+                            break;
                     }
 
                 }
             } catch (Exception ex) {
-                TflLogger.Warn(Name, string.Empty, "Troubling handling logging configuration. {0} {1}", ex.Message, ex.StackTrace);
+                if (!ShouldLog || Log == null || Log.Count <= 0)
+                    return;
+                foreach (var log in Log) {
+                    switch (log.Provider) {
+                        case ProviderType.File:
+                            TflLogger.Info(Name, "Log", "Writing errors to {0}", log.Folder + log.File);
+                            break;
+                        case ProviderType.Mail:
+                            TflLogger.Info(Name, "Log", "Mailing errors to {0}", log.To);
+                            break;
+                        default:
+                            TflLogger.Warn(Name, "Log", "Log does not support {0} provider. You may only add mail and file providers from the configuration.", log.Provider);
+                            break;
+                    }
+                }
+                foreach (var exception in ex.FlattenHierarchy()) {
+                    TflLogger.Warn(Name, string.Empty, "Troubling handling logging configuration. {0} {1}", exception.Message, exception.StackTrace);
+                }
             }
 
         }

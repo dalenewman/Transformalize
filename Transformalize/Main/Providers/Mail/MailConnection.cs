@@ -69,8 +69,6 @@ namespace Transformalize.Main.Providers.Mail {
                 _smtpClient = new SmtpClient {
                     Port = port,
                     EnableSsl = EnableSsl,
-                    DeliveryMethod = SmtpDeliveryMethod.Network,
-                    UseDefaultCredentials = true,
                     Host = Server
                 };
             } else {

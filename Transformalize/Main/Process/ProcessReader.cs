@@ -131,7 +131,8 @@ namespace Transformalize.Main {
                     To = logElement.To,
                     Layout = logElement.Layout,
                     File = logElement.File,
-                    Folder = logElement.Folder
+                    Folder = logElement.Folder,
+                    Async = logElement.Async
                 };
 
                 if (logElement.Connection != Common.DefaultValue) {

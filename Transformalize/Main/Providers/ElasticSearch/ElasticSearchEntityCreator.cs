@@ -125,17 +125,17 @@ namespace Transformalize.Main.Providers.ElasticSearch {
         public Dictionary<string, string> GetFieldMap(Entity entity) {
             var map = new Dictionary<string, string>();
             foreach (var field in entity.OutputFields()) {
-                var alias = field.Alias.ToLower();
+                var aliasLower = field.Alias.ToLower();
                 if (field.SimpleType.Equals("string")) {
                     foreach (var searchType in field.SearchTypes) {
-                        if (map.ContainsKey(alias)) {
-                            map[alias + searchType.Name.ToLower()] = alias;
+                        if (map.ContainsKey(aliasLower)) {
+                            map[aliasLower + searchType.Name.ToLower()] = field.Alias;
                         } else {
-                            map[alias] = alias;
+                            map[aliasLower] = field.Alias;
                         }
                     }
                 } else {
-                    map[alias] = alias;
+                    map[aliasLower] = field.Alias;
                 }
             }
             if (!map.ContainsKey("tflbatchid")) {

@@ -1,7 +1,6 @@
 ﻿using System;
 using Transformalize.Libs.EnterpriseLibrary.SemanticLogging;
 using Transformalize.Main;
-using Transformalize.Main.Providers.Mail;
 
 namespace Transformalize.Logging {
 

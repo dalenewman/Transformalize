@@ -37,6 +37,7 @@ namespace Transformalize.Configuration {
         private const string SUBJECT = "subject";
         private const string FILE = "file";
         private const string FOLDER = "folder";
+        private const string ASYNC = "async";
 
         [ConfigurationProperty(NAME, IsRequired = true)]
         public string Name {
@@ -68,6 +69,11 @@ namespace Transformalize.Configuration {
             set { this[FOLDER] = value; }
         }
 
+        [ConfigurationProperty(ASYNC, IsRequired = false, DefaultValue = false)]
+        public bool Async {
+            get { return (bool)this[ASYNC]; }
+            set { this[ASYNC] = value; }
+        }
         [ConfigurationProperty(SUBJECT, IsRequired = false, DefaultValue = Common.DefaultValue)]
         public string Subject {
             get { return this[SUBJECT] as string; }

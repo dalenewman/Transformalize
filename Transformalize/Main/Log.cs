@@ -13,7 +13,7 @@ namespace Transformalize.Main {
         private string _to = Common.DefaultValue;
         private EventLevel _level = EventLevel.Informational;
         private ProviderType _provider = ProviderType.Console;
-
+        public bool Async { get; set; }
 
         public string Name {
             get { return _name; }
@@ -61,5 +61,6 @@ namespace Transformalize.Main {
             get { return _folder; }
             set { _folder = value; }
         }
+
     }
 }

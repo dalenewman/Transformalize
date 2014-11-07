@@ -15,7 +15,7 @@ namespace Transformalize.Logging {
 
         public EmailSink(Log log) {
             _log = log;
-            _mail = (MailConnection) log.Connection;
+            _mail = (MailConnection)log.Connection;
         }
 
         public void OnNext(EventEntry entry) {
@@ -40,7 +40,11 @@ namespace Transformalize.Logging {
                 }
 
                 try {
-                    await client.SendMailAsync(message).ConfigureAwait(false);
+                    if (_log.Async) {
+                        await client.SendMailAsync(message).ConfigureAwait(false);
+                    } else {
+                        client.Send(message);
+                    }
                 } catch (SmtpException e) {
                     SemanticLoggingEventSource.Log.CustomSinkUnhandledFault("SMTP error sending email: " + e.Message);
                 } catch (InvalidOperationException e) {
