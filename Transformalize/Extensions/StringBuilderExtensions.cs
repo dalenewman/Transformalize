@@ -144,6 +144,12 @@ namespace Transformalize.Extensions {
             return false;
         }
 
+        public static void Concat(this StringBuilder sb, params object[] args) {
+            foreach (var obj in args) {
+                sb.Append(obj);
+            }
+        }
+
         public static bool EndsWith(this StringBuilder sb, string value) {
             var sbLen = sb.Length;
             var valLen = value.Length;
@@ -176,7 +182,7 @@ namespace Transformalize.Extensions {
             }
         }
 
-        public static void Push(this StringBuilder sb, Func<char,bool> selector) {
+        public static void Push(this StringBuilder sb, Func<char, bool> selector) {
             var count = 0;
             var numbers = new char[sb.Length];
             for (var i = 0; i < sb.Length; i++) {

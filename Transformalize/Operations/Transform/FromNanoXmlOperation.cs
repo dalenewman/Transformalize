@@ -36,15 +36,22 @@ namespace Transformalize.Operations.Transform {
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
                 if (ShouldRun(row)) {
+
+                    var xml = row[InKey].ToString();
+                    if (xml.Equals(string.Empty)) {
+                        yield return row;
+                        continue;
+                    }
+
                     var count = 0;
-                    var xml = new NanoXmlDocument(row[InKey].ToString());
-                    if (_elements.ContainsKey(xml.RootNode.Name)) {
-                        var field = _elements[xml.RootNode.Name];
-                        row[field.Alias] = _converter[field.SimpleType](xml.RootNode.Value ?? (field.ReadInnerXml ? xml.RootNode.InnerText() : xml.RootNode.ToString()));
+                    var doc = new NanoXmlDocument(xml);
+                    if (_elements.ContainsKey(doc.RootNode.Name)) {
+                        var field = _elements[doc.RootNode.Name];
+                        row[field.Alias] = _converter[field.SimpleType](doc.RootNode.Value ?? (field.ReadInnerXml ? doc.RootNode.InnerText() : doc.RootNode.ToString()));
                         count++;
                     }
 
-                    var subNodes = xml.RootNode.SubNodes.ToArray();
+                    var subNodes = doc.RootNode.SubNodes.ToArray();
                     while (subNodes.Any()) {
                         var nextNodes = new List<NanoXmlNode>();
                         foreach (var node in subNodes) {

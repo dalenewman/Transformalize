@@ -1,5 +1,5 @@
 ﻿using System;
-using Transformalize.Libs.EnterpriseLibrary.SemanticLogging;
+using Transformalize.Libs.SemanticLogging;
 using Transformalize.Main;
 
 namespace Transformalize.Logging {

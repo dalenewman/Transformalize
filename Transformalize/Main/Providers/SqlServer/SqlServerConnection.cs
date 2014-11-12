@@ -22,6 +22,7 @@
 
 using System;
 using System.Data;
+using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Logging;
@@ -39,6 +40,7 @@ namespace Transformalize.Main.Providers.SqlServer {
             Type = ProviderType.SqlServer;
             L = "[";
             R = "]";
+            TextQualifier = "'";
             IsDatabase = true;
             InsertMultipleRows = true;
             Top = true;
@@ -83,47 +85,59 @@ namespace Transformalize.Main.Providers.SqlServer {
 
         public override string KeyRangeQuery(Entity entity) {
 
-            const string sql = @"
+            const string pattern = @"
                 SELECT {0}
                 FROM [{1}].[{2}] WITH (NOLOCK)
                 WHERE [{3}] BETWEEN @Begin AND @End
             ";
 
-            return string.Format(
-                sql,
+            var sql = string.Format(
+                pattern,
                 string.Join(", ", entity.SelectKeys(this)),
-                entity.Schema,
+                string.IsNullOrEmpty(entity.Schema) ? DefaultSchema : entity.Schema,
                 entity.Name,
                 entity.Version.Name
                 );
+
+
+            if (entity.Filters.Any()) {
+                sql += " AND " + entity.Filters.ResolveExpression(TextQualifier);
+            }
+
+            return sql;
         }
 
         public override string KeyQuery(Entity entity) {
 
-            const string sql = @"
+            const string format = @"
                 SELECT {0}
                 FROM [{1}].[{2}] WITH (NOLOCK)
                 WHERE [{3}] <= @End
             ";
 
-            return string.Format(
-                sql,
+            var sql = string.Format(
+                format,
                 string.Join(", ", entity.SelectKeys(this)),
-                entity.Schema,
+                string.IsNullOrEmpty(entity.Schema) ? DefaultSchema : entity.Schema,
                 entity.Name,
                 entity.Version.Name
             );
+
+            if (entity.Filters.Any()) {
+                sql += " AND " + entity.Filters.ResolveExpression(TextQualifier);
+            }
+
+            return sql;
         }
 
         public override string KeyAllQuery(Entity entity) {
             const string format = @"
-                SELECT {0} FROM [{1}].[{2}]
-            ";
+                SELECT {0} FROM [{1}].[{2}]";
 
             var sql = string.Format(
                 format,
                 string.Join(", ", entity.SelectKeys(this)),
-                entity.Schema,
+                string.IsNullOrEmpty(entity.Schema) ? this.DefaultSchema : entity.Schema,
                 entity.Name
             );
 
@@ -134,6 +148,10 @@ namespace Transformalize.Main.Providers.SqlServer {
             if (entity.Sample > 0m && entity.Sample < 100m && TableSample && !entity.Sampled) {
                 entity.Sampled = true;
                 sql += string.Format(" TABLESAMPLE ({0:##} PERCENT)", entity.Sample);
+            }
+
+            if (entity.Filters.Any()) {
+                sql += " WHERE " + entity.Filters.ResolveExpression(TextQualifier);
             }
             return sql;
         }

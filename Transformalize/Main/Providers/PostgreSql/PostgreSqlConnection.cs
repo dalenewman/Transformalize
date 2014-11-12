@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Providers.Sql;
@@ -16,6 +17,7 @@ namespace Transformalize.Main.Providers.PostgreSql {
             Type = ProviderType.PostgreSql;
             L = "\"";
             R = "\"";
+            TextQualifier = "'";
             IsDatabase = true;
             InsertMultipleRows = true;
             Views = true;
@@ -30,11 +32,19 @@ namespace Transformalize.Main.Providers.PostgreSql {
         }
 
         public override string KeyAllQuery(Entity entity) {
-            return string.Format(
-                @"SELECT {0} FROM {1};",
+            var sql = string.Format(
+                @"SELECT {0} FROM {1} ",
                 string.Join(", ", entity.SelectKeys(this)),
                 Enclose(entity.Name)
             );
+
+            if (entity.Filters.Any()) {
+                sql += " WHERE " + entity.Filters.ResolveExpression(TextQualifier);
+            }
+
+            sql += ";";
+            return sql;
+
         }
 
         public override void WriteEndVersion(Process process, AbstractConnection input, Entity entity, bool force = false) {
@@ -83,23 +93,34 @@ namespace Transformalize.Main.Providers.PostgreSql {
         }
 
         public override string KeyRangeQuery(Entity entity) {
-            return string.Format(
-                @"SELECT {0} FROM {1} WHERE {2} BETWEEN @Begin AND @End;",
+            var sql = string.Format(
+                @"SELECT {0} FROM {1} WHERE {2} BETWEEN @Begin AND @End ",
                 string.Join(", ", entity.SelectKeys(this)),
                 Enclose(entity.Name),
                 Enclose(entity.Version.Name)
             );
 
+            if (entity.Filters.Any()) {
+                sql += " AND " + entity.Filters.ResolveExpression(TextQualifier);
+            }
+
+            sql += ";";
+            return sql;
         }
 
         public override string KeyQuery(Entity entity) {
-            return string.Format(
-                @"SELECT {0} FROM {1} WHERE {2} <= @End;",
+            var sql = string.Format(
+                @"SELECT {0} FROM {1} WHERE {2} <= @End ",
                 string.Join(", ", entity.SelectKeys(this)),
                 Enclose(entity.Name),
                 Enclose(entity.Version.Name)
             );
 
+            if (entity.Filters.Any()) {
+                sql += " AND " + entity.Filters.ResolveExpression(TextQualifier);
+            }
+            sql += ";";
+            return sql;
         }
 
         public override void LoadBeginVersion(Entity entity) {

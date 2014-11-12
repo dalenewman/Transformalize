@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Transformalize.Extensions;
 using Transformalize.Libs.Rhino.Etl;
@@ -64,30 +65,30 @@ namespace Transformalize.Main.Providers {
         }
 
         public static string Select(Entity entity, AbstractConnection connection) {
-            var sql = Select(entity.Fields, entity.Name, connection, entity.Schema, entity.NoLock, entity.Sampled ? 100m : entity.Sample);
+
+            var maxDop = connection.MaxDop ? " OPTION (MAXDOP 2)" : string.Empty;
+            var withNoLock = entity.NoLock && connection.NoLock ? " WITH(NOLOCK)" : string.Empty;
+
+            var tableSample = string.Empty;
+            if (entity.Sample > 0m && entity.Sample < 100m && connection.TableSample) {
+                TflLogger.Info(entity.ProcessName, entity.Name, "Sample enforced at query level: {0:##} percent.", entity.Sample);
+                tableSample = string.Format(" TABLESAMPLE ({0:##} PERCENT)", entity.Sample);
+            }
+
+            var where = string.Empty;
+            if (entity.Filters.Any()) {
+                where = " WHERE " + entity.Filters.ResolveExpression(connection.TextQualifier);
+            }
+
+            var sqlPattern = "\r\nSELECT\r\n    {0}\r\nFROM {1}" + tableSample + withNoLock + where + maxDop + ";";
+            var columns = new FieldSqlWriter(entity.Fields.WithInput()).Select(connection).Write(",\r\n    ");
+
+            var sql = string.Format(sqlPattern, columns, SafeTable(entity.Name, connection, entity.Schema));
+
             if (entity.Sample > 0m && entity.Sample < 100m && connection.TableSample) {
                 entity.Sampled = true;
             }
             return sql;
-        }
-
-        public static string Select(Fields fields, string table, AbstractConnection connection, string schema, bool noLock = false, Decimal sample = 100m) {
-
-            var maxDop = connection.MaxDop ? " OPTION (MAXDOP 2)" : string.Empty;
-            var withNoLock = noLock && connection.NoLock ? " WITH(NOLOCK)" : string.Empty;
-
-            var tableSample = string.Empty;
-            if (sample > 0m && sample < 100m && connection.TableSample) {
-                var process = fields.Any() ? fields[0].Process : string.Empty;
-                var entity = fields.Any() ? fields[0].Entity : string.Empty;
-                TflLogger.Info(process, entity, "Sample enforced at query level: {0:##} percent.", sample);
-                tableSample = string.Format(" TABLESAMPLE ({0:##} PERCENT)", sample);
-            }
-
-            var sqlPattern = "\r\nSELECT\r\n    {0}\r\nFROM {1}" + tableSample + withNoLock + maxDop + ";";
-            var columns = new FieldSqlWriter(fields).Input().Select(connection).Write(",\r\n    ");
-
-            return string.Format(sqlPattern, columns, SafeTable(table, connection, schema));
         }
 
         private static string InsertUnionedValues(int size, string name, Fields fields, IEnumerable<Row> rows, AbstractConnection connection) {

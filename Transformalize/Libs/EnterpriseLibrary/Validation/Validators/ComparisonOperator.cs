@@ -9,6 +9,8 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+// ReSharper disable InconsistentNaming
+
 namespace Transformalize.Libs.EnterpriseLibrary.Validation.Validators
 {
 	/// <summary>
@@ -21,7 +23,7 @@ namespace Transformalize.Libs.EnterpriseLibrary.Validation.Validators
 		/// </summary>
 		Equal,
 
-		/// <summary>
+        /// <summary>
 		/// Comparison for not equal.
 		/// </summary>
 		NotEqual,
@@ -44,6 +46,7 @@ namespace Transformalize.Libs.EnterpriseLibrary.Validation.Validators
 		/// <summary>
 		/// Comparison for lesser or equal.
 		/// </summary>
-		LessThanEqual
+		LessThanEqual,
+
 	}
 }

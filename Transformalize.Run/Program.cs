@@ -23,7 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
-using Transformalize.Libs.EnterpriseLibrary.SemanticLogging;
+using Transformalize.Libs.SemanticLogging;
 using Transformalize.Logging;
 using Transformalize.Main;
 using Process = Transformalize.Main.Process;

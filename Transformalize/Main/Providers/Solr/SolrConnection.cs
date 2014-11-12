@@ -21,6 +21,7 @@ namespace Transformalize.Main.Providers.Solr {
             : base(element, dependencies) {
             Type = ProviderType.Solr;
             IsDatabase = true;
+            TextQualifier = string.Empty;
             _solrUrl = element.NormalizeUrl(DEFAULT_PORT);
 
             if (!element.File.Equals(string.Empty)) {

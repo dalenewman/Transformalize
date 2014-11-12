@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Transformalize.Libs.EnterpriseLibrary.SemanticLogging;
+using Transformalize.Libs.SemanticLogging;
 
 namespace Transformalize.Logging {
 

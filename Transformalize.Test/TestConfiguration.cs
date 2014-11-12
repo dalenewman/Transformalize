@@ -20,9 +20,12 @@
 
 #endregion
 
+using System.Diagnostics.Tracing;
 using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
+using Transformalize.Libs.SemanticLogging;
+using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Runner;
 
@@ -31,6 +34,14 @@ namespace Transformalize.Test
     [TestFixture]
     public class TestConfiguration
     {
+
+        [SetUp]
+        public void SetUp() {
+            var console = new ObservableEventListener();
+            console.EnableEvents(TflEventSource.Log, EventLevel.Informational);
+            console.LogToConsole(new LegacyLogFormatter());
+        }
+
         [Test]
         [Ignore("Because this requires a NorthWind database.")]
         public void TestBase()
@@ -120,6 +131,53 @@ namespace Transformalize.Test
             Assert.AreEqual("v3", actions[2].Attribute("action").Value);
 
         }
+
+        [Test]
+        public void TestIntegratedEntityFilters() {
+            const string xml = @"<transformalize>
+    <processes>
+        <add name=""process"">
+            <connections>
+                <add name=""input"" database=""master"" />
+            </connections>
+            <entities>
+                <add name=""entity"" version=""version"">
+                    <filter>
+                        <add left=""field1"" right=""literal1"" operator=""NotEqual"" continuation=""and"" />
+                        <add left=""field2"" right=""6"" operator=""GreaterThan"" continuation=""OR"" />
+                        <add expression=""field3 != 'literal3'"" />
+                    </filter>
+                    <fields>
+                        <add name=""field1"" primary-key=""true"" />
+                        <add name=""field2"" type=""int"" />
+                        <add name=""field3"" />
+                        <add name=""version"" type=""byte[]"" length=""8"" />
+                    </fields>
+                </add>
+            </entities>
+        </add>
+    </processes>
+</transformalize>";
+            var process = ProcessFactory.CreateSingle(xml);
+
+            Assert.AreEqual("process", process.Name);
+            Assert.AreEqual("entity", process.Entities.First().Name);
+
+            var filters = process.Entities.First().Filters;
+
+            Assert.AreEqual(3, filters.Count);
+            Assert.AreEqual("field1 != 'literal1'", filters[0].ResolveExpression("'"));
+            Assert.AreEqual("field2 > 6", filters[1].ResolveExpression("'"));
+            Assert.AreEqual("field3 != 'literal3'", filters[2].ResolveExpression("'"));
+
+            Assert.AreEqual("field1 != 'literal1' AND field2 > 6 OR field3 != 'literal3'", filters.ResolveExpression("'"));
+
+            var sql = process.Entities[0].Input[0].Connection.KeyAllQuery(process.Entities[0]);
+
+            Assert.AreEqual(@"
+                SELECT [field1] FROM [dbo].[entity] WHERE field1 != 'literal1' AND field2 > 6 OR field3 != 'literal3'", sql);
+        }
+
 
     }
 }

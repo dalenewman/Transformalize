@@ -21,8 +21,8 @@
 #endregion
 
 using NUnit.Framework;
-using Transformalize.Libs.EnterpriseLibrary.SemanticLogging;
-using Transformalize.Libs.EnterpriseLibrary.SemanticLogging.Utility;
+using Transformalize.Libs.SemanticLogging;
+using Transformalize.Libs.SemanticLogging.EventSourceAnalyzer;
 
 namespace Transformalize.Test {
 

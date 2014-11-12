@@ -26,6 +26,7 @@ using System.Diagnostics.Tracing;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
+using Transformalize.Libs.Microsoft.System.Web.Razor.Text;
 using Transformalize.Libs.Ninject;
 using Transformalize.Libs.NVelocity.App;
 using Transformalize.Libs.RazorEngine;
@@ -67,6 +68,7 @@ namespace Transformalize.Main {
                 StarEnabled = _element.StarEnabled,
                 TimeZone = string.IsNullOrEmpty(_element.TimeZone) ? TimeZoneInfo.Local.Id : _element.TimeZone,
                 PipelineThreading = (PipelineThreading)Enum.Parse(typeof(PipelineThreading), _element.PipelineThreading, true),
+                Parallel =  _element.Parallel,
                 Kernal = new StandardKernel(new NinjectBindings(_element))
             };
 
@@ -82,8 +84,7 @@ namespace Transformalize.Main {
                 connectionFactory.Providers[element.Name.ToLower()] = element.Type;
             }
             _process.Connections = connectionFactory.Create(_element.Connections);
-            if (!_process.Connections.ContainsKey("output"))
-            {
+            if (!_process.Connections.ContainsKey("output")) {
                 TflLogger.Warn(_processName, string.Empty, "No output connection detected.  Defaulting to internal.");
                 _process.OutputConnection = connectionFactory.Create(new ConnectionConfigurationElement() { Name = "output", Provider = "internal" });
             } else {
@@ -123,39 +124,52 @@ namespace Transformalize.Main {
             if (element.Log.Count == 0)
                 return;
 
+            var fileLogs = new List<Log>();
+
             foreach (LogConfigurationElement logElement in element.Log) {
-                var log = new Log {
-                    Name = logElement.Name,
-                    Subject = logElement.Subject,
-                    From = logElement.From,
-                    To = logElement.To,
-                    Layout = logElement.Layout,
-                    File = logElement.File,
-                    Folder = logElement.Folder,
-                    Async = logElement.Async
-                };
-
-                if (logElement.Connection != Common.DefaultValue) {
-                    if (process.Connections.ContainsKey(logElement.Connection)) {
-                        log.Connection = process.Connections[logElement.Connection];
-                        if (log.Connection.Type == ProviderType.File && log.File.Equals(Common.DefaultValue)) {
-                            log.File = log.Connection.File;
-                        }
-                    } else {
-                        throw new TransformalizeException("You are referencing an invalid connection name in your log configuration.  {0} is not confiured in <connections/>.", logElement.Connection);
-                    }
+                var log = MapLog(process, logElement);
+                if (log.Provider == ProviderType.File) {
+                    fileLogs.Add(log);
+                } else {
+                    process.Log.Add(log);
                 }
-
-                try {
-                    EventLevel eventLevel;
-                    Enum.TryParse(logElement.LogLevel, out eventLevel);
-                    log.Level = eventLevel;
-                    log.Provider = (ProviderType)Enum.Parse(typeof(ProviderType), logElement.Provider, true);
-                } catch (Exception ex) {
-                    throw new TransformalizeException("Log configuration invalid. {0}", ex.Message);
-                }
-                process.Log.Add(log);
             }
+
+            process.Log.AddRange(fileLogs);
+        }
+
+        private static Log MapLog(Process process, LogConfigurationElement logElement) {
+            var log = new Log {
+                Name = logElement.Name,
+                Subject = logElement.Subject,
+                From = logElement.From,
+                To = logElement.To,
+                Layout = logElement.Layout,
+                File = logElement.File,
+                Folder = logElement.Folder,
+                Async = logElement.Async
+            };
+
+            if (logElement.Connection != Common.DefaultValue) {
+                if (process.Connections.ContainsKey(logElement.Connection)) {
+                    log.Connection = process.Connections[logElement.Connection];
+                    if (log.Connection.Type == ProviderType.File && log.File.Equals(Common.DefaultValue)) {
+                        log.File = log.Connection.File;
+                    }
+                } else {
+                    throw new TransformalizeException("You are referencing an invalid connection name in your log configuration.  {0} is not confiured in <connections/>.", logElement.Connection);
+                }
+            }
+
+            try {
+                EventLevel eventLevel;
+                Enum.TryParse(logElement.LogLevel, out eventLevel);
+                log.Level = eventLevel;
+                log.Provider = (ProviderType)Enum.Parse(typeof(ProviderType), logElement.Provider, true);
+            } catch (Exception ex) {
+                throw new TransformalizeException("Log configuration invalid. {0}", ex.Message);
+            }
+            return log;
         }
 
         private static ProcessConfigurationElement Adapt(ProcessConfigurationElement process, IEnumerable<string> transformToFields) {

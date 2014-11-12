@@ -54,6 +54,7 @@ namespace Transformalize.Configuration {
         private const string MODE = "mode";
         private const string FILE_INSPECTION = "file-inspection";
         private const string LOG = "log";
+        private const string PARALLEL = "parallel";
 
         /// <summary>
         /// A name (of your choosing) to identify the process.
@@ -200,6 +201,17 @@ namespace Transformalize.Configuration {
         [ConfigurationProperty(TEMPLATE_CONTENT_TYPE, IsRequired = false, DefaultValue = "raw")]
         public string TemplateContentType {
             get { return this[TEMPLATE_CONTENT_TYPE] as string; }
+            set { this[TEMPLATE_CONTENT_TYPE] = value; }
+        }
+
+        /// <summary>
+        /// Optional.  Default is `true`
+        /// 
+        /// If true, process entities in parallel.  If false, process them one by one in their configuration order.
+        /// </summary>
+        [ConfigurationProperty(PARALLEL, IsRequired = false, DefaultValue = "true")]
+        public bool Parallel {
+            get { return (bool)this[PARALLEL]; }
             set { this[TEMPLATE_CONTENT_TYPE] = value; }
         }
 

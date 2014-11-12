@@ -21,9 +21,11 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
+using Transformalize.Libs.DBDiff.Schema.SqlServer2005.Model;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.Rhino.Etl;
@@ -121,25 +123,68 @@ namespace Transformalize.Main {
 
             //depend on fields
             LoadVersion(element, entity);
+
+            LoadFilters(element.Filter, entity);
+
             entity.Input.AddRange(PrepareIo(element.Input, entity.Fields));
             entity.Output = PrepareIo(element.Output, entity.Fields);
 
             return entity;
         }
 
-        private PipelineThreading DetermineThreading(EntityConfigurationElement element)
-        {
+        private static void LoadFilters(IEnumerable filter, Entity entity) {
+            var validator = ValidationFactory.CreateValidator<FilterConfigurationElement>();
+
+            foreach (FilterConfigurationElement element in filter) {
+
+                var results = validator.Validate(element);
+                if (!results.IsValid) {
+                    foreach (var result in results) {
+                        TflLogger.Error(entity.ProcessName, entity.Alias, result.Message);
+                    }
+                    throw new TransformalizeException("Filter configuration is invalid.  See error log.");
+                }
+
+                var item = new Filter();
+
+                if (!string.IsNullOrEmpty(element.Expression)) {
+                    item.Expression = element.Expression;
+                    entity.Filters.Add(item);
+                    continue;
+                }
+
+                if (!string.IsNullOrEmpty(element.Left)) {
+                    if (entity.HasField(element.Left)) {
+                        item.LeftField = entity.FindField(element.Left).First();
+                    } else {
+                        item.LeftLiteral = element.Left;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(element.Right)) {
+                    if (entity.HasField(element.Right)) {
+                        item.RightField = entity.FindField(element.Right).First();
+                    } else {
+                        item.RightLiteral = element.Right;
+                    }
+                }
+
+                item.Operator = (ComparisonOperator)Enum.Parse(typeof(ComparisonOperator), element.Operator, true);
+                item.Continuation = (Continuation)Enum.Parse(typeof(Continuation), element.Continuation, true);
+                entity.Filters.Add(item);
+            }
+
+        }
+
+        private PipelineThreading DetermineThreading(EntityConfigurationElement element) {
             var threading = PipelineThreading.Default;
-            if (_process.PipelineThreading != PipelineThreading.Default)
-            {
+            if (_process.PipelineThreading != PipelineThreading.Default) {
                 threading = _process.PipelineThreading;
             }
 
-            if (!element.PipelineThreading.Equals("Default"))
-            {
+            if (!element.PipelineThreading.Equals("Default")) {
                 PipelineThreading entityThreading;
-                if (Enum.TryParse(element.PipelineThreading, true, out entityThreading))
-                {
+                if (Enum.TryParse(element.PipelineThreading, true, out entityThreading)) {
                     threading = entityThreading;
                 }
             }
@@ -150,10 +195,10 @@ namespace Transformalize.Main {
 
             if (_process.Mode != "metadata" && element.Fields.Count == 0 && _process.Connections.ContainsKey(element.Connection)) {
                 try {
-                    
+
                     TflLogger.Info(entity.ProcessName, entity.Name, "Detecting fields.");
                     var connection = _process.Connections[element.Connection];
-                    var fields = connection.GetEntitySchema( _process, entity, entityIndex == 0);
+                    var fields = connection.GetEntitySchema(_process, entity, entityIndex == 0);
                     if (fields.Any()) {
                         foreach (var field in fields) {
                             if (String.IsNullOrEmpty(field.Label) || field.Label.Equals(field.Alias)) {

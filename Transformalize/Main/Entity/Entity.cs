@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.Linq;
+using Transformalize.Libs.FileHelpers.Events;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Providers;
@@ -87,6 +88,7 @@ namespace Transformalize.Main {
             Input = new List<NamedConnection>();
             DetectChanges = true;
             Compare = true;
+            Filters = new Filters();
         }
 
         public IEnumerable<Row> Rows {
@@ -108,6 +110,7 @@ namespace Transformalize.Main {
         public bool VariableLength { get; set; }
         public bool Sampled { get; set; }
         public short Index { get; set; }
+        public Filters Filters { get; set; }
 
         public string FirstKey() {
             return PrimaryKey.First().Alias;
@@ -216,5 +219,22 @@ namespace Transformalize.Main {
         public string SchemaPrefix(string l, string r) {
             return NeedsSchema() ? string.Concat(l, Schema, r, ".") : string.Empty;
         }
+
+        public bool HasField(string nameOrAlias) {
+            return this.Fields.HaveField(this.Alias, nameOrAlias);
+        }
+
+        public bool HasCalculatedField(string name) {
+            return this.CalculatedFields.HaveField(this.Alias, name);
+        }
+
+        public IEnumerable<Field> FindField(string nameOrAlias) {
+            return this.Fields.Find(this.Alias, nameOrAlias);
+        }
+
+        public IEnumerable<Field> FindCalculatedField(string name) {
+            return this.CalculatedFields.Find(this.Alias, name);
+        }
+
     }
 }

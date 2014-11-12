@@ -86,6 +86,7 @@ namespace Transformalize.Main.Providers {
         public string Encoding { get; set; }
         public string Version { get; set; }
         public ConnectionIs Is { get; set; }
+        public string TextQualifier { get; set; }
 
         public ConnectionStringProperties ConnectionStringProperties {
             get { return _connectionStringProperties; }

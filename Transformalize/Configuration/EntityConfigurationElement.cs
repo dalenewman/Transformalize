@@ -35,6 +35,7 @@ namespace Transformalize.Configuration {
         private const string ALIAS = "alias";
         private const string CONNECTION = "connection";
         private const string FIELDS = "fields";
+        private const string FILTER = "filter";
         private const string CALCULATED_FIELDS = "calculated-fields";
         private const string VERSION = "version";
         private const string PREFIX = "prefix";
@@ -137,6 +138,11 @@ namespace Transformalize.Configuration {
         [ConfigurationProperty(FIELDS)]
         public FieldElementCollection Fields {
             get { return this[FIELDS] as FieldElementCollection; }
+        }
+
+        [ConfigurationProperty(FILTER)]
+        public FilterElementCollection Filter {
+            get { return this[FILTER] as FilterElementCollection; }
         }
 
         [ConfigurationProperty(CALCULATED_FIELDS)]

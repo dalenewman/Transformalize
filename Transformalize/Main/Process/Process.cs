@@ -23,16 +23,17 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Transformalize.Extensions;
 using Transformalize.Libs.Dapper;
-using Transformalize.Libs.EnterpriseLibrary.Common.Configuration.Design;
-using Transformalize.Libs.EnterpriseLibrary.SemanticLogging;
-using Transformalize.Libs.EnterpriseLibrary.SemanticLogging.Sinks;
 using Transformalize.Libs.Ninject;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Libs.SemanticLogging;
+using Transformalize.Libs.SemanticLogging.TextFile;
+using Transformalize.Libs.SemanticLogging.TextFile.Sinks;
 using Transformalize.Logging;
 using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.File;
@@ -76,6 +77,7 @@ namespace Transformalize.Main {
         private long _logRows = 10000;
         private List<Log> _logList = new List<Log>();
         private bool _shouldLog = true;
+        private bool _parallel = true;
 
         // properties
         public string TimeZone { get; set; }
@@ -142,6 +144,12 @@ namespace Transformalize.Main {
         public bool ShouldLog {
             get { return _shouldLog; }
             set { _shouldLog = value; }
+        }
+
+        public bool Parallel
+        {
+            get { return _parallel; }
+            set { _parallel = value; }
         }
 
         //constructor
@@ -239,7 +247,12 @@ namespace Transformalize.Main {
                     }
                 }
                 foreach (var exception in ex.FlattenHierarchy()) {
-                    TflLogger.Warn(Name, string.Empty, "Troubling handling logging configuration. {0} {1}", exception.Message, exception.StackTrace);
+                    if (exception is IOException) {
+                        TflLogger.Warn(Name, string.Empty, exception.Message);
+
+                    } else {
+                        TflLogger.Warn(Name, string.Empty, "Troubling handling logging configuration. {0} {1} {2}", exception.Message, exception.StackTrace, exception.GetType());
+                    }
                 }
             }
 

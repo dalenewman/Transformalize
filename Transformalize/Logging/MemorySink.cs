@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Transformalize.Libs.EnterpriseLibrary.SemanticLogging;
-using Transformalize.Libs.EnterpriseLibrary.SemanticLogging.Formatters;
+using Transformalize.Libs.SemanticLogging;
+using Transformalize.Libs.SemanticLogging.Formatters;
 
 namespace Transformalize.Logging {
 

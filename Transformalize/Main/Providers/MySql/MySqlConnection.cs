@@ -22,6 +22,7 @@
 
 using System;
 using System.Data;
+using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Providers.Sql;
@@ -36,6 +37,7 @@ namespace Transformalize.Main.Providers.MySql {
             Type = ProviderType.MySql;
             L = "`";
             R = "`";
+            TextQualifier = "'";
             IsDatabase = true;
             Views = true;
             ConnectionStringProperties.UserProperty = "Uid";
@@ -46,17 +48,22 @@ namespace Transformalize.Main.Providers.MySql {
         }
 
         public override string KeyAllQuery(Entity entity) {
-            const string sql = @"
+            const string format = @"
                 SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
-                SELECT {0} FROM `{1}`;
-                COMMIT;
-            ";
+                SELECT {0} FROM `{1}` ";
 
-            return string.Format(
-                sql,
+            var sql = string.Format(
+                format,
                 string.Join(", ", entity.SelectKeys(this)),
                 entity.Name
             );
+
+            if (entity.Filters.Any()) {
+                sql += " WHERE " + entity.Filters.ResolveExpression(TextQualifier);
+            }
+
+            sql += ";COMMIT;";
+            return sql;
         }
 
         public override void WriteEndVersion(Process process, AbstractConnection input, Entity entity, bool force = false) {
@@ -84,21 +91,25 @@ namespace Transformalize.Main.Providers.MySql {
         }
 
         public override string KeyQuery(Entity entity) {
-            const string sql = @"
+            const string format = @"
                 SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
                 SELECT {0}
                 FROM `{1}`
-                WHERE `{2}` <= @End;
-                COMMIT;
-            ";
+                WHERE `{2}` <= @End ";
 
-            return string.Format(
-                sql,
+            var sql = string.Format(
+                format,
                 string.Join(", ", entity.SelectKeys(this)),
                 entity.Name,
                 entity.Version.Name
                 );
 
+            if (entity.Filters.Any()) {
+                sql += " AND " + entity.Filters.ResolveExpression(TextQualifier);
+            }
+
+            sql += ";COMMIT;";
+            return sql;
         }
 
         public override int NextBatchId(string processName) {
@@ -124,20 +135,25 @@ namespace Transformalize.Main.Providers.MySql {
 
         public override string KeyRangeQuery(Entity entity) {
 
-            const string sql = @"
+            const string format = @"
                 SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
                 SELECT {0}
                 FROM `{1}`
-                WHERE `{2}` BETWEEN @Begin AND @End;
-                COMMIT;
-            ";
+                WHERE `{2}` BETWEEN @Begin AND @End ";
 
-            return string.Format(
-                sql,
+            var sql = string.Format(
+                format,
                 string.Join(", ", entity.SelectKeys(this)),
                 entity.Name,
                 entity.Version.Name
             );
+
+            if (entity.Filters.Any()) {
+                sql += " AND " + entity.Filters.ResolveExpression(TextQualifier);
+            }
+
+            sql += ";COMMIT;";
+            return sql;
         }
 
         public override void LoadBeginVersion(Entity entity) {

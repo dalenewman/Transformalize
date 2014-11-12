@@ -347,6 +347,14 @@ namespace Transformalize.Main {
         public Fields WithoutInput() {
             return new Fields(Storage.Where(f => !f.Input));
         }
+
+        public Fields WithoutOutput() {
+            return new Fields(Storage.Where(f => !f.Output));
+        }
+
+        public Fields WithSimpleType(string simpleType) {
+            return new Fields(Storage.Where(f => f.SimpleType.Equals(simpleType)));
+        }
     }
 
 }

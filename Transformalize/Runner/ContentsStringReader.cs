@@ -12,7 +12,7 @@ namespace Transformalize.Runner {
             return new Contents() {
                 Content = ReplaceParameters(resource, _query),
                 FileName = string.Empty,
-                Name = string.Empty
+                Name = "XML"
             };
         }
     }

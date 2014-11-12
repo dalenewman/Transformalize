@@ -20,13 +20,23 @@
 
 #endregion
 
+using System.Diagnostics.Tracing;
 using NUnit.Framework;
 using Transformalize.Configuration;
+using Transformalize.Libs.SemanticLogging;
+using Transformalize.Logging;
 using Transformalize.Main.Transform;
 
 namespace Transformalize.Test {
     [TestFixture]
     public class TestShortHand {
+
+        [SetUp]
+        public void SetUp() {
+            var console = new ObservableEventListener();
+            console.EnableEvents(TflEventSource.Log, EventLevel.Informational);
+            console.LogToConsole(new LegacyLogFormatter());
+        }
 
         [Test]
         public void Replace() {

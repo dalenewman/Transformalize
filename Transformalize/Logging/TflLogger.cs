@@ -1,6 +1,6 @@
 using System.Diagnostics.Tracing;
 using System.Text;
-using Transformalize.Libs.EnterpriseLibrary.SemanticLogging;
+using Transformalize.Libs.SemanticLogging;
 using Transformalize.Operations.Transform;
 
 namespace Transformalize.Logging {

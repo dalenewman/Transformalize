@@ -11,7 +11,8 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             : base(element, dependencies) {
             Type = ProviderType.ElasticSearch;
             IsDatabase = true;
-        }
+            TextQualifier = string.Empty;
+            }
 
         public override int NextBatchId(string processName) {
             if (!TflBatchRecordsExist(processName)) {
@@ -126,7 +127,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
         }
 
         public override IOperation Extract(Process process, Entity entity, bool firstRun) {
-            return new ElasticSearchEntityExtract(this, entity, entity.OutputFields().Aliases().ToArray());
+            return new ElasticSearchEntityExtract(this, entity, entity.InputFields().Aliases().ToArray());
         }
 
         private int GetMaxTflBatchId(Entity entity) {

@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
@@ -43,22 +44,25 @@ namespace Transformalize.Runner {
 
         public ProcessElementCollection Read() {
             var contents = _contentsReader.Read(_resource);
-
             var section = new TransformalizeConfiguration();
+            XElement transformalize;
+
 
             try {
-                var doc = XDocument.Parse(contents.Content);
-                var transformalize = doc.Element("transformalize");
-
+                transformalize = XDocument.Parse(contents.Content).Element("transformalize");
                 if (transformalize == null)
                     throw new TransformalizeException("Can't find the <transformalize/> element in {0}.", string.IsNullOrEmpty(contents.Name) ? "the configuration" : contents.Name);
+            } catch (Exception e) {
+                throw new TransformalizeException("Couldn't parse {0}.  Make sure it is valid XML and try again. {1}", contents.Name, e.Message);
+            }
 
+            try {
                 section.Deserialize(
                     DefaultParameters(transformalize.ToString())
                 );
                 return section.Processes;
-            } catch (Exception e) {
-                throw new TransformalizeException("Couldn't parse {0}.  Make sure it is valid XML and try again. {1}", contents.Name, e.Message);
+            } catch (ConfigurationErrorsException e) {
+                throw new TransformalizeException("Couldn't parse {0}.  {1}", contents.Name, e.Message);
             }
         }
 

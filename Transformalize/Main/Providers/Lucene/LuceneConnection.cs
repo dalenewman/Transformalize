@@ -16,7 +16,8 @@ namespace Transformalize.Main.Providers.Lucene {
             : base(element, dependencies) {
             Type = ProviderType.Lucene;
             IsDatabase = true;
-        }
+            TextQualifier = string.Empty;
+            }
 
         public override int NextBatchId(string processName) {
             if (!TflBatchRecordsExist(processName)) {

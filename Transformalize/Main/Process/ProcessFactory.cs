@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Tracing;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
-using Transformalize.Libs.EnterpriseLibrary.SemanticLogging;
-using Transformalize.Libs.EnterpriseLibrary.SemanticLogging.Formatters;
-using Transformalize.Libs.EnterpriseLibrary.SemanticLogging.Sinks;
 using Transformalize.Logging;
 
 namespace Transformalize.Main {
@@ -23,6 +18,16 @@ namespace Transformalize.Main {
             return Create(new ConfigurationFactory(resource).Create(), options);
         }
 
+        /// <summary>
+        /// Create process from a resource
+        /// </summary>
+        /// <param name="resource">resource may be a file name, a web address, or an XML configuration.</param>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        public static Process CreateSingle(string resource, Options options = null) {
+            TflLogger.Info(string.Empty, string.Empty, "Process Requested from {0}", ConfigurationFactory.DetermineConfigurationSource(resource).ToString());
+            return CreateSingle(new ConfigurationFactory(resource).Create()[0], options);
+        }
         /// <summary>
         /// Create process(es) from a configuration element.
         /// </summary>

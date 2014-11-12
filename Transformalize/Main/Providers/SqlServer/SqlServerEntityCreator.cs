@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Transformalize.Libs.Dapper;
 using Transformalize.Logging;
 
@@ -19,7 +20,8 @@ namespace Transformalize.Main.Providers.SqlServer {
                 new FieldSqlWriter(entity.Fields, entity.CalculatedFields);
 
             var primaryKey = writer.FieldType(keyType).Alias(connection.L, connection.R).Asc().Values();
-            var defs = writer
+            var defs = new List<string>();
+            defs.AddRange(writer
                 .Reload()
                 .AddBatchId(entity.Index)
                 .AddDeleted(entity)
@@ -28,7 +30,13 @@ namespace Transformalize.Main.Providers.SqlServer {
                 .Alias(connection.L, connection.R)
                 .DataType(new SqlServerDataTypeService())
                 .AppendIf(" NOT NULL", keyType)
-                .Values();
+                .Values());
+
+            var rowVersion = entity.Fields.WithSimpleType("rowversion").WithoutInput().WithoutOutput();
+            if (rowVersion.Any()) {
+                var alias = rowVersion.First().Alias;
+                defs.Add(connection.Enclose(alias) + " [ROWVERSION] NOT NULL");
+            }
 
             var createSql = connection.TableQueryWriter.CreateTable(entity.OutputName(), defs);
             TflLogger.Debug(process.Name, entity.Name, createSql);

@@ -35,7 +35,14 @@ namespace Transformalize.Operations.Transform {
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
                 if (ShouldRun(row)) {
-                    using (var reader = XmlReader.Create(new StringReader(row[InKey].ToString()), Settings)) {
+                    var xml = row[InKey].ToString();
+
+                    if (xml.Equals(string.Empty)) {
+                        yield return row;
+                        continue;
+                    }
+
+                    using (var reader = XmlReader.Create(new StringReader(xml), Settings)) {
                         var count = 0;
                         while (reader.Read() && count < _total) {
                             if (_nameMap.ContainsKey(reader.Name)) {

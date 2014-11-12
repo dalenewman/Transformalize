@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Xml;
-using Transformalize.Libs.Nest.DSL.Repository;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 

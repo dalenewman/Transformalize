@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Net.Mail;
-using Transformalize.Libs.EnterpriseLibrary.SemanticLogging;
-using Transformalize.Libs.EnterpriseLibrary.SemanticLogging.Formatters;
+using Transformalize.Libs.SemanticLogging;
+using Transformalize.Libs.SemanticLogging.Formatters;
 using Transformalize.Main;
 using Transformalize.Main.Providers.Mail;
 
@@ -23,11 +23,15 @@ namespace Transformalize.Logging {
                 return;
             using (var writer = new StringWriter()) {
                 _formatter.WriteEvent(entry, writer);
-                Send(writer.ToString());
+                if (_log.Async) {
+                    SendAsync(writer.ToString());
+                } else {
+                    Send(writer.ToString());
+                }
             }
         }
 
-        private async void Send(string body) {
+        private async void SendAsync(string body) {
 
             using (var client = _mail.SmtpClient)
             using (var message = new MailMessage() {
@@ -40,11 +44,29 @@ namespace Transformalize.Logging {
                 }
 
                 try {
-                    if (_log.Async) {
-                        await client.SendMailAsync(message).ConfigureAwait(false);
-                    } else {
-                        client.Send(message);
-                    }
+                    await client.SendMailAsync(message).ConfigureAwait(false);
+                } catch (SmtpException e) {
+                    SemanticLoggingEventSource.Log.CustomSinkUnhandledFault("SMTP error sending email: " + e.Message);
+                } catch (InvalidOperationException e) {
+                    SemanticLoggingEventSource.Log.CustomSinkUnhandledFault("Configuration error sending email: " + e.Message);
+                }
+            }
+        }
+
+        private void Send(string body) {
+
+            using (var client = _mail.SmtpClient)
+            using (var message = new MailMessage() {
+                From = new MailAddress(_log.From),
+                Body = body,
+                Subject = _log.Subject
+            }) {
+                foreach (var to in _log.To.Split(',')) {
+                    message.To.Add(new MailAddress(to));
+                }
+
+                try {
+                    client.Send(message);
                 } catch (SmtpException e) {
                     SemanticLoggingEventSource.Log.CustomSinkUnhandledFault("SMTP error sending email: " + e.Message);
                 } catch (InvalidOperationException e) {
