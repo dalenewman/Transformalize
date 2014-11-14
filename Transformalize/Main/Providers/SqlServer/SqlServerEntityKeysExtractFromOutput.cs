@@ -55,7 +55,10 @@ namespace Transformalize.Main.Providers.SqlServer {
 
         protected override void PrepareCommand(IDbCommand cmd) {
             cmd.CommandTimeout = 0;
-            cmd.CommandText = _entity.CanDetectChanges(Connection.IsDatabase) ? PrepareSqlWithInputKeys() : PrepareSql();
+            cmd.CommandText = 
+                _entity.CanDetectChanges(Connection.IsDatabase) && (_entity.HasSqlKeysOverride() || !_entity.HasSqlOverride()) ?
+                PrepareSqlWithInputKeys() :
+                PrepareSql();
             Debug("SQL:\r\n{0}", cmd.CommandText);
         }
 

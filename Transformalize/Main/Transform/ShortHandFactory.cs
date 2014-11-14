@@ -171,7 +171,7 @@ namespace Transformalize.Main.Transform {
             {"fromjson",FromJson},
             {"padleft", PadLeft},
             {"padright", PadRight},
-            {"tostring", arg=> new TransformConfigurationElement() { Method = "tostring", Format = arg, IsShortHand = true }},
+            {"tostring", ToString},
             {"tolower", arg=> new TransformConfigurationElement() { Method = "tolower", Parameter = arg, IsShortHand = true} },
             {"toupper", arg=> new TransformConfigurationElement() { Method = "toupper", Parameter = arg, IsShortHand = true}},
             {"javascript", JavaScript},
@@ -677,7 +677,7 @@ namespace Transformalize.Main.Transform {
 
         private static TransformConfigurationElement Convert(string arg) {
             var split = SplitComma(arg);
-            Guard.Against(split.Length < 1, "The convert method requires the first parameter reference another field's alias (or name).");
+            Guard.Against(split.Length < 1, "The convert and tostring methods require the first parameter reference another field's alias (or name).");
 
             var element = new TransformConfigurationElement() { Method = "convert", Parameter = split[0], IsShortHand = true };
             if (split.Length <= 1)
@@ -693,6 +693,13 @@ namespace Transformalize.Main.Transform {
                 }
             }
 
+            return element;
+        }
+
+        private static TransformConfigurationElement ToString(string arg) {
+            var element = Convert(arg);
+            element.Method = "tostring";
+            element.To = "string";
             return element;
         }
 

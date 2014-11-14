@@ -26,6 +26,7 @@ using Transformalize.Configuration;
 using Transformalize.Libs.SemanticLogging;
 using Transformalize.Logging;
 using Transformalize.Main.Transform;
+using Transformalize.Operations;
 
 namespace Transformalize.Test {
     [TestFixture]
@@ -461,9 +462,10 @@ namespace Transformalize.Test {
 
         [Test]
         public void ToStringTest() {
-            const string expression = "tos(#,##0.00";
+            const string expression = @"tostring(Parameter,#\,##0.00";
             var result = ShortHandFactory.Interpret(expression);
             Assert.AreEqual("tostring", result.Method);
+            Assert.AreEqual("Parameter", result.Parameter);
             Assert.AreEqual("#,##0.00", result.Format);
         }
 

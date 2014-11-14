@@ -208,7 +208,11 @@ namespace Transformalize.Main {
         }
 
         /// <summary>
-        /// In order to detect changes, the entity's detect-changes must be true, must have a version, must be input, and the input must be a database where specific columns can be requested
+        /// In order to detect changes:
+        /// 
+        /// * the entity's detect-changes must be true
+        /// * the entity must have a version, which must be input
+        /// * the input connection must be a database where specific columns can be requested
         /// </summary>
         /// <param name="isDatabase"></param>
         /// <returns></returns>
