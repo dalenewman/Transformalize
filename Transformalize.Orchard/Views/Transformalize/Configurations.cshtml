@@ -1,0 +1,163 @@
+﻿@using Orchard.ContentManagement
+@using Orchard.Core.Title.Models
+@model Transformalize.Orchard.Models.Configurations
+@{
+    Script.Require("jQuery").AtHead();
+    Layout.Title = "Configurations";
+}
+    
+<style type="text/css">
+    .btn-file {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-file input[type=file] {
+        position: absolute;
+        top: 0;
+        right: 0;
+        min-width: 100%;
+        min-height: 100%;
+        font-size: 999px;
+        text-align: right;
+        filter: alpha(opacity=0);
+        opacity: 0;
+        outline: none;
+        background: white;
+        cursor: inherit;
+        display: block;
+    }
+</style>
+<script type="text/javascript">
+    //<!--
+    $(document).ready(function() {
+        $("input:file").change(function () {
+            var fileName = $(this).val().replace("C:\\fakepath\\", "");
+
+            $(this).closest('td')
+                .siblings('.td-submit')
+                .children('button[type=submit]')
+                .removeAttr('disabled')
+                .removeClass('btn-disabled')
+                .addClass('btn-primary');
+
+            $(this).closest('td')
+                .siblings('.td-file')
+                .text(fileName)
+                .removeClass('text-warning')
+                .addClass('text-success');
+        });
+
+        $('label.mode').click(function () {
+            $('input[type=radio]', $(this).parent()).removeAttr('checked');
+            $(this).children().first().attr('checked', 'checked');
+        });
+
+        function removeMessages() {
+            $(".zone-messages").fadeOut().hide();
+        }
+
+        setTimeout(removeMessages, 10000);
+    });
+    //-->
+</script>
+
+<table class="table table-condensed table-hover" style="font-size: smaller;">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Title</th>
+            <th>Input</th>
+            <th>File</th>
+            <th>Mode</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var part in Model.ConfigurationParts) {
+            var incoming = Model.CurrentId == part.Id && !Model.InputFileName.Equals(string.Empty);
+            <tr class="@(Model.CurrentId == part.Id ? "active" : string.Empty)">
+                <td>
+                    <a href="@Url.Action("Configuration","Transformalize",new { id=part.Id})" target="_blank">@part.Id</a>
+                </td>
+                <td>@(part.As<TitlePart>().Title)</td>
+                @if (part.RequiresInputFile() == true) {
+                    using (Html.BeginFormAntiForgeryPost(Url.Action("Execute", "Transformalize", new {id=part.Id}), FormMethod.Post, new { enctype = "multipart/form-data" })) {
+                        <td>
+                            <input type="hidden" name="InputFile" value="@(Model.InputFileId)"/>
+                            <input type="hidden" name="OutputFile" value="@(Model.OutputFileId)"/>
+                            <div class="btn-group">
+                                <span class="btn btn-warning btn-file btn-xs">
+                                    Browse <input name="file" type="file"> 
+                                </span>
+                                <button type="button" class="btn btn-info btn-xs" onclick=" window.open('@Url.Action("Files","File",new{SelectFor=part.Id})', '_self');">Select</button>
+                            </div>
+                        </td>
+                    if (incoming) {
+                        <td class="text-success td-file">@Model.InputFileName</td>
+                    } else {
+                        <td class="text-warning td-file">you need a file...</td>
+                    }
+                    <td>
+                        @if (part.HasModes()) {
+                            if (part.ToModes().Length > 1) {
+                                <div class="btn-group btn-group-xs" data-toggle="buttons">
+                                    @foreach (var mode in part.ToModes()) {
+                                        <label class="mode btn btn-default @(mode.IsDefault || Model.Mode.Equals(mode.Name) ? "active" : string.Empty)">
+                                            <input type="radio" name="Mode" value="@(mode.Name)" checked="@(mode.IsDefault)" data-toggle="button"> @mode.Name
+                                        </label>
+                                    }
+                                </div>
+                            } else {
+                                <input type="hidden" name="Mode" value="@(part.ToModes()[0].Name)"/>
+                            }
+                        }                            
+                    </td>
+                    <td class="td-submit">
+                        <button type="submit" class="btn btn-@(incoming?"primary":"disabled") btn-xs" disabled="@(!incoming)">
+                            <span class="glyphicon glyphicon-play-circle"></span> Run
+                        </button>
+                        @if (Model.Edit) {
+                            <button type="button" class="btn btn-info btn-xs" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + part.Id))','_self');">
+                                <span class="glyphicon glyphicon-edit"></span> Edit
+                            </button>
+                        }
+                    </td>
+                    }
+                } else {
+                    using (Html.BeginFormAntiForgeryPost(Url.Action("Execute", "Transformalize", new { id = part.Id }), FormMethod.Post)) {
+                    <td> &nbsp;</td>
+                    <td> &nbsp;</td>
+                    <td>
+                        @if (part.HasModes()) {
+                            if (part.ToModes().Length > 1) {
+                                <div class="btn-group btn-group-xs" data-toggle="buttons">
+                                    @foreach (var mode in part.ToModes()) {
+                                        <label class="mode btn btn-default @(mode.IsDefault || Model.Mode.Equals(mode.Name) ? "active" : string.Empty)">
+                                            <input type="radio" name="Mode" value="@(mode.Name)" checked="@(mode.IsDefault)" data-toggle="button"> @mode.Name
+                                        </label>
+                                    }
+                                </div>
+                            } else {
+                                <input type="hidden" name="Mode" value="@(part.ToModes()[0].Name)" />
+                            }
+                        }
+                    </td>
+                         <td>
+                             <input type="hidden" name="InputFile" value="@(Model.InputFileId)"/>
+                             <input type="hidden" name="OutputFile" value="@(Model.OutputFileId)"/>
+                             <button type="submit" class="btn btn-primary btn-xs">
+                                 <span class="glyphicon glyphicon-play-circle"></span> Run
+                             </button>
+                            @if (Model.Edit) {
+                                <button type="button" class="btn btn-info btn-xs" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + part.Id))','_self');">
+                                    <span class="glyphicon glyphicon-edit"></span> Edit
+                                </button>
+                            }
+                         </td>
+                    }
+                }
+            </tr>
+        }
+    </tbody>
+</table>

@@ -52,6 +52,12 @@ namespace Transformalize.Runner {
                 transformalize = XDocument.Parse(contents.Content).Element("transformalize");
                 if (transformalize == null)
                     throw new TransformalizeException("Can't find the <transformalize/> element in {0}.", string.IsNullOrEmpty(contents.Name) ? "the configuration" : contents.Name);
+
+                // The Transformalize WEB API returns these elements, but .NET Configuration can't stand them, so they are removed before deserialization below.
+                var apiElements = new[] { "request", "status", "message", "time", "response" };
+                foreach (var element in apiElements.Where(element => transformalize.Elements(element).Any())) {
+                    transformalize.Elements(element).Remove();
+                }
             } catch (Exception e) {
                 throw new TransformalizeException("Couldn't parse {0}.  Make sure it is valid XML and try again. {1}", contents.Name, e.Message);
             }

@@ -1,0 +1,234 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{FDEBD5FC-6AA3-494F-A223-A1BDB7CCD107}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Transformalize.Orchard</RootNamespace>
+    <AssemblyName>Transformalize.Orchard</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>4.0</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <TargetFrameworkProfile />
+    <UseIISExpress>false</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Orchard.Core, Version=1.7.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Libs\Orchard.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Orchard.Framework, Version=1.7.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Libs\Orchard.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.ComponentModel.DataAnnotations">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\lib\aspnetmvc\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Libs\Orchard.Core.dll" />
+    <Content Include="Libs\Orchard.Framework.dll" />
+    <Content Include="Scripts\codemirror-4.5\addon\dialog\dialog.js" />
+    <Content Include="Scripts\codemirror-4.5\addon\display\fullscreen.js" />
+    <Content Include="Scripts\codemirror-4.5\addon\edit\closetag.js" />
+    <Content Include="Scripts\codemirror-4.5\addon\edit\matchtags.js" />
+    <Content Include="Scripts\codemirror-4.5\addon\fold\brace-fold.js" />
+    <Content Include="Scripts\codemirror-4.5\addon\fold\comment-fold.js" />
+    <Content Include="Scripts\codemirror-4.5\addon\fold\foldcode.js" />
+    <Content Include="Scripts\codemirror-4.5\addon\fold\foldgutter.js" />
+    <Content Include="Scripts\codemirror-4.5\addon\fold\indent-fold.js" />
+    <Content Include="Scripts\codemirror-4.5\addon\fold\markdown-fold.js" />
+    <Content Include="Scripts\codemirror-4.5\addon\fold\xml-fold.js" />
+    <Content Include="Scripts\codemirror-4.5\addon\hint\show-hint.js" />
+    <Content Include="Scripts\codemirror-4.5\addon\hint\xml-hint.js" />
+    <Content Include="Scripts\codemirror-4.5\addon\search\match-highlighter.js" />
+    <Content Include="Scripts\codemirror-4.5\addon\search\search.js" />
+    <Content Include="Scripts\codemirror-4.5\addon\search\searchcursor.js" />
+    <Content Include="Scripts\codemirror-4.5\lib\codemirror.js" />
+    <Content Include="Scripts\codemirror-4.5\mode\xml\index.html" />
+    <Content Include="Scripts\codemirror-4.5\mode\xml\test.js" />
+    <Content Include="Scripts\codemirror-4.5\mode\xml\xml.js" />
+    <Content Include="Scripts\configuration-editor-004.js" />
+    <Content Include="Styles\codemirror-4.5\addon\dialog\dialog.css" />
+    <Content Include="Styles\codemirror-4.5\addon\display\fullscreen.css" />
+    <Content Include="Styles\codemirror-4.5\addon\fold\foldgutter.css" />
+    <Content Include="Styles\codemirror-4.5\addon\hint\show-hint.css" />
+    <Content Include="Styles\codemirror-4.5\lib\codemirror.css" />
+    <Content Include="Styles\codemirror-4.5\theme\3024-day.css" />
+    <Content Include="Styles\codemirror-4.5\theme\3024-night.css" />
+    <Content Include="Styles\codemirror-4.5\theme\ambiance-mobile.css" />
+    <Content Include="Styles\codemirror-4.5\theme\ambiance.css" />
+    <Content Include="Styles\codemirror-4.5\theme\base16-dark.css" />
+    <Content Include="Styles\codemirror-4.5\theme\base16-light.css" />
+    <Content Include="Styles\codemirror-4.5\theme\blackboard.css" />
+    <Content Include="Styles\codemirror-4.5\theme\cobalt.css" />
+    <Content Include="Styles\codemirror-4.5\theme\eclipse.css" />
+    <Content Include="Styles\codemirror-4.5\theme\elegant.css" />
+    <Content Include="Styles\codemirror-4.5\theme\erlang-dark.css" />
+    <Content Include="Styles\codemirror-4.5\theme\lesser-dark.css" />
+    <Content Include="Styles\codemirror-4.5\theme\mbo.css" />
+    <Content Include="Styles\codemirror-4.5\theme\mdn-like.css" />
+    <Content Include="Styles\codemirror-4.5\theme\midnight.css" />
+    <Content Include="Styles\codemirror-4.5\theme\monokai.css" />
+    <Content Include="Styles\codemirror-4.5\theme\neat.css" />
+    <Content Include="Styles\codemirror-4.5\theme\neo.css" />
+    <Content Include="Styles\codemirror-4.5\theme\night.css" />
+    <Content Include="Styles\codemirror-4.5\theme\paraiso-dark.css" />
+    <Content Include="Styles\codemirror-4.5\theme\paraiso-light.css" />
+    <Content Include="Styles\codemirror-4.5\theme\pastel-on-dark.css" />
+    <Content Include="Styles\codemirror-4.5\theme\rubyblue.css" />
+    <Content Include="Styles\codemirror-4.5\theme\solarized.css" />
+    <Content Include="Styles\codemirror-4.5\theme\the-matrix.css" />
+    <Content Include="Styles\codemirror-4.5\theme\tomorrow-night-eighties.css" />
+    <Content Include="Styles\codemirror-4.5\theme\twilight.css" />
+    <Content Include="Styles\codemirror-4.5\theme\vibrant-ink.css" />
+    <Content Include="Styles\codemirror-4.5\theme\xq-dark.css" />
+    <Content Include="Styles\codemirror-4.5\theme\xq-light.css" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Views\Web.config" />
+    <Content Include="Scripts\Web.config" />
+    <Content Include="Styles\Web.config" />
+    <Content Include="Properties\AssemblyInfo.cs" />
+    <Content Include="Module.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controllers\ApiController.cs" />
+    <Compile Include="Models\ApiRequest.cs" />
+    <Compile Include="Models\ApiRequestType.cs" />
+    <Compile Include="Models\ApiResponse.cs" />
+    <Compile Include="Controllers\TransformalizeController.cs" />
+    <Compile Include="Controllers\FileController.cs" />
+    <Compile Include="Drivers\FilePartDriver.cs" />
+    <Compile Include="Drivers\ConfigurationPartDriver.cs" />
+    <Compile Include="Handlers\ConfigurationPartHandler.cs" />
+    <Compile Include="Handlers\FilePartHandler.cs" />
+    <Compile Include="Migrations.cs" />
+    <Compile Include="Models\IpAddressRange.cs" />
+    <Compile Include="Models\Configurations.cs" />
+    <Compile Include="Models\ExecuteViewModel.cs" />
+    <Compile Include="Models\FilePart.cs" />
+    <Compile Include="Models\FilePartRecord.cs" />
+    <Compile Include="Models\ConfigurationPart.cs" />
+    <Compile Include="Models\ConfigurationPartRecord.cs" />
+    <Compile Include="Models\CheckFileResult.cs" />
+    <Compile Include="Models\Mode.cs" />
+    <Compile Include="Permissions.cs" />
+    <Compile Include="Routes.cs" />
+    <Compile Include="Services\TransformalizeService.cs" />
+    <Compile Include="Services\ITransformalizeService.cs" />
+    <Compile Include="Services\IFileService.cs" />
+    <Compile Include="Services\FileService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\EditorTemplates\Parts\Configuration.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Placement.info">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\File\Files.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Transformalize\Execute.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Transformalize\Configurations.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\PublishProfiles\local.pubxml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Transformalize\Transformalize.csproj">
+      <Project>{154566af-2842-44c8-985b-f8d809e8fd79}</Project>
+      <Name>Transformalize</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target> -->
+  <Target Name="AfterBuild" DependsOnTargets="AfterBuildCompiler">
+    <PropertyGroup>
+      <AreasManifestDir>$(ProjectDir)\..\Manifests</AreasManifestDir>
+    </PropertyGroup>
+    <!-- If this is an area child project, uncomment the following line:
+    <CreateAreaManifest AreaName="$(AssemblyName)" AreaType="Child" AreaPath="$(ProjectDir)" ManifestPath="$(AreasManifestDir)" ContentFiles="@(Content)" />
+    -->
+    <!-- If this is an area parent project, uncomment the following lines:
+    <CreateAreaManifest AreaName="$(AssemblyName)" AreaType="Parent" AreaPath="$(ProjectDir)" ManifestPath="$(AreasManifestDir)" ContentFiles="@(Content)" />
+    <CopyAreaManifests ManifestPath="$(AreasManifestDir)" CrossCopy="false" RenameViews="true" />
+    -->
+  </Target>
+  <Target Name="AfterBuildCompiler" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(ProjectDir)\..\$(ProjectName)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <SaveServerSettingsInUserFile>True</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

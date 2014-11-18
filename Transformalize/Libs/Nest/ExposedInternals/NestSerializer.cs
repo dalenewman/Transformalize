@@ -12,7 +12,6 @@ using Transformalize.Libs.Nest.Domain.Marker;
 using Transformalize.Libs.Nest.DSL;
 using Transformalize.Libs.Nest.Extensions;
 using Transformalize.Libs.Nest.Resolvers;
-using Transformalize.Libs.Newtonsoft.Json;
 
 namespace Transformalize.Libs.Nest.ExposedInternals
 {

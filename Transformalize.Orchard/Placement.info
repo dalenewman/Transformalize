@@ -1,0 +1,7 @@
+﻿<Placement>
+  <Place Parts_Configuration_Edit="Content:2"/>
+  <Match DisplayType="Detail">
+    <Place Parts_Title="-"/>
+    <Place Parts_Common_Metadata="-"/>
+  </Match>
+</Placement>
