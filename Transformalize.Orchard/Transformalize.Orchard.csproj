@@ -144,6 +144,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\ApiController.cs" />
+    <Compile Include="Handlers\IResultsHandler.cs" />
+    <Compile Include="Handlers\JsonContentHandler.cs" />
+    <Compile Include="Handlers\JsonResultsToArrayHandler.cs" />
+    <Compile Include="Handlers\JsonResultsToDictionaryHandler.cs" />
+    <Compile Include="Handlers\XmlContentHandler.cs" />
+    <Compile Include="Handlers\XmlResultsToAttributesHandler.cs" />
+    <Compile Include="Handlers\XmlResultsToHtmlTable.cs" />
     <Compile Include="Models\ApiRequest.cs" />
     <Compile Include="Models\ApiRequestType.cs" />
     <Compile Include="Models\ApiResponse.cs" />

@@ -3977,9 +3977,9 @@
   <PropertyGroup>
     <PostBuildEvent>IF EXIST c:\code\JunkDrawer XCOPY /s /y $(TargetDir)Transformalize.dll c:\code\JunkDrawer\Assemblies\
 IF EXIST c:\code\DataProfiler XCOPY /s /y $(TargetDir)Transformalize.dll c:\code\DataProfiler\Assemblies\
-IF EXIST C:\Code\Orchard.Source.1.7.1\src\Orchard.Web\Modules\Transformalize.Orchard\Libs XCOPY /s /y $(TargetDir)Transformalize.dll C:\Code\Orchard.Source.1.7.1\src\Orchard.Web\Modules\Transformalize.Orchard\Libs\
-IF EXIST C:\Code\Orchard.Source.1.8.1\src\Orchard.Web\Modules\Transformalize.Orchard\Libs XCOPY /s /y $(TargetDir)Transformalize.dll C:\Code\Orchard.Source.1.8.1\src\Orchard.Web\Modules\Transformalize.Orchard\Libs\
-IF EXIST C:\Code\Orchard.Source.1.8.1\src\Orchard.Web\Modules\Transformalize.Orchard\bin XCOPY /s /y $(TargetDir)Transformalize.dll C:\Code\Orchard.Source.1.8.1\src\Orchard.Web\Modules\Transformalize.Orchard\bin\</PostBuildEvent>
+IF EXIST C:\Code\Orchard.Source.1.7.1\src\Orchard.Web\Modules\Transformalize.Orchard XCOPY /s /y $(TargetDir)..\..\..\Transformalize.Orchard\*.* C:\Code\Orchard.Source.1.7.1\src\Orchard.Web\Modules\Transformalize.Orchard\
+IF EXIST C:\Code\Orchard.Source.1.8.1\src\Orchard.Web\Modules\Transformalize.Orchard XCOPY /s /y $(TargetDir)..\..\..\Transformalize.Orchard\*.* C:\Code\Orchard.Source.1.8.1\src\Orchard.Web\Modules\Transformalize.Orchard\
+</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
