@@ -1,0 +1,111 @@
+﻿@model ConfigurationPart
+@using Transformalize.Orchard.Models
+
+@{
+    Script.Require("jQuery").AtHead();
+    Script.Include("handsontable/jquery.handsontable.full.min.js").AtHead();
+    Style.Include("handsontable/jquery.handsontable.full.min.css");
+    Layout.Title = "Hands On Table";
+}
+
+<h2>@(Model.Title())</h2>
+
+<button id="save" type="button" class="btn btn-primary btn-xs" style="margin-bottom: 10px;">
+    <span class="glyphicon glyphicon-floppy-save"></span> Save
+</button>
+
+<div id="target" class="handsontable"></div>
+
+<script>
+    //<!--
+    $(document).ready(function () {
+
+        var settings = {
+            load: '@(Url.Action("Load", "HandsOnTable", new { id = 122 }))',
+            save: '@(Url.Action("Save", "HandsOnTable", new { id = 121 }))',
+            token: '@Html.AntiForgeryTokenValueOrchard()'
+        };
+
+        if (!Array.prototype.filter) {
+            Array.prototype.filter = function (fun /*, thisp*/) {
+                var len = this.length >>> 0;
+                if (typeof fun != "function")
+                    throw new TypeError();
+
+                var res = [];
+                var thisp = arguments[1];
+                for (var i = 0; i < len; i++) {
+                    if (i in this) {
+                        var val = this[i]; // in case fun mutates this
+                        if (fun.call(thisp, val, i, this))
+                            res.push(val);
+                    }
+                }
+                return res;
+            };
+        }
+
+        $.get(settings.load, function (tfl) {
+            if (tfl.status === 200) {
+                var fields = tfl.processes[0].add.entities.add.fields.add.filter(function (item) {
+                    return !item.hasOwnProperty('output') || item.output === true;
+                });
+                var headers = $.map(fields, function (f) {
+                    return f.label;
+                });
+                var data = tfl.response[0];
+                if (data.length > 0) {
+                    $('#target').handsontable({
+                        data: data,
+                        minSpareRows: 1,
+                        rowHeaders: true,
+                        colHeaders: headers,
+                        contextMenu: true
+                    });
+                } else {
+                    $('#target').handsontable({
+                        startRows: 1,
+                        startCols: headers.length,
+                        minSpareRows: 1,
+                        rowHeaders: true,
+                        colHeaders: headers,
+                        contextMenu: true
+                    });
+                }
+            } else {
+                alert(tfl.message);
+            }
+        }, 'json');
+
+        $('#save').click(function () {
+            var data = $('#target').data('handsontable').getData().slice().filter(function (item) {
+                for (i = 0; i < item.length; i++) {
+                    if (item[i] == null) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+
+            $.ajax({
+                url: settings.save,
+                data: { "data": JSON.stringify(data), "__RequestVerificationToken": settings.token },
+                type: 'POST',
+                success: function (tfl) {
+                    if (tfl.status === 200) {
+                        alert('data saved');
+                        alert(JSON.stringify(data));
+                    } else {
+                        alert(tfl.message);
+                        alert(JSON.stringify(data));
+                    }
+                },
+                error: function () {
+                    alert('Unable to execute the process.');
+                }
+            });
+        });
+
+    });
+    // -->
+</script>

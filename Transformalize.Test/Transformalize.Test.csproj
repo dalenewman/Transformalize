@@ -117,6 +117,7 @@
     <Compile Include="TestFileInformationFactory.cs" />
     <Compile Include="TestInput.cs" />
     <Compile Include="TestEventSource.cs" />
+    <Compile Include="TextXmlContentHandler.cs" />
     <Compile Include="TestOptions.cs" />
     <Compile Include="TestOutput.cs" />
     <Compile Include="TestParameters.cs" />
@@ -193,6 +194,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Transformalize.Orchard\Transformalize.Orchard.csproj">
+      <Project>{fdebd5fc-6aa3-494f-a223-a1bdb7ccd107}</Project>
+      <Name>Transformalize.Orchard</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Transformalize\Transformalize.csproj">
       <Project>{154566af-2842-44c8-985b-f8d809e8fd79}</Project>
       <Name>Transformalize</Name>

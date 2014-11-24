@@ -52,6 +52,7 @@ namespace Transformalize.Main {
         private Dictionary<string, AbstractConnection> _connections = new Dictionary<string, AbstractConnection>();
 
         // fields (for now)
+        public bool Complete = false;
         public IEnumerable<Row> Results = Enumerable.Empty<Row>();
         public Fields CalculatedFields = new Fields();
         public Entities Entities = new Entities();
@@ -78,6 +79,8 @@ namespace Transformalize.Main {
         private List<Log> _logList = new List<Log>();
         private bool _shouldLog = true;
         private bool _parallel = true;
+        private List<ObservableEventListener> _eventListeners = new List<ObservableEventListener>();
+        private List<SinkSubscription> _sinkSubscriptions = new List<SinkSubscription>();
 
         // properties
         public string TimeZone { get; set; }
@@ -146,8 +149,7 @@ namespace Transformalize.Main {
             set { _shouldLog = value; }
         }
 
-        public bool Parallel
-        {
+        public bool Parallel {
             get { return _parallel; }
             set { _parallel = value; }
         }
@@ -183,22 +185,42 @@ namespace Transformalize.Main {
         }
 
         public void ExecuteScaler() {
-            SetLog();
+            StartLogging();
             var p = this;
             using (var runner = GetRunner()) {
                 runner.Run(ref p);
             }
+            StopLogging();
         }
 
         public IEnumerable<Row> Execute() {
-            SetLog();
+            StartLogging();
             var p = this;
             using (var runner = GetRunner()) {
-                return runner.Run(ref p);
+                var rows = runner.Run(ref p);
+                StopLogging();
+                return rows;
             }
         }
 
-        public void SetLog() {
+        public List<ObservableEventListener> EventListeners {
+            get { return _eventListeners; }
+            set { _eventListeners = value; }
+        }
+
+        public void StopLogging() {
+            foreach (var listener in EventListeners) {
+                listener.DisableEvents(TflEventSource.Log);
+                listener.Dispose();
+            }
+            EventListeners.Clear();
+            foreach (var sink in SinkSubscriptions) {
+                sink.Dispose();
+            }
+            SinkSubscriptions.Clear();
+        }
+
+        public void StartLogging() {
 
             try {
                 if (!ShouldLog || Log == null || Log.Count <= 0)
@@ -213,8 +235,9 @@ namespace Transformalize.Main {
                             log.File = (log.File.Equals(Common.DefaultValue) ? "tfl-" + Name + ".log" : log.File).TrimStart('\\');
 
                             var fileListener = new ObservableEventListener();
-                            fileListener.EnableEvents(TflEventSource.Log, EventLevel.Informational);
-                            fileListener.LogToRollingFlatFile(log.Folder + log.File, 5000, "yyyy-MM-dd", RollFileExistsBehavior.Increment, RollInterval.Day, new LegacyLogFormatter(), 0, log.Async);
+                            fileListener.EnableEvents(TflEventSource.Log, log.Level);
+                            SinkSubscriptions.Add(fileListener.LogToRollingFlatFile(log.Folder + log.File, 5000, "yyyy-MM-dd", RollFileExistsBehavior.Increment, RollInterval.Day, new LegacyLogFormatter(), 0, log.Async));
+                            EventListeners.Add(fileListener);
                             break;
                         case ProviderType.Mail:
                             if (log.Connection == null) {
@@ -225,7 +248,8 @@ namespace Transformalize.Main {
                             }
                             var mailListener = new ObservableEventListener();
                             mailListener.EnableEvents(TflEventSource.Log, EventLevel.Error);
-                            mailListener.LogToEmail(log);
+                            SinkSubscriptions.Add(mailListener.LogToEmail(log));
+                            EventListeners.Add(mailListener);
                             break;
                     }
 
@@ -256,6 +280,11 @@ namespace Transformalize.Main {
                 }
             }
 
+        }
+
+        public List<SinkSubscription> SinkSubscriptions {
+            get { return _sinkSubscriptions; }
+            set { _sinkSubscriptions = value; }
         }
 
         public Fields OutputFields() {

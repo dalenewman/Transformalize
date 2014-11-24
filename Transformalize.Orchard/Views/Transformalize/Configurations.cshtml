@@ -78,7 +78,7 @@
             var incoming = Model.CurrentId == part.Id && !Model.InputFileName.Equals(string.Empty);
             <tr class="@(Model.CurrentId == part.Id ? "active" : string.Empty)">
                 <td>
-                    <a href="@Url.Action("Configuration","Transformalize",new { id=part.Id})" target="_blank">@part.Id</a>
+                    <a href="@Url.Action("Api/Configuration","Api",new { id=part.Id})" target="_blank">@part.Id</a>
                 </td>
                 <td>@(part.As<TitlePart>().Title)</td>
                 @if (part.RequiresInputFile() == true) {
@@ -90,7 +90,7 @@
                                 <span class="btn btn-warning btn-file btn-xs">
                                     Browse <input name="file" type="file"> 
                                 </span>
-                                <button type="button" class="btn btn-info btn-xs" onclick=" window.open('@Url.Action("Files","File",new{SelectFor=part.Id})', '_self');">Select</button>
+                                <button type="button" class="btn btn-info btn-xs" onclick="window.open('@Url.Action("Files","File",new{SelectFor=part.Id})', '_self');">Select</button>
                             </div>
                         </td>
                     if (incoming) {

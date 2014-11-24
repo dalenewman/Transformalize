@@ -21,8 +21,10 @@
 #endregion
 
 using System.Data.SqlClient;
+using Transformalize.Libs.DBDiff.Schema.SqlServer2005.Model;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.SqlServer {
     public class SqlServerEntityBatchUpdate : SqlBatchOperation {
@@ -40,7 +42,7 @@ namespace Transformalize.Main.Providers.SqlServer {
         protected override void PrepareCommand(Row row, SqlCommand command) {
 
             var fields = _entity.OutputFields();
-            var writer = new FieldSqlWriter(fields);
+            var writer = new FieldSqlWriter(fields).AddDeleted(_entity);
             var sets = writer.Alias(_connection.L, _connection.R).SetParam().Write(", ", false);
 
             command.CommandText = string.Format(@"
@@ -52,10 +54,13 @@ namespace Transformalize.Main.Providers.SqlServer {
             foreach (var field in fields) {
                 AddParameter(command, field.Identifier, row[field.Alias]);
             }
+            if (_entity.Delete) {
+                AddParameter(command, "TflDeleted", false);
+            }
             AddParameter(command, "TflKey", row["TflKey"]);
             AddParameter(command, "TflBatchId", _entity.TflBatchId);
 
-            Debug(command.CommandText);
+            TflLogger.Debug(_entity.ProcessName, _entity.Alias, command.CommandText);
         }
     }
 }

@@ -28,7 +28,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var fields in Model.Log.Select(line => line.Split("|".ToCharArray()).Select(f => f.TrimEnd('.')).ToArray())) {
+                @foreach (var fields in Model.TransformalizeResponse.Log.Select(line => line.Split("|".ToCharArray()).Select(f => f.TrimEnd('.')).ToArray())) {
                     string color;
                     switch (fields[2].Trim()) {
                         case "Error":
@@ -52,7 +52,7 @@
     </div>
 }
 
-@foreach (var process in Model.Processes) {
+@foreach (var process in Model.TransformalizeResponse.Processes) {
     var results = process.Results.ToArray();
     if(results.Length > 0) {
         var fields = process.OutputFields().ToArray();

@@ -4,6 +4,7 @@ using System.Diagnostics.Tracing;
 using System.Linq;
 using System.Net;
 using Orchard.ContentManagement;
+using Orchard.Core.Title.Models;
 
 namespace Transformalize.Orchard.Models {
 
@@ -12,6 +13,7 @@ namespace Transformalize.Orchard.Models {
         private bool? _requiresInputFile;
         private bool? _requiresOutputFile;
         private Mode[] _modes;
+        private bool _parametersInjected = false;
 
         public string Configuration {
             get {
@@ -40,6 +42,10 @@ namespace Transformalize.Orchard.Models {
         public string Modes {
             get { return Record.Modes; }
             set { Record.Modes = value; }
+        }
+
+        public string Title() {
+            return this.As<TitlePart>().Title;
         }
 
         public bool TryCatch {
@@ -127,6 +133,14 @@ namespace Transformalize.Orchard.Models {
 
         public bool HasEndAddress() {
             return !string.IsNullOrEmpty(Record.EndAddress);
+        }
+
+        public void SetParametersInjected() {
+            _parametersInjected = true;
+        }
+
+        public bool GetParametersInjected() {
+            return _parametersInjected;
         }
 
         public bool IsInAllowedRange(string userHostAddress) {

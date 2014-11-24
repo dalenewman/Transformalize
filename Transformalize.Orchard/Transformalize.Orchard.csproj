@@ -61,7 +61,6 @@
     <Reference Include="System.ComponentModel.DataAnnotations">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -98,6 +97,7 @@
     <Content Include="Scripts\codemirror-4.5\mode\xml\test.js" />
     <Content Include="Scripts\codemirror-4.5\mode\xml\xml.js" />
     <Content Include="Scripts\configuration-editor-004.js" />
+    <Content Include="Scripts\handsontable\jquery.handsontable.full.min.js" />
     <Content Include="Styles\codemirror-4.5\addon\dialog\dialog.css" />
     <Content Include="Styles\codemirror-4.5\addon\display\fullscreen.css" />
     <Content Include="Styles\codemirror-4.5\addon\fold\foldgutter.css" />
@@ -133,6 +133,7 @@
     <Content Include="Styles\codemirror-4.5\theme\vibrant-ink.css" />
     <Content Include="Styles\codemirror-4.5\theme\xq-dark.css" />
     <Content Include="Styles\codemirror-4.5\theme\xq-light.css" />
+    <Content Include="Styles\handsontable\jquery.handsontable.full.min.css" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -144,9 +145,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\ApiController.cs" />
+    <Compile Include="Controllers\HandsOnTableController.cs" />
+    <Compile Include="Handlers\ContentHandler.cs" />
     <Compile Include="Handlers\IResultsHandler.cs" />
     <Compile Include="Handlers\JsonContentHandler.cs" />
     <Compile Include="Handlers\JsonResultsToArrayHandler.cs" />
+    <Compile Include="Handlers\JsonResultsToObjectHandler.cs" />
     <Compile Include="Handlers\JsonResultsToDictionaryHandler.cs" />
     <Compile Include="Handlers\XmlContentHandler.cs" />
     <Compile Include="Handlers\XmlResultsToAttributesHandler.cs" />
@@ -170,6 +174,7 @@
     <Compile Include="Models\ConfigurationPartRecord.cs" />
     <Compile Include="Models\CheckFileResult.cs" />
     <Compile Include="Models\Mode.cs" />
+    <Compile Include="Models\TransformalizeResponse.cs" />
     <Compile Include="Permissions.cs" />
     <Compile Include="Routes.cs" />
     <Compile Include="Services\TransformalizeService.cs" />
@@ -196,6 +201,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\PublishProfiles\local.pubxml" />
+    <Content Include="Views\HandsOnTable\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Transformalize\Transformalize.csproj">

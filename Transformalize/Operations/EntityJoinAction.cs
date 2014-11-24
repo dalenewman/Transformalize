@@ -21,37 +21,50 @@
 #endregion
 
 using System.Linq;
+using Transformalize.Libs.Nest.DSL.Repository;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Logging;
 using Transformalize.Main;
 
 namespace Transformalize.Operations {
     public class EntityJoinAction : JoinOperation {
-        private readonly Entity _entity;
         private readonly string _firstKey;
+        private readonly bool _hasVersion;
+        private readonly string _versionAlias;
+        private readonly string _versionSimpleType;
+        private readonly bool _entityDelete;
+        private readonly int _tflBatchId;
         private readonly string[] _keys;
-        private readonly string[] _bytes = new[] { "byte[]", "rowversion" };
+        private static readonly string[] Bytes = new[] { "byte[]", "rowversion" };
 
         public EntityJoinAction(Process process, Entity entity)
             : base(process) {
-            _entity = entity;
+            _hasVersion = entity.Version != null;
+            _versionAlias = _hasVersion ? entity.Version.Alias : string.Empty;
+            _versionSimpleType = _hasVersion ? entity.Version.SimpleType : string.Empty;
+            _entityDelete = entity.Delete;
+            _tflBatchId = entity.TflBatchId;
             _keys = entity.PrimaryKey.Aliases().ToArray();
             _firstKey = _keys[0];
         }
 
         protected override Row MergeRows(Row leftRow, Row rightRow) {
+
             if (rightRow.ContainsKey(_firstKey)) {
-                if (_entity.Version == null || UpdateIsNecessary(ref leftRow, ref rightRow)) {
+                var wasDeleted = _entityDelete && rightRow["TflDeleted"] != null && (bool)rightRow["TflDeleted"];
+                if (wasDeleted || !_hasVersion || UpdateIsNecessary(ref leftRow, ref rightRow, _versionAlias, _versionSimpleType)) {
                     leftRow["TflAction"] = EntityAction.Update;
                     leftRow["TflKey"] = rightRow["TflKey"];
-                    leftRow["TflBatchId"] = _entity.TflBatchId;
+                    leftRow["TflBatchId"] = _tflBatchId;
                     leftRow["TflDeleted"] = false;
                 } else {
                     leftRow["TflAction"] = EntityAction.None;
+                    leftRow["TflDeleted"] = false;
                 }
             } else {
                 leftRow["TflAction"] = EntityAction.Insert;
-                leftRow["TflBatchId"] = _entity.TflBatchId;
+                leftRow["TflBatchId"] = _tflBatchId;
                 leftRow["TflDeleted"] = false;
             }
 
@@ -62,13 +75,13 @@ namespace Transformalize.Operations {
             LeftJoin.Left(_keys).Right(_keys);
         }
 
-        private bool UpdateIsNecessary(ref Row leftRow, ref Row rightRow) {
-            if (_bytes.Any(t => t == _entity.Version.SimpleType)) {
-                var beginBytes = (byte[])leftRow[_entity.Version.Alias];
-                var endBytes = (byte[])rightRow[_entity.Version.Alias];
+        private static bool UpdateIsNecessary(ref Row leftRow, ref Row rightRow, string versionAlias, string versionSimpleType) {
+            if (Bytes.Any(t => t == versionSimpleType)) {
+                var beginBytes = (byte[])leftRow[versionAlias];
+                var endBytes = (byte[])rightRow[versionAlias];
                 return !beginBytes.SequenceEqual(endBytes);
             }
-            return !leftRow[_entity.Version.Alias].Equals(rightRow[_entity.Version.Alias]);
+            return !leftRow[versionAlias].Equals(rightRow[versionAlias]);
         }
     }
 }

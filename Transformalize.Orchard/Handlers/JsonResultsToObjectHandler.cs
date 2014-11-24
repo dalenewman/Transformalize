@@ -3,7 +3,9 @@ using Transformalize.Libs.Newtonsoft.Json;
 using Transformalize.Main;
 
 namespace Transformalize.Orchard.Handlers {
-    public class JsonResultsToDictionaryHandler : IResultsHandler {
+
+    public class JsonResultsToObjectHandler : IResultsHandler {
+
         public string Handle(Process[] processes) {
             var sw = new StringWriter();
             var writer = new JsonTextWriter(sw);
@@ -11,16 +13,12 @@ namespace Transformalize.Orchard.Handlers {
             foreach (var process in processes) {
                 writer.WriteStartArray();
                 foreach (var row in process.Results) {
-                    writer.WriteStartArray();
+                    writer.WriteStartObject();
                     foreach (var alias in process.OutputFields().Aliases()) {
-                        writer.WriteStartObject();
-                        writer.WritePropertyName("Key");
-                        writer.WriteValue(alias);
-                        writer.WritePropertyName("Value");
+                        writer.WritePropertyName(alias);
                         writer.WriteValue(row[alias]);
-                        writer.WriteEndObject();
                     }
-                    writer.WriteEndArray();
+                    writer.WriteEndObject();
                 }
                 writer.WriteEndArray();
             }

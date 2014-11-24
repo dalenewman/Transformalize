@@ -15,9 +15,7 @@ namespace Transformalize.Orchard {
         public IEnumerable<RouteDescriptor> GetRoutes() {
             return new[] {
 
-                RouteDescriptor("Transformalize", "Configuration"),
                 RouteDescriptor("Transformalize", "Execute"),
-                RouteDescriptor("Transformalize", "MetaData"),
                 RouteDescriptor("Api", "Api/Configuration"),
                 RouteDescriptor("Api", "Api/Execute"),
                 RouteDescriptor("Api", "Api/MetaData"),
@@ -50,6 +48,71 @@ namespace Transformalize.Orchard {
                         {"area", "Transformalize.Orchard" },
                         {"controller", "File" },
                         {"action", "Upload"}
+                    },
+                    new RouteValueDictionary(),
+                    new RouteValueDictionary { {"area", "Transformalize.Orchard" } },
+                    new MvcRouteHandler()
+                    )
+                },
+
+                new RouteDescriptor {
+                Priority = 11,
+                Route = new Route(
+                    "Transformalize/HandsOnTable/{id}",
+                    new RouteValueDictionary {
+                        {"area", "Transformalize.Orchard" },
+                        {"controller", "HandsOnTable" },
+                        {"action", "Index"},
+                        {"id", 0}
+                    },
+                    new RouteValueDictionary(),
+                    new RouteValueDictionary { {"area", "Transformalize.Orchard" } },
+                    new MvcRouteHandler()
+                    )
+                },
+
+                new RouteDescriptor {
+                Priority = 11,
+                Route = new Route(
+                    "Transformalize/HandsOnTable/Load/{id}",
+                    new RouteValueDictionary {
+                        {"area", "Transformalize.Orchard" },
+                        {"controller", "HandsOnTable" },
+                        {"action", "Load"},
+                        {"id", 0}
+                    },
+                    new RouteValueDictionary(),
+                    new RouteValueDictionary { {"area", "Transformalize.Orchard" } },
+                    new MvcRouteHandler()
+                    )
+                },
+
+                new RouteDescriptor {
+                Priority = 11,
+                Route = new Route(
+                    "Transformalize/HandsOnTable/Save/{id}",
+                    new RouteValueDictionary {
+                        {"area", "Transformalize.Orchard" },
+                        {"controller", "HandsOnTable" },
+                        {"action", "Save"},
+                        {"id", 0}
+                    },
+                    new RouteValueDictionary(),
+                    new RouteValueDictionary { {"area", "Transformalize.Orchard" } },
+                    new MvcRouteHandler()
+                    )
+                },
+
+                // Legacy configuration path, new is Transformalize/Api/Configuration/{id}
+                new RouteDescriptor {
+                Priority = 11,
+                Route = new Route(
+                    "Transformalize/Configuration/{id}",
+                    new RouteValueDictionary {
+                        {"area", "Transformalize.Orchard" },
+                        {"controller", "Api" },
+                        {"action", "Api/Configuration"},
+                        {"id", 0}
                     },
                     new RouteValueDictionary(),
                     new RouteValueDictionary { {"area", "Transformalize.Orchard" } },

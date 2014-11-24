@@ -41,7 +41,7 @@ namespace Transformalize.Main.Providers.SqlServer {
             _connection = connection;
             EntityName = entity.Name;
             _entity = entity;
-            _fields = new List<string>(new FieldSqlWriter(entity.PrimaryKey).Alias(connection.L, connection.R).Keys()) { "TflKey" };
+            _fields = new List<string>(new FieldSqlWriter(entity.PrimaryKey).AddDeleted(entity).Alias(connection.L, connection.R).Keys()) { "TflKey" };
             _key = _entity.PrimaryKey;
         }
 
@@ -68,7 +68,7 @@ namespace Transformalize.Main.Providers.SqlServer {
                 FROM {2} e WITH (NOLOCK);
             ";
 
-            var selectKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias(_connection.L, _connection.R).Write(", e.", false);
+            var selectKeys = new FieldSqlWriter(_entity.PrimaryKey).AddDeleted(_entity).Alias(_connection.L, _connection.R).Write(", e.", false);
             return string.Format(sqlPattern, selectKeys, PrepareVersion(), _connection.Enclose(_entity.OutputName()));
         }
 
@@ -99,7 +99,7 @@ namespace Transformalize.Main.Providers.SqlServer {
             builder.AppendLine(_connection.WriteTemporaryTable("@KEYS", _key.WithInput()));
             builder.AppendLine(SqlTemplates.BatchInsertValues(50, "@KEYS", _key.WithInput(), _entity.InputKeys, _connection));
 
-            var selectKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias(_connection.L, _connection.R).Write(", e.", false);
+            var selectKeys = new FieldSqlWriter(_entity.PrimaryKey).AddDeleted(_entity).Alias(_connection.L, _connection.R).Write(", e.", false);
             var joinKeys = new FieldSqlWriter(_entity.PrimaryKey).Input().Alias(_connection.L, _connection.R).Set("e", "k").Write(" AND ");
             return string.Format(sqlPattern, builder, selectKeys, PrepareVersion(), _connection.Enclose(_entity.OutputName()), joinKeys);
         }

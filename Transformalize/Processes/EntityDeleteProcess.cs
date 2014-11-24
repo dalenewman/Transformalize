@@ -42,12 +42,14 @@ namespace Transformalize.Processes {
 
         protected override void Initialize() {
 
-            if (_entity.Input.Count == 1) {
-                var connection = _entity.Input.First().Connection;
+            var firstConnection = _entity.Input.First().Connection;
+            var singleInput = _entity.Input.Count == 1;
+
+            if (singleInput) {
                 Register(
-                    connection.Is.Internal() ?
+                    firstConnection.Is.Internal() ?
                     _entity.InputOperation :
-                    connection.ExtractAllKeysFromInput(_process, _entity)
+                    firstConnection.ExtractAllKeysFromInput(_process, _entity)
                 );
             } else {
                 var multiInput = new ParallelUnionAllOperation();
@@ -55,6 +57,18 @@ namespace Transformalize.Processes {
                     multiInput.Add(namedConnection.Connection.ExtractAllKeysFromInput(_process, _entity));
                 }
                 Register(multiInput);
+            }
+
+            //primary key and/or version may be calculated, so defaults and transformations should be run on them
+            if (!_entity.PrimaryKey.All(f => f.Input) || (_entity.Version != null && !_entity.Version.Input)) {
+                TflLogger.Warn(_entity.ProcessName, _entity.Alias, "Using a calculated primary key or version to perform deletes requires setting default values and all transformations to run.  The preferred method is to use an input field.");
+                Register(new ApplyDefaults(true, new Fields(_entity.Fields, _entity.CalculatedFields)) { EntityName = _entity.Name });
+                foreach (var transform in _entity.OperationsBeforeAggregation) {
+                    Register(transform);
+                }
+                foreach (var transform in _entity.OperationsAfterAggregation) {
+                    Register(transform);
+                }
             }
 
             Register(new EntityDetectDeletes(_process, _entity).Right(_process.OutputConnection.ExtractAllKeysFromOutput(_entity)));

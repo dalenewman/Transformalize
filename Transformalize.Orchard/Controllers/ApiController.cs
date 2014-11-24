@@ -1,30 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Web.Mvc;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.Localization;
-using Transformalize.Libs.fastJSON;
-using Transformalize.Libs.Lucene.Net.Search;
-using Transformalize.Libs.Newtonsoft.Json;
-using Transformalize.Libs.Newtonsoft.Json.Linq;
-using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
-using Transformalize.Main.Providers;
-using Transformalize.Operations;
 using Transformalize.Orchard.Models;
 using Transformalize.Orchard.Services;
-using Process = Transformalize.Main.Process;
 
 namespace Transformalize.Orchard.Controllers {
     public class ApiController : Controller {
 
         private const string DEFAULT_FORMAT = "xml";
-        private const string DEFAULT_FLAVOR = "dictionary";
+        private const string DEFAULT_FLAVOR = "attributes";
 
         private readonly IOrchardServices _orchardServices;
         private readonly ITransformalizeService _transformalize;
@@ -42,12 +31,11 @@ namespace Transformalize.Orchard.Controllers {
             T = NullLocalizer.Instance;
         }
 
-        private static ActionResult SimpleResult(ApiRequest request, int status, string message = "") {
+        private static ActionResult SimpleResult(ApiRequest request, int status, string message) {
+            request.Status = status;
+            request.Message = message;
             var query = GetQuery();
-            return new ApiResponse(request, "<transformalize><processes></processes></transformalize>") {
-                Status = status,
-                Message = message
-            }.ContentResult(
+            return new ApiResponse(request, "<transformalize><processes></processes></transformalize>").ContentResult(
                 query["format"] ?? DEFAULT_FORMAT,
                 query["flavor"] ?? DEFAULT_FLAVOR
             );
@@ -73,11 +61,13 @@ namespace Transformalize.Orchard.Controllers {
                     return SimpleResult(request, 404, "Not Found");
                 }
             }
-            var query = GetQuery();
-            request.Configuration = _transformalize.InjectParameters(part, query);
+
+            _transformalize.InjectParameters(ref part, GetQuery());
+            request.Configuration = part.Configuration;
+
             return new ApiResponse(request).ContentResult(
-                query["format"] ?? DEFAULT_FORMAT,
-                query["flavor"] ?? DEFAULT_FLAVOR
+                GetQuery()["format"] ?? DEFAULT_FORMAT,
+                GetQuery()["flavor"] ?? DEFAULT_FLAVOR
             );
         }
 
@@ -97,7 +87,9 @@ namespace Transformalize.Orchard.Controllers {
             }
 
             var query = GetQuery();
-            request.Configuration = _transformalize.InjectParameters(part, query);
+            _transformalize.InjectParameters(ref part, query);
+            request.Configuration = part.Configuration;
+
             return new ApiResponse(request, _transformalize.GetMetaData(part, query)).ContentResult(
                 query["format"] ?? DEFAULT_FORMAT,
                 query["flavor"] ?? DEFAULT_FLAVOR
@@ -132,24 +124,21 @@ namespace Transformalize.Orchard.Controllers {
 
             // ready
             var query = GetQuery();
-            request.Configuration = _transformalize.InjectParameters(part, query);
+            _transformalize.InjectParameters(ref part, query);
+            request.Configuration = part.Configuration;
+
             var options = query["Mode"] != null ? new Options { Mode = query["Mode"] } : new Options();
 
-            var processes = new Process[0];
-            var message = string.Empty;
-            var status = 200;
+            var processes = new TransformalizeResponse();
 
             try {
-                processes = RunCommon(request.Configuration, options, query);
+                processes = _transformalize.Run(part, options, query);
             } catch (Exception ex) {
-                status = 500;
-                message = ex.Message;
+                request.Status = 500;
+                request.Message = ex.Message;
             }
 
-            return new ApiResponse(request, processes) {
-                Status = status,
-                Message = message
-            }.ContentResult(
+            return new ApiResponse(request, processes).ContentResult(
                 query["format"] ?? DEFAULT_FORMAT,
                 query["flavor"] ?? DEFAULT_FLAVOR
             );
@@ -158,62 +147,6 @@ namespace Transformalize.Orchard.Controllers {
         private static NameValueCollection GetQuery() {
             var request = System.Web.HttpContext.Current.Request;
             return new NameValueCollection { request.Form, request.QueryString };
-        }
-
-        private static Process[] RunCommon(string configuration, Options options, NameValueCollection query) {
-            var processes = new List<Process>();
-            if (options.Mode.Equals("rebuild", StringComparison.OrdinalIgnoreCase)) {
-                options.Mode = "init";
-                processes.AddRange(ProcessFactory.Create(configuration, options));
-                options.Mode = "first";
-                processes.AddRange(ProcessFactory.Create(configuration, options));
-            } else {
-                processes.AddRange(ProcessFactory.Create(configuration, options));
-            }
-
-            foreach (var process in processes) {
-                if (process.Connections.ContainsKey("input")) {
-                    if (process.Connections["input"].Type == ProviderType.Internal) {
-                        var data = query["data"];
-                        if (data != null) {
-                            var rows = new List<Row>();
-                            var sr = new StringReader(data);
-                            var reader = new JsonTextReader(sr);
-                            reader.Read();
-                            if (reader.TokenType != JsonToken.StartArray)
-                                throw new JsonException("The data passed into this process must be an array of arrays that contain input data matching the configured fields.  E.g. [['Dale','Newman', 34],['Gavin','Newman', 3]]");
-
-                            var entity = process.Entities.First();
-                            var inputFields = entity.InputFields();
-
-                            while (reader.Read()) {
-                                if (reader.TokenType == JsonToken.StartArray) {
-                                    var row = new Row();
-                                    foreach (var name in inputFields.Select(f => f.Name)) {
-                                        reader.Read();
-                                        row[name] = reader.Value;
-                                    }
-                                    rows.Add(row);
-                                } else if (reader.TokenType == JsonToken.StartObject) {
-                                    var row = new Row();
-                                    do {
-                                        reader.Read();
-                                        var name = reader.Value;
-                                        reader.Read();
-                                        var value = reader.Value;
-                                        row[name] = value;
-                                    } while (reader.TokenType != JsonToken.EndObject);
-                                    rows.Add(row);
-                                }
-                            }
-                            entity.InputOperation = new RowsOperation(rows);
-                        }
-                    }
-                }
-                process.ExecuteScaler();
-            }
-
-            return processes.ToArray();
         }
 
     }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
@@ -7,12 +6,10 @@ using System.Text;
 using System.Web.Mvc;
 using Orchard;
 using Orchard.ContentManagement;
-using Orchard.Core.XmlRpc.Controllers;
 using Orchard.Localization;
 using Orchard.Themes;
 using Orchard.UI.Notify;
 using Transformalize.Extensions;
-using Transformalize.Libs.SemanticLogging;
 using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
@@ -60,51 +57,6 @@ namespace Transformalize.Orchard.Controllers {
             };
 
             return View(viewModel);
-        }
-
-        [LiveWriterController.NoCache]
-        public ActionResult Configuration(int id) {
-
-            var part = _orchardServices.ContentManager.Get(id).As<ConfigurationPart>();
-            if (part == null) {
-                return new HttpNotFoundResult();
-            }
-
-            if (!(Request.IsLocal || part.IsInAllowedRange(Request.UserHostAddress))) {
-                if (User.Identity.IsAuthenticated) {
-                    if (!_orchardServices.Authorizer.Authorize(global::Orchard.Core.Contents.Permissions.ViewContent, part)) {
-                        return new HttpUnauthorizedResult();
-                    }
-                } else {
-                    System.Web.Security.FormsAuthentication.RedirectToLoginPage(Request.RawUrl);
-                }
-            }
-
-            var query = new NameValueCollection(Request.QueryString);
-            return new ContentResult() {
-                Content = Encoding.UTF8.GetString(Encoding.Default.GetBytes(_transformalize.InjectParameters(part, query))),
-                ContentEncoding = Encoding.UTF8,
-                ContentType = "text/xml"
-            };
-        }
-
-        public ActionResult MetaData(int id) {
-
-            if (!User.Identity.IsAuthenticated) {
-                System.Web.Security.FormsAuthentication.RedirectToLoginPage(Request.RawUrl);
-            }
-
-            var part = _orchardServices.ContentManager.Get(id).As<ConfigurationPart>();
-            if (part == null) {
-                return new HttpNotFoundResult();
-            }
-
-            var query = new NameValueCollection(Request.QueryString);
-            return new ContentResult() {
-                Content = _transformalize.GetMetaData(part, query),
-                ContentEncoding = Encoding.UTF8,
-                ContentType = "text/xml"
-            };
         }
 
         [Themed]
@@ -157,7 +109,7 @@ namespace Transformalize.Orchard.Controllers {
                     _orchardServices.Notifier.Information(T("You have {0} new file{0}.", fileCount, fileCount.Plural()));
                     return RedirectToAction("Download", "File", new { id = _transformalize.FilesCreated.Last() });
                 }
-                if (viewModel.Processes.All(p => p.OutputConnection.Type != ProviderType.Internal)) {
+                if (viewModel.TransformalizeResponse.Processes.All(p => p.OutputConnection.Type != ProviderType.Internal)) {
                     return RedirectToAction("Configurations", "Transformalize", new { id = part.Id });
                 }
             }
@@ -182,18 +134,9 @@ namespace Transformalize.Orchard.Controllers {
             var model = new ExecuteViewModel() { DisplayLog = part.DisplayLog };
             var options = query["Mode"] != null ? new Options { Mode = query["Mode"] } : new Options();
 
-            var log = new SynchronizedCollection<string>();
-            var memory = new ObservableEventListener();
-
-            if (part.DisplayLog) {
-                memory.EnableEvents(TflEventSource.Log, part.ToLogLevel());
-                memory.LogToMemory(ref log);
-                TflLogger.Info("Orchard", "Log", "Injecting memory logger");
-            }
-
             if (part.TryCatch) {
                 try {
-                    model.Processes = RunCommon(part, query, options);
+                    model.TransformalizeResponse = _transformalize.Run(part, options, query);
                 } catch (Exception ex) {
                     TflLogger.Error(string.Empty, string.Empty, ex.Message);
                     TflLogger.Warn(string.Empty, string.Empty, ex.StackTrace);
@@ -202,38 +145,10 @@ namespace Transformalize.Orchard.Controllers {
                     }
                 }
             } else {
-                model.Processes = RunCommon(part, query, options);
+                model.TransformalizeResponse = _transformalize.Run(part, options, query);
             }
-
-            if (!part.DisplayLog) {
-                return model;
-            }
-
-            model.Log = log.ToArray();
 
             return model;
-        }
-
-        private Process[] RunCommon(ConfigurationPart part, NameValueCollection query, Options options) {
-            var xml = _transformalize.InjectParameters(part, query);
-            var processes = new List<Process>();
-            if (options.Mode.Equals("rebuild", StringComparison.OrdinalIgnoreCase)) {
-                options.Mode = "init";
-                processes.AddRange(ProcessFactory.Create(xml, options));
-                options.Mode = "first";
-                processes.AddRange(ProcessFactory.Create(xml, options));
-            } else {
-                processes.AddRange(ProcessFactory.Create(xml, options));
-            }
-
-            foreach (var process in processes) {
-                process.ExecuteScaler();
-                if (!part.DisplayLog && !process.OutputConnection.Type.HasFlag(ProviderType.Internal)) {
-                    _orchardServices.Notifier.Information(T("{0} executed successfully.", process.Name));
-                }
-            }
-
-            return processes.ToArray();
         }
 
     }

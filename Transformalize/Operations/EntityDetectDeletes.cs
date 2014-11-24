@@ -17,14 +17,25 @@ namespace Transformalize.Operations {
 
         protected override Row MergeRows(Row leftRow, Row rightRow) {
             var row = rightRow.Clone();
-            if (leftRow.ContainsKey(_firstKey)) {
+
+            if (ThereIsAKeyMatch(leftRow, _firstKey)) {
                 row["TflAction"] = EntityAction.None;
                 row["TflDeleted"] = false;
             } else {
-                row["TflAction"] = EntityAction.Delete;
-                row["TflDeleted"] = true;
+                var isAlreadyDeleted = rightRow["TflDeleted"] != null && (bool)rightRow["TflDeleted"];
+                if (isAlreadyDeleted) {
+                    row["TflAction"] = EntityAction.None;
+                    row["TflDeleted"] = true;
+                } else {
+                    row["TflAction"] = EntityAction.Delete;
+                    row["TflDeleted"] = true;
+                }
             }
             return row;
+        }
+
+        private static bool ThereIsAKeyMatch(Row leftRow, string firstKey) {
+            return leftRow.ContainsKey(firstKey);
         }
 
         protected override void SetupJoinConditions() {

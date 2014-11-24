@@ -30,6 +30,7 @@ namespace Transformalize.Runner {
             timer.Stop();
             TflLogger.Info(process.Name, string.Empty, "Initialized output in {0}.", timer.Elapsed);
 
+            process.Complete = true;
             return result;
         }
 

@@ -54,7 +54,7 @@ namespace Transformalize.Runner {
                     throw new TransformalizeException("Can't find the <transformalize/> element in {0}.", string.IsNullOrEmpty(contents.Name) ? "the configuration" : contents.Name);
 
                 // The Transformalize WEB API returns these elements, but .NET Configuration can't stand them, so they are removed before deserialization below.
-                var apiElements = new[] { "request", "status", "message", "time", "response" };
+                var apiElements = new[] { "request", "status", "message", "time", "response", "log" };
                 foreach (var element in apiElements.Where(element => transformalize.Elements(element).Any())) {
                     transformalize.Elements(element).Remove();
                 }

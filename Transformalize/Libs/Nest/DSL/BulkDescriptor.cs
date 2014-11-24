@@ -46,7 +46,7 @@ namespace Transformalize.Libs.Nest.DSL
 
 		public BulkDescriptor()
 		{
-			Self.Operations = new SynchronizedCollection<IBulkOperation>();
+			Self.Operations = new List<IBulkOperation>();
 		}
 
 		public BulkDescriptor Create<T>(Func<BulkCreateDescriptor<T>, BulkCreateDescriptor<T>> bulkCreateSelector) where T : class

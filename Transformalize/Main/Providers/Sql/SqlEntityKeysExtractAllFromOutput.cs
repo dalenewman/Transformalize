@@ -3,8 +3,7 @@ using System.Data;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 
-namespace Transformalize.Main.Providers.Sql
-{
+namespace Transformalize.Main.Providers.Sql {
     public class SqlEntityKeysExtractAllFromOutput : InputCommandOperation {
 
         private readonly Entity _entity;
@@ -14,8 +13,10 @@ namespace Transformalize.Main.Providers.Sql
             : base(connection) {
             _entity = entity;
             EntityName = entity.Name;
-            _keys = new List<string>(entity.PrimaryKey.Aliases()) { "TflKey" };
-            }
+            _keys = _entity.Delete ?
+                new List<string>(entity.PrimaryKey.Aliases()) { "TflDeleted", "TflKey" } :
+                new List<string>(entity.PrimaryKey.Aliases()) { "TflKey" };
+        }
 
         protected override Row CreateRowFromReader(IDataReader reader) {
             var row = new Row();
@@ -33,7 +34,7 @@ namespace Transformalize.Main.Providers.Sql
         }
 
         private string PrepareSql() {
-            
+
             var sqlPattern = "SELECT {0}, TflKey FROM {1}";
             if (Connection.NoLock) {
                 sqlPattern += " WITH (NOLOCK);";
@@ -41,7 +42,7 @@ namespace Transformalize.Main.Providers.Sql
                 sqlPattern = "SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED; " + sqlPattern + "; COMMIT;";
             }
 
-            var selectKeys = new FieldSqlWriter(_entity.PrimaryKey).Alias(Connection.L, Connection.R).Write(", ", false);
+            var selectKeys = new FieldSqlWriter(_entity.PrimaryKey).AddDeleted(_entity).Alias(Connection.L, Connection.R).Write(", ", false);
             return string.Format(sqlPattern, selectKeys, Connection.Enclose(_entity.OutputName()));
         }
 

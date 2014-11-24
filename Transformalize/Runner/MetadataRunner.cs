@@ -29,7 +29,7 @@ namespace Transformalize.Runner {
 
             timer.Stop();
             TflLogger.Info(process.Name, string.Empty, "Calculated metadata in {0}.", timer.Elapsed);
-
+            process.Complete = true;
             return result;
         }
 

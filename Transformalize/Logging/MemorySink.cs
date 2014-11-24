@@ -7,11 +7,11 @@ using Transformalize.Libs.SemanticLogging.Formatters;
 namespace Transformalize.Logging {
 
     public sealed class MemorySink : IObserver<EventEntry> {
-        private readonly SynchronizedCollection<string> _log;
+        private readonly List<string> _log;
 
         private readonly IEventTextFormatter _formatter = new LegacyLogFormatter();
 
-        public MemorySink(ref SynchronizedCollection<string> log) {
+        public MemorySink(ref List<string> log) {
             _log = log;
         }
 

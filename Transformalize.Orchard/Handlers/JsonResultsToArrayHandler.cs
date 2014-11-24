@@ -1,10 +1,9 @@
 using System.IO;
 using Transformalize.Libs.Newtonsoft.Json;
 using Transformalize.Main;
-using Transformalize.Orchard.Models;
 
-namespace Transformalize.Orchard.Handlers
-{
+namespace Transformalize.Orchard.Handlers {
+
     public class JsonResultsToArrayHandler : IResultsHandler {
 
         public string Handle(Process[] processes) {

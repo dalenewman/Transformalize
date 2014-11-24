@@ -71,6 +71,7 @@ namespace Transformalize.Runner {
             timer.Stop();
             TflLogger.Info(process.Name, string.Empty, "Process affected {0} records in {1}.", process.Anything, timer.Elapsed);
 
+            process.Complete = true;
             return process.Results;
         }
 

@@ -334,6 +334,8 @@ namespace Transformalize.Main {
         }
 
         public FieldSqlWriter AddDeleted(Entity entity, bool forCreate = true) {
+            if (!entity.Delete)
+                return this;
             if (!entity.IsMaster())
                 return this;
             var field = Fields.GetDeletedField(entity.Index, forCreate);
