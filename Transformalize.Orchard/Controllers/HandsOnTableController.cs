@@ -18,6 +18,7 @@ namespace Transformalize.Orchard.Controllers {
     [Themed]
     public class HandsOnTableController : Controller {
 
+        private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private readonly IOrchardServices _orchardServices;
         private readonly ITransformalizeService _transformalize;
         private readonly IApiService _apiService;
@@ -80,37 +81,40 @@ namespace Transformalize.Orchard.Controllers {
             connections.First(c => c.Attribute("provider") != null && c.Attribute("provider").Value.Equals("internal")).SetAttributeValue("name", "output");
 
             var entity = process.Element("entities").Element("add");
-            entity.SetAttributeValue("detect-changes", "false");
-            if (entity.Attributes("delete").Any()) {
-                entity.Attributes("delete").Remove();
-            }
-
-            var filter = new XElement("filter");
-            var add = new XElement("add");
-            add.SetAttributeValue("left", "TflDeleted");
-            add.SetAttributeValue("right", "0");
-            filter.Add(add);
-            entity.Add(filter);
-
             var fields = entity.Elements("fields").Elements("add").ToArray();
 
-            foreach (var field in fields) {
-                field.SetAttributeValue("primary-key", "true");
+            if (!fields.Any(f => f.Attribute("primary-key") != null && f.Attribute("primary-key").Value.Equals("true", IC))){
+                foreach (var field in fields) {
+                    field.SetAttributeValue("primary-key", "true");
+                }
             }
 
-            var lastField = fields.Last();
-            var deleted = new XElement("add");
-            deleted.SetAttributeValue("name", "TflDeleted");
-            deleted.SetAttributeValue("type", "boolean");
-            deleted.SetAttributeValue("output", "false");
-            deleted.SetAttributeValue("label", "Deleted");
-            lastField.AddAfterSelf(deleted);
+            entity.SetAttributeValue("detect-changes", "false");
+            if (entity.Attributes("delete").Any()  && entity.Attribute("delete").Value.Equals("true", IC)) {
+                entity.Attributes("delete").Remove();
+
+                var filter = new XElement("filter");
+                var add = new XElement("add");
+                add.SetAttributeValue("left", "TflDeleted");
+                add.SetAttributeValue("right", "0");
+                filter.Add(add);
+                entity.Add(filter);
+
+                var lastField = fields.Last();
+                var deleted = new XElement("add");
+                deleted.SetAttributeValue("name", "TflDeleted");
+                deleted.SetAttributeValue("type", "boolean");
+                deleted.SetAttributeValue("output", "false");
+                deleted.SetAttributeValue("label", "Deleted");
+                lastField.AddAfterSelf(deleted);
+            }
 
             return xml.ToString();
             // ReSharper restore PossibleNullReferenceException
         }
 
         private ActionResult ModifyAndRun(int id, Func<string, string> modifier) {
+
             Response.AddHeader("Access-Control-Allow-Origin", "*");
             var request = new ApiRequest(ApiRequestType.Execute) { Stopwatch = _stopwatch };
 

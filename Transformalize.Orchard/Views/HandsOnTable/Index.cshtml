@@ -14,7 +14,11 @@
 
 <h2>@(title)</h2>
 
-<button id="save" type="button" class="btn btn-primary btn-xs" style="margin-bottom: 10px;">
+<button id="load" type="button" class="btn btn-warning btn-xs" style="margin-bottom: 7px;">
+    <span class="glyphicon glyphicon-refresh"></span> Reload
+</button>
+
+<button id="save" type="button" class="btn btn-primary btn-xs" style="margin-bottom: 7px;">
     <span class="glyphicon glyphicon-floppy-save"></span> Save
 </button>
 
@@ -73,38 +77,40 @@
             };
         }
 
-        $.get(settings.load, function (tfl) {
-            if (tfl.status === 200) {
-                var fields = tfl.processes[0].add.entities.add.fields.add.filter(function (item) {
-                    return !item.hasOwnProperty('output') || item.output === true;
-                });
-                var headers = $.map(fields, function (f) {
-                    return f.label;
-                });
-                var data = tfl.response[0];
-                if (data.length > 0) {
-                    $('#target').handsontable({
-                        data: data,
-                        minSpareRows: 1,
-                        rowHeaders: true,
-                        colHeaders: headers,
-                        contextMenu: true
+        $('#load').click(function () {
+            $.get(settings.load, function (tfl) {
+                if (tfl.status === 200) {
+                    var fields = tfl.processes[0].add.entities.add.fields.add.filter(function (item) {
+                        return !item.hasOwnProperty('output') || item.output === true;
                     });
+                    var headers = $.map(fields, function (f) {
+                        return f.label;
+                    });
+                    var data = tfl.response[0];
+                    if (data.length > 0) {
+                        $('#target').handsontable({
+                            data: data,
+                            minSpareRows: 1,
+                            rowHeaders: true,
+                            colHeaders: headers,
+                            contextMenu: true
+                        });
+                    } else {
+                        $('#target').handsontable({
+                            startRows: 1,
+                            startCols: headers.length,
+                            minSpareRows: 1,
+                            rowHeaders: true,
+                            colHeaders: headers,
+                            contextMenu: true
+                        });
+                    }
+                    $().toastmessage('showSuccessToast', "Data Loaded");
                 } else {
-                    $('#target').handsontable({
-                        startRows: 1,
-                        startCols: headers.length,
-                        minSpareRows: 1,
-                        rowHeaders: true,
-                        colHeaders: headers,
-                        contextMenu: true
-                    });
+                    $().toastmessage('showErrorToast', tfl.message);
                 }
-                $().toastmessage('showSuccessToast', "Data Loaded");
-            } else {
-                $().toastmessage('showErrorToast', tfl.message);
-            }
-        }, 'json');
+            }, 'json');
+        });
 
         $('#save').click(function () {
             var data = $('#target').data('handsontable').getData().slice().filter(function (item) {
@@ -129,6 +135,8 @@
                 }
             });
         });
+
+        $('#load').click();
 
     });
     // -->
