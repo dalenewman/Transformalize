@@ -1,13 +1,17 @@
 ﻿using System;
-using System.IO;
-using System.Net;
+using System.Collections.Specialized;
+using System.Diagnostics;
+using System.Linq;
 using System.Web.Mvc;
+using System.Xml.Linq;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.Localization;
 using Orchard.Logging;
 using Orchard.Themes;
+using Transformalize.Main;
 using Transformalize.Orchard.Models;
+using Transformalize.Orchard.Services;
 
 namespace Transformalize.Orchard.Controllers {
 
@@ -15,14 +19,27 @@ namespace Transformalize.Orchard.Controllers {
     public class HandsOnTableController : Controller {
 
         private readonly IOrchardServices _orchardServices;
+        private readonly ITransformalizeService _transformalize;
+        private readonly IApiService _apiService;
+        private readonly Stopwatch _stopwatch = new Stopwatch();
+        private readonly NameValueCollection _query = new NameValueCollection(2);
 
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
 
-        public HandsOnTableController(IOrchardServices services) {
+        public HandsOnTableController(
+            IOrchardServices services,
+            ITransformalizeService transformalize,
+            IApiService apiService
+        ) {
             _orchardServices = services;
+            _transformalize = transformalize;
+            _apiService = apiService;
             T = NullLocalizer.Instance;
             Logger = NullLogger.Instance;
+            _query.Add("format", "json");
+            _query.Add("flavor", "arrays");
+            _stopwatch.Start();
         }
 
         public ActionResult Index(int id) {
@@ -42,67 +59,100 @@ namespace Transformalize.Orchard.Controllers {
             return View(part);
         }
 
-        public ContentResult Load(int id) {
-            //TODO: Have to transform configuration instead of request
-            var relayTo = Request.Url.GetLeftPart(UriPartial.Authority) + Url.Action("Api/Execute", "Api", new { id }) + "?format=json&flavor=arrays";
-            Logger.Error(relayTo);
-            var content = RelayContent(relayTo);
-            return new ContentResult() {
-                Content = content,
-                ContentType = "application/json"
-            };
+        public ActionResult Load(int id) {
+            return ModifyAndRun(id, TransformConfigurationForLoad);
         }
 
-        public ContentResult Save(int id) {
-            //TODO: Have to transform configuration instead of request
-            var relayTo = Request.Url.GetLeftPart(UriPartial.Authority) + Url.Action("Api/Execute", "Api", new { id }) + "?format=json&flavor=arrays";
-            Logger.Error(relayTo);
-            var content = RelayContent(relayTo);
-            return new ContentResult() {
-                Content = content,
-                ContentType = "application/json"
-            };
+        public ActionResult Save(int id) {
+            _query.Add("data", Request.Form["data"]);
+            return ModifyAndRun(id, s => s);
         }
 
-        private string RelayContent(string url) {
+        private static string TransformConfigurationForLoad(string configuration) {
+            // ReSharper disable PossibleNullReferenceException
+            var xml = XDocument.Parse(configuration).Root;
 
-            string content;
-            var orchardRequest = Request;
-            var serviceRequest = WebRequest.Create(url);
+            var process = xml.Element("processes").Element("add");
+            process.SetAttributeValue("star-enabled", "false");
 
-            serviceRequest.Method = orchardRequest.HttpMethod;
-            serviceRequest.ContentType = orchardRequest.ContentType;
+            var connections = process.Element("connections").Elements().ToArray();
+            connections.First(c => c.Attribute("provider") == null || !c.Attribute("provider").Value.Equals("internal")).SetAttributeValue("name", "input");
+            connections.First(c => c.Attribute("provider") != null && c.Attribute("provider").Value.Equals("internal")).SetAttributeValue("name", "output");
 
-            if (serviceRequest.Method != "GET") {
-
-                orchardRequest.InputStream.Position = 0;
-
-                var inStream = orchardRequest.InputStream;
-                Stream webStream = null;
-                try {
-                    //copy incoming request body to outgoing request
-                    if (inStream != null && inStream.Length > 0) {
-                        serviceRequest.ContentLength = inStream.Length;
-                        webStream = serviceRequest.GetRequestStream();
-                        inStream.CopyTo(webStream);
-                    }
-                } finally {
-                    if (null != webStream) {
-                        webStream.Flush();
-                        webStream.Close();
-                    }
-                }
+            var entity = process.Element("entities").Element("add");
+            entity.SetAttributeValue("detect-changes", "false");
+            if (entity.Attributes("delete").Any()) {
+                entity.Attributes("delete").Remove();
             }
 
-            using (var response = (HttpWebResponse)serviceRequest.GetResponse()) {
-                using (var stream = response.GetResponseStream()) {
-                    content = new StreamReader(stream).ReadToEnd();
-                }
-                Response.ContentType = response.ContentType;
+            var filter = new XElement("filter");
+            var add = new XElement("add");
+            add.SetAttributeValue("left", "TflDeleted");
+            add.SetAttributeValue("right", "0");
+            filter.Add(add);
+            entity.Add(filter);
+
+            var fields = entity.Elements("fields").Elements("add").ToArray();
+
+            foreach (var field in fields) {
+                field.SetAttributeValue("primary-key", "true");
             }
 
-            return content;
+            var lastField = fields.Last();
+            var deleted = new XElement("add");
+            deleted.SetAttributeValue("name", "TflDeleted");
+            deleted.SetAttributeValue("type", "boolean");
+            deleted.SetAttributeValue("output", "false");
+            deleted.SetAttributeValue("label", "Deleted");
+            lastField.AddAfterSelf(deleted);
+
+            return xml.ToString();
+            // ReSharper restore PossibleNullReferenceException
         }
+
+        private ActionResult ModifyAndRun(int id, Func<string, string> modifier) {
+            Response.AddHeader("Access-Control-Allow-Origin", "*");
+            var request = new ApiRequest(ApiRequestType.Execute) { Stopwatch = _stopwatch };
+
+            var part = _orchardServices.ContentManager.Get(id).As<ConfigurationPart>();
+            if (part == null) {
+                return _apiService.NotFound(request, _query);
+            }
+
+            if (User.Identity.IsAuthenticated) {
+                if (!_orchardServices.Authorizer.Authorize(global::Orchard.Core.Contents.Permissions.ViewContent, part)) {
+                    return _apiService.Unathorized(request, _query);
+                }
+            } else {
+                return _apiService.Unathorized(request, _query);
+            }
+
+            var transformalizeRequest = new TransformalizeRequest();
+            try {
+                transformalizeRequest = new TransformalizeRequest {
+                    Configuration = modifier(part.Configuration),
+                    Options = new Options(),
+                    Query = _query
+                };
+            } catch (Exception ex) {
+                request.Status = 500;
+                request.Message = ex.Message;
+            }
+
+            var processes = new TransformalizeResponse();
+
+            try {
+                processes = _transformalize.Run(transformalizeRequest);
+            } catch (Exception ex) {
+                request.Status = 500;
+                request.Message = ex.Message;
+            }
+
+            return new ApiResponse(request, transformalizeRequest.Configuration, processes).ContentResult("json", "arrays");
+
+        }
+
+
 
     }
 }

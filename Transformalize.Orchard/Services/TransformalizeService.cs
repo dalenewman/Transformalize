@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics.Tracing;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -43,23 +44,18 @@ namespace Transformalize.Orchard.Services {
         public ILogger Logger { get; set; }
         public IEnumerable<int> FilesCreated { get { return _filesCreated; } }
 
-        public void InjectParameters(ref ConfigurationPart part, NameValueCollection query) {
-            if (part.GetParametersInjected())
-                return;
-
+        public string InjectParameters(ConfigurationPart part, NameValueCollection query) {
             _filesCreated.Clear();
             if (query["__RequestVerificationToken"] != null) {
                 query.Remove("__RequestVerificationToken");
             }
             InitializeFile(part, query, "InputFile");
             InitializeFile(part, query, "OutputFile");
-            part.Configuration = new ContentsStringReader(query).Read(part.Configuration).Content;
-            part.SetParametersInjected();
+            return new ContentsStringReader(query).Read(part.Configuration).Content;
         }
 
-        public string GetMetaData(ConfigurationPart part, NameValueCollection query) {
-            InjectParameters(ref part, query);
-            var process = ProcessFactory.Create(part.Configuration, new Options { Mode = "metadata" }).First();
+        public string GetMetaData(string configuration) {
+            var process = ProcessFactory.Create(configuration, new Options { Mode = "metadata" }).First();
             return new MetaDataWriter(process).Write();
         }
 
@@ -78,30 +74,30 @@ namespace Transformalize.Orchard.Services {
             return _orchardServices.ContentManager.Get(id, VersionOptions.Published).As<ConfigurationPart>();
         }
 
-        public TransformalizeResponse Run(ConfigurationPart part, Options options, NameValueCollection query) {
+        public TransformalizeResponse Run(TransformalizeRequest request) {
 
             var log = new List<string>();
 
-            if (part.DisplayLog) {
+            if (request.DisplayLog) {
                 var memory = new ObservableEventListener();
-                memory.EnableEvents(TflEventSource.Log, part.ToLogLevel());
+                memory.EnableEvents(TflEventSource.Log, request.LogLevel);
                 memory.LogToMemory(ref log);
                 TflLogger.Info("Orchard", "Log", "Injecting memory logger");
             }
 
             var processes = new List<Process>();
-            if (options.Mode.Equals("rebuild", StringComparison.OrdinalIgnoreCase)) {
-                options.Mode = "init";
-                processes.AddRange(ProcessFactory.Create(part.Configuration, options));
-                options.Mode = "first";
-                processes.AddRange(ProcessFactory.Create(part.Configuration, options));
+            if (request.Options.Mode.Equals("rebuild", StringComparison.OrdinalIgnoreCase)) {
+                request.Options.Mode = "init";
+                processes.AddRange(ProcessFactory.Create(request.Configuration, request.Options));
+                request.Options.Mode = "first";
+                processes.AddRange(ProcessFactory.Create(request.Configuration, request.Options));
             } else {
-                processes.AddRange(ProcessFactory.Create(part.Configuration, options));
+                processes.AddRange(ProcessFactory.Create(request.Configuration, request.Options));
             }
 
             for (var i = 0; i < processes.Count; i++) {
                 var process = processes[i];
-                CreateInputOperation(ref process, query);
+                CreateInputOperation(ref process, request.Query);
                 process.ExecuteScaler();
             }
 
@@ -201,5 +197,13 @@ namespace Transformalize.Orchard.Services {
         }
 
 
+    }
+
+    public class TransformalizeRequest {
+        public bool DisplayLog { get; set; }
+        public EventLevel LogLevel { get; set; }
+        public Options Options { get; set; }
+        public string Configuration { get; set; }
+        public NameValueCollection Query { get; set; }
     }
 }

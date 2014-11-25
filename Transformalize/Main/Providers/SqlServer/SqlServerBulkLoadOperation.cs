@@ -47,15 +47,14 @@ namespace Transformalize.Main.Providers.SqlServer {
             BatchSize = _batchSize;
 
             var fromFields = new Fields(_entity.Fields, _entity.CalculatedFields).WithOutput().AddBatchId(_entity.Index, false);
-            if (_entity.IsMaster())
+            if (_entity.IsMaster() && _entity.Delete)
                 fromFields.AddDeleted(_entity.Index, false);
-
-            var toFields = new SqlServerEntityAutoFieldReader().Read(Connection, _entity.ProcessName, _entity.Prefix, _entity.OutputName(), Connection.DefaultSchema, _entity.IsMaster());
 
             foreach (var field in fromFields) {
                 Schema[field.Alias] = field.SystemType;
             }
 
+            var toFields = new SqlServerEntityAutoFieldReader().Read(Connection, _entity.ProcessName, _entity.Prefix, _entity.OutputName(), Connection.DefaultSchema, _entity.IsMaster());
             foreach (var from in fromFields) {
                 if (toFields.HaveField(from.Alias)) {
                     var to = toFields.Find(from.Alias).First();

@@ -2,13 +2,17 @@
 @using Transformalize.Orchard.Models
 
 @{
+    var title = Model.Title();
     Script.Require("jQuery").AtHead();
-    Script.Include("handsontable/jquery.handsontable.full.min.js").AtHead();
-    Style.Include("handsontable/jquery.handsontable.full.min.css");
-    Layout.Title = "Hands On Table";
+    Script.Include("jquery.handsontable.full.min.js").AtHead();
+    Script.Include("jquery.blockUI.js").AtHead();
+    Script.Include("jquery.toastmessage.js").AtHead();
+    Style.Include("jquery.handsontable.full.min.css");
+    Style.Include("jquery.toastmessage.css");
+    Layout.Title = title;
 }
 
-<h2>@(Model.Title())</h2>
+<h2>@(title)</h2>
 
 <button id="save" type="button" class="btn btn-primary btn-xs" style="margin-bottom: 10px;">
     <span class="glyphicon glyphicon-floppy-save"></span> Save
@@ -21,10 +25,34 @@
     $(document).ready(function () {
 
         var settings = {
-            load: '@(Url.Action("Load", "HandsOnTable", new { id = 122 }))',
-            save: '@(Url.Action("Save", "HandsOnTable", new { id = 121 }))',
+            load: '@(Url.Action("Load", "HandsOnTable", new { id = Model.Id }))',
+            save: '@(Url.Action("Save", "HandsOnTable", new { id = Model.Id }))',
             token: '@Html.AntiForgeryTokenValueOrchard()'
         };
+
+        $(document).ajaxStart(function () {
+            $.blockUI({
+                css: {
+                    border: 'none',
+                    padding: '15px',
+                    backgroundColor: '#000',
+                    '-webkit-border-radius': '10px',
+                    '-moz-border-radius': '10px',
+                    opacity: .5,
+                    color: '#fff',
+                    baseZ: 1021
+                }
+            });
+        });
+
+        $(document).ajaxComplete(function () {
+            $.unblockUI();
+        });
+
+        $(document).ajaxError(function (event, request) {
+            $.unblockUI();
+            $().toastmessage('showErrorToast', request.responseText);
+        });
 
         if (!Array.prototype.filter) {
             Array.prototype.filter = function (fun /*, thisp*/) {
@@ -72,8 +100,9 @@
                         contextMenu: true
                     });
                 }
+                $().toastmessage('showSuccessToast', "Data Loaded");
             } else {
-                alert(tfl.message);
+                $().toastmessage('showErrorToast', tfl.message);
             }
         }, 'json');
 
@@ -93,15 +122,10 @@
                 type: 'POST',
                 success: function (tfl) {
                     if (tfl.status === 200) {
-                        alert('data saved');
-                        alert(JSON.stringify(data));
+                        $().toastmessage('showSuccessToast', "Data Saved");
                     } else {
-                        alert(tfl.message);
-                        alert(JSON.stringify(data));
+                        $().toastmessage('showErrorToast', tfl.message);
                     }
-                },
-                error: function () {
-                    alert('Unable to execute the process.');
                 }
             });
         });

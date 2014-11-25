@@ -13,7 +13,6 @@ namespace Transformalize.Orchard.Models {
         private bool? _requiresInputFile;
         private bool? _requiresOutputFile;
         private Mode[] _modes;
-        private bool _parametersInjected = false;
 
         public string Configuration {
             get {
@@ -54,12 +53,17 @@ namespace Transformalize.Orchard.Models {
         }
 
         public bool DisplayLog {
-            get { return Record.DisplayLog; }
+            get {
+                return Record.DisplayLog;
+            }
             set { Record.DisplayLog = value; }
         }
 
         public string LogLevel {
-            get { return Record.LogLevel; }
+            get
+            {
+                return Record.LogLevel;
+            }
             set { Record.LogLevel = value; }
         }
 
@@ -133,14 +137,6 @@ namespace Transformalize.Orchard.Models {
 
         public bool HasEndAddress() {
             return !string.IsNullOrEmpty(Record.EndAddress);
-        }
-
-        public void SetParametersInjected() {
-            _parametersInjected = true;
-        }
-
-        public bool GetParametersInjected() {
-            return _parametersInjected;
         }
 
         public bool IsInAllowedRange(string userHostAddress) {

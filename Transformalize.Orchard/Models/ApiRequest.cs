@@ -4,7 +4,6 @@ namespace Transformalize.Orchard.Models {
 
     public class ApiRequest {
         public ApiRequestType RequestType { get; set; }
-        public string Configuration { get; set; }
         public Stopwatch Stopwatch { get; set; }
         public string Flavor { get; set; }
         public int Status { get; set; }
@@ -13,7 +12,6 @@ namespace Transformalize.Orchard.Models {
         public ApiRequest(ApiRequestType requestType) {
             Stopwatch = new Stopwatch();
             RequestType = requestType;
-            Configuration = string.Empty;
             Flavor = string.Empty;
             Status = 200;
             Message = "OK";

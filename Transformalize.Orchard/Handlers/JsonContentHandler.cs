@@ -21,7 +21,7 @@ namespace Transformalize.Orchard.Handlers {
     ""log"":{7}
 }}";
 
-        public static string LogToJson(IEnumerable<string> logs) {
+        public static string LogsToJson(IEnumerable<string> logs) {
             var sw = new StringWriter();
             var writer = new JsonTextWriter(sw);
             writer.WriteStartArray();
@@ -38,7 +38,7 @@ namespace Transformalize.Orchard.Handlers {
                 writer.WritePropertyName("entity");
                 writer.WriteValue(attributes[3]);
                 writer.WritePropertyName("message");
-                writer.WriteValue(attributes[4].TrimEnd());
+                writer.WriteValue(attributes[4].TrimEnd(new []{' ','\r','\n'}));
 
                 writer.WriteEndObject();
             }
@@ -47,7 +47,7 @@ namespace Transformalize.Orchard.Handlers {
             return sw.ToString();
         }
 
-        public static string GetContent(ApiRequest request, TransformalizeResponse response, string meta) {
+        public static string GetContent(ApiRequest request, string configuration, TransformalizeResponse response, string meta) {
 
             var builder = new StringBuilder();
 
@@ -56,18 +56,18 @@ namespace Transformalize.Orchard.Handlers {
             }
 
             var converter = new OneWayXmlNodeConverter();
-            var doc = XDocument.Parse(request.Configuration);
+            var doc = XDocument.Parse(configuration);
             var environments = JsonConvert.SerializeObject(doc.Descendants("environments").Any() ? doc.Descendants("environments").First().Nodes() : new string[0] as object, Formatting.None, converter);
             var processes = JsonConvert.SerializeObject(doc.Descendants("processes").First().Nodes(), Formatting.None, converter);
 
             switch (request.RequestType) {
                 case ApiRequestType.MetaData:
                     var metaData = JsonConvert.SerializeObject(XDocument.Parse(meta).Descendants("entities").First(), Formatting.None, converter);
-                    builder.AppendFormat(JSON_TEMPLATE, "metadata", 200, "OK", request.Stopwatch.ElapsedMilliseconds, environments, processes, metaData, LogToJson(response.Log));
+                    builder.AppendFormat(JSON_TEMPLATE, "metadata", 200, "OK", request.Stopwatch.ElapsedMilliseconds, environments, processes, metaData, LogsToJson(response.Log));
                     return builder.ToString();
 
                 case ApiRequestType.Configuration:
-                    builder.AppendFormat(JSON_TEMPLATE, "configuration", 200, "OK", request.Stopwatch.ElapsedMilliseconds, environments, processes, "[]", LogToJson(response.Log));
+                    builder.AppendFormat(JSON_TEMPLATE, "configuration", 200, "OK", request.Stopwatch.ElapsedMilliseconds, environments, processes, "[]", LogsToJson(response.Log));
                     return builder.ToString();
 
                 case ApiRequestType.Execute:
@@ -87,11 +87,11 @@ namespace Transformalize.Orchard.Handlers {
                             results = new JsonResultsToObjectHandler().Handle(response.Processes);
                             break;
                     }
-                    builder.AppendFormat(JSON_TEMPLATE, "execute", 200, "OK", request.Stopwatch.ElapsedMilliseconds, environments, processes, results, LogToJson(response.Log));
+                    builder.AppendFormat(JSON_TEMPLATE, "execute", 200, "OK", request.Stopwatch.ElapsedMilliseconds, environments, processes, results, LogsToJson(response.Log));
                     return builder.ToString();
 
                 default:
-                    builder.AppendFormat(JSON_TEMPLATE, "configuration", 200, "OK", request.Stopwatch.ElapsedMilliseconds, environments, processes, "[]", LogToJson(response.Log));
+                    builder.AppendFormat(JSON_TEMPLATE, "configuration", 200, "OK", request.Stopwatch.ElapsedMilliseconds, environments, processes, "[]", LogsToJson(response.Log));
                     return builder.ToString();
             }
         }

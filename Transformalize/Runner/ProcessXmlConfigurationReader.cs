@@ -47,13 +47,12 @@ namespace Transformalize.Runner {
             var section = new TransformalizeConfiguration();
             XElement transformalize;
 
-
             try {
                 transformalize = XDocument.Parse(contents.Content).Element("transformalize");
                 if (transformalize == null)
                     throw new TransformalizeException("Can't find the <transformalize/> element in {0}.", string.IsNullOrEmpty(contents.Name) ? "the configuration" : contents.Name);
 
-                // The Transformalize WEB API returns these elements, but .NET Configuration can't stand them, so they are removed before deserialization below.
+                // The Transformalize.Orchard API returns these elements, but .NET Configuration doesn't allow them.
                 var apiElements = new[] { "request", "status", "message", "time", "response", "log" };
                 foreach (var element in apiElements.Where(element => transformalize.Elements(element).Any())) {
                     transformalize.Elements(element).Remove();

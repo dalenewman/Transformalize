@@ -17,6 +17,8 @@ namespace Transformalize.Orchard.Drivers {
             part.Record.Modes = context.Attribute(part.PartDefinition.Name, "Modes");
             part.Record.DisplayLog = System.Convert.ToBoolean(context.Attribute(part.PartDefinition.Name, "DisplayLog"));
             part.Record.LogLevel = context.Attribute(part.PartDefinition.Name, "LogLevel");
+            part.Record.StartAddress = context.Attribute(part.PartDefinition.Name, "StartAddress");
+            part.Record.EndAddress = context.Attribute(part.PartDefinition.Name, "EndAddress");
             part.Record.OutputFileExtension = context.Attribute(part.PartDefinition.Name, "OutputFileExtension");
             part.Record.TryCatch = System.Convert.ToBoolean(context.Attribute(part.PartDefinition.Name, "TryCatch"));
 
@@ -27,6 +29,8 @@ namespace Transformalize.Orchard.Drivers {
             context.Element(part.PartDefinition.Name).SetAttributeValue("Modes", part.Record.Modes);
             context.Element(part.PartDefinition.Name).SetAttributeValue("DisplayLog", part.Record.DisplayLog);
             context.Element(part.PartDefinition.Name).SetAttributeValue("LogLevel", part.Record.LogLevel);
+            context.Element(part.PartDefinition.Name).SetAttributeValue("StartAddress", part.Record.StartAddress);
+            context.Element(part.PartDefinition.Name).SetAttributeValue("EndAddress", part.Record.EndAddress);
             context.Element(part.PartDefinition.Name).SetAttributeValue("OutputFileExtension", part.Record.OutputFileExtension);
             context.Element(part.PartDefinition.Name).SetAttributeValue("TryCatch", part.Record.TryCatch);
         }

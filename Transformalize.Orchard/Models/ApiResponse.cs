@@ -9,21 +9,26 @@ namespace Transformalize.Orchard.Models {
     public class ApiResponse {
 
         private readonly ApiRequest _request;
+        private readonly string _configuration;
         private readonly TransformalizeResponse _response = new TransformalizeResponse();
         private readonly string _metaData;
 
-        public ApiResponse(ApiRequest request) {
+        public ApiResponse(ApiRequest request, string configuration)
+        {
             _request = request;
+            _configuration = configuration;
         }
 
-        public ApiResponse(ApiRequest request, string metaData) {
+        public ApiResponse(ApiRequest request, string configuration, string metaData) {
             _request = request;
+            _configuration = configuration;
             _metaData = metaData;
         }
 
-        public ApiResponse(ApiRequest request, TransformalizeResponse response) {
+        public ApiResponse(ApiRequest request, string configuration, TransformalizeResponse response) {
             _response = response;
             _request = request;
+            _configuration = configuration;
         }
 
         public ContentResult ContentResult(string format, string flavor = null) {
@@ -37,9 +42,9 @@ namespace Transformalize.Orchard.Models {
             _request.Flavor = flavor.ToLower();
             switch (format.ToLower()) {
                 case "json":
-                    return JsonContentHandler.GetContent(_request, _response, _metaData);
+                    return JsonContentHandler.GetContent(_request, _configuration, _response, _metaData);
                 default:
-                    return XmlContentHandler.GetContent(_request, _response, _metaData);
+                    return XmlContentHandler.GetContent(_request, _configuration, _response, _metaData);
             }
         }
 

@@ -132,11 +132,18 @@ namespace Transformalize.Orchard.Controllers {
         private ExecuteViewModel Run(ConfigurationPart part, NameValueCollection query) {
 
             var model = new ExecuteViewModel() { DisplayLog = part.DisplayLog };
-            var options = query["Mode"] != null ? new Options { Mode = query["Mode"] } : new Options();
+
+            var transformalizeRequest = new TransformalizeRequest() {
+                Configuration = _transformalize.InjectParameters(part, query),
+                DisplayLog = part.DisplayLog,
+                LogLevel = part.ToLogLevel(),
+                Options = query["Mode"] != null ? new Options { Mode = query["Mode"] } : new Options(),
+                Query = query
+            };
 
             if (part.TryCatch) {
                 try {
-                    model.TransformalizeResponse = _transformalize.Run(part, options, query);
+                    model.TransformalizeResponse = _transformalize.Run(transformalizeRequest);
                 } catch (Exception ex) {
                     TflLogger.Error(string.Empty, string.Empty, ex.Message);
                     TflLogger.Warn(string.Empty, string.Empty, ex.StackTrace);
@@ -145,7 +152,7 @@ namespace Transformalize.Orchard.Controllers {
                     }
                 }
             } else {
-                model.TransformalizeResponse = _transformalize.Run(part, options, query);
+                model.TransformalizeResponse = _transformalize.Run(transformalizeRequest);
             }
 
             return model;

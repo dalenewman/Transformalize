@@ -17,28 +17,21 @@ namespace Transformalize.Orchard.Controllers {
 
         private readonly IOrchardServices _orchardServices;
         private readonly ITransformalizeService _transformalize;
+        private readonly IApiService _apiService;
         private readonly Stopwatch _stopwatch = new Stopwatch();
 
         public Localizer T { get; set; }
 
         public ApiController(
             IOrchardServices services,
-            ITransformalizeService transformalize
+            ITransformalizeService transformalize,
+            IApiService apiService
         ) {
             _stopwatch.Start();
             _orchardServices = services;
             _transformalize = transformalize;
+            _apiService = apiService;
             T = NullLocalizer.Instance;
-        }
-
-        private static ActionResult SimpleResult(ApiRequest request, int status, string message) {
-            request.Status = status;
-            request.Message = message;
-            var query = GetQuery();
-            return new ApiResponse(request, "<transformalize><processes></processes></transformalize>").ContentResult(
-                query["format"] ?? DEFAULT_FORMAT,
-                query["flavor"] ?? DEFAULT_FLAVOR
-            );
         }
 
         [ActionName("Api/Configuration")]
@@ -46,26 +39,26 @@ namespace Transformalize.Orchard.Controllers {
 
             Response.AddHeader("Access-Control-Allow-Origin", "*");
             var request = new ApiRequest(ApiRequestType.Configuration) { Stopwatch = _stopwatch };
+            var query = GetQuery();
 
             var part = _orchardServices.ContentManager.Get(id).As<ConfigurationPart>();
             if (part == null) {
-                return SimpleResult(request, 404, "Not Found");
+                return _apiService.NotFound(request, query);
             }
 
             if (!(Request.IsLocal || part.IsInAllowedRange(Request.UserHostAddress))) {
                 if (User.Identity.IsAuthenticated) {
                     if (!_orchardServices.Authorizer.Authorize(global::Orchard.Core.Contents.Permissions.ViewContent, part)) {
-                        return SimpleResult(request, 401, "Unauthorized");
+                        return _apiService.Unathorized(request, query);
                     }
                 } else {
-                    return SimpleResult(request, 404, "Not Found");
+                    return _apiService.Unathorized(request, query);
                 }
             }
 
-            _transformalize.InjectParameters(ref part, GetQuery());
-            request.Configuration = part.Configuration;
+            var configuration = _transformalize.InjectParameters(part, GetQuery());
 
-            return new ApiResponse(request).ContentResult(
+            return new ApiResponse(request, configuration).ContentResult(
                 GetQuery()["format"] ?? DEFAULT_FORMAT,
                 GetQuery()["flavor"] ?? DEFAULT_FLAVOR
             );
@@ -76,69 +69,82 @@ namespace Transformalize.Orchard.Controllers {
             Response.AddHeader("Access-Control-Allow-Origin", "*");
 
             var request = new ApiRequest(ApiRequestType.MetaData) { Stopwatch = _stopwatch };
+            var query = GetQuery();
 
             if (!User.Identity.IsAuthenticated) {
-                return SimpleResult(request, 401, "Unauthorized");
+                return _apiService.Unathorized(request, query);
             }
 
             var part = _orchardServices.ContentManager.Get(id).As<ConfigurationPart>();
             if (part == null) {
-                return SimpleResult(request, 404, "Not Found");
+                return _apiService.NotFound(request, query);
             }
 
-            var query = GetQuery();
-            _transformalize.InjectParameters(ref part, query);
-            request.Configuration = part.Configuration;
+            var configuration = _transformalize.InjectParameters(part, query);
 
-            return new ApiResponse(request, _transformalize.GetMetaData(part, query)).ContentResult(
+            return new ApiResponse(request, configuration, _transformalize.GetMetaData(configuration)).ContentResult(
                 query["format"] ?? DEFAULT_FORMAT,
                 query["flavor"] ?? DEFAULT_FLAVOR
             );
         }
 
-        [ActionName("Api/Execute")]
+
+        [ActionName("Api/Execute"), ValidateInput(false)]
         public ActionResult Execute(int id) {
 
             Response.AddHeader("Access-Control-Allow-Origin", "*");
             var request = new ApiRequest(ApiRequestType.Execute) { Stopwatch = _stopwatch };
+            var query = GetQuery();
+            var configuration = Request.Form["configuration"];
 
-            if (id == 0)
-                return SimpleResult(request, 404, "Not Found");
+            if (id == 0 && configuration == null) {
+                return _apiService.NotFound(request, query);
+            }
 
             if (!Request.IsLocal) {
                 if (!User.Identity.IsAuthenticated)
-                    return SimpleResult(request, 401, "Unauthorized");
+                    return _apiService.Unathorized(request, query);
                 if (!_orchardServices.Authorizer.Authorize(Permissions.Execute))
-                    return SimpleResult(request, 401, "Unauthorized");
+                    return _apiService.Unathorized(request, query);
             }
 
-            var part = _orchardServices.ContentManager.Get(id).As<ConfigurationPart>();
-            if (part == null)
-                return SimpleResult(request, 404, "Not Found");
+            ConfigurationPart part;
+            if (id == 0) {
+                part = _orchardServices.ContentManager.New<ConfigurationPart>("Configuration");
+                part.Configuration = configuration;
+            } else {
+                part = _orchardServices.ContentManager.Get(id).As<ConfigurationPart>();
+            }
+
+            if (part == null) {
+                return _apiService.NotFound(request, query);
+            }
 
             if (!Request.IsLocal) {
                 if (!_orchardServices.Authorizer.Authorize(global::Orchard.Core.Contents.Permissions.ViewContent, part)) {
-                    return SimpleResult(request, 401, "Unauthorized");
+                    return _apiService.Unathorized(request, query);
                 }
             }
 
             // ready
-            var query = GetQuery();
-            _transformalize.InjectParameters(ref part, query);
-            request.Configuration = part.Configuration;
-
-            var options = query["Mode"] != null ? new Options { Mode = query["Mode"] } : new Options();
+            var transformalizeRequest = new TransformalizeRequest() {
+                Configuration = _transformalize.InjectParameters(part, query),
+                DisplayLog = part.DisplayLog,
+                LogLevel = part.ToLogLevel(),
+                Options = query["Mode"] != null ? new Options { Mode = query["Mode"] } : new Options(),
+                Query = query
+            };
 
             var processes = new TransformalizeResponse();
 
             try {
-                processes = _transformalize.Run(part, options, query);
+                processes = _transformalize.Run(transformalizeRequest);
             } catch (Exception ex) {
                 request.Status = 500;
                 request.Message = ex.Message;
             }
 
-            return new ApiResponse(request, processes).ContentResult(
+            return new ApiResponse(request, transformalizeRequest.Configuration, processes).ContentResult(
                 query["format"] ?? DEFAULT_FORMAT,
                 query["flavor"] ?? DEFAULT_FLAVOR
             );

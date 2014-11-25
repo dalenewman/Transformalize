@@ -22,7 +22,10 @@ namespace Transformalize.Configuration.Builders {
                     Index = true
                 }
             );
+        }
 
+        public ProcessBuilder(ProcessConfigurationElement element) {
+            _process = element;
         }
 
         public ProcessConfigurationElement Process() {

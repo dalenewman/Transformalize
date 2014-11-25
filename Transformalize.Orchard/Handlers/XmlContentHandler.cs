@@ -35,7 +35,7 @@ namespace Transformalize.Orchard.Handlers {
                 xmlWriter.WriteAttributeString("level", attributes[1].TrimEnd());
                 xmlWriter.WriteAttributeString("process", attributes[2]);
                 xmlWriter.WriteAttributeString("entity", attributes[3]);
-                xmlWriter.WriteAttributeString("message", attributes[4].TrimEnd());
+                xmlWriter.WriteAttributeString("message", attributes[4].TrimEnd(new []{' ','\r','\n'}));
 
                 xmlWriter.WriteEndElement();
             }
@@ -43,14 +43,14 @@ namespace Transformalize.Orchard.Handlers {
             return xmlBuilder.ToString();
         }
 
-        public static string GetContent(ApiRequest request, TransformalizeResponse response, string meta) {
+        public static string GetContent(ApiRequest request, string configuration, TransformalizeResponse response, string meta) {
 
             if (request.Status != 200) {
                 return ApiContentHandler.GetErrorContent(XML_TEMPLATE, request);
             }
 
             var builder = new StringBuilder();
-            var doc = XDocument.Parse(request.Configuration);
+            var doc = XDocument.Parse(configuration);
             var environments = doc.Descendants("environments").Any() ? XmlNodesToString(doc.Descendants("environments").First().Nodes()) : string.Empty;
             var processes = XmlNodesToString(doc.Descendants("processes").First().Nodes());
 

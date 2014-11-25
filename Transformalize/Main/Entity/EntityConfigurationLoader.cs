@@ -295,17 +295,20 @@ namespace Transformalize.Main {
             if (element.CalculatedFields.Cast<FieldConfigurationElement>().Any(cf => cf.PrimaryKey))
                 return;
 
-            TflLogger.Warn(_process.Name, element.Name, "Adding TflHashCode primary key for {0}.", element.Name);
-            var pk = new FieldConfigurationElement {
-                Name = "TflHashCode",
-                Type = "System.Int32",
-                PrimaryKey = true,
-                Transforms = new TransformElementCollection {
+            if (!element.CalculatedFields.Cast<FieldConfigurationElement>().Any(cf => cf.Name.Equals("TflHashCode", StringComparison.OrdinalIgnoreCase))) {
+                TflLogger.Warn(_process.Name, element.Name, "Adding TflHashCode primary key for {0}.", element.Name);
+                var pk = new FieldConfigurationElement {
+                    Name = "TflHashCode",
+                    Type = "System.Int32",
+                    PrimaryKey = true,
+                    Transforms = new TransformElementCollection {
                     new TransformConfigurationElement {Method = "concat", Parameter = "*"},
                     new TransformConfigurationElement {Method = "gethashcode"}
-                }
-            };
-            element.CalculatedFields.Insert(pk);
+                    }
+                };
+                element.CalculatedFields.Insert(pk);
+            }
+
             if (string.IsNullOrEmpty(element.Version)) {
                 element.Version = "TflHashCode";
             }
