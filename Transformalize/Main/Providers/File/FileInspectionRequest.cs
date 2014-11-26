@@ -39,5 +39,7 @@ namespace Transformalize.Main.Providers.File {
             get { return _defaultLength; }
             set { _defaultLength = value; }
         }
+
+        public string DefaultType { get; set; }
     }
 }

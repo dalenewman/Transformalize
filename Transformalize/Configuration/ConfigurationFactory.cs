@@ -22,6 +22,10 @@ namespace Transformalize.Configuration {
             return CreateReader().Read();
         }
 
+        public ProcessConfigurationElement CreateSingle() {
+            return CreateReader().Read()[0];
+        }
+
         private IReader<ProcessElementCollection> CreateReader() {
 
             var source = DetermineConfigurationSource(_resource);

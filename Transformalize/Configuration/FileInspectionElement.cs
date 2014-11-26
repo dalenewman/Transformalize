@@ -52,6 +52,7 @@ namespace Transformalize.Configuration {
             return new FileInspectionRequest() {
                 DataTypes = Types.Cast<TypeConfigurationElement>().Select(t => t.Type).ToList(),
                 DefaultLength = MaxLength == 0 ? "1024" : MaxLength.ToString(CultureInfo.InvariantCulture),
+                DefaultType = "string",
                 MinLength = MinLength,
                 MaxLength = MaxLength,
                 Delimiters = Delimiters.Cast<DelimiterConfigurationElement>().ToDictionary(d => d.Character[0], d => d.Name),

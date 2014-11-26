@@ -72,7 +72,7 @@ namespace Transformalize.Main.Providers.File {
                         if (!results.All(row => row[result].Equals(true)))
                             continue;
                         field.Type = dataType;
-                        field.Length = string.Empty;
+                        field.Length = request.MinLength.ToString(CultureInfo.InvariantCulture);
                         break;
                     }
                 }

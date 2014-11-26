@@ -14,10 +14,14 @@ namespace Transformalize.Main.Providers.File {
 
         public void ImportScaler(FileInfo fileInfo, FileInspectionRequest request, ConnectionConfigurationElement output, string processName = null, string entityName = null) {
             var fileInformation = FileInformationFactory.Create(fileInfo, request);
-            var process = BuildProcess(fileInformation, request, output, processName, entityName);
-            process.Mode = "init";
-            ProcessFactory.Create(process)[0].ExecuteScaler();
-            ProcessFactory.Create(process)[0].ExecuteScaler();
+            var configuration = BuildProcess(fileInformation, request, output, processName, entityName);
+            var process = ProcessFactory.CreateSingle(configuration);
+            if (process.Connections["output"].Type != ProviderType.Internal) {
+                process.Options.Mode = "init";
+                process.ExecuteScaler();
+            }
+
+            ProcessFactory.CreateSingle(configuration,new Options()).ExecuteScaler();
         }
 
         public FileImportResult Import(FileInfo fileInfo, ConnectionConfigurationElement output, string processName = null, string entityName = null) {
@@ -26,16 +30,21 @@ namespace Transformalize.Main.Providers.File {
 
         public FileImportResult Import(FileInfo fileInfo, FileInspectionRequest request, ConnectionConfigurationElement output, string processName = null, string entityName = null) {
             var fileInformation = FileInformationFactory.Create(fileInfo, request);
-            var process = BuildProcess(fileInformation, request, output, processName, entityName);
-            process.Mode = "init";
-            ProcessFactory.CreateSingle(process).ExecuteScaler();
+            var configuration = BuildProcess(fileInformation, request, output, processName, entityName);
+            var process = ProcessFactory.CreateSingle(configuration);
+
+            if (process.Connections["output"].Type != ProviderType.Internal) {
+                process.Options.Mode = "init";
+                process.ExecuteScaler();
+            }
+
             return new FileImportResult {
                 Information = fileInformation,
-                Rows = ProcessFactory.Create(process)[0].Execute()
+                Rows = ProcessFactory.CreateSingle(configuration).Execute()
             };
         }
 
-        private ProcessConfigurationElement BuildProcess(FileInformation fileInformation, FileInspectionRequest request, ConnectionConfigurationElement output, string processName = null, string entityName = null) {
+        private static ProcessConfigurationElement BuildProcess(FileInformation fileInformation, FileInspectionRequest request, ConnectionConfigurationElement output, string processName = null, string entityName = null) {
 
             if (String.IsNullOrEmpty(processName)) {
                 processName = Common.CleanIdentifier(Path.GetFileNameWithoutExtension(fileInformation.FileInfo.Name));
