@@ -25,25 +25,9 @@ namespace Transformalize.Main.Providers.SqlCe {
             );
         }
 
-        public string DropPrimaryKey(string name, IEnumerable<string> primaryKey) {
-            var pk = primaryKey.ToArray();
-            return string.Format(
-                "ALTER TABLE [{0}] DROP CONSTRAINT [PK_{0}_{1}];",
-                SqlIdentifier(name),
-                KeyName(pk)
-                );
-        }
-
         public string AddUniqueClusteredIndex(string name) {
             return string.Format(
                 "CREATE UNIQUE NONCLUSTERED INDEX [UX_{0}_TflKey] ON [{0}] (TflKey ASC);",
-                SqlIdentifier(name)
-                );
-        }
-
-        public string DropUniqueClusteredIndex(string name) {
-            return string.Format(
-                "DROP INDEX [UX_{0}_TflKey] ON [{0}];",
                 SqlIdentifier(name)
                 );
         }

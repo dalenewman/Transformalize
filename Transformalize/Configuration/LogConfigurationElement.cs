@@ -92,10 +92,10 @@ namespace Transformalize.Configuration {
             set { this[TO] = value; }
         }
 
-        [ConfigurationProperty(LEVEL, IsRequired = false, DefaultValue = "Info")]
+        [ConfigurationProperty(LEVEL, IsRequired = false, DefaultValue = "Informational")]
         public string LogLevel {
             get { return this[LEVEL] as string; }
-            set { this[LEVEL] = value.ToLower(); }
+            set { this[LEVEL] = value; }
         }
 
         [ConfigurationProperty(LAYOUT, IsRequired = false, DefaultValue = Common.DefaultValue)]

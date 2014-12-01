@@ -38,15 +38,7 @@ namespace Transformalize.Main.Providers.MySql {
             throw new System.NotImplementedException();
         }
 
-        public string DropPrimaryKey(string name, IEnumerable<string> primaryKey) {
-            throw new System.NotImplementedException();
-        }
-
         public string AddUniqueClusteredIndex(string name) {
-            throw new System.NotImplementedException();
-        }
-
-        public string DropUniqueClusteredIndex(string name) {
             throw new System.NotImplementedException();
         }
 

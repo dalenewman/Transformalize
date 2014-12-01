@@ -54,7 +54,7 @@ namespace Transformalize.Main.Providers.SqlServer {
                 Schema[field.Alias] = field.SystemType;
             }
 
-            var toFields = new SqlServerEntityAutoFieldReader().Read(Connection, _entity.ProcessName, _entity.Prefix, _entity.OutputName(), Connection.DefaultSchema, _entity.IsMaster());
+            var toFields = new SqlServerEntityAutoFieldReader().Read(Connection, _entity.ProcessName, _entity.Prefix, _entity.OutputName(), string.Empty, _entity.IsMaster());
             foreach (var from in fromFields) {
                 if (toFields.HaveField(from.Alias)) {
                     var to = toFields.Find(from.Alias).First();

@@ -56,8 +56,7 @@ namespace Transformalize.Main.Providers.SqlServer {
             const string format = @"IF EXISTS (
 	SELECT *
 	FROM INFORMATION_SCHEMA.VIEWS
-	WHERE TABLE_SCHEMA = 'dbo'
-	AND TABLE_NAME = '{0}'
+	WHERE TABLE_NAME = '{0}'
 )
 	DROP VIEW [{0}];";
             return string.Format(format, process.Star);
@@ -85,11 +84,16 @@ namespace Transformalize.Main.Providers.SqlServer {
             builder.AppendFormat("FROM {0} d\r\n", process.OutputConnection.Enclose(process.MasterEntity.OutputName()));
             builder.AppendFormat("INNER JOIN TflBatch b ON (d.TflBatchId = b.TflBatchId AND b.ProcessName = '{0}')\r\n", process.Name);
 
-            foreach (var entity in process.Entities.Where(e => !e.IsMaster())) {
+            foreach (var entity in process.Entities.Where(e => !e.IsMaster()))
+            {
                 builder.AppendFormat("LEFT OUTER JOIN {0} ON (", entity.OutputName());
 
                 foreach (var join in entity.RelationshipToMaster.First().Join.ToArray()) {
-                    builder.AppendFormat("d.{0} = {1}.{2} AND ", process.OutputConnection.Enclose(join.LeftField.Alias), entity.OutputName(), process.OutputConnection.Enclose(join.RightField.Alias));
+                    builder.AppendFormat(
+                        "d.{0} = {1}.{2} AND ",
+                        process.OutputConnection.Enclose(join.LeftField.Alias),
+                        entity.OutputName(),
+                        process.OutputConnection.Enclose(join.RightField.Alias));
                 }
 
                 builder.TrimEnd(" AND ");

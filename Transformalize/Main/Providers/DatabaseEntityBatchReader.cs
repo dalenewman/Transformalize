@@ -27,7 +27,7 @@ namespace Transformalize.Main.Providers
 {
     public class DatabaseEntityBatchReader : IEntityBatchReader
     {
-        private const string SQL = "SELECT ISNULL(MAX(TflBatchId),0)+1 FROM dbo.TflBatch WHERE ProcessName = @ProcessName;";
+        private const string SQL = "SELECT ISNULL(MAX(TflBatchId),0)+1 FROM TflBatch WHERE ProcessName = @ProcessName;";
 
         public int ReadNext(Process process, Entity entity)
         {

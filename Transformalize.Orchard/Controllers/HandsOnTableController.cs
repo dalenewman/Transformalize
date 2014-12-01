@@ -76,21 +76,19 @@ namespace Transformalize.Orchard.Controllers {
             var process = xml.Element("processes").Element("add");
             process.SetAttributeValue("star-enabled", "false");
 
-            var connections = process.Element("connections").Elements().ToArray();
-            connections.First(c => c.Attribute("provider") == null || !c.Attribute("provider").Value.Equals("internal")).SetAttributeValue("name", "input");
-            connections.First(c => c.Attribute("provider") != null && c.Attribute("provider").Value.Equals("internal")).SetAttributeValue("name", "output");
+            SwapInputAndOutput(ref process);
 
             var entity = process.Element("entities").Element("add");
             var fields = entity.Elements("fields").Elements("add").ToArray();
 
-            if (!fields.Any(f => f.Attribute("primary-key") != null && f.Attribute("primary-key").Value.Equals("true", IC))){
+            if (!fields.Any(f => f.Attribute("primary-key") != null && f.Attribute("primary-key").Value.Equals("true", IC))) {
                 foreach (var field in fields) {
                     field.SetAttributeValue("primary-key", "true");
                 }
             }
 
             entity.SetAttributeValue("detect-changes", "false");
-            if (entity.Attributes("delete").Any()  && entity.Attribute("delete").Value.Equals("true", IC)) {
+            if (entity.Attributes("delete").Any() && entity.Attribute("delete").Value.Equals("true", IC)) {
                 entity.Attributes("delete").Remove();
 
                 var filter = new XElement("filter");
@@ -111,6 +109,13 @@ namespace Transformalize.Orchard.Controllers {
 
             return xml.ToString();
             // ReSharper restore PossibleNullReferenceException
+        }
+
+        private static void SwapInputAndOutput(ref XElement process) {
+            var connections = process.Element("connections").Elements().ToArray();
+            connections.First(c => c.Attribute("name").Value.Equals("output")).SetAttributeValue("name", "temp");
+            connections.First(c => c.Attribute("name").Value.Equals("input")).SetAttributeValue("name", "output");
+            connections.First(c => c.Attribute("name").Value.Equals("temp")).SetAttributeValue("name", "input");
         }
 
         private ActionResult ModifyAndRun(int id, Func<string, string> modifier) {

@@ -63,7 +63,7 @@ namespace Transformalize.Main.Providers.SqlServer {
         }
 
         public override int NextBatchId(string processName) {
-            var tflEntity = new Entity() { TflBatchId = 1, Name = "TflBatch", Alias = "TflBatch", Schema = "dbo", PrimaryKey = new Fields() { new Field(FieldType.PrimaryKey) { Name = "TflBatchId" } } };
+            var tflEntity = new Entity() { TflBatchId = 1, Name = "TflBatch", Alias = "TflBatch", Schema = string.Empty, PrimaryKey = new Fields() { new Field(FieldType.PrimaryKey) { Name = "TflBatchId" } } };
             if (!RecordsExist(tflEntity)) {
                 return 1;
             }
@@ -71,7 +71,7 @@ namespace Transformalize.Main.Providers.SqlServer {
             using (var cn = GetConnection()) {
                 cn.Open();
                 var cmd = cn.CreateCommand();
-                cmd.CommandText = "SELECT ISNULL(MAX(TflBatchId),0)+1 FROM TflBatch WHERE ProcessName = @ProcessName;";
+                cmd.CommandText = "SELECT ISNULL(MAX(TflBatchId),0)+1 FROM dbo.TflBatch WHERE ProcessName = @ProcessName;";
 
                 var process = cmd.CreateParameter();
                 process.ParameterName = "@ProcessName";
@@ -267,7 +267,7 @@ namespace Transformalize.Main.Providers.SqlServer {
         }
 
         public override Fields GetEntitySchema(Process process, Entity entity, bool isMaster = false) {
-            var fields = new SqlServerEntityAutoFieldReader().Read(this, process.Name, entity.Prefix, entity.Name, entity.Schema, isMaster);
+            var fields = new SqlServerEntityAutoFieldReader().Read(this, process.Name, entity.Prefix, entity.OutputName(), entity.Schema, isMaster);
             return !fields.Any() ?
                 new SqlEntitySchemaReader(this).Read(entity.Name, entity.Schema) :
                 fields;

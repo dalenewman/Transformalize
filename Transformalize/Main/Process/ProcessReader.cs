@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using System.Linq;
+using System.Web.Configuration;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
 using Transformalize.Libs.Microsoft.System.Web.Razor.Text;
@@ -68,7 +69,7 @@ namespace Transformalize.Main {
                 StarEnabled = _element.StarEnabled,
                 TimeZone = string.IsNullOrEmpty(_element.TimeZone) ? TimeZoneInfo.Local.Id : _element.TimeZone,
                 PipelineThreading = (PipelineThreading)Enum.Parse(typeof(PipelineThreading), _element.PipelineThreading, true),
-                Parallel =  _element.Parallel,
+                Parallel = _element.Parallel,
                 Kernal = new StandardKernel(new NinjectBindings(_element))
             };
 
@@ -117,7 +118,7 @@ namespace Transformalize.Main {
             return _process;
         }
 
-        private static void LoadLogConfiguration(ProcessConfigurationElement element, ref Process process) {
+        private void LoadLogConfiguration(ProcessConfigurationElement element, ref Process process) {
 
             process.LogRows = element.Log.Rows;
 
@@ -138,7 +139,7 @@ namespace Transformalize.Main {
             process.Log.AddRange(fileLogs);
         }
 
-        private static Log MapLog(Process process, LogConfigurationElement logElement) {
+        private Log MapLog(Process process, LogConfigurationElement logElement) {
             var log = new Log {
                 Name = logElement.Name,
                 Subject = logElement.Subject,
@@ -163,8 +164,27 @@ namespace Transformalize.Main {
 
             try {
                 EventLevel eventLevel;
-                Enum.TryParse(logElement.LogLevel, out eventLevel);
-                log.Level = eventLevel;
+                if (Enum.TryParse(logElement.LogLevel, out eventLevel)) {
+                    log.Level = eventLevel;
+                } else {
+                    switch (logElement.LogLevel.ToLower()) {
+                        case "debug":
+                            log.Level = EventLevel.Verbose;
+                            break;
+                        case "info":
+                            log.Level = EventLevel.Informational;
+                            break;
+                        case "warn":
+                            log.Level = EventLevel.Warning;
+                            break;
+                        default:
+                            log.Level = EventLevel.Informational;
+                            TflLogger.Warn(_processName, string.Empty, "Invalid log level: {0}.  Valid values are Informational, Error, Verbose, and Warning. Defaulting to Informational.", logElement.LogLevel);
+                            break;
+                    }
+
+                }
+                log.Level = Enum.TryParse(logElement.LogLevel, out eventLevel) ? eventLevel : EventLevel.Verbose;
                 log.Provider = (ProviderType)Enum.Parse(typeof(ProviderType), logElement.Provider, true);
             } catch (Exception ex) {
                 throw new TransformalizeException("Log configuration invalid. {0}", ex.Message);

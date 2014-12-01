@@ -100,7 +100,6 @@
     <Content Include="Scripts\jquery.handsontable.full.min.js" />
     <Content Include="Scripts\jquery.blockUI.js" />
     <Content Include="Scripts\jquery.toastmessage.js" />
-    <Content Include="Styles\busy.gif" />
     <Content Include="Styles\codemirror-4.5\addon\dialog\dialog.css" />
     <Content Include="Styles\codemirror-4.5\addon\display\fullscreen.css" />
     <Content Include="Styles\codemirror-4.5\addon\fold\foldgutter.css" />
@@ -152,7 +151,6 @@
     <Content Include="Styles\images\sort_desc_disabled.png" />
     <Content Include="Styles\images\success.png" />
     <Content Include="Styles\images\warning.png" />
-    <Content Include="Styles\jquery.handsontable.bootstrap.css" />
     <Content Include="Styles\jquery.handsontable.full.min.css" />
     <Content Include="Styles\jquery.toastmessage.css" />
     <Content Include="Web.config">

@@ -48,33 +48,9 @@ namespace Transformalize.Main.Providers.SqlServer {
             );
         }
 
-        public string DropPrimaryKey(string name, IEnumerable<string> primaryKey) {
-            var pk = primaryKey.ToArray();
-            return string.Format(
-                "ALTER TABLE [{0}] DROP CONSTRAINT [PK_{0}_{1}];",
-                SqlIdentifier(name),
-                KeyName(pk)
-            );
-        }
-
         public string AddUniqueClusteredIndex(string name) {
             return string.Format(
                 "CREATE UNIQUE CLUSTERED INDEX [UX_{0}_TflKey] ON [{0}] (TflKey ASC);",
-                SqlIdentifier(name)
-            );
-        }
-
-        public string DropUniqueClusteredIndex(string name) {
-            return string.Format(
-                @"
-                    IF EXISTS(
-	                    SELECT i.*
-	                    FROM sys.indexes i WITH (NOLOCK)
-	                    INNER JOIN sys.tables t WITH (NOLOCK) ON (i.object_id = t.object_id)
-	                    WHERE i.[name] = 'UX_{0}_TflKey'
-	                    AND t.[name] = '{0}'
-                    )	DROP INDEX [UX_{0}_TflKey] ON [{0}];
-                ",
                 SqlIdentifier(name)
             );
         }

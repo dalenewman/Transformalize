@@ -8,7 +8,7 @@ namespace Transformalize.Main.Providers.SqlCe {
 
         public void Initialize(Process process) {
 
-            if (!new SqlCeTableExists(process.OutputConnection).Exists("dbo", "TflBatch")) {
+            if (!new SqlCeTableExists(process.OutputConnection).OutputExists("TflBatch")) {
                 Execute(process.OutputConnection, @"
                     CREATE TABLE [TflBatch](
                         [TflBatchId] INT NOT NULL,

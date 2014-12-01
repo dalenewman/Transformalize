@@ -36,10 +36,6 @@ namespace Transformalize.Main.Providers.SqlServer {
         public Fields Read(AbstractConnection connection, string process, string prefix, string name, string schema, bool isMaster = false) {
             var fields = new Fields();
 
-            if (schema.Equals(string.Empty)) {
-                schema = connection.DefaultSchema;
-            }
-
             using (var cn = connection.GetConnection()) {
                 cn.Open();
                 var sql = PrepareSql();
@@ -105,7 +101,7 @@ namespace Transformalize.Main.Providers.SqlServer {
                     FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu
                     INNER JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc ON (kcu.TABLE_SCHEMA = tc.TABLE_SCHEMA AND kcu.TABLE_NAME = tc.TABLE_NAME AND kcu.CONSTRAINT_NAME = tc.CONSTRAINT_NAME AND tc.CONSTRAINT_TYPE = 'PRIMARY KEY')
                 ) pk ON (c.TABLE_SCHEMA = pk.TABLE_SCHEMA AND c.TABLE_NAME = pk.TABLE_NAME AND c.COLUMN_NAME = pk.COLUMN_NAME)
-                WHERE c.TABLE_SCHEMA = @Schema
+                WHERE (@Schema = '' OR c.TABLE_SCHEMA = @Schema)
                 AND c.TABLE_NAME = @Name
                 ORDER BY c.ORDINAL_POSITION
             ";

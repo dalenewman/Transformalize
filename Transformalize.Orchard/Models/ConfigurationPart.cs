@@ -118,8 +118,6 @@ namespace Transformalize.Orchard.Models {
 
         public EventLevel ToLogLevel() {
             switch (LogLevel) {
-                case "critical":
-                    return EventLevel.Critical;
                 case "error":
                     return EventLevel.Error;
                 case "warn":

@@ -22,6 +22,6 @@
 
 namespace Transformalize.Main.Providers {
     public interface ITableExists {
-        bool Exists(string schema, string name);
+        bool OutputExists(string name);
     }
 }

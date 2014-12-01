@@ -34,7 +34,7 @@ namespace Transformalize.Main.Providers.SqlServer {
                 Execute(process.OutputConnection, CreateIndex());
                 Debug("Created TflBatch.");
             } else {
-                var sql = string.Format("DELETE FROM TflBatch WHERE ProcessName = '{0}';", process.Name);
+                var sql = string.Format("DELETE FROM [TflBatch] WHERE ProcessName = '{0}';", process.Name);
                 Debug(sql);
                 Execute(process.OutputConnection, sql);
             }
@@ -56,7 +56,7 @@ namespace Transformalize.Main.Providers.SqlServer {
 
         public string CreateIndex() {
             return @"
-                CREATE INDEX Ix_TflBatch_ProcessName_EntityName__TflBatchId ON TflBatch (
+                CREATE INDEX Ix_TflBatch_ProcessName_EntityName__TflBatchId ON [TflBatch] (
                     ProcessName ASC,
                     EntityName ASC
                 ) INCLUDE (TflBatchId);

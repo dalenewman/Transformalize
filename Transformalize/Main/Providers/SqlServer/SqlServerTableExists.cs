@@ -31,13 +31,12 @@ namespace Transformalize.Main.Providers.SqlServer {
             _connection = connection;
         }
 
-        public bool Exists(string schema, string name) {
+        public bool OutputExists(string name) {
             var sql = string.Format(@"
 	            SELECT TOP(1) TABLE_NAME
 	            FROM INFORMATION_SCHEMA.TABLES 
-	            WHERE TABLE_SCHEMA = '{0}' 
-	            AND  TABLE_NAME = '{1}';
-            ", schema.Equals(string.Empty) ? _connection.DefaultSchema : schema, name);
+	            WHERE TABLE_NAME = '{0}';
+            ", name);
 
             using (var cn = _connection.GetConnection()) {
                 cn.Open();

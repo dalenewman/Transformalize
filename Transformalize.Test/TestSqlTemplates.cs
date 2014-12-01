@@ -39,6 +39,16 @@ namespace Transformalize.Test {
         }
 
         [Test]
+        public void TestDropSqlNoSchema() {
+            Assert.AreEqual(@"
+                IF EXISTS(
+        	        SELECT *
+        	        FROM INFORMATION_SCHEMA.TABLES
+        	        WHERE TABLE_NAME = 'TEST'
+                )	DROP TABLE [TEST];
+            ", SqlTemplates.DropTable("TEST", string.Empty));
+        }
+        [Test]
         public void TestTruncateSql() {
             Assert.AreEqual(@"
                 IF EXISTS(

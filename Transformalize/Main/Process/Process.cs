@@ -166,7 +166,9 @@ namespace Transformalize.Main {
                     Setup();
                     return true;
                 }
-                TflLogger.Warn(Name, string.Empty, "Connection(s) failed.");
+                foreach (var connection in Connections.Where(cn => !cn.Value.IsReady())) {
+                    TflLogger.Error(Name, string.Empty, "Connection {0} failed.", connection.Key);
+                }
                 return false;
             }
             TflLogger.Error(Name, string.Empty, "Process is disabled.");

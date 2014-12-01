@@ -10,7 +10,7 @@ namespace Transformalize.Main.Providers.SqlCe
             _connection = connection;
         }
 
-        public bool Exists(string schema, string name) {
+        public bool OutputExists(string name) {
             var sql = string.Format(@"
 	            SELECT TABLE_NAME
 	            FROM INFORMATION_SCHEMA.TABLES 

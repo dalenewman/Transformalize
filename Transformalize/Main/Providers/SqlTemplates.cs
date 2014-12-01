@@ -33,6 +33,16 @@ namespace Transformalize.Main.Providers {
     public static class SqlTemplates {
 
         public static string TruncateTable(string name, string schema) {
+            if (schema.Equals(string.Empty)) {
+                return string.Format(@"
+                IF EXISTS(
+        	        SELECT *
+        	        FROM INFORMATION_SCHEMA.TABLES
+        	        WHERE TABLE_NAME = '{0}'
+                )	TRUNCATE TABLE [{0}];
+            ", name);
+
+            }
             return string.Format(@"
                 IF EXISTS(
         	        SELECT *
@@ -44,6 +54,15 @@ namespace Transformalize.Main.Providers {
         }
 
         public static string DropTable(string name, string schema) {
+            if (string.IsNullOrEmpty(schema)) {
+                return string.Format(@"
+                IF EXISTS(
+        	        SELECT *
+        	        FROM INFORMATION_SCHEMA.TABLES
+        	        WHERE TABLE_NAME = '{0}'
+                )	DROP TABLE [{0}];
+            ", name);
+            }
             return string.Format(@"
                 IF EXISTS(
         	        SELECT *

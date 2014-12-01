@@ -233,7 +233,7 @@ namespace Transformalize.Main.Providers {
                 Name = "TflBatch",
                 ProcessName = processName,
                 Alias = "TflBatch",
-                Schema = "dbo",
+                Schema = string.Empty,
                 PrimaryKey = new Fields() {
                     new Field(FieldType.PrimaryKey) {
                         Name = "TflBatchId"
