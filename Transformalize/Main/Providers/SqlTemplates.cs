@@ -128,16 +128,25 @@ namespace Transformalize.Main.Providers {
             return sqlBuilder.ToString();
         }
 
-        private static IEnumerable<string> RowsToValues(Fields fields, IEnumerable<Row> rows) {
+        private static IEnumerable<string> RowsToValues(OrderedFields fields, IEnumerable<Row> rows) {
+
+            var preProcessed = new string[fields.Count][];
+            for (var i = 0; i < fields.Count; i++) {
+                var field = fields.ElementAt(i);
+                preProcessed[i] = new[] { field.Alias, field.SimpleType, field.Quote() };
+            }
+
             foreach (var row in rows) {
                 var values = new List<string>();
-                foreach (Field field in fields) {
-                    var value = row[field.Alias].ToString();
-                    var quote = field.Quote();
+                foreach (var field in preProcessed) {
+                    var value = row[field[0]].ToString();
+                    if (field[1].StartsWith("bool")) {
+                        value = value.Equals("True", StringComparison.Ordinal) ? "1" : "0";
+                    }
                     values.Add(
-                        quote == string.Empty
+                        field[2] == string.Empty
                             ? value
-                            : string.Concat(quote, value.Replace("'", "''"), quote)
+                            : string.Concat(field[2], value.Replace("'", "''"), field[2])
                         );
                 }
                 yield return string.Join(",", values);

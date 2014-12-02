@@ -71,7 +71,7 @@ namespace Transformalize.Main.Providers.SqlServer {
             using (var cn = GetConnection()) {
                 cn.Open();
                 var cmd = cn.CreateCommand();
-                cmd.CommandText = "SELECT ISNULL(MAX(TflBatchId),0)+1 FROM dbo.TflBatch WHERE ProcessName = @ProcessName;";
+                cmd.CommandText = "SELECT ISNULL(MAX(TflBatchId),0)+1 FROM TflBatch WHERE ProcessName = @ProcessName;";
 
                 var process = cmd.CreateParameter();
                 process.ParameterName = "@ProcessName";
@@ -97,8 +97,7 @@ namespace Transformalize.Main.Providers.SqlServer {
                 string.IsNullOrEmpty(entity.Schema) ? DefaultSchema : entity.Schema,
                 entity.Name,
                 entity.Version.Name
-                );
-
+            );
 
             if (entity.Filters.Any()) {
                 sql += " AND " + entity.Filters.ResolveExpression(TextQualifier);

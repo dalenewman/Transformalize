@@ -3,12 +3,17 @@
 
 @{
     var title = Model.Title();
-    Script.Require("jQuery").AtHead();
-    Script.Include("jquery.handsontable.full.min.js").AtHead();
-    Script.Include("jquery.blockUI.js").AtHead();
-    Script.Include("jquery.toastmessage.js").AtHead();
+    
+    Script.Require("jQuery").AtFoot();
+    Script.Include("jquery-ui/js/jquery-ui.custom.min.js").AtFoot();
+    Script.Include("jquery.handsontable.full.min.js").AtFoot();
+    Script.Include("jquery.blockUI.js").AtFoot();
+    Script.Include("jquery.toastmessage.js").AtFoot();
+    Script.Include("shims/array.filter.js").AtFoot();
+    Script.Include("numeral.js").AtFoot();
     
     Style.Include("jquery.handsontable.full.min.css");
+    Style.Include("jquery-ui/css/ui-bootstrap/jquery-ui.custom.css");
     Style.Include("jquery.toastmessage.css");
     Layout.Title = title;
 }
@@ -27,6 +32,11 @@
 
 <script>
     //<!--
+
+    function addMinutes(date, minutes) {
+        return new Date(date.getTime() + minutes * 60000);
+    }
+
     $(document).ready(function () {
 
         var settings = {
@@ -59,42 +69,81 @@
             $().toastmessage('showErrorToast', request.responseText);
         });
 
-        if (!Array.prototype.filter) {
-            Array.prototype.filter = function (fun /*, thisp*/) {
-                var len = this.length >>> 0;
-                if (typeof fun != "function")
-                    throw new TypeError();
-
-                var res = [];
-                var thisp = arguments[1];
-                for (var i = 0; i < len; i++) {
-                    if (i in this) {
-                        var val = this[i]; // in case fun mutates this
-                        if (fun.call(thisp, val, i, this))
-                            res.push(val);
-                    }
-                }
-                return res;
-            };
-        }
+        var dateMap = [];
 
         $('#load').click(function () {
             $.get(settings.load, function (tfl) {
                 if (tfl.status === 200) {
+                    var dateFormat = 'yy-mm-dd';
                     var fields = tfl.processes[0].add.entities.add.fields.add.filter(function (item) {
                         return !item.hasOwnProperty('output') || item.output === true;
                     });
                     var headers = $.map(fields, function (f) {
                         return f.label;
                     });
+                    dateMap = $.map(fields, function (f) {
+                        return f.hasOwnProperty('type') && f.type.indexOf('date') == 0 ? 1 : 0;
+                    });
+                    var columns = $.map(fields, function (f) {
+                        var column = {};
+                        switch (f.hasOwnProperty('type') ? f.type.toLowerCase().replace('system.','') : 'string') {
+                            case 'int16':
+                            case 'int32':
+                            case 'int64':
+                            case 'double':
+                            case 'float':
+                            case 'decimal':
+                            case 'short':
+                            case 'long':
+                            case 'byte':
+                            case 'int':
+                                column = { type: 'numeric' };
+                                break;
+
+                            case 'date':
+                            case 'time':
+                            case 'datetime':
+                                column = {
+                                    type: 'date',
+                                    dateFormat: dateFormat,
+                                    defaultDate: null,
+                                    showButtonPanel: true
+                                };
+                                break;
+
+                            case 'bool':
+                            case 'boolean':
+                                column = {
+                                    type: 'checkbox'
+                                }
+                                break;
+                            default:
+                                column = {};
+                        }
+                        return column;
+                    });
                     var data = tfl.response[0];
                     if (data.length > 0) {
+                        
+                        var minutes = new Date().getTimezoneOffset();
+                        for (var i = 0; i < data.length; i++) {
+                            for (var y = 0; y < dateMap.length; y++) {
+                                if (dateMap[y] == 1) {
+                                    data[i][y] = $.datepicker.formatDate(dateFormat, addMinutes(new Date(data[i][y]), minutes));
+                                }
+                            }
+                        }
+
                         $('#target').handsontable({
                             data: data,
                             minSpareRows: 1,
                             rowHeaders: true,
                             colHeaders: headers,
-                            contextMenu: true
+                            columnSorting: true,
+                            contextMenu: true,
+                            columns: columns,
+                            manualColumnResize: true,
+                            manualRowResize: true,
                         });
                     } else {
                         $('#target').handsontable({
@@ -103,8 +152,12 @@
                             minSpareRows: 1,
                             rowHeaders: true,
                             colHeaders: headers,
-                            contextMenu: true
-                        });
+                            columnSorting: true,
+                            contextMenu: true,
+                            columns: columns,
+                            manualColumnResize: true,
+                            manualRowResize: true,
+                    });
                     }
                     $().toastmessage('showSuccessToast', "Data Loaded");
                 } else {
@@ -115,13 +168,23 @@
 
         $('#save').click(function () {
             var data = $('#target').data('handsontable').getData().slice().filter(function (item) {
+                var nullCount = 0;
                 for (i = 0; i < item.length; i++) {
                     if (item[i] == null) {
-                        return false;
+                        nullCount++;
                     }
                 }
-                return true;
+                return nullCount < item.length;
             });
+
+            /*
+            for (var i = 0; i < data.length; i++) {
+                for (var y = 0; y < dateMap.length; y++) {
+                    if (dateMap[y] == 1) {
+                        data[i][y] = new Date(data[i][y]).toUTCString;
+                    }
+                }
+            }*/
 
             $.ajax({
                 url: settings.save,

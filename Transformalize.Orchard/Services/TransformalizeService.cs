@@ -127,23 +127,23 @@ namespace Transformalize.Orchard.Services {
 
             var entity = process.Entities.First();
             var inputFields = entity.InputFields();
+            var conversion = Common.GetObjectConversionMap();
 
             while (reader.Read()) {
                 if (reader.TokenType == JsonToken.StartArray) {
                     var row = new Row();
-                    foreach (var name in inputFields.Select(f => f.Name)) {
+                    foreach (var field in inputFields) {
                         reader.Read();
-                        row[name] = reader.Value;
+                        row[field.Name] = conversion[field.SimpleType](reader.Value);
                     }
                     rows.Add(row);
                 } else if (reader.TokenType == JsonToken.StartObject) {
                     var row = new Row();
                     do {
                         reader.Read();
-                        var name = reader.Value;
+                        var name = reader.Value.ToString();
                         reader.Read();
-                        var value = reader.Value;
-                        row[name] = value;
+                        row[name] = conversion[inputFields[name].SimpleType](reader.Value);
                     } while (reader.TokenType != JsonToken.EndObject);
                     rows.Add(row);
                 }

@@ -72,7 +72,7 @@ namespace Transformalize.Main.Providers.PostgreSql {
         }
 
         public override int NextBatchId(string processName) {
-            var tflEntity = new Entity { TflBatchId = 1, Name = "TflBatch", Alias = "TflBatch", Schema = "dbo", PrimaryKey = new Fields() { new Field(FieldType.PrimaryKey) { Name = "TflBatchId" } } };
+            var tflEntity = TflBatchEntity(processName);
             if (!RecordsExist(tflEntity)) {
                 return 1;
             }
