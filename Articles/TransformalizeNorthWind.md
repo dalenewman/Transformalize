@@ -6,68 +6,79 @@ Transformalize aims to transform and denormalize relational data in near real-ti
 
 * As an OLAP cube data source
 * To feed a SOLR, Elasticsearch, or Lucene index.
-* To provide faster, simpler, non-blocking access for regular SQL queries
+* To provide faster, simpler, non-blocking access for SQL queries
 * Or, use your imagination... (e.g. to feed a Redis cache server, to load a NoSql database, etc.)
 
-Transformalize is an open source .NET 4.5 class library. It may be referenced and run directly in code, or run within [Orchard CMS](http://www.orchardproject.net), or with a console application. It's source is hosted on [GitHub](https://github.com/dalenewman/Transformalize).
+Transformalize is an open source .NET 4.5 class library. It may be
+referenced and run directly in code, or run within
+[Orchard CMS](http://www.orchardproject.net), or with
+an included console application (`tfl.exe`).
+It's source code is hosted on [GitHub](https://github.com/dalenewman/Transformalize).
 
 ###Demo###
 
-Start with an XML configuration:
+Start with a process configuration:
 
 <pre class="prettyprint">
-    &lt;transformalize&gt;
-	    &lt;processes&gt;
-		    &lt;add name=&quot;NorthWind&quot;&gt;
-		        &lt;connections&gt;
-		            &lt;add name=&quot;input&quot; /&gt;
-		            &lt;add name=&quot;output&quot; /&gt;
-		        &lt;/connections&gt;
-		        &lt;entities/&gt;
-		        &lt;relationships/&gt;
-		    &lt;/add&gt;
-	    &lt;/processes&gt;
-    &lt;/transformalize&gt;
+&lt;transformalize&gt;
+	&lt;processes&gt;
+		&lt;add name=&quot;NorthWind&quot;&gt;
+		    &lt;connections&gt;
+		        &lt;add name=&quot;input&quot; /&gt;
+		        &lt;add name=&quot;output&quot; /&gt;
+		    &lt;/connections&gt;
+		&lt;/add&gt;
+	&lt;/processes&gt;
+&lt;/transformalize&gt;
 </pre>
 
-Specify the [NorthWind](http://www.microsoft.com/en-us/download/details.aspx?id=23654) database as an input, and another as the output. The default input and output connection provider is SQL Server.&nbsp;
+First, setup connections:
 
 <pre class="prettyprint">
 &lt;connections&gt;
-    &lt;add name=&quot;input&quot; connection-string=&quot;server=localhost;Database=NorthWind;Trusted_Connection=True;&quot;/&gt;
-    &lt;add name=&quot;output&quot; connection-string=&quot;server=localhost;Database=NorthWindOutput;Trusted_Connection=True;&quot;/&gt;
-&lt;/connections&gt;</pre>
+    &lt;add name=&quot;input&quot; database=&quot;NorthWind&quot;/&gt;
+    &lt;add name=&quot;output&quot; database=&quot;NorthWindOutput&quot;/&gt;
+&lt;/connections&gt;
+</pre>
 
-####The NorthWind database schema:####
+I set the input to `NorthWind` and the output to `NorthWindOutput`. These are both 
+SQL Server databases.  Connections are trusted *sqlserver* by default. 
+If you're following along at home, create these databases first.  Then, populate the 
+Northwind database with this [sql script](http://www.microsoft.com/en-us/download/details.aspx?id=23654).
+
+####The NorthWind Schema...
 
 <img src="http://www.codeproject.com/KB/database/658971/NorthWindOrderDetails.png" class="img-responsive img-thumbnail" alt="Northwind Schema" />
 
-Add an `Order Details` entity and save the file as _NorthWind.xml_.
+The schema pictured above shows 8 tables in the `NorthWind` database.  The most important *fact* table is `Order Details`. 
+So, I add it as the first entity and save the configuration as *NorthWind.xml*.
 
-<pre class="prettyprint linenums:8">
+<pre class="prettyprint">
 &lt;entities&gt;
     &lt;add name=&quot;Order Details&quot;/&gt;
 &lt;/entities&gt;&nbsp;
 </pre>
 
-Using the console application, run Transformalize (aka tfl) in &quot;metadata&quot; mode:
+Using the console application (`tfl.exe`), run Transformalize in &quot;metadata&quot; mode:
 
 <pre class"prettyprint">
 tfl NorthWind.xml {&#39;mode&#39;:&#39;metadata&#39;}
 </pre>
 
-Metadata mode reads the information schema of the database. &nbsp;Then, it writes and opens an XML file with Order Detail&#39;s primary key and field definitions. Copy them into _NorthWind.xml_:
+Metadata mode reads the information schema of the database. 
+&nbsp;Then, it writes and opens an XML file with Order Detail&#39;s 
+primary key and field definitions. Copy them into _NorthWind.xml_:
 
-<pre class="prettyprint linenums:8">
+<pre class="prettyprint">
 &lt;entities&gt;
     &lt;add name=&quot;Order Details&quot;&gt;
-        &lt;fields&gt;
+        <strong>&lt;fields&gt;
             &lt;add name=&quot;OrderID&quot; type=&quot;System.Int32&quot; primary-key=&quot;true&quot; /&gt;
             &lt;add name=&quot;ProductID&quot; type=&quot;System.Int32&quot; primary-key=&quot;true&quot; /&gt;
             &lt;add name=&quot;Discount&quot; type=&quot;System.Single&quot; /&gt;
             &lt;add name=&quot;Quantity&quot; type=&quot;System.Int16&quot; /&gt;
             &lt;add name=&quot;UnitPrice&quot; type=&quot;System.Decimal&quot; precision=&quot;19&quot; scale=&quot;4&quot;/&gt;
-        &lt;/fields&gt;
+        &lt;/fields&gt;</strong>
     &lt;/add&gt;
 &lt;/entities&gt;&nbsp;&nbsp;
 </pre>
@@ -245,7 +256,7 @@ tfl NorthWind.xml
 
 View the output:
 
-<pre class="prettyprint linenums">
+<pre class="prettyprint">
 SELECT TOP 10
 	Discount AS Disc,
 	OrderID,
@@ -266,7 +277,7 @@ SELECT TOP 10
 FROM NorthWindStar;
 </pre>
 
-<pre class="prettyprint linenums">
+<pre class="prettyprint">
 Disc OrderID PId Qty UnitPrice  CustId EId Freight  OrderDate  RequiredDate ShipAddress            ShipCity        ShippedDate ShipPostalCode ShipRegion Sid
 ---- ------- --- --- ---------  ------ --- -------- ---------- ------------ ---------------------- --------------- ----------- -------------- ---------- ---
 0.2  10248   11  12  14.0000    VINET  5   32.3800  1996-07-04 1996-08-01   59 rue de l&#39;Abbaye     Reims           1996-07-16  51100                     3
@@ -545,20 +556,20 @@ The NorthWind data is fairly clean. In reality, you&#39;ll face more challenging
 
 Transformalize uses several other open source projects including
 
-1.  [Rhino ETL](https://github.com/hibernating-rhinos/rhino-etl)
-2.  [Razor Engine](https://github.com/Antaris/RazorEngine)
-3.  [Jint](https://github.com/sebastienros/jint)
-4.  [Ninject](http://www.ninject.org/)
-7.  [fastJSON](http://www.codeproject.com/Articles/159450/fastJSON)
-7.  [Newtonsoft.JSON](https://github.com/JamesNK/Newtonsoft.Json)
-8.  [Dapper-dot-net](https://github.com/SamSaffron/dapper-dot-net)
-9.  [File Helpers](http://filehelpers.sourceforge.net/)
-10.  [Excel Data Reader](http://exceldatareader.codeplex.com/)
-11.  [Enterprise Library 6 Validation & Semantic Logging Blocks](http://msdn.microsoft.com/library/cc467894.aspx "Enterprise Library Home Page")
-11.  [Lucene.NET](http://lucenenet.apache.org/)
-12.  [Elasticsearch.NET & NEST](https://github.com/elasticsearch/elasticsearch-net)
-13.  [SolrNet](https://github.com/mausch/SolrNet)
+1. [Rhino ETL](https://github.com/hibernating-rhinos/rhino-etl)
+1. [Razor Engine](https://github.com/Antaris/RazorEngine)
+1. [Jint](https://github.com/sebastienros/jint)
+1. [Ninject](http://www.ninject.org/)
+1. [fastJSON](http://www.codeproject.com/Articles/159450/fastJSON)
+1. [Newtonsoft.JSON](https://github.com/JamesNK/Newtonsoft.Json)
+1. [Dapper-dot-net](https://github.com/SamSaffron/dapper-dot-net)
+1. [File Helpers](http://filehelpers.sourceforge.net/)
+1. [Excel Data Reader](http://exceldatareader.codeplex.com/)
+1. [Enterprise Library 6 Validation & Semantic Logging Blocks](http://msdn.microsoft.com/library/cc467894.aspx "Enterprise Library Home Page")
+1. [Lucene.NET](http://lucenenet.apache.org/)
+1. [Elasticsearch.NET & NEST](https://github.com/elasticsearch/elasticsearch-net)
+1. [SolrNet](https://github.com/mausch/SolrNet)
 
-Where possible, I&#39;ve included source code from these projects rather than the Nuget packages. The upside &nbsp;of doing this is I get to step into and learn from other people&#39;s code. The downside is it&#39;s a bit harder to keep these libraries up to date.
+Where possible, I've included source code from these projects rather than the Nuget packages. The upside &nbsp;of doing this is I get to step into and learn from other people&#39;s code. The downside is it&#39;s a bit harder to keep these libraries up to date.
 
 <script src="http://cdnjs.cloudflare.com/ajax/libs/prettify/r298/run_prettify.js" type="text/javascript"></script>
