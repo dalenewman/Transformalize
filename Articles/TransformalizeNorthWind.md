@@ -16,18 +16,18 @@ Transformalize is an open source .NET 4.5 class library. It may be referenced an
 Start with an XML configuration:
 
 <pre class="prettyprint">
-&lt;transformalize&gt;
-	&lt;processes&gt;
-		&lt;add name=&quot;NorthWind&quot;&gt;
-		    &lt;connections&gt;
-		        &lt;add name=&quot;input&quot; /&gt;
-		        &lt;add name=&quot;output&quot; /&gt;
-		    &lt;/connections&gt;
-		    &lt;entities/&gt;
-		    &lt;relationships/&gt;
-		&lt;/add&gt;
-	&lt;/processes&gt;
-&lt;/transformalize&gt;
+    &lt;transformalize&gt;
+	    &lt;processes&gt;
+		    &lt;add name=&quot;NorthWind&quot;&gt;
+		        &lt;connections&gt;
+		            &lt;add name=&quot;input&quot; /&gt;
+		            &lt;add name=&quot;output&quot; /&gt;
+		        &lt;/connections&gt;
+		        &lt;entities/&gt;
+		        &lt;relationships/&gt;
+		    &lt;/add&gt;
+	    &lt;/processes&gt;
+    &lt;/transformalize&gt;
 </pre>
 
 Specify the [NorthWind](http://www.microsoft.com/en-us/download/details.aspx?id=23654) database as an input, and another as the output. The default input and output connection provider is SQL Server.&nbsp;
@@ -127,11 +127,9 @@ tfl NorthWind.xml {&#39;mode&#39;:&#39;init&#39;}
 23:58:52 | Info | NorthWind | All | Initialized TrAnSfOrMaLiZeR.
 23:58:52 | Info | NorthWind | All | Initialized NorthWindOrderDetails in NorthWindOutput on localhost.
 23:58:52 | Info | NorthWind | All | Process completed in 00:00:00.5504415.
-
 tfl NorthWind.xml
 00:00:18 | Info | NorthWind | Order Details....... | Processed 2155 inserts, and 0 updates in Order Details.
 00:00:18 | Info | NorthWind | Order Details....... | Process completed in 00:00:00.7417452.
-
 tfl NorthWind.xml
 00:00:23 | Info | NorthWind | Order Details....... | Processed 0 inserts, and 0 updates in Order Details.
 00:00:23 | Info | NorthWind | Order Details....... | Process completed in 00:00:00.6042720.
@@ -235,12 +233,10 @@ tfl NorthWind.xml {&#39;mode&#39;:&#39;init&#39;}
 23:23:47 | Info | NorthWind | All | Initialized NorthWindOrderDetails in NorthWindOutput on localhost.
 23:23:47 | Info | NorthWind | All | Initialized NorthWindOrders in NorthWindOutput on localhost.
 23:23:47 | Info | NorthWind | All | Process completed in 00:00:00.6609756.
-
 tfl NorthWind.xml
 23:24:30 | Info | NorthWind | Order Details....... | Processed 2155 inserts, and 0 updates in Order Details.
 23:24:30 | Info | NorthWind | Orders.............. | Processed 830 inserts, and 0 updates in Orders.
 23:24:30 | Info | NorthWind | Orders.............. | Process completed in 00:00:00.9719255.
-
 tfl NorthWind.xml
 23:24:35 | Info | NorthWind | Order Details....... | Processed 0 inserts, and 0 updates in Order Details.
 23:24:35 | Info | NorthWind | Orders.............. | Processed 0 inserts, and 0 updates in Orders.
@@ -323,7 +319,6 @@ tfl NorthWind.xml {&#39;mode&#39;:&#39;init&#39;}
 19:41:53 | Info | NorthWind | All | Initialized NorthWindSuppliers in NorthWindOutput on localhost.
 19:41:53 | Info | NorthWind | All | Initialized NorthWindCategories in NorthWindOutput on localhost.
 19:41:53 | Info | NorthWind | All | Process completed in 00:00:01.1828232.
-
 tfl NorthWind.xml
 19:42:06 | Info | NorthWind | Order Details....... | Processed 2155 inserts, and 0 updates in Order Details.
 19:42:07 | Info | NorthWind | Orders.............. | Processed 830 inserts, and 0 updates in Orders.
@@ -336,7 +331,6 @@ tfl NorthWind.xml
 19:42:07 | Info | NorthWind | Orders.............. | Processed 2155 rows. Updated Order Details with Orders.
 19:42:07 | Info | NorthWind | Products............ | Processed 2155 rows. Updated Order Details with Products.
 19:42:07 | Info | NorthWind | All................. | Process completed in 00:00:01.2583563.
-
 tfl NorthWind.xml
 19:42:13 | Info | NorthWind | Order Details....... | Processed 0 inserts, and 0 updates in Order Details.
 19:42:13 | Info | NorthWind | Orders.............. | Processed 0 inserts, and 0 updates in Orders.
@@ -448,9 +442,7 @@ The cube looks better now, but we&#39;ll need it to update whenever Transformali
     &lt;add name=&quot;output&quot; connection-string=&quot;Server=localhost;Database=NorthWindOutput;Trusted_Connection=True;&quot;/&gt;
     &lt;add name=&quot;cube&quot; connection-string=&quot;Data Source=localhost;Catalog=NorthWind;&quot; provider=&quot;AnalysisServices&quot;/&gt;
 &lt;/connections&gt;
-
 &lt;!-- ... --&gt;
-
 &lt;templates path=&quot;C:\Tfl\&quot;&gt;
     &lt;add name=&quot;process-cube&quot; file=&quot;process-cube.xmla&quot;&gt;
         &lt;settings&gt;
@@ -501,22 +493,18 @@ With more complex templates, and an Apache [SOLR](http://lucene.apache.org/solr/
 
 <pre class="prettyprint linenums">
 &lt;templates&gt;
-
     &lt;add name=&quot;solr-data-handler&quot; file=&quot;solr-data-handler.cshtml&quot; cache=&quot;true&quot;&gt;
       &lt;actions&gt;
         &lt;add action=&quot;copy&quot; file=&quot;C:\Solr\NorthWind\conf\data-config.xml&quot;/&gt;
       &lt;/actions&gt;
     &lt;/add&gt;
-
     &lt;add name=&quot;solr-schema&quot; file=&quot;solr-schema.cshtml&quot; cache=&quot;true&quot;&gt;
       &lt;actions&gt;
         &lt;add action=&quot;copy&quot; file=&quot;C:\Solr\NorthWind\conf\schema.xml&quot;/&gt;
         &lt;add action=&quot;web&quot; url=&quot;http://localhost:8983/solr/NorthWind/dataimport?command=full-import&amp;amp;clean=true&amp;amp;commit=true&amp;amp;optimize=true&quot;/&gt;
       &lt;/actions&gt;
     &lt;/add&gt;
-
 &lt;/templates&gt;
-
 &lt;search-types&gt;
     &lt;add name=&quot;default&quot; /&gt;
     &lt;add name=&quot;facet&quot; analyzer=&quot;lowercase&quot; store=&quot;true&quot; index=&quot;true&quot; /&gt;
@@ -530,15 +518,16 @@ To control how the fields are handled in SOLR, &quot;search types&quot; are appl
 
 Running Tfl now produces:
 
-<pre class="prettyprint linenums">
-tfl NorthWind.xml
-...
-00:48:25 | Info | NorthWind | Products.... | Processed 2155 rows. Updated Order Details with Products.
-00:48:28 | Info | NorthWind | Categories.. | process-cube ran successfully.
-00:48:28 | Info | NorthWind | Categories.. | Copied solr-data-handler template output to C:\Solr\NorthWind\conf\data-config.xml.
-00:48:29 | Info | NorthWind | Categories.. | Copied solr-schema template output to C:\Solr\NorthWind\conf\schema.xml.
-00:48:29 | Info | NorthWind | Categories.. | Made web request to http://localhost:8983/solr/NorthWind/dataimport?command=full-import&amp;clean=true&amp;commit=true&amp;optimize=true.
-00:48:29 | Info | NorthWind | Categories.. | Process completed in 00:00:04.8287386.</pre>
+<pre class="prettyprint">
+    tfl NorthWind.xml
+    ...
+    00:48:25 | Info | NorthWind | Products.... | Processed 2155 rows. Updated Order Details with Products.
+    00:48:28 | Info | NorthWind | Categories.. | process-cube ran successfully.
+    00:48:28 | Info | NorthWind | Categories.. | Copied solr-data-handler template output to C:\Solr\NorthWind\conf\data-config.xml.
+    00:48:29 | Info | NorthWind | Categories.. | Copied solr-schema template output to C:\Solr\NorthWind\conf\schema.xml.
+    00:48:29 | Info | NorthWind | Categories.. | Made web request to http://localhost:8983/solr/NorthWind/dataimport?command=full-import&amp;clean=true&amp;commit=true&amp;optimize=true.
+    00:48:29 | Info | NorthWind | Categories.. | Process completed in 00:00:04.8287386.
+</pre>
 
 In this example, the template action &quot;web&quot; triggers SOLR to clean and re-import the index. In a production environment, you&#39;d want to reload the schema when it changes, and make use of full and delta imports appropriately. If all goes well, you see something like this in the SOLR admin:
 
@@ -554,18 +543,20 @@ The NorthWind data is fairly clean. In reality, you&#39;ll face more challenging
 
 ---
 
-Transformalize uses several other open source projects including&nbsp;
+Transformalize uses several other open source projects including
 
-1.  [Rhino ETL](https://github.com/hibernating-rhinos/rhino-etl)&nbsp;
+1.  [Rhino ETL](https://github.com/hibernating-rhinos/rhino-etl)
 2.  [Razor Engine](https://github.com/Antaris/RazorEngine)
 3.  [Jint](https://github.com/sebastienros/jint)
 4.  [Ninject](http://www.ninject.org/)
-7.  [fastJSON](http://www.codeproject.com/Articles/159450/fastJSON)&nbsp;
+7.  [fastJSON](http://www.codeproject.com/Articles/159450/fastJSON)
+7.  [Newtonsoft.JSON](https://github.com/JamesNK/Newtonsoft.Json)
 8.  [Dapper-dot-net](https://github.com/SamSaffron/dapper-dot-net)
 9.  [File Helpers](http://filehelpers.sourceforge.net/)
 10.  [Excel Data Reader](http://exceldatareader.codeplex.com/)
 11.  [Enterprise Library 6 Validation & Semantic Logging Blocks](http://msdn.microsoft.com/library/cc467894.aspx "Enterprise Library Home Page")
-12.  [Elasticsearch.NET](https://github.com/elasticsearch/elasticsearch-net)
+11.  [Lucene.NET](http://lucenenet.apache.org/)
+12.  [Elasticsearch.NET & NEST](https://github.com/elasticsearch/elasticsearch-net)
 13.  [SolrNet](https://github.com/mausch/SolrNet)
 
 Where possible, I&#39;ve included source code from these projects rather than the Nuget packages. The upside &nbsp;of doing this is I get to step into and learn from other people&#39;s code. The downside is it&#39;s a bit harder to keep these libraries up to date.
