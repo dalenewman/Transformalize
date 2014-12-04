@@ -4,17 +4,18 @@
 @{
     var title = Model.Title();
     
-    Script.Require("jQuery").AtFoot();
-    Script.Include("jquery-ui/js/jquery-ui.custom.min.js").AtFoot();
-    Script.Include("jquery.handsontable.full.min.js").AtFoot();
-    Script.Include("jquery.blockUI.js").AtFoot();
-    Script.Include("jquery.toastmessage.js").AtFoot();
-    Script.Include("shims/array.filter.js").AtFoot();
-    Script.Include("numeral.js").AtFoot();
+    Script.Require("jQuery").AtHead();
     
-    Style.Include("jquery.handsontable.full.min.css");
-    Style.Include("jquery-ui/css/ui-bootstrap/jquery-ui.custom.css");
-    Style.Include("jquery.toastmessage.css");
+    Script.Include("HandsOnTable-0.11.4/jquery-ui/js/jquery-ui.custom.min.js").AtFoot();
+    Script.Include("HandsOnTable-0.11.4/jquery.handsontable.full.min.js").AtFoot();
+    Script.Include("jquery.blockUI.min.js").AtFoot();
+    Script.Include("jquery.toastmessage.min.js").AtFoot();
+    Script.Include("HandsOnTable-0.11.4/shims/array.filter.min.js").AtFoot();
+    Script.Include("HandsOnTable-0.11.4/numeral.min.js").AtFoot();
+
+    Style.Include("HandsOnTable-0.11.4/jquery.handsontable.full.min.css");
+    Style.Include("HandsOnTable-0.11.4/jquery-ui/css/ui-bootstrap/jquery-ui.custom.min.css");
+    Style.Include("jquery.toastmessage.min.css");
     Layout.Title = title;
 }
 
@@ -176,15 +177,6 @@
                 }
                 return nullCount < item.length;
             });
-
-            /*
-            for (var i = 0; i < data.length; i++) {
-                for (var y = 0; y < dateMap.length; y++) {
-                    if (dateMap[y] == 1) {
-                        data[i][y] = new Date(data[i][y]).toUTCString;
-                    }
-                }
-            }*/
 
             $.ajax({
                 url: settings.save,

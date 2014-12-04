@@ -103,6 +103,54 @@ namespace Transformalize.Orchard {
                     )
                 },
 
+                new RouteDescriptor {
+                Priority = 11,
+                Route = new Route(
+                    "Transformalize/SlickGrid/{id}",
+                    new RouteValueDictionary {
+                        {"area", "Transformalize.Orchard" },
+                        {"controller", "SlickGrid" },
+                        {"action", "Index"},
+                        {"id", 0}
+                    },
+                    new RouteValueDictionary(),
+                    new RouteValueDictionary { {"area", "Transformalize.Orchard" } },
+                    new MvcRouteHandler()
+                    )
+                },
+
+                new RouteDescriptor {
+                Priority = 11,
+                Route = new Route(
+                    "Transformalize/SlickGrid/Load/{id}",
+                    new RouteValueDictionary {
+                        {"area", "Transformalize.Orchard" },
+                        {"controller", "SlickGrid" },
+                        {"action", "Load"},
+                        {"id", 0}
+                    },
+                    new RouteValueDictionary(),
+                    new RouteValueDictionary { {"area", "Transformalize.Orchard" } },
+                    new MvcRouteHandler()
+                    )
+                },
+
+                new RouteDescriptor {
+                Priority = 11,
+                Route = new Route(
+                    "Transformalize/SlickGrid/Save/{id}",
+                    new RouteValueDictionary {
+                        {"area", "Transformalize.Orchard" },
+                        {"controller", "SlickGrid" },
+                        {"action", "Save"},
+                        {"id", 0}
+                    },
+                    new RouteValueDictionary(),
+                    new RouteValueDictionary { {"area", "Transformalize.Orchard" } },
+                    new MvcRouteHandler()
+                    )
+                },
+
                 // Legacy configuration path, new is Transformalize/Api/Configuration/{id}
                 new RouteDescriptor {
                 Priority = 11,

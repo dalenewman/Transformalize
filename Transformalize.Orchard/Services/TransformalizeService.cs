@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Diagnostics.Tracing;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -196,14 +195,5 @@ namespace Transformalize.Orchard.Services {
             return cleanedSlug.ToLower().RemoveDiacritics();
         }
 
-
-    }
-
-    public class TransformalizeRequest {
-        public bool DisplayLog { get; set; }
-        public EventLevel LogLevel { get; set; }
-        public Options Options { get; set; }
-        public string Configuration { get; set; }
-        public NameValueCollection Query { get; set; }
     }
 }

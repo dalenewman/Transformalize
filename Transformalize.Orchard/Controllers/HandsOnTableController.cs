@@ -157,7 +157,7 @@ namespace Transformalize.Orchard.Controllers {
                 request.Message = ex.Message;
             }
 
-            return new ApiResponse(request, transformalizeRequest.Configuration, processes).ContentResult("json", "arrays");
+            return new ApiResponse(request, transformalizeRequest.Configuration, processes).ContentResult(_query["format"], _query["flavor"]);
 
         }
 

@@ -30,12 +30,15 @@
             <tbody>
                 @foreach (var fields in Model.TransformalizeResponse.Log.Select(line => line.Split("|".ToCharArray()).Select(f => f.TrimEnd('.')).ToArray())) {
                     string color;
-                    switch (fields[2].Trim()) {
-                        case "Error":
+                    switch (fields[1].Trim().ToLower().Substring(0,4)) {
+                        case "erro":
                             color = "danger";
                             break;
-                        case "Warn ":
+                        case "warn":
                             color = "warning";
+                            break;
+                        case "debu":
+                            color = "info";
                             break;
                         default:
                             color = "";

@@ -77,131 +77,490 @@
     <Content Include="Libs\Orchard.Core.dll" />
     <Content Include="Libs\Orchard.Framework.dll" />
     <Content Include="Scripts\codemirror-4.5\addon\dialog\dialog.js" />
+    <Content Include="Scripts\codemirror-4.5\addon\dialog\dialog.min.js">
+      <DependentUpon>dialog.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\codemirror-4.5\addon\display\fullscreen.js" />
+    <Content Include="Scripts\codemirror-4.5\addon\display\fullscreen.min.js">
+      <DependentUpon>fullscreen.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\codemirror-4.5\addon\edit\closetag.js" />
+    <Content Include="Scripts\codemirror-4.5\addon\edit\closetag.min.js">
+      <DependentUpon>closetag.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\codemirror-4.5\addon\edit\matchtags.js" />
+    <Content Include="Scripts\codemirror-4.5\addon\edit\matchtags.min.js">
+      <DependentUpon>matchtags.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\codemirror-4.5\addon\fold\brace-fold.js" />
+    <Content Include="Scripts\codemirror-4.5\addon\fold\brace-fold.min.js">
+      <DependentUpon>brace-fold.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\codemirror-4.5\addon\fold\comment-fold.js" />
+    <Content Include="Scripts\codemirror-4.5\addon\fold\comment-fold.min.js">
+      <DependentUpon>comment-fold.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\codemirror-4.5\addon\fold\foldcode.js" />
+    <Content Include="Scripts\codemirror-4.5\addon\fold\foldcode.min.js">
+      <DependentUpon>foldcode.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\codemirror-4.5\addon\fold\foldgutter.js" />
+    <Content Include="Scripts\codemirror-4.5\addon\fold\foldgutter.min.js">
+      <DependentUpon>foldgutter.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\codemirror-4.5\addon\fold\indent-fold.js" />
+    <Content Include="Scripts\codemirror-4.5\addon\fold\indent-fold.min.js">
+      <DependentUpon>indent-fold.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\codemirror-4.5\addon\fold\markdown-fold.js" />
+    <Content Include="Scripts\codemirror-4.5\addon\fold\markdown-fold.min.js">
+      <DependentUpon>markdown-fold.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\codemirror-4.5\addon\fold\xml-fold.js" />
+    <Content Include="Scripts\codemirror-4.5\addon\fold\xml-fold.min.js">
+      <DependentUpon>xml-fold.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\codemirror-4.5\addon\hint\show-hint.js" />
+    <Content Include="Scripts\codemirror-4.5\addon\hint\show-hint.min.js">
+      <DependentUpon>show-hint.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\codemirror-4.5\addon\hint\xml-hint.js" />
+    <Content Include="Scripts\codemirror-4.5\addon\hint\xml-hint.min.js">
+      <DependentUpon>xml-hint.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\codemirror-4.5\addon\search\match-highlighter.js" />
+    <Content Include="Scripts\codemirror-4.5\addon\search\match-highlighter.min.js">
+      <DependentUpon>match-highlighter.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\codemirror-4.5\addon\search\search.js" />
+    <Content Include="Scripts\codemirror-4.5\addon\search\search.min.js">
+      <DependentUpon>search.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\codemirror-4.5\addon\search\searchcursor.js" />
+    <Content Include="Scripts\codemirror-4.5\addon\search\searchcursor.min.js">
+      <DependentUpon>searchcursor.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\codemirror-4.5\lib\codemirror.js" />
+    <Content Include="Scripts\codemirror-4.5\lib\codemirror.min.js">
+      <DependentUpon>codemirror.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\codemirror-4.5\mode\xml\index.html" />
     <Content Include="Scripts\codemirror-4.5\mode\xml\test.js" />
+    <Content Include="Scripts\codemirror-4.5\mode\xml\test.min.js">
+      <DependentUpon>test.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\codemirror-4.5\mode\xml\xml.js" />
+    <Content Include="Scripts\codemirror-4.5\mode\xml\xml.min.js">
+      <DependentUpon>xml.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\configuration-editor-004.js" />
-    <Content Include="Scripts\jquery-ui\js\jquery-ui.custom.js" />
-    <Content Include="Scripts\jquery-ui\js\jquery-ui.custom.min.js" />
-    <Content Include="Scripts\jquery.handsontable.full.min.js" />
+    <Content Include="Scripts\configuration-editor-004.min.js">
+      <DependentUpon>configuration-editor-004.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\HandsOnTable-0.11.4\jquery-ui\js\jquery-ui.custom.js" />
+    <Content Include="Scripts\HandsOnTable-0.11.4\jquery-ui\js\jquery-ui.custom.min.js" />
+    <Content Include="Scripts\HandsOnTable-0.11.4\jquery.handsontable.full.min.js" />
+    <Content Include="Scripts\HandsOnTable-0.11.4\numeral.min.js">
+      <DependentUpon>numeral.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\HandsOnTable-0.11.4\shims\array.filter.min.js">
+      <DependentUpon>array.filter.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\HandsOnTable-0.11.4\shims\array.indexOf.min.js">
+      <DependentUpon>array.indexOf.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\HandsOnTable-0.11.4\shims\weakmap.min.js">
+      <DependentUpon>weakmap.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\jquery.blockUI.js" />
+    <Content Include="Scripts\jquery.blockUI.min.js">
+      <DependentUpon>jquery.blockUI.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\jquery.toastmessage.js" />
-    <Content Include="Scripts\numeral.js" />
-    <Content Include="Scripts\shims\array.filter.js" />
-    <Content Include="Scripts\shims\array.indexOf.js" />
-    <Content Include="Scripts\shims\weakmap.js" />
+    <Content Include="Scripts\HandsOnTable-0.11.4\numeral.js" />
+    <Content Include="Scripts\HandsOnTable-0.11.4\shims\array.filter.js" />
+    <Content Include="Scripts\HandsOnTable-0.11.4\shims\array.indexOf.js" />
+    <Content Include="Scripts\HandsOnTable-0.11.4\shims\weakmap.js" />
+    <Content Include="Scripts\jquery.toastmessage.min.js">
+      <DependentUpon>jquery.toastmessage.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\controls\slick.columnpicker.js" />
+    <Content Include="Scripts\SlickGrid-2.1.0\controls\slick.columnpicker.min.js">
+      <DependentUpon>slick.columnpicker.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\controls\slick.pager.js" />
+    <Content Include="Scripts\SlickGrid-2.1.0\controls\slick.pager.min.js">
+      <DependentUpon>slick.pager.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\lib\firebugx.js" />
+    <Content Include="Scripts\SlickGrid-2.1.0\lib\firebugx.min.js">
+      <DependentUpon>firebugx.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\lib\jquery-1.7.min.js" />
+    <Content Include="Scripts\SlickGrid-2.1.0\lib\jquery-ui-1.8.16.custom.min.js" />
+    <Content Include="Scripts\SlickGrid-2.1.0\lib\jquery.event.drag-2.2.js" />
+    <Content Include="Scripts\SlickGrid-2.1.0\lib\jquery.event.drag-2.2.min.js">
+      <DependentUpon>jquery.event.drag-2.2.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\lib\jquery.event.drop-2.2.js" />
+    <Content Include="Scripts\SlickGrid-2.1.0\lib\jquery.event.drop-2.2.min.js">
+      <DependentUpon>jquery.event.drop-2.2.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\lib\jquery.jsonp-2.4.min.js" />
+    <Content Include="Scripts\SlickGrid-2.1.0\lib\jquery.simulate.js" />
+    <Content Include="Scripts\SlickGrid-2.1.0\lib\jquery.simulate.min.js">
+      <DependentUpon>jquery.simulate.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\lib\jquery.sparkline.min.js" />
+    <Content Include="Scripts\SlickGrid-2.1.0\lib\qunit.js" />
+    <Content Include="Scripts\SlickGrid-2.1.0\lib\qunit.min.js">
+      <DependentUpon>qunit.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\MIT-LICENSE.txt" />
+    <Content Include="Scripts\SlickGrid-2.1.0\plugins\slick.autotooltips.js" />
+    <Content Include="Scripts\SlickGrid-2.1.0\plugins\slick.autotooltips.min.js">
+      <DependentUpon>slick.autotooltips.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\plugins\slick.cellcopymanager.js" />
+    <Content Include="Scripts\SlickGrid-2.1.0\plugins\slick.cellcopymanager.min.js">
+      <DependentUpon>slick.cellcopymanager.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\plugins\slick.cellrangedecorator.js" />
+    <Content Include="Scripts\SlickGrid-2.1.0\plugins\slick.cellrangedecorator.min.js">
+      <DependentUpon>slick.cellrangedecorator.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\plugins\slick.cellrangeselector.js" />
+    <Content Include="Scripts\SlickGrid-2.1.0\plugins\slick.cellrangeselector.min.js">
+      <DependentUpon>slick.cellrangeselector.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\plugins\slick.cellselectionmodel.js" />
+    <Content Include="Scripts\SlickGrid-2.1.0\plugins\slick.cellselectionmodel.min.js">
+      <DependentUpon>slick.cellselectionmodel.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\plugins\slick.checkboxselectcolumn.js" />
+    <Content Include="Scripts\SlickGrid-2.1.0\plugins\slick.checkboxselectcolumn.min.js">
+      <DependentUpon>slick.checkboxselectcolumn.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\plugins\slick.headerbuttons.js" />
+    <Content Include="Scripts\SlickGrid-2.1.0\plugins\slick.headerbuttons.min.js">
+      <DependentUpon>slick.headerbuttons.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\plugins\slick.headermenu.js" />
+    <Content Include="Scripts\SlickGrid-2.1.0\plugins\slick.headermenu.min.js">
+      <DependentUpon>slick.headermenu.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\plugins\slick.rowmovemanager.js" />
+    <Content Include="Scripts\SlickGrid-2.1.0\plugins\slick.rowmovemanager.min.js">
+      <DependentUpon>slick.rowmovemanager.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\plugins\slick.rowselectionmodel.js" />
+    <Content Include="Scripts\SlickGrid-2.1.0\plugins\slick.rowselectionmodel.min.js">
+      <DependentUpon>slick.rowselectionmodel.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\slick.core.js" />
+    <Content Include="Scripts\SlickGrid-2.1.0\slick.core.min.js">
+      <DependentUpon>slick.core.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\slick.dataview.js" />
+    <Content Include="Scripts\SlickGrid-2.1.0\slick.dataview.min.js">
+      <DependentUpon>slick.dataview.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\slick.editors.js" />
+    <Content Include="Scripts\SlickGrid-2.1.0\slick.editors.min.js">
+      <DependentUpon>slick.editors.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\slick.formatters.js" />
+    <Content Include="Scripts\SlickGrid-2.1.0\slick.formatters.min.js">
+      <DependentUpon>slick.formatters.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\slick.grid.js" />
+    <Content Include="Scripts\SlickGrid-2.1.0\slick.grid.min.js">
+      <DependentUpon>slick.grid.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\slick.groupitemmetadataprovider.js" />
+    <Content Include="Scripts\SlickGrid-2.1.0\slick.groupitemmetadataprovider.min.js">
+      <DependentUpon>slick.groupitemmetadataprovider.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\slick.remotemodel.js" />
+    <Content Include="Scripts\SlickGrid-2.1.0\slick.remotemodel.min.js">
+      <DependentUpon>slick.remotemodel.js</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\addon\dialog\dialog.css" />
+    <Content Include="Styles\codemirror-4.5\addon\dialog\dialog.min.css">
+      <DependentUpon>dialog.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\addon\display\fullscreen.css" />
+    <Content Include="Styles\codemirror-4.5\addon\display\fullscreen.min.css">
+      <DependentUpon>fullscreen.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\addon\fold\foldgutter.css" />
+    <Content Include="Styles\codemirror-4.5\addon\fold\foldgutter.min.css">
+      <DependentUpon>foldgutter.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\addon\hint\show-hint.css" />
+    <Content Include="Styles\codemirror-4.5\addon\hint\show-hint.min.css">
+      <DependentUpon>show-hint.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\lib\codemirror.css" />
+    <Content Include="Styles\codemirror-4.5\lib\codemirror.min.css">
+      <DependentUpon>codemirror.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\theme\3024-day.css" />
+    <Content Include="Styles\codemirror-4.5\theme\3024-day.min.css">
+      <DependentUpon>3024-day.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\theme\3024-night.css" />
+    <Content Include="Styles\codemirror-4.5\theme\3024-night.min.css">
+      <DependentUpon>3024-night.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\theme\ambiance-mobile.css" />
+    <Content Include="Styles\codemirror-4.5\theme\ambiance-mobile.min.css">
+      <DependentUpon>ambiance-mobile.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\theme\ambiance.css" />
+    <Content Include="Styles\codemirror-4.5\theme\ambiance.min.css">
+      <DependentUpon>ambiance.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\theme\base16-dark.css" />
+    <Content Include="Styles\codemirror-4.5\theme\base16-dark.min.css">
+      <DependentUpon>base16-dark.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\theme\base16-light.css" />
+    <Content Include="Styles\codemirror-4.5\theme\base16-light.min.css">
+      <DependentUpon>base16-light.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\theme\blackboard.css" />
+    <Content Include="Styles\codemirror-4.5\theme\blackboard.min.css">
+      <DependentUpon>blackboard.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\theme\cobalt.css" />
+    <Content Include="Styles\codemirror-4.5\theme\cobalt.min.css">
+      <DependentUpon>cobalt.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\theme\eclipse.css" />
+    <Content Include="Styles\codemirror-4.5\theme\eclipse.min.css">
+      <DependentUpon>eclipse.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\theme\elegant.css" />
+    <Content Include="Styles\codemirror-4.5\theme\elegant.min.css">
+      <DependentUpon>elegant.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\theme\erlang-dark.css" />
+    <Content Include="Styles\codemirror-4.5\theme\erlang-dark.min.css">
+      <DependentUpon>erlang-dark.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\theme\lesser-dark.css" />
+    <Content Include="Styles\codemirror-4.5\theme\lesser-dark.min.css">
+      <DependentUpon>lesser-dark.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\theme\mbo.css" />
+    <Content Include="Styles\codemirror-4.5\theme\mbo.min.css">
+      <DependentUpon>mbo.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\theme\mdn-like.css" />
+    <Content Include="Styles\codemirror-4.5\theme\mdn-like.min.css">
+      <DependentUpon>mdn-like.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\theme\midnight.css" />
+    <Content Include="Styles\codemirror-4.5\theme\midnight.min.css">
+      <DependentUpon>midnight.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\theme\monokai.css" />
+    <Content Include="Styles\codemirror-4.5\theme\monokai.min.css">
+      <DependentUpon>monokai.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\theme\neat.css" />
+    <Content Include="Styles\codemirror-4.5\theme\neat.min.css">
+      <DependentUpon>neat.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\theme\neo.css" />
+    <Content Include="Styles\codemirror-4.5\theme\neo.min.css">
+      <DependentUpon>neo.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\theme\night.css" />
+    <Content Include="Styles\codemirror-4.5\theme\night.min.css">
+      <DependentUpon>night.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\theme\paraiso-dark.css" />
+    <Content Include="Styles\codemirror-4.5\theme\paraiso-dark.min.css">
+      <DependentUpon>paraiso-dark.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\theme\paraiso-light.css" />
+    <Content Include="Styles\codemirror-4.5\theme\paraiso-light.min.css">
+      <DependentUpon>paraiso-light.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\theme\pastel-on-dark.css" />
+    <Content Include="Styles\codemirror-4.5\theme\pastel-on-dark.min.css">
+      <DependentUpon>pastel-on-dark.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\theme\rubyblue.css" />
+    <Content Include="Styles\codemirror-4.5\theme\rubyblue.min.css">
+      <DependentUpon>rubyblue.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\theme\solarized.css" />
+    <Content Include="Styles\codemirror-4.5\theme\solarized.min.css">
+      <DependentUpon>solarized.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\theme\the-matrix.css" />
+    <Content Include="Styles\codemirror-4.5\theme\the-matrix.min.css">
+      <DependentUpon>the-matrix.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\theme\tomorrow-night-eighties.css" />
+    <Content Include="Styles\codemirror-4.5\theme\tomorrow-night-eighties.min.css">
+      <DependentUpon>tomorrow-night-eighties.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\theme\twilight.css" />
+    <Content Include="Styles\codemirror-4.5\theme\twilight.min.css">
+      <DependentUpon>twilight.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\theme\vibrant-ink.css" />
+    <Content Include="Styles\codemirror-4.5\theme\vibrant-ink.min.css">
+      <DependentUpon>vibrant-ink.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\theme\xq-dark.css" />
+    <Content Include="Styles\codemirror-4.5\theme\xq-dark.min.css">
+      <DependentUpon>xq-dark.css</DependentUpon>
+    </Content>
     <Content Include="Styles\codemirror-4.5\theme\xq-light.css" />
-    <Content Include="Styles\images\back_disabled.png" />
-    <Content Include="Styles\images\back_enabled.png" />
-    <Content Include="Styles\images\back_enabled_hover.png" />
+    <Content Include="Styles\codemirror-4.5\theme\xq-light.min.css">
+      <DependentUpon>xq-light.css</DependentUpon>
+    </Content>
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\ui-bootstrap\jquery-ui.custom.min.css">
+      <DependentUpon>jquery-ui.custom.css</DependentUpon>
+    </Content>
     <Content Include="Styles\images\close.gif" />
     <Content Include="Styles\images\error.png" />
-    <Content Include="Styles\images\forward_disabled.png" />
-    <Content Include="Styles\images\forward_enabled.png" />
-    <Content Include="Styles\images\forward_enabled_hover.png" />
     <Content Include="Styles\images\notice.png" />
-    <Content Include="Styles\images\sort_asc.png" />
-    <Content Include="Styles\images\sort_asc_disabled.png" />
-    <Content Include="Styles\images\sort_both.png" />
-    <Content Include="Styles\images\sort_desc.png" />
-    <Content Include="Styles\images\sort_desc_disabled.png" />
     <Content Include="Styles\images\success.png" />
     <Content Include="Styles\images\warning.png" />
-    <Content Include="Styles\jquery-ui\css\smoothness\images\animated-overlay.gif" />
-    <Content Include="Styles\jquery-ui\css\smoothness\images\ui-bg_diagonals-thick_18_b81900_40x40.png" />
-    <Content Include="Styles\jquery-ui\css\smoothness\images\ui-bg_diagonals-thick_20_666666_40x40.png" />
-    <Content Include="Styles\jquery-ui\css\smoothness\images\ui-bg_flat_0_aaaaaa_40x100.png" />
-    <Content Include="Styles\jquery-ui\css\smoothness\images\ui-bg_flat_10_000000_40x100.png" />
-    <Content Include="Styles\jquery-ui\css\smoothness\images\ui-bg_flat_75_ffffff_40x100.png" />
-    <Content Include="Styles\jquery-ui\css\smoothness\images\ui-bg_glass_100_f6f6f6_1x400.png" />
-    <Content Include="Styles\jquery-ui\css\smoothness\images\ui-bg_glass_100_fdf5ce_1x400.png" />
-    <Content Include="Styles\jquery-ui\css\smoothness\images\ui-bg_glass_55_fbf9ee_1x400.png" />
-    <Content Include="Styles\jquery-ui\css\smoothness\images\ui-bg_glass_65_ffffff_1x400.png" />
-    <Content Include="Styles\jquery-ui\css\smoothness\images\ui-bg_glass_75_dadada_1x400.png" />
-    <Content Include="Styles\jquery-ui\css\smoothness\images\ui-bg_glass_75_e6e6e6_1x400.png" />
-    <Content Include="Styles\jquery-ui\css\smoothness\images\ui-bg_glass_95_fef1ec_1x400.png" />
-    <Content Include="Styles\jquery-ui\css\smoothness\images\ui-bg_gloss-wave_35_f6a828_500x100.png" />
-    <Content Include="Styles\jquery-ui\css\smoothness\images\ui-bg_highlight-soft_100_eeeeee_1x100.png" />
-    <Content Include="Styles\jquery-ui\css\smoothness\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
-    <Content Include="Styles\jquery-ui\css\smoothness\images\ui-bg_highlight-soft_75_ffe45c_1x100.png" />
-    <Content Include="Styles\jquery-ui\css\smoothness\images\ui-icons_222222_256x240.png" />
-    <Content Include="Styles\jquery-ui\css\smoothness\images\ui-icons_228ef1_256x240.png" />
-    <Content Include="Styles\jquery-ui\css\smoothness\images\ui-icons_2e83ff_256x240.png" />
-    <Content Include="Styles\jquery-ui\css\smoothness\images\ui-icons_454545_256x240.png" />
-    <Content Include="Styles\jquery-ui\css\smoothness\images\ui-icons_888888_256x240.png" />
-    <Content Include="Styles\jquery-ui\css\smoothness\images\ui-icons_cd0a0a_256x240.png" />
-    <Content Include="Styles\jquery-ui\css\smoothness\images\ui-icons_ef8c08_256x240.png" />
-    <Content Include="Styles\jquery-ui\css\smoothness\images\ui-icons_ffd27a_256x240.png" />
-    <Content Include="Styles\jquery-ui\css\smoothness\images\ui-icons_ffffff_256x240.png" />
-    <Content Include="Styles\jquery-ui\css\smoothness\jquery-ui.custom.css" />
-    <Content Include="Styles\jquery-ui\css\smoothness\jquery-ui.custom.min.css" />
-    <Content Include="Styles\jquery-ui\css\ui-bootstrap\images\ui-bg_flat_0_aaaaaa_40x100.png" />
-    <Content Include="Styles\jquery-ui\css\ui-bootstrap\images\ui-bg_glass_55_fbf9ee_1x400.png" />
-    <Content Include="Styles\jquery-ui\css\ui-bootstrap\images\ui-bg_glass_65_ffffff_1x400.png" />
-    <Content Include="Styles\jquery-ui\css\ui-bootstrap\images\ui-bg_glass_75_dadada_1x400.png" />
-    <Content Include="Styles\jquery-ui\css\ui-bootstrap\images\ui-bg_glass_75_e6e6e6_1x400.png" />
-    <Content Include="Styles\jquery-ui\css\ui-bootstrap\images\ui-bg_glass_75_ffffff_1x400.png" />
-    <Content Include="Styles\jquery-ui\css\ui-bootstrap\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
-    <Content Include="Styles\jquery-ui\css\ui-bootstrap\images\ui-bg_inset-soft_95_fef1ec_1x100.png" />
-    <Content Include="Styles\jquery-ui\css\ui-bootstrap\images\ui-icons_222222_256x240.png" />
-    <Content Include="Styles\jquery-ui\css\ui-bootstrap\images\ui-icons_2e83ff_256x240.png" />
-    <Content Include="Styles\jquery-ui\css\ui-bootstrap\images\ui-icons_454545_256x240.png" />
-    <Content Include="Styles\jquery-ui\css\ui-bootstrap\images\ui-icons_888888_256x240.png" />
-    <Content Include="Styles\jquery-ui\css\ui-bootstrap\images\ui-icons_cd0a0a_256x240.png" />
-    <Content Include="Styles\jquery-ui\css\ui-bootstrap\images\ui-icons_f6cf3b_256x240.png" />
-    <Content Include="Styles\jquery-ui\css\ui-bootstrap\jquery-ui.custom.css" />
-    <Content Include="Styles\jquery.handsontable.full.min.css" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\smoothness\images\animated-overlay.gif" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\smoothness\images\ui-bg_diagonals-thick_18_b81900_40x40.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\smoothness\images\ui-bg_diagonals-thick_20_666666_40x40.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\smoothness\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\smoothness\images\ui-bg_flat_10_000000_40x100.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\smoothness\images\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\smoothness\images\ui-bg_glass_100_f6f6f6_1x400.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\smoothness\images\ui-bg_glass_100_fdf5ce_1x400.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\smoothness\images\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\smoothness\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\smoothness\images\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\smoothness\images\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\smoothness\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\smoothness\images\ui-bg_gloss-wave_35_f6a828_500x100.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\smoothness\images\ui-bg_highlight-soft_100_eeeeee_1x100.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\smoothness\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\smoothness\images\ui-bg_highlight-soft_75_ffe45c_1x100.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\smoothness\images\ui-icons_222222_256x240.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\smoothness\images\ui-icons_228ef1_256x240.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\smoothness\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\smoothness\images\ui-icons_454545_256x240.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\smoothness\images\ui-icons_888888_256x240.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\smoothness\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\smoothness\images\ui-icons_ef8c08_256x240.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\smoothness\images\ui-icons_ffd27a_256x240.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\smoothness\images\ui-icons_ffffff_256x240.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\smoothness\jquery-ui.custom.css" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\smoothness\jquery-ui.custom.min.css" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\ui-bootstrap\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\ui-bootstrap\images\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\ui-bootstrap\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\ui-bootstrap\images\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\ui-bootstrap\images\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\ui-bootstrap\images\ui-bg_glass_75_ffffff_1x400.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\ui-bootstrap\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\ui-bootstrap\images\ui-bg_inset-soft_95_fef1ec_1x100.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\ui-bootstrap\images\ui-icons_222222_256x240.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\ui-bootstrap\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\ui-bootstrap\images\ui-icons_454545_256x240.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\ui-bootstrap\images\ui-icons_888888_256x240.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\ui-bootstrap\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\ui-bootstrap\images\ui-icons_f6cf3b_256x240.png" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\ui-bootstrap\jquery-ui.custom.css" />
+    <Content Include="Styles\HandsOnTable-0.11.4\jquery.handsontable.full.min.css" />
     <Content Include="Styles\jquery.toastmessage.css" />
+    <Content Include="Styles\jquery.toastmessage.min.css">
+      <DependentUpon>jquery.toastmessage.css</DependentUpon>
+    </Content>
+    <Content Include="Styles\SlickGrid-2.1.0\controls\slick.columnpicker.css" />
+    <Content Include="Styles\SlickGrid-2.1.0\controls\slick.columnpicker.min.css">
+      <DependentUpon>slick.columnpicker.css</DependentUpon>
+    </Content>
+    <Content Include="Styles\SlickGrid-2.1.0\controls\slick.pager.css" />
+    <Content Include="Styles\SlickGrid-2.1.0\controls\slick.pager.min.css">
+      <DependentUpon>slick.pager.css</DependentUpon>
+    </Content>
+    <Content Include="Styles\SlickGrid-2.1.0\css\smoothness\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Styles\SlickGrid-2.1.0\css\smoothness\images\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Styles\SlickGrid-2.1.0\css\smoothness\images\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Styles\SlickGrid-2.1.0\css\smoothness\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Styles\SlickGrid-2.1.0\css\smoothness\images\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Styles\SlickGrid-2.1.0\css\smoothness\images\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Styles\SlickGrid-2.1.0\css\smoothness\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="Styles\SlickGrid-2.1.0\css\smoothness\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Styles\SlickGrid-2.1.0\css\smoothness\images\ui-icons_222222_256x240.png" />
+    <Content Include="Styles\SlickGrid-2.1.0\css\smoothness\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Styles\SlickGrid-2.1.0\css\smoothness\images\ui-icons_454545_256x240.png" />
+    <Content Include="Styles\SlickGrid-2.1.0\css\smoothness\images\ui-icons_888888_256x240.png" />
+    <Content Include="Styles\SlickGrid-2.1.0\css\smoothness\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Styles\SlickGrid-2.1.0\css\smoothness\jquery-ui-1.8.16.custom.css" />
+    <Content Include="Styles\SlickGrid-2.1.0\css\smoothness\jquery-ui-1.8.16.custom.min.css">
+      <DependentUpon>jquery-ui-1.8.16.custom.css</DependentUpon>
+    </Content>
+    <Content Include="Styles\SlickGrid-2.1.0\images\actions.gif" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\ajax-loader-small.gif" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\arrow_redo.png" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\arrow_right_peppermint.png" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\arrow_right_spearmint.png" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\arrow_undo.png" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\bullet_blue.png" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\bullet_star.png" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\bullet_toggle_minus.png" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\bullet_toggle_plus.png" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\calendar.gif" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\collapse.gif" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\comment_yellow.gif" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\down.gif" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\drag-handle.png" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\editor-helper-bg.gif" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\expand.gif" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\header-bg.gif" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\header-columns-bg.gif" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\header-columns-over-bg.gif" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\help.png" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\info.gif" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\listview.gif" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\pencil.gif" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\row-over-bg.gif" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\sort-asc.gif" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\sort-asc.png" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\sort-desc.gif" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\sort-desc.png" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\stripes.png" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\tag_red.png" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\tick.png" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\user_identity.gif" />
+    <Content Include="Styles\SlickGrid-2.1.0\images\user_identity_plus.gif" />
+    <Content Include="Styles\SlickGrid-2.1.0\lib\qunit.css" />
+    <Content Include="Styles\SlickGrid-2.1.0\lib\qunit.min.css">
+      <DependentUpon>qunit.css</DependentUpon>
+    </Content>
+    <Content Include="Styles\SlickGrid-2.1.0\MIT-LICENSE.txt" />
+    <Content Include="Styles\SlickGrid-2.1.0\plugins\slick.headerbuttons.css" />
+    <Content Include="Styles\SlickGrid-2.1.0\plugins\slick.headerbuttons.min.css">
+      <DependentUpon>slick.headerbuttons.css</DependentUpon>
+    </Content>
+    <Content Include="Styles\SlickGrid-2.1.0\plugins\slick.headermenu.css" />
+    <Content Include="Styles\SlickGrid-2.1.0\plugins\slick.headermenu.min.css">
+      <DependentUpon>slick.headermenu.css</DependentUpon>
+    </Content>
+    <Content Include="Styles\SlickGrid-2.1.0\slick-default-theme.css" />
+    <Content Include="Styles\SlickGrid-2.1.0\slick-default-theme.min.css">
+      <DependentUpon>slick-default-theme.css</DependentUpon>
+    </Content>
+    <Content Include="Styles\SlickGrid-2.1.0\slick.grid.css" />
+    <Content Include="Styles\SlickGrid-2.1.0\slick.grid.min.css">
+      <DependentUpon>slick.grid.css</DependentUpon>
+    </Content>
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -213,6 +572,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\ApiController.cs" />
+    <Compile Include="Controllers\SlickGridController.cs" />
     <Compile Include="Controllers\HandsOnTableController.cs" />
     <Compile Include="Handlers\ContentHandler.cs" />
     <Compile Include="Handlers\IResultsHandler.cs" />
@@ -247,6 +607,7 @@
     <Compile Include="Routes.cs" />
     <Compile Include="Services\ApiService.cs" />
     <Compile Include="Services\IApiService.cs" />
+    <Compile Include="Services\TransformalizeRequest.cs" />
     <Compile Include="Services\TransformalizeService.cs" />
     <Compile Include="Services\ITransformalizeService.cs" />
     <Compile Include="Services\IFileService.cs" />
@@ -273,6 +634,157 @@
   <ItemGroup>
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <Content Include="Views\HandsOnTable\Index.cshtml" />
+    <Content Include="Views\SlickGrid\Index.cshtml" />
+    <Content Include="Scripts\SlickGrid-2.1.0\slick.core.min.js.map">
+      <DependentUpon>slick.core.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\slick.dataview.min.js.map">
+      <DependentUpon>slick.dataview.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\slick.editors.min.js.map">
+      <DependentUpon>slick.editors.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\slick.formatters.min.js.map">
+      <DependentUpon>slick.formatters.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\slick.grid.min.js.map">
+      <DependentUpon>slick.grid.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\slick.groupitemmetadataprovider.min.js.map">
+      <DependentUpon>slick.groupitemmetadataprovider.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\slick.remotemodel.min.js.map">
+      <DependentUpon>slick.remotemodel.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\controls\slick.columnpicker.min.js.map">
+      <DependentUpon>slick.columnpicker.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\controls\slick.pager.min.js.map">
+      <DependentUpon>slick.pager.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\lib\firebugx.min.js.map">
+      <DependentUpon>firebugx.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\lib\jquery.event.drag-2.2.min.js.map">
+      <DependentUpon>jquery.event.drag-2.2.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\lib\jquery.event.drop-2.2.min.js.map">
+      <DependentUpon>jquery.event.drop-2.2.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\lib\jquery.simulate.min.js.map">
+      <DependentUpon>jquery.simulate.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\lib\qunit.min.js.map">
+      <DependentUpon>qunit.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\plugins\slick.autotooltips.min.js.map">
+      <DependentUpon>slick.autotooltips.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\plugins\slick.cellcopymanager.min.js.map">
+      <DependentUpon>slick.cellcopymanager.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\plugins\slick.cellrangedecorator.min.js.map">
+      <DependentUpon>slick.cellrangedecorator.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\plugins\slick.cellrangeselector.min.js.map">
+      <DependentUpon>slick.cellrangeselector.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\plugins\slick.cellselectionmodel.min.js.map">
+      <DependentUpon>slick.cellselectionmodel.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\plugins\slick.checkboxselectcolumn.min.js.map">
+      <DependentUpon>slick.checkboxselectcolumn.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\plugins\slick.headerbuttons.min.js.map">
+      <DependentUpon>slick.headerbuttons.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\plugins\slick.headermenu.min.js.map">
+      <DependentUpon>slick.headermenu.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\plugins\slick.rowmovemanager.min.js.map">
+      <DependentUpon>slick.rowmovemanager.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\SlickGrid-2.1.0\plugins\slick.rowselectionmodel.min.js.map">
+      <DependentUpon>slick.rowselectionmodel.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\configuration-editor-004.min.js.map">
+      <DependentUpon>configuration-editor-004.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\jquery.blockUI.min.js.map">
+      <DependentUpon>jquery.blockUI.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\jquery.toastmessage.min.js.map">
+      <DependentUpon>jquery.toastmessage.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\codemirror-4.5\addon\dialog\dialog.min.js.map">
+      <DependentUpon>dialog.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\codemirror-4.5\addon\display\fullscreen.min.js.map">
+      <DependentUpon>fullscreen.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\codemirror-4.5\addon\edit\closetag.min.js.map">
+      <DependentUpon>closetag.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\codemirror-4.5\addon\edit\matchtags.min.js.map">
+      <DependentUpon>matchtags.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\codemirror-4.5\addon\fold\brace-fold.min.js.map">
+      <DependentUpon>brace-fold.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\codemirror-4.5\addon\fold\comment-fold.min.js.map">
+      <DependentUpon>comment-fold.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\codemirror-4.5\addon\fold\foldcode.min.js.map">
+      <DependentUpon>foldcode.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\codemirror-4.5\addon\fold\foldgutter.min.js.map">
+      <DependentUpon>foldgutter.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\codemirror-4.5\addon\fold\indent-fold.min.js.map">
+      <DependentUpon>indent-fold.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\codemirror-4.5\addon\fold\markdown-fold.min.js.map">
+      <DependentUpon>markdown-fold.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\codemirror-4.5\addon\fold\xml-fold.min.js.map">
+      <DependentUpon>xml-fold.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\codemirror-4.5\addon\hint\show-hint.min.js.map">
+      <DependentUpon>show-hint.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\codemirror-4.5\addon\hint\xml-hint.min.js.map">
+      <DependentUpon>xml-hint.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\codemirror-4.5\addon\search\match-highlighter.min.js.map">
+      <DependentUpon>match-highlighter.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\codemirror-4.5\addon\search\search.min.js.map">
+      <DependentUpon>search.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\codemirror-4.5\addon\search\searchcursor.min.js.map">
+      <DependentUpon>searchcursor.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\codemirror-4.5\lib\codemirror.min.js.map">
+      <DependentUpon>codemirror.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\codemirror-4.5\mode\xml\test.min.js.map">
+      <DependentUpon>test.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\codemirror-4.5\mode\xml\xml.min.js.map">
+      <DependentUpon>xml.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\HandsOnTable-0.11.4\numeral.min.js.map">
+      <DependentUpon>numeral.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\HandsOnTable-0.11.4\shims\array.filter.min.js.map">
+      <DependentUpon>array.filter.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\HandsOnTable-0.11.4\shims\array.indexOf.min.js.map">
+      <DependentUpon>array.indexOf.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\HandsOnTable-0.11.4\shims\weakmap.min.js.map">
+      <DependentUpon>weakmap.min.js</DependentUpon>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Transformalize\Transformalize.csproj">
@@ -280,6 +792,7 @@
       <Name>Transformalize</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
