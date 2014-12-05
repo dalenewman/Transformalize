@@ -62,8 +62,7 @@ namespace Transformalize.Main.Providers.Solr {
         }
 
         public void Create(AbstractConnection connection, Process process, Entity entity) {
-
-            throw new TransformalizeException("Error writing Solr mapping.");
+            throw new TransformalizeException(process.Name, entity.Name, "Error writing Solr mapping.");
         }
 
         public Dictionary<string, object> GetFields(Entity entity) {

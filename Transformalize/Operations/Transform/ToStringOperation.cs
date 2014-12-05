@@ -28,7 +28,7 @@ namespace Transformalize.Operations.Transform {
             _format = format;
 
             if (_inType == "string") {
-                throw new TransformalizeException("You have ToString transform on {0}.  It is already a string.", inKey);
+                throw new TransformalizeException(ProcessName, EntityName, "You have ToString transform on {0}.  It is already a string.", inKey);
             }
 
             Name = string.Format("ToStringOperation ({0})", outKey);

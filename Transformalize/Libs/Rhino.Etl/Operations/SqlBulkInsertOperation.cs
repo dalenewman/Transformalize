@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using Transformalize.Libs.Rhino.Etl.DataReaders;
 using Transformalize.Libs.Rhino.Etl.Infrastructure;
+using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
 
@@ -38,6 +39,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations {
 
         private SqlBulkCopy _sqlBulkCopy;
         private int _timeout;
+        private string _targetTable;
 
         protected SqlBulkInsertOperation(AbstractConnection connection, string targetTable, int timeout = 0)
             : base(connection) {
@@ -65,7 +67,13 @@ namespace Transformalize.Libs.Rhino.Etl.Operations {
         }
 
         /// <summary>The table or view to bulk load the data into.</summary>
-        public string TargetTable { get; set; }
+        public string TargetTable {
+            get { return _targetTable; }
+            set {
+                _targetTable = value;
+                TflLogger.Debug(ProcessName, EntityName, "Target table set to {0}.", _targetTable);
+            }
+        }
 
         /// <summary>
         ///     <c>true</c> to turn the <see cref="SqlBulkCopyOptions.TableLock" /> option on, otherwise <c>false</c>.
@@ -235,7 +243,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations {
                         throw;
 
                     var length = l.GetValue(metadata);
-                    throw new TransformalizeException("Column: {0} contains data with a length greater than: {1}", column, length);
+                    throw new TransformalizeException(ProcessName, string.Empty, "Column: {0} contains data with a length greater than: {1}", column, length);
                 }
             }
             yield break;

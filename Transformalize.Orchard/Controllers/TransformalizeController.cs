@@ -2,7 +2,6 @@
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Web.Mvc;
 using Orchard;
 using Orchard.ContentManagement;
@@ -133,10 +132,8 @@ namespace Transformalize.Orchard.Controllers {
 
             var model = new ExecuteViewModel() { DisplayLog = part.DisplayLog };
 
-            var transformalizeRequest = new TransformalizeRequest() {
+            var transformalizeRequest = new TransformalizeRequest(part) {
                 Configuration = _transformalize.InjectParameters(part, query),
-                DisplayLog = part.DisplayLog,
-                LogLevel = part.ToLogLevel(),
                 Options = query["Mode"] != null ? new Options { Mode = query["Mode"] } : new Options(),
                 Query = query
             };

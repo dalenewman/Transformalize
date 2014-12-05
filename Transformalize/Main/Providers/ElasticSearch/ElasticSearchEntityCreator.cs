@@ -80,8 +80,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             if (response.Success)
                 return;
 
-            TflLogger.Error(process.Name, entity.Name, response.ServerError.Error);
-            throw new TransformalizeException("Error writing ElasticSearch mapping.");
+            throw new TransformalizeException(process.Name, entity.Name, response.ServerError.Error);
         }
 
         public Dictionary<string, object> GetFields(Entity entity) {

@@ -102,7 +102,7 @@ namespace Transformalize.Main.Providers.SqlServer {
             var surrogate = field.Identity ? " IDENTITY(1,1) " : string.Empty;
 
             if (!Types.ContainsKey(field.SimpleType)) {
-                throw new TransformalizeException("Field type {0} is not implemented.", field.SimpleType);
+                throw new TransformalizeException(field.Process, field.Entity, "Field type {0} is not implemented.", field.SimpleType);
             }
 
             var sqlDataType = Types[field.SimpleType];

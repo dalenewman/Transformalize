@@ -127,10 +127,8 @@ namespace Transformalize.Orchard.Controllers {
             }
 
             // ready
-            var transformalizeRequest = new TransformalizeRequest() {
+            var transformalizeRequest = new TransformalizeRequest(part) {
                 Configuration = _transformalize.InjectParameters(part, query),
-                DisplayLog = part.DisplayLog,
-                LogLevel = part.ToLogLevel(),
                 Options = query["Mode"] != null ? new Options { Mode = query["Mode"] } : new Options(),
                 Query = query
             };

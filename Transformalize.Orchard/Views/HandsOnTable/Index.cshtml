@@ -77,17 +77,17 @@
                 if (tfl.status === 200) {
                     var dateFormat = 'yy-mm-dd';
                     var fields = tfl.processes[0].add.entities.add.fields.add.filter(function (item) {
-                        return !item.hasOwnProperty('output') || item.output === true;
+                        return item.output == "true";
                     });
                     var headers = $.map(fields, function (f) {
                         return f.label;
                     });
                     dateMap = $.map(fields, function (f) {
-                        return f.hasOwnProperty('type') && f.type.indexOf('date') == 0 ? 1 : 0;
+                        return f.type.indexOf('date') == 0 ? 1 : 0;
                     });
                     var columns = $.map(fields, function (f) {
                         var column = {};
-                        switch (f.hasOwnProperty('type') ? f.type.toLowerCase().replace('system.','') : 'string') {
+                        switch (f.type.toLowerCase().replace('system.','')) {
                             case 'int16':
                             case 'int32':
                             case 'int64':

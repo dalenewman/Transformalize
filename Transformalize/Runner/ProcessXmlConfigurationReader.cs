@@ -50,7 +50,7 @@ namespace Transformalize.Runner {
             try {
                 transformalize = XDocument.Parse(contents.Content).Element("transformalize");
                 if (transformalize == null)
-                    throw new TransformalizeException("Can't find the <transformalize/> element in {0}.", string.IsNullOrEmpty(contents.Name) ? "the configuration" : contents.Name);
+                    throw new TransformalizeException(string.Empty, string.Empty, "Can't find the <transformalize/> element in {0}.", string.IsNullOrEmpty(contents.Name) ? "the configuration" : contents.Name);
 
                 // The Transformalize.Orchard API returns these elements, but .NET Configuration doesn't allow them.
                 var apiElements = new[] { "request", "status", "message", "time", "response", "log" };

@@ -14,13 +14,12 @@ namespace Transformalize.Runner {
 
         public IEnumerable<Row> Run(ref Process process) {
 
-            var result = Enumerable.Empty<Row>();
+            process.CheckIfReady();
+            process.Setup();
 
+            var result = Enumerable.Empty<Row>();
             var timer = new Stopwatch();
             timer.Start();
-
-            if (!process.IsReady())
-                return result;
 
             var fileName = new FileInfo(Path.Combine(Common.GetTemporaryFolder(process.Name), "MetaData.xml")).FullName;
             var writer = new MetaDataWriter(process);

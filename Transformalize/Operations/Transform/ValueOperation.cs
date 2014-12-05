@@ -15,7 +15,7 @@ namespace Transformalize.Operations.Transform {
             if (!value.Equals(string.Empty)) {
                 _value = Common.GetObjectConversionMap()[Common.ToSimpleType(outType)](value);
             } else if (!_parameters.Any()) {
-                throw new TransformalizeException("The value transform method requires the value attribute to be set, or a parameter.");
+                throw new TransformalizeException(ProcessName, EntityName, "The value transform method requires the value attribute to be set, or a parameter.");
             }
 
             Name = string.Format("ValueOperation ({0})", outKey);

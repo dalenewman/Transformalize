@@ -55,8 +55,7 @@ namespace Transformalize.Main {
                             templateAction.Connection = _process.Connections[action.Connection];
                         } else {
                             var message = string.Format("The template '{0}' refers to an invalid connection named '{1}'.", action.Action, action.Connection);
-                            TflLogger.Error(_process.Name, string.Empty, message);
-                            throw new TransformalizeException(message);
+                            throw new TransformalizeException(_process.Name, string.Empty, message);
                         }
                     }
 

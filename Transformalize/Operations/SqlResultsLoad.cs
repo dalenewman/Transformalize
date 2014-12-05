@@ -32,7 +32,7 @@ namespace Transformalize.Operations {
                     transaction.Commit();
                 } catch (Exception ex) {
                     transaction.Rollback();
-                    throw new TransformalizeException("Results batch update failed. {0}", ex.Message);
+                    throw new TransformalizeException(_process.Name, string.Empty, "Results batch update failed. {0}", ex.Message);
                 }
             }
             yield break;

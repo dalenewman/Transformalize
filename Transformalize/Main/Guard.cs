@@ -3,7 +3,7 @@
         public static void Against(bool assertion, string message, params object[] args) {
             if (assertion == false)
                 return;
-            throw new TransformalizeException(message, args);
+            throw new TransformalizeException(string.Empty, string.Empty, message, args);
         }
     }
 }

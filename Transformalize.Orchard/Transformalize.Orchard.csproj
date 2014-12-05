@@ -572,6 +572,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\ApiController.cs" />
+    <Compile Include="Controllers\WidgetController.cs" />
     <Compile Include="Controllers\SlickGridController.cs" />
     <Compile Include="Controllers\HandsOnTableController.cs" />
     <Compile Include="Handlers\ContentHandler.cs" />

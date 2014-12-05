@@ -37,7 +37,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations {
                     transaction.Commit();
                 } catch (Exception ex) {
                     transaction.Rollback();
-                    throw new TransformalizeException("The bulk update operation failed. {0}", ex.Message);
+                    throw new TransformalizeException(ProcessName, EntityName, "The bulk update operation failed. {0}", ex.Message);
                 }
             }
             yield break;

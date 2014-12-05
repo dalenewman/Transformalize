@@ -23,12 +23,12 @@ namespace Transformalize.Main {
             foreach (RelationshipConfigurationElement r in _elements) {
                 Entity leftEntity;
                 if (!_process.Entities.TryFind(r.LeftEntity, out leftEntity)) {
-                    throw new TransformalizeException("Can't find left entity {0}.", r.LeftEntity);
+                    throw new TransformalizeException(_process.Name, leftEntity.Alias, "Can't find left entity {0}.", r.LeftEntity);
                 }
 
                 Entity rightEntity;
                 if (!_process.Entities.TryFind(r.RightEntity, out rightEntity)) {
-                    throw new TransformalizeException("Can't find right entity {0}.", r.RightEntity);
+                    throw new TransformalizeException(_process.Name, rightEntity.Alias, "Can't find right entity {0}.", r.RightEntity);
                 }
 
                 var join = GetJoins(r, leftEntity, rightEntity);

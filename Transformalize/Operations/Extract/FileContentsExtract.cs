@@ -16,7 +16,7 @@ namespace Transformalize.Operations.Extract
             _fileInfo = new FileInfo(fileConnection.File);
             _output = entity.Fields.First().Alias;
             if (!_fileInfo.Exists) {
-                throw new TransformalizeException("File {0} does not exist.", fileConnection.Name);
+                throw new TransformalizeException(ProcessName, entity.Alias, "File {0} does not exist.", fileConnection.Name);
             }
         }
 

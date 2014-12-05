@@ -27,13 +27,13 @@ namespace Transformalize.Operations.Transform {
 
             _timeComponent = timeComponent.ToLower().TrimEnd("s".ToCharArray());
             if (!_parts.ContainsKey(_timeComponent)) {
-                throw new TransformalizeException("DatePart does not handle {0} time component. Set time-component to day, date, dayofweek, dayofyear, hour, millisecond, minute, month, second, tick, or year.", _timeComponent);
+                throw new TransformalizeException(ProcessName, EntityName, "DatePart does not handle {0} time component. Set time-component to day, date, dayofweek, dayofyear, hour, millisecond, minute, month, second, tick, or year.", _timeComponent);
             }
 
             var testValue = _parts[_timeComponent](DateTime.Now);
             if (!CanChangeType(testValue, Common.ToSystemType(outType))) {
-                throw new TransformalizeException("DatePart can't change type from {0} to {1}.", testValue.GetType(), outType);
-            }
+                throw new TransformalizeException(ProcessName, EntityName, "DatePart can't change type from {0} to {1}.", testValue.GetType(), outType);
+            } 
 
             Name = string.Format("DatePart ({0})", outKey);
         }

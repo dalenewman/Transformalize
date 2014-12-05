@@ -45,7 +45,7 @@ namespace Transformalize.Operations.Transform {
             }
 
             if (!_timeMap.ContainsKey(timeComponent.ToLower())) {
-                throw new TransformalizeException("TimeOfDay operation expects time component to be days, hours, minutes, seconds, or milliseconds.  You have {0}.", timeComponent);
+                throw new TransformalizeException(ProcessName, EntityName, "TimeOfDay operation expects time component to be days, hours, minutes, seconds, or milliseconds.  You have {0}.", timeComponent);
             }
 
             _transformer = _timeMap[timeComponent.ToLower()];

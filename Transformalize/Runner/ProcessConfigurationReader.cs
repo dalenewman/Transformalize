@@ -35,11 +35,11 @@ namespace Transformalize.Runner {
         public ProcessElementCollection Read() {
             var section = (TransformalizeConfiguration)ConfigurationManager.GetSection("transformalize");
             if (section == null) {
-                throw new TransformalizeException("Can't find transformalize section in configuration.");
+                throw new TransformalizeException(_name, string.Empty, "Can't find transformalize section in configuration.");
             }
             var element = section.Processes.Get(_name);
             if (element == null) {
-                throw new TransformalizeException("Can't find a process named {0} in transformalize configuration.", _name);
+                throw new TransformalizeException(_name, string.Empty, "Can't find a process named {0} in transformalize configuration.", _name);
             }
 
             return new ProcessElementCollection() { element };

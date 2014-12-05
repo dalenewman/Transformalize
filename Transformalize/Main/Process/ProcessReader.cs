@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using System.Linq;
+using System.Web;
 using System.Web.Configuration;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
@@ -56,7 +57,7 @@ namespace Transformalize.Main {
         public Process Read() {
 
             if (_element == null) {
-                throw new TransformalizeException("Can't find a process named {0}.", _processName);
+                throw new TransformalizeException(string.Empty, string.Empty, "Can't find a process named {0}.", _processName);
             }
             _process = new Process(_element.Name) {
                 Options = _options,
@@ -158,7 +159,7 @@ namespace Transformalize.Main {
                         log.File = log.Connection.File;
                     }
                 } else {
-                    throw new TransformalizeException("You are referencing an invalid connection name in your log configuration.  {0} is not confiured in <connections/>.", logElement.Connection);
+                    throw new TransformalizeException(process.Name, string.Empty, "You are referencing an invalid connection name in your log configuration.  {0} is not confiured in <connections/>.", logElement.Connection);
                 }
             }
 
@@ -187,7 +188,7 @@ namespace Transformalize.Main {
                 log.Level = Enum.TryParse(logElement.LogLevel, out eventLevel) ? eventLevel : EventLevel.Verbose;
                 log.Provider = (ProviderType)Enum.Parse(typeof(ProviderType), logElement.Provider, true);
             } catch (Exception ex) {
-                throw new TransformalizeException("Log configuration invalid. {0}", ex.Message);
+                throw new TransformalizeException(process.Name, string.Empty, "Log configuration invalid. {0}", ex.Message);
             }
             return log;
         }

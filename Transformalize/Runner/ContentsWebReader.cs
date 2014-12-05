@@ -27,7 +27,7 @@ namespace Transformalize.Runner {
                     response.Content = ReplaceParameters(response.Content, HttpUtility.ParseQueryString(uri.Query));
                 }
             } else {
-                throw new TransformalizeException("{0} returned from {1}", response.Code, resource);
+                throw new TransformalizeException(string.Empty, string.Empty, "{0} returned from {1}", response.Code, resource);
             }
 
             return new Contents {

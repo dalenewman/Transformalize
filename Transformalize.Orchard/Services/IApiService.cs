@@ -5,7 +5,7 @@ using Transformalize.Orchard.Models;
 
 namespace Transformalize.Orchard.Services {
     public interface IApiService : IDependency {
-        ActionResult NotFound(ApiRequest request, NameValueCollection query);
-        ActionResult Unathorized(ApiRequest request, NameValueCollection query);
+        ActionResult NotFound(ApiRequest request, NameValueCollection query = null);
+        ActionResult Unathorized(ApiRequest request, NameValueCollection query = null);
     }
 }

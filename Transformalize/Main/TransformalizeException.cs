@@ -29,17 +29,17 @@ namespace Transformalize.Main {
 
         private readonly string _message;
 
-        public TransformalizeException(string message, params object[] args) {
+        public TransformalizeException(string process, string entity, string message, params object[] args) {
             _message = args.Length > 0 ? string.Format(message, args) : message;
-            TflLogger.Error(string.Empty, string.Empty, _message);
+            TflLogger.Error(process, entity, _message);
             //LogManager.Flush();
         }
 
-        public TransformalizeException(Exception exception, string message, params object[] args) {
+        public TransformalizeException(string process, string entity, Exception exception, string message, params object[] args) {
             _message = args.Length > 0 ? string.Format(message, args) : message;
-            TflLogger.Error(string.Empty, string.Empty, _message);
-            TflLogger.Error(string.Empty, string.Empty, exception.Message);
-            TflLogger.Error(string.Empty, string.Empty, exception.StackTrace);
+            TflLogger.Error(process, entity, _message);
+            TflLogger.Error(process, entity, exception.Message);
+            TflLogger.Error(process, entity, exception.StackTrace);
             //LogManager.Flush();
         }
 

@@ -67,7 +67,7 @@ namespace Transformalize.Main.Providers {
                     }
                 }
             } catch (Exception ex) {
-                throw new TransformalizeException("{0} connection type '{1}' is unavailable.  Make sure the assembly (*.dll) is in the same folder as your executable. Error Message: {2}", connection.Name, connection.Type, ex.Message);
+                throw new TransformalizeException(string.Empty, string.Empty, "{0} connection type '{1}' is unavailable.  Make sure the assembly (*.dll) is in the same folder as your executable. Error Message: {2}", connection.Name, connection.Type, ex.Message);
             }
 
             CachedResults[connection.Name] = result;

@@ -31,7 +31,7 @@ namespace Transformalize.Runner {
                             );
 
             if (!fileInfo.Exists) {
-                throw new TransformalizeException("Sorry. I can't find the file {0}.", fileInfo.FullName);
+                throw new TransformalizeException(string.Empty, string.Empty, "Sorry. I can't find the file {0}.", fileInfo.FullName);
             }
 
             var content = File.ReadAllText(fileInfo.FullName);

@@ -37,11 +37,11 @@ namespace Transformalize.Runner {
 
         public IEnumerable<Row> Run(ref Process process) {
 
+            process.CheckIfReady();
+            process.Setup();
+
             var timer = new Stopwatch();
             timer.Start();
-
-            if (!process.IsReady())
-                return process.Results;
 
             process.IsFirstRun = process.MasterEntity == null || !process.OutputConnection.RecordsExist(process.MasterEntity);
             process.PerformActions(a => a.Before);

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using Microsoft.CSharp;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Logging;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
@@ -72,8 +73,8 @@ public class Transformer : ITransformer
     }}
 }}", scriptBuilder, castBuilder, script);
 
-            Debug("Compiling this code:");
-            Debug(code);
+            TflLogger.Debug(ProcessName, EntityName, "Compiling this code:");
+            TflLogger.Debug(ProcessName, EntityName, code);
 
             var res = csc.CompileAssemblyFromSource(
                 cp,
@@ -85,16 +86,16 @@ public class Transformer : ITransformer
                 _transformer = (ITransformer)Activator.CreateInstance(type);
                 try {
                     var test = _transformer.Transform(testRow);
-                    Debug("CSharp transform compiled and passed test. {0}", test);
+                    TflLogger.Debug(ProcessName, EntityName, "CSharp transform compiled and passed test. {0}", test);
                 } catch (Exception e) {
-                    Debug("CSharp transform compiled but failed test. {0}", e.Message);
-                    Debug(e.StackTrace);
+                    TflLogger.Debug(ProcessName, EntityName, "CSharp transform compiled but failed test. {0}", e.Message);
+                    TflLogger.Debug(ProcessName, EntityName, e.StackTrace);
                 }
             } else {
                 foreach (var error in res.Errors) {
-                    Error(error.ToString());
+                    TflLogger.Error(ProcessName, EntityName, error.ToString());
                 }
-                throw new TransformalizeException("Failed to compile code. {0}", code);
+                throw new TransformalizeException(ProcessName, EntityName, "Failed to compile code. {0}", code);
             }
 
             Name = string.Format("CSharpOperation ({0})", outKey);

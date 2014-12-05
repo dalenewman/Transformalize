@@ -60,7 +60,7 @@ namespace Transformalize.Processes {
                         TflLogger.Debug(this.Process.Name, string.Empty, e.StackTrace);
                     }
                 }
-                throw new TransformalizeException("Transform process failed for {0}.", Process.Name);
+                throw new TransformalizeException(this.Process.Name, string.Empty, "Transform process failed for {0}.", Process.Name);
             }
 
             base.PostProcessing();

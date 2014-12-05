@@ -258,9 +258,8 @@ namespace Transformalize.Main.Providers.SqlServer {
                         entity.End = entity.HasRows ? reader.GetValue(0) : null;
                     }
                 } catch (Exception ex) {
-                    TflLogger.Error(entity.ProcessName, entity.Name, ex.Message);
-                    TflLogger.Error(entity.ProcessName, entity.Name, ex.StackTrace);
-                    throw new TransformalizeException(ex.Message);
+                    TflLogger.Debug(entity.ProcessName, entity.Name, ex.StackTrace);
+                    throw new TransformalizeException(entity.ProcessName, entity.Name, ex.Message);
                 }
             }
         }

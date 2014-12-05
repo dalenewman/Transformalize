@@ -36,7 +36,7 @@ namespace Transformalize.Operations.Transform {
                 Debug("Defaulting From TimeZone to {0}.", defaultTimeZone);
             } else {
                 if (!TimeZoneInfo.GetSystemTimeZones().Any(tz => tz.Id.Equals(timeZone))) {
-                    throw new TransformalizeException("From Timezone Id {0} is invalid.", timeZone);
+                    throw new TransformalizeException(ProcessName, EntityName, "From Timezone Id {0} is invalid.", timeZone);
                 }
             }
             return result;

@@ -461,7 +461,7 @@ namespace Transformalize.Main.Transform {
                 return new TransformConfigurationElement() { Method = "substring", StartIndex = startIndex, Length = length, IsShortHand = true };
             }
 
-            throw new TransformalizeException("The substring method requires two integers indicating start index and length. '{0}' doesn't represent two integers.", arg);
+            throw new TransformalizeException(string.Empty, string.Empty, "The substring method requires two integers indicating start index and length. '{0}' doesn't represent two integers.", arg);
         }
 
         private static TransformConfigurationElement Remove(string arg) {
@@ -474,7 +474,7 @@ namespace Transformalize.Main.Transform {
                 return new TransformConfigurationElement() { Method = "remove", StartIndex = startIndex, Length = length, IsShortHand = true };
             }
 
-            throw new TransformalizeException("The remove method requires two integer parameters indicating start index and length. '{0}' doesn't represent two integers.", arg);
+            throw new TransformalizeException(string.Empty, string.Empty, "The remove method requires two integer parameters indicating start index and length. '{0}' doesn't represent two integers.", arg);
         }
 
         private static TransformConfigurationElement Slug(string arg) {
@@ -508,7 +508,7 @@ namespace Transformalize.Main.Transform {
             if (int.TryParse(split[0], out interval)) {
                 element.Interval = interval;
             } else {
-                throw new TransformalizeException("The insertinterval method's first parameter must be an integer.  {0} is not an integer.", split[0]);
+                throw new TransformalizeException(string.Empty, string.Empty, "The insertinterval method's first parameter must be an integer.  {0} is not an integer.", split[0]);
             }
 
             element.Value = split[1];
@@ -525,7 +525,7 @@ namespace Transformalize.Main.Transform {
             if (int.TryParse(split[0], out startIndex)) {
                 element.StartIndex = startIndex;
             } else {
-                throw new TransformalizeException("The insert method's first parameter must be an integer.  {0} is not an integer.", split[0]);
+                throw new TransformalizeException(string.Empty, string.Empty, "The insert method's first parameter must be an integer.  {0} is not an integer.", split[0]);
             }
 
             element.Parameter = split[1];

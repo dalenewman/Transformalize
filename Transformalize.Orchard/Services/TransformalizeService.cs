@@ -14,6 +14,7 @@ using Orchard.Utility.Extensions;
 using Transformalize.Libs.Newtonsoft.Json;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.SemanticLogging;
+using Transformalize.Libs.SolrNet.Utils;
 using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
@@ -29,6 +30,10 @@ namespace Transformalize.Orchard.Services {
         private readonly IFileService _fileService;
         private readonly List<int> _filesCreated = new List<int>();
 
+        public Localizer T { get; set; }
+        public ILogger Logger { get; set; }
+        public IEnumerable<int> FilesCreated { get { return _filesCreated; } }
+
         public TransformalizeService(
             IOrchardServices orchardServices,
             IFileService fileService
@@ -38,10 +43,6 @@ namespace Transformalize.Orchard.Services {
             Logger = NullLogger.Instance;
             T = NullLocalizer.Instance;
         }
-
-        public Localizer T { get; set; }
-        public ILogger Logger { get; set; }
-        public IEnumerable<int> FilesCreated { get { return _filesCreated; } }
 
         public string InjectParameters(ConfigurationPart part, NameValueCollection query) {
             _filesCreated.Clear();
@@ -96,7 +97,7 @@ namespace Transformalize.Orchard.Services {
 
             for (var i = 0; i < processes.Count; i++) {
                 var process = processes[i];
-                CreateInputOperation(ref process, request.Query);
+                CreateInputOperation(process, request);
                 process.ExecuteScaler();
             }
 
@@ -106,15 +107,15 @@ namespace Transformalize.Orchard.Services {
             };
         }
 
-        private static void CreateInputOperation(ref Process process, NameValueCollection query) {
+        private static void CreateInputOperation(Process process, TransformalizeRequest request) {
+
+            var data = request.Query["data"];
+            if (data == null)
+                return;
 
             if (!process.Connections.ContainsKey("input"))
                 return;
             if (process.Connections["input"].Type != ProviderType.Internal)
-                return;
-
-            var data = query["data"];
-            if (data == null)
                 return;
 
             var rows = new List<Row>();
@@ -128,6 +129,7 @@ namespace Transformalize.Orchard.Services {
             var inputFields = entity.InputFields();
             var conversion = Common.GetObjectConversionMap();
 
+            // Note: Input 
             while (reader.Read()) {
                 if (reader.TokenType == JsonToken.StartArray) {
                     var row = new Row();
@@ -140,10 +142,16 @@ namespace Transformalize.Orchard.Services {
                     var row = new Row();
                     do {
                         reader.Read();
-                        var name = reader.Value.ToString();
-                        reader.Read();
-                        row[name] = conversion[inputFields[name].SimpleType](reader.Value);
+                        if (reader.TokenType == JsonToken.PropertyName) {
+                            var name = reader.Value.ToString();
+                            reader.Read();
+                            row[name] = reader.Value;
+                        }
                     } while (reader.TokenType != JsonToken.EndObject);
+
+                    foreach (var field in inputFields) {
+                        row[field.Name] = conversion[field.SimpleType](row[field.Name]);
+                    }
                     rows.Add(row);
                 }
             }

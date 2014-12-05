@@ -113,7 +113,7 @@
     }
 
     function getEditor(type) {
-        switch (getSimpleType(type)) {
+        switch (type) {
             case 'int16':
             case 'int32':
             case 'int64':
@@ -209,26 +209,26 @@
                 if (tfl.status === 200) {
 
                     state.fields = tfl.processes[0].add.entities.add.fields.add.filter(function (f) {
-                        return !f.hasOwnProperty('output') || f.output == true;
+                        return f.output.toLowerCase() == 'true';
                     });
 
                     state.dates = state.fields.filter(function (f) {
-                        return f.hasOwnProperty('type') && f.type.indexOf('date') == 0;
+                        return getSimpleType(f.type).indexOf('date') == 0;
                     });
 
                     var columns = $.map(state.fields, function (f) {
-                        var id = f.hasOwnProperty('alias') ? f.alias : f.name;
-                        var hasType = f.hasOwnProperty('type');
-                        var isBool = hasType && f.type.toLowerCase().indexOf('bool') == 0;
+                        var id = f.alias;
+                        var type = getSimpleType(f.type);
+                        var isBool = type.indexOf('bool') == 0;
                         return {
                             id: id,
-                            name: f.hasOwnProperty('label') ? f.label : id,
+                            name: f.label,
                             field: id,
                             resizable: true,
                             sortable: false,
                             formatter: isBool ? Slick.Formatters.Checkmark : defaultFormatter,
                             cssClass: isBool ? 'check-align' : '',
-                            editor: hasType ? getEditor(f.type) : Slick.Editors.Text,
+                            editor: type == 'string' ? Slick.Editors.Text : getEditor(f.type),
                         };
                     });
 

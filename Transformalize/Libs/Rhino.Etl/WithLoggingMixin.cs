@@ -35,15 +35,15 @@ namespace Transformalize.Libs.Rhino.Etl {
         protected void Error(Exception exception, string format, params object[] args) {
             var message = string.Format(CultureInfo.InvariantCulture, format, args);
             var errorMessage = exception != null ? string.Format("{0}: {1}", message, exception.Message) : message;
-            _errors.Add(new TransformalizeException(exception, errorMessage));
+            _errors.Add(new TransformalizeException(string.Empty, string.Empty, exception, errorMessage));
         }
 
         protected void Error(string format, params object[] args) {
-            _errors.Add(new TransformalizeException(format, args));
+            _errors.Add(new TransformalizeException(string.Empty, string.Empty, format, args));
         }
 
         protected void Error(string message) {
-            _errors.Add(new TransformalizeException(message));
+            _errors.Add(new TransformalizeException(string.Empty, string.Empty, message));
         }
 
         protected void Warn(string format, params object[] args) {

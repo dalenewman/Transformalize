@@ -54,7 +54,7 @@ namespace Transformalize.Processes {
                         TflLogger.Debug(this.Process.Name, string.Empty, inner.StackTrace);
                     }
                 }
-                throw new TransformalizeException("Initialization Process failed for {0}. See error log.", Process.Name);
+                throw new TransformalizeException(this.Process.Name, string.Empty, "Initialization Process failed for {0}. See error log.", Process.Name);
             }
 
             if (Process.StarEnabled && Process.Entities.Count > 0) {

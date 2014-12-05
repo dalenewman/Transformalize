@@ -112,7 +112,7 @@ namespace Transformalize.Main {
                         item.Value.Parameter = _fields.Find(item.Value.Parameter).First().Alias;
                         AddParameterToConfiguration(transform, item.Value.Parameter, false);
                     } else {
-                        throw new TransformalizeException("The map parameter {0} does not exist.  Please make sure it matches a field's name or alias.", item.Value.Parameter);
+                        throw new TransformalizeException(string.Empty, string.Empty, "The map parameter {0} does not exist.  Please make sure it matches a field's name or alias.", item.Value.Parameter);
                     }
                 }
             }

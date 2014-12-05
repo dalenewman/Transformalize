@@ -158,7 +158,7 @@ namespace Transformalize.Processes {
                         TflLogger.Debug(_entity.ProcessName, _entity.Name, e.StackTrace);
                     }
                 }
-                throw new TransformalizeException("Entity Process failed for {0}. See error log.", _entity.Alias);
+                throw new TransformalizeException(_entity.ProcessName, _entity.Name, "Entity Process failed for {0}. See error log.", _entity.Alias);
             }
 
             if (Process.OutputConnection.Is.Internal()) {

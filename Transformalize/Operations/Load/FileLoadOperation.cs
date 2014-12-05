@@ -105,7 +105,7 @@ namespace Transformalize.Operations.Load {
                         Encoding.GetEncoding(_connection.Encoding)
                 };
             } catch (Exception ex) {
-                throw new TransformalizeException(ex.Message);
+                throw new TransformalizeException(ProcessName, EntityName, ex.Message);
             }
 
             if (!_connection.Header.Equals(string.Empty)) {

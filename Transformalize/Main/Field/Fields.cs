@@ -125,6 +125,10 @@ namespace Transformalize.Main {
             return Storage.Select(f => f.Alias);
         }
 
+        public IEnumerable<string> Names() {
+            return Storage.Select(f => f.Name);
+        }
+
         public Field[] ToArray() {
             return Storage.ToArray();
         }

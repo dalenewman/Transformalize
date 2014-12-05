@@ -160,19 +160,13 @@ namespace Transformalize.Main {
         }
 
         //methods
-        public bool IsReady() {
-            if (Enabled || Options.Force) {
-                if (Connections.All(cn => cn.Value.IsReady())) {
-                    Setup();
-                    return true;
-                }
-                foreach (var connection in Connections.Where(cn => !cn.Value.IsReady())) {
-                    TflLogger.Error(Name, string.Empty, "Connection {0} failed.", connection.Key);
-                }
-                return false;
+        public void CheckIfReady() {
+            if (!Enabled && !Options.Force)
+                throw new TransformalizeException(Name, string.Empty, "Process is disabled.");
+
+            foreach (var connection in Connections.Where(cn => !cn.Value.IsReady())) {
+                throw new TransformalizeException(Name, string.Empty, "Connection {0} failed.", connection.Key);
             }
-            TflLogger.Error(Name, string.Empty, "Process is disabled.");
-            return false;
         }
 
         private IProcessRunner GetRunner() {
@@ -243,7 +237,7 @@ namespace Transformalize.Main {
                             break;
                         case ProviderType.Mail:
                             if (log.Connection == null) {
-                                throw new TransformalizeException("The mail logger needs to reference a mail connection in <connections/> collection.");
+                                throw new TransformalizeException(Name, string.Empty, "The mail logger needs to reference a mail connection in <connections/> collection.");
                             }
                             if (log.Subject.Equals(Common.DefaultValue)) {
                                 log.Subject = Name + " " + log.Level;

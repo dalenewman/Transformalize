@@ -86,7 +86,7 @@ namespace Transformalize.Processes {
                     TflLogger.Error(this.Process.Name, string.Empty, e.Message);
                     TflLogger.Debug(this.Process.Name, string.Empty, e.StackTrace);
                 }
-                throw new TransformalizeException("Entity Delete Process for {0} failed. See error log", _entity.Alias);
+                throw new TransformalizeException(this.Process.Name, string.Empty, "Entity Delete Process for {0} failed. See error log", _entity.Alias);
             }
 
             base.PostProcessing();

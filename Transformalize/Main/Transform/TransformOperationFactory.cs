@@ -83,7 +83,7 @@ namespace Transformalize.Main {
                 foreach (var result in results) {
                     TflLogger.Error(_process.Name, _entityName, result.Message);
                 }
-                throw new TransformalizeException("Transform validation failed. See error log.");
+                throw new TransformalizeException(_process.Name, _entityName, "Transform validation failed. See error log.");
             }
 
             var hasParameters = parameters.Count > 0;
@@ -122,7 +122,7 @@ namespace Transformalize.Main {
 
                 case "copy":
                     if (!hasParameters) {
-                        throw new TransformalizeException("The copy transform requires a parameter.  It copies the parameter value into the calculated field.");
+                        throw new TransformalizeException(_process.Name, _entityName, "The copy transform requires a parameter.  It copies the parameter value into the calculated field.");
                     }
                     return new CopyOperation(inKey, outKey) { ShouldRun = shouldRun, EntityName = _entityName };
 
@@ -322,7 +322,7 @@ namespace Transformalize.Main {
                             ) { ShouldRun = shouldRun, EntityName = _entityName };
                     }
 
-                    throw new TransformalizeException("Mail operation references invalid connection {0}", element.Connection);
+                    throw new TransformalizeException(_process.Name, _entityName, "Mail operation references invalid connection {0}", element.Connection);
 
                 case "map":
                     var equals = _process.MapEquals.ContainsKey(element.Map) ? _process.MapEquals[element.Map] : new Map();
@@ -345,10 +345,10 @@ namespace Transformalize.Main {
                                 }
                             }
                             if (equals.Count == 0) {
-                                throw new TransformalizeException("Map '{0}' is not defined.", element.Map);
+                                throw new TransformalizeException(_process.Name, _entityName, "Map '{0}' is not defined.", element.Map);
                             }
                         } else {
-                            throw new TransformalizeException("Map '{0}' is not defined.", element.Map);
+                            throw new TransformalizeException(_process.Name, _entityName, "Map '{0}' is not defined.", element.Map);
                         }
                     }
 
@@ -401,7 +401,7 @@ namespace Transformalize.Main {
                 case "javascript":
                     foreach (TransformScriptConfigurationElement script in element.Scripts) {
                         if (!_process.Scripts.ContainsKey(script.Name)) {
-                            throw new TransformalizeException("Invalid script reference: {0}.", script.Name);
+                            throw new TransformalizeException(_process.Name, _entityName, "Invalid script reference: {0}.", script.Name);
                         }
                         scripts[script.Name] = _process.Scripts[script.Name];
                     }
@@ -416,7 +416,7 @@ namespace Transformalize.Main {
                 case "csharp":
                     foreach (TransformScriptConfigurationElement script in element.Scripts) {
                         if (!_process.Scripts.ContainsKey(script.Name)) {
-                            throw new TransformalizeException("Invalid script reference: {0}.", script.Name);
+                            throw new TransformalizeException(_process.Name, _entityName, "Invalid script reference: {0}.", script.Name);
                         }
                         scripts[script.Name] = _process.Scripts[script.Name];
                     }
@@ -824,7 +824,7 @@ namespace Transformalize.Main {
 
             foreach (TransformTemplateConfigurationElement template in element.Templates) {
                 if (!_process.Templates.ContainsKey(template.Name)) {
-                    throw new TransformalizeException("Invalid template reference: {0}", template.Name);
+                    throw new TransformalizeException(_process.Name, _entityName, "Invalid template reference: {0}", template.Name);
                 }
                 templates[template.Name] = _process.Templates[template.Name];
                 _process.Templates[template.Name].IsUsedInPipeline = true;

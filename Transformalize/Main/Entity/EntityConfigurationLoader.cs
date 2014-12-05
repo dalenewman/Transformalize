@@ -142,7 +142,7 @@ namespace Transformalize.Main {
                     foreach (var result in results) {
                         TflLogger.Error(entity.ProcessName, entity.Alias, result.Message);
                     }
-                    throw new TransformalizeException("Filter configuration is invalid.  See error log.");
+                    throw new TransformalizeException(entity.ProcessName, entity.Alias, "Filter configuration is invalid.  See error log.");
                 }
 
                 var item = new Filter();
@@ -224,7 +224,7 @@ namespace Transformalize.Main {
                     throw new TransformalizeException("No fields defined.  Unable to detect them for {0}. {1}", entity.Name, ex.Message);
                 } finally {
                     if (element.Fields.Count == 0) {
-                        throw new TransformalizeException("No fields defined.  Unable to detect them for {0}.", entity.Name);
+                        throw new TransformalizeException(entity.ProcessName, entity.Name, "No fields defined.  Unable to detect them for {0}.", entity.Name);
                     }
                 }
             }
@@ -283,7 +283,7 @@ namespace Transformalize.Main {
                 foreach (var result in results) {
                     TflLogger.Error(_process.Name, element.Name, result.Message);
                 }
-                throw new TransformalizeException("Entity validation failed. See error log.");
+                throw new TransformalizeException(_process.Name, element.Name, "Entity validation failed. See error log.");
             }
         }
 
@@ -338,7 +338,7 @@ namespace Transformalize.Main {
                 if (!element.CalculatedFields.Cast<FieldConfigurationElement>().Any(f => f.Output && string.IsNullOrEmpty(f.Aggregate)))
                     return;
 
-                throw new TransformalizeException("Entity {0} is set to group, but not all your output fields have aggregate defined.", entity.Alias);
+                throw new TransformalizeException(entity.ProcessName, entity.Alias, "Entity {0} is set to group, but not all your output fields have aggregate defined.", entity.Alias);
             }
 
             if (!element.Fields.Cast<FieldConfigurationElement>().Any(f => f.Output && !string.IsNullOrEmpty(f.Aggregate)))
@@ -347,7 +347,7 @@ namespace Transformalize.Main {
             if (!element.CalculatedFields.Cast<FieldConfigurationElement>().Any(f => f.Output && !string.IsNullOrEmpty(f.Aggregate)))
                 return;
 
-            throw new TransformalizeException("Entity {0} is not set to group, but one of your output fields has an aggregate defined.", entity.Alias);
+            throw new TransformalizeException(entity.Prefix, entity.Alias, "Entity {0} is not set to group, but one of your output fields has an aggregate defined.", entity.Alias);
         }
 
         private static FieldType GetFieldType(FieldConfigurationElement element, bool isMaster) {

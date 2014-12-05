@@ -61,7 +61,7 @@ namespace Transformalize.Main.Providers {
                 foreach (var result in results) {
                     TflLogger.Error(_process.Name, string.Empty, result.Message);
                 }
-                throw new TransformalizeException("Connection validation failed. See error log.");
+                throw new TransformalizeException(_process.Name, string.Empty, "Connection validation failed. See error log.");
             }
         }
 
