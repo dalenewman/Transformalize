@@ -1,6 +1,6 @@
 ﻿@using Orchard.ContentManagement
 @using Orchard.Core.Common.Models
-@model IEnumerable<Transformalize.Orchard.Models.FilePart>
+@model Transformalize.Orchard.Models.FilesResponse
 @{
     Layout.Title = "Files";
     Script.Require("jQuery").AtHead();
@@ -73,7 +73,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var file in Model) {
+        @foreach (var file in Model.Files) {
             <tr class="@(ViewBag.CurrentId.Equals(file.Id) ? "success" : (file.Direction == "Out" ? "warning" : string.Empty))">
                 <td>
                 @if (ViewBag.SelectFor > 0) {
@@ -85,12 +85,12 @@
                 <td>@file.Id</td>
                 <td>@file.FileName()</td>
                 <td><span class="label @(file.Direction.Equals("Out") ? "label-warning" : "label-success")">@file.Direction</span></td>
-                <td>@(file.As<CommonPart>().CreatedUtc.As<DateTime>().ToLocalTime())</td>
+                <td>@(TimeZoneInfo.ConvertTimeFromUtc(file.CreatedUtc(), Model.TimeZoneInfo))</td>
                 <td>
-                    <button type="button" class="btn btn-info btn-xs" onclick=" window.open('@Url.Action("Download","File",new{id=@file.Id})','_self');">
+                    <button type="button" class="btn btn-info btn-xs" onclick="window.open('@Url.Action("Download","File",new{id=@file.Id})','_self');">
                         <span class="glyphicon glyphicon-download"></span> Download
                     </button>
-                    <button type="button" class="btn btn-danger btn-xs pull-right" onclick=" window.open('@Url.Action("Delete","File",new{id=@file.Id})','_self');">
+                    <button type="button" class="btn btn-danger btn-xs pull-right" onclick="window.open('@Url.Action("Delete","File",new{id=@file.Id})','_self');">
                         <span class="glyphicon glyphicon-trash"></span> Delete
                     </button>
                 </td>

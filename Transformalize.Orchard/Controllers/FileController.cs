@@ -34,14 +34,14 @@ namespace Transformalize.Orchard.Controllers {
                 System.Web.Security.FormsAuthentication.RedirectToLoginPage(Request.RawUrl);
             }
 
-            if(!_orchardServices.Authorizer.Authorize(Permissions.Upload))
+            if (!_orchardServices.Authorizer.Authorize(Permissions.Upload))
                 return new HttpUnauthorizedResult();
 
             if (Request.Files != null && Request.Files.Count > 0) {
                 var input = Request.Files.Get(0);
                 if (input != null && input.ContentLength > 0) {
                     var filePart = _fileService.Upload(input);
-                    return RedirectToAction("Files", new { id=filePart.Id });
+                    return RedirectToAction("Files", new { id = filePart.Id });
                 }
                 _orchardServices.Notifier.Error(T("Please choose a file."));
             } else {
@@ -52,13 +52,19 @@ namespace Transformalize.Orchard.Controllers {
         }
 
         public ActionResult Files(int id) {
+
             if (User.Identity.IsAuthenticated) {
 
                 ViewBag.CurrentId = id;
                 ViewBag.SelectFor = Convert.ToInt32(Request.QueryString["SelectFor"] ?? "0");
                 ViewBag.Mode = Request.QueryString["Mode"] ?? string.Empty;
 
-                return View(_fileService.GetFiles());
+                var response = new FilesResponse() {
+                    TimeZoneInfo = _orchardServices.WorkContext.CurrentTimeZone,
+                    Files = _fileService.GetFiles()
+                };
+
+                return View(response);
             }
 
             System.Web.Security.FormsAuthentication.RedirectToLoginPage(Request.RawUrl);

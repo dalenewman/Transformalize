@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Rhino.Etl.Core.Files;
+using Transformalize.Libs.FileHelpers.Converters;
 using Transformalize.Libs.FileHelpers.Enums;
 using Transformalize.Libs.FileHelpers.RunTime;
 using Transformalize.Libs.Rhino.Etl;
@@ -12,6 +13,23 @@ using Transformalize.Main;
 using Transformalize.Main.Providers;
 
 namespace Transformalize.Operations.Load {
+
+    public class GuidConverter : ConverterBase {
+        public override object StringToField(string @from) {
+            return Guid.Parse(@from);
+        }
+    }
+
+    public class ByteArrayConverter : ConverterBase {
+        public override object StringToField(string @from) {
+            return Common.HexStringToByteArray(@from);
+        }
+
+        public override string FieldToString(object @from) {
+            return Common.BytesToHexString((byte[])@from);
+        }
+    }
+
     public class FileLoadOperation : AbstractOperation {
 
         private const string SPACE = " ";
@@ -82,6 +100,12 @@ namespace Transformalize.Operations.Load {
                     field.Converter.Kind = ConverterKind.Date;
                     field.Converter.Arg1 = _connection.DateFormat;
                 }
+                if (f.SimpleType.Equals("guid")) {
+                    field.Converter.TypeName = "Transformalize.Operations.Load.GuidConverter";
+                }
+                if (f.SimpleType.Equals("byte[]") || f.SimpleType.Equals("rowversion")) {
+                    field.Converter.TypeName = "Transformalize.Operations.Load.ByteArrayConverter";
+                }
                 if (_isCsv) {
                     field.FieldQuoted = true;
                     field.QuoteChar = '"';
@@ -124,7 +148,7 @@ namespace Transformalize.Operations.Load {
                         var value = row[field].ToString();
                         if (_isCsv) {
                             row[field] = value.Replace("\r\n", "\n");
-                        } else if(_connection.Delimiter != SPACE) {
+                        } else if (_connection.Delimiter != SPACE) {
                             row[field] = value.Replace(_connection.Delimiter, SPACE);
                         }
                     }

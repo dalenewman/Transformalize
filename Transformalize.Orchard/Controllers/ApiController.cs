@@ -3,7 +3,6 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Web.Mvc;
 using Orchard;
-using Orchard.ContentManagement;
 using Orchard.Localization;
 using Transformalize.Main;
 using Transformalize.Orchard.Models;
@@ -38,48 +37,41 @@ namespace Transformalize.Orchard.Controllers {
         public ActionResult Configuration(int id) {
 
             Response.AddHeader("Access-Control-Allow-Origin", "*");
-            var request = new ApiRequest(ApiRequestType.Configuration) { Stopwatch = _stopwatch };
+            ConfigurationPart part;
+            ApiRequest request;
+
+            foreach (var rejection in _apiService.Rejections(id, out request, out part)) {
+                return rejection.ContentResult(
+                    DEFAULT_FORMAT,
+                    DEFAULT_FLAVOR
+                );
+            }
+
             var query = GetQuery();
-
-            var part = _orchardServices.ContentManager.Get(id).As<ConfigurationPart>();
-            if (part == null) {
-                return _apiService.NotFound(request, query);
-            }
-
-            if (!(Request.IsLocal || part.IsInAllowedRange(Request.UserHostAddress))) {
-                if (User.Identity.IsAuthenticated) {
-                    if (!_orchardServices.Authorizer.Authorize(global::Orchard.Core.Contents.Permissions.ViewContent, part)) {
-                        return _apiService.Unathorized(request, query);
-                    }
-                } else {
-                    return _apiService.Unathorized(request, query);
-                }
-            }
-
-            var configuration = _transformalize.InjectParameters(part, GetQuery());
+            var configuration = _transformalize.InjectParameters(part, query);
 
             return new ApiResponse(request, configuration).ContentResult(
-                GetQuery()["format"] ?? DEFAULT_FORMAT,
-                GetQuery()["flavor"] ?? DEFAULT_FLAVOR
+                query["format"] ?? DEFAULT_FORMAT,
+                query["flavor"] ?? DEFAULT_FLAVOR
             );
         }
 
         [ActionName("Api/MetaData")]
         public ActionResult MetaData(int id) {
+
             Response.AddHeader("Access-Control-Allow-Origin", "*");
+            ConfigurationPart part;
+            ApiRequest request;
 
-            var request = new ApiRequest(ApiRequestType.MetaData) { Stopwatch = _stopwatch };
+            foreach (var rejection in _apiService.Rejections(id, out request, out part)) {
+                return rejection.ContentResult(
+                    DEFAULT_FORMAT,
+                    DEFAULT_FLAVOR
+                );
+            }
+
+            request.RequestType = ApiRequestType.MetaData;
             var query = GetQuery();
-
-            if (!User.Identity.IsAuthenticated) {
-                return _apiService.Unathorized(request, query);
-            }
-
-            var part = _orchardServices.ContentManager.Get(id).As<ConfigurationPart>();
-            if (part == null) {
-                return _apiService.NotFound(request, query);
-            }
-
             var configuration = _transformalize.InjectParameters(part, query);
 
             return new ApiResponse(request, configuration, _transformalize.GetMetaData(configuration)).ContentResult(
@@ -93,38 +85,18 @@ namespace Transformalize.Orchard.Controllers {
         public ActionResult Execute(int id) {
 
             Response.AddHeader("Access-Control-Allow-Origin", "*");
-            var request = new ApiRequest(ApiRequestType.Execute) { Stopwatch = _stopwatch };
-            var query = GetQuery();
-            var configuration = Request.Form["configuration"];
-
-            if (id == 0 && configuration == null) {
-                return _apiService.NotFound(request, query);
-            }
-
-            if (!Request.IsLocal) {
-                if (!User.Identity.IsAuthenticated)
-                    return _apiService.Unathorized(request, query);
-                if (!_orchardServices.Authorizer.Authorize(Permissions.Execute))
-                    return _apiService.Unathorized(request, query);
-            }
-
             ConfigurationPart part;
-            if (id == 0) {
-                part = _orchardServices.ContentManager.New<ConfigurationPart>("Configuration");
-                part.Configuration = configuration;
-            } else {
-                part = _orchardServices.ContentManager.Get(id).As<ConfigurationPart>();
+            ApiRequest request;
+
+            foreach (var rejection in _apiService.Rejections(id, out request, out part)) {
+                return rejection.ContentResult(
+                    DEFAULT_FORMAT,
+                    DEFAULT_FLAVOR
+                );
             }
 
-            if (part == null) {
-                return _apiService.NotFound(request, query);
-            }
-
-            if (!Request.IsLocal) {
-                if (!_orchardServices.Authorizer.Authorize(global::Orchard.Core.Contents.Permissions.ViewContent, part)) {
-                    return _apiService.Unathorized(request, query);
-                }
-            }
+            request.RequestType = ApiRequestType.Execute;
+            var query = GetQuery();
 
             // ready
             var transformalizeRequest = new TransformalizeRequest(part) {

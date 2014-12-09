@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Web.Mvc;
 using System.Xml.Linq;
 using Orchard;
@@ -10,6 +11,7 @@ using Orchard.ContentManagement;
 using Orchard.Localization;
 using Orchard.Logging;
 using Orchard.Themes;
+using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Orchard.Models;
 using Transformalize.Orchard.Services;
@@ -42,14 +44,41 @@ namespace Transformalize.Orchard.Controllers {
         }
 
         protected static string TransformConfigurationForLoad(string configuration) {
-            // ReSharper disable PossibleNullReferenceException
             var xml = XDocument.Parse(configuration).Root;
+            if (xml == null) {
+                TflLogger.Error(string.Empty, string.Empty, "Unable to transform configuration for load.");
+                return configuration;
+            }
+            ReverseConfiguration(xml);
+            return xml.ToString();
+        }
+
+        protected static string TransformConfigurationForDownload(string configuration) {
+            var xml = XDocument.Parse(configuration).Root;
+            if (xml == null) {
+                TflLogger.Error(string.Empty, string.Empty, "Unable to transform configuration for download.");
+                return configuration;
+            }
+
+            ReverseConfiguration(xml);
+
+            var output = xml.Element("processes").Element("add").Element("connections").Elements().First(e => e.Attribute("name").Value.Equals("output", IC));
+            output.SetAttributeValue("provider", "file");
+            output.SetAttributeValue("file", "@(OutputFile)");
+            return xml.ToString();
+        }
+
+        protected static void ReverseConfiguration(XContainer xml) {
+            // ReSharper disable PossibleNullReferenceException
 
             var process = xml.Element("processes").Element("add");
             var processName = process.Attribute("name").Value;
             process.SetAttributeValue("star-enabled", "false");
 
-            SwapInputAndOutput(ref process);
+            var connections = process.Element("connections").Elements().ToArray();
+            connections.First(c => c.Attribute("name").Value.Equals("output")).SetAttributeValue("name", "temp");
+            connections.First(c => c.Attribute("name").Value.Equals("input")).SetAttributeValue("name", "output");
+            connections.First(c => c.Attribute("name").Value.Equals("temp")).SetAttributeValue("name", "input");
 
             var entity = process.Element("entities").Element("add");
             CopyAttributeIfMissing(entity, "name", "alias");
@@ -95,7 +124,6 @@ namespace Transformalize.Orchard.Controllers {
                 lastField.AddAfterSelf(deleted);
             }
 
-            return xml.ToString();
             // ReSharper restore PossibleNullReferenceException
         }
 
@@ -109,25 +137,25 @@ namespace Transformalize.Orchard.Controllers {
             return Common.EntityOutputName(tflEntity, processName);
         }
 
-        private static void CopyAttributesIfMissing(IEnumerable<XElement> elements, string from, string to) {
+        protected static void CopyAttributesIfMissing(IEnumerable<XElement> elements, string from, string to) {
             foreach (var element in elements) {
                 CopyAttributeIfMissing(element, from, to);
             }
         }
 
-        private static void CopyAttributeIfMissing(XElement element, string from, string to) {
+        protected static void CopyAttributeIfMissing(XElement element, string from, string to) {
             if (element.Attribute(to) == null) {
                 element.SetAttributeValue(to, element.Attribute(from).Value);
             }
         }
 
-        private static void SwapAttributes(IEnumerable<XElement> elements, string left, string right) {
+        protected static void SwapAttributes(IEnumerable<XElement> elements, string left, string right) {
             foreach (var element in elements) {
                 SwapAttribute(element, left, right);
             }
         }
 
-        private static void SwapAttribute(XElement element, string left, string right) {
+        protected static void SwapAttribute(XElement element, string left, string right) {
             var leftValue = element.Attribute(left) == null ? string.Empty : element.Attribute(left).Value;
             var rightValue = element.Attribute(right) == null ? string.Empty : element.Attribute(right).Value;
 
@@ -135,47 +163,29 @@ namespace Transformalize.Orchard.Controllers {
             element.SetAttributeValue(right, leftValue);
         }
 
-        private static void DefaultAttributesIfMissing(IEnumerable<XElement> elements, string attribute, string value) {
+        protected static void DefaultAttributesIfMissing(IEnumerable<XElement> elements, string attribute, string value) {
             foreach (var element in elements) {
                 DefaultAttributeIfMissing(element, attribute, value);
             }
         }
 
-        private static void DefaultAttributeIfMissing(XElement element, string attribute, string value) {
+        protected static void DefaultAttributeIfMissing(XElement element, string attribute, string value) {
             if (element.Attribute(attribute) == null) {
                 element.SetAttributeValue(attribute, value);
             }
         }
 
-        private static void SwapInputAndOutput(ref XElement process) {
-            var connections = process.Element("connections").Elements().ToArray();
-            connections.First(c => c.Attribute("name").Value.Equals("output")).SetAttributeValue("name", "temp");
-            connections.First(c => c.Attribute("name").Value.Equals("input")).SetAttributeValue("name", "output");
-            connections.First(c => c.Attribute("name").Value.Equals("temp")).SetAttributeValue("name", "input");
-        }
-
-        protected ActionResult ModifyAndRun(int id, Func<string, string> modifier, NameValueCollection query) {
-
-            Response.AddHeader("Access-Control-Allow-Origin", "*");
-            var request = new ApiRequest(ApiRequestType.Execute) { Stopwatch = _stopwatch };
-
-            var part = _orchardServices.ContentManager.Get(id).As<ConfigurationPart>();
-            if (part == null) {
-                return _apiService.NotFound(request, query);
-            }
-
-            if (User.Identity.IsAuthenticated) {
-                if (!_orchardServices.Authorizer.Authorize(global::Orchard.Core.Contents.Permissions.ViewContent, part)) {
-                    return _apiService.Unathorized(request, query);
-                }
-            } else {
-                return _apiService.Unathorized(request, query);
-            }
+        protected ApiResponse Run(
+            ApiRequest request,
+            ConfigurationPart part,
+            NameValueCollection query,
+            string modifiedConfiguration = null
+        ) {
 
             var errorNumber = 500;
             try {
                 var tflRequest = new TransformalizeRequest(part) {
-                    Configuration = modifier(part.Configuration),
+                    Configuration = modifiedConfiguration ?? part.Configuration,
                     Options = new Options(),
                     Query = query
                 };
@@ -188,7 +198,7 @@ namespace Transformalize.Orchard.Controllers {
                     request,
                     tflRequest.Configuration,
                     tflResponse
-                ).ContentResult(query["format"], query["flavor"]);
+                );
             } catch (Exception ex) {
                 request.Status = errorNumber;
                 request.Message = ex.Message;
@@ -196,7 +206,7 @@ namespace Transformalize.Orchard.Controllers {
                     request,
                     part.Configuration,
                     new TransformalizeResponse()
-                ).ContentResult(query["format"], query["flavor"]);
+                );
             }
         }
 

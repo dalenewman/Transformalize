@@ -21,7 +21,7 @@ namespace Transformalize.Orchard.Drivers {
             part.Record.EndAddress = context.Attribute(part.PartDefinition.Name, "EndAddress");
             part.Record.OutputFileExtension = context.Attribute(part.PartDefinition.Name, "OutputFileExtension");
             part.Record.TryCatch = System.Convert.ToBoolean(context.Attribute(part.PartDefinition.Name, "TryCatch"));
-
+            part.Record.EditorTheme = context.Attribute(part.PartDefinition.Name, "EditorTheme");
         }
 
         protected override void Exporting(ConfigurationPart part, ExportContentContext context) {
@@ -33,6 +33,7 @@ namespace Transformalize.Orchard.Drivers {
             context.Element(part.PartDefinition.Name).SetAttributeValue("EndAddress", part.Record.EndAddress);
             context.Element(part.PartDefinition.Name).SetAttributeValue("OutputFileExtension", part.Record.OutputFileExtension);
             context.Element(part.PartDefinition.Name).SetAttributeValue("TryCatch", part.Record.TryCatch);
+            context.Element(part.PartDefinition.Name).SetAttributeValue("EditorTheme", part.Record.EditorTheme);
         }
 
         //GET EDITOR

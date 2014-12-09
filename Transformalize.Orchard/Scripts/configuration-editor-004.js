@@ -55,7 +55,7 @@
         dragDrop: false,
         lineNumbers: true,
         lineWrapping: true,
-        theme: "solarized",
+        theme: settings.theme,
         extraKeys: {
             "'<'": completeAfter,
             "'/'": completeIfAfterLt,
@@ -82,11 +82,11 @@
     });
 
     $('#md-button').click(function () {
-        window.open(window.metaDataUrl, '_blank');
+        window.open(settings.metaDataUrl, '_blank');
     });
 
     $('#jobs-button').click(function () {
-        window.open(window.jobsUrl, '_self');
+        window.open(settings.jobsUrl, '_self');
     });
 });
 

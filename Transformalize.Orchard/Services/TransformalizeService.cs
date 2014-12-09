@@ -14,7 +14,6 @@ using Orchard.Utility.Extensions;
 using Transformalize.Libs.Newtonsoft.Json;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.SemanticLogging;
-using Transformalize.Libs.SolrNet.Utils;
 using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Main.Providers;

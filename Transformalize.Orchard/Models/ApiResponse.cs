@@ -13,6 +13,8 @@ namespace Transformalize.Orchard.Models {
         private readonly TransformalizeResponse _response = new TransformalizeResponse();
         private readonly string _metaData;
 
+        public TransformalizeResponse TransformalizeResponse { get { return _response; } }
+
         public ApiResponse(ApiRequest request, string configuration)
         {
             _request = request;

@@ -27,5 +27,8 @@ namespace Transformalize.Orchard.Models {
         [StringLength(64)]
         public virtual string EndAddress { get; set; }
 
+        [StringLength(128)]
+        public virtual string EditorTheme { get; set; }
+
     }
 }

@@ -98,6 +98,12 @@ namespace Transformalize.Orchard {
             return 5;
         }
 
+        public int UpdateFrom5() {
+            SchemaBuilder.AlterTable("ConfigurationPartRecord",
+                table => table
+                    .AddColumn("EditorTheme", DbType.String));
+            return 6;
+        }
 
     }
 }

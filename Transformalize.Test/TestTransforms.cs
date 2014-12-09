@@ -1482,6 +1482,21 @@ It is False#end", templates, parameters);
         }
 
         [Test]
+        public void TestCyrToLatSlugWithNumbers() {
+            const string russian = "Икра из печеных баклажанов 2000-х";
+            const string expected = "ikra-iz-pechenyih-baklazhanov-2000-h";
+
+            var input = new RowsBuilder()
+                .Row("in", russian)
+                .ToOperation();
+            var c2L = new CyrToLatOperation("in", "in");
+            var output = TestOperation(input, c2L);
+
+            Assert.AreEqual(expected, output[0]["in"].ToString());
+
+        }
+
+        [Test]
         public void TestTransliteratedFault2() {
             const string russian = "Сэндвич с салатом из морской капусты и яиц с тахинной заправкой";
             const string expected = "sendvich-s-salatom-iz-morskoy-kapustyi-i-yaits-s-tahinnoy-zapravkoy";

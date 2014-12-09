@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using Orchard.ContentManagement;
+using Orchard.Core.Common.Models;
 
 namespace Transformalize.Orchard.Models {
     public class FilePart : ContentPart<FilePartRecord> {
@@ -21,6 +22,10 @@ namespace Transformalize.Orchard.Models {
 
         public bool IsValid() {
             return !String.IsNullOrEmpty(FullPath);
+        }
+
+        public DateTime CreatedUtc() {
+            return this.As<CommonPart>().CreatedUtc ?? DateTime.UtcNow;
         }
     }
 }

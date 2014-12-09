@@ -18,12 +18,17 @@ namespace Transformalize.Orchard.Models {
             get {
                 if (string.IsNullOrEmpty(Record.Configuration)) {
                     return @"<transformalize>
+    <environments>
+    </environments>
     <processes>
         <add name=""default"">
             <connections>
-                <add name=""input"" database=""master"" />
-                <add name=""output"" provider=""internal"" />
+                <add name=""input"" />
+                <add name=""output"" />
             </connections>
+            <entities>
+                <add name=""e1"" />
+            </entities>
         </add>
     </processes>
 </transformalize>
@@ -60,8 +65,7 @@ namespace Transformalize.Orchard.Models {
         }
 
         public string LogLevel {
-            get
-            {
+            get {
                 return Record.LogLevel;
             }
             set { Record.LogLevel = value; }
@@ -77,6 +81,18 @@ namespace Transformalize.Orchard.Models {
             set { Record.EndAddress = value; }
         }
 
+        public string EditorTheme {
+            get
+            {
+                if (string.IsNullOrEmpty(Record.EditorTheme))
+                {
+                    return "solarized";
+                }
+                return Record.EditorTheme;
+            }
+            set { Record.EditorTheme = value; }
+        }
+
         public string OutputFileExtension {
             get {
                 return string.IsNullOrEmpty(Record.OutputFileExtension) ?
@@ -88,6 +104,10 @@ namespace Transformalize.Orchard.Models {
 
         public IEnumerable AvailableLogLevels {
             get { return new[] { "info", "debug", "warn", "error", "off" }; }
+        }
+
+        public IEnumerable AvailableThemes {
+            get { return new[] { "3024-day", "3024-night", "ambiance-mobile", "ambiance", "base16-dark", "base16-light", "blackboard", "cobalt", "eclipse", "elegant", "erlang-dark", "lesser-dark", "mbo", "mdn-like", "midnight", "monokai", "neat", "neo", "night", "paraiso-dark", "paraiso-light", "pastel-on-dark", "rubyblue", "solarized", "the-matrix", "tomorrow-night-eighties", "twilight", "vibrant-ink", "xq-dark", "xq-light" }; }
         }
 
         public bool? RequiresInputFile() {
