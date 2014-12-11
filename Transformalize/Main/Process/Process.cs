@@ -22,14 +22,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.Tracing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using Transformalize.Extensions;
 using Transformalize.Libs.Dapper;
-using Transformalize.Libs.Lucene.Net.Store;
 using Transformalize.Libs.Ninject;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
@@ -52,6 +50,7 @@ namespace Transformalize.Main {
         private IParameters _parameters = new Parameters.Parameters();
         private bool _enabled = true;
         private Dictionary<string, AbstractConnection> _connections = new Dictionary<string, AbstractConnection>();
+        private bool _logStarted = false;
 
         // fields (for now)
         public bool Complete = false;
@@ -216,12 +215,13 @@ namespace Transformalize.Main {
                 sink.Dispose();
             }
             SinkSubscriptions.Clear();
+            _logStarted = false;
         }
 
         public void StartLogging() {
 
             try {
-                if (!ShouldLog || Log == null || Log.Count <= 0)
+                if (!_logStarted && (!ShouldLog || Log == null || Log.Count <= 0))
                     return;
 
                 foreach (var log in Log) {
@@ -301,6 +301,7 @@ namespace Transformalize.Main {
                 }
             }
 
+            _logStarted = true;
 
         }
 

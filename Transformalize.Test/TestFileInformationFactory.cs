@@ -134,5 +134,17 @@ KS,""9,000,000"",Rectangle");
 
             Assert.AreEqual(0, actual.Fields.Count);
         }
+
+        [Test]
+        public void TestSpecific()
+        {
+
+            var file = @"C:\Temp\Data\legacy-inventory-sc-return-to-duke-2014-08-01.csv";
+
+            var request = new FileInspectionRequest();
+            var actual = FileInformationFactory.Create(new FileInfo(file), request);
+
+            Assert.AreEqual(7, actual.Fields.Count);
+        }
     }
 }

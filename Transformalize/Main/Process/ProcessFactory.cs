@@ -46,7 +46,7 @@ namespace Transformalize.Main {
             if (elements != null && elements.Count > 0) {
                 process = string.Join(", ", elements.Cast<ProcessConfigurationElement>().Select(p => p.Name));
             }
-            var ip4 = System.Net.Dns.GetHostEntry(host).AddressList.Where(a=>a.ToString()[4] != ':').Select(a => a.ToString()).ToArray();
+            var ip4 = System.Net.Dns.GetHostEntry(host).AddressList.Where(a=> a.ToString().Length > 4 && a.ToString()[4] != ':').Select(a => a.ToString()).ToArray();
             TflLogger.Info(process, string.Empty, "Host is {0} {1}", host,  string.Join(", ", ip4.Any() ? ip4 : new []{string.Empty}));
 
             var processes = new List<Process>();
