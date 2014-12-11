@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Libs.GoogleMaps.LocationServices;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Main.Parameters;
 
@@ -34,10 +35,10 @@ namespace Transformalize.Operations.Transform {
                         row[OutKey] = string.Format("{0},{1}", latLong.Latitude, latLong.Longitude);
                     } catch (Exception e) {
                         row[OutKey] = "0,0";
-                        Warn("GeoCoding failed for {0}. {1}", address, e.Message);
+                        TflLogger.Warn(ProcessName, EntityName, "GeoCoding failed for {0}. {1}", address, e.Message);
                     }
                     if (_sleep > 0) {
-                        Info("GeoCoded {0} to {1}.", address, row[OutKey]);
+                        TflLogger.Info(ProcessName, EntityName, "GeoCoded {0} to {1}.", address, row[OutKey]);
                         System.Threading.Thread.Sleep(_sleep);
                     }
                 }

@@ -60,11 +60,11 @@ namespace Transformalize.Main.Providers.SqlServer {
                     var to = toFields.Find(from.Alias).First();
                     if (!to.SimpleType.Equals(from.SimpleType)) {
                         if (!to.SimpleType.Equals("byte[]") && from.SimpleType.Equals("rowversion")) {
-                            throw new TransformalizeException("{0} has a matching {1} fields, but different types: {2} != {3}.", TargetTable, from.Alias, from.SimpleType, to.SimpleType);
+                            throw new TransformalizeException(ProcessName, EntityName, "{0} has a matching {1} fields, but different types: {2} != {3}.", TargetTable, from.Alias, from.SimpleType, to.SimpleType);
                         }
                     }
                 } else {
-                    throw new TransformalizeException("{0} does not have a matching {1} field.", TargetTable, from.Alias);
+                    throw new TransformalizeException(ProcessName, EntityName, "{0} does not have a matching {1} field.", TargetTable, from.Alias);
                 }
             }
         }

@@ -53,6 +53,12 @@ namespace Transformalize.Main.Providers.File {
 
             var fields = new Fields();
             var delimiter = FindDelimiter();
+
+            if (_storage.Count == 0) {
+                TflLogger.Warn("JunkDrawer", _fileInfo.Name, "No lines in file.");
+                return fields;
+            }
+
             var firstLine = _storage[0];
 
             if (delimiter == default(char)) {
@@ -67,11 +73,13 @@ namespace Transformalize.Main.Providers.File {
 
             for (var i = 0; i < names.Length; i++) {
                 var name = names[i];
-                var field = new Field("string", _request.DefaultLength, FieldType.NonKey, true, string.Empty) {
+                var field = new Field(_request.DefaultType, _request.DefaultLength, FieldType.NonKey, true, string.Empty) {
                     Name = name
                 };
-                if (_storage.Any(x => x.Values[delimiter][i].Contains(delimiter) || _storage.Skip(1).Where(y=> !_request.IgnoreEmpty || !string.IsNullOrEmpty(y.Values[delimiter][i])).All(z=> z.Quote != default(char) && z.Values[delimiter][i].StartsWith(z.Quote.ToString(CultureInfo.InvariantCulture)) && z.Values[delimiter][i].EndsWith(z.Quote.ToString(CultureInfo.InvariantCulture))))) {
-                    field.QuotedWith = _storage.Skip(1).First().Quote;
+                if (_storage.Count > 1) {
+                    if (_storage.Any(x => x.Values[delimiter][i].Contains(delimiter) || _storage.Skip(1).Where(y => !_request.IgnoreEmpty || !string.IsNullOrEmpty(y.Values[delimiter][i])).All(z => z.Quote != default(char) && z.Values[delimiter][i].StartsWith(z.Quote.ToString(CultureInfo.InvariantCulture)) && z.Values[delimiter][i].EndsWith(z.Quote.ToString(CultureInfo.InvariantCulture))))) {
+                        field.QuotedWith = _storage.Skip(1).First().Quote;
+                    }
                 }
                 fields.Add(field);
             }

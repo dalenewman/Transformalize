@@ -168,8 +168,8 @@ namespace Transformalize.Main {
                 if (Enum.TryParse(logElement.LogLevel, out eventLevel)) {
                     log.Level = eventLevel;
                 } else {
-                    switch (logElement.LogLevel.ToLower()) {
-                        case "debug":
+                    switch (logElement.LogLevel.ToLower().Left(4)) {
+                        case "debu":
                             log.Level = EventLevel.Verbose;
                             break;
                         case "info":
@@ -178,6 +178,9 @@ namespace Transformalize.Main {
                         case "warn":
                             log.Level = EventLevel.Warning;
                             break;
+                        case "erro":
+                            log.Level = EventLevel.Error;
+                            break;
                         default:
                             log.Level = EventLevel.Informational;
                             TflLogger.Warn(_processName, string.Empty, "Invalid log level: {0}.  Valid values are Informational, Error, Verbose, and Warning. Defaulting to Informational.", logElement.LogLevel);
@@ -185,7 +188,6 @@ namespace Transformalize.Main {
                     }
 
                 }
-                log.Level = Enum.TryParse(logElement.LogLevel, out eventLevel) ? eventLevel : EventLevel.Verbose;
                 log.Provider = (ProviderType)Enum.Parse(typeof(ProviderType), logElement.Provider, true);
             } catch (Exception ex) {
                 throw new TransformalizeException(process.Name, string.Empty, "Log configuration invalid. {0}", ex.Message);

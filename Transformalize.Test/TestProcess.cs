@@ -488,12 +488,12 @@ namespace Transformalize.Test {
     r3.[Description],
     r4.[CategoryId],
     r5.[Category]
-FROM [dbo].[TestOrderDetail] m
-LEFT OUTER JOIN [dbo].[TestOrder] r1 ON (m.[OrderId] = r1.[OrderId])
-LEFT OUTER JOIN [dbo].[TestCustomer] r2 ON (r1.[CustomerId] = r2.[CustomerId])
-LEFT OUTER JOIN [dbo].[TestProduct] r3 ON (m.[ProductId] = r3.[ProductId])
-LEFT OUTER JOIN [dbo].[TestProductCategory] r4 ON (r3.[ProductId] = r4.[ProductId])
-LEFT OUTER JOIN [dbo].[TestCategory] r5 ON (r4.[CategoryId] = r5.[CategoryId]);";
+FROM [TestOrderDetail] m
+LEFT OUTER JOIN [TestOrder] r1 ON (m.[OrderId] = r1.[OrderId])
+LEFT OUTER JOIN [TestCustomer] r2 ON (r1.[CustomerId] = r2.[CustomerId])
+LEFT OUTER JOIN [TestProduct] r3 ON (m.[ProductId] = r3.[ProductId])
+LEFT OUTER JOIN [TestProductCategory] r4 ON (r3.[ProductId] = r4.[ProductId])
+LEFT OUTER JOIN [TestCategory] r5 ON (r4.[CategoryId] = r5.[CategoryId]);";
 
             var actual = GetTestProcess("sqlserver").ViewSql();
 

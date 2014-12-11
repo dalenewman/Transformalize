@@ -51,7 +51,7 @@ namespace Transformalize.Configuration {
         public FileInspectionRequest GetInspectionRequest() {
             return new FileInspectionRequest() {
                 DataTypes = Types.Cast<TypeConfigurationElement>().Select(t => t.Type).ToList(),
-                DefaultLength = MaxLength == 0 ? "1024" : MaxLength.ToString(CultureInfo.InvariantCulture),
+                DefaultLength = MinLength == 0 ? "1024" : MinLength.ToString(CultureInfo.InvariantCulture),
                 DefaultType = "string",
                 MinLength = MinLength,
                 MaxLength = MaxLength,

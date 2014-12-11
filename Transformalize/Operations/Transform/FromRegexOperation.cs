@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Logging;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
@@ -43,7 +44,7 @@ namespace Transformalize.Operations.Transform {
                             try {
                                 row[pair.Key] = Common.ConversionMap[pair.Value.SimpleType](@group.Value);
                             } catch (Exception ex) {
-                                Warn("Trouble converting '{0}' to '{1}' type.  Matched from {2}. {3}", row[pair.Key], pair.Value.SimpleType, row[InKey], ex.Message);
+                                TflLogger.Warn(ProcessName, EntityName, "Trouble converting '{0}' to '{1}' type.  Matched from {2}. {3}", row[pair.Key], pair.Value.SimpleType, row[InKey], ex.Message);
                             }
                         }
                     }

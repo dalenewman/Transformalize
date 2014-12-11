@@ -43,6 +43,7 @@ namespace Transformalize.Main.Providers.SqlServer {
                         {"date","DATETIME"},
                         {"time","DATETIME"},
                         {"decimal", "DECIMAL"},
+                        {"numeric","DECIMAL"},
                         {"double", "FLOAT"},
                         {"int32", "INT"},
                         {"char", "NCHAR"},

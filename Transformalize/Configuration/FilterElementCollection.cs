@@ -23,7 +23,6 @@
 using System.Configuration;
 using System.Text;
 using Transformalize.Extensions;
-using Transformalize.Libs.Avro.Schema;
 
 namespace Transformalize.Configuration {
     public class FilterElementCollection : MyConfigurationElementCollection {

@@ -18,6 +18,7 @@ namespace Transformalize.Main.Providers.File {
             var process = ProcessFactory.CreateSingle(configuration);
             if (process.Connections["output"].Type != ProviderType.Internal) {
                 process.Options.Mode = "init";
+                process.Mode = "init";
                 process.ExecuteScaler();
             }
 
@@ -35,6 +36,7 @@ namespace Transformalize.Main.Providers.File {
 
             if (process.Connections["output"].Type != ProviderType.Internal) {
                 process.Options.Mode = "init";
+                process.Mode = "init";
                 process.ExecuteScaler();
             }
 

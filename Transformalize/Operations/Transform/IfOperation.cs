@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Main.Parameters;
 
@@ -64,7 +65,7 @@ namespace Transformalize.Operations.Transform {
             var rightType = _rightHasValue && _rightValue != null  ? Common.ToSimpleType(_rightValue.GetType().Name) : _right.Value.SimpleType;
 
             if (!leftType.Equals(rightType)) {
-                Warn("If Operation for {0} has type mismatch: left type is {1}, right type is {2};", OutKey, leftType, rightType);
+                TflLogger.Warn(ProcessName, EntityName, "If Operation for {0} has type mismatch: left type is {1}, right type is {2};", OutKey, leftType, rightType);
             }
 
             Name = string.Format("IfOperation ({0})", outKey);

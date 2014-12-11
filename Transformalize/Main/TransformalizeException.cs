@@ -32,15 +32,6 @@ namespace Transformalize.Main {
         public TransformalizeException(string process, string entity, string message, params object[] args) {
             _message = args.Length > 0 ? string.Format(message, args) : message;
             TflLogger.Error(process, entity, _message);
-            //LogManager.Flush();
-        }
-
-        public TransformalizeException(string process, string entity, Exception exception, string message, params object[] args) {
-            _message = args.Length > 0 ? string.Format(message, args) : message;
-            TflLogger.Error(process, entity, _message);
-            TflLogger.Error(process, entity, exception.Message);
-            TflLogger.Error(process, entity, exception.StackTrace);
-            //LogManager.Flush();
         }
 
         public override string Message {

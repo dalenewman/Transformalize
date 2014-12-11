@@ -31,15 +31,15 @@ namespace Transformalize.Libs.Sqloogle.Operations {
                 var subRows = new List<Row>();
                 var generator = new Generate() { ConnectionString = _connectionStringBuilder.ConnectionString };
 
-                Debug("Started generating definitions on {0} for {1}", _connectionStringBuilder.DataSource, _connectionStringBuilder.InitialCatalog);
+                TflLogger.Debug("Sqloogle", "Sqloogle", "Started generating definitions on {0} for {1}", _connectionStringBuilder.DataSource, _connectionStringBuilder.InitialCatalog);
 
                 try {
                     results = generator.Process();
                 } catch (Exception e) {
-                    Warn("Trouble processing objects from {0}.{1}.\nError Message: {2}.", _connectionStringBuilder.DataSource, _connectionStringBuilder.InitialCatalog, e.Message);
+                    TflLogger.Warn("Sqloogle", "Sqloogle", "Trouble processing objects from {0}.{1}.\nError Message: {2}.", _connectionStringBuilder.DataSource, _connectionStringBuilder.InitialCatalog, e.Message);
                 }
 
-                Debug("Finished generating defs on {0} for {1}", _connectionStringBuilder.DataSource, _connectionStringBuilder.InitialCatalog);
+                TflLogger.Debug("Sqloogle", "Sqloogle", "Finished generating defs on {0} for {1}", _connectionStringBuilder.DataSource, _connectionStringBuilder.InitialCatalog);
 
                 subRows.AddRange(ToRows(results.Procedures, "StoredProcedures", "Stored Procedure"));
                 subRows.AddRange(ToRows(results.Functions, "Functions", "Function"));

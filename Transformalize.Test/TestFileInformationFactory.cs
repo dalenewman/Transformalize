@@ -95,5 +95,44 @@ KS,""9,000,000"",Rectangle");
             Assert.AreEqual("1024", actual.Fields[2].Length);
         }
 
+        [Test]
+        public void TestCsvWithJustHeaders() {
+
+            var file = Path.GetTempFileName().Replace(".tmp", ".csv");
+            File.WriteAllText(file, @"State,Population,Shape");
+
+            var request = new FileInspectionRequest();
+            var actual = FileInformationFactory.Create(new FileInfo(file), request);
+
+            Assert.AreEqual(3, actual.Fields.Count);
+
+            Assert.AreEqual("State", actual.Fields[0].Name);
+            Assert.AreEqual("Population", actual.Fields[1].Name);
+            Assert.AreEqual("Shape", actual.Fields[2].Name);
+
+            Assert.AreEqual("string", actual.Fields[0].Type);
+            Assert.AreEqual("string", actual.Fields[1].Type);
+            Assert.AreEqual("string", actual.Fields[2].Type);
+
+            Assert.IsFalse(actual.Fields[0].IsQuoted());
+            Assert.IsFalse(actual.Fields[1].IsQuoted());
+            Assert.IsFalse(actual.Fields[2].IsQuoted());
+
+            Assert.AreEqual("1024", actual.Fields[0].Length);
+            Assert.AreEqual("1024", actual.Fields[1].Length);
+            Assert.AreEqual("1024", actual.Fields[2].Length);
+        }
+
+        [Test]
+        public void TestEmptyCsv() {
+
+            var file = Path.GetTempFileName().Replace(".tmp", ".csv");
+            File.WriteAllText(file, string.Empty);
+
+            var request = new FileInspectionRequest();
+            var actual = FileInformationFactory.Create(new FileInfo(file), request);
+
+            Assert.AreEqual(0, actual.Fields.Count);
+        }
     }
 }

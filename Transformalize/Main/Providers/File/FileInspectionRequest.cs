@@ -14,6 +14,7 @@ namespace Transformalize.Main.Providers.File {
         private List<string> _dataTypes = new List<string> { "boolean", "int", "long", "single", "double", "decimal", "datetime" };
         private bool _ignoreEmpty = true;
         private string _defaultLength = "1024";
+        private string _defaultType = "string";
 
         public int Top { get; set; }
         public decimal Sample { get; set; }
@@ -40,6 +41,9 @@ namespace Transformalize.Main.Providers.File {
             set { _defaultLength = value; }
         }
 
-        public string DefaultType { get; set; }
+        public string DefaultType {
+            get { return _defaultType; }
+            set { _defaultType = value; }
+        }
     }
 }

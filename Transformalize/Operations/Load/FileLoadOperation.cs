@@ -9,6 +9,7 @@ using Transformalize.Libs.FileHelpers.Enums;
 using Transformalize.Libs.FileHelpers.RunTime;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
 
@@ -69,7 +70,7 @@ namespace Transformalize.Operations.Load {
 
             if (FileInfo.Exists)
                 return;
-            Warn("Output file already exists.  Deleting...");
+            TflLogger.Warn(entity.ProcessName, entity.Alias, "Output file already exists.  Deleting...");
 
             FileInfo.Delete();
         }

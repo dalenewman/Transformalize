@@ -10,14 +10,12 @@ using System.Threading.Tasks;
 using Transformalize.Libs.SemanticLogging.Properties;
 using Transformalize.Libs.SemanticLogging.Sinks;
 
-namespace Transformalize.Libs.SemanticLogging.Utility
-{
+namespace Transformalize.Libs.SemanticLogging.Utility {
     /// <summary>
     /// Buffering and batching utility for sinks that can benefit from batched writes
     /// </summary>
     /// <typeparam name="TEntry">The type of the entry to buffer.</typeparam>
-    public sealed class BufferedEventPublisher<TEntry> : IDisposable
-    {
+    public sealed class BufferedEventPublisher<TEntry> : IDisposable {
         private static readonly TimeSpan MinimumInterval = TimeSpan.FromMilliseconds(500);
         private readonly string sinkId;
         private readonly Func<IList<TEntry>, Task<int>> eventPublisher;
@@ -27,8 +25,7 @@ namespace Transformalize.Libs.SemanticLogging.Utility
         private readonly BlockingCollection<TEntry> buffer;
         private readonly object lockObject = new object();
         private readonly int maxBatchSize;
-        private readonly Lazy<Task> cachedCompletedTask = new Lazy<Task>(() =>
-        {
+        private readonly Lazy<Task> cachedCompletedTask = new Lazy<Task>(() => {
             var tcs = new TaskCompletionSource<bool>();
             tcs.SetResult(true);
             return tcs.Task;
@@ -53,8 +50,7 @@ namespace Transformalize.Libs.SemanticLogging.Utility
         /// <param name="cancellationToken">Cancels any pending operation.</param>
         /// <exception cref="System.ArgumentOutOfRangeException">BufferingCount out of range.</exception>
         /// <exception cref="System.ArgumentException">Argument valdation error.</exception>
-        private BufferedEventPublisher(string sinkId, Func<IList<TEntry>, Task<int>> eventPublisher, TimeSpan bufferingInterval, int bufferingCount, int maxBufferSize, CancellationToken cancellationToken)
-        {
+        private BufferedEventPublisher(string sinkId, Func<IList<TEntry>, Task<int>> eventPublisher, TimeSpan bufferingInterval, int bufferingCount, int maxBufferSize, CancellationToken cancellationToken) {
             Guard.ArgumentNotNullOrEmpty(sinkId, "sinkId");
             Guard.ArgumentNotNull(eventPublisher, "eventPublisherAction");
             Guard.ArgumentGreaterOrEqualThan(500, maxBufferSize, "maxBufferSize");
@@ -62,14 +58,12 @@ namespace Transformalize.Libs.SemanticLogging.Utility
             Guard.ArgumentGreaterOrEqualThan(0, bufferingCount, "bufferingCount");
             Guard.ArgumentIsValidTimeout(bufferingInterval, "bufferingInterval");
 
-            if (maxBufferSize < (bufferingCount * 3) && bufferingCount != int.MaxValue)
-            {
+            if (maxBufferSize < (bufferingCount * 3) && bufferingCount != int.MaxValue) {
                 throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Resources.MaxBufferSizeShouldBeLargerThanBufferingCount, maxBufferSize, bufferingCount), "maxBufferSize");
             }
 
             // throw if not auto flush parameter was supplied
-            if (bufferingInterval == Timeout.InfiniteTimeSpan && bufferingCount == 0)
-            {
+            if (bufferingInterval == Timeout.InfiniteTimeSpan && bufferingCount == 0) {
                 throw new ArgumentException(Resources.InvalidBufferingArguments);
             }
 
@@ -97,8 +91,7 @@ namespace Transformalize.Libs.SemanticLogging.Utility
         /// <exception cref="System.ArgumentOutOfRangeException">BufferingCount out of range.</exception>
         /// <exception cref="System.ArgumentException">Argument valdation error.</exception>
         /// <returns>An instance of BufferedEventPublisher{TEntry}.</returns>
-        public static BufferedEventPublisher<TEntry> CreateAndStart(string sinkId, Func<IList<TEntry>, Task<int>> eventPublisher, TimeSpan bufferingInterval, int bufferingCount, int maxBufferSize, CancellationToken cancellationToken)
-        {
+        public static BufferedEventPublisher<TEntry> CreateAndStart(string sinkId, Func<IList<TEntry>, Task<int>> eventPublisher, TimeSpan bufferingInterval, int bufferingCount, int maxBufferSize, CancellationToken cancellationToken) {
             var publisher = new BufferedEventPublisher<TEntry>(sinkId, eventPublisher, bufferingInterval, bufferingCount, maxBufferSize, cancellationToken);
             publisher.StartBackgroundTask();
             return publisher;
@@ -109,25 +102,18 @@ namespace Transformalize.Libs.SemanticLogging.Utility
         /// </summary>
         /// <param name="entry">The entry.</param>
         /// <returns>True on successful post, false otherwise.</returns>
-        public bool TryPost(TEntry entry)
-        {
+        public bool TryPost(TEntry entry) {
             var bufferInstance = this.buffer;
-            if (bufferInstance.TryAdd(entry))
-            {
-                if (!this.autoFlushByCountDisabled && this.bufferingCount > 0 && bufferInstance.Count >= this.bufferingCount)
-                {
+            if (bufferInstance.TryAdd(entry)) {
+                if (!this.autoFlushByCountDisabled && this.bufferingCount > 0 && bufferInstance.Count >= this.bufferingCount) {
                     this.TriggerFlush();
                 }
 
                 return true;
             }
-            else
-            {
-                if (Interlocked.Exchange(ref this.isBufferFull, 1) == 0)
-                {
-                    // log only if we are switching from normal buffering state
-                    SemanticLoggingEventSource.Log.BufferedEventPublisherCapacityOverloaded(bufferInstance.BoundedCapacity, this.sinkId);
-                }
+            if (Interlocked.Exchange(ref this.isBufferFull, 1) == 0) {
+                // log only if we are switching from normal buffering state
+                SemanticLoggingEventSource.Log.BufferedEventPublisherCapacityOverloaded(bufferInstance.BoundedCapacity, this.sinkId);
             }
 
             return false;
@@ -137,22 +123,17 @@ namespace Transformalize.Libs.SemanticLogging.Utility
         /// Flushes all the buffered entries.
         /// </summary>
         /// <returns>The task to wait for flush completion.</returns>
-        public Task FlushAsync()
-        {
+        public Task FlushAsync() {
             // if there are no entries in the buffer, just return a completed operation
-            if (this.buffer.Count == 0)
-            {
+            if (this.buffer.Count == 0) {
                 return this.cachedCompletedTask.Value;
             }
 
             // create an awaitable task to know when the Flush operation finished.
             var completionSource = this.flushCompletionSource;
-            if (completionSource == null)
-            {
-                lock (this.lockObject)
-                {
-                    if (this.flushCompletionSource == null)
-                    {
+            if (completionSource == null) {
+                lock (this.lockObject) {
+                    if (this.flushCompletionSource == null) {
                         this.flushCompletionSource = new TaskCompletionSource<bool>();
                     }
 
@@ -168,10 +149,8 @@ namespace Transformalize.Libs.SemanticLogging.Utility
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        public void Dispose()
-        {
-            if (!this.disposed)
-            {
+        public void Dispose() {
+            if (!this.disposed) {
                 this.disposed = true;
 
                 this.cancellationTokenSource.Cancel();
@@ -180,60 +159,49 @@ namespace Transformalize.Libs.SemanticLogging.Utility
             }
         }
 
-        private void StartBackgroundTask()
-        {
+        private void StartBackgroundTask() {
             Task.Factory.StartNew((Func<Task>)this.TransferEntries, CancellationToken.None, TaskCreationOptions.HideScheduler, TaskScheduler.Default)
                 .Unwrap()
                 .ContinueWith(this.RestartBackgroundTask);
         }
 
         // Logs any unobserved exception and restarts the background task.
-        private void RestartBackgroundTask(Task predecesor)
-        {
-            if (predecesor.Exception != null)
-            {
+        private void RestartBackgroundTask(Task predecesor) {
+            if (predecesor.Exception != null) {
                 SemanticLoggingEventSource.Log.BufferedEventPublisherUnobservedTaskFault(this.sinkId, predecesor.Exception.ToString());
             }
 
-            if (!this.cancellationTokenSource.IsCancellationRequested)
-            {
+            if (!this.cancellationTokenSource.IsCancellationRequested) {
                 // Restart background task
                 this.StartBackgroundTask();
             }
         }
 
         //// Main processing loop for publishing entries based on time interval, buffer count and explicit flush triggers.
-        private async Task TransferEntries()
-        {
+        private async Task TransferEntries() {
             var token = this.cancellationTokenSource.Token;
 
             var bufferInstance = this.buffer;
-            while (true)
-            {
-                if (token.IsCancellationRequested)
-                {
+            while (true) {
+                if (token.IsCancellationRequested) {
                     // if cancelled, break the processing loop.
                     this.SetAsFlushed();
                     return;
                 }
 
                 var count = bufferInstance.Count;
-                if (count == 0 || count < this.bufferingCount)
-                {
-                    if (count == 0)
-                    {
+                if (count == 0 || count < this.bufferingCount) {
+                    if (count == 0) {
                         // if all entries were published, mark as flushed.
                         this.SetAsFlushed();
                     }
 
-                    if (this.flushCompletionSource == null)
-                    {
+                    if (this.flushCompletionSource == null) {
                         // if no consumers triggered an explicit flush operation, then
                         // wait for the buffering interval.
                         await this.WaitForIntervalAsync(this.bufferingInterval).ConfigureAwait(false);
 
-                        if (token.IsCancellationRequested || bufferInstance.Count == 0)
-                        {
+                        if (token.IsCancellationRequested || bufferInstance.Count == 0) {
                             // if there are no new entries yet, restart the loop that will
                             // normally cause a new waiting interval.
                             continue;
@@ -244,21 +212,17 @@ namespace Transformalize.Libs.SemanticLogging.Utility
                 var entries = this.GetBatch();
 
                 int entriesSent = 0;
-                try
-                {
+                try {
                     entriesSent = await this.eventPublisher(entries).ConfigureAwait(false);
-                    if (entriesSent > 0)
-                    {
+                    if (entriesSent > 0) {
                         // if entries were successfully published, remove them from the queue.
-                        for (int i = 0; i < entriesSent; i++)
-                        {
+                        for (int i = 0; i < entriesSent; i++) {
                             var deleted = bufferInstance.Take();
 
                             // System.Diagnostics.Debug.Assert(typeof(TEntry).IsValueType ? object.Equals(entries[i], deleted) : object.ReferenceEquals(entries[i], deleted), "Elements in the queue were removed outside of the main loop.");
                         }
 
-                        if (Interlocked.Exchange(ref this.isBufferFull, 0) == 1)
-                        {
+                        if (Interlocked.Exchange(ref this.isBufferFull, 0) == 1) {
                             // log only if we are switching from overload state
                             SemanticLoggingEventSource.Log.BufferedEventPublisherCapacityRestored(this.sinkId);
                         }
@@ -266,15 +230,12 @@ namespace Transformalize.Libs.SemanticLogging.Utility
                         this.nonTransientErrorWait.Reset();
                         this.autoFlushByCountDisabled = false;
                     }
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     // There are non-transient errors, so return error in flush calls.
                     this.FailFlushOperation(ex);
                 }
 
-                if (entriesSent == 0 && !token.IsCancellationRequested)
-                {
+                if (entriesSent == 0 && !token.IsCancellationRequested) {
                     this.autoFlushByCountDisabled = true;
 
                     // if there are errors that are non transient, wait and retry later, but don't ever break the loop.
@@ -286,12 +247,9 @@ namespace Transformalize.Libs.SemanticLogging.Utility
         /// <summary>
         /// If there are consumers waiting for the flush operation to finish, it completes the operation.
         /// </summary>
-        private void SetAsFlushed()
-        {
-            lock (this.lockObject)
-            {
-                if (this.flushCompletionSource != null)
-                {
+        private void SetAsFlushed() {
+            lock (this.lockObject) {
+                if (this.flushCompletionSource != null) {
                     // TODO: notify that the Flush operation was terminated, as the process is stopping.
                     this.flushCompletionSource.TrySetResult(true);
                     this.flushCompletionSource = null;
@@ -300,30 +258,24 @@ namespace Transformalize.Libs.SemanticLogging.Utility
         }
 
         // If there are consumers waiting for the flush operation to finish, it returns a failed task.
-        private void FailFlushOperation(Exception exception)
-        {
+        private void FailFlushOperation(Exception exception) {
             AggregateException aggregateException = exception as AggregateException;
-            if (aggregateException != null)
-            {
+            if (aggregateException != null) {
                 exception = aggregateException.Flatten().InnerException;
             }
 
-            lock (this.lockObject)
-            {
-                if (this.flushCompletionSource != null)
-                {
+            lock (this.lockObject) {
+                if (this.flushCompletionSource != null) {
                     this.flushCompletionSource.TrySetException(new FlushFailedException(exception));
                     this.flushCompletionSource = null;
                 }
             }
         }
 
-        private void TriggerFlush()
-        {
+        public void TriggerFlush() {
             // notify to stop waiting for polling interval
             var tokenSource = this.flushTokenSource;
-            if (!tokenSource.IsCancellationRequested)
-            {
+            if (!tokenSource.IsCancellationRequested) {
                 tokenSource.Cancel();
             }
         }
@@ -333,12 +285,9 @@ namespace Transformalize.Libs.SemanticLogging.Utility
         /// </summary>
         /// <param name="interval">The interval to wait.</param>
         /// <returns>Returns a task that will run completion when the time expires, and will reset the flush cancellation token.</returns>
-        private async Task WaitForIntervalAsync(TimeSpan interval)
-        {
-            lock (this.lockObject)
-            {
-                if (this.flushCompletionSource != null || this.disposed)
-                {
+        private async Task WaitForIntervalAsync(TimeSpan interval) {
+            lock (this.lockObject) {
+                if (this.flushCompletionSource != null || this.disposed) {
                     return;
                 }
 
@@ -352,33 +301,27 @@ namespace Transformalize.Libs.SemanticLogging.Utility
                     .ConfigureAwait(false);
         }
 
-        private static void IgnoreTaskCancelation(Task task)
-        {
+        private static void IgnoreTaskCancelation(Task task) {
         }
 
-        private IList<TEntry> GetBatch()
-        {
+        private IList<TEntry> GetBatch() {
             return Enumerable.Take(this.buffer, this.maxBatchSize).ToList();
         }
 
-        private void NotifyOnBufferNotEmpty()
-        {
-            if (this.buffer.Count > 0)
-            {
+        private void NotifyOnBufferNotEmpty() {
+            if (this.buffer.Count > 0) {
                 SemanticLoggingEventSource.Log.BufferedEventPublisherEventsLostWhileDisposing(this.buffer.Count, this.sinkId);
             }
         }
 
-        private class ExponentialBackoff
-        {
+        private class ExponentialBackoff {
             private readonly double minBackoffMilliseconds;
             private readonly double maxBackoffMilliseconds;
             private readonly double deltaBackoffMilliseconds;
 
             private int currentPower;
 
-            public ExponentialBackoff(TimeSpan minBackoff, TimeSpan maxBackoff, TimeSpan deltaBackoff)
-            {
+            public ExponentialBackoff(TimeSpan minBackoff, TimeSpan maxBackoff, TimeSpan deltaBackoff) {
                 Guard.ArgumentGreaterOrEqualThan(0, minBackoff.TotalMilliseconds, "minBackoff");
                 Guard.ArgumentGreaterOrEqualThan(0, maxBackoff.TotalMilliseconds, "maxBackoff");
                 Guard.ArgumentGreaterOrEqualThan(0, deltaBackoff.TotalMilliseconds, "deltaBackoff");
@@ -389,23 +332,20 @@ namespace Transformalize.Libs.SemanticLogging.Utility
                 this.deltaBackoffMilliseconds = deltaBackoff.TotalMilliseconds;
             }
 
-            public TimeSpan GetNextDelay()
-            {
+            public TimeSpan GetNextDelay() {
                 var random = new Random();
 
                 int delta = (int)((Math.Pow(2.0, this.currentPower) - 1.0) * random.Next((int)(this.deltaBackoffMilliseconds * 0.8), (int)(this.deltaBackoffMilliseconds * 1.2)));
                 int interval = (int)Math.Min(checked(this.minBackoffMilliseconds + delta), this.maxBackoffMilliseconds);
 
-                if (interval < this.maxBackoffMilliseconds)
-                {
+                if (interval < this.maxBackoffMilliseconds) {
                     this.currentPower++;
                 }
 
                 return TimeSpan.FromMilliseconds(interval);
             }
 
-            public void Reset()
-            {
+            public void Reset() {
                 this.currentPower = 0;
             }
         }

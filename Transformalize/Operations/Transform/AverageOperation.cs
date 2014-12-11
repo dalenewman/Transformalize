@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Logging;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
@@ -57,8 +58,6 @@ namespace Transformalize.Operations.Transform {
             row[OutKey] = any > 0 ? SwitchType(items) : 0;
         }
 
-
-
         private object SwitchType(IEnumerable<object> items) {
             switch (_outType) {
                 case "decimal":
@@ -74,7 +73,7 @@ namespace Transformalize.Operations.Transform {
                 case "int64":
                     return items.Average(x => Convert.ToInt64(x));
                 default:
-                    Warn("Unable to handle average of type {0}", _outType);
+                    TflLogger.Warn(ProcessName, EntityName, "Unable to handle average of type {0}", _outType);
                     return 0;
             }
         }

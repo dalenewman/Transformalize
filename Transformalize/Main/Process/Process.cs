@@ -22,12 +22,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Tracing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using Transformalize.Extensions;
 using Transformalize.Libs.Dapper;
+using Transformalize.Libs.Lucene.Net.Store;
 using Transformalize.Libs.Ninject;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
@@ -247,25 +249,31 @@ namespace Transformalize.Main {
                             SinkSubscriptions.Add(mailListener.LogToEmail(log));
                             EventListeners.Add(mailListener);
                             break;
+                        case ProviderType.ElasticSearch:
+                            //note: does not work
+                            if (log.Connection == null) {
+                                throw new TransformalizeException(Name, string.Empty, "The elasticsearch logger needs to reference an elasticsearch connection in the <connections/> collection.");
+                            }
+                            var elasticListener = new ObservableEventListener();
+                            elasticListener.EnableEvents(TflEventSource.Log, log.Level);
+                            SinkSubscriptions.Add(
+                                elasticListener.LogToElasticSearch(
+                                    Name,
+                                    log,
+                                    TimeSpan.FromSeconds(5),
+                                    TimeSpan.FromSeconds(10),
+                                    500,
+                                    2000
+                                )
+                            );
+                            EventListeners.Add(elasticListener);
+                            break;
                     }
 
                 }
             } catch (Exception ex) {
                 if (!ShouldLog || Log == null || Log.Count <= 0)
                     return;
-                foreach (var log in Log) {
-                    switch (log.Provider) {
-                        case ProviderType.File:
-                            TflLogger.Info(Name, "Log", "Writing errors to {0}", log.Folder + log.File);
-                            break;
-                        case ProviderType.Mail:
-                            TflLogger.Info(Name, "Log", "Mailing errors to {0}", log.To);
-                            break;
-                        default:
-                            TflLogger.Warn(Name, "Log", "Log does not support {0} provider. You may only add mail and file providers from the configuration.", log.Provider);
-                            break;
-                    }
-                }
                 foreach (var exception in ex.FlattenHierarchy()) {
                     if (exception is IOException) {
                         TflLogger.Warn(Name, string.Empty, exception.Message);
@@ -275,6 +283,24 @@ namespace Transformalize.Main {
                     }
                 }
             }
+
+            foreach (var log in Log) {
+                switch (log.Provider) {
+                    case ProviderType.File:
+                        TflLogger.Info(Name, "Log", "Writing errors to {0}", log.Folder + log.File);
+                        break;
+                    case ProviderType.Mail:
+                        TflLogger.Info(Name, "Log", "Mailing errors to {0}", log.To);
+                        break;
+                    case ProviderType.ElasticSearch:
+                        TflLogger.Info(Name, "Log", "Writing errors to {0}Transformalize/LogEntry", log.Connection.Uri());
+                        break;
+                    default:
+                        TflLogger.Warn(Name, "Log", "Log does not support {0} provider. You may only add mail and file providers from the configuration.", log.Provider);
+                        break;
+                }
+            }
+
 
         }
 
@@ -404,7 +430,6 @@ namespace Transformalize.Main {
             var master = MasterEntity;
             var l = OutputConnection.L;
             var r = OutputConnection.R;
-            var schema = master.SchemaPrefix(l, r);
 
             builder.AppendLine("SELECT");
             builder.Append("    ");
@@ -422,7 +447,6 @@ namespace Transformalize.Main {
 
             builder.AppendLine();
             builder.Append("FROM ");
-            builder.Append(schema);
             builder.Append(l);
             builder.Append(master.OutputName());
             builder.Append(r);
@@ -434,7 +458,6 @@ namespace Transformalize.Main {
                 if (rel.RightEntity.IsMaster()) {
                     builder.Append("m");
                 } else {
-                    builder.Append(rel.RightEntity.SchemaPrefix(l, r));
                     builder.Append(l);
                     builder.Append(rel.RightEntity.OutputName());
                     builder.Append(r);
@@ -476,23 +499,15 @@ namespace Transformalize.Main {
 
             if (!OutputConnection.IsDatabase || Relationships.Count <= 0)
                 return;
-            var view = (MasterEntity.PrependProcessNameToOutputName ? Common.EntityOutputName(MasterEntity, Name) : MasterEntity.Alias) + View;
-            var fullName = MasterEntity.SchemaPrefix(OutputConnection.L, OutputConnection.R) + OutputConnection.Enclose(view);
 
             var connection = OutputConnection.GetConnection();
             connection.Open();
 
-            if (MasterEntity.NeedsSchema()) {
-                if (connection.Query("SELECT TOP(1) TABLE_NAME FROM INFORMATION_SCHEMA.VIEWS WHERE TABLE_SCHEMA = @Schema AND TABLE_NAME = @View;", new { MasterEntity.Schema, View = view }).Any()) {
-                    connection.Execute(string.Format("DROP VIEW {0};", fullName));
-                }
-            } else {
-                if (connection.Query("SELECT TOP(1) TABLE_NAME FROM INFORMATION_SCHEMA.VIEWS WHERE TABLE_NAME = @View;", new { View = view }).Any()) {
-                    connection.Execute(string.Format("DROP VIEW {0};", fullName));
-                }
+            if (connection.Query("SELECT TOP(1) TABLE_NAME FROM INFORMATION_SCHEMA.VIEWS WHERE TABLE_NAME = @View;", new { View }).Any()) {
+                connection.Execute(string.Format("DROP VIEW {0};", OutputConnection.Enclose(View)));
             }
 
-            var outputSql = string.Format("CREATE VIEW {0} AS {1}", fullName, ViewSql());
+            var outputSql = string.Format("CREATE VIEW {0} AS {1}", OutputConnection.Enclose(View), ViewSql());
             TflLogger.Debug(Name, string.Empty, outputSql);
             connection.Execute(outputSql);
             connection.Close();

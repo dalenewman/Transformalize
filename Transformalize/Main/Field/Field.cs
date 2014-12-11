@@ -222,10 +222,6 @@ namespace Transformalize.Main {
             set { _readInnerXml = value; }
         }
 
-        public string SqlDataType {
-            get { return _sqlDataType ?? (_sqlDataType = new SqlServerDataTypeService().GetDataType(this)); }
-        }
-
         /// <summary>
         ///     FieldType can affect Output
         /// </summary>

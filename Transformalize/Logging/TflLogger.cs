@@ -8,14 +8,13 @@ namespace Transformalize.Logging {
     public static class TflLogger {
 
         private const string DELIMITER = " | ";
-        private const int PROCESS_LENGTH = 12;
-        private const int ENTITY_LENGTH = 18;
+        private const int PROCESS_LENGTH = 20;
+        private const int ENTITY_LENGTH = 20;
         private static readonly ObjectPool<StringBuilder> StringBuilders = new ObjectPool<StringBuilder>(() => new StringBuilder());
-        public static bool IsDebugEnabled { get { return TflEventSource.Log.IsEnabled(EventLevel.LogAlways, Keywords.All); } }
+        public static bool IsDebugEnabled { get { return TflEventSource.Log.IsEnabled(EventLevel.Verbose, Keywords.All); } }
         public static bool IsErrorEnabled { get { return TflEventSource.Log.IsEnabled(EventLevel.Error, Keywords.All); } }
         public static bool IsWarnEnabled { get { return TflEventSource.Log.IsEnabled(EventLevel.Warning, Keywords.All); } }
         public static bool IsInfoEnabled { get { return TflEventSource.Log.IsEnabled(EventLevel.Informational, Keywords.All); } }
-        public static bool IsTraceEnabled { get { return TflEventSource.Log.IsEnabled(EventLevel.LogAlways, Keywords.All); } }
 
         private static StringBuilder GetStringBuilder(string level, string process, string entity) {
             var sb = StringBuilders.GetObject();
