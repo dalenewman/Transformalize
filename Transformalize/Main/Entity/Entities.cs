@@ -21,7 +21,7 @@ namespace Transformalize.Main {
         /// Just Name (without alias)
         /// Both Alias AND Name
         /// Alias OR Name
-        /// Matching both name and alias to nameOrAlias takes precedence matching name or alias
+        /// Matching both name and alias to nameOrAlias takes precedence over matching name or alias
         /// </summary>
         /// <param name="nameOrAlias"></param>
         /// <returns></returns>

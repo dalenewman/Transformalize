@@ -2,16 +2,20 @@
 using System.Diagnostics;
 using Orchard;
 using Orchard.ContentManagement;
+using Orchard.Core.Title.Models;
+using Orchard.Logging;
 using Transformalize.Orchard.Models;
 
 namespace Transformalize.Orchard.Services {
 
     public class ApiService : IApiService {
         private readonly IOrchardServices _orchardServices;
-
         private readonly Stopwatch _stopwatch = new Stopwatch();
 
+        protected ILogger Logger { get; set; }
+
         public ApiService(IOrchardServices orchardServices) {
+            Logger = NullLogger.Instance;
             _orchardServices = orchardServices;
             _stopwatch.Start();
         }
@@ -47,6 +51,7 @@ namespace Transformalize.Orchard.Services {
             }
 
             if (part == null) {
+                Logger.Error("No Configuration for id {0}.  Requested by {1} at {2}.", id, context.User.Identity.IsAuthenticated ? context.User.Identity.Name : "Anonymous", context.Request.UserHostAddress);
                 response.Add(NotFound(request));
                 return response;
             }
@@ -59,10 +64,12 @@ namespace Transformalize.Orchard.Services {
                 if (_orchardServices.Authorizer.Authorize(global::Orchard.Core.Contents.Permissions.ViewContent, part)) {
                     return response;
                 }
+                Logger.Error("Not authorized to run {0}.  Requested by {1} at {2}.", part.As<TitlePart>().Title, context.User.Identity.Name, context.Request.UserHostAddress);
                 response.Add(Unathorized(request));
                 return response;
             }
 
+            Logger.Error("Not authorized to run {0}.  Requested by Anonymous at {1}.", part.As<TitlePart>().Title, context.Request.UserHostAddress);
             response.Add(Unathorized(request));
             return response;
         }

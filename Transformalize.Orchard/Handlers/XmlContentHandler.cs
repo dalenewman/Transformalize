@@ -35,7 +35,7 @@ namespace Transformalize.Orchard.Handlers {
                 xmlWriter.WriteAttributeString("level", attributes[1].TrimEnd());
                 xmlWriter.WriteAttributeString("process", attributes[2]);
                 xmlWriter.WriteAttributeString("entity", attributes[3]);
-                xmlWriter.WriteAttributeString("message", attributes[4].TrimEnd(new []{' ','\r','\n'}));
+                xmlWriter.WriteAttributeString("message", attributes[4].TrimEnd(new[] { ' ', '\r', '\n' }));
 
                 xmlWriter.WriteEndElement();
             }
@@ -50,22 +50,30 @@ namespace Transformalize.Orchard.Handlers {
             }
 
             var builder = new StringBuilder();
-            var doc = XDocument.Parse(configuration);
-            var environments = doc.Descendants("environments").Any() ? XmlNodesToString(doc.Descendants("environments").First().Nodes()) : string.Empty;
-            var processes = XmlNodesToString(doc.Descendants("processes").First().Nodes());
+
+            XElement doc;
+            string processes;
 
             switch (request.RequestType) {
                 case ApiRequestType.MetaData:
                     var metaData = XDocument.Parse(meta).Descendants("entities").First().ToString();
-                    builder.AppendFormat(XML_TEMPLATE, "metadata", 200, "OK", request.Stopwatch.ElapsedMilliseconds, environments, processes, metaData, LogsToXml(response.Log));
+                    builder.AppendFormat(XML_TEMPLATE, "metadata", 200, "OK", request.Stopwatch.ElapsedMilliseconds, string.Empty, string.Empty, metaData, LogsToXml(response.Log));
                     return builder.ToString();
 
                 case ApiRequestType.Configuration:
+                    doc = XDocument.Parse(configuration).Root;
+                    var environments = doc.Descendants("environments").Any() ? XmlNodesToString(doc.Descendants("environments").First().Nodes()) : string.Empty;
+                    processes = XmlNodesToString(doc.Element("processes").Nodes());
                     builder.AppendFormat(XML_TEMPLATE, "configuration", 200, "OK", request.Stopwatch.ElapsedMilliseconds, environments, processes, string.Empty, LogsToXml(response.Log));
                     return builder.ToString();
 
                 case ApiRequestType.Execute:
                     string results;
+                    doc = XDocument.Parse(configuration).Root;
+                    var nodes = doc.Element("processes");
+                    nodes.Descendants("connections").Remove();
+                    nodes.Descendants("parameters").Remove();
+                    processes = XmlNodesToString(nodes.Nodes());
                     switch (request.Flavor) {
                         case "attributes":
                             results = new XmlResultsToAttributesHandler().Handle(response.Processes);
@@ -77,11 +85,11 @@ namespace Transformalize.Orchard.Handlers {
                             results = new XmlResultsToDictionaryHandler().Handle(response.Processes);
                             break;
                     }
-                    builder.AppendFormat(XML_TEMPLATE, "execute", 200, "OK", request.Stopwatch.ElapsedMilliseconds, environments, processes, results, LogsToXml(response.Log));
+                    builder.AppendFormat(XML_TEMPLATE, "execute", 200, "OK", request.Stopwatch.ElapsedMilliseconds, string.Empty, processes, results, LogsToXml(response.Log));
                     return builder.ToString();
 
                 default:
-                    builder.AppendFormat(XML_TEMPLATE, "configuration", 200, "OK", request.Stopwatch.ElapsedMilliseconds, environments, processes, string.Empty, LogsToXml(response.Log));
+                    builder.AppendFormat(XML_TEMPLATE, "configuration", 200, "OK", request.Stopwatch.ElapsedMilliseconds, string.Empty, string.Empty, string.Empty, LogsToXml(response.Log));
                     return builder.ToString();
             }
 

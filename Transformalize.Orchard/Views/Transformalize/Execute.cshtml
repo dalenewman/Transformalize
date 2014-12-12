@@ -41,12 +41,17 @@
                             color = "info";
                             break;
                         default:
-                            color = "";
+                            color = "default";
                             break;
                     }
                     <tr class="@color">
-                        @foreach (var field in fields) {
-                            <td>@field</td>
+                        @for (int i = 0; i < fields.Length; i++) {
+                            var field = fields[i].Trim(new []{' ','.'});
+                            if (i == 1) {
+                                <td><span class="label label-@color">@field</span></td>
+                            } else {
+                                <td>@field</td>
+                            }
                         }
                     </tr>
                 }

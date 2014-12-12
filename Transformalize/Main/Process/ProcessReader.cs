@@ -78,7 +78,7 @@ namespace Transformalize.Main {
             if (_options.Mode != Common.DefaultValue && _options.Mode != _process.Mode) {
                 _process.Mode = _options.Mode;
             }
-            TflLogger.Info(_processName, string.Empty, "Mode is set to {0}", _process.Mode);
+            TflLogger.Info(_processName, string.Empty, "Mode is {0}", _process.Mode);
 
             //shared across the process
             var connectionFactory = new ConnectionFactory(_process);

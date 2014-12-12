@@ -221,7 +221,7 @@ namespace Transformalize.Main {
         public void StartLogging() {
 
             try {
-                if (!_logStarted && (!ShouldLog || Log == null || Log.Count <= 0))
+                if (_logStarted || !ShouldLog || Log == null || Log.Count <= 0)
                     return;
 
                 foreach (var log in Log) {

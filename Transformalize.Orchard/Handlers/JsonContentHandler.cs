@@ -56,42 +56,50 @@ namespace Transformalize.Orchard.Handlers {
             }
 
             var converter = new OneWayXmlNodeConverter();
-            var doc = XDocument.Parse(configuration);
-            var environments = JsonConvert.SerializeObject(doc.Descendants("environments").Any() ? doc.Descendants("environments").First().Nodes() : new string[0] as object, Formatting.None, converter);
-            var processes = JsonConvert.SerializeObject(doc.Descendants("processes").First().Nodes(), Formatting.None, converter);
+
+            XElement doc;
+            string processes;
 
             switch (request.RequestType) {
                 case ApiRequestType.MetaData:
                     var metaData = JsonConvert.SerializeObject(XDocument.Parse(meta).Descendants("entities").First(), Formatting.None, converter);
-                    builder.AppendFormat(JSON_TEMPLATE, "metadata", 200, "OK", request.Stopwatch.ElapsedMilliseconds, environments, processes, metaData, LogsToJson(response.Log));
+                    builder.AppendFormat(JSON_TEMPLATE, "metadata", 200, "OK", request.Stopwatch.ElapsedMilliseconds, string.Empty, string.Empty, metaData, LogsToJson(response.Log));
                     return builder.ToString();
 
                 case ApiRequestType.Configuration:
+                    doc = XDocument.Parse(configuration).Root;
+                    string environments = JsonConvert.SerializeObject(doc.Elements("environments").Any() ? doc.Element("environments").Nodes() : new string[0] as object, Formatting.None, converter);
+                    processes = JsonConvert.SerializeObject(doc.Element("processes").Nodes(), Formatting.None, converter);
                     builder.AppendFormat(JSON_TEMPLATE, "configuration", 200, "OK", request.Stopwatch.ElapsedMilliseconds, environments, processes, "[]", LogsToJson(response.Log));
                     return builder.ToString();
 
                 case ApiRequestType.Execute:
                     string results;
+                    doc = XDocument.Parse(configuration).Root;
+                    var nodes = doc.Element("processes");
+                    nodes.Descendants("parameters").Remove();
+                    nodes.Descendants("connections").Remove();
+                    processes = JsonConvert.SerializeObject(nodes.Nodes(), Formatting.None, converter);
                     switch (request.Flavor) {
-                        case "array":
-                            goto case "arrays";
                         case "arrays":
                             results = new JsonResultsToArrayHandler().Handle(response.Processes);
                             break;
-                        case "dictionary":
-                            goto case "dictionaries";
+                        case "array":
+                            goto case "arrays";
                         case "dictionaries":
                             results = new JsonResultsToDictionaryHandler().Handle(response.Processes);
                             break;
+                        case "dictionary":
+                            goto case "dictionaries";
                         default:
                             results = new JsonResultsToObjectHandler().Handle(response.Processes);
                             break;
                     }
-                    builder.AppendFormat(JSON_TEMPLATE, "execute", 200, "OK", request.Stopwatch.ElapsedMilliseconds, environments, processes, results, LogsToJson(response.Log));
+                    builder.AppendFormat(JSON_TEMPLATE, "execute", 200, "OK", request.Stopwatch.ElapsedMilliseconds, "[]", processes, results, LogsToJson(response.Log));
                     return builder.ToString();
 
                 default:
-                    builder.AppendFormat(JSON_TEMPLATE, "configuration", 200, "OK", request.Stopwatch.ElapsedMilliseconds, environments, processes, "[]", LogsToJson(response.Log));
+                    builder.AppendFormat(JSON_TEMPLATE, "configuration", 200, "OK", request.Stopwatch.ElapsedMilliseconds, "[]", "[]", "[]", LogsToJson(response.Log));
                     return builder.ToString();
             }
         }

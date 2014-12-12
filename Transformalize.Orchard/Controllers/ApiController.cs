@@ -14,7 +14,6 @@ namespace Transformalize.Orchard.Controllers {
         private const string DEFAULT_FORMAT = "xml";
         private const string DEFAULT_FLAVOR = "attributes";
 
-        private readonly IOrchardServices _orchardServices;
         private readonly ITransformalizeService _transformalize;
         private readonly IApiService _apiService;
         private readonly Stopwatch _stopwatch = new Stopwatch();
@@ -22,12 +21,10 @@ namespace Transformalize.Orchard.Controllers {
         public Localizer T { get; set; }
 
         public ApiController(
-            IOrchardServices services,
             ITransformalizeService transformalize,
             IApiService apiService
         ) {
             _stopwatch.Start();
-            _orchardServices = services;
             _transformalize = transformalize;
             _apiService = apiService;
             T = NullLocalizer.Instance;

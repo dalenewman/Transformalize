@@ -16,14 +16,14 @@ namespace Transformalize.Main {
             var isTemplate = string.IsNullOrEmpty(action.File);
             var file = isTemplate ? action.RenderedFile : action.File;
 
-            var mail = new MailMessage {
-                From = new MailAddress(action.From)
-            };
-
             if (action.To.Equals(string.Empty)) {
                 TflLogger.Warn(action.ProcessName, string.Empty, "Couldn't send email. No 'to' provided.");
                 return;
             }
+
+            var mail = new MailMessage {
+                From = new MailAddress(string.IsNullOrEmpty(action.From) ? action.To : action.From)
+            };
 
             if (action.Connection == null) {
                 TflLogger.Warn(action.ProcessName, string.Empty, "Couldn't send email.  Mail action needs a valid connection.");

@@ -28,6 +28,7 @@ using System.Text;
 using System.Xml.Linq;
 using Transformalize.Configuration;
 using Transformalize.Libs.NanoXml;
+using Transformalize.Libs.SharpZLib.Encryption;
 using Transformalize.Logging;
 using Transformalize.Main;
 
@@ -52,13 +53,12 @@ namespace Transformalize.Runner {
                 if (transformalize == null)
                     throw new TransformalizeException(string.Empty, string.Empty, "Can't find the <transformalize/> element in {0}.", string.IsNullOrEmpty(contents.Name) ? "the configuration" : contents.Name);
 
-                // The Transformalize.Orchard API returns these elements, but .NET Configuration doesn't allow them.
-                var apiElements = new[] { "request", "status", "message", "time", "response", "log" };
-                foreach (var element in apiElements.Where(element => transformalize.Elements(element).Any())) {
-                    transformalize.Elements(element).Remove();
+                var apiElements = HandleApiElements(transformalize);
+                if (apiElements.ContainsKey("status") && apiElements["status"] != "200") {
+                    TflLogger.Warn(string.Empty, string.Empty, "API at {0} responded with {1} {2}.", _resource, apiElements["status"], apiElements["message"]);
                 }
             } catch (Exception e) {
-                throw new TransformalizeException("Couldn't parse {0}.  Make sure it is valid XML and try again. {1}", contents.Name, e.Message);
+                throw new TransformalizeException(string.Empty, string.Empty, "Couldn't parse {0}.  Make sure it is valid XML and try again. {1}", contents.Name, e.Message);
             }
 
             try {
@@ -66,9 +66,24 @@ namespace Transformalize.Runner {
                     DefaultParameters(transformalize.ToString())
                 );
                 return section.Processes;
-            } catch (ConfigurationErrorsException e) {
-                throw new TransformalizeException("Couldn't parse {0}.  {1}", contents.Name, e.Message);
+            } catch (Exception e) {
+                throw new TransformalizeException(string.Empty, string.Empty, "Couldn't deserialize {0}.  {1}", contents.Name, e.Message);
             }
+
+        }
+
+        private static Dictionary<string, string> HandleApiElements(XContainer transformalize) {
+            // The Transformalize.Orchard API returns these elements, but .NET Configuration doesn't allow them.
+            var apiElements = new[] { "request", "status", "message", "time", "response", "log" };
+            var apiContents = new Dictionary<string, string>();
+            foreach (var element in apiElements.Where(element => transformalize.Elements(element).Any())) {
+                var node = transformalize.Element(element);
+                if (node != null) {
+                    apiContents[element] = node.Value;
+                }
+                transformalize.Elements(element).Remove();
+            }
+            return apiContents;
         }
 
         public static string DefaultParameters(string xml) {

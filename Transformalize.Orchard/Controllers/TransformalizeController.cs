@@ -142,11 +142,11 @@ namespace Transformalize.Orchard.Controllers {
                 try {
                     model.TransformalizeResponse = _transformalize.Run(transformalizeRequest);
                 } catch (Exception ex) {
+                    model.DisplayLog = true;
+                    model.TransformalizeResponse.Log.Add(string.Format("{0} | error | orchard | . | {1}", DateTime.Now.ToString("HH:mm:ss"), ex.Message));
+                    model.TransformalizeResponse.Log.Add(string.Format("{0} | debug | orchard | . | {1}", DateTime.Now.ToString("HH:mm:ss"), ex.StackTrace));
                     TflLogger.Error(string.Empty, string.Empty, ex.Message);
                     TflLogger.Warn(string.Empty, string.Empty, ex.StackTrace);
-                    if (!part.DisplayLog) {
-                        _orchardServices.Notifier.Add(NotifyType.Error, T(ex.Message));
-                    }
                 }
             } else {
                 model.TransformalizeResponse = _transformalize.Run(transformalizeRequest);
