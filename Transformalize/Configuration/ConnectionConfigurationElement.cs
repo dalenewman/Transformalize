@@ -35,7 +35,6 @@ namespace Transformalize.Configuration {
         private readonly char[] _slash = { '/' };
 
         private const string NAME = "name";
-        private const string COMPATABILITY_LEVEL = "compatibility-level";
         private const string PROVIDER = "provider";
         private const string BATCH_SIZE = "batch-size";
         private const string ENABLED = "enabled";
@@ -59,8 +58,6 @@ namespace Transformalize.Configuration {
         private const string PATH = "path";
         private const string ENABLE_SSL = "enable-ssl";
         private const string SCHEMA = "schema";
-        private const string TABLE = "table";
-        private const string VIEW = "view";
         private const string ENCODING = "encoding";
         private const string VERSION = "version";
         private const string DIRECT = "direct";
@@ -118,18 +115,6 @@ namespace Transformalize.Configuration {
         public string Schema {
             get { return this[SCHEMA] as string; }
             set { this[SCHEMA] = value; }
-        }
-
-        [ConfigurationProperty(TABLE, IsRequired = false, DefaultValue = "")]
-        public string Table {
-            get { return this[TABLE] as string; }
-            set { this[TABLE] = value; }
-        }
-
-        [ConfigurationProperty(VIEW, IsRequired = false, DefaultValue = "")]
-        public string View {
-            get { return this[VIEW] as string; }
-            set { this[VIEW] = value; }
         }
 
         [ConfigurationProperty(PATH, IsRequired = false, DefaultValue = "")]
@@ -222,12 +207,6 @@ namespace Transformalize.Configuration {
         public string Server {
             get { return this[SERVER] as string; }
             set { this[SERVER] = value; }
-        }
-
-        [ConfigurationProperty(COMPATABILITY_LEVEL, IsRequired = false, DefaultValue = 0)]
-        public int CompatabilityLevel {
-            get { return (int)this[COMPATABILITY_LEVEL]; }
-            set { this[COMPATABILITY_LEVEL] = value; }
         }
 
         [ConfigurationProperty(PROVIDER, IsRequired = false, DefaultValue = "SqlServer")]

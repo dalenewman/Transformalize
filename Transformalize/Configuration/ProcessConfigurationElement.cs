@@ -135,7 +135,7 @@ namespace Transformalize.Configuration {
         /// 
         /// `True` by default.
         /// 
-        /// Indicates the process is enabed.  The included executable (e.g. `tfl.exe`) 
+        /// Indicates the process is enabled.  The included executable (e.g. `tfl.exe`) 
         /// respects this setting and does not run the process if disabled (or `False`).
         /// </summary>
         [ConfigurationProperty(ENABLED, IsRequired = false, DefaultValue = true)]

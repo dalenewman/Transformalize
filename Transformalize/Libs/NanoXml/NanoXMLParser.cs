@@ -226,7 +226,7 @@ namespace Transformalize.Libs.NanoXml {
         /// <summary>
         ///     List of attributes
         /// </summary>
-        public IEnumerable<NanoXmlAttribute> Attributes {
+        public List<NanoXmlAttribute> Attributes {
             get { return attributes; }
         }
 

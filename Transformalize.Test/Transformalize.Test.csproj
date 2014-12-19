@@ -113,6 +113,7 @@
     <Compile Include="TestFileInformationFactory.cs" />
     <Compile Include="TestInput.cs" />
     <Compile Include="TestEventSource.cs" />
+    <Compile Include="TestBenchmark.cs" />
     <Compile Include="TextXmlContentHandler.cs" />
     <Compile Include="TestOptions.cs" />
     <Compile Include="TestOutput.cs" />
@@ -125,6 +126,7 @@
     <Compile Include="TestValidators.cs" />
     <Compile Include="TestWarehouse.cs" />
     <Compile Include="TestWithProcess.cs" />
+    <Compile Include="TflAttributes.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

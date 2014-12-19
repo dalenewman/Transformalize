@@ -3888,6 +3888,7 @@
   <ItemGroup>
     <Folder Include="Libs\SharpZLib\obj\Debug\TempPE\" />
     <Folder Include="Main\Providers\Sqloogle\" />
+    <Folder Include="Model\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Libs\EnterpriseLibrary\Common\Configuration\DesignResources.resx" />
