@@ -57,7 +57,6 @@ namespace Transformalize.Configuration {
         private const string FOOTER = "footer";
         private const string PATH = "path";
         private const string ENABLE_SSL = "enable-ssl";
-        private const string SCHEMA = "schema";
         private const string ENCODING = "encoding";
         private const string VERSION = "version";
         private const string DIRECT = "direct";
@@ -109,12 +108,6 @@ namespace Transformalize.Configuration {
         public string User {
             get { return this[USER] as string; }
             set { this[USER] = value; }
-        }
-
-        [ConfigurationProperty(SCHEMA, IsRequired = false, DefaultValue = "")]
-        public string Schema {
-            get { return this[SCHEMA] as string; }
-            set { this[SCHEMA] = value; }
         }
 
         [ConfigurationProperty(PATH, IsRequired = false, DefaultValue = "")]

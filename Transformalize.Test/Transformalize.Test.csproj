@@ -126,7 +126,7 @@
     <Compile Include="TestValidators.cs" />
     <Compile Include="TestWarehouse.cs" />
     <Compile Include="TestWithProcess.cs" />
-    <Compile Include="TflAttributes.cs" />
+    <Compile Include="TflNode.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

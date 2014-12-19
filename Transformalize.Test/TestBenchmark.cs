@@ -21,20 +21,13 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using Microsoft.SqlServer.Server;
 using NUnit.Framework;
 using Transformalize.Configuration;
-using Transformalize.Libs.DBDiff.Schema.SqlServer2005.Model;
 using Transformalize.Libs.NanoXml;
-using Transformalize.Libs.Nest.Domain.Mapping.Descriptors;
-using Transformalize.Libs.SolrNet.Utils;
 using Transformalize.Main;
 
 namespace Transformalize.Test {
@@ -99,81 +92,65 @@ namespace Transformalize.Test {
 
     }
 
-    public class TflRoot : TflAttributes {
+    public class TflRoot : TflNode {
         public TflRoot(NanoXmlNode node)
             : base(node) {
-            Element<TflProcess>("processes");
-            Element<TflEnvironment>("environments");
+            Elements<TflEnvironment>("environments");
+            Elements<TflProcess>("processes");
         }
     }
 
-    public class TflEnvironment : TflAttributes {
+    public class TflEnvironment : TflNode {
         public TflEnvironment(NanoXmlNode node)
             : base(node) {
-            Attributes["default"] = Empty();
+            Attribute(string.Empty, "name");
+            Elements<TflParameter>("parameters");
         }
     }
 
-    public class TflConnection : TflAttributes {
+    public class TflParameter : TflNode {
+        public TflParameter(NanoXmlNode node)
+            : base(node) {
+            Attribute(string.Empty, "entity", "field", "name", "value");
+            Attribute(true, "input");
+            Attribute("string", "type");
+        }
+    }
+
+    public class TflConnection : TflNode {
         public TflConnection(NanoXmlNode node)
             : base(node) {
 
-            Attribute("batch-size", 500);
-            Attribute("connection-string", string.Empty);
-            Attribute("content-type", string.Empty);
-            Attribute("data", Common.DefaultValue);
-            Attribute("database", string.Empty);
-            Attribute("date-format", "MM/dd/yyyy h:mm:ss tt");
-            Attribute("delimiter", ",");
-            Attribute("direct", false);
-            Attribute("enabled", true);
-            Attribute("enable-ssl", false);
-            Attribute("encoding", "utf-8");
-            Attribute("end", 0);
-            Attribute("error-mode", string.Empty);
-            Attribute("file", string.Empty);
-            Attribute("folder", string.Empty);
-            Attribute("footer", string.Empty);
-            Attribute("header", Common.DefaultValue);
-            Attribute("name", string.Empty);
-            Attribute("password", string.Empty);
-            Attribute("path", string.Empty);
-            Attribute("port", 0);
-            Attribute("provider", "SqlServer");
-            Attribute("schema", string.Empty);
-            Attribute("search-option", "TopDirectoryOnly");
-            Attribute("search-pattern", "*.*");
-            Attribute("server", "localhost");
-            Attribute("start", 1);
-            Attribute("table", string.Empty);
-            Attribute("url", string.Empty);
-            Attribute("user", string.Empty);
-            Attribute("version", Common.DefaultValue);
-            Attribute("view", string.Empty);
-            Attribute("web-method", "GET");
+            Attribute(500, "batch-size");
+            Attribute(string.Empty, "connection-string", "content-type", "database", "error-mode", "file", "folder", "footer", "name", "password", "path", "url", "user");
+            Attribute(Common.DefaultValue, "data", "header", "version");
+            Attribute("MM/dd/yyyy h:mm:ss tt", "date-format");
+            Attribute(",", "delimiter");
+            Attribute(false, "direct", "enable-ssl");
+            Attribute(true, "enabled");
+            Attribute("utf-8", "encoding");
+            Attribute(0, "end", "port");
+            Attribute("SqlServer", "provider");
+            Attribute("TopDirectoryOnly", "search-option");
+            Attribute("*.*", "search-pattern");
+            Attribute("localhost", "server");
+            Attribute(1, "start");
+            Attribute("GET", "web-method");
         }
 
     }
 
-    public class TflProcess : TflAttributes {
+    public class TflProcess : TflNode {
 
         public TflProcess(NanoXmlNode node)
             : base(node) {
 
-            Attribute("name", string.Empty);
-            Attribute("mode", string.Empty);
-            Attribute("pipeline-threading", string.Empty);
-            Attribute("inherit", string.Empty);
-            Attribute("time-zone", string.Empty);
-            Attribute("enabled", true);
-            Attribute("star-enabled", true);
-            Attribute("star", string.Empty);
-            Attribute("view-enabled", true);
-            Attribute("view", string.Empty);
-            Attribute("template-content-type", string.Empty);
-            Attribute("parallel", true);
+            Attribute(string.Empty, "name", "mode", "pipeline-threading", "inherit", "time-zone", "star", "view");
+            Attribute(true, "enabled", "star-enabled", "view-enabled", "parallel");
+            Attribute("raw", "template-content-type");
 
-            Element<TflConnection>("connections");
+            Elements<TflParameter>("parameters");
+            Elements<TflConnection>("connections");
         }
 
     }

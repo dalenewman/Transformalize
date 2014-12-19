@@ -1,6 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <transformalize>
+
+  <environments default="prod" >
+    <add name="prod" >
+      <parameters>
+        <add name="SqlServer" value="p" />
+      </parameters>
+    </add>
+    <add name="test" >
+      <parameters>
+        <add name="SqlServer" value="AclaraTestSrv.mwf.local" />
+      </parameters>
+    </add>
+  </environments>
+
   <processes>
+   
     <add name="NorthWind" enabled="true">
 
       <log rows="1000">
