@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using Transformalize.Libs.Lucene.Net.Util;
 using Transformalize.Libs.NanoXml;
+using Transformalize.Libs.Newtonsoft.Json.Converters;
 
 namespace Transformalize.Test {
 
@@ -47,10 +48,12 @@ namespace Transformalize.Test {
             }
         }
 
+        // Get an element by index
         public TflNode this[string element, int i] {
             get { return _elements[element][i]; }
         }
 
+        // Get an attribute by name
         public TflMeta this[string name] {
             get { return _attributes[name]; }
         }
@@ -61,7 +64,7 @@ namespace Transformalize.Test {
             _node = node;
         }
 
-        protected void Elements<T>(string element) {
+        protected void Element<T>(string element) {
             ElementLoaders[element] = n => ((TflNode)Activator.CreateInstance(typeof(T), n));
         }
 
@@ -73,6 +76,11 @@ namespace Transformalize.Test {
             if (unique) {
                 _unique.Add(name);
             }
+        }
+
+        // Convenience method for keys
+        protected void Key(string name, bool unique = true) {
+            Attribute(name, string.Empty, true, unique);
         }
 
         public TflNode Load() {
@@ -144,6 +152,10 @@ namespace Transformalize.Test {
 
         public Dictionary<string, TflMeta> Attributes {
             get { return _attributes; }
+        }
+
+        public Dictionary<string, List<TflNode>> Elements {
+            get { return _elements; }
         }
 
     }

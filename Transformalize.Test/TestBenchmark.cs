@@ -81,10 +81,13 @@ namespace Transformalize.Test {
             sw.Stop();
             Console.WriteLine("Root: {0}", sw.ElapsedMilliseconds);
 
-            Assert.AreEqual(new TflMeta("NorthWind").Value, root["processes", 0]["name"].Value);
-            Assert.AreEqual(new TflMeta("").Value, root["processes", 0]["mode"].Value);
-            Assert.AreEqual(new TflMeta(string.Empty).Value, root["processes", 0]["pipeline-threading"].Value);
-            Assert.AreEqual(new TflMeta(true).Value, root["processes", 0]["enabled"].Value);
+            Assert.AreEqual("NorthWind", root["processes", 0]["name"].Value);
+            Assert.AreEqual(string.Empty, root["processes", 0]["mode"].Value);
+            Assert.AreEqual(string.Empty, root["processes", 0]["pipeline-threading"].Value);
+            Assert.AreEqual(true, root["processes", 0]["enabled"].Value);
+
+            Assert.AreEqual("prod", root["environments", 0]["name"].Value);
+            Assert.AreEqual("test", root["environments", 1]["name"].Value);
 
             Assert.AreEqual(new TflMeta("NorthWindStar").Value, root["processes", 0]["connections", 1]["database"].Value);
 
@@ -94,89 +97,108 @@ namespace Transformalize.Test {
 
     public class TflRoot : TflNode {
 
+        public TflRoot(NanoXmlNode node)
+            : base(node) {
+            Element<TflEnvironment>("environments");
+            Element<TflProcess>("processes");
+        }
+
         internal class TflEnvironment : TflNode {
             public TflEnvironment(NanoXmlNode node)
                 : base(node) {
                 Attribute("name", string.Empty, true, true);
-                Elements<TflParameter>("parameters");
+                Element<TflParameter>("parameters");
             }
         }
 
         internal class TflProcess : TflNode {
 
+            public TflProcess(NanoXmlNode node)
+                : base(node) {
+
+                Key("name");
+
+                Attribute("enabled", true);
+                Attribute("inherit", string.Empty);
+                Attribute("mode", string.Empty);
+                Attribute("parallel", true);
+                Attribute("pipeline-threading", string.Empty);
+                Attribute("star", string.Empty);
+                Attribute("star-enabled", true);
+                Attribute("template-content-type", "raw");
+                Attribute("time-zone", string.Empty);
+                Attribute("view", string.Empty);
+                Attribute("view-enabled", true);
+
+                Element<TflParameter>("parameters");
+                Element<TflConnection>("connections");
+                Element<TflProvider>("providers");
+                Element<TflLog>("log");
+                Element<TflSearchType>("search-types");
+                Element<TflMap>("maps");
+            }
+
             internal class TflConnection : TflNode {
                 public TflConnection(NanoXmlNode node)
                     : base(node) {
+                    Key("name");
 
                     Attribute("batch-size", 500);
                     Attribute("connection-string", string.Empty);
                     Attribute("content-type", string.Empty);
+                    Attribute("data", Common.DefaultValue);
                     Attribute("database", string.Empty);
+                    Attribute("date-format", "MM/dd/yyyy h:mm:ss tt");
+                    Attribute("delimiter", ",");
+                    Attribute("direct", false);
+                    Attribute("enabled", true);
+                    Attribute("enable-ssl", false);
+                    Attribute("encoding", "utf-8");
+                    Attribute("end", 0);
                     Attribute("error-mode", string.Empty);
                     Attribute("file", string.Empty);
                     Attribute("folder", string.Empty);
                     Attribute("footer", string.Empty);
-                    Attribute("name", string.Empty);
+                    Attribute("header", Common.DefaultValue);
                     Attribute("password", string.Empty);
                     Attribute("path", string.Empty);
-                    Attribute("url", string.Empty);
-                    Attribute("user", string.Empty);
-                    Attribute("data", Common.DefaultValue);
-                    Attribute("header", Common.DefaultValue);
-                    Attribute("version", Common.DefaultValue);
-                    Attribute("date-format", "MM/dd/yyyy h:mm:ss tt");
-                    Attribute("delimiter", ",");
-                    Attribute("direct", false);
-                    Attribute("enable-ssl", false);
-                    Attribute("enabled", true);
-                    Attribute("encoding", "utf-8");
-                    Attribute("end", 0);
                     Attribute("port", 0);
                     Attribute("provider", "SqlServer");
                     Attribute("search-option", "TopDirectoryOnly");
                     Attribute("search-pattern", "*.*");
                     Attribute("server", "localhost");
                     Attribute("start", 1);
+                    Attribute("url", string.Empty);
+                    Attribute("user", string.Empty);
+                    Attribute("version", Common.DefaultValue);
                     Attribute("web-method", "GET");
                 }
             }
 
-            public TflProcess(NanoXmlNode node)
-                : base(node) {
-
-                Attribute("name", string.Empty);
-                Attribute("mode", string.Empty);
-                Attribute("pipeline-threading", string.Empty);
-                Attribute("inherit", string.Empty);
-                Attribute("time-zone", string.Empty);
-                Attribute("star", string.Empty);
-                Attribute("view", string.Empty);
-
-                Attribute("enabled", true);
-                Attribute("star-enabled", true);
-                Attribute("view-enabled", true);
-                Attribute("parallel", true);
-
-                Attribute("template-content-type", "raw");
-
-                Elements<TflParameter>("parameters");
-                Elements<TflConnection>("connections");
-                Elements<TflProvider>("providers");
-                Elements<TflLog>("log");
+            internal class TflSearchType : TflNode {
+                public TflSearchType(NanoXmlNode node)
+                    : base(node) {
+                    Key("name");
+                    Attribute("store", true);
+                    Attribute("index", true);
+                    Attribute("multi-valued", false);
+                    Attribute("analyzer", string.Empty);
+                    Attribute("norms", true);
+                }
             }
 
             internal class TflProvider : TflNode {
                 public TflProvider(NanoXmlNode node)
                     : base(node) {
-                    Attribute("name", string.Empty, true, true);
-                    Attribute("type", "SqlServer", true);
+                    Key("name");
+                    Attribute("type", string.Empty, true);
                 }
             }
 
             internal class TflLog : TflNode {
                 public TflLog(NanoXmlNode node)
                     : base(node) {
-                    Attribute("name", string.Empty, true, true);
+                    Key("name");
                     Attribute("provider", Common.DefaultValue);
                     Attribute("layout", Common.DefaultValue);
                     Attribute("level", "Informational");
@@ -189,13 +211,28 @@ namespace Transformalize.Test {
                     Attribute("async", false);
                 }
             }
+
+            internal class TflMap : TflNode {
+                public TflMap(NanoXmlNode node)
+                    : base(node) {
+                    Key("name");
+                    Attribute("connection", "input");
+                    Attribute("query", string.Empty);
+                    Element<TflMapItem>("items");
+                }
+
+                internal class TflMapItem : TflNode {
+                    public TflMapItem(NanoXmlNode node)
+                        : base(node) {
+                        Key("from");
+                        Attribute("operator", "equals");
+                        Attribute("parameter", string.Empty);
+                        Attribute("to", string.Empty);
+                    }
+                }
+            }
         }
 
-        public TflRoot(NanoXmlNode node)
-            : base(node) {
-            Elements<TflEnvironment>("environments");
-            Elements<TflProcess>("processes");
-        }
     }
 
     public class TflParameter : TflNode {
