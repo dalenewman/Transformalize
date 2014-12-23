@@ -2,7 +2,7 @@
 <transformalize>
 
   <environments default="prod" >
-    <add name="prod" >
+    <add something="false" >
       <parameters>
         <add name="SqlServer" value="p" />
       </parameters>

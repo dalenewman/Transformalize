@@ -55,6 +55,7 @@
         dragDrop: false,
         lineNumbers: true,
         lineWrapping: true,
+        viewPortMargin: Infinity,
         theme: settings.theme,
         extraKeys: {
             "'<'": completeAfter,

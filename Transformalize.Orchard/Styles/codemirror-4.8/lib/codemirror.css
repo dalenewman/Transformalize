@@ -3,7 +3,7 @@
 .CodeMirror {
     /* Set height, width, borders, and global font properties here */
     font-family: PragmataPro, Source Code Pro, Tahoma, monospace;
-    height: 400px;
+    height: auto;
     font-size: larger;
 }
 

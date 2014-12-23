@@ -1,23 +1,58 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using Transformalize.Libs.NanoXml;
-using Transformalize.Main;
 
 namespace Transformalize.Test {
+
+    public sealed class TflMeta {
+        public object Value { get; set; }
+        public bool Required { get; set; }
+        public bool Unique { get; set; }
+        public bool Set { get; set; }
+
+        public TflMeta(object value, bool required = false, bool unique = false) {
+            Value = value;
+            Required = required;
+            Unique = unique;
+        }
+
+    }
 
     public abstract class TflNode {
 
         private readonly NanoXmlNode _node;
-        private readonly Hashtable _attributes = new Hashtable(StringComparer.Ordinal);
+        private readonly Dictionary<string, TflMeta> _attributes = new Dictionary<string, TflMeta>(StringComparer.Ordinal);
+        private readonly List<string> _required = new List<string>();
+        private readonly List<string> _unique = new List<string>();
         private readonly Dictionary<string, List<TflNode>> _elements = new Dictionary<string, List<TflNode>>();
+
+        private static Dictionary<Type, Func<string, object>> Converter {
+            get {
+                return new Dictionary<Type, Func<string, object>> {
+                {typeof(String), (x => x)},
+                {typeof(Guid), (x => Guid.Parse(x))},
+                {typeof(Int16), (x => Convert.ToInt16(x))},
+                {typeof(Int32), (x => Convert.ToInt32(x))},
+                {typeof(Int64), (x => Convert.ToInt64(x))},
+                {typeof(Double), (x => Convert.ToDouble(x))},
+                {typeof(Decimal), (x => Decimal.Parse(x, NumberStyles.Float | NumberStyles.AllowThousands | NumberStyles.AllowCurrencySymbol, (IFormatProvider)CultureInfo.CurrentCulture.GetFormat(typeof(NumberFormatInfo))))},
+                {typeof(Char), (x => Convert.ToChar(x))},
+                {typeof(DateTime), (x => Convert.ToDateTime(x))},
+                {typeof(Boolean), (x => Convert.ToBoolean(x))},
+                {typeof(Single), (x => Convert.ToSingle(x))},
+                {typeof(Byte), (x => Convert.ToByte(x))}
+            };
+            }
+        }
 
         public TflNode this[string element, int i] {
             get { return _elements[element][i]; }
         }
 
-        public object this[string name] {
-            get { return Attributes[name]; }
+        public TflMeta this[string name] {
+            get { return _attributes[name]; }
         }
 
         protected Dictionary<string, Func<NanoXmlNode, TflNode>> ElementLoaders = new Dictionary<string, Func<NanoXmlNode, TflNode>>();
@@ -26,36 +61,50 @@ namespace Transformalize.Test {
             _node = node;
         }
 
-        protected Hashtable Attributes {
-            get { return _attributes; }
-        }
-
         protected void Elements<T>(string element) {
-            ElementLoaders[element] = n => ((TflNode)Activator.CreateInstance(typeof(T), n)).Load();
+            ElementLoaders[element] = n => ((TflNode)Activator.CreateInstance(typeof(T), n));
         }
 
-        protected void Attribute<T>(T value, params string[] args) {
-            for (var i = 0; i < args.Length; i++) {
-                var attribute = args[i];
-                Attributes[attribute] = new object[] { value, Common.ToSimpleType(typeof(T).ToString()) };
+        protected void Attribute<T>(string name, T value, bool required = false, bool unique = false) {
+            _attributes[name] = new TflMeta(value, required, unique);
+            if (required) {
+                _required.Add(name);
+            }
+            if (unique) {
+                _unique.Add(name);
             }
         }
 
         public TflNode Load() {
             if (_node.Attributes.Count > 0) {
-                var converter = Common.GetObjectConversionMap();
                 for (var i = 0; i < _node.Attributes.Count; i++) {
                     var attribute = _node.Attributes[i];
-                    if (Attributes.ContainsKey(attribute.Name)) {
-                        var temp = (object[])Attributes[attribute.Name];
-                        var defaultValue = temp[0];
-                        var type = temp[1].ToString();
-                        Attributes[attribute.Name] = type.Equals("string") ?
-                            new object[] { attribute.Value ?? defaultValue, type } :
-                            new object[] { converter[type](attribute.Value), type };
+                    if (_attributes.ContainsKey(attribute.Name)) {
+
+                        var data = _attributes[attribute.Name];
+
+                        if (data.Value is string) {
+                            if (attribute.Value != null) {
+                                data.Set = true;
+                                data.Value = attribute.Value;
+                            }
+                        } else {
+                            if (attribute.Value != null) {
+                                data.Set = true;
+                                data.Value = Converter[data.Value.GetType()](attribute.Value);
+                            }
+                        }
                     } else {
-                        //throw new TransformalizeException(string.Empty, string.Empty, "Invalid attribute: {0}.", attribute.Name);
+                        //throw;
                         Console.WriteLine("Invalid attribute {0} in {1}.", attribute.Name, _node.Name);
+                    }
+                }
+
+                //check to make sure required were set
+                for (int i = 0; i < _required.Count; i++) {
+                    if (_attributes[_required[i]].Set == false) {
+                        //throw;
+                        Console.WriteLine("Required attribute {0} in {1} must be set.", _required[i], _node.Name);
                     }
                 }
             }
@@ -67,18 +116,34 @@ namespace Transformalize.Test {
                     for (var j = 0; j < node.SubNodes.Count; j++) {
                         var add = node.SubNodes[j];
                         if (add.Name == "add") {
-                            _elements[node.Name].Add(ElementLoaders[node.Name](add));
+                            var tflNode = ElementLoaders[node.Name](add).Load();
+                            // check for duplicates of unique attributes
+                            if (_elements[node.Name].Count > 0) {
+                                for (int k = 0; k < _elements[node.Name].Count; k++) {
+                                    foreach (var pair in _elements[node.Name][k].Attributes) {
+                                        if (pair.Value.Unique && tflNode.Attributes[pair.Key].Value.Equals(pair.Value.Value)) {
+                                            //throw;
+                                            Console.WriteLine("Duplicate {0} value {1} in {2}.", pair.Key, pair.Value.Value, node.Name);
+                                        }
+                                    }
+                                }
+                            }
+                            _elements[node.Name].Add(tflNode);
                         } else {
                             Console.WriteLine("Invalid element {0} in {1}.", add.Name, node.Name);
                         }
                     }
                 } else {
-                    //throw new TransformalizeException(string.Empty, string.Empty, "Invalid element: {0}.", node.Name);
+                    //throw;
                     Console.WriteLine("Invalid element {0} in {1}.", node.Name, _node.Name);
                 }
             }
 
             return this;
+        }
+
+        public Dictionary<string, TflMeta> Attributes {
+            get { return _attributes; }
         }
 
     }
