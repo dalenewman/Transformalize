@@ -87,7 +87,6 @@ namespace Transformalize.Main {
             Output = new List<NamedConnection>();
             Input = new List<NamedConnection>();
             DetectChanges = true;
-            Compare = true;
             Filters = new Filters();
         }
 

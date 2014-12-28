@@ -143,6 +143,7 @@
     <Compile Include="Configuration\ProcessElementCollection.cs" />
     <Compile Include="Configuration\TransformalizeConfiguration.cs" />
     <Compile Include="Extensions\ExceptionExtensions.cs" />
+    <Compile Include="Extensions\CharExtensions.cs" />
     <Compile Include="Extensions\ListExtension.cs" />
     <Compile Include="Extensions\LongExtensions.cs" />
     <Compile Include="Extensions\IntExtensions.cs" />

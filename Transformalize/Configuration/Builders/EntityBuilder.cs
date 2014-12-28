@@ -112,11 +112,6 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
-        public EntityBuilder Compare(bool compare) {
-            _entity.Compare = compare;
-            return this;
-        }
-
         public EntityBuilder TrimAll(bool trimAll) {
             _entity.TrimAll = trimAll;
             return this;

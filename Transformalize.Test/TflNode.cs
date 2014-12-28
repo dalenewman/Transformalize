@@ -1,33 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Transformalize.Libs.Lucene.Net.Util;
+using System.Linq;
+using Transformalize.Extensions;
 using Transformalize.Libs.NanoXml;
-using Transformalize.Libs.Newtonsoft.Json.Converters;
+using Transformalize.Libs.SolrNet.Utils;
 
 namespace Transformalize.Test {
-
-    public sealed class TflMeta {
-        public object Value { get; set; }
-        public bool Required { get; set; }
-        public bool Unique { get; set; }
-        public bool Set { get; set; }
-
-        public TflMeta(object value, bool required = false, bool unique = false) {
-            Value = value;
-            Required = required;
-            Unique = unique;
-        }
-
-    }
-
     public abstract class TflNode {
 
-        private readonly NanoXmlNode _node;
-        private readonly Dictionary<string, TflMeta> _attributes = new Dictionary<string, TflMeta>(StringComparer.Ordinal);
-        private readonly List<string> _required = new List<string>();
-        private readonly List<string> _unique = new List<string>();
-        private readonly Dictionary<string, List<TflNode>> _elements = new Dictionary<string, List<TflNode>>();
+        private readonly Dictionary<string, TflProperty> _properties = new Dictionary<string, TflProperty>(StringComparer.Ordinal);
+        private readonly List<string> _requiredProperties = new List<string>();
+        private readonly List<string> _uniqueProperties = new List<string>();
+        private readonly Dictionary<string, List<TflNode>> _classes = new Dictionary<string, List<TflNode>>();
+        private readonly List<string> _requiredClasses = new List<string>();
+        private readonly List<string> _problems = new List<string>();
 
         private static Dictionary<Type, Func<string, object>> Converter {
             get {
@@ -50,112 +37,151 @@ namespace Transformalize.Test {
 
         // Get an element by index
         public TflNode this[string element, int i] {
-            get { return _elements[element][i]; }
+            get { return _classes[element][i]; }
         }
 
         // Get an attribute by name
-        public TflMeta this[string name] {
-            get { return _attributes[name]; }
+        public TflProperty this[string name] {
+            get { return _properties[name]; }
         }
 
-        protected Dictionary<string, Func<NanoXmlNode, TflNode>> ElementLoaders = new Dictionary<string, Func<NanoXmlNode, TflNode>>();
+        protected Dictionary<string, TflNode> ElementLoaders = new Dictionary<string, TflNode>();
+        protected List<string> Problems { get { return _problems; } }
 
-        protected TflNode(NanoXmlNode node) {
-            _node = node;
-        }
-
-        protected void Element<T>(string element) {
-            ElementLoaders[element] = n => ((TflNode)Activator.CreateInstance(typeof(T), n));
-        }
-
-        protected void Attribute<T>(string name, T value, bool required = false, bool unique = false) {
-            _attributes[name] = new TflMeta(value, required, unique);
+        protected void Class<T>(string element, bool required = false) {
+            ElementLoaders[element] = (TflNode) Activator.CreateInstance(typeof(T));
             if (required) {
-                _required.Add(name);
+                _requiredClasses.Add(element);
+            }
+        }
+
+        protected void Property<T>(string name, T value, bool required = false, bool unique = false) {
+            _properties[name] = new TflProperty(value, required, unique);
+            if (required) {
+                _requiredProperties.Add(name);
             }
             if (unique) {
-                _unique.Add(name);
+                _uniqueProperties.Add(name);
             }
         }
 
         // Convenience method for keys
         protected void Key(string name, bool unique = true) {
-            Attribute(name, string.Empty, true, unique);
+            Property(name, string.Empty, true, unique);
         }
 
-        public TflNode Load() {
-            if (_node.Attributes.Count > 0) {
-                for (var i = 0; i < _node.Attributes.Count; i++) {
-                    var attribute = _node.Attributes[i];
-                    if (_attributes.ContainsKey(attribute.Name)) {
+        public TflNode Load(NanoXmlNode node, string parentName = null) {
+            LoadProperties(node, parentName);
+            LoadClasses(node, parentName);
+            return this;
+        }
 
-                        var data = _attributes[attribute.Name];
-
-                        if (data.Value is string) {
-                            if (attribute.Value != null) {
-                                data.Set = true;
-                                data.Value = attribute.Value;
-                            }
-                        } else {
-                            if (attribute.Value != null) {
-                                data.Set = true;
-                                data.Value = Converter[data.Value.GetType()](attribute.Value);
-                            }
-                        }
-                    } else {
-                        //throw;
-                        Console.WriteLine("Invalid attribute {0} in {1}.", attribute.Name, _node.Name);
-                    }
-                }
-
-                //check to make sure required were set
-                for (int i = 0; i < _required.Count; i++) {
-                    if (_attributes[_required[i]].Set == false) {
-                        //throw;
-                        Console.WriteLine("Required attribute {0} in {1} must be set.", _required[i], _node.Name);
-                    }
-                }
-            }
-
-            for (var i = 0; i < _node.SubNodes.Count; i++) {
-                var node = _node.SubNodes[i];
-                if (ElementLoaders.ContainsKey(node.Name)) {
-                    _elements[node.Name] = new List<TflNode>();
-                    for (var j = 0; j < node.SubNodes.Count; j++) {
-                        var add = node.SubNodes[j];
-                        if (add.Name == "add") {
-                            var tflNode = ElementLoaders[node.Name](add).Load();
+        private void LoadClasses(NanoXmlNode n, string parentName) {
+            for (var i = 0; i < n.SubNodes.Count; i++) {
+                var subNode = n.SubNodes[i];
+                if (ElementLoaders.ContainsKey(subNode.Name)) {
+                    _classes[subNode.Name] = new List<TflNode>();
+                    for (var j = 0; j < subNode.SubNodes.Count; j++) {
+                        var add = subNode.SubNodes[j];
+                        if (add.Name.Equals("add")) {
+                            var tflNode = ElementLoaders[subNode.Name].Load(add, subNode.Name);
                             // check for duplicates of unique attributes
-                            if (_elements[node.Name].Count > 0) {
-                                for (int k = 0; k < _elements[node.Name].Count; k++) {
-                                    foreach (var pair in _elements[node.Name][k].Attributes) {
-                                        if (pair.Value.Unique && tflNode.Attributes[pair.Key].Value.Equals(pair.Value.Value)) {
-                                            //throw;
-                                            Console.WriteLine("Duplicate {0} value {1} in {2}.", pair.Key, pair.Value.Value, node.Name);
+                            if (_classes[subNode.Name].Count > 0) {
+                                for (var k = 0; k < _classes[subNode.Name].Count; k++) {
+                                    foreach (var pair in _classes[subNode.Name][k].Properties) {
+                                        if (!pair.Value.Unique || !tflNode.Properties[pair.Key].Value.Equals(pair.Value.Value))
+                                            continue;
+
+                                        if (tflNode.Properties[pair.Key].Set && pair.Value.Set) {
+                                            _problems.Add(string.Format("Duplicate {0} value {1} in {2}.", pair.Key, pair.Value.Value, subNode.Name));
+                                        } else {
+                                            if (!pair.Value.Value.Equals(string.Empty)) {
+                                                _problems.Add(string.Format("Possible duplicate {0} value {1} in {2}.", pair.Key, pair.Value.Value, subNode.Name));
+                                            }
                                         }
                                     }
                                 }
                             }
-                            _elements[node.Name].Add(tflNode);
+                            _classes[subNode.Name].Add(tflNode);
                         } else {
-                            Console.WriteLine("Invalid element {0} in {1}.", add.Name, node.Name);
+                            _problems.Add(string.Format("Invalid element {0} in {1}.", add.Name, subNode.Name));
                         }
                     }
                 } else {
-                    //throw;
-                    Console.WriteLine("Invalid element {0} in {1}.", node.Name, _node.Name);
+                    _problems.Add(string.Format("Invalid element {0} in {1}.", subNode.Name, n.Name));
                 }
             }
 
-            return this;
+            CheckRequiredClasses(n, parentName);
         }
 
-        public Dictionary<string, TflMeta> Attributes {
-            get { return _attributes; }
+        private void CheckRequiredClasses(NanoXmlNode node, string parentName) {
+            for (var i = 0; i < _requiredClasses.Count; i++) {
+                if (!_classes.ContainsKey(_requiredClasses[i])) {
+                    if (parentName == null) {
+                        _problems.Add(string.Format("The '{0}' element is missing a{2} '{1}' element.", node.Name, _requiredClasses[i], _requiredClasses[i][0].IsVowel() ? "n" : string.Empty));
+                    } else {
+                        _problems.Add(string.Format("A{3} '{0}' '{1}' element is missing a{4} '{2}' element.", parentName, node.Name, _requiredClasses[i], parentName[0].IsVowel() ? "n" : string.Empty, _requiredClasses[i][0].IsVowel() ? "n" : string.Empty));
+                    }
+                } else if (_classes[_requiredClasses[i]].Count == 0) {
+                    _problems.Add(string.Format("A{1} '{0}' element is missing an 'add' element.", _requiredClasses[i], _requiredClasses[i][0].IsVowel() ? "n" : string.Empty));
+                }
+            }
         }
 
-        public Dictionary<string, List<TflNode>> Elements {
-            get { return _elements; }
+        private void LoadProperties(NanoXmlNode node, string parentName) {
+            for (var i = 0; i < node.Attributes.Count; i++) {
+                var attribute = node.Attributes[i];
+                if (_properties.ContainsKey(attribute.Name)) {
+                    var data = _properties[attribute.Name];
+
+                    if (data.Value is string) {
+                        if (attribute.Value != null) {
+                            data.Set = true;
+                            data.Value = attribute.Value;
+                        }
+                    } else {
+                        if (attribute.Value != null) {
+                            data.Set = true;
+                            data.Value = Converter[data.Value.GetType()](attribute.Value);
+                        }
+                    }
+                } else {
+                    _problems.Add(string.Format("A{3} '{0}' '{1}' element contains an invalid '{2}' attribute.", parentName, node.Name, attribute.Name, parentName[0].IsVowel() ? "n" : string.Empty));
+                }
+            }
+
+            CheckRequiredProperties(node, parentName);
+        }
+
+        private void CheckRequiredProperties(NanoXmlNode node, string parentName) {
+            for (var i = 0; i < _requiredProperties.Count; i++) {
+                if (!_properties[_requiredProperties[i]].Set) {
+                    _problems.Add(string.Format("A{3} '{0}' '{1}' element is missing a '{2}' attribute.", parentName, node.Name, _requiredProperties[i], parentName[0].IsVowel() ? "n" : string.Empty));
+                }
+            }
+        }
+
+        public Dictionary<string, TflProperty> Properties {
+            get { return _properties; }
+        }
+
+        public Dictionary<string, List<TflNode>> Classes {
+            get { return _classes; }
+        }
+
+        public List<string> AllProblems() {
+            var allProblems = new List<string>();
+            for (var i = 0; i < _problems.Count; i++) {
+                allProblems.Add(_problems[i]);
+            }
+            foreach (var pair in Classes) {
+                for (var i = 0; i < pair.Value.Count; i++) {
+                    var @class = pair.Value[i];
+                    allProblems.AddRange(@class.AllProblems());
+                }
+            }
+            return allProblems;
         }
 
     }

@@ -83,12 +83,6 @@ namespace Transformalize.Configuration {
             set { this[DETECT_CHANGES] = value; }
         }
 
-        [ConfigurationProperty(COMPARE, IsRequired = false, DefaultValue = true)]
-        public bool Compare {
-            get { return (bool)this[COMPARE]; }
-            set { this[COMPARE] = value; }
-        }
-
         [ConfigurationProperty(TRIM_ALL, IsRequired = false, DefaultValue = false)]
         public bool TrimAll {
             get { return (bool)this[TRIM_ALL]; }

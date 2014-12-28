@@ -58,7 +58,6 @@ namespace Transformalize.Main {
                 Sample = element.Sample,
                 Top = element.Top,
                 DetectChanges = element.DetectChanges,
-                Compare = element.Compare,
                 TrimAll = element.TrimAll,
                 NoLock = element.NoLock,
                 Unicode = element.Unicode,
