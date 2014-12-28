@@ -77,7 +77,7 @@ namespace Transformalize.Test {
             var sw = new Stopwatch();
             sw.Start();
             var rootNode = new NanoXmlDocument(File.ReadAllText(@"NorthWind.xml")).RootNode;
-            var root = new TflRoot(rootNode).Load();
+            var root = new TflRoot().Load(rootNode);
             sw.Stop();
             Console.WriteLine("Root: {0}", sw.ElapsedMilliseconds);
 

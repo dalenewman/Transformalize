@@ -1,12 +1,8 @@
-using Transformalize.Libs.NanoXml;
-
-namespace Transformalize.Test
-{
+namespace Transformalize.Test {
     public class TflCalculatedField : TflField {
-        public TflCalculatedField(NanoXmlNode node)
-            : base(node) {
+        public TflCalculatedField() {
             Property("input", false);
             Property("alias", string.Empty);
-            }
+        }
     }
 }

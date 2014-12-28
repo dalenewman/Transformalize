@@ -1,11 +1,8 @@
-using Transformalize.Libs.NanoXml;
 using Transformalize.Main;
 
-namespace Transformalize.Test
-{
+namespace Transformalize.Test {
     public class TflConnection : TflNode {
-        public TflConnection(NanoXmlNode node)
-            : base(node) {
+        public TflConnection() {
             Key("name");
 
             Property("batch-size", 500);
@@ -37,6 +34,6 @@ namespace Transformalize.Test
             Property("user", string.Empty);
             Property("version", Common.DefaultValue);
             Property("web-method", "GET");
-            }
+        }
     }
 }

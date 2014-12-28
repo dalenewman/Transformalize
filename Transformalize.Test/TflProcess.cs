@@ -1,10 +1,7 @@
-using Transformalize.Libs.NanoXml;
-
 namespace Transformalize.Test {
     public class TflProcess : TflNode {
 
-        public TflProcess(NanoXmlNode node)
-            : base(node) {
+        public TflProcess() {
 
             Key("name");
 

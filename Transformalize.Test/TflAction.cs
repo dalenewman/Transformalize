@@ -1,9 +1,6 @@
-using Transformalize.Libs.NanoXml;
-
 namespace Transformalize.Test {
     public class TflAction : TflNode {
-        public TflAction(NanoXmlNode node)
-            : base(node) {
+        public TflAction() {
             Property("action", string.Empty, true);
             Property("after", true);
             Property("arguments", string.Empty);

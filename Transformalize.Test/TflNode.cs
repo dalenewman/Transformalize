@@ -45,11 +45,11 @@ namespace Transformalize.Test {
             get { return _properties[name]; }
         }
 
-        protected Dictionary<string, TflNode> ElementLoaders = new Dictionary<string, TflNode>();
+        protected Dictionary<string, Func<TflNode>> ElementLoaders = new Dictionary<string, Func<TflNode>>();
         protected List<string> Problems { get { return _problems; } }
 
         protected void Class<T>(string element, bool required = false) {
-            ElementLoaders[element] = (TflNode) Activator.CreateInstance(typeof(T));
+            ElementLoaders[element] = () => (TflNode) Activator.CreateInstance(typeof(T));
             if (required) {
                 _requiredClasses.Add(element);
             }
@@ -84,7 +84,7 @@ namespace Transformalize.Test {
                     for (var j = 0; j < subNode.SubNodes.Count; j++) {
                         var add = subNode.SubNodes[j];
                         if (add.Name.Equals("add")) {
-                            var tflNode = ElementLoaders[subNode.Name].Load(add, subNode.Name);
+                            var tflNode = ElementLoaders[subNode.Name]().Load(add, subNode.Name);
                             // check for duplicates of unique attributes
                             if (_classes[subNode.Name].Count > 0) {
                                 for (var k = 0; k < _classes[subNode.Name].Count; k++) {

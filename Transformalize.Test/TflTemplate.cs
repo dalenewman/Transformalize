@@ -1,9 +1,6 @@
-using Transformalize.Libs.NanoXml;
-
 namespace Transformalize.Test {
     public class TflTemplate : TflNode {
-        public TflTemplate(NanoXmlNode node)
-            : base(node) {
+        public TflTemplate(){
             Key("name");
 
             Property("content-type", "raw");

@@ -1,10 +1,6 @@
-using Transformalize.Libs.NanoXml;
-
-namespace Transformalize.Test
-{
+namespace Transformalize.Test {
     public class TflEntity : TflNode {
-        public TflEntity(NanoXmlNode node)
-            : base(node) {
+        public TflEntity() {
             Property("alias", string.Empty, false, true);  // should be unique, if entered
             Property("connection", "input");
             Property("delete", false);
@@ -31,6 +27,6 @@ namespace Transformalize.Test
             Class<TflCalculatedField>("calculated-fields");
             Class<TflIo>("input");
             Class<TflIo>("output");
-            }
+        }
     }
 }

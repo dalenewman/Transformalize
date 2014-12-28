@@ -1,11 +1,8 @@
-using Transformalize.Libs.NanoXml;
 using Transformalize.Main;
 
-namespace Transformalize.Test
-{
+namespace Transformalize.Test {
     public class TflBranch : TflNode {
-        public TflBranch(NanoXmlNode node)
-            : base(node) {
+        public TflBranch() {
             Key("name");
 
             Property("run-field", Common.DefaultValue);
@@ -14,6 +11,6 @@ namespace Transformalize.Test
             Property("run-value", string.Empty);
 
             Class<TflTransform>("transforms");
-            }
+        }
     }
 }

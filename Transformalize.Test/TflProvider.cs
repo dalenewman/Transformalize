@@ -1,12 +1,8 @@
-using Transformalize.Libs.NanoXml;
-
-namespace Transformalize.Test
-{
+namespace Transformalize.Test {
     public class TflProvider : TflNode {
-        public TflProvider(NanoXmlNode node)
-            : base(node) {
+        public TflProvider() {
             Key("name");
             Property("type", string.Empty, true);
-            }
+        }
     }
 }

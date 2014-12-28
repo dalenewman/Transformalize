@@ -22,38 +22,40 @@
 
 using System;
 using NUnit.Framework;
+using Transformalize.Libs.NanoXml;
 
 namespace Transformalize.Test {
+
     [TestFixture]
     public class TestNewConfiguration {
 
         [Test]
         public void TestEmptyCfg() {
-            var cfg = @"<transformalize></transformalize>".Replace("'", "\"");
-            var root = new TflRoot(cfg).Load();
+            var cfg = new NanoXmlDocument(@"<transformalize></transformalize>".Replace("'", "\"")).RootNode;
+            var root = new TflRoot().Load(cfg);
             Assert.AreEqual(1, root.AllProblems().Count);
             Assert.AreEqual("The 'transformalize' element is missing a 'processes' element.", root.AllProblems()[0]);
         }
 
         [Test]
         public void TestEmptyProcesses() {
-            var cfg = @"<transformalize>
+            var cfg = new NanoXmlDocument(@"<transformalize>
     <processes>
     </processes>
-</transformalize>".Replace("'", "\"");
-            var root = new TflRoot(cfg).Load();
+</transformalize>".Replace("'", "\"")).RootNode;
+            var root = new TflRoot().Load(cfg);
             Assert.AreEqual(1, root.AllProblems().Count);
             Assert.AreEqual("A 'processes' element is missing an 'add' element.", root.AllProblems()[0]);
         }
 
         [Test]
         public void TestInvalidProcess() {
-            var cfg = @"<transformalize>
+            var cfg = new NanoXmlDocument(@"<transformalize>
     <processes>
         <add />
     </processes>
-</transformalize>".Replace("'", "\"");
-            var root = new TflRoot(cfg).Load();
+</transformalize>".Replace("'", "\"")).RootNode;
+            var root = new TflRoot().Load(cfg);
             Assert.AreEqual(3, root.AllProblems().Count);
             foreach (var problem in root.AllProblems()) {
                 Console.WriteLine(problem);
@@ -65,15 +67,15 @@ namespace Transformalize.Test {
 
         [Test]
         public void TestInvalidProcessAttribute() {
-            var cfg = @"<transformalize>
+            var cfg = new NanoXmlDocument(@"<transformalize>
     <processes>
         <add name='dale' invalid='true'>
             <connections />
             <entities />
         </add>
     </processes>
-</transformalize>".Replace("'", "\"");
-            var root = new TflRoot(cfg).Load();
+</transformalize>".Replace("'", "\"")).RootNode;
+            var root = new TflRoot().Load(cfg);
             Assert.AreEqual(3, root.AllProblems().Count);
             foreach (var problem in root.AllProblems()) {
                 Console.WriteLine(problem);

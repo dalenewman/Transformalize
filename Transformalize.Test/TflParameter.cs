@@ -1,9 +1,6 @@
-﻿using Transformalize.Libs.NanoXml;
-
-namespace Transformalize.Test {
+﻿namespace Transformalize.Test {
     public class TflParameter : TflNode {
-        public TflParameter(NanoXmlNode node)
-            : base(node) {
+        public TflParameter() {
             Property("entity", string.Empty);
             Property("field", string.Empty);
             Property("name", string.Empty);

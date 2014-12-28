@@ -1,9 +1,6 @@
-using Transformalize.Libs.NanoXml;
-
 namespace Transformalize.Test {
     public class TflFileInspection : TflNode {
-        public TflFileInspection(NanoXmlNode node)
-            : base(node) {
+        public TflFileInspection() {
             Property("sample", 100);
             Property("max-length", 0);
             Property("min-length", 0);

@@ -1,14 +1,10 @@
-using Transformalize.Libs.NanoXml;
 using Transformalize.Main;
 
-namespace Transformalize.Test
-{
+namespace Transformalize.Test {
     public class TflTransform : TflNode {
-        public TflTransform(NanoXmlNode node)
-            : base(node) {
+        public TflTransform() {
             Property("after-aggregation", true);
             Property("before-aggregation", false);
-            Property("branches", string.Empty);
             Property("characters", string.Empty);
             Property("connection", string.Empty);
             Property("contains-characters", "All");
@@ -94,6 +90,6 @@ namespace Transformalize.Test
             Class<TflNameReference>("templates");
             Class<TflBranch>("branches");
             Class<TflField>("fields");
-            }
+        }
     }
 }

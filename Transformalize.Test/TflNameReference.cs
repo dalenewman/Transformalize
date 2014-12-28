@@ -1,11 +1,7 @@
-using Transformalize.Libs.NanoXml;
-
-namespace Transformalize.Test
-{
+namespace Transformalize.Test {
     public class TflNameReference : TflNode {
-        public TflNameReference(NanoXmlNode node)
-            : base(node) {
+        public TflNameReference() {
             Key("name");
-            }
+        }
     }
 }

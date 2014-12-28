@@ -1,12 +1,8 @@
-using Transformalize.Libs.NanoXml;
-
-namespace Transformalize.Test
-{
+namespace Transformalize.Test {
     public class TflJoin : TflNode {
-        public TflJoin(NanoXmlNode node)
-            : base(node) {
+        public TflJoin() {
             Property("left-field", string.Empty, true);
             Property("right-field", string.Empty, true);
-            }
+        }
     }
 }

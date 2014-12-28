@@ -1,11 +1,9 @@
 using Transformalize.Libs.NanoXml;
 using Transformalize.Main;
 
-namespace Transformalize.Test
-{
+namespace Transformalize.Test {
     public class TflField : TflNode {
-        public TflField(NanoXmlNode node)
-            : base(node) {
+        public TflField() {
             Property("aggregate", string.Empty);
             Property("alias", string.Empty, false, true);
             Property("default", string.Empty);
@@ -37,6 +35,6 @@ namespace Transformalize.Test
 
             Class<TflNameReference>("search-types");
             Class<TflTransform>("transforms");
-            }
+        }
     }
 }

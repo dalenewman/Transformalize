@@ -1,12 +1,8 @@
-﻿using Transformalize.Libs.NanoXml;
-
-namespace Transformalize.Test
-{
+﻿namespace Transformalize.Test {
     public class TflScript : TflNode {
-        public TflScript(NanoXmlNode node)
-            : base(node) {
+        public TflScript() {
             Key("name");
             Property("file", string.Empty, true);
-            }
+        }
     }
 }

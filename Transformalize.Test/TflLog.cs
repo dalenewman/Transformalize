@@ -1,11 +1,8 @@
-﻿using Transformalize.Libs.NanoXml;
-using Transformalize.Main;
+﻿using Transformalize.Main;
 
-namespace Transformalize.Test
-{
+namespace Transformalize.Test {
     public class TflLog : TflNode {
-        public TflLog(NanoXmlNode node)
-            : base(node) {
+        public TflLog() {
             Key("name");
             Property("provider", Common.DefaultValue);
             Property("layout", Common.DefaultValue);
@@ -17,6 +14,6 @@ namespace Transformalize.Test
             Property("file", Common.DefaultValue);
             Property("folder", Common.DefaultValue);
             Property("async", false);
-            }
+        }
     }
 }
