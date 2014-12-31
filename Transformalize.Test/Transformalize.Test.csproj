@@ -127,34 +127,6 @@
     <Compile Include="TestValidators.cs" />
     <Compile Include="TestWarehouse.cs" />
     <Compile Include="TestWithProcess.cs" />
-    <Compile Include="TflAction.cs" />
-    <Compile Include="TflBranch.cs" />
-    <Compile Include="TflCalculatedField.cs" />
-    <Compile Include="TflConnection.cs" />
-    <Compile Include="TflDelimiter.cs" />
-    <Compile Include="TflEntity.cs" />
-    <Compile Include="TflEnvironment.cs" />
-    <Compile Include="TflField.cs" />
-    <Compile Include="TflFileInspection.cs" />
-    <Compile Include="TflFilter.cs" />
-    <Compile Include="TflIo.cs" />
-    <Compile Include="TflJoin.cs" />
-    <Compile Include="TflLog.cs" />
-    <Compile Include="TflMap.cs" />
-    <Compile Include="TflMapItem.cs" />
-    <Compile Include="TflNameReference.cs" />
-    <Compile Include="TflNode.cs" />
-    <Compile Include="TflParameter.cs" />
-    <Compile Include="TflProcess.cs" />
-    <Compile Include="TflProperty.cs" />
-    <Compile Include="TflProvider.cs" />
-    <Compile Include="TflRelationship.cs" />
-    <Compile Include="TflRoot.cs" />
-    <Compile Include="TflScript.cs" />
-    <Compile Include="TflSearchType.cs" />
-    <Compile Include="TflTemplate.cs" />
-    <Compile Include="TflTransform.cs" />
-    <Compile Include="TflType.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -208,6 +180,7 @@
   <ItemGroup>
     <Content Include="NorthWind.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="NorthWindExpanded.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

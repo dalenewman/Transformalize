@@ -24,16 +24,16 @@
       </log>
 
       <file-inspection>
-        <types>
-          <add type="decimal"/>
-          <add type="string"/>
-        </types>
-        <delimiters>
-          <add name="comma" character=","/>
-          <add name="pipe" character="|"/>
-          <add name="tab" character="&#009;"/>
-          <add name="semicolon" character=";"/>
-        </delimiters>
+          <types>
+            <add type="decimal"/>
+            <add type="string"/>
+          </types>
+          <delimiters>
+            <add name="comma" character=","/>
+            <add name="pipe" character="|"/>
+            <add name="tab" character="&#009;"/>
+            <add name="semicolon" character=";"/>
+          </delimiters>
       </file-inspection>
 
       <connections>

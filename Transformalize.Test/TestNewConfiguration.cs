@@ -22,6 +22,7 @@
 
 using System;
 using NUnit.Framework;
+using Transformalize.Configuration;
 using Transformalize.Libs.NanoXml;
 
 namespace Transformalize.Test {
@@ -76,16 +77,214 @@ namespace Transformalize.Test {
     </processes>
 </transformalize>".Replace("'", "\"")).RootNode;
             var root = new TflRoot().Load(cfg);
-            Assert.AreEqual(3, root.AllProblems().Count);
-            foreach (var problem in root.AllProblems()) {
+            var problems = root.AllProblems();
+            Assert.AreEqual(3, problems.Count);
+            foreach (var problem in problems) {
                 Console.WriteLine(problem);
             }
-            Assert.AreEqual("A 'processes' 'add' element contains an invalid 'invalid' attribute.", root.AllProblems()[0]);
-            Assert.AreEqual("A 'connections' element is missing an 'add' element.", root.AllProblems()[1]);
-            Assert.AreEqual("An 'entities' element is missing an 'add' element.", root.AllProblems()[2]);
+            Assert.AreEqual("A 'processes' 'add' element contains an invalid 'invalid' attribute.  Valid attributes are: name, enabled, mode, parallel, pipeline-threading, star, star-enabled, template-content-type, time-zone, view, view-enabled.", problems[0]);
+            Assert.AreEqual("A 'connections' element is missing an 'add' element.", problems[1]);
+            Assert.AreEqual("An 'entities' element is missing an 'add' element.", problems[2]);
         }
 
+
+        [Test]
+        public void TestProcessEntityFieldNames() {
+            var cfg = new NanoXmlDocument(@"<transformalize>
+    <processes>
+        <add name='process'>
+            <connections>
+                <add name='input' />
+            </connections>
+            <entities>
+                <add name='entity' >
+                    <fields>
+                        <add name='field' />
+                    </fields>
+                </add>
+            </entities>
+        </add>
+    </processes>
+</transformalize>".Replace("'", "\"")).RootNode;
+            var root = new TflRoot().Load(cfg);
+            var problems = root.AllProblems();
+            foreach (var problem in problems) {
+                Console.WriteLine(problem);
+            }
+            Assert.AreEqual(0, problems.Count);
+            Assert.AreEqual("process", root["processes", 0]["name"].Value);
+            Assert.AreEqual("entity", root["processes", 0]["entities", 0]["name"].Value);
+            Assert.AreEqual("field", root["processes", 0]["entities", 0]["fields", 0]["name"].Value);
+
+        }
+
+        [Test]
+        public void TestClassProperty() {
+            var cfg = new NanoXmlDocument(@"<transformalize>
+    <environments default='one'>
+        <add name='one'>
+            <parameters>
+                <add name='one' />
+            </parameters>
+        </add>
+        <add name='two'>
+            <parameters>
+                <add name='two' />
+            </parameters>
+        </add>
+    </environments>
+    <processes>
+        <add name='process'>
+            <connections>
+                <add name='input' />
+            </connections>
+            <entities>
+                <add name='entity' >
+                    <fields>
+                        <add name='field' />
+                    </fields>
+                </add>
+            </entities>
+        </add>
+    </processes>
+</transformalize>".Replace("'", "\"")).RootNode;
+            var root = new TflRoot().Load(cfg);
+            var problems = root.AllProblems();
+            foreach (var problem in problems) {
+                Console.WriteLine(problem);
+            }
+            Assert.AreEqual(0, problems.Count);
+            Assert.AreEqual("one", root["environments", 0]["default"].Value);
+        }
+
+
+        [Test]
+        public void TestFileInspection() {
+            var cfg = new NanoXmlDocument(@"<transformalize>
+    <processes>
+        <add name='process'>
+            <file-inspection>
+                <add name='default' sample='99' max-length='128' min-length='64'>
+                    <types>
+                    </types>
+                    <delimiters>
+                        <add name='comma' character=',' />
+                    </delimiters>
+                </add>
+            </file-inspection>
+            <connections>
+                <add name='input' />
+            </connections>
+            <entities>
+                <add name='entity' >
+                    <fields>
+                        <add name='field' />
+                    </fields>
+                </add>
+            </entities>
+        </add>
+    </processes>
+</transformalize>".Replace("'", "\"")).RootNode;
+            var root = new TflRoot().Load(cfg);
+            var problems = root.AllProblems();
+            foreach (var problem in problems) {
+                Console.WriteLine(problem);
+            }
+            Assert.AreEqual(0, problems.Count);
+            Assert.AreEqual("process", root["processes", 0]["name"].Value);
+            Assert.AreEqual("entity", root["processes", 0]["entities", 0]["name"].Value);
+            Assert.AreEqual("field", root["processes", 0]["entities", 0]["fields", 0]["name"].Value);
+            Assert.AreEqual("default", root["processes", 0]["file-inspection", 0]["name"].Value);
+            Assert.AreEqual(99, root["processes", 0]["file-inspection", 0]["sample"].Value);
+            Assert.AreEqual(128, root["processes", 0]["file-inspection", 0]["max-length"].Value);
+            Assert.AreEqual(64, root["processes", 0]["file-inspection", 0]["min-length"].Value);
+        }
+
+        [Test]
+        public void TestParameterToObject() {
+            var cfg = new NanoXmlDocument(@"<transformalize>
+    <environments default='one'>
+        <add name='one'>
+            <parameters>
+                <add name='one' value='1' />
+            </parameters>
+        </add>
+        <add name='two'>
+            <parameters>
+                <add name='two' />
+            </parameters>
+        </add>
+    </environments>
+    <processes>
+        <add name='process'>
+            <connections>
+                <add name='input' />
+            </connections>
+            <entities>
+                <add name='entity' >
+                    <fields>
+                        <add name='field' />
+                    </fields>
+                </add>
+            </entities>
+        </add>
+    </processes>
+</transformalize>".Replace("'", "\"")).RootNode;
+            var root = new TflRoot().Load(cfg);
+            var problems = root.AllProblems();
+            foreach (var problem in problems) {
+                Console.WriteLine(problem);
+            }
+            Assert.AreEqual(0, problems.Count);
+            root.Populate();
+
+            var testParameter = (TflParameter) root["environments", 0]["parameters", 0];
+            Assert.AreEqual("one", testParameter.Name);
+            Assert.AreEqual("1", testParameter.Value);
+        }
+
+        [Test]
+        public void TestEnvironmentToObject() {
+            var cfg = new NanoXmlDocument(@"<transformalize>
+    <environments default='one'>
+        <add name='one'>
+            <parameters>
+                <add name='one' value='1' />
+            </parameters>
+        </add>
+        <add name='two'>
+            <parameters>
+                <add name='two' />
+            </parameters>
+        </add>
+    </environments>
+    <processes>
+        <add name='process'>
+            <connections>
+                <add name='input' />
+            </connections>
+            <entities>
+                <add name='entity' >
+                    <fields>
+                        <add name='field' />
+                    </fields>
+                </add>
+            </entities>
+        </add>
+    </processes>
+</transformalize>".Replace("'", "\"")).RootNode;
+            var root = new TflRoot().Load(cfg);
+            var problems = root.AllProblems();
+            foreach (var problem in problems) {
+                Console.WriteLine(problem);
+            }
+            Assert.AreEqual(0, problems.Count);
+
+            root.Populate();
+            var testEnvironment = (TflEnvironment) root["environments", 0];
+            Assert.AreEqual("one", testEnvironment.Name);
+            //Assert.AreEqual("one", testEnvironment.Default);
+            //Assert.AreEqual(1, testEnvironment.Parameters.Count);
+        }
     }
-
-
 }

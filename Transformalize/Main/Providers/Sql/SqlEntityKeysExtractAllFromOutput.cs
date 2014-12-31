@@ -13,7 +13,7 @@ namespace Transformalize.Main.Providers.Sql {
             : base(connection) {
             _entity = entity;
             EntityName = entity.Name;
-            _keys = _entity.Delete ?
+            _keys = _entity.Delete && _entity.IsMaster() ?
                 new List<string>(entity.PrimaryKey.Aliases()) { "TflDeleted", "TflKey" } :
                 new List<string>(entity.PrimaryKey.Aliases()) { "TflKey" };
         }

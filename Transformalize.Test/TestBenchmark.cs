@@ -76,10 +76,17 @@ namespace Transformalize.Test {
         public void TestRoot() {
             var sw = new Stopwatch();
             sw.Start();
-            var rootNode = new NanoXmlDocument(File.ReadAllText(@"NorthWind.xml")).RootNode;
-            var root = new TflRoot().Load(rootNode);
+            var root = new TflRoot().Load(new NanoXmlDocument(File.ReadAllText(@"NorthWind.xml")).RootNode);
             sw.Stop();
-            Console.WriteLine("Root: {0}", sw.ElapsedMilliseconds);
+            Console.WriteLine("Load: {0}", sw.ElapsedMilliseconds);
+
+            sw = new Stopwatch();
+            sw.Start();
+            root.Populate();
+            sw.Start();
+            Console.WriteLine("Populate: {0}", sw.ElapsedMilliseconds);
+
+            var cfg = (TflRoot) root;
 
             Assert.AreEqual("NorthWind", root["processes", 0]["name"].Value);
             Assert.AreEqual(string.Empty, root["processes", 0]["mode"].Value);
@@ -88,9 +95,9 @@ namespace Transformalize.Test {
 
             Assert.AreEqual("prod", root["environments", 0]["name"].Value);
             Assert.AreEqual("test", root["environments", 1]["name"].Value);
-            Assert.AreEqual(false, root["environments", 1]["default"].Value);
+            Assert.AreEqual("prod", root["environments", 1]["default"].Value);
 
-            Assert.AreEqual(new TflProperty("NorthWindStar").Value, root["processes", 0]["connections", 1]["database"].Value);
+            Assert.AreEqual(new TflProperty("database", "NorthWindStar").Value, root["processes", 0]["connections", 1]["database"].Value);
 
         }
 
