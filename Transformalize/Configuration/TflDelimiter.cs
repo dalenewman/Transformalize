@@ -2,7 +2,7 @@ namespace Transformalize.Configuration {
 
     public class TflDelimiter : CfgNode {
         public TflDelimiter() {
-            Property(n:"character", v:default(char), r:true, u:true);
+            Property(n:"character", v:default(char), r:true, u:true, d:true);
             Property(n:"name", v:string.Empty, r:true);
         }
 

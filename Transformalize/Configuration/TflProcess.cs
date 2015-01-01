@@ -32,11 +32,13 @@ namespace Transformalize.Configuration {
             Class<TflTemplate>("templates");
         }
 
-        public List<TflAction> Actions { get; set; }
-
+        [Cfg(v = "", r = true, u = true)]
         public string Name { get; set; }
+        [Cfg(v = true)]
         public bool Enabled { get; set; }
+        [Cfg(v="")]
         public string Mode { get; set; }
+        [Cfg(v=true)]
         public bool Parallel { get; set; }
         public string PipelineThreading { get; set; }
         public string Star { get; set; }
@@ -45,6 +47,19 @@ namespace Transformalize.Configuration {
         public string TimeZone { get; set; }
         public string View { get; set; }
         public bool ViewEnabled { get; set; }
+
+        public List<TflAction> Actions { get; set; }
+        public List<TflCalculatedField> CalculatedFields { get; set; }
+        public List<TflConnection> Connections { get; set; }
+        public List<TflEntity> Entities { get; set; }
+        public List<TflFileInspection> FileInspections { get; set; }
+        public List<TflLog> Logs { get; set; }
+        public List<TflMap> Maps { get; set; }
+        public List<TflParameter> Parameters { get; set; }
+        public List<TflProvider> Providers { get; set; }
+        public List<TflRelationship> Relationships { get; set; }
+        public List<TflSearchType> SearchTypes { get; set; }
+        public List<TflTemplate> Templates { get; set; }
 
     }
 }

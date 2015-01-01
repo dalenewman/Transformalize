@@ -11,7 +11,7 @@ namespace Transformalize.Configuration {
             Property(n: "data", v: Common.DefaultValue);
             Property(n: "database", v: string.Empty);
             Property(n: "date-format", v: "MM/dd/yyyy h:mm:ss tt");
-            Property(n: "delimiter", v: ",");
+            Property(n: "delimiter", v: ',');
             Property(n: "direct", v: false);
             Property(n: "enabled", v: true);
             Property(n: "enable-ssl", v: false);
@@ -43,7 +43,7 @@ namespace Transformalize.Configuration {
         public string Data { get; set; }
         public string DataBase { get; set; }
         public string DateFormat { get; set; }
-        public string Delimiter { get; set; }
+        public char Delimiter { get; set; }
         public bool Direct { get; set; }
         public bool Enabled { get; set; }
         public bool EnableSsl { get; set; }

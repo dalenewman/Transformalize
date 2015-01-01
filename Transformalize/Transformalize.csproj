@@ -121,7 +121,7 @@
     <Compile Include="Configuration\TflNameReference.cs" />
     <Compile Include="Configuration\TflParameter.cs" />
     <Compile Include="Configuration\TflProcess.cs" />
-    <Compile Include="Configuration\TflProperty.cs" />
+    <Compile Include="Configuration\CfgProperty.cs" />
     <Compile Include="Configuration\TflProvider.cs" />
     <Compile Include="Configuration\TflRelationship.cs" />
     <Compile Include="Configuration\TflRoot.cs" />

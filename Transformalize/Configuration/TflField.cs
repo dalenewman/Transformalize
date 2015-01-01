@@ -49,8 +49,8 @@ namespace Transformalize.Configuration {
         public bool PrimaryKey { get; set; }
         public bool Raw { get; set; }
         public bool ReadInnerXml { get; set; }
-        public bool Unicode { get; set; }
-        public bool VariableLength { get; set; }
+        public string Unicode { get; set; }
+        public string VariableLength { get; set; }
         public char QuotedWith { get; set; }
         public int Index { get; set; }
         public int Precision { get; set; }

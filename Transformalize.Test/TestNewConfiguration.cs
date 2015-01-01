@@ -57,13 +57,18 @@ namespace Transformalize.Test {
     </processes>
 </transformalize>".Replace("'", "\"")).RootNode;
             var root = new TflRoot().Load(cfg);
-            Assert.AreEqual(3, root.AllProblems().Count);
-            foreach (var problem in root.AllProblems()) {
+
+            var problems = root.AllProblems();
+
+            Assert.AreEqual(3, problems.Count);
+
+            foreach (var problem in problems) {
                 Console.WriteLine(problem);
             }
-            Assert.AreEqual("A 'processes' 'add' element is missing a 'name' attribute.", root.AllProblems()[0]);
-            Assert.AreEqual("A 'processes' 'add' element is missing a 'connections' element.", root.AllProblems()[1]);
-            Assert.AreEqual("A 'processes' 'add' element is missing an 'entities' element.", root.AllProblems()[2]);
+            Assert.IsTrue(problems.Contains("A 'processes' 'add' element is missing a 'name' attribute."));
+            Assert.IsTrue(problems.Contains("A 'processes' 'add' element is missing a 'connections' element."));
+            Assert.IsTrue(problems.Contains("A 'processes' 'add' element is missing an 'entities' element."));
+
         }
 
         [Test]
@@ -238,7 +243,9 @@ namespace Transformalize.Test {
             Assert.AreEqual(0, problems.Count);
             root.Populate();
 
-            var testParameter = (TflParameter) root["environments", 0]["parameters", 0];
+            var x = (TflRoot) root;
+
+            var testParameter = x.Environments[0].Parameters[0];
             Assert.AreEqual("one", testParameter.Name);
             Assert.AreEqual("1", testParameter.Value);
         }
@@ -281,10 +288,10 @@ namespace Transformalize.Test {
             Assert.AreEqual(0, problems.Count);
 
             root.Populate();
-            var testEnvironment = (TflEnvironment) root["environments", 0];
-            Assert.AreEqual("one", testEnvironment.Name);
-            //Assert.AreEqual("one", testEnvironment.Default);
-            //Assert.AreEqual(1, testEnvironment.Parameters.Count);
+            var x = (TflRoot) root;
+            Assert.AreEqual("one", x.Environments[0].Name);
+            Assert.AreEqual("one", x.Environments[0].Default);
+            Assert.AreEqual(1, x.Environments[0].Parameters.Count);
         }
     }
 }

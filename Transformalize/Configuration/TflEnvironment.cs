@@ -9,6 +9,7 @@ namespace Transformalize.Configuration {
         }
 
         public string Name { get; set; }
+        public string Default { get; set; }
         public List<TflParameter> Parameters { get; set; }
     }
 }

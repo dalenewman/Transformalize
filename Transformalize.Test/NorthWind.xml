@@ -24,6 +24,7 @@
       </log>
 
       <file-inspection>
+        <add name="default">
           <types>
             <add type="decimal"/>
             <add type="string"/>
@@ -34,6 +35,7 @@
             <add name="tab" character="&#009;"/>
             <add name="semicolon" character=";"/>
           </delimiters>
+        </add>
       </file-inspection>
 
       <connections>

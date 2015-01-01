@@ -30,10 +30,10 @@ namespace Transformalize.Configuration {
         }
 
         public string Action { get; set; }
-        public string After { get; set; }
+        public bool After { get; set; }
         public string Arguments { get; set; }
         public string Bcc { get; set; }
-        public string Before { get; set; }
+        public bool Before { get; set; }
         public string Body { get; set; }
         public string Cc { get; set; }
         public string Command { get; set; }

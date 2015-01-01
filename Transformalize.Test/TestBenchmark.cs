@@ -86,7 +86,12 @@ namespace Transformalize.Test {
             sw.Start();
             Console.WriteLine("Populate: {0}", sw.ElapsedMilliseconds);
 
-            var cfg = (TflRoot) root;
+            var cfg = (TflRoot)root;
+
+            var problems = root.AllProblems();
+            foreach (var problem in problems) {
+                Console.WriteLine(problem);
+            }
 
             Assert.AreEqual("NorthWind", root["processes", 0]["name"].Value);
             Assert.AreEqual(string.Empty, root["processes", 0]["mode"].Value);
@@ -97,7 +102,7 @@ namespace Transformalize.Test {
             Assert.AreEqual("test", root["environments", 1]["name"].Value);
             Assert.AreEqual("prod", root["environments", 1]["default"].Value);
 
-            Assert.AreEqual(new TflProperty("database", "NorthWindStar").Value, root["processes", 0]["connections", 1]["database"].Value);
+            Assert.AreEqual(new CfgProperty("database", "NorthWindStar").Value, root["processes", 0]["connections", 1]["database"].Value);
 
         }
 

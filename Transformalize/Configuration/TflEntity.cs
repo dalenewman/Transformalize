@@ -50,8 +50,8 @@ namespace Transformalize.Configuration {
         public string ScriptKeys { get; set; }
         public string Script { get; set; }
         public bool TrimAll { get; set; }
-        public bool Unicode { get; set; }
-        public bool VariableLength { get; set; }
+        public string Unicode { get; set; }
+        public string VariableLength { get; set; }
         public string Version { get; set; }
 
         public List<TflFilter> Filters { get; set; }
