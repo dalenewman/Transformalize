@@ -30,7 +30,6 @@ namespace Transformalize.Libs.Cfg.Net {
         private readonly List<string> _problems = new List<string>();
         private readonly Dictionary<string, Func<CfgNode>> _elementLoaders = new Dictionary<string, Func<CfgNode>>();
 
-        protected List<string> Problems { get { return _problems; } }
         protected static bool TurnOffProperties { get; set; }
 
         private static Dictionary<Type, Func<string, object>> Converter {
@@ -62,7 +61,16 @@ namespace Transformalize.Libs.Cfg.Net {
             get { return _properties[name]; }
         }
 
-        public void Load(NanoXmlNode node) {
+        public void Load(string xml) {
+
+            NanoXmlNode node;
+            try {
+                node = new NanoXmlDocument(xml).RootNode;
+            } catch (Exception ex) {
+                _problems.Add(string.Format("Could not parse the configuration. {0}", ex.Message));
+                return;
+            }
+
             LoadProperties(node, null);
             LoadCollections(node, null);
             if (!TurnOffProperties) {
@@ -114,10 +122,14 @@ namespace Transformalize.Libs.Cfg.Net {
         /// <param name="unique"></param>
         /// <param name="decode"></param>
         protected void Property<T>(string name, T value, bool required = false, bool unique = false, bool decode = false) {
+            Property(name, value, typeof(T), required, unique, decode);
+        }
+
+        private void Property(string name, object value, Type type, bool required, bool unique, bool decode) {
             if (!_properties.ContainsKey(name)) {
                 _propertyKeys.Add(name);
             }
-            _properties[name] = new CfgProperty(name, value, required, unique, decode);
+            _properties[name] = new CfgProperty(name, value, type, required, unique, decode);
             if (required) {
                 _requiredProperties.Add(name);
             }
@@ -126,19 +138,11 @@ namespace Transformalize.Libs.Cfg.Net {
             }
         }
 
-        protected void Property(string name) {
-            Property(name, string.Empty, false, false, false);
-        }
-
-        protected void Property(CfgProperty property) {
-            Property(property.Name, property.Value, property.Required, property.Unique, property.Decode);
-        }
-
         protected void SharedProperty<T>(string className, string propertyName, T value) {
             if (_classProperties.ContainsKey(className)) {
-                _classProperties[className][propertyName] = new CfgProperty(propertyName, value);
+                _classProperties[className][propertyName] = new CfgProperty(propertyName, value, typeof(T), false, false, false);
             } else {
-                _classProperties[className] = new Dictionary<string, CfgProperty>(StringComparer.Ordinal) { { propertyName, new CfgProperty(propertyName, value) } };
+                _classProperties[className] = new Dictionary<string, CfgProperty>(StringComparer.Ordinal) { { propertyName, new CfgProperty(propertyName, value, typeof(T), false, false, false) } };
             }
         }
 
@@ -191,9 +195,9 @@ namespace Transformalize.Libs.Cfg.Net {
                                 foreach (var attribute in subNode.Attributes) {
                                     if (!_classProperties[subNode.Name].ContainsKey(attribute.Name))
                                         continue;
-                                    var classProperty = _classProperties[subNode.Name][attribute.Name];
-                                    classProperty.Value = attribute.Value ?? classProperty.Value;
-                                    tflNode.Property(classProperty);
+                                    var property = _classProperties[subNode.Name][attribute.Name];
+                                    property.Value = attribute.Value ?? property.Value;
+                                    tflNode.Property(property.Name, property.Value, property.Type, property.Required, property.Unique, property.Decode);
                                 }
                             }
 
@@ -259,12 +263,12 @@ namespace Transformalize.Libs.Cfg.Net {
                     if (attribute.Value == null)
                         continue;
 
-                    if (_properties[attribute.Name].Value is string) {
+                    if (_properties[attribute.Name].Type == typeof(string)) {
                         _properties[attribute.Name].Value = _properties[attribute.Name].Decode && attribute.Value.IndexOf('&') >= 0 ? Decode(attribute.Value) : attribute.Value;
                         _properties[attribute.Name].Set = true;
                     } else {
                         try {
-                            _properties[attribute.Name].Value = Converter[_properties[attribute.Name].Value.GetType()](_properties[attribute.Name].Decode && attribute.Value.IndexOf('&') >= 0 ? Decode(attribute.Value) : attribute.Value);
+                            _properties[attribute.Name].Value = Converter[_properties[attribute.Name].Type](_properties[attribute.Name].Decode && attribute.Value.IndexOf('&') >= 0 ? Decode(attribute.Value) : attribute.Value);
                             _properties[attribute.Name].Set = true;
                         } catch (Exception ex) {
                             _problems.Add(string.Format("Could not set '{0}' to '{1}' inside '{2}' '{3}'. {4}", _properties[attribute.Name].Name, attribute.Value, parentName, node.Name, ex.Message));
@@ -300,8 +304,7 @@ namespace Transformalize.Libs.Cfg.Net {
                 if (pair.Value.PropertyType.IsGenericType)
                     continue;
 
-                Property(ToXmlNameStyle(pair.Value.Name), attribute.value, attribute.required, attribute.unique,
-                    attribute.decode);
+                Property(ToXmlNameStyle(pair.Value.Name), attribute.value, pair.Value.PropertyType, attribute.required, attribute.unique, attribute.decode);
             }
         }
 
@@ -582,7 +585,7 @@ namespace Transformalize.Libs.Cfg.Net {
             }
         }
 
-        public List<string> AllProblems() {
+        public List<string> Problems() {
             var allProblems = new List<string>();
             for (var i = 0; i < _problems.Count; i++) {
                 allProblems.Add(_problems[i]);
@@ -590,7 +593,7 @@ namespace Transformalize.Libs.Cfg.Net {
             foreach (var pair in _collections) {
                 for (var i = 0; i < pair.Value.Count; i++) {
                     var @class = pair.Value[i];
-                    allProblems.AddRange(@class.AllProblems());
+                    allProblems.AddRange(@class.Problems());
                 }
             }
             return allProblems;

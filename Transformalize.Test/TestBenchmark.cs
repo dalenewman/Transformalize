@@ -77,11 +77,11 @@ namespace Transformalize.Test {
             var sw = new Stopwatch();
             sw.Start();
             var cfg = new TflRoot();
-            cfg.Load(new NanoXmlDocument(File.ReadAllText(@"NorthWind.xml")).RootNode);
+            cfg.Load(File.ReadAllText(@"NorthWind.xml"));
             sw.Stop();
             Console.WriteLine("Load: {0}", sw.ElapsedMilliseconds);
 
-            var problems = cfg.AllProblems();
+            var problems = cfg.Problems();
             foreach (var problem in problems) {
                 Console.WriteLine(problem);
             }
@@ -95,7 +95,7 @@ namespace Transformalize.Test {
             Assert.AreEqual("test", cfg["environments", 1]["name"].Value);
             Assert.AreEqual("prod", cfg["environments", 1]["default"].Value);
 
-            Assert.AreEqual(new CfgProperty("database", "NorthWindStar").Value, cfg["processes", 0]["connections", 1]["database"].Value);
+            Assert.AreEqual("NorthWindStar", cfg["processes", 0]["connections", 1]["database"].Value);
 
         }
 
