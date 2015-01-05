@@ -1,20 +1,21 @@
-﻿using Transformalize.Main;
+﻿using Transformalize.Libs.Cfg.Net;
+using Transformalize.Main;
 
 namespace Transformalize.Configuration {
     public class TflLog : CfgNode {
         public TflLog() {
 
-            Property(n: "name", v: string.Empty, r:true, u:true);
-            Property(n: "provider", v: Common.DefaultValue);
-            Property(n: "layout", v: Common.DefaultValue);
-            Property(n: "level", v: "Informational");
-            Property(n: "connection", v: Common.DefaultValue);
-            Property(n: "from", v: Common.DefaultValue);
-            Property(n: "to", v: Common.DefaultValue);
-            Property(n: "subject", v: Common.DefaultValue);
-            Property(n: "file", v: Common.DefaultValue);
-            Property(n: "folder", v: Common.DefaultValue);
-            Property(n: "async", v: false);
+            Property(name: "name", value: string.Empty, required:true, unique:true);
+            Property(name: "provider", value: Common.DefaultValue);
+            Property(name: "layout", value: Common.DefaultValue);
+            Property(name: "level", value: "Informational");
+            Property(name: "connection", value: Common.DefaultValue);
+            Property(name: "from", value: Common.DefaultValue);
+            Property(name: "to", value: Common.DefaultValue);
+            Property(name: "subject", value: Common.DefaultValue);
+            Property(name: "file", value: Common.DefaultValue);
+            Property(name: "folder", value: Common.DefaultValue);
+            Property(name: "async", value: false);
         }
 
         public string Name { get; set; }

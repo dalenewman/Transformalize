@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Transformalize.Libs.Cfg.Net;
 using Transformalize.Main;
 
 namespace Transformalize.Configuration {
@@ -7,13 +8,13 @@ namespace Transformalize.Configuration {
 
         public TflBranch() {
 
-            Property(n: "name", v: string.Empty, r: true, u: true);
-            Property(n: "run-field", v: Common.DefaultValue);
-            Property(n: "run-operator", v: "Equal");
-            Property(n: "run-type", v: Common.DefaultValue);
-            Property(n: "run-value", v: string.Empty);
+            Property(name: "name", value: string.Empty, required: true, unique: true);
+            Property(name: "run-field", value: Common.DefaultValue);
+            Property(name: "run-operator", value: "Equal");
+            Property(name: "run-type", value: Common.DefaultValue);
+            Property(name: "run-value", value: string.Empty);
 
-            Class<TflTransform>("transforms");
+            Collection<TflTransform>("transforms");
         }
 
         public string Name { get; set; }

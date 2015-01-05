@@ -1,11 +1,13 @@
+using Transformalize.Libs.Cfg.Net;
+
 namespace Transformalize.Configuration {
     public class TflFilter : CfgNode {
         public TflFilter() {
-            Property(n: "left", v: string.Empty);
-            Property(n: "right", v: string.Empty);
-            Property(n: "operator", v: "Equal");
-            Property(n: "continuation", v: "AND");
-            Property(n: "expression", v: string.Empty);
+            Property(name: "left", value: string.Empty);
+            Property(name: "right", value: string.Empty);
+            Property(name: "operator", value: "Equal");
+            Property(name: "continuation", value: "AND");
+            Property(name: "expression", value: string.Empty);
         }
 
         public string Left { get; set; }

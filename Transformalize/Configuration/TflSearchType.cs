@@ -1,12 +1,14 @@
+using Transformalize.Libs.Cfg.Net;
+
 namespace Transformalize.Configuration {
     public class TflSearchType : CfgNode {
         public TflSearchType() {
-            Property(n: "name", v: string.Empty, r: true, u: true);
-            Property(n: "store", v: true);
-            Property(n: "index", v: true);
-            Property(n: "multi-valued", v: false);
-            Property(n: "analyzer", v: string.Empty);
-            Property(n: "norms", v: true);
+            Property(name: "name", value: string.Empty, required: true, unique: true);
+            Property(name: "store", value: true);
+            Property(name: "index", value: true);
+            Property(name: "multi-valued", value: false);
+            Property(name: "analyzer", value: string.Empty);
+            Property(name: "norms", value: true);
         }
 
         public string Name { get; set; }

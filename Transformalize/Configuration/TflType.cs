@@ -1,7 +1,9 @@
+using Transformalize.Libs.Cfg.Net;
+
 namespace Transformalize.Configuration {
     public class TflType : CfgNode {
         public TflType() {
-            Property(n:"type", v:string.Empty, r:true, u:true);
+            Property(name:"type", value:string.Empty, required:true, unique:true);
         }
     }
 }

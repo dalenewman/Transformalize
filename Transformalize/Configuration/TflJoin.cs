@@ -1,9 +1,11 @@
+using Transformalize.Libs.Cfg.Net;
+
 namespace Transformalize.Configuration {
     public class TflJoin : CfgNode {
 
         public TflJoin() {
-            Property(n: "left-field", v: string.Empty, r: true);
-            Property(n: "right-field", v: string.Empty, r: true);
+            Property(name: "left-field", value: string.Empty, required: true);
+            Property(name: "right-field", value: string.Empty, required: true);
         }
 
         public string LeftField { get; set; }

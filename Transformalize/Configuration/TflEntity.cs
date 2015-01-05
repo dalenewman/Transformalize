@@ -1,36 +1,37 @@
 using System.Collections.Generic;
+using Transformalize.Libs.Cfg.Net;
 
 namespace Transformalize.Configuration {
     public class TflEntity : CfgNode {
 
         public TflEntity() {
 
-            Property(n: "alias", v: string.Empty, r: false, u: true);
-            Property(n: "connection", v: "input");
-            Property(n: "delete", v: false);
-            Property(n: "detect-changes", v: true);
-            Property(n: "group", v: false);
-            Property(n: "name", v: string.Empty, r: true);
-            Property(n: "no-lock", v: false);
-            Property(n: "pipeline-threading", v: "Default");
-            Property(n: "prefix", v: string.Empty);
-            Property(n: "prepend-process-name-to-output-name", v: true);
-            Property(n: "sample", v: 100);
-            Property(n: "schema", v: string.Empty);
-            Property(n: "query-keys", v: string.Empty);
-            Property(n: "query", v: string.Empty);
-            Property(n: "script-keys", v: string.Empty);
-            Property(n: "script", v: string.Empty);
-            Property(n: "trim-all", v: false);
-            Property(n: "unicode", v: string.Empty);
-            Property(n: "variable-length", v: string.Empty);
-            Property(n: "version", v: string.Empty);
+            Property(name: "alias", value: string.Empty, required: false, unique: true);
+            Property(name: "connection", value: "input");
+            Property(name: "delete", value: false);
+            Property(name: "detect-changes", value: true);
+            Property(name: "group", value: false);
+            Property(name: "name", value: string.Empty, required: true);
+            Property(name: "no-lock", value: false);
+            Property(name: "pipeline-threading", value: "Default");
+            Property(name: "prefix", value: string.Empty);
+            Property(name: "prepend-process-name-to-output-name", value: true);
+            Property(name: "sample", value: 100);
+            Property(name: "schema", value: string.Empty);
+            Property(name: "query-keys", value: string.Empty);
+            Property(name: "query", value: string.Empty);
+            Property(name: "script-keys", value: string.Empty);
+            Property(name: "script", value: string.Empty);
+            Property(name: "trim-all", value: false);
+            Property(name: "unicode", value: string.Empty);
+            Property(name: "variable-length", value: string.Empty);
+            Property(name: "version", value: string.Empty);
 
-            Class<TflFilter>("filter");
-            Class<TflField>("fields");
-            Class<TflCalculatedField>("calculated-fields");
-            Class<TflIo>("input");
-            Class<TflIo>("output");
+            Collection<TflFilter>("filter");
+            Collection<TflField>("fields");
+            Collection<TflCalculatedField>("calculated-fields");
+            Collection<TflIo>("input");
+            Collection<TflIo>("output");
         }
 
         public string Alias { get; set; }

@@ -22,13 +22,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using Transformalize.Configuration;
-using Transformalize.Libs.NanoXml;
-using Transformalize.Libs.SharpZLib.Encryption;
+using Transformalize.Libs.Cfg.Net;
 using Transformalize.Logging;
 using Transformalize.Main;
 

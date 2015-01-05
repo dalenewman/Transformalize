@@ -1,11 +1,11 @@
-﻿// http://www.codeproject.com/Tips/682245/NanoXML-Simple-and-fast-XML-parser
+﻿// credits to http://www.codeproject.com/Tips/682245/NanoXML-Simple-and-fast-XML-parser
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Transformalize.Libs.NanoXml {
+namespace Transformalize.Libs.Cfg.Net {
     /// <summary>
     ///     Base class containing useful features for all XML classes
     /// </summary>
@@ -79,15 +79,15 @@ namespace Transformalize.Libs.NanoXml {
     ///     Class representing whole DOM XML document
     /// </summary>
     public class NanoXmlDocument : NanoXmlBase {
-        private readonly List<NanoXmlAttribute> declarations = new List<NanoXmlAttribute>();
-        private readonly NanoXmlNode rootNode;
+        private readonly List<NanoXmlAttribute> _declarations = new List<NanoXmlAttribute>();
+        private readonly NanoXmlNode _rootNode;
 
         /// <summary>
         ///     Public constructor. Loads xml document from raw string
         /// </summary>
         /// <param name="xmlString">String with xml</param>
         public NanoXmlDocument(string xmlString) {
-            int i = 0;
+            var i = 0;
 
             while (true) {
                 SkipSpaces(xmlString, ref i);
@@ -100,7 +100,7 @@ namespace Transformalize.Libs.NanoXml {
                 if (xmlString[i] == '?') // declaration
                 {
                     i++; // skip ?
-                    ParseAttributes(xmlString, ref i, declarations, '?', '>');
+                    ParseAttributes(xmlString, ref i, _declarations, '?', '>');
                     i++; // skip ending ?
                     i++; // skip ending >
 
@@ -117,7 +117,7 @@ namespace Transformalize.Libs.NanoXml {
                     continue;
                 }
 
-                rootNode = new NanoXmlNode(xmlString, ref i);
+                _rootNode = new NanoXmlNode(xmlString, ref i);
                 break;
             }
         }
@@ -126,14 +126,14 @@ namespace Transformalize.Libs.NanoXml {
         ///     Root document element
         /// </summary>
         public NanoXmlNode RootNode {
-            get { return rootNode; }
+            get { return _rootNode; }
         }
 
         /// <summary>
         ///     List of XML Declarations as <see cref="NanoXmlAttribute" />
         /// </summary>
         public IEnumerable<NanoXmlAttribute> Declarations {
-            get { return declarations; }
+            get { return _declarations; }
         }
     }
 
@@ -142,12 +142,12 @@ namespace Transformalize.Libs.NanoXml {
     /// </summary>
     public class NanoXmlNode : NanoXmlBase {
         private readonly List<NanoXmlAttribute> attributes = new List<NanoXmlAttribute>();
-        private readonly string name;
+        private readonly string _name;
 
-        private readonly List<NanoXmlNode> subNodes = new List<NanoXmlNode>();
+        private readonly List<NanoXmlNode> _subNodes = new List<NanoXmlNode>();
 
         internal NanoXmlNode(string str, ref int i) {
-            name = ParseAttributes(str, ref i, attributes, '>', '/');
+            _name = ParseAttributes(str, ref i, attributes, '>', '/');
 
             if (str[i] == '/') // if this node has nothing inside
             {
@@ -159,7 +159,7 @@ namespace Transformalize.Libs.NanoXml {
             i++; // skip >
 
             // temporary. to include all whitespaces into value, if any
-            int tempI = i;
+            var tempI = i;
 
             SkipSpaces(str, ref tempI);
 
@@ -169,7 +169,7 @@ namespace Transformalize.Libs.NanoXml {
                 while (str[i + 1] != '/') // parse subnodes
                 {
                     i++; // skip <
-                    subNodes.Add(new NanoXmlNode(str, ref i));
+                    _subNodes.Add(new NanoXmlNode(str, ref i));
 
                     SkipSpaces(str, ref i);
 
@@ -187,19 +187,19 @@ namespace Transformalize.Libs.NanoXml {
                 i++; // skip <
 
                 if (str[i] != '/')
-                    throw new XmlParsingException("Invalid ending on tag " + name);
+                    throw new XmlParsingException("Invalid ending on tag " + _name);
             }
 
             i++; // skip /
             SkipSpaces(str, ref i);
 
-            string endName = GetValue(str, ref i, '>', '\0', true);
-            if (endName != name)
-                throw new XmlParsingException("Start/end tag name mismatch: " + name + " and " + endName);
+            var endName = GetValue(str, ref i, '>', '\0', true);
+            if (endName != _name)
+                throw new XmlParsingException("Start/end tag name mismatch: " + _name + " and " + endName);
             SkipSpaces(str, ref i);
 
             if (str[i] != '>')
-                throw new XmlParsingException("Invalid ending on tag " + name);
+                throw new XmlParsingException("Invalid ending on tag " + _name);
 
             i++; // skip >
         }
@@ -213,14 +213,14 @@ namespace Transformalize.Libs.NanoXml {
         ///     Element name
         /// </summary>
         public string Name {
-            get { return name; }
+            get { return _name; }
         }
 
         /// <summary>
         ///     List of subelements
         /// </summary>
         public List<NanoXmlNode> SubNodes {
-            get { return subNodes; }
+            get { return _subNodes; }
         }
 
         /// <summary>
@@ -237,9 +237,11 @@ namespace Transformalize.Libs.NanoXml {
         /// <returns>First subelement with given name or NULL if no such element</returns>
         public NanoXmlNode this[string nodeName] {
             get {
-                foreach (NanoXmlNode nanoXmlNode in subNodes)
-                    if (nanoXmlNode.name == nodeName)
+                for (var i = 0; i < _subNodes.Count; i++) {
+                    var nanoXmlNode = _subNodes[i];
+                    if (nanoXmlNode._name == nodeName)
                         return nanoXmlNode;
+                }
 
                 return null;
             }
@@ -251,19 +253,23 @@ namespace Transformalize.Libs.NanoXml {
         /// <param name="attributeName">Attribute name to get</param>
         /// <returns><see cref="NanoXmlAttribute" /> with given name or null if no such attribute</returns>
         public NanoXmlAttribute GetAttribute(string attributeName) {
-            foreach (var nanoXmlAttribute in attributes)
+            for (var i = 0; i < attributes.Count; i++) {
+                var nanoXmlAttribute = attributes[i];
                 if (nanoXmlAttribute.Name == attributeName)
                     return nanoXmlAttribute;
+            }
 
             return null;
         }
 
         public bool TryAttribute(string attributeName, out NanoXmlAttribute attribute) {
-            foreach (var nanoXmlAttribute in attributes)
-                if (nanoXmlAttribute.Name == attributeName) {
-                    attribute = nanoXmlAttribute;
-                    return true;
-                }
+            for (var i = 0; i < attributes.Count; i++) {
+                var nanoXmlAttribute = attributes[i];
+                if (nanoXmlAttribute.Name != attributeName)
+                    continue;
+                attribute = nanoXmlAttribute;
+                return true;
+            }
 
             attribute = null;
             return false;
@@ -280,7 +286,8 @@ namespace Transformalize.Libs.NanoXml {
         }
 
         private void InnerText(ref StringBuilder builder) {
-            foreach (var node in subNodes) {
+            for (var i = 0; i < _subNodes.Count; i++) {
+                var node = _subNodes[i];
                 builder.Append("<");
                 builder.Append(node.Name);
                 foreach (var attribute in node.attributes) {
@@ -319,26 +326,26 @@ namespace Transformalize.Libs.NanoXml {
     ///     XML element attribute
     /// </summary>
     public class NanoXmlAttribute {
-        private readonly string name;
-        private readonly string value;
+        private readonly string _name;
+        private readonly string _value;
 
         internal NanoXmlAttribute(string name, string value) {
-            this.name = name;
-            this.value = value;
+            _name = name;
+            _value = value;
         }
 
         /// <summary>
         ///     Attribute name
         /// </summary>
         public string Name {
-            get { return name; }
+            get { return _name; }
         }
 
         /// <summary>
         ///     Attribtue value
         /// </summary>
         public string Value {
-            get { return value; }
+            get { return _value; }
         }
     }
 

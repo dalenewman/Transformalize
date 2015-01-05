@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Transformalize.Libs.Cfg.Net;
 using Transformalize.Main;
 
 namespace Transformalize.Configuration {
@@ -6,37 +7,37 @@ namespace Transformalize.Configuration {
 
         public TflField() {
 
-            Property(n: "aggregate", v: string.Empty);
-            Property(n: "alias", v: string.Empty, r: false, u: true);
-            Property(n: "default", v: string.Empty);
-            Property(n: "default-blank", v: false);
-            Property(n: "default-empty", v: false);
-            Property(n: "default-white-space", v: false);
-            Property(n: "delimiter", v: ", ");
-            Property(n: "distinct", v: false);
-            Property(n: "index", v: short.MaxValue);
-            Property(n: "input", v: true);
-            Property(n: "label", v: string.Empty);
-            Property(n: "length", v: "64");
-            Property(n: "name", v: string.Empty, r: true);
-            Property(n: "node-type", v: "element");
-            Property(n: "optional", v: false);
-            Property(n: "output", v: true);
-            Property(n: "precision", v: 18);
-            Property(n: "primary-key", v: false);
-            Property(n: "quoted-with", v: default(char));
-            Property(n: "raw", v: false);
-            Property(n: "read-inner-xml", v: true);
-            Property(n: "scale", v: 9);
-            Property(n: "search-type", v: "default");
-            Property(n: "sort", v: string.Empty);
-            Property(n: "t", v: string.Empty);
-            Property(n: "type", v: "string");
-            Property(n: "unicode", v: Common.DefaultValue);
-            Property(n: "variable-length", v: Common.DefaultValue);
+            Property(name: "aggregate", value: string.Empty);
+            Property(name: "alias", value: string.Empty, required: false, unique: true);
+            Property(name: "default", value: string.Empty);
+            Property(name: "default-blank", value: false);
+            Property(name: "default-empty", value: false);
+            Property(name: "default-white-space", value: false);
+            Property(name: "delimiter", value: ", ");
+            Property(name: "distinct", value: false);
+            Property(name: "index", value: short.MaxValue);
+            Property(name: "input", value: true);
+            Property(name: "label", value: string.Empty);
+            Property(name: "length", value: "64");
+            Property(name: "name", value: string.Empty, required: true);
+            Property(name: "node-type", value: "element");
+            Property(name: "optional", value: false);
+            Property(name: "output", value: true);
+            Property(name: "precision", value: 18);
+            Property(name: "primary-key", value: false);
+            Property(name: "quoted-with", value: default(char));
+            Property(name: "raw", value: false);
+            Property(name: "read-inner-xml", value: true);
+            Property(name: "scale", value: 9);
+            Property(name: "search-type", value: "default");
+            Property(name: "sort", value: string.Empty);
+            Property(name: "t", value: string.Empty);
+            Property(name: "type", value: "string");
+            Property(name: "unicode", value: Common.DefaultValue);
+            Property(name: "variable-length", value: Common.DefaultValue);
 
-            Class<TflNameReference>("search-types");
-            Class<TflTransform>("transforms");
+            Collection<TflNameReference>("search-types");
+            Collection<TflTransform>("transforms");
         }
 
         public bool DefaultBlank { get; set; }

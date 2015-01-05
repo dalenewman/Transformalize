@@ -103,7 +103,6 @@
     <Compile Include="EtlProcessHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestAggregations.cs" />
-    <Compile Include="TestNewConfiguration.cs" />
     <Compile Include="TestConfiguration.cs" />
     <Compile Include="TestConnectionValidation.cs" />
     <Compile Include="TestColumnNameValidator.cs" />

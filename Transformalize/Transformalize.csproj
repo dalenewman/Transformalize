@@ -80,7 +80,6 @@
     <Compile Include="Configuration\Builders\SearchTypeBuilder.cs" />
     <Compile Include="Configuration\Builders\TemplateBuilder.cs" />
     <Compile Include="Configuration\Builders\TransformBuilder.cs" />
-    <Compile Include="Configuration\CfgNode.cs" />
     <Compile Include="Configuration\ConfigurationFactory.cs" />
     <Compile Include="Configuration\ConfigurationSource.cs" />
     <Compile Include="Configuration\ConnectionConfigurationElement.cs" />
@@ -121,7 +120,6 @@
     <Compile Include="Configuration\TflNameReference.cs" />
     <Compile Include="Configuration\TflParameter.cs" />
     <Compile Include="Configuration\TflProcess.cs" />
-    <Compile Include="Configuration\CfgProperty.cs" />
     <Compile Include="Configuration\TflProvider.cs" />
     <Compile Include="Configuration\TflRelationship.cs" />
     <Compile Include="Configuration\TflRoot.cs" />
@@ -177,6 +175,11 @@
     <Compile Include="Extensions\IntExtensions.cs" />
     <Compile Include="Extensions\ObjectPool.cs" />
     <Compile Include="Extensions\ProducerConsumerCollectionBase.cs" />
+    <Compile Include="Libs\Cfg.Net\CfgAttribute.cs" />
+    <Compile Include="Libs\Cfg.Net\CfgNode.cs" />
+    <Compile Include="Libs\Cfg.Net\CfgProperty.cs" />
+    <Compile Include="Libs\Cfg.Net\CharExtensions.cs" />
+    <Compile Include="Libs\Cfg.Net\NanoXmlParser.cs" />
     <Compile Include="Libs\Dapper\SqlBuilder.cs" />
     <Compile Include="Libs\Dapper\SqlMapper.cs" />
     <Compile Include="Libs\DBDiff.Schema\Attributes\ShowCollection.cs" />
@@ -1464,7 +1467,6 @@
     <Compile Include="Libs\Microsoft\System.Web.Razor\Utils\EnumeratorExtensions.cs" />
     <Compile Include="Libs\Microsoft\System.Web.Razor\Utils\EnumUtil.cs" />
     <Compile Include="Libs\Microsoft\System.Web.Razor\VBRazorCodeLanguage.cs" />
-    <Compile Include="Libs\NanoXml\NanoXmlParser.cs" />
     <Compile Include="Libs\Nest\ConvenienceExtensions\AliasExtensions.cs" />
     <Compile Include="Libs\Nest\ConvenienceExtensions\CountExtensions.cs" />
     <Compile Include="Libs\Nest\ConvenienceExtensions\CreateIndexExtensions.cs" />

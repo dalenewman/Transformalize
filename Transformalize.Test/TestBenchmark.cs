@@ -27,7 +27,7 @@ using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration;
-using Transformalize.Libs.NanoXml;
+using Transformalize.Libs.Cfg.Net;
 using Transformalize.Main;
 
 namespace Transformalize.Test {
@@ -76,33 +76,26 @@ namespace Transformalize.Test {
         public void TestRoot() {
             var sw = new Stopwatch();
             sw.Start();
-            var root = new TflRoot().Load(new NanoXmlDocument(File.ReadAllText(@"NorthWind.xml")).RootNode);
+            var cfg = new TflRoot();
+            cfg.Load(new NanoXmlDocument(File.ReadAllText(@"NorthWind.xml")).RootNode);
             sw.Stop();
             Console.WriteLine("Load: {0}", sw.ElapsedMilliseconds);
 
-            sw = new Stopwatch();
-            sw.Start();
-            root.Populate();
-            sw.Start();
-            Console.WriteLine("Populate: {0}", sw.ElapsedMilliseconds);
-
-            var cfg = (TflRoot)root;
-
-            var problems = root.AllProblems();
+            var problems = cfg.AllProblems();
             foreach (var problem in problems) {
                 Console.WriteLine(problem);
             }
 
-            Assert.AreEqual("NorthWind", root["processes", 0]["name"].Value);
-            Assert.AreEqual(string.Empty, root["processes", 0]["mode"].Value);
-            Assert.AreEqual(string.Empty, root["processes", 0]["pipeline-threading"].Value);
-            Assert.AreEqual(true, root["processes", 0]["enabled"].Value);
+            Assert.AreEqual("NorthWind", cfg["processes", 0]["name"].Value);
+            Assert.AreEqual(string.Empty, cfg["processes", 0]["mode"].Value);
+            Assert.AreEqual(string.Empty, cfg["processes", 0]["pipeline-threading"].Value);
+            Assert.AreEqual(true, cfg["processes", 0]["enabled"].Value);
 
-            Assert.AreEqual("prod", root["environments", 0]["name"].Value);
-            Assert.AreEqual("test", root["environments", 1]["name"].Value);
-            Assert.AreEqual("prod", root["environments", 1]["default"].Value);
+            Assert.AreEqual("prod", cfg["environments", 0]["name"].Value);
+            Assert.AreEqual("test", cfg["environments", 1]["name"].Value);
+            Assert.AreEqual("prod", cfg["environments", 1]["default"].Value);
 
-            Assert.AreEqual(new CfgProperty("database", "NorthWindStar").Value, root["processes", 0]["connections", 1]["database"].Value);
+            Assert.AreEqual(new CfgProperty("database", "NorthWindStar").Value, cfg["processes", 0]["connections", 1]["database"].Value);
 
         }
 

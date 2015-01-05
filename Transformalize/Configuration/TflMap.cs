@@ -1,14 +1,16 @@
+using Transformalize.Libs.Cfg.Net;
+
 namespace Transformalize.Configuration {
 
     public class TflMap : CfgNode {
 
         public TflMap() {
 
-            Property(n: "name", v: string.Empty, r:true, u:true);
-            Property(n: "connection", v: "input");
-            Property(n: "query", v: string.Empty);
+            Property(name: "name", value: string.Empty, required:true, unique:true);
+            Property(name: "connection", value: "input");
+            Property(name: "query", value: string.Empty);
 
-            Class<TflMapItem>("items");
+            Collection<TflMapItem>("items");
         }
 
         public string Name { get; set; }

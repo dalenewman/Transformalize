@@ -1,32 +1,33 @@
 using System.Collections.Generic;
+using Transformalize.Libs.Cfg.Net;
 
 namespace Transformalize.Configuration {
     public class TflAction : CfgNode {
 
         public TflAction() {
 
-            Property(n: "action", v: string.Empty, r: true);
-            Property(n: "after", v: true);
-            Property(n: "arguments", v: string.Empty);
-            Property(n: "bcc", v: string.Empty);
-            Property(n: "before", v: false);
-            Property(n: "body", v: string.Empty);
-            Property(n: "cc", v: string.Empty);
-            Property(n: "command", v: string.Empty);
-            Property(n: "connection", v: string.Empty);
-            Property(n: "file", v: string.Empty);
-            Property(n: "from", v: string.Empty);
-            Property(n: "html", v: true);
-            Property(n: "method", v: "get");
-            Property(n: "mode", v: "*");
-            Property(n: "new-value", v: string.Empty);
-            Property(n: "old-value", v: string.Empty);
-            Property(n: "subject", v: string.Empty);
-            Property(n: "time-out", v: 0);
-            Property(n: "to", v: string.Empty);
-            Property(n: "url", v: string.Empty);
+            Property(name: "action", value: string.Empty, required: true);
+            Property(name: "after", value: true);
+            Property(name: "arguments", value: string.Empty);
+            Property(name: "bcc", value: string.Empty);
+            Property(name: "before", value: false);
+            Property(name: "body", value: string.Empty);
+            Property(name: "cc", value: string.Empty);
+            Property(name: "command", value: string.Empty);
+            Property(name: "connection", value: string.Empty);
+            Property(name: "file", value: string.Empty);
+            Property(name: "from", value: string.Empty);
+            Property(name: "html", value: true);
+            Property(name: "method", value: "get");
+            Property(name: "mode", value: "*");
+            Property(name: "new-value", value: string.Empty);
+            Property(name: "old-value", value: string.Empty);
+            Property(name: "subject", value: string.Empty);
+            Property(name: "time-out", value: 0);
+            Property(name: "to", value: string.Empty);
+            Property(name: "url", value: string.Empty);
 
-            Class<TflNameReference>("modes");
+            Collection<TflNameReference>("modes");
         }
 
         public string Action { get; set; }

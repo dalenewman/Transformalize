@@ -1,14 +1,15 @@
+using Transformalize.Libs.Cfg.Net;
 using Transformalize.Main;
 
 namespace Transformalize.Configuration {
     public class TflIo : CfgNode {
         public TflIo() {
-            Property(n: "name", v: string.Empty);
-            Property(n: "connection", v: string.Empty, r: true);
-            Property(n: "run-field", v: string.Empty);
-            Property(n: "run-type", v: Common.DefaultValue);
-            Property(n: "run-operator", v: "Equal");
-            Property(n: "run-value", v: string.Empty);
+            Property(name: "name", value: string.Empty);
+            Property(name: "connection", value: string.Empty, required: true);
+            Property(name: "run-field", value: string.Empty);
+            Property(name: "run-type", value: Common.DefaultValue);
+            Property(name: "run-operator", value: "Equal");
+            Property(name: "run-value", value: string.Empty);
         }
 
         public string Name { get; set; }

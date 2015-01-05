@@ -1,19 +1,20 @@
 using System.Collections.Generic;
+using Transformalize.Libs.Cfg.Net;
 
 namespace Transformalize.Configuration {
 
     public class TflTemplate : CfgNode {
 
         public TflTemplate() {
-            Property(n: "name", v: string.Empty, r: true, u: true);
-            Property(n: "content-type", v: "raw");
-            Property(n: "file", v: string.Empty, r: true, u: true);
-            Property(n: "cache", v: false);
-            Property(n: "enabled", v: true);
-            Property(n: "engine", v: "razor");
+            Property(name: "name", value: string.Empty, required: true, unique: true);
+            Property(name: "content-type", value: "raw");
+            Property(name: "file", value: string.Empty, required: true, unique: true);
+            Property(name: "cache", value: false);
+            Property(name: "enabled", value: true);
+            Property(name: "engine", value: "razor");
 
-            Class<TflParameter>("parameters");
-            Class<TflAction>("actions");
+            Collection<TflParameter>("parameters");
+            Collection<TflAction>("actions");
         }
 
         public string Name { get; set; }

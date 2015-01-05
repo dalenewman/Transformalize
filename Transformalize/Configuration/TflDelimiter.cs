@@ -1,9 +1,11 @@
+using Transformalize.Libs.Cfg.Net;
+
 namespace Transformalize.Configuration {
 
     public class TflDelimiter : CfgNode {
         public TflDelimiter() {
-            Property(n:"character", v:default(char), r:true, u:true, d:true);
-            Property(n:"name", v:string.Empty, r:true);
+            Property(name:"character", value:default(char), required:true, unique:true, decode:true);
+            Property(name:"name", value:string.Empty, required:true);
         }
 
         public char Character { get; set; }

@@ -1,7 +1,9 @@
+using Transformalize.Libs.Cfg.Net;
+
 namespace Transformalize.Configuration {
     public class TflNameReference : CfgNode {
         public TflNameReference() {
-            Property(n: "name", v: string.Empty, r: true, u: true);
+            Property(name: "name", value: string.Empty, required: true, unique: true);
         }
 
         public string Name { get; set; }

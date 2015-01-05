@@ -1,44 +1,45 @@
 using System.Collections.Generic;
+using Transformalize.Libs.Cfg.Net;
 
 namespace Transformalize.Configuration {
     public class TflProcess : CfgNode {
 
         public TflProcess() {
 
-            Property(n: "name", v: string.Empty, r: true, u: true);
-            Property(n: "enabled", v: true);
-            Property(n: "mode", v: string.Empty);
-            Property(n: "parallel", v: true);
-            Property(n: "pipeline-threading", v: string.Empty);
-            Property(n: "star", v: string.Empty);
-            Property(n: "star-enabled", v: true);
-            Property(n: "template-content-type", v: "raw");
-            Property(n: "time-zone", v: string.Empty);
-            Property(n: "view", v: string.Empty);
-            Property(n: "view-enabled", v: true);
+            Property(name: "name", value: string.Empty, required: true, unique: true);
+            Property(name: "enabled", value: true);
+            Property(name: "mode", value: string.Empty);
+            Property(name: "parallel", value: true);
+            Property(name: "pipeline-threading", value: string.Empty);
+            Property(name: "star", value: string.Empty);
+            Property(name: "star-enabled", value: true);
+            Property(name: "template-content-type", value: "raw");
+            Property(name: "time-zone", value: string.Empty);
+            Property(name: "view", value: string.Empty);
+            Property(name: "view-enabled", value: true);
 
-            Class<TflAction>("actions");
-            Class<TflCalculatedField>("calculated-fields");
-            Class<TflConnection>("connections", true);
-            Class<TflEntity>("entities", true);
-            Class<TflFileInspection>("file-inspection");
-            Class<TflLog, int>("log", false, "rows", 10000);
-            Class<TflMap>("maps");
-            Class<TflParameter>("parameters");
-            Class<TflProvider>("providers");
-            Class<TflRelationship>("relationships");
-            Class<TflScript>("scripts");
-            Class<TflSearchType>("search-types");
-            Class<TflTemplate>("templates");
+            Collection<TflAction>("actions");
+            Collection<TflCalculatedField>("calculated-fields");
+            Collection<TflConnection>("connections", true);
+            Collection<TflEntity>("entities", true);
+            Collection<TflFileInspection>("file-inspection");
+            Collection<TflLog, int>("log", false, "rows", 10000);
+            Collection<TflMap>("maps");
+            Collection<TflParameter>("parameters");
+            Collection<TflProvider>("providers");
+            Collection<TflRelationship>("relationships");
+            Collection<TflScript>("scripts");
+            Collection<TflSearchType>("search-types");
+            Collection<TflTemplate>("templates");
         }
 
-        [Cfg(v = "", r = true, u = true)]
+        [Cfg(value = "", required = true, unique = true)]
         public string Name { get; set; }
-        [Cfg(v = true)]
+        [Cfg(value = true)]
         public bool Enabled { get; set; }
-        [Cfg(v="")]
+        [Cfg(value="")]
         public string Mode { get; set; }
-        [Cfg(v=true)]
+        [Cfg(value=true)]
         public bool Parallel { get; set; }
         public string PipelineThreading { get; set; }
         public string Star { get; set; }

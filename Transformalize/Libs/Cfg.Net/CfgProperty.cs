@@ -1,4 +1,4 @@
-namespace Transformalize.Configuration {
+namespace Transformalize.Libs.Cfg.Net {
 
     public sealed class CfgProperty {
 
