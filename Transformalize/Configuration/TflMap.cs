@@ -13,8 +13,5 @@ namespace Transformalize.Configuration {
             Collection<TflMapItem>("items");
         }
 
-        public string Name { get; set; }
-        public string Connection { get; set; }
-        public string Query { get; set; }
     }
 }

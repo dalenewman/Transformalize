@@ -37,36 +37,5 @@ namespace Transformalize.Configuration {
             Property(name: "web-method", value: "GET");
         }
 
-        public string Name { get; set; }
-        public int BatchSize { get; set; }
-        public string ConnectionString { get; set; }
-        public string ContentType { get; set; }
-        public string Data { get; set; }
-        public string DataBase { get; set; }
-        public string DateFormat { get; set; }
-        public char Delimiter { get; set; }
-        public bool Direct { get; set; }
-        public bool Enabled { get; set; }
-        public bool EnableSsl { get; set; }
-        public string Encoding { get; set; }
-        public int End { get; set; }
-        public string ErrorMode { get; set; }
-        public string File { get; set; }
-        public string Folder { get; set; }
-        public string Footer { get; set; }
-        public string Header { get; set; }
-        public string Password { get; set; }
-        public string Path { get; set; }
-        public int Port { get; set; }
-        public string Provider { get; set; }
-        public string SearchOption { get; set; }
-        public string SearchPattern { get; set; }
-        public string Server { get; set; }
-        public int Start { get; set; }
-        public string Url { get; set; }
-        public string User { get; set; }
-        public string Version { get; set; }
-        public string WebMethod { get; set; }
-
     }
 }

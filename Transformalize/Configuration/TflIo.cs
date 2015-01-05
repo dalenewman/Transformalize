@@ -12,11 +12,5 @@ namespace Transformalize.Configuration {
             Property(name: "run-value", value: string.Empty);
         }
 
-        public string Name { get; set; }
-        public string Connection { get; set; }
-        public string RunField { get; set; }
-        public string RunType { get; set; }
-        public string RunOperator { get; set; }
-        public string RunValue { get; set; }
     }
 }

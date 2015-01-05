@@ -18,16 +18,5 @@ namespace Transformalize.Configuration {
             Property(name: "async", value: false);
         }
 
-        public string Name { get; set; }
-        public string Provider { get; set; }
-        public string Layout { get; set; }
-        public string Level { get; set; }
-        public string Connection { get; set; }
-        public string From { get; set; }
-        public string To { get; set; }
-        public string Subject { get; set; }
-        public string File { get; set; }
-        public string Folder { get; set; }
-        public bool Async { get; set; }
     }
 }

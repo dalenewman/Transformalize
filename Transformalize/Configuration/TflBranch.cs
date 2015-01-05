@@ -16,13 +16,5 @@ namespace Transformalize.Configuration {
 
             Collection<TflTransform>("transforms");
         }
-
-        public string Name { get; set; }
-        public string RunField { get; set; }
-        public string RunOperator { get; set; }
-        public string RunType { get; set; }
-        public string RunValue { get; set; }
-
-        public List<TflTransform> Transforms { get; set; }
     }
 }

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Transformalize.Libs.Cfg.Net;
 
 namespace Transformalize.Configuration {
@@ -15,12 +14,5 @@ namespace Transformalize.Configuration {
             Collection<TflJoin>("join");
         }
 
-        public string LeftEntity { get; set; }
-        public string RightEntity { get; set; }
-        public string LeftField { get; set; }
-        public string RightField { get; set; }
-        public bool Index { get; set; }
-
-        public List<TflJoin> Join { get; set; }
     }
 }

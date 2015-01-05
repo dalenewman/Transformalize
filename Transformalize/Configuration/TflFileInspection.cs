@@ -15,12 +15,5 @@ namespace Transformalize.Configuration {
             Collection<TflDelimiter>("delimiters", true);
         }
 
-        public string Name { get; set; }
-        public int Sample { get; set; }
-        public int MaxLength { get; set; }
-        public int MinLength { get; set; }
-
-        public List<TflType> Types { get; set; }
-        public List<TflDelimiter> Delimiters { get; set; }
     }
 }

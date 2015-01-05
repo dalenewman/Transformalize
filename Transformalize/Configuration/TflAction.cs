@@ -30,27 +30,5 @@ namespace Transformalize.Configuration {
             Collection<TflNameReference>("modes");
         }
 
-        public string Action { get; set; }
-        public bool After { get; set; }
-        public string Arguments { get; set; }
-        public string Bcc { get; set; }
-        public bool Before { get; set; }
-        public string Body { get; set; }
-        public string Cc { get; set; }
-        public string Command { get; set; }
-        public string Connection { get; set; }
-        public string File { get; set; }
-        public string From { get; set; }
-        public bool Html { get; set; }
-        public string Method { get; set; }
-        public string Mode { get; set; }
-        public string NewValue { get; set; }
-        public string OldValue { get; set; }
-        public string Subject { get; set; }
-        public int TimeOut { get; set; }
-        public string To { get; set; }
-        public string Url { get; set; }
-
-        public List<TflNameReference> Modes { get; set; }
     }
 }

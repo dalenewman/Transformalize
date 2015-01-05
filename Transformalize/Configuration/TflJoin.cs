@@ -8,7 +8,5 @@ namespace Transformalize.Configuration {
             Property(name: "right-field", value: string.Empty, required: true);
         }
 
-        public string LeftField { get; set; }
-        public string RightField { get; set; }
     }
 }

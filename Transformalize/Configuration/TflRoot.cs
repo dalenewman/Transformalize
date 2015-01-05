@@ -9,7 +9,5 @@ namespace Transformalize.Configuration {
             Collection<TflProcess>("processes", true);
         }
 
-        public List<TflEnvironment> Environments { get; set; }
-        public List<TflProcess> Processes { get; set; }
     }
 }

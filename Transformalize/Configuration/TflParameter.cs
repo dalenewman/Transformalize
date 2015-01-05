@@ -13,12 +13,6 @@ namespace Transformalize.Configuration {
             Property("type", "string");
         }
 
-        public string Entity { get; set; }
-        public string Field { get; set; }
-        public string Name { get; set; }
-        public object Value { get; set; }
-        public bool Input { get; set; }
-        public string Type { get; set; }
     }
 
 }

@@ -8,7 +8,5 @@ namespace Transformalize.Configuration {
             Property(name: "file", value: string.Empty, required: true);
         }
 
-        public string Name { get; set; }
-        public string File { get; set; }
     }
 }

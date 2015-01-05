@@ -131,7 +131,6 @@
     <Compile Include="Configuration\TypeConfigurationElement.cs" />
     <Compile Include="Configuration\EmptyElementCollection.cs" />
     <Compile Include="Configuration\TypeElementCollection.cs" />
-    <Compile Include="Configuration\ValidatorElementCollection.cs" />
     <Compile Include="Configuration\ModeConfigurationElement.cs" />
     <Compile Include="Configuration\ModeElementCollection.cs" />
     <Compile Include="Configuration\ProviderConfigurationElement.cs" />

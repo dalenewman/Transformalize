@@ -6,6 +6,5 @@ namespace Transformalize.Configuration {
             Property(name: "name", value: string.Empty, required: true, unique: true);
         }
 
-        public string Name { get; set; }
     }
 }

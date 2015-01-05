@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Transformalize.Libs.Cfg.Net;
 
 namespace Transformalize.Configuration {
@@ -32,35 +31,6 @@ namespace Transformalize.Configuration {
             Collection<TflSearchType>("search-types");
             Collection<TflTemplate>("templates");
         }
-
-        [Cfg(value = "", required = true, unique = true)]
-        public string Name { get; set; }
-        [Cfg(value = true)]
-        public bool Enabled { get; set; }
-        [Cfg(value="")]
-        public string Mode { get; set; }
-        [Cfg(value=true)]
-        public bool Parallel { get; set; }
-        public string PipelineThreading { get; set; }
-        public string Star { get; set; }
-        public bool StarEnabled { get; set; }
-        public string TemplateContentType { get; set; }
-        public string TimeZone { get; set; }
-        public string View { get; set; }
-        public bool ViewEnabled { get; set; }
-
-        public List<TflAction> Actions { get; set; }
-        public List<TflCalculatedField> CalculatedFields { get; set; }
-        public List<TflConnection> Connections { get; set; }
-        public List<TflEntity> Entities { get; set; }
-        public List<TflFileInspection> FileInspections { get; set; }
-        public List<TflLog> Logs { get; set; }
-        public List<TflMap> Maps { get; set; }
-        public List<TflParameter> Parameters { get; set; }
-        public List<TflProvider> Providers { get; set; }
-        public List<TflRelationship> Relationships { get; set; }
-        public List<TflSearchType> SearchTypes { get; set; }
-        public List<TflTemplate> Templates { get; set; }
 
     }
 }

@@ -10,11 +10,5 @@ namespace Transformalize.Configuration {
             Property(name: "expression", value: string.Empty);
         }
 
-        public string Left { get; set; }
-        public string Right { get; set; }
-        public string Operator { get; set; }
-        public string Continuation { get; set; }
-        public string Expression { get; set; }
-
     }
 }

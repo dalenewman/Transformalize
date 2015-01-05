@@ -40,37 +40,5 @@ namespace Transformalize.Configuration {
             Collection<TflTransform>("transforms");
         }
 
-        public bool DefaultBlank { get; set; }
-        public bool DefaultEmpty { get; set; }
-        public bool DefaultWhiteSpace { get; set; }
-        public bool Distinct { get; set; }
-        public bool Input { get; set; }
-        public bool Optional { get; set; }
-        public bool Output { get; set; }
-        public bool PrimaryKey { get; set; }
-        public bool Raw { get; set; }
-        public bool ReadInnerXml { get; set; }
-        public string Unicode { get; set; }
-        public string VariableLength { get; set; }
-        public char QuotedWith { get; set; }
-        public int Index { get; set; }
-        public int Precision { get; set; }
-        public int Scale { get; set; }
-        public string Aggregate { get; set; }
-        public string Alias { get; set; }
-        public string Default { get; set; }
-        public string Delimiter { get; set; }
-        public string Label { get; set; }
-        public string Length { get; set; }
-        public string Name { get; set; }
-        public string NodeType { get; set; }
-        public string SearchType { get; set; }
-        public string Sort { get; set; }
-        public string T { get; set; }
-        public string Type { get; set; }
-
-        public List<TflNameReference> SearchTypes { get; set; }
-        public List<TflTransform> Transforms { get; set; } 
-
     }
 }

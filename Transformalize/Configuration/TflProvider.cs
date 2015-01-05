@@ -6,8 +6,5 @@ namespace Transformalize.Configuration {
             Property("name", string.Empty, true, true);
             Property("type", string.Empty, true, false);
         }
-
-        public string Name { get; set; }
-        public string Type { get; set; }
     }
 }

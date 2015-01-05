@@ -10,12 +10,5 @@ namespace Transformalize.Configuration {
             Property(name: "analyzer", value: string.Empty);
             Property(name: "norms", value: true);
         }
-
-        public string Name { get; set; }
-        public bool Store { get; set; }
-        public bool Index { get; set; }
-        public bool MultiValued { get; set; }
-        public string Analyzer { get; set; }
-        public bool Norms { get; set; }
     }
 }

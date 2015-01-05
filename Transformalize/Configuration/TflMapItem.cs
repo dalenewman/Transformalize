@@ -10,9 +10,5 @@ namespace Transformalize.Configuration {
             Property(name: "to", value: string.Empty);
         }
 
-        public string From { get; set; }
-        public string Operator { get; set; }
-        public string Parameter { get; set; }
-        public string To { get; set; }
     }
 }

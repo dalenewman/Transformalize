@@ -7,8 +7,5 @@ namespace Transformalize.Configuration {
             Property(name:"character", value:default(char), required:true, unique:true, decode:true);
             Property(name:"name", value:string.Empty, required:true);
         }
-
-        public char Character { get; set; }
-        public string Name { get; set; }
     }
 }

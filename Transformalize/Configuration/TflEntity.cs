@@ -34,32 +34,5 @@ namespace Transformalize.Configuration {
             Collection<TflIo>("output");
         }
 
-        public string Alias { get; set; }
-        public string Connection { get; set; }
-        public bool Delete { get; set; }
-        public bool DetectChanges { get; set; }
-        public bool Group { get; set; }
-        public string Name { get; set; }
-        public bool NoLock { get; set; }
-        public string PipelineThreading { get; set; }
-        public string Prefix { get; set; }
-        public bool PrependProcessNameToOutputName { get; set; }
-        public int Sample { get; set; }
-        public string Schema { get; set; }
-        public string QueryKeys { get; set; }
-        public string Query { get; set; }
-        public string ScriptKeys { get; set; }
-        public string Script { get; set; }
-        public bool TrimAll { get; set; }
-        public string Unicode { get; set; }
-        public string VariableLength { get; set; }
-        public string Version { get; set; }
-
-        public List<TflFilter> Filters { get; set; }
-        public List<TflField> Fields { get; set; }
-        public List<TflCalculatedField> CalculatedFields { get; set; }
-        public List<TflIo> Input { get; set; }
-        public List<TflIo> Output { get; set; } 
-
     }
 }
