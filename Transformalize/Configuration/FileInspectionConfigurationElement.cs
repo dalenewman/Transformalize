@@ -6,13 +6,20 @@ using Transformalize.Main.Providers.File;
 
 namespace Transformalize.Configuration {
 
-    public class FileInspectionElement : ConfigurationElement {
+    public class FileInspectionConfigurationElement : ConfigurationElement {
 
+        private const string NAME = "name";
         private const string TYPES = "types";
         private const string DELIMITERS = "delimiters";
         private const string SAMPLE = "sample";
         private const string MAX_LENGTH = "max-length";
         private const string MIN_LENGTH = "min-length";
+
+        [ConfigurationProperty(NAME, IsRequired = true)]
+        public string Name {
+            get { return this[SAMPLE] as string; }
+            set { this[SAMPLE] = value; }
+        }
 
         [ConfigurationProperty(SAMPLE, IsRequired = false, DefaultValue = "100")]
         public decimal Sample {

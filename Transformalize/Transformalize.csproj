@@ -63,6 +63,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\FileInspectionElementCollection.cs" />
     <Compile Include="Configuration\Builders\ActionBuilder.cs" />
     <Compile Include="Configuration\Builders\BranchBuilder.cs" />
     <Compile Include="Configuration\Builders\ConnectionBuilder.cs" />
@@ -94,7 +95,7 @@
     <Compile Include="Configuration\EnvironmentElementCollection.cs" />
     <Compile Include="Configuration\FilterConfigurationElement.cs" />
     <Compile Include="Configuration\FilterElementCollection.cs" />
-    <Compile Include="Configuration\FileInspectionElement.cs" />
+    <Compile Include="Configuration\FileInspectionConfigurationElement.cs" />
     <Compile Include="Configuration\MyConfigurationElementCollection.cs" />
     <Compile Include="Configuration\BranchElementCollection.cs" />
     <Compile Include="Configuration\IoConfigurationElement.cs" />

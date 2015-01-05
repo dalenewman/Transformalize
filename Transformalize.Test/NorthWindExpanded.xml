@@ -3,6 +3,8 @@
   <processes>
     <add name="NorthWind" inherit="NorthWind.xml">
 
+      <file-inspection />
+      
       <entities>
 
         <add name="Order Details" version="RowVersion" prefix="OrderDetails">

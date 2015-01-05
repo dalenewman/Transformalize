@@ -315,9 +315,8 @@ namespace Transformalize.Configuration {
         /// Settings to control [file inspection](/file-inspection).
         /// </summary>
         [ConfigurationProperty(FILE_INSPECTION, IsRequired = false)]
-        public FileInspectionElement FileInspection {
-            get { return this[FILE_INSPECTION] as FileInspectionElement; }
-            set { this[FILE_INSPECTION] = value; }
+        public FileInspectionElementCollection FileInspections {
+            get { return this[FILE_INSPECTION] as FileInspectionElementCollection; }
         }
 
         public override bool IsReadOnly() {
@@ -342,7 +341,6 @@ namespace Transformalize.Configuration {
             Scripts.Path = child.Scripts.Path == Common.DefaultValue ? Scripts.Path : child.Scripts.Path;
             Templates.Path = child.Templates.Path == Common.DefaultValue ? Templates.Path : child.Templates.Path;
             Relationships.IndexMode = child.Relationships.IndexMode == Common.DefaultValue ? Relationships.IndexMode : child.Relationships.IndexMode;
-            FileInspection = child.FileInspection;
 
             //collections
             Parameters.Merge(child.Parameters);
@@ -357,6 +355,7 @@ namespace Transformalize.Configuration {
             Templates.Merge(child.Templates);
             Actions.Merge(child.Actions);
             Log.Merge(child.Log);
+            FileInspections.Merge(child.FileInspections);
         }
     }
 }

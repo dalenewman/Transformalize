@@ -63,7 +63,7 @@ namespace Transformalize.Main {
                 Options = _options,
                 TemplateContentType = _element.TemplateContentType.Equals("raw") ? Encoding.Raw : Encoding.Html,
                 Enabled = _element.Enabled,
-                FileInspectionRequest = _element.FileInspection == null ? new FileInspectionRequest() : _element.FileInspection.GetInspectionRequest(),
+                FileInspectionRequest = _element.FileInspections.Count == 0 ? new FileInspectionRequest() : _element.FileInspections[0].GetInspectionRequest(),
                 Star = _element.Star,
                 View = _element.View,
                 Mode = _element.Mode,
