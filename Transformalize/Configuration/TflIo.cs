@@ -3,14 +3,19 @@ using Transformalize.Main;
 
 namespace Transformalize.Configuration {
     public class TflIo : CfgNode {
-        public TflIo() {
-            Property(name: "name", value: string.Empty);
-            Property(name: "connection", value: string.Empty, required: true);
-            Property(name: "run-field", value: string.Empty);
-            Property(name: "run-type", value: Common.DefaultValue);
-            Property(name: "run-operator", value: "Equal");
-            Property(name: "run-value", value: string.Empty);
-        }
+
+        [Cfg(value = "", required = true)]
+        public string Connection { get; set; }
+        [Cfg(value = "")]
+        public string Name { get; set; }
+        [Cfg(value = "")]
+        public string RunField { get; set; }
+        [Cfg(value = "Equal")]
+        public string RunOperator { get; set; }
+        [Cfg(value = Common.DefaultValue)]
+        public string RunType { get; set; }
+        [Cfg(value = "")]
+        public string RunValue { get; set; }
 
     }
 }

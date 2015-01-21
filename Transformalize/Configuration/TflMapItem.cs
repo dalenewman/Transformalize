@@ -3,12 +3,14 @@
 namespace Transformalize.Configuration {
     public class TflMapItem : CfgNode {
 
-        public TflMapItem() {
-            Property(name: "from", value: string.Empty, required: true, unique: true);
-            Property(name: "operator", value: "equals");
-            Property(name: "parameter", value: string.Empty);
-            Property(name: "to", value: string.Empty);
-        }
+        [Cfg(value = "", required = true, unique = true)]
+        public string From { get; set; }
+        [Cfg(value = "equals")]
+        public string Operator { get; set; }
+        [Cfg(value = "")]
+        public string Parameter { get; set; }
+        [Cfg(value = "")]
+        public string To { get; set; }
 
     }
 }

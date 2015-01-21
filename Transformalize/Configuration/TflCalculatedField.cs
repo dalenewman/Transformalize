@@ -1,8 +1,11 @@
+using Transformalize.Libs.Cfg.Net;
+
 namespace Transformalize.Configuration {
+
     public class TflCalculatedField : TflField {
-        public TflCalculatedField() {
-            Property(name: "input", value: false);
-            Property(name: "alias", value: string.Empty);
-        }
+        [Cfg(value=false)]
+        public new bool Input { get; set; }
+        [Cfg(value="")]
+        public new string Alias { get; set; }
     }
 }

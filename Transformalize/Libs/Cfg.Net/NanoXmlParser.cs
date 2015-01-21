@@ -47,23 +47,23 @@ namespace Transformalize.Libs.Cfg.Net {
         // returns name
         protected static string ParseAttributes(string str, ref int i, List<NanoXmlAttribute> attributes, char endChar, char endChar2) {
             SkipSpaces(str, ref i);
-            string name = GetValue(str, ref i, endChar, endChar2, true);
+            var name = GetValue(str, ref i, endChar, endChar2, true);
 
             SkipSpaces(str, ref i);
 
             while (str[i] != endChar && str[i] != endChar2) {
-                string attrName = GetValue(str, ref i, '=', '\0', true);
+                var attrName = GetValue(str, ref i, '=', '\0', true);
 
                 SkipSpaces(str, ref i);
                 i++; // skip '='
                 SkipSpaces(str, ref i);
 
-                char quote = str[i];
+                var quote = str[i];
                 if (!IsQuote(quote))
                     throw new XmlParsingException("Unexpected token after " + attrName);
 
                 i++; // skip quote
-                string attrValue = GetValue(str, ref i, quote, '\0', false);
+                var attrValue = GetValue(str, ref i, quote, '\0', false);
                 i++; // skip quote
 
                 attributes.Add(new NanoXmlAttribute(attrName, attrValue));
@@ -129,25 +129,19 @@ namespace Transformalize.Libs.Cfg.Net {
             get { return _rootNode; }
         }
 
-        /// <summary>
-        ///     List of XML Declarations as <see cref="NanoXmlAttribute" />
-        /// </summary>
-        public IEnumerable<NanoXmlAttribute> Declarations {
-            get { return _declarations; }
-        }
     }
 
     /// <summary>
     ///     Element node of document
     /// </summary>
     public class NanoXmlNode : NanoXmlBase {
-        private readonly List<NanoXmlAttribute> attributes = new List<NanoXmlAttribute>();
+        private readonly List<NanoXmlAttribute> _attributes = new List<NanoXmlAttribute>();
         private readonly string _name;
 
         private readonly List<NanoXmlNode> _subNodes = new List<NanoXmlNode>();
 
         internal NanoXmlNode(string str, ref int i) {
-            _name = ParseAttributes(str, ref i, attributes, '>', '/');
+            _name = ParseAttributes(str, ref i, _attributes, '>', '/');
 
             if (str[i] == '/') // if this node has nothing inside
             {
@@ -227,7 +221,7 @@ namespace Transformalize.Libs.Cfg.Net {
         ///     List of attributes
         /// </summary>
         public List<NanoXmlAttribute> Attributes {
-            get { return attributes; }
+            get { return _attributes; }
         }
 
         /// <summary>
@@ -253,8 +247,8 @@ namespace Transformalize.Libs.Cfg.Net {
         /// <param name="attributeName">Attribute name to get</param>
         /// <returns><see cref="NanoXmlAttribute" /> with given name or null if no such attribute</returns>
         public NanoXmlAttribute GetAttribute(string attributeName) {
-            for (var i = 0; i < attributes.Count; i++) {
-                var nanoXmlAttribute = attributes[i];
+            for (var i = 0; i < _attributes.Count; i++) {
+                var nanoXmlAttribute = _attributes[i];
                 if (nanoXmlAttribute.Name == attributeName)
                     return nanoXmlAttribute;
             }
@@ -263,8 +257,8 @@ namespace Transformalize.Libs.Cfg.Net {
         }
 
         public bool TryAttribute(string attributeName, out NanoXmlAttribute attribute) {
-            for (var i = 0; i < attributes.Count; i++) {
-                var nanoXmlAttribute = attributes[i];
+            for (var i = 0; i < _attributes.Count; i++) {
+                var nanoXmlAttribute = _attributes[i];
                 if (nanoXmlAttribute.Name != attributeName)
                     continue;
                 attribute = nanoXmlAttribute;
@@ -276,7 +270,7 @@ namespace Transformalize.Libs.Cfg.Net {
         }
 
         public bool HasAttribute(string attributeName) {
-            return attributes.Any(nanoXmlAttribute => nanoXmlAttribute.Name == attributeName);
+            return _attributes.Any(nanoXmlAttribute => nanoXmlAttribute.Name == attributeName);
         }
 
         public string InnerText() {
@@ -290,7 +284,7 @@ namespace Transformalize.Libs.Cfg.Net {
                 var node = _subNodes[i];
                 builder.Append("<");
                 builder.Append(node.Name);
-                foreach (var attribute in node.attributes) {
+                foreach (var attribute in node._attributes) {
                     builder.AppendFormat(" {0}=\"{1}\"", attribute.Name, attribute.Value);
                 }
                 builder.Append(">");
@@ -320,6 +314,9 @@ namespace Transformalize.Libs.Cfg.Net {
             return builder.ToString();
         }
 
+        public bool HasSubNode() {
+            return SubNodes != null && SubNodes.Any();
+        }
     }
 
     /// <summary>

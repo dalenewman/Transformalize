@@ -3,11 +3,16 @@ using Transformalize.Libs.Cfg.Net;
 
 namespace Transformalize.Configuration {
     public class TflRoot : CfgNode {
-        public TflRoot() {
-            TurnOffProperties = true;
-            Collection<TflEnvironment, string>("environments", false, "default", string.Empty);
-            Collection<TflProcess>("processes", true);
-        }
 
+        [Cfg(sharedProperty = "default", sharedValue = "")]
+        public List<TflEnvironment> Environments { get; set; }
+        [Cfg(required = true)]
+        public List<TflProcess> Processes { get; set; }
+        [Cfg()]
+        public List<TflResponse> Response { get; set; }
+
+        public TflRoot(string xml, Dictionary<string, string> parameters) {
+            Load(xml, parameters);
+        }
     }
 }

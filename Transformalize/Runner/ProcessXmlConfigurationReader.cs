@@ -141,9 +141,9 @@ namespace Transformalize.Runner {
                 if (result.Contains(placeHolder)) {
                     var value = parameter.GetAttribute("value").Value;
                     result = result.Replace(placeHolder, value);
-                    TflLogger.Info(string.Empty, string.Empty, "{0} replaced with \"{1}\"", placeHolder, value);
+                    TflLogger.Debug(string.Empty, string.Empty, "{0} replaced with \"{1}\"", placeHolder, value);
                 } else {
-                    TflLogger.Debug(string.Empty, string.Empty, "{0} not found.", placeHolder);
+                    TflLogger.Error(string.Empty, string.Empty, "{0} not found.", placeHolder);
                 }
             }
             return result;

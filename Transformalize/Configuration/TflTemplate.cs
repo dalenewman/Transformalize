@@ -5,17 +5,23 @@ namespace Transformalize.Configuration {
 
     public class TflTemplate : CfgNode {
 
-        public TflTemplate() {
-            Property(name: "name", value: string.Empty, required: true, unique: true);
-            Property(name: "content-type", value: "raw");
-            Property(name: "file", value: string.Empty, required: true, unique: true);
-            Property(name: "cache", value: false);
-            Property(name: "enabled", value: true);
-            Property(name: "engine", value: "razor");
+        [Cfg( required = true, unique = true)]
+        public string Name { get; set; }
+        [Cfg( value = "raw", domain = "raw,html")]
+        public string ContentType { get; set; }
+        [Cfg( required = true, unique = true)]
+        public string File { get; set; }
+        [Cfg( value = false)]
+        public bool Cache { get; set; }
+        [Cfg( value = true)]
+        public bool Enabled { get; set; }
+        [Cfg( value = "razor", domain = "razor,velocity")]
+        public string Engine { get; set; }  
 
-            Collection<TflParameter>("parameters");
-            Collection<TflAction>("actions");
-        }
+        [Cfg()]
+        public List<TflParameter> Parameters { get; set; }
+        [Cfg()]
+        public List<TflAction> Actions { get; set; }
 
     }
 }

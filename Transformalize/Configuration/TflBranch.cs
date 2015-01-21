@@ -6,15 +6,19 @@ namespace Transformalize.Configuration {
 
     public class TflBranch : CfgNode {
 
-        public TflBranch() {
+        [Cfg(unique = true)]
+        public string Name { get; set; }
+        [Cfg(value = Common.DefaultValue)]
+        public string RunField { get; set; }
+        [Cfg(value = "Equal")]
+        public string RunOperator { get; set; }
+        [Cfg(value = Common.DefaultValue)]
+        public string RunType { get; set; }
+        [Cfg(value = "")]
+        public string RunValue { get; set; }
 
-            Property(name: "name", value: string.Empty, required: true, unique: true);
-            Property(name: "run-field", value: Common.DefaultValue);
-            Property(name: "run-operator", value: "Equal");
-            Property(name: "run-type", value: Common.DefaultValue);
-            Property(name: "run-value", value: string.Empty);
+        [Cfg()]
+        public List<TflTransform> Transforms { get; set; }
 
-            Collection<TflTransform>("transforms");
-        }
     }
 }

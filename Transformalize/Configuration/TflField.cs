@@ -5,40 +5,67 @@ using Transformalize.Main;
 namespace Transformalize.Configuration {
     public class TflField : CfgNode {
 
-        public TflField() {
+        [Cfg(value=false)]
+        public bool DefaultBlank { get; set; }
+        [Cfg(value = false)]
+        public bool DefaultEmpty { get; set; }
+        [Cfg(value = false)]
+        public bool DefaultWhiteSpace { get; set; }
+        [Cfg(value = false)]
+        public bool Distinct { get; set; }
+        [Cfg(value = true)]
+        public bool Input { get; set; }
+        [Cfg(value = false)]
+        public bool Optional { get; set; }
+        [Cfg(value = true)]
+        public bool Output { get; set; }
+        [Cfg(value = false)]
+        public bool PrimaryKey { get; set; }
+        [Cfg(value = false)]
+        public bool Raw { get; set; }
+        [Cfg(value = true)]
+        public bool ReadInnerXml { get; set; }
+        [Cfg(value = default(char))]
+        public char QuotedWith { get; set; }
+        [Cfg(value=short.MaxValue)]
+        public int Index { get; set; }
+        [Cfg(value=18)]
+        public int Precision { get; set; }
+        [Cfg(value=9)]
+        public int Scale { get; set; }
+        [Cfg(value="")]
+        public string Aggregate { get; set; }
+        [Cfg(value = "", required = false, unique = true)]
+        public string Alias { get; set; }
+        [Cfg(value = "")]
+        public string Default { get; set; }
+        [Cfg(value = ", ")]
+        public string Delimiter { get; set; }
+        [Cfg(value = "")]
+        public string Label { get; set; }
+        [Cfg(value = "64")]
+        public string Length { get; set; }
+        [Cfg(required = true)]
+        public string Name { get; set; }
+        [Cfg(value="element")]
+        public string NodeType { get; set; }
+        [Cfg(value = "default")]
+        public string SearchType { get; set; }
+        [Cfg(value="")]
+        public string Sort { get; set; }
+        [Cfg(value="")]
+        public string T { get; set; }
+        [Cfg(value="string")]
+        public string Type { get; set; }
+        [Cfg(value=Common.DefaultValue)]
+        public string Unicode { get; set; }
+        [Cfg(value=Common.DefaultValue)]
+        public string VariableLength { get; set; }
 
-            Property(name: "aggregate", value: string.Empty);
-            Property(name: "alias", value: string.Empty, required: false, unique: true);
-            Property(name: "default", value: string.Empty);
-            Property(name: "default-blank", value: false);
-            Property(name: "default-empty", value: false);
-            Property(name: "default-white-space", value: false);
-            Property(name: "delimiter", value: ", ");
-            Property(name: "distinct", value: false);
-            Property(name: "index", value: short.MaxValue);
-            Property(name: "input", value: true);
-            Property(name: "label", value: string.Empty);
-            Property(name: "length", value: "64");
-            Property(name: "name", value: string.Empty, required: true);
-            Property(name: "node-type", value: "element");
-            Property(name: "optional", value: false);
-            Property(name: "output", value: true);
-            Property(name: "precision", value: 18);
-            Property(name: "primary-key", value: false);
-            Property(name: "quoted-with", value: default(char));
-            Property(name: "raw", value: false);
-            Property(name: "read-inner-xml", value: true);
-            Property(name: "scale", value: 9);
-            Property(name: "search-type", value: "default");
-            Property(name: "sort", value: string.Empty);
-            Property(name: "t", value: string.Empty);
-            Property(name: "type", value: "string");
-            Property(name: "unicode", value: Common.DefaultValue);
-            Property(name: "variable-length", value: Common.DefaultValue);
-
-            Collection<TflNameReference>("search-types");
-            Collection<TflTransform>("transforms");
-        }
+        [Cfg(required = false)]
+        public List<TflNameReference> SearchTypes { get; set; }
+        [Cfg(required = false)]
+        public List<TflTransform> Transforms { get; set; } 
 
     }
 }

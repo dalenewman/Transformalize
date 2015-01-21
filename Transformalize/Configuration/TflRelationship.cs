@@ -1,18 +1,21 @@
+using System.Collections.Generic;
 using Transformalize.Libs.Cfg.Net;
 
 namespace Transformalize.Configuration {
     public class TflRelationship : CfgNode {
 
-        public TflRelationship() {
+        [Cfg(value = "", required = true, unique = false)]
+        public string LeftEntity { get; set; }
+        [Cfg(value = "", required = true, unique = false)]
+        public string RightEntity { get; set; }
+        [Cfg(value = "")]
+        public string LeftField { get; set; }
+        [Cfg(value = "")]
+        public string RightField { get; set; }
+        [Cfg(value = false)]
+        public bool Index { get; set; }
 
-            Property(name: "left-entity", value: string.Empty, required: true, unique: false);
-            Property(name: "right-entity", value: string.Empty, required: true, unique: false);
-            Property(name: "left-field", value: string.Empty);
-            Property(name: "right-field", value: string.Empty);
-            Property(name: "index", value: false);
-
-            Collection<TflJoin>("join");
-        }
-
+        [Cfg()]
+        public List<TflJoin> Join { get; set; }
     }
 }

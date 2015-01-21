@@ -4,16 +4,18 @@ using Transformalize.Libs.Cfg.Net;
 namespace Transformalize.Configuration {
     public class TflFileInspection : CfgNode {
 
-        public TflFileInspection() {
+        [Cfg(value = (short)0 )]
+        public short MaxLength { get; set; }
+        [Cfg(value = (short)0)]
+        public short MinLength { get; set; }
+        [Cfg(value = "", required = true, unique = true)]
+        public string Name { get; set; }
+        [Cfg(value = (short)100)]
+        public short Sample { get; set; }
 
-            Property(name: "name", value: string.Empty, required: true, unique: true);
-            Property(name: "sample", value: 100);
-            Property(name: "max-length", value: 0);
-            Property(name: "min-length", value: 0);
-
-            Collection<TflType>("types");
-            Collection<TflDelimiter>("delimiters", true);
-        }
-
+        [Cfg(required = false)]
+        public List<TflType> Types { get; set; }
+        [Cfg(required = true)]
+        public List<TflDelimiter> Delimiters { get; set; }
     }
 }

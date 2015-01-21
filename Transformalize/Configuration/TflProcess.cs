@@ -1,36 +1,56 @@
+using System.Collections.Generic;
 using Transformalize.Libs.Cfg.Net;
 
 namespace Transformalize.Configuration {
     public class TflProcess : CfgNode {
 
-        public TflProcess() {
+        [Cfg( value = "", required = true, unique = true)]
+        public string Name { get; set; }
+        [Cfg( value = true)]
+        public bool Enabled { get; set; }
+        [Cfg( value = "")]
+        public string Mode { get; set; }
+        [Cfg( value = true)]
+        public bool Parallel { get; set; }
+        [Cfg( value = "")]
+        public string PipelineThreading { get; set; }
+        [Cfg( value = "")]
+        public string Star { get; set; }
+        [Cfg( value = true)]
+        public bool StarEnabled { get; set; }
+        [Cfg( value = "raw", domain = "raw,html")]
+        public string TemplateContentType { get; set; }
+        [Cfg( value = "")]
+        public string TimeZone { get; set; }
+        [Cfg( value = "")]
+        public string View { get; set; }
+        [Cfg( value = true)]
+        public bool ViewEnabled { get; set; }
 
-            Property(name: "name", value: string.Empty, required: true, unique: true);
-            Property(name: "enabled", value: true);
-            Property(name: "mode", value: string.Empty);
-            Property(name: "parallel", value: true);
-            Property(name: "pipeline-threading", value: string.Empty);
-            Property(name: "star", value: string.Empty);
-            Property(name: "star-enabled", value: true);
-            Property(name: "template-content-type", value: "raw");
-            Property(name: "time-zone", value: string.Empty);
-            Property(name: "view", value: string.Empty);
-            Property(name: "view-enabled", value: true);
-
-            Collection<TflAction>("actions");
-            Collection<TflCalculatedField>("calculated-fields");
-            Collection<TflConnection>("connections", true);
-            Collection<TflEntity>("entities", true);
-            Collection<TflFileInspection>("file-inspection");
-            Collection<TflLog, int>("log", false, "rows", 10000);
-            Collection<TflMap>("maps");
-            Collection<TflParameter>("parameters");
-            Collection<TflProvider>("providers");
-            Collection<TflRelationship>("relationships");
-            Collection<TflScript>("scripts");
-            Collection<TflSearchType>("search-types");
-            Collection<TflTemplate>("templates");
-        }
+        [Cfg()]
+        public List<TflAction> Actions { get; set; }
+        [Cfg()]
+        public List<TflCalculatedField> CalculatedFields { get; set; }
+        [Cfg(required = true)]
+        public List<TflConnection> Connections { get; set; }
+        [Cfg(required = true)]
+        public List<TflEntity> Entities { get; set; }
+        [Cfg()]
+        public List<TflFileInspection> FileInspection { get; set; }
+        [Cfg(sharedProperty = "rows", sharedValue = 10000)]
+        public List<TflLog> Log { get; set; }
+        [Cfg()]
+        public List<TflMap> Maps { get; set; }
+        [Cfg()]
+        public List<TflProvider> Providers { get; set; }
+        [Cfg()]
+        public List<TflRelationship> Relationships { get; set; }
+        [Cfg()]
+        public List<TflScript> Scripts { get; set; }
+        [Cfg()]
+        public List<TflSearchType> SearchTypes { get; set; }
+        [Cfg()]
+        public List<TflTemplate> Templates { get; set; }
 
     }
 }

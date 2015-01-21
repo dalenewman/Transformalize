@@ -86,7 +86,7 @@
         window.open(settings.metaDataUrl, '_blank');
     });
 
-    $('#jobs-button').click(function () {
+    $('#jobs-button,#jobs-link').click(function () {
         window.open(settings.jobsUrl, '_self');
     });
 });

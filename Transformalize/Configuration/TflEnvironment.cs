@@ -1,10 +1,11 @@
+using System.Collections.Generic;
 using Transformalize.Libs.Cfg.Net;
 
 namespace Transformalize.Configuration {
     public class TflEnvironment : CfgNode {
-        public TflEnvironment() {
-            Property("name", string.Empty, true, true);
-            Collection<TflParameter>("parameters", true);
-        }
+        [Cfg(required = true, unique = true)]
+        public string Name { get; set; }
+        [Cfg(required = true)]
+        public List<TflParameter> Parameters { get; set; }
     }
 }

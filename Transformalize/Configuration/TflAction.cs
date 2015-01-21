@@ -1,34 +1,55 @@
 using System.Collections.Generic;
+using System.Linq;
 using Transformalize.Libs.Cfg.Net;
 
 namespace Transformalize.Configuration {
     public class TflAction : CfgNode {
 
-        public TflAction() {
+        [Cfg(required = true)]
+        public string Action { get; set; }
+        [Cfg(value = true)]
+        public bool After { get; set; }
+        [Cfg(value = "")]
+        public string Arguments { get; set; }
+        [Cfg(value = "")]
+        public string Bcc { get; set; }
+        [Cfg(value = false)]
+        public bool Before { get; set; }
+        [Cfg(value = "")]
+        public string Body { get; set; }
+        [Cfg(value = "")]
+        public string Cc { get; set; }
+        [Cfg(value = "")]
+        public string Command { get; set; }
+        [Cfg(value = "")]
+        public string Connection { get; set; }
+        [Cfg(value = "")]
+        public string File { get; set; }
+        [Cfg(value = "")]
+        public string From { get; set; }
+        [Cfg(value = true)]
+        public bool Html { get; set; }
+        [Cfg(value = "get")]
+        public string Method { get; set; }
+        [Cfg(value = "*")]
+        public string Mode { get; set; }
+        [Cfg(value = "")]
+        public string NewValue { get; set; }
+        [Cfg(value = "")]
+        public string OldValue { get; set; }
+        [Cfg(value = "")]
+        public string Subject { get; set; }
+        [Cfg(value = 0)]
+        public int TimeOut { get; set; }
+        [Cfg(value = "")]
+        public string To { get; set; }
+        [Cfg(value = "")]
+        public string Url { get; set; }
 
-            Property(name: "action", value: string.Empty, required: true);
-            Property(name: "after", value: true);
-            Property(name: "arguments", value: string.Empty);
-            Property(name: "bcc", value: string.Empty);
-            Property(name: "before", value: false);
-            Property(name: "body", value: string.Empty);
-            Property(name: "cc", value: string.Empty);
-            Property(name: "command", value: string.Empty);
-            Property(name: "connection", value: string.Empty);
-            Property(name: "file", value: string.Empty);
-            Property(name: "from", value: string.Empty);
-            Property(name: "html", value: true);
-            Property(name: "method", value: "get");
-            Property(name: "mode", value: "*");
-            Property(name: "new-value", value: string.Empty);
-            Property(name: "old-value", value: string.Empty);
-            Property(name: "subject", value: string.Empty);
-            Property(name: "time-out", value: 0);
-            Property(name: "to", value: string.Empty);
-            Property(name: "url", value: string.Empty);
+        public List<TflNameReference> Modes { get; set; }
 
-            Collection<TflNameReference>("modes");
+        public string[] GetModes() {
+            return this.Count("modes") > 0 ? Modes.Select(m => m.Name).ToArray() : new[] { Mode };
         }
-
     }
 }

@@ -23,7 +23,7 @@ It's source code is hosted on [GitHub](https://github.com/dalenewman/Transformal
 
 Start with a process configuration:
 
-<pre class="prettyprint">
+<pre class="prettyprint" lang="xml">
 &lt;transformalize&gt;
 	&lt;processes&gt;
 		&lt;add name=&quot;NorthWind&quot;&gt;
@@ -38,7 +38,7 @@ Start with a process configuration:
 
 First, setup connections:
 
-<pre class="prettyprint">
+<pre class="prettyprint" lang="xml">
 &lt;connections&gt;
     &lt;add name=&quot;input&quot; database=&quot;NorthWind&quot;/&gt;
     &lt;add name=&quot;output&quot; database=&quot;NorthWindOutput&quot;/&gt;
@@ -57,7 +57,7 @@ Northwind database with this [sql script](http://www.microsoft.com/en-us/downloa
 The schema pictured above shows 8 tables in the `NorthWind` database.  The most important *fact* table is `Order Details`. 
 So, I add it as the first entity and save the configuration as *NorthWind.xml*.
 
-<pre class="prettyprint">
+<pre class="prettyprint" lang="xml">
 &lt;entities&gt;
     &lt;add name=&quot;Order Details&quot;/&gt;
 &lt;/entities&gt;&nbsp;
@@ -65,7 +65,7 @@ So, I add it as the first entity and save the configuration as *NorthWind.xml*.
 
 Using the console application (`tfl.exe`), run Transformalize in &quot;metadata&quot; mode:
 
-<pre class"prettyprint">
+<pre class"prettyprint" lang="bash">
 tfl NorthWind.xml {&#39;mode&#39;:&#39;metadata&#39;}
 </pre>
 
@@ -73,7 +73,7 @@ Metadata mode reads the information schema of the database.
 &nbsp;Then, it writes and opens an XML file with Order Detail&#39;s 
 primary key and field definitions. Copy them into _NorthWind.xml_:
 
-<pre class="prettyprint">
+<pre class="prettyprint" lang="xml">
 &lt;entities&gt;
     &lt;add name=&quot;Order Details&quot;&gt;
         <strong>&lt;fields&gt;
@@ -89,7 +89,7 @@ primary key and field definitions. Copy them into _NorthWind.xml_:
 
 Now, run Transformalize in Initialize mode:
 
-<pre class="prettyprint linenums">
+<pre class="prettyprint" lang="bash">
 tfl NorthWind.xml {&#39;mode&#39;:&#39;init&#39;}
 23:38:57 | Info | NorthWind | All | Initialized TrAnSfOrMaLiZeR.
 23:38:57 | Info | NorthWind | All | Initialized NorthWindOrderDetails in NorthWindOutput on localhost.
@@ -98,7 +98,7 @@ tfl NorthWind.xml {&#39;mode&#39;:&#39;init&#39;}
 
 Initialize mode initializes the output, preparing a place to store the data. Now run Tfl without specifying a mode:
 
-<pre class="prettyprint linenums">
+<pre class="prettyprint" lang="bash">
 tfl NorthWind.xml
 23:43:01 | Info | NorthWind | Order Details....... | Processed 2155 inserts, and 0 updates in Order Details.
 23:43:01 | Info | NorthWind | Order Details....... | Process completed in 00:00:00.7455880.
@@ -106,7 +106,7 @@ tfl NorthWind.xml
 
 Transformalize copied the data that is configured in Northwind.xml. If we run it again, this happens:&nbsp;
 
-<pre class="prettyprint linenums">
+<pre class="prettyprint" lang="bash">
 tfl NorthWind.xml
 23:44:18 | Info | NorthWind | Order Details....... | Processed 0 inserts, and 2155 updates in Order Details.
 23:44:18 | Info | NorthWind | Order Details....... | Process completed in 00:00:01.0926105.&nbsp;
@@ -114,13 +114,13 @@ tfl NorthWind.xml
 
 It updates the data. It copies new and updates existing data, but it is inefficient. The 2155 records have not been modified in the source, but they have been updated unnecessarily in the destination. So, we need to add a _version_ column to `Order Details` entity.  A version column should be a value that will increment anytime a record is inserted or updated.  Conveniently, SQL Server offers a ROWVERSION type that gives us a version column without having to modify the application or add a trigger.
 
-<pre class="prettyprint linenums">
+<pre class="prettyprint" lang="sql">
 ALTER TABLE [Order Details] ADD RowVersion ROWVERSION;&nbsp;
 </pre>
 
 Update the `Order Details` entity to use RowVersion:&nbsp;
 
-<pre class="prettyprint linenums:8">
+<pre class="prettyprint" lang="xml">
 &lt;entities&gt;
     &lt;add name=&quot;Order Details&quot; version=&quot;RowVersion&quot;&gt;
         &lt;fields&gt;
@@ -137,7 +137,7 @@ Update the `Order Details` entity to use RowVersion:&nbsp;
 
 Re-initialize and run twice:&nbsp;
 
-<pre class="prettyprint linenums">
+<pre class="prettyprint" lang="bash">
 tfl NorthWind.xml {&#39;mode&#39;:&#39;init&#39;}
 23:58:52 | Info | NorthWind | All | Initialized TrAnSfOrMaLiZeR.
 23:58:52 | Info | NorthWind | All | Initialized NorthWindOrderDetails in NorthWindOutput on localhost.
@@ -152,7 +152,7 @@ tfl NorthWind.xml
 
 Now it doesn&#39;t update data unnecessarily. &nbsp;It&#39;s using the version field to sense that the data hasn&#39;t been updated. &nbsp;Let&#39;s view the output.
 
-<pre class="prettyprint linenums lang-sql">
+<pre class="prettyprint" lang="sql">
 SELECT TOP 10
 	Discount,
 	OrderID,
@@ -162,7 +162,7 @@ SELECT TOP 10
 FROM NorthWindStar;
 </pre>
 
-<pre class="prettyprint linenums">
+<pre class="prettyprint" lang="bash">
 Discount   OrderID     ProductID   Quantity UnitPrice
 ---------- ----------- ----------- -------- ---------
 0.2        10248       11          12       14.0000
@@ -179,7 +179,7 @@ Discount   OrderID     ProductID   Quantity UnitPrice
 
 Review the NorthWind diagram. The next closest tables to `Order Details` are `Orders` and `Products`. Add the `Orders` entity. Hint: Add entity &lt;add name=&quot;Orders&quot;/&gt; and run Tfl in metadata mode.
 
-<pre class="prettyprint linenums:19">
+<pre class="prettyprint" lang="xml">
 &lt;add name=&quot;Orders&quot; version=&quot;RowVersion&quot;&gt;
     &lt;fields&gt;
         &lt;add name=&quot;OrderID&quot; type=&quot;System.Int32&quot; primary-key=&quot;true&quot; &gt;&lt;/add&gt;
@@ -207,14 +207,14 @@ Review the NorthWind diagram. The next closest tables to `Order Details` are `Or
 
 Re-initialize.
 
-<pre class="prettyprint linenums">
+<pre class="prettyprint" lang="bash">
 tfl NorthWind.xml {&#39;mode&#39;:&#39;init&#39;}
 22:32:14 | Error | NorthWind | The entity Orders must have a relationship to the master entity Order Details.
 </pre>
 
 When another table is added, it must be related to the master table. The master table is the first table defined. In this case, it&#39;s `Order Details`. So, we have to add a relationship:
 
-<pre class="prettyprint linenums:41">
+<pre class="prettyprint" lang="xml">
 &lt;!-- ... ---&gt;
 &lt;/entities&gt;
 &lt;relationships&gt;
@@ -224,14 +224,14 @@ When another table is added, it must be related to the master table. The master 
 
 Re-initialize.
 
-<pre class="prettyprint linenums">
+<pre class="prettyprint" lang="bash">
 tfl NorthWind.xml {&#39;mode&#39;:&#39;init&#39;}
 23:13:31 | Error | NorthWind | field overlap error in Orders. The field: RowVersion is already defined in a previous entity.  You must alias (rename) it.
 </pre>
 
 Just like in SQL views, multiple entities (or tables) joined together can introduce identical field names. &nbsp;So, you have to re-name (or alias) any columns that have the same name. &nbsp;In this case, it&#39;s our RowVersion column that we&#39;re using to detect changes. &nbsp;So, alias the RowVersion in the Orders entity to OrdersRowVersion like this:&nbsp;
 
-<pre class="prettyprint linenums:19">
+<pre class="prettyprint" lang="xml">
 &lt;add name=&quot;Orders&quot; version=&quot;RowVersion&quot;&gt;
 	&lt;fields&gt;
 		&lt;!-- ... --&gt;
@@ -242,7 +242,7 @@ Just like in SQL views, multiple entities (or tables) joined together can introd
 
 Re-initialize and run twice.
 
-<pre class="prettyprint linenums">
+<pre class="prettyprint" lang="bash">
 tfl NorthWind.xml {&#39;mode&#39;:&#39;init&#39;}
 23:23:47 | Info | NorthWind | All | Initialized TrAnSfOrMaLiZeR.
 23:23:47 | Info | NorthWind | All | Initialized NorthWindOrderDetails in NorthWindOutput on localhost.
@@ -260,7 +260,7 @@ tfl NorthWind.xml
 
 View the output:
 
-<pre class="prettyprint">
+<pre class="prettyprint" lang="sql">
 SELECT TOP 10
 	Discount AS Disc,
 	OrderID,
@@ -281,7 +281,7 @@ SELECT TOP 10
 FROM NorthWindStar;
 </pre>
 
-<pre class="prettyprint">
+<pre class="prettyprint" lang="bash">
 Disc OrderID PId Qty UnitPrice  CustId EId Freight  OrderDate  RequiredDate ShipAddress            ShipCity        ShippedDate ShipPostalCode ShipRegion Sid
 ---- ------- --- --- ---------  ------ --- -------- ---------- ------------ ---------------------- --------------- ----------- -------------- ---------- ---
 0.2  10248   11  12  14.0000    VINET  5   32.3800  1996-07-04 1996-08-01   59 rue de l&#39;Abbaye     Reims           1996-07-16  51100                     3
@@ -298,7 +298,7 @@ Disc OrderID PId Qty UnitPrice  CustId EId Freight  OrderDate  RequiredDate Ship
 
 Now, rinse and repeat. &nbsp;That is, consult the NorthWind diagram and continue adding related entities until the relationships configuration look like this:
 
-<pre class="prettyprint linenums:200">
+<pre class="prettyprint" lang="xml">
 &lt;relationships&gt;
     &lt;add left-entity=&quot;Order Details&quot; left-field=&quot;OrderID&quot; right-entity=&quot;Orders&quot; right-field=&quot;OrderID&quot; /&gt;
     &lt;add left-entity=&quot;Order Details&quot; left-field=&quot;ProductID&quot; right-entity=&quot;Products&quot; right-field=&quot;ProductID&quot; /&gt;
@@ -312,7 +312,7 @@ Now, rinse and repeat. &nbsp;That is, consult the NorthWind diagram and continue
 
 As you might expect, adding all these entities creates many duplicate field names. Instead of renaming each one, we can add a prefix to the entity. A prefix aliases all the fields as prefix + name.
 
-<pre class="prettyprint linenums:150">
+<pre class="prettyprint" lang="xml">
 &lt;add name=&quot;Employees&quot; version=&quot;RowVersion&quot; prefix=&quot;Employee&quot;&gt;
     &lt;fields&gt;
 		&lt;!-- ... --&gt;
@@ -322,7 +322,7 @@ As you might expect, adding all these entities creates many duplicate field name
 
 Initialize, and run twice. Console output should look like this:
 
-<pre class="prettyprint linenums">
+<pre class="prettyprint" lang="bash">
 tfl NorthWind.xml {&#39;mode&#39;:&#39;init&#39;}
 19:41:53 | Info | NorthWind | All | Initialized TrAnSfOrMaLiZeR.
 19:41:53 | Info | NorthWind | All | Initialized NorthWindOrderDetails in NorthWindOutput on localhost.
@@ -360,12 +360,12 @@ tfl NorthWind.xml
 
 Now there are 81 fields available in the output `NorthWindStar`:
 
-<pre class="prettyprint linenums lang-sql">
+<pre class="prettyprint" lang="sql">
 SELECT COUNT(*) AS FieldCount
 FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_NAME = &#39;NorthWindStar&#39;
 </pre>
-<pre class="prettyprint linenums">
+<pre class="prettyprint" lang="bash">
 FieldCount
 ----------
 81
@@ -389,7 +389,7 @@ Open up [BIDS](http://technet.microsoft.com/en-us/library/ms173767%28v=sql.105%2
 
 As you can see, slicing the measures by order date isn&#39;t ideal. Moreover, the unit price and quantity measures don&#39;t help much by themselves. This cube needs a time hierarchy and revenue calculation. We can add them with Transformalize. First, add three calculated fields based on &quot;order date&quot; to create a time hierarchy:
 
-<pre class="prettyprint linenums">
+<pre class="prettyprint" lang="xml">
 &lt;add name=&quot;Orders&quot; version=&quot;RowVersion&quot; prefix=&quot;Orders&quot;&gt;
     &lt;fields&gt;
       &lt;!-- ... --&gt;
@@ -417,7 +417,7 @@ As you can see, slicing the measures by order date isn&#39;t ideal. Moreover, th
 
 Calculated fields project new fields based on the values of other fields and previously defined other calculated fields. They are used at the entity level, or at the process level. In an entity, they have access to any field within their entity. In a process, they have access to all of the data. To control which fields they have access to, use parameters like this:
 
-<pre class="prettyprint linenums">
+<pre class="prettyprint" lang="xml">
 &lt;transform method=&quot;format&quot; format=&quot;{0} is a big city!&quot;&gt;
     &lt;parameters&gt;
         &lt;add field=&quot;City&quot; /&gt;
@@ -427,7 +427,7 @@ Calculated fields project new fields based on the values of other fields and pre
 
 You may add multiple parameters in this way. &nbsp;However, if you only have a single parameter, you can specify it in the parameter attribute in the transform element itself, like this:
 
-<pre class="prettyprint linenums">
+<pre class="prettyprint" lang="xml">
 &lt;transform method=&quot;format&quot; format=&quot;{0} is a big city!&quot; parameter=&quot;City&quot; /&gt;&nbsp;
 </pre>
 
@@ -435,7 +435,7 @@ Another short-cut is to set the parameter attribute to &quot;*&quot; to include 
 
 There are many built-in [Transforms](https://github.com/dalenewman/Transformalize/wiki/Transforms).  If you can&#39;t find one that fits your needs, you can use the C#, JavaScript, or the Razor template transforms to define your own. Let&#39;s use a JavaScript transform to calculate revenue:
 
-<pre class="prettyprint linenums">
+<pre class="prettyprint" lang="xml">
 &lt;calculated-fields&gt;
     &lt;add name=&quot;Revenue&quot; type=&quot;System.Decimal&quot; &gt;
         &lt;transforms&gt;
@@ -451,7 +451,7 @@ Re-initialize and run Tfl. Then, using the new time fields and revenue, see if i
 
 The cube looks better now, but we&#39;ll need it to update whenever Transformalize runs. &nbsp;So, &nbsp;add a connection to Analysis Services and a corresponding template action:&nbsp;
 
-<pre class="prettyprint linenums">
+<pre class="prettyprint" lang="xml">
 &lt;connections&gt;
     &lt;add name=&quot;input&quot; connection-string=&quot;server=localhost;Database=NorthWind;Trusted_Connection=True;&quot;/&gt;
     &lt;add name=&quot;output&quot; connection-string=&quot;Server=localhost;Database=NorthWindOutput;Trusted_Connection=True;&quot;/&gt;
@@ -472,7 +472,7 @@ The cube looks better now, but we&#39;ll need it to update whenever Transformali
 
 Transformalize &quot;templates&quot; use [C# Razor syntax](http://haacked.com/archive/2011/01/06/razor-syntax-quick-reference.aspx). Settings are passed into the template and used like this:
 
-<pre class="prettyprint linenums">
+<pre class="prettyprint" lang="xml">
 &lt;Batch xmlns=&quot;http://schemas.microsoft.com/analysisservices/2003/engine&quot;&gt;
   &lt;Process xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:ddl2=&quot;http://schemas.microsoft.com/analysisservices/2003/engine/2&quot; xmlns:ddl2_2=&quot;http://schemas.microsoft.com/analysisservices/2003/engine/2/2&quot; xmlns:ddl100_100=&quot;http://schemas.microsoft.com/analysisservices/2008/engine/100/100&quot; xmlns:ddl200=&quot;http://schemas.microsoft.com/analysisservices/2010/engine/200&quot; xmlns:ddl200_200=&quot;http://schemas.microsoft.com/analysisservices/2010/engine/200/200&quot;&gt;
     &lt;Object&gt;
@@ -486,7 +486,7 @@ Transformalize &quot;templates&quot; use [C# Razor syntax](http://haacked.com/ar
 
 The `@(Model.Settings.DatabaseID)` will be replaced with `NorthWind2`.  Transformalize&#39;s template manager will render the template, and subsequently run defined &quot;actions.&quot; The &quot;run&quot; action executes the rendered content against the designated connection. &nbsp;This allows you to dynamically build data manipulation queries, or XMLA commands in this case, and execute them.
 
-<pre class="prettyprint linenums">
+<pre class="prettyprint" lang="bash">
 tfl NorthWind.xml
 00:14:28 | Info | NorthWind | Order Details.. | Processed 2155 inserts, and 0 updates in Order Details.
 00:14:28 | Info | NorthWind | Orders......... | Processed 830 inserts, and 0 updates in Orders.
@@ -506,7 +506,7 @@ tfl NorthWind.xml
 
 With more complex templates, and an Apache [SOLR](http://lucene.apache.org/solr/) server, it is possible to integrate full text search into the process as well. &nbsp;Transformalize comes with a pair of templates that can build the necessary SOLR configuration files for schema, and data import handling.&nbsp;
 
-<pre class="prettyprint linenums">
+<pre class="prettyprint" lang="xml">
 &lt;templates&gt;
     &lt;add name=&quot;solr-data-handler&quot; file=&quot;solr-data-handler.cshtml&quot; cache=&quot;true&quot;&gt;
       &lt;actions&gt;
@@ -533,7 +533,7 @@ To control how the fields are handled in SOLR, &quot;search types&quot; are appl
 
 Running Tfl now produces:
 
-<pre class="prettyprint">
+<pre class="prettyprint" lang="bash">
     tfl NorthWind.xml
     ...
     00:48:25 | Info | NorthWind | Products.... | Processed 2155 rows. Updated Order Details with Products.

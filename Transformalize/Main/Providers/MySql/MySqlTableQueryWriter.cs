@@ -45,7 +45,7 @@ namespace Transformalize.Main.Providers.MySql {
         public string WriteTemporary(AbstractConnection connection, string name, Fields fields, bool useAlias = true) {
             var safeName = connection.Enclose(name.TrimStart("@".ToCharArray()));
             var defs = useAlias ? new FieldSqlWriter(fields).Alias(connection.L, connection.R).DataType(new MySqlDataTypeService()).Write() : new FieldSqlWriter(fields).Name(connection.L, connection.R).DataType(new MySqlDataTypeService()).Write();
-            return string.Format(@"CREATE TEMPORARY TABLE {0}({1}) ENGINE = MEMORY;", safeName, defs);
+            return string.Format(@"CREATE TEMPORARY TABLE IF NOT EXISTS {0}({1}) ENGINE = MEMORY; TRUNCATE TABLE {0};", safeName, defs);
         }
     }
 }

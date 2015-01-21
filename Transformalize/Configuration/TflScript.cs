@@ -3,10 +3,10 @@
 namespace Transformalize.Configuration {
     public class TflScript : CfgNode {
 
-        public TflScript() {
-            Property(name: "name", value: string.Empty, required: true, unique: true);
-            Property(name: "file", value: string.Empty, required: true);
-        }
+        [Cfg(required = true, unique = true)]
+        public string Name { get; set; }
+        [Cfg(required = true)]
+        public string File { get; set; }
 
     }
 }

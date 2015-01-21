@@ -350,8 +350,8 @@ namespace Transformalize.Main {
                 return fields.Find(alias).First();
             }
 
-            foreach (var fields in Entities.Where(e => e.Alias == entity || entity == string.Empty).Select(e => e.CalculatedFields).Where(fields => fields.Find(alias).Any())) {
-                return fields.Find(alias).First();
+            foreach (var calculatedFields in Entities.Where(e => e.Alias == entity || entity == string.Empty).Select(e => e.CalculatedFields).Where(calculatedFields => calculatedFields.Find(alias).Any())) {
+                return calculatedFields.Find(alias).First();
             }
 
             if (CalculatedFields.Find(alias).Any()) {
@@ -367,8 +367,8 @@ namespace Transformalize.Main {
 
         private bool IsValidationResultField(string alias, string entity) {
             return Entities
-                    .Where(e => e.Alias == entity || entity == string.Empty)
-                    .Any(e => e.OperationsAfterAggregation.OfType<ValidationOperation>().Any(operation => operation.ResultKey.Equals(alias)));
+                .Where(e => e.Alias == entity || entity == string.Empty)
+                .Any(e => e.OperationsAfterAggregation.OfType<ValidationOperation>().Any(operation => operation.ResultKey.Equals(alias)));
         }
 
         public bool TryGetField(string entity, string alias, out Field field, bool issueWarning = true) {

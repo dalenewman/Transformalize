@@ -205,9 +205,13 @@
     <Content Include="Scripts\common.ajax.min.js">
       <DependentUpon>common.ajax.js</DependentUpon>
     </Content>
+    <Content Include="Scripts\configurations-001.js" />
     <Content Include="Scripts\configuration-editor-004.js" />
     <Content Include="Scripts\configuration-editor-004.min.js">
       <DependentUpon>configuration-editor-004.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\configurations-001.min.js">
+      <DependentUpon>configurations-001.js</DependentUpon>
     </Content>
     <Content Include="Scripts\HandsOnTable-0.11.4\jquery-ui\js\jquery-ui.custom.js" />
     <Content Include="Scripts\HandsOnTable-0.11.4\jquery-ui\js\jquery-ui.custom.min.js" />
@@ -808,6 +812,10 @@
     <Content Include="Styles\codemirror-4.8\theme\xq-light.css" />
     <Content Include="Styles\codemirror-4.8\theme\xq-light.min.css">
       <DependentUpon>xq-light.css</DependentUpon>
+    </Content>
+    <Content Include="Styles\configurations-001.css" />
+    <Content Include="Styles\configurations-001.min.css">
+      <DependentUpon>configurations-001.css</DependentUpon>
     </Content>
     <Content Include="Styles\HandsOnTable-0.11.4\jquery-ui\css\ui-bootstrap\jquery-ui.custom.min.css">
       <DependentUpon>jquery-ui.custom.css</DependentUpon>
@@ -1631,6 +1639,9 @@
     </Content>
     <Content Include="Scripts\common.ajax.min.js.map">
       <DependentUpon>common.ajax.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\configurations-001.min.js.map">
+      <DependentUpon>configurations-001.min.js</DependentUpon>
     </Content>
   </ItemGroup>
   <ItemGroup>

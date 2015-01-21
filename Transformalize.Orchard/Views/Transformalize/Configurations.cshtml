@@ -2,65 +2,11 @@
 @using Orchard.Core.Title.Models
 @model Transformalize.Orchard.Models.Configurations
 @{
+    Style.Include("configurations-001.min.css").AtHead();
     Script.Require("jQuery").AtHead();
+    Script.Include("configurations-001.min.js").AtHead();
     Layout.Title = "Configurations";
 }
-    
-<style type="text/css">
-    .btn-file {
-        position: relative;
-        overflow: hidden;
-    }
-
-    .btn-file input[type=file] {
-        position: absolute;
-        top: 0;
-        right: 0;
-        min-width: 100%;
-        min-height: 100%;
-        font-size: 999px;
-        text-align: right;
-        filter: alpha(opacity=0);
-        opacity: 0;
-        outline: none;
-        background: white;
-        cursor: inherit;
-        display: block;
-    }
-</style>
-<script type="text/javascript">
-    //<!--
-    $(document).ready(function() {
-        $("input:file").change(function () {
-            var fileName = $(this).val().replace("C:\\fakepath\\", "");
-
-            $(this).closest('td')
-                .siblings('.td-submit')
-                .children('button[type=submit]')
-                .removeAttr('disabled')
-                .removeClass('btn-disabled')
-                .addClass('btn-primary');
-
-            $(this).closest('td')
-                .siblings('.td-file')
-                .text(fileName)
-                .removeClass('text-warning')
-                .addClass('text-success');
-        });
-
-        $('label.mode').click(function () {
-            $('input[type=radio]', $(this).parent()).removeAttr('checked');
-            $(this).children().first().attr('checked', 'checked');
-        });
-
-        function removeMessages() {
-            $(".zone-messages").fadeOut().hide();
-        }
-
-        setTimeout(removeMessages, 10000);
-    });
-    //-->
-</script>
 
 <table class="table table-condensed table-hover" style="font-size: smaller;">
     <thead>

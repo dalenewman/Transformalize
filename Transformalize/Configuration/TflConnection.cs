@@ -3,39 +3,65 @@ using Transformalize.Main;
 
 namespace Transformalize.Configuration {
     public class TflConnection : CfgNode {
-
-        public TflConnection() {
-            Property(name: "name", value: string.Empty, required: true, unique: true);
-            Property(name: "batch-size", value: 500);
-            Property(name: "connection-string", value: string.Empty);
-            Property(name: "content-type", value: string.Empty);
-            Property(name: "data", value: Common.DefaultValue);
-            Property(name: "database", value: string.Empty);
-            Property(name: "date-format", value: "MM/dd/yyyy h:mm:ss tt");
-            Property(name: "delimiter", value: ',');
-            Property(name: "direct", value: false);
-            Property(name: "enabled", value: true);
-            Property(name: "enable-ssl", value: false);
-            Property(name: "encoding", value: "utf-8");
-            Property(name: "end", value: 0);
-            Property(name: "error-mode", value: string.Empty);
-            Property(name: "file", value: string.Empty);
-            Property(name: "folder", value: string.Empty);
-            Property(name: "footer", value: string.Empty);
-            Property(name: "header", value: Common.DefaultValue);
-            Property(name: "password", value: string.Empty);
-            Property(name: "path", value: string.Empty);
-            Property(name: "port", value: 0);
-            Property(name: "provider", value: "SqlServer");
-            Property(name: "search-option", value: "TopDirectoryOnly");
-            Property(name: "search-pattern", value: "*.*");
-            Property(name: "server", value: "localhost");
-            Property(name: "start", value: 1);
-            Property(name: "url", value: string.Empty);
-            Property(name: "user", value: string.Empty);
-            Property(name: "version", value: Common.DefaultValue);
-            Property(name: "web-method", value: "GET");
-        }
-
+        [Cfg(value = "", required = true, unique = true)]
+        public string Name { get; set; }
+        [Cfg(value = 500)]
+        public int BatchSize { get; set; }
+        [Cfg(value = "")]
+        public string ConnectionString { get; set; }
+        [Cfg(value = "")]
+        public string ContentType { get; set; }
+        [Cfg(value = Common.DefaultValue)]
+        public string Data { get; set; }
+        [Cfg(value = "")]
+        public string Database { get; set; }
+        [Cfg(value = "MM/dd/yyyy h=mm=ss tt")]
+        public string DateFormat { get; set; }
+        [Cfg(value = ',')]
+        public char Delimiter { get; set; }
+        [Cfg(value = false)]
+        public bool Direct { get; set; }
+        [Cfg(value = true)]
+        public bool Enabled { get; set; }
+        [Cfg(value = false)]
+        public bool EnableSsl { get; set; }
+        [Cfg(value = "utf-8")]
+        public string Encoding { get; set; }
+        [Cfg(value = 0)]
+        public int End { get; set; }
+        [Cfg(value = "")]
+        public string ErrorMode { get; set; }
+        [Cfg(value = "")]
+        public string File { get; set; }
+        [Cfg(value = "")]
+        public string Folder { get; set; }
+        [Cfg(value = "")]
+        public string Footer { get; set; }
+        [Cfg(value = Common.DefaultValue)]
+        public string Header { get; set; }
+        [Cfg(value = "")]
+        public string Password { get; set; }
+        [Cfg(value = "")]
+        public string Path { get; set; }
+        [Cfg(value = 0)]
+        public int Port { get; set; }
+        [Cfg(value = "SqlServer")]
+        public string Provider { get; set; }
+        [Cfg(value = "TopDirectoryOnly")]
+        public string SearchOption { get; set; }
+        [Cfg(value = "*.*")]
+        public string SearchPattern { get; set; }
+        [Cfg(value = "localhost")]
+        public string Server { get; set; }
+        [Cfg(value = 1)]
+        public int Start { get; set; }
+        [Cfg(value = "")]
+        public string Url { get; set; }
+        [Cfg(value = "")]
+        public string User { get; set; }
+        [Cfg(value = Common.DefaultValue)]
+        public string Version { get; set; }
+        [Cfg(value = "GET")]
+        public string WebMethod { get; set; }
     }
 }

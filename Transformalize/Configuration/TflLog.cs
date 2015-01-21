@@ -3,20 +3,29 @@ using Transformalize.Main;
 
 namespace Transformalize.Configuration {
     public class TflLog : CfgNode {
-        public TflLog() {
 
-            Property(name: "name", value: string.Empty, required:true, unique:true);
-            Property(name: "provider", value: Common.DefaultValue);
-            Property(name: "layout", value: Common.DefaultValue);
-            Property(name: "level", value: "Informational");
-            Property(name: "connection", value: Common.DefaultValue);
-            Property(name: "from", value: Common.DefaultValue);
-            Property(name: "to", value: Common.DefaultValue);
-            Property(name: "subject", value: Common.DefaultValue);
-            Property(name: "file", value: Common.DefaultValue);
-            Property(name: "folder", value: Common.DefaultValue);
-            Property(name: "async", value: false);
-        }
+        [Cfg(value = false)]
+        public bool Async { get; set; }
+        [Cfg(value = Common.DefaultValue)]
+        public string Connection { get; set; }
+        [Cfg(value = Common.DefaultValue)]
+        public string File { get; set; }
+        [Cfg(value = Common.DefaultValue)]
+        public string Folder { get; set; }
+        [Cfg(value = Common.DefaultValue)]
+        public string From { get; set; }
+        [Cfg(value = Common.DefaultValue)]
+        public string Layout { get; set; }
+        [Cfg(value = "Informational")]
+        public string Level { get; set; }
+        [Cfg(value = "", required = true, unique = true)]
+        public string Name { get; set; }
+        [Cfg(value = Common.DefaultValue)]
+        public string Provider { get; set; }
+        [Cfg(value = Common.DefaultValue)]
+        public string Subject { get; set; }
+        [Cfg(value = Common.DefaultValue)]
+        public string To { get; set; }
 
     }
 }

@@ -123,7 +123,9 @@
     <Compile Include="Configuration\TflProcess.cs" />
     <Compile Include="Configuration\TflProvider.cs" />
     <Compile Include="Configuration\TflRelationship.cs" />
+    <Compile Include="Configuration\TflResponse.cs" />
     <Compile Include="Configuration\TflRoot.cs" />
+    <Compile Include="Configuration\TflRow.cs" />
     <Compile Include="Configuration\TflScript.cs" />
     <Compile Include="Configuration\TflSearchType.cs" />
     <Compile Include="Configuration\TflTemplate.cs" />
@@ -175,10 +177,7 @@
     <Compile Include="Extensions\IntExtensions.cs" />
     <Compile Include="Extensions\ObjectPool.cs" />
     <Compile Include="Extensions\ProducerConsumerCollectionBase.cs" />
-    <Compile Include="Libs\Cfg.Net\CfgAttribute.cs" />
-    <Compile Include="Libs\Cfg.Net\CfgNode.cs" />
-    <Compile Include="Libs\Cfg.Net\CfgProperty.cs" />
-    <Compile Include="Libs\Cfg.Net\CharExtensions.cs" />
+    <Compile Include="Libs\Cfg.Net\CfgNet.cs" />
     <Compile Include="Libs\Cfg.Net\NanoXmlParser.cs" />
     <Compile Include="Libs\Dapper\SqlBuilder.cs" />
     <Compile Include="Libs\Dapper\SqlMapper.cs" />

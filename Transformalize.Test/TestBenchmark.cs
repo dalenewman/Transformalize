@@ -27,7 +27,6 @@ using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration;
-using Transformalize.Libs.Cfg.Net;
 using Transformalize.Main;
 
 namespace Transformalize.Test {
@@ -35,67 +34,43 @@ namespace Transformalize.Test {
     public class TestBenchmark : EtlProcessHelper {
 
         [Test]
-        public void RunCfgBenchmark() {
+        public void RunCfgBenchmark()
+        {
+
+            var xml = File.ReadAllText(@"NorthWind.xml");
 
             var xDocWatch = new Stopwatch();
-            var nanoWatch = new Stopwatch();
+            var cfgNetWatch = new Stopwatch();
             var procWatch = new Stopwatch();
             var cfgWatch = new Stopwatch();
 
             xDocWatch.Start();
-            var doc1 = XDocument.Load(File.OpenRead(@"NorthWind.xml"));
+            var doc1 = XDocument.Parse(xml);
             var firstProcess1 = doc1.Root.Element("processes").Element("add");
             xDocWatch.Stop();
 
-            nanoWatch.Start();
-            var doc2 = new NanoXmlDocument(File.ReadAllText(@"NorthWind.xml"));
-            var firstProcess2 = doc2.RootNode.SubNodes.First(n => n.Name == "processes").SubNodes.First(n => n.Name == "add");
-            nanoWatch.Stop();
+            cfgNetWatch.Start();
+            var cfgNet = new TflRoot(xml, null);
+            var firstProcess2 = cfgNet.Processes[0];
+            cfgNetWatch.Stop();
 
             cfgWatch.Start();
-            var cfg = new ConfigurationFactory(@"Northwind.xml").CreateSingle();
+            var cfg = new ConfigurationFactory(xml).CreateSingle();
             cfgWatch.Stop();
 
             procWatch.Start();
-            var proc = ProcessFactory.CreateSingle(@"NorthWind.xml");
+            var proc = ProcessFactory.CreateSingle(xml);
             procWatch.Stop();
 
             Console.WriteLine("Process: " + procWatch.ElapsedMilliseconds); // ~ 1928
             Console.WriteLine(".NET Cfg: " + cfgWatch.ElapsedMilliseconds); // ~ 341
+            Console.WriteLine("Cfg-NET: " + cfgNetWatch.ElapsedMilliseconds); // ~ 200 ms
             Console.WriteLine("XDocument: " + xDocWatch.ElapsedMilliseconds); // ~ 45ms
-            Console.WriteLine("NanoXml: " + nanoWatch.ElapsedMilliseconds); // ~ 18 ms
 
-            Assert.AreEqual("NorthWind", firstProcess2.GetAttribute("name").Value);
+            Assert.AreEqual("NorthWind", firstProcess2.Name);
             Assert.AreEqual("NorthWind", firstProcess1.Attribute("name").Value);
             Assert.AreEqual("NorthWind", cfg.Name);
             Assert.AreEqual("NorthWind", proc.Name);
-
-        }
-
-        [Test]
-        public void TestRoot() {
-            var sw = new Stopwatch();
-            sw.Start();
-            var cfg = new TflRoot();
-            cfg.Load(File.ReadAllText(@"NorthWind.xml"));
-            sw.Stop();
-            Console.WriteLine("Load: {0}", sw.ElapsedMilliseconds);
-
-            var problems = cfg.Problems();
-            foreach (var problem in problems) {
-                Console.WriteLine(problem);
-            }
-
-            Assert.AreEqual("NorthWind", cfg["processes", 0]["name"].Value);
-            Assert.AreEqual(string.Empty, cfg["processes", 0]["mode"].Value);
-            Assert.AreEqual(string.Empty, cfg["processes", 0]["pipeline-threading"].Value);
-            Assert.AreEqual(true, cfg["processes", 0]["enabled"].Value);
-
-            Assert.AreEqual("prod", cfg["environments", 0]["name"].Value);
-            Assert.AreEqual("test", cfg["environments", 1]["name"].Value);
-            Assert.AreEqual("prod", cfg["environments", 1]["default"].Value);
-
-            Assert.AreEqual("NorthWindStar", cfg["processes", 0]["connections", 1]["database"].Value);
 
         }
 

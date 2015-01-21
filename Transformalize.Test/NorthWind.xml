@@ -1,15 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <transformalize>
 
-  <environments default="prod" >
+  <environments default="test" >
     <add name="prod" >
       <parameters>
-        <add name="SqlServer" value="p" />
+        <add name="SqlServer" value="127.0.0.1" />
       </parameters>
     </add>
     <add name="test" >
       <parameters>
-        <add name="SqlServer" value="AclaraTestSrv.mwf.local" />
+        <add name="SqlServer" value="localhost" />
       </parameters>
     </add>
   </environments>
@@ -39,7 +39,7 @@
       </file-inspection>
 
       <connections>
-        <add name="input" connection-string="Server=localhost;Database=NorthWind;Trusted_Connection=True;" />
+        <add name="input" connection-string="Server=@(SqlServer);Database=NorthWind;Trusted_Connection=True;" />
         <add name="output" database="NorthWindStar" port="1433" />
         <add name="ssas" database="NorthWind" provider="AnalysisServices" />
       </connections>

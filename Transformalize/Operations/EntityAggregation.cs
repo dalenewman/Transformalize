@@ -47,6 +47,11 @@ namespace Transformalize.Operations {
 
             EntityName = entity.Name;
             _keysToGroupBy = new Fields(entity.Fields, entity.CalculatedFields).WithGroup().Aliases().ToArray();
+
+            if (_keysToGroupBy.Length == 0) {
+                throw new TransformalizeException(entity.ProcessName, entity.Name, "When an entity is set to group, you need to set at least one field's aggregate attribute to 'group'.");
+            }
+
             _firstKey = _keysToGroupBy[0];
             _fieldsToAccumulate = new Fields(entity.Fields, entity.CalculatedFields).WithOutput().WithAccumulate().ToArray();
 
