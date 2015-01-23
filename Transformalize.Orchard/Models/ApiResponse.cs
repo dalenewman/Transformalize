@@ -55,7 +55,7 @@ namespace Transformalize.Orchard.Models {
                 case "json":
                     return "application/json";
                 default:
-                    return "text/xml";
+                    return "application/xml";
             }
         }
 

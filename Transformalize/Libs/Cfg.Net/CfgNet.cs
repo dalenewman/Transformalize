@@ -11,7 +11,6 @@ namespace Transformalize.Libs.Cfg.Net {
     public static class CfgConstants {
 
         // ReSharper disable InconsistentNaming
-        public static string ATTRIBUTE_NAME = "name";
         public static char ENTITY_END = ';';
         public static char ENTITY_START = '&';
         public static char HIGH_SURROGATE = '\uD800';
@@ -26,7 +25,6 @@ namespace Transformalize.Libs.Cfg.Net {
         public static string PARAMETERS_ELEMENT_NAME = "parameters";
 
         //PROBLEM PATTERNS
-        public static string PROBLEM_DUPLICATE = "There is a duplicate {0} value {1} in {2}.";
         public static string PROBLEM_DUPLICATE_SET = "You set a duplicate '{0}' value '{1}' in '{2}'.";
         public static string PROBLEM_INVALID_ATTRIBUTE = "A{3} '{0}' '{1}' element contains an invalid '{2}' attribute.  Valid attributes are: {4}.";
         public static string PROBLEM_INVALID_ELEMENT = "A{2} '{0}' element has an invalid '{1}' element.";
@@ -35,13 +33,103 @@ namespace Transformalize.Libs.Cfg.Net {
         public static string PROBLEM_MISSING_ATTRIBUTE = "A{3} '{0}' '{1}' element is missing a '{2}' attribute.";
         public static string PROBLEM_MISSING_ELEMENT = "The '{0}' element is missing a{2} '{1}' element.";
         public static string PROBLEM_MISSING_NESTED_ELEMENT = "A{3} '{0}' '{1}' element is missing a{4} '{2}' element.";
-        public static string PROBLEM_MISSING_PLACE_HOLDER_VALUE = "You're missing a value for @({0})";
+        public static string PROBLEM_MISSING_PLACE_HOLDER_VALUE = "You're missing {0} for {1}.";
         public static string PROBLEM_SETTING_PROPERTY = "Could not set property {0} to value {1} from attribute {2}. {3}";
         public static string PROBLEM_SETTING_VALUE = "Could not set '{0}' to '{1}' inside '{2}' '{3}'. {4}";
         public static string PROBLEM_UNEXPECTED_ELEMENT = "Invalid element {0} in {1}.  Only 'add' elements are allowed here.";
         public static string PROBLEM_XML_PARSE = "Could not parse the configuration. {0}";
         public static string PROBLEM_VALUE_NOT_IN_DOMAIN = "A{5} '{0}' '{1}' element has an invalid value of '{3}' in the '{2}' attribute.  The valid domain is: {4}.";
         // ReSharper restore InconsistentNaming
+    }
+
+
+    public class CfgProblems {
+
+        private readonly StringBuilder _storage = new StringBuilder();
+
+        public void DuplicateSet(string uniqueAttribute, object value, string nodeName) {
+            _storage.AppendFormat(CfgConstants.PROBLEM_DUPLICATE_SET, uniqueAttribute, value, nodeName);
+            _storage.AppendLine();
+        }
+
+        public void InvalidAttribute(string parentName, string nodeName, string attributeName, string validateAttributes) {
+            _storage.AppendFormat(CfgConstants.PROBLEM_INVALID_ATTRIBUTE, parentName, nodeName, attributeName, Suffix(parentName), validateAttributes);
+            _storage.AppendLine();
+        }
+
+        public void InvalidElement(string nodeName, string subNodeName) {
+            _storage.AppendFormat(CfgConstants.PROBLEM_INVALID_ELEMENT, nodeName, subNodeName, Suffix(nodeName));
+            _storage.AppendLine();
+        }
+
+        public void InvalidNestedElement(string parentName, string nodeName, string subNodeName) {
+            _storage.AppendFormat(CfgConstants.PROBLEM_INVALID_NESTED_ELEMENT, parentName, nodeName, subNodeName, Suffix(parentName));
+            _storage.AppendLine();
+        }
+
+        public void MissingAddElement(string elementName) {
+            _storage.AppendFormat(CfgConstants.PROBLEM_MISSING_ADD_ELEMENT, elementName, Suffix(elementName));
+            _storage.AppendLine();
+        }
+
+        public void MissingAttribute(string parentName, string nodeName, string attributeName) {
+            _storage.AppendFormat(CfgConstants.PROBLEM_MISSING_ATTRIBUTE, parentName, nodeName, attributeName, Suffix(parentName));
+            _storage.AppendLine();
+        }
+
+        public void MissingElement(string nodeName, string elementName) {
+            _storage.AppendFormat(CfgConstants.PROBLEM_MISSING_ELEMENT, nodeName, elementName, Suffix(elementName));
+            _storage.AppendLine();
+        }
+
+        public void MissingNestedElement(string parentName, string nodeName, string elementName) {
+            _storage.AppendFormat(CfgConstants.PROBLEM_MISSING_NESTED_ELEMENT, parentName, nodeName, elementName, Suffix(parentName), Suffix(elementName));
+            _storage.AppendLine();
+        }
+
+        public void MissingPlaceHolderValues(string[] keys) {
+            var formatted = "@(" + string.Join("), @(", keys) + ")";
+            _storage.AppendFormat(CfgConstants.PROBLEM_MISSING_PLACE_HOLDER_VALUE, keys.Length == 1 ? "a value" : "values", formatted);
+            _storage.AppendLine();
+        }
+
+        public void SettingProperty(string propertyName, object value, string attributeName, string message) {
+            _storage.AppendFormat(CfgConstants.PROBLEM_SETTING_PROPERTY, propertyName, value, attributeName, message);
+            _storage.AppendLine();
+        }
+
+        public void SettingValue(string propertyName, object value, string parentName, string nodeName, string message) {
+            _storage.AppendFormat(CfgConstants.PROBLEM_SETTING_VALUE, propertyName, value, parentName, nodeName, message);
+            _storage.AppendLine();
+        }
+
+        public void UnexpectedElement(string elementName, string subNodeName) {
+            _storage.AppendFormat(CfgConstants.PROBLEM_UNEXPECTED_ELEMENT, elementName, subNodeName);
+            _storage.AppendLine();
+        }
+
+        public void ValueNotInDomain(string parentName, string nodeName, string propertyName, object value, string validValues) {
+            _storage.AppendFormat(CfgConstants.PROBLEM_VALUE_NOT_IN_DOMAIN, parentName, nodeName, propertyName, value, validValues, Suffix(parentName));
+            _storage.AppendLine();
+        }
+
+        public void XmlParse(string message) {
+            _storage.AppendFormat(CfgConstants.PROBLEM_XML_PARSE, message);
+            _storage.AppendLine();
+        }
+
+        private static string Suffix(string thing) {
+            return thing[0].IsVowel() ? "n" : string.Empty;
+        }
+
+        public string[] Yield() {
+            return _storage.ToString().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+        }
+
+        public void AddCustomProblem(string problem) {
+            _storage.Append(problem);
+            _storage.AppendLine();
+        }
     }
 
     public static class CharExtensions {
@@ -106,9 +194,9 @@ namespace Transformalize.Libs.Cfg.Net {
         private readonly List<string> _uniqueProperties = new List<string>();
         private readonly Dictionary<string, CfgNode[]> _collections = new Dictionary<string, CfgNode[]>(StringComparer.Ordinal);
         private readonly List<string> _requiredClasses = new List<string>();
-        private readonly List<string> _problems = new List<string>();
         private readonly Dictionary<string, Func<CfgNode>> _elementLoaders = new Dictionary<string, Func<CfgNode>>(StringComparer.Ordinal);
         private readonly StringBuilder _builder = new StringBuilder();
+        private readonly CfgProblems _problems = new CfgProblems();
 
         private static Dictionary<Type, Func<string, object>> Converter {
             get {
@@ -142,7 +230,11 @@ namespace Transformalize.Libs.Cfg.Net {
             get { return _properties[name]; }
         }
 
-        public void Load(string xml, Dictionary<string, string> parameters = null) {
+        protected void AddCustomProblem(string problem) {
+            _problems.AddCustomProblem(problem);
+        }
+
+        public virtual void Load(string xml, Dictionary<string, string> parameters = null) {
 
             NanoXmlNode node = null;
             try {
@@ -159,7 +251,7 @@ namespace Transformalize.Libs.Cfg.Net {
                     }
                 }
             } catch (Exception ex) {
-                _problems.Add(string.Format(CfgConstants.PROBLEM_XML_PARSE, ex.Message));
+                _problems.XmlParse(ex.Message);
                 return;
             }
 
@@ -189,7 +281,7 @@ namespace Transformalize.Libs.Cfg.Net {
                         environmentNode = environmentsNode.SubNodes[j];
 
                         NanoXmlAttribute environmentName;
-                        if (!environmentNode.TryAttribute(CfgConstants.ATTRIBUTE_NAME, out environmentName))
+                        if (!environmentNode.TryAttribute("name", out environmentName))
                             continue;
 
                         if (defaultEnvironment.Value != environmentName.Value || !environmentNode.HasSubNode())
@@ -352,14 +444,14 @@ namespace Transformalize.Libs.Cfg.Net {
 
                             _collections[subNode.Name][j] = tflNode;
                         } else {
-                            _problems.Add(string.Format(CfgConstants.PROBLEM_UNEXPECTED_ELEMENT, add.Name, subNode.Name));
+                            _problems.UnexpectedElement(add.Name, subNode.Name);
                         }
                     }
                 } else {
                     if (parentName == null) {
-                        _problems.Add(string.Format(CfgConstants.PROBLEM_INVALID_ELEMENT, node.Name, subNode.Name, node.Name[0].IsVowel() ? "n" : string.Empty));
+                        _problems.InvalidElement(node.Name, subNode.Name);
                     } else {
-                        _problems.Add(string.Format(CfgConstants.PROBLEM_INVALID_NESTED_ELEMENT, parentName, node.Name, subNode.Name, parentName[0].IsVowel() ? "n" : string.Empty));
+                        _problems.InvalidNestedElement(parentName, node.Name, subNode.Name);
                     }
                 }
 
@@ -375,7 +467,7 @@ namespace Transformalize.Libs.Cfg.Net {
                             .Select(group => group.Key).ToArray();
 
                         for (var l = 0; l < duplicates.Length; l++) {
-                            _problems.Add(string.Format(CfgConstants.PROBLEM_DUPLICATE_SET, unique, duplicates[l], subNode.Name));
+                            _problems.DuplicateSet(unique, duplicates[l], subNode.Name);
                         }
                     }
                 }
@@ -414,12 +506,12 @@ namespace Transformalize.Libs.Cfg.Net {
             for (var i = 0; i < _requiredClasses.Count; i++) {
                 if (!_collections.ContainsKey(_requiredClasses[i])) {
                     if (parentName == null) {
-                        _problems.Add(string.Format(CfgConstants.PROBLEM_MISSING_ELEMENT, node.Name, _requiredClasses[i], _requiredClasses[i][0].IsVowel() ? CfgConstants.ATTRIBUTE_NAME : string.Empty));
+                        _problems.MissingElement(node.Name, _requiredClasses[i]);
                     } else {
-                        _problems.Add(string.Format(CfgConstants.PROBLEM_MISSING_NESTED_ELEMENT, parentName, node.Name, _requiredClasses[i], parentName[0].IsVowel() ? CfgConstants.ATTRIBUTE_NAME : string.Empty, _requiredClasses[i][0].IsVowel() ? CfgConstants.ATTRIBUTE_NAME : string.Empty));
+                        _problems.MissingNestedElement(parentName, node.Name, _requiredClasses[i]);
                     }
                 } else if (_collections[_requiredClasses[i]].Length == 0) {
-                    _problems.Add(string.Format(CfgConstants.PROBLEM_MISSING_ADD_ELEMENT, _requiredClasses[i], _requiredClasses[i][0].IsVowel() ? CfgConstants.ATTRIBUTE_NAME : string.Empty));
+                    _problems.MissingAddElement(_requiredClasses[i]);
                 }
             }
         }
@@ -438,9 +530,9 @@ namespace Transformalize.Libs.Cfg.Net {
 
                     if (parameters != null && attribute.Value.IndexOf('@') >= 0) {
                         var response = ReplaceParameters(attribute.Value, parameters, _builder);
-                        value = response[0];
-                        if (response.Length > 1) {
-                            _problems.Add(response[1]);
+                        value = response.Item1;
+                        if (response.Item2.Length > 1) {
+                            _problems.MissingPlaceHolderValues(response.Item2);
                         }
                     } else {
                         value = attribute.Value;
@@ -449,7 +541,7 @@ namespace Transformalize.Libs.Cfg.Net {
                     var property = _properties[attribute.Name];
 
                     if (!property.IsInDomain(value)) {
-                        _problems.Add(string.Format(CfgConstants.PROBLEM_VALUE_NOT_IN_DOMAIN, parentName, node.Name, property.Name, value, property.Attributes.domain.Replace(property.Attributes.domainDelimiter.ToString(CultureInfo.InvariantCulture),", "), parentName[0].IsVowel() ? "n" : string.Empty));
+                        _problems.ValueNotInDomain(parentName, node.Name, property.Name, value, property.Attributes.domain.Replace(property.Attributes.domainDelimiter.ToString(CultureInfo.InvariantCulture), ", "));
                     }
 
                     if (property.Type == typeof(string)) {
@@ -460,27 +552,20 @@ namespace Transformalize.Libs.Cfg.Net {
                             property.Attributes.value = Converter[property.Type](property.Attributes.decode && value.IndexOf(CfgConstants.ENTITY_START) >= 0 ? Decode(value, _builder) : value);
                             property.Set = true;
                         } catch (Exception ex) {
-                            _problems.Add(string.Format(CfgConstants.PROBLEM_SETTING_VALUE, property.Name, value, parentName, node.Name, ex.Message));
+                            _problems.SettingValue(property.Name, value, parentName, node.Name, ex.Message);
                         }
                     }
                 } else {
-                    _problems.Add(
-                        string.Format(
-                            CfgConstants.PROBLEM_INVALID_ATTRIBUTE,
-                            parentName,
-                            node.Name,
-                            attribute.Name, parentName[0].IsVowel() ? CfgConstants.ATTRIBUTE_NAME : string.Empty,
-                            string.Join(", ", _properties.Select(kv => kv.Key))
-                        )
-                    );
+                    _problems.InvalidAttribute(parentName, node.Name, attribute.Name, string.Join(", ", _properties.Select(kv => kv.Key)));
                 }
             }
 
             CheckRequiredProperties(node, parentName);
         }
 
-        private static string[] ReplaceParameters(string value, IDictionary<string, string> parameters, StringBuilder builder) {
+        private static Tuple<string, string[]> ReplaceParameters(string value, IDictionary<string, string> parameters, StringBuilder builder) {
             builder.Clear();
+            List<string> badKeys = null;
             for (var j = 0; j < value.Length; j++) {
                 if (value[j] == CfgConstants.PLACE_HOLDER_FIRST &&
                     value.Length > j + 1 &&
@@ -494,7 +579,12 @@ namespace Transformalize.Libs.Cfg.Net {
                         if (parameters.ContainsKey(key)) {
                             builder.Append(parameters[key]);
                         } else {
-                            return new[] { string.Empty, string.Format(CfgConstants.PROBLEM_MISSING_PLACE_HOLDER_VALUE, key) };
+                            if (badKeys == null) {
+                                badKeys = new List<string> { key };
+                            } else {
+                                badKeys.Add(key);
+                            }
+                            builder.AppendFormat("@({0})", key);
                         }
                     }
                     j = j + length;
@@ -502,7 +592,7 @@ namespace Transformalize.Libs.Cfg.Net {
                     builder.Append(value[j]);
                 }
             }
-            return new[] { builder.ToString() };
+            return new Tuple<string, string[]>(builder.ToString(), badKeys == null ? new string[0] : badKeys.ToArray());
         }
 
         private void ConfigurePropertiesWithPropertyAttributes() {
@@ -527,7 +617,7 @@ namespace Transformalize.Libs.Cfg.Net {
         private void CheckRequiredProperties(NanoXmlNode node, string parentName) {
             for (var i = 0; i < _requiredProperties.Count; i++) {
                 if (!_properties[_requiredProperties[i]].Set) {
-                    _problems.Add(string.Format(CfgConstants.PROBLEM_MISSING_ATTRIBUTE, parentName, node.Name, _requiredProperties[i], parentName[0].IsVowel() ? CfgConstants.ATTRIBUTE_NAME : string.Empty));
+                    _problems.MissingAttribute(parentName, node.Name, _requiredProperties[i]);
                 }
             }
         }
@@ -807,8 +897,9 @@ namespace Transformalize.Libs.Cfg.Net {
 
         public List<string> Problems() {
             var allProblems = new List<string>();
-            for (var i = 0; i < _problems.Count; i++) {
-                allProblems.Add(_problems[i]);
+            var problems = _problems.Yield();
+            for (var i = 0; i < problems.Length; i++) {
+                allProblems.Add(problems[i]);
             }
             foreach (var pair in _collections) {
                 for (var i = 0; i < pair.Value.Length; i++) {
@@ -832,7 +923,7 @@ namespace Transformalize.Libs.Cfg.Net {
                     try {
                         properties[key].SetValue(this, _properties[key].Attributes.value, null);
                     } catch (Exception ex) {
-                        _problems.Add(string.Format(CfgConstants.PROBLEM_SETTING_PROPERTY, properties[key].Name, _properties[key].Attributes.value, _properties[key].Name, ex.Message));
+                        _problems.SettingProperty(properties[key].Name, _properties[key].Attributes.value, _properties[key].Name, ex.Message);
                     }
                 }
             }
