@@ -49,7 +49,7 @@ namespace Transformalize.Configuration {
         public List<TflNameReference> Modes { get; set; }
 
         public string[] GetModes() {
-            return this.Count("modes") > 0 ? Modes.Select(m => m.Name).ToArray() : new[] { Mode };
+            return Modes.Any() ? Modes.Select(m => m.Name).ToArray() : new[] { Mode };
         }
     }
 }
