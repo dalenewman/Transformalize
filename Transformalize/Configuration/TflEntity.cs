@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using Transformalize.Libs.Cfg.Net;
+using Transformalize.Libs.Lucene.Net.Document;
 using Transformalize.Libs.Rhino.Etl.Operations;
 
 namespace Transformalize.Configuration {
@@ -82,12 +84,31 @@ namespace Transformalize.Configuration {
 
         public IOperation InputOperation { get; set; }
 
+        public IEnumerable<TflField> AllFields() {
+            foreach (var f in Fields) {
+                yield return f;
+                foreach (var transform in f.Transforms) {
+                    foreach (var tf in transform.Fields) {
+                        yield return tf;
+                    }
+                }
+            }
+            foreach (var calculatedField in CalculatedFields) {
+                yield return calculatedField;
+            }
+        }
+
         protected override void Modify() {
             if (Alias == string.Empty) {
                 Alias = Name;
             }
             foreach (var calculatedField in CalculatedFields) {
                 calculatedField.Input = false;
+            }
+            if (!string.IsNullOrEmpty(Prefix)) {
+                foreach (var field in Fields.Where(f => f.Alias == f.Name)) {
+                    field.Alias = Prefix + field.Name;
+                }
             }
         }
 

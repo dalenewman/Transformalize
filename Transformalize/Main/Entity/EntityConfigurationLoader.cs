@@ -321,22 +321,22 @@ namespace Transformalize.Main {
 
         private static void GuardAgainstInvalidGrouping(TflEntity element, Entity entity) {
             if (entity.Group) {
-                if (!element.Fields.Cast<TflField>().Any(f => f.Output && string.IsNullOrEmpty(f.Aggregate)))
+                if (!element.Fields.Any(f => f.Output && string.IsNullOrEmpty(f.Aggregate)))
                     return;
 
-                if (!element.CalculatedFields.Cast<TflField>().Any(f => f.Output && string.IsNullOrEmpty(f.Aggregate)))
+                if (!element.CalculatedFields.Any(f => f.Output && string.IsNullOrEmpty(f.Aggregate)))
                     return;
 
                 throw new TransformalizeException(entity.ProcessName, entity.Alias, "Entity {0} is set to group, but not all your output fields have aggregate defined.", entity.Alias);
             }
 
-            if (!element.Fields.Cast<TflField>().Any(f => f.Output && !string.IsNullOrEmpty(f.Aggregate)))
+            if (!element.Fields.Any(f => f.Output && !string.IsNullOrEmpty(f.Aggregate)))
                 return;
 
-            if (!element.CalculatedFields.Cast<TflField>().Any(f => f.Output && !string.IsNullOrEmpty(f.Aggregate)))
+            if (!element.CalculatedFields.Any(f => f.Output && !string.IsNullOrEmpty(f.Aggregate)))
                 return;
 
-            throw new TransformalizeException(entity.Prefix, entity.Alias, "Entity {0} is not set to group, but one of your output fields has an aggregate defined.", entity.Alias);
+            throw new TransformalizeException(entity.ProcessName, entity.Alias, "Entity {0} is not set to group, but one of your output fields has an aggregate defined.", entity.Alias);
         }
 
         private static FieldType GetFieldType(TflField element, bool isMaster) {

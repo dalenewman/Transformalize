@@ -432,11 +432,12 @@ namespace Transformalize.Libs.Cfg.Net {
                                         continue;
                                     var property = _classProperties[subNode.Name][attribute.Name];
                                     if (attribute.Value != null) {
+                                        var value = CheckParameters(parameters, attribute.Value);
                                         if (property.Type == typeof(string) || property.Type == typeof(object)) {
-                                            property.Attributes.value = attribute.Value;
+                                            property.Attributes.value = value;
                                         } else {
                                             try {
-                                                property.Attributes.value = Converter[property.Type](attribute.Value);
+                                                property.Attributes.value = Converter[property.Type](value);
                                             } catch (Exception ex) {
                                                 _problems.SettingValue(property.Name, attribute.Value, parentName, node.Name, ex.Message);
                                             }

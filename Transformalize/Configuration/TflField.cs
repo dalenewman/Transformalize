@@ -238,7 +238,7 @@ namespace Transformalize.Configuration {
         /// 
         ///     <add name="Name" t="trim()" />
         /// </summary>
-        [Cfg(value = "")]
+        [Cfg(value = "", decode = true)]
         public string T { get; set; }
 
         /// <summary>
@@ -304,5 +304,6 @@ namespace Transformalize.Configuration {
                 Alias = Name;
             }
         }
+
     }
 }

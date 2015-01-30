@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Transformalize.Libs.Cfg.Net;
 using Transformalize.Main;
 
@@ -199,6 +200,39 @@ namespace Transformalize.Configuration {
             }
             foreach (var calculatedField in CalculatedFields) {
                 calculatedField.Input = false;
+            }
+        }
+
+        protected override void Validate() {
+            ValidateDuplicateEntities();
+            ValidateDuplicateFields();
+        }
+
+        private void ValidateDuplicateFields() {
+            var fieldDuplicates = Entities
+                .SelectMany(e => e.AllFields())
+                .Where(f=>!f.PrimaryKey)
+                .Union(CalculatedFields)
+                .GroupBy(f => f.Alias)
+                .Where(group => @group.Count() > 1)
+                .Select(group => @group.Key)
+                .ToArray();
+            foreach (var duplicate in fieldDuplicates) {
+                AddProblem(
+                    string.Format(
+                        "The entity field '{0}' occurs more than once. Remove, alias, or prefix one.",
+                        duplicate));
+            }
+        }
+
+        private void ValidateDuplicateEntities() {
+            var entityDuplicates = Entities
+                .GroupBy(e => e.Alias)
+                .Where(group => @group.Count() > 1)
+                .Select(group => @group.Key)
+                .ToArray();
+            foreach (var duplicate in entityDuplicates) {
+                AddProblem(string.Format("The '{0}' entity occurs more than once. Remove or alias one.", duplicate));
             }
         }
     }

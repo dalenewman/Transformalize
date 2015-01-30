@@ -104,7 +104,7 @@ namespace Transformalize.Configuration {
         public string RunType { get; set; }
         [Cfg(value = Common.DefaultValue)]
         public string RunValue { get; set; }
-        [Cfg(value = "")]
+        [Cfg(value = "", decode = true)]
         public string Script { get; set; }
         [Cfg(value = Common.DefaultValue)]
         public string Separator { get; set; }
@@ -112,7 +112,7 @@ namespace Transformalize.Configuration {
         public int Sleep { get; set; }
         [Cfg(value = 0)]
         public int StartIndex { get; set; }
-        [Cfg(value = "")]
+        [Cfg(value = "", decode = true)]
         public string T { get; set; }
         [Cfg(value = "")]
         public string Tag { get; set; }
@@ -144,7 +144,7 @@ namespace Transformalize.Configuration {
         public string Units { get; set; }
         [Cfg(value = null)]
         public object UpperBound { get; set; }
-        [Cfg(value = "Inclusive", domain = "Inclusive,Exclusive,Ignore")]
+        [Cfg(value = "Inclusive", domain = "Inclusive,Exclusive,Ignore", ignoreCase = true)]
         public string UpperBoundType { get; set; }
         [Cfg(value = "None")]
         public string UpperUnit { get; set; }
@@ -154,11 +154,11 @@ namespace Transformalize.Configuration {
         public bool UseHttps { get; set; }
         [Cfg(value = "")]
         public string Value { get; set; }
-        [Cfg(value = "GET", domain = "GET,POST")]
+        [Cfg(value = "GET", domain = "GET,POST", ignoreCase = true)]
         public string WebMethod { get; set; }
         [Cfg(value = "Default")]
         public string XmlMode { get; set; }
-        [Cfg(value = "")]
+        [Cfg(value = "", decode = true)]
         public string Xpath { get; set; }
 
         [Cfg()]
