@@ -32,6 +32,8 @@ namespace Transformalize.Test {
     [TestFixture]
     public class TestShortHand {
 
+        private readonly TflField _field = new TflField();
+
         [SetUp]
         public void SetUp() {
             var console = new ObservableEventListener();
@@ -42,7 +44,7 @@ namespace Transformalize.Test {
         [Test]
         public void Replace() {
             const string expression = "r(x,y";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("replace", result.Method);
             Assert.AreEqual("x", result.OldValue);
             Assert.AreEqual("y", result.NewValue);
@@ -51,7 +53,7 @@ namespace Transformalize.Test {
         [Test]
         public void Left() {
             const string expression = "l(3";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("left", result.Method);
             Assert.AreEqual(3, result.Length);
         }
@@ -59,7 +61,7 @@ namespace Transformalize.Test {
         [Test]
         public void Right() {
             const string expression = "ri(2";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("right", result.Method);
             Assert.AreEqual(2, result.Length);
         }
@@ -67,7 +69,7 @@ namespace Transformalize.Test {
         [Test]
         public void Append() {
             const string expression = "ap(...";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("append", result.Method);
             Assert.AreEqual("...", result.Parameter);
         }
@@ -75,7 +77,7 @@ namespace Transformalize.Test {
         [Test]
         public void If() {
             const string expression = "if(x,y,yes,no";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("if", result.Method);
             Assert.AreEqual("x", result.Left);
             Assert.AreEqual("Equal", result.Operator);
@@ -87,7 +89,7 @@ namespace Transformalize.Test {
         [Test]
         public void IfWithOperator() {
             const string expression = "i(x,NotEqual,y,yes,no";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("if", result.Method);
             Assert.AreEqual("x", result.Left);
             Assert.AreEqual("NotEqual", result.Operator);
@@ -99,7 +101,7 @@ namespace Transformalize.Test {
         [Test]
         public void IfWithEmpty() {
             const string expression = "i(x,,yes,no";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("if", result.Method);
             Assert.AreEqual("x", result.Left);
             Assert.AreEqual("Equal", result.Operator);
@@ -111,7 +113,7 @@ namespace Transformalize.Test {
         [Test]
         public void IfWithoutElse() {
             const string expression = "i(x,y,yes";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("if", result.Method);
             Assert.AreEqual("x", result.Left);
             Assert.AreEqual("Equal", result.Operator);
@@ -123,7 +125,7 @@ namespace Transformalize.Test {
         [Test]
         public void Convert() {
             const string expression = "cv(p";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("convert", result.Method);
             Assert.AreEqual("p", result.Parameter);
         }
@@ -131,7 +133,7 @@ namespace Transformalize.Test {
         [Test]
         public void ConvertDate() {
             const string expression = "cv(d,MMMM-DD-YYYY";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("convert", result.Method);
             Assert.AreEqual("d", result.Parameter);
             Assert.AreEqual("MMMM-DD-YYYY", result.Format);
@@ -140,7 +142,7 @@ namespace Transformalize.Test {
         [Test]
         public void ConvertWithEncoding() {
             const string expression = "cv(b,UTF-8";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("convert", result.Method);
             Assert.AreEqual("b", result.Parameter);
             Assert.AreEqual("UTF-8", result.Encoding);
@@ -149,7 +151,7 @@ namespace Transformalize.Test {
         [Test]
         public void ConvertWithType() {
             const string expression = "cv(b,int";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("convert", result.Method);
             Assert.AreEqual("b", result.Parameter);
             Assert.AreEqual("int32", result.To);
@@ -158,7 +160,7 @@ namespace Transformalize.Test {
         [Test]
         public void Copy() {
             const string expression = "cp(a";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("copy", result.Method);
             Assert.AreEqual("a", result.Parameter);
         }
@@ -166,7 +168,7 @@ namespace Transformalize.Test {
         [Test]
         public void Concat() {
             const string expression = "cc(*";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("concat", result.Method);
             Assert.AreEqual("*", result.Parameter);
         }
@@ -174,7 +176,7 @@ namespace Transformalize.Test {
         [Test]
         public void ConcatWithParameters() {
             const string expression = "cc(p1,p2";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("concat", result.Method);
             Assert.AreEqual("p1", result.Parameters[0].Field);
             Assert.AreEqual("p2", result.Parameters[1].Field);
@@ -183,7 +185,7 @@ namespace Transformalize.Test {
         [Test]
         public void Join() {
             const string expression = @"j(\,,*";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("join", result.Method);
             Assert.AreEqual(",", result.Separator);
             Assert.AreEqual("*", result.Parameter);
@@ -192,7 +194,7 @@ namespace Transformalize.Test {
         [Test]
         public void JoinWithParameters() {
             const string expression = "j( ,p1,p2";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("join", result.Method);
             Assert.AreEqual(" ", result.Separator);
             Assert.AreEqual("p1", result.Parameters[0].Field);
@@ -202,14 +204,14 @@ namespace Transformalize.Test {
         [Test]
         public void HashCode() {
             const string expression = "hc(";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("gethashcode", result.Method);
         }
 
         [Test]
         public void CompressField() {
             const string expression = "co(";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("compress", result.Method);
             Assert.AreEqual("", result.Parameter);
         }
@@ -217,7 +219,7 @@ namespace Transformalize.Test {
         [Test]
         public void CompressParameter() {
             const string expression = "co(p";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("compress", result.Method);
             Assert.AreEqual("p", result.Parameter);
         }
@@ -225,7 +227,7 @@ namespace Transformalize.Test {
         [Test]
         public void DeCompressField() {
             const string expression = "de(";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("decompress", result.Method);
             Assert.AreEqual("", result.Parameter);
         }
@@ -233,7 +235,7 @@ namespace Transformalize.Test {
         [Test]
         public void DeCompressParameter() {
             const string expression = "de(p";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("decompress", result.Method);
             Assert.AreEqual("p", result.Parameter);
         }
@@ -241,7 +243,7 @@ namespace Transformalize.Test {
         [Test]
         public void Elipse() {
             const string expression = "e(20,.....";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("elipse", result.Method);
             Assert.AreEqual(20, result.Length);
             Assert.AreEqual(".....", result.Elipse);
@@ -250,7 +252,7 @@ namespace Transformalize.Test {
         [Test]
         public void RegexReplace() {
             const string expression = "rr(^x|y$,Z";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("regexreplace", result.Method);
             Assert.AreEqual("^x|y$", result.Pattern);
             Assert.AreEqual("Z", result.Replacement);
@@ -260,7 +262,7 @@ namespace Transformalize.Test {
         [Test]
         public void ElipseEscapeComma() {
             const string expression = @"e(20,\,\,\,";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("elipse", result.Method);
             Assert.AreEqual(20, result.Length);
             Assert.AreEqual(",,,", result.Elipse);
@@ -269,7 +271,7 @@ namespace Transformalize.Test {
         [Test]
         public void Format() {
             const string expression = @"f(mailto:{0},email";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("format", result.Method);
             Assert.AreEqual("mailto:{0}", result.Format);
             Assert.AreEqual("email", result.Parameter);
@@ -278,7 +280,7 @@ namespace Transformalize.Test {
         [Test]
         public void FormatTwoParameters() {
             const string expression = @"f(mailto:{0}@{1},username,domain";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("format", result.Method);
             Assert.AreEqual("mailto:{0}@{1}", result.Format);
             Assert.AreEqual("username", result.Parameters[0].Field);
@@ -288,7 +290,7 @@ namespace Transformalize.Test {
         [Test]
         public void Insert() {
             const string expression = @"in(3,three";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("insert", result.Method);
             Assert.AreEqual(3, result.StartIndex);
             Assert.AreEqual("three", result.Parameter);
@@ -297,7 +299,7 @@ namespace Transformalize.Test {
         [Test]
         public void InsertInterval() {
             const string expression = @"ii(3,three";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("insertinterval", result.Method);
             Assert.AreEqual(3, result.Interval);
             Assert.AreEqual("three", result.Value);
@@ -306,14 +308,14 @@ namespace Transformalize.Test {
         [Test]
         public void Transliterate() {
             const string expression = @"tlr(";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("transliterate", result.Method);
         }
 
         [Test]
         public void Slug() {
             const string expression = @"sl(50";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("slug", result.Method);
             Assert.AreEqual(50, result.Length);
         }
@@ -321,7 +323,7 @@ namespace Transformalize.Test {
         [Test]
         public void DistinctWords() {
             const string expression = @"dw( ";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("distinctwords", result.Method);
             Assert.AreEqual(" ", result.Separator);
         }
@@ -329,14 +331,14 @@ namespace Transformalize.Test {
         [Test]
         public void Now() {
             const string expression = @"now";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("now", result.Method);
         }
 
         [Test]
         public void Remove() {
             const string expression = @"rm(3,2";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("remove", result.Method);
             Assert.AreEqual(3, result.StartIndex);
             Assert.AreEqual(2, result.Length);
@@ -345,7 +347,7 @@ namespace Transformalize.Test {
         [Test]
         public void TrimStart() {
             const string expression = @"ts(. ";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("trimstart", result.Method);
             Assert.AreEqual(". ", result.TrimChars);
         }
@@ -353,7 +355,7 @@ namespace Transformalize.Test {
         [Test]
         public void TrimStartAppend() {
             const string expression = @"tsa(*+, ";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("trimstartappend", result.Method);
             Assert.AreEqual("*+", result.TrimChars);
             Assert.AreEqual(" ", result.Separator);
@@ -362,7 +364,7 @@ namespace Transformalize.Test {
         [Test]
         public void TrimEnd() {
             const string expression = @"te(^%";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("trimend", result.Method);
             Assert.AreEqual("^%", result.TrimChars);
         }
@@ -370,7 +372,7 @@ namespace Transformalize.Test {
         [Test]
         public void Trim() {
             const string expression = @"t(|,";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("trim", result.Method);
             Assert.AreEqual("|,", result.TrimChars);
         }
@@ -378,7 +380,7 @@ namespace Transformalize.Test {
         [Test]
         public void Substring() {
             const string expression = @"ss(3,2";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("substring", result.Method);
             Assert.AreEqual(3, result.StartIndex);
             Assert.AreEqual(2, result.Length);
@@ -387,7 +389,7 @@ namespace Transformalize.Test {
         [Test]
         public void Map() {
             const string expression = @"m(map,param";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("map", result.Method);
             Assert.AreEqual("map", result.Map);
             Assert.AreEqual("param", result.Parameter);
@@ -396,7 +398,7 @@ namespace Transformalize.Test {
         [Test]
         public void MapInline() {
             const string expression = @"m(x=1,y=2,z=3";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("map", result.Method);
             Assert.AreEqual("x=1,y=2,z=3", result.Map);
         }
@@ -404,7 +406,7 @@ namespace Transformalize.Test {
         [Test]
         public void MapInlineWithParam() {
             const string expression = @"m(param,x=1,y=2,z=3";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("map", result.Method);
             Assert.AreEqual("x=1,y=2,z=3", result.Map);
             Assert.AreEqual("param", result.Parameter);
@@ -413,57 +415,44 @@ namespace Transformalize.Test {
         [Test]
         public void Add() {
             const string expression = "add(p1,7.2";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("add", result.Method);
             Assert.AreEqual("p1", result.Parameters[0].Field);
             Assert.AreEqual("7.2", result.Parameters[1].Value);
         }
 
         [Test]
-        public void FromJson() {
-            const string expression = "fj(p1,[result][metadata][globalCounts][count],int";
-            var result = ShortHandFactory.Interpret(expression);
-            Assert.AreEqual("fromjson", result.Method);
-            Assert.AreEqual("p1", result.Parameters[0].Field);
-            Assert.AreEqual("result", result.Fields[0].Name);
-            Assert.AreEqual("metadata", result.Fields[0].Transforms[0].Fields[0].Name);
-            Assert.AreEqual("globalCounts", result.Fields[0].Transforms[0].Fields[0].Transforms[0].Fields[0].Name);
-            Assert.AreEqual("count", result.Fields[0].Transforms[0].Fields[0].Transforms[0].Fields[0].Transforms[0].Fields[0].Name);
-            Assert.AreEqual("int32", result.Fields[0].Transforms[0].Fields[0].Transforms[0].Fields[0].Transforms[0].Fields[0].Type);
-        }
-
-        [Test]
         public void PadLeft() {
             const string expression = "pl(10,*";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("padleft", result.Method);
             Assert.AreEqual(10, result.TotalWidth);
-            Assert.AreEqual("*", result.PaddingChar);
+            Assert.AreEqual('*', result.PaddingChar);
         }
 
         [Test]
         public void PadLeftWithParam() {
             const string expression = "pl(10,*,p2";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("padleft", result.Method);
             Assert.AreEqual(10, result.TotalWidth);
-            Assert.AreEqual("*", result.PaddingChar);
+            Assert.AreEqual('*', result.PaddingChar);
             Assert.AreEqual("p2", result.Parameter);
         }
 
         [Test]
         public void PadRight() {
             const string expression = "pr(10,*";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("padright", result.Method);
             Assert.AreEqual(10, result.TotalWidth);
-            Assert.AreEqual("*", result.PaddingChar);
+            Assert.AreEqual('*', result.PaddingChar);
         }
 
         [Test]
         public void ToStringTest() {
             const string expression = @"tostring(Parameter,#\,##0.00";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("tostring", result.Method);
             Assert.AreEqual("Parameter", result.Parameter);
             Assert.AreEqual("#,##0.00", result.Format);
@@ -472,21 +461,21 @@ namespace Transformalize.Test {
         [Test]
         public void ToLower() {
             const string expression = "tl";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("tolower", result.Method);
         }
 
         [Test]
         public void ToUpper() {
             const string expression = "tu";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("toupper", result.Method);
         }
 
         [Test]
         public void JavaScript() {
             const string expression = "js(JSON.parse(x)[0].value,x";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("javascript", result.Method);
             Assert.AreEqual("JSON.parse(x)[0].value", result.Script);
             Assert.AreEqual("x", result.Parameter);
@@ -495,7 +484,7 @@ namespace Transformalize.Test {
         [Test]
         public void JavaScriptWithTwoParameters() {
             const string expression = @"js(x*y;,x,y";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("javascript", result.Method);
             Assert.AreEqual("x*y;", result.Script);
             Assert.AreEqual("x", result.Parameters[0].Field);
@@ -505,7 +494,7 @@ namespace Transformalize.Test {
         [Test]
         public void CSharp() {
             const string expression = "cs(return d.AddDays(-1);,d";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("csharp", result.Method);
             Assert.AreEqual("return d.AddDays(-1);", result.Script);
             Assert.AreEqual("d", result.Parameter);
@@ -514,7 +503,7 @@ namespace Transformalize.Test {
         [Test]
         public void Template() {
             const string expression = "tp(@{ var x = Model.theParameter.PadLeft(5); }@{x} plus more text,theParameter";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("template", result.Method);
             Assert.AreEqual("@{ var x = Model.theParameter.PadLeft(5); }@{x} plus more text", result.Template);
             Assert.AreEqual("theParameter", result.Parameter);
@@ -523,7 +512,7 @@ namespace Transformalize.Test {
         [Test]
         public void Velocity() {
             const string expression = "v(#set( $x = $theParameter.PadLeft(5))$x plus more text,theParameter";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("velocity", result.Method);
             Assert.AreEqual("#set( $x = $theParameter.PadLeft(5))$x plus more text", result.Template);
             Assert.AreEqual("theParameter", result.Parameter);
@@ -532,7 +521,7 @@ namespace Transformalize.Test {
         [Test]
         public void TitleCase() {
             const string expression = "tc";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("totitlecase", result.Method);
             Assert.AreEqual("", result.Parameter);
         }
@@ -540,7 +529,7 @@ namespace Transformalize.Test {
         [Test]
         public void TimeZone() {
             const string expression = "tz(UTC,Eastern Standard Time,dateParam";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("timezone", result.Method);
             Assert.AreEqual("UTC", result.FromTimeZone);
             Assert.AreEqual("Eastern Standard Time", result.ToTimeZone);
@@ -550,7 +539,7 @@ namespace Transformalize.Test {
         [Test]
         public void ToJson() {
             const string expression = "tj(p1,p2,p3";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("tojson", result.Method);
             Assert.AreEqual("p1", result.Parameters[0].Field);
             Assert.AreEqual("p2", result.Parameters[1].Field);
@@ -560,7 +549,7 @@ namespace Transformalize.Test {
         [Test]
         public void ToJsonWithLiterals() {
             const string expression = "tj(p1,k:v,p3";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("tojson", result.Method);
             Assert.AreEqual("p1", result.Parameters[0].Field);
             Assert.AreEqual("k", result.Parameters[1].Name);
@@ -569,45 +558,15 @@ namespace Transformalize.Test {
         }
 
         [Test]
-        public void FromXml() {
-            const string expression = "fx(p1,p2,p3";
-            var result = ShortHandFactory.Interpret(expression);
-            Assert.AreEqual("fromxml", result.Method);
-            Assert.AreEqual("p1", result.Fields[0].Name);
-            Assert.AreEqual("p2", result.Fields[1].Name);
-            Assert.AreEqual("p3", result.Fields[2].Name);
-        }
-
-        [Test]
-        public void FromRegex() {
-            const string expression = @"fr([0-9]{2\,}(?<p1>[a-z]*),p1";
-            var result = ShortHandFactory.Interpret(expression);
-            Assert.AreEqual("fromregex", result.Method);
-            Assert.AreEqual("[0-9]{2,}(?<p1>[a-z]*)", result.Pattern);
-            Assert.AreEqual("p1", result.Fields[0].Name);
-        }
-
-        [Test]
-        public void FromSplit() {
-            const string expression = "fs(|,p1,p2,p3";
-            var result = ShortHandFactory.Interpret(expression);
-            Assert.AreEqual("fromsplit", result.Method);
-            Assert.AreEqual("|", result.Separator);
-            Assert.AreEqual("p1", result.Fields[0].Name);
-            Assert.AreEqual("p2", result.Fields[1].Name);
-            Assert.AreEqual("p3", result.Fields[2].Name);
-        }
-
-        [Test]
         public void Tag() {
             const string expression = "tag(a,field1,content:stuff,target:field2";
-            var result = ShortHandFactory.Interpret(expression);
+            var result = ShortHandFactory.Interpret(expression, _field);
             Assert.AreEqual("tag", result.Method);
             Assert.AreEqual("a", result.Tag);
 
             Assert.AreEqual(string.Empty, result.Parameters[0].Name);
             Assert.AreEqual("field1", result.Parameters[0].Field);
-            Assert.AreEqual(string.Empty, result.Parameters[0].Value);
+            Assert.AreEqual(null, result.Parameters[0].Value);
 
             Assert.AreEqual("content", result.Parameters[1].Name);
             Assert.AreEqual(string.Empty, result.Parameters[1].Field);
@@ -620,13 +579,13 @@ namespace Transformalize.Test {
 
         [Test]
         public void TwoMethods() {
-            var field = new TflField() {
-                Name = "test",
-                T = "left(10).right(2)"
-            };
+            var field = new TflField().GetDefaultOf<TflField>(f => {
+                f.Name = "test";
+                f.T = "left(10).right(2)";
+            });
             ShortHandFactory.ExpandShortHandTransforms(field);
 
-            Assert.AreEqual(2,field.Transforms.Count);
+            Assert.AreEqual(2, field.Transforms.Count);
             Assert.AreEqual("left", field.Transforms[0].Method);
             Assert.AreEqual(10, field.Transforms[0].Length);
             Assert.AreEqual("right", field.Transforms[1].Method);
@@ -635,10 +594,10 @@ namespace Transformalize.Test {
 
         [Test]
         public void TwoMethodsShorter() {
-            var field = new TflField() {
-                Name = "test",
-                T = "l(10).ri(2)"
-            };
+            var field = new TflField().GetDefaultOf<TflField>(f => {
+                f.Name = "test";
+                f.T = "l(10).ri(2)";
+            });
             ShortHandFactory.ExpandShortHandTransforms(field);
 
             Assert.AreEqual(2, field.Transforms.Count);

@@ -203,7 +203,7 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
-        public TransformBuilder LowerBound(bool lowerBound) {
+        public TransformBuilder LowerBound(object lowerBound) {
             _transform.LowerBound = lowerBound;
             return this;
         }
@@ -218,7 +218,7 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
-        public TransformBuilder UpperBound(bool upperBound) {
+        public TransformBuilder UpperBound(object upperBound) {
             _transform.UpperBound = upperBound;
             return this;
         }

@@ -11,15 +11,15 @@ namespace Transformalize.Configuration {
         public string Field { get; set; }
         [Cfg(value = "")]
         public string Name { get; set; }
-        [Cfg(value = Common.DefaultValue)]
+        [Cfg(value = null)]
         public string Value { get; set; }
         [Cfg(value = true)]
         public bool Input { get; set; }
-        [Cfg(value = "string")]
+        [Cfg(value = "string", domain = Common.ValidTypes, ignoreCase = true)]
         public string Type { get; set; }
 
         public bool HasValue() {
-            return Value != Common.DefaultValue;
+            return Value != null;
         }
     }
 

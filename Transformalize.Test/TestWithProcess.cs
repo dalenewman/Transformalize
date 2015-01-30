@@ -40,12 +40,10 @@ namespace Transformalize.Test {
     public class TestWithProcess : EtlProcessHelper {
 
         private readonly Mock<IOperation> _entityKeysExtract;
-        private static readonly TflProcess Element = new TflRoot(File.ReadAllText(@"TestFiles\Test.xml"), null).Processes[0];
         private readonly Process _process;
 
         public TestWithProcess() {
-            var options = new Options();
-            _process = new ProcessReader(Element, ref options).Read();
+            _process = ProcessFactory.CreateSingle(File.ReadAllText(@"TestFiles\Test.xml"));
             _entityKeysExtract = new Mock<IOperation>();
             _entityKeysExtract.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row> {
                 new Row { {"OrderDetailKey", 1} },

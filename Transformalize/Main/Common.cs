@@ -22,7 +22,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -41,6 +40,7 @@ namespace Transformalize.Main {
         private const string CLEAN_PATTERN = @"[^\w]";
 
         public const string DefaultValue = "[default]";
+        public const string ValidTypes = "bool,boolean,byte,byte[],char,date,datetime,decimal,double,float,guid,int,int16,int32,int64,long,object,real,rowversion,short,single,string,uint64,xml";
 
         public static Dictionary<string, byte> Validators = new Dictionary<string, byte> {
             {"containscharacters", 1},
@@ -60,33 +60,31 @@ namespace Transformalize.Main {
             return Validators.ContainsKey(method.ToLower());
         }
 
-
-
         public static Dictionary<string, byte> TypeMap = new Dictionary<string, byte> {
-            {"string", 0},
-            {"xml", 0},
-            {"int16", 1},
-            {"short", 1},
-            {"int32", 2},
-            {"int", 2},
-            {"int64", 3},
-            {"long", 3},
-            {"double", 4},
-            {"decimal", 5},
-            {"char", 6},
-            {"datetime", 7},
-            {"date", 7},
-            {"boolean", 8},
             {"bool", 8},
-            {"single", 9},
-            {"real", 9},
-            {"float", 9},
-            {"guid", 10},
+            {"boolean", 8},
             {"byte", 11},
             {"byte[]", 12},
+            {"char", 6},
+            {"date", 7},
+            {"datetime", 7},
+            {"decimal", 5},
+            {"double", 4},
+            {"float", 9},
+            {"guid", 10},
+            {"int", 2},
+            {"int16", 1},
+            {"int32", 2},
+            {"int64", 3},
+            {"long", 3},
+            {"object", 14},
+            {"real", 9},
             {"rowversion", 12},
+            {"short", 1},
+            {"single", 9},
+            {"string", 0},
             {"uint64", 13},
-            {"object", 14}
+            {"xml", 0},
         };
 
         public static Dictionary<string, Func<string, object>> ConversionMap = new Dictionary<string, Func<string, object>> {
@@ -98,6 +96,8 @@ namespace Transformalize.Main {
             {"int", (x => Convert.ToInt32(x))},
             {"int64", (x => Convert.ToInt64(x))},
             {"long", (x => Convert.ToInt64(x))},
+            {"uint16", (x => Convert.ToUInt16(x))},
+            {"uint32", (x => Convert.ToUInt32(x))},
             {"uint64", (x => Convert.ToUInt64(x))},
             {"double", (x => Convert.ToDouble(x))},
             {"decimal", (x => Decimal.Parse(x, NumberStyles.Float | NumberStyles.AllowThousands | NumberStyles.AllowCurrencySymbol, (IFormatProvider)CultureInfo.CurrentCulture.GetFormat(typeof(NumberFormatInfo))))},
@@ -132,7 +132,9 @@ namespace Transformalize.Main {
                 {"int32", (x => x.ToString())},
                 {"short", (x => x.ToString())},
                 {"int64", (x => x.ToString())},
-                {"uint64", (x => x.ToString())},
+                {"uint16", (x => "(UInt16)"+x.ToString())},
+                {"uint32", (x => "(UInt32)"+x.ToString())},
+                {"uint64", (x => "(UInt64)"+x.ToString())},
                 {"long", (x => x.ToString() + "L")},
                 {"double", (x => x.ToString() + "D")},
                 {"decimal", (x => x.ToString() + "M")},
@@ -140,7 +142,7 @@ namespace Transformalize.Main {
                 {"datetime", (x => String.Format("Convert.ToDateTime(\"{0}\")",x))},
                 {"boolean", (x => x.ToString().ToLower())},
                 {"bool", (x => x.ToString().ToLower())},
-                {"single", (x => x.ToString())},
+                {"single", (x => "(System.Single)"+x.ToString())},
                 {"float", (x => x.ToString()+"F")},
                 {"real", (x => x.ToString())},
                 {"byte", (x => x.ToString())},
@@ -149,7 +151,8 @@ namespace Transformalize.Main {
             };
         }
 
-        public static Dictionary<string, Func<object, object>> GetObjectConversionMap() {
+        public static Dictionary<string, Func<object, object>> GetObjectConversionMap()
+        {
             return new Dictionary<string, Func<object, object>> {
                 {"string", (x => x)},
                 {"xml", (x => x)},

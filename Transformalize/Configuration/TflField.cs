@@ -271,7 +271,7 @@ namespace Transformalize.Configuration {
         /// * uint64
         /// * xml
         /// </summary>
-        [Cfg(value = "string", domain = "bool,boolean,byte,byte[],char,date,datetime,decimal,double,float,guid,int,int16,int32,int64,long,object,real,rowversion,short,single,string,uint64,xml")]
+        [Cfg(value = "string", domain = Common.ValidTypes, ignoreCase = true)]
         public string Type { get; set; }
 
         /// <summary>

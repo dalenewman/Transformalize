@@ -123,8 +123,8 @@ namespace Transformalize.Test {
         public void DomainReturningMessage() {
 
             var input = new RowsBuilder()
-                .Row("in", "2")
-                .Row("in", "4").ToOperation();
+                .Row("in", 2)
+                .Row("in", "3").ToOperation();
 
             var xml = @"
 <cfg>
@@ -142,7 +142,7 @@ namespace Transformalize.Test {
                     <calculated-fields>
                         <add name='out'>
                             <transforms>
-                                <add name='domain' domain='1,2,3' message-template='{0} is wrong! {2} can't be {0}.' parameter='in' />
+                                <add method='domain' domain='1,2,3' message-template='{0} is wrong! {2} can not be {0}.' parameter='in' />
                             </transforms>
                         </add>
                     </calculated-fields>
@@ -158,7 +158,7 @@ namespace Transformalize.Test {
             var output = process.Execute().ToArray();
 
             Assert.AreEqual(true, output[0]["outResult"]);
-            Assert.AreEqual("4 is wrong! in can't be 4.", output[1]["outMessage"]);
+            Assert.AreEqual("3 is wrong! in can not be 3.", output[1]["outMessage"]);
         }
 
 
@@ -181,11 +181,12 @@ namespace Transformalize.Test {
                 <add name='entity'>
                     <fields>
                         <add name='in' type='int' />
+                        <add name='result' type='bool' input='false' />
                     </fields>
                     <calculated-fields>
                         <add name='out'>
                             <transforms>
-                                <add name='domain' domain='1,2,3' message-template='{0} is wrong! {2} can't be {0}.' parameter='in' />
+                                <add method='domain' domain='1,2,3' result-field='result' message-template='{0} is wrong! {2} can not be {0}.' parameter='in' />
                             </transforms>
                         </add>
                     </calculated-fields>

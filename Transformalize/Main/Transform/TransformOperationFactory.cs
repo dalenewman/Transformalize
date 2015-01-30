@@ -33,7 +33,6 @@ using Transformalize.Logging;
 using Transformalize.Main.Parameters;
 using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.Mail;
-using Transformalize.Main.Transform;
 using Transformalize.Operations.Transform;
 using Transformalize.Operations.Validate;
 using System.Linq;
@@ -61,19 +60,6 @@ namespace Transformalize.Main {
 
             if (_isInitMode)
                 return new EmptyOperation();
-
-            if (element.Method == string.Empty && element.T != string.Empty) {
-                var split = Common.Split(element.T, ").");
-                var partial = new PartialProcessOperation(_process);
-                foreach (var shortHand in split.Select(ShortHandFactory.Interpret)) {
-                    shortHand.AfterAggregation = element.AfterAggregation;
-                    shortHand.BeforeAggregation = element.BeforeAggregation;
-                    shortHand.Decode = element.Decode;
-                    shortHand.Encode = element.Encode;
-                    partial.Register(Create(field, shortHand, parameters));
-                }
-                return partial;
-            }
 
             Func<Row, bool> shouldRun = row => true;
             var toTimeZone = string.IsNullOrEmpty(element.ToTimeZone) ? _process.TimeZone : element.ToTimeZone;
@@ -711,7 +697,7 @@ namespace Transformalize.Main {
                     if (element.Separator.Equals(Common.DefaultValue)) {
                         element.Separator = COMMA;
                     }
-                    var domain = element.Domain.Split(element.Separator.ToCharArray()).Select(s => _conversionMap[field.SimpleType](s));
+                    var domain = element.Domain.Split(element.Separator.ToCharArray()).Select(s => _conversionMap[inType](s));
 
                     return new DomainValidatorOperation(
                         inKey,

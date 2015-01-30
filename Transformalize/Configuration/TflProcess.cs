@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Transformalize.Libs.Cfg.Net;
@@ -174,7 +175,7 @@ namespace Transformalize.Configuration {
         /// <summary>
         /// A collection of [Scripts](/script)
         /// </summary>
-        [Cfg(sharedProperty = "path", sharedValue = Common.DefaultValue)]
+        [Cfg(sharedProperty = "path", sharedValue = "")]
         public List<TflScript> Scripts { get; set; }
 
         /// <summary>
@@ -189,7 +190,13 @@ namespace Transformalize.Configuration {
         [Cfg(sharedProperty = "path", sharedValue = "")]
         public List<TflTemplate> Templates { get; set; }
 
-        protected override void Validate() {
+        protected override void Modify() {
+            if (String.IsNullOrEmpty(Star)) {
+                Star = Name + "Star";
+            }
+            if (string.IsNullOrEmpty(View)) {
+                View = Name + "View";
+            }
             foreach (var calculatedField in CalculatedFields) {
                 calculatedField.Input = false;
             }

@@ -3173,7 +3173,6 @@
     <Compile Include="Main\Process\TransformFieldsToParametersAdapter.cs" />
     <Compile Include="Main\Process\Process.cs" />
     <Compile Include="Main\Process\ProcessParametersReader.cs" />
-    <Compile Include="Main\Process\ProcessReader.cs" />
     <Compile Include="Main\Process\ProcessTransformParametersReader.cs" />
     <Compile Include="Main\Providers\AbstractConnection.cs" />
     <Compile Include="Main\Providers\AnalysisServices\AnalysisServicesConnection.cs" />

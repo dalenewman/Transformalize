@@ -38,12 +38,12 @@
 
         <add name="OrderDetail" connection="input" version="RowVersion">
           <fields>
-            <add name="OrderDetailKey" type="System.Int32" primary-key="true"/>
-            <add name="OrderKey" type="system.Int32"></add>
-            <add name="ProductKey" type="System.Int32"></add>
-            <add name="Qty" alias="Quantity" type="System.Int32"></add>
-            <add name="Price" type="System.Decimal" precision="10" scale="5"></add>
-            <add name="Properties" type="System.Xml">
+            <add name="OrderDetailKey" type="int" primary-key="true"/>
+            <add name="OrderKey" type="int"></add>
+            <add name="ProductKey" type="int"></add>
+            <add name="Qty" alias="Quantity" type="int"></add>
+            <add name="Price" type="decimal" precision="10" scale="5"></add>
+            <add name="Properties" type="xml">
               <transforms>
                 <add method="fromXml">
                   <fields>
@@ -60,10 +60,10 @@
 
         <add name="Order" connection="input" version="RowVersion">
           <fields>
-            <add name="OrderKey" type="System.Int32" primary-key="true"/>
+            <add name="OrderKey" type="int" primary-key="true"/>
             <add name="OrderValidation" length="1024" input="false"/>
-            <add name="CustomerKey" type="System.Int32"></add>
-            <add name="OrderDate" type="System.DateTime">
+            <add name="CustomerKey" type="int"></add>
+            <add name="OrderDate" type="datetime">
               <transforms>
                 <add method="datetimerange"
                      lower-bound="2010-01-01"
@@ -79,7 +79,7 @@
 
         <add name="Customer" connection="input" version="RowVersion">
           <fields>
-            <add name="CustomerKey" type="System.Int32" primary-key="true"/>
+            <add name="CustomerKey" type="int" primary-key="true"/>
             <add name="CustomerValidation" length="1024" input="false"/>
             <add name="First" alias="FirstName" length="50">
               <transforms>
@@ -123,7 +123,7 @@
 
         <add name="Product" connection="input" version="RowVersion">
           <fields>
-            <add name="ProductKey" type="System.Int32" primary-key="true"/>
+            <add name="ProductKey" type="int" primary-key="true"/>
             <add name="Name" alias="ProductName" length="100" default="None">
               <transforms>
                 <add method="javascript" script="if(ProductName.length == 8) { '8 chars not allowed!' } else { ProductName };"/>
@@ -166,7 +166,7 @@
 
       <calculated-fields>
 
-        <add name="Result" type="System.Byte">
+        <add name="Result" type="byte">
           <transforms>
             <add method="javascript" script="if(LastName == 'Newman' &amp;&amp; ProductName == 'Resharper') { 1 } else { 2 };">
               <parameters>
@@ -182,11 +182,6 @@
     </add>
 
     <add name="File">
-
-      <providers>
-        <add name="sqlserver" type="System.Data.SqlClient.SqlConnection, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"/>
-        <add name="file" type="System.IO"/>
-      </providers>
 
       <connections>
         <add name="input" file="c:\temp\hellog.txt" provider="file"/>
@@ -227,13 +222,8 @@
 
     <add name="MyLogs">
 
-      <providers>
-        <add name="sqlserver" type="System.Data.SqlClient.SqlConnection, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"/>
-        <add name="file" type="System.IO"/>
-      </providers>
-
       <connections>
-        <add name="input" file="x.log" provider="file" delimiter=" | "/>
+        <add name="input" file="x.log" provider="file" delimiter="|"/>
         <add name="output" connection-string="Server=localhost;Database=TestOutput;Trusted_Connection=True;"/>
       </connections>
 
@@ -263,7 +253,7 @@
                 </add>
               </transforms>
             </add>
-            <add name="HashCode" type="System.Int32" input="false" primary-key="true">
+            <add name="HashCode" type="int" input="false" primary-key="true">
               <transforms>
                 <add method="GetHashCode" parameter="HashText"></add>
               </transforms>

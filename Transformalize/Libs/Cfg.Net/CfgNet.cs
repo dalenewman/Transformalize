@@ -150,6 +150,7 @@ namespace Transformalize.Libs.Cfg.Net {
         public object sharedValue { get; set; }
         public string domain { get; set; }
         public char domainDelimiter { get; set; }
+        public bool ignoreCase { get; set; }
         // ReSharper restore InconsistentNaming
     }
 
@@ -172,7 +173,12 @@ namespace Transformalize.Libs.Cfg.Net {
             if (attribute.domainDelimiter == default(char)) {
                 attribute.domainDelimiter = ',';
             }
-            _domainSet = new HashSet<string>(attribute.domain.Split(new[] { attribute.domainDelimiter }, StringSplitOptions.None));
+
+            if (attribute.ignoreCase) {
+                _domainSet = new HashSet<string>(attribute.domain.Split(new[] { attribute.domainDelimiter }, StringSplitOptions.None), StringComparer.OrdinalIgnoreCase);
+            } else {
+                _domainSet = new HashSet<string>(attribute.domain.Split(new[] { attribute.domainDelimiter }, StringSplitOptions.None), StringComparer.Ordinal);
+            }
         }
 
         public bool IsInDomain(string value) {
@@ -426,10 +432,14 @@ namespace Transformalize.Libs.Cfg.Net {
                                         continue;
                                     var property = _classProperties[subNode.Name][attribute.Name];
                                     if (attribute.Value != null) {
-                                        try {
-                                            property.Attributes.value = Converter[property.Type](attribute.Value);
-                                        } catch (Exception ex) {
-                                            _problems.SettingValue(property.Name, attribute.Value, parentName, node.Name, ex.Message);
+                                        if (property.Type == typeof(string) || property.Type == typeof(object)) {
+                                            property.Attributes.value = attribute.Value;
+                                        } else {
+                                            try {
+                                                property.Attributes.value = Converter[property.Type](attribute.Value);
+                                            } catch (Exception ex) {
+                                                _problems.SettingValue(property.Name, attribute.Value, parentName, node.Name, ex.Message);
+                                            }
                                         }
                                     }
                                     tflNode.Property(property.Name, property.Type, property.Attributes);
@@ -521,16 +531,20 @@ namespace Transformalize.Libs.Cfg.Net {
                     var value = CheckParameters(parameters, attribute.Value);
                     var property = _properties[attribute.Name];
 
-                    if (!property.IsInDomain(value)) {
-                        _problems.ValueNotInDomain(parentName, node.Name, property.Name, value, property.Attributes.domain.Replace(property.Attributes.domainDelimiter.ToString(CultureInfo.InvariantCulture), ", "));
+                    if (property.Attributes.decode && value.IndexOf(CfgConstants.ENTITY_START) >= 0) {
+                        value = Decode(value, _builder);
                     }
 
-                    if (property.Type == typeof(string)) {
-                        property.Attributes.value = property.Attributes.decode && value.IndexOf(CfgConstants.ENTITY_START) >= 0 ? Decode(value, _builder) : value;
+                    if (!property.IsInDomain(value)) {
+                        _problems.ValueNotInDomain(parentName, node.Name, property.Name, attribute.Value, property.Attributes.domain.Replace(property.Attributes.domainDelimiter.ToString(CultureInfo.InvariantCulture), ", "));
+                    }
+
+                    if (property.Type == typeof(string) || property.Type == typeof(object)) {
+                        property.Attributes.value = value;
                         property.Set = true;
                     } else {
                         try {
-                            property.Attributes.value = Converter[property.Type](property.Attributes.decode && value.IndexOf(CfgConstants.ENTITY_START) >= 0 ? Decode(value, _builder) : value);
+                            property.Attributes.value = Converter[property.Type](value);
                             property.Set = true;
                         } catch (Exception ex) {
                             _problems.SettingValue(property.Name, value, parentName, node.Name, ex.Message);
@@ -921,7 +935,9 @@ namespace Transformalize.Libs.Cfg.Net {
 
             // instantiate collections that would otherwise be null
             foreach (var pair in _elementLoaders) {
-                properties[pair.Key].SetValue(this, Activator.CreateInstance(properties[pair.Key].PropertyType), null);
+                if (properties[pair.Key].GetValue(this, null) == null) {
+                    properties[pair.Key].SetValue(this, Activator.CreateInstance(properties[pair.Key].PropertyType), null);
+                }
             }
 
             Modify();
