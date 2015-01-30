@@ -12,7 +12,7 @@ namespace Transformalize.Main.Providers.SqlCe {
 
     public class SqlCeConnection : AbstractConnection {
 
-        public SqlCeConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
+        public SqlCeConnection(TflConnection element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
             Type = ProviderType.SqlCe4;
             L = "[";

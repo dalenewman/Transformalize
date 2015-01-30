@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using Transformalize.Libs.Cfg.Net;
 using Transformalize.Main;
@@ -8,7 +9,7 @@ namespace Transformalize.Configuration {
         /// <summary>
         /// A name (of your choosing) to identify the process.
         /// </summary>
-        [Cfg( value = "", required = true, unique = true)]
+        [Cfg(value = "", required = true, unique = true)]
         public string Name { get; set; }
 
         /// <summary>
@@ -19,7 +20,7 @@ namespace Transformalize.Configuration {
         /// Indicates the process is enabled.  The included executable (e.g. `tfl.exe`) 
         /// respects this setting and does not run the process if disabled (or `False`).
         /// </summary>
-        [Cfg( value = true)]
+        [Cfg(value = true)]
         public bool Enabled { get; set; }
 
         /// <summary>
@@ -33,7 +34,7 @@ namespace Transformalize.Configuration {
         /// Aside from these, you may use any mode (of your choosing).  Then, you can control
         /// whether or not templates and/or actions run by setting their modes.
         /// </summary>
-        [Cfg( value = "")]
+        [Cfg(value = "")]
         public string Mode { get; set; }
 
         /// <summary>
@@ -44,17 +45,17 @@ namespace Transformalize.Configuration {
         /// Parallel *on* allows you to process all the entities at the same time, potentially faster.
         /// Parallel *off* allows you to have one entity depend on a previous entity's data.
         /// </summary>
-        [Cfg( value = true)]
+        [Cfg(value = true)]
         public bool Parallel { get; set; }
 
         /// <summary>
         /// Optional.
         /// 
-        /// A choice between `Multithreaded`, `SingleThreaded`, and <strong>`Default`</strong>.
+        /// A choice between `MultiThreaded`, `SingleThreaded`, and <strong>`Default`</strong>.
         /// 
         /// `Default` defers this decision to the entity's PipelineThreading setting.
         /// </summary>
-        [Cfg(value = "", domain = "SingleThreaded,MultiThreaded,Default")]
+        [Cfg(value = "Default", domain = "SingleThreaded,MultiThreaded,Default")]
         public string PipelineThreading { get; set; }
 
         /// <summary>
@@ -66,9 +67,9 @@ namespace Transformalize.Configuration {
         /// 
         /// If not set, it is the combination of the process name, and "Star." 
         /// </summary>
-        [Cfg( value = "")]
+        [Cfg(value = "")]
         public string Star { get; set; }
-        
+
         /// <summary>
         /// Optional.
         /// 
@@ -78,7 +79,7 @@ namespace Transformalize.Configuration {
         /// if your intention is not to create a star-schema.  A `False` setting here may
         /// speed things up.
         /// </summary>
-        [Cfg( value = true)]
+        [Cfg(value = true)]
         public bool StarEnabled { get; set; }
 
         /// <summary>
@@ -89,7 +90,7 @@ namespace Transformalize.Configuration {
         /// This refers to the razor templating engine's content type.  If you're rendering HTML 
         /// markup, use `html`, if not, using `raw` may inprove performance.
         /// </summary>
-        [Cfg( value = "raw", domain = "raw,html")]
+        [Cfg(value = "raw", domain = "raw,html")]
         public string TemplateContentType { get; set; }
 
         /// <summary>
@@ -103,7 +104,7 @@ namespace Transformalize.Configuration {
         /// NOTE: Normally, you should keep the dates in UTC until presented to the user. 
         /// Then, have the client application convert UTC to the user's time zone.
         /// </summary>
-        [Cfg( value = "")]
+        [Cfg(value = "")]
         public string TimeZone { get; set; }
 
         /// <summary>
@@ -116,10 +117,10 @@ namespace Transformalize.Configuration {
         /// 
         /// If not set, it is the combination of the process name, and "View." 
         /// </summary>
-        [Cfg( value = "")]
+        [Cfg(value = "")]
         public string View { get; set; }
 
-        [Cfg( value = false)]
+        [Cfg(value = false)]
         public bool ViewEnabled { get; set; }
 
         /// <summary>
@@ -132,7 +133,7 @@ namespace Transformalize.Configuration {
         /// A collection of [Calculated Fields](/calculated-field)
         /// </summary>
         [Cfg()]
-        public List<TflCalculatedField> CalculatedFields { get; set; }
+        public List<TflField> CalculatedFields { get; set; }
 
         /// <summary>
         /// A collection of [Connections](/connection)
@@ -155,7 +156,7 @@ namespace Transformalize.Configuration {
         /// <summary>
         /// A collection of [Logs](/log)
         /// </summary>
-        [Cfg(sharedProperty = "rows", sharedValue = 10000)]
+        [Cfg(sharedProperty = "rows", sharedValue = (long)10000)]
         public List<TflLog> Log { get; set; }
 
         /// <summary>
@@ -185,8 +186,13 @@ namespace Transformalize.Configuration {
         /// <summary>
         /// A collection of [Templates](/template)
         /// </summary>
-        [Cfg()]
+        [Cfg(sharedProperty = "path", sharedValue = "")]
         public List<TflTemplate> Templates { get; set; }
 
+        protected override void Validate() {
+            foreach (var calculatedField in CalculatedFields) {
+                calculatedField.Input = false;
+            }
+        }
     }
 }

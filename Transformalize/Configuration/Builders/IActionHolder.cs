@@ -8,6 +8,6 @@ namespace Transformalize.Configuration.Builders {
         MapBuilder Map(string name);
         ProcessBuilder TemplatePath(string path);
         ProcessBuilder ScriptPath(string path);
-        ProcessConfigurationElement Process();
+        TflProcess Process();
     }
 }

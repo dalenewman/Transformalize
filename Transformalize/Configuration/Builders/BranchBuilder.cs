@@ -3,9 +3,9 @@ namespace Transformalize.Configuration.Builders {
     public class BranchBuilder {
 
         private readonly TransformBuilder _transformBuilder;
-        private readonly BranchConfigurationElement _branch;
+        private readonly TflBranch _branch;
 
-        public BranchBuilder(TransformBuilder transformBuilder, BranchConfigurationElement branch) {
+        public BranchBuilder(TransformBuilder transformBuilder, TflBranch branch) {
             _transformBuilder = transformBuilder;
             _branch = branch;
         }
@@ -32,7 +32,7 @@ namespace Transformalize.Configuration.Builders {
             return _transformBuilder.Branch(name);
         }
 
-        public ProcessConfigurationElement Process() {
+        public TflProcess Process() {
             return _transformBuilder.Process();
         }
 
@@ -41,7 +41,7 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public TransformBuilder Transform(string method) {
-            var transform = new TransformConfigurationElement() { Method = method };
+            var transform = _branch.GetDefaultOf<TflTransform>(t => t.Method = method);
             _branch.Transforms.Add(transform);
             return new TransformBuilder(this, transform);
         }

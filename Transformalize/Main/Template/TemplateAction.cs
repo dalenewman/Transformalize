@@ -48,14 +48,13 @@ namespace Transformalize.Main {
         public string Body { get; set; }
         public bool Before { get; set; }
         public bool After { get; set; }
-        public bool Conditional { get; set; }
         public string OldValue { get; set; }
         public string NewValue { get; set; }
         public int Timeout { get; set; }
         public string Command { get; set; }
         public string ProcessName { get; set; }
 
-        public TemplateAction(Process process, string template, ActionConfigurationElement action, IEnumerable<string> modes) {
+        public TemplateAction(Process process, string template, TflAction action) {
             _process = process;
             ProcessName = process.Name;
             Action = action.Action;
@@ -74,7 +73,6 @@ namespace Transformalize.Main {
             Modes = action.GetModes();
             Before = action.Before;
             After = action.After;
-            Conditional = action.Conditional;
             OldValue = action.OldValue;
             NewValue = action.NewValue;
             Command = action.Command;

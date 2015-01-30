@@ -85,7 +85,8 @@ namespace Transformalize.Test {
 
             var element = new ProcessBuilder("CopyFile")
                 .Connection("output")
-                    .Database("TestOutput")  //default provider is SqlServer, localhost
+                    .Provider("SqlServer")
+                    .Database("TestOutput")
                 .Action("Copy")
                     .From(file1)
                     .To("output")
@@ -94,7 +95,7 @@ namespace Transformalize.Test {
             var process = ProcessFactory.CreateSingle(element);
             process.ExecuteScaler();
             var expected = Common.CleanIdentifier(Path.GetFileNameWithoutExtension(file1));
-            var sqlServer = new ConnectionFactory(process).Create(new ConnectionConfigurationElement() { Name = "test", Provider = "sqlserver", Database = "TestOutput" });
+            var sqlServer = new ConnectionFactory(process).Create(new TflConnection() { Name = "test", Provider = "sqlserver", Database = "TestOutput" });
 
             var rows = sqlServer.GetConnection().Query(string.Format("SELECT f1, f2, f3 FROM {0}", expected)).ToArray();
             Assert.AreEqual(1, rows.Length);

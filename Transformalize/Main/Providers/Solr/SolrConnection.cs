@@ -17,7 +17,7 @@ namespace Transformalize.Main.Providers.Solr {
             {"text_en_splitting","string"}
         };
 
-        public SolrConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
+        public SolrConnection(TflConnection element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
             Type = ProviderType.Solr;
             IsDatabase = true;

@@ -54,7 +54,7 @@ namespace Transformalize.Main.Providers.Log {
             throw new System.NotImplementedException();
         }
 
-        public LogConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
+        public LogConnection(TflConnection element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
             Type = ProviderType.Log;
         }

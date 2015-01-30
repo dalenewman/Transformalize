@@ -25,13 +25,11 @@ namespace Transformalize.Operations.Extract {
         private readonly string _fullName;
         private readonly string _name;
         private readonly ErrorMode _errorMode;
-        private readonly int _ignoreFirstLines;
         private readonly FixedLengthClassBuilder _classBuilder;
 
         private int _counter;
 
-        public FileFixedExtract(AbstractConnection connection, Entity entity, int top) {
-
+        public FileFixedExtract(AbstractConnection connection, Entity entity, int top = 0) {
             var fileInfo = new FileInfo(connection.File);
 
             _entity = entity;
@@ -40,11 +38,11 @@ namespace Transformalize.Operations.Extract {
             _fullName = fileInfo.FullName;
             _name = fileInfo.Name;
             _errorMode = connection.ErrorMode;
-            _ignoreFirstLines = connection.Start - 1;
+            int ignoreFirstLines = connection.Start - 1;
 
             _classBuilder = new FixedLengthClassBuilder("Tfl" + _entity.Alias) {
                 IgnoreEmptyLines = true,
-                IgnoreFirstLines = _ignoreFirstLines
+                IgnoreFirstLines = ignoreFirstLines
             };
             foreach (var field in _fields) {
                 var length = field.Length.Equals("max", IC) ? int.MaxValue : Convert.ToInt32(field.Length.Equals(string.Empty) ? "64" : field.Length);

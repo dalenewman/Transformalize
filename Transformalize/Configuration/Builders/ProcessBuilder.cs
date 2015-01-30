@@ -4,108 +4,121 @@ namespace Transformalize.Configuration.Builders {
 
     public class ProcessBuilder : IFieldHolder, IActionHolder {
 
-        private readonly ProcessConfigurationElement _process;
+        private readonly TflProcess _process;
 
         public ProcessBuilder(string name) {
-            _process = new ProcessConfigurationElement() { Name = name };
+            var root = new TflRoot(string.Format(@"<tfl><processes><add name='{0}'><connections><add name='input' provider='internal' /></connections></add></processes></tfl>", name), null);
+            _process = root.GetDefaultOf<TflProcess>(p=>p.Name = name);
             _process.SearchTypes.Add(
-                new SearchTypeConfigurationElement {
-                    Name = "none",
-                    MultiValued = false,
-                    Store = false,
-                    Index = false
-                },
-                new SearchTypeConfigurationElement {
-                    Name = "default",
-                    MultiValued = false,
-                    Store = true,
-                    Index = true
-                }
+                _process.GetDefaultOf<TflSearchType>(st => {
+                    st.Name = "none";
+                    st.MultiValued = false;
+                    st.Store = false;
+                    st.Index = false;
+                })
+            );
+            _process.SearchTypes.Add(
+                _process.GetDefaultOf<TflSearchType>(st => {
+                    st.Name = "default";
+                    st.MultiValued = false;
+                    st.Store = true;
+                    st.Index = true;
+                })
             );
         }
 
-        public ProcessBuilder(ProcessConfigurationElement element) {
+        public ProcessBuilder(TflProcess element) {
             _process = element;
         }
 
-        public ProcessConfigurationElement Process() {
+        public TflProcess Process() {
             return _process;
         }
 
         public ConnectionBuilder Connection(string name) {
-            var connection = new ConnectionConfigurationElement() { Name = name };
+            var connection = _process.GetDefaultOf<TflConnection>();
+            connection.Name = name;
             _process.Connections.Add(connection);
             return new ConnectionBuilder(this, connection);
         }
 
-        public ConnectionBuilder Connection(ConnectionConfigurationElement connection) {
+        public ConnectionBuilder Connection(TflConnection connection) {
             _process.Connections.Add(connection);
             return new ConnectionBuilder(this, connection);
         }
 
         public MapBuilder Map(string name) {
-            var map = new MapConfigurationElement { Name = name };
+            var map = _process.GetDefaultOf<TflMap>();
+            map.Name = name;
             _process.Maps.Add(map);
             return new MapBuilder(this, map);
         }
 
         public MapBuilder Map(string name, string sql) {
-            var map = new MapConfigurationElement { Name = name };
-            map.Items.Sql = sql;
+            var map = _process.GetDefaultOf<TflMap>();
+            map.Name = name;
+            map.Query = sql;
             _process.Maps.Add(map);
             return new MapBuilder(this, map);
         }
 
         public EntityBuilder Entity(string name) {
-            var entity = new EntityConfigurationElement() { Name = name };
+            var entity = _process.GetDefaultOf<TflEntity>(e=>e.Name = name);
             _process.Entities.Add(entity);
             return new EntityBuilder(this, entity);
         }
 
         public RelationshipBuilder Relationship() {
-            var relationship = new RelationshipConfigurationElement();
+            var relationship = _process.GetDefaultOf<TflRelationship>();
             _process.Relationships.Add(relationship);
             return new RelationshipBuilder(this, relationship);
         }
 
         public TemplateBuilder Template(string name) {
-            var template = new TemplateConfigurationElement { Name = name };
+            var template = _process.GetDefaultOf<TflTemplate>();
+            template.Name = name;
             _process.Templates.Add(template);
             return new TemplateBuilder(this, template);
         }
 
 
         public ActionBuilder Action(string action) {
-            var a = new ActionConfigurationElement() { Action = action };
+            var a = _process.GetDefaultOf<TflAction>();
+            a.Action = action;
             _process.Actions.Add(a);
             return new ActionBuilder(this, a);
         }
 
         public SearchTypeBuilder SearchType(string name) {
-            var searchType = new SearchTypeConfigurationElement() { Name = name };
+            var searchType = _process.GetDefaultOf<TflSearchType>();
+            searchType.Name = name;
             _process.SearchTypes.Add(searchType);
             return new SearchTypeBuilder(this, searchType);
         }
 
         public FieldBuilder CalculatedField(string name) {
-            var calculatedField = new FieldConfigurationElement() { Name = name };
-            _process.CalculatedFields.Add(calculatedField);
-            return new FieldBuilder(this, calculatedField);
+            var cf = _process.GetDefaultOf<TflField>(f=>f.Name = name);
+            _process.CalculatedFields.Add(cf);
+            return new FieldBuilder(this, cf);
         }
 
         public FieldBuilder Field(string name) {
-            var calculatedField = new FieldConfigurationElement() { Name = name };
+            var calculatedField = _process.GetDefaultOf<TflField>(f=>f.Name = name);
             _process.CalculatedFields.Add(calculatedField);
             return new FieldBuilder(this, calculatedField);
         }
 
         public ProcessBuilder TemplatePath(string path) {
-            _process.Templates.Path = path;
+            foreach (var template in _process.Templates) {
+                template.Path = path;
+            }
             return this;
         }
 
         public ProcessBuilder ScriptPath(string path) {
-            _process.Scripts.Path = path;
+            foreach (var script in _process.Scripts) {
+                script.Path = path;
+            }
             return this;
         }
 
@@ -115,13 +128,16 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public ScriptBuilder Script(string name) {
-            var script = new ScriptConfigurationElement() { Name = name };
+            var script = _process.GetDefaultOf<TflScript>();
+            script.Name = name;
             _process.Scripts.Add(script);
             return new ScriptBuilder(this, script);
         }
 
         public ProcessBuilder Script(string name, string fileName) {
-            var script = new ScriptConfigurationElement() { Name = name, File = fileName };
+            var script = _process.GetDefaultOf<TflScript>();
+            script.Name = name;
+            script.File = fileName;
             _process.Scripts.Add(script);
             return this;
         }

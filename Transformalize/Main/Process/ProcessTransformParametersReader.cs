@@ -39,7 +39,7 @@ namespace Transformalize.Main {
         }
 
 
-        public IParameters Read(TransformConfigurationElement transform) {
+        public IParameters Read(TflTransform transform) {
             var parameters = new Parameters.Parameters();
 
             if (transform.Parameter != string.Empty && transform.Parameter != "*") {
@@ -52,7 +52,7 @@ namespace Transformalize.Main {
                 AddMapParametersToConfiguration(transform, _process.MapEndsWith[transform.Map]);
             }
 
-            foreach (ParameterConfigurationElement p in transform.Parameters) {
+            foreach (var p in transform.Parameters) {
 
                 var fields = _process.OutputFields();
                 if (!string.IsNullOrEmpty(p.Field)) {
@@ -77,25 +77,23 @@ namespace Transformalize.Main {
             return parameters;
         }
 
-        private void AddParameterToConfiguration(TransformConfigurationElement transform, string parameter, bool insert) {
+        private void AddParameterToConfiguration(TflTransform transform, string parameter, bool insert) {
             try {
                 if (parameter.Contains(".")) {
                     var values = parameter.Split(_dotArray);
-                    var p = new ParameterConfigurationElement {
-                        Entity = values[0],
-                        Field = values[1]
-                    };
+                    var p = transform.GetDefaultOf<TflParameter>(x => {
+                        x.Entity = values[0];
+                        x.Field = values[1];
+                    });
 
                     if (insert)
-                        transform.Parameters.Insert(p);
+                        transform.Parameters.Insert(0, p);
                     else
                         transform.Parameters.Add(p);
                 } else {
-                    var p = new ParameterConfigurationElement {
-                        Field = parameter
-                    };
+                    var p = transform.GetDefaultOf<TflParameter>(x => x.Field = parameter);
                     if (insert)
-                        transform.Parameters.Insert(p);
+                        transform.Parameters.Insert(0, p);
                     else
                         transform.Parameters.Add(p);
                 }
@@ -104,8 +102,7 @@ namespace Transformalize.Main {
             }
         }
 
-        private void AddMapParametersToConfiguration(TransformConfigurationElement transform,
-                                                     IEnumerable<KeyValuePair<string, Item>> items) {
+        private void AddMapParametersToConfiguration(TflTransform transform, IEnumerable<KeyValuePair<string, Item>> items) {
             foreach (var item in items) {
                 if (item.Value.UseParameter) {
                     if (_fields.Find(item.Value.Parameter).Any()) {

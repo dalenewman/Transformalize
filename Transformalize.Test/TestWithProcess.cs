@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Moq;
 using NUnit.Framework;
@@ -39,7 +40,7 @@ namespace Transformalize.Test {
     public class TestWithProcess : EtlProcessHelper {
 
         private readonly Mock<IOperation> _entityKeysExtract;
-        private static readonly ProcessConfigurationElement Element = new ProcessConfigurationReader("Test").Read()[0];
+        private static readonly TflProcess Element = new TflRoot(File.ReadAllText(@"TestFiles\Test.xml"), null).Processes[0];
         private readonly Process _process;
 
         public TestWithProcess() {

@@ -1,9 +1,9 @@
 namespace Transformalize.Configuration.Builders {
     public class ScriptBuilder {
         private readonly ProcessBuilder _processBuilder;
-        private readonly ScriptConfigurationElement _script;
+        private readonly TflScript _script;
 
-        public ScriptBuilder(ProcessBuilder processBuilder, ScriptConfigurationElement script) {
+        public ScriptBuilder(ProcessBuilder processBuilder, TflScript script) {
             _processBuilder = processBuilder;
             _script = script;
         }
@@ -17,7 +17,7 @@ namespace Transformalize.Configuration.Builders {
             return _processBuilder.Script(name);
         }
 
-        public ProcessConfigurationElement Process() {
+        public TflProcess Process() {
             return _processBuilder.Process();
         }
     }

@@ -23,15 +23,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Xml.Linq;
 using Transformalize.Configuration;
-using Transformalize.Libs.Cfg.Net;
 using Transformalize.Logging;
 using Transformalize.Main;
 
 namespace Transformalize.Runner {
-    public class ProcessXmlConfigurationReader : IReader<ProcessElementCollection> {
+    public class ProcessXmlConfigurationReader : IReader<List<TflProcess>> {
 
         private readonly string _resource;
         private readonly ContentsReader _contentsReader;
@@ -41,112 +38,27 @@ namespace Transformalize.Runner {
             _contentsReader = contentsReader;
         }
 
-        public ProcessElementCollection Read() {
-            var contents = _contentsReader.Read(_resource);
-            var section = new TransformalizeConfiguration();
-            XElement transformalize;
+        public List<TflProcess> Read(Dictionary<string, string> parameters) {
+            var cfg = new TflRoot(_contentsReader.Read(_resource).Content, parameters);
+            var problems = cfg.Problems();
 
-            try {
-                transformalize = XDocument.Parse(contents.Content).Element("transformalize");
-                if (transformalize == null)
-                    throw new TransformalizeException(string.Empty, string.Empty, "Can't find the <transformalize/> element in {0}.", string.IsNullOrEmpty(contents.Name) ? "the configuration" : contents.Name);
-
-                var apiElements = HandleApiElements(transformalize);
-                if (apiElements.ContainsKey("status") && apiElements["status"] != "200") {
-                    TflLogger.Warn(string.Empty, string.Empty, "API at {0} responded with {1} {2}.", _resource, apiElements["status"], apiElements["message"]);
+            if (problems.Any()) {
+                foreach (var problem in problems) {
+                    TflLogger.Error(string.Empty, string.Empty, problem);
                 }
-            } catch (Exception e) {
-                throw new TransformalizeException(string.Empty, string.Empty, "Couldn't parse {0}.  Make sure it is valid XML and try again. {1}", contents.Name, e.Message);
+                throw new TransformalizeException(string.Empty, string.Empty, string.Join(Environment.NewLine, problems));
             }
 
-            try {
-                section.Deserialize(
-                    DefaultParameters(transformalize.ToString())
-                );
-                return section.Processes;
-            } catch (Exception e) {
-                throw new TransformalizeException(string.Empty, string.Empty, "Couldn't deserialize {0}.  {1}", contents.Name, e.Message);
-            }
-
-        }
-
-        private static Dictionary<string, string> HandleApiElements(XContainer transformalize) {
-            // The Transformalize.Orchard API returns these elements, but .NET Configuration doesn't allow them.
-            var apiElements = new[] { "request", "status", "message", "time", "response", "log" };
-            var apiContents = new Dictionary<string, string>();
-            foreach (var element in apiElements.Where(element => transformalize.Elements(element).Any())) {
-                var node = transformalize.Element(element);
-                if (node != null) {
-                    apiContents[element] = node.Value;
-                }
-                transformalize.Elements(element).Remove();
-            }
-            return apiContents;
-        }
-
-        public static string DefaultParameters(string xml) {
-
-            if (!xml.Contains("@"))
-                return xml;
-
-            var doc = new NanoXmlDocument(xml);
-
-            var transformalize = doc.RootNode;
-            var processes = new NanoXmlNode[0];
-            var environments = new NanoXmlNode[0];
-            var environmentDefault = string.Empty;
-
-            foreach (var node in transformalize.SubNodes) {
-                switch (node.Name) {
-                    case "environments":
-                        environmentDefault = node.Attributes.Any() ? node.Attributes.First().Value : string.Empty;
-                        environments = node.SubNodes.ToArray();
-                        break;
-                    case "processes":
-                        processes = node.SubNodes.ToArray();
-                        break;
-                }
-            }
-
-            var newXml = new StringBuilder("<transformalize><processes>");
-
-            if (environments.Length > 0) {
-                var parameters = environmentDefault.Equals(string.Empty) ?
-                    environments.First().SubNodes.First().SubNodes.ToArray() :
-                    environments.First(e => e.GetAttribute("name").Value.Equals(environmentDefault)).SubNodes.First().SubNodes.ToArray();
-
-                foreach (var process in processes) {
-                    TflLogger.Info(string.Empty, string.Empty, "Environment: {0}", environmentDefault.Equals(string.Empty) ? "first" : environmentDefault);
-                    newXml.AppendLine(ApplyParameters(process.ToString(), parameters));
-                }
-            } else {
-                foreach (var process in processes) {
-                    var processXml = process.ToString();
-                    if (process.SubNodes.Any(n => n.Name.Equals("parameters"))) {
-                        processXml = ApplyParameters(processXml, process.SubNodes.First(n => n.Name.Equals("parameters")).SubNodes);
+            if (cfg.Response.Any()) {
+                foreach (var response in cfg.Response) {
+                    if (response.Status != "200") {
+                        TflLogger.Warn(string.Empty, string.Empty, "API at {0} responded with {1} {2}.", _resource, response.Status, response.Message);
                     }
-                    newXml.AppendLine(processXml);
                 }
             }
 
-            newXml.AppendLine("</processes></transformalize>");
-            return newXml.ToString();
-        }
+            return cfg.Processes;
 
-        private static string ApplyParameters(string xml, IEnumerable<NanoXmlNode> parameters) {
-            var result = xml;
-            foreach (var parameter in parameters) {
-                var name = parameter.GetAttribute("name").Value.Trim("@".ToCharArray());
-                var placeHolder = "@(" + name + ")";
-                if (result.Contains(placeHolder)) {
-                    var value = parameter.GetAttribute("value").Value;
-                    result = result.Replace(placeHolder, value);
-                    TflLogger.Debug(string.Empty, string.Empty, "{0} replaced with \"{1}\"", placeHolder, value);
-                } else {
-                    TflLogger.Error(string.Empty, string.Empty, "{0} not found.", placeHolder);
-                }
-            }
-            return result;
         }
 
     }

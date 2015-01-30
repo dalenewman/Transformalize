@@ -1,9 +1,9 @@
 namespace Transformalize.Configuration.Builders {
     public class ActionBuilder {
         private readonly IActionHolder _builder;
-        private readonly ActionConfigurationElement _action;
+        private readonly TflAction _action;
 
-        public ActionBuilder(IActionHolder builder, ActionConfigurationElement action) {
+        public ActionBuilder(IActionHolder builder, TflAction action) {
             _builder = builder;
             _action = action;
         }
@@ -48,7 +48,7 @@ namespace Transformalize.Configuration.Builders {
 
         public ActionBuilder Modes(params string[] modes) {
             foreach (var mode in modes) {
-                _action.Modes.Add(new ModeConfigurationElement() { Mode = mode });
+                _action.Modes.Add(new TflNameReference() { Name = mode });
             }
             return this;
         }
@@ -103,7 +103,7 @@ namespace Transformalize.Configuration.Builders {
             return _builder.ScriptPath(path);
         }
 
-        public ProcessConfigurationElement Process() {
+        public TflProcess Process() {
             return _builder.Process();
         }
     }

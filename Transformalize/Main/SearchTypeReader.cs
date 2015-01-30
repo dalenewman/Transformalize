@@ -4,9 +4,9 @@ using Transformalize.Configuration;
 
 namespace Transformalize.Main {
     public class SearchTypeReader {
-        private readonly SearchTypeElementCollection _elements;
+        private readonly List<TflSearchType> _elements;
 
-        public SearchTypeReader(SearchTypeElementCollection elements)
+        public SearchTypeReader(List<TflSearchType> elements)
         {
             _elements = elements;
         }
@@ -31,7 +31,7 @@ namespace Transformalize.Main {
                 Analyzer = string.Empty
             };
 
-            var configuredTypes = _elements.Cast<SearchTypeConfigurationElement>().ToArray();
+            var configuredTypes = _elements.ToArray();
 
             if (configuredTypes.Any()) {
                 foreach (var st in configuredTypes) {

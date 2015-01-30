@@ -7,9 +7,9 @@ using Transformalize.Operations;
 namespace Transformalize.Main.Providers.Mail {
 
     public class WebConnection : AbstractConnection {
-        private readonly ConnectionConfigurationElement _element;
+        private readonly TflConnection _element;
 
-        public WebConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
+        public WebConnection(TflConnection element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
             _element = element;
             Type = ProviderType.Web;

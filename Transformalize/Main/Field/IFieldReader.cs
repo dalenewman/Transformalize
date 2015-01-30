@@ -26,6 +26,6 @@ namespace Transformalize.Main
 {
     public interface IFieldReader
     {
-        Field Read(FieldConfigurationElement element, FieldType fieldType = FieldType.NonKey);
+        Field Read(TflField element, FieldType fieldType = FieldType.NonKey);
     }
 }

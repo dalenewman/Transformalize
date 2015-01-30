@@ -3,9 +3,9 @@ namespace Transformalize.Configuration.Builders
     public class ItemBuilder {
         private readonly ProcessBuilder _processBuilder;
         private readonly MapBuilder _mapBuilder;
-        private readonly ItemConfigurationElement _item;
+        private readonly TflMapItem _item;
 
-        public ItemBuilder(ProcessBuilder processBuilder, MapBuilder mapBuilder, ItemConfigurationElement item) {
+        public ItemBuilder(ProcessBuilder processBuilder, MapBuilder mapBuilder, TflMapItem item) {
             _processBuilder = processBuilder;
             _mapBuilder = mapBuilder;
             _item = item;
@@ -40,7 +40,7 @@ namespace Transformalize.Configuration.Builders
             return _mapBuilder.Item();
         }
 
-        public ProcessConfigurationElement Process() {
+        public TflProcess Process() {
             return _mapBuilder.Process();
         }
 

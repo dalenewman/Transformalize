@@ -39,7 +39,7 @@ namespace Transformalize.Main.Providers {
         private string _defaultSchema = string.Empty;
         private ConnectionStringProperties _connectionStringProperties = new ConnectionStringProperties();
 
-        public ConnectionConfigurationElement Source { get; set; }
+        public TflConnection Source { get; set; }
         public string Name { get; set; }
         public string TypeAndAssemblyName { get; set; }
         public int BatchSize { get; set; }
@@ -61,7 +61,7 @@ namespace Transformalize.Main.Providers {
         public string File { get; set; }
         public string Folder { get; set; }
         public ErrorMode ErrorMode { get; set; }
-        public string Delimiter { get; set; }
+        public char Delimiter { get; set; }
         public string SearchPattern { get; set; }
         public SearchOption SearchOption { get; set; }
         public int Start { get; set; }
@@ -124,7 +124,7 @@ namespace Transformalize.Main.Providers {
             set { _r = value; }
         }
 
-        protected AbstractConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies) {
+        protected AbstractConnection(TflConnection element, AbstractConnectionDependencies dependencies) {
 
             Source = element;
             BatchSize = element.BatchSize;
@@ -161,7 +161,7 @@ namespace Transformalize.Main.Providers {
             Is = new ConnectionIs(this);
         }
 
-        private void ProcessConnectionString(ConnectionConfigurationElement element) {
+        private void ProcessConnectionString(TflConnection element) {
             if (element.ConnectionString != string.Empty) {
                 Database = ConnectionStringParser.GetDatabaseName(element.ConnectionString);
                 Server = ConnectionStringParser.GetServerName(element.ConnectionString);

@@ -7,21 +7,20 @@ using Transformalize.Logging;
 namespace Transformalize.Main {
     public class ScriptReader {
 
-        private readonly ScriptElementCollection _elements;
+        private readonly List<TflScript> _elements;
         private readonly char[] _s = new[] { '\\' };
 
-        public ScriptReader(ScriptElementCollection elements) {
+        public ScriptReader(List<TflScript> elements) {
             _elements = elements;
         }
 
         public Dictionary<string, Script> Read() {
-            var scriptElements = _elements.Cast<ScriptConfigurationElement>().ToArray();
-            var path = _elements.Path == Common.DefaultValue ? string.Empty : _elements.Path;
+            var scriptElements = _elements;
 
             var scripts = new Dictionary<string, Script>();
 
             foreach (var script in scriptElements) {
-                var fileInfo = path.Equals(string.Empty) ? new FileInfo(script.File) : new FileInfo(path.TrimEnd(_s) + @"\" + script.File);
+                var fileInfo = script.Path.Equals(string.Empty) ? new FileInfo(script.File) : new FileInfo(script.Path.TrimEnd(_s) + @"\" + script.File);
                 if (!fileInfo.Exists) {
                     TflLogger.Warn(string.Empty, string.Empty, "Missing Script: {0}.", fileInfo.FullName);
                 } else {

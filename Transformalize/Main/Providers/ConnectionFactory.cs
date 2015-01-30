@@ -41,32 +41,19 @@ namespace Transformalize.Main.Providers {
             set { _providers = value; }
         }
 
-        public AbstractConnection Create(ConnectionConfigurationElement element) {
+        public AbstractConnection Create(TflConnection element) {
             return GetConnection(element);
         }
 
-        public Dictionary<string, AbstractConnection> Create(ConnectionElementCollection elements) {
+        public Dictionary<string, AbstractConnection> Create(List<TflConnection> elements) {
             var connections = new Dictionary<string, AbstractConnection>();
-            foreach (ConnectionConfigurationElement element in elements) {
-                Validate(element);
+            foreach (var element in elements) {
                 connections.Add(element.Name, GetConnection(element));
             }
             return connections;
         }
 
-        private void Validate(ConnectionConfigurationElement element) {
-            var validator = ValidationFactory.CreateValidator<ConnectionConfigurationElement>();
-            var results = validator.Validate(element);
-            if (!results.IsValid) {
-                foreach (var result in results) {
-                    TflLogger.Error(_process.Name, string.Empty, result.Message);
-                }
-                throw new TransformalizeException(_process.Name, string.Empty, "Connection validation failed. See error log.");
-            }
-        }
-
-        private AbstractConnection GetConnection(ConnectionConfigurationElement element) {
-            Validate(element);
+        private AbstractConnection GetConnection(TflConnection element) {
             var parameters = new IParameter[] {
                 new ConstructorArgument("element", element)
             };

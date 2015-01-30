@@ -21,11 +21,9 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
-using Transformalize.Libs.DBDiff.Schema.SqlServer2005.Model;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.Rhino.Etl;
@@ -42,7 +40,7 @@ namespace Transformalize.Main {
             _process = process;
         }
 
-        public Entity Read(EntityConfigurationElement element, short entityIndex) {
+        public Entity Read(TflEntity element, short entityIndex) {
 
             Validate(element);
 
@@ -56,15 +54,14 @@ namespace Transformalize.Main {
                 Delete = element.Delete,
                 PrependProcessNameToOutputName = element.PrependProcessNameToOutputName,
                 Sample = element.Sample,
-                Top = element.Top,
                 DetectChanges = element.DetectChanges,
                 TrimAll = element.TrimAll,
                 NoLock = element.NoLock,
                 Unicode = element.Unicode,
                 VariableLength = element.VariableLength,
-                SqlOverride = element.SqlOverride.Sql,
-                SqlScriptOverride = element.SqlOverride.Script,
-                SqlKeysOverride = element.SqlKeysOverride.Sql,
+                SqlOverride = element.Query,
+                SqlScriptOverride = element.Script,
+                SqlKeysOverride = element.QueryKeys,
                 Alias = string.IsNullOrEmpty(element.Alias) ? element.Name : element.Alias,
                 InputOperation = element.InputOperation,
                 Index = entityIndex
@@ -85,7 +82,7 @@ namespace Transformalize.Main {
             //fields
             short autoIndex = 0;
 
-            foreach (FieldConfigurationElement f in element.Fields) {
+            foreach (TflField f in element.Fields) {
                 var fieldType = GetFieldType(f, entityIndex == 0);
 
                 var field = new FieldReader(_process, entity).Read(f, fieldType);
@@ -102,7 +99,7 @@ namespace Transformalize.Main {
                 autoIndex++;
             }
 
-            foreach (FieldConfigurationElement cf in element.CalculatedFields) {
+            foreach (var cf in element.CalculatedFields) {
                 var fieldReader = new FieldReader(_process, entity, usePrefix: false);
                 var fieldType = GetFieldType(cf, entityIndex == 0);
                 var field = fieldReader.Read(cf, fieldType);
@@ -122,8 +119,7 @@ namespace Transformalize.Main {
 
             //depend on fields
             LoadVersion(element, entity);
-
-            LoadFilters(element.Filter, entity);
+            LoadFilter(element.Filter, entity);
 
             entity.Input.AddRange(PrepareIo(element.Input, entity.Fields));
             entity.Output = PrepareIo(element.Output, entity.Fields);
@@ -131,18 +127,9 @@ namespace Transformalize.Main {
             return entity;
         }
 
-        private static void LoadFilters(IEnumerable filter, Entity entity) {
-            var validator = ValidationFactory.CreateValidator<FilterConfigurationElement>();
+        private static void LoadFilter(IEnumerable<TflFilter> filter, Entity entity) {
 
-            foreach (FilterConfigurationElement element in filter) {
-
-                var results = validator.Validate(element);
-                if (!results.IsValid) {
-                    foreach (var result in results) {
-                        TflLogger.Error(entity.ProcessName, entity.Alias, result.Message);
-                    }
-                    throw new TransformalizeException(entity.ProcessName, entity.Alias, "Filter configuration is invalid.  See error log.");
-                }
+            foreach (var element in filter) {
 
                 var item = new Filter();
 
@@ -175,7 +162,7 @@ namespace Transformalize.Main {
 
         }
 
-        private PipelineThreading DetermineThreading(EntityConfigurationElement element) {
+        private PipelineThreading DetermineThreading(TflEntity element) {
             var threading = PipelineThreading.Default;
             if (_process.PipelineThreading != PipelineThreading.Default) {
                 threading = _process.PipelineThreading;
@@ -190,7 +177,7 @@ namespace Transformalize.Main {
             return threading;
         }
 
-        private void GuardAgainstMissingFields(EntityConfigurationElement element, Entity entity, short entityIndex) {
+        private void GuardAgainstMissingFields(TflEntity element, Entity entity, short entityIndex) {
 
             if (_process.Mode != "metadata" && element.Fields.Count == 0 && _process.Connections.ContainsKey(element.Connection)) {
                 try {
@@ -203,18 +190,17 @@ namespace Transformalize.Main {
                             if (String.IsNullOrEmpty(field.Label) || field.Label.Equals(field.Alias)) {
                                 field.Label = MetaDataWriter.AddSpacesToSentence(field.Alias, true).Replace("_", " ");
                             }
-                            var f = new FieldConfigurationElement {
-                                Type = field.Type,
-                                Length = field.Length,
-                                PrimaryKey = field.FieldType.Equals(FieldType.PrimaryKey) || field.FieldType.Equals(FieldType.MasterKey),
-                                Output = true,
-                                Default = string.Empty,
-                                Name = field.Name,
-                                Input = true,
-                                Precision = field.Precision,
-                                Scale = field.Scale,
-                                Label = field.Label
-                            };
+                            var name = field.Name;
+                            var f = element.GetDefaultOf<TflField>(x => x.Name = name);
+                            f.Type = field.Type;
+                            f.Length = field.Length;
+                            f.PrimaryKey = field.FieldType.Equals(FieldType.PrimaryKey) || field.FieldType.Equals(FieldType.MasterKey);
+                            f.Output = true;
+                            f.Default = string.Empty;
+                            f.Input = true;
+                            f.Precision = field.Precision;
+                            f.Scale = field.Scale;
+                            f.Label = field.Label;
                             element.Fields.Add(f);
                         }
                         TflLogger.Info(entity.ProcessName, entity.Name, "Detected {0} fields.", fields.Count);
@@ -229,12 +215,12 @@ namespace Transformalize.Main {
             }
         }
 
-        private List<NamedConnection> PrepareIo(IoElementCollection collection, Fields fields) {
+        private List<NamedConnection> PrepareIo(List<TflIo> collection, Fields fields) {
             var namedConnections = new List<NamedConnection>();
             var entity = fields.Any() ? fields[0].Entity : "None";
 
-            var validator = ValidationFactory.CreateValidator<IoConfigurationElement>();
-            foreach (IoConfigurationElement io in collection) {
+            var validator = ValidationFactory.CreateValidator<TflIo>();
+            foreach (var io in collection) {
                 var results = validator.Validate(io);
 
                 if (results.IsValid) {
@@ -275,8 +261,8 @@ namespace Transformalize.Main {
             return namedConnections;
         }
 
-        private void Validate(EntityConfigurationElement element) {
-            var validator = ValidationFactory.CreateValidator<EntityConfigurationElement>();
+        private void Validate(TflEntity element) {
+            var validator = ValidationFactory.CreateValidator<TflEntity>();
             var results = validator.Validate(element);
             if (!results.IsValid) {
                 foreach (var result in results) {
@@ -286,26 +272,30 @@ namespace Transformalize.Main {
             }
         }
 
-        private void GuardAgainstMissingPrimaryKey(EntityConfigurationElement element) {
+        private void GuardAgainstMissingPrimaryKey(TflEntity element) {
 
-            if (element.Fields.Cast<FieldConfigurationElement>().Any(f => f.PrimaryKey))
+            if (element.Fields.Any(f => f.PrimaryKey))
                 return;
 
-            if (element.CalculatedFields.Cast<FieldConfigurationElement>().Any(cf => cf.PrimaryKey))
+            if (element.CalculatedFields.Any(cf => cf.PrimaryKey))
                 return;
 
-            if (!element.CalculatedFields.Cast<FieldConfigurationElement>().Any(cf => cf.Name.Equals("TflHashCode", StringComparison.OrdinalIgnoreCase))) {
+            if (!element.CalculatedFields.Any(cf => cf.Name.Equals("TflHashCode", StringComparison.OrdinalIgnoreCase))) {
                 TflLogger.Warn(_process.Name, element.Name, "Adding TflHashCode primary key for {0}.", element.Name);
-                var pk = new FieldConfigurationElement {
-                    Name = "TflHashCode",
-                    Type = "System.Int32",
-                    PrimaryKey = true,
-                    Transforms = new TransformElementCollection {
-                    new TransformConfigurationElement {Method = "concat", Parameter = "*"},
-                    new TransformConfigurationElement {Method = "gethashcode"}
-                    }
-                };
-                element.CalculatedFields.Insert(pk);
+                var pk = element.GetDefaultOf<TflField>(f => {
+                    f.Name = "TflHashCode";
+                    f.Type = "int";
+                    f.PrimaryKey = true;
+                    f.Transforms = new List<TflTransform> {
+                        element.GetDefaultOf<TflTransform>(t => {
+                            t.Method = "concat";
+                            t.Parameter = "*";
+                        }), 
+                        element.GetDefaultOf<TflTransform>(t => t.Method = "gethashcode")
+                    };
+                });
+
+                element.CalculatedFields.Insert(0, pk);
             }
 
             if (string.IsNullOrEmpty(element.Version)) {
@@ -313,7 +303,7 @@ namespace Transformalize.Main {
             }
         }
 
-        private static void LoadVersion(EntityConfigurationElement element, Entity entity) {
+        private static void LoadVersion(TflEntity element, Entity entity) {
             if (String.IsNullOrEmpty(element.Version))
                 return;
 
@@ -329,27 +319,27 @@ namespace Transformalize.Main {
             entity.Version.Output = true;
         }
 
-        private static void GuardAgainstInvalidGrouping(EntityConfigurationElement element, Entity entity) {
+        private static void GuardAgainstInvalidGrouping(TflEntity element, Entity entity) {
             if (entity.Group) {
-                if (!element.Fields.Cast<FieldConfigurationElement>().Any(f => f.Output && string.IsNullOrEmpty(f.Aggregate)))
+                if (!element.Fields.Cast<TflField>().Any(f => f.Output && string.IsNullOrEmpty(f.Aggregate)))
                     return;
 
-                if (!element.CalculatedFields.Cast<FieldConfigurationElement>().Any(f => f.Output && string.IsNullOrEmpty(f.Aggregate)))
+                if (!element.CalculatedFields.Cast<TflField>().Any(f => f.Output && string.IsNullOrEmpty(f.Aggregate)))
                     return;
 
                 throw new TransformalizeException(entity.ProcessName, entity.Alias, "Entity {0} is set to group, but not all your output fields have aggregate defined.", entity.Alias);
             }
 
-            if (!element.Fields.Cast<FieldConfigurationElement>().Any(f => f.Output && !string.IsNullOrEmpty(f.Aggregate)))
+            if (!element.Fields.Cast<TflField>().Any(f => f.Output && !string.IsNullOrEmpty(f.Aggregate)))
                 return;
 
-            if (!element.CalculatedFields.Cast<FieldConfigurationElement>().Any(f => f.Output && !string.IsNullOrEmpty(f.Aggregate)))
+            if (!element.CalculatedFields.Cast<TflField>().Any(f => f.Output && !string.IsNullOrEmpty(f.Aggregate)))
                 return;
 
             throw new TransformalizeException(entity.Prefix, entity.Alias, "Entity {0} is not set to group, but one of your output fields has an aggregate defined.", entity.Alias);
         }
 
-        private static FieldType GetFieldType(FieldConfigurationElement element, bool isMaster) {
+        private static FieldType GetFieldType(TflField element, bool isMaster) {
             FieldType fieldType;
             if (element.PrimaryKey) {
                 fieldType = isMaster ? FieldType.MasterKey : FieldType.PrimaryKey;

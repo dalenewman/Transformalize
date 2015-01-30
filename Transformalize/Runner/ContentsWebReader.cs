@@ -23,9 +23,7 @@ namespace Transformalize.Runner {
 
             var response = Web.Get(uri.OriginalString);
             if (response.Code == HttpStatusCode.OK) {
-                if (!string.IsNullOrEmpty(uri.Query)) {
-                    response.Content = ReplaceParameters(response.Content, HttpUtility.ParseQueryString(uri.Query));
-                }
+                response.Content = response.Content;
             } else {
                 throw new TransformalizeException(string.Empty, string.Empty, "{0} returned from {1}", response.Code, resource);
             }

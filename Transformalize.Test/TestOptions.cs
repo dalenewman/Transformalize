@@ -48,19 +48,5 @@ namespace Transformalize.Test
             Assert.AreEqual("init", options.Mode);
         }
 
-        [Test]
-        public void TestSerializeConfig()
-        {
-            var configIn = (TransformalizeConfiguration) ConfigurationManager.GetSection("transformalize");
-            var configOut = new TransformalizeConfiguration();
-            Assert.IsNotNull(configIn);
-            var xml = configIn.Serialize(null, "transformalize", ConfigurationSaveMode.Minimal);
-
-            xml = xml.Replace("\"output\"", "\"OUT\"");
-
-            configOut.Deserialize(xml);
-
-            Assert.AreEqual("OUT", configOut.Processes[0].Connections[1].Name);
-        }
     }
 }

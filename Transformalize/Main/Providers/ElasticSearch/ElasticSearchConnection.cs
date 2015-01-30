@@ -7,7 +7,7 @@ using Transformalize.Operations.Transform;
 namespace Transformalize.Main.Providers.ElasticSearch {
     public class ElasticSearchConnection : AbstractConnection {
 
-        public ElasticSearchConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
+        public ElasticSearchConnection(TflConnection element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
             Type = ProviderType.ElasticSearch;
             IsDatabase = true;

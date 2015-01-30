@@ -53,7 +53,7 @@ namespace Transformalize.Main.Providers.Console {
             throw new System.NotImplementedException();
         }
 
-        public ConsoleConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
+        public ConsoleConnection(TflConnection element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
             Type = ProviderType.Console;
         }

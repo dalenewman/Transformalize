@@ -33,7 +33,6 @@ namespace Transformalize.Test {
     [TestFixture]
     public class TestInput {
 
-
         [Test]
         public void TestSingleInput()
         {
@@ -42,7 +41,7 @@ namespace Transformalize.Test {
 
             var cfg = new ProcessBuilder("process")
 
-                .Connection("input1").Provider("file").File(file1).Delimiter(",").Start(2)
+                .Connection("input1").Provider("file").File(file1).Delimiter(',').Start(2)
                 .Connection("output").Provider("internal")
 
                 .Entity("entity")
@@ -77,8 +76,8 @@ namespace Transformalize.Test {
 
             var cfg = new ProcessBuilder("process")
                 
-                .Connection("input1").Provider("file").File(file1).Delimiter(",").Start(2)
-                .Connection("input2").Provider("file").File(file2).Delimiter(",").Start(2)
+                .Connection("input1").Provider("file").File(file1).Delimiter(',').Start(2)
+                .Connection("input2").Provider("file").File(file2).Delimiter(',').Start(2)
                 .Connection("output").Provider("internal")
                 .Entity("entity")
                     .Input("i1","input1")

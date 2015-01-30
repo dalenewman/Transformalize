@@ -24,7 +24,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using Transformalize.Configuration.Builders;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 using Transformalize.Test.Builders;
@@ -43,19 +42,25 @@ namespace Transformalize.Test {
                 .Row("id", 3).Field("name", "three")
                 .ToOperation();
 
-            var cfg = new ProcessBuilder("process")
+            var xml = @"<tfl><processes>
+<add name='process'>
+    <connections>
+        <add name='input' provider='internal' />
+        <add name='output' provider='internal' />
+    </connections>
+    <entities>
+        <add name='entity'>
+            <fields>
+                <add name='id' type='int' primary-key='true' />
+                <add name='name' />
+            </fields>
+        </add>
+    </entities>
+</add>
+</processes></tfl>".Replace('\'', '"');
 
-                .Connection("input").Provider("internal")
-                .Connection("output").Provider("internal")
-
-                .Entity("entity")
-                    .InputOperation(input)
-                    .Field("id").Int32().PrimaryKey()
-                    .Field("name")
-                .Process();
-
-            var process = ProcessFactory.Create(cfg)[0];
-
+            var process = ProcessFactory.Create(xml)[0];
+            process.Entities[0].InputOperation = input;
             var output = process.Execute();
 
             Assert.IsInstanceOf<IEnumerable<Row>>(output);
@@ -75,31 +80,31 @@ namespace Transformalize.Test {
                 .Row("id", 3).Field("name", "three")
                 .ToOperation();
 
-            var cfg = new ProcessBuilder("process")
-                
-                .Connection("input").Provider("internal")
-                .Connection("output").Provider("internal")
+            var xml = string.Format(@"<tfl><processes>
+<add name='process'>
+    <connections>
+        <add name='input' provider='internal' />
+        <add name='output' provider='internal' />
+        <add name='c1' provider='file' file='{0}' />
+        <add name='c2' provider='file' file='{1}' />
+    </connections>
+    <entities>
+        <add name='name'>
+            <output>
+                <add name='o1' connection='c1' run-field='name' run-value='two' />
+                <add name='o2' connection='c2' run-field='id' run-operator='GreaterThan' run-type='int' run-value='1' />
+            </output>
+            <fields>
+                <add name='id' type='int' primary-key='true' />
+                <add name='name' />
+            </fields>
+        </add>
+    </entities>
+</add>
+</processes></tfl>", file1,file2).Replace('\'', '"');
 
-                .Connection("c1").Provider("file").File(file1)
-                .Connection("c2").Provider("file").File(file2)
-
-                .Entity("entity")
-                    .InputOperation(input)
-                    .Output("o1", "c1")
-                        .RunField("name")
-                        .RunValue("two")
-                    .Output("o2", "c2")
-                        .RunField("id")
-                        .RunOperator("GreaterThan")
-                        .RunType("int")
-                        .RunValue(1)
-                    .Field("id").Int32().PrimaryKey()
-                    .Field("name")
-                
-                .Process();
-
-            var process = ProcessFactory.Create(cfg)[0];
-
+            var process = ProcessFactory.Create(xml)[0];
+            process.Entities[0].InputOperation = input;
             var rows = process.Execute();
 
             Assert.IsNotNull(rows);

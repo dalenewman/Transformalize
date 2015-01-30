@@ -39,11 +39,11 @@ using System.Linq;
 namespace Transformalize.Main {
 
     public class NinjectBindings : NinjectModule {
-        private readonly ProcessConfigurationElement _element;
+        private readonly TflProcess _element;
         private const string CORE_ID = "CoreId";
         private readonly Type _type = typeof(Dictionary<string, object>);
 
-        public NinjectBindings(ProcessConfigurationElement element) {
+        public NinjectBindings(TflProcess element) {
             _element = element;
         }
 
@@ -88,7 +88,7 @@ namespace Transformalize.Main {
             Bind<AbstractConnection>().To<WebConnection>().Named("web");
 
             //solrnet binding
-            var solrConnections = _element.Connections.Cast<ConnectionConfigurationElement>().Where(c => c.Provider.Equals("solr", StringComparison.OrdinalIgnoreCase)).ToArray();
+            var solrConnections = _element.Connections.Cast<TflConnection>().Where(c => c.Provider.Equals("solr", StringComparison.OrdinalIgnoreCase)).ToArray();
             if (solrConnections.Any()) {
                 var mapper = new MemoizingMappingManager(new AttributesMappingManager());
                 Bind<IReadOnlyMappingManager>().ToConstant(mapper);
@@ -125,8 +125,8 @@ namespace Transformalize.Main {
                 Bind<ISolrStatusResponseParser>().To<SolrStatusResponseParser>();
                 Bind<ISolrCoreAdmin>().To<SolrCoreAdmin>();
 
-                foreach (EntityConfigurationElement entity in _element.Entities) {
-                    foreach (ConnectionConfigurationElement cn in solrConnections) {
+                foreach (TflEntity entity in _element.Entities) {
+                    foreach (TflConnection cn in solrConnections) {
                         if (cn.Name.Equals(entity.Connection, StringComparison.OrdinalIgnoreCase)) {
                             var coreUrl = cn.NormalizeUrl(8983) + "/" + (entity.PrependProcessNameToOutputName ? _element.Name + entity.Alias : entity.Alias);
                             TflLogger.Info(_element.Name, entity.Name, "Registering SOLR core {0}", coreUrl);

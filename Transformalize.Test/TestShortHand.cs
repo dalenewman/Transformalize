@@ -620,9 +620,9 @@ namespace Transformalize.Test {
 
         [Test]
         public void TwoMethods() {
-            var field = new FieldConfigurationElement() {
+            var field = new TflField() {
                 Name = "test",
-                ShortHand = "left(10).right(2)"
+                T = "left(10).right(2)"
             };
             ShortHandFactory.ExpandShortHandTransforms(field);
 
@@ -635,9 +635,9 @@ namespace Transformalize.Test {
 
         [Test]
         public void TwoMethodsShorter() {
-            var field = new FieldConfigurationElement() {
+            var field = new TflField() {
                 Name = "test",
-                ShortHand = "l(10).ri(2)"
+                T = "l(10).ri(2)"
             };
             ShortHandFactory.ExpandShortHandTransforms(field);
 

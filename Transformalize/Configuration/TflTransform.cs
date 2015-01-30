@@ -172,5 +172,6 @@ namespace Transformalize.Configuration {
         [Cfg()]
         public List<TflField> Fields { get; set; }
 
+        public bool IsShortHand { get; set; }
     }
 }

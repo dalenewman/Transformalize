@@ -66,7 +66,6 @@ namespace Transformalize.Main {
         public Options Options = new Options();
         public Dictionary<string, string> Providers = new Dictionary<string, string>();
         public List<Relationship> Relationships = new List<Relationship>();
-        public string RelationshipsIndexMode = "";
         public Dictionary<string, Script> Scripts = new Dictionary<string, Script>();
         public Dictionary<string, SearchType> SearchTypes = new Dictionary<string, SearchType>();
         public Encoding TemplateContentType = Encoding.Raw;
@@ -387,13 +386,7 @@ namespace Transformalize.Main {
         public void PerformActions(Func<TemplateAction, bool> filter) {
             if (Actions.Any(filter)) {
                 foreach (var action in Actions.Where(filter)) {
-                    if (action.Conditional) {
-                        if (UpdatedAnything()) {
-                            action.Handle(FindFile(action));
-                        }
-                    } else {
-                        action.Handle(FindFile(action));
-                    }
+                    action.Handle(FindFile(action));
                 }
             }
         }

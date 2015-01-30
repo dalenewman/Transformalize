@@ -10,7 +10,7 @@ namespace Transformalize.Main.Providers {
         }
 
         public bool Delimited() {
-            return !string.IsNullOrEmpty(_connection.Delimiter);
+            return _connection.Delimiter != default(char);
         }
 
         public bool Excel() {

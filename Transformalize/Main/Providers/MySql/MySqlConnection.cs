@@ -32,7 +32,7 @@ using Transformalize.Processes;
 namespace Transformalize.Main.Providers.MySql {
     public class MySqlConnection : AbstractConnection {
 
-        public MySqlConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
+        public MySqlConnection(TflConnection element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
             Type = ProviderType.MySql;
             L = "`";

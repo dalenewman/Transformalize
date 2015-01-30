@@ -4,9 +4,9 @@ namespace Transformalize.Configuration.Builders {
     public class FieldBuilder {
 
         private readonly IFieldHolder _fieldHolder;
-        private readonly FieldConfigurationElement _field;
+        private readonly TflField _field;
 
-        public FieldBuilder(IFieldHolder fieldHolder, FieldConfigurationElement field) {
+        public FieldBuilder(IFieldHolder fieldHolder, TflField field) {
             _fieldHolder = fieldHolder;
             _field = field;
         }
@@ -49,7 +49,7 @@ namespace Transformalize.Configuration.Builders {
             return _fieldHolder.Entity(name);
         }
 
-        public ProcessConfigurationElement Process() {
+        public TflProcess Process() {
             return _fieldHolder.Process();
         }
 
@@ -63,7 +63,7 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public TransformBuilder Transform(string method = "") {
-            var transform = new TransformConfigurationElement() { Method = method };
+            var transform = _field.GetDefaultOf<TflTransform>(t => t.Method = method);
             _field.Transforms.Add(transform);
             return new TransformBuilder(this, transform);
         }
@@ -205,7 +205,7 @@ namespace Transformalize.Configuration.Builders {
             if (_field.SearchType.Equals("default")) {
                 _field.SearchType = searchType;
             } else {
-                _field.SearchTypes.Add(new FieldSearchTypeConfigurationElement() { Type = searchType });
+                _field.SearchTypes.Add(new TflNameReference() { Name = searchType });
             }
             return this;
         }
@@ -216,7 +216,7 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public FieldBuilder ShortHand(string shortHand) {
-            _field.ShortHand = shortHand;
+            _field.T = shortHand;
             return this;
         }
     }

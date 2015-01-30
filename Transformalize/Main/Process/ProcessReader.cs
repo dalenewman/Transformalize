@@ -24,11 +24,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using System.Linq;
-using System.Web;
-using System.Web.Configuration;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
-using Transformalize.Libs.Microsoft.System.Web.Razor.Text;
 using Transformalize.Libs.Ninject;
 using Transformalize.Libs.NVelocity.App;
 using Transformalize.Libs.RazorEngine;
@@ -39,15 +36,15 @@ using Transformalize.Main.Transform;
 
 namespace Transformalize.Main {
 
-    public class ProcessReader : IReader<Process> {
+    public class ProcessReader {
 
-        private readonly ProcessConfigurationElement _element;
+        private readonly TflProcess _element;
         private readonly Options _options;
         private readonly string _processName = string.Empty;
         private Process _process;
         private readonly string[] _transformToFields = { "fromxml", "fromregex", "fromjson", "fromsplit" };
 
-        public ProcessReader(ProcessConfigurationElement process, ref Options options) {
+        public ProcessReader(TflProcess process, ref Options options) {
             ShortHandFactory.ExpandShortHandTransforms(process);
             _element = Adapt(process, _transformToFields);
             _processName = process.Name;
@@ -63,7 +60,7 @@ namespace Transformalize.Main {
                 Options = _options,
                 TemplateContentType = _element.TemplateContentType.Equals("raw") ? Encoding.Raw : Encoding.Html,
                 Enabled = _element.Enabled,
-                FileInspectionRequest = _element.FileInspections.Count == 0 ? new FileInspectionRequest() : _element.FileInspections[0].GetInspectionRequest(),
+                FileInspectionRequest = _element.FileInspection.Count == 0 ? new FileInspectionRequest() : _element.FileInspection[0].GetInspectionRequest(),
                 Star = _element.Star,
                 View = _element.View,
                 Mode = _element.Mode,
@@ -82,13 +79,13 @@ namespace Transformalize.Main {
 
             //shared across the process
             var connectionFactory = new ConnectionFactory(_process);
-            foreach (ProviderConfigurationElement element in _element.Providers) {
-                connectionFactory.Providers[element.Name.ToLower()] = element.Type;
-            }
             _process.Connections = connectionFactory.Create(_element.Connections);
             if (!_process.Connections.ContainsKey("output")) {
                 TflLogger.Warn(_processName, string.Empty, "No output connection detected.  Defaulting to internal.");
-                _process.OutputConnection = connectionFactory.Create(new ConnectionConfigurationElement() { Name = "output", Provider = "internal" });
+                var output = _element.GetDefaultOf<TflConnection>();
+                output.Name = "output";
+                output.Provider = "internal";
+                _process.OutputConnection = connectionFactory.Create(output);
             } else {
                 _process.OutputConnection = _process.Connections["output"];
             }
@@ -112,23 +109,22 @@ namespace Transformalize.Main {
             new OperationsLoader(ref _process, _element.Entities).Load();
 
             _process.Relationships = new RelationshipsReader(_process, _element.Relationships).Read();
-            _process.RelationshipsIndexMode = _element.Relationships.IndexMode;
             new ProcessOperationsLoader(ref _process, _element.CalculatedFields).Load();
             new EntityRelationshipLoader(ref _process).Load();
 
             return _process;
         }
 
-        private void LoadLogConfiguration(ProcessConfigurationElement element, ref Process process) {
+        private void LoadLogConfiguration(TflProcess element, ref Process process) {
 
-            process.LogRows = element.Log.Rows;
+            process.LogRows = element.Log.Any() ? element.Log[0].Rows : (long)10000;
 
             if (element.Log.Count == 0)
                 return;
 
             var fileLogs = new List<Log>();
 
-            foreach (LogConfigurationElement logElement in element.Log) {
+            foreach (var logElement in element.Log) {
                 var log = MapLog(process, logElement);
                 if (log.Provider == ProviderType.File) {
                     fileLogs.Add(log);
@@ -140,7 +136,7 @@ namespace Transformalize.Main {
             process.Log.AddRange(fileLogs);
         }
 
-        private Log MapLog(Process process, LogConfigurationElement logElement) {
+        private Log MapLog(Process process, TflLog logElement) {
             var log = new Log {
                 Name = logElement.Name,
                 Subject = logElement.Subject,
@@ -165,10 +161,10 @@ namespace Transformalize.Main {
 
             try {
                 EventLevel eventLevel;
-                if (Enum.TryParse(logElement.LogLevel, out eventLevel)) {
+                if (Enum.TryParse(logElement.Level, out eventLevel)) {
                     log.Level = eventLevel;
                 } else {
-                    switch (logElement.LogLevel.ToLower().Left(4)) {
+                    switch (logElement.Level.ToLower().Left(4)) {
                         case "debu":
                             log.Level = EventLevel.Verbose;
                             break;
@@ -183,7 +179,7 @@ namespace Transformalize.Main {
                             break;
                         default:
                             log.Level = EventLevel.Informational;
-                            TflLogger.Warn(_processName, string.Empty, "Invalid log level: {0}.  Valid values are Informational, Error, Verbose, and Warning. Defaulting to Informational.", logElement.LogLevel);
+                            TflLogger.Warn(_processName, string.Empty, "Invalid log level: {0}.  Valid values are Informational, Error, Verbose, and Warning. Defaulting to Informational.", logElement.Level);
                             break;
                     }
 
@@ -195,7 +191,7 @@ namespace Transformalize.Main {
             return log;
         }
 
-        private static ProcessConfigurationElement Adapt(ProcessConfigurationElement process, IEnumerable<string> transformToFields) {
+        private static TflProcess Adapt(TflProcess process, IEnumerable<string> transformToFields) {
 
             foreach (var field in transformToFields) {
                 while (new TransformFieldsToParametersAdapter(process).Adapt(field) > 0) {

@@ -58,10 +58,6 @@ namespace Transformalize.Main {
                     continue;
                 }
 
-                if (!_process.UpdatedAnything() && template.Conditional) {
-                    continue;
-                }
-
                 var fullName = template.Contents.FileName;
 
                 try {

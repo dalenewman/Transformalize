@@ -86,7 +86,6 @@
       <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.XML" />
@@ -104,7 +103,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestAggregations.cs" />
     <Compile Include="TestConfiguration.cs" />
-    <Compile Include="TestConnectionValidation.cs" />
     <Compile Include="TestColumnNameValidator.cs" />
     <Compile Include="TestFieldInspector.cs" />
     <Compile Include="TestFields.cs" />
@@ -181,10 +179,10 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="NorthWindExpanded.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Scripts\test.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestFiles\Test.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="TestFiles\Headers\Single.txt">

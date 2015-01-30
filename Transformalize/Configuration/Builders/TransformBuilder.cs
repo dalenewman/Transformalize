@@ -6,14 +6,14 @@ namespace Transformalize.Configuration.Builders {
 
         private readonly FieldBuilder _fieldBuilder;
         private readonly BranchBuilder _branchBuilder;
-        private readonly TransformConfigurationElement _transform;
+        private readonly TflTransform _transform;
 
-        public TransformBuilder(FieldBuilder fieldBuilder, TransformConfigurationElement transform) {
+        public TransformBuilder(FieldBuilder fieldBuilder, TflTransform transform) {
             _fieldBuilder = fieldBuilder;
             _transform = transform;
         }
 
-        public TransformBuilder(BranchBuilder branchBuilder, TransformConfigurationElement transform) {
+        public TransformBuilder(BranchBuilder branchBuilder, TflTransform transform) {
             _branchBuilder = branchBuilder;
             _transform = transform;
         }
@@ -29,7 +29,7 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public TransformBuilder XPath(string xPath) {
-            _transform.XPath = xPath;
+            _transform.Xpath = xPath;
             return this;
         }
 
@@ -103,7 +103,7 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
-        public TransformBuilder PaddingChar(string paddingChar) {
+        public TransformBuilder PaddingChar(char paddingChar) {
             _transform.PaddingChar = paddingChar;
             return this;
         }
@@ -203,7 +203,7 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
-        public TransformBuilder LowerBound(string lowerBound) {
+        public TransformBuilder LowerBound(bool lowerBound) {
             _transform.LowerBound = lowerBound;
             return this;
         }
@@ -218,7 +218,7 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
-        public TransformBuilder UpperBound(string upperBound) {
+        public TransformBuilder UpperBound(bool upperBound) {
             _transform.UpperBound = upperBound;
             return this;
         }
@@ -283,7 +283,7 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
-        public ProcessConfigurationElement Process() {
+        public TflProcess Process() {
             return _fieldBuilder == null ? _branchBuilder.Process() : _fieldBuilder.Process();
         }
 
@@ -306,7 +306,11 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public TransformBuilder Parameter(object value, string type) {
-            _transform.Parameters.Add(new ParameterConfigurationElement { Value = value.ToString(), Type = type });
+            var parameter = _transform.GetDefaultOf<TflParameter>(p => {
+                p.Type = type;
+                p.Value = value.ToString();
+            });
+            _transform.Parameters.Add(parameter);
             return this;
         }
 
@@ -322,7 +326,11 @@ namespace Transformalize.Configuration.Builders {
             if (field.Equals("*")) {
                 _transform.Parameter = field;
             } else {
-                _transform.Parameters.Add(new ParameterConfigurationElement { Field = field, Entity = entity });
+                var parameter = _transform.GetDefaultOf<TflParameter>(p => {
+                    p.Entity = entity;
+                    p.Field = field;
+                });
+                _transform.Parameters.Add(parameter);
             }
             return this;
         }
@@ -331,7 +339,7 @@ namespace Transformalize.Configuration.Builders {
             if (_fieldBuilder == null) {
                 return _branchBuilder.Branch(name);
             }
-            var branch = new BranchConfigurationElement() { Name = name };
+            var branch = _transform.GetDefaultOf<TflBranch>(b => b.Name = name);
             _transform.Branches.Add(branch);
             return new BranchBuilder(this, branch);
         }
@@ -341,7 +349,7 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public TransformBuilder ExternalScript(string name) {
-            var script = new TransformScriptConfigurationElement() { Name = name };
+            var script = new TflNameReference() { Name = name };
             _transform.Scripts.Add(script);
             return this;
         }

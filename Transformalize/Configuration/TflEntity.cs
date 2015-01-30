@@ -62,19 +62,19 @@ namespace Transformalize.Configuration {
         public string ScriptKeys { get; set; }
         [Cfg(value = false)]
         public bool TrimAll { get; set; }
-        [Cfg(value = "")]
-        public string Unicode { get; set; }
-        [Cfg(value = "")]
-        public string VariableLength { get; set; }
+        [Cfg(value = true)]
+        public bool Unicode { get; set; }
+        [Cfg(value = true)]
+        public bool VariableLength { get; set; }
         [Cfg(value = "")]
         public string Version { get; set; }
 
         [Cfg(required = false)]
-        public List<TflFilter> Filters { get; set; }
+        public List<TflFilter> Filter { get; set; }
         [Cfg(required = false)]
         public List<TflField> Fields { get; set; }
         [Cfg(required = false)]
-        public List<TflCalculatedField> CalculatedFields { get; set; }
+        public List<TflField> CalculatedFields { get; set; }
         [Cfg(required = false)]
         public List<TflIo> Input { get; set; }
         [Cfg(required = false)]
@@ -82,6 +82,14 @@ namespace Transformalize.Configuration {
 
         public IOperation InputOperation { get; set; }
 
+        protected override void Modify() {
+            if (Alias == string.Empty) {
+                Alias = Name;
+            }
+            foreach (var calculatedField in CalculatedFields) {
+                calculatedField.Input = false;
+            }
+        }
 
     }
 }

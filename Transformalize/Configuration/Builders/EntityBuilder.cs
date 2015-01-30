@@ -1,3 +1,4 @@
+using System;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
@@ -6,14 +7,14 @@ namespace Transformalize.Configuration.Builders {
     public class EntityBuilder : IFieldHolder {
 
         private readonly ProcessBuilder _processBuilder;
-        private readonly EntityConfigurationElement _entity;
+        private readonly TflEntity _entity;
 
-        public EntityBuilder(ProcessBuilder processBuilder, EntityConfigurationElement entity) {
+        public EntityBuilder(ProcessBuilder processBuilder, TflEntity entity) {
             _processBuilder = processBuilder;
             _entity = entity;
         }
 
-        public ProcessConfigurationElement Process() {
+        public TflProcess Process() {
             return _processBuilder.Process();
         }
 
@@ -48,7 +49,7 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public EntityBuilder Sample(decimal sample) {
-            _entity.Sample = sample;
+            _entity.Sample = Convert.ToInt32(sample);
             return this;
         }
 
@@ -57,7 +58,7 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public FieldBuilder Field(string name) {
-            var field = new FieldConfigurationElement() { Name = name };
+            var field = _entity.GetDefaultOf<TflField>(f => f.Name = name);
             _entity.Fields.Add(field);
             return new FieldBuilder(this, field);
         }
@@ -77,7 +78,7 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public FieldBuilder CalculatedField(string name) {
-            var calculatedField = new FieldConfigurationElement() { Name = name };
+            var calculatedField = _entity.GetDefaultOf<TflField>(f => f.Name = name);
             _entity.CalculatedFields.Add(calculatedField);
             return new FieldBuilder(this, calculatedField);
         }
@@ -93,17 +94,17 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public EntityBuilder SqlKeysOverride(string sql) {
-            _entity.SqlKeysOverride.Sql = sql;
+            _entity.QueryKeys = sql;
             return this;
         }
 
         public EntityBuilder SqlOverride(string sql) {
-            _entity.SqlOverride.Sql = sql;
+            _entity.Query = sql;
             return this;
         }
 
         public EntityBuilder SqlOverride(object script) {
-            _entity.SqlOverride.Script = script.ToString();
+            _entity.Script = script.ToString();
             return this;
         }
 
@@ -123,23 +124,22 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public IoBuilder Output(string name, string connectionName) {
-            var output = new IoConfigurationElement() {
-                Name = name,
-                Connection = connectionName
-            };
+            var output = _entity.GetDefaultOf<TflIo>(io => {
+                io.Name = name;
+                io.Connection = connectionName;
+            });
             _entity.Output.Add(output);
             return new IoBuilder(this, output);
         }
 
         public IoBuilder Input(string name, string connectionName) {
-            var input = new IoConfigurationElement() { Name = name, Connection = connectionName };
+            var input = _entity.GetDefaultOf<TflIo>(io => {
+                io.Name = name;
+                io.Connection = connectionName;
+            });
             _entity.Input.Add(input);
             return new IoBuilder(this, input);
         }
 
-        public EntityBuilder Top(int top) {
-            _entity.Top = top;
-            return this;
-        }
     }
 }

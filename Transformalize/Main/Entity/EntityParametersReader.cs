@@ -31,7 +31,7 @@ namespace Transformalize.Main {
             _entity = entity;
         }
 
-        public IParameters Read(TransformConfigurationElement transform) {
+        public IParameters Read(TflTransform transform) {
             var fields = new Fields(_entity.Fields, _entity.CalculatedFields).ToArray();
             foreach (var field in fields) {
                 _parameters.Add(field.Alias, field.Alias, null, field.Type);

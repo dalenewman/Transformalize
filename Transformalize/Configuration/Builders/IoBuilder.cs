@@ -1,9 +1,9 @@
 namespace Transformalize.Configuration.Builders {
     public class IoBuilder {
         private readonly EntityBuilder _entityBuilder;
-        private readonly IoConfigurationElement _output;
+        private readonly TflIo _output;
 
-        public IoBuilder(EntityBuilder entityBuilder, IoConfigurationElement output) {
+        public IoBuilder(EntityBuilder entityBuilder, TflIo output) {
             _entityBuilder = entityBuilder;
             _output = output;
         }

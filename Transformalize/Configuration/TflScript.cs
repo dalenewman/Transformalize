@@ -8,5 +8,7 @@ namespace Transformalize.Configuration {
         [Cfg(required = true)]
         public string File { get; set; }
 
+        public string Path { get; set; }
+
     }
 }

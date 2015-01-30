@@ -7,9 +7,9 @@ namespace Transformalize.Configuration.Builders {
     public class ConnectionBuilder {
 
         private readonly ProcessBuilder _processBuilder;
-        private ConnectionConfigurationElement _connection;
+        private TflConnection _connection;
 
-        public ConnectionBuilder(ProcessBuilder processBuilder, ConnectionConfigurationElement connection) {
+        public ConnectionBuilder(ProcessBuilder processBuilder, TflConnection connection) {
             _processBuilder = processBuilder;
             _connection = connection;
         }
@@ -64,7 +64,7 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
-        public ProcessConfigurationElement Process() {
+        public TflProcess Process() {
             return _processBuilder.Process();
         }
 
@@ -127,7 +127,7 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
-        public ConnectionBuilder Delimiter(string delimiter) {
+        public ConnectionBuilder Delimiter(char delimiter) {
             _connection.Delimiter = delimiter;
             return this;
         }
@@ -154,7 +154,7 @@ namespace Transformalize.Configuration.Builders {
             return _processBuilder.Action(action);
         }
 
-        public ConnectionBuilder Connection(ConnectionConfigurationElement element) {
+        public ConnectionBuilder Connection(TflConnection element) {
             return _processBuilder.Connection(element);
         }
     }

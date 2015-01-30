@@ -3,9 +3,9 @@ namespace Transformalize.Configuration.Builders {
     public class TemplateBuilder : IActionHolder {
 
         private readonly ProcessBuilder _processBuilder;
-        private readonly TemplateConfigurationElement _template;
+        private readonly TflTemplate _template;
 
-        public TemplateBuilder(ProcessBuilder processBuilder, TemplateConfigurationElement template) {
+        public TemplateBuilder(ProcessBuilder processBuilder, TflTemplate template) {
             _processBuilder = processBuilder;
             _template = template;
         }
@@ -39,7 +39,7 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public ActionBuilder Action(string action) {
-            var a = new ActionConfigurationElement() { Action = action };
+            var a = _template.GetDefaultOf<TflAction>(x => x.Action = action);
             _template.Actions.Add(a);
             return new ActionBuilder(this, a);
         }
@@ -60,19 +60,25 @@ namespace Transformalize.Configuration.Builders {
             return _processBuilder.ScriptPath(path);
         }
 
-        public ProcessConfigurationElement Process() {
+        public TflProcess Process() {
             return _processBuilder.Process();
         }
 
         public TemplateBuilder Parameter(string name, object value) {
-            var parameter = new ParameterConfigurationElement() { Name = name, Value = value.ToString() };
+            var parameter = _template.GetDefaultOf<TflParameter>(p => {
+                p.Name = name;
+                p.Value = value.ToString();
+            });
             _template.Parameters.Add(parameter);
             return this;
         }
 
         public TemplateBuilder Parameter(string name, object value, string type) {
-            var parameter = new ParameterConfigurationElement() { Name = name, Value = value.ToString(), Type = type };
-            _template.Parameters.Add(parameter);
+            var parameter = _template.GetDefaultOf<TflParameter>(p => {
+                p.Name = name;
+                p.Value = value.ToString();
+                p.Type = type;
+            }); _template.Parameters.Add(parameter);
             return this;
         }
 

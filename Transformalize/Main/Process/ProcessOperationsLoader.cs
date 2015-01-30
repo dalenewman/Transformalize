@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Transformalize.Configuration;
 
 namespace Transformalize.Main {
@@ -6,9 +7,9 @@ namespace Transformalize.Main {
     public class ProcessOperationsLoader {
 
         private readonly Process _process;
-        private readonly FieldElementCollection _elements;
+        private readonly List<TflField> _elements;
 
-        public ProcessOperationsLoader(ref Process process, FieldElementCollection elements) {
+        public ProcessOperationsLoader(ref Process process, List<TflField> elements) {
             _process = process;
             _elements = elements;
         }
@@ -17,7 +18,7 @@ namespace Transformalize.Main {
 
             var autoIndex = Convert.ToInt16(_process.MasterEntity == null ? 0 : new Fields(_process.MasterEntity.Fields, _process.MasterEntity.CalculatedFields).Count + 1);
 
-            foreach (FieldConfigurationElement f in _elements) {
+            foreach (TflField f in _elements) {
                 var field = new FieldReader(_process, _process.MasterEntity, false).Read(f);
 
                 if (field.Index.Equals(short.MaxValue)) {
@@ -29,7 +30,7 @@ namespace Transformalize.Main {
                 field.Index = field.Index == 0 ? autoIndex : field.Index;
                 _process.CalculatedFields.Add(field);
 
-                foreach (TransformConfigurationElement t in f.Transforms) {
+                foreach (TflTransform t in f.Transforms) {
 
                     var factory = new TransformOperationFactory(_process, string.Empty);
                     var parameters = t.Parameter == "*" ?

@@ -209,7 +209,7 @@ namespace Transformalize.Main {
             return new Fields(Storage.Where(f => f.FieldType.HasFlag(FieldType.NonKey)));
         }
 
-        public Fields FindByParamater(ParameterConfigurationElement element) {
+        public Fields FindByParamater(TflParameter element) {
             if (HaveField(element.Entity, element.Field)) {
                 return Find(element.Entity, element.Field);
             }

@@ -12,7 +12,7 @@ namespace Transformalize.Configuration {
         /// 
         ///     <add name="Name" default="None" default-blank="true" />
         /// </summary>
-        [Cfg(value=false)]
+        [Cfg(value = false)]
         public bool DefaultBlank { get; set; }
 
         /// <summary>
@@ -112,19 +112,19 @@ namespace Transformalize.Configuration {
         /// 
         ///     <add name="Name" index="0" />
         /// </summary>
-        [Cfg(value=short.MaxValue)]
-        public int Index { get; set; }
+        [Cfg(value = short.MaxValue)]
+        public short Index { get; set; }
 
         /// <summary>
         /// Optional. Default is `18`
         /// </summary>
-        [Cfg(value=18)]
+        [Cfg(value = 18)]
         public int Precision { get; set; }
 
         /// <summary>
         /// Optional. Default is `9`
         /// </summary>
-        [Cfg(value=9)]
+        [Cfg(value = 9)]
         public int Scale { get; set; }
 
         /// <summary>
@@ -200,7 +200,7 @@ namespace Transformalize.Configuration {
         /// 
         ///     <add name="Name" />
         /// </summary>
-        [Cfg(required = true)] 
+        [Cfg(required = true)]
         public string Name { get; set; }
 
         /// <summary>
@@ -209,7 +209,7 @@ namespace Transformalize.Configuration {
         /// Used when fields are defined inside a `fromXml` transform.  In this type of transform, 
         /// the field's name corresponds to an *element*'s name or an *attribute*'s name.
         /// </summary>
-        [Cfg(value="element")]
+        [Cfg(value = "element")]
         public string NodeType { get; set; }
 
         /// <summary>
@@ -228,7 +228,7 @@ namespace Transformalize.Configuration {
         /// * asc
         /// * desc
         /// </summary>
-        [Cfg(value="", domain="asc,desc")]
+        [Cfg(value = "", domain = "asc,desc")]
         public string Sort { get; set; }
 
         /// <summary>
@@ -238,7 +238,7 @@ namespace Transformalize.Configuration {
         /// 
         ///     <add name="Name" t="trim()" />
         /// </summary>
-        [Cfg(value="")]
+        [Cfg(value = "")]
         public string T { get; set; }
 
         /// <summary>
@@ -271,7 +271,7 @@ namespace Transformalize.Configuration {
         /// * uint64
         /// * xml
         /// </summary>
-        [Cfg(value = "string", domain = "bool,boolean,byte,byte[],char,date,datetime,decimal,double,float,guid,int,int16,int32,int64,long,object,real,rowversion,short,single,uint64,xml")]
+        [Cfg(value = "string", domain = "bool,boolean,byte,byte[],char,date,datetime,decimal,double,float,guid,int,int16,int32,int64,long,object,real,rowversion,short,single,string,uint64,xml")]
         public string Type { get; set; }
 
         /// <summary>
@@ -281,7 +281,7 @@ namespace Transformalize.Configuration {
         /// If set to true, a string is stored in the NVARCHAR data type (unicode).
         /// If set to false, a string is stored in the VARCHAR data type (not unicode).
         /// </summary>
-        [Cfg(value=Common.DefaultValue)]
+        [Cfg(value = Common.DefaultValue)]
         public string Unicode { get; set; }
 
         /// <summary>
@@ -291,13 +291,18 @@ namespace Transformalize.Configuration {
         /// If set to true, a string is stored in the NVARCHAR data type (variable length).
         /// If set to false, a string is stored in the NCHAR data type (fixed length).
         /// </summary>
-        [Cfg(value=Common.DefaultValue)]
+        [Cfg(value = Common.DefaultValue)]
         public string VariableLength { get; set; }
 
         [Cfg(required = false)]
         public List<TflNameReference> SearchTypes { get; set; }
         [Cfg(required = false)]
-        public List<TflTransform> Transforms { get; set; } 
+        public List<TflTransform> Transforms { get; set; }
 
+        protected override void Modify() {
+            if (Alias == string.Empty) {
+                Alias = Name;
+            }
+        }
     }
 }

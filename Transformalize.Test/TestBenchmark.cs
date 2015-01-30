@@ -34,43 +34,33 @@ namespace Transformalize.Test {
     public class TestBenchmark : EtlProcessHelper {
 
         [Test]
-        public void RunCfgBenchmark()
-        {
+        public void RunCfgBenchmark() {
 
             var xml = File.ReadAllText(@"NorthWind.xml");
 
             var xDocWatch = new Stopwatch();
-            var cfgNetWatch = new Stopwatch();
             var procWatch = new Stopwatch();
             var cfgWatch = new Stopwatch();
 
             xDocWatch.Start();
-            var doc1 = XDocument.Parse(xml);
-            var firstProcess1 = doc1.Root.Element("processes").Element("add");
+            var xDocProcess = XDocument.Parse(xml).Root.Element("processes").Element("add");
             xDocWatch.Stop();
 
-            cfgNetWatch.Start();
-            var cfgNet = new TflRoot(xml, null);
-            var firstProcess2 = cfgNet.Processes[0];
-            cfgNetWatch.Stop();
-
             cfgWatch.Start();
-            var cfg = new ConfigurationFactory(xml).CreateSingle();
+            var cfgProcess = new ConfigurationFactory(xml).CreateSingle();
             cfgWatch.Stop();
 
             procWatch.Start();
-            var proc = ProcessFactory.CreateSingle(xml);
+            var bigBloatedProcess = ProcessFactory.CreateSingle(xml);
             procWatch.Stop();
 
-            Console.WriteLine("Process: " + procWatch.ElapsedMilliseconds); // ~ 1928
-            Console.WriteLine(".NET Cfg: " + cfgWatch.ElapsedMilliseconds); // ~ 341
-            Console.WriteLine("Cfg-NET: " + cfgNetWatch.ElapsedMilliseconds); // ~ 200 ms
-            Console.WriteLine("XDocument: " + xDocWatch.ElapsedMilliseconds); // ~ 45ms
+            Console.WriteLine("Process: " + procWatch.ElapsedMilliseconds); // ~ 1928 to 1658
+            Console.WriteLine("Config: " + cfgWatch.ElapsedMilliseconds); // ~ 341 to 193
+            Console.WriteLine("XDocument: " + xDocWatch.ElapsedMilliseconds); // ~ 45ms to 40
 
-            Assert.AreEqual("NorthWind", firstProcess2.Name);
-            Assert.AreEqual("NorthWind", firstProcess1.Attribute("name").Value);
-            Assert.AreEqual("NorthWind", cfg.Name);
-            Assert.AreEqual("NorthWind", proc.Name);
+            Assert.AreEqual("NorthWind", xDocProcess.Attribute("name").Value);
+            Assert.AreEqual("NorthWind", cfgProcess.Name);
+            Assert.AreEqual("NorthWind", bigBloatedProcess.Name);
 
         }
 

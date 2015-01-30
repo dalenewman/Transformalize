@@ -7,7 +7,7 @@ namespace Transformalize.Configuration {
 
         [Cfg(value = "input")]
         public string Connection { get; set; }
-        [Cfg(value = "", required = true, unique = true)]
+        [Cfg(required = true, unique = true)]
         public string Name { get; set; }
         [Cfg(value = "")]
         public string Query { get; set; }

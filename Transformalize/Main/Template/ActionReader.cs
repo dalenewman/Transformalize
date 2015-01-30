@@ -15,17 +15,17 @@ namespace Transformalize.Main {
             _process = process;
         }
 
-        public IEnumerable<TemplateAction> Read(ActionElementCollection elements) {
+        public IEnumerable<TemplateAction> Read(List<TflAction> elements) {
 
             var actions = new List<TemplateAction>();
-            foreach (ActionConfigurationElement action in elements) {
+            foreach (var action in elements) {
                 var modes = action.GetModes();
                 if (modes.Length > 0 && !modes.Contains("*") && !modes.Any(m => m.Equals(_process.Mode, IC))) {
                     TflLogger.Debug(_process.Name, string.Empty, "Bypassing {0} action in {1} mode.", action.Action, _process.Mode);
                     continue;
                 }
 
-                var templateAction = new TemplateAction(_process, string.Empty, action, modes);
+                var templateAction = new TemplateAction(_process, string.Empty, action);
 
                 if (!String.IsNullOrEmpty(action.Connection)) {
                     if (_process.Connections.ContainsKey(action.Connection)) {

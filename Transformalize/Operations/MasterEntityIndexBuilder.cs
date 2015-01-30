@@ -18,7 +18,7 @@ namespace Transformalize.Operations {
         }
 
         public void Create() {
-            if (string.IsNullOrEmpty(_process.Options.Mode) || _process.Options.Mode == Common.DefaultValue || _process.Options.Mode != _process.RelationshipsIndexMode)
+            if (string.IsNullOrEmpty(_process.Options.Mode) || _process.Options.Mode == Common.DefaultValue)
                 return;
             var stopWatch = new Stopwatch();
             stopWatch.Start();

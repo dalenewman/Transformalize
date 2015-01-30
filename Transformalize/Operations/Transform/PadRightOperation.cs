@@ -7,10 +7,10 @@ namespace Transformalize.Operations.Transform {
         private readonly int _totalWidth;
         private readonly char _paddingChar;
 
-        public PadRightOperation(string inKey, string outKey, int totalWidth, string paddingChar)
+        public PadRightOperation(string inKey, string outKey, int totalWidth, char paddingChar)
             : base(inKey, outKey) {
             _totalWidth = totalWidth;
-            _paddingChar = paddingChar[0];
+            _paddingChar = paddingChar;
             Name = string.Format("PadRightOperation ({0})", outKey);
         }
 

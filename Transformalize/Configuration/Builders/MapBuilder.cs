@@ -3,14 +3,14 @@ using Transformalize.Main;
 namespace Transformalize.Configuration.Builders {
     public class MapBuilder {
         private readonly ProcessBuilder _processBuilder;
-        private readonly MapConfigurationElement _map;
+        private readonly TflMap _map;
 
-        public MapBuilder(ProcessBuilder processBuilder, MapConfigurationElement map) {
+        public MapBuilder(ProcessBuilder processBuilder, TflMap map) {
             _processBuilder = processBuilder;
             _map = map;
         }
 
-        public ProcessConfigurationElement Process() {
+        public TflProcess Process() {
             return _processBuilder.Process();
         }
 
@@ -20,7 +20,7 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public ItemBuilder Item() {
-            var item = new ItemConfigurationElement();
+            var item = _map.GetDefaultOf<TflMapItem>();
             _map.Items.Add(item);
             return new ItemBuilder(_processBuilder, this, item);
         }
@@ -30,7 +30,7 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public MapBuilder Sql(string sql) {
-            _map.Items.Sql = sql;
+            _map.Query = sql;
             return this;
         }
 

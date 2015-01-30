@@ -20,10 +20,12 @@
 
 #endregion
 
+using System.Collections.Generic;
+
 namespace Transformalize.Main
 {
     public interface IReader<out T>
     {
-        T Read();
+        T Read(Dictionary<string, string> parameters);
     }
 }

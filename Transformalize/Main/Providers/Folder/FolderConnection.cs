@@ -59,12 +59,12 @@ namespace Transformalize.Main.Providers.Folder {
             foreach (var file in new DirectoryInfo(Folder).GetFiles(SearchPattern, SearchOption)) {
                 File = file.FullName;
                 if (Is.Excel()) {
-                    union.Add(new FileExcelExtract(this, entity, entity.Top));
+                    union.Add(new FileExcelExtract(this, entity));
                 } else {
                     if (Is.Delimited()) {
-                        union.Add(new FileDelimitedExtract(this, entity, entity.Top));
+                        union.Add(new FileDelimitedExtract(this, entity));
                     } else {
-                        union.Add(new FileFixedExtract(this, entity, entity.Top));
+                        union.Add(new FileFixedExtract(this, entity));
                     }
                 }
                 union.Add();
@@ -72,7 +72,7 @@ namespace Transformalize.Main.Providers.Folder {
             return union;
         }
 
-        public FolderConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
+        public FolderConnection(TflConnection element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
             Type = ProviderType.Folder;
         }

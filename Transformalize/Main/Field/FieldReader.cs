@@ -40,7 +40,7 @@ namespace Transformalize.Main {
             _entity = entity;
         }
 
-        public Field Read(FieldConfigurationElement element, FieldType fieldType = FieldType.NonKey) {
+        public Field Read(TflField element, FieldType fieldType = FieldType.NonKey) {
             var alias = Common.GetAlias(element, _usePrefix, _entity.Prefix);
 
             var field = new Field(element.Type, element.Length, fieldType, element.Output, element.Default) {
@@ -86,12 +86,12 @@ namespace Transformalize.Main {
             return field;
         }
 
-        private void FieldSearchTypesLoader(Field field, FieldConfigurationElement element) {
-            var searchTypes = element.SearchTypes.Cast<FieldSearchTypeConfigurationElement>().ToArray();
+        private void FieldSearchTypesLoader(Field field, TflField element) {
+            var searchTypes = element.SearchTypes;
 
-            if (searchTypes.Length > 0) {
-                foreach (var st in searchTypes.Where(st => _process.SearchTypes.ContainsKey(st.Type))) {
-                    field.SearchTypes.Add(InheritType(_process.SearchTypes[st.Type], field));
+            if (searchTypes.Count > 0) {
+                foreach (var st in searchTypes.Where(st => _process.SearchTypes.ContainsKey(st.Name))) {
+                    field.SearchTypes.Add(InheritType(_process.SearchTypes[st.Name], field));
                 }
                 return;
             }

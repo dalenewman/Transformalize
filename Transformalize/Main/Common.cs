@@ -176,7 +176,7 @@ namespace Transformalize.Main {
             };
         }
 
-        public static string GetAlias(FieldConfigurationElement element, bool usePrefix, string prefix) {
+        public static string GetAlias(TflField element, bool usePrefix, string prefix) {
             return usePrefix && element.Alias.Equals(element.Name) && !String.IsNullOrEmpty(prefix) ? prefix + element.Name : element.Alias;
         }
 
@@ -319,6 +319,20 @@ namespace Transformalize.Main {
             var placeHolder = arg.GetHashCode().ToString(CultureInfo.InvariantCulture);
             var split = arg.Replace("\\" + splitter, placeHolder).Split(new string[] { splitter }, StringSplitOptions.None);
             return split.Select(s => s.Replace(placeHolder, splitter.ToString(CultureInfo.InvariantCulture))).Skip(skip).ToArray();
+        }
+
+        public static Dictionary<string, string> ParseQueryString(string query) {
+            var queryParameters = new Dictionary<string, string>();
+            var querySegments = query.Split('&');
+            for (var i = 0; i < querySegments.Length; i++) {
+                var segment = querySegments[i];
+                var parts = segment.Split('=');
+                if (parts.Length <= 0) continue;
+                var key = parts[0].Trim(new[] { '?', ' ' });
+                var val = parts[1].Trim();
+                queryParameters[key] = val;
+            }
+            return queryParameters;
         }
     }
 }

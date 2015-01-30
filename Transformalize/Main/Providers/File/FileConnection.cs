@@ -62,15 +62,15 @@ namespace Transformalize.Main.Providers.File {
             }
 
             if (Is.Excel()) {
-                return new FileExcelExtract(this, entity, entity.Top);
+                return new FileExcelExtract(this, entity);
             }
             if (Is.Delimited()) {
-                return new FileDelimitedExtract(this, entity, entity.Top);
+                return new FileDelimitedExtract(this, entity);
             }
-            return new FileFixedExtract(this, entity, entity.Top);
+            return new FileFixedExtract(this, entity);
         }
 
-        public FileConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
+        public FileConnection(TflConnection element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
             Type = ProviderType.File;
         }

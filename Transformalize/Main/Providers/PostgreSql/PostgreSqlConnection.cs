@@ -12,7 +12,7 @@ namespace Transformalize.Main.Providers.PostgreSql {
 
         /* Pooling=true;Min Pool Size=0;Max Pool Size=100;Connection Lifetime=0; */
 
-        public PostgreSqlConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
+        public PostgreSqlConnection(TflConnection element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
             Type = ProviderType.PostgreSql;
             L = "\"";

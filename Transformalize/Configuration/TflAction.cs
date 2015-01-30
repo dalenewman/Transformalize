@@ -46,6 +46,7 @@ namespace Transformalize.Configuration {
         [Cfg(value = "")]
         public string Url { get; set; }
 
+        [Cfg()]
         public List<TflNameReference> Modes { get; set; }
 
         public string[] GetModes() {

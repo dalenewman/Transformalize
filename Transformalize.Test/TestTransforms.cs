@@ -1066,7 +1066,7 @@ namespace Transformalize.Test {
         public void PadLeft() {
             var input = new RowsBuilder().Row("in", "23").Field("out", "").ToOperation();
 
-            var padLeftTransform = new PadLeftOperation("in", "out", 5, "X");
+            var padLeftTransform = new PadLeftOperation("in", "out", 5, 'X');
 
             var output = TestOperation(input, padLeftTransform);
 
@@ -1078,7 +1078,7 @@ namespace Transformalize.Test {
         public void PadRight() {
             var input = new RowsBuilder().Row("in", "23").Field("out", "").ToOperation();
 
-            var padRightTransform = new PadRightOperation("in", "out", 5, "X");
+            var padRightTransform = new PadRightOperation("in", "out", 5, 'X');
 
             var output = TestOperation(input, padRightTransform);
 

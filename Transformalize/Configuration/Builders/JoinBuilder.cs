@@ -2,9 +2,9 @@ namespace Transformalize.Configuration.Builders
 {
     public class JoinBuilder {
         private readonly RelationshipBuilder _relationshipBuilder;
-        private readonly JoinConfigurationElement _join;
+        private readonly TflJoin _join;
 
-        public JoinBuilder(RelationshipBuilder relationshipBuilder, JoinConfigurationElement joinElement) {
+        public JoinBuilder(RelationshipBuilder relationshipBuilder, TflJoin joinElement) {
             _relationshipBuilder = relationshipBuilder;
             _join = joinElement;
         }
@@ -23,7 +23,7 @@ namespace Transformalize.Configuration.Builders
             return _relationshipBuilder.Join();
         }
 
-        public ProcessConfigurationElement Process() {
+        public TflProcess Process() {
             return _relationshipBuilder.Process();
         }
     }

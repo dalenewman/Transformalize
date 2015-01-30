@@ -33,9 +33,6 @@ namespace Transformalize.Main {
 
         private string _mode = Common.DefaultValue;
         private List<string> _problems = new List<string>();
-
-        public int Top { get; set; }
-
         public List<string> Problems { get { return _problems; } set { _problems = value; } }
         public bool Force { get; set; }
         public EventLevel LogLevel { get; set; }
@@ -71,15 +68,6 @@ namespace Transformalize.Main {
                                     Force = input;
                                 } else {
                                     RecordBadValue(option, typeof(bool));
-                                }
-                                break;
-
-                            case "top":
-                                int top;
-                                if (int.TryParse(value, out top)) {
-                                    Top = top;
-                                } else {
-                                    RecordBadValue(option, typeof(int));
                                 }
                                 break;
 

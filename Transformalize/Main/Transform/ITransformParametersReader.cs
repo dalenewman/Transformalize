@@ -26,6 +26,6 @@ namespace Transformalize.Main
 {
     public interface ITransformParametersReader
     {
-        IParameters Read(TransformConfigurationElement transform);
+        IParameters Read(TflTransform transform);
     }
 }

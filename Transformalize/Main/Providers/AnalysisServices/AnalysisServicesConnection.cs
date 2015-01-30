@@ -77,7 +77,7 @@ namespace Transformalize.Main.Providers.AnalysisServices {
             throw new System.NotImplementedException();
         }
 
-        public AnalysisServicesConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
+        public AnalysisServicesConnection(TflConnection element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
             Type = ProviderType.AnalysisServices;
             ConnectionStringProperties.DatabaseProperty = "Catalog";

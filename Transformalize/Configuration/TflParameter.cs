@@ -1,4 +1,5 @@
 ﻿using Transformalize.Libs.Cfg.Net;
+using Transformalize.Main;
 
 namespace Transformalize.Configuration {
 
@@ -10,13 +11,16 @@ namespace Transformalize.Configuration {
         public string Field { get; set; }
         [Cfg(value = "")]
         public string Name { get; set; }
-        [Cfg(value = "")]
+        [Cfg(value = Common.DefaultValue)]
         public string Value { get; set; }
         [Cfg(value = true)]
         public bool Input { get; set; }
         [Cfg(value = "string")]
         public string Type { get; set; }
 
+        public bool HasValue() {
+            return Value != Common.DefaultValue;
+        }
     }
 
 }

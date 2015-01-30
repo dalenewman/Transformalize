@@ -1,0 +1,277 @@
+﻿<?xml version="1.0"?>
+<transformalize>
+  <processes>
+
+    <add name="Test">
+
+      <connections>
+        <add name="input" database="TestInput"/>
+        <add name="output" database="TestOutput"/>
+      </connections>
+
+      <scripts path="Scripts">
+        <add name="test" file="test.js"></add>
+      </scripts>
+
+      <templates path="Templates">
+        <add name="double" file="double.cshtml"></add>
+        <add name="solr-data-handler" file="solr-data-handler.cshtml" cache="true">
+          <actions>
+            <add action="copy" file="C:\Solr\Test\conf\data-config.xml"/>
+          </actions>
+        </add>
+        <add name="solr-schema" file="solr-schema.cshtml" cache="true">
+          <actions>
+            <add action="copy" file="C:\Solr\Test\conf\schema.xml"/>
+            <add action="open" file="C:\Solr\Test\conf\schema.xml"/>
+          </actions>
+        </add>
+      </templates>
+
+      <search-types>
+        <add name="default"/>
+        <add name="facet" analyzer="lowercase" store="true" index="true"/>
+        <add name="standard" analyzer="standard_lowercase" store="false" index="true"/>
+      </search-types>
+
+      <entities>
+
+        <add name="OrderDetail" connection="input" version="RowVersion">
+          <fields>
+            <add name="OrderDetailKey" type="System.Int32" primary-key="true"/>
+            <add name="OrderKey" type="system.Int32"></add>
+            <add name="ProductKey" type="System.Int32"></add>
+            <add name="Qty" alias="Quantity" type="System.Int32"></add>
+            <add name="Price" type="System.Decimal" precision="10" scale="5"></add>
+            <add name="Properties" type="System.Xml">
+              <transforms>
+                <add method="fromXml">
+                  <fields>
+                    <add name="Color"></add>
+                    <add name="Size"></add>
+                    <add name="Gender"></add>
+                  </fields>
+                </add>
+              </transforms>
+            </add>
+            <add name="RowVersion" alias="OrderDetailRowVersion" type="RowVersion" length="8" search-type="none"></add>
+          </fields>
+        </add>
+
+        <add name="Order" connection="input" version="RowVersion">
+          <fields>
+            <add name="OrderKey" type="System.Int32" primary-key="true"/>
+            <add name="OrderValidation" length="1024" input="false"/>
+            <add name="CustomerKey" type="System.Int32"></add>
+            <add name="OrderDate" type="System.DateTime">
+              <transforms>
+                <add method="datetimerange"
+                     lower-bound="2010-01-01"
+                     upper-bound="2012-10-31"
+                     message-template="{2} should be between 2010-01-01 and 2012 Halloween. You have {0}."
+                     message-field="OrderValidation"
+                     message-append="true"/>
+              </transforms>
+            </add>
+            <add name="RowVersion" alias="OrderRowVersion" type="RowVersion" length="8" search-type="none"></add>
+          </fields>
+        </add>
+
+        <add name="Customer" connection="input" version="RowVersion">
+          <fields>
+            <add name="CustomerKey" type="System.Int32" primary-key="true"/>
+            <add name="CustomerValidation" length="1024" input="false"/>
+            <add name="First" alias="FirstName" length="50">
+              <transforms>
+                <add method="map" map="FirstNames"/>
+              </transforms>
+            </add>
+
+            <add name="Last" alias="LastName" length="50">
+              <transforms>
+                <add method="containscharacters" characters="abc" contains-characters="All" message-template="{2} must contain a, b, and c. You have {0}." message-field="CustomerValidation"/>
+              </transforms>
+            </add>
+            <add name="Address" length="100">
+            </add>
+            <add name="City" length="50">
+              <transforms>
+                <add method="insert" index="0" value="Town ofs "></add>
+                <add method="remove" start-index="7" length="1"></add>
+                <add method="replace" old-value="Town" new-value="City"></add>
+                <add method="trimStart" trim-chars="Ci"></add>
+              </transforms>
+            </add>
+            <add name="State" length="10">
+              <transforms>
+                <add method="template" template="@Double(Model.State)">
+                  <templates>
+                    <add name="double"></add>
+                  </templates>
+                </add>
+              </transforms>
+            </add>
+            <add name="Country" length="10">
+              <transforms>
+                <add method="containscharacters" characters="US" contains-characters="All" message-template="This is not America." message-field="CustomerValidation"/>
+                <add method="domain" domain="US,PT,CI" message-template="0={0}, 1={1}, 2={2}." message-field="CustomerValidation"/>
+              </transforms>
+            </add>
+            <add name="RowVersion" alias="CustomerRowVersion" type="RowVersion" length="8" search-type="none"></add>
+          </fields>
+        </add>
+
+        <add name="Product" connection="input" version="RowVersion">
+          <fields>
+            <add name="ProductKey" type="System.Int32" primary-key="true"/>
+            <add name="Name" alias="ProductName" length="100" default="None">
+              <transforms>
+                <add method="javascript" script="if(ProductName.length == 8) { '8 chars not allowed!' } else { ProductName };"/>
+              </transforms>
+            </add>
+            <add name="RowVersion" alias="ProductRowVersion" type="RowVersion" length="8" search-type="none"></add>
+          </fields>
+        </add>
+
+      </entities>
+
+      <relationships>
+        <add left-entity="OrderDetail" right-entity="Order">
+          <join>
+            <add left-field="OrderKey" right-field="OrderKey"/>
+          </join>
+        </add>
+        <add left-entity="OrderDetail" right-entity="Product">
+          <join>
+            <add left-field="ProductKey" right-field="ProductKey"/>
+          </join>
+        </add>
+        <add left-entity="Order" right-entity="Customer">
+          <join>
+            <add left-field="CustomerKey" right-field="CustomerKey"/>
+          </join>
+        </add>
+      </relationships>
+
+      <maps>
+        <add name="FirstNames">
+          <items>
+            <add from="Cha" to="Chuck" operator="StartsWith"></add>
+            <add from="topher" to="Chris" operator="EndsWith"></add>
+            <add from="Thomas" to="Tom"></add>
+            <add from="*" to="John"></add>
+          </items>
+        </add>
+      </maps>
+
+      <calculated-fields>
+
+        <add name="Result" type="System.Byte">
+          <transforms>
+            <add method="javascript" script="if(LastName == 'Newman' &amp;&amp; ProductName == 'Resharper') { 1 } else { 2 };">
+              <parameters>
+                <add entity="Customer" field="LastName"></add>
+                <add entity="Product" field="ProductName"></add>
+              </parameters>
+            </add>
+          </transforms>
+        </add>
+
+      </calculated-fields>
+
+    </add>
+
+    <add name="File">
+
+      <providers>
+        <add name="sqlserver" type="System.Data.SqlClient.SqlConnection, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"/>
+        <add name="file" type="System.IO"/>
+      </providers>
+
+      <connections>
+        <add name="input" file="c:\temp\hellog.txt" provider="file"/>
+        <add name="output" connection-string="Server=localhost;Database=TestOutput;Trusted_Connection=True;"/>
+      </connections>
+
+      <entities>
+        <add name="log" connection="input">
+          <fields>
+            <add name="Line" length="512" output="false">
+              <transforms>
+                <add method="fromRegex" pattern="^(?&lt;Date&gt;.{23}).*(?&lt;Level&gt; INFO| DEBUG| WARN| ERROR| TRACE)(?&lt;Message&gt; +log - .*$)">
+                  <fields>
+                    <add name="Date" length="23">
+                      <transforms>
+                        <add method="replace" old-value="," new-value="."></add>
+                      </transforms>
+                    </add>
+                    <add name="Level" length="10">
+                      <transforms>
+                        <add method="trim" trim-chars=" "></add>
+                      </transforms>
+                    </add>
+                    <add name="Message" length="500">
+                      <transforms>
+                        <add method="trimStart" trim-chars="log -"/>
+                        <add method="trimEnd" trim-chars=" "/>
+                      </transforms>
+                    </add>
+                  </fields>
+                </add>
+              </transforms>
+            </add>
+          </fields>
+        </add>
+      </entities>
+    </add>
+
+    <add name="MyLogs">
+
+      <providers>
+        <add name="sqlserver" type="System.Data.SqlClient.SqlConnection, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"/>
+        <add name="file" type="System.IO"/>
+      </providers>
+
+      <connections>
+        <add name="input" file="x.log" provider="file" delimiter=" | "/>
+        <add name="output" connection-string="Server=localhost;Database=TestOutput;Trusted_Connection=True;"/>
+      </connections>
+
+      <entities>
+        <add name="TflLog" connection="input" version="HashCode">
+          <fields>
+            <add name="Process" input="false" default="DplGas" length="20"/>
+            <add name="Time" length="8" variable-length="false"/>
+            <add name="Level" length="5"/>
+            <add name="Entity" length="30">
+              <transforms>
+                <add method="TrimEnd" trim-chars="."></add>
+              </transforms>
+            </add>
+            <add name="Message" length="512"/>
+          </fields>
+          <calculated-fields>
+            <add name="HashText" length="550" output="false">
+              <transforms>
+                <add method="Concat">
+                  <parameters>
+                    <add field="Time"></add>
+                    <add field="Process"></add>
+                    <add field="Entity"></add>
+                    <add field="Message"></add>
+                  </parameters>
+                </add>
+              </transforms>
+            </add>
+            <add name="HashCode" type="System.Int32" input="false" primary-key="true">
+              <transforms>
+                <add method="GetHashCode" parameter="HashText"></add>
+              </transforms>
+            </add>
+          </calculated-fields>
+        </add>
+      </entities>
+    </add>
+
+  </processes>
+</transformalize>

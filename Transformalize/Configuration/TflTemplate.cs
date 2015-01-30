@@ -16,7 +16,9 @@ namespace Transformalize.Configuration {
         [Cfg( value = true)]
         public bool Enabled { get; set; }
         [Cfg( value = "razor", domain = "razor,velocity")]
-        public string Engine { get; set; }  
+        public string Engine { get; set; }
+
+        public string Path { get; set; }
 
         [Cfg()]
         public List<TflParameter> Parameters { get; set; }

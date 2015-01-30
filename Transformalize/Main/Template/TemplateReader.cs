@@ -16,10 +16,10 @@ namespace Transformalize.Main {
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
         private readonly Process _process;
-        private readonly TemplateElementCollection _elements;
+        private readonly List<TflTemplate> _elements;
         private readonly DefaultFactory _defaultFactory = new DefaultFactory();
 
-        public TemplateReader(Process process, TemplateElementCollection elements) {
+        public TemplateReader(Process process, List<TflTemplate> elements) {
             _process = process;
             _elements = elements;
             SetupRazorTemplateService();
@@ -27,8 +27,7 @@ namespace Transformalize.Main {
 
         public Dictionary<string, Template> Read() {
 
-            var templateElements = _elements.Cast<TemplateConfigurationElement>().ToArray();
-            var path = _elements.Path == Common.DefaultValue ? string.Empty : _elements.Path;
+            var templateElements = _elements;
             var templates = new Dictionary<string, Template>();
 
             foreach (var element in templateElements) {
@@ -36,19 +35,19 @@ namespace Transformalize.Main {
                 if (!element.Enabled)
                     continue;
 
-                var reader = element.File.StartsWith("http", IC) ? (ContentsReader)new ContentsWebReader() : new ContentsFileReader(path);
+                var reader = element.File.StartsWith("http", IC) ? (ContentsReader)new ContentsWebReader() : new ContentsFileReader(element.Path);
                 var template = new Template(_process, element, reader.Read(element.File));
 
-                foreach (ParameterConfigurationElement parameter in element.Parameters) {
+                foreach (var parameter in element.Parameters) {
                     template.Parameters[parameter.Name] = new Parameter(parameter.Name, _defaultFactory.Convert(parameter.Value, parameter.Type));
                 }
 
-                foreach (ActionConfigurationElement action in element.Actions) {
+                foreach (var action in element.Actions) {
                     var modes = action.GetModes();
                     if (modes.Length > 0 && !modes.Contains("*") && !modes.Any(m => m.Equals(_process.Mode, IC)))
                         continue;
 
-                    var templateAction = new TemplateAction(_process, template.Name, action, modes);
+                    var templateAction = new TemplateAction(_process, template.Name, action);
 
                     if (!String.IsNullOrEmpty(action.Connection)) {
                         if (_process.Connections.ContainsKey(action.Connection)) {

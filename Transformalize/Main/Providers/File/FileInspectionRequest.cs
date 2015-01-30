@@ -16,7 +16,6 @@ namespace Transformalize.Main.Providers.File {
         private string _defaultLength = "1024";
         private string _defaultType = "string";
 
-        public int Top { get; set; }
         public decimal Sample { get; set; }
         public int MaxLength { get; set; }
         public int MinLength { get; set; }

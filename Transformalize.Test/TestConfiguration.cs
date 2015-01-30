@@ -20,20 +20,20 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
+using Transformalize.Configuration;
 using Transformalize.Libs.SemanticLogging;
 using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Runner;
 
-namespace Transformalize.Test
-{
+namespace Transformalize.Test {
     [TestFixture]
-    public class TestConfiguration
-    {
+    public class TestConfiguration {
 
         [SetUp]
         public void SetUp() {
@@ -44,8 +44,7 @@ namespace Transformalize.Test
 
         [Test]
         [Ignore("Because this requires a NorthWind database.")]
-        public void TestBase()
-        {
+        public void TestBase() {
             var northWind = ProcessFactory.Create("NorthWind.xml")[0];
             Assert.AreEqual("int16", northWind.Entities[0].Fields["OrderDetailsQuantity"].Type);
             Assert.AreEqual(8, northWind.Entities.Count);
@@ -54,31 +53,29 @@ namespace Transformalize.Test
         }
 
         [Test]
-        public void TestSimpleExpansion() {
-            var northWind = ProcessFactory.Create("NorthWindExpanded.xml")[0];
-            Assert.AreEqual("System.Int32", northWind.Entities[0].Fields["OrderDetailsQuantity"].Type);
-            Assert.AreEqual(8, northWind.Entities.Count);
-            Assert.AreEqual(4, northWind.Entities[1].CalculatedFields.Count);
-        }
-
-        [Test]
-        public void TestDefaultParameters()
-        {
+        public void TestDefaultParameters() {
             const string xml = @"<transformalize>
-    <processes>
-        <add name=""test1"">
+    <environments default='@(Environment)'>
+        <add name='one'>
             <parameters>
                 <add name=""t1"" value=""v1"" />
+                <add name=""t2"" value=""v2"" />
             </parameters>
+        </add>
+        <add name='two'>
+            <parameters>
+                <add name=""t1"" value=""v2"" />
+                <add name=""t2"" value=""v3"" />
+            </parameters>
+        </add>
+    </environments>
+    <processes>
+        <add name=""test1"">
             <actions>
                 <add action=""@(t1)"" />
             </actions>
         </add>
         <add name=""test2"">
-            <parameters>
-                <add name=""t1"" value=""v2"" />
-                <add name=""t2"" value=""v3"" />
-            </parameters>
             <actions>
                 <add action=""@(t1)"" />
                 <add action=""@(t2)"" />
@@ -86,13 +83,15 @@ namespace Transformalize.Test
         </add>
     </processes>
 </transformalize>";
-            var output = ProcessXmlConfigurationReader.DefaultParameters(xml);
-            var doc = XDocument.Parse(output);
-            var actions = doc.Descendants("add").Where(n=>n.Attributes("action").Any()).ToArray();
-            
-            Assert.AreEqual("v1", actions[0].Attribute("action").Value);
-            Assert.AreEqual("v2", actions[1].Attribute("action").Value);
-            Assert.AreEqual("v3", actions[2].Attribute("action").Value);
+            var root1 = new TflRoot(xml, new Dictionary<string, string>() { { "Environment", "one" } });
+            Assert.AreEqual("v1", root1.Processes[0].Actions[0].Action);
+            Assert.AreEqual("v1", root1.Processes[1].Actions[0].Action);
+            Assert.AreEqual("v2", root1.Processes[1].Actions[1].Action);
+
+            var root2 = new TflRoot(xml, new Dictionary<string, string>() { { "Environment", "two" } });
+            Assert.AreEqual("v2", root2.Processes[0].Actions[0].Action);
+            Assert.AreEqual("v2", root2.Processes[1].Actions[0].Action);
+            Assert.AreEqual("v3", root2.Processes[1].Actions[1].Action);
 
         }
 
@@ -122,13 +121,11 @@ namespace Transformalize.Test
         </add>
     </processes>
 </transformalize>";
-            var output = ProcessXmlConfigurationReader.DefaultParameters(xml);
-            var doc = XDocument.Parse(output);
-            var actions = doc.Descendants("add").Where(n => n.Attributes("action").Any()).ToArray();
+            var processes = new TflRoot(xml, null).Processes;
 
-            Assert.AreEqual("v1", actions[0].Attribute("action").Value);
-            Assert.AreEqual("v2", actions[1].Attribute("action").Value);
-            Assert.AreEqual("v3", actions[2].Attribute("action").Value);
+            Assert.AreEqual("v1", processes[0].Actions[0].Action);
+            Assert.AreEqual("v2", processes[1].Actions[0].Action);
+            Assert.AreEqual("v3", processes[1].Actions[1].Action);
 
         }
 
@@ -143,7 +140,7 @@ namespace Transformalize.Test
             <entities>
                 <add name=""entity"" version=""version"">
                     <filter>
-                        <add left=""field1"" right=""literal1"" operator=""NotEqual"" continuation=""and"" />
+                        <add left=""field1"" right=""literal1"" operator=""NotEqual"" continuation=""AND"" />
                         <add left=""field2"" right=""6"" operator=""GreaterThan"" continuation=""OR"" />
                         <add expression=""field3 != 'literal3'"" />
                     </filter>

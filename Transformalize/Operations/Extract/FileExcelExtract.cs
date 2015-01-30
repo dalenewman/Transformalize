@@ -17,7 +17,7 @@ namespace Transformalize.Operations.Extract {
         private readonly int _start;
         private readonly int _end;
 
-        public FileExcelExtract(AbstractConnection connection, Entity entity, int top) {
+        public FileExcelExtract(AbstractConnection connection, Entity entity, int top = 0) {
             _fields = entity.Fields.WithInput().ToArray();
             _fileInfo = new FileInfo(connection.File);
             _start = connection.Start;

@@ -63,7 +63,6 @@ namespace Transformalize.Main {
         public bool Delete { get; set; }
         public bool PrependProcessNameToOutputName { get; set; }
         public decimal Sample { get; set; }
-        public int Top { get; set; }
         public string SqlOverride { get; set; }
         public string SqlScriptOverride { get; set; }
         public string SqlKeysOverride { get; set; }

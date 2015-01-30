@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -33,7 +34,7 @@ namespace Transformalize.Operations.Load {
 
     public class FileLoadOperation : AbstractOperation {
 
-        private const string SPACE = " ";
+        private const char SPACE = ' ';
         private readonly AbstractConnection _connection;
         private readonly Entity _entity;
         private readonly List<string> _strings = new List<string>();
@@ -77,12 +78,13 @@ namespace Transformalize.Operations.Load {
 
         protected virtual void PrepareHeader(Entity entity) {
             if (_connection.Header.Equals(Common.DefaultValue)) {
+                var delimiter = _connection.Delimiter.ToString(CultureInfo.InvariantCulture);
                 foreach (var field in _fileFields) {
                     if (field.SimpleType.Equals("string"))
                         _strings.Add(field.Alias);
-                    Headers.Add(field.Alias.Replace(_connection.Delimiter, string.Empty));
+                    Headers.Add(field.Alias.Replace(delimiter, string.Empty));
                 }
-                HeaderText = string.Join(_connection.Delimiter, Headers);
+                HeaderText = string.Join(delimiter, Headers);
             } else {
                 HeaderText = _connection.Header;
             }
@@ -93,7 +95,7 @@ namespace Transformalize.Operations.Load {
         }
 
         protected virtual void PrepareType(Entity entity) {
-            var builder = new DelimitedClassBuilder("Tfl" + entity.OutputName()) { IgnoreEmptyLines = true, Delimiter = _connection.Delimiter, IgnoreFirstLines = 0 };
+            var builder = new DelimitedClassBuilder("Tfl" + entity.OutputName()) { IgnoreEmptyLines = true, Delimiter = _connection.Delimiter.ToString(CultureInfo.InvariantCulture), IgnoreFirstLines = 0 };
 
             foreach (var f in _fileFields) {
                 var field = new DelimitedFieldBuilder(f.Identifier, f.SystemType);

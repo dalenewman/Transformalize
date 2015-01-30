@@ -43,8 +43,6 @@ namespace Transformalize.Runner {
                     Content = content
                 };
 
-            content = ReplaceParameters(content, HttpUtility.ParseQueryString(file.Substring(file.IndexOf('?'))));
-
             return new Contents {
                 Name = Path.GetFileNameWithoutExtension(fileInfo.FullName),
                 FileName = fileInfo.FullName,

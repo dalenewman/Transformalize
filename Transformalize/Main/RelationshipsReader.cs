@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.SqlServer.Server;
 using Transformalize.Configuration;
 
 namespace Transformalize.Main {
     public class RelationshipsReader {
 
         private readonly Process _process;
-        private readonly RelationshipElementCollection _elements;
+        private readonly List<TflRelationship> _elements;
 
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
 
-        public RelationshipsReader(Process process, RelationshipElementCollection elements) {
+        public RelationshipsReader(Process process, List<TflRelationship> elements) {
             _process = process;
             _elements = elements;
         }
@@ -20,7 +19,7 @@ namespace Transformalize.Main {
         public List<Relationship> Read() {
             var relationships = new List<Relationship>();
 
-            foreach (RelationshipConfigurationElement r in _elements) {
+            foreach (var r in _elements) {
                 Entity leftEntity;
                 if (!_process.Entities.TryFind(r.LeftEntity, out leftEntity)) {
                     throw new TransformalizeException(_process.Name, r.LeftEntity, "Can't find left entity {0}.", r.LeftEntity);
@@ -44,10 +43,10 @@ namespace Transformalize.Main {
             return relationships;
         }
 
-        private static List<Join> GetJoins(RelationshipConfigurationElement r, Entity leftEntity, Entity rightEntity) {
+        private static List<Join> GetJoins(TflRelationship r, Entity leftEntity, Entity rightEntity) {
             if (string.IsNullOrEmpty(r.LeftField)) {
                 return (
-                    from JoinConfigurationElement j in r.Join
+                    from TflJoin j in r.Join
                     select GetJoin(leftEntity, j.LeftField, rightEntity, j.RightField)
                 ).ToList();
             }

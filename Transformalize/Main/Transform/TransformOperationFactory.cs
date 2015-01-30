@@ -46,7 +46,7 @@ namespace Transformalize.Main {
         private const string COMMA = ",";
 
         private readonly Process _process;
-        private readonly Validator<TransformConfigurationElement> _validator = ValidationFactory.CreateValidator<TransformConfigurationElement>();
+        private readonly Validator<TflTransform> _validator = ValidationFactory.CreateValidator<TflTransform>();
         private readonly Dictionary<string, Func<object, object>> _conversionMap = Common.GetObjectConversionMap();
         private readonly bool _isInitMode;
         private readonly string _entityName;
@@ -57,13 +57,13 @@ namespace Transformalize.Main {
             _isInitMode = process.IsInitMode();
         }
 
-        public IOperation Create(Field field, TransformConfigurationElement element, IParameters parameters) {
+        public IOperation Create(Field field, TflTransform element, IParameters parameters) {
 
             if (_isInitMode)
                 return new EmptyOperation();
 
-            if (element.Method == string.Empty && element.ShortHand != string.Empty) {
-                var split = Common.Split(element.ShortHand, ").");
+            if (element.Method == string.Empty && element.T != string.Empty) {
+                var split = Common.Split(element.T, ").");
                 var partial = new PartialProcessOperation(_process);
                 foreach (var shortHand in split.Select(ShortHandFactory.Interpret)) {
                     shortHand.AfterAggregation = element.AfterAggregation;
@@ -399,7 +399,7 @@ namespace Transformalize.Main {
                     ) { ShouldRun = shouldRun, EntityName = _entityName };
 
                 case "javascript":
-                    foreach (TransformScriptConfigurationElement script in element.Scripts) {
+                    foreach (var script in element.Scripts) {
                         if (!_process.Scripts.ContainsKey(script.Name)) {
                             throw new TransformalizeException(_process.Name, _entityName, "Invalid script reference: {0}.", script.Name);
                         }
@@ -414,7 +414,7 @@ namespace Transformalize.Main {
                     ) { ShouldRun = shouldRun, EntityName = _entityName };
 
                 case "csharp":
-                    foreach (TransformScriptConfigurationElement script in element.Scripts) {
+                    foreach (var script in element.Scripts) {
                         if (!_process.Scripts.ContainsKey(script.Name)) {
                             throw new TransformalizeException(_process.Name, _entityName, "Invalid script reference: {0}.", script.Name);
                         }
@@ -573,7 +573,7 @@ namespace Transformalize.Main {
                     return new ValueOperation(outKey, outType, element.Value, parameters) { ShouldRun = shouldRun, EntityName = _entityName };
 
                 case "xpath":
-                    return new XPathOperation(inKey, outKey, outType, element.XPath) { ShouldRun = shouldRun, EntityName = _entityName };
+                    return new XPathOperation(inKey, outKey, outType, element.Xpath) { ShouldRun = shouldRun, EntityName = _entityName };
 
                 case "xmlencode":
                     return new XmlEncodeOperation(inKey, outKey) { ShouldRun = shouldRun, EntityName = _entityName };
@@ -816,13 +816,13 @@ namespace Transformalize.Main {
             return new EmptyOperation();
         }
 
-        private Dictionary<string, Template> ComposeTemplates(Field field, ref TransformConfigurationElement element) {
+        private Dictionary<string, Template> ComposeTemplates(Field field, ref TflTransform element) {
             var templates = new Dictionary<string, Template>();
             var method = element.Method.ToLower();
             if (new[] { "razor", "template", "velocity" }.All(n => n != method))
                 return templates;
 
-            foreach (TransformTemplateConfigurationElement template in element.Templates) {
+            foreach (var template in element.Templates) {
                 if (!_process.Templates.ContainsKey(template.Name)) {
                     throw new TransformalizeException(_process.Name, _entityName, "Invalid template reference: {0}", template.Name);
                 }
@@ -861,18 +861,17 @@ namespace Transformalize.Main {
             return new Parameter(parameter, parameter) { SimpleType = newParameterType };
         }
 
-        private static bool TryRemoveInputParameters(TransformConfigurationElement element, IParameters parameters) {
+        private static bool TryRemoveInputParameters(TflTransform element, IParameters parameters) {
             //if inKey (the field, or first parameter) is not in fields,
             //then it is an input parameter, not an output parameter (or field)
-            var parameterElements = element.Parameters.Cast<ParameterConfigurationElement>().ToArray();
-            if (parameterElements.Any(f => f.Input)) {
-                var key = parameterElements.First(f => f.Input).Field;
-                if (parameters.ContainsKey(key)) {
-                    parameters.Remove(key);
-                    return true;
-                }
-            }
-            return false;
+            var parameterElements = element.Parameters;
+            if (!parameterElements.Any(f => f.Input))
+                return false;
+            var key = parameterElements.First(f => f.Input).Field;
+            if (!parameters.ContainsKey(key))
+                return false;
+            parameters.Remove(key);
+            return true;
         }
 
     }

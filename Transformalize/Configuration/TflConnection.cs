@@ -32,7 +32,7 @@ namespace Transformalize.Configuration {
         public string Encoding { get; set; }
         [Cfg(value = 0)]
         public int End { get; set; }
-        [Cfg(value = "")]
+        [Cfg(value = "SaveAndContinue", domain="ThrowException,SaveAndContinue,IgnoreAndContinue")]
         public string ErrorMode { get; set; }
         [Cfg(value = "")]
         public string File { get; set; }

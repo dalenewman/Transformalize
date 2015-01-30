@@ -34,7 +34,7 @@ namespace Transformalize.Main.Providers.SqlServer {
 
     public class SqlServerConnection : AbstractConnection {
 
-        public SqlServerConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
+        public SqlServerConnection(TflConnection element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
 
             Type = ProviderType.SqlServer;

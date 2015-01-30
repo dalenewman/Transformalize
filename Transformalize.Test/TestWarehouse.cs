@@ -20,10 +20,10 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using NUnit.Framework;
 using Transformalize.Configuration;
-using Transformalize.Configuration.Builders;
 using Transformalize.Libs.SemanticLogging;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Logging;
@@ -48,8 +48,6 @@ namespace Transformalize.Test {
             var storageLocations = GetInitialStorageLocations();
             var warehouses = GetInitialWarehouses();
             var process = GetInitialProcess(inventory, storageLocations, warehouses);
-
-            var logLevel = EventLevel.Informational;
 
             //init and run
             var init = ProcessFactory.Create(process, new Options())[0];
@@ -119,46 +117,91 @@ namespace Transformalize.Test {
             Assert.AreEqual(0, third["Warehouse"].Updates);
         }
 
-        private static ProcessConfigurationElement GetInitialProcess(IOperation inventory, IOperation storageLocations, IOperation warehouses) {
-            return new ProcessBuilder("Bug")
-                .Connection("input").Provider("internal")
-                .Connection("output").Database("Junk")
-                .Entity("Inventory")
-                    .InputOperation(inventory)
-                    .Version("InventoryHashCode")
-                        .Field("InventoryKey").Int32().PrimaryKey()
-                        .Field("Name").Alias("Inventory").Default("Default")
-                        .Field("StorageLocationKey").Int32()
-                        .CalculatedField("InventoryHashCode")
-                            .Int32()
-                            .Transform("concat").Parameter("*")
-                            .Transform("gethashcode")
-                .Entity("StorageLocation")
-                    .InputOperation(storageLocations)
-                    .Version("StorageLocationHashCode")
-                        .Field("StorageLocationKey").Int32().PrimaryKey()
-                        .Field("Name").Alias("StorageLocation").Default("Default")
-                        .Field("WarehouseKey").Int32()
-                        .CalculatedField("StorageLocationHashCode")
-                            .Int32()
-                            .Transform("concat").Parameter("*")
-                            .Transform("gethashcode")
-                .Entity("Warehouse")
-                    .InputOperation(warehouses)
-                    .Version("WarehouseHashCode")
-                    .Field("WarehouseKey").Int32().PrimaryKey()
-                    .Field("Name").Alias("Warehouse").Default("Default")
-                    .CalculatedField("WarehouseHashCode")
-                        .Int32()
-                        .Transform("concat").Parameter("*")
-                        .Transform("gethashcode")
-                .Relationship()
-                    .LeftEntity("Inventory").LeftField("StorageLocationKey")
-                    .RightEntity("StorageLocation").RightField("StorageLocationKey")
-                .Relationship()
-                    .LeftEntity("StorageLocation").LeftField("WarehouseKey")
-                    .RightEntity("Warehouse").RightField("WarehouseKey")
-                .Process();
+        private static TflProcess GetInitialProcess(IOperation inventory, IOperation storageLocations, IOperation warehouses) {
+            return new TflProcess {
+                Name = "Bug",
+                Connections = new List<TflConnection> {
+                    new TflConnection() {Name = "input", Provider = "internal"},
+                    new TflConnection() {Name = "output", Provider = "sqlserver", Database = "junk"}
+                },
+                Entities = new List<TflEntity> {
+                    new TflEntity {
+                        Name = "Inventory",
+                        InputOperation = inventory,
+                        Version = "InventoryHashCode",
+                        Fields = new List<TflField> {
+                            new TflField() {Name = "InventoryKey", Type = "int", PrimaryKey = true},
+                            new TflField() {Name = "Name", Alias = "Inventory", Default = "Default"},
+                            new TflField() {Name = "StorageLocationKey", Type = "int"}
+                        },
+                        CalculatedFields = new List<TflField> {
+                            new TflField {
+                                Name = "InventoryHashCode",
+                                Input = false,
+                                Type = "int",
+                                Transforms = new List<TflTransform>()
+                                {
+                                    new TflTransform() {Method = "concat", Parameter = "*"},
+                                    new TflTransform() {Method = "gethashcode"}
+                                }
+                            }
+                        }
+                    },
+                    new TflEntity {
+                        Name = "StorageLocation",
+                        InputOperation = storageLocations,
+                        Version = "StorageLocationHashCode",
+                        Fields = new List<TflField> {
+                            new TflField() {Name = "StorageLocationKey", Type = "int", PrimaryKey = true},
+                            new TflField() {Name = "Name", Alias = "StorageLocation", Default = "Default"},
+                            new TflField() {Name = "WarehouseKey", Type = "int"}
+                        },
+                        CalculatedFields = new List<TflField> {
+                            new TflField {
+                                Name = "StorageLocationHashCode",
+                                Type = "int",
+                                Transforms = new List<TflTransform> {
+                                    new TflTransform() {Method = "concat", Parameter = "*"},
+                                    new TflTransform() {Method = "gethashcode"}
+                                }
+                            }
+                        }
+                    },
+                    new TflEntity {
+                        Name = "Warehouse",
+                        InputOperation = warehouses,
+                        Version = "WarehouseHashCode",
+                        Fields = new List<TflField> {
+                            new TflField() {Name = "WarehouseKey", Type = "int", PrimaryKey = true},
+                            new TflField() {Name = "Name", Alias = "Warehouse", Default = "Default"}
+                        },
+                        CalculatedFields = new List<TflField> {
+                            new TflField {
+                                Name = "WarehouseHashCode",
+                                Type = "int",
+                                Transforms = new List<TflTransform>                                 {
+                                    new TflTransform() {Method = "concat", Parameter = "*"},
+                                    new TflTransform() {Method = "gethashcode"}
+                                }
+                            }
+                        }
+                    }
+                },
+                Relationships = new List<TflRelationship>() {
+                    new TflRelationship {
+                        LeftEntity = "Inventory",
+                        LeftField = "StorageLocationKey",
+                        RightEntity = "StorageLocation",
+                        RightField = "StorageLocationKey"
+                    },
+                    new TflRelationship {
+                        LeftEntity = "StorageLocation",
+                        LeftField = "WarehouseKey",
+                        RightEntity = "Warehouse",
+                        RightField = "WarehouseKey"
+                    }
+                }
+            };
         }
 
         private static IOperation GetInitialWarehouses() {

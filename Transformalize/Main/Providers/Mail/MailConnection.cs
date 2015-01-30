@@ -60,7 +60,7 @@ namespace Transformalize.Main.Providers.Mail {
 
         public SmtpClient SmtpClient { get { return _smtpClient; } }
 
-        public MailConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
+        public MailConnection(TflConnection element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
             Type = ProviderType.Mail;
 

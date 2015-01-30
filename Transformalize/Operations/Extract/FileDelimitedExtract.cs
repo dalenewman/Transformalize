@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -22,12 +23,12 @@ namespace Transformalize.Operations.Extract {
         private readonly string _fullName;
         private readonly string _name;
         private readonly int _ignoreFirstLines;
-        private readonly string _delimiter;
+        private readonly char _delimiter;
         private readonly ErrorMode _errorMode;
         private bool _warned;
         private int _counter;
 
-        public FileDelimitedExtract(AbstractConnection connection, Entity entity, int top) {
+        public FileDelimitedExtract(AbstractConnection connection, Entity entity, int top = 0) {
 
             var fileInfo = new FileInfo(connection.File);
 
@@ -45,7 +46,7 @@ namespace Transformalize.Operations.Extract {
 
             var cb = new DelimitedClassBuilder("Tfl" + _entity.OutputName()) {
                 IgnoreEmptyLines = true,
-                Delimiter = _delimiter,
+                Delimiter = _delimiter.ToString(CultureInfo.InvariantCulture),
                 IgnoreFirstLines = _ignoreFirstLines
             };
 

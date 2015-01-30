@@ -26,12 +26,12 @@ namespace Transformalize.Configuration {
 
         public FileInspectionRequest GetInspectionRequest() {
             return new FileInspectionRequest() {
-                DataTypes = Types.Cast<TypeConfigurationElement>().Select(t => t.Type).ToList(),
+                DataTypes = Types.Select(t => t.Type).ToList(),
                 DefaultLength = MinLength == 0 ? "1024" : MinLength.ToString(CultureInfo.InvariantCulture),
                 DefaultType = "string",
                 MinLength = MinLength,
                 MaxLength = MaxLength,
-                Delimiters = Delimiters.Cast<DelimiterConfigurationElement>().ToDictionary(d => d.Character[0], d => d.Name),
+                Delimiters = Delimiters.ToDictionary(d => d.Character, d => d.Name),
                 Sample = Sample,
                 IgnoreEmpty = IgnoreEmpty
             };

@@ -41,7 +41,7 @@
       <connections>
         <add name="input" connection-string="Server=@(SqlServer);Database=NorthWind;Trusted_Connection=True;" />
         <add name="output" database="NorthWindStar" port="1433" />
-        <add name="ssas" database="NorthWind" provider="AnalysisServices" />
+        <add name="ssas" database="NorthWind" provider="analysisservices" />
       </connections>
       
       <templates path="Templates">
@@ -102,10 +102,10 @@
             <add name="ShipCity" length="15" ></add>
             <add name="ShipCountry" length="15" ></add>
             <add name="ShipName" length="40" ></add>
-            <add name="ShippedDate" type="System.DateTime" ></add>
+            <add name="ShippedDate" type="datetime" ></add>
             <add name="ShipPostalCode" length="10" ></add>
             <add name="ShipRegion" length="15" ></add>
-            <add name="ShipVia" type="System.Int32" ></add>
+            <add name="ShipVia" type="int" ></add>
           </fields>
 
           <calculated-fields>
@@ -153,25 +153,25 @@
             <add name="ContactName" length="30" ></add>
             <add name="ContactTitle" length="30" ></add>
             <add name="Country" length="15" ></add>
-            <add name="CustomerID" type="System.Char" length="5" primary-key="true"></add>
+            <add name="CustomerID" type="char" length="5" primary-key="true"></add>
             <add name="Fax" length="24" ></add>
             <add name="Phone" length="24" ></add>
             <add name="PostalCode" length="10" ></add>
             <add name="Region" length="15" ></add>
-            <add name="RowVersion" type="System.Byte[]" length="8" ></add>
+            <add name="RowVersion" type="byte[]" length="8" ></add>
           </fields>
         </add>
 
         <add name="Employees" version="RowVersion" prefix="Employees">
           <fields>
             <add name="Address" length="60" ></add>
-            <add name="BirthDate" type="System.DateTime" ></add>
+            <add name="BirthDate" type="datetime" ></add>
             <add name="City" length="15" ></add>
             <add name="Country" length="15" ></add>
-            <add name="EmployeeID" type="System.Int32" primary-key="true"></add>
+            <add name="EmployeeID" type="int" primary-key="true"></add>
             <add name="Extension" length="4" ></add>
             <add name="FirstName" length="10" ></add>
-            <add name="HireDate" type="System.DateTime" ></add>
+            <add name="HireDate" type="datetime" ></add>
             <add name="HomePhone" length="24" ></add>
             <add name="LastName" length="20" ></add>
             <add name="Notes" length="MAX" ></add>
@@ -179,7 +179,7 @@
             <add name="PhotoPath" alias="EmployeesPhotoPath" input="false" output="false"></add>
             <add name="PostalCode" length="10" ></add>
             <add name="Region" length="15" ></add>
-            <add name="RowVersion" type="System.Byte[]" length="8" ></add>
+            <add name="RowVersion" type="byte[]" length="8" ></add>
             <add name="Title" length="30" ></add>
             <add name="TitleOfCourtesy" length="25" ></add>
             <add name="ReportsTo" alias="EmployeesManager" type="string" length="64">
@@ -281,9 +281,7 @@
       </calculated-fields>
 
       <maps>
-        <add name="Managers" connection="input">
-          <items sql="select EmployeeID, FirstName + ' ' + LastName FROM Employees;" />
-        </add>
+        <add name="Managers" connection="input" query="select EmployeeID, FirstName + ' ' + LastName FROM Employees;" />
       </maps>
 
     </add>    

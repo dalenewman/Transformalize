@@ -20,7 +20,6 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
@@ -268,8 +267,6 @@ namespace Transformalize.Test {
                         .Parameter("OrdersShipCountry")
                 .Process();
 
-            Assert.IsNotNullOrEmpty(process.Serialize());
-
             //ProcessFactory.Create(process, new Options() { Mode = "init"}).Run();
             //ProcessFactory.Create(process).Run();
         }
@@ -332,7 +329,7 @@ namespace Transformalize.Test {
             Assert.AreEqual("startswith", process.Maps[0].Items[1].Operator);
 
             Assert.AreEqual("input", process.Maps[1].Connection);
-            Assert.AreEqual("SELECT [From], [To] FROM [Table];", process.Maps[1].Items.Sql);
+            Assert.AreEqual("SELECT [From], [To] FROM [Table];", process.Maps[1].Query);
         }
 
         [Test]

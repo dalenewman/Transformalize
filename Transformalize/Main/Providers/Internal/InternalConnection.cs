@@ -62,7 +62,7 @@ namespace Transformalize.Main.Providers.Internal {
             return string.Empty;
         }
 
-        public InternalConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
+        public InternalConnection(TflConnection element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
             Type = ProviderType.Internal;
         }

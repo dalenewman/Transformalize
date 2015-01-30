@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Operations.Transform;
@@ -8,21 +9,21 @@ namespace Transformalize.Main {
     public class OperationsLoader {
         private const string DEFAULT = "[default]";
         private readonly Process _process;
-        private readonly EntityElementCollection _entities;
+        private readonly List<TflEntity> _entities;
 
-        public OperationsLoader(ref Process process, EntityElementCollection entities) {
+        public OperationsLoader(ref Process process, List<TflEntity> entities) {
             _process = process;
             _entities = entities;
         }
 
         public void Load() {
-            foreach (EntityConfigurationElement entityElement in _entities) {
+            foreach (var entityElement in _entities) {
 
                 var entity = _process.Entities.First(e => e.Alias == entityElement.Alias);
                 var factory = new TransformOperationFactory(_process, entity.Name);
 
                 //fields can have prefixes and are limited to literal parameters (parameters with name and value provided in configuration)
-                foreach (FieldConfigurationElement f in entityElement.Fields) {
+                foreach (var f in entityElement.Fields) {
 
                     var alias = Common.GetAlias(f, true, entityElement.Prefix);
                     var field = _process.GetField(entity.Alias, alias);
@@ -32,7 +33,7 @@ namespace Transformalize.Main {
                         entity.OperationsAfterAggregation.Add(new TrimOperation(field.Alias, field.Alias, " "));
                     }
 
-                    foreach (TransformConfigurationElement t in f.Transforms) {
+                    foreach (var t in f.Transforms) {
                         field.Transforms.Add(t.Method.ToLower());
                         var reader = new FieldParametersReader();
                         if (t.BeforeAggregation) {
@@ -46,11 +47,11 @@ namespace Transformalize.Main {
                 }
 
                 // calculated fields do not have prefixes, and have access to all or some of an entity's parameters
-                foreach (FieldConfigurationElement cf in entityElement.CalculatedFields) {
+                foreach (var cf in entityElement.CalculatedFields) {
 
                     var field = _process.GetField(entity.Alias, cf.Alias);
 
-                    foreach (TransformConfigurationElement t in cf.Transforms) {
+                    foreach (var t in cf.Transforms) {
                         var reader = t.Parameter.Equals("*") ?
                             (ITransformParametersReader)new EntityParametersReader(entity) :
                             new EntityTransformParametersReader(entity);
@@ -70,9 +71,9 @@ namespace Transformalize.Main {
 
         }
 
-        private void AddBranches(IEnumerable branches, Entity entity, Field field, ITransformParametersReader reader) {
-            foreach (BranchConfigurationElement branch in branches) {
-                foreach (TransformConfigurationElement transform in branch.Transforms) {
+        private void AddBranches(IEnumerable<TflBranch> branches, Entity entity, Field field, ITransformParametersReader reader) {
+            foreach (var branch in branches) {
+                foreach (var transform in branch.Transforms) {
 
                     Field f;
                     transform.RunField = branch.RunField.Equals(DEFAULT) ? (Common.IsValidator(transform.Method) ? (transform.ResultField.Equals(DEFAULT) ? transform.ResultField + "Result" : transform.ResultField) : field.Alias) : branch.RunField;

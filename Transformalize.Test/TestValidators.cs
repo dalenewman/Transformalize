@@ -21,8 +21,10 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using Transformalize.Configuration;
 using Transformalize.Configuration.Builders;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Main;
@@ -124,20 +126,35 @@ namespace Transformalize.Test {
                 .Row("in", "2")
                 .Row("in", "4").ToOperation();
 
-            var cfg = new ProcessBuilder("process")
-                .Connection("input").Provider(ProviderType.Internal)
-                .Connection("output").Provider(ProviderType.Internal)
-                .Entity("entity")
-                    .InputOperation(input)
-                    .Field("in").Int32()
-                    .CalculatedField("out")
-                        .Transform("domain")
-                            .Domain("1,2,3")
-                            .MessageTemplate("{0} is wrong! {2} can't be {0}.")
-                            .Parameter("in")
-                .Process();
+            var xml = @"
+<cfg>
+    <processes>
+        <add name='process'>
+            <connections>
+                <add name='input' provider='internal' />
+                <add name='output' provider='internal' />
+            </connections>
+            <entities>
+                <add name='entity'>
+                    <fields>
+                        <add name='in' type='int' />
+                    </fields>
+                    <calculated-fields>
+                        <add name='out'>
+                            <transforms>
+                                <add name='domain' domain='1,2,3' message-template='{0} is wrong! {2} can't be {0}.' parameter='in' />
+                            </transforms>
+                        </add>
+                    </calculated-fields>
+                </add>
+            </entities>
+        </add>
+    </processes>    
+</cfg>
+".Replace('\'', '"');
 
-            var process = ProcessFactory.Create(cfg)[0];
+            var process = ProcessFactory.Create(xml)[0];
+            process.Entities[0].InputOperation = input;
             var output = process.Execute().ToArray();
 
             Assert.AreEqual(true, output[0]["outResult"]);
@@ -152,19 +169,35 @@ namespace Transformalize.Test {
                 .Row("in", 2)
                 .Row("in", 4).ToOperation();
 
-            var cfg = new ProcessBuilder("process")
-                .Connection("input").Provider(ProviderType.Internal)
-                .Connection("output").Provider(ProviderType.Internal)
-                .Entity("entity")
-                    .InputOperation(input)
-                    .Field("in").Int32()
-                        .Transform("domain")
-                            .Domain("1,2,3")
-                            .ResultField("result")
-                            .MessageField("message")
-                .Process();
+            var xml = @"
+<cfg>
+    <processes>
+        <add name='process'>
+            <connections>
+                <add name='input' provider='internal' />
+                <add name='output' provider='internal' />
+            </connections>
+            <entities>
+                <add name='entity'>
+                    <fields>
+                        <add name='in' type='int' />
+                    </fields>
+                    <calculated-fields>
+                        <add name='out'>
+                            <transforms>
+                                <add name='domain' domain='1,2,3' message-template='{0} is wrong! {2} can't be {0}.' parameter='in' />
+                            </transforms>
+                        </add>
+                    </calculated-fields>
+                </add>
+            </entities>
+        </add>
+    </processes>    
+</cfg>
+".Replace('\'', '"');
 
-            var process = ProcessFactory.Create(cfg)[0];
+            var process = ProcessFactory.Create(xml)[0];
+            process.Entities[0].InputOperation = input;
             var output = process.Execute().ToArray();
 
             Assert.AreEqual(true, output[0]["result"]);
@@ -202,12 +235,10 @@ namespace Transformalize.Test {
 
                 .Process();
 
-            var crap = cfg.Serialize();
             var process = ProcessFactory.Create(cfg)[0];
             process.Mode = "test";
             var output = process.Execute().ToArray();
 
-            Assert.AreNotEqual(string.Empty, crap);
             Assert.AreEqual("DALE", output[0]["new-name"]);
             Assert.AreEqual("vlad", output[1]["new-name"]);
             Assert.AreEqual("tara", output[2]["new-name"]);

@@ -12,7 +12,7 @@ using Version = Transformalize.Libs.Lucene.Net.Util.Version;
 namespace Transformalize.Main.Providers.Lucene {
     public class LuceneConnection : AbstractConnection {
 
-        public LuceneConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
+        public LuceneConnection(TflConnection element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
             Type = ProviderType.Lucene;
             IsDatabase = true;

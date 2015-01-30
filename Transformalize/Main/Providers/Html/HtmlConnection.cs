@@ -59,7 +59,7 @@ namespace Transformalize.Main.Providers.Html {
             throw new System.NotImplementedException();
         }
 
-        public HtmlConnection(ConnectionConfigurationElement element, AbstractConnectionDependencies dependencies)
+        public HtmlConnection(TflConnection element, AbstractConnectionDependencies dependencies)
             : base(element, dependencies) {
             Type = ProviderType.Html;
         }

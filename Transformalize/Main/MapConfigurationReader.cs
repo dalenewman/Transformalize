@@ -21,30 +21,26 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 
-namespace Transformalize.Main
-{
-    public class MapConfigurationReader : IMapReader
-    {
+namespace Transformalize.Main {
+    public class MapConfigurationReader : IMapReader {
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
-        private readonly ItemElementCollection _items;
+        private readonly List<TflMapItem> _items;
         private readonly string _operator;
 
-        public MapConfigurationReader(ItemElementCollection items, string @operator)
-        {
+        public MapConfigurationReader(List<TflMapItem> items, string @operator) {
             _items = items;
             _operator = @operator;
         }
 
-        public Map Read()
-        {
+        public Map Read() {
             var map = new Map();
             foreach (
                 var i in
-                    _items.Cast<ItemConfigurationElement>().Where(i => i.Operator.Equals(_operator, IC)))
-            {
+                    _items.Where(i => i.Operator.Equals(_operator, IC))) {
                 map[i.From] = new Item(i.Parameter, i.To);
             }
             return map;

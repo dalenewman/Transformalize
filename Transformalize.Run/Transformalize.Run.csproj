@@ -97,7 +97,6 @@
       <HintPath>..\packages\Npgsql.2.0.14.3\lib\net45\Npgsql.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Device" />
     <Reference Include="System.Xml.Linq" />

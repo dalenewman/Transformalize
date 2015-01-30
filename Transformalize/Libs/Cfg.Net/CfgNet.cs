@@ -222,6 +222,32 @@ namespace Transformalize.Libs.Cfg.Net {
             get { return _properties[name]; }
         }
 
+        public T GetDefaultOf<T>(Action<T> setter = null) {
+            var obj = Activator.CreateInstance(typeof(T));
+            var propertyInfos = GetProperties(typeof(T), _builder);
+
+            foreach (var pair in propertyInfos) {
+                if (pair.Value.MemberType != MemberTypes.Property)
+                    continue;
+                var attribute = (CfgAttribute)Attribute.GetCustomAttribute(pair.Value, typeof(CfgAttribute));
+                if (attribute == null)
+                    continue;
+                if (pair.Value.PropertyType.IsGenericType) {
+                    pair.Value.SetValue(obj, Activator.CreateInstance(pair.Value.PropertyType), null);
+                } else {
+                    pair.Value.SetValue(obj, attribute.value ?? default(T), null);
+                }
+            }
+
+            if (setter != null) {
+                setter((T)obj);
+            }
+
+            ((CfgNode)obj).Modify();
+
+            return (T)obj;
+        }
+
         protected void AddProblem(string problem) {
             _problems.AddCustomProblem(problem);
         }
@@ -231,7 +257,7 @@ namespace Transformalize.Libs.Cfg.Net {
             NanoXmlNode node = null;
             try {
                 node = new NanoXmlDocument(xml).RootNode;
-                var environmentDefaults = LoadEnvironment(node).ToArray();
+                var environmentDefaults = LoadEnvironment(node, parameters).ToArray();
                 if (environmentDefaults.Length > 0) {
                     for (var i = 0; i < environmentDefaults.Length; i++) {
                         if (i == 0 && parameters == null) {
@@ -252,7 +278,7 @@ namespace Transformalize.Libs.Cfg.Net {
             PopulateProperties();
         }
 
-        protected IEnumerable<string[]> LoadEnvironment(NanoXmlNode node) {
+        protected IEnumerable<string[]> LoadEnvironment(NanoXmlNode node, Dictionary<string, string> parameters) {
 
             for (var i = 0; i < node.SubNodes.Count; i++) {
                 var environmentsNode = node.SubNodes[i];
@@ -276,7 +302,9 @@ namespace Transformalize.Libs.Cfg.Net {
                         if (!environmentNode.TryAttribute("name", out environmentName))
                             continue;
 
-                        if (defaultEnvironment.Value != environmentName.Value || !environmentNode.HasSubNode())
+                        var value = CheckParameters(parameters, defaultEnvironment.Value);
+
+                        if (value != environmentName.Value || !environmentNode.HasSubNode())
                             continue;
 
                         return GetParameters(environmentNode.SubNodes[0]);
@@ -353,9 +381,9 @@ namespace Transformalize.Libs.Cfg.Net {
 
         protected void SharedProperty<T>(string className, string propertyName, T value) {
             if (_classProperties.ContainsKey(className)) {
-                _classProperties[className][propertyName] = new CfgProperty(propertyName, typeof(T), new CfgAttribute() { value = value });
+                _classProperties[className][propertyName] = new CfgProperty(propertyName, value.GetType(), new CfgAttribute() { value = value });
             } else {
-                _classProperties[className] = new Dictionary<string, CfgProperty>(StringComparer.Ordinal) { { propertyName, new CfgProperty(propertyName, typeof(T), new CfgAttribute() { value = value }) } };
+                _classProperties[className] = new Dictionary<string, CfgProperty>(StringComparer.Ordinal) { { propertyName, new CfgProperty(propertyName, value.GetType(), new CfgAttribute() { value = value }) } };
             }
         }
 
@@ -369,6 +397,11 @@ namespace Transformalize.Libs.Cfg.Net {
         /// Override to add custom validation.  Use `AddProblem()` to add problems.
         /// </summary>
         protected virtual void Validate() { }
+
+        /// <summary>
+        /// Override for custom modifications.
+        /// </summary>
+        protected virtual void Modify() { }
 
         private void LoadCollections(NanoXmlNode node, string parentName, Dictionary<string, string> parameters = null) {
 
@@ -393,7 +426,11 @@ namespace Transformalize.Libs.Cfg.Net {
                                         continue;
                                     var property = _classProperties[subNode.Name][attribute.Name];
                                     if (attribute.Value != null) {
-                                        property.Attributes.value = attribute.Value;
+                                        try {
+                                            property.Attributes.value = Converter[property.Type](attribute.Value);
+                                        } catch (Exception ex) {
+                                            _problems.SettingValue(property.Name, attribute.Value, parentName, node.Name, ex.Message);
+                                        }
                                     }
                                     tflNode.Property(property.Name, property.Type, property.Attributes);
                                 }
@@ -481,18 +518,7 @@ namespace Transformalize.Libs.Cfg.Net {
                     if (attribute.Value == null)
                         continue;
 
-                    string value;
-
-                    if (parameters != null && attribute.Value.IndexOf('@') >= 0) {
-                        var response = ReplaceParameters(attribute.Value, parameters, _builder);
-                        value = response.Item1;
-                        if (response.Item2.Length > 1) {
-                            _problems.MissingPlaceHolderValues(response.Item2);
-                        }
-                    } else {
-                        value = attribute.Value;
-                    }
-
+                    var value = CheckParameters(parameters, attribute.Value);
                     var property = _properties[attribute.Name];
 
                     if (!property.IsInDomain(value)) {
@@ -516,6 +542,16 @@ namespace Transformalize.Libs.Cfg.Net {
             }
 
             CheckRequiredProperties(node, parentName);
+        }
+
+        private string CheckParameters(IDictionary<string, string> parameters, string input) {
+            if (parameters == null || input.IndexOf('@') < 0)
+                return input;
+            var response = ReplaceParameters(input, parameters, _builder);
+            if (response.Item2.Length > 1) {
+                _problems.MissingPlaceHolderValues(response.Item2);
+            }
+            return response.Item1;
         }
 
         private static Tuple<string, string[]> ReplaceParameters(string value, IDictionary<string, string> parameters, StringBuilder builder) {
@@ -888,6 +924,7 @@ namespace Transformalize.Libs.Cfg.Net {
                 properties[pair.Key].SetValue(this, Activator.CreateInstance(properties[pair.Key].PropertyType), null);
             }
 
+            Modify();
             Validate();
         }
 

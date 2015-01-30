@@ -56,14 +56,12 @@ namespace Transformalize.Main {
         public bool Enabled { get; private set; }
         public Encoding ContentType { get; private set; }
         public bool IsUsedInPipeline { get; set; }
-        public bool Conditional { get; set; }
         public string Engine { get; set; }
 
-        public Template(Process process, TemplateConfigurationElement element, Contents contents) {
+        public Template(Process process, TflTemplate element, Contents contents) {
 
             Cache = element.Cache;
             Enabled = element.Enabled;
-            Conditional = element.Conditional;
             Engine = element.Engine;
             Name = element.Name;
             ContentType = element.ContentType.Equals("raw") ? Encoding.Raw : Encoding.Html;

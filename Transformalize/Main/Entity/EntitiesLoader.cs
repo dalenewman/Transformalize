@@ -9,16 +9,16 @@ namespace Transformalize.Main {
     public class EntitiesLoader {
 
         private readonly Process _process;
-        private readonly EntityElementCollection _elements;
+        private readonly List<TflEntity> _elements;
 
-        public EntitiesLoader(ref Process process, EntityElementCollection elements) {
+        public EntitiesLoader(ref Process process, List<TflEntity> elements) {
             _process = process;
             _elements = elements;
         }
 
         public void Load() {
             short entityIndex = 0;
-            foreach (EntityConfigurationElement element in _elements) {
+            foreach (TflEntity element in _elements) {
                 var entity = new EntityConfigurationLoader(_process).Read(element, entityIndex);
 
                 GuardAgainstFieldOverlap(entity);

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using Transformalize.Main;
@@ -5,34 +6,29 @@ using Transformalize.Runner;
 
 namespace Transformalize.Configuration {
     public class ConfigurationFactory {
-        private readonly NameValueCollection _query;
+        private readonly Dictionary<string, string> _parameters;
         private readonly string _resource;
 
-        /// <summary>
-        /// Turns configuration into a collection of processes.
-        /// </summary>
-        /// <param name="resource">May be a named process in your application *.config, an xml file name, a url pointing to an xml file on a web server, or the xml configuration itself.  Way too many choices!</param>
-        /// <param name="query">an optional collection of named values for replacing $(parameter) place-holders in the configuration.</param>
-        public ConfigurationFactory(string resource, NameValueCollection query = null) {
+        public ConfigurationFactory(string resource, Dictionary<string, string> parameters = null) {
+            _parameters = parameters;
             _resource = resource.Trim();
-            _query = query;
         }
 
-        public ProcessElementCollection Create() {
-            return CreateReader().Read();
+        public List<TflProcess> Create() {
+            return CreateReader().Read(_parameters);
         }
 
-        public ProcessConfigurationElement CreateSingle() {
-            return CreateReader().Read()[0];
+        public TflProcess CreateSingle() {
+            return CreateReader().Read(_parameters)[0];
         }
 
-        private IReader<ProcessElementCollection> CreateReader() {
+        private IReader<List<TflProcess>> CreateReader() {
 
             var source = DetermineConfigurationSource(_resource);
 
             switch (source) {
                 case ConfigurationSource.Xml:
-                    return new ProcessXmlConfigurationReader(_resource, new ContentsStringReader(_query));
+                    return new ProcessXmlConfigurationReader(_resource, new ContentsStringReader());
                 case ConfigurationSource.WebFile:
                     return new ProcessXmlConfigurationReader(_resource, new ContentsWebReader());
                 default:
@@ -41,7 +37,7 @@ namespace Transformalize.Configuration {
                         return new ProcessXmlConfigurationReader(_resource, new ContentsFileReader());
                     }
 
-                    return new ProcessConfigurationReader(_resource);
+                    throw new TransformalizeException(string.Empty, string.Empty, "{0} is invalid configuration.", _resource);
             }
 
         }
