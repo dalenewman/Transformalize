@@ -10,7 +10,7 @@ namespace Transformalize.Configuration {
         public string Name { get; set; }
         [Cfg(value = "")]
         public string RunField { get; set; }
-        [Cfg(value = "Equal", domain = "Equal,GreaterThan,GreaterThanEqual,LessThan,LessThanEqual,NotEqual")]
+        [Cfg(value = "Equal", domain = Common.ValidComparisons)]
         public string RunOperator { get; set; }
         [Cfg(value = Common.DefaultValue)]
         public string RunType { get; set; }

@@ -99,7 +99,7 @@ namespace Transformalize.Configuration {
         }
 
         protected override void Modify() {
-            if (Alias == string.Empty) {
+            if (string.IsNullOrEmpty(Alias)) {
                 Alias = Name;
             }
             foreach (var calculatedField in CalculatedFields) {

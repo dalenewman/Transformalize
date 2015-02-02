@@ -66,6 +66,8 @@ namespace Transformalize.Configuration {
         public string Version { get; set; }
         [Cfg(value = "GET")]
         public string WebMethod { get; set; }
+        [Cfg(value=true)]
+        public bool Check { get; set; }
 
         protected override void Validate() {
             const StringComparison ic = StringComparison.OrdinalIgnoreCase;

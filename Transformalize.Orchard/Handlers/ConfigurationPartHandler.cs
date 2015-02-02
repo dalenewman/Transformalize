@@ -50,7 +50,7 @@ namespace Transformalize.Orchard.Handlers {
                 return;
             try {
                 //test if configuration works
-                foreach (var process in new ConfigurationFactory(part.Configuration).Create().Cast<TflProcess>().Select(element => ProcessFactory.Create(element)).SelectMany(processes => processes)) {
+                foreach (var process in new ConfigurationFactory(part.Configuration).Create().Select(element => ProcessFactory.Create(element)).SelectMany(processes => processes)) {
                     Log.Information("Successfully loaded {0}.", process.Name);
                 }
                 CheckAddress(part.StartAddress);

@@ -5,6 +5,7 @@ using Transformalize.Configuration;
 using Transformalize.Extensions;
 using Transformalize.Libs.Elasticsearch.Net.Serialization;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
+using Transformalize.Libs.FileHelpers.DataLink;
 
 namespace Transformalize.Main.Transform {
 
@@ -545,8 +546,10 @@ namespace Transformalize.Main.Transform {
                 return element;
             }
 
-            foreach (var p in split.Skip(1)) {
-                element.Parameters.Add(new TflParameter() { Field = p });
+            var skipped = split.Skip(1).ToArray();
+            for (var i = 0; i < skipped.Length; i++) {
+                var p = skipped[i];
+                element.Parameters.Add(field.GetDefaultOf<TflParameter>(x => x.Field = p));
             }
 
             return element;

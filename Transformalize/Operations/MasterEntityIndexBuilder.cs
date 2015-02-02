@@ -20,21 +20,27 @@ namespace Transformalize.Operations {
         public void Create() {
             if (string.IsNullOrEmpty(_process.Options.Mode) || _process.Options.Mode == Common.DefaultValue)
                 return;
-            var stopWatch = new Stopwatch();
-            stopWatch.Start();
-            using (var cn = _process.OutputConnection.GetConnection()) {
-                cn.Open();
-                foreach (var sql in CreateRelationIndexStatements()) {
-                    TflLogger.Info(_process.Name, _process.MasterEntity.Name, sql);
-                    try {
-                        cn.Execute(sql);
-                    } catch (Exception ex) {
-                        TflLogger.Warn(_process.Name, _process.MasterEntity.Name, "Failed to create index. {0} {1}", sql, ex.Message);
+            var indexCommands = CreateRelationIndexStatements().ToArray();
+
+            if (indexCommands.Any()) {
+                var stopWatch = new Stopwatch();
+                stopWatch.Start();
+                using (var cn = _process.OutputConnection.GetConnection()) {
+                    cn.Open();
+                    foreach (var sql in indexCommands) {
+                        TflLogger.Info(_process.Name, _process.MasterEntity.Name, sql);
+                        try {
+                            cn.Execute(sql);
+                        } catch (Exception ex) {
+                            TflLogger.Warn(_process.Name, _process.MasterEntity.Name, "Failed to create index. {0} {1}", sql, ex.Message);
+                        }
                     }
                 }
+                stopWatch.Stop();
+                TflLogger.Info(_process.Name, _process.MasterEntity.Name, "Indexed {0} star-schema relationships in {1}.", _process.MasterEntity.OutputName(), stopWatch.Elapsed);
+
             }
-            stopWatch.Stop();
-            TflLogger.Info(_process.Name, _process.MasterEntity.Name, "Indexed {0} star-schema relationships in {1}.", _process.MasterEntity.OutputName(), stopWatch.Elapsed);
+
         }
 
         private IEnumerable<string> CreateRelationIndexStatements() {

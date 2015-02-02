@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using System.Linq;
+using Microsoft.AnalysisServices;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
 using Transformalize.Libs.Ninject;
@@ -159,7 +160,7 @@ namespace Transformalize.Main {
 
             private void LoadLogConfiguration(TflProcess element, ref Process process) {
 
-                process.LogRows = element.Log.Any() ? element.Log[0].Rows : (long)10000;
+                process.LogRows = element.Log.Any() ? element.Log[0].Rows : 10000;
 
                 if (element.Log.Count == 0)
                     return;

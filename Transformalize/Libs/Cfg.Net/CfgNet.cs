@@ -145,7 +145,6 @@ namespace Transformalize.Libs.Cfg.Net {
         public object value { get; set; }
         public bool required { get; set; }
         public bool unique { get; set; }
-        public bool decode { get; set; }
         public string sharedProperty { get; set; }
         public object sharedValue { get; set; }
         public string domain { get; set; }
@@ -532,7 +531,7 @@ namespace Transformalize.Libs.Cfg.Net {
                     var value = CheckParameters(parameters, attribute.Value);
                     var property = _properties[attribute.Name];
 
-                    if (property.Attributes.decode && value.IndexOf(CfgConstants.ENTITY_START) >= 0) {
+                    if (value.IndexOf(CfgConstants.ENTITY_START) > -1) {
                         value = Decode(value, _builder);
                     }
 

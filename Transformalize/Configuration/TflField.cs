@@ -238,7 +238,7 @@ namespace Transformalize.Configuration {
         /// 
         ///     <add name="Name" t="trim()" />
         /// </summary>
-        [Cfg(value = "", decode = true)]
+        [Cfg(value = "")]
         public string T { get; set; }
 
         /// <summary>

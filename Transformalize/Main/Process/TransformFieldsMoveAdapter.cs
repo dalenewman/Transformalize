@@ -45,7 +45,7 @@ namespace Transformalize.Main {
                 RemoveFields(entity.Fields, transformName);
 
                 calculatedFields[entity.Alias] = GetFields(entity.CalculatedFields, transformName);
-                RemoveFields(entity.CalculatedFields.Cast<TflField>().ToList(), transformName);
+                RemoveFields(entity.CalculatedFields, transformName);
             }
 
             InsertFields(fields);

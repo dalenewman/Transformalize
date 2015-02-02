@@ -98,13 +98,13 @@ namespace Transformalize.Configuration {
         public string Root { get; set; }
         [Cfg(value = "")]
         public string RunField { get; set; }
-        [Cfg(value = "Equal", domain = "Equal,LessThan,GreaterThan,LessThanEqual,GreaterThanEqual")]
+        [Cfg(value = "Equal", domain = Common.ValidComparisons)]
         public string RunOperator { get; set; }
         [Cfg(value = Common.DefaultValue)]
         public string RunType { get; set; }
         [Cfg(value = Common.DefaultValue)]
         public string RunValue { get; set; }
-        [Cfg(value = "", decode = true)]
+        [Cfg(value = "")]
         public string Script { get; set; }
         [Cfg(value = Common.DefaultValue)]
         public string Separator { get; set; }
@@ -112,7 +112,7 @@ namespace Transformalize.Configuration {
         public int Sleep { get; set; }
         [Cfg(value = 0)]
         public int StartIndex { get; set; }
-        [Cfg(value = "", decode = true)]
+        [Cfg(value = "")]
         public string T { get; set; }
         [Cfg(value = "")]
         public string Tag { get; set; }
@@ -158,7 +158,7 @@ namespace Transformalize.Configuration {
         public string WebMethod { get; set; }
         [Cfg(value = "Default")]
         public string XmlMode { get; set; }
-        [Cfg(value = "", decode = true)]
+        [Cfg(value = "")]
         public string Xpath { get; set; }
 
         [Cfg()]

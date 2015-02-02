@@ -26,6 +26,7 @@ using System.IO;
 using System.Numerics;
 using Transformalize.Configuration;
 using Transformalize.Libs.FileHelpers.Enums;
+using Transformalize.Libs.Lucene.Net.Index;
 using Transformalize.Libs.Rhino.Etl.Operations;
 
 namespace Transformalize.Main.Providers {
@@ -85,6 +86,7 @@ namespace Transformalize.Main.Providers {
         public bool TableSample { get; set; }
         public string Encoding { get; set; }
         public string Version { get; set; }
+        public bool CheckMe { get; set; }
         public ConnectionIs Is { get; set; }
         public string TextQualifier { get; set; }
 
@@ -141,6 +143,7 @@ namespace Transformalize.Main.Providers {
             Direct = element.Direct;
             Encoding = element.Encoding;
             Version = element.Version;
+            CheckMe = element.Check;
             Path = element.Path;
             ErrorMode = (ErrorMode)Enum.Parse(typeof(ErrorMode), element.ErrorMode, true);
             SearchOption = (SearchOption)Enum.Parse(typeof(SearchOption), element.SearchOption, true);
@@ -193,7 +196,7 @@ namespace Transformalize.Main.Providers {
         }
 
         public bool IsReady() {
-            return ConnectionChecker.Check(this);
+            return CheckMe && ConnectionChecker.Check(this);
         }
 
         public void AddParameter(IDbCommand command, string name, object val) {

@@ -88,7 +88,7 @@ namespace Transformalize.Main {
             Bind<AbstractConnection>().To<WebConnection>().Named("web");
 
             //solrnet binding
-            var solrConnections = _element.Connections.Cast<TflConnection>().Where(c => c.Provider.Equals("solr", StringComparison.OrdinalIgnoreCase)).ToArray();
+            var solrConnections = _element.Connections.Where(c => c.Provider.Equals("solr", StringComparison.OrdinalIgnoreCase)).ToArray();
             if (solrConnections.Any()) {
                 var mapper = new MemoizingMappingManager(new AttributesMappingManager());
                 Bind<IReadOnlyMappingManager>().ToConstant(mapper);

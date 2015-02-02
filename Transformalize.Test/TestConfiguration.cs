@@ -22,14 +22,13 @@
 
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
+using System.IO;
 using System.Linq;
-using System.Xml.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration;
 using Transformalize.Libs.SemanticLogging;
 using Transformalize.Logging;
 using Transformalize.Main;
-using Transformalize.Runner;
 
 namespace Transformalize.Test {
     [TestFixture]
@@ -174,6 +173,14 @@ namespace Transformalize.Test {
             Assert.AreEqual(@"
                 SELECT [field1] FROM [dbo].[entity] WHERE field1 != 'literal1' AND field2 > 6 OR field3 != 'literal3'", sql);
         }
+
+        //public void TestError() {
+        //    var cfg = new TflRoot(File.ReadAllText(@"C:\Code\mydd\mydd\tfl\class.xml"), null);
+        //    Assert.AreEqual(0, cfg.Problems().Count);
+
+        //    var process = ProcessFactory.CreateSingle(@"C:\Code\mydd\mydd\tfl\class.xml");
+        //    Assert.IsNotNull(process);
+        //}
 
 
     }

@@ -41,6 +41,7 @@ namespace Transformalize.Main {
 
         public const string DefaultValue = "[default]";
         public const string ValidTypes = "bool,boolean,byte,byte[],char,date,datetime,decimal,double,float,guid,int,int16,int32,int64,long,object,real,rowversion,short,single,string,uint64,xml";
+        public const string ValidComparisons = "Equal,NotEqual,LessThan,GreaterThan,LessThanEqual,GreaterThanEqual";
 
         public static Dictionary<string, byte> Validators = new Dictionary<string, byte> {
             {"containscharacters", 1},
