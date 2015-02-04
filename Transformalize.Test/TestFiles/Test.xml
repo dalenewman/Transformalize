@@ -61,26 +61,25 @@
         <add name="Order" connection="input" version="RowVersion">
           <fields>
             <add name="OrderKey" type="int" primary-key="true"/>
-            <add name="OrderValidation" length="1024" input="false"/>
             <add name="CustomerKey" type="int"></add>
-            <add name="OrderDate" type="datetime">
-              <transforms>
+            <add name="OrderDate" type="datetime"/>
+            <add name="RowVersion" alias="OrderRowVersion" type="RowVersion" length="8" search-type="none"></add>
+          </fields>
+          <calculated-fields>
+            <add name="OrderDateIsInRange" type="bool">
+               <transforms>
                 <add method="datetimerange"
                      lower-bound="2010-01-01"
                      upper-bound="2012-10-31"
-                     message-template="{2} should be between 2010-01-01 and 2012 Halloween. You have {0}."
-                     message-field="OrderValidation"
-                     message-append="true"/>
-              </transforms>
+                     parameter="OrderDate"/>
+              </transforms>             
             </add>
-            <add name="RowVersion" alias="OrderRowVersion" type="RowVersion" length="8" search-type="none"></add>
-          </fields>
+          </calculated-fields>
         </add>
 
         <add name="Customer" connection="input" version="RowVersion">
           <fields>
             <add name="CustomerKey" type="int" primary-key="true"/>
-            <add name="CustomerValidation" length="1024" input="false"/>
             <add name="First" alias="FirstName" length="50">
               <transforms>
                 <add method="map" map="FirstNames"/>
@@ -89,7 +88,7 @@
 
             <add name="Last" alias="LastName" length="50">
               <transforms>
-                <add method="containscharacters" characters="abc" contains-characters="All" message-template="{2} must contain a, b, and c. You have {0}." message-field="CustomerValidation"/>
+                <add method="containscharacters" characters="abc" contains-characters="All" />
               </transforms>
             </add>
             <add name="Address" length="100">
@@ -111,14 +110,22 @@
                 </add>
               </transforms>
             </add>
-            <add name="Country" length="10">
-              <transforms>
-                <add method="containscharacters" characters="US" contains-characters="All" message-template="This is not America." message-field="CustomerValidation"/>
-                <add method="domain" domain="US,PT,CI" message-template="0={0}, 1={1}, 2={2}." message-field="CustomerValidation"/>
-              </transforms>
-            </add>
+            <add name="Country" length="10" />
             <add name="RowVersion" alias="CustomerRowVersion" type="RowVersion" length="8" search-type="none"></add>
           </fields>
+          <calculated-fields>
+            <add name="CountryIsUS" type="bool">
+              <transforms>
+                <add method="containscharacters" characters="US" contains-characters="All" parameter="Country" />
+              </transforms>           
+            </add>
+            <add name="CountryInUsPtCi" type="bool">
+              <transforms>
+                <add method="domain" domain="US,PT,CI" parameter="Country"/>
+              </transforms>
+            </add>
+          </calculated-fields>
+          
         </add>
 
         <add name="Product" connection="input" version="RowVersion">

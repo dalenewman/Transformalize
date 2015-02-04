@@ -7,7 +7,7 @@ namespace Transformalize.Configuration {
         public string Name { get; set; }
         [Cfg(required = true)]
         public List<TflParameter> Parameters { get; set; }
-
+        [Cfg()]
         public string Default { get; set; }
     }
 }

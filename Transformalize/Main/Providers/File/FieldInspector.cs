@@ -68,8 +68,6 @@ namespace Transformalize.Main.Providers.File {
                                 f.GetDefaultOf<TflTransform>(t => {
                                     t.Method = "typeconversion";
                                     t.Type = dataType;
-                                    t.ResultField = result;
-                                    t.MessageField = string.Empty;
                                     t.Parameter = field.Name;
                                     t.IgnoreEmpty = request.IgnoreEmpty;
                                 })

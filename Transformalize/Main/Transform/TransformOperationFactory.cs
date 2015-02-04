@@ -77,8 +77,6 @@ namespace Transformalize.Main {
             var inType = hasParameters ? parameters[0].SimpleType : field.SimpleType;
             var outKey = field.Alias;
             var outType = field.SimpleType;
-            var resultKey = element.ResultField.Equals(Common.DefaultValue) ? field.Alias + "Result" : element.ResultField;
-            var messageKey = element.MessageField.Equals(Common.DefaultValue) ? field.Alias + "Message" : element.MessageField;
             var scripts = new Dictionary<string, Script>();
 
             if (!hasParameters) {
@@ -670,27 +668,21 @@ namespace Transformalize.Main {
                 case "containscharacters":
                     return new ContainsCharactersValidatorOperation(
                         inKey,
-                        resultKey,
-                        messageKey,
+                        outKey,
                         element.Characters,
                         (ContainsCharacters)Enum.Parse(typeof(ContainsCharacters), element.ContainsCharacters, true),
-                        element.MessageTemplate,
-                        element.Negated,
-                        element.MessageAppend
+                        element.Negated
                     );
 
                 case "datetimerange":
                     return new DateTimeRangeValidatorOperation(
                         inKey,
-                        resultKey,
-                        messageKey,
-                        (DateTime)_conversionMap[field.SimpleType](element.LowerBound),
+                        outKey,
+                        (DateTime)_conversionMap[inType](element.LowerBound),
                         (RangeBoundaryType)Enum.Parse(typeof(RangeBoundaryType), element.LowerBoundType, true),
-                        (DateTime)_conversionMap[field.SimpleType](element.UpperBound),
+                        (DateTime)_conversionMap[inType](element.UpperBound),
                         (RangeBoundaryType)Enum.Parse(typeof(RangeBoundaryType), element.UpperBoundType, true),
-                        element.MessageTemplate,
-                        element.Negated,
-                        element.MessageAppend
+                        element.Negated
                     );
 
                 case "domain":
@@ -701,98 +693,77 @@ namespace Transformalize.Main {
 
                     return new DomainValidatorOperation(
                         inKey,
-                        resultKey,
-                        messageKey,
+                        outKey,
                         domain,
-                        element.MessageTemplate,
-                        element.Negated,
-                        element.MessageAppend
+                        element.Negated
                     );
 
                 case "isjson":
-                    return new JsonValidatorOperation(inKey, resultKey, messageKey, element.MessageTemplate, element.Negated, element.MessageAppend);
+                    return new JsonValidatorOperation(inKey, outKey, element.Negated);
 
                 case "notnull":
-                    return new NotNullValidatorOperation(inKey, resultKey, messageKey, element.MessageTemplate, element.Negated, element.MessageAppend);
+                    return new NotNullValidatorOperation(inKey, outKey, element.Negated);
 
                 case "fieldcomparison":
-                    return new PropertyComparisonValidatorOperation(inKey, element.TargetField, resultKey, messageKey, element.Operator, element.MessageTemplate, element.Negated, element.MessageAppend);
+                    return new PropertyComparisonValidatorOperation(inKey, element.TargetField, outKey, element.Operator, element.Negated);
 
                 case "range":
                     return new RangeValidatorOperation(
                         inKey,
-                        resultKey,
-                        messageKey,
+                        outKey,
                         (IComparable)_conversionMap[field.SimpleType](element.LowerBound),
                         (RangeBoundaryType)Enum.Parse(typeof(RangeBoundaryType), element.LowerBoundType, true),
                         (IComparable)_conversionMap[field.SimpleType](element.UpperBound),
                         (RangeBoundaryType)Enum.Parse(typeof(RangeBoundaryType), element.UpperBoundType, true),
-                        element.MessageTemplate,
-                        element.Negated,
-                        element.MessageAppend
+                        element.Negated
                     );
 
                 case "regex":
                     return new RegexValidatorOperation(
                         inKey,
-                        resultKey,
-                        messageKey,
+                        outKey,
                         element.Pattern,
-                        element.MessageTemplate,
-                        element.Negated,
-                        element.MessageAppend
+                        element.Negated
                     );
 
                 case "relativedatetime":
                     return new RelativeDateTimeValidatorOperation(
                         inKey,
-                        resultKey,
-                        messageKey,
+                        outKey,
                         Convert.ToInt32(element.LowerBound),
                         (DateTimeUnit)Enum.Parse(typeof(DateTimeUnit), element.LowerUnit, true),
                         (RangeBoundaryType)Enum.Parse(typeof(RangeBoundaryType), element.LowerBoundType, true),
                         Convert.ToInt32(element.UpperBound),
                         (DateTimeUnit)Enum.Parse(typeof(DateTimeUnit), element.UpperUnit, true),
                         (RangeBoundaryType)Enum.Parse(typeof(RangeBoundaryType), element.UpperBoundType, true),
-                        element.MessageTemplate,
-                        element.Negated,
-                        element.MessageAppend
+                        element.Negated
                     );
 
                 case "startswith":
                     return new StartsWithValidatorOperation(
                         inKey,
                         element.Value,
-                        resultKey,
-                        messageKey,
-                        element.MessageTemplate,
-                        element.Negated,
-                        element.MessageAppend
+                        outKey,
+                        element.Negated
                     );
 
                 case "stringlength":
                     return new StringLengthValidatorOperation(
                         inKey,
-                        resultKey,
-                        messageKey,
+                        outKey,
                         Convert.ToInt32(element.LowerBound),
                         (RangeBoundaryType)Enum.Parse(typeof(RangeBoundaryType), element.LowerBoundType, true),
                         Convert.ToInt32(element.UpperBound),
                         (RangeBoundaryType)Enum.Parse(typeof(RangeBoundaryType), element.UpperBoundType, true),
-                        element.MessageTemplate,
-                        element.Negated,
-                        element.MessageAppend
+                        element.Negated
                     );
 
                 case "typeconversion":
                     return new TypeConversionValidatorOperation(
                         inKey,
-                        resultKey,
-                        messageKey,
+                        outKey,
                         Common.ToSystemType(element.Type),
-                        element.MessageTemplate,
                         element.Negated,
-                        element.MessageAppend,
                         element.IgnoreEmpty
                     );
 

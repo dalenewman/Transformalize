@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using Transformalize.Libs.Cfg.Net;
 using Transformalize.Main;
 
 namespace Transformalize.Configuration {
     public class TflField : CfgNode {
+        private string _type1;
 
         /// <summary>
         /// Optional.  Default is `false`
@@ -272,7 +274,10 @@ namespace Transformalize.Configuration {
         /// * xml
         /// </summary>
         [Cfg(value = "string", domain = Common.ValidTypes, ignoreCase = true)]
-        public string Type { get; set; }
+        public string Type {
+            get { return _type1; }
+            set { _type1 = value != null && value.StartsWith("sy", StringComparison.OrdinalIgnoreCase) ? value.ToLower().Replace("system.", string.Empty) : value; }
+        }
 
         /// <summary>
         /// Optional. Default defers to entity's unicode attribute, which defaults to `true`

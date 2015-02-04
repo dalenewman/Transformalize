@@ -132,24 +132,7 @@
           <fields>
             <add name="Address" length="60" ></add>
             <add name="City" length="15" ></add>
-            <add name="CompanyName" length="40" >
-              <transforms>
-                <add method="domain" domain="Wartian Herkku,Die Wandernde Kuh" result-field="x">
-                  <branches>
-                    <add name="pass" run-field="x" run-value="true">
-                      <transforms>
-                        <add method="toUpper"/>
-                      </transforms>
-                    </add>
-                    <add name="fail" run-field="x" run-value="false">
-                      <transforms>
-                        <add method="toLower"/>
-                      </transforms>
-                    </add>
-                  </branches>
-                </add>
-              </transforms>
-            </add>
+            <add name="CompanyName" length="40" />
             <add name="ContactName" length="30" ></add>
             <add name="ContactTitle" length="30" ></add>
             <add name="Country" length="15" ></add>

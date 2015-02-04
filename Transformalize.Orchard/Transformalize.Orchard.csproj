@@ -1165,6 +1165,7 @@
   <ItemGroup>
     <Compile Include="Controllers\ApiController.cs" />
     <Compile Include="Controllers\ReclineController.cs" />
+    <Compile Include="Controllers\TflController.cs" />
     <Compile Include="Controllers\WidgetController.cs" />
     <Compile Include="Controllers\SlickGridController.cs" />
     <Compile Include="Controllers\HandsOnTableController.cs" />

@@ -22,22 +22,16 @@ namespace Transformalize.Orchard.Controllers {
     public class WidgetController : Controller {
 
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
-        private readonly IOrchardServices _orchardServices;
         private readonly ITransformalizeService _transformalize;
-        private readonly IApiService _apiService;
         private readonly Stopwatch _stopwatch = new Stopwatch();
 
         protected Localizer T { get; set; }
         protected ILogger Logger { get; set; }
 
         public WidgetController(
-            IOrchardServices services,
-            ITransformalizeService transformalize,
-            IApiService apiService
+            ITransformalizeService transformalize
         ) {
-            _orchardServices = services;
             _transformalize = transformalize;
-            _apiService = apiService;
             T = NullLocalizer.Instance;
             Logger = NullLogger.Instance;
             _stopwatch.Start();
@@ -177,26 +171,18 @@ namespace Transformalize.Orchard.Controllers {
 
         protected ApiResponse Run(
             ApiRequest request,
-            ConfigurationPart part,
-            NameValueCollection query,
-            string modifiedConfiguration = null
+            TransformalizeRequest transformalizeRequest
         ) {
 
             var errorNumber = 500;
             try {
-                var tflRequest = new TransformalizeRequest(part) {
-                    Configuration = modifiedConfiguration ?? part.Configuration,
-                    Options = new Options(),
-                    Query = query
-                };
-
                 errorNumber++;
-                var tflResponse = _transformalize.Run(tflRequest);
+                var tflResponse = _transformalize.Run(transformalizeRequest);
 
                 errorNumber++;
                 return new ApiResponse(
                     request,
-                    tflRequest.Configuration,
+                    transformalizeRequest.Configuration,
                     tflResponse
                 );
             } catch (Exception ex) {
@@ -204,7 +190,7 @@ namespace Transformalize.Orchard.Controllers {
                 request.Message = ex.Message;
                 return new ApiResponse(
                     request,
-                    part.Configuration,
+                    transformalizeRequest.Configuration,
                     new TransformalizeResponse()
                 );
             }

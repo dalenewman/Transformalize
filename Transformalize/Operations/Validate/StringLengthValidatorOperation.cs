@@ -6,22 +6,19 @@ namespace Transformalize.Operations.Validate {
         public StringLengthValidatorOperation(
             string keyToValidate,
             string resultKey,
-            string messageKey,
             int lowerBound,
             RangeBoundaryType lowerBoundaryType,
             int upperBound,
             RangeBoundaryType upperBoundaryType,
-            string messageTemplate,
-            bool negated,
-            bool messageAppend)
-            : base(keyToValidate, resultKey, messageKey, messageAppend) {
+            bool negated)
+            : base(keyToValidate, resultKey) {
 
             Validator = new StringLengthValidator(
                 lowerBound,
                 lowerBoundaryType,
                 upperBound,
                 upperBoundaryType,
-                messageTemplate,
+                string.Empty,
                 negated
                 );
         }

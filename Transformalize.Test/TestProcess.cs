@@ -375,7 +375,7 @@ namespace Transformalize.Test {
 
             var orderDate = order.Fields[1];
             Assert.AreEqual("OrderDate", orderDate.Name);
-            Assert.AreEqual("System.DateTime", orderDate.Type);
+            Assert.AreEqual("datetime", orderDate.Type);
             Assert.IsFalse(orderDate.PrimaryKey);
             Assert.AreEqual("9999-12-31", orderDate.Default);
 

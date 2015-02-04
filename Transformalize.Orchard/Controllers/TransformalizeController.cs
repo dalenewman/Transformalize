@@ -10,14 +10,13 @@ using Orchard.Themes;
 using Orchard.UI.Notify;
 using Transformalize.Extensions;
 using Transformalize.Logging;
-using Transformalize.Main;
 using Transformalize.Main.Providers;
 using Transformalize.Orchard.Models;
 using Transformalize.Orchard.Services;
 
 namespace Transformalize.Orchard.Controllers {
 
-    public class TransformalizeController : Controller {
+    public class TransformalizeController : TflController {
 
         private readonly IOrchardServices _orchardServices;
         private readonly ITransformalizeService _transformalize;
@@ -90,13 +89,14 @@ namespace Transformalize.Orchard.Controllers {
                     var input = Request.Files.Get(0);
                     if (input != null && input.ContentLength > 0) {
                         var filePart = _fileService.Upload(input);
-                        query.Remove("InputFile");
-                        query.Add("InputFile", filePart.Id.ToString(CultureInfo.InvariantCulture));
+                        query["InputFile"] = filePart.Id.ToString(CultureInfo.InvariantCulture);
                     }
                 }
             }
 
-            var viewModel = Run(part, query);
+            var transformalizeRequest = new TransformalizeRequest(part, query, null);
+
+            var viewModel = Run(transformalizeRequest);
 
             var returnUrl = (Request.Form["ReturnUrl"] ?? Request.QueryString["ReturnUrl"]) ?? string.Empty;
             if (!returnUrl.Equals(string.Empty))
@@ -117,30 +117,13 @@ namespace Transformalize.Orchard.Controllers {
             return View(viewModel);
         }
 
-        private NameValueCollection GetQuery() {
-            var result = new NameValueCollection();
-            if (Request.Form != null) {
-                result.Add(Request.Form);
-            }
-            if (Request.QueryString != null) {
-                result.Add(Request.QueryString);
-            }
-            return result;
-        }
+        private ExecuteViewModel Run(TransformalizeRequest request) {
 
-        private ExecuteViewModel Run(ConfigurationPart part, NameValueCollection query) {
+            var model = new ExecuteViewModel() { DisplayLog = request.Part.DisplayLog };
 
-            var model = new ExecuteViewModel() { DisplayLog = part.DisplayLog };
-
-            var transformalizeRequest = new TransformalizeRequest(part) {
-                Configuration = _transformalize.InjectParameters(part, query),
-                Options = query["Mode"] != null ? new Options { Mode = query["Mode"] } : new Options(),
-                Query = query
-            };
-
-            if (part.TryCatch) {
+            if (request.Part.TryCatch) {
                 try {
-                    model.TransformalizeResponse = _transformalize.Run(transformalizeRequest);
+                    model.TransformalizeResponse = _transformalize.Run(request);
                 } catch (Exception ex) {
                     model.DisplayLog = true;
                     model.TransformalizeResponse.Log.Add(string.Format("{0} | error | orchard | . | {1}", DateTime.Now.ToString("HH:mm:ss"), ex.Message));
@@ -149,7 +132,7 @@ namespace Transformalize.Orchard.Controllers {
                     TflLogger.Warn(string.Empty, string.Empty, ex.StackTrace);
                 }
             } else {
-                model.TransformalizeResponse = _transformalize.Run(transformalizeRequest);
+                model.TransformalizeResponse = _transformalize.Run(request);
             }
 
             return model;

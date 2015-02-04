@@ -1,4 +1,5 @@
-﻿using System.Collections.Specialized;
+﻿using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Web.Mvc;
 using Orchard;
 using Orchard.ContentManagement;
@@ -13,14 +14,14 @@ namespace Transformalize.Orchard.Controllers {
 
         private readonly IOrchardServices _orchardServices;
         private readonly IApiService _apiService;
-        private readonly NameValueCollection _query = new NameValueCollection(2);
+        private readonly Dictionary<string,string> _query = new Dictionary<string, string>(3);
 
         public SlickGridController(
             IOrchardServices services,
             ITransformalizeService transformalize,
             IApiService apiService
         )
-            : base(services, transformalize, apiService) {
+            : base(transformalize) {
             _orchardServices = services;
             _apiService = apiService;
             _query.Add("format", "json");
@@ -55,8 +56,9 @@ namespace Transformalize.Orchard.Controllers {
 
             request.RequestType = ApiRequestType.Execute;
             var modified = TransformConfigurationForLoad(part.Configuration);
+            var transformalizeRequest = new TransformalizeRequest(part, _query, modified);
 
-            return Run(request, part, _query, modified)
+            return Run(request, transformalizeRequest)
                 .ContentResult(_query["format"], _query["flavor"]);
         }
 
@@ -71,8 +73,9 @@ namespace Transformalize.Orchard.Controllers {
 
             request.RequestType = ApiRequestType.Execute;
             _query.Add("data", Request.Form["data"]);
+            var transformalizeRequest = new TransformalizeRequest(part, _query, null);
 
-            return Run(request, part, _query).ContentResult(_query["format"], _query["flavor"]);
+            return Run(request, transformalizeRequest).ContentResult(_query["format"], _query["flavor"]);
         }
 
     }

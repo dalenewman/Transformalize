@@ -168,11 +168,6 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
-        public TransformBuilder MessageTemplate(string template) {
-            _transform.MessageTemplate = template;
-            return this;
-        }
-
         public TransformBuilder ContainsCharacters(string containsCharacters) {
             _transform.ContainsCharacters = containsCharacters;
             return this;
@@ -180,21 +175,6 @@ namespace Transformalize.Configuration.Builders {
 
         public TransformBuilder Negated(bool negated) {
             _transform.Negated = negated;
-            return this;
-        }
-
-        public TransformBuilder MessageField(string field) {
-            _transform.MessageField = field;
-            return this;
-        }
-
-        public TransformBuilder MessageAppend(bool append) {
-            _transform.MessageAppend = append;
-            return this;
-        }
-
-        public TransformBuilder ResultField(string field) {
-            _transform.ResultField = field;
             return this;
         }
 

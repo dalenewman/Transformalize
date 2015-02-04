@@ -9,24 +9,18 @@ namespace Transformalize.Operations.Validate {
     public class ValidationOperation : AbstractOperation {
 
         private readonly string _keyToValidate;
-        private readonly bool _messageAppend;
         private readonly bool _ignoreEmpty;
-        private readonly bool _messageOutput;
+        private readonly bool _messageOutput = false;
         private readonly bool _isTypeConversion;
 
         public Validator Validator { get; set; }
         public bool ValidateRow { get; set; }
         public string ResultKey { get; set; }
-        public string MessageKey { get; set; }
 
-        public ValidationOperation(string keyToValidate, string resultKey, string messageKey, bool messageAppend, bool ignoreEmpty = false) {
+        public ValidationOperation(string keyToValidate, string resultKey, bool ignoreEmpty = false) {
             ResultKey = resultKey;
-            MessageKey = messageKey;
-
             _keyToValidate = keyToValidate;
-            _messageAppend = messageAppend;
             _ignoreEmpty = ignoreEmpty;
-            _messageOutput = !messageKey.Equals(string.Empty);
             _isTypeConversion = this is TypeConversionValidatorOperation;
         }
 
@@ -52,14 +46,6 @@ namespace Transformalize.Operations.Validate {
             var results = new ValidationResults();
             Validator.DoValidate(value, row, _keyToValidate, results);
             row[ResultKey] = results.IsValid;
-
-            if (!_messageOutput || results.IsValid)
-                return;
-
-            var message = results.First().Message;
-            row[MessageKey] = _messageAppend ?
-                string.Concat(row[MessageKey] ?? string.Empty, " ", message).Trim(' ') :
-                message;
         }
 
     }

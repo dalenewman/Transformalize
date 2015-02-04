@@ -33,7 +33,6 @@ using Transformalize.Main;
 using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.SqlServer;
 using Transformalize.Operations;
-using Transformalize.Runner;
 
 namespace Transformalize.Test {
     [TestFixture]
@@ -43,7 +42,13 @@ namespace Transformalize.Test {
         private readonly Process _process;
 
         public TestWithProcess() {
-            _process = ProcessFactory.CreateSingle(File.ReadAllText(@"TestFiles\Test.xml"));
+            var cfg = new TflRoot(File.ReadAllText(@"TestFiles\Test.xml"), null);
+            foreach (var problem in cfg.Problems()) {
+                Console.WriteLine(problem);
+            }
+
+            _process = ProcessFactory.CreateSingle(cfg.Processes[0]);
+
             _entityKeysExtract = new Mock<IOperation>();
             _entityKeysExtract.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row> {
                 new Row { {"OrderDetailKey", 1} },
@@ -141,15 +146,16 @@ SELECT
     [d].[OrderDetailRowVersion],
     [d].[Result],
     ISNULL([d].[CustomerKey], 0) AS [CustomerKey],
-    ISNULL([TestOrder].[OrderValidation], '') AS [OrderValidation],
     ISNULL([TestOrder].[OrderDate], '12/31/9999 12:00:00 AM') AS [OrderDate],
-    ISNULL([TestCustomer].[CustomerValidation], '') AS [CustomerValidation],
+    ISNULL([TestOrder].[OrderDateIsInRange], 0) AS [OrderDateIsInRange],
     ISNULL([TestCustomer].[FirstName], '') AS [FirstName],
     ISNULL([TestCustomer].[LastName], '') AS [LastName],
     ISNULL([TestCustomer].[Address], '') AS [Address],
     ISNULL([TestCustomer].[City], '') AS [City],
     ISNULL([TestCustomer].[State], '') AS [State],
     ISNULL([TestCustomer].[Country], '') AS [Country],
+    ISNULL([TestCustomer].[CountryIsUS], 0) AS [CountryIsUS],
+    ISNULL([TestCustomer].[CountryInUsPtCi], 0) AS [CountryInUsPtCi],
     ISNULL([TestProduct].[ProductName], 'None') AS [ProductName]
 FROM [TestOrderDetail] d
 INNER JOIN TflBatch b ON (d.TflBatchId = b.TflBatchId AND b.ProcessName = 'Test')

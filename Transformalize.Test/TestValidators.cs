@@ -39,16 +39,14 @@ namespace Transformalize.Test {
         [Test]
         public void ParseJson() {
             var input = new RowsBuilder()
-                .Row().Field("f1", "{\"i\":\"am\", \"valid\":true}").Field("o1", "")
-                .Row().Field("f1", "{\"i\":\"have\", \"a\":\"Prob\"lem\"}").Field("o1", "").ToOperation();
-            var isJson = new JsonValidatorOperation("f1", "o1", "o2", "{2} in {0}.", false, false);
+                .Row().Field("f1", "{\"i\":\"am\", \"valid\":true}").Field("out", null)
+                .Row().Field("f1", "{\"i\":\"have\", \"a\":\"Prob\"lem\"}").Field("out", null).ToOperation();
+            var isJson = new JsonValidatorOperation("f1", "out", false);
 
             var rows = TestOperation(input, isJson);
 
-            Assert.AreEqual(true, rows[0]["o1"]);
-            Assert.AreEqual(null, rows[0]["o2"]);
-            Assert.AreEqual(false, rows[1]["o1"]);
-            Assert.AreEqual("Could not find token at index 23 in f1.", rows[1]["o2"]);
+            Assert.AreEqual(true, rows[0]["out"]);
+            Assert.AreEqual(false, rows[1]["out"]);
         }
 
         [Test]
@@ -57,35 +55,37 @@ namespace Transformalize.Test {
             const string badJson = "{\"updated\": \"Thu, 10 Sep 2009 08:45:12 +0000\", \"links\": [{\"href\": \"http://www.designvitality.com/blog/2007/09/photoshop-text-effect-tutorial/\", \"type\": \"text/html\", \"rel\": \"alternate\"}], \"title\": \"Photoshop Text Effects\", \"author\": \"hotpants1\", \"comments\": \"http://delicious.com/url/90c1b26e451a090452df8b947d6298cb\", \"guidislink\": false, \"title_detail\": {\"base\": \"http://feeds.delicious.com/v2/rss/recent?min=1&count=100\", \"type\": \"text/plain\", \"language\": null, \"value\": \"Photoshop Text Effects\"}, \"link\": \"http://www.designvitality.com/blog/2007/09/photoshop-text-effect-tutorial/\", \"source\": {}, \"wfw_commentrss\": \"http://feeds.delicious.com/v2/rss/url/90c1b26e451a090452df8b947d6298cb\", \"id\": \"http://delicious.com/url/90c1b26e451a090452df8b947d6298cb#hotpants1\", \"tags\": [{\"term\": \"photoshop\", scheme\": \"http://delicious.com/hotpants1/\", \"label\": null}]}";
 
             var input = new RowsBuilder().Row().Field("f1", goodJson).Field("o1", "").Row().Field("f1", badJson).Field("o1", "").ToOperation();
-            var isJson = new JsonValidatorOperation("f1", "o1", "o2", "{2} in {0}.",false, false);
+            var isJson = new JsonValidatorOperation("f1", "out", false);
 
             var rows = TestOperation(input, isJson);
 
-            Assert.AreEqual(null, rows[0]["o2"]);
-            Assert.AreEqual("Could not find token at index 800 in f1.", rows[1]["o2"]);
+            Assert.AreEqual(true, rows[0]["out"]);
+            Assert.AreEqual(false, rows[1]["out"]);
         }
 
         [Test]
         public void ContainsCharacters() {
-            var input = new RowsBuilder().Row("f1", "test").Row("f1", "abcd").ToOperation();
-            var containsCharacters = new ContainsCharactersValidatorOperation("f1", "o1", "o2", "abc", Libs.EnterpriseLibrary.Validation.Validators.ContainsCharacters.All, "{2} doesn't have abc in it! Your value of '{0}' sucks.", false, false);
+            var input = new RowsBuilder()
+                .Row("f1", "test")
+                .Row("f1", "abcd").ToOperation();
+
+            var containsCharacters = new ContainsCharactersValidatorOperation("f1", "o1", "abc", Libs.EnterpriseLibrary.Validation.Validators.ContainsCharacters.All, false);
 
             var output = TestOperation(input, containsCharacters);
 
-            Assert.AreEqual("f1 doesn't have abc in it! Your value of 'test' sucks.", output[0]["o2"]);
-            Assert.AreEqual(null, output[1]["o2"]);
+            Assert.AreEqual(false, output[0]["o1"]);
+            Assert.AreEqual(true, output[1]["o1"]);
         }
 
         [Test]
         public void StartsWith() {
             var input = new RowsBuilder().Row("f1", "test").Row("f1", "abcd").ToOperation();
-            var startsWith = new StartsWithValidatorOperation("f1", "abc", "result", "message", "{0} doesn't start with {2}.  It is {1}.",false, false);
+            var startsWith = new StartsWithValidatorOperation("f1", "abc", "out", false);
 
             var output = TestOperation(input, startsWith);
 
-            Assert.AreEqual("f1 doesn't start with abc.  It is test.", output[0]["message"]);
-            Assert.IsFalse((bool) output[0]["result"]);
-            Assert.IsTrue((bool)output[1]["result"]);
+            Assert.IsFalse((bool) output[0]["out"]);
+            Assert.IsTrue((bool)output[1]["out"]);
         }
 
         [Test]
@@ -95,27 +95,29 @@ namespace Transformalize.Test {
             var startDate = new DateTime(2013, 1, 1, 0, 0, 0, 001);
             var endDate = new DateTime(2013, 12, 31, 23, 59, 59, 998);
 
-            var input = new RowsBuilder().Row("f1", goodDate).Row("f1", badDate).ToOperation();
-            var dateTimeRange = new DateTimeRangeValidatorOperation("f1", "o1", "o2", startDate, RangeBoundaryType.Inclusive, endDate, RangeBoundaryType.Inclusive, "Bad!", false, true);
+            var input = new RowsBuilder()
+                .Row("f1", goodDate)
+                .Row("f1", badDate).ToOperation();
+            var dateTimeRange = new DateTimeRangeValidatorOperation("f1", "o1", startDate, RangeBoundaryType.Inclusive, endDate, RangeBoundaryType.Inclusive, false);
 
             var output = TestOperation(input, dateTimeRange);
 
-            Assert.AreEqual(null, output[0]["o2"]);
-            Assert.AreEqual("Bad!", output[1]["o2"]);
+            Assert.AreEqual(true, output[0]["o1"]);
+            Assert.AreEqual(false, output[1]["o1"]);
         }
 
         [Test]
         public void Domain() {
             var input = new RowsBuilder()
-                .Row("in", "2").Field("out", "")
-                .Row("in", "4").Field("out", "").ToOperation();
+                .Row("in", "2").Field("out", null)
+                .Row("in", "4").Field("out", null).ToOperation();
 
-            var domainOperation = new DomainValidatorOperation("in", "out", "o2", new[] { "1", "2", "3" }, "{0} is wrong! {2} can't be {0}.", false, false);
+            var domainOperation = new DomainValidatorOperation("in", "out", new[] { "1", "2", "3" }, false);
 
             var output = TestOperation(input, domainOperation);
 
-            Assert.AreEqual(null, output[0]["o2"]);
-            Assert.AreEqual("4 is wrong! in can't be 4.", output[1]["o2"]);
+            Assert.AreEqual(true, output[0]["out"]);
+            Assert.AreEqual(false, output[1]["out"]);
 
         }
 
@@ -142,7 +144,7 @@ namespace Transformalize.Test {
                     <calculated-fields>
                         <add name='out'>
                             <transforms>
-                                <add method='domain' domain='1,2,3' message-template='{0} is wrong! {2} can not be {0}.' parameter='in' />
+                                <add method='domain' domain='1,2,3' parameter='in' />
                             </transforms>
                         </add>
                     </calculated-fields>
@@ -157,8 +159,8 @@ namespace Transformalize.Test {
             process.Entities[0].InputOperation = input;
             var output = process.Execute().ToArray();
 
-            Assert.AreEqual(true, output[0]["outResult"]);
-            Assert.AreEqual("3 is wrong! in can not be 3.", output[1]["outMessage"]);
+            Assert.AreEqual(true, output[0]["out"]);
+            Assert.AreEqual(false, output[1]["out"]);
         }
 
 
@@ -181,12 +183,11 @@ namespace Transformalize.Test {
                 <add name='entity'>
                     <fields>
                         <add name='in' type='int' />
-                        <add name='result' type='bool' input='false' />
                     </fields>
                     <calculated-fields>
-                        <add name='out'>
+                        <add name='out' type='bool'>
                             <transforms>
-                                <add method='domain' domain='1,2,3' result-field='result' message-template='{0} is wrong! {2} can not be {0}.' parameter='in' />
+                                <add method='domain' domain='1,2,3' parameter='in' />
                             </transforms>
                         </add>
                     </calculated-fields>
@@ -201,8 +202,8 @@ namespace Transformalize.Test {
             process.Entities[0].InputOperation = input;
             var output = process.Execute().ToArray();
 
-            Assert.AreEqual(true, output[0]["result"]);
-            Assert.AreEqual(false, output[1]["result"]);
+            Assert.AreEqual(true, output[0]["out"]);
+            Assert.AreEqual(false, output[1]["out"]);
         }
 
         [Test]
@@ -219,12 +220,14 @@ namespace Transformalize.Test {
                 .Entity("entity")
                     .InputOperation(input)
                     .Field("name")
-                    .Field("gender").Input(false).Default("male")
-                    .CalculatedField("new-name")
+                    .CalculatedField("is-dale")
+                        .Type("bool")
                         .Transform("domain")
                             .Domain("Dale")
                             .Parameter("name")
-                            .ResultField("is-dale")
+                    .CalculatedField("new-name")
+                        .Transform("copy")
+                            .Parameter("name")
                             .Branch("DaleBranch")
                                 .RunIf("is-dale", true)
                                     .Transform("toUpper")
@@ -237,7 +240,6 @@ namespace Transformalize.Test {
                 .Process();
 
             var process = ProcessFactory.Create(cfg)[0];
-            process.Mode = "test";
             var output = process.Execute().ToArray();
 
             Assert.AreEqual("DALE", output[0]["new-name"]);
@@ -251,15 +253,15 @@ namespace Transformalize.Test {
         public void NotNull() {
 
             var input = new RowsBuilder()
-                .Row("in", "x").Field("out", "")
-                .Row("in", null).Field("out", "").ToOperation();
+                .Row("in", "x").Field("out", null)
+                .Row("in", null).Field("out", null).ToOperation();
 
-            var notNullOperation = new NotNullValidatorOperation("in", "out", "o2", "{2} can't be null.", false, false);
+            var notNullOperation = new NotNullValidatorOperation("in", "out", false);
 
             var output = TestOperation(input, notNullOperation);
 
-            Assert.AreEqual(null, output[0]["o2"]);
-            Assert.AreEqual("in can't be null.", output[1]["o2"]);
+            Assert.AreEqual(true, output[0]["out"]);
+            Assert.AreEqual(false, output[1]["out"]);
 
         }
 
@@ -269,12 +271,12 @@ namespace Transformalize.Test {
                 .Row("in1", "77").Field("in2", null).Field("out", "")
                 .Row("in1", "78").Field("in2", "78").Field("out", "").ToOperation();
 
-            var validator = new PropertyComparisonValidatorOperation("in1", "in2", "out", "o2", "Equal", "Bad!", false, false);
+            var validator = new PropertyComparisonValidatorOperation("in1", "in2", "out", "Equal", false);
 
             var output = TestOperation(input, validator);
 
-            Assert.AreEqual("Bad!", output[0]["o2"]);
-            Assert.AreEqual(null, output[1]["o2"]);
+            Assert.AreEqual(false, output[0]["out"]);
+            Assert.AreEqual(true, output[1]["out"]);
         }
 
         [Test]
@@ -283,12 +285,12 @@ namespace Transformalize.Test {
                 .Row("in1", 59).Field("in2", 57).Field("out", "")
                 .Row("in1", 47).Field("in2", 47).Field("out", "").ToOperation();
 
-            var validator = new PropertyComparisonValidatorOperation("in1", "in2", "out", "o2", "GreaterThan", "{0} Bad!", false, false);
+            var validator = new PropertyComparisonValidatorOperation("in1", "in2", "out", "GreaterThan", false);
 
             var output = TestOperation(input, validator);
 
-            Assert.AreEqual(null, output[0]["o2"]);
-            Assert.AreEqual("47 Bad!", output[1]["o2"]);
+            Assert.AreEqual(true, output[0]["out"]);
+            Assert.AreEqual(false, output[1]["out"]);
         }
 
         [Test]
@@ -298,12 +300,12 @@ namespace Transformalize.Test {
                 .Row("in", 5).Field("out", "")
                 .Row("in", 2).Field("out", "").ToOperation();
 
-            var validator = new RangeValidatorOperation("in", "out", "o2", 3, RangeBoundaryType.Inclusive, 9, RangeBoundaryType.Inclusive, "{0} is not between and {3} and {5}.", false, false);
+            var validator = new RangeValidatorOperation("in", "out", 3, RangeBoundaryType.Inclusive, 9, RangeBoundaryType.Inclusive, false);
 
             var output = TestOperation(input, validator);
 
-            Assert.AreEqual(null, output[0]["o2"]);
-            Assert.AreEqual("2 is not between and 3 and 9.", output[1]["o2"]);
+            Assert.AreEqual(true, output[0]["out"]);
+            Assert.AreEqual(false, output[1]["out"]);
 
         }
 
@@ -313,12 +315,12 @@ namespace Transformalize.Test {
                 .Row("in", "789A").Field("out", "")
                 .Row("in", "hjd7").Field("out", "").ToOperation();
 
-            var validator = new RegexValidatorOperation("in", "out", "o2", @"^7[0-9]{2}A$", "{0} is no match.", false, false);
+            var validator = new RegexValidatorOperation("in", "out", @"^7[0-9]{2}A$", false);
 
             var output = TestOperation(input, validator);
 
-            Assert.AreEqual(null, output[0]["o2"]);
-            Assert.AreEqual("hjd7 is no match.", output[1]["o2"]);
+            Assert.AreEqual(true, output[0]["out"]);
+            Assert.AreEqual(false, output[1]["out"]);
 
         }
 
@@ -335,22 +337,19 @@ namespace Transformalize.Test {
             var validator = new RelativeDateTimeValidatorOperation(
                 "in",
                 "out",
-                "o2",
                 -1,
                 DateTimeUnit.Day,
                 RangeBoundaryType.Inclusive,
                 1,
                 DateTimeUnit.Day,
                 RangeBoundaryType.Inclusive,
-                "I don't like {0:yyyy-MM-dd}!",
-                false,
                 false
             );
 
             var output = TestOperation(input, validator);
 
-            Assert.AreEqual(null, output[0]["o2"]);
-            Assert.AreEqual("I don't like " + badDateString + "!", output[1]["o2"]);
+            Assert.AreEqual(true, output[0]["out"]);
+            Assert.AreEqual(false, output[1]["out"]);
         }
 
         [Test]
@@ -359,12 +358,12 @@ namespace Transformalize.Test {
                 .Row("in", "something").Field("out", string.Empty)
                 .Row("in", "some").Field("out", string.Empty).ToOperation();
 
-            var validator = new StringLengthValidatorOperation("in", "out", "o2", 5, RangeBoundaryType.Inclusive, 10, RangeBoundaryType.Inclusive, "Sorry, the length of '{0}' must be between {3} and {5} characters long.", false, false);
+            var validator = new StringLengthValidatorOperation("in", "out", 5, RangeBoundaryType.Inclusive, 10, RangeBoundaryType.Inclusive, false);
 
             var output = TestOperation(input, validator);
 
-            Assert.AreEqual(null, output[0]["o2"]);
-            Assert.AreEqual("Sorry, the length of 'some' must be between 5 and 10 characters long.", output[1]["o2"]);
+            Assert.AreEqual(true, output[0]["out"]);
+            Assert.AreEqual(false, output[1]["out"]);
         }
 
         [Test]
@@ -376,12 +375,12 @@ namespace Transformalize.Test {
 
             var type = Common.ToSystemType("datetime");
 
-            var validator = new TypeConversionValidatorOperation("in", "out", "o2", type, "Can't parse {0} to a {3}.", false, false, false);
+            var validator = new TypeConversionValidatorOperation("in", "out", type, false, false);
 
             var output = TestOperation(input, validator);
 
-            Assert.AreEqual(null, output[0]["o2"]);
-            Assert.AreEqual("Can't parse 10/32/2001 to a System.DateTime.", output[1]["o2"]);
+            Assert.AreEqual(true, output[0]["out"]);
+            Assert.AreEqual(false, output[1]["out"]);
 
         }
 

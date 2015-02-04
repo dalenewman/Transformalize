@@ -76,7 +76,7 @@ namespace Transformalize.Main {
                 foreach (var transform in branch.Transforms) {
 
                     Field f;
-                    transform.RunField = branch.RunField.Equals(DEFAULT) ? (Common.IsValidator(transform.Method) ? (transform.ResultField.Equals(DEFAULT) ? transform.ResultField + "Result" : transform.ResultField) : field.Alias) : branch.RunField;
+                    transform.RunField = branch.RunField;
                     transform.RunType = _process.TryGetField(entity.Name, transform.RunField, out f) ? f.SimpleType : "boolean";
                     transform.RunOperator = branch.RunOperator;
                     transform.RunValue = branch.RunValue;

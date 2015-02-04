@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -19,7 +18,6 @@ using Transformalize.Main;
 using Transformalize.Main.Providers;
 using Transformalize.Operations;
 using Transformalize.Orchard.Models;
-using Transformalize.Runner;
 
 namespace Transformalize.Orchard.Services {
 
@@ -43,18 +41,14 @@ namespace Transformalize.Orchard.Services {
             T = NullLocalizer.Instance;
         }
 
-        public string InjectParameters(ConfigurationPart part, NameValueCollection query) {
+        public void InitializeFiles(TransformalizeRequest request) {
             _filesCreated.Clear();
-            if (query["__RequestVerificationToken"] != null) {
-                query.Remove("__RequestVerificationToken");
-            }
-            InitializeFile(part, query, "InputFile");
-            InitializeFile(part, query, "OutputFile");
-            return new ContentsStringReader(query).Read(part.Configuration).Content;
+            InitializeFile(request, "InputFile");
+            InitializeFile(request, "OutputFile");
         }
 
-        public string GetMetaData(string configuration) {
-            var process = ProcessFactory.Create(configuration, new Options { Mode = "metadata" }).First();
+        public string GetMetaData(TransformalizeRequest request) {
+            var process = ProcessFactory.CreateSingle(request.Configuration, new Options { Mode = "metadata" }, request.Query);
             return new MetaDataWriter(process).Write();
         }
 
@@ -77,9 +71,9 @@ namespace Transformalize.Orchard.Services {
 
             var log = new List<string>();
 
-            if (request.DisplayLog) {
+            if (request.Part.DisplayLog) {
                 var memory = new ObservableEventListener();
-                memory.EnableEvents(TflEventSource.Log, request.LogLevel);
+                memory.EnableEvents(TflEventSource.Log, request.Part.ToLogLevel());
                 memory.LogToMemory(ref log);
                 TflLogger.Info("Orchard", "Log", "Injecting memory logger");
             }
@@ -87,11 +81,11 @@ namespace Transformalize.Orchard.Services {
             var processes = new List<Process>();
             if (request.Options.Mode.Equals("rebuild", StringComparison.OrdinalIgnoreCase)) {
                 request.Options.Mode = "init";
-                processes.AddRange(ProcessFactory.Create(request.Configuration, request.Options));
+                processes.AddRange(ProcessFactory.Create(request.Configuration, request.Options, request.Query));
                 request.Options.Mode = "first";
-                processes.AddRange(ProcessFactory.Create(request.Configuration, request.Options));
+                processes.AddRange(ProcessFactory.Create(request.Configuration, request.Options, request.Query));
             } else {
-                processes.AddRange(ProcessFactory.Create(request.Configuration, request.Options));
+                processes.AddRange(ProcessFactory.Create(request.Configuration, request.Options, request.Query));
             }
 
             for (var i = 0; i < processes.Count; i++) {
@@ -108,9 +102,9 @@ namespace Transformalize.Orchard.Services {
 
         private static void CreateInputOperation(Process process, TransformalizeRequest request) {
 
-            var data = request.Query["data"];
-            if (data == null)
+            if (!request.Query.ContainsKey("data")) {
                 return;
+            }
 
             if (!process.Connections.ContainsKey("input"))
                 return;
@@ -118,7 +112,7 @@ namespace Transformalize.Orchard.Services {
                 return;
 
             var rows = new List<Row>();
-            var sr = new StringReader(data);
+            var sr = new StringReader(request.Query["data"]);
             var reader = new JsonTextReader(sr);
             reader.Read();
             if (reader.TokenType != JsonToken.StartArray)
@@ -158,29 +152,26 @@ namespace Transformalize.Orchard.Services {
             entity.InputOperation = new RowsOperation(rows);
         }
 
-        private void InitializeFile(ConfigurationPart part, NameValueCollection query, string key) {
+        private void InitializeFile(TransformalizeRequest request, string key) {
 
-            if (!part.Configuration.Contains("@(" + key + ")") || !query.AllKeys.Any(k => k.Equals(key))) {
+            if (!request.Query.ContainsKey(key)) {
                 return;
             }
 
             int id;
-            if (!int.TryParse(query[key] ?? "0", out id)) {
-                _orchardServices.Notifier.Add(NotifyType.Error, T("{0} must be an integer. \"{1}\" is not valid.", key, query[key]));
+            if (!int.TryParse(request.Query[key] ?? "0", out id)) {
+                _orchardServices.Notifier.Add(NotifyType.Error, T("{0} must be an integer. \"{1}\" is not valid.", key, request.Query[key]));
                 return;
             }
 
             FilePart filePart;
             if (id > 0) {
-                filePart = _fileService.Get(id) ?? CreateOutputFile(part);
+                filePart = _fileService.Get(id) ?? CreateOutputFile(request.Part);
             } else {
-                filePart = CreateOutputFile(part);
+                filePart = CreateOutputFile(request.Part);
             }
 
-            if (query[key] != null)
-                query.Remove(key);
-
-            query.Add(key, filePart.FullPath);
+            request.Query[key] = filePart.FullPath;
         }
 
         private FilePart CreateOutputFile(ConfigurationPart part) {

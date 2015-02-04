@@ -60,12 +60,6 @@ namespace Transformalize.Configuration {
         public string LowerUnit { get; set; }
         [Cfg(value = "")]
         public string Map { get; set; }
-        [Cfg(value = false)]
-        public bool MessageAppend { get; set; }
-        [Cfg(value = Common.DefaultValue)]
-        public string MessageField { get; set; }
-        [Cfg(value = "")]
-        public string MessageTemplate { get; set; }
         [Cfg(required = true)]
         public string Method { get; set; }
         [Cfg(value = "dynamic")]
@@ -90,8 +84,6 @@ namespace Transformalize.Configuration {
         public string Replacement { get; set; }
         [Cfg(value = true)]
         public bool ReplaceSingleQuotes { get; set; }
-        [Cfg(value = Common.DefaultValue)]
-        public string ResultField { get; set; }
         [Cfg(value = "")]
         public string Right { get; set; }
         [Cfg(value = "")]

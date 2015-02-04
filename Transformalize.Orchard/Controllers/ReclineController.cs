@@ -1,11 +1,10 @@
-﻿using System.Collections.Specialized;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using System.Xml.Linq;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.Themes;
-using Transformalize.Logging;
 using Transformalize.Orchard.Models;
 using Transformalize.Orchard.Services;
 
@@ -16,14 +15,14 @@ namespace Transformalize.Orchard.Controllers {
 
         private readonly IOrchardServices _orchardServices;
         private readonly IApiService _apiService;
-        private readonly NameValueCollection _query = new NameValueCollection(2);
+        private readonly Dictionary<string,string> _query = new Dictionary<string, string>(3);
 
         public ReclineController(
             IOrchardServices services,
             ITransformalizeService transformalize,
             IApiService apiService
         )
-            : base(services, transformalize, apiService) {
+            : base(transformalize) {
             _orchardServices = services;
             _apiService = apiService;
             _query.Add("format", "json");
@@ -67,8 +66,9 @@ namespace Transformalize.Orchard.Controllers {
             var modified = xml.ToString();
 
             request.RequestType = ApiRequestType.Execute;
-            
-            return Run(request, part, _query, modified).ContentResult(_query["format"], _query["flavor"]);
+            var transformalizeRequest = new TransformalizeRequest(part, _query, modified);
+
+            return Run(request, transformalizeRequest).ContentResult(_query["format"], _query["flavor"]);
         }
 
     }

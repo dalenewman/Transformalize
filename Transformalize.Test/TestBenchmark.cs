@@ -54,8 +54,8 @@ namespace Transformalize.Test {
             var bigBloatedProcess = ProcessFactory.CreateSingle(xml);
             procWatch.Stop();
 
-            Console.WriteLine("Process: " + procWatch.ElapsedMilliseconds); // ~ 1928 to 1658
-            Console.WriteLine("Config: " + cfgWatch.ElapsedMilliseconds); // ~ 341 to 193
+            Console.WriteLine("Process: " + procWatch.ElapsedMilliseconds); // ~ 1928 to 1564
+            Console.WriteLine("Config: " + cfgWatch.ElapsedMilliseconds); // ~ 341 to 177
             Console.WriteLine("XDocument: " + xDocWatch.ElapsedMilliseconds); // ~ 45ms to 40
 
             Assert.AreEqual("NorthWind", xDocProcess.Attribute("name").Value);

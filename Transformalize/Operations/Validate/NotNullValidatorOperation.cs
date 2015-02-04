@@ -2,9 +2,9 @@
 
 namespace Transformalize.Operations.Validate {
     public class NotNullValidatorOperation : ValidationOperation {
-        public NotNullValidatorOperation(string keyToValidate, string resultKey, string messageKey, string messageTemplate, bool negated, bool messageAppend)
-            : base(keyToValidate, resultKey, messageKey, messageAppend) {
-            Validator = new NotNullValidator(negated, messageTemplate) { Tag = keyToValidate };
+        public NotNullValidatorOperation(string keyToValidate, string resultKey, bool negated)
+            : base(keyToValidate, resultKey) {
+            Validator = new NotNullValidator(negated, string.Empty) { Tag = keyToValidate };
         }
     }
 }

@@ -1,18 +1,12 @@
 ﻿using System;
-using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Web.Mvc;
-using Orchard;
 using Orchard.Localization;
-using Transformalize.Main;
 using Transformalize.Orchard.Models;
 using Transformalize.Orchard.Services;
 
 namespace Transformalize.Orchard.Controllers {
-    public class ApiController : Controller {
-
-        private const string DEFAULT_FORMAT = "xml";
-        private const string DEFAULT_FLAVOR = "attributes";
+    public class ApiController : TflController {
 
         private readonly ITransformalizeService _transformalize;
         private readonly IApiService _apiService;
@@ -39,17 +33,16 @@ namespace Transformalize.Orchard.Controllers {
 
             foreach (var rejection in _apiService.Rejections(id, out request, out part)) {
                 return rejection.ContentResult(
-                    DEFAULT_FORMAT,
-                    DEFAULT_FLAVOR
+                    DefaultFormat,
+                    DefaultFlavor
                 );
             }
 
             var query = GetQuery();
-            var configuration = _transformalize.InjectParameters(part, query);
 
-            return new ApiResponse(request, configuration).ContentResult(
-                query["format"] ?? DEFAULT_FORMAT,
-                query["flavor"] ?? DEFAULT_FLAVOR
+            return new ApiResponse(request, part.Configuration).ContentResult(
+                query["format"] ?? DefaultFormat,
+                query["flavor"] ?? DefaultFlavor
             );
         }
 
@@ -62,18 +55,18 @@ namespace Transformalize.Orchard.Controllers {
 
             foreach (var rejection in _apiService.Rejections(id, out request, out part)) {
                 return rejection.ContentResult(
-                    DEFAULT_FORMAT,
-                    DEFAULT_FLAVOR
+                    DefaultFormat,
+                    DefaultFlavor
                 );
             }
 
             request.RequestType = ApiRequestType.MetaData;
             var query = GetQuery();
-            var configuration = _transformalize.InjectParameters(part, query);
+            var transformalizeRequest = new TransformalizeRequest(part, query, null);
 
-            return new ApiResponse(request, configuration, _transformalize.GetMetaData(configuration)).ContentResult(
-                query["format"] ?? DEFAULT_FORMAT,
-                query["flavor"] ?? DEFAULT_FLAVOR
+            return new ApiResponse(request, part.Configuration, _transformalize.GetMetaData(transformalizeRequest)).ContentResult(
+                query["format"] ?? DefaultFormat,
+                query["flavor"] ?? DefaultFlavor
             );
         }
 
@@ -87,20 +80,17 @@ namespace Transformalize.Orchard.Controllers {
 
             foreach (var rejection in _apiService.Rejections(id, out request, out part)) {
                 return rejection.ContentResult(
-                    DEFAULT_FORMAT,
-                    DEFAULT_FLAVOR
+                    DefaultFormat,
+                    DefaultFlavor
                 );
             }
 
             request.RequestType = ApiRequestType.Execute;
-            var query = GetQuery();
 
             // ready
-            var transformalizeRequest = new TransformalizeRequest(part) {
-                Configuration = _transformalize.InjectParameters(part, query),
-                Options = query["Mode"] != null ? new Options { Mode = query["Mode"] } : new Options(),
-                Query = query
-            };
+            var transformalizeRequest = new TransformalizeRequest(part, GetQuery(), null);
+
+            _transformalize.InitializeFiles(transformalizeRequest);
 
             var processes = new TransformalizeResponse();
 
@@ -108,18 +98,13 @@ namespace Transformalize.Orchard.Controllers {
                 processes = _transformalize.Run(transformalizeRequest);
             } catch (Exception ex) {
                 request.Status = 500;
-                request.Message = ex.Message;
+                request.Message = ex.Message + " " + ex.StackTrace;
             }
 
             return new ApiResponse(request, transformalizeRequest.Configuration, processes).ContentResult(
-                query["format"] ?? DEFAULT_FORMAT,
-                query["flavor"] ?? DEFAULT_FLAVOR
+                transformalizeRequest.Query["format"],
+                transformalizeRequest.Query["flavor"]
             );
-        }
-
-        private static NameValueCollection GetQuery() {
-            var request = System.Web.HttpContext.Current.Request;
-            return new NameValueCollection { request.Form, request.QueryString };
         }
 
     }

@@ -7,22 +7,19 @@ namespace Transformalize.Operations.Validate
         public RangeValidatorOperation(
             string keyToValidate,
             string resultKey,
-            string messageKey,
             IComparable lowerBound,
             RangeBoundaryType lowerBoundary,
             IComparable upperBound,
             RangeBoundaryType upperBoundary,
-            string messageTemplate,
-            bool negated,
-            bool messageAppend)
-            : base(keyToValidate, resultKey, messageKey, messageAppend) {
+            bool negated)
+            : base(keyToValidate, resultKey) {
 
             Validator = new RangeValidator(
                 lowerBound,
                 lowerBoundary,
                 upperBound,
                 upperBoundary,
-                messageTemplate,
+                string.Empty,
                 negated
                 ) { Tag = keyToValidate };
 

@@ -5,6 +5,7 @@ using Transformalize.Main;
 namespace Transformalize.Configuration {
     public class TflConnection : CfgNode {
         private readonly char[] _slash = { '/' };
+        private string _provider;
 
         [Cfg(value = "", required = true, unique = true)]
         public string Name { get; set; }
@@ -48,8 +49,13 @@ namespace Transformalize.Configuration {
         public string Path { get; set; }
         [Cfg(value = 0)]
         public int Port { get; set; }
+
         [Cfg(value = "sqlserver", domain = "sqlserver,mysql,postgresql,sqlce,analysisservices,file,folder,internal,console,log,mail,html,elasticsearch,solr,lucene,web", ignoreCase = true)]
-        public string Provider { get; set; }
+        public string Provider {
+            get { return _provider; }
+            set { _provider = value == null ? string.Empty : value.ToLower(); }
+        }
+
         [Cfg(value = "TopDirectoryOnly", domain = "AllDirectories,TopDirectoryOnly", ignoreCase = true)]
         public string SearchOption { get; set; }
         [Cfg(value = "*.*")]
@@ -75,12 +81,6 @@ namespace Transformalize.Configuration {
                 AddProblem("The file provider requires a file.");
             } else if (Provider.Equals("Folder", ic) && string.IsNullOrEmpty(Folder)) {
                 AddProblem("The folder provider requires a folder.");
-            }
-        }
-
-        protected override void Modify() {
-            if (Provider != null) {
-                Provider = Provider.ToLower();
             }
         }
 

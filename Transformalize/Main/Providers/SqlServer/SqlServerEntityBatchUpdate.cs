@@ -21,7 +21,6 @@
 #endregion
 
 using System.Data.SqlClient;
-using Transformalize.Libs.DBDiff.Schema.SqlServer2005.Model;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Logging;

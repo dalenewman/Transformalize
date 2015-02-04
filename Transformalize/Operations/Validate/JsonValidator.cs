@@ -5,8 +5,8 @@ using ValidationResult = Transformalize.Libs.EnterpriseLibrary.Validation.Valida
 
 namespace Transformalize.Operations.Validate {
     public class JsonValidator : ValueValidator<string> {
-        public JsonValidator(string messageTemplate, string tag, bool negated)
-            : base(messageTemplate, tag, negated){}
+        public JsonValidator(string tag, bool negated)
+            : base(string.Empty, tag, negated){}
 
         protected override void DoValidate(string objectToValidate, object currentTarget, string key, ValidationResults validationResults) {
             var result = JSON.Instance.Validate(objectToValidate);
