@@ -103,8 +103,9 @@
     <Compile Include="Configuration\TflProvider.cs" />
     <Compile Include="Configuration\TflRelationship.cs" />
     <Compile Include="Configuration\TflResponse.cs" />
+    <Compile Include="Configuration\TflResponseLog.cs" />
     <Compile Include="Configuration\TflRoot.cs" />
-    <Compile Include="Configuration\TflRow.cs" />
+    <Compile Include="Configuration\TflEmpty.cs" />
     <Compile Include="Configuration\TflScript.cs" />
     <Compile Include="Configuration\TflSearchType.cs" />
     <Compile Include="Configuration\TflTemplate.cs" />

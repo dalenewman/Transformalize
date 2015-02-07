@@ -308,6 +308,9 @@ namespace Transformalize.Configuration {
             if (Alias == string.Empty) {
                 Alias = Name;
             }
+            if (Label == string.Empty) {
+                Label = Alias;
+            }
         }
 
     }

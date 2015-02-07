@@ -329,10 +329,10 @@ namespace Transformalize.Main {
                                 }
                             }
                             if (equals.Count == 0) {
-                                throw new TransformalizeException(_process.Name, _entityName, "Map '{0}' is not defined.", element.Map);
+                                TflLogger.Warn(_process.Name, _entityName, "Map '{0}' is empty.", element.Map);
                             }
                         } else {
-                            throw new TransformalizeException(_process.Name, _entityName, "Map '{0}' is not defined.", element.Map);
+                            TflLogger.Warn(_process.Name, _entityName, "Map '{0}' is empty.", element.Map);
                         }
                     }
 

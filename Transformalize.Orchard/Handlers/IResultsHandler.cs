@@ -15,18 +15,18 @@ namespace Transformalize.Orchard.Handlers {
             var xmlBuilder = new StringBuilder();
             var xmlWriter = XmlWriter.Create(xmlBuilder, new XmlWriterSettings() { ConformanceLevel = ConformanceLevel.Fragment });
             foreach (var rows in processes.Select(p => p.Results)) {
-                xmlWriter.WriteStartElement("rows");
                 foreach (var row in rows) {
-                    xmlWriter.WriteStartElement("row");
+                    xmlWriter.WriteStartElement("add");
+                    xmlWriter.WriteStartElement("pairs");
                     foreach (var column in row.Columns) {
-                        xmlWriter.WriteStartElement("item");
+                        xmlWriter.WriteStartElement("add");
                         xmlWriter.WriteAttributeString("key", column);
                         xmlWriter.WriteAttributeString("value", row[column].ToString());
-                        xmlWriter.WriteEndElement(); //item
+                        xmlWriter.WriteEndElement(); //add
                     }
-                    xmlWriter.WriteEndElement(); //row
+                    xmlWriter.WriteEndElement(); //pairs
+                    xmlWriter.WriteEndElement(); //add
                 }
-                xmlWriter.WriteEndElement(); //rows
             }
             xmlWriter.Flush();
             return xmlBuilder.ToString();

@@ -114,9 +114,9 @@
 
         $('#load').click(function () {
             $.get(settings.load, function (tfl) {
-                if (tfl.status === 200) {
+                if (tfl.response[0].status === 200) {
 
-                    state.fields = tfl.processes[0].add.entities.add.fields.add.filter(function (f) {
+                    state.fields = tfl.response[0].processes[0].entities[0].fields.add.filter(function (f) {
                         return f.output.toLowerCase() == 'true';
                     });
 
@@ -130,7 +130,7 @@
                                 is_derived: false
                             });
                         }),
-                        records: tfl.response[0]
+                        records: tfl.response[0].rows
                     });
 
                     console.log(state.dataSet);
@@ -145,7 +145,7 @@
 
                     $().toastmessage('showSuccessToast', "Data Loaded");
                 } else {
-                    $().toastmessage('showErrorToast', tfl.message);
+                    $().toastmessage('showErrorToast', tfl.response[0].message);
                 }
             }, 'json');
         });

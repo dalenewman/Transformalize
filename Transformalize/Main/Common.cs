@@ -152,8 +152,7 @@ namespace Transformalize.Main {
             };
         }
 
-        public static Dictionary<string, Func<object, object>> GetObjectConversionMap()
-        {
+        public static Dictionary<string, Func<object, object>> GetObjectConversionMap() {
             return new Dictionary<string, Func<object, object>> {
                 {"string", (x => x)},
                 {"xml", (x => x)},
@@ -287,6 +286,10 @@ namespace Transformalize.Main {
         }
 
         public static string EntityOutputName(Entity entity, string processName) {
+            return entity.PrependProcessNameToOutputName ? String.Concat(processName.Replace("-", String.Empty), entity.Alias).Replace(" ", String.Empty) : entity.Alias;
+        }
+
+        public static string EntityOutputName(TflEntity entity, string processName) {
             return entity.PrependProcessNameToOutputName ? String.Concat(processName.Replace("-", String.Empty), entity.Alias).Replace(" ", String.Empty) : entity.Alias;
         }
 

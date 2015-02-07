@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Text;
+using System.Web.UI.WebControls;
 using System.Xml;
 using Transformalize.Main;
 
@@ -16,7 +17,7 @@ namespace Transformalize.Orchard.Handlers {
 
                     var rows = process.Results.ToList();
                     var columns = rows.First().Columns.Where(c => !c.StartsWith("Tfl")).Select(c => c).ToArray();
-                    var fields = process.OutputFields().Where(f => columns.Contains(f.Alias)).Select(f => new[] { f.Alias, string.IsNullOrEmpty(f.Label) ? f.Alias : f.Label, f.Raw.ToString() }).ToArray();
+                    var fields = process.OutputFields().Where(f => columns.Contains(f.Alias)).Select(f => new[] { f.Alias, string.IsNullOrEmpty(f.Label) ? f.Alias : f.Label, f.Raw.ToString(), f.SimpleType }).ToArray();
 
                     xmlWriter.WriteStartElement("thead");
                     xmlWriter.WriteStartElement("tr");
@@ -36,7 +37,11 @@ namespace Transformalize.Orchard.Handlers {
                             if (field[2].Equals("True")) {
                                 xmlWriter.WriteRaw(row[field[0]].ToString());
                             } else {
-                                xmlWriter.WriteValue(row[field[0]]);
+                                if (field[3].Equals("guid")) {
+                                    xmlWriter.WriteValue(row[field[0]].ToString());
+                                } else {
+                                    xmlWriter.WriteValue(row[field[0]]);
+                                }
                             }
                             xmlWriter.WriteEndElement();//td
                         }

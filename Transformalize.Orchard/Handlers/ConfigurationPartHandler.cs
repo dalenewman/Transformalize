@@ -9,7 +9,6 @@ using Orchard.Localization;
 using Orchard.Logging;
 using Orchard.UI.Notify;
 using Transformalize.Configuration;
-using Transformalize.Main;
 using Transformalize.Orchard.Models;
 
 namespace Transformalize.Orchard.Handlers {
@@ -50,11 +49,16 @@ namespace Transformalize.Orchard.Handlers {
                 return;
             try {
                 //test if configuration works
-                foreach (var process in new ConfigurationFactory(part.Configuration).Create().Select(element => ProcessFactory.Create(element)).SelectMany(processes => processes)) {
-                    Log.Information("Successfully loaded {0}.", process.Name);
+                var root = new TflRoot(part.Configuration, null);
+                var problems = root.Problems();
+                if (problems.Any()) {
+                    foreach (var problem in problems) {
+                        _notifier.Add(NotifyType.Warning, T(problem));
+                    }
                 }
                 CheckAddress(part.StartAddress);
                 CheckAddress(part.EndAddress);
+                Log.Information("Successfully loaded {0}.", part.Title());
             } catch (Exception ex) {
                 _notifier.Add(NotifyType.Warning, T(ex.Message));
                 Log.Warning(ex.Message);

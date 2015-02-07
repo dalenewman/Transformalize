@@ -324,11 +324,10 @@ namespace Transformalize.Libs.Cfg.Net {
     /// </summary>
     public class NanoXmlAttribute {
         private readonly string _name;
-        private readonly string _value;
 
         internal NanoXmlAttribute(string name, string value) {
             _name = name;
-            _value = value;
+            Value = value;
         }
 
         /// <summary>
@@ -341,9 +340,7 @@ namespace Transformalize.Libs.Cfg.Net {
         /// <summary>
         ///     Attribtue value
         /// </summary>
-        public string Value {
-            get { return _value; }
-        }
+        public string Value { get; set; }
     }
 
     internal class XmlParsingException : Exception {

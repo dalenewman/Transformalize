@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using System.Xml.Linq;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.Themes;
+using Transformalize.Configuration;
 using Transformalize.Orchard.Models;
 using Transformalize.Orchard.Services;
 
@@ -56,17 +58,17 @@ namespace Transformalize.Orchard.Controllers {
                 return rejection.ContentResult(_query["format"], _query["flavor"]);
             }
 
-            var xml = XDocument.Parse(part.Configuration).Root;
-            var process = xml.Element("processes").Element("add");
+            var root = new TflRoot(part.Configuration, _query);
 
-            var entity = process.Element("entities").Element("add");
-            var fields = entity.Elements("fields").Elements("add").ToArray();
-
-            DefaultAttributesIfMissing(fields, "output","true");
-            var modified = xml.ToString();
+            var problems = root.Problems();
+            if (problems.Any()) {
+                request.Status = 500;
+                request.Message = string.Join(Environment.NewLine, problems);
+                return new ApiResponse(request, root.ToString(), new TransformalizeResponse()).ContentResult(_query["format"], _query["flavor"]);
+            }
 
             request.RequestType = ApiRequestType.Execute;
-            var transformalizeRequest = new TransformalizeRequest(part, _query, modified);
+            var transformalizeRequest = new TransformalizeRequest(part, _query, null, root);
 
             return Run(request, transformalizeRequest).ContentResult(_query["format"], _query["flavor"]);
         }

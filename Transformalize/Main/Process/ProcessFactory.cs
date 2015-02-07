@@ -36,9 +36,8 @@ namespace Transformalize.Main {
         /// <param name="element"></param>
         /// <param name="options"></param>
         /// <returns></returns>
-        public static Process[] Create(TflProcess element, Options options = null) {
-            TflLogger.Debug(element.Name, string.Empty, "Process Requested from element.");
-            return Create(new List<TflProcess>() { element }, options);
+        public static Process[] Create(TflRoot element, Options options = null) {
+            return Create(element.Processes, options);
         }
 
         private static Process[] Create(List<TflProcess> elements, Options options = null) {
@@ -56,15 +55,15 @@ namespace Transformalize.Main {
                 options = new Options();
             }
 
-            foreach (var element in elements) {
-                processes.Add(new ProcessReader(element, ref options).Read());
+            if (elements != null) {
+                processes.AddRange(elements.Select(element => new ProcessReader(element, ref options).Read()));
             }
 
             return processes.ToArray();
         }
 
         public static Process CreateSingle(TflProcess process, Options options = null) {
-            return Create(process, options)[0];
+            return Create(new List<TflProcess> { process }, options)[0];
         }
 
         private static void CombineParameters(ConfigurationSource source, string resource, Dictionary<string, string> parameters) {
@@ -160,7 +159,7 @@ namespace Transformalize.Main {
 
             private void LoadLogConfiguration(TflProcess element, ref Process process) {
 
-                process.LogRows = element.Log.Any() ? element.Log[0].Rows : 10000;
+                process.LogRows = element.Log.Any() ? (element.Log[0].Rows == 0 ? 10000 : element.Log[0].Rows) : 10000;
 
                 if (element.Log.Count == 0)
                     return;

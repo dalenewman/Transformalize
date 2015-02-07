@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
@@ -8,6 +7,7 @@ using Orchard.ContentManagement;
 using Orchard.Localization;
 using Orchard.Themes;
 using Orchard.UI.Notify;
+using Transformalize.Configuration;
 using Transformalize.Extensions;
 using Transformalize.Logging;
 using Transformalize.Main.Providers;

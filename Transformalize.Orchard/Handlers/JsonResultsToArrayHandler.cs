@@ -9,7 +9,6 @@ namespace Transformalize.Orchard.Handlers {
         public string Handle(Process[] processes) {
             var sw = new StringWriter();
             var writer = new JsonTextWriter(sw);
-            writer.WriteStartArray();
             foreach (var process in processes) {
                 writer.WriteStartArray();
                 foreach (var row in process.Results) {
@@ -21,7 +20,6 @@ namespace Transformalize.Orchard.Handlers {
                 }
                 writer.WriteEndArray();
             }
-            writer.WriteEndArray();
             writer.Flush();
             return sw.ToString();
         }

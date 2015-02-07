@@ -1,24 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Xml.Linq;
+using Transformalize.Configuration;
 using Transformalize.Libs.Newtonsoft.Json;
-using Transformalize.Main;
+using Transformalize.Libs.Newtonsoft.Json.Serialization;
 using Transformalize.Orchard.Models;
 
 namespace Transformalize.Orchard.Handlers {
     public static class JsonContentHandler {
         private const string JSON_TEMPLATE = @"{{
-    ""request"":""{0}"",
-    ""status"":{1},
-    ""message"":""{2}"",
-    ""time"":{3},
     ""environments"":{4},
     ""processes"":{5},
-    ""response"":{6},
-    ""log"":{7}
+    ""response"": [{{
+        ""request"":""{0}"",
+        ""status"":{1},
+        ""message"":""{2}"",
+        ""time"":{3},
+        ""rows"":{6},
+        ""content"":{8},
+        ""log"":{7}
+    }}]
 }}";
 
         public static string LogsToJson(IEnumerable<string> logs) {
@@ -28,7 +30,7 @@ namespace Transformalize.Orchard.Handlers {
             foreach (var log in logs) {
                 writer.WriteStartObject();
 
-                var attributes = log.Split(new []{" | "}, 5, StringSplitOptions.None);
+                var attributes = log.Split(new[] { " | " }, 5, StringSplitOptions.None);
                 writer.WritePropertyName("time");
                 writer.WriteValue(attributes[0]);
                 writer.WritePropertyName("level");
@@ -38,7 +40,7 @@ namespace Transformalize.Orchard.Handlers {
                 writer.WritePropertyName("entity");
                 writer.WriteValue(attributes[3]);
                 writer.WritePropertyName("message");
-                writer.WriteValue(attributes[4].TrimEnd(new []{' ','\r','\n'}));
+                writer.WriteValue(attributes[4].TrimEnd(new[] { ' ', '\r', '\n' }));
 
                 writer.WriteEndObject();
             }
@@ -47,39 +49,37 @@ namespace Transformalize.Orchard.Handlers {
             return sw.ToString();
         }
 
-        public static string GetContent(ApiRequest request, string configuration, TransformalizeResponse response, string meta) {
+        public static string GetContent(ApiRequest request, string configuration, TransformalizeResponse response) {
 
             var builder = new StringBuilder();
+            var processes = "[]";
+            var environments = "[]";
+            var results = "[]";
+            var content = "{}";
 
-            if (request.Status != 200) {
-                return ApiContentHandler.GetErrorContent(JSON_TEMPLATE, request);
-            }
-
-            var converter = new OneWayXmlNodeConverter();
-
-            XElement doc;
-            string processes;
+            var tfl = new TflRoot(configuration, null);
+            var settings = new JsonSerializerSettings {
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            };
 
             switch (request.RequestType) {
+
                 case ApiRequestType.MetaData:
-                    var metaData = JsonConvert.SerializeObject(XDocument.Parse(meta).Descendants("entities").First(), Formatting.None, converter);
-                    builder.AppendFormat(JSON_TEMPLATE, "metadata", 200, "OK", request.Stopwatch.ElapsedMilliseconds, string.Empty, string.Empty, metaData, LogsToJson(response.Log));
+                    processes = JsonConvert.SerializeObject(tfl.Processes, Formatting.None, settings);
+                    builder.AppendFormat(JSON_TEMPLATE, request.RequestType, request.Status, request.Message, request.Stopwatch.ElapsedMilliseconds, environments, processes, results, LogsToJson(response.Log), content);
                     return builder.ToString();
 
                 case ApiRequestType.Configuration:
-                    doc = XDocument.Parse(configuration).Root;
-                    string environments = JsonConvert.SerializeObject(doc.Elements("environments").Any() ? doc.Element("environments").Nodes() : new string[0] as object, Formatting.None, converter);
-                    processes = JsonConvert.SerializeObject(doc.Element("processes").Nodes(), Formatting.None, converter);
-                    builder.AppendFormat(JSON_TEMPLATE, "configuration", 200, "OK", request.Stopwatch.ElapsedMilliseconds, environments, processes, "[]", LogsToJson(response.Log));
+                    processes = JsonConvert.SerializeObject(tfl.Processes, Formatting.None, settings);
+                    environments = JsonConvert.SerializeObject(tfl.Environments, Formatting.None, settings);
+                    builder.AppendFormat(JSON_TEMPLATE, request.RequestType, request.Status, request.Message, request.Stopwatch.ElapsedMilliseconds, environments, processes, results, LogsToJson(response.Log), content);
                     return builder.ToString();
 
                 case ApiRequestType.Execute:
-                    string results;
-                    doc = XDocument.Parse(configuration).Root;
-                    var nodes = doc.Element("processes");
-                    nodes.Descendants("parameters").Remove();
-                    nodes.Descendants("connections").Remove();
-                    processes = JsonConvert.SerializeObject(nodes.Nodes(), Formatting.None, converter);
+                    foreach (var process in tfl.Processes) {
+                        process.Connections = new List<TflConnection>();
+                    }
+                    processes = JsonConvert.SerializeObject(tfl.Processes, Formatting.None, settings);
                     switch (request.Flavor) {
                         case "arrays":
                             results = new JsonResultsToArrayHandler().Handle(response.Processes);
@@ -95,11 +95,15 @@ namespace Transformalize.Orchard.Handlers {
                             results = new JsonResultsToObjectHandler().Handle(response.Processes);
                             break;
                     }
-                    builder.AppendFormat(JSON_TEMPLATE, "execute", 200, "OK", request.Stopwatch.ElapsedMilliseconds, "[]", processes, results, LogsToJson(response.Log));
+                    builder.AppendFormat(JSON_TEMPLATE, request.RequestType, request.Status, request.Message, request.Stopwatch.ElapsedMilliseconds, environments, processes, results, LogsToJson(response.Log), content);
                     return builder.ToString();
 
                 default:
-                    builder.AppendFormat(JSON_TEMPLATE, "configuration", 200, "OK", request.Stopwatch.ElapsedMilliseconds, "[]", "[]", "[]", LogsToJson(response.Log));
+                    if (request.Status == 200) {
+                        request.Status = 400;
+                        request.Message = "Bad Request";
+                    }
+                    builder.AppendFormat(JSON_TEMPLATE, request.RequestType, request.Status, request.Message, request.Stopwatch.ElapsedMilliseconds, environments, processes, results, LogsToJson(response.Log), content);
                     return builder.ToString();
             }
         }

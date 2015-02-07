@@ -1,7 +1,4 @@
-using System;
-using System.Linq.Expressions;
 using System.Web.Mvc;
-using Transformalize.Main;
 using Transformalize.Orchard.Handlers;
 
 namespace Transformalize.Orchard.Models {
@@ -11,7 +8,6 @@ namespace Transformalize.Orchard.Models {
         private readonly ApiRequest _request;
         private readonly string _configuration;
         private readonly TransformalizeResponse _response = new TransformalizeResponse();
-        private readonly string _metaData;
 
         public TransformalizeResponse TransformalizeResponse { get { return _response; } }
 
@@ -19,12 +15,6 @@ namespace Transformalize.Orchard.Models {
         {
             _request = request;
             _configuration = configuration;
-        }
-
-        public ApiResponse(ApiRequest request, string configuration, string metaData) {
-            _request = request;
-            _configuration = configuration;
-            _metaData = metaData;
         }
 
         public ApiResponse(ApiRequest request, string configuration, TransformalizeResponse response) {
@@ -44,9 +34,9 @@ namespace Transformalize.Orchard.Models {
             _request.Flavor = flavor.ToLower();
             switch (format.ToLower()) {
                 case "json":
-                    return JsonContentHandler.GetContent(_request, _configuration, _response, _metaData);
+                    return JsonContentHandler.GetContent(_request, _configuration, _response);
                 default:
-                    return XmlContentHandler.GetContent(_request, _configuration, _response, _metaData);
+                    return XmlContentHandler.GetContent(_request, _configuration, _response);
             }
         }
 

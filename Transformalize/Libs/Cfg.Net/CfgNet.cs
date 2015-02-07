@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Transformalize.Libs.Cfg.Net {
@@ -111,8 +110,8 @@ namespace Transformalize.Libs.Cfg.Net {
             _storage.AppendLine();
         }
 
-        public void RootValueNotInDomain(string propertyName, object value, string validValues) {
-            _storage.AppendFormat(CfgConstants.PROBLEM_ROOT_VALUE_NOT_IN_DOMAIN, propertyName, value, validValues);
+        public void RootValueNotInDomain(object value, string propertyName, string validValues) {
+            _storage.AppendFormat(CfgConstants.PROBLEM_ROOT_VALUE_NOT_IN_DOMAIN, value, propertyName, validValues);
             _storage.AppendLine();
         }
 
@@ -204,6 +203,8 @@ namespace Transformalize.Libs.Cfg.Net {
         public string[] UniquePropertiesInList { get; set; }
         public string SharedProperty { get; set; }
         public object SharedValue { get; set; }
+        public Action<object, object> Setter { get; set; }
+        public Func<object, object> Getter { get; set; }
 
         public CfgMetadata(PropertyInfo propertyInfo, CfgAttribute attribute) {
             PropertyInfo = propertyInfo;
@@ -239,8 +240,9 @@ namespace Transformalize.Libs.Cfg.Net {
         private readonly CfgProblems _problems = new CfgProblems();
         private readonly Type _type;
         private static Dictionary<string, char> _entities;
+        private NanoXmlNode _node;
 
-        protected CfgNode() {
+        public CfgNode() {
             _type = GetType();
         }
 
@@ -268,13 +270,15 @@ namespace Transformalize.Libs.Cfg.Net {
 
         public T GetDefaultOf<T>(Action<T> setter = null) {
             var obj = Activator.CreateInstance(typeof(T));
-            var propertyInfos = GetMetadata(typeof(T), _builder);
+            var metadata = GetMetadata(typeof(T), _builder);
 
-            foreach (var pair in propertyInfos) {
+            foreach (var pair in metadata) {
                 if (pair.Value.PropertyInfo.PropertyType.IsGenericType) {
-                    pair.Value.PropertyInfo.SetValue(obj, Activator.CreateInstance(pair.Value.PropertyInfo.PropertyType), null);
+                    //pair.Value.PropertyInfo.SetValue(obj, Activator.CreateInstance(pair.Value.PropertyInfo.PropertyType), null);
+                    pair.Value.Setter(obj, Activator.CreateInstance(pair.Value.PropertyInfo.PropertyType));
                 } else {
-                    pair.Value.PropertyInfo.SetValue(obj, pair.Value.Attribute.value ?? default(T), null);
+                    //pair.Value.PropertyInfo.SetValue(obj, pair.Value.Attribute.value ?? default(T), null);
+                    pair.Value.Setter(obj, pair.Value.Attribute.value ?? default(T));
                 }
             }
 
@@ -293,10 +297,9 @@ namespace Transformalize.Libs.Cfg.Net {
 
         public void Load(string xml, Dictionary<string, string> parameters = null) {
 
-            NanoXmlNode node = null;
             try {
-                node = new NanoXmlDocument(xml).RootNode;
-                var environmentDefaults = LoadEnvironment(node, parameters).ToArray();
+                _node = new NanoXmlDocument(xml).RootNode;
+                var environmentDefaults = LoadEnvironment(_node, parameters).ToArray();
                 if (environmentDefaults.Length > 0) {
                     for (var i = 0; i < environmentDefaults.Length; i++) {
                         if (i == 0 && parameters == null) {
@@ -312,8 +315,8 @@ namespace Transformalize.Libs.Cfg.Net {
                 return;
             }
 
-            LoadProperties(node, null, parameters);
-            LoadCollections(node, null, parameters);
+            LoadProperties(_node, null, parameters);
+            LoadCollections(_node, null, parameters);
             Modify();
             Validate();
         }
@@ -393,11 +396,17 @@ namespace Transformalize.Libs.Cfg.Net {
         }
 
         protected CfgNode Load(NanoXmlNode node, string parentName, Dictionary<string, string> parameters) {
-            LoadProperties(node, parentName, parameters);
-            LoadCollections(node, parentName, parameters);
+            _node = node;
+            LoadProperties(_node, parentName, parameters);
+            LoadCollections(_node, parentName, parameters);
             Modify();
             Validate();
             return this;
+        }
+
+        //returns original xml string, does not reflect modifications
+        public override string ToString() {
+            return _node == null ? string.Empty : _node.ToString();
         }
 
         /// <summary>
@@ -421,7 +430,8 @@ namespace Transformalize.Libs.Cfg.Net {
             //initialize all the lists
             foreach (var key in keys) {
                 var list = (IList)Activator.CreateInstance(metadata[key].PropertyInfo.PropertyType);
-                metadata[key].PropertyInfo.SetValue(this, list, null);
+                //metadata[key].PropertyInfo.SetValue(this, list, null);
+                metadata[key].Setter(this, list);
                 elements.Add(key, list);
             }
 
@@ -432,12 +442,12 @@ namespace Transformalize.Libs.Cfg.Net {
                     var item = metadata[subNode.Name];
 
                     object value = null;
-                    PropertyInfo sharedPropertyInfo = null;
+                    CfgMetadata sharedCfg = null;
 
                     if (item.SharedProperty != null) {
                         var sharedMetadata = GetMetadata(item.ListType, _builder);
                         if (sharedMetadata.ContainsKey(item.SharedProperty)) {
-                            sharedPropertyInfo = sharedMetadata[item.SharedProperty].PropertyInfo;
+                            sharedCfg = sharedMetadata[item.SharedProperty];
                         } else {
                             _problems.SharedPropertyMissing(subNode.Name, item.SharedProperty, item.ListType.ToString());
                         }
@@ -452,10 +462,12 @@ namespace Transformalize.Libs.Cfg.Net {
                         if (add.Name.Equals("add", StringComparison.Ordinal)) {
                             addHits.Add(subNode.Name);
                             var loaded = item.Loader().Load(add, subNode.Name, parameters);
-                            if (sharedPropertyInfo != null) {
-                                var sharedValue = sharedPropertyInfo.GetValue(loaded, null);
+                            if (sharedCfg != null) {
+                                //var sharedValue = sharedCfg.PropertyInfo.GetValue(loaded, null);
+                                var sharedValue = sharedCfg.Getter(loaded);
                                 if (sharedValue == null) {
-                                    sharedPropertyInfo.SetValue(loaded, value ?? item.SharedValue, null);
+                                    //sharedCfg.PropertyInfo.SetValue(loaded, value ?? item.SharedValue, null);
+                                    sharedCfg.Setter(loaded, value ?? item.SharedValue);
                                 }
                             }
                             elements[subNode.Name].Add(loaded);
@@ -525,39 +537,50 @@ namespace Transformalize.Libs.Cfg.Net {
             for (var i = 0; i < node.Attributes.Count; i++) {
                 var attribute = node.Attributes[i];
                 if (metadata.ContainsKey(attribute.Name)) {
+
                     if (attribute.Value == null)
                         continue;
 
-                    var value = CheckParameters(parameters, attribute.Value);
-                    if (value.IndexOf(CfgConstants.ENTITY_START) > -1) {
-                        value = Decode(value, _builder);
+                    var decoded = false;
+                    attribute.Value = CheckParameters(parameters, attribute.Value);
+
+                    if (attribute.Value.IndexOf(CfgConstants.ENTITY_START) > -1) {
+                        attribute.Value = Decode(attribute.Value, _builder);
+                        decoded = true;
                     }
 
                     var item = metadata[attribute.Name];
 
                     if (item.Attribute.unique) {
-                        UniqueProperties[attribute.Name] = value;
+                        UniqueProperties[attribute.Name] = attribute.Value;
                     }
 
                     if (item.PropertyInfo.PropertyType == typeof(string) || item.PropertyInfo.PropertyType == typeof(object)) {
-                        item.PropertyInfo.SetValue(this, value, null);
+                        //item.PropertyInfo.SetValue(this, attribute.Value, null);
+                        item.Setter(this, attribute.Value);
                         keyHits.Add(attribute.Name);
                     } else {
                         try {
-                            item.PropertyInfo.SetValue(this, Converter[item.PropertyInfo.PropertyType](value), null);
+                            //item.PropertyInfo.SetValue(this, Converter[item.PropertyInfo.PropertyType](attribute.Value), null);
+                            item.Setter(this, Converter[item.PropertyInfo.PropertyType](attribute.Value));
                             keyHits.Add(attribute.Name);
                         } catch (Exception ex) {
-                            _problems.SettingValue(attribute.Name, value, parentName, node.Name, ex.Message);
+                            _problems.SettingValue(attribute.Name, attribute.Value, parentName, node.Name, ex.Message);
                         }
                     }
 
-                    if (!item.IsInDomain(item.PropertyInfo.GetValue(this, null))) {
+                    // Setter has been called and may have changed it
+                    var value = item.Getter(this);
+
+                    if (!item.IsInDomain(value)) {
                         if (parentName == null) {
                             _problems.RootValueNotInDomain(value, attribute.Name, item.Attribute.domain.Replace(item.Attribute.domainDelimiter.ToString(CultureInfo.InvariantCulture), ", "));
                         } else {
                             _problems.ValueNotInDomain(parentName, node.Name, attribute.Name, value, item.Attribute.domain.Replace(item.Attribute.domainDelimiter.ToString(CultureInfo.InvariantCulture), ", "));
                         }
                     }
+
+                    attribute.Value = decoded ? Encode(value.ToString(), _builder) : value.ToString();
                 } else {
                     _problems.InvalidAttribute(parentName, node.Name, attribute.Name, string.Join(", ", keys));
                 }
@@ -567,7 +590,8 @@ namespace Transformalize.Libs.Cfg.Net {
             foreach (var key in keys.Except(keyHits)) {
                 var item = metadata[key];
                 if (item.Attribute.value != null) {
-                    item.PropertyInfo.SetValue(this, item.Attribute.value, null);
+                    //item.PropertyInfo.SetValue(this, item.Attribute.value, null);
+                    item.Setter(this, item.Attribute.value);
                 }
                 if (item.Attribute.required) {
                     _problems.MissingAttribute(parentName, node.Name, key);
@@ -888,7 +912,8 @@ namespace Transformalize.Libs.Cfg.Net {
             var metadata = GetMetadata(_type, _builder);
             for (var i = 0; i < ElementCache[_type].Count; i++) {
                 var element = ElementCache[_type][i];
-                var list = (IList)metadata[element].PropertyInfo.GetValue(this, null);
+                //var list = (IList)metadata[element].PropertyInfo.GetValue(this, null);
+                var list = (IList)metadata[element].Getter(this);
                 foreach (var node in list.Cast<CfgNode>()) {
                     allProblems.AddRange(node.Problems());
                 }
@@ -924,8 +949,14 @@ namespace Transformalize.Libs.Cfg.Net {
             metadata = new Dictionary<string, CfgMetadata>(StringComparer.Ordinal);
             for (var i = 0; i < propertyInfos.Length; i++) {
                 var propertyInfo = propertyInfos[i];
+
                 if (propertyInfo.MemberType != MemberTypes.Property)
                     continue;
+                if (!propertyInfo.CanRead)
+                    continue;
+                if (!propertyInfo.CanWrite)
+                    continue;
+
                 var attribute = (CfgAttribute)Attribute.GetCustomAttribute(propertyInfo, typeof(CfgAttribute));
                 if (attribute == null)
                     continue;
@@ -944,6 +975,9 @@ namespace Transformalize.Libs.Cfg.Net {
                 } else {
                     keyCache.Add(key);
                 }
+                item.Setter = ReflectionHelper.CreateSetter(propertyInfo);
+                item.Getter = ReflectionHelper.CreateGetter(propertyInfo);
+
                 metadata[key] = item;
             }
             MetadataCache[type] = metadata;
@@ -957,6 +991,40 @@ namespace Transformalize.Libs.Cfg.Net {
                 }
             }
             return metadata;
+        }
+
+        // a naive implementation for hand-written configurations
+        private static string Encode(string value, StringBuilder builder) {
+
+            builder.Clear();
+            for (var i = 0; i < value.Length; i++) {
+                var ch = value[0];
+                if (ch <= '>') {
+                    switch (ch) {
+                        case '<':
+                            builder.Append("&lt;");
+                            break;
+                        case '>':
+                            builder.Append("&gt;");
+                            break;
+                        case '"':
+                            builder.Append("&quot;");
+                            break;
+                        case '\'':
+                            builder.Append("&#39;");
+                            break;
+                        case '&':
+                            builder.Append("&amp;");
+                            break;
+                        default:
+                            builder.Append(ch);
+                            break;
+                    }
+                } else {
+                    builder.Append(ch);
+                }
+            }
+            return builder.ToString();
         }
 
         public static string Decode(string input, StringBuilder builder) {
@@ -1027,4 +1095,34 @@ namespace Transformalize.Libs.Cfg.Net {
 
     }
 
+    // Credit to http://stackoverflow.com/users/478478/alex-hope-oconnor
+    public static class ReflectionHelper {
+
+        public static Func<object, object> CreateGetter(PropertyInfo property) {
+            var getter = property.GetGetMethod();
+            var genericMethod = typeof(ReflectionHelper).GetMethod("CreateGetterGeneric");
+            var genericHelper = genericMethod.MakeGenericMethod(property.DeclaringType, property.PropertyType);
+            return (Func<object, object>)genericHelper.Invoke(null, new object[] { getter });
+        }
+
+        public static Func<object, object> CreateGetterGeneric<T, R>(MethodInfo getter) where T : class {
+            var getterTypedDelegate = (Func<T, R>)Delegate.CreateDelegate(typeof(Func<T, R>), getter);
+            var getterDelegate = (Func<object, object>)((object instance) => getterTypedDelegate((T)instance));
+            return getterDelegate;
+        }
+
+        public static Action<object, object> CreateSetter(PropertyInfo property) {
+            var setter = property.GetSetMethod();
+            var genericMethod = typeof(ReflectionHelper).GetMethod("CreateSetterGeneric");
+            var genericHelper = genericMethod.MakeGenericMethod(property.DeclaringType, property.PropertyType);
+            return (Action<object, object>)genericHelper.Invoke(null, new object[] { setter });
+        }
+
+        public static Action<object, object> CreateSetterGeneric<T, V>(MethodInfo setter) where T : class {
+            var setterTypedDelegate = (Action<T, V>)Delegate.CreateDelegate(typeof(Action<T, V>), setter);
+            var setterDelegate = (Action<object, object>)((instance, value) => setterTypedDelegate((T)instance, (V)value));
+            return setterDelegate;
+        }
+
+    }
 }

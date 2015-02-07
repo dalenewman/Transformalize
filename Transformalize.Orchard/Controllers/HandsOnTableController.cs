@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Web.Mvc;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.Themes;
+using Transformalize.Configuration;
 using Transformalize.Orchard.Models;
 using Transformalize.Orchard.Services;
 
@@ -14,7 +17,7 @@ namespace Transformalize.Orchard.Controllers {
 
         private readonly IOrchardServices _orchardServices;
         private readonly IApiService _apiService;
-        private readonly Dictionary<string,string> _query = new Dictionary<string, string>(3);
+        private readonly Dictionary<string, string> _query = new Dictionary<string, string>(3);
 
         public HandsOnTableController(
             IOrchardServices services,
@@ -55,11 +58,20 @@ namespace Transformalize.Orchard.Controllers {
             }
 
             request.RequestType = ApiRequestType.Execute;
-            var modified = TransformConfigurationForLoad(part.Configuration);
-            var transformalizeRequest = new TransformalizeRequest(part, _query, modified);
 
-            return Run(request, transformalizeRequest)
-                .ContentResult(_query["format"], _query["flavor"]);
+            var root = new TflRoot(part.Configuration, _query);
+            var problems = root.Problems();
+            if (problems.Any()) {
+                request.Status = 500;
+                request.Message = string.Join(Environment.NewLine, problems);
+                return new ApiResponse(request, root.ToString(), new TransformalizeResponse()).ContentResult(_query["format"], _query["flavor"]);
+            }
+
+            TransformConfigurationForLoad(root);
+
+            var transformalizeRequest = new TransformalizeRequest(part, _query, null, root);
+
+            return Run(request, transformalizeRequest).ContentResult(_query["format"], _query["flavor"]);
         }
 
         //todo: we don't want it to actually download, we just want a link to the download

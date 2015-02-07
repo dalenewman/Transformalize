@@ -1,33 +1,39 @@
-#region License
-
-// /*
-// Transformalize - Replicate, Transform, and Denormalize Your Data...
-// Copyright (C) 2013 Dale Newman
-// 
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-// 
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-// */
-
-#endregion
-
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace Transformalize.Extensions {
+
     public static class StringBuilderExtensions {
 
-        const char DEFAULT_CHAR = default(char);
+        public static int LastIndexOf(this StringBuilder sb, char value) {
+            for (var i = sb.Length - 1; i > -1; i--) {
+                if (sb[i].Equals(value)) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        public static void InsertFormat(this StringBuilder sb, int index, string format, params object[] args) {
+            var length = sb.Length;
+
+            if (length > index) {
+                var keep = new Stack<char>();
+                for (var i = length - 1; i >= index; i--) {
+                    keep.Push(sb[i]);
+                }
+                sb.Remove(index, length - index);
+                sb.AppendFormat(format, args);
+                if (!keep.Any()) return;
+                while (keep.Count > 0) {
+                    sb.Append(keep.Pop());
+                }
+            } else {
+                sb.AppendFormat(format, args);
+            }
+        }
 
         public static void TrimStart(this StringBuilder sb, string trimChars) {
             var length = sb.Length;
@@ -199,7 +205,7 @@ namespace Transformalize.Extensions {
             sb.Remove(0, count);
 
             for (var i = 0; i < numbers.Length; i++) {
-                if (numbers[i].Equals(DEFAULT_CHAR)) {
+                if (numbers[i].Equals(default(char))) {
                     break;
                 }
                 sb.Append(numbers[i]);

@@ -10,6 +10,7 @@ using Orchard.Localization;
 using Orchard.Logging;
 using Orchard.UI.Notify;
 using Orchard.Utility.Extensions;
+using Transformalize.Configuration;
 using Transformalize.Libs.Newtonsoft.Json;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.SemanticLogging;
@@ -47,11 +48,6 @@ namespace Transformalize.Orchard.Services {
             InitializeFile(request, "OutputFile");
         }
 
-        public string GetMetaData(TransformalizeRequest request) {
-            var process = ProcessFactory.CreateSingle(request.Configuration, new Options { Mode = "metadata" }, request.Query);
-            return new MetaDataWriter(process).Write();
-        }
-
         public IEnumerable<ConfigurationPart> GetConfigurations() {
             return _orchardServices.ContentManager.Query<ConfigurationPart, ConfigurationPartRecord>(VersionOptions.Latest)
                 .Join<TitlePartRecord>()
@@ -79,13 +75,26 @@ namespace Transformalize.Orchard.Services {
             }
 
             var processes = new List<Process>();
-            if (request.Options.Mode.Equals("rebuild", StringComparison.OrdinalIgnoreCase)) {
-                request.Options.Mode = "init";
-                processes.AddRange(ProcessFactory.Create(request.Configuration, request.Options, request.Query));
-                request.Options.Mode = "first";
-                processes.AddRange(ProcessFactory.Create(request.Configuration, request.Options, request.Query));
-            } else {
-                processes.AddRange(ProcessFactory.Create(request.Configuration, request.Options, request.Query));
+
+            //transitioning to using TflRoot instead of string configuration
+            if (request.Root != null) {
+                if (request.Options.Mode.Equals("rebuild", StringComparison.OrdinalIgnoreCase)) {
+                    request.Options.Mode = "init";
+                    processes.AddRange(ProcessFactory.Create(request.Root, request.Options));
+                    request.Options.Mode = "first";
+                    processes.AddRange(ProcessFactory.Create(request.Root, request.Options));
+                } else {
+                    processes.AddRange(ProcessFactory.Create(request.Root, request.Options));
+                }
+            } else {  //legacy
+                if (request.Options.Mode.Equals("rebuild", StringComparison.OrdinalIgnoreCase)) {
+                    request.Options.Mode = "init";
+                    processes.AddRange(ProcessFactory.Create(request.Configuration, request.Options, request.Query));
+                    request.Options.Mode = "first";
+                    processes.AddRange(ProcessFactory.Create(request.Configuration, request.Options, request.Query));
+                } else {
+                    processes.AddRange(ProcessFactory.Create(request.Configuration, request.Options, request.Query));
+                }
             }
 
             for (var i = 0; i < processes.Count; i++) {

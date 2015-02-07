@@ -87,7 +87,7 @@ namespace Transformalize.Test {
                 
                 .Process();
 
-            var process = ProcessFactory.Create(cfg)[0];
+            var process = ProcessFactory.CreateSingle(cfg);
 
             var output = process.Execute().ToArray();
 

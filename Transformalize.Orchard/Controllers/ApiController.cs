@@ -1,9 +1,15 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
+using System.Text;
 using System.Web.Mvc;
 using Orchard.Localization;
+using Transformalize.Configuration;
+using Transformalize.Extensions;
+using Transformalize.Main;
 using Transformalize.Orchard.Models;
 using Transformalize.Orchard.Services;
+using Process = Transformalize.Main.Process;
 
 namespace Transformalize.Orchard.Controllers {
     public class ApiController : TflController {
@@ -64,7 +70,21 @@ namespace Transformalize.Orchard.Controllers {
             var query = GetQuery();
             var transformalizeRequest = new TransformalizeRequest(part, query, null);
 
-            return new ApiResponse(request, part.Configuration, _transformalize.GetMetaData(transformalizeRequest)).ContentResult(
+            var tfl = new TflRoot(transformalizeRequest.Configuration, transformalizeRequest.Query);
+            var problems = tfl.Problems();
+            if (problems.Any()) {
+                var bad = new TransformalizeResponse();
+                request.Status = 501;
+                request.Message = "Configuration Problem" + problems.Count.Plural();
+                bad.Log.AddRange(problems.Select(p => string.Format("{0:HH:mm:ss} | Error | . | . | {1}", DateTime.UtcNow, p)));
+                return new ApiResponse(request, "<tfl></tfl>", bad).ContentResult(
+                    query["format"] ?? DefaultFormat,
+                    query["flavor"] ?? DefaultFlavor
+                );
+            }
+
+            var metaData = new MetaDataWriter(ProcessFactory.CreateSingle(tfl.Processes[0], new Options { Mode = "metadata" })).Write();
+            return new ApiResponse(request, metaData).ContentResult(
                 query["format"] ?? DefaultFormat,
                 query["flavor"] ?? DefaultFlavor
             );

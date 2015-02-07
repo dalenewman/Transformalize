@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Web.Mvc;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.Themes;
+using Transformalize.Configuration;
 using Transformalize.Orchard.Models;
 using Transformalize.Orchard.Services;
 
@@ -55,8 +58,18 @@ namespace Transformalize.Orchard.Controllers {
             }
 
             request.RequestType = ApiRequestType.Execute;
-            var modified = TransformConfigurationForLoad(part.Configuration);
-            var transformalizeRequest = new TransformalizeRequest(part, _query, modified);
+            var root = new TflRoot(part.Configuration, _query);
+            
+            TransformConfigurationForLoad(root);
+
+            var problems = root.Problems();
+            if (problems.Any()) {
+                request.Status = 500;
+                request.Message = string.Join(Environment.NewLine, problems);
+                return new ApiResponse(request, root.ToString(), new TransformalizeResponse()).ContentResult(_query["format"], _query["flavor"]);
+            }
+
+            var transformalizeRequest = new TransformalizeRequest(part, _query, null, root);
 
             return Run(request, transformalizeRequest)
                 .ContentResult(_query["format"], _query["flavor"]);

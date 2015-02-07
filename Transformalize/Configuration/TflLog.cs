@@ -26,7 +26,7 @@ namespace Transformalize.Configuration {
         public string Subject { get; set; }
         [Cfg(value = Common.DefaultValue)]
         public string To { get; set; }
-        [Cfg()]
+        [Cfg(value = (long)10000)]
         public long Rows { get; set; }
 
     }

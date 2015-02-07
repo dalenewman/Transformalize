@@ -21,10 +21,7 @@
 #endregion
 
 using System.Collections.Generic;
-using System.Configuration;
 using NUnit.Framework;
-using Transformalize.Configuration;
-using Transformalize.Main;
 
 namespace Transformalize.Test {
     [TestFixture]
@@ -38,7 +35,7 @@ namespace Transformalize.Test {
             };
 
             var actual = Orchard.Handlers.XmlContentHandler.LogsToXml(logs);
-            const string expected = "<entry time=\"time\" level=\"level\" process=\"process\" entity=\"entity\" message=\"message\" /><entry time=\"time\" level=\"level\" process=\"process\" entity=\"entity\" message=\"message\" />";
+            const string expected = "<add time=\"time\" level=\"level\" process=\"process\" entity=\"entity\" message=\"message\" /><add time=\"time\" level=\"level\" process=\"process\" entity=\"entity\" message=\"message\" />";
 
             Assert.AreEqual(expected, actual);
         }

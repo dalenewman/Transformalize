@@ -50,12 +50,12 @@ namespace Transformalize.Test {
             var process = GetInitialProcess(inventory, storageLocations, warehouses);
 
             //init and run
-            var init = ProcessFactory.Create(process, new Options())[0];
+            var init = ProcessFactory.CreateSingle(process, new Options());
             init.Mode = "init";
             init.PipelineThreading = PipelineThreading.SingleThreaded;
             init.ExecuteScaler();
 
-            var first = ProcessFactory.Create(process, new Options())[0];
+            var first = ProcessFactory.CreateSingle(process, new Options());
             first.PipelineThreading = PipelineThreading.SingleThreaded;
             first.ExecuteScaler();
             //LogManager.Flush();
@@ -103,7 +103,7 @@ namespace Transformalize.Test {
             process.Entities[2].InputOperation = GetInitialWarehouses();
 
             //run again
-            var third = ProcessFactory.Create(process)[0];
+            var third = ProcessFactory.CreateSingle(process);
             third.PipelineThreading = PipelineThreading.SingleThreaded;
             third.ExecuteScaler();
             //LogManager.Flush();

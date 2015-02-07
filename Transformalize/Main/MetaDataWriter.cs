@@ -38,9 +38,7 @@ namespace Transformalize.Main {
 
         public string Write() {
             var content = new StringBuilder();
-            content.AppendLine("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
-            content.AppendLine("<process>");
-            content.AppendLine("  <entities>");
+            content.AppendLine("<tfl><processes><add name=\"metadata\"><entities>");
 
             var count = 0;
             foreach (var entity in _process.Entities) {
@@ -53,8 +51,7 @@ namespace Transformalize.Main {
                 count++;
             }
 
-            content.AppendLine("  </entities>");
-            content.AppendLine("</process>");
+            content.AppendLine("</entities></add></processes></tfl>");
             return content.ToString();
         }
 

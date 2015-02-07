@@ -206,10 +206,10 @@
 
         $('#load').click(function () {
             $.get(settings.load, function (tfl) {
-                if (tfl.status === 200) {
+                if (tfl.response[0].status === 200) {
 
-                    state.fields = tfl.processes[0].add.entities.add.fields.add.filter(function (f) {
-                        return f.output.toLowerCase() == 'true';
+                    state.fields = tfl.processes[0].entities[0].fields.filter(function (f) { 
+                        return f.output;
                     });
 
                     state.dates = state.fields.filter(function (f) {
@@ -241,7 +241,7 @@
                         editCommandHandler: queueAndExecuteCommand
                     };
 
-                    state.data = tfl.response[0];
+                    state.data = tfl.response[0].rows;
 
                     var minutes = new Date().getTimezoneOffset();
                     for (var i = 0; i < state.data.length; i++) {
@@ -264,7 +264,7 @@
 
                     $().toastmessage('showSuccessToast', "Data Loaded");
                 } else {
-                    $().toastmessage('showErrorToast', tfl.message);
+                    $().toastmessage('showErrorToast', tfl.response[0].message);
                 }
             }, 'json');
         });
@@ -276,10 +276,10 @@
                 data: { "data": JSON.stringify(state.data), "__RequestVerificationToken": settings.token },
                 type: 'POST',
                 success: function (tfl) {
-                    if (tfl.status === 200) {
+                    if (tfl.response[0].status === 200) {
                         $().toastmessage('showSuccessToast', "Data Saved");
                     } else {
-                        $().toastmessage('showErrorToast', tfl.message);
+                        $().toastmessage('showErrorToast', tfl.response[0].message);
                     }
                 }
             });

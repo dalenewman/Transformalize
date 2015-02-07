@@ -751,7 +751,7 @@ namespace Transformalize.Test {
                                 .Parameter("EndDate")
             .Process();
 
-            var process = ProcessFactory.Create(config)[0];
+            var process = ProcessFactory.CreateSingle(config);
 
             var output = process.Execute().ToArray();
 
@@ -829,7 +829,7 @@ namespace Transformalize.Test {
                                 .Parameter("EndDate")
             .Process();
 
-            var process = ProcessFactory.Create(config)[0];
+            var process = ProcessFactory.CreateSingle(config);
             process.PipelineThreading = PipelineThreading.SingleThreaded;
             var output = process.Execute().ToArray();
 
@@ -878,7 +878,7 @@ namespace Transformalize.Test {
                             .Parameter("EndDate")
             .Process();
 
-            var process = ProcessFactory.Create(config )[0];
+            var process = ProcessFactory.CreateSingle(config);
             process.PipelineThreading = PipelineThreading.SingleThreaded;
             var output = process.Execute().ToArray();
 
@@ -1415,7 +1415,7 @@ It is False#end", templates, parameters);
                         .Transform("if").Left("MeterCategory").Right("R").Then("Reclaim").Else("Domestic")
                 .Process();
 
-            var process = ProcessFactory.Create(cfg)[0];
+            var process = ProcessFactory.CreateSingle(cfg);
             var output = process.Execute().ToArray();
 
             Assert.AreEqual("Reclaim", output[0]["MeterCategory"]);

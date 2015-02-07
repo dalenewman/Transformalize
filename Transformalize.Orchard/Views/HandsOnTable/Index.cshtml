@@ -74,10 +74,10 @@
 
         $('#load').click(function () {
             $.get(settings.load, function (tfl) {
-                if (tfl.status === 200) {
+                if (tfl.response[0].status === 200) {
                     var dateFormat = 'yy-mm-dd';
-                    var fields = tfl.processes[0].add.entities.add.fields.add.filter(function (item) {
-                        return item.output == "true";
+                    var fields = tfl.processes[0].entities[0].fields.filter(function (item) {
+                        return item.output;
                     });
                     var headers = $.map(fields, function (f) {
                         return f.label;
@@ -123,7 +123,7 @@
                         }
                         return column;
                     });
-                    var data = tfl.response[0];
+                    var data = tfl.response[0].rows;
                     if (data.length > 0) {
                         
                         var minutes = new Date().getTimezoneOffset();
@@ -162,7 +162,7 @@
                     }
                     $().toastmessage('showSuccessToast', "Data Loaded");
                 } else {
-                    $().toastmessage('showErrorToast', tfl.message);
+                    $().toastmessage('showErrorToast', tfl.response[0].message);
                 }
             }, 'json');
         });
@@ -183,10 +183,10 @@
                 data: { "data": JSON.stringify(data), "__RequestVerificationToken": settings.token },
                 type: 'POST',
                 success: function (tfl) {
-                    if (tfl.status === 200) {
+                    if (tfl.response[0].status === 200) {
                         $().toastmessage('showSuccessToast', "Data Saved");
                     } else {
-                        $().toastmessage('showErrorToast', tfl.message);
+                        $().toastmessage('showErrorToast', tfl.response[0].message);
                     }
                 }
             });
