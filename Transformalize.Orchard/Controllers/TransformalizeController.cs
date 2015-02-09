@@ -1,13 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
 using Orchard;
 using Orchard.ContentManagement;
+using Orchard.FileSystems.AppData;
 using Orchard.Localization;
 using Orchard.Themes;
 using Orchard.UI.Notify;
-using Transformalize.Configuration;
 using Transformalize.Extensions;
 using Transformalize.Logging;
 using Transformalize.Main.Providers;
@@ -21,17 +22,20 @@ namespace Transformalize.Orchard.Controllers {
         private readonly IOrchardServices _orchardServices;
         private readonly ITransformalizeService _transformalize;
         private readonly IFileService _fileService;
+        private readonly IAppDataFolder _appDataFolder;
 
         public Localizer T { get; set; }
 
         public TransformalizeController(
             IOrchardServices services,
             ITransformalizeService transformalize,
-            IFileService fileService
+            IFileService fileService,
+            IAppDataFolder appDataFolder
         ) {
             _orchardServices = services;
             _transformalize = transformalize;
             _fileService = fileService;
+            _appDataFolder = appDataFolder;
             T = NullLocalizer.Instance;
         }
 
@@ -83,16 +87,8 @@ namespace Transformalize.Orchard.Controllers {
             // ready
             var query = GetQuery();
 
-            // handle input files
-            if (part.RequiresInputFile() == true) {
-                if (Request.Files != null && Request.Files.Count > 0) {
-                    var input = Request.Files.Get(0);
-                    if (input != null && input.ContentLength > 0) {
-                        var filePart = _fileService.Upload(input);
-                        query["InputFile"] = filePart.Id.ToString(CultureInfo.InvariantCulture);
-                    }
-                }
-            }
+            HandleInputFile(part, query);
+            HandleOutputFile(part, query);
 
             var transformalizeRequest = new TransformalizeRequest(part, query, null);
 
@@ -109,12 +105,44 @@ namespace Transformalize.Orchard.Controllers {
                     return RedirectToAction("Download", "File", new { id = _transformalize.FilesCreated.Last() });
                 }
                 if (viewModel.TransformalizeResponse.Processes.All(p => p.OutputConnection.Type != ProviderType.Internal)) {
+                    _orchardServices.Notifier.Add(NotifyType.Information, T(part.Title() + " Completed."));
                     return RedirectToAction("Configurations", "Transformalize", new { id = part.Id });
                 }
             }
 
             ViewBag.CurrentId = id;
             return View(viewModel);
+        }
+
+        private void HandleOutputFile(ConfigurationPart part, IDictionary<string, string> query) {
+            if (part.RequiresOutputFile() != true)
+                return;
+
+            var fileId = 0;
+
+            if (query.ContainsKey("OutputFile")) {
+                if (int.TryParse(query["OutputFile"], out fileId))
+                    return;
+
+                if (_appDataFolder.FileExists(query["OutputFile"])) {
+                    fileId = _fileService.Create(query["OutputFile"]).Id;
+                }
+            }
+
+            query["OutputFile"] = fileId.ToString(CultureInfo.InvariantCulture);
+        }
+
+        private void HandleInputFile(ConfigurationPart part, IDictionary<string, string> query) {
+            if (Request.Files == null || Request.Files.Count <= 0 || part.RequiresInputFile() != true)
+                return;
+
+            var input = Request.Files.Get(0);
+
+            if (input == null || input.ContentLength <= 0)
+                return;
+
+            var filePart = _fileService.Upload(input);
+            query["InputFile"] = filePart.Id.ToString(CultureInfo.InvariantCulture);
         }
 
         private ExecuteViewModel Run(TransformalizeRequest request) {
@@ -128,8 +156,7 @@ namespace Transformalize.Orchard.Controllers {
                     model.DisplayLog = true;
                     model.TransformalizeResponse.Log.Add(string.Format("{0} | error | orchard | . | {1}", DateTime.Now.ToString("HH:mm:ss"), ex.Message));
                     model.TransformalizeResponse.Log.Add(string.Format("{0} | debug | orchard | . | {1}", DateTime.Now.ToString("HH:mm:ss"), ex.StackTrace));
-                    TflLogger.Error(string.Empty, string.Empty, ex.Message);
-                    TflLogger.Warn(string.Empty, string.Empty, ex.StackTrace);
+                    TflLogger.Error(string.Empty, string.Empty, ex.Message + Environment.NewLine + ex.StackTrace);
                 }
             } else {
                 model.TransformalizeResponse = _transformalize.Run(request);

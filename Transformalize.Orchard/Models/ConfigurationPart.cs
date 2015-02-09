@@ -82,10 +82,8 @@ namespace Transformalize.Orchard.Models {
         }
 
         public string EditorTheme {
-            get
-            {
-                if (string.IsNullOrEmpty(Record.EditorTheme))
-                {
+            get {
+                if (string.IsNullOrEmpty(Record.EditorTheme)) {
                     return "solarized";
                 }
                 return Record.EditorTheme;

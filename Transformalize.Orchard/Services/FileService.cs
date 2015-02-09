@@ -36,7 +36,7 @@ namespace Transformalize.Orchard.Services {
         public ILogger Logger { get; set; }
 
         public FilePart Upload(HttpPostedFileBase input) {
-            
+
             var part = _orchardServices.ContentManager.New<FilePart>("File");
             var exportFile = string.Format("{0}-{1}-{2}",
                 _orchardServices.WorkContext.CurrentUser.UserName,
@@ -53,6 +53,14 @@ namespace Transformalize.Orchard.Services {
             _orchardServices.ContentManager.Create(part);
             _orchardServices.Notifier.Information(T("{0} uploaded successfully.", Path.GetFileName(input.FileName)));
 
+            return part;
+        }
+
+        public FilePart Create(string fileName) {
+            var part = _orchardServices.ContentManager.New<FilePart>("File");
+            part.FullPath = fileName;
+            part.Direction = "Out";
+            _orchardServices.ContentManager.Create(part);
             return part;
         }
 

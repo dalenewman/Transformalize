@@ -191,13 +191,9 @@ namespace Transformalize.Main {
                 };
 
                 if (logElement.Connection != Common.DefaultValue) {
-                    if (process.Connections.ContainsKey(logElement.Connection)) {
-                        log.Connection = process.Connections[logElement.Connection];
-                        if (log.Connection.Type == ProviderType.File && log.File.Equals(Common.DefaultValue)) {
-                            log.File = log.Connection.File;
-                        }
-                    } else {
-                        throw new TransformalizeException(process.Name, string.Empty, "You are referencing an invalid connection name in your log configuration.  {0} is not confiured in <connections/>.", logElement.Connection);
+                    log.Connection = process.Connections[logElement.Connection];
+                    if (log.Connection.Type == ProviderType.File && log.File.Equals(Common.DefaultValue)) {
+                        log.File = log.Connection.File;
                     }
                 }
 
@@ -206,25 +202,8 @@ namespace Transformalize.Main {
                     if (Enum.TryParse(logElement.Level, out eventLevel)) {
                         log.Level = eventLevel;
                     } else {
-                        switch (logElement.Level.ToLower().Left(4)) {
-                            case "debu":
-                                log.Level = EventLevel.Verbose;
-                                break;
-                            case "info":
-                                log.Level = EventLevel.Informational;
-                                break;
-                            case "warn":
-                                log.Level = EventLevel.Warning;
-                                break;
-                            case "erro":
-                                log.Level = EventLevel.Error;
-                                break;
-                            default:
-                                log.Level = EventLevel.Informational;
-                                TflLogger.Warn(_processName, string.Empty, "Invalid log level: {0}.  Valid values are Informational, Error, Verbose, and Warning. Defaulting to Informational.", logElement.Level);
-                                break;
-                        }
-
+                        log.Level = EventLevel.Informational;
+                        TflLogger.Warn(_processName, string.Empty, "Invalid log level: {0}.  Valid values are Informational, Error, Verbose, and Warning. Defaulting to Informational.", logElement.Level);
                     }
                     log.Provider = (ProviderType)Enum.Parse(typeof(ProviderType), logElement.Provider, true);
                 } catch (Exception ex) {

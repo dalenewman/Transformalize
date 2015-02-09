@@ -159,40 +159,6 @@ namespace Transformalize.Libs.Cfg.Net {
         // ReSharper restore InconsistentNaming
     }
 
-    public sealed class CfgProperty {
-
-        private readonly HashSet<string> _domainSet;
-        public string Name { get; set; }
-        public Type Type { get; set; }
-        public CfgAttribute Attributes { get; set; }
-        public bool Set { get; set; }
-        public object Value { get; set; }
-
-        public CfgProperty(string name, Type type, object value, CfgAttribute attribute) {
-            Name = name;
-            Type = type;
-            Value = value ?? attribute.value;
-            Attributes = attribute;
-
-            if (string.IsNullOrEmpty(attribute.domain))
-                return;
-
-            if (attribute.domainDelimiter == default(char)) {
-                attribute.domainDelimiter = ',';
-            }
-
-            if (attribute.ignoreCase) {
-                _domainSet = new HashSet<string>(attribute.domain.Split(new[] { attribute.domainDelimiter }, StringSplitOptions.None), StringComparer.OrdinalIgnoreCase);
-            } else {
-                _domainSet = new HashSet<string>(attribute.domain.Split(new[] { attribute.domainDelimiter }, StringSplitOptions.None), StringComparer.Ordinal);
-            }
-        }
-
-        public bool IsInDomain(string value) {
-            return _domainSet == null || _domainSet.Contains(value);
-        }
-    }
-
     public class CfgMetadata {
         private readonly HashSet<string> _domainSet;
 

@@ -237,9 +237,6 @@ namespace Transformalize.Main {
                             EventListeners.Add(fileListener);
                             break;
                         case ProviderType.Mail:
-                            if (log.Connection == null) {
-                                throw new TransformalizeException(Name, string.Empty, "The mail logger needs to reference a mail connection in <connections/> collection.");
-                            }
                             if (log.Subject.Equals(Common.DefaultValue)) {
                                 log.Subject = Name + " " + log.Level;
                             }

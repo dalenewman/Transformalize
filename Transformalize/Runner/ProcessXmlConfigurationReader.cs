@@ -39,21 +39,23 @@ namespace Transformalize.Runner {
         }
 
         public List<TflProcess> Read(Dictionary<string, string> parameters) {
-            var cfg = new TflRoot(_contentsReader.Read(_resource).Content, parameters);
-            var problems = cfg.Problems();
-
-            if (problems.Any()) {
-                foreach (var problem in problems) {
-                    TflLogger.Error(string.Empty, string.Empty, problem);
-                }
-                throw new TransformalizeException(string.Empty, string.Empty, string.Join(Environment.NewLine, problems));
-            }
+            var content = _contentsReader.Read(_resource).Content;
+            var cfg = new TflRoot(content, parameters);
 
             if (cfg.Response.Any()) {
                 foreach (var response in cfg.Response) {
                     if (response.Status != 200) {
                         TflLogger.Warn(string.Empty, string.Empty, "API at {0} responded with {1} {2}.", _resource, response.Status, response.Message);
                     }
+                }
+            } else {
+                var problems = cfg.Problems();
+                if (problems.Any()) {
+                    foreach (var problem in problems) {
+                        TflLogger.Error(string.Empty, string.Empty, problem);
+                    }
+                    TflLogger.Debug(string.Empty, string.Empty, content);
+                    throw new TransformalizeException(string.Empty, string.Empty, string.Join(Environment.NewLine, problems));
                 }
             }
 

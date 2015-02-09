@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
+using System.Net;
 using System.Web.Mvc;
 using Orchard.Localization;
 using Transformalize.Configuration;
@@ -9,7 +9,6 @@ using Transformalize.Extensions;
 using Transformalize.Main;
 using Transformalize.Orchard.Models;
 using Transformalize.Orchard.Services;
-using Process = Transformalize.Main.Process;
 
 namespace Transformalize.Orchard.Controllers {
     public class ApiController : TflController {
@@ -118,7 +117,7 @@ namespace Transformalize.Orchard.Controllers {
                 processes = _transformalize.Run(transformalizeRequest);
             } catch (Exception ex) {
                 request.Status = 500;
-                request.Message = ex.Message + " " + ex.StackTrace;
+                request.Message = ex.Message + " " + WebUtility.HtmlEncode(ex.StackTrace);
             }
 
             return new ApiResponse(request, transformalizeRequest.Configuration, processes).ContentResult(

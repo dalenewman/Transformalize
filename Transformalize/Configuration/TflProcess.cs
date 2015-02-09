@@ -206,12 +206,22 @@ namespace Transformalize.Configuration {
         protected override void Validate() {
             ValidateDuplicateEntities();
             ValidateDuplicateFields();
+            ValidateLogConnections();
+        }
+
+        private void ValidateLogConnections() {
+            if (Log.Count <= 0)
+                return;
+
+            foreach (var log in Log.Where(log => log.Connection != Common.DefaultValue).Where(log => Connections.All(c => c.Name != log.Connection))) {
+                AddProblem(string.Format("Log {0}'s connection {1} doesn't exist.", log.Name, log.Connection));
+            }
         }
 
         private void ValidateDuplicateFields() {
             var fieldDuplicates = Entities
                 .SelectMany(e => e.AllFields())
-                .Where(f=>!f.PrimaryKey)
+                .Where(f => !f.PrimaryKey)
                 .Union(CalculatedFields)
                 .GroupBy(f => f.Alias)
                 .Where(group => @group.Count() > 1)
