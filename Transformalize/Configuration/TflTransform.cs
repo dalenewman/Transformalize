@@ -72,7 +72,7 @@ namespace Transformalize.Configuration {
         public string NewValue { get; set; }
         [Cfg(value = "")]
         public string OldValue { get; set; }
-        [Cfg(value = "Equal", domain = "Equal,LessThan,GreaterThan,LessThanEqual,GreaterThanEqual")]
+        [Cfg(value = "Equal", domain = Common.ValidComparisons)]
         public string Operator { get; set; }
         [Cfg(value = '0')]
         public char PaddingChar { get; set; }

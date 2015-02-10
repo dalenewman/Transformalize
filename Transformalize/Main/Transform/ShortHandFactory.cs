@@ -654,11 +654,12 @@ namespace Transformalize.Main.Transform {
             var split = SplitComma(arg);
             Guard.Against(split.Length < 2, "The regexreplace method requires at least two parameters: the pattern, and the replacement text.  A third parameter, count (how many to replace) is optional. The argument '{0}' has {1} parameter{2}.", arg, split.Length, split.Length.Plural());
 
-            var element = new TflTransform() {
-                Method = "regexreplace",
-                Pattern = split[0],
-                Replacement = split[1], IsShortHand = true
-            };
+            var element = field.GetDefaultOf<TflTransform>(t => {
+                t.Method = "regexreplace";
+                t.Pattern = split[0];
+                t.Replacement = split[1];
+                t.IsShortHand = true;
+            });
 
             if (split.Length <= 2)
                 return element;

@@ -127,7 +127,7 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
-        public ConnectionBuilder Delimiter(char delimiter) {
+        public ConnectionBuilder Delimiter(string delimiter) {
             _connection.Delimiter = delimiter;
             return this;
         }

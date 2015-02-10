@@ -19,10 +19,12 @@ namespace Transformalize.Configuration {
         public string Data { get; set; }
         [Cfg(value = "")]
         public string Database { get; set; }
-        [Cfg(value = "MM/dd/yyyy h=mm=ss tt")]
+        [Cfg(value = "MM/dd/yyyy h:mm:ss tt")]
         public string DateFormat { get; set; }
-        [Cfg(value = ',')]
-        public char Delimiter { get; set; }
+
+        [Cfg(value = ",")]
+        public string Delimiter { get; set; }
+
         [Cfg(value = false)]
         public bool Direct { get; set; }
         [Cfg(value = true)]
@@ -72,7 +74,7 @@ namespace Transformalize.Configuration {
         public string Version { get; set; }
         [Cfg(value = "GET")]
         public string WebMethod { get; set; }
-        [Cfg(value=true)]
+        [Cfg(value = true)]
         public bool Check { get; set; }
 
         protected override void Validate() {
@@ -81,6 +83,10 @@ namespace Transformalize.Configuration {
                 AddProblem("The file provider requires a file.");
             } else if (Provider.Equals("Folder", ic) && string.IsNullOrEmpty(Folder)) {
                 AddProblem("The folder provider requires a folder.");
+            }
+
+            if (Delimiter.Length > 1) {
+                AddProblem(string.Format("Invalid delimiter defined for connection '{0}'.  The delimiter '{1}' is too long.  It can only be zero or one character.", Name, Delimiter));
             }
         }
 

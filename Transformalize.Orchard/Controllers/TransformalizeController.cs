@@ -84,15 +84,14 @@ namespace Transformalize.Orchard.Controllers {
                 }
             }
 
-            // ready
             var query = GetQuery();
 
+            // files
             HandleInputFile(part, query);
-            HandleOutputFile(part, query);
+            _transformalize.InitializeFiles(part, query);
 
-            var transformalizeRequest = new TransformalizeRequest(part, query, null);
-
-            var viewModel = Run(transformalizeRequest);
+            // ready
+            var viewModel = Run(new TransformalizeRequest(part, query, null));
 
             var returnUrl = (Request.Form["ReturnUrl"] ?? Request.QueryString["ReturnUrl"]) ?? string.Empty;
             if (!returnUrl.Equals(string.Empty))
@@ -112,24 +111,6 @@ namespace Transformalize.Orchard.Controllers {
 
             ViewBag.CurrentId = id;
             return View(viewModel);
-        }
-
-        private void HandleOutputFile(ConfigurationPart part, IDictionary<string, string> query) {
-            if (part.RequiresOutputFile() != true)
-                return;
-
-            var fileId = 0;
-
-            if (query.ContainsKey("OutputFile")) {
-                if (int.TryParse(query["OutputFile"], out fileId))
-                    return;
-
-                if (_appDataFolder.FileExists(query["OutputFile"])) {
-                    fileId = _fileService.Create(query["OutputFile"]).Id;
-                }
-            }
-
-            query["OutputFile"] = fileId.ToString(CultureInfo.InvariantCulture);
         }
 
         private void HandleInputFile(ConfigurationPart part, IDictionary<string, string> query) {

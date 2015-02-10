@@ -106,12 +106,13 @@ namespace Transformalize.Orchard.Controllers {
 
             request.RequestType = ApiRequestType.Execute;
 
+            var query = GetQuery();
+
+            _transformalize.InitializeFiles(part, query);
+
             // ready
-            var transformalizeRequest = new TransformalizeRequest(part, GetQuery(), null);
-
-            _transformalize.InitializeFiles(transformalizeRequest);
-
             var processes = new TransformalizeResponse();
+            var transformalizeRequest = new TransformalizeRequest(part, query, null);
 
             try {
                 processes = _transformalize.Run(transformalizeRequest);

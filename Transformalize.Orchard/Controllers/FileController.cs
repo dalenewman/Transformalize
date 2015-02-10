@@ -79,7 +79,9 @@ namespace Transformalize.Orchard.Controllers {
                 return result.ActionResult;
 
             var ext = Path.GetExtension(result.FilePart.FullPath) ?? "csv";
-            return new FilePathResult(result.FileInfo.FullName, "application/" + ext.TrimStart(".".ToCharArray())) {
+            return new FilePathResult(
+                result.FileInfo.FullName,
+                "application/" + ext.TrimStart(new []{'.'})) {
                 FileDownloadName = result.FileInfo.Name
             };
         }

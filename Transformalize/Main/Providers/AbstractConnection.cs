@@ -135,7 +135,7 @@ namespace Transformalize.Main.Providers {
             End = element.End;
             File = element.File;
             Folder = element.Folder;
-            Delimiter = element.Delimiter;
+            Delimiter = element.Delimiter == string.Empty ? default(char) : element.Delimiter[0];
             DateFormat = element.DateFormat;
             Header = element.Header;
             Footer = element.Footer;

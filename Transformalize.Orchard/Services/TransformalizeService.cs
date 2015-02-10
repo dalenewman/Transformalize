@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.Core.Title.Models;
+using Orchard.FileSystems.AppData;
 using Orchard.Localization;
 using Orchard.Logging;
 using Orchard.UI.Notify;
@@ -26,6 +27,7 @@ namespace Transformalize.Orchard.Services {
 
         private readonly IOrchardServices _orchardServices;
         private readonly IFileService _fileService;
+        private readonly IAppDataFolder _appDataFolder;
         private readonly List<int> _filesCreated = new List<int>();
 
         public Localizer T { get; set; }
@@ -34,18 +36,20 @@ namespace Transformalize.Orchard.Services {
 
         public TransformalizeService(
             IOrchardServices orchardServices,
-            IFileService fileService
+            IFileService fileService,
+            IAppDataFolder appDataFolder
             ) {
             _orchardServices = orchardServices;
             _fileService = fileService;
+            _appDataFolder = appDataFolder;
             Logger = NullLogger.Instance;
             T = NullLocalizer.Instance;
         }
 
-        public void InitializeFiles(TransformalizeRequest request) {
+        public void InitializeFiles(ConfigurationPart part, IDictionary<string, string> query) {
             _filesCreated.Clear();
-            InitializeFile(request, "InputFile");
-            InitializeFile(request, "OutputFile");
+            InitializeFile(part, query, "InputFile");
+            InitializeFile(part, query, "OutputFile");
         }
 
         public IEnumerable<ConfigurationPart> GetConfigurations() {
@@ -161,26 +165,33 @@ namespace Transformalize.Orchard.Services {
             entity.InputOperation = new RowsOperation(rows);
         }
 
-        private void InitializeFile(TransformalizeRequest request, string key) {
+        private void InitializeFile(ConfigurationPart part, IDictionary<string, string> query, string key) {
 
-            if (!request.Query.ContainsKey(key)) {
-                return;
-            }
-
-            int id;
-            if (!int.TryParse(request.Query[key] ?? "0", out id)) {
-                _orchardServices.Notifier.Add(NotifyType.Error, T("{0} must be an integer. \"{1}\" is not valid.", key, request.Query[key]));
+            if (!query.ContainsKey(key)) {
                 return;
             }
 
             FilePart filePart;
-            if (id > 0) {
-                filePart = _fileService.Get(id) ?? CreateOutputFile(request.Part);
+            int id;
+
+            var file = query[key] ?? "0";
+
+            if (int.TryParse(file, out id)) {
+                if (id > 0) {
+                    filePart = _fileService.Get(id) ?? CreateOutputFile(part);
+                } else {
+                    filePart = CreateOutputFile(part);
+                }
             } else {
-                filePart = CreateOutputFile(request.Part);
+                if (file.IndexOfAny(Path.GetInvalidPathChars()) == -1 && _appDataFolder.FileExists(file)) {
+                    filePart = _fileService.Create(file);
+                } else {
+                    TflLogger.Error(string.Empty, string.Empty, "File '{0}' passed into process is invalid!", file);
+                    return;
+                }
             }
 
-            request.Query[key] = filePart.FullPath;
+            query[key] = filePart.FullPath;
         }
 
         private FilePart CreateOutputFile(ConfigurationPart part) {

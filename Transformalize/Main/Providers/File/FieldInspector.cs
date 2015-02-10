@@ -28,7 +28,7 @@ namespace Transformalize.Main.Providers.File {
                 c.Name = "input";
                 c.Provider = "file";
                 c.File = fileInformation.FileInfo.FullName;
-                c.Delimiter = fileInformation.Delimiter == default(char) ? '|' : fileInformation.Delimiter;
+                c.Delimiter = fileInformation.Delimiter == default(char) ? "|" : fileInformation.Delimiter.ToString(CultureInfo.InvariantCulture);
                 c.Start = fileInformation.FirstRowIsHeader ? 2 : 1;
             }));
 

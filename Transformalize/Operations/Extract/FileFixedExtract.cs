@@ -56,7 +56,7 @@ namespace Transformalize.Operations.Extract {
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
 
-            Info("Reading {0}", _name);
+            Info("Reading Fixed {0}", _name);
 
             if (_top > 0) {
                 using (var file = new FluentFile(_classBuilder.CreateRecordClass()).From(_fullName).OnError(_errorMode)) {

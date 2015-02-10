@@ -7,7 +7,7 @@ using Transformalize.Operations.Transform;
 namespace Transformalize.Main {
 
     public class OperationsLoader {
-        private const string DEFAULT = "[default]";
+
         private readonly Process _process;
         private readonly List<TflEntity> _entities;
 

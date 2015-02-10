@@ -15,5 +15,10 @@ namespace Transformalize.Configuration {
         [Cfg(required = false)]
         public List<TflMapItem> Items { get; set; }
 
+        protected override void Validate() {
+            if (Items.Count == 0 && Query == string.Empty) {
+                AddProblem(string.Format("Map '{0}' needs items or a query.", Name));
+            }
+        }
     }
 }

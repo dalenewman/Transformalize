@@ -1,18 +1,26 @@
 using Transformalize.Libs.Cfg.Net;
+using Transformalize.Main;
 
 namespace Transformalize.Configuration {
     public class TflFilter : CfgNode {
+        private string _continuation;
 
         /// <summary>
-        /// Optional.  Default is `AND`
+        /// Optional.  Default is `And`
         /// 
         /// A continuation operator.  Valid values are:
         /// 
-        /// * AND
-        /// * OR
+        /// * And
+        /// * Or
         /// </summary>
-        [Cfg(value = "AND", domain = "AND,OR")]
-        public string Continuation { get; set; }
+        [Cfg(value = "And", domain = "And,Or", ignoreCase = true)]
+        public string Continuation {
+            get { return _continuation; }
+            set {
+                if (value != null)
+                    _continuation = value.ToUpper();
+            }
+        }
 
         /// <summary>
         /// Optional
@@ -50,7 +58,7 @@ namespace Transformalize.Configuration {
         /// * LessThanEqual
         /// * NotEqual
         /// </summary>
-        [Cfg(value = "Equal", domain = "Equal,GreaterThan,GreaterThanEqual,LessThan,LessThanEqual,NotEqual")]
+        [Cfg(value = "Equal", domain = Common.ValidComparisons)]
         public string Operator { get; set; }
 
     }

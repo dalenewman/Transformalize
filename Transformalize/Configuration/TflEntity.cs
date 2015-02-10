@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Libs.Cfg.Net;
-using Transformalize.Libs.Lucene.Net.Document;
 using Transformalize.Libs.Rhino.Etl.Operations;
 
 namespace Transformalize.Configuration {

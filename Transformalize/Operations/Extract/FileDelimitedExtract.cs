@@ -65,7 +65,7 @@ namespace Transformalize.Operations.Extract {
                 }
             }
 
-            Info("Reading {0}", _name);
+            Info("Reading Delimited {0}", _name);
 
             var conversionMap = Common.GetObjectConversionMap();
 

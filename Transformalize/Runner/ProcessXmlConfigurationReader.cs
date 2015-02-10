@@ -48,15 +48,15 @@ namespace Transformalize.Runner {
                         TflLogger.Warn(string.Empty, string.Empty, "API at {0} responded with {1} {2}.", _resource, response.Status, response.Message);
                     }
                 }
-            } else {
-                var problems = cfg.Problems();
-                if (problems.Any()) {
-                    foreach (var problem in problems) {
-                        TflLogger.Error(string.Empty, string.Empty, problem);
-                    }
-                    TflLogger.Debug(string.Empty, string.Empty, content);
-                    throw new TransformalizeException(string.Empty, string.Empty, string.Join(Environment.NewLine, problems));
+            }
+
+            var problems = cfg.Problems();
+            if (problems.Any()) {
+                foreach (var problem in problems) {
+                    TflLogger.Error(string.Empty, string.Empty, problem);
                 }
+                TflLogger.Debug(string.Empty, string.Empty, content);
+                throw new TransformalizeException(string.Empty, string.Empty, string.Join(Environment.NewLine, problems));
             }
 
             return cfg.Processes;
