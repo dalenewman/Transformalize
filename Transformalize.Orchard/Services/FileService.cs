@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
 using System.Web;
 using Orchard;
 using Orchard.ContentManagement;
@@ -90,12 +91,12 @@ namespace Transformalize.Orchard.Services {
         public IEnumerable<FilePart> GetFiles() {
             var isSiteOwner = _orchardServices.Authorizer.Authorize(global::Orchard.Security.StandardPermissions.SiteOwner);
             if (isSiteOwner) {
-                return _orchardServices.ContentManager.Query<FilePart, FilePartRecord>("File")
+                return _orchardServices.ContentManager.Query<FilePart, FilePartRecord>(VersionOptions.Published)
                     .Join<CommonPartRecord>()
                     .OrderByDescending(cpr => cpr.CreatedUtc)
                     .List();
             }
-            return _orchardServices.ContentManager.Query<FilePart, FilePartRecord>("File")
+            return _orchardServices.ContentManager.Query<FilePart, FilePartRecord>(VersionOptions.Published)
                 .Join<CommonPartRecord>()
                 .Where(cpr => cpr.OwnerId == _orchardServices.WorkContext.CurrentUser.Id)
                 .OrderByDescending(cpr => cpr.CreatedUtc)

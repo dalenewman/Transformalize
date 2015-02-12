@@ -87,8 +87,8 @@ namespace Transformalize.Main {
             private readonly string[] _transformToFields = { "fromxml", "fromregex", "fromjson", "fromsplit" };
 
             public ProcessReader(TflProcess process, ref Options options) {
-                ShortHandFactory.ExpandShortHandTransforms(process);
                 _element = Adapt(process, _transformToFields);
+                ShortHandFactory.ExpandShortHandTransforms(_element);
                 _processName = process.Name;
                 _options = options;
             }

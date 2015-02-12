@@ -31,18 +31,30 @@
         transformalize: {
             children: ["environments", "processes"]
         },
-        parameters: {
+        environments: {
             children: ["add"]
         },
         processes: {
             children: ["add"]
+        },
+        parameters: {
+            children: ["add"]
+        },
+        entities: {
+            children: ["add"]
+        },
+        fields: {
+            children: ["add"]
+        },
+        "calculated-fields": {
+            children: ["add"]  
         },
         add: {
             children: ["connections", "entities", "fields", "relationships", "calculated-fields"],
             attrs: {
                 name: null,
                 provider: ["file", "folder", "internal", "sqlserver", "mysql", "postgresql", "elasticsearch", "lucene", "solr"],
-                type: ["boolean", "byte", "int16", "short", "int", "int32", "int64", "long", "single", "double", "decimal", "datetime", "guid", "byte[]"]
+                type: ["bool", "byte", "int16", "short", "int", "int32", "int64", "long", "single", "double", "decimal", "datetime", "guid", "byte[]"]
             }
         }
     };
@@ -81,6 +93,8 @@
         matchTags: { bothTags: true },
         hintOptions: { schemaInfo: tags }
     });
+
+    editor.setSize('100%', Math.round(window.innerHeight * .75));
 
     $('#md-button').click(function () {
         window.open(settings.metaDataUrl, '_blank');

@@ -801,6 +801,8 @@ namespace Transformalize.Main.Transform {
 
         private static TflTransform Format(string arg, TflField field) {
             var split = SplitComma(arg);
+            Guard.Against(!split[0].Contains("{"),"A format place-holder is required.  There are not left brackets {.");
+            Guard.Against(!split[0].Contains("}"), "A format place-holder is required.  There are not right brackets }.");
             Guard.Against(split.Length < 1, "The format method requires at least one parameter; the format with {{0}} style place-holders in it.  For each place-holder, add additional parameters that reference fields.  If no fields are referenced, the first parameter is assumed to be the field this transform is nested in.");
             var element = field.GetDefaultOf<TflTransform>(t => {
                 t.Method = "format";

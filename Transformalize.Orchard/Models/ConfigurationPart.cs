@@ -101,7 +101,7 @@ namespace Transformalize.Orchard.Models {
         }
 
         public IEnumerable AvailableLogLevels {
-            get { return new[] { "info", "debug", "warn", "error", "off" }; }
+            get { return new[] { "info", "debug", "warn", "error" }; }
         }
 
         public IEnumerable AvailableThemes {

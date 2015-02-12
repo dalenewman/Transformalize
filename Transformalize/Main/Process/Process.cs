@@ -297,7 +297,6 @@ namespace Transformalize.Main {
                 }
             }
 
-            System.Diagnostics.Trace.Refresh();
             _logStarted = true;
 
         }

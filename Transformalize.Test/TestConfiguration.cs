@@ -174,13 +174,17 @@ namespace Transformalize.Test {
                 SELECT [field1] FROM [dbo].[entity] WHERE field1 != 'literal1' AND field2 > 6 OR field3 != 'literal3'", sql);
         }
 
-        //public void TestError() {
-        //    var cfg = new TflRoot(File.ReadAllText(@"C:\Code\mydd\mydd\tfl\class.xml"), null);
-        //    Assert.AreEqual(0, cfg.Problems().Count);
+        [Test()]
+        [Ignore("requires db.")]
+        public void TestError() {
+            var cfg = new TflRoot(File.ReadAllText(@"C:\Temp\test.xml"), null);
+            Assert.AreEqual(0, cfg.Problems().Count);
 
-        //    var process = ProcessFactory.CreateSingle(@"C:\Code\mydd\mydd\tfl\class.xml");
-        //    Assert.IsNotNull(process);
-        //}
+            var process = ProcessFactory.CreateSingle(@"C:\Temp\test.xml");
+            Assert.IsNotNull(process);
+
+            process.ExecuteScaler();
+        }
 
 
     }

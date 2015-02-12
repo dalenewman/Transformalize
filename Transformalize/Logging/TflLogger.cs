@@ -87,7 +87,7 @@ namespace Transformalize.Logging {
         }
 
         public static void Error(string process, string entity, string message, params object[] args) {
-            if(!IsErrorEnabled)
+            if (!IsErrorEnabled)
                 return;
             var sb = GetStringBuilder("Error", process, entity);
             if (args != null && args.Length > 0) {
@@ -100,5 +100,8 @@ namespace Transformalize.Logging {
             StringBuilders.PutObject(sb);
         }
 
+        public static void Dispose() {
+            TflEventSource.Log.Dispose();
+        }
     }
 }

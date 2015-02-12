@@ -22,6 +22,7 @@
 
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Text;
 using Transformalize.Extensions;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
@@ -142,13 +143,16 @@ namespace Transformalize.Processes {
 
             var errors = GetAllErrors().ToArray();
             if (errors.Any()) {
+                var messageBuilder = new StringBuilder();
                 foreach (var error in errors) {
                     foreach (var e in error.FlattenHierarchy()) {
                         TflLogger.Error(_entity.ProcessName, _entity.Name, e.Message);
+                        messageBuilder.AppendLine(e.Message);
                         TflLogger.Debug(_entity.ProcessName, _entity.Name, e.StackTrace);
+                        messageBuilder.AppendLine(e.StackTrace);
                     }
                 }
-                throw new TransformalizeException(_entity.ProcessName, _entity.Name, "Entity Process failed for {0}. See error log.", _entity.Alias);
+                throw new TransformalizeException(_entity.ProcessName, _entity.Name, "Entity Process failed for {0}. {1}", _entity.Alias, messageBuilder.ToString());
             }
 
             if (Process.OutputConnection.Is.Internal()) {

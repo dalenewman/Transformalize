@@ -2,11 +2,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Libs.Cfg.Net;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Logging;
 
 namespace Transformalize.Configuration {
     public class TflEntity : CfgNode {
 
-        [Cfg(value = "", required = false, unique = true)]
+        [Cfg(required = false, unique = true)]
         public string Alias { get; set; }
         [Cfg(value = "input")]
         public string Connection { get; set; }

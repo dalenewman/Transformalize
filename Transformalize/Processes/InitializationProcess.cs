@@ -21,6 +21,7 @@
 #endregion
 
 using System.Linq;
+using System.Text;
 using Transformalize.Extensions;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Logging;
@@ -48,13 +49,16 @@ namespace Transformalize.Processes {
         protected override void PostProcessing() {
             var errors = GetAllErrors().ToArray();
             if (errors.Any()) {
+                var messageBuilder = new StringBuilder();
                 foreach (var error in errors) {
-                    foreach (var inner in error.FlattenHierarchy()) {
-                        TflLogger.Error(this.Process.Name, string.Empty, inner.Message);
-                        TflLogger.Debug(this.Process.Name, string.Empty, inner.StackTrace);
+                    foreach (var e in error.FlattenHierarchy()) {
+                        TflLogger.Error(this.Process.Name, string.Empty, e.Message);
+                        messageBuilder.AppendLine(e.Message);
+                        TflLogger.Debug(this.Process.Name, string.Empty, e.StackTrace);
+                        messageBuilder.AppendLine(e.StackTrace);
                     }
                 }
-                throw new TransformalizeException(this.Process.Name, string.Empty, "Initialization Process failed for {0}. See error log.", Process.Name);
+                throw new TransformalizeException(this.Process.Name, string.Empty, "Initialization Process failed for {0}. {1}", Process.Name, messageBuilder.ToString());
             }
 
             if (Process.StarEnabled && Process.Entities.Count > 0) {

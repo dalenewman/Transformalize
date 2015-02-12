@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using Transformalize.Libs.Cfg.Net;
+using Transformalize.Logging;
 using Transformalize.Main;
 
 namespace Transformalize.Configuration {
     public class TflField : CfgNode {
-        private string _type1;
+        private string _type;
 
         /// <summary>
         /// Optional.  Default is `false`
@@ -183,7 +184,7 @@ namespace Transformalize.Configuration {
         /// <summary>
         /// Optional.
         /// 
-        /// A field's label.  A label is a more descriptive name that can contain spaces, etc.
+        /// A field's label.  A label is a more descriptive name that can contain spaces, etc.  Used by user interface builders.
         /// </summary>
         [Cfg(value = "")]
         public string Label { get; set; }
@@ -275,8 +276,12 @@ namespace Transformalize.Configuration {
         /// </summary>
         [Cfg(value = "string", domain = Common.ValidTypes, ignoreCase = true)]
         public string Type {
-            get { return _type1; }
-            set { _type1 = value != null && value.StartsWith("sy", StringComparison.OrdinalIgnoreCase) ? value.ToLower().Replace("system.", string.Empty) : value; }
+            get { return _type; }
+            set {
+                if (value != null) {
+                    _type = value.StartsWith("sy", StringComparison.OrdinalIgnoreCase) ? value.ToLower().Replace("system.", string.Empty) : value.ToLower();
+                }
+            }
         }
 
         /// <summary>
@@ -299,17 +304,25 @@ namespace Transformalize.Configuration {
         [Cfg(value = Common.DefaultValue)]
         public string VariableLength { get; set; }
 
-        [Cfg(required = false)]
-        public List<TflNameReference> SearchTypes { get; set; }
-        [Cfg(required = false)]
-        public List<TflTransform> Transforms { get; set; }
 
+        //lists
+        [Cfg()]
+        public List<TflNameReference> SearchTypes { get; set; }
+        [Cfg()]
+        public List<TflTransform> Transforms { get; set; }
+        [Cfg()]
+        public List<string> Domain { get; set; }
+
+        //custom
         protected override void Modify() {
             if (Alias == string.Empty) {
                 Alias = Name;
             }
             if (Label == string.Empty) {
                 Label = Alias;
+            }
+            if (!Type.Equals("string")) {
+                DefaultBlank = true;
             }
         }
 

@@ -87,6 +87,12 @@
                     });
                     var columns = $.map(fields, function (f) {
                         var column = {};
+                        if (f.domain.length > 0) {
+                            return {
+                                type: 'dropdown',
+                                source: f.domain
+                            };
+                        }
                         switch (f.type.toLowerCase().replace('system.','')) {
                             case 'int16':
                             case 'int32':

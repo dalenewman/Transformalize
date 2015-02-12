@@ -78,12 +78,16 @@ namespace Transformalize.Orchard.Controllers {
             if (result.ActionResult != null)
                 return result.ActionResult;
 
+            if (!result.FileInfo.Exists) {
+                return new HttpNotFoundResult();
+            }
+
             var ext = Path.GetExtension(result.FilePart.FullPath) ?? "csv";
             return new FilePathResult(
                 result.FileInfo.FullName,
-                "application/" + ext.TrimStart(new []{'.'})) {
-                FileDownloadName = result.FileInfo.Name
-            };
+                "application/" + ext.TrimStart(new[] { '.' })) {
+                    FileDownloadName = result.FileInfo.Name
+                };
         }
 
         public ActionResult Delete(int id) {
@@ -94,7 +98,8 @@ namespace Transformalize.Orchard.Controllers {
 
             try {
                 _orchardServices.ContentManager.Remove(result.FilePart.ContentItem);
-                result.FileInfo.Delete();
+                if(result.FileInfo.Exists)
+                    result.FileInfo.Delete();
             } catch (Exception ex) {
                 _orchardServices.Notifier.Add(NotifyType.Error, T(ex.Message));
             }
@@ -120,10 +125,7 @@ namespace Transformalize.Orchard.Controllers {
                     return new CheckFileResult(new HttpUnauthorizedResult(), part);
             }
 
-            var fileInfo = new FileInfo(part.FullPath);
-            return !fileInfo.Exists ?
-                new CheckFileResult(new HttpNotFoundResult(), part, fileInfo) :
-                new CheckFileResult(null, part, fileInfo);
+            return new CheckFileResult(null, part, new FileInfo(part.FullPath));
         }
 
     }

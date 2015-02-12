@@ -39,16 +39,13 @@ namespace Transformalize.Orchard.Services {
             var response = new List<ApiResponse>();
 
             if (id == 0) {
-                var configuration = context.Request.Form["configuration"];
-                if (configuration != null) {
-                    part = _orchardServices.ContentManager.New<ConfigurationPart>("Configuration");
-                    part.Configuration = configuration;
-                } else {
-                    part = null;
-                }
-            } else {
-                part = _orchardServices.ContentManager.Get(id).As<ConfigurationPart>();
+                Logger.Error("No Configuration for id 0.  Requested by {1} at {2}.", context.User.Identity.IsAuthenticated ? context.User.Identity.Name : "Anonymous", context.Request.UserHostAddress);
+                response.Add(NotFound(request));
+                part = null;
+                return response;
             }
+
+            part = _orchardServices.ContentManager.Get(id).As<ConfigurationPart>();
 
             if (part == null) {
                 Logger.Error("No Configuration for id {0}.  Requested by {1} at {2}.", id, context.User.Identity.IsAuthenticated ? context.User.Identity.Name : "Anonymous", context.Request.UserHostAddress);

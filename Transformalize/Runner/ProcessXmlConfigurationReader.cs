@@ -44,7 +44,7 @@ namespace Transformalize.Runner {
 
             if (cfg.Response.Any()) {
                 foreach (var response in cfg.Response) {
-                    if (response.Status != 200) {
+                    if (response.Status != (short)200) {
                         TflLogger.Warn(string.Empty, string.Empty, "API at {0} responded with {1} {2}.", _resource, response.Status, response.Message);
                     }
                 }

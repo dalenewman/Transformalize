@@ -58,6 +58,7 @@ namespace Transformalize.Orchard.Handlers {
             var content = string.Empty;
             var results = string.Empty;
             var builder = new StringBuilder();
+            var processes = string.Empty;
 
             switch (request.RequestType) {
                 case ApiRequestType.MetaData:
@@ -72,20 +73,16 @@ namespace Transformalize.Orchard.Handlers {
 
                 case ApiRequestType.Execute:
 
-                    var doc = XDocument.Parse(configuration).Root;
-                    var nodes = doc.Element("processes");
-                    nodes.Descendants("connections").Remove();
-                    nodes.Descendants("parameters").Remove();
-                    var processes = XmlNodesToString(nodes.Nodes());
-
                     switch (request.Flavor) {
                         case "attributes":
+                            processes = SecureConfiguration(configuration);
                             results = new XmlResultsToAttributesHandler().Handle(response.Processes);
                             break;
                         case "table":
                             content = new XmlResultsToHtmlTable().Handle(response.Processes);
                             break;
                         default:
+                            processes = SecureConfiguration(configuration);
                             results = new XmlResultsToDictionaryHandler().Handle(response.Processes);
                             break;
                     }
@@ -97,10 +94,18 @@ namespace Transformalize.Orchard.Handlers {
                         request.Status = 400;
                         request.Message = "Bad Request";
                     }
-                    builder.AppendFormat(XML_TEMPLATE, request.RequestType, request.Status, request.Message, request.Stopwatch.ElapsedMilliseconds, string.Empty, string.Empty, results, LogsToXml(response.Log), content);
+                    builder.AppendFormat(XML_TEMPLATE, request.RequestType, request.Status, request.Message, request.Stopwatch.ElapsedMilliseconds, string.Empty, processes, results, LogsToXml(response.Log), content);
                     return builder.ToString();
             }
 
+        }
+
+        public static string SecureConfiguration(string configuration) {
+            var doc = XDocument.Parse(configuration).Root;
+            var nodes = doc.Element("processes");
+            nodes.Descendants("connections").Remove();
+            nodes.Descendants("parameters").Remove();
+            return XmlNodesToString(nodes.Nodes());
         }
     }
 }

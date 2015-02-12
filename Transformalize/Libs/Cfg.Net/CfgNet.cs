@@ -41,6 +41,8 @@ namespace Transformalize.Libs.Cfg.Net {
         public static string PROBLEM_VALUE_NOT_IN_DOMAIN = "A{5} '{0}' '{1}' element has an invalid value of '{3}' in the '{2}' attribute.  The valid domain is: {4}.";
         public static string PROBLEM_ROOT_VALUE_NOT_IN_DOMAIN = "The root element has an invalid value of '{0}' in the '{1}' attribute.  The valid domain is: {2}.";
         public static string PROBLEM_SHARED_PROPERTY_MISSING = "A{3} '{0}' shared property '{1}' is missing in '{2}'.  Make sure it is defined and decorated with [Cfg()].";
+        public static string PROBLEM_ONLY_ONE_ATTRIBUTE_ALLOWED = "You must have exactly 1 attribute in '{0}' '{1}'.  You have {2}.";
+        public static string PROBLEM_TYPE_MISMATCH = "The `{0}` attribute's default value's type ({1}) does not match the property type ({2}).";
         // ReSharper restore InconsistentNaming
     }
 
@@ -143,6 +145,16 @@ namespace Transformalize.Libs.Cfg.Net {
             return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' || c == 'A' || c == 'E' || c == 'I' ||
                    c == 'O' || c == 'U';
         }
+
+        public void OnlyOneAttributeAllowed(string parentName, string name, int count) {
+            _storage.AppendFormat(CfgConstants.PROBLEM_ONLY_ONE_ATTRIBUTE_ALLOWED, parentName, name, count);
+            _storage.AppendLine();
+        }
+
+        public void TypeMismatch(string key, Type defaultType, Type propertyType) {
+            _storage.AppendFormat(CfgConstants.PROBLEM_TYPE_MISMATCH, key, defaultType, propertyType);
+            _storage.AppendLine();
+        }
     }
 
     [AttributeUsage(AttributeTargets.Property)]
@@ -171,6 +183,7 @@ namespace Transformalize.Libs.Cfg.Net {
         public object SharedValue { get; set; }
         public Action<object, object> Setter { get; set; }
         public Func<object, object> Getter { get; set; }
+        public bool TypeMismatch { get; set; }
 
         public CfgMetadata(PropertyInfo propertyInfo, CfgAttribute attribute) {
             PropertyInfo = propertyInfo;
@@ -205,11 +218,14 @@ namespace Transformalize.Libs.Cfg.Net {
         private readonly StringBuilder _builder = new StringBuilder();
         private readonly CfgProblems _problems = new CfgProblems();
         private readonly Type _type;
+        private readonly Dictionary<string, CfgMetadata> _metadata;
         private static Dictionary<string, char> _entities;
         private NanoXmlNode _node;
 
-        public CfgNode() {
+        protected CfgNode() {
             _type = GetType();
+            _metadata = GetMetadata(_type, _problems, _builder);
+            SetDefaults(this, _metadata);
         }
 
         private static Dictionary<Type, Func<string, object>> Converter {
@@ -234,19 +250,17 @@ namespace Transformalize.Libs.Cfg.Net {
             }
         }
 
+        /// <summary>
+        /// Get any type that inherits from CfgNode with default values
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="setter"></param>
+        /// <returns></returns>
         public T GetDefaultOf<T>(Action<T> setter = null) {
             var obj = Activator.CreateInstance(typeof(T));
-            var metadata = GetMetadata(typeof(T), _builder);
+            var metadata = GetMetadata(typeof(T), _problems, _builder);
 
-            foreach (var pair in metadata) {
-                if (pair.Value.PropertyInfo.PropertyType.IsGenericType) {
-                    //pair.Value.PropertyInfo.SetValue(obj, Activator.CreateInstance(pair.Value.PropertyInfo.PropertyType), null);
-                    pair.Value.Setter(obj, Activator.CreateInstance(pair.Value.PropertyInfo.PropertyType));
-                } else {
-                    //pair.Value.PropertyInfo.SetValue(obj, pair.Value.Attribute.value ?? default(T), null);
-                    pair.Value.Setter(obj, pair.Value.Attribute.value ?? default(T));
-                }
-            }
+            SetDefaults(obj, metadata);
 
             if (setter != null) {
                 setter((T)obj);
@@ -255,6 +269,18 @@ namespace Transformalize.Libs.Cfg.Net {
             ((CfgNode)obj).Modify();
 
             return (T)obj;
+        }
+
+        private static void SetDefaults(object obj, Dictionary<string, CfgMetadata> metadata) {
+            foreach (var pair in metadata) {
+                if (pair.Value.PropertyInfo.PropertyType.IsGenericType) {
+                    pair.Value.Setter(obj, Activator.CreateInstance(pair.Value.PropertyInfo.PropertyType));
+                } else {
+                    if (!pair.Value.TypeMismatch) {
+                        pair.Value.Setter(obj, pair.Value.Attribute.value);
+                    }
+                }
+            }
         }
 
         protected void AddProblem(string problem) {
@@ -387,31 +413,28 @@ namespace Transformalize.Libs.Cfg.Net {
 
         private void LoadCollections(NanoXmlNode node, string parentName, Dictionary<string, string> parameters = null) {
 
-            var metadata = GetMetadata(_type, _builder);
             var keys = ElementCache[_type];
             var elements = new Dictionary<string, IList>();
             var elementHits = new HashSet<string>();
             var addHits = new HashSet<string>();
 
             //initialize all the lists
-            foreach (var key in keys) {
-                var list = (IList)Activator.CreateInstance(metadata[key].PropertyInfo.PropertyType);
-                //metadata[key].PropertyInfo.SetValue(this, list, null);
-                metadata[key].Setter(this, list);
-                elements.Add(key, list);
+            for (var i = 0; i < keys.Count; i++) {
+                var key = keys[i];
+                elements.Add(key, (IList)_metadata[key].Getter(this));
             }
 
             for (var i = 0; i < node.SubNodes.Count; i++) {
                 var subNode = node.SubNodes[i];
-                if (metadata.ContainsKey(subNode.Name)) {
+                if (_metadata.ContainsKey(subNode.Name)) {
                     elementHits.Add(subNode.Name);
-                    var item = metadata[subNode.Name];
+                    var item = _metadata[subNode.Name];
 
                     object value = null;
                     CfgMetadata sharedCfg = null;
 
                     if (item.SharedProperty != null) {
-                        var sharedMetadata = GetMetadata(item.ListType, _builder);
+                        var sharedMetadata = GetMetadata(item.ListType, _problems, _builder);
                         if (sharedMetadata.ContainsKey(item.SharedProperty)) {
                             sharedCfg = sharedMetadata[item.SharedProperty];
                         } else {
@@ -427,16 +450,31 @@ namespace Transformalize.Libs.Cfg.Net {
                         var add = subNode.SubNodes[j];
                         if (add.Name.Equals("add", StringComparison.Ordinal)) {
                             addHits.Add(subNode.Name);
-                            var loaded = item.Loader().Load(add, subNode.Name, parameters);
-                            if (sharedCfg != null) {
-                                //var sharedValue = sharedCfg.PropertyInfo.GetValue(loaded, null);
-                                var sharedValue = sharedCfg.Getter(loaded);
-                                if (sharedValue == null) {
-                                    //sharedCfg.PropertyInfo.SetValue(loaded, value ?? item.SharedValue, null);
-                                    sharedCfg.Setter(loaded, value ?? item.SharedValue);
+                            if (item.Loader == null) {
+                                if (add.Attributes.Count == 1) {
+                                    var attrValue = add.Attributes[0].Value;
+                                    if (item.ListType == typeof(string) || item.ListType == typeof(object)) {
+                                        elements[subNode.Name].Add(attrValue);
+                                    } else {
+                                        try {
+                                            elements[subNode.Name].Add(Converter[item.ListType](attrValue));
+                                        } catch (Exception ex) {
+                                            _problems.SettingValue(subNode.Name, attrValue, parentName, subNode.Name, ex.Message);
+                                        }
+                                    }
+                                } else {
+                                    _problems.OnlyOneAttributeAllowed(parentName, subNode.Name, add.Attributes.Count);
                                 }
+                            } else {
+                                var loaded = item.Loader().Load(add, subNode.Name, parameters);
+                                if (sharedCfg != null) {
+                                    var sharedValue = sharedCfg.Getter(loaded);
+                                    if (sharedValue == null) {
+                                        sharedCfg.Setter(loaded, value ?? item.SharedValue);
+                                    }
+                                }
+                                elements[subNode.Name].Add(loaded);
                             }
-                            elements[subNode.Name].Add(loaded);
                         } else {
                             _problems.UnexpectedElement(add.Name, subNode.Name);
                         }
@@ -453,7 +491,7 @@ namespace Transformalize.Libs.Cfg.Net {
             // check for duplicates of unique properties required to be unique in collections
             for (var i = 0; i < keys.Count; i++) {
                 var key = keys[i];
-                var item = metadata[key];
+                var item = _metadata[key];
                 var list = elements[key];
 
                 if (list.Count > 1) {
@@ -492,7 +530,6 @@ namespace Transformalize.Libs.Cfg.Net {
 
         private void LoadProperties(NanoXmlNode node, string parentName, IDictionary<string, string> parameters = null) {
 
-            var metadata = GetMetadata(_type, _builder);
             var keys = PropertyCache[_type];
 
             if (keys.Count == 0)
@@ -502,7 +539,7 @@ namespace Transformalize.Libs.Cfg.Net {
 
             for (var i = 0; i < node.Attributes.Count; i++) {
                 var attribute = node.Attributes[i];
-                if (metadata.ContainsKey(attribute.Name)) {
+                if (_metadata.ContainsKey(attribute.Name)) {
 
                     if (attribute.Value == null)
                         continue;
@@ -515,19 +552,17 @@ namespace Transformalize.Libs.Cfg.Net {
                         decoded = true;
                     }
 
-                    var item = metadata[attribute.Name];
+                    var item = _metadata[attribute.Name];
 
                     if (item.Attribute.unique) {
                         UniqueProperties[attribute.Name] = attribute.Value;
                     }
 
                     if (item.PropertyInfo.PropertyType == typeof(string) || item.PropertyInfo.PropertyType == typeof(object)) {
-                        //item.PropertyInfo.SetValue(this, attribute.Value, null);
                         item.Setter(this, attribute.Value);
                         keyHits.Add(attribute.Name);
                     } else {
                         try {
-                            //item.PropertyInfo.SetValue(this, Converter[item.PropertyInfo.PropertyType](attribute.Value), null);
                             item.Setter(this, Converter[item.PropertyInfo.PropertyType](attribute.Value));
                             keyHits.Add(attribute.Name);
                         } catch (Exception ex) {
@@ -552,13 +587,9 @@ namespace Transformalize.Libs.Cfg.Net {
                 }
             }
 
-            //set missed keys
+            // missing any required attributes?
             foreach (var key in keys.Except(keyHits)) {
-                var item = metadata[key];
-                if (item.Attribute.value != null) {
-                    //item.PropertyInfo.SetValue(this, item.Attribute.value, null);
-                    item.Setter(this, item.Attribute.value);
-                }
+                var item = _metadata[key];
                 if (item.Attribute.required) {
                     _problems.MissingAttribute(parentName, node.Name, key);
                 }
@@ -875,13 +906,13 @@ namespace Transformalize.Libs.Cfg.Net {
 
         public List<string> Problems() {
             var allProblems = new List<string>(_problems.Yield());
-            var metadata = GetMetadata(_type, _builder);
             for (var i = 0; i < ElementCache[_type].Count; i++) {
                 var element = ElementCache[_type][i];
-                //var list = (IList)metadata[element].PropertyInfo.GetValue(this, null);
-                var list = (IList)metadata[element].Getter(this);
-                foreach (var node in list.Cast<CfgNode>()) {
-                    allProblems.AddRange(node.Problems());
+                var list = (IList)_metadata[element].Getter(this);
+                foreach (var node in list) {
+                    if (node is CfgNode) {
+                        allProblems.AddRange(((CfgNode)node).Problems());
+                    }
                 }
             }
             return allProblems;
@@ -903,7 +934,7 @@ namespace Transformalize.Libs.Cfg.Net {
             return sb.ToString();
         }
 
-        private static Dictionary<string, CfgMetadata> GetMetadata(Type type, StringBuilder sb) {
+        private static Dictionary<string, CfgMetadata> GetMetadata(Type type, CfgProblems problems, StringBuilder sb) {
             Dictionary<string, CfgMetadata> metadata;
             if (MetadataCache.TryGetValue(type, out metadata))
                 return metadata;
@@ -930,10 +961,21 @@ namespace Transformalize.Libs.Cfg.Net {
                 var key = ToXmlNameStyle(propertyInfo.Name, sb);
                 var item = new CfgMetadata(propertyInfo, attribute);
 
+                // report default value and property type mismatches
+                if (attribute.value != null) {
+                    var attributeType = attribute.value.GetType();
+                    if (attributeType != propertyInfo.PropertyType) {
+                        item.TypeMismatch = true;
+                        problems.TypeMismatch(key, attributeType, propertyInfo.PropertyType);
+                    }
+                }
+
                 if (propertyInfo.PropertyType.IsGenericType) {
                     listCache.Add(key);
                     item.ListType = propertyInfo.PropertyType.GetGenericArguments()[0];
-                    item.Loader = () => (CfgNode)Activator.CreateInstance(item.ListType);
+                    if (item.ListType.BaseType == typeof(CfgNode)) {
+                        item.Loader = () => (CfgNode)Activator.CreateInstance(item.ListType);
+                    }
                     if (attribute.sharedProperty != null) {
                         item.SharedProperty = attribute.sharedProperty;
                         item.SharedValue = attribute.sharedValue;
@@ -953,7 +995,7 @@ namespace Transformalize.Libs.Cfg.Net {
             //add metadata to cache before you start digging deeper
             foreach (var item in metadata) {
                 if (item.Value.ListType != null) {
-                    item.Value.UniquePropertiesInList = GetMetadata(item.Value.ListType, sb).Where(p => p.Value.Attribute.unique).Select(p => p.Key).ToArray();
+                    item.Value.UniquePropertiesInList = GetMetadata(item.Value.ListType, problems, sb).Where(p => p.Value.Attribute.unique).Select(p => p.Key).ToArray();
                 }
             }
             return metadata;

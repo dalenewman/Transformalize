@@ -22,20 +22,16 @@ namespace Transformalize.Orchard.Controllers {
         private readonly IOrchardServices _orchardServices;
         private readonly ITransformalizeService _transformalize;
         private readonly IFileService _fileService;
-        private readonly IAppDataFolder _appDataFolder;
-
         public Localizer T { get; set; }
 
         public TransformalizeController(
             IOrchardServices services,
             ITransformalizeService transformalize,
-            IFileService fileService,
-            IAppDataFolder appDataFolder
+            IFileService fileService
         ) {
             _orchardServices = services;
             _transformalize = transformalize;
             _fileService = fileService;
-            _appDataFolder = appDataFolder;
             T = NullLocalizer.Instance;
         }
 

@@ -151,38 +151,6 @@ namespace Transformalize.Orchard {
                     )
                 },
 
-                new RouteDescriptor {
-                Priority = 11,
-                Route = new Route(
-                    "Transformalize/Recline/{id}",
-                    new RouteValueDictionary {
-                        {"area", "Transformalize.Orchard" },
-                        {"controller", "Recline" },
-                        {"action", "Index"},
-                        {"id", 0}
-                    },
-                    new RouteValueDictionary(),
-                    new RouteValueDictionary { {"area", "Transformalize.Orchard" } },
-                    new MvcRouteHandler()
-                    )
-                },
-
-                new RouteDescriptor {
-                Priority = 11,
-                Route = new Route(
-                    "Transformalize/Recline/Load/{id}",
-                    new RouteValueDictionary {
-                        {"area", "Transformalize.Orchard" },
-                        {"controller", "Recline" },
-                        {"action", "Load"},
-                        {"id", 0}
-                    },
-                    new RouteValueDictionary(),
-                    new RouteValueDictionary { {"area", "Transformalize.Orchard" } },
-                    new MvcRouteHandler()
-                    )
-                },
-
                 // Legacy configuration path, new is Transformalize/Api/Configuration/{id}
                 new RouteDescriptor {
                 Priority = 11,

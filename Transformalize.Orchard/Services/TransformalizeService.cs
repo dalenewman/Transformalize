@@ -48,8 +48,10 @@ namespace Transformalize.Orchard.Services {
 
         public void InitializeFiles(ConfigurationPart part, IDictionary<string, string> query) {
             _filesCreated.Clear();
-            InitializeFile(part, query, "InputFile");
-            InitializeFile(part, query, "OutputFile");
+            if(query.ContainsKey("InputFile") && part.RequiresInputFile() == true)
+                InitializeFile(part, query, "InputFile");
+            if(query.ContainsKey("OutputFile") && part.RequiresOutputFile() == true)
+                InitializeFile(part, query, "OutputFile");
         }
 
         public IEnumerable<ConfigurationPart> GetConfigurations() {
@@ -166,10 +168,6 @@ namespace Transformalize.Orchard.Services {
         }
 
         private void InitializeFile(ConfigurationPart part, IDictionary<string, string> query, string key) {
-
-            if (!query.ContainsKey(key)) {
-                return;
-            }
 
             FilePart filePart;
             int id;

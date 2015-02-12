@@ -7,7 +7,7 @@ namespace Transformalize.Configuration {
         [Cfg(value = "")]
         public string Request { get; set; }
 
-        [Cfg(value = 200)]
+        [Cfg(value = (short)200)]
         public short Status { get; set; }
 
         [Cfg(value = "OK")]

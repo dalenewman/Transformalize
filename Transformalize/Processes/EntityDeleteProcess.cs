@@ -21,6 +21,7 @@
 #endregion
 
 using System.Linq;
+using System.Text;
 using Transformalize.Extensions;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
@@ -82,11 +83,16 @@ namespace Transformalize.Processes {
 
             var errors = GetAllErrors().ToArray();
             if (errors.Any()) {
-                foreach (var e in errors.SelectMany(error => error.FlattenHierarchy())) {
-                    TflLogger.Error(this.Process.Name, string.Empty, e.Message);
-                    TflLogger.Debug(this.Process.Name, string.Empty, e.StackTrace);
+                var messageBuilder = new StringBuilder();
+                foreach (var error in errors) {
+                    foreach (var e in error.FlattenHierarchy()) {
+                        TflLogger.Error(_entity.ProcessName, _entity.Name, e.Message);
+                        messageBuilder.AppendLine(e.Message);
+                        TflLogger.Debug(_entity.ProcessName, _entity.Name, e.StackTrace);
+                        messageBuilder.AppendLine(e.StackTrace);
+                    }
                 }
-                throw new TransformalizeException(this.Process.Name, string.Empty, "Entity Delete Process for {0} failed. See error log", _entity.Alias);
+                throw new TransformalizeException(this.Process.Name, string.Empty, "Entity Delete Process for {0} failed. {1}", _entity.Alias, messageBuilder.ToString());
             }
 
             base.PostProcessing();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 
 namespace Transformalize.Logging {
@@ -45,5 +46,8 @@ namespace Transformalize.Logging {
             }
         }
 
+        public void Update() {
+            SendCommand(this, EventCommand.Update, new Dictionary<string, string>());
+        }
     }
 }

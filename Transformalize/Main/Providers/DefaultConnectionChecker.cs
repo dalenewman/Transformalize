@@ -64,6 +64,7 @@ namespace Transformalize.Main.Providers {
                         }
                     } catch (Exception e) {
                         TflLogger.Error(string.Empty, string.Empty, "{0} connection caused error message: {1}", connection.Name, e.Message);
+                        TflLogger.Dispose();
                     }
                 }
             } catch (Exception ex) {
