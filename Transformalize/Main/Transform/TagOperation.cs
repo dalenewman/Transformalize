@@ -84,7 +84,7 @@ namespace Transformalize.Main {
                     sb.Append(_tag);
                     string content = null;
                     foreach (var p in _parameters) {
-                        var value = (row[p.Key] ?? (p.Value.ValueReferencesField ? row[p.Value.Value] : p.Value.Value)).ToString();
+                        var value = (row[p.Key] ?? (p.Value.ValueReferencesField ? row[p.Value.Value] ?? "parameter name conflict!" : p.Value.Value)).ToString();
                         if (_decode) {
                             value = HttpUtility.HtmlDecode(value);
                         }

@@ -26,7 +26,6 @@ using Transformalize.Configuration;
 using Transformalize.Libs.SemanticLogging;
 using Transformalize.Logging;
 using Transformalize.Main.Transform;
-using Transformalize.Operations;
 
 namespace Transformalize.Test {
     [TestFixture]
@@ -576,6 +575,32 @@ namespace Transformalize.Test {
             Assert.AreEqual(string.Empty, result.Parameters[2].Field);
             Assert.AreEqual("field2", result.Parameters[2].Value);
         }
+
+        [Test]
+        public void TagInput() {
+            const string expression = "tag(input,type:radio,name:slot,class:required,value:Info)";
+            var result = ShortHandFactory.Interpret(expression, _field);
+            Assert.AreEqual("tag", result.Method);
+            Assert.AreEqual("input", result.Tag);
+
+            Assert.AreEqual("type", result.Parameters[0].Name);
+            Assert.AreEqual("", result.Parameters[0].Field);
+            Assert.AreEqual("radio", result.Parameters[0].Value);
+
+            Assert.AreEqual("name", result.Parameters[1].Name);
+            Assert.AreEqual(string.Empty, result.Parameters[1].Field);
+            Assert.AreEqual("slot", result.Parameters[1].Value);
+
+            Assert.AreEqual("class", result.Parameters[2].Name);
+            Assert.AreEqual(string.Empty, result.Parameters[2].Field);
+            Assert.AreEqual("required", result.Parameters[2].Value);
+
+            Assert.AreEqual("value", result.Parameters[3].Name);
+            Assert.AreEqual("", result.Parameters[3].Field);
+            Assert.AreEqual("Info", result.Parameters[3].Value);
+
+        }
+
 
         [Test]
         public void TwoMethods() {

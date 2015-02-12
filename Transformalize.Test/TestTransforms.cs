@@ -31,6 +31,7 @@ using Transformalize.Libs.NVelocity.App;
 using Transformalize.Main;
 using Transformalize.Main.Parameters;
 using Transformalize.Main.Providers;
+using Transformalize.Main.Transform;
 using Transformalize.Operations;
 using Transformalize.Operations.Transform;
 using Transformalize.Test.Builders;
