@@ -9,18 +9,18 @@ namespace Transformalize.Main.Providers.File {
     public class FieldInspector {
 
         public Fields Inspect(string file) {
-            return Inspect(FileInformationFactory.Create(file), new FileInspectionRequest());
+            return Inspect(FileInformationFactory.Create(file), new FileInspectionRequest(file));
         }
 
         public Fields Inspect(FileInformation fileInformation) {
-            return Inspect(fileInformation, new FileInspectionRequest());
+            return Inspect(fileInformation, new FileInspectionRequest(fileInformation.FileInfo.Name));
         }
 
         public Fields Inspect(FileInformation fileInformation, FileInspectionRequest request) {
 
-            var root = new TflRoot(string.Format(@"<tfl><processes><add name='{0}'><connections><add name='input' provider='internal' /></connections></add></processes></tfl>", fileInformation.ProcessName), null);
+            var root = new TflRoot(string.Format(@"<tfl><processes><add name='{0}'><connections><add name='input' provider='internal' /></connections></add></processes></tfl>", request.ProcessName), null);
             var process = root.GetDefaultOf<TflProcess>(p => {
-                p.Name = fileInformation.ProcessName;
+                p.Name = request.ProcessName;
                 p.StarEnabled = false;
             });
 

@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Transformalize.Libs.Cfg.Net.fastJSON;
+using Transformalize.Libs.Newtonsoft.Json;
 using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Libs.fastJSON;
 using Transformalize.Main;
 using Transformalize.Main.Parameters;
 
@@ -22,19 +24,25 @@ namespace Transformalize.Operations.Transform {
             foreach (var row in rows) {
                 if (ShouldRun(row)) {
                     var input = row[InKey].ToString();
+                    var parsed = new object();
+                    bool success;
 
-                    object response;
-                    var success = JSON.Instance.TryParse(input, out response);
+                    try {
+                        parsed = JSON.Parse(input);
+                        success = true;
+                    } catch (Exception ex) {
+                        success = false;
+                    }
 
                     if (success) {
-                        var dict = response as Dictionary<string, object>;
+                        var dict = parsed as Dictionary<string, object>;
                         if (dict != null) {
                             foreach (var pair in _parameters) {
                                 var value = dict[pair.Value.Name];
                                 if (value is string || value is int || value is long || value is double) {
                                     row[pair.Key] = value;
                                 } else {
-                                    row[pair.Key] = JSON.Instance.ToJSON(value);
+                                    row[pair.Key] = JsonConvert.SerializeObject(value);
                                 }
                             }
                         }

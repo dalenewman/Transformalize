@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Transformalize.Libs.Cfg.Net;
+using Transformalize.Libs.Cfg.Net.nanoXML;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 

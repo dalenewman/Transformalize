@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Transformalize.Libs.Cfg.Net;
-using Transformalize.Logging;
 using Transformalize.Main;
 
 namespace Transformalize.Configuration {
@@ -315,15 +314,10 @@ namespace Transformalize.Configuration {
 
         //custom
         protected override void Modify() {
-            if (Alias == string.Empty) {
-                Alias = Name;
-            }
-            if (Label == string.Empty) {
-                Label = Alias;
-            }
-            if (!Type.Equals("string")) {
-                DefaultBlank = true;
-            }
+            if (Alias == string.Empty) { Alias = Name; }
+            if (Label == string.Empty) { Label = Alias; }
+            if (Type != "string") { DefaultBlank = true; }
+            if (Type == "rowversion") { Length = "8"; }
         }
 
     }

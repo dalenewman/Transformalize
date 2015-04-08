@@ -3,10 +3,10 @@
 namespace Transformalize.Main.Providers.File {
 
     public class FileInformationReader {
+
         private readonly FileInspectionRequest _request;
 
-        public FileInformationReader(FileInspectionRequest request)
-        {
+        public FileInformationReader(FileInspectionRequest request) {
             _request = request;
         }
 

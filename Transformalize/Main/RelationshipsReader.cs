@@ -65,11 +65,11 @@ namespace Transformalize.Main {
             var rightHit = rightFields.HaveField(rightEntity.Alias, rightField);
 
             if (!leftHit) {
-                throw new TransformalizeException("The left entity {0} does not have a field named {1} for joining to the right entity {2} with field {3}.", leftEntity.Alias, leftField, rightEntity.Alias, rightField);
+                throw new TransformalizeException(leftEntity.ProcessName, leftEntity.Name, "The left entity {0} does not have a field named {1} for joining to the right entity {2} with field {3}.", leftEntity.Alias, leftField, rightEntity.Alias, rightField);
             }
 
             if (!rightHit) {
-                throw new TransformalizeException("The right entity {0} does not have a field named {1} for joining to the left entity {2} with field {3}.", rightEntity.Alias, rightField, leftEntity.Alias, leftField);
+                throw new TransformalizeException(rightEntity.ProcessName, rightEntity.Name, "The right entity {0} does not have a field named {1} for joining to the left entity {2} with field {3}.", rightEntity.Alias, rightField, leftEntity.Alias, leftField);
             }
 
             var join = new Join {

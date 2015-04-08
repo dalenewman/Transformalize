@@ -84,11 +84,9 @@ namespace Transformalize.Main {
             private readonly Options _options;
             private readonly string _processName = string.Empty;
             private Process _process;
-            private readonly string[] _transformToFields = { "fromxml", "fromregex", "fromjson", "fromsplit" };
 
-            public ProcessReader(TflProcess process, ref Options options) {
-                _element = Adapt(process, _transformToFields);
-                ShortHandFactory.ExpandShortHandTransforms(_element);
+            public ProcessReader(TflProcess process, ref Options options){
+                _element = process;
                 _processName = process.Name;
                 _options = options;
             }
@@ -102,7 +100,7 @@ namespace Transformalize.Main {
                     Options = _options,
                     TemplateContentType = _element.TemplateContentType.Equals("raw") ? Encoding.Raw : Encoding.Html,
                     Enabled = _element.Enabled,
-                    FileInspectionRequest = _element.FileInspection.Count == 0 ? new FileInspectionRequest() : _element.FileInspection[0].GetInspectionRequest(),
+                    FileInspectionRequest = _element.FileInspection.Count == 0 ? new FileInspectionRequest(_element.Name) : _element.FileInspection[0].GetInspectionRequest(_element.Name),
                     Star = _element.Star,
                     View = _element.View,
                     Mode = _element.Mode,
@@ -210,17 +208,6 @@ namespace Transformalize.Main {
                     throw new TransformalizeException(process.Name, string.Empty, "Log configuration invalid. {0}", ex.Message);
                 }
                 return log;
-            }
-
-            private static TflProcess Adapt(TflProcess process, IEnumerable<string> transformToFields) {
-
-                foreach (var field in transformToFields) {
-                    while (new TransformFieldsToParametersAdapter(process).Adapt(field) > 0) {
-                        new TransformFieldsMoveAdapter(process).Adapt(field);
-                    };
-                }
-
-                return process;
             }
 
         }

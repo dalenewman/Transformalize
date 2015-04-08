@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using Transformalize.Extensions;
-using Transformalize.Libs.fastJSON;
+using Transformalize.Libs.Cfg.Net.fastJSON;
+using Transformalize.Libs.Newtonsoft.Json;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Logging;
@@ -59,7 +60,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
                     body.Append(_prefix);
                     body.Append(key);
                     body.AppendLine("\"}}");
-                    body.AppendLine(JSON.Instance.ToJSON(_elasticMap.ToDictionary(item => item.Key.ToLower(), item => row[item.Value])));
+                    body.AppendLine(JsonConvert.SerializeObject(_elasticMap.ToDictionary(item => item.Key.ToLower(), item => row[item.Value])) );
                     Interlocked.Increment(ref _count);
                 }
                 _client.Client.Bulk(body.ToString(), nv => nv

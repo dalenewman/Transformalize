@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using Orchard.Localization;
-using Transformalize.Configuration;
 using Transformalize.Extensions;
 using Transformalize.Main;
 using Transformalize.Orchard.Models;
@@ -69,8 +68,7 @@ namespace Transformalize.Orchard.Controllers {
             var query = GetQuery();
             var transformalizeRequest = new TransformalizeRequest(part, query, null);
 
-            var tfl = new TflRoot(transformalizeRequest.Configuration, transformalizeRequest.Query);
-            var problems = tfl.Problems();
+            var problems = transformalizeRequest.Root.Problems();
             if (problems.Any()) {
                 var bad = new TransformalizeResponse();
                 request.Status = 501;
@@ -82,7 +80,7 @@ namespace Transformalize.Orchard.Controllers {
                 );
             }
 
-            var metaData = new MetaDataWriter(ProcessFactory.CreateSingle(tfl.Processes[0], new Options { Mode = "metadata" })).Write();
+            var metaData = new MetaDataWriter(ProcessFactory.CreateSingle(transformalizeRequest.Root.Processes[0], new Options { Mode = "metadata" })).Write();
             return new ApiResponse(request, metaData).ContentResult(
                 query["format"] ?? DefaultFormat,
                 query["flavor"] ?? DefaultFlavor

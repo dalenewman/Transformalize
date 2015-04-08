@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Transformalize.Libs.Jint.Parser.Ast;
 
 namespace Transformalize.Extensions {
 
@@ -14,6 +15,19 @@ namespace Transformalize.Extensions {
                 }
             }
             return -1;
+        }
+
+        public static void RemoveNonNumeric(this StringBuilder sb) {
+            var numbers = new List<char>();
+            var found = false;
+            for (var i = 0; i < sb.Length; i++) {
+                if (!char.IsNumber(sb[i])) continue;
+                found = true;
+                numbers.Add(sb[i]);
+            }
+            if (!found) return;
+            sb.Clear();
+            sb.Append(numbers.ToArray());
         }
 
         public static void InsertFormat(this StringBuilder sb, int index, string format, params object[] args) {

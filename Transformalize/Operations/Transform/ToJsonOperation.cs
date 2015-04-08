@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using System.Threading;
+using Transformalize.Libs.Cfg.Net.fastJSON;
+using Transformalize.Libs.Newtonsoft.Json;
 using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Libs.fastJSON;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
@@ -21,7 +21,7 @@ namespace Transformalize.Operations.Transform {
                     foreach (var pair in _parameters) {
                         data[pair.Value.Name] = pair.Value.Value ?? row[pair.Key];
                     }
-                    row[OutKey] = JSON.Instance.ToJSON(data, new JSONParameters() { UseEscapedUnicode = false });
+                    row[OutKey] = JsonConvert.SerializeObject(data, Formatting.None);
                 } else {
                     Skip();
                 }

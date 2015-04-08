@@ -23,7 +23,6 @@
 using System.IO;
 using System.Text.RegularExpressions;
 using Transformalize.Logging;
-using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.File;
 
 namespace Transformalize.Main {
@@ -100,8 +99,8 @@ namespace Transformalize.Main {
                     fromInfo = new FileInfo(from);
                     if (fromInfo.Exists) {
                         var output = _process.Connections[to.ToLower()].Source;
-                        var results = new FileImporter().Import(fromInfo, output);
-                        TflLogger.Info(action.ProcessName, string.Empty, "Copied {0} to {1} connection.  Process name: {2}, Entity Name: {3}.", fromInfo.Name, to, results.Information.ProcessName, results.Information.EntityName);
+                        new FileImporter().Import(fromInfo.FullName, output);
+                        TflLogger.Info(action.ProcessName, string.Empty, "Copied {0} to {1} connection.", fromInfo.Name, to);
                     } else {
                         TflLogger.Warn(action.ProcessName, string.Empty, "Unable to copy file {0}.  It may not exist.", fromInfo.Name);
                     }

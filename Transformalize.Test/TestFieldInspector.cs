@@ -12,13 +12,13 @@ namespace Transformalize.Test {
         public void TestFieldQuotedCsv() {
 
             var file = Path.GetTempFileName().Replace(".tmp", ".csv");
-            File.WriteAllText(file, @"State,Population,Shape
+            File.WriteAllText(file, @"""State"",""Population"",""Shape""
 MI,""10,000,000"",Mitten
 CA,""20,000,000"",Sock
 KS,""9,000,000"",Rectangle");
 
-            var request = new FileInspectionRequest { DataTypes = new List<string> { "decimal" } };
-            var fileInformation = FileInformationFactory.Create(new FileInfo(file), request);
+            var request = new FileInspectionRequest(file) { DataTypes = new List<string> { "decimal" } };
+            var fileInformation = FileInformationFactory.Create(request);
             var actual = new FieldInspector().Inspect(fileInformation, request);
 
             Assert.AreEqual(3, actual.Count);
@@ -31,9 +31,9 @@ KS,""9,000,000"",Rectangle");
             Assert.AreEqual("decimal", actual[1].Type);
             Assert.AreEqual("string", actual[2].Type);
 
-            Assert.AreEqual(default(char), actual[0].QuotedWith);
+            Assert.AreEqual('\"', actual[0].QuotedWith);
             Assert.AreEqual('\"', actual[1].QuotedWith);
-            Assert.AreEqual(default(char), actual[2].QuotedWith);
+            Assert.AreEqual('\"', actual[2].QuotedWith);
 
             Assert.AreEqual("3", actual[0].Length);
             Assert.AreEqual("1024", actual[1].Length);
@@ -82,8 +82,8 @@ Friday,14,5.5,5/1/2014
 Saturday,15,6.6,6/1/2014");
 
 
-            var request = new FileInspectionRequest { DataTypes = new List<string> { "int32", "double", "datetime" } };
-            var information = FileInformationFactory.Create(new FileInfo(file), request);
+            var request = new FileInspectionRequest(file) { DataTypes = new List<string> { "int32", "double", "datetime" } };
+            var information = FileInformationFactory.Create(request);
             var fields = new FieldInspector().Inspect(information, request).ToArray();
 
             Assert.AreEqual("string", fields[0].Type);
@@ -101,8 +101,8 @@ Saturday,15,6.6,6/1/2014");
 
             const string file = @"TestFiles\Headers\Issue002.xlsx";
 
-            var request = new FileInspectionRequest { DataTypes = new List<string> { "int32", "datetime" } };
-            var information = FileInformationFactory.Create(new FileInfo(file), request);
+            var request = new FileInspectionRequest(file) { DataTypes = new List<string> { "int32", "datetime" } };
+            var information = FileInformationFactory.Create(request);
             var fields = new FieldInspector().Inspect(information, request).ToArray();
 
             Assert.AreEqual("string", fields[0].Type);
@@ -124,11 +124,11 @@ Saturday,15,6.6,6/1/2014");
 ""Friday"",14,,5/1/2014,
 ""Saturday"",15,,6/1/2014,");
 
-            var request = new FileInspectionRequest {
+            var request = new FileInspectionRequest(file) {
                 DataTypes = new List<string> { "int32", "double", "datetime" },
                 IgnoreEmpty = true
             };
-            var information = FileInformationFactory.Create(new FileInfo(file), request);
+            var information = FileInformationFactory.Create(request);
             var fields = new FieldInspector().Inspect(information, request).ToArray();
 
             Assert.AreEqual('"', fields[0].QuotedWith);

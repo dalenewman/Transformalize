@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using Rhino.Etl.Core.Files;
 using Transformalize.Libs.FileHelpers.Converters;
+using Transformalize.Libs.FileHelpers.DataLink.Storage;
 using Transformalize.Libs.FileHelpers.Enums;
 using Transformalize.Libs.FileHelpers.RunTime;
 using Transformalize.Libs.Rhino.Etl;
@@ -124,6 +125,7 @@ namespace Transformalize.Operations.Load {
 
             PrepareType(_entity);
             FluentFile engine;
+            var inserts = 0;
 
             try {
                 engine = new FluentFile(Type) {
@@ -160,8 +162,10 @@ namespace Transformalize.Operations.Load {
                     }
                     var record = row.ToObject(Type);
                     file.Write(record);
+                    inserts++;
                 }
             }
+            _entity.Inserts = inserts;
             yield break;
         }
     }

@@ -12,7 +12,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Transformalize.Libs.fastJSON;
+using Transformalize.Libs.Cfg.Net.fastJSON;
+using Transformalize.Libs.Newtonsoft.Json;
 
 namespace Transformalize.Libs.Rhino.Etl {
     /// <summary>
@@ -192,7 +193,7 @@ namespace Transformalize.Libs.Rhino.Etl {
         }
 
         public override string ToString() {
-            return JSON.Instance.ToJSON(_storage);
+            return JsonConvert.SerializeObject(_storage);
         }
 
     }

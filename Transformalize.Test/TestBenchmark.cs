@@ -23,7 +23,6 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration;
@@ -54,8 +53,8 @@ namespace Transformalize.Test {
             var bigBloatedProcess = ProcessFactory.CreateSingle(xml);
             procWatch.Stop();
 
-            Console.WriteLine("Process: " + procWatch.ElapsedMilliseconds); // ~ 1928 to 1533
-            Console.WriteLine("Config: " + cfgWatch.ElapsedMilliseconds); // ~ 341 to 196
+            Console.WriteLine("Process: " + procWatch.ElapsedMilliseconds); // ~ 1928 to 1586
+            Console.WriteLine("Config: " + cfgWatch.ElapsedMilliseconds); // ~ 341 to 222
             Console.WriteLine("XDocument: " + xDocWatch.ElapsedMilliseconds); // ~ 45ms to 44
 
             Assert.AreEqual("NorthWind", xDocProcess.Attribute("name").Value);

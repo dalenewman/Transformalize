@@ -31,7 +31,6 @@ using Transformalize.Libs.NVelocity.App;
 using Transformalize.Main;
 using Transformalize.Main.Parameters;
 using Transformalize.Main.Providers;
-using Transformalize.Main.Transform;
 using Transformalize.Operations;
 using Transformalize.Operations.Transform;
 using Transformalize.Test.Builders;
@@ -90,6 +89,16 @@ namespace Transformalize.Test {
         }
 
         [Test]
+        public void FormatPhone() {
+            var input = new RowsBuilder().Row().Field("phone", "1112223333").ToOperation();
+            var formatPhone = new FormatPhoneOperation("phone", "phone");
+
+            var rows = TestOperation(input, formatPhone);
+
+            Assert.AreEqual("(111) 222-3333", rows[0]["phone"]);
+        }
+
+        [Test]
         public void ConvertStringToNumber() {
             var input = new RowsBuilder().Row().Field("f1", "1").ToOperation();
             var convert = new ConvertOperation("f1", "string", "o1", "int32", string.Empty);
@@ -97,6 +106,17 @@ namespace Transformalize.Test {
             var rows = TestOperation(input, convert);
 
             Assert.AreEqual(1, rows[0]["o1"]);
+        }
+
+        [Test]
+        public void ConvertObjectToNumber() {
+            object number = 2;
+            var input = new RowsBuilder().Row().Field("f1", number).ToOperation();
+            var convert = new ConvertOperation("f1", "object", "o1", "int32", string.Empty);
+
+            var rows = TestOperation(input, convert);
+
+            Assert.AreEqual(2, rows[0]["o1"]);
         }
 
         [Test]
@@ -436,8 +456,7 @@ namespace Transformalize.Test {
         }
 
         [Test]
-        public void IfProblem()
-        {
+        public void IfProblem() {
             const string xml = @"
 <transformalize>
     <processes>
@@ -465,10 +484,10 @@ namespace Transformalize.Test {
     </processes>
 </transformalize>
 ";
-            var process = ProcessFactory.Create(xml.Replace('\'','"'));
+            var process = ProcessFactory.Create(xml.Replace('\'', '"'));
 
             var input = new RowsBuilder()
-                .Row("email", "")                    .Field("has_email", null, "bool")
+                .Row("email", "").Field("has_email", null, "bool")
                 .Row("email", "dalenewman@gmail.com").Field("has_email", null, "bool")
                 .ToOperation();
 
@@ -974,8 +993,7 @@ namespace Transformalize.Test {
         }
 
         [Test]
-        public void Markdown()
-        {
+        public void Markdown() {
             const string input = @"#Header
 
 1. Number 1
@@ -1187,15 +1205,15 @@ It is False#end", templates, parameters);
         [Test]
         public void Tag() {
             var input = new RowsBuilder()
-                .Row("input", 2).Field("another","thing").Field("out", "")
-                .Row("input", 4).Field("another","element").Field("out", "")
+                .Row("input", 2).Field("another", "thing").Field("out", "")
+                .Row("input", 4).Field("another", "element").Field("out", "")
                 .ToOperation();
             var parameters = new ParametersBuilder()
                 .Parameter("x", 3)
                 .Parameter("input")
                 .Parameter("another")
                 .ToParameters();
-            var tagOperation = new TagOperation("out","a", parameters, false, false);
+            var tagOperation = new TagOperation("out", "a", parameters, false, false);
             var output = TestOperation(input, tagOperation);
 
             Assert.AreEqual("<a x=\"3\" input=\"2\" another=\"thing\" />", output[0]["out"]);
@@ -1210,7 +1228,7 @@ It is False#end", templates, parameters);
                 .ToOperation();
             var parameters = new ParametersBuilder()
                 .Parameter("x", 3)
-                .Parameter("content","it wants & needs it")
+                .Parameter("content", "it wants & needs it")
                 .Parameter("input")
                 .Parameter("another")
                 .ToParameters();
@@ -1232,7 +1250,7 @@ It is False#end", templates, parameters);
                 .Parameter("content", "it wants & needs it")
                 .Parameter("input")
                 .Parameter("another")
-                .Parameter("y","input", true)
+                .Parameter("y", "input", true)
                 .ToParameters();
             var tagOperation = new TagOperation("out", "a", parameters, false, true);
             var output = TestOperation(input, tagOperation);
@@ -1305,6 +1323,31 @@ It is False#end", templates, parameters);
             var transform = new ToStringOperation("number", "int32", "number", "C");
             var output = TestOperation(input, transform);
             Assert.AreEqual("$43.00", output[0]["number"]);
+        }
+
+        [Test]
+        public void ToStringFromObject()
+        {
+            object obj = 3;
+            object obj2 = 4;
+            var input = new RowsBuilder()
+                .Row("number", obj)
+                .Row("number", obj2)
+                .ToOperation();
+
+            var transform = new ToStringOperation("number", "object", "number", "C");
+            var output = TestOperation(input, transform);
+            Assert.AreEqual("$3.00", output[0]["number"]);
+            Assert.AreEqual("$4.00", output[1]["number"]);
+        }
+
+        [Test]
+        public void ToStringFromStringIsTreatedAsObject() {
+            object obj = 3;
+            var input = new RowsBuilder().Row("number", obj).ToOperation();
+            var transform = new ToStringOperation("number", "string", "number", "C");
+            var output = TestOperation(input, transform);
+            Assert.AreEqual("$3.00", output[0]["number"]);
         }
 
         [Test]

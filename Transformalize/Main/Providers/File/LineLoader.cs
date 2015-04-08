@@ -13,16 +13,17 @@ namespace Transformalize.Main.Providers.File {
 
         public LineLoader(FileSystemInfo fileInfo, FileInspectionRequest request) {
             _request = request;
-            _loader = new FileLineLoader(fileInfo.FullName);
+            _loader = new FileLineLoader(fileInfo.FullName, request.LineLimit);
             _isCsv = fileInfo.Extension.Equals(".csv", StringComparison.OrdinalIgnoreCase);
         }
 
         public IEnumerable<Line> Load() {
 
             return _loader.Load().Select(
-                content => _isCsv && content.Contains(DOUBLE_QUOTE) && content.Count(c => c.Equals(DOUBLE_QUOTE)) % 2 == 0 ?
+                content => _isCsv ?
                     new Line(content, DOUBLE_QUOTE, _request) :
-                    new Line(content, _request));
+                    new Line(content, _request)
+            );
         }
     }
 }

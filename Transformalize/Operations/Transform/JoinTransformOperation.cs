@@ -6,6 +6,32 @@ using Transformalize.Main;
 using Transformalize.Main.Parameters;
 
 namespace Transformalize.Operations.Transform {
+
+    public class CopyMultipleOperation : ShouldRunOperation {
+
+        private readonly IEnumerable<KeyValuePair<string, IParameter>> _parameters;
+
+        public CopyMultipleOperation(string outKey, IParameters parameters)
+            : base(string.Empty, outKey) {
+            _parameters = parameters.ToEnumerable();
+            Name = string.Format("CopyMultipleOperation ({0})", outKey);
+        }
+
+        public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
+            foreach (var row in rows) {
+                if (ShouldRun(row)) {
+                    var linqRow = row;
+                    row[OutKey] = _parameters.Select(p => linqRow[p.Key] ?? p.Value).ToArray();
+                } else {
+                    Interlocked.Increment(ref SkipCount);
+                }
+
+                yield return row;
+            }
+        }
+    }
+
+
     public class JoinTransformOperation : ShouldRunOperation {
         private readonly string _separator;
         private readonly IEnumerable<KeyValuePair<string, IParameter>> _parameters;

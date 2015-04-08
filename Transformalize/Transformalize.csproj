@@ -12,6 +12,8 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -43,6 +45,9 @@
     </DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CfgNet">
+      <HintPath>..\packages\Cfg-NET.0.0.4\lib\CfgNet.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.AnalysisServices, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.AnalysisServices.11.0.2100.60\lib\net40\Microsoft.AnalysisServices.DLL</HintPath>
@@ -118,8 +123,6 @@
     <Compile Include="Extensions\IntExtensions.cs" />
     <Compile Include="Extensions\ObjectPool.cs" />
     <Compile Include="Extensions\ProducerConsumerCollectionBase.cs" />
-    <Compile Include="Libs\Cfg.Net\CfgNet.cs" />
-    <Compile Include="Libs\Cfg.Net\NanoXmlParser.cs" />
     <Compile Include="Libs\Dapper\SqlBuilder.cs" />
     <Compile Include="Libs\Dapper\SqlMapper.cs" />
     <Compile Include="Libs\Elasticsearch.Net\ConnectionPool\EndpointState.cs" />
@@ -524,7 +527,6 @@
     <Compile Include="Libs\ExcelDataReader\Exceptions\BiffRecordException.cs" />
     <Compile Include="Libs\ExcelDataReader\Exceptions\HeaderException.cs" />
     <Compile Include="Libs\ExcelDataReader\IExcelDataReader.cs" />
-    <Compile Include="Libs\fastJSON\JsonTryParse.cs" />
     <Compile Include="Libs\GoogleMaps.LocationServices\Address.cs" />
     <Compile Include="Libs\GoogleMaps.LocationServices\Directions.cs" />
     <Compile Include="Libs\GoogleMaps.LocationServices\GoogleLocationService.cs" />
@@ -3430,6 +3432,7 @@
     <Compile Include="Operations\Transform\FilterOperation.cs" />
     <Compile Include="Operations\Transform\FilterOutputOperation.cs" />
     <Compile Include="Operations\Transform\FormatOperation.cs" />
+    <Compile Include="Operations\Transform\FormatPhoneOperation.cs" />
     <Compile Include="Operations\Transform\FromJsonOperation.cs" />
     <Compile Include="Operations\Transform\FromRegexOperation.cs" />
     <Compile Include="Operations\Transform\FromNanoXmlOperation.cs" />
@@ -3507,14 +3510,6 @@
     <Compile Include="Extensions\LinqExtensions.cs" />
     <Compile Include="Extensions\StringBuilderExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="Libs\fastJSON\dynamic.cs" />
-    <Compile Include="Libs\fastJSON\Formatter.cs" />
-    <Compile Include="Libs\fastJSON\Getters.cs" />
-    <Compile Include="Libs\fastJSON\JSON.cs" />
-    <Compile Include="Libs\fastJSON\JsonParser.cs" />
-    <Compile Include="Libs\fastJSON\JsonSerializer.cs" />
-    <Compile Include="Libs\fastJSON\Reflection.cs" />
-    <Compile Include="Libs\fastJSON\SafeDictionary.cs" />
     <Compile Include="Libs\RazorEngine\AttributeValue.cs" />
     <Compile Include="Libs\RazorEngine\CodeGenerators\SetModelTypeCodeGenerator.cs" />
     <Compile Include="Libs\RazorEngine\Common\GlobalSuppressions.cs" />
@@ -3706,10 +3701,16 @@
   <PropertyGroup>
     <PostBuildEvent>IF EXIST c:\code\JunkDrawer XCOPY /s /y $(TargetDir)Transformalize.dll c:\code\JunkDrawer\Assemblies\
 IF EXIST c:\code\DataProfiler XCOPY /s /y $(TargetDir)Transformalize.dll c:\code\DataProfiler\Assemblies\
-IF EXIST C:\Code\Orchard.Source.1.7.1\src\Orchard.Web\Modules\Transformalize.Orchard XCOPY /s /y $(TargetDir)..\..\..\Transformalize.Orchard\*.* C:\Code\Orchard.Source.1.7.1\src\Orchard.Web\Modules\Transformalize.Orchard\
 IF EXIST C:\Code\Orchard.Source.1.8.1\src\Orchard.Web\Modules\Transformalize.Orchard XCOPY /s /y $(TargetDir)..\..\..\Transformalize.Orchard\*.* C:\Code\Orchard.Source.1.8.1\src\Orchard.Web\Modules\Transformalize.Orchard\
 </PostBuildEvent>
   </PropertyGroup>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

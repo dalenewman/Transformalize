@@ -1,14 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Transformalize.Libs.fastJSON;
+using Transformalize.Libs.Cfg.Net.fastJSON;
+using Transformalize.Libs.Newtonsoft.Json;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
 namespace Transformalize.Operations {
+
     public class ConsoleLoadOperation : AbstractOperation {
+
         private readonly List<string> _columns = new List<string>();
         private readonly List<string> _guids = new List<string>();
         private readonly List<string> _byteArrays = new List<string>();
@@ -28,7 +30,10 @@ namespace Transformalize.Operations {
                 foreach (var byteArray in _byteArrays) {
                     row[byteArray] = Common.BytesToHexString((byte[])row[byteArray]);
                 }
-                Console.WriteLine(JSON.Instance.ToJSON(_columns.ToDictionary(alias => alias, alias => row[alias])));
+
+                Console.WriteLine(
+                    JsonConvert.SerializeObject(_columns.ToDictionary(alias => alias, alias => row[alias]))
+                );
             }
             yield break;
         }

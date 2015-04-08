@@ -24,7 +24,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using System.Linq;
-using Transformalize.Libs.fastJSON;
+using Transformalize.Libs.Cfg.Net.fastJSON;
+using Transformalize.Libs.Newtonsoft.Json;
 using Transformalize.Logging;
 
 namespace Transformalize.Main {
@@ -51,7 +52,7 @@ namespace Transformalize.Main {
                     if (settings.Contains("'")) {
                         settings = settings.Replace('\'', '"');
                     }
-                    var options = JSON.Instance.ToObject<Dictionary<string, object>>(settings);
+                    var options = JsonConvert.DeserializeObject<Dictionary<string, object>>(settings);
 
                     foreach (var option in options) {
                         var key = option.Key.ToLower();

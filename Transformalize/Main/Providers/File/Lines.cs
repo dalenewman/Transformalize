@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -12,14 +13,60 @@ namespace Transformalize.Main.Providers.File {
         private readonly FileInspectionRequest _request;
         private readonly List<Line> _storage = new List<Line>();
         private char _bestDelimiter;
+        private bool _isCsv;
 
         public Lines(FileSystemInfo fileInfo, FileInspectionRequest request) {
             _fileInfo = fileInfo;
+            _isCsv = fileInfo.Extension.Equals(".csv", StringComparison.OrdinalIgnoreCase);
             _request = request;
             _storage.AddRange(new LineLoader(fileInfo, request).Load());
         }
 
         public char FindDelimiter() {
+
+            if (_bestDelimiter != default(char))
+                return _bestDelimiter;
+
+            if (_storage.Count == 0) {
+                TflLogger.Warn(string.Empty, string.Empty, "Can't find any lines or a delimiter for {0}. Defaulting to single column.", _fileInfo.Name);
+                return default(char);
+            }
+
+            var isSample = _storage.Count == _request.LineLimit;
+            var count = Convert.ToDouble(_storage.Count);
+
+            foreach (var pair in _request.Delimiters) {
+                var delimiter = pair.Key;
+                var values = _storage.Select(l => l.Values[delimiter].Length - 1).ToArray();
+                var average = values.Average();
+                var min = values.Min();
+                if (min == 0 || !(average > 0))
+                    continue;
+
+                var variance = values.Sum(l => Math.Pow((l - average), 2)) / (count-(isSample ? 1 : 0));
+
+                pair.Value.AveragePerLine = average;
+                pair.Value.StandardDeviation = _storage.Count == 1 ? 0 : Math.Sqrt(variance);
+            }
+
+            var winner = _request.Delimiters
+                .Select(p => p.Value)
+                .Where(d => d.AveragePerLine > 0)
+                .OrderBy(d => d.CoefficientOfVariance())
+                .ThenByDescending(d=> d.AveragePerLine)
+                .FirstOrDefault();
+
+            if (winner != null) {
+                _bestDelimiter = winner.Character;
+                TflLogger.Info(string.Empty, string.Empty, "Delimiter is '{0}'", _bestDelimiter);
+                return _bestDelimiter;
+            }
+
+            TflLogger.Warn(string.Empty, string.Empty, "Can't find a delimiter for {0}.  Defaulting to single column.", _fileInfo.Name);
+            return default(char);
+        }
+
+        public char FindDelimiterOld() {
 
             if (_bestDelimiter != default(char))
                 return _bestDelimiter;
@@ -69,18 +116,14 @@ namespace Transformalize.Main.Providers.File {
                 return fields;
             }
 
-            var names = firstLine.Values[delimiter];
+            var names = firstLine.Values[delimiter].Select(n=>n.Trim(firstLine.Quote)).ToArray();
 
             for (var i = 0; i < names.Length; i++) {
                 var name = names[i];
                 var field = new Field(_request.DefaultType, _request.DefaultLength, FieldType.NonKey, true, string.Empty) {
-                    Name = name
+                    Name = name,
+                    QuotedWith = firstLine.Quote
                 };
-                if (_storage.Count > 1) {
-                    if (_storage.Any(x => x.Values[delimiter][i].Contains(delimiter) || _storage.Skip(1).Where(y => !_request.IgnoreEmpty || !string.IsNullOrEmpty(y.Values[delimiter][i])).All(z => z.Quote != default(char) && z.Values[delimiter][i].StartsWith(z.Quote.ToString(CultureInfo.InvariantCulture)) && z.Values[delimiter][i].EndsWith(z.Quote.ToString(CultureInfo.InvariantCulture))))) {
-                        field.QuotedWith = _storage.Skip(1).First().Quote;
-                    }
-                }
                 fields.Add(field);
             }
 

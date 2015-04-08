@@ -1,37 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
+﻿using System.Globalization;
 using Transformalize.Configuration;
 using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.File {
+
     public class FileImporter {
 
-        public void ImportScaler(FileInfo fileInfo, TflConnection output, string processName = null, string entityName = null) {
-            ImportScaler(fileInfo, new FileInspectionRequest(), output, processName, entityName);
+        public long ImportScaler(string fileName, TflConnection output) {
+            return ImportScaler(new FileInspectionRequest(fileName), output);
         }
 
-        public void ImportScaler(FileInfo fileInfo, FileInspectionRequest request, TflConnection output, string processName = null, string entityName = null) {
-            var fileInformation = FileInformationFactory.Create(fileInfo, request);
-            var configuration = BuildProcess(fileInformation, request, output, processName, entityName);
-            var process = ProcessFactory.CreateSingle(configuration);
-            if (process.Connections["output"].Type != ProviderType.Internal) {
-                process.Options.Mode = "init";
-                process.Mode = "init";
-                process.ExecuteScaler();
+        public long ImportScaler(FileInspectionRequest request, TflConnection output) {
+            var fileInformation = FileInformationFactory.Create(request);
+            var configuration = BuildProcess(fileInformation, request, output);
+            var initProcess = ProcessFactory.CreateSingle(configuration);
+            if (initProcess.Connections["output"].Type != ProviderType.Internal) {
+                initProcess.Options.Mode = "init";
+                initProcess.Mode = "init";
+                initProcess.ExecuteScaler();
             }
 
-            ProcessFactory.CreateSingle(configuration, new Options()).ExecuteScaler();
+            var process = ProcessFactory.CreateSingle(configuration, new Options());
+            process.ExecuteScaler();
+            return process.Entities[0].Inserts;
         }
 
-        public FileImportResult Import(FileInfo fileInfo, TflConnection output, string processName = null, string entityName = null) {
-            return Import(fileInfo, new FileInspectionRequest(), output, processName, entityName);
+        public FileImportResult Import(string fileName, TflConnection output) {
+            return Import(new FileInspectionRequest(fileName), output);
         }
 
-        public FileImportResult Import(FileInfo fileInfo, FileInspectionRequest request, TflConnection output, string processName = null, string entityName = null) {
-            var fileInformation = FileInformationFactory.Create(fileInfo, request);
-            var configuration = BuildProcess(fileInformation, request, output, processName, entityName);
+        public FileImportResult Import(FileInspectionRequest request, TflConnection output) {
+
+            var fileInformation = FileInformationFactory.Create(request);
+            var configuration = BuildProcess(fileInformation, request, output);
             var process = ProcessFactory.CreateSingle(configuration);
 
             if (process.Connections["output"].Type != ProviderType.Internal) {
@@ -46,21 +47,13 @@ namespace Transformalize.Main.Providers.File {
             };
         }
 
-        private static TflProcess BuildProcess(FileInformation fileInformation, FileInspectionRequest request, TflConnection output, string processName = null, string entityName = null) {
+        private static TflProcess BuildProcess(FileInformation fileInformation, FileInspectionRequest request, TflConnection output) {
 
-            if (String.IsNullOrEmpty(processName)) {
-                processName = Common.CleanIdentifier(Path.GetFileNameWithoutExtension(fileInformation.FileInfo.Name));
-            }
-
-            if (String.IsNullOrEmpty(entityName)) {
-                entityName = "TflAuto" + processName.GetHashCode().ToString(CultureInfo.InvariantCulture).Replace("-", "0").PadRight(13, '0');
-            }
-
-            var root = new TflRoot(string.Format(@"<tfl><processes><add name='{0}'><connections><add name='input' provider='internal' /></connections></add></processes></tfl>", entityName), null);
+            var root = new TflRoot(string.Format(@"<tfl><processes><add name='{0}'><connections><add name='input' provider='internal' /></connections></add></processes></tfl>", request.EntityName), null);
 
             var process = root.GetDefaultOf<TflProcess>(p => {
-                p.Name = entityName;
-                p.Star = processName;
+                p.Name = request.EntityName;
+                p.Star = request.ProcessName;
                 p.StarEnabled = false;
             });
 
@@ -75,7 +68,7 @@ namespace Transformalize.Main.Providers.File {
             process.Connections.Add(output);
 
             process.Entities.Add(process.GetDefaultOf<TflEntity>(e => {
-                e.Name = entityName;
+                e.Name = request.EntityName;
                 e.PrependProcessNameToOutputName = false;
                 e.DetectChanges = false;
             }));
@@ -84,9 +77,9 @@ namespace Transformalize.Main.Providers.File {
 
             foreach (var fd in fields) {
                 if (fd.Type.Equals("string")) {
-                    TflLogger.Info(processName, entityName, "Using {0} character string for {1}.", fd.Length, fd.Name);
+                    TflLogger.Info(request.ProcessName, request.EntityName, "Using {0} character string for {1}.", fd.Length, fd.Name);
                 } else {
-                    TflLogger.Info(processName, entityName, "Using {0} for {1}.", fd.Type, fd.Name);
+                    TflLogger.Info(request.ProcessName, request.EntityName, "Using {0} for {1}.", fd.Type, fd.Name);
                 }
 
                 var field = fd;

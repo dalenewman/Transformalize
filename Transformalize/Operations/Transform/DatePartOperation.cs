@@ -8,7 +8,7 @@ namespace Transformalize.Operations.Transform {
     public class DatePartOperation : ShouldRunOperation {
 
         private readonly string _timeComponent;
-        private readonly Dictionary<string, Func<DateTime, object>> _parts = new Dictionary<string, Func<DateTime, object>>() {
+        public static readonly Dictionary<string, Func<DateTime, object>> Parts = new Dictionary<string, Func<DateTime, object>>() {
             {"day", x => x.Day},
             {"date", x=>x.Date},
             {"dayofweek", x=>x.DayOfWeek},
@@ -26,11 +26,11 @@ namespace Transformalize.Operations.Transform {
             : base(inKey, outKey) {
 
             _timeComponent = timeComponent.ToLower().TrimEnd("s".ToCharArray());
-            if (!_parts.ContainsKey(_timeComponent)) {
+            if (!Parts.ContainsKey(_timeComponent)) {
                 throw new TransformalizeException(ProcessName, EntityName, "DatePart does not handle {0} time component. Set time-component to day, date, dayofweek, dayofyear, hour, millisecond, minute, month, second, tick, or year.", _timeComponent);
             }
 
-            var testValue = _parts[_timeComponent](DateTime.Now);
+            var testValue = Parts[_timeComponent](DateTime.Now);
             if (!CanChangeType(testValue, Common.ToSystemType(outType))) {
                 throw new TransformalizeException(ProcessName, EntityName, "DatePart can't change type from {0} to {1}.", testValue.GetType(), outType);
             } 
@@ -43,7 +43,7 @@ namespace Transformalize.Operations.Transform {
                 if (ShouldRun(row)) {
                     if (row[InKey] is DateTime) {
                         var date = ((DateTime)row[InKey]);
-                        row[OutKey] = _parts[_timeComponent](date);
+                        row[OutKey] = Parts[_timeComponent](date);
                     }
                 }
                 yield return row;

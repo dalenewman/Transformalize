@@ -63,7 +63,7 @@ namespace Transformalize.Orchard.Handlers {
             switch (request.RequestType) {
                 case ApiRequestType.MetaData:
                     builder.Append(configuration);
-                    builder.InsertFormat(builder.LastIndexOf('<'), RESPONSE_TEMPLATE, request.RequestType, request.Status, request.Message, request.Stopwatch.ElapsedMilliseconds, string.Empty, LogsToXml(response.Log));
+                    builder.InsertFormat(builder.LastIndexOf('<'), RESPONSE_TEMPLATE, request.RequestType, request.Status, request.Message, request.Stopwatch.ElapsedMilliseconds, string.Empty, LogsToXml(response.Log), content);
                     return builder.ToString();
 
                 case ApiRequestType.Configuration:

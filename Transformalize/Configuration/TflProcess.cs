@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Libs.Cfg.Net;
 using Transformalize.Main;
+using Transformalize.Main.Transform;
 
 namespace Transformalize.Configuration {
     public class TflProcess : CfgNode {
@@ -40,14 +41,14 @@ namespace Transformalize.Configuration {
         public string Mode { get; set; }
 
         /// <summary>
-        /// Optional.  Default is `true`
+        /// Optional.  Default is `false`
         /// 
         /// If true, process entities in parallel.  If false, process them one by one in their configuration order.
         /// 
         /// Parallel *on* allows you to process all the entities at the same time, potentially faster.
         /// Parallel *off* allows you to have one entity depend on a previous entity's data.
         /// </summary>
-        [Cfg(value = true)]
+        [Cfg(value = false)]
         public bool Parallel { get; set; }
 
         /// <summary>
@@ -192,14 +193,39 @@ namespace Transformalize.Configuration {
         public List<TflTemplate> Templates { get; set; }
 
         protected override void Modify() {
+
             if (String.IsNullOrEmpty(Star)) {
                 Star = Name + "Star";
             }
+
             if (string.IsNullOrEmpty(View)) {
                 View = Name + "View";
             }
+
             foreach (var calculatedField in CalculatedFields) {
                 calculatedField.Input = false;
+            }
+
+            try {
+                AdaptFieldsCreatedFromTransforms(new[] { "fromxml", "fromregex", "fromjson", "fromsplit" });
+            } catch (Exception ex) {
+                AddProblem("Trouble adapting fields created from transforms. {0}", ex.Message);
+            }
+
+            try {
+                var factory = new ShortHandFactory(this);
+                factory.ExpandShortHandTransforms();
+            } catch (Exception ex) {
+                AddProblem("Trouble expanding short hand transforms. {0}", ex.Message);
+            }
+        }
+
+
+        private void AdaptFieldsCreatedFromTransforms(IEnumerable<string> transformToFields) {
+            foreach (var field in transformToFields) {
+                while (new TransformFieldsToParametersAdapter(this).Adapt(field) > 0) {
+                    new TransformFieldsMoveAdapter(this).Adapt(field);
+                }
             }
         }
 

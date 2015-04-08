@@ -108,6 +108,9 @@ namespace Transformalize.Main {
                     if (!hasParameters) {
                         throw new TransformalizeException(_process.Name, _entityName, "The copy transform requires a parameter.  It copies the parameter value into the calculated field.");
                     }
+                    if(parameters.Count > 1)
+                        return new CopyMultipleOperation(outKey, parameters) { ShouldRun = shouldRun, EntityName = _entityName };
+
                     return new CopyOperation(inKey, outKey) { ShouldRun = shouldRun, EntityName = _entityName };
 
                 case "collapse":
@@ -465,6 +468,9 @@ namespace Transformalize.Main {
                         inKey,
                         outKey
                     ) { ShouldRun = shouldRun, EntityName = _entityName };
+
+                case "formatphone":
+                    return new FormatPhoneOperation(inKey, outKey) { ShouldRun = shouldRun, EntityName = _entityName};
 
                 case "join":
                     if (element.Separator.Equals(Common.DefaultValue)) {

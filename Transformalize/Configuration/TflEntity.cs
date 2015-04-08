@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Libs.Cfg.Net;
 using Transformalize.Libs.Rhino.Etl.Operations;
-using Transformalize.Logging;
 
 namespace Transformalize.Configuration {
     public class TflEntity : CfgNode {
@@ -44,8 +43,20 @@ namespace Transformalize.Configuration {
         [Cfg(value = false)]
         public bool NoLock { get; set; }
 
-        [Cfg(value = "Default", domain = "SingleThreaded,MultiThreaded,Default")]
+        /// <summary>
+        /// Optional.  Defaults to `SingleThreaded`.
+        /// 
+        /// Controls the threading of Rhino ETL's pipeline. 
+        /// Valid values are `SingleThreaded`, and `MultiThreaded`.
+        /// `MultiThreaded` can be faster depending on the computer, but may obscure error messages in some cases.
+        /// 
+        /// **Note**: You can set each entity if you want, or control all entities from the Process' pipeline threading attribute.
+        /// 
+        /// In general, you should develop using `SingleThreaded`, and once everything is stable, switch over to `MultiThreaded`.
+        /// </summary>
+        [Cfg(value = "SingleThreaded", domain = "SingleThreaded,MultiThreaded", ignoreCase = true)]
         public string PipelineThreading { get; set; }
+
         [Cfg(value = "")]
         public string Prefix { get; set; }
         [Cfg(value = true)]
@@ -112,5 +123,43 @@ namespace Transformalize.Configuration {
             }
         }
 
+        protected override void Validate() {
+            var fields = AllFields().ToArray();
+            var names = new HashSet<string>(fields.Select(f => f.Name).Distinct());
+            var aliases = new HashSet<string>(fields.Select(f => f.Alias));
+
+            ValidateVersion(names, aliases);
+        }
+
+        private void ValidateVersion(HashSet<string> names, HashSet<string> aliases) {
+            if (Version == string.Empty)
+                return;
+
+            if (names.Contains(Version))
+                return;
+
+            if (aliases.Contains(Version))
+                return;
+
+            AddProblem("Cant't find version field '{0}' in entity '{1}'", Version, Name);
+        }
+
+        private void ValidateFilter(HashSet<string> names, HashSet<string> aliases) {
+            if (Filter.Count == 0)
+                return;
+
+            foreach (var f in Filter) {
+                if (f.Expression != string.Empty)
+                    return;
+
+                if (names.Contains(f.Left))
+                    continue;
+
+                if (aliases.Contains(f.Left))
+                    continue;
+
+                AddProblem("A filter's left attribute must reference a defined field. '{0}' is not defined.", f.Left);
+            }
+        }
     }
 }

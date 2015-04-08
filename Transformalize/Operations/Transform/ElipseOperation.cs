@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Threading;
 using Transformalize.Libs.Rhino.Etl;
 
 namespace Transformalize.Operations.Transform {
@@ -22,7 +21,7 @@ namespace Transformalize.Operations.Transform {
                         row[OutKey] = value.Substring(0, _length) + _elipse;
                     }
                 } else {
-                    Interlocked.Increment(ref SkipCount);
+                    Skip();
                 }
                 yield return row;
             }

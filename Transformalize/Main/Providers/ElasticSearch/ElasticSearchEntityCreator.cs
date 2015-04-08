@@ -1,5 +1,6 @@
 using System.Collections.Generic;
-using Transformalize.Libs.fastJSON;
+using Transformalize.Libs.Cfg.Net.fastJSON;
+using Transformalize.Libs.Newtonsoft.Json;
 using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.ElasticSearch {
@@ -73,7 +74,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             var fields = GetFields(entity);
             var properties = new Dictionary<string, object>() { { "properties", fields } };
             var body = new Dictionary<string, object>() { { client.Type, properties } };
-            var json = JSON.Instance.ToJSON(body);
+            var json = JsonConvert.SerializeObject(body);
 
             var response = client.Client.IndicesPutMapping(client.Index, client.Type, json);
 

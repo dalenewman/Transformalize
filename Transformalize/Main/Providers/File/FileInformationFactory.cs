@@ -1,24 +1,22 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 
 namespace Transformalize.Main.Providers.File {
+
     public static class FileInformationFactory {
 
-        public static FileInformation Create(string file) {
-            return Create(new FileInfo(file), new FileInspectionRequest());
+        public static FileInformation Create(string file, string processName = null, string entityName = null) {
+            return Create(new FileInspectionRequest(file), processName, entityName);
         }
 
-        public static FileInformation Create(string file, FileInspectionRequest request) {
-            return Create(new FileInfo(file), request);
-        }
+        public static FileInformation Create(FileInspectionRequest request, string processName = null, string entityName = null) {
 
-        public static FileInformation Create(FileInfo fileInfo, FileInspectionRequest request) {
-            var ext = fileInfo.Extension.ToLower();
+            var ext = request.FileInfo.Extension.ToLower();
+            var isExcel = ext.StartsWith(".xls", StringComparison.OrdinalIgnoreCase);
 
-            var fileInformation = ext.StartsWith(".xls", StringComparison.OrdinalIgnoreCase) ?
-                new ExcelInformationReader(request).Read(fileInfo) :
-                new FileInformationReader(request).Read(fileInfo);
+            var fileInformation = isExcel ?
+                new ExcelInformationReader(request).Read(request.FileInfo) :
+                new FileInformationReader(request).Read(request.FileInfo);
 
             var validator = new ColumnNameValidator(fileInformation.Fields.Select(f => f.Name).ToArray());
             if (validator.Valid())

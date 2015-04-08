@@ -3,6 +3,7 @@ using System.Threading;
 using Transformalize.Libs.Rhino.Etl;
 
 namespace Transformalize.Operations.Transform {
+
     public class SubstringOperation : ShouldRunOperation {
         private readonly int _startIndex;
         private readonly int _length;

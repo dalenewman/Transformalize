@@ -7,7 +7,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Transformalize.Libs.fastJSON;
+using Transformalize.Libs.Cfg.Net.fastJSON;
+using Transformalize.Libs.Newtonsoft.Json;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Logging;
@@ -41,7 +42,7 @@ namespace Transformalize.Operations.Load {
                 foreach (var byteArray in _byteArrays) {
                     row[byteArray] = Common.BytesToHexString((byte[])row[byteArray]);
                 }
-                TflLogger.Info(_entity.ProcessName, _entity.Name, JSON.Instance.ToJSON(_columns.ToDictionary(alias => alias, alias => row[alias])));
+                TflLogger.Info(_entity.ProcessName, _entity.Name, JsonConvert.SerializeObject(_columns.ToDictionary(alias => alias, alias => row[alias])));
             }
             //LogManager.Flush();
             yield break;

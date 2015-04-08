@@ -2,6 +2,7 @@
 using Transformalize.Extensions;
 
 namespace Transformalize.Main.Providers.File {
+
     public class Line {
 
         private readonly char _quote = default(char);
@@ -20,16 +21,16 @@ namespace Transformalize.Main.Providers.File {
 
         public Line(string content, FileInspectionRequest request) {
             _content = content;
-            foreach (var delimiter in request.Delimiters.Keys) {
-                _values[delimiter] = content.Split(delimiter);
+            foreach (var pair in request.Delimiters) {
+                _values[pair.Key] = content.Split(pair.Key);
             }
         }
 
         public Line(string content, char quote, FileInspectionRequest request) {
             _content = content;
             _quote = quote;
-            foreach (var delimiter in request.Delimiters.Keys) {
-                _values[delimiter] = content.DelimiterSplit(delimiter, quote);
+            foreach (var pair in request.Delimiters) {
+                _values[pair.Key] = content.DelimiterSplit(pair.Key, quote);
             }
         }
 
