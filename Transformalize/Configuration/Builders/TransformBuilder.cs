@@ -1,4 +1,5 @@
 using System;
+using Transformalize.Libs.Newtonsoft.Json;
 
 namespace Transformalize.Configuration.Builders {
 

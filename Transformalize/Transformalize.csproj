@@ -45,8 +45,9 @@
     </DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CfgNet">
-      <HintPath>..\packages\Cfg-NET.0.0.4\lib\CfgNet.dll</HintPath>
+    <Reference Include="CfgNet, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Cfg-NET.0.0.5\lib\CfgNet.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AnalysisServices, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -3005,7 +3006,6 @@
     <Compile Include="Main\Providers\AnalysisServices\AnalysisServicesConnection.cs" />
     <Compile Include="Main\Providers\AnalysisServices\AnalysisServicesConnectionChecker.cs" />
     <Compile Include="Main\Providers\AnalysisServices\AnalysisServicesScriptRunner.cs" />
-    <Compile Include="Main\Providers\ConnectionFactory.cs" />
     <Compile Include="Main\Providers\ConnectionStringParser.cs" />
     <Compile Include="Main\Providers\DefaultConnectionChecker.cs" />
     <Compile Include="Main\Providers\DatabaseScriptRunner.cs" />
@@ -3420,8 +3420,10 @@
     <Compile Include="Operations\Transform\AppendOperation.cs" />
     <Compile Include="Operations\Transform\AverageOperation.cs" />
     <Compile Include="Operations\Transform\CompressOperation.cs" />
+    <Compile Include="Operations\Transform\ConcatArrayOperation.cs" />
     <Compile Include="Operations\Transform\ConcatOperation.cs" />
     <Compile Include="Operations\Transform\ConvertOperation.cs" />
+    <Compile Include="Operations\Transform\CopyMultipleOperation.cs" />
     <Compile Include="Operations\Transform\CSharpOperation.cs" />
     <Compile Include="Operations\Transform\CyrToLatOperation.cs" />
     <Compile Include="Operations\Transform\DatePartOperation.cs" />
@@ -3431,6 +3433,7 @@
     <Compile Include="Operations\Transform\EmptyOperation.cs" />
     <Compile Include="Operations\Transform\FilterOperation.cs" />
     <Compile Include="Operations\Transform\FilterOutputOperation.cs" />
+    <Compile Include="Operations\Transform\FormatArrayOperation.cs" />
     <Compile Include="Operations\Transform\FormatOperation.cs" />
     <Compile Include="Operations\Transform\FormatPhoneOperation.cs" />
     <Compile Include="Operations\Transform\FromJsonOperation.cs" />
@@ -3447,6 +3450,7 @@
     <Compile Include="Operations\Transform\InsertIntervalOperation.cs" />
     <Compile Include="Operations\Transform\InsertOperation.cs" />
     <Compile Include="Operations\Transform\JavascriptOperation.cs" />
+    <Compile Include="Operations\Transform\JoinArrayOperation.cs" />
     <Compile Include="Operations\Transform\JoinTransformOperation.cs" />
     <Compile Include="Operations\Transform\CopyOperation.cs" />
     <Compile Include="Operations\Transform\GuidOperation.cs" />

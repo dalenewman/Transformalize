@@ -33,11 +33,6 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
-        public EntityBuilder InputOperation(IOperation operation) {
-            _entity.InputOperation = operation;
-            return this;
-        }
-
         public EntityBuilder Alias(string alias) {
             _entity.Alias = alias;
             return this;

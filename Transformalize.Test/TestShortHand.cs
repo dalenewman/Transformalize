@@ -172,38 +172,17 @@ namespace Transformalize.Test {
 
         [Test]
         public void Concat() {
-            const string expression = "concat(*";
+            const string expression = "concat(";
             var result = _factory.Interpret(expression, _field);
             Assert.AreEqual("concat", result.Method);
-            Assert.AreEqual("*", result.Parameter);
-        }
-
-        [Test]
-        public void ConcatWithParameters() {
-            const string expression = "concat(p1,p2";
-            var result = _factory.Interpret(expression, _field);
-            Assert.AreEqual("concat", result.Method);
-            Assert.AreEqual("p1", result.Parameters[0].Field);
-            Assert.AreEqual("p2", result.Parameters[1].Field);
         }
 
         [Test]
         public void Join() {
-            const string expression = @"join(\,,*";
+            const string expression = @"join(\,";
             var result = _factory.Interpret(expression, _field);
             Assert.AreEqual("join", result.Method);
             Assert.AreEqual(",", result.Separator);
-            Assert.AreEqual("*", result.Parameter);
-        }
-
-        [Test]
-        public void JoinWithParameters() {
-            const string expression = "join( ,p1,p2";
-            var result = _factory.Interpret(expression, _field);
-            Assert.AreEqual("join", result.Method);
-            Assert.AreEqual(" ", result.Separator);
-            Assert.AreEqual("p1", result.Parameters[0].Field);
-            Assert.AreEqual("p2", result.Parameters[1].Field);
         }
 
         [Test]
@@ -259,21 +238,10 @@ namespace Transformalize.Test {
 
         [Test]
         public void Format() {
-            const string expression = @"format(mailto:{0},email";
+            const string expression = @"format(mailto:{0}";
             var result = _factory.Interpret(expression, _field);
             Assert.AreEqual("format", result.Method);
             Assert.AreEqual("mailto:{0}", result.Format);
-            Assert.AreEqual("email", result.Parameter);
-        }
-
-        [Test]
-        public void FormatTwoParameters() {
-            const string expression = @"format(mailto:{0}@{1},username,domain";
-            var result = _factory.Interpret(expression, _field);
-            Assert.AreEqual("format", result.Method);
-            Assert.AreEqual("mailto:{0}@{1}", result.Format);
-            Assert.AreEqual("username", result.Parameters[0].Field);
-            Assert.AreEqual("domain", result.Parameters[1].Field);
         }
 
         [Test]

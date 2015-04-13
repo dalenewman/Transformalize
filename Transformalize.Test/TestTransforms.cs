@@ -25,15 +25,19 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
+using Transformalize.Configuration;
 using Transformalize.Configuration.Builders;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.NVelocity.App;
+using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 using Transformalize.Main.Parameters;
 using Transformalize.Main.Providers;
+using Transformalize.Main.Transform;
 using Transformalize.Operations;
 using Transformalize.Operations.Transform;
 using Transformalize.Test.Builders;
+using MapBuilder = Transformalize.Test.Builders.MapBuilder;
 
 namespace Transformalize.Test {
     [TestFixture]
@@ -758,7 +762,7 @@ namespace Transformalize.Test {
                 .Connection("input").Provider("internal")
                 .Connection("output").Provider("internal")
                 .Script("script", script)
-                .Entity("test").InputOperation(input)
+                .Entity("test")
                     .Field("OrderStatus")
                     .Field("StartDate").DateTime()
                     .Field("EndDate").DateTime()
@@ -770,6 +774,8 @@ namespace Transformalize.Test {
                                 .Parameter("StartDate")
                                 .Parameter("EndDate")
             .Process();
+
+            config.Entities[0].InputOperation = input;
 
             var process = ProcessFactory.CreateSingle(config);
 
@@ -836,7 +842,7 @@ namespace Transformalize.Test {
                 .Connection("input").Provider("internal")
                 .Connection("output").Provider("internal")
                 .Script("script", script)
-                .Entity("test").InputOperation(input)
+                .Entity("test")
                     .Field("OrderStatus")
                     .Field("StartDate").DateTime()
                     .Field("EndDate").DateTime()
@@ -848,6 +854,8 @@ namespace Transformalize.Test {
                                 .Parameter("StartDate")
                                 .Parameter("EndDate")
             .Process();
+
+            config.Entities[0].InputOperation = input;
 
             var process = ProcessFactory.CreateSingle(config);
             process.PipelineThreading = PipelineThreading.SingleThreaded;
@@ -862,25 +870,10 @@ namespace Transformalize.Test {
         [Test]
         public void CSharpInProcessInLine() {
 
-            var input = new RowsBuilder()
-                .Row("OrderStatus", "Completed")
-                    .Field("StartDate", DateTime.Now.AddMinutes(-30.0))
-                    .Field("EndDate", DateTime.Now)
-                .Row("OrderStatus", "Problematic")
-                    .Field("StartDate", DateTime.Now.AddMinutes(-29.0))
-                    .Field("EndDate", DateTime.Now)
-                .Row("OrderStatus", "Problematic")
-                    .Field("StartDate", DateTime.Now.AddMinutes(-78.0))
-                    .Field("EndDate", DateTime.Now)
-                .Row("OrderStatus", "x")
-                    .Field("StartDate", DateTime.Now.AddMinutes(-20.0))
-                    .Field("EndDate", DateTime.Now)
-                .ToOperation();
-
             var config = new ProcessBuilder("test")
                 .Connection("input").Provider("internal")
                 .Connection("output").Provider("internal")
-                .Entity("test").InputOperation(input)
+                .Entity("test")
                     .Field("OrderStatus")
                     .Field("StartDate").DateTime()
                     .Field("EndDate").DateTime()
@@ -897,6 +890,21 @@ namespace Transformalize.Test {
                             .Parameter("StartDate")
                             .Parameter("EndDate")
             .Process();
+
+            config.Entities[0].InputOperation = new RowsBuilder()
+                .Row("OrderStatus", "Completed")
+                    .Field("StartDate", DateTime.Now.AddMinutes(-30.0))
+                    .Field("EndDate", DateTime.Now)
+                .Row("OrderStatus", "Problematic")
+                    .Field("StartDate", DateTime.Now.AddMinutes(-29.0))
+                    .Field("EndDate", DateTime.Now)
+                .Row("OrderStatus", "Problematic")
+                    .Field("StartDate", DateTime.Now.AddMinutes(-78.0))
+                    .Field("EndDate", DateTime.Now)
+                .Row("OrderStatus", "x")
+                    .Field("StartDate", DateTime.Now.AddMinutes(-20.0))
+                    .Field("EndDate", DateTime.Now)
+                .ToOperation();
 
             var process = ProcessFactory.CreateSingle(config);
             process.PipelineThreading = PipelineThreading.SingleThreaded;
@@ -1326,8 +1334,7 @@ It is False#end", templates, parameters);
         }
 
         [Test]
-        public void ToStringFromObject()
-        {
+        public void ToStringFromObject() {
             object obj = 3;
             object obj2 = 4;
             var input = new RowsBuilder()
@@ -1444,20 +1451,20 @@ It is False#end", templates, parameters);
 
         [Test]
         public void TestCombo() {
-            var input = new RowsBuilder()
-                .Row("MeterNumber", "R00001")
-                .Row("MeterNumber", "000002").ToOperation();
 
             var cfg = new ProcessBuilder("process")
                 .Connection("input").Provider(ProviderType.Internal)
                 .Connection("output").Provider(ProviderType.Internal)
                 .Entity("entity")
-                    .InputOperation(input)
                     .Field("MeterNumber")
                     .CalculatedField("MeterCategory").Default("None")
                         .Transform("left").Length(1).Parameter("MeterNumber")
                         .Transform("if").Left("MeterCategory").Right("R").Then("Reclaim").Else("Domestic")
                 .Process();
+
+            cfg.Entities[0].InputOperation = new RowsBuilder()
+                .Row("MeterNumber", "R00001")
+                .Row("MeterNumber", "000002").ToOperation();
 
             var process = ProcessFactory.CreateSingle(cfg);
             var output = process.Execute().ToArray();
@@ -1554,6 +1561,89 @@ It is False#end", templates, parameters);
             Assert.AreEqual(expected, output[0]["in"].ToString());
 
         }
+
+        [Test]
+        public void TestCopyConcat() {
+
+            var input = new RowsBuilder()
+                .Row("in1", 1).Field("in2", 2)
+                .Row("in1", 3).Field("in2", 4)
+                .ToOperation();
+
+            var copyParameters = new Parameters() { { "in1", "in1", null, "int" }, { "in2", "in2", null, "int" } };
+
+            var copyOperation = new CopyMultipleOperation("out", copyParameters);
+            var concatOperation = new ConcatArrayOperation(new Parameter("out", null), "out");
+
+            var output = TestOperation(input, copyOperation, concatOperation);
+
+            Assert.AreEqual("12", output[0]["out"].ToString());
+            Assert.AreEqual("34", output[1]["out"].ToString());
+
+
+        }
+
+        [Test]
+        public void TestCopyJoin() {
+
+            var input = new RowsBuilder()
+                .Row("in1", 1).Field("in2", 2)
+                .Row("in1", 3).Field("in2", 4)
+                .ToOperation();
+
+            var copyParameters = new Parameters() { { "in1", "in1", null, "int" }, { "in2", "in2", null, "int" } };
+
+            var copyOperation = new CopyMultipleOperation("out", copyParameters);
+            var joinArrayOperation = new JoinArrayOperation(new Parameter("out", null), "out", "-");
+
+            var output = TestOperation(input, copyOperation, joinArrayOperation);
+
+            Assert.AreEqual("1-2", output[0]["out"].ToString());
+            Assert.AreEqual("3-4", output[1]["out"].ToString());
+        }
+
+        [Test]
+        public void TestCopyFormat() {
+
+            var input = new RowsBuilder()
+                .Row("in1", 1).Field("in2", 2)
+                .Row("in1", 3).Field("in2", 4)
+                .ToOperation();
+
+            var copyParameters = new Parameters() { { "in1", "in1", null, "int" }, { "in2", "in2", null, "int" } };
+
+            var copyOperation = new CopyMultipleOperation("out", copyParameters);
+            var formatArrayOperation = new FormatArrayOperation(new Parameter("out", null), "out", "Here is {0} and here is {1}.");
+
+            var output = TestOperation(input, copyOperation, formatArrayOperation);
+
+            Assert.AreEqual("Here is 1 and here is 2.", output[0]["out"].ToString());
+            Assert.AreEqual("Here is 3 and here is 4.", output[1]["out"].ToString());
+        }
+
+        [Test]
+        public void TestCopyMapToParameter() {
+
+            var input = new RowsBuilder()
+                .Row("in1", 1).Field("p1", "one").Field("p2", "two")
+                .Row("in1", 2).Field("p1", "one").Field("p2", "two")
+                .ToOperation();
+
+            var maps = new MapsBuilder()
+                .Equals()
+                    .Item("1", null, "p1")
+                    .Item("2", null, "p2")
+                .ToMaps();
+
+            var copyOperation = new CopyOperation("in1", "out");
+            var mapOperation = new MapOperation("out", "out", "string", maps);
+
+            var output = TestOperation(input, copyOperation, mapOperation);
+
+            Assert.AreEqual("one", output[0]["out"].ToString());
+            Assert.AreEqual("two", output[1]["out"].ToString());
+        }
+
 
     }
 

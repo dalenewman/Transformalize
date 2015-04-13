@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO.Pipes;
 using System.Linq;
 using System.Threading;
 using Transformalize.Libs.Rhino.Etl;
@@ -51,14 +52,14 @@ namespace Transformalize.Operations.Transform {
 
                     if (_hasEquals) {
                         if (_equals.ContainsKey(value)) {
-                            row[OutKey] = _equals[value].Value ?? row[_equals[value].Parameter];
+                            row[OutKey] = _equals[value].UseParameter ? row[_equals[value].Parameter] : _equals[value].Value;
                             found = true;
                         }
                     }
 
                     if (!found && _hasStartsWith) {
                         foreach (var pair in _startsWith.Where(pair => value.StartsWith(pair.Key))) {
-                            row[OutKey] = pair.Value.Value ?? row[pair.Value.Parameter];
+                            row[OutKey] = pair.Value.UseParameter ? row[pair.Value.Parameter] : pair.Value.Value;
                             found = true;
                             break;
                         }
@@ -66,14 +67,14 @@ namespace Transformalize.Operations.Transform {
 
                     if (!found && _hasEndsWith) {
                         foreach (var pair in _endsWith.Where(pair => value.EndsWith(pair.Key))) {
-                            row[OutKey] = pair.Value.Value ?? row[pair.Value.Parameter];
+                            row[OutKey] = pair.Value.UseParameter ? row[pair.Value.Parameter] : pair.Value.Value;
                             found = true;
                             break;
                         }
                     }
 
                     if (!found && _equals.ContainsKey("*")) {
-                        row[OutKey] = _equals["*"].Value ?? row[_equals["*"].Parameter];
+                        row[OutKey] = _equals["*"].UseParameter ? row[_equals["*"].Parameter] : _equals["*"].Value;
                         found = true;
                     }
 

@@ -7,18 +7,18 @@ namespace Transformalize.Main {
     public class ProcessOperationsLoader {
 
         private readonly Process _process;
-        private readonly List<TflField> _elements;
+        private readonly List<TflField> _calculatedFields;
 
-        public ProcessOperationsLoader(ref Process process, List<TflField> elements) {
+        public ProcessOperationsLoader(ref Process process, List<TflField> calculatedFields) {
             _process = process;
-            _elements = elements;
+            _calculatedFields = calculatedFields;
         }
 
         public void Load() {
 
             var autoIndex = Convert.ToInt16(_process.MasterEntity == null ? 0 : new Fields(_process.MasterEntity.Fields, _process.MasterEntity.CalculatedFields).Count + 1);
 
-            foreach (TflField f in _elements) {
+            foreach (TflField f in _calculatedFields) {
                 var field = new FieldReader(_process, _process.MasterEntity, false).Read(f);
 
                 if (field.Index.Equals(short.MaxValue)) {

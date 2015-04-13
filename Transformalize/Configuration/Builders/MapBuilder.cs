@@ -1,6 +1,5 @@
-using Transformalize.Main;
-
 namespace Transformalize.Configuration.Builders {
+
     public class MapBuilder {
         private readonly ProcessBuilder _processBuilder;
         private readonly TflMap _map;

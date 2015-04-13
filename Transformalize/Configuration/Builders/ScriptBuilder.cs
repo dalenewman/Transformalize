@@ -1,4 +1,5 @@
 namespace Transformalize.Configuration.Builders {
+
     public class ScriptBuilder {
         private readonly ProcessBuilder _processBuilder;
         private readonly TflScript _script;

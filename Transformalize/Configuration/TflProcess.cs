@@ -1,13 +1,46 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Libs.Cfg.Net;
+using Transformalize.Libs.Ninject;
+using Transformalize.Libs.Ninject.Parameters;
+using Transformalize.Libs.Ninject.Syntax;
+using Transformalize.Libs.SolrNet;
 using Transformalize.Main;
+using Transformalize.Main.Providers;
+using Transformalize.Main.Providers.Solr;
 using Transformalize.Main.Transform;
 
 namespace Transformalize.Configuration {
+
     public class TflProcess : CfgNode {
+
+        private readonly Dictionary<string, string> _providerTypes = new Dictionary<string, string>();
+
+        public TflProcess() {
+
+            _providerTypes.Add("sqlserver", "System.Data.SqlClient.SqlConnection, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
+            _providerTypes.Add("sqlce", "System.Data.SqlServerCe.SqlCeConnection, System.Data.SqlServerCe");
+            _providerTypes.Add("mysql", "MySql.Data.MySqlClient.MySqlConnection, MySql.Data");
+            _providerTypes.Add("postgresql", "Npgsql.NpgsqlConnection, Npgsql");
+            var empties = new[] {
+                "analysisservices",
+                "file",
+                "folder",
+                "internal",
+                "console",
+                "log",
+                "html",
+                "elasticsearch",
+                "solr",
+                "lucene",
+                "mail",
+                "web"
+            };
+            foreach (var empty in empties) {
+                _providerTypes.Add(empty, empty);
+            }
+        }
 
         /// <summary>
         /// A name (of your choosing) to identify the process.
@@ -141,7 +174,7 @@ namespace Transformalize.Configuration {
         /// <summary>
         /// A collection of [Connections](/connection)
         /// </summary>
-        [Cfg(required = true)]
+        [Cfg(required = false)]
         public List<TflConnection> Connections { get; set; }
 
         /// <summary>
@@ -202,9 +235,22 @@ namespace Transformalize.Configuration {
                 View = Name + "View";
             }
 
+            // calculated fields are not input
             foreach (var calculatedField in CalculatedFields) {
                 calculatedField.Input = false;
             }
+
+            // an output connection must exist
+            if (Connections.All(c => c.Name != "output"))
+                Connections.Add(new TflConnection() { Name = "output", Provider = "internal" });
+
+            // a none searchtype should exist
+            if(SearchTypes.All(st => st.Name != "none"))
+                SearchTypes.Add(new TflSearchType() { Name = "none", MultiValued = false, Store = false, Index = false });
+            
+            // a default searchtype should exist
+            if(SearchTypes.All(st => st.Name != "default"))
+                SearchTypes.Add(new TflSearchType() { Name = "default", MultiValued = false, Store = true, Index = true });
 
             try {
                 AdaptFieldsCreatedFromTransforms(new[] { "fromxml", "fromregex", "fromjson", "fromsplit" });
@@ -271,5 +317,34 @@ namespace Transformalize.Configuration {
                 AddProblem(string.Format("The '{0}' entity occurs more than once. Remove or alias one.", duplicate));
             }
         }
+
+        // Register Dependencies
+        public IKernel Register() {
+            return new StandardKernel(new NinjectBindings(this));
+        }
+
+        /// <summary>
+        /// Resolve Dependencies
+        /// </summary>
+        /// <param name="kernal"></param>
+        public void Resolve(IKernel kernal) {
+            foreach (var connection in Connections) {
+                var parameters = new IParameter[] {
+                new ConstructorArgument("element", connection)
+            };
+                connection.Connection = kernal.Get<AbstractConnection>(connection.Provider, parameters);
+                connection.Connection.TypeAndAssemblyName = _providerTypes[connection.Provider];
+
+                if (connection.Provider != "solr") 
+                    continue;
+
+                var solr = (SolrConnection)connection.Connection;
+                foreach (var coreUrl in Entities.Select(entity => solr.GetCoreUrl(Common.EntityOutputName(entity, Name)))) {
+                    solr.ReadOnlyOperationCores[coreUrl] = kernal.Get<ISolrReadOnlyOperations<Dictionary<string, object>>>(coreUrl);
+                    solr.OperationCores[coreUrl] = kernal.Get<ISolrOperations<Dictionary<string, object>>>(coreUrl);
+                }
+            }
+        }
+
     }
 }

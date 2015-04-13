@@ -27,6 +27,7 @@ using NUnit.Framework;
 using Transformalize.Configuration;
 using Transformalize.Configuration.Builders;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
+using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
 using Transformalize.Operations.Validate;
@@ -208,17 +209,10 @@ namespace Transformalize.Test {
 
         [Test]
         public void DomainWithBranches() {
-
-            var input = new RowsBuilder()
-                .Row("name", "Dale")
-                .Row("name", "Vlad")
-                .Row("name","Tara").ToOperation();
-
             var cfg = new ProcessBuilder("process")
                 .Connection("input").Provider(ProviderType.Internal)
                 .Connection("output").Provider(ProviderType.Internal)
                 .Entity("entity")
-                    .InputOperation(input)
                     .Field("name")
                     .CalculatedField("is-dale")
                         .Type("bool")
@@ -238,6 +232,11 @@ namespace Transformalize.Test {
                                         .Parameter("name")
 
                 .Process();
+
+            cfg.Entities[0].InputOperation = new RowsBuilder()
+                .Row("name", "Dale")
+                .Row("name", "Vlad")
+                .Row("name","Tara").ToOperation();
 
             var process = ProcessFactory.CreateSingle(cfg);
             var output = process.Execute().ToArray();

@@ -1,5 +1,7 @@
 namespace Transformalize.Configuration.Builders {
+
     public class ActionBuilder {
+
         private readonly IActionHolder _builder;
         private readonly TflAction _action;
 

@@ -1,11 +1,12 @@
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.IO;
 using Transformalize.Main;
 using Transformalize.Runner;
 
 namespace Transformalize.Configuration {
+
     public class ConfigurationFactory {
+
         private readonly Dictionary<string, string> _parameters;
         private readonly string _resource;
 

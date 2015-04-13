@@ -1,5 +1,8 @@
+using System.Collections.Generic;
 using System.Diagnostics.Tracing;
+using System.Linq;
 using System.Text;
+using Transformalize.Configuration;
 using Transformalize.Libs.SemanticLogging;
 using Transformalize.Operations.Transform;
 
@@ -53,6 +56,16 @@ namespace Transformalize.Logging {
             TflEventSource.Log.Info(sb.ToString(), process, entity);
             sb.Clear();
             StringBuilders.PutObject(sb);
+        }
+
+        public static void LogHost(List<TflProcess> processes) {
+            var host = System.Net.Dns.GetHostName();
+            var process = string.Empty;
+            if (processes != null && processes.Count > 0) {
+                process = string.Join(", ", processes.Select(p => p.Name));
+            }
+            var ip4 = System.Net.Dns.GetHostEntry(host).AddressList.Where(a => a.ToString().Length > 4 && a.ToString()[4] != ':').Select(a => a.ToString()).ToArray();
+            Info(process, string.Empty, "Host is {0} {1}", host, string.Join(", ", ip4.Any() ? ip4 : new[] { string.Empty }));
         }
 
         public static void Debug(string process, string entity, string message, params object[] args) {

@@ -8,8 +8,10 @@ namespace Transformalize.Configuration {
 
         [Cfg(required = false, unique = true)]
         public string Alias { get; set; }
+
         [Cfg(value = "input")]
         public string Connection { get; set; }
+
         [Cfg(value = false)]
         public bool Delete { get; set; }
 

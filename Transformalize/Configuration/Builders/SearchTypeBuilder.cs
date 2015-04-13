@@ -1,5 +1,7 @@
 namespace Transformalize.Configuration.Builders {
+
     public class SearchTypeBuilder {
+
         private readonly ProcessBuilder _processBuilder;
         private readonly TflSearchType _searchType;
 

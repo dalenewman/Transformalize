@@ -197,14 +197,19 @@ namespace Transformalize.Main.Providers.Solr {
             throw new NotImplementedException();
         }
 
+        // resolved at composition root
+        public Dictionary<string, ISolrReadOnlyOperations<Dictionary<string, object>>> ReadOnlyOperationCores { get; set; }
+        public Dictionary<string, ISolrOperations<Dictionary<string, object>>> OperationCores { get; set; } 
+
         public ISolrReadOnlyOperations<Dictionary<string, object>> GetReadonlyOperations(Process process, string outputName) {
             var coreUrl = GetCoreUrl(outputName);
-            return process.Kernal.Get<ISolrReadOnlyOperations<Dictionary<string, object>>>(coreUrl);
+            return ReadOnlyOperationCores[coreUrl];
         }
 
         public ISolrOperations<Dictionary<string, object>> GetOperations(Process process, string outputName) {
             var coreUrl = GetCoreUrl(outputName);
-            return process.Kernal.Get<ISolrOperations<Dictionary<string, object>>>(coreUrl);
+            return OperationCores[coreUrl];
         }
+
     }
 }

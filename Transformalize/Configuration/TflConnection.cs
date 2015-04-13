@@ -1,9 +1,12 @@
 using System;
+using System.Collections.Generic;
 using Transformalize.Libs.Cfg.Net;
 using Transformalize.Main;
+using Transformalize.Main.Providers;
 
 namespace Transformalize.Configuration {
     public class TflConnection : CfgNode {
+
         private readonly char[] _slash = { '/' };
         private string _provider;
 
@@ -52,7 +55,7 @@ namespace Transformalize.Configuration {
         [Cfg(value = 0)]
         public int Port { get; set; }
 
-        [Cfg(value = "sqlserver", domain = "sqlserver,mysql,postgresql,sqlce,analysisservices,file,folder,internal,console,log,mail,html,elasticsearch,solr,lucene,web", ignoreCase = true)]
+        [Cfg(value = "sqlserver", domain = "sqlserver,mysql,postgresql,sqlce,analysisservices,file,folder,internal,console,log,mail,html,elasticsearch,solr,lucene,web", toLower = true)]
         public string Provider {
             get { return _provider; }
             set { _provider = value == null ? string.Empty : value.ToLower(); }
@@ -76,6 +79,8 @@ namespace Transformalize.Configuration {
         public string WebMethod { get; set; }
         [Cfg(value = true)]
         public bool Check { get; set; }
+
+        public AbstractConnection Connection { get; set; }
 
         protected override void Validate() {
             const StringComparison ic = StringComparison.OrdinalIgnoreCase;

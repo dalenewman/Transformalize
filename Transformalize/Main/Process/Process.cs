@@ -50,14 +50,13 @@ namespace Transformalize.Main {
         private IParameters _parameters = new Parameters.Parameters();
         private bool _enabled = true;
         private Dictionary<string, AbstractConnection> _connections = new Dictionary<string, AbstractConnection>();
-        private bool _logStarted = false;
+        private bool _logStarted;
 
         // fields (for now)
         public bool Complete = false;
         public IEnumerable<Row> Results = Enumerable.Empty<Row>();
         public Fields CalculatedFields = new Fields();
         public Entities Entities = new Entities();
-        public IKernel Kernal;
         public Dictionary<string, Map> MapEndsWith = new Dictionary<string, Map>();
         public Dictionary<string, Map> MapEquals = new Dictionary<string, Map>();
         public Dictionary<string, Map> MapStartsWith = new Dictionary<string, Map>();
@@ -71,6 +70,7 @@ namespace Transformalize.Main {
         public Encoding TemplateContentType = Encoding.Raw;
         public Dictionary<string, Template> Templates = new Dictionary<string, Template>();
         public AbstractConnection OutputConnection;
+
         private PipelineThreading _pipelineThreading = PipelineThreading.MultiThreaded;
         private string _star = Common.DefaultValue;
         private string _view = Common.DefaultValue;

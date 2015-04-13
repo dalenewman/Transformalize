@@ -27,7 +27,6 @@ using Transformalize.Configuration;
 using Transformalize.Configuration.Builders;
 using Transformalize.Libs.Dapper;
 using Transformalize.Main;
-using Transformalize.Main.Providers;
 
 namespace Transformalize.Test {
     [TestFixture]
@@ -93,13 +92,14 @@ namespace Transformalize.Test {
                 .Process();
 
             var process = ProcessFactory.CreateSingle(element);
+
             process.ExecuteScaler();
             var expected = Common.CleanIdentifier(Path.GetFileNameWithoutExtension(file1));
-            var sqlServer = new ConnectionFactory(process).Create(element.GetDefaultOf<TflConnection>(c => {
+            var sqlServer = element.GetDefaultOf<TflConnection>(c => {
                 c.Name = "test";
                 c.Provider = "sqlserver";
                 c.Database = "TestOutput";
-            }));
+            }).Connection;
 
             var rows = sqlServer.GetConnection().Query(string.Format("SELECT f1, f2, f3 FROM {0}", expected)).ToArray();
             Assert.AreEqual(1, rows.Length);

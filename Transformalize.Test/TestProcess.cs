@@ -23,6 +23,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using Transformalize.Configuration;
 using Transformalize.Configuration.Builders;
 using Transformalize.Libs.Cfg.Net.fastJSON;
 using Transformalize.Libs.Newtonsoft.Json;
@@ -37,18 +38,12 @@ namespace Transformalize.Test {
     public class TestProcess {
 
         private static Process GetTestProcess(string outputProvider) {
-            return ProcessFactory.CreateSingle(new ProcessBuilder("Test")
+
+            var process = new ProcessBuilder("Test")
                 .StarEnabled(false)
                 .Connection("input").Provider("internal")
                 .Connection("output").Provider(outputProvider)
                 .Entity("OrderDetail")
-                    .InputOperation(
-                        new RowsBuilder()
-                            .Row("OrderDetailId", 1).Field("OrderId", 1).Field("ProductId", 1).Field("Quantity", 2).Field("Price", 2.0)
-                            .Row("OrderDetailId", 2).Field("OrderId", 1).Field("ProductId", 2).Field("Quantity", 2).Field("Price", 3.0)
-                            .Row("OrderDetailId", 3).Field("OrderId", 2).Field("ProductId", 2).Field("Quantity", 4).Field("Price", 3.0)
-                            .ToOperation()
-                    )
                     .Schema("dbo")
                     .Field("OrderDetailId").PrimaryKey()
                     .Field("OrderId")
@@ -56,56 +51,24 @@ namespace Transformalize.Test {
                     .Field("Price")
                     .Field("Quantity")
                 .Entity("Order")
-                    .InputOperation(
-                        new RowsBuilder()
-                            .Row("OrderId", 1).Field("CustomerId", 1)
-                            .Row("OrderId", 2).Field("CustomerId", 2)
-                            .ToOperation()
-                    )
                     .Schema("dbo")
                     .Field("OrderId").PrimaryKey()
                     .Field("CustomerId")
                 .Entity("Customer")
-                    .InputOperation(
-                        new RowsBuilder()
-                            .Row("CustomerId", 1).Field("FirstName", "Dale").Field("LastName", "Newman")
-                            .Row("CustomerId", 2).Field("FirstName", "Tara").Field("LastName", "Newman")
-                            .ToOperation()
-                    )
                     .Schema("dbo")
                     .Field("CustomerId").PrimaryKey()
                     .Field("FirstName")
                     .Field("LastName")
                 .Entity("Product")
-                    .InputOperation(
-                        new RowsBuilder()
-                            .Row("ProductId", 1).Field("Name", "Beans").Field("Description", "Really nice beans.")
-                            .Row("ProductId", 2).Field("Name", "Cheese").Field("Description", "Very sharp cheese.")
-                            .ToOperation()
-                    )
                     .Schema("dbo")
                     .Field("ProductId").PrimaryKey()
                     .Field("Name").Alias("Product")
                     .Field("Description")
                 .Entity("ProductCategory")
-                    .InputOperation(
-                        new RowsBuilder()
-                            .Row("ProductId", 1).Field("CategoryId", 1)
-                            .Row("ProductId", 1).Field("CategoryId", 2)
-                            .Row("ProductId", 2).Field("CategoryId", 3)
-                            .ToOperation()
-                    )
                     .Schema("dbo")
                     .Field("ProductId").PrimaryKey()
                     .Field("CategoryId").PrimaryKey()
                 .Entity("Category")
-                    .InputOperation(
-                        new RowsBuilder()
-                            .Row("CategoryId", 1).Field("Name", "Proteins")
-                            .Row("CategoryId", 2).Field("Name", "Miracle Fruits")
-                            .Row("CategoryId", 3).Field("Name", "Dairy")
-                            .ToOperation()
-                    )
                     .Schema("dbo")
                     .Field("CategoryId").PrimaryKey()
                     .Field("Name").Alias("Category")
@@ -124,7 +87,44 @@ namespace Transformalize.Test {
                 .Relationship()
                     .LeftEntity("ProductCategory").LeftField("CategoryId")
                     .RightEntity("Category").RightField("CategoryId")
-            .Process());
+            .Process();
+
+            process = new TflRoot(process).Processes[0];
+
+            process.Entities[0].InputOperation = new RowsBuilder()
+                .Row("OrderDetailId", 1).Field("OrderId", 1).Field("ProductId", 1).Field("Quantity", 2).Field("Price", 2.0)
+                .Row("OrderDetailId", 2).Field("OrderId", 1).Field("ProductId", 2).Field("Quantity", 2).Field("Price", 3.0)
+                .Row("OrderDetailId", 3).Field("OrderId", 2).Field("ProductId", 2).Field("Quantity", 4).Field("Price", 3.0)
+                .ToOperation();
+
+            process.Entities[1].InputOperation = new RowsBuilder()
+                .Row("OrderId", 1).Field("CustomerId", 1)
+                .Row("OrderId", 2).Field("CustomerId", 2)
+                .ToOperation();
+
+            process.Entities[2].InputOperation = new RowsBuilder()
+                .Row("CustomerId", 1).Field("FirstName", "Dale").Field("LastName", "Newman")
+                .Row("CustomerId", 2).Field("FirstName", "Tara").Field("LastName", "Newman")
+                .ToOperation();
+
+            process.Entities[3].InputOperation = new RowsBuilder()
+                .Row("ProductId", 1).Field("Name", "Beans").Field("Description", "Really nice beans.")
+                .Row("ProductId", 2).Field("Name", "Cheese").Field("Description", "Very sharp cheese.")
+                .ToOperation();
+
+            process.Entities[4].InputOperation = new RowsBuilder()
+                .Row("ProductId", 1).Field("CategoryId", 1)
+                .Row("ProductId", 1).Field("CategoryId", 2)
+                .Row("ProductId", 2).Field("CategoryId", 3)
+                .ToOperation();
+
+            process.Entities[5].InputOperation = new RowsBuilder()
+                .Row("CategoryId", 1).Field("Name", "Proteins")
+                .Row("CategoryId", 2).Field("Name", "Miracle Fruits")
+                .Row("CategoryId", 3).Field("Name", "Dairy")
+                .ToOperation();
+
+            return ProcessFactory.CreateSingle(process);
 
         }
 
@@ -280,7 +280,7 @@ namespace Transformalize.Test {
                 .Process();
 
             Assert.AreEqual("p1", process.Name);
-            Assert.AreEqual(1, process.Connections.Count);
+            Assert.AreEqual(2, process.Connections.Count, "There should be 2 connections because an internal output is automatically added.");
             Assert.AreEqual(500, process.Connections[0].BatchSize);
             Assert.AreEqual("input", process.Connections[0].Name);
             Assert.AreEqual("localhost", process.Connections[0].Server);

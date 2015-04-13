@@ -1,4 +1,5 @@
 namespace Transformalize.Configuration.Builders {
+
     public class RelationshipBuilder {
         private readonly ProcessBuilder _processBuilder;
         private readonly TflRelationship _relationship;

@@ -2,20 +2,34 @@
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using System.Linq;
-using Microsoft.AnalysisServices;
 using Transformalize.Configuration;
-using Transformalize.Extensions;
+using Transformalize.Libs.EnterpriseLibrary.Common.Configuration.Design;
 using Transformalize.Libs.Ninject;
 using Transformalize.Libs.NVelocity.App;
 using Transformalize.Libs.RazorEngine;
 using Transformalize.Logging;
 using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.File;
-using Transformalize.Main.Transform;
 
 namespace Transformalize.Main {
 
     public static class ProcessFactory {
+
+        private static Process[] Create(List<TflProcess> tflProcesses, Options options = null) {
+
+            TflLogger.LogHost(tflProcesses);
+
+            var processes = new List<Process>();
+            options = options ?? new Options();
+
+            foreach (var process in tflProcesses) {
+                var kernal = process.Register();
+                process.Resolve(kernal);
+                processes.Add(new ProcessReader(process, options).Read());
+            }
+
+            return processes.ToArray();
+        }
 
         public static Process[] Create(string resource, Options options = null, Dictionary<string, string> parameters = null) {
             var source = ConfigurationFactory.DetermineConfigurationSource(resource);
@@ -38,28 +52,6 @@ namespace Transformalize.Main {
         /// <returns></returns>
         public static Process[] Create(TflRoot element, Options options = null) {
             return Create(element.Processes, options);
-        }
-
-        private static Process[] Create(List<TflProcess> elements, Options options = null) {
-
-            var host = System.Net.Dns.GetHostName();
-            var process = string.Empty;
-            if (elements != null && elements.Count > 0) {
-                process = string.Join(", ", elements.Select(p => p.Name));
-            }
-            var ip4 = System.Net.Dns.GetHostEntry(host).AddressList.Where(a => a.ToString().Length > 4 && a.ToString()[4] != ':').Select(a => a.ToString()).ToArray();
-            TflLogger.Info(process, string.Empty, "Host is {0} {1}", host, string.Join(", ", ip4.Any() ? ip4 : new[] { string.Empty }));
-
-            var processes = new List<Process>();
-            if (options == null) {
-                options = new Options();
-            }
-
-            if (elements != null) {
-                processes.AddRange(elements.Select(element => new ProcessReader(element, ref options).Read()));
-            }
-
-            return processes.ToArray();
         }
 
         public static Process CreateSingle(TflProcess process, Options options = null) {
@@ -85,7 +77,7 @@ namespace Transformalize.Main {
             private readonly string _processName = string.Empty;
             private Process _process;
 
-            public ProcessReader(TflProcess process, ref Options options){
+            public ProcessReader(TflProcess process, Options options) {
                 _element = process;
                 _processName = process.Name;
                 _options = options;
@@ -107,8 +99,7 @@ namespace Transformalize.Main {
                     StarEnabled = _element.StarEnabled,
                     TimeZone = string.IsNullOrEmpty(_element.TimeZone) ? TimeZoneInfo.Local.Id : _element.TimeZone,
                     PipelineThreading = (PipelineThreading)Enum.Parse(typeof(PipelineThreading), _element.PipelineThreading, true),
-                    Parallel = _element.Parallel,
-                    Kernal = new StandardKernel(new NinjectBindings(_element))
+                    Parallel = _element.Parallel
                 };
 
                 // options mode overrides process node
@@ -118,17 +109,8 @@ namespace Transformalize.Main {
                 TflLogger.Info(_processName, string.Empty, "Mode is {0}", _process.Mode);
 
                 //shared across the process
-                var connectionFactory = new ConnectionFactory(_process);
-                _process.Connections = connectionFactory.Create(_element.Connections);
-                if (!_process.Connections.ContainsKey("output")) {
-                    TflLogger.Warn(_processName, string.Empty, "No output connection detected.  Defaulting to internal.");
-                    var output = _element.GetDefaultOf<TflConnection>();
-                    output.Name = "output";
-                    output.Provider = "internal";
-                    _process.OutputConnection = connectionFactory.Create(output);
-                } else {
-                    _process.OutputConnection = _process.Connections["output"];
-                }
+                _process.Connections = _element.Connections.ToDictionary(c => c.Name, c => c.Connection);
+                _process.OutputConnection = _process.Connections["output"];
 
                 //logs set after connections, because they may depend on them
                 LoadLogConfiguration(_element, ref _process);

@@ -1,3 +1,5 @@
+using Transformalize.Libs.Newtonsoft.Json;
+
 namespace Transformalize.Configuration.Builders
 {
     public class JoinBuilder {

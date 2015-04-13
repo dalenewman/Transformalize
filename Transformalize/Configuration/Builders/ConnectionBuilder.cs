@@ -1,5 +1,6 @@
 using System.IO;
 using Transformalize.Libs.FileHelpers.Enums;
+using Transformalize.Libs.Newtonsoft.Json;
 using Transformalize.Main.Providers;
 
 namespace Transformalize.Configuration.Builders {
@@ -7,7 +8,7 @@ namespace Transformalize.Configuration.Builders {
     public class ConnectionBuilder {
 
         private readonly ProcessBuilder _processBuilder;
-        private TflConnection _connection;
+        private readonly TflConnection _connection;
 
         public ConnectionBuilder(ProcessBuilder processBuilder, TflConnection connection) {
             _processBuilder = processBuilder;

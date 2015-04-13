@@ -24,7 +24,6 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Transformalize.Configuration;
-using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.NVelocity.App;
 using Transformalize.Libs.Rhino.Etl;
@@ -45,7 +44,6 @@ namespace Transformalize.Main {
         private const string COMMA = ",";
 
         private readonly Process _process;
-        private readonly Validator<TflTransform> _validator = ValidationFactory.CreateValidator<TflTransform>();
         private readonly Dictionary<string, Func<object, object>> _conversionMap = Common.GetObjectConversionMap();
         private readonly bool _isInitMode;
         private readonly string _entityName;
@@ -63,15 +61,6 @@ namespace Transformalize.Main {
 
             Func<Row, bool> shouldRun = row => true;
             var toTimeZone = string.IsNullOrEmpty(element.ToTimeZone) ? _process.TimeZone : element.ToTimeZone;
-            var results = _validator.Validate(element);
-            if (!results.IsValid) {
-                TflLogger.Error(_process.Name, _entityName, "There is a problem with the transform element for field {0}.", field.Alias);
-                foreach (var result in results) {
-                    TflLogger.Error(_process.Name, _entityName, result.Message);
-                }
-                throw new TransformalizeException(_process.Name, _entityName, "Transform validation failed. See error log.");
-            }
-
             var hasParameters = parameters.Count > 0;
             var inKey = hasParameters ? parameters[0].Name : field.Alias;
             var inType = hasParameters ? parameters[0].SimpleType : field.SimpleType;
@@ -108,7 +97,7 @@ namespace Transformalize.Main {
                     if (!hasParameters) {
                         throw new TransformalizeException(_process.Name, _entityName, "The copy transform requires a parameter.  It copies the parameter value into the calculated field.");
                     }
-                    if(parameters.Count > 1)
+                    if (parameters.Count > 1)
                         return new CopyMultipleOperation(outKey, parameters) { ShouldRun = shouldRun, EntityName = _entityName };
 
                     return new CopyOperation(inKey, outKey) { ShouldRun = shouldRun, EntityName = _entityName };
@@ -451,6 +440,15 @@ namespace Transformalize.Main {
                     ) { ShouldRun = shouldRun, EntityName = _entityName };
 
                 case "format":
+
+                    if (parameters.Count == 1 && element.IsShortHand) {
+                        return new FormatArrayOperation(
+                            parameters[0],
+                            outKey,
+                            element.Format
+                        ) { ShouldRun = shouldRun, EntityName = _entityName };
+                    }
+
                     return new FormatOperation(
                         outKey,
                         element.Format,
@@ -458,6 +456,14 @@ namespace Transformalize.Main {
                         ) { ShouldRun = shouldRun, EntityName = _entityName };
 
                 case "concat":
+
+                    if (parameters.Count == 1 && element.IsShortHand) {
+                        return new ConcatArrayOperation(
+                            parameters[0],
+                            outKey
+                        ) { ShouldRun = shouldRun, EntityName = _entityName };
+                    }
+
                     return new ConcatOperation(
                         outKey,
                         parameters
@@ -470,12 +476,21 @@ namespace Transformalize.Main {
                     ) { ShouldRun = shouldRun, EntityName = _entityName };
 
                 case "formatphone":
-                    return new FormatPhoneOperation(inKey, outKey) { ShouldRun = shouldRun, EntityName = _entityName};
+                    return new FormatPhoneOperation(inKey, outKey) { ShouldRun = shouldRun, EntityName = _entityName };
 
                 case "join":
                     if (element.Separator.Equals(Common.DefaultValue)) {
                         element.Separator = SPACE;
                     }
+
+                    if (parameters.Count == 1 && element.IsShortHand) {
+                        return new JoinArrayOperation(
+                            parameters[0],
+                            outKey,
+                            element.Separator
+                        ) { ShouldRun = shouldRun, EntityName = _entityName };
+                    }
+
                     return new JoinTransformOperation(
                         outKey,
                         element.Separator,

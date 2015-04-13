@@ -1,4 +1,5 @@
 using System.Globalization;
+using Transformalize.Libs.Newtonsoft.Json;
 
 namespace Transformalize.Configuration.Builders {
     public class FieldBuilder {

@@ -60,8 +60,10 @@ namespace Transformalize.Configuration {
         public string LowerUnit { get; set; }
         [Cfg(value = "")]
         public string Map { get; set; }
-        [Cfg(required = true)]
+
+        [Cfg(required = true, toLower = true)]
         public string Method { get; set; }
+
         [Cfg(value = "dynamic")]
         public string Model { get; set; }
         [Cfg(value = "")]

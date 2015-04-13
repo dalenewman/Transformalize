@@ -51,7 +51,7 @@
   <ItemGroup>
     <Reference Include="CfgNet, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Cfg-NET.0.0.4\lib\CfgNet.dll</HintPath>
+      <HintPath>..\packages\Cfg-NET.0.0.5\lib\CfgNet.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Orchard.Core, Version=1.8.1.0, Culture=neutral, processorArchitecture=MSIL">

@@ -1,3 +1,4 @@
+using Transformalize.Libs.Newtonsoft.Json;
 using Transformalize.Main;
 
 namespace Transformalize.Configuration.Builders {
@@ -7,24 +8,7 @@ namespace Transformalize.Configuration.Builders {
         private readonly TflProcess _process;
 
         public ProcessBuilder(string name) {
-            var root = new TflRoot(string.Format(@"<tfl><processes><add name='{0}'><connections><add name='input' provider='internal' /></connections></add></processes></tfl>", name), null);
-            _process = root.GetDefaultOf<TflProcess>(p=>p.Name = name);
-            _process.SearchTypes.Add(
-                _process.GetDefaultOf<TflSearchType>(st => {
-                    st.Name = "none";
-                    st.MultiValued = false;
-                    st.Store = false;
-                    st.Index = false;
-                })
-            );
-            _process.SearchTypes.Add(
-                _process.GetDefaultOf<TflSearchType>(st => {
-                    st.Name = "default";
-                    st.MultiValued = false;
-                    st.Store = true;
-                    st.Index = true;
-                })
-            );
+            _process = new TflProcess() { Name = name };
         }
 
         public ProcessBuilder(TflProcess element) {
@@ -32,7 +16,7 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public TflProcess Process() {
-            return _process;
+            return new TflRoot(_process).Processes[0];
         }
 
         public ConnectionBuilder Connection(string name) {
@@ -63,7 +47,7 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public EntityBuilder Entity(string name) {
-            var entity = _process.GetDefaultOf<TflEntity>(e=>e.Name = name);
+            var entity = _process.GetDefaultOf<TflEntity>(e => e.Name = name);
             _process.Entities.Add(entity);
             return new EntityBuilder(this, entity);
         }
@@ -97,13 +81,13 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public FieldBuilder CalculatedField(string name) {
-            var cf = _process.GetDefaultOf<TflField>(f=>f.Name = name);
+            var cf = _process.GetDefaultOf<TflField>(f => f.Name = name);
             _process.CalculatedFields.Add(cf);
             return new FieldBuilder(this, cf);
         }
 
         public FieldBuilder Field(string name) {
-            var calculatedField = _process.GetDefaultOf<TflField>(f=>f.Name = name);
+            var calculatedField = _process.GetDefaultOf<TflField>(f => f.Name = name);
             _process.CalculatedFields.Add(calculatedField);
             return new FieldBuilder(this, calculatedField);
         }

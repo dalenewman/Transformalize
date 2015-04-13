@@ -6,7 +6,6 @@ using Transformalize.Main;
 using Transformalize.Main.Parameters;
 
 namespace Transformalize.Operations.Transform {
-
     public class ConcatOperation : ShouldRunOperation {
 
         private readonly KeyValuePair<string, IParameter>[] _parameters;

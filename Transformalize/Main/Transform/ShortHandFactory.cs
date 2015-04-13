@@ -4,15 +4,15 @@ using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
-using Transformalize.Libs.Nest.DSL.Query.Functions;
 using Transformalize.Operations.Transform;
 
 namespace Transformalize.Main.Transform {
 
     public class ShortHandFactory {
+
         private readonly TflProcess _process;
         private readonly Dictionary<string, string> _methods;
-        private readonly Dictionary<string, Func<string, TflField, TflTransform>> _functions;
+        private readonly Dictionary<string, Func<string, TflField, TflTransform, TflTransform>> _functions;
         private readonly Dictionary<string, byte> _maps;
 
         public ShortHandFactory(TflProcess process) {
@@ -89,7 +89,7 @@ namespace Transformalize.Main.Transform {
             {"velocity","velocity"},
             {"web","web"},
         };
-            _functions = new Dictionary<string, Func<string, TflField, TflTransform>> {
+            _functions = new Dictionary<string, Func<string, TflField, TflTransform, TflTransform>> {
             {"replace", Replace},
             {"left", Left},
             {"right", Right},
@@ -113,19 +113,19 @@ namespace Transformalize.Main.Transform {
             {"slug", Slug},
             {"cyrtolat", CyrToLat},
             {"distinctwords", DistinctWords},
-            {"guid", (arg, root) =>root.GetDefaultOf<TflTransform>(t=>{t.Method = "guid"; t.IsShortHand = true;})},
-            {"now", (arg, root) =>root.GetDefaultOf<TflTransform>(t=>{t.Method = "now"; t.IsShortHand = true;})},
+            {"guid", (arg, root, last) =>root.GetDefaultOf<TflTransform>(t=>{t.Method = "guid"; t.IsShortHand = true;})},
+            {"now", (arg, root, last) =>root.GetDefaultOf<TflTransform>(t=>{t.Method = "now"; t.IsShortHand = true;})},
             {"remove", Remove},
-            {"trimstart", (arg, root) => root.GetDefaultOf<TflTransform>(t=>{t.Method = "trimstart"; t.TrimChars = arg; t.IsShortHand = true;})},
+            {"trimstart", (arg, root, last) => root.GetDefaultOf<TflTransform>(t=>{t.Method = "trimstart"; t.TrimChars = arg; t.IsShortHand = true;})},
             {"trimstartappend", TrimStartAppend},
-            {"trimend", (arg, root) => root.GetDefaultOf<TflTransform>(t=>{t.Method = "trimend"; t.TrimChars = arg; t.IsShortHand = true;})},
-            {"trim", (arg, root) => root.GetDefaultOf<TflTransform>(t=>{t.Method = "trim"; t.TrimChars = arg; t.IsShortHand = true;})},
+            {"trimend", (arg, root, last) => root.GetDefaultOf<TflTransform>(t=>{t.Method = "trimend"; t.TrimChars = arg; t.IsShortHand = true;})},
+            {"trim", (arg, root, last) => root.GetDefaultOf<TflTransform>(t=>{t.Method = "trim"; t.TrimChars = arg; t.IsShortHand = true;})},
             {"substring", Substring},
             {"map", Map},
             {"urlencode", UrlEncode},
             {"web", Web},
             {"add", Add},
-            {"fromjson", (arg,root) => NotImplemented("fromjson", root)},
+            {"fromjson", (arg,root, last) => NotImplemented("fromjson", root, last)},
             {"padleft", PadLeft},
             {"padright", PadRight},
             {"tostring", ToString},
@@ -138,9 +138,9 @@ namespace Transformalize.Main.Transform {
             {"totitlecase", ToTitleCase},
             {"timezone", TimeZone},
             {"tojson", ToJson},
-            {"fromxml", (arg,root) => NotImplemented("fromxml", root)},
-            {"fromregex", (arg,root) => NotImplemented("fromregex", root)},
-            {"fromsplit", (arg,root) => NotImplemented("fromsplit", root)},
+            {"fromxml", (arg,root, last) => NotImplemented("fromxml", root, last)},
+            {"fromregex", (arg,root, last) => NotImplemented("fromregex", root, last)},
+            {"fromsplit", (arg,root, last) => NotImplemented("fromsplit", root, last)},
             {"velocity", Velocity},
             {"tag", Tag},
             {"htmlencode", HtmlEncode},
@@ -149,7 +149,7 @@ namespace Transformalize.Main.Transform {
         };
         }
 
-        private TflTransform Append(string arg, TflField field) {
+        private static TflTransform Append(string arg, TflField field, TflTransform lastTransform) {
             Guard.Against(string.IsNullOrEmpty(arg), "The append method requires a single argument representing a field or a value that you want to append to this field.");
             return field.GetDefaultOf<TflTransform>(t => {
                 t.Method = "append";
@@ -158,14 +158,17 @@ namespace Transformalize.Main.Transform {
             });
         }
 
-        private TflTransform Copy(string arg, TflField field) {
+        private static TflTransform Copy(string arg, TflField field, TflTransform lastTransform) {
 
             Guard.Against(string.IsNullOrEmpty(arg), "The copy method requires one or more parameters representing fields that you want to copy to this field.  A single field produces a single value, multiple fields produces an array or values.");
+
             var element = field.GetDefaultOf<TflTransform>(t => {
                 t.Method = "copy";
                 t.IsShortHand = true;
             });
+
             var split = SplitComma(arg);
+
             if (split.Length == 1) {
                 element.Parameter = split[0];
                 return element;
@@ -190,7 +193,7 @@ namespace Transformalize.Main.Transform {
             return element;
         }
 
-        private TflTransform NotImplemented(string arg, TflField field) {
+        private static TflTransform NotImplemented(string arg, TflField field, TflTransform lastTransform) {
             throw new TransformalizeException(string.Empty, string.Empty, "The {0} method is not implemented as a shorthand transform.", arg);
         }
 
@@ -199,22 +202,38 @@ namespace Transformalize.Main.Transform {
         /// </summary>
         /// <param name="f">the field</param>
         public void ExpandShortHandTransforms(TflField f) {
-            if (f.T == string.Empty)
-                return;
-            var list = new List<TflTransform>(Common.Split(f.T, ").").Where(t => !string.IsNullOrEmpty(t)).Select(t => Interpret(t, f)));
+
+            var list = new List<TflTransform>();
+            var lastTransform = new TflTransform();
+            var methods = f.T == string.Empty ? new String[0] : Common.Split(f.T, ").").Where(t => !string.IsNullOrEmpty(t));
+
+            foreach (var method in methods) {
+                // translate previous copies to parameters for calculated columns
+                if (!f.Input && lastTransform.Method == "copy" && method != "copy") {
+                    var tempParameter = lastTransform.Parameter;
+                    var tempParameters = lastTransform.Parameters;
+                    lastTransform = Interpret(method, f, lastTransform);
+                    lastTransform.Parameter = tempParameter;
+                    lastTransform.Parameters = tempParameters;
+                    list.Add(lastTransform);
+                } else {
+                    lastTransform = Interpret(method, f, lastTransform);
+                    list.Add(lastTransform);
+                }
+            }
 
             foreach (var transform in f.Transforms) {
-                // some transforms are shorthand transforms that need expanding
-                if (transform.Method.Equals("shorthand", StringComparison.OrdinalIgnoreCase)) {
-                    list.AddRange(Common.Split(transform.T, ").").Where(t => !string.IsNullOrEmpty(t)).Select(t => Interpret(t, f)));
+                // expand shorthand transforms
+                if (transform.Method.Equals("t") || transform.Method.Equals("shorthand")) {
+                    var tempField = new TflField { T = transform.T };
+                    ExpandShortHandTransforms(tempField);
+                    list.AddRange(tempField.Transforms);
+                } else {
+                    list.Add(transform);
                 }
-                // some transforms define new fields that may have t attributes that need expanding as well
-                foreach (var field in transform.Fields) {
-                    ExpandShortHandTransforms(field);
-                }
-                list.Add(transform);
             }
-            f.Transforms = list.Where(t => !t.Method.Equals("shorthand", StringComparison.OrdinalIgnoreCase)).ToList();
+
+            f.Transforms = list;
         }
 
         /// <summary>
@@ -234,12 +253,12 @@ namespace Transformalize.Main.Transform {
             }
         }
 
-        private TflTransform ToJson(string arg, TflField field) {
-            var element = Parameters("tojson", arg, 0, field);
+        private TflTransform ToJson(string arg, TflField field, TflTransform lastTransform) {
+            var element = Parameters("tojson", arg, 0, field, lastTransform);
             return element;
         }
 
-        private TflTransform Template(string arg, TflField field) {
+        private TflTransform Template(string arg, TflField field, TflTransform lastTransform) {
             var split = SplitComma(arg);
 
             Guard.Against(split.Length < 2, "The template/razor method requires at least two paramters: a template, and a parameter.");
@@ -263,7 +282,7 @@ namespace Transformalize.Main.Transform {
             return element;
         }
 
-        private TflTransform Velocity(string arg, TflField field) {
+        private TflTransform Velocity(string arg, TflField field, TflTransform lastTransform) {
             var split = SplitComma(arg);
 
             Guard.Against(split.Length < 2, "The velocity method requires at least two paramters: a template, and a parameter.");
@@ -288,7 +307,7 @@ namespace Transformalize.Main.Transform {
             return element;
         }
 
-        private TflTransform Script(string method, string arg, TflField field) {
+        private TflTransform Script(string method, string arg, TflField field, TflTransform lastTransform) {
             var split = SplitComma(arg);
 
             Guard.Against(split.Length < 2, "The {0} method requires at least two paramters: a script, and a parameter.", method);
@@ -312,23 +331,23 @@ namespace Transformalize.Main.Transform {
             return element;
         }
 
-        private TflTransform CSharp(string arg, TflField field) {
-            return Script("csharp", arg, field);
+        private TflTransform CSharp(string arg, TflField field, TflTransform lastTransform) {
+            return Script("csharp", arg, field, lastTransform);
         }
 
-        private TflTransform JavaScript(string arg, TflField field) {
-            return Script("javascript", arg, field);
+        private TflTransform JavaScript(string arg, TflField field, TflTransform lastTransform) {
+            return Script("javascript", arg, field, lastTransform);
         }
 
-        private TflTransform PadLeft(string arg, TflField field) {
-            return Pad("padleft", arg, field);
+        private TflTransform PadLeft(string arg, TflField field, TflTransform lastTransform) {
+            return Pad("padleft", arg, field, lastTransform);
         }
 
-        private TflTransform PadRight(string arg, TflField field) {
-            return Pad("padright", arg, field);
+        private TflTransform PadRight(string arg, TflField field, TflTransform lastTransform) {
+            return Pad("padright", arg, field, lastTransform);
         }
 
-        private TflTransform Pad(string method, string arg, TflField field) {
+        private static TflTransform Pad(string method, string arg, TflField field, TflTransform lastTransform) {
 
             Guard.Against(arg.Equals(string.Empty), "The {0} method requires two pararmeters: the total width, and the padding character(s).", method);
 
@@ -356,7 +375,7 @@ namespace Transformalize.Main.Transform {
             return element;
         }
 
-        private TflTransform Web(string arg, TflField field) {
+        private static TflTransform Web(string arg, TflField field, TflTransform lastTransform) {
             var split = SplitComma(arg);
             Guard.Against(split.Length > 2, "The web method takes two optional parameters: a parameter referencing a field, and an integer representing sleep ms in between web requests.  You have {0} parameter{1} in '{2}'.", split.Length, split.Length.Plural(), arg);
 
@@ -376,7 +395,7 @@ namespace Transformalize.Main.Transform {
             return element;
         }
 
-        private TflTransform Map(string arg, TflField field) {
+        private TflTransform Map(string arg, TflField field, TflTransform lastTransform) {
 
             var split = SplitComma(arg);
 
@@ -386,7 +405,7 @@ namespace Transformalize.Main.Transform {
                 t.Method = "map";
                 t.IsShortHand = true;
             });
-            
+
             if (_maps.ContainsKey(split[0])) {
                 element.Map = split[0];
                 Guard.Against(split.Length > 1, "If you reference a map name in a map method, that's the only parameter you can have.  It will map what is in the current field.");
@@ -398,7 +417,7 @@ namespace Transformalize.Main.Transform {
             return element;
         }
 
-        private TflTransform TrimStartAppend(string arg, TflField field) {
+        private TflTransform TrimStartAppend(string arg, TflField field, TflTransform lastTransform) {
             var split = SplitComma(arg);
             Guard.Against(split.Length < 1, "The trimstartappend method requires at least one parameter indicating the trim characters.");
 
@@ -419,7 +438,7 @@ namespace Transformalize.Main.Transform {
             return element;
         }
 
-        private TflTransform Substring(string arg, TflField field) {
+        private TflTransform Substring(string arg, TflField field, TflTransform lastTransform) {
             var split = SplitComma(arg);
             Guard.Against(split.Length < 1, "The substring method requires a start index.");
 
@@ -437,7 +456,7 @@ namespace Transformalize.Main.Transform {
             throw new TransformalizeException(string.Empty, string.Empty, "The substring method requires two integers indicating start index and length. '{0}' doesn't represent two integers.", arg);
         }
 
-        private TflTransform Remove(string arg, TflField field) {
+        private TflTransform Remove(string arg, TflField field, TflTransform lastTransform) {
             var split = SplitComma(arg);
             Guard.Against(split.Length < 2, "The remove method requires start index and length. You have {0} parameter{1}.", split.Length, split.Length.Plural());
 
@@ -455,7 +474,7 @@ namespace Transformalize.Main.Transform {
             throw new TransformalizeException(string.Empty, string.Empty, "The remove method requires two integer parameters indicating start index and length. '{0}' doesn't represent two integers.", arg);
         }
 
-        private TflTransform Slug(string arg, TflField field) {
+        private TflTransform Slug(string arg, TflField field, TflTransform lastTransform) {
             var element = field.GetDefaultOf<TflTransform>(t => {
                 t.Method = "slug";
                 t.IsShortHand = true;
@@ -475,7 +494,7 @@ namespace Transformalize.Main.Transform {
             return element;
         }
 
-        private TflTransform InsertInterval(string arg, TflField field) {
+        private TflTransform InsertInterval(string arg, TflField field, TflTransform lastTransform) {
             //interval, value
             var split = SplitComma(arg);
 
@@ -497,7 +516,7 @@ namespace Transformalize.Main.Transform {
             return element;
         }
 
-        private TflTransform Insert(string arg, TflField field) {
+        private TflTransform Insert(string arg, TflField field, TflTransform lastTransform) {
             var split = SplitComma(arg);
             Guard.Against(split.Length != 2, "The insert method requires two parameters; the start index, and the value (or field reference) you'd like to insert.  '{0}' has {1} parameter{2}.", arg, split.Length, split.Length.Plural());
 
@@ -517,31 +536,27 @@ namespace Transformalize.Main.Transform {
             return element;
         }
 
-        private TflTransform Join(string arg, TflField field) {
-            var split = SplitComma(arg);
-            Guard.Against(split.Length == 0, "The join method requires a separator, and then a * (for all fields) or a comma delimited list of parameters that reference fields.");
+        private TflTransform Join(string arg, TflField field, TflTransform lastTransform) {
 
-            var element = field.GetDefaultOf<TflTransform>(t => {
+            if (string.IsNullOrEmpty(arg)) {
+                return field.GetDefaultOf<TflTransform>(t => {
+                    t.Method = "concat";
+                    t.IsShortHand = true;
+                });
+            }
+
+            var split = SplitComma(arg);
+            Guard.Against(split.Length != 1, "The join method requires one parameter; the separator. To get fields for join, use the copy() method.");
+
+            return field.GetDefaultOf<TflTransform>(t => {
                 t.Method = "join";
                 t.Separator = split[0];
                 t.IsShortHand = true;
             });
 
-            if (split.Length == 2) {
-                element.Parameter = split[1];
-                return element;
-            }
-
-            var skipped = split.Skip(1).ToArray();
-            for (var i = 0; i < skipped.Length; i++) {
-                var p = skipped[i];
-                element.Parameters.Add(field.GetDefaultOf<TflParameter>(x => x.Field = p));
-            }
-
-            return element;
         }
 
-        private TflTransform Add(string arg, TflField field) {
+        private TflTransform Add(string arg, TflField field, TflTransform lastTransform) {
             var split = SplitComma(arg);
             Guard.Against(split.Length == 0, "The add method requires a * parameter, or a comma delimited list of parameters that reference numeric fields.");
 
@@ -569,7 +584,7 @@ namespace Transformalize.Main.Transform {
             return element;
         }
 
-        private TflTransform Parameters(string method, string arg, int skip, TflField f) {
+        private TflTransform Parameters(string method, string arg, int skip, TflField f, TflTransform lastTransform) {
             var split = SplitComma(arg, skip);
             Guard.Against(split.Length == 0, "The {0} method requires parameters.", method);
 
@@ -611,11 +626,11 @@ namespace Transformalize.Main.Transform {
             return element;
         }
 
-        private TflTransform Concat(string arg, TflField field) {
-            return Parameters("concat", arg, 0, field);
+        private static TflTransform Concat(string arg, TflField field, TflTransform lastTransform) {
+            return Parameterless("concat", "concatenated", arg, field, lastTransform);
         }
 
-        public TflTransform Interpret(string expression, TflField field) {
+        public TflTransform Interpret(string expression, TflField field, TflTransform lastTransform = null) {
 
             string method;
             var arg = string.Empty;
@@ -630,10 +645,10 @@ namespace Transformalize.Main.Transform {
             }
 
             Guard.Against(!_methods.ContainsKey(method), "Sorry. Your expression '{0}' references an undefined method: '{1}'.", expression, method);
-            return _functions[_methods[method]](arg, field);
+            return _functions[_methods[method]](arg, field, lastTransform);
         }
 
-        private TflTransform RegexReplace(string arg, TflField field) {
+        private TflTransform RegexReplace(string arg, TflField field, TflTransform lastTransform) {
 
             Guard.Against(arg.Equals(string.Empty), "The regexreplace requires two parameters: a regular expression pattern, and replacement text.  You didn't pass in any parameters.");
 
@@ -657,7 +672,7 @@ namespace Transformalize.Main.Transform {
             return element;
         }
 
-        private TflTransform Replace(string arg, TflField field) {
+        private TflTransform Replace(string arg, TflField field, TflTransform lastTransform) {
             var split = SplitComma(arg);
             Guard.Against(split.Length < 2, "The replace method requires two parameters: an old value, and a new value. Your arguments '{0}' resolve {1} parameter{2}.", arg, split.Length, split.Length.Plural());
             var oldValue = split[0];
@@ -671,7 +686,7 @@ namespace Transformalize.Main.Transform {
             });
         }
 
-        private TflTransform Convert(string arg, TflField field) {
+        private TflTransform Convert(string arg, TflField field, TflTransform lastTransform) {
             var split = SplitComma(arg);
 
             var element = field.GetDefaultOf<TflTransform>(t => {
@@ -695,14 +710,14 @@ namespace Transformalize.Main.Transform {
             return element;
         }
 
-        private TflTransform ToString(string arg, TflField field) {
-            var element = Convert(arg, field);
+        private TflTransform ToString(string arg, TflField field, TflTransform lastTransform) {
+            var element = Convert(arg, field, lastTransform);
             element.Method = "tostring";
             element.To = "string";
             return element;
         }
 
-        private TflTransform If(string arg, TflField field) {
+        private TflTransform If(string arg, TflField field, TflTransform lastTransform) {
             var linked = new LinkedList<string>(SplitComma(arg));
 
             Guard.Against(linked.Count < 2, "The if method requires at least 2 arguments. Your argument '{0}' has {1}.", arg, linked.Count);
@@ -740,7 +755,7 @@ namespace Transformalize.Main.Transform {
             return element;
         }
 
-        private TflTransform Right(string arg, TflField field) {
+        private TflTransform Right(string arg, TflField field, TflTransform lastTransform) {
             int length;
             Guard.Against(!int.TryParse(arg, out length), "The right method requires a single integer representing the length, or how many right-most characters you want. You passed in '{0}'.", arg);
             return field.GetDefaultOf<TflTransform>(t => {
@@ -750,7 +765,7 @@ namespace Transformalize.Main.Transform {
             });
         }
 
-        private TflTransform Left(string arg, TflField field) {
+        private TflTransform Left(string arg, TflField field, TflTransform lastTransform) {
             int length;
             Guard.Against(!int.TryParse(arg, out length), "The left method requires a single integer representing the length, or how many left-most characters you want. You passed in '{0}'.", arg);
             return field.GetDefaultOf<TflTransform>(t => {
@@ -760,62 +775,62 @@ namespace Transformalize.Main.Transform {
             });
         }
 
-        private TflTransform GetHashCode(string arg, TflField field) {
-            return Parameterless("hashcode", "integer hash code", arg, field);
+        private TflTransform GetHashCode(string arg, TflField field, TflTransform lastTransform) {
+            return Parameterless("hashcode", "integer hash code", arg, field, lastTransform);
         }
 
-        private TflTransform Compress(string arg, TflField field) {
-            return Parameterless("compress", "compressed", arg, field);
+        private TflTransform Compress(string arg, TflField field, TflTransform lastTransform) {
+            return Parameterless("compress", "compressed", arg, field, lastTransform);
         }
 
-        private TflTransform UrlEncode(string arg, TflField field) {
-            return Parameterless("urlencode", "url-encoded", arg, field);
+        private TflTransform UrlEncode(string arg, TflField field, TflTransform lastTransform) {
+            return Parameterless("urlencode", "url-encoded", arg, field, lastTransform);
         }
 
-        private TflTransform HtmlEncode(string arg, TflField field) {
-            return Parameterless("htmlencode", "html-encoded", arg, field);
+        private TflTransform HtmlEncode(string arg, TflField field, TflTransform lastTransform) {
+            return Parameterless("htmlencode", "html-encoded", arg, field, lastTransform);
         }
 
-        private TflTransform Collapse(string arg, TflField field) {
-            return Parameterless("collapse", "white-space collapsed", arg, field);
+        private TflTransform Collapse(string arg, TflField field, TflTransform lastTransform) {
+            return Parameterless("collapse", "white-space collapsed", arg, field, lastTransform);
         }
 
-        private TflTransform IsDaylightSavings(string arg, TflField field) {
-            return Parameterless("isdaylightsavings", "boolean indicating whether or not it is daylight savings time", arg, field);
+        private TflTransform IsDaylightSavings(string arg, TflField field, TflTransform lastTransform) {
+            return Parameterless("isdaylightsavings", "boolean indicating whether or not it is daylight savings time", arg, field, lastTransform);
         }
 
-        private TflTransform StripHtml(string arg, TflField field) {
-            return Parameterless("striphtml", "html-less", arg, field);
+        private TflTransform StripHtml(string arg, TflField field, TflTransform lastTransform) {
+            return Parameterless("striphtml", "html-less", arg, field, lastTransform);
         }
 
-        private TflTransform Transliterate(string arg, TflField field) {
-            return Parameterless("transliterate", "transliterated", arg, field);
+        private TflTransform Transliterate(string arg, TflField field, TflTransform lastTransform) {
+            return Parameterless("transliterate", "transliterated", arg, field, lastTransform);
         }
 
-        private TflTransform ToUpper(string arg, TflField field) {
-            return Parameterless("toupper", "upper-cased", arg, field);
+        private TflTransform ToUpper(string arg, TflField field, TflTransform lastTransform) {
+            return Parameterless("toupper", "upper-cased", arg, field, lastTransform);
         }
 
-        private TflTransform ToTitleCase(string arg, TflField field) {
-            return Parameterless("totitlecase", "title-cased", arg, field);
+        private TflTransform ToTitleCase(string arg, TflField field, TflTransform lastTransform) {
+            return Parameterless("totitlecase", "title-cased", arg, field, lastTransform);
         }
 
-        private TflTransform ToLower(string arg, TflField field) {
-            return Parameterless("tolower", "lower-cased", arg, field);
+        private TflTransform ToLower(string arg, TflField field, TflTransform lastTransform) {
+            return Parameterless("tolower", "lower-cased", arg, field, lastTransform);
         }
 
-        private TflTransform FormatPhone(string arg, TflField field) {
-            return Parameterless("formatphone", "phone number formatted", arg, field);
+        private TflTransform FormatPhone(string arg, TflField field, TflTransform lastTransform) {
+            return Parameterless("formatphone", "phone number formatted", arg, field, lastTransform);
         }
 
-        private TflTransform Parameterless(string method, string result, string arg, TflField field) {
-            Guard.Against(!string.IsNullOrEmpty(arg), "The {0} method does not take parameters.  It returns a {1} version of whatever is currently in the field.", method, result);
+        private static TflTransform Parameterless(string method, string result, string arg, TflField field, TflTransform lastTransform) {
+            Guard.Against(!string.IsNullOrEmpty(arg), "{0}() does not take parameters.  It returns a {1} version of the value or values in the field. To get data into the field, proceed {0}() with copy(f1) or copy(f1,f2,etc) short-hand method.", method, result);
             return field.GetDefaultOf<TflTransform>(t => {
                 t.Method = method;
                 t.IsShortHand = true;
             });
         }
-        private TflTransform CyrToLat(string arg, TflField field) {
+        private static TflTransform CyrToLat(string arg, TflField field, TflTransform lastTransform) {
             Guard.Against(!string.IsNullOrEmpty(arg), "The cyrtolat method does not take parameters.  It will return a latin version of whatever is currently in the field.");
             return field.GetDefaultOf<TflTransform>(t => {
                 t.Method = "cyrtolat";
@@ -823,7 +838,7 @@ namespace Transformalize.Main.Transform {
             });
         }
 
-        private TflTransform DistinctWords(string arg, TflField field) {
+        private static TflTransform DistinctWords(string arg, TflField field, TflTransform lastTransform) {
 
             var split = SplitComma(arg);
 
@@ -835,7 +850,8 @@ namespace Transformalize.Main.Transform {
                 t.IsShortHand = true;
             });
         }
-        private TflTransform Decompress(string arg, TflField field) {
+
+        private static TflTransform Decompress(string arg, TflField field, TflTransform lastTransform) {
             Guard.Against(!string.IsNullOrEmpty(arg), "The decompress method does not take parameters.  It will return a decompressed version of whatever is currently in the field.");
             return field.GetDefaultOf<TflTransform>(t => {
                 t.Method = "decompress";
@@ -843,11 +859,11 @@ namespace Transformalize.Main.Transform {
             });
         }
 
-        private string[] SplitComma(string arg, int skip = 0) {
+        private static string[] SplitComma(string arg, int skip = 0) {
             return Common.Split(arg, ",", skip);
         }
 
-        private TflTransform DatePart(string arg, TflField field) {
+        private static TflTransform DatePart(string arg, TflField field, TflTransform lastTransform) {
 
             var element = field.GetDefaultOf<TflTransform>(t => {
                 t.Method = "datepart";
@@ -865,7 +881,7 @@ namespace Transformalize.Main.Transform {
             return element;
         }
 
-        private TflTransform Elipse(string arg, TflField field) {
+        private static TflTransform Elipse(string arg, TflField field, TflTransform lastTransform) {
             var element = field.GetDefaultOf<TflTransform>(t => {
                 t.Method = "elipse";
                 t.IsShortHand = true;
@@ -884,34 +900,23 @@ namespace Transformalize.Main.Transform {
             return element;
         }
 
-        private TflTransform Format(string arg, TflField field) {
+        private TflTransform Format(string arg, TflField field, TflTransform lastTransform) {
+
             var split = SplitComma(arg);
+            Guard.Against(split.Length != 1, "format() takes one parameter: the format with {{index}} style place-holders in it. To get data for format, use the copy() method.");
+
             Guard.Against(!split[0].Contains("{"), "A format place-holder is required.  There are not left brackets {.");
             Guard.Against(!split[0].Contains("}"), "A format place-holder is required.  There are not right brackets }.");
-            Guard.Against(split.Length < 1, "The format method requires at least one parameter; the format with {{0}} style place-holders in it.  For each place-holder, add additional parameters that reference fields.  If no fields are referenced, the first parameter is assumed to be the field this transform is nested in.");
-            var element = field.GetDefaultOf<TflTransform>(t => {
+
+            return field.GetDefaultOf<TflTransform>(t => {
                 t.Method = "format";
                 t.Format = split[0];
                 t.IsShortHand = true;
             });
 
-            if (split.Length <= 1)
-                return element;
-
-            if (split.Length == 2) {
-                element.Parameter = split[1];
-                return element;
-            }
-
-            var skipped = split.Skip(1).ToArray();
-            for (int i = 0; i < skipped.Length; i++) {
-                var s = skipped[i];
-                element.Parameters.Add(field.GetDefaultOf<TflParameter>(p => p.Field = s));
-            }
-            return element;
         }
 
-        private TflTransform TimeZone(string arg, TflField field) {
+        private TflTransform TimeZone(string arg, TflField field, TflTransform lastTransform) {
             var split = SplitComma(arg);
 
             Guard.Against(split.Length < 2, "The timezone method requires at least two parameters: the from-time-zone, and the to-time-zone.");
@@ -940,10 +945,10 @@ namespace Transformalize.Main.Transform {
             return element;
         }
 
-        private TflTransform Tag(string arg, TflField field) {
+        private TflTransform Tag(string arg, TflField field, TflTransform lastTransform) {
             var split = SplitComma(arg).ToList();
             Guard.Against(split.Count < 2, "The tag method requires at least 2 parameters: the tag (aka element name), and a parameter (which becomes an attribute of the tag/element).  With {0}, You passed in {1} parameter{2}.", arg, split.Count, split.Count.Plural());
-            var element = Parameters("tag", arg, 1, field);
+            var element = Parameters("tag", arg, 1, field, lastTransform);
             element.Tag = split[0];
             return element;
         }

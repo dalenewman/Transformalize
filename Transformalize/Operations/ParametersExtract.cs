@@ -27,7 +27,9 @@ using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
 namespace Transformalize.Operations {
+
     public class ParametersExtract : InputCommandOperation {
+
         private readonly Process _process;
         private int[] _batchIds;
         private readonly string[] _keys;

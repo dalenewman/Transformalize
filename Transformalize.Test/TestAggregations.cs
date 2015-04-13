@@ -51,11 +51,12 @@ namespace Transformalize.Test {
                 .Connection("input").Provider(ProviderType.Internal)
                 .Connection("output").Provider(ProviderType.Internal)
                 .Entity("entity")
-                    .InputOperation(_testInput)
                     .Group() //group means you need to aggregate all output fields
                     .Field("order").Aggregate("group").Int32().PrimaryKey()
                     .Field("count").Input(false).Aggregate("count").Int32()
                 .Process();
+
+            cfg.Entities.First().InputOperation = _testInput;
 
             var output = ProcessFactory.CreateSingle(cfg).Execute().ToArray();
 
@@ -77,7 +78,6 @@ namespace Transformalize.Test {
                 .Connection("input").Provider(ProviderType.Internal)
                 .Connection("output").Provider(ProviderType.Internal)
                 .Entity("entity")
-                    .InputOperation(_testInput)
                     .Group() //group means you need to aggregate all output fields
                     .Field("order").Aggregate("group").Int32().PrimaryKey()
                     .Field("year").Aggregate("max")
@@ -86,6 +86,8 @@ namespace Transformalize.Test {
                     .Field("guid").Aggregate("max").Type("guid")
                     .Field("bytes").Aggregate("max").Type("byte[]")
                 .Process();
+
+            cfg.Entities.First().InputOperation = _testInput;
 
             var output = ProcessFactory.CreateSingle(cfg).Execute().ToArray();
 
@@ -115,11 +117,12 @@ namespace Transformalize.Test {
                 .Connection("input").Provider(ProviderType.Internal)
                 .Connection("output").Provider(ProviderType.Internal)
                 .Entity("entity")
-                    .InputOperation(_testInput)
                     .Group() //group means you need to aggregate all output fields
                     .Field("order").Aggregate("group").Int32().PrimaryKey()
                     .Field("year").Aggregate("maxlength")
                 .Process();
+
+            cfg.Entities.First().InputOperation = _testInput;
 
             var output = ProcessFactory.CreateSingle(cfg).Execute().ToArray();
 
@@ -141,11 +144,12 @@ namespace Transformalize.Test {
                 .Connection("input").Provider(ProviderType.Internal)
                 .Connection("output").Provider(ProviderType.Internal)
                 .Entity("entity")
-                    .InputOperation(_testInput)
                     .Group() //group means you need to aggregate all output fields
                     .Field("order").Aggregate("group").Int32().PrimaryKey()
                     .Field("year").Aggregate("minlength")
                 .Process();
+
+            cfg.Entities.First().InputOperation = _testInput;
 
             var output = ProcessFactory.CreateSingle(cfg).Execute().ToArray();
 
@@ -167,12 +171,13 @@ namespace Transformalize.Test {
                 .Connection("input").Provider(ProviderType.Internal)
                 .Connection("output").Provider(ProviderType.Internal)
                 .Entity("entity")
-                    .InputOperation(_testInput)
                     .Group() //group means you need to aggregate all output fields
                     .Field("order").Aggregate("group").Int32().PrimaryKey()
                     .Field("int32").Aggregate("sum").Int32()
                     .Field("int64").Aggregate("sum").Int64()
                 .Process();
+
+            cfg.Entities.First().InputOperation = _testInput;
 
             var output = ProcessFactory.CreateSingle(cfg).Execute().ToArray();
 
@@ -189,7 +194,6 @@ namespace Transformalize.Test {
             Assert.AreEqual(4000, r2["int64"]);
         }
 
-
         [Test]
         public void TestMin() {
 
@@ -197,7 +201,6 @@ namespace Transformalize.Test {
                 .Connection("input").Provider(ProviderType.Internal)
                 .Connection("output").Provider(ProviderType.Internal)
                 .Entity("entity")
-                    .InputOperation(_testInput)
                     .Group() //group means you need to aggregate all output fields
                     .Field("order").Aggregate("group").Int32().PrimaryKey()
                     .Field("year").Aggregate("min")
@@ -206,6 +209,8 @@ namespace Transformalize.Test {
                     .Field("guid").Aggregate("min").Type("guid")
                     .Field("bytes").Aggregate("min").Type("byte[]")
                 .Process();
+
+            cfg.Entities.First().InputOperation = _testInput;
 
             var output = ProcessFactory.CreateSingle(cfg).Execute().ToArray();
 
@@ -235,11 +240,12 @@ namespace Transformalize.Test {
                 .Connection("input").Provider(ProviderType.Internal)
                 .Connection("output").Provider(ProviderType.Internal)
                 .Entity("entity")
-                    .InputOperation(_testInput)
                     .Group() //group means you need to aggregate all output fields
                     .Field("order").Aggregate("group").Int32().PrimaryKey()
                     .Field("year").Aggregate("last")
                 .Process();
+
+            cfg.Entities.First().InputOperation = _testInput;
 
             var output = ProcessFactory.CreateSingle(cfg).Execute().ToArray();
 
@@ -261,11 +267,12 @@ namespace Transformalize.Test {
                 .Connection("input").Provider(ProviderType.Internal)
                 .Connection("output").Provider(ProviderType.Internal)
                 .Entity("entity")
-                    .InputOperation(_testInput)
                     .Group() //group means you need to aggregate all output fields
                     .Field("order").Aggregate("group").Int32().PrimaryKey()
                     .Field("year").Aggregate("first")
                 .Process();
+
+            cfg.Entities.First().InputOperation = _testInput;
 
             var output = ProcessFactory.CreateSingle(cfg).Execute().ToArray();
 
@@ -287,11 +294,12 @@ namespace Transformalize.Test {
                 .Connection("input").Provider(ProviderType.Internal)
                 .Connection("output").Provider(ProviderType.Internal)
                 .Entity("entity")
-                    .InputOperation(_testInput)
                     .Group() //group means you need to aggregate all output fields
                     .Field("order").Aggregate("group").Int32().PrimaryKey()
                     .Field("year").Aggregate("count").Distinct().Int32().Alias("years")
                 .Process();
+
+            cfg.Entities.First().InputOperation = _testInput;
 
             var output = ProcessFactory.CreateSingle(cfg).Execute().ToArray();
 
@@ -313,11 +321,12 @@ namespace Transformalize.Test {
                 .Connection("input").Provider(ProviderType.Internal)
                 .Connection("output").Provider(ProviderType.Internal)
                 .Entity("entity")
-                    .InputOperation(_testInput)
                     .Group() //group means you need to aggregate all output fields
                     .Field("order").Aggregate("group").Int32().PrimaryKey()
                     .Field("year").Alias("years").Aggregate("join")
                 .Process();
+
+            cfg.Entities.First().InputOperation = _testInput;
 
             var output = ProcessFactory.CreateSingle(cfg).Execute().ToArray();
 
@@ -339,11 +348,12 @@ namespace Transformalize.Test {
                 .Connection("input").Provider(ProviderType.Internal)
                 .Connection("output").Provider(ProviderType.Internal)
                 .Entity("entity")
-                    .InputOperation(_testInput)
                     .Group() //group means you need to aggregate all output fields
                     .Field("order").Aggregate("group").Int32().PrimaryKey()
                     .Field("year").Alias("years").Aggregate("join").Distinct()
                 .Process();
+
+            cfg.Entities.First().InputOperation = _testInput;
 
             var output = ProcessFactory.CreateSingle(cfg).Execute().ToArray();
 
@@ -358,7 +368,6 @@ namespace Transformalize.Test {
             Assert.AreEqual("2000", r2["years"]);
         }
 
-
         [Test]
         public void TestArray() {
 
@@ -366,11 +375,12 @@ namespace Transformalize.Test {
                 .Connection("input").Provider(ProviderType.Internal)
                 .Connection("output").Provider(ProviderType.Internal)
                 .Entity("entity")
-                    .InputOperation(_testInput)
                     .Group() //group means you need to aggregate all output fields
                     .Field("order").Aggregate("group").Int32().PrimaryKey()
                     .Field("year").Alias("years").Aggregate("array")
                 .Process();
+
+            cfg.Entities.First().InputOperation = _testInput;
 
             var output = ProcessFactory.CreateSingle(cfg).Execute().ToArray();
 
@@ -392,11 +402,12 @@ namespace Transformalize.Test {
                 .Connection("input").Provider(ProviderType.Internal)
                 .Connection("output").Provider(ProviderType.Internal)
                 .Entity("entity")
-                    .InputOperation(_testInput)
                     .Group() //group means you need to aggregate all output fields
                     .Field("order").Aggregate("group").Int32().PrimaryKey()
                     .Field("year").Alias("years").Aggregate("array").Distinct()
                 .Process();
+
+            cfg.Entities.First().InputOperation = _testInput;
 
             var output = ProcessFactory.CreateSingle(cfg).Execute().ToArray();
 
