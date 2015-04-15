@@ -263,7 +263,7 @@ namespace Transformalize.Main {
         }
 
         public bool HaveSort() {
-            return Storage.Any(f => !f.Sort.Equals(string.Empty));
+            return Storage.Any(f => !f.Sort.Equals("none"));
         }
 
         public Fields AddBatchId(int entityIndex, bool forCreate = true) {

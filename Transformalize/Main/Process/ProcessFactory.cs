@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using System.Linq;
@@ -7,6 +8,7 @@ using Transformalize.Libs.EnterpriseLibrary.Common.Configuration.Design;
 using Transformalize.Libs.Ninject;
 using Transformalize.Libs.NVelocity.App;
 using Transformalize.Libs.RazorEngine;
+using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Logging;
 using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.File;
@@ -115,6 +117,7 @@ namespace Transformalize.Main {
                 //logs set after connections, because they may depend on them
                 LoadLogConfiguration(_element, ref _process);
 
+                _process.DataSets = GetDataSets(_element);
                 _process.Scripts = new ScriptReader(_element.Scripts).Read();
                 _process.Actions = new ActionReader(_process).Read(_element.Actions);
                 _process.Templates = new TemplateReader(_process, _element.Templates).Read();
@@ -135,6 +138,26 @@ namespace Transformalize.Main {
                 new EntityRelationshipLoader(ref _process).Load();
 
                 return _process;
+            }
+
+            private static Dictionary<string, List<Row>> GetDataSets(TflProcess process) {
+
+                var dataSets = new Dictionary<string, List<Row>>();
+                if (!process.DataSets.Any()) 
+                    return dataSets;
+
+                foreach (var dataSet in process.DataSets) {
+                    dataSets[dataSet.Name] = new List<Row>();
+                    var rows = dataSets[dataSet.Name];
+                    foreach (var r in dataSet.Rows) {
+                        var row = new Row();
+                        foreach (var pair in r) {
+                            row[pair.Key] = pair.Value;
+                        }
+                        rows.Add(row);
+                    }
+                }
+                return dataSets;
             }
 
             private void LoadLogConfiguration(TflProcess element, ref Process process) {

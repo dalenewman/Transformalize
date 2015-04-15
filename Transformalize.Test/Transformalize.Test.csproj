@@ -68,7 +68,7 @@
   <ItemGroup>
     <Reference Include="CfgNet, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Cfg-NET.0.0.5\lib\CfgNet.dll</HintPath>
+      <HintPath>..\packages\Cfg-NET.0.0.6\lib\CfgNet.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AnalysisServices, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -110,6 +110,7 @@
     <Compile Include="TestAggregations.cs" />
     <Compile Include="TestConfiguration.cs" />
     <Compile Include="TestColumnNameValidator.cs" />
+    <Compile Include="TestDataSets.cs" />
     <Compile Include="TestFieldInspector.cs" />
     <Compile Include="TestFields.cs" />
     <Compile Include="TestActions.cs" />

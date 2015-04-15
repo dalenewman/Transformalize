@@ -53,6 +53,23 @@ namespace Transformalize.Main.Providers.Internal {
 
         public override IOperation Extract(Process process, Entity entity, bool firstRun) {
             var p = new PartialProcessOperation(process);
+            if (entity.InputOperation == null) {
+                if (process.DataSets.ContainsKey(entity.Name)) {
+                    // TODO: Make EntityFieldTypeConverterOperation
+                    var converter = Common.GetObjectConversionMap();
+                    var rows = process.DataSets[entity.Name];
+                    foreach (var field in entity.Fields.WithInput()) {
+                        if (field.SimpleType == "string") 
+                            continue;
+                        foreach (var row in rows) {
+                            row[field.Name] = converter[field.SimpleType](row[field.Name]);
+                        }
+                    }
+                    entity.InputOperation = new RowsOperation(process.DataSets[entity.Name]);
+                } else {
+                    entity.InputOperation = new EmptyOperation();
+                }
+            }
             p.Register(entity.InputOperation);
             p.Register(new AliasOperation(entity));
             return p;

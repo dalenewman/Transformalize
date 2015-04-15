@@ -157,6 +157,7 @@ namespace Transformalize.Main {
         //constructor
         public Process(string name = "") {
             Name = name;
+            DataSets = new Dictionary<string, List<Row>>();
         }
 
         //methods
@@ -305,6 +306,8 @@ namespace Transformalize.Main {
             get { return _sinkSubscriptions; }
             set { _sinkSubscriptions = value; }
         }
+
+        public Dictionary<string,List<Row>> DataSets { get; set; }
 
         public Fields OutputFields() {
             return Fields().WithOutput();

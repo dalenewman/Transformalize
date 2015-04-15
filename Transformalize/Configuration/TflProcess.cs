@@ -225,6 +225,12 @@ namespace Transformalize.Configuration {
         [Cfg(sharedProperty = "path", sharedValue = "")]
         public List<TflTemplate> Templates { get; set; }
 
+        /// <summary>
+        /// A collection of [Data Sets](/data-sets)
+        /// </summary>
+        [Cfg()]
+        public List<TflDataSet> DataSets { get; set; }
+
         protected override void Modify() {
 
             if (String.IsNullOrEmpty(Star)) {
@@ -245,11 +251,11 @@ namespace Transformalize.Configuration {
                 Connections.Add(new TflConnection() { Name = "output", Provider = "internal" });
 
             // a none searchtype should exist
-            if(SearchTypes.All(st => st.Name != "none"))
+            if (SearchTypes.All(st => st.Name != "none"))
                 SearchTypes.Add(new TflSearchType() { Name = "none", MultiValued = false, Store = false, Index = false });
-            
+
             // a default searchtype should exist
-            if(SearchTypes.All(st => st.Name != "default"))
+            if (SearchTypes.All(st => st.Name != "default"))
                 SearchTypes.Add(new TflSearchType() { Name = "default", MultiValued = false, Store = true, Index = true });
 
             try {
@@ -279,6 +285,13 @@ namespace Transformalize.Configuration {
             ValidateDuplicateEntities();
             ValidateDuplicateFields();
             ValidateLogConnections();
+            ValidateRelationships();
+        }
+
+        private void ValidateRelationships() {
+            if (Entities.Count > 1 && Relationships.Count + 1 < Entities.Count) {
+                AddProblem("You have {0} entities, but only {1} relationships.  Once you have more than one entity, you should create relationships between them.", Entities.Count, Relationships.Count);
+            }
         }
 
         private void ValidateLogConnections() {
@@ -335,7 +348,7 @@ namespace Transformalize.Configuration {
                 connection.Connection = kernal.Get<AbstractConnection>(connection.Provider, parameters);
                 connection.Connection.TypeAndAssemblyName = _providerTypes[connection.Provider];
 
-                if (connection.Provider != "solr") 
+                if (connection.Provider != "solr")
                     continue;
 
                 var solr = (SolrConnection)connection.Connection;

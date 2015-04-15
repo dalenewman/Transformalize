@@ -148,7 +148,7 @@ namespace Transformalize.Configuration {
         /// * sum
         /// 
         /// </summary>
-        [Cfg(value = "", domain = "array,concat,count,first,group,join,last,max,maxlength,min,minlength,sum")]
+        [Cfg(value="last", domain = "array,concat,count,first,group,join,last,max,maxlength,min,minlength,sum", toLower = true)]
         public string Aggregate { get; set; }
 
         /// <summary>
@@ -230,7 +230,7 @@ namespace Transformalize.Configuration {
         /// * asc
         /// * desc
         /// </summary>
-        [Cfg(value = "", domain = "asc,desc")]
+        [Cfg(value="none", domain = "asc,desc,none", toLower = true)]
         public string Sort { get; set; }
 
         /// <summary>
@@ -273,12 +273,17 @@ namespace Transformalize.Configuration {
         /// * uint64
         /// * xml
         /// </summary>
-        [Cfg(value = "string", domain = Common.ValidTypes, ignoreCase = true)]
+        [Cfg(value = "string", domain = Common.ValidTypes, toLower = true)]
         public string Type {
             get { return _type; }
             set {
-                if (value != null) {
-                    _type = value.StartsWith("sy", StringComparison.OrdinalIgnoreCase) ? value.ToLower().Replace("system.", string.Empty) : value.ToLower();
+                if (value == null)
+                    return;
+
+                if (value == "date") {
+                    _type = "datetime";
+                } else {
+                    _type = value.StartsWith("system.") ? value.Replace("system.", string.Empty) : value;
                 }
             }
         }

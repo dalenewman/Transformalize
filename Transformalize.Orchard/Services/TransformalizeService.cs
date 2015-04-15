@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.Core.Title.Models;
+using Orchard.Environment.Extensions;
 using Orchard.FileSystems.AppData;
 using Orchard.Localization;
 using Orchard.Logging;
@@ -28,7 +29,9 @@ namespace Transformalize.Orchard.Services {
         private readonly IOrchardServices _orchardServices;
         private readonly IFileService _fileService;
         private readonly IAppDataFolder _appDataFolder;
+        private readonly IExtensionManager _extensionManager;
         private readonly List<int> _filesCreated = new List<int>();
+        private static readonly string OrchardVersion = typeof (ContentItem).Assembly.GetName().Version.ToString();
 
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
@@ -37,11 +40,13 @@ namespace Transformalize.Orchard.Services {
         public TransformalizeService(
             IOrchardServices orchardServices,
             IFileService fileService,
-            IAppDataFolder appDataFolder
+            IAppDataFolder appDataFolder,
+            IExtensionManager extensionManager
             ) {
             _orchardServices = orchardServices;
             _fileService = fileService;
             _appDataFolder = appDataFolder;
+            _extensionManager = extensionManager;
             Logger = NullLogger.Instance;
             T = NullLocalizer.Instance;
         }
@@ -78,6 +83,8 @@ namespace Transformalize.Orchard.Services {
                 memory.EnableEvents(TflEventSource.Log, request.Part.ToLogLevel());
                 memory.LogToMemory(ref log);
                 TflLogger.Info("Orchard", "Log", "Injecting memory logger");
+                TflLogger.Info("Orchard", "Log", "Orchard version: {0}", OrchardVersion);
+                TflLogger.Info("Orchard", "Log", "Transformalize.Orchard version: {0}", _extensionManager.GetExtension("Transformalize.Orchard").Version);
             }
 
             var processes = new List<Process>();

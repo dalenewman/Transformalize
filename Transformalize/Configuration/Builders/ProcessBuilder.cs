@@ -1,4 +1,7 @@
+using System.Collections.Generic;
+using System.Linq;
 using Transformalize.Libs.Newtonsoft.Json;
+using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 
 namespace Transformalize.Configuration.Builders {
@@ -146,5 +149,10 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
+        public ProcessBuilder DataSet(string name, IEnumerable<Dictionary<string,string>> rows) {
+            var dataSet = new TflDataSet { Name = name, Rows = rows.ToList() };
+            _process.DataSets.Add(dataSet);
+            return this;
+        }
     }
 }
