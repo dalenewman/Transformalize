@@ -12,7 +12,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Transformalize.Libs.Cfg.Net.fastJSON;
 using Transformalize.Libs.Newtonsoft.Json;
 
 namespace Transformalize.Libs.Rhino.Etl {

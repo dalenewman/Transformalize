@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Transformalize.Libs.Cfg.Net.fastJSON;
 using Transformalize.Libs.Newtonsoft.Json;
 using Transformalize.Logging;
 

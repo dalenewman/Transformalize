@@ -104,7 +104,7 @@ namespace Transformalize.Main {
                     Parallel = _element.Parallel
                 };
 
-                // options mode overrides process node
+                // options mode overrides process mode
                 if (_options.Mode != Common.DefaultValue && _options.Mode != _process.Mode) {
                     _process.Mode = _options.Mode;
                 }

@@ -5,7 +5,6 @@ using System.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration;
 using Transformalize.Configuration.Builders;
-using Transformalize.Libs.NVelocity.Runtime.Directive;
 using Transformalize.Libs.SemanticLogging;
 using Transformalize.Logging;
 using Transformalize.Main;

@@ -1,7 +1,8 @@
 ﻿using System;
-using Transformalize.Libs.Cfg.Net.fastJSON;
+
 using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
+using Transformalize.Libs.Newtonsoft.Json.Linq;
 using ValidationResult = Transformalize.Libs.EnterpriseLibrary.Validation.ValidationResult;
 
 namespace Transformalize.Operations.Validate {
@@ -11,7 +12,7 @@ namespace Transformalize.Operations.Validate {
 
         protected override void DoValidate(string objectToValidate, object currentTarget, string key, ValidationResults validationResults) {
             try {
-                JSON.Parse(objectToValidate);
+                JObject.Parse(objectToValidate);
                 if (Negated) {
                     validationResults.AddResult(new ValidationResult("The object is JSON", objectToValidate, key, Tag, this));
                 }
