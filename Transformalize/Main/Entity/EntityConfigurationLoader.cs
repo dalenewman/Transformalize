@@ -70,9 +70,8 @@ namespace Transformalize.Main {
             GuardAgainstMissingPrimaryKey(element);
 
             // wire up connections
-            if (!string.IsNullOrEmpty(element.Connection) && _process.Connections.ContainsKey(element.Connection)) {
-                var connection = _process.Connections[element.Connection];
-                entity.Input.Add(new NamedConnection() { Connection = connection, Name = connection.Name });
+            if (_process.Connections.Contains(element.Connection)) {
+                entity.Input.Add(_process.Connections.GetConnectionByName(element.Connection).NamedConnection());
             }
 
             //needs an input connection
@@ -178,32 +177,33 @@ namespace Transformalize.Main {
 
         private void GuardAgainstMissingFields(TflEntity element, Entity entity, short entityIndex) {
 
-            if (_process.Mode != "metadata" && element.Fields.Count == 0 && _process.Connections.ContainsKey(element.Connection)) {
+            if (_process.Mode != "metadata" && element.Fields.Count == 0) {
                 try {
 
                     TflLogger.Info(entity.ProcessName, entity.Name, "Detecting fields.");
-                    var connection = _process.Connections[element.Connection];
+                    var connection = entity.Input.First().Connection;
                     var fields = connection.GetEntitySchema(_process, entity, entityIndex == 0);
-                    if (fields.Any()) {
-                        foreach (var field in fields) {
-                            if (String.IsNullOrEmpty(field.Label) || field.Label.Equals(field.Alias)) {
-                                field.Label = MetaDataWriter.AddSpacesToSentence(field.Alias, true).Replace("_", " ");
-                            }
-                            var name = field.Name;
-                            var f = element.GetDefaultOf<TflField>(x => x.Name = name);
-                            f.Type = field.Type;
-                            f.Length = field.Length;
-                            f.PrimaryKey = field.FieldType.Equals(FieldType.PrimaryKey) || field.FieldType.Equals(FieldType.MasterKey);
-                            f.Output = true;
-                            f.Default = string.Empty;
-                            f.Input = true;
-                            f.Precision = field.Precision;
-                            f.Scale = field.Scale;
-                            f.Label = field.Label;
-                            element.Fields.Add(f);
+                    if (!fields.Any())
+                        return;
+
+                    foreach (var field in fields) {
+                        if (String.IsNullOrEmpty(field.Label) || field.Label.Equals(field.Alias)) {
+                            field.Label = MetaDataWriter.AddSpacesToSentence(field.Alias, true).Replace("_", " ");
                         }
-                        TflLogger.Info(entity.ProcessName, entity.Name, "Detected {0} fields.", fields.Count);
+                        var name = field.Name;
+                        var f = element.GetDefaultOf<TflField>(x => x.Name = name);
+                        f.Type = field.Type;
+                        f.Length = field.Length;
+                        f.PrimaryKey = field.FieldType.Equals(FieldType.PrimaryKey) || field.FieldType.Equals(FieldType.MasterKey);
+                        f.Output = true;
+                        f.Default = string.Empty;
+                        f.Input = true;
+                        f.Precision = field.Precision;
+                        f.Scale = field.Scale;
+                        f.Label = field.Label;
+                        element.Fields.Add(f);
                     }
+                    TflLogger.Info(entity.ProcessName, entity.Name, "Detected {0} fields.", fields.Count);
                 } catch (Exception ex) {
                     throw new TransformalizeException("No fields defined.  Unable to detect them for {0}. {1}", entity.Name, ex.Message);
                 } finally {
@@ -214,48 +214,35 @@ namespace Transformalize.Main {
             }
         }
 
-        private List<NamedConnection> PrepareIo(List<TflIo> collection, Fields fields) {
+        private List<NamedConnection> PrepareIo(IEnumerable<TflIo> collection, Fields fields) {
             var namedConnections = new List<NamedConnection>();
             var entity = fields.Any() ? fields[0].Entity : "None";
 
-            var validator = ValidationFactory.CreateValidator<TflIo>();
             foreach (var io in collection) {
-                var results = validator.Validate(io);
-
-                if (results.IsValid) {
-                    if (_process.Connections.ContainsKey(io.Connection)) {
-                        Func<Row, bool> shouldRun = row => true;
-                        if (!io.RunField.Equals(string.Empty)) {
-                            var f = io.RunField;
-                            var match = fields.Find(f).ToArray();
-                            if (match.Length > 0) {
-                                var field = match[0];
-                                if (io.RunType.Equals(DEFAULT)) {
-                                    io.RunType = field.SimpleType;
-                                }
-                                var op = (ComparisonOperator)Enum.Parse(typeof(ComparisonOperator), io.RunOperator, true);
-                                var simpleType = Common.ToSimpleType(io.RunType);
-                                var value = Common.ConversionMap[simpleType](io.RunValue);
-                                shouldRun = row => Common.CompareMap[op](row[field.Alias], value);
-                            } else {
-                                TflLogger.Warn(_process.Name, entity, "Field {0} specified in {1} output doesn't exist.  It will not affect the output.", io.RunField, io.Name);
-                            }
+                Func<Row, bool> shouldRun = row => true;
+                if (!io.RunField.Equals(string.Empty)) {
+                    var f = io.RunField;
+                    var match = fields.Find(f).ToArray();
+                    if (match.Length > 0) {
+                        var field = match[0];
+                        if (io.RunType.Equals(DEFAULT)) {
+                            io.RunType = field.SimpleType;
                         }
-
-                        namedConnections.Add(new NamedConnection {
-                            Name = io.Name,
-                            Connection = _process.Connections[io.Connection],
-                            ShouldRun = shouldRun
-                        });
+                        var op = (ComparisonOperator)Enum.Parse(typeof(ComparisonOperator), io.RunOperator, true);
+                        var simpleType = Common.ToSimpleType(io.RunType);
+                        var value = Common.ConversionMap[simpleType](io.RunValue);
+                        shouldRun = row => Common.CompareMap[op](row[field.Alias], value);
                     } else {
-                        TflLogger.Warn(_process.Name, entity, "Can't add output {0} because connection {1} doesn't exist.", io.Name, io.Connection);
-                    }
-                } else {
-                    TflLogger.Warn(_process.Name, entity, "Output {0} is invalid.", io.Name);
-                    foreach (var reason in results) {
-                        TflLogger.Warn(_process.Name, entity, reason.Message);
+                        TflLogger.Warn(_process.Name, entity, "Field {0} specified in {1} output doesn't exist.  It will not affect the output.", io.RunField, io.Name);
                     }
                 }
+
+                namedConnections.Add(new NamedConnection {
+                    Name = io.Name,
+                    Connection = _process.Connections.GetConnectionByName(io.Connection).Connection,
+                    ShouldRun = shouldRun
+                });
+
             }
             return namedConnections;
         }
