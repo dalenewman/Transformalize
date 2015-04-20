@@ -26,14 +26,8 @@ namespace Transformalize.Main {
                 }
 
                 var templateAction = new TemplateAction(_process, string.Empty, action);
-
                 if (!String.IsNullOrEmpty(action.Connection)) {
-                    if (_process.Connections.ContainsKey(action.Connection)) {
-                        templateAction.Connection = _process.Connections[action.Connection];
-                    } else {
-                        var message = string.Format("The template '{0}' refers to an invalid connection named '{1}'.", action.Action, action.Connection);
-                        throw new TransformalizeException(_process.Name, string.Empty, message);
-                    }
+                    templateAction.Connection = _process.Connections.GetConnectionByName(action.Connection).Connection;
                 }
 
                 actions.Add(templateAction);

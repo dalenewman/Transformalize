@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Main.Providers;
 
@@ -20,11 +21,8 @@ namespace Transformalize.Main {
                     _process.MapStartsWith[m.Name] = new MapConfigurationReader(m.Items, "startswith").Read();
                     _process.MapEndsWith[m.Name] = new MapConfigurationReader(m.Items, "endswith").Read();
                 } else {
-                    if (_process.Connections.ContainsKey(m.Connection)) {
-                        _process.MapEquals[m.Name] = new SqlMapReader(m.Query, _process.Connections[m.Connection]).Read();
-                    } else {
-                        throw new TransformalizeException("Map {0} references connection {1}, which does not exist.", m.Name, m.Connection);
-                    }
+                    var connection = _process.Connections.GetConnectionByName(m.Connection);
+                    _process.MapEquals[m.Name] = new SqlMapReader(m.Query, connection.Connection).Read();
                 }
             }
         }

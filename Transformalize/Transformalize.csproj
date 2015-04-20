@@ -2810,6 +2810,7 @@
     <Compile Include="Main\Entity\Filter.cs" />
     <Compile Include="Main\Entity\Filters.cs" />
     <Compile Include="Main\OneWayXmlNodeConverter.cs" />
+    <Compile Include="Main\Process\Connections.cs" />
     <Compile Include="Main\Providers\Mail\WebConnection.cs" />
     <Compile Include="Main\Providers\Mail\WebDependencies.cs" />
     <Compile Include="Main\Data.cs" />

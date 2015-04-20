@@ -20,6 +20,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -89,9 +90,16 @@ namespace Transformalize.Test {
 
             var process = ProcessFactory.CreateSingle(cfg);
 
+            Assert.AreEqual(2, process.Entities.First().Input.Count);
+
             var output = process.Execute().ToArray();
 
             Assert.IsInstanceOf<IEnumerable<Row>>(output);
+
+            foreach (var row in output)
+            {
+                Console.WriteLine(row);
+            }
 
             Assert.AreEqual(6, output.Length);
             Assert.AreEqual(1+2+3+4+5+6, output.Sum(r => (int) r["id"]));

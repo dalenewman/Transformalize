@@ -281,24 +281,16 @@ namespace Transformalize.Main {
                     goto case "gethashcode";
 
                 case "mail":
-                    Guard.Against(string.IsNullOrEmpty(element.Connection), "The mail transform operations requires the connection attribute be set.");
-
-                    var connection = _process.Connections[element.Connection];
-
-                    Guard.Against(connection.Type != ProviderType.Mail, "The mail transform requires a valid mail connection.  The connection you referenced is {0}", connection.Type);
+                    var connection = _process.Connections.GetConnectionByName(element.Connection).Connection;
 
                     if (!parameters.ContainsName("body")) {
                         parameters.Add(field.Alias, "body", null, "string");
                     }
 
-                    if (_process.Connections.ContainsKey(element.Connection)) {
-                        return new MailOperation(
-                            (MailConnection)connection,
-                            parameters
-                            ) { ShouldRun = shouldRun, EntityName = _entityName };
-                    }
-
-                    throw new TransformalizeException(_process.Name, _entityName, "Mail operation references invalid connection {0}", element.Connection);
+                    return new MailOperation(
+                        (MailConnection)connection,
+                        parameters
+                        ) { ShouldRun = shouldRun, EntityName = _entityName };
 
                 case "map":
                     var equals = _process.MapEquals.ContainsKey(element.Map) ? _process.MapEquals[element.Map] : new Map();
@@ -662,11 +654,10 @@ namespace Transformalize.Main {
                     ) { ShouldRun = shouldRun, EntityName = _entityName };
 
                 case "run":
-                    Guard.Against(string.IsNullOrEmpty(element.Connection), "Run transform requires a connection.");
-                    Guard.Against(!_process.Connections.ContainsKey(element.Connection), "Run transform requires a connection defined in <connections/>. {0} is not defined.", element.Connection);
+
                     return new RunOperation(
                         inKey,
-                        _process.Connections[element.Connection],
+                        _process.Connections.GetConnectionByName(element.Connection).Connection,
                         element.TimeOut
                     ) { ShouldRun = shouldRun, EntityName = _entityName };
 

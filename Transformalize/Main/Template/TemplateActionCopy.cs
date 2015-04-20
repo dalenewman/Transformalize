@@ -21,6 +21,7 @@
 #endregion
 
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Transformalize.Logging;
 using Transformalize.Main.Providers.File;
@@ -98,7 +99,7 @@ namespace Transformalize.Main {
                 case CopyType.FileToConnection:
                     fromInfo = new FileInfo(from);
                     if (fromInfo.Exists) {
-                        var output = _process.Connections[to.ToLower()].Source;
+                        var output = _process.Connections.GetConnectionByName(to.ToLower()).Connection.Source;
                         new FileImporter().Import(fromInfo.FullName, output);
                         TflLogger.Info(action.ProcessName, string.Empty, "Copied {0} to {1} connection.", fromInfo.Name, to);
                     } else {
@@ -128,7 +129,7 @@ namespace Transformalize.Main {
         }
 
         private bool IsConnectionName(string name) {
-            return _process.Connections.ContainsKey(name.ToLower());
+            return _process.Connections.Contains(name.ToLower());
         }
     }
 }

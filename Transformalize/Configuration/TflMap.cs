@@ -5,7 +5,7 @@ namespace Transformalize.Configuration {
 
     public class TflMap : CfgNode {
 
-        [Cfg(value = "input")]
+        [Cfg(value = "input", toLower = true)]
         public string Connection { get; set; }
         [Cfg(required = true, unique = true)]
         public string Name { get; set; }

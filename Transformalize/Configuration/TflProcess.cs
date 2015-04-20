@@ -272,7 +272,6 @@ namespace Transformalize.Configuration {
             }
         }
 
-
         private void AdaptFieldsCreatedFromTransforms(IEnumerable<string> transformToFields) {
             foreach (var field in transformToFields) {
                 while (new TransformFieldsToParametersAdapter(this).Adapt(field) > 0) {
@@ -286,6 +285,66 @@ namespace Transformalize.Configuration {
             ValidateDuplicateFields();
             ValidateLogConnections();
             ValidateRelationships();
+            ValidateEntityConnections();
+            ValidateActionConnections();
+            ValidateTemplateActionConnections();
+            ValidateTransformConnections();
+            ValidateMapConnections();
+        }
+
+        private void ValidateMapConnections() {
+            foreach (var map in Maps.Where(m => m.Query != string.Empty).Where(map => Connections.All(c => c.Name != map.Connection))) {
+                AddProblem("The {0} map references an invalid connection: {1}.", map.Name, map.Connection);
+            }
+        }
+
+        private IEnumerable<TflTransform> GetAllTransforms() {
+            foreach (var transform in Entities.SelectMany(entity => entity.GetAllTransforms())) {
+                yield return transform;
+            }
+            foreach (var transform in CalculatedFields.SelectMany(field => field.Transforms)) {
+                yield return transform;
+            }
+        }
+
+
+        private void ValidateTransformConnections() {
+
+            var methodsWithConnections = new[] { "mail", "run" };
+
+            foreach (var transform in GetAllTransforms().Where(t => methodsWithConnections.Any(nc => nc == t.Method))) {
+                var connection = Connections.FirstOrDefault(c => c.Name == transform.Connection);
+                if (connection == null) {
+                    AddProblem("The {0} transform references an invalid connection: {2}.", transform.Method, transform.Connection);
+                    continue;
+                }
+
+                switch (transform.Method) {
+                    case "mail":
+                        if (connection.Provider != "mail") {
+                            AddProblem("The {0} transform references the wrong type of connection: {1}.", transform.Method, connection.Provider);
+                        }
+                        break;
+                }
+            }
+        }
+
+        private void ValidateEntityConnections() {
+            foreach (var entity in Entities.Where(entity => Connections.All(c => c.Name != entity.Connection))) {
+                AddProblem("The {0} entity references an invalid connection: {1}.", entity.Name, entity.Connection);
+            }
+        }
+
+        private void ValidateTemplateActionConnections() {
+            foreach (var action in Templates.SelectMany(template => template.Actions.Where(a => a.Connection != string.Empty).Where(action => Connections.All(c => c.Name != action.Connection)))) {
+                AddProblem("The {0} template action references an invalid connection: {1}.", action.Action, action.Connection);
+            }
+        }
+
+        private void ValidateActionConnections() {
+            foreach (var action in Actions.Where(action => action.Connection != string.Empty).Where(action => Connections.All(c => c.Name != action.Connection))) {
+                AddProblem("The {0} action references an invalid connection: {1}.", action.Action, action.Connection);
+            }
         }
 
         private void ValidateRelationships() {

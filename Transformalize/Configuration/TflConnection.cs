@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Transformalize.Libs.Cfg.Net;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
@@ -8,9 +7,8 @@ namespace Transformalize.Configuration {
     public class TflConnection : CfgNode {
 
         private readonly char[] _slash = { '/' };
-        private string _provider;
 
-        [Cfg(value = "", required = true, unique = true)]
+        [Cfg(value = "", required = true, unique = true, toLower = true)]
         public string Name { get; set; }
         [Cfg(value = 500)]
         public int BatchSize { get; set; }
@@ -56,10 +54,7 @@ namespace Transformalize.Configuration {
         public int Port { get; set; }
 
         [Cfg(value = "sqlserver", domain = "sqlserver,mysql,postgresql,sqlce,analysisservices,file,folder,internal,console,log,mail,html,elasticsearch,solr,lucene,web", toLower = true)]
-        public string Provider {
-            get { return _provider; }
-            set { _provider = value == null ? string.Empty : value.ToLower(); }
-        }
+        public string Provider { get; set; }
 
         [Cfg(value = "TopDirectoryOnly", domain = "AllDirectories,TopDirectoryOnly", ignoreCase = true)]
         public string SearchOption { get; set; }
@@ -109,6 +104,10 @@ namespace Transformalize.Configuration {
                 builder.Path = builder.Path.TrimEnd(_slash) + "/" + Folder.TrimStart(_slash);
             }
             return builder.ToString();
+        }
+
+        public NamedConnection NamedConnection() {
+            return new NamedConnection() { Name = Name, Connection = Connection };
         }
     }
 }

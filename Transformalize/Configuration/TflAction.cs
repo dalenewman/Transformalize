@@ -21,7 +21,7 @@ namespace Transformalize.Configuration {
         public string Cc { get; set; }
         [Cfg(value = "")]
         public string Command { get; set; }
-        [Cfg(value = "")]
+        [Cfg(value = "", toLower = true)]
         public string Connection { get; set; }
         [Cfg(value = "")]
         public string File { get; set; }

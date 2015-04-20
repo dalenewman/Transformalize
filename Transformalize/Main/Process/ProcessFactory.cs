@@ -111,8 +111,8 @@ namespace Transformalize.Main {
                 TflLogger.Info(_processName, string.Empty, "Mode is {0}", _process.Mode);
 
                 //shared across the process
-                _process.Connections = _element.Connections.ToDictionary(c => c.Name, c => c.Connection);
-                _process.OutputConnection = _process.Connections["output"];
+                _process.Connections.AddRange(_element.Connections);
+                _process.OutputConnection = _process.Connections.Output().Connection;
 
                 //logs set after connections, because they may depend on them
                 LoadLogConfiguration(_element, ref _process);
@@ -194,7 +194,7 @@ namespace Transformalize.Main {
                 };
 
                 if (logElement.Connection != Common.DefaultValue) {
-                    log.Connection = process.Connections[logElement.Connection];
+                    log.Connection = process.Connections.GetConnectionByName(logElement.Connection).Connection;
                     if (log.Connection.Type == ProviderType.File && log.File.Equals(Common.DefaultValue)) {
                         log.File = log.Connection.File;
                     }

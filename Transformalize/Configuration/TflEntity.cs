@@ -9,7 +9,7 @@ namespace Transformalize.Configuration {
         [Cfg(required = false, unique = true)]
         public string Alias { get; set; }
 
-        [Cfg(value = "input")]
+        [Cfg(value = "input", toLower = true)]
         public string Connection { get; set; }
 
         [Cfg(value = false)]
@@ -131,9 +131,10 @@ namespace Transformalize.Configuration {
             var aliases = new HashSet<string>(fields.Select(f => f.Alias));
 
             ValidateVersion(names, aliases);
+            ValidateFilter(names, aliases);
         }
 
-        private void ValidateVersion(HashSet<string> names, HashSet<string> aliases) {
+        private void ValidateVersion(ICollection<string> names, ICollection<string> aliases) {
             if (Version == string.Empty)
                 return;
 
@@ -146,7 +147,7 @@ namespace Transformalize.Configuration {
             AddProblem("Cant't find version field '{0}' in entity '{1}'", Version, Name);
         }
 
-        private void ValidateFilter(HashSet<string> names, HashSet<string> aliases) {
+        private void ValidateFilter(ICollection<string> names, ICollection<string> aliases) {
             if (Filter.Count == 0)
                 return;
 
@@ -161,6 +162,15 @@ namespace Transformalize.Configuration {
                     continue;
 
                 AddProblem("A filter's left attribute must reference a defined field. '{0}' is not defined.", f.Left);
+            }
+        }
+
+        public IEnumerable<TflTransform> GetAllTransforms() {
+            foreach (var transform in Fields.SelectMany(field => field.Transforms)) {
+                yield return transform;
+            }
+            foreach (var transform in CalculatedFields.SelectMany(field => field.Transforms)) {
+                yield return transform;
             }
         }
     }

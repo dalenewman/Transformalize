@@ -49,7 +49,7 @@ namespace Transformalize.Main {
         private List<IOperation> _transformOperations = new List<IOperation>();
         private IParameters _parameters = new Parameters.Parameters();
         private bool _enabled = true;
-        private Dictionary<string, AbstractConnection> _connections = new Dictionary<string, AbstractConnection>();
+        private Connections _connections = new Connections();
         private bool _logStarted;
 
         // fields (for now)
@@ -103,7 +103,7 @@ namespace Transformalize.Main {
             set { _mode = value.ToLower(); }
         }
 
-        public Dictionary<string, AbstractConnection> Connections {
+        public Connections Connections {
             get { return _connections; }
             set { _connections = value; }
         }
@@ -165,8 +165,8 @@ namespace Transformalize.Main {
             if (!Enabled && !Options.Force)
                 throw new TransformalizeException(Name, string.Empty, "Process is disabled.");
 
-            foreach (var connection in Connections.Where(cn => !cn.Value.IsReady())) {
-                throw new TransformalizeException(Name, string.Empty, "Connection {0} failed.", connection.Key);
+            foreach (var connection in Connections.Where(cn => !cn.Connection.IsReady())) {
+                throw new TransformalizeException(Name, string.Empty, "Connection {0} failed.", connection.Name);
             }
         }
 
@@ -307,7 +307,7 @@ namespace Transformalize.Main {
             set { _sinkSubscriptions = value; }
         }
 
-        public Dictionary<string,List<Row>> DataSets { get; set; }
+        public Dictionary<string, List<Row>> DataSets { get; set; }
 
         public Fields OutputFields() {
             return Fields().WithOutput();

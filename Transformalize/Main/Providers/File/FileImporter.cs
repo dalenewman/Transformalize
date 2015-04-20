@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Logging;
 
@@ -14,7 +15,7 @@ namespace Transformalize.Main.Providers.File {
             var fileInformation = FileInformationFactory.Create(request);
             var configuration = BuildProcess(fileInformation, request, output);
             var initProcess = ProcessFactory.CreateSingle(configuration);
-            if (initProcess.Connections["output"].Type != ProviderType.Internal) {
+            if (initProcess.Connections.Output().Provider != "internal") {
                 initProcess.Options.Mode = "init";
                 initProcess.Mode = "init";
                 initProcess.ExecuteScaler();
@@ -35,7 +36,7 @@ namespace Transformalize.Main.Providers.File {
             var configuration = BuildProcess(fileInformation, request, output);
             var process = ProcessFactory.CreateSingle(configuration);
 
-            if (process.Connections["output"].Type != ProviderType.Internal) {
+            if (process.Connections.Output().Provider != "internal") {
                 process.Options.Mode = "init";
                 process.Mode = "init";
                 process.ExecuteScaler();
