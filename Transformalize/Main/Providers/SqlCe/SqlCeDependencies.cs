@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Transformalize.Main.Providers.SqlServer;
 
 namespace Transformalize.Main.Providers.SqlCe {
@@ -9,7 +10,7 @@ namespace Transformalize.Main.Providers.SqlCe {
                 new SqlCeEntityRecordsExist(),
                 new SqlCeEntityDropper(),
                 new SqlCeEntityCreator(),
-                new FalseViewWriter(),
+                new List<IViewWriter> { new FalseViewWriter() },
                 new SqlCeTflWriter(),
                 new DatabaseScriptRunner(),
                 new SqlServerDataTypeService()

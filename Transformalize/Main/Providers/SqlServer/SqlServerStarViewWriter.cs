@@ -27,9 +27,14 @@ using Transformalize.Libs.Dapper;
 using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.SqlServer {
-    public class SqlServerViewWriter : IViewWriter {
+
+    public class SqlServerStarViewWriter : IViewWriter {
 
         public void Drop(Process process) {
+
+            if (!process.StarEnabled || process.Relationships.Count == 0)
+                return;
+
             using (var cn = process.OutputConnection.GetConnection()) {
                 cn.Open();
 
@@ -41,6 +46,10 @@ namespace Transformalize.Main.Providers.SqlServer {
         }
 
         public void Create(Process process) {
+
+            if (!process.StarEnabled || process.Relationships.Count == 0)
+                return;
+
             Drop(process);
             using (var cn = process.OutputConnection.GetConnection()) {
                 cn.Open();
@@ -53,12 +62,13 @@ namespace Transformalize.Main.Providers.SqlServer {
         }
 
         private static string DropSql(Process process) {
-            const string format = @"IF EXISTS (
-	SELECT *
-	FROM INFORMATION_SCHEMA.VIEWS
-	WHERE TABLE_NAME = '{0}'
-)
-	DROP VIEW [{0}];";
+            const string format = @"
+            IF EXISTS (
+	            SELECT *
+	            FROM INFORMATION_SCHEMA.VIEWS
+	            WHERE TABLE_NAME = '{0}'
+            )
+	            DROP VIEW [{0}];";
             return string.Format(format, process.Star);
         }
 
@@ -84,8 +94,7 @@ namespace Transformalize.Main.Providers.SqlServer {
             builder.AppendFormat("FROM {0} d\r\n", process.OutputConnection.Enclose(process.MasterEntity.OutputName()));
             builder.AppendFormat("INNER JOIN TflBatch b ON (d.TflBatchId = b.TflBatchId AND b.ProcessName = '{0}')\r\n", process.Name);
 
-            foreach (var entity in process.Entities.Where(e => !e.IsMaster()))
-            {
+            foreach (var entity in process.Entities.Where(e => !e.IsMaster())) {
                 builder.AppendFormat("LEFT OUTER JOIN {0} ON (", entity.OutputName());
 
                 foreach (var join in entity.RelationshipToMaster.First().Join.ToArray()) {

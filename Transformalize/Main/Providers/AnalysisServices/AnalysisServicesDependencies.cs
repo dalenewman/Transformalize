@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Transformalize.Main.Providers.AnalysisServices {
     public class AnalysisServicesDependencies : AbstractConnectionDependencies {
         public AnalysisServicesDependencies()
@@ -6,8 +8,8 @@ namespace Transformalize.Main.Providers.AnalysisServices {
                 new AnalysisServicesConnectionChecker(),
                 new FalseEntityRecordsExist(),
                 new FalseEntityDropper(),
-                new FalseEntityCreator(), 
-                new FalseViewWriter(),
+                new FalseEntityCreator(),
+                new List<IViewWriter> { new FalseViewWriter() },
                 new FalseTflWriter(),
                 new AnalysisServicesScriptRunner(),
                 new FalseDataTypeService()) { }

@@ -27,6 +27,7 @@ using Transformalize.Configuration;
 using Transformalize.Configuration.Builders;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
+using Transformalize.Main.Providers.SqlServer;
 using Transformalize.Test.Builders;
 using Process = Transformalize.Main.Process;
 
@@ -471,6 +472,7 @@ namespace Transformalize.Test {
 
         [Test]
         public void TestViewSql() {
+
             const string expected = @"SELECT
     m.[OrderDetailId],
     m.[OrderId],
@@ -491,7 +493,8 @@ LEFT OUTER JOIN [TestProduct] r3 ON (m.[ProductId] = r3.[ProductId])
 LEFT OUTER JOIN [TestProductCategory] r4 ON (r3.[ProductId] = r4.[ProductId])
 LEFT OUTER JOIN [TestCategory] r5 ON (r4.[CategoryId] = r5.[CategoryId]);";
 
-            var actual = GetTestProcess("sqlserver").ViewSql();
+            var process = GetTestProcess("sqlserver");
+            var actual = new SqlServerViewWriter().ViewSql(process);
 
             Assert.AreEqual(expected, actual);
         }

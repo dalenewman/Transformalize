@@ -4,7 +4,9 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Operations.Transform;
 
 namespace Transformalize.Main {
+
     public class MarkDownOperation : ShouldRunOperation {
+
         private readonly Markdown _markdown = new Markdown();
         public MarkDownOperation(string inKey, string outKey)
             : base(inKey, outKey) {

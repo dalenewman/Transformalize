@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Transformalize.Main.Providers {
 
     public abstract class AbstractConnectionDependencies {
@@ -6,7 +8,7 @@ namespace Transformalize.Main.Providers {
         public IConnectionChecker ConnectionChecker { get; private set; }
         public IEntityRecordsExist EntityRecordsExist { get; private set; }
         public IEntityDropper EntityDropper { get; private set; }
-        public IViewWriter ViewWriter { get; private set; }
+        public List<IViewWriter> ViewWriters { get; private set; }
         public ITflWriter TflWriter { get; private set; }
         public IScriptRunner ScriptRunner { get; private set; }
         public IEntityCreator EntityCreator { get; private set; }
@@ -18,7 +20,7 @@ namespace Transformalize.Main.Providers {
             IEntityRecordsExist entityRecordsExist,
             IEntityDropper entityDropper,
             IEntityCreator entityCreator,
-            IViewWriter viewWriter,
+            List<IViewWriter> viewWriters,
             ITflWriter tflWriter,
             IScriptRunner scriptRunner,
             IDataTypeService dataTypeService
@@ -28,7 +30,7 @@ namespace Transformalize.Main.Providers {
             EntityRecordsExist = entityRecordsExist;
             EntityDropper = entityDropper;
             EntityCreator = entityCreator;
-            ViewWriter = viewWriter;
+            ViewWriters = viewWriters;
             TflWriter = tflWriter;
             ScriptRunner = scriptRunner;
             DataTypeService = dataTypeService;

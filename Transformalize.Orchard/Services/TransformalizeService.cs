@@ -128,9 +128,9 @@ namespace Transformalize.Orchard.Services {
                 return;
             }
 
-            if (!process.Connections.ContainsKey("input"))
+            if (!process.Connections.Contains("input"))
                 return;
-            if (process.Connections["input"].Type != ProviderType.Internal)
+            if (process.Connections.GetConnectionByName("input").Connection.Type != ProviderType.Internal)
                 return;
 
             var rows = new List<Row>();

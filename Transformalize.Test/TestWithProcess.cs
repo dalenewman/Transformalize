@@ -127,7 +127,7 @@ OPTION (MAXDOP 2);";
 
         [Test]
         public void TestWriteSql() {
-            var actual = new SqlServerViewWriter().CreateSql(_process);
+            var actual = new SqlServerStarViewWriter().CreateSql(_process);
             Console.Write(actual);
             Assert.AreEqual(@"CREATE VIEW [TestStar] AS
 SELECT

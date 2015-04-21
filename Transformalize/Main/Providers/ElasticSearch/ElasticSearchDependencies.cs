@@ -1,4 +1,6 @@
 
+using System.Collections.Generic;
+
 namespace Transformalize.Main.Providers.ElasticSearch {
     public class ElasticSearchDependencies : AbstractConnectionDependencies {
         public ElasticSearchDependencies()
@@ -8,7 +10,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
                 new ElasticSearchEntityRecordsExist(),
                 new ElasticSearchEntityDropper(),
                 new ElasticSearchEntityCreator(),
-                new FalseViewWriter(),
+                new List<IViewWriter> { new FalseViewWriter() },
                 new ElasticSearchTflWriter(),
                 new FalseScriptRunner(),
                 new FalseDataTypeService()) { }

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics.Tracing;
 using System.Linq;
 using Transformalize.Configuration;
+using Transformalize.Extensions;
 using Transformalize.Libs.EnterpriseLibrary.Common.Configuration.Design;
 using Transformalize.Libs.Ninject;
 using Transformalize.Libs.NVelocity.App;
@@ -99,6 +101,7 @@ namespace Transformalize.Main {
                     View = _element.View,
                     Mode = _element.Mode,
                     StarEnabled = _element.StarEnabled,
+                    ViewEnabled = _element.ViewEnabled,
                     TimeZone = string.IsNullOrEmpty(_element.TimeZone) ? TimeZoneInfo.Local.Id : _element.TimeZone,
                     PipelineThreading = (PipelineThreading)Enum.Parse(typeof(PipelineThreading), _element.PipelineThreading, true),
                     Parallel = _element.Parallel
@@ -108,7 +111,8 @@ namespace Transformalize.Main {
                 if (_options.Mode != Common.DefaultValue && _options.Mode != _process.Mode) {
                     _process.Mode = _options.Mode;
                 }
-                TflLogger.Info(_processName, string.Empty, "Mode is {0}", _process.Mode);
+                TflLogger.Info(_processName, string.Empty, "{0} entit{1} in {2} mode.", _element.Entities.Count, _element.Entities.Count.Pluralize(), _process.Mode == string.Empty ? "Default" : _process.Mode);
+                TflLogger.Info(_processName, string.Empty, "Running {0} with a {1} pipeline.", _element.Parallel ? "Parallel" : "Serial", GetPipelineDescription());
 
                 //shared across the process
                 _process.Connections.AddRange(_element.Connections);
@@ -140,10 +144,24 @@ namespace Transformalize.Main {
                 return _process;
             }
 
+            private string GetPipelineDescription() {
+                var pipeline = _element.PipelineThreading;
+                if (pipeline == "Default") {
+                    if (_element.Entities.All(e => e.PipelineThreading == "SingleThreaded")) {
+                        pipeline = "SingleThreaded";
+                    } else if (_element.Entities.All(e => e.PipelineThreading == "MultiThreaded")) {
+                        pipeline = "MultiThreaded";
+                    } else {
+                        pipeline = "Mixed";
+                    }
+                }
+                return pipeline;
+            }
+
             private static Dictionary<string, List<Row>> GetDataSets(TflProcess process) {
 
                 var dataSets = new Dictionary<string, List<Row>>();
-                if (!process.DataSets.Any()) 
+                if (!process.DataSets.Any())
                     return dataSets;
 
                 foreach (var dataSet in process.DataSets) {

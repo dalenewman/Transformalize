@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Numerics;
@@ -53,7 +54,7 @@ namespace Transformalize.Main.Providers {
         public IScriptRunner ScriptRunner { get; set; }
         public ITableQueryWriter TableQueryWriter { get; set; }
         public ITflWriter TflWriter { get; set; }
-        public IViewWriter ViewWriter { get; set; }
+        public List<IViewWriter> ViewWriters { get; set; } 
         public IDataTypeService DataTypeService { get; set; }
         public string Database { get; set; }
         public string User { get; set; }
@@ -156,7 +157,7 @@ namespace Transformalize.Main.Providers {
             EntityRecordsExist = dependencies.EntityRecordsExist;
             EntityDropper = dependencies.EntityDropper;
             EntityCreator = dependencies.EntityCreator;
-            ViewWriter = dependencies.ViewWriter;
+            ViewWriters = dependencies.ViewWriters;
             TflWriter = dependencies.TflWriter;
             ScriptRunner = dependencies.ScriptRunner;
             DataTypeService = dependencies.DataTypeService;

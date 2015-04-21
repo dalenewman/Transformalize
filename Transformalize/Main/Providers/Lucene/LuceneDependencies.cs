@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Transformalize.Main.Providers.Lucene {
     public class LuceneDependencies : AbstractConnectionDependencies {
         public LuceneDependencies(string processName)
@@ -7,7 +9,7 @@ namespace Transformalize.Main.Providers.Lucene {
                 new LuceneEntityRecordsExist(),
                 new LuceneEntityDropper(),
                 new LuceneEntityCreator(),
-                new FalseViewWriter(),
+                new List<IViewWriter> { new FalseViewWriter() },
                 new LuceneTflWriter(),
                 new FalseScriptRunner(),
                 new FalseDataTypeService()) { }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Transformalize.Main.Providers.AnalysisServices;
 
 namespace Transformalize.Main.Providers.Console {
@@ -9,7 +10,7 @@ namespace Transformalize.Main.Providers.Console {
                 new FalseEntityRecordsExist(),
                 new FalseEntityDropper(),
                 new FalseEntityCreator(),
-                new FalseViewWriter(),
+                new List<IViewWriter> { new FalseViewWriter() },
                 new FalseTflWriter(),
                 new FalseScriptRunner(),
             new FalseDataTypeService()) { }

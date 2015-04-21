@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Transformalize.Main.Providers.SqlServer;
 
 namespace Transformalize.Main.Providers.PostgreSql {
@@ -9,7 +10,7 @@ namespace Transformalize.Main.Providers.PostgreSql {
                 new PostgreSqlEntityRecordsExist(),
                 new PostgreSqlEntityDropper(),
                 new DatabaseEntityCreator(),
-                new PostgreSqlViewWriter(),
+                new List<IViewWriter> { new PostgreSqlViewWriter()},
                 new PostgreSqlTflWriter(),
                 new DatabaseScriptRunner(),
             new PostgreSqlDataTypeService()) { }

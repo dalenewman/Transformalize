@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Transformalize.Main.Providers.AnalysisServices;
 using Transformalize.Main.Providers.File;
 
@@ -11,7 +12,7 @@ namespace Transformalize.Main.Providers.Html
                 new FileEntityRecordsExist(),
                 new FileEntityDropper(),
                 new FileEntityCreator(),
-                new FalseViewWriter(),
+                new List<IViewWriter> { new FalseViewWriter() },
                 new FalseTflWriter(),
                 new FalseScriptRunner(),
             new FalseDataTypeService()) { }

@@ -2961,6 +2961,7 @@
     <Compile Include="Main\Providers\SqlServer\SqlServerEntityCreator.cs" />
     <Compile Include="Main\Providers\SqlServer\SqlServerEntityDropper.cs" />
     <Compile Include="Main\Providers\SqlServer\SqlServerEntityKeysExtractFromOutput.cs" />
+    <Compile Include="Main\Providers\SqlServer\SqlServerViewWirter.cs" />
     <Compile Include="Main\Providers\Sql\SqlEntityDelete.cs" />
     <Compile Include="Main\Providers\Sql\SqlEntityKeysExtractAllFromInput.cs" />
     <Compile Include="Main\Providers\Sql\SqlEntityKeysExtractAllFromOutput.cs" />
@@ -3036,7 +3037,7 @@
     <Compile Include="Main\Providers\SqlServer\SqlServerTableExists.cs" />
     <Compile Include="Main\Providers\SqlServer\SqlServerTableQueryWriter.cs" />
     <Compile Include="Main\Providers\SqlServer\SqlServerTflWriter.cs" />
-    <Compile Include="Main\Providers\SqlServer\SqlServerViewWriter.cs" />
+    <Compile Include="Main\Providers\SqlServer\SqlServerStarViewWriter.cs" />
     <Compile Include="Main\Providers\SqlTemplates.cs" />
     <Compile Include="Main\Providers\StarFields.cs" />
     <Compile Include="Main\Relationship.cs" />

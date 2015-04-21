@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Transformalize.Main.Providers.AnalysisServices;
 
 namespace Transformalize.Main.Providers.Folder {
@@ -9,7 +10,7 @@ namespace Transformalize.Main.Providers.Folder {
                 new FolderEntityRecordsExist(),
                 new FolderEntityDropper(),
                 new FolderEntityCreator(),
-                new FalseViewWriter(),
+                new List<IViewWriter> { new FalseViewWriter() },
                 new FalseTflWriter(),
                 new FalseScriptRunner(), 
                 new FalseDataTypeService()) { }

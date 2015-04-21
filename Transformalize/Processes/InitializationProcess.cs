@@ -35,7 +35,9 @@ namespace Transformalize.Processes {
         public InitializationProcess(Process process)
             : base(process) {
             process.OutputConnection.TflWriter.Initialize(process);
-            process.OutputConnection.ViewWriter.Drop(process);
+            foreach (var writer in process.OutputConnection.ViewWriters) {
+                writer.Drop(process);
+            }
         }
 
         protected override void Initialize() {
@@ -61,10 +63,10 @@ namespace Transformalize.Processes {
                 throw new TransformalizeException(this.Process.Name, string.Empty, "Initialization Process failed for {0}. {1}", Process.Name, messageBuilder.ToString());
             }
 
-            if (Process.StarEnabled && Process.Entities.Count > 0) {
-                Process.OutputConnection.ViewWriter.Create(Process);
+            foreach (var writer in Process.OutputConnection.ViewWriters) {
+                writer.Create(Process);
             }
-            Process.InitializeView();
+
             base.PostProcessing();
         }
     }

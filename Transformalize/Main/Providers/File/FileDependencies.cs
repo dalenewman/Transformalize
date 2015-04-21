@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Transformalize.Main.Providers.File {
     public class FileDependencies : AbstractConnectionDependencies {
         public FileDependencies()
@@ -7,7 +9,7 @@ namespace Transformalize.Main.Providers.File {
                 new FileEntityRecordsExist(),
                 new FileEntityDropper(),
                 new FileEntityCreator(),
-                new FalseViewWriter(),
+                new List<IViewWriter> { new FalseViewWriter() },
                 new FalseTflWriter(),
                 new FalseScriptRunner(),
             new FalseDataTypeService()) { }

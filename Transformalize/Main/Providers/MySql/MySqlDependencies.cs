@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Transformalize.Main.Providers.MySql {
     public class MySqlDependencies : AbstractConnectionDependencies {
         public MySqlDependencies()
@@ -7,7 +9,7 @@ namespace Transformalize.Main.Providers.MySql {
                 new MySqlEntityRecordsExist(),
                 new MySqlEntityDropper(),
                 new DatabaseEntityCreator(),
-                new MySqlViewWriter(),
+                new List<IViewWriter> { new MySqlViewWriter()},
                 new MySqlTflWriter(),
                 new DatabaseScriptRunner(),
             new MySqlDataTypeService()

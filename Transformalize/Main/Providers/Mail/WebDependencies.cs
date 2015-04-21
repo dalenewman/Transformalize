@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Transformalize.Main.Providers.Mail {
     public class WebDependencies : AbstractConnectionDependencies {
         public WebDependencies()
@@ -7,7 +9,7 @@ namespace Transformalize.Main.Providers.Mail {
                 new FalseEntityRecordsExist(),
                 new FalseEntityDropper(),
                 new FalseEntityCreator(),
-                new FalseViewWriter(),
+                new List<IViewWriter> { new FalseViewWriter() },
                 new FalseTflWriter(),
                 new FalseScriptRunner(),
                 new FalseDataTypeService()
