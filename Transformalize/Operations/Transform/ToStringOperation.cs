@@ -16,6 +16,7 @@ namespace Transformalize.Operations.Transform {
             { "datetime", ((value,format) => (Convert.ToDateTime(value)).ToString(format))},
             { "int32", ((value,format) => (Convert.ToInt32(value)).ToString(format))},
             { "decimal", ((value,format) => (Convert.ToDecimal(value)).ToString(format))},
+            { "timespan", ((value, format) => ((TimeSpan)value).ToString(format)) },
             { "double",  ((value,format) => (Convert.ToDouble(value)).ToString(format))},
             { "int16",  ((value,format) => (Convert.ToInt16(value)).ToString(format))},
             { "int64",  ((value,format) => (Convert.ToInt64(value)).ToString(format))},

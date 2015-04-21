@@ -30,7 +30,6 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Logging;
 using Transformalize.Main.Parameters;
-using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.Mail;
 using Transformalize.Operations.Transform;
 using Transformalize.Operations.Validate;
@@ -433,13 +432,13 @@ namespace Transformalize.Main {
 
                 case "format":
 
-                    if (parameters.Count == 1 && element.IsShortHand) {
-                        return new FormatArrayOperation(
-                            parameters[0],
-                            outKey,
-                            element.Format
-                        ) { ShouldRun = shouldRun, EntityName = _entityName };
-                    }
+                    //if (parameters.Count == 1 && element.IsShortHand) {
+                    //    return new FormatArrayOperation(
+                    //        parameters[0],
+                    //        outKey,
+                    //        element.Format
+                    //    ) { ShouldRun = shouldRun, EntityName = _entityName };
+                    //}
 
                     return new FormatOperation(
                         outKey,
@@ -447,14 +446,20 @@ namespace Transformalize.Main {
                         parameters
                         ) { ShouldRun = shouldRun, EntityName = _entityName };
 
+                case "timespan":
+                    return new TimeSpanOperation(
+                        parameters,
+                        outKey
+                    ) { ShouldRun = shouldRun, EntityName = _entityName };
+
                 case "concat":
 
-                    if (parameters.Count == 1 && element.IsShortHand) {
-                        return new ConcatArrayOperation(
-                            parameters[0],
-                            outKey
-                        ) { ShouldRun = shouldRun, EntityName = _entityName };
-                    }
+                    //if (parameters.Count == 1 && element.IsShortHand) {
+                    //    return new ConcatArrayOperation(
+                    //        parameters[0],
+                    //        outKey
+                    //    ) { ShouldRun = shouldRun, EntityName = _entityName };
+                    //}
 
                     return new ConcatOperation(
                         outKey,
@@ -475,13 +480,13 @@ namespace Transformalize.Main {
                         element.Separator = SPACE;
                     }
 
-                    if (parameters.Count == 1 && element.IsShortHand) {
-                        return new JoinArrayOperation(
-                            parameters[0],
-                            outKey,
-                            element.Separator
-                        ) { ShouldRun = shouldRun, EntityName = _entityName };
-                    }
+                    //if (parameters.Count == 1 && element.IsShortHand) {
+                    //    return new JoinArrayOperation(
+                    //        parameters[0],
+                    //        outKey,
+                    //        element.Separator
+                    //    ) { ShouldRun = shouldRun, EntityName = _entityName };
+                    //}
 
                     return new JoinTransformOperation(
                         outKey,

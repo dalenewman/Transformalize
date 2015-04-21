@@ -3462,6 +3462,7 @@
     <Compile Include="Operations\Transform\SlugOperation.cs" />
     <Compile Include="Operations\Transform\SplitIndexOperation.cs" />
     <Compile Include="Operations\Transform\TemplateOperation.cs" />
+    <Compile Include="Operations\Transform\TimeSpanOperation.cs" />
     <Compile Include="Operations\Transform\TimeZoneOperation.cs" />
     <Compile Include="Operations\Transform\TransliterateOperation.cs" />
     <Compile Include="Operations\Transform\ValueOperation.cs" />

@@ -412,48 +412,42 @@ namespace Transformalize.Test {
 
         [Test]
         public void JavaScript() {
-            const string expression = "js(JSON.parse(x)[0].value,x";
+            const string expression = "javascript(JSON.parse(x)[0].value)";
             var result = _factory.Interpret(expression, _field);
             Assert.AreEqual("javascript", result.Method);
             Assert.AreEqual("JSON.parse(x)[0].value", result.Script);
-            Assert.AreEqual("x", result.Parameter);
         }
 
         [Test]
         public void JavaScriptWithTwoParameters() {
-            const string expression = @"js(x*y;,x,y";
+            const string expression = @"js(x*y)";
             var result = _factory.Interpret(expression, _field);
             Assert.AreEqual("javascript", result.Method);
-            Assert.AreEqual("x*y;", result.Script);
-            Assert.AreEqual("x", result.Parameters[0].Field);
-            Assert.AreEqual("y", result.Parameters[1].Field);
+            Assert.AreEqual("x*y", result.Script);
         }
 
         [Test]
         public void CSharp() {
-            const string expression = "cs(return d.AddDays(-1);,d";
+            const string expression = "cs(return d.AddDays(-1);)";
             var result = _factory.Interpret(expression, _field);
             Assert.AreEqual("csharp", result.Method);
             Assert.AreEqual("return d.AddDays(-1);", result.Script);
-            Assert.AreEqual("d", result.Parameter);
         }
 
         [Test]
         public void Template() {
-            const string expression = "template(@{ var x = Model.theParameter.PadLeft(5); }@{x} plus more text,theParameter";
+            const string expression = "template(@{ var x = Model.theParameter.PadLeft(5); }@{x} plus more text)";
             var result = _factory.Interpret(expression, _field);
             Assert.AreEqual("template", result.Method);
             Assert.AreEqual("@{ var x = Model.theParameter.PadLeft(5); }@{x} plus more text", result.Template);
-            Assert.AreEqual("theParameter", result.Parameter);
         }
 
         [Test]
         public void Velocity() {
-            const string expression = "velocity(#set( $x = $theParameter.PadLeft(5))$x plus more text,theParameter";
+            const string expression = "velocity(#set( $x = $theParameter.PadLeft(5))$x plus more text";
             var result = _factory.Interpret(expression, _field);
             Assert.AreEqual("velocity", result.Method);
             Assert.AreEqual("#set( $x = $theParameter.PadLeft(5))$x plus more text", result.Template);
-            Assert.AreEqual("theParameter", result.Parameter);
         }
 
         [Test]

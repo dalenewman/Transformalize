@@ -28,7 +28,6 @@ using System.Linq;
 using System.Text;
 using Transformalize.Extensions;
 using Transformalize.Libs.Dapper;
-using Transformalize.Libs.Ninject;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Libs.SemanticLogging;
@@ -87,6 +86,7 @@ namespace Transformalize.Main {
         public bool IsFirstRun { get; set; }
         public long Anything { get; set; }
         public bool StarEnabled { get; set; }
+        public bool ViewEnabled { get; set; }
 
         public string Star {
             get { return _star.Equals(Common.DefaultValue) ? Name + "Star" : _star; }
@@ -416,95 +416,6 @@ namespace Transformalize.Main {
                 entity.TflBatchId = batchId;
                 batchId++;
             }
-        }
-
-        public string ViewSql() {
-            const string fieldSpacer = ",\r\n    ";
-            var builder = new StringBuilder();
-            var master = MasterEntity;
-            var l = OutputConnection.L;
-            var r = OutputConnection.R;
-
-            builder.AppendLine("SELECT");
-            builder.Append("    ");
-            builder.Append(new FieldSqlWriter(master.OutputFields()).Alias(l, r).Prepend("m.").Write(fieldSpacer));
-
-            foreach (var rel in Relationships) {
-                var joinFields = rel.Fields();
-                foreach (var field in rel.RightEntity.OutputFields()) {
-                    if (!joinFields.HaveField(field.Alias)) {
-                        builder.Append(fieldSpacer);
-                        builder.Append(new FieldSqlWriter(new Fields(field)).Alias(l, r).Prepend("r" + rel.RightEntity.Index + ".").Write(fieldSpacer));
-                    }
-                }
-            }
-
-            builder.AppendLine();
-            builder.Append("FROM ");
-            builder.Append(l);
-            builder.Append(master.OutputName());
-            builder.Append(r);
-            builder.Append(" m");
-
-            foreach (var rel in Relationships) {
-                builder.AppendLine();
-                builder.Append("LEFT OUTER JOIN ");
-                if (rel.RightEntity.IsMaster()) {
-                    builder.Append("m");
-                } else {
-                    builder.Append(l);
-                    builder.Append(rel.RightEntity.OutputName());
-                    builder.Append(r);
-                }
-                builder.Append(" ");
-                builder.Append("r");
-                builder.Append(rel.RightEntity.Index);
-                builder.Append(" ON (");
-                foreach (var j in rel.Join) {
-                    if (rel.LeftEntity.IsMaster()) {
-                        builder.Append("m");
-                    } else {
-                        builder.Append("r");
-                        builder.Append(rel.LeftEntity.Index);
-                    }
-                    builder.Append(".");
-                    builder.Append(l);
-                    builder.Append(j.LeftField.Alias);
-                    builder.Append(r);
-                    builder.Append(" = ");
-                    builder.Append("r");
-                    builder.Append(rel.RightEntity.Index);
-                    builder.Append(".");
-                    builder.Append(l);
-                    builder.Append(j.RightField.Alias);
-                    builder.Append(r);
-                    builder.Append(" AND ");
-                }
-                builder.TrimEnd(" AND ");
-                builder.Append(")");
-            }
-
-            builder.Append(";");
-            return builder.ToString();
-
-        }
-
-        public void InitializeView() {
-
-            if (!OutputConnection.IsDatabase || Relationships.Count <= 0)
-                return;
-
-            var connection = OutputConnection.GetConnection();
-            connection.Open();
-
-            if (connection.Query("SELECT TOP(1) TABLE_NAME FROM INFORMATION_SCHEMA.VIEWS WHERE TABLE_NAME = @View;", new { View }).Any()) {
-                connection.Execute(string.Format("DROP VIEW {0};", OutputConnection.Enclose(View)));
-            }
-
-            var outputSql = string.Format("CREATE VIEW {0} AS {1}", OutputConnection.Enclose(View), ViewSql());
-            TflLogger.Debug(Name, string.Empty, outputSql);
-            connection.Execute(outputSql);
-            connection.Close();
         }
 
         public bool IsInitMode() {

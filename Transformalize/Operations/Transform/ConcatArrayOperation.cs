@@ -4,7 +4,6 @@ using Transformalize.Main;
 using Transformalize.Main.Parameters;
 
 namespace Transformalize.Operations.Transform {
-
     public class ConcatArrayOperation : ShouldRunOperation {
         private readonly IParameter _inParameter;
 
