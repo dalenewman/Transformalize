@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
+
     public class ConvertOperation : ShouldRunOperation {
+
         private readonly string _outType;
         private readonly string _fromFormat;
         private readonly Dictionary<string, Func<object, object>> _conversionMap = Common.GetObjectConversionMap();
@@ -41,15 +42,15 @@ namespace Transformalize.Operations.Transform {
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
-
             foreach (var row in rows) {
                 if (ShouldRun(row)) {
                     row[OutKey] = _conversionMap[_outType](row[InKey]);
                 } else {
-                    Interlocked.Increment(ref SkipCount);
+                    Skip();
                 }
                 yield return row;
             }
         }
+
     }
 }

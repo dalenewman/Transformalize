@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Transformalize.Libs.Cfg.Net;
 using Transformalize.Main;
 
@@ -120,7 +121,7 @@ namespace Transformalize.Configuration {
         public string TimeComponent { get; set; }
         [Cfg(value = 0)]
         public int TimeOut { get; set; }
-        [Cfg(value = "")]
+        [Cfg(value = Common.DefaultValue, domain = Common.DefaultValue + "," + Common.ValidTypes)]
         public string To { get; set; }
         [Cfg(value = "0.0")]
         public string ToLat { get; set; }
@@ -168,17 +169,28 @@ namespace Transformalize.Configuration {
 
         public bool IsShortHand { get; set; }
 
-        protected override void Validate() {
-            if (Method == null)
-                return;
+        protected override void Modify() {
+            switch (Method) {
+                case "trimstartappend":
+                    if (Separator.Equals(Common.DefaultValue)) {
+                        Separator = " ";
+                    }
+                    break;
+            }
+        }
 
-            switch (Method.ToLower()) {
+        protected override void Validate() {
+
+            switch (Method) {
                 case "shorthand":
                     if (string.IsNullOrEmpty(T)) {
                         AddProblem("shorthand transform requires t attribute.");
                     }
                     break;
-                default:
+                case "copy":
+                    if (Parameter == string.Empty && !Parameters.Any()) {
+                        AddProblem("copy transform requires a parameter (or parameters).");
+                    }
                     break;
             }
         }

@@ -57,16 +57,11 @@ namespace Transformalize.Orchard.Services {
                 return response;
             }
 
-            if (context.User.Identity.IsAuthenticated) {
-                if (_orchardServices.Authorizer.Authorize(global::Orchard.Core.Contents.Permissions.ViewContent, part)) {
-                    return response;
-                }
-                Logger.Error("Not authorized to run {0}.  Requested by {1} at {2}.", part.As<TitlePart>().Title, context.User.Identity.Name, context.Request.UserHostAddress);
-                response.Add(Unathorized(request));
+            if (_orchardServices.Authorizer.Authorize(global::Orchard.Core.Contents.Permissions.ViewContent, part)) {
                 return response;
             }
 
-            Logger.Error("Not authorized to run {0}.  Requested by Anonymous at {1}.", part.As<TitlePart>().Title, context.Request.UserHostAddress);
+            Logger.Error("Not authorized to run {0}.  Requested by {1} at {2}.", part.As<TitlePart>().Title, context.User.Identity.Name, context.Request.UserHostAddress);
             response.Add(Unathorized(request));
             return response;
         }

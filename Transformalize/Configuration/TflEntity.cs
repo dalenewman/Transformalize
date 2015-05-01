@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Libs.Cfg.Net;
+using Transformalize.Libs.Lucene.Net.Document;
 using Transformalize.Libs.Rhino.Etl.Operations;
 
 namespace Transformalize.Configuration {
@@ -97,18 +98,14 @@ namespace Transformalize.Configuration {
 
         public IOperation InputOperation { get; set; }
 
-        public IEnumerable<TflField> AllFields() {
+        public IEnumerable<TflField> GetAllFields() {
+            var fields = new List<TflField>();
             foreach (var f in Fields) {
-                yield return f;
-                foreach (var transform in f.Transforms) {
-                    foreach (var tf in transform.Fields) {
-                        yield return tf;
-                    }
-                }
+                fields.Add(f);
+                fields.AddRange(f.Transforms.SelectMany(transform => transform.Fields));
             }
-            foreach (var calculatedField in CalculatedFields) {
-                yield return calculatedField;
-            }
+            fields.AddRange(CalculatedFields);
+            return fields;
         }
 
         protected override void Modify() {
@@ -126,7 +123,7 @@ namespace Transformalize.Configuration {
         }
 
         protected override void Validate() {
-            var fields = AllFields().ToArray();
+            var fields = GetAllFields().ToArray();
             var names = new HashSet<string>(fields.Select(f => f.Name).Distinct());
             var aliases = new HashSet<string>(fields.Select(f => f.Alias));
 
@@ -166,12 +163,58 @@ namespace Transformalize.Configuration {
         }
 
         public IEnumerable<TflTransform> GetAllTransforms() {
-            foreach (var transform in Fields.SelectMany(field => field.Transforms)) {
-                yield return transform;
+            var transforms = Fields.SelectMany(field => field.Transforms).ToList();
+            transforms.AddRange(CalculatedFields.SelectMany(field => field.Transforms));
+            return transforms;
+        }
+
+        public void MergeParameters() {
+
+            foreach (var field in Fields) {
+                foreach (var transform in field.Transforms.Where(t => t.Parameter != string.Empty)) {
+                    if (transform.Parameter == "*") {
+                        AddProblem("You can not reference all parameters within an entity's field: {0}", field.Name);
+                    } else {
+                        transform.Parameters.Add(GetParameter(Alias, transform.Parameter));
+                    }
+                    transform.Parameter = string.Empty;
+                }
             }
-            foreach (var transform in CalculatedFields.SelectMany(field => field.Transforms)) {
-                yield return transform;
+
+            var index = 0;
+            foreach (var calculatedField in CalculatedFields) {
+                foreach (var transform in calculatedField.Transforms.Where(t => t.Parameter != string.Empty)) {
+                    if (transform.Parameter == "*") {
+                        foreach (var field in Fields) {
+                            transform.Parameters.Add(GetParameter(Alias, field.Alias, field.Type));
+                        }
+                        var thisField = calculatedField.Name;
+                        foreach (var calcField in CalculatedFields.Take(index).Where(cf => cf.Name != thisField)) {
+                            transform.Parameters.Add(GetParameter(Alias, calcField.Alias, calcField.Type));
+                        }
+                    } else {
+                        transform.Parameters.Add(GetParameter(Alias, transform.Parameter));
+                    }
+                    transform.Parameter = string.Empty;
+                }
+                index++;
             }
+
+        }
+
+        private TflParameter GetParameter(string entity, string field, string type) {
+            return GetDefaultOf<TflParameter>(p => {
+                p.Entity = entity;
+                p.Field = field;
+                p.Type = type;
+            });
+        }
+
+        private TflParameter GetParameter(string entity, string field) {
+            return GetDefaultOf<TflParameter>(p => {
+                p.Entity = entity;
+                p.Field = field;
+            });
         }
     }
 }

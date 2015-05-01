@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using System.IO;
 using System.Linq;
 using Moq;
@@ -29,6 +30,8 @@ using NUnit.Framework;
 using Transformalize.Configuration;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Libs.SemanticLogging;
+using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.SqlServer;
@@ -166,5 +169,6 @@ LEFT OUTER JOIN TestProduct ON (d.[ProductKey] = TestProduct.[ProductKey])
 
 
         }
+
     }
 }

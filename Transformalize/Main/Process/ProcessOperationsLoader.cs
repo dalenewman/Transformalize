@@ -9,7 +9,7 @@ namespace Transformalize.Main {
         private readonly Process _process;
         private readonly List<TflField> _calculatedFields;
 
-        public ProcessOperationsLoader(ref Process process, List<TflField> calculatedFields) {
+        public ProcessOperationsLoader(Process process, List<TflField> calculatedFields) {
             _process = process;
             _calculatedFields = calculatedFields;
         }
@@ -18,7 +18,7 @@ namespace Transformalize.Main {
 
             var autoIndex = Convert.ToInt16(_process.MasterEntity == null ? 0 : new Fields(_process.MasterEntity.Fields, _process.MasterEntity.CalculatedFields).Count + 1);
 
-            foreach (TflField f in _calculatedFields) {
+            foreach (var f in _calculatedFields) {
                 var field = new FieldReader(_process, _process.MasterEntity, false).Read(f);
 
                 if (field.Index.Equals(short.MaxValue)) {
@@ -30,12 +30,10 @@ namespace Transformalize.Main {
                 field.Index = field.Index == 0 ? autoIndex : field.Index;
                 _process.CalculatedFields.Add(field);
 
-                foreach (TflTransform t in f.Transforms) {
+                foreach (var t in f.Transforms) {
 
                     var factory = new TransformOperationFactory(_process, string.Empty);
-                    var parameters = t.Parameter == "*" ?
-                        new ProcessParametersReader(_process).Read() :
-                        new ProcessTransformParametersReader(_process).Read(t);
+                    var parameters = new ProcessTransformParametersReader(_process).Read(t);
                     var operation = factory.Create(field, t, parameters);
 
                     _process.TransformOperations.Add(operation);

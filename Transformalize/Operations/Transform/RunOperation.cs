@@ -5,9 +5,8 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Logging;
 using Transformalize.Main.Providers;
-using Transformalize.Operations.Transform;
 
-namespace Transformalize.Main {
+namespace Transformalize.Operations.Transform {
     public class RunOperation : ShouldRunOperation {
         private readonly int _timeOut;
         private readonly IDbConnection _connection;

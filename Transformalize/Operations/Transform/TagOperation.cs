@@ -1,14 +1,12 @@
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Security;
 using System.Text;
 using System.Web;
 using System.Xml;
 using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Operations.Transform;
+using Transformalize.Main;
 
-namespace Transformalize.Main {
+namespace Transformalize.Operations.Transform {
 
     public class TagOperation2 : ShouldRunOperation {
         private readonly string _tag;

@@ -104,26 +104,26 @@ namespace Transformalize.Processes {
 
         }
 
-        private PartialProcessOperation PrepareOutputOperation(Process process, NamedConnection nc) {
+        private PartialProcessOperation PrepareOutputOperation(Process process, NamedConnection output) {
 
             var partial = new PartialProcessOperation(process);
-            partial.Register(new FilterOutputOperation(nc.ShouldRun) { EntityName = _entity.Name });
+            partial.Register(new FilterOutputOperation(output.ShouldRun) { EntityName = _entity.Name });
 
-            if (nc.Connection.Type == ProviderType.Internal) {
-                partial.RegisterLast(_collectors[nc.Name]);
+            if (output.Connection.Type == ProviderType.Internal) {
+                partial.RegisterLast(_collectors[output.Name]);
             } else {
                 if (Process.IsFirstRun || !_entity.DetectChanges) {
                     partial.Register(new EntityAddTflFields(process, _entity));
-                    partial.Register(nc.Connection.Insert(process, _entity));
+                    partial.Register(output.Connection.Insert(process, _entity));
                 } else {
-                    partial.Register(new EntityJoinAction(process, _entity).Right(nc.Connection.ExtractCorrespondingKeysFromOutput(_entity)));
+                    partial.Register(new EntityJoinAction(process, _entity).Right(output.Connection.ExtractCorrespondingKeysFromOutput(_entity)));
                     var branch = new BranchingOperation()
                         .Add(new PartialProcessOperation(process)
                             .Register(new EntityActionFilter(process, _entity, EntityAction.Insert))
-                            .Register(nc.Connection.Insert(process, _entity)))
+                            .Register(output.Connection.Insert(process, _entity)))
                         .Add(new PartialProcessOperation(process)
                             .Register(new EntityActionFilter(process, _entity, EntityAction.Update))
-                            .Register(nc.Connection.Update(_entity)));
+                            .Register(output.Connection.Update(_entity)));
 
                     partial.Register(branch);
                 }

@@ -76,6 +76,8 @@ namespace Transformalize.Main.Transform {
             {"timezone","timezone"},
             {"titlecase","totitlecase"},
             {"tojson","tojson"},
+            {"toint","toint"},
+            {"toint32","toint"},
             {"tolower","tolower"},
             {"tostring","tostring"},
             {"totitlecase","totitlecase"},
@@ -89,7 +91,11 @@ namespace Transformalize.Main.Transform {
             {"urlencode","urlencode"},
             {"velocity","velocity"},
             {"web","web"},
-            {"timespan","timespan"}
+            {"timespan","timespan"},
+            {"isempty","isempty"},
+            {"isblank","isempty"},
+            {"equals","equals"},
+            {"isequalto", "equals"}
         };
             _functions = new Dictionary<string, Func<string, TflField, TflTransform, TflTransform>> {
             {"replace", Replace},
@@ -139,6 +145,7 @@ namespace Transformalize.Main.Transform {
             {"template", Template},
             {"totitlecase", ToTitleCase},
             {"timezone", TimeZone},
+            {"toint", ToInt},
             {"tojson", ToJson},
             {"fromxml", (arg,root, last) => NotImplemented("fromxml", root, last)},
             {"fromregex", (arg,root, last) => NotImplemented("fromregex", root, last)},
@@ -148,8 +155,24 @@ namespace Transformalize.Main.Transform {
             {"htmlencode", HtmlEncode},
             {"isdaylightsavings", IsDaylightSavings},
             {"collapse", Collapse},
-            {"timespan", Timespan}
+            {"timespan", Timespan},
+            {"isempty", IsEmpty},
+            {"equals", Equals}
         };
+        }
+
+        private static TflTransform IsEmpty(string arg, TflField field, TflTransform lastTransform) {
+            return Parameterless("isempty", "(true if empty, false if not empty)", arg, field, lastTransform);
+        }
+
+        private static TflTransform Equals(string arg, TflField field, TflTransform lastTransform) {
+            var split = SplitComma(arg);
+            Guard.Against(split.Length == 0 || split.Length > 1, "The equals method requires one parameter representing a value or field that you want compared with this field's value.");
+            return field.GetDefaultOf<TflTransform>(t => {
+                t.Method = "equals";
+                t.Parameter = arg;
+                t.IsShortHand = true;
+            });
         }
 
         private static TflTransform Timespan(string arg, TflField field, TflTransform lastTransform) {
@@ -339,11 +362,11 @@ namespace Transformalize.Main.Transform {
             return Script("javascript", arg, field, lastTransform);
         }
 
-        private TflTransform PadLeft(string arg, TflField field, TflTransform lastTransform) {
+        private static TflTransform PadLeft(string arg, TflField field, TflTransform lastTransform) {
             return Pad("padleft", arg, field, lastTransform);
         }
 
-        private TflTransform PadRight(string arg, TflField field, TflTransform lastTransform) {
+        private static TflTransform PadRight(string arg, TflField field, TflTransform lastTransform) {
             return Pad("padright", arg, field, lastTransform);
         }
 
@@ -714,6 +737,13 @@ namespace Transformalize.Main.Transform {
             var element = Convert(arg, field, lastTransform);
             element.Method = "tostring";
             element.To = "string";
+            return element;
+        }
+
+        private TflTransform ToInt(string arg, TflField field, TflTransform lastTransform) {
+            var element = Convert(arg, field, lastTransform);
+            element.Method = "convert";
+            element.To = "int";
             return element;
         }
 

@@ -1571,11 +1571,9 @@ It is False#end", templates, parameters);
                 .ToOperation();
 
             var copyParameters = new Parameters() { { "in1", "in1", null, "int" }, { "in2", "in2", null, "int" } };
+            var concatOperation = new ConcatOperation("out", copyParameters);
 
-            var copyOperation = new CopyMultipleOperation("out", copyParameters);
-            var concatOperation = new ConcatArrayOperation(new Parameter("out", null), "out");
-
-            var output = TestOperation(input, copyOperation, concatOperation);
+            var output = TestOperation(input, concatOperation);
 
             Assert.AreEqual("12", output[0]["out"].ToString());
             Assert.AreEqual("34", output[1]["out"].ToString());
@@ -1593,10 +1591,9 @@ It is False#end", templates, parameters);
 
             var copyParameters = new Parameters() { { "in1", "in1", null, "int" }, { "in2", "in2", null, "int" } };
 
-            var copyOperation = new CopyMultipleOperation("out", copyParameters);
-            var joinArrayOperation = new JoinArrayOperation(new Parameter("out", null), "out", "-");
+            var joinArrayOperation = new JoinTransformOperation("out", "-", copyParameters);
 
-            var output = TestOperation(input, copyOperation, joinArrayOperation);
+            var output = TestOperation(input, joinArrayOperation);
 
             Assert.AreEqual("1-2", output[0]["out"].ToString());
             Assert.AreEqual("3-4", output[1]["out"].ToString());
@@ -1612,10 +1609,9 @@ It is False#end", templates, parameters);
 
             var copyParameters = new Parameters() { { "in1", "in1", null, "int" }, { "in2", "in2", null, "int" } };
 
-            var copyOperation = new CopyMultipleOperation("out", copyParameters);
-            var formatArrayOperation = new FormatArrayOperation(new Parameter("out", null), "out", "Here is {0} and here is {1}.");
+            var formatArrayOperation = new FormatOperation("out", "Here is {0} and here is {1}.", copyParameters);
 
-            var output = TestOperation(input, copyOperation, formatArrayOperation);
+            var output = TestOperation(input, formatArrayOperation);
 
             Assert.AreEqual("Here is 1 and here is 2.", output[0]["out"].ToString());
             Assert.AreEqual("Here is 3 and here is 4.", output[1]["out"].ToString());

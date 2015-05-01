@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Main;
 using Transformalize.Main.Parameters;
-using Transformalize.Operations.Transform;
 
-namespace Transformalize.Main {
+namespace Transformalize.Operations.Transform {
     public class WebOperation : ShouldRunOperation {
         private readonly IParameter _url;
         private readonly int _sleep;

@@ -21,6 +21,7 @@
 #endregion
 
 using System.Diagnostics.Tracing;
+using System.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration;
 using Transformalize.Libs.SemanticLogging;

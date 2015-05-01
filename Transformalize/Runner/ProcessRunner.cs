@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Libs.Rhino.Etl.Pipelines;
 using Transformalize.Logging;
 using Transformalize.Main;
@@ -49,19 +50,29 @@ namespace Transformalize.Runner {
             if (!process.IsFirstRun) {
                 ProcessDeletes(ref process);
             }
+
             ProcessEntities(ref process);
 
             if (process.StarEnabled && !process.OutputConnection.Is.Internal()) {
                 ProcessMaster(ref process);
-                ProcessTransforms(ref process);
             }
 
-            if (process.Relationships.Any()) {
-                var collector = new CollectorOperation();
-                new MasterJoinProcess(process, ref collector).Execute();
-                process.Results = collector.Rows;
+            if (process.OutputConnection.Is.Internal()) {
+                if (process.Relationships.Any()) {
+                    var collector = new CollectorOperation();
+                    new MasterJoinProcess(process, ref collector).Execute();
+                    process.Results = collector.Rows;
+                } else {
+                    process.Results = process.MasterEntity == null ? Enumerable.Empty<Row>() : process.MasterEntity.Rows;
+                }
             } else {
-                process.Results = process.MasterEntity == null ? Enumerable.Empty<Row>() : process.MasterEntity.Rows;
+                process.Results = Enumerable.Empty<Row>();
+            }
+
+            if (process.OutputConnection.Is.Internal()) {
+                ProcessTransforms(process, new RowsOperation(process.Results));
+            } else {
+                ProcessTransforms(process, new ParametersExtract(process));
             }
 
             new TemplateManager(process).Manage();
@@ -115,10 +126,10 @@ namespace Transformalize.Runner {
             updateMasterProcess.Execute();
         }
 
-        private static void ProcessTransforms(ref Process process) {
+        private static void ProcessTransforms(Process process, IOperation input) {
             if (process.CalculatedFields.Count <= 0)
                 return;
-            var transformProcess = new TransformProcess(process) {
+            var transformProcess = new TransformProcess(process, input) {
                 PipelineExecuter = process.PipelineThreading == PipelineThreading.SingleThreaded ? (AbstractPipelineExecuter)new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter()
             };
             transformProcess.Execute();

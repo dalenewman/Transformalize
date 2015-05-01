@@ -35,14 +35,6 @@ namespace Transformalize.Main {
         public IParameters Read(TflTransform transform) {
             var parameters = new Parameters.Parameters();
 
-            if (transform.Parameter != string.Empty && transform.Parameter != "*") {
-                var parameter = transform.GetDefaultOf<TflParameter>(p => {
-                    p.Entity = _entity.Alias; 
-                    p.Field = transform.Parameter;
-                });
-                transform.Parameters.Insert(0, parameter);
-            }
-
             foreach (var p in transform.Parameters) {
                 if (string.IsNullOrEmpty(p.Field) && (string.IsNullOrEmpty(p.Name) || string.IsNullOrEmpty(p.Value))) {
                     throw new TransformalizeException("The entity {0} has a {1} transform parameter without a field attribute, or name and value attributes.  Entity parameters require one or the other.", _entity.Alias, transform.Method);

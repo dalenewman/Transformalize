@@ -3,6 +3,7 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Parameters;
 using Transformalize.Operations;
+using Transformalize.Operations.Transform;
 
 namespace Transformalize.Main.Providers.Mail {
 

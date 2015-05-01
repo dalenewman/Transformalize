@@ -23,6 +23,7 @@
 using System.Linq;
 using Transformalize.Extensions;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Operations;
@@ -30,15 +31,17 @@ using Transformalize.Operations;
 namespace Transformalize.Processes {
     public class TransformProcess : EtlProcess {
         private readonly Process _process;
+        private readonly IOperation _input;
 
-        public TransformProcess(Process process)
+        public TransformProcess(Process process, IOperation input)
             : base(process) {
             _process = process;
+            _input = input;
         }
 
         protected override void Initialize() {
 
-            Register(new ParametersExtract(_process));
+            Register(_input);
             Register(new ApplyDefaults(true, _process.CalculatedFields));
 
             foreach (var transform in _process.TransformOperations) {
@@ -47,8 +50,9 @@ namespace Transformalize.Processes {
 
             Register(new TruncateOperation(string.Empty, _process.CalculatedFields));
             Register(new GatherOperation());
-            RegisterLast(new ResultsLoad(_process));
-            //RegisterLast(new DapperResultsLoad(ref _process));
+            if (!_process.OutputConnection.Is.Internal()) {
+                Register(new ResultsLoad(_process));
+            }
         }
 
         protected override void PostProcessing() {

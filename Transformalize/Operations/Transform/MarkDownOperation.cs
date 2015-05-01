@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using Transformalize.Libs.MarkdownSharp;
 using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Operations.Transform;
 
-namespace Transformalize.Main {
+namespace Transformalize.Operations.Transform {
 
     public class MarkDownOperation : ShouldRunOperation {
 

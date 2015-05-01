@@ -21,14 +21,12 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using Transformalize.Configuration;
 using Transformalize.Configuration.Builders;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
-using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
+using Transformalize.Main.Parameters;
 using Transformalize.Main.Providers;
 using Transformalize.Operations.Validate;
 using Transformalize.Test.Builders;
@@ -321,6 +319,58 @@ namespace Transformalize.Test {
             Assert.AreEqual(true, output[0]["out"]);
             Assert.AreEqual(false, output[1]["out"]);
 
+        }
+
+        [Test]
+        public void IsEmpty() {
+            var input = new RowsBuilder()
+                .Row("in", "789A").Field("out", "")
+                .Row("in", "").Field("out", "").ToOperation();
+
+            var validator = new IsEmptyOperation("in", "out");
+
+            var output = TestOperation(input, validator);
+
+            Assert.AreEqual(false, output[0]["out"]);
+            Assert.AreEqual(true, output[1]["out"]);
+        }
+
+        [Test]
+        public void EqualsAnotherField() {
+
+            var rows = new RowsBuilder()
+                .Row("in", "789A").Field("other","not equal")
+                .Row("in", "x").Field("other", "x").ToOperation();
+
+            var parameters = new ParametersBuilder()
+                .Parameter("other", new Parameter("other", null) {SimpleType = "string"})
+                .ToParameters();
+
+            var validator = new EqualsOperation("in", parameters.First().Value);
+
+            var output = TestOperation(rows, validator);
+
+            Assert.AreEqual(false, output[0]["in"]);
+            Assert.AreEqual(true, output[1]["in"]);
+        }
+
+        [Test]
+        public void EqualsAValue() {
+
+            var rows = new RowsBuilder()
+                .Row("in", "789A")
+                .Row("in", "x").ToOperation();
+
+            var parameters = new ParametersBuilder()
+                .Parameter("other", new Parameter("other", "789A") { SimpleType = "string" })
+                .ToParameters();
+
+            var validator = new EqualsOperation("in", parameters.First().Value);
+
+            var output = TestOperation(rows, validator);
+
+            Assert.AreEqual(true, output[0]["in"]);
+            Assert.AreEqual(false, output[1]["in"]);
         }
 
         [Test]

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Transformalize.Libs.Cfg.Net;
 using Transformalize.Libs.Ninject;
 using Transformalize.Libs.Ninject.Parameters;
@@ -14,6 +15,8 @@ using Transformalize.Main.Transform;
 namespace Transformalize.Configuration {
 
     public class TflProcess : CfgNode {
+
+        private const string ALL = "*";
 
         private readonly Dictionary<string, string> _providerTypes = new Dictionary<string, string>();
 
@@ -246,17 +249,8 @@ namespace Transformalize.Configuration {
                 calculatedField.Input = false;
             }
 
-            // an output connection must exist
-            if (Connections.All(c => c.Name != "output"))
-                Connections.Add(new TflConnection() { Name = "output", Provider = "internal" });
-
-            // a none searchtype should exist
-            if (SearchTypes.All(st => st.Name != "none"))
-                SearchTypes.Add(new TflSearchType() { Name = "none", MultiValued = false, Store = false, Index = false });
-
-            // a default searchtype should exist
-            if (SearchTypes.All(st => st.Name != "default"))
-                SearchTypes.Add(new TflSearchType() { Name = "default", MultiValued = false, Store = true, Index = true });
+            ModifyDefaultOutput();
+            ModifyDefaultSearchTypes();
 
             try {
                 AdaptFieldsCreatedFromTransforms(new[] { "fromxml", "fromregex", "fromjson", "fromsplit" });
@@ -270,6 +264,108 @@ namespace Transformalize.Configuration {
             } catch (Exception ex) {
                 AddProblem("Trouble expanding short hand transforms. {0}", ex.Message);
             }
+
+            ModifyMergeParameters();
+            ModifyMapParameters();
+
+        }
+
+        private void ModifyMergeParameters() {
+            foreach (var entity in Entities) {
+                entity.MergeParameters();
+            }
+            var index = 0;
+            foreach (var field in CalculatedFields) {
+                foreach (var transform in field.Transforms.Where(t => t.Parameter != string.Empty)) {
+                    if (transform.Parameter == ALL) {
+                        foreach (var entity in Entities) {
+                            foreach (var entityField in entity.GetAllFields().Where(f => f.Output)) {
+                                transform.Parameters.Add(GetParameter(entity.Alias, entityField.Alias, entityField.Type));
+                            }
+                        }
+                        var thisField = field;
+                        foreach (var cf in CalculatedFields.Take(index).Where(cf => cf.Name != thisField.Name)) {
+                            transform.Parameters.Add(GetParameter(string.Empty, cf.Alias, cf.Type));
+                        }
+                    } else {
+                        if (transform.Parameter.IndexOf('.') > 0) {
+                            var split = transform.Parameter.Split(new[] { '.' });
+                            transform.Parameters.Add(GetParameter(split[0], split[1]));
+                        } else {
+                            transform.Parameters.Add(GetParameter(transform.Parameter));
+                        }
+                    }
+                    transform.Parameter = string.Empty;
+                }
+                index++;
+            }
+        }
+
+        private TflParameter GetParameter(string field) {
+            return GetDefaultOf<TflParameter>(p => {
+                p.Field = field;
+            });
+        }
+
+        private TflParameter GetParameter(string entity, string field) {
+            return GetDefaultOf<TflParameter>(p => {
+                p.Entity = entity;
+                p.Field = field;
+            });
+        }
+
+        private TflParameter GetParameter(string entity, string field, string type) {
+            return GetDefaultOf<TflParameter>(p => {
+                p.Entity = entity;
+                p.Field = field;
+                p.Type = type;
+            });
+        }
+
+        /// <summary>
+        /// Map transforms require the map's parameters.
+        /// </summary>
+        private void ModifyMapParameters() {
+
+            if (Maps.Count == 0)
+                return;
+
+            foreach (var transform in GetAllTransforms().Where(t => t.Method == "map" && Maps.Any(m => m.Name == t.Map))) {
+
+                var parameters = Maps
+                    .First(m => m.Name == transform.Map)
+                    .Items
+                    .Where(i => i.Parameter != string.Empty)
+                    .Select(p => p.Parameter)
+                    .Distinct();
+
+                foreach (var parameter in parameters) {
+                    if (parameter.IndexOf('.') > 0) {
+                        var split = parameter.Split(new[] { '.' });
+                        transform.Parameters.Add(new TflParameter {
+                            Entity = split[0],
+                            Field = split[1]
+                        });
+                    } else {
+                        transform.Parameters.Add(new TflParameter { Field = parameter });
+                    }
+                }
+            }
+        }
+
+        private void ModifyDefaultSearchTypes() {
+
+            if (SearchTypes.All(st => st.Name != "none"))
+                SearchTypes.Add(new TflSearchType() { Name = "none", MultiValued = false, Store = false, Index = false });
+
+            if (SearchTypes.All(st => st.Name != "default"))
+                SearchTypes.Add(new TflSearchType() { Name = "default", MultiValued = false, Store = true, Index = true });
+
+        }
+
+        private void ModifyDefaultOutput() {
+            if (Connections.All(c => c.Name != "output"))
+                Connections.Add(new TflConnection() { Name = "output", Provider = "internal" });
         }
 
         private void AdaptFieldsCreatedFromTransforms(IEnumerable<string> transformToFields) {
@@ -299,12 +395,9 @@ namespace Transformalize.Configuration {
         }
 
         private IEnumerable<TflTransform> GetAllTransforms() {
-            foreach (var transform in Entities.SelectMany(entity => entity.GetAllTransforms())) {
-                yield return transform;
-            }
-            foreach (var transform in CalculatedFields.SelectMany(field => field.Transforms)) {
-                yield return transform;
-            }
+            var transforms = Entities.SelectMany(entity => entity.GetAllTransforms()).ToList();
+            transforms.AddRange(CalculatedFields.SelectMany(field => field.Transforms));
+            return transforms;
         }
 
 
@@ -364,7 +457,7 @@ namespace Transformalize.Configuration {
 
         private void ValidateDuplicateFields() {
             var fieldDuplicates = Entities
-                .SelectMany(e => e.AllFields())
+                .SelectMany(e => e.GetAllFields())
                 .Where(f => !f.PrimaryKey)
                 .Union(CalculatedFields)
                 .GroupBy(f => f.Alias)

@@ -138,8 +138,8 @@ namespace Transformalize.Main {
                 new OperationsLoader(ref _process, _element.Entities).Load();
 
                 _process.Relationships = new RelationshipsReader(_process, _element.Relationships).Read();
-                new ProcessOperationsLoader(ref _process, _element.CalculatedFields).Load();
-                new EntityRelationshipLoader(ref _process).Load();
+                new ProcessOperationsLoader(_process, _element.CalculatedFields).Load();
+                new EntityRelationshipLoader(_process).Load();
 
                 return _process;
             }

@@ -20,6 +20,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Transformalize.Libs.Rhino.Etl;
@@ -32,12 +33,13 @@ namespace Transformalize.Operations {
 
         private readonly Process _process;
         private int[] _batchIds;
-        private readonly string[] _keys;
+        private readonly HashSet<string> _keys;
 
         public ParametersExtract(Process process) : base(process.OutputConnection) {
             _process = process;
             UseTransaction = false;
-            _keys = _process.Parameters.ToEnumerable().Where(p => !p.Value.HasValue()).Select(p => p.Key).ToArray();
+            _keys = new HashSet<string>(_process.Parameters.ToEnumerable().Where(p => !p.Value.HasValue()).Select(p => p.Key));
+            _keys.IntersectWith(process.OutputFields().Select(f=>f.Alias));
         }
 
         private string PrepareSql() {

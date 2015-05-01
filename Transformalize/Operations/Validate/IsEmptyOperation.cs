@@ -1,20 +1,19 @@
-using System;
 using System.Collections.Generic;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Operations.Transform;
 
-namespace Transformalize.Main {
-    public class IsDaylightSavingsOperation : ShouldRunOperation {
-        public IsDaylightSavingsOperation(string inKey, string outKey)
+namespace Transformalize.Operations.Validate {
+    public class IsEmptyOperation : ShouldRunOperation {
+        public IsEmptyOperation(string inKey, string outKey)
             : base(inKey, outKey) {
-            Name = "IsDaylingSavings (" + outKey + ")";
+            Name = "IsEmpty (" + InKey + " => " + OutKey + ")";
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             foreach (var row in rows) {
                 if (ShouldRun(row)) {
-                    row[OutKey] = ((DateTime)row[InKey]).IsDaylightSavingTime();
-                }
+                    row[OutKey] = row[InKey].Equals(string.Empty);
+                } else { Skip(); }
                 yield return row;
             }
         }

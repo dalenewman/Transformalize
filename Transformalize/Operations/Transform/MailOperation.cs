@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Net.Mail;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Main;
 using Transformalize.Main.Providers.Mail;
-using Transformalize.Operations.Transform;
 
-namespace Transformalize.Main {
+namespace Transformalize.Operations.Transform {
 
     public class MailOperation : ShouldRunOperation {
 

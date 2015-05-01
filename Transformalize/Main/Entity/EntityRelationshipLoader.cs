@@ -7,7 +7,7 @@ namespace Transformalize.Main {
     public class EntityRelationshipLoader {
         private readonly Process _process;
 
-        public EntityRelationshipLoader(ref Process process) {
+        public EntityRelationshipLoader(Process process) {
             _process = process;
         }
 

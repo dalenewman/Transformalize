@@ -39,6 +39,7 @@ using Parameter = Transformalize.Main.Parameters.Parameter;
 namespace Transformalize.Main {
 
     public class TransformOperationFactory {
+
         private const string SPACE = " ";
         private const string COMMA = ",";
 
@@ -87,15 +88,12 @@ namespace Transformalize.Main {
                         inKey,
                         inType,
                         outKey,
-                        element.To.Equals(string.Empty) ? outType : element.To,
+                        element.To.Equals(Common.DefaultValue) ? outType : element.To,
                         element.Encoding,
                         element.Format
                     ) { ShouldRun = shouldRun, EntityName = _entityName };
 
                 case "copy":
-                    if (!hasParameters) {
-                        throw new TransformalizeException(_process.Name, _entityName, "The copy transform requires a parameter.  It copies the parameter value into the calculated field.");
-                    }
                     if (parameters.Count > 1)
                         return new CopyMultipleOperation(outKey, parameters) { ShouldRun = shouldRun, EntityName = _entityName };
 
@@ -224,9 +222,6 @@ namespace Transformalize.Main {
                     ) { ShouldRun = shouldRun, EntityName = _entityName };
 
                 case "trimstartappend":
-                    if (element.Separator.Equals(Common.DefaultValue)) {
-                        element.Separator = SPACE;
-                    }
                     return new TrimStartAppendOperation(
                         inKey,
                         outKey,
@@ -296,6 +291,8 @@ namespace Transformalize.Main {
                     var startsWith = _process.MapStartsWith.ContainsKey(element.Map) ? _process.MapStartsWith[element.Map] : new Map();
                     var endsWith = _process.MapEndsWith.ContainsKey(element.Map) ? _process.MapEndsWith[element.Map] : new Map();
 
+
+                    //TODO: Move to Modify and Validate
                     if (equals.Count == 0 && startsWith.Count == 0 && endsWith.Count == 0) {
                         if (element.Map.Contains("=")) {
                             foreach (var item in element.Map.Split(new[] { ',' })) {
@@ -366,7 +363,9 @@ namespace Transformalize.Main {
                     ) { ShouldRun = shouldRun, EntityName = _entityName };
 
                 case "javascript":
+
                     foreach (var script in element.Scripts) {
+                        //TODO: Move to Validate
                         if (!_process.Scripts.ContainsKey(script.Name)) {
                             throw new TransformalizeException(_process.Name, _entityName, "Invalid script reference: {0}.", script.Name);
                         }
@@ -382,6 +381,7 @@ namespace Transformalize.Main {
 
                 case "csharp":
                     foreach (var script in element.Scripts) {
+                        // TODO: Move to Validate
                         if (!_process.Scripts.ContainsKey(script.Name)) {
                             throw new TransformalizeException(_process.Name, _entityName, "Invalid script reference: {0}.", script.Name);
                         }
@@ -391,6 +391,7 @@ namespace Transformalize.Main {
                     return new CSharpOperation(
                         outKey,
                         outType,
+                        //TODO: Move to Modify
                         (element.ReplaceSingleQuotes ? Regex.Replace(element.Script, @"(?<=[^'])'{1}(?=[^'])", "\"") : element.Script),
                         scripts,
                         parameters
@@ -410,6 +411,7 @@ namespace Transformalize.Main {
                     goto case "template";
 
                 case "velocity":
+                    // TODO: Move to composition root
                     if (!_process.VelocityInitialized) {
                         Velocity.Init();
                     }
@@ -432,14 +434,6 @@ namespace Transformalize.Main {
 
                 case "format":
 
-                    //if (parameters.Count == 1 && element.IsShortHand) {
-                    //    return new FormatArrayOperation(
-                    //        parameters[0],
-                    //        outKey,
-                    //        element.Format
-                    //    ) { ShouldRun = shouldRun, EntityName = _entityName };
-                    //}
-
                     return new FormatOperation(
                         outKey,
                         element.Format,
@@ -453,13 +447,6 @@ namespace Transformalize.Main {
                     ) { ShouldRun = shouldRun, EntityName = _entityName };
 
                 case "concat":
-
-                    //if (parameters.Count == 1 && element.IsShortHand) {
-                    //    return new ConcatArrayOperation(
-                    //        parameters[0],
-                    //        outKey
-                    //    ) { ShouldRun = shouldRun, EntityName = _entityName };
-                    //}
 
                     return new ConcatOperation(
                         outKey,
@@ -476,17 +463,11 @@ namespace Transformalize.Main {
                     return new FormatPhoneOperation(inKey, outKey) { ShouldRun = shouldRun, EntityName = _entityName };
 
                 case "join":
+
+                    //TODO: Move to Modify
                     if (element.Separator.Equals(Common.DefaultValue)) {
                         element.Separator = SPACE;
                     }
-
-                    //if (parameters.Count == 1 && element.IsShortHand) {
-                    //    return new JoinArrayOperation(
-                    //        parameters[0],
-                    //        outKey,
-                    //        element.Separator
-                    //    ) { ShouldRun = shouldRun, EntityName = _entityName };
-                    //}
 
                     return new JoinTransformOperation(
                         outKey,
@@ -503,8 +484,10 @@ namespace Transformalize.Main {
                     ) { ShouldRun = shouldRun, EntityName = _entityName };
 
                 case "timezone":
+                    //TODO: Move to Modify
                     element.FromTimeZone = TimeZoneOperation.GuardTimeZone(field.Process, _entityName, element.FromTimeZone, "UTC");
                     toTimeZone = TimeZoneOperation.GuardTimeZone(field.Process, _entityName, toTimeZone, TimeZoneInfo.Local.Id);
+
                     return new TimeZoneOperation(
                         inKey,
                         outKey,
@@ -667,6 +650,15 @@ namespace Transformalize.Main {
                     ) { ShouldRun = shouldRun, EntityName = _entityName };
 
                 // validators
+                case "equals":
+                    return new EqualsOperation(outKey, parameters.First().Value) { ShouldRun = shouldRun, EntityName = _entityName };
+
+                case "isempty":
+                    return new IsEmptyOperation(
+                        inKey,
+                        outKey
+                    ) { ShouldRun = shouldRun, EntityName = _entityName };
+
                 case "isdaylightsavings":
                     return new IsDaylightSavingsOperation(
                         inKey,

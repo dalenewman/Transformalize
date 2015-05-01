@@ -29,10 +29,6 @@ namespace Transformalize.Main {
         public IParameters Read(TflTransform transform) {
             var parameters = new Parameters.Parameters();
 
-            if (transform.Parameter != string.Empty && transform.Parameter != "*") {
-                transform.Parameters.Insert(0, transform.GetDefaultOf<TflParameter>( p => p.Field = transform.Parameter));
-            }
-
             foreach (var p in transform.Parameters) {
                 if (string.IsNullOrEmpty(p.Name)) {
                     TflLogger.Warn(string.Empty, string.Empty, "Detected a {0} transform parameter without a name attribute.  Field parameters require names and values.", transform.Method);

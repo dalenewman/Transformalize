@@ -52,9 +52,7 @@ namespace Transformalize.Main {
                     var field = _process.GetField(entity.Alias, cf.Alias);
 
                     foreach (var t in cf.Transforms) {
-                        var reader = t.Parameter.Equals("*") ?
-                            (ITransformParametersReader)new EntityParametersReader(entity) :
-                            new EntityTransformParametersReader(entity);
+                        var reader = new EntityTransformParametersReader(entity);
 
                         if (t.BeforeAggregation) {
                             entity.OperationsBeforeAggregation.Add(factory.Create(field, t, reader.Read(t)));

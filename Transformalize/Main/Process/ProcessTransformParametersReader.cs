@@ -20,8 +20,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Logging;
 using Transformalize.Main.Parameters;
@@ -29,32 +27,19 @@ using Transformalize.Main.Parameters;
 namespace Transformalize.Main {
 
     public class ProcessTransformParametersReader : ITransformParametersReader {
-        private readonly char[] _dotArray = new[] { '.' };
-        private readonly Fields _fields;
+
         private readonly Process _process;
 
         public ProcessTransformParametersReader(Process process) {
             _process = process;
-            _fields = _process.OutputFields();
         }
-
 
         public IParameters Read(TflTransform transform) {
             var parameters = new Parameters.Parameters();
-
-            if (transform.Parameter != string.Empty && transform.Parameter != "*") {
-                AddParameterToConfiguration(transform, transform.Parameter, true);
-            }
-
-            if (transform.Method.ToLower() == "map") {
-                AddMapParametersToConfiguration(transform, _process.MapEquals[transform.Map]);
-                AddMapParametersToConfiguration(transform, _process.MapStartsWith[transform.Map]);
-                AddMapParametersToConfiguration(transform, _process.MapEndsWith[transform.Map]);
-            }
+            var fields = new Fields(_process.OutputFields(), _process.CalculatedFields.WithoutOutput());
 
             foreach (var p in transform.Parameters) {
 
-                var fields = _process.OutputFields();
                 if (!string.IsNullOrEmpty(p.Field)) {
                     if (fields.FindByParamater(p).Any()) {
                         var field = fields.FindByParamater(p).Last();
@@ -77,42 +62,5 @@ namespace Transformalize.Main {
             return parameters;
         }
 
-        private void AddParameterToConfiguration(TflTransform transform, string parameter, bool insert) {
-            try {
-                if (parameter.Contains(".")) {
-                    var values = parameter.Split(_dotArray);
-                    var p = transform.GetDefaultOf<TflParameter>(x => {
-                        x.Entity = values[0];
-                        x.Field = values[1];
-                    });
-
-                    if (insert)
-                        transform.Parameters.Insert(0, p);
-                    else
-                        transform.Parameters.Add(p);
-                } else {
-                    var p = transform.GetDefaultOf<TflParameter>(x => x.Field = parameter);
-                    if (insert)
-                        transform.Parameters.Insert(0, p);
-                    else
-                        transform.Parameters.Add(p);
-                }
-            } catch (Exception) {
-                TflLogger.Warn(_process.Name, string.Empty, "Process parameter {0} is already defined.  This could happen if you have a parameter attribute defined in your transform element, and also in your transform parameters collection.  Or, it could happen if you're using a map transform and your map output already references the parameters.", parameter);
-            }
-        }
-
-        private void AddMapParametersToConfiguration(TflTransform transform, IEnumerable<KeyValuePair<string, Item>> items) {
-            foreach (var item in items) {
-                if (item.Value.UseParameter) {
-                    if (_fields.Find(item.Value.Parameter).Any()) {
-                        item.Value.Parameter = _fields.Find(item.Value.Parameter).First().Alias;
-                        AddParameterToConfiguration(transform, item.Value.Parameter, false);
-                    } else {
-                        throw new TransformalizeException(string.Empty, string.Empty, "The map parameter {0} does not exist.  Please make sure it matches a field's name or alias.", item.Value.Parameter);
-                    }
-                }
-            }
-        }
     }
 }
